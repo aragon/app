@@ -8,20 +8,20 @@ interface IMockRedisEntry {
 // The commands the service issues (sessionStore + the two rate limiters). Signatures are the
 // simple shapes the service uses; `asRedis` bridges to the full Upstash client type.
 export interface IMockRedis {
-    get(key: string): Promise<string | null>;
-    set(
+    get: (key: string) => Promise<string | null>;
+    set: (
         key: string,
         value: string,
         opts?: { ex?: number; nx?: boolean },
-    ): Promise<'OK' | null>;
-    incrby(key: string, amount: number): Promise<number>;
-    expire(key: string, seconds: number, mode?: 'NX'): Promise<number>;
-    rpush(key: string, value: string): Promise<number>;
-    lrange(key: string, start: number, end: number): Promise<string[]>;
-    lrem(key: string, count: number, value: string): Promise<number>;
-    del(...keys: string[]): Promise<number>;
-    evalsha(sha: string, keys: string[], args: unknown[]): Promise<unknown>;
-    eval(script: string, keys: string[], args: unknown[]): Promise<unknown>;
+    ) => Promise<'OK' | null>;
+    incrby: (key: string, amount: number) => Promise<number>;
+    expire: (key: string, seconds: number, mode?: 'NX') => Promise<number>;
+    rpush: (key: string, value: string) => Promise<number>;
+    lrange: (key: string, start: number, end: number) => Promise<string[]>;
+    lrem: (key: string, count: number, value: string) => Promise<number>;
+    del: (...keys: string[]) => Promise<number>;
+    evalsha: (sha: string, keys: string[], args: unknown[]) => Promise<unknown>;
+    eval: (script: string, keys: string[], args: unknown[]) => Promise<unknown>;
 }
 
 // In-memory Redis fake. Every method mutates the map synchronously before resolving, so

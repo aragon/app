@@ -28,8 +28,6 @@ const getConnectedAccount = (
     if (connections instanceof Map && current) {
         return connections.get(current)?.accounts[0];
     }
-
-    return;
 };
 
 const campaignsPerPage = 5;

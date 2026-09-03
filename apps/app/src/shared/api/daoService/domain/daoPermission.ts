@@ -6,6 +6,35 @@ import type {
     PermissionEntityStatus,
 } from './enum';
 
+export interface ISppConditionRule {
+    type:
+        | 'block-number'
+        | 'timestamp'
+        | 'condition'
+        | 'logic'
+        | 'value'
+        | 'unknown';
+    operation:
+        | 'none'
+        | 'eq'
+        | 'neq'
+        | 'gt'
+        | 'lt'
+        | 'gte'
+        | 'lte'
+        | 'return'
+        | 'not'
+        | 'and'
+        | 'or'
+        | 'xor'
+        | 'if-else'
+        | 'unknown';
+    value: string;
+    permissionId: string;
+    ruleIndexes?: number[];
+    conditionAddress?: string;
+}
+
 /**
  * Backend-enriched condition payload for a permission. Fields vary by
  * condition type (voting-power, membership, execute-selector, or unknown).
@@ -40,6 +69,10 @@ export interface IDaoPermissionCondition {
      * Untrusted backend payload, narrowed by the execute-selector slot.
      */
     targets?: unknown;
+    /**
+     * Normalized rules returned for SPP rule conditions.
+     */
+    rules?: ISppConditionRule[];
 }
 
 /**

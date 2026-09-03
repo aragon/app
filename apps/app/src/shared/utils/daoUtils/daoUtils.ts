@@ -48,11 +48,13 @@ export interface IGetDaoPluginsParams {
      */
     hasExecute?: boolean;
     /**
-     * Keeps plugins whose interface type could not be resolved. They are
-     * dropped by default because the app has no UI to render them with. Set
-     * this to `true` ONLY for surfaces describing what is installed on-chain
-     * (permissions, contract versions), where omitting a contract would give a
-     * wrong picture of the DAO.
+     * Keeps plugins the app cannot govern with: those whose interface type could
+     * not be resolved, and those the backend flags as unsupported (`isSupported:
+     * false`, e.g. installed outside the standard OSx flow). They are dropped by
+     * default because the app has no UI to render them with. Set this to `true`
+     * ONLY for surfaces describing what is installed on-chain (permissions,
+     * contract versions), where omitting a contract would give a wrong picture
+     * of the DAO.
      * @default false
      */
     includeUnsupported?: boolean;
@@ -74,21 +76,34 @@ class DaoUtils {
         dao?.plugins?.some((p) => p.isBody && this.isSupportedPlugin(p)) ??
         false;
 
+    /**
+     * Checks if the DAO has at least one plugin the app can render. Plugins the
+     * backend cannot resolve or flags as unsupported are dropped first, so this
+     * stays in sync with what `getDaoPlugins` returns — otherwise sections and
+     * navigation items would be rendered for a DAO with no usable plugin.
+     * Client-side only: the plugin registry is populated on demand.
+     */
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds =
-            dao?.plugins?.map(({ interfaceType }) => interfaceType) ?? [];
+            dao?.plugins
+                ?.filter((plugin) => this.isSupportedPlugin(plugin))
+                .map(({ interfaceType }) => interfaceType) ?? [];
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
 
     /**
-     * Checks if the backend could resolve the interface type of the plugin.
-     * Deliberately based on the interface type and not on the plugin registry:
-     * the registry is populated on demand, so a registry lookup here would
-     * report every plugin as unsupported during server rendering.
+     * Checks if the backend could resolve the interface type of the plugin and
+     * did not flag it as unsupported (e.g. installed outside the standard OSx
+     * flow). Deliberately based on those backend fields and not on the plugin
+     * registry: the registry is populated on demand, so a registry lookup here
+     * would report every plugin as unsupported during server rendering.
      */
-    isSupportedPlugin = (plugin: Pick<IDaoPlugin, 'interfaceType'>): boolean =>
-        plugin.interfaceType !== PluginInterfaceType.UNKNOWN;
+    isSupportedPlugin = (
+        plugin: Pick<IDaoPlugin, 'interfaceType' | 'isSupported'>,
+    ): boolean =>
+        plugin.interfaceType !== PluginInterfaceType.UNKNOWN &&
+        plugin.isSupported !== false;
 
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.ens != null && dao.ens !== '' ? dao.ens : undefined;

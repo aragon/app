@@ -61,9 +61,7 @@ describe('errorUtils', () => {
         it('ignores non-serializable properties', () => {
             const error = {
                 message: 'test',
-                fn: () => {
-                    return;
-                },
+                fn: jest.fn(),
                 symbol: Symbol('test'),
             };
 

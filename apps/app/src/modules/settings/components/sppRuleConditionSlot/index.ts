@@ -1,0 +1,1 @@
+export { SppRuleConditionSlot } from './sppRuleConditionSlot';

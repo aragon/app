@@ -16,11 +16,10 @@ export type FeatureFlagKey =
     | 'gateAdvancedGovernance'
     | 'osxUpdates'
     | 'useMocks'
-    | 'enableAllPlugins'
     | 'existingProposalCreationCondition'
     | 'aragonProfiles'
     | 'supportChat'
-    | 'permissionsPage';
+    | 'telegramSubscription';
 
 /**
  * Feature flag definition structure.
@@ -96,5 +95,5 @@ export interface IFeatureFlagsProvider {
      * perspective. Any per-request details (cookies, headers, etc.) must be
      * resolved inside this method.
      */
-    loadOverrides(): Promise<FeatureFlagOverrides>;
+    loadOverrides: () => Promise<FeatureFlagOverrides>;
 }

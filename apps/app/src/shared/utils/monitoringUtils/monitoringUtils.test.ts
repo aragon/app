@@ -64,6 +64,33 @@ describe('monitoring utils', () => {
                 buildEvent('TypeError: Converting circular structure to JSON'),
             );
             expect(result).not.toBeNull();
+            expect(result?.tags?.noise_class).toBeUndefined();
+        });
+
+        it('tags environment noise (in-app browsers, extension conflicts, deploy skew) as expected/info', () => {
+            const environmentMessages = [
+                'TypeError: JSON.stringify cannot serialize cyclic structures.',
+                "TypeError: 'get' on proxy: property 'removeListener' is a read-only and non-configurable data property",
+                "NotFoundError: Failed to execute 'removeChild' on 'Node'",
+                "ReferenceError: Can't find variable: indexedDB",
+                'Error: Failed to find Server Action. This request might be from an older or newer deployment.',
+                'Error: The destination stream closed early.',
+            ];
+
+            environmentMessages.forEach((message) => {
+                const result = monitoringUtils.beforeSend(buildEvent(message));
+                expect(result).not.toBeNull();
+                expect(result?.tags?.noise_class).toEqual('expected');
+                expect(result?.level).toEqual('info');
+            });
+        });
+
+        it('tags AppKit disconnect failures as expected wallet behaviour', () => {
+            const result = monitoringUtils.beforeSend(
+                buildEvent('AppKitError: Failed to disconnect'),
+            );
+            expect(result).not.toBeNull();
+            expect(result?.tags?.noise_class).toEqual('expected');
         });
 
         it('keeps expected wallet behaviour, tags it expected and demotes to info', () => {

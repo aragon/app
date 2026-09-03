@@ -25,6 +25,7 @@ import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
 import {
     ActionItemId,
+    type IBuildUnverifiedAllowedActionParams,
     type IGetActionItemsParams,
     type IGetAllowedActionBaseParams,
     type IGetAllowedActionItemsParams,
@@ -290,23 +291,28 @@ class ActionComposerUtils {
                     return nativeItem;
                 }
 
-                const item = this.buildDefaultCustomAction(
-                    {
-                        address: action.target,
-                        name:
-                            decoded?.contractName ??
-                            t(
-                                'app.governance.actionComposer.unverifiedContract',
-                            ),
-                    },
-                    {
-                        name:
-                            decoded?.functionName ??
-                            t('app.governance.actionComposer.unknownFunction'),
-                        parameters: decoded?.inputs ?? [],
-                    },
-                    actionIndex,
-                );
+                // Only a fully decoded action can carry `inputData`: the fallback labels belong to the
+                // composer dropdown, never to the action itself, as `ProposalActionsItem` resolves the
+                // "unverified contract" / "unknown function" labels and the warning from a null
+                // `inputData` on its own.
+                const { contractName, functionName, inputs } = decoded ?? {};
+                const item =
+                    contractName != null && functionName != null
+                        ? this.buildDefaultCustomAction(
+                              { address: target, name: contractName },
+                              {
+                                  name: functionName,
+                                  parameters: inputs ?? [],
+                              },
+                              actionIndex,
+                          )
+                        : this.buildUnverifiedAllowedAction({
+                              target,
+                              selector,
+                              functionName,
+                              index: actionIndex,
+                              t,
+                          });
 
                 item.info = selector;
 
@@ -681,6 +687,34 @@ class ActionComposerUtils {
                     value: undefined,
                 })),
             },
+        },
+    });
+
+    /**
+     * Builds the composer item of an allowed action whose contract or function name the backend could not
+     * decode. The item keeps readable labels for the dropdown, while its action carries `inputData: null`
+     * so the action item renders the unverified labels plus warning itself and offers the raw-calldata
+     * view only - the ABI needed by the decoded view is exactly what is missing here.
+     */
+    private buildUnverifiedAllowedAction = ({
+        target,
+        selector,
+        functionName,
+        index,
+        t,
+    }: IBuildUnverifiedAllowedActionParams): IActionComposerInputItem => ({
+        id: `${target}-${selector}-${index.toString()}`,
+        name:
+            functionName ?? t('app.governance.actionComposer.unknownFunction'),
+        icon: IconType.SLASH,
+        groupId: target,
+        defaultValue: {
+            type: ActionItemId.CUSTOM_ACTION,
+            to: target,
+            from: '',
+            data: '',
+            value: '0',
+            inputData: null,
         },
     });
 

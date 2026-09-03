@@ -120,7 +120,7 @@ const buildEstimationAlert = (
         return undefined;
     }
 
-    const { isMarginReduced, exceedsMaxGasLimit } =
+    const { gasLimit, isMarginReduced, exceedsMaxGasLimit } =
         crossChainControllerGasUtils.resolveGasLimit({
             requiredGas: BigInt(estimation.requiredGas),
         });
@@ -149,10 +149,31 @@ const buildEstimationAlert = (
         };
     }
 
+    // The floor decided the limit rather than the measurement plus its margin, so quoting a
+    // recommended margin here would describe a total the field does not hold.
+    const isMinimumApplied =
+        crossChainControllerGasUtils.applyBuffer(
+            BigInt(estimation.requiredGas),
+            crossChainControllerGas.bufferPercent,
+        ) < BigInt(crossChainControllerGas.minGasLimit);
+
+    if (isMinimumApplied) {
+        return {
+            message: t(`${translationPrefix}.minimumApplied`, {
+                requiredGas: formatGas(estimation.requiredGas),
+                minGasLimit: formatGas(
+                    crossChainControllerGas.minGasLimit.toString(),
+                ),
+            }),
+            variant: 'success',
+        };
+    }
+
     return {
         message: t(`${translationPrefix}.simulated`, {
             requiredGas: formatGas(estimation.requiredGas),
             bufferPercent: crossChainControllerGas.bufferPercent,
+            totalGas: formatGas(gasLimit.toString()),
         }),
         variant: 'success',
     };
