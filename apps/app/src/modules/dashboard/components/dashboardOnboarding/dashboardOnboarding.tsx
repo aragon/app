@@ -42,7 +42,11 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     });
 
     const displayName = address ? (
-        <AddressOutput address={address} label={ensName ?? undefined} />
+        <AddressOutput
+            address={address}
+            copy={false}
+            label={ensName ?? undefined}
+        />
     ) : undefined;
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
