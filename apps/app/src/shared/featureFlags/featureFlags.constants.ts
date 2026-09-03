@@ -109,18 +109,6 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'enableAllPlugins',
-        name: 'Enable all plugins',
-        description:
-            'Enables all plugins for DAO creation flows, bypassing whitelist validation',
-        defaultValue: false,
-        environments: {
-            local: true,
-            development: true,
-            preview: true,
-        },
-    },
-    {
         key: 'existingProposalCreationCondition',
         name: 'Existing proposal creation condition',
         description:

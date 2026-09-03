@@ -16,7 +16,6 @@ export type FeatureFlagKey =
     | 'gateAdvancedGovernance'
     | 'osxUpdates'
     | 'useMocks'
-    | 'enableAllPlugins'
     | 'existingProposalCreationCondition'
     | 'aragonProfiles'
     | 'supportChat'
