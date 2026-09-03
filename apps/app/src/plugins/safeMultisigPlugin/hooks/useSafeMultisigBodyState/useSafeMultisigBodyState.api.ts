@@ -80,6 +80,11 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     rateLimitedRetryAfter?: number;
     /**
+     * Whether the backend served this from its stale window because its fresh window had lapsed.
+     * The data is usable and must be rendered, but a confirmation count may lag reality.
+     */
+    isStale: boolean;
+    /**
      * Report queued for this proposal and stage, live or superseded.
      */
     pendingReport?: ISafeMultisigBodyReport;

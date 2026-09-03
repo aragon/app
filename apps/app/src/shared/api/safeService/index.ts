@@ -6,3 +6,4 @@ export { safeService } from './safeService';
 export type * from './safeService.api';
 export { SafeServiceError } from './safeServiceError';
 export { SafeServiceKey, safeServiceKeys } from './safeServiceKeys';
+export { safeTransactionService } from './safeTransactionService';

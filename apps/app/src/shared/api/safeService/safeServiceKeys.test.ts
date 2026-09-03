@@ -45,7 +45,7 @@ describe('safe service keys', () => {
     });
 
     it('builds one safePendingTransactions key regardless of the casing the caller used', () => {
-        const queryParams = { currentNonce: '6' };
+        const queryParams = { limit: 10 };
 
         expect(
             safeServiceKeys.safePendingTransactions({

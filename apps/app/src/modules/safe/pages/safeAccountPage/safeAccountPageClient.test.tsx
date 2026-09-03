@@ -4,7 +4,7 @@ import * as safeServiceApi from '@/shared/api/safeService';
 import * as useDaoChainModule from '@/shared/hooks/useDaoChain';
 import {
     generateReactQueryResultSuccess,
-    generateSafeInfo,
+    generateSafeInfoResponse,
 } from '@/shared/testUtils';
 import {
     type ISafeAccountPageClientProps,
@@ -31,7 +31,9 @@ describe('<SafeAccountPageClient /> component', () => {
 
     beforeEach(() => {
         useSafeInfoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateSafeInfo() }),
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse(),
+            }),
         );
         useDaoChainSpy.mockReturnValue({
             chainId: 1,
@@ -62,7 +64,7 @@ describe('<SafeAccountPageClient /> component', () => {
     it('renders the owners, pending transactions and assets of the Safe', () => {
         useSafeInfoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateSafeInfo({ nonce: '42' }),
+                data: generateSafeInfoResponse({ nonce: '42' }),
             }),
         );
         render(createTestComponent());
@@ -77,7 +79,7 @@ describe('<SafeAccountPageClient /> component', () => {
     it('displays the reported Safe version verbatim', () => {
         useSafeInfoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateSafeInfo({ version: '1.4.1+L2' }),
+                data: generateSafeInfoResponse({ version: '1.4.1+L2' }),
             }),
         );
         render(createTestComponent());
@@ -88,7 +90,7 @@ describe('<SafeAccountPageClient /> component', () => {
     it('renders a Safe below the EIP-1271 floor without gating the read view', () => {
         useSafeInfoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateSafeInfo({ version: '1.1.1' }),
+                data: generateSafeInfoResponse({ version: '1.1.1' }),
             }),
         );
         render(createTestComponent());

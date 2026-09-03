@@ -1,11 +1,12 @@
 import { type MutationOptions, useMutation } from '@tanstack/react-query';
-import { safeService } from '../../safeService';
 import type { IProposeSafeTransactionParams } from '../../safeService.api';
+import { safeTransactionService } from '../../safeTransactionService';
 
 export const useProposeSafeTransaction = (
     options?: MutationOptions<unknown, unknown, IProposeSafeTransactionParams>,
 ) =>
     useMutation({
-        mutationFn: (params) => safeService.proposeSafeTransaction(params),
+        mutationFn: (params) =>
+            safeTransactionService.proposeSafeTransaction(params),
         ...options,
     });

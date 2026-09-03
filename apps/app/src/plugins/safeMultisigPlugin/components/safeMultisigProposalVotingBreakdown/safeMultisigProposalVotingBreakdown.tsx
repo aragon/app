@@ -58,6 +58,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         isError,
         isRateLimited,
         rateLimitedRetryAfter,
+        isStale,
     } = bodyState;
 
     // A rate-limited read is a degraded state, not a bug: the poll backs off and recovers on its
@@ -143,6 +144,12 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                             <Tag
                                 label={t(`${translationKey}.tag.competition`)}
                                 variant="warning"
+                            />
+                        )}
+                        {isStale && (
+                            <Tag
+                                label={t(`${translationKey}.tag.stale`)}
+                                variant="neutral"
                             />
                         )}
                         {hasConnectedWalletSigned && (

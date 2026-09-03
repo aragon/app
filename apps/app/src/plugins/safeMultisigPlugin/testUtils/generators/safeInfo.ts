@@ -1,6 +1,12 @@
-import type { ISafeInfo } from '@/shared/api/safeService';
+import type { ISafeInfoResponse } from '@/shared/api/safeService';
 
-export const generateSafeInfo = (safeInfo?: Partial<ISafeInfo>): ISafeInfo => ({
+/**
+ * Produces what the body state actually holds: the backend response, including the freshness
+ * metadata a consumer needs to tell a current payload from one served stale.
+ */
+export const generateSafeInfo = (
+    safeInfo?: Partial<ISafeInfoResponse>,
+): ISafeInfoResponse => ({
     address: '0x0000000000000000000000000000000000000001',
     nonce: '0',
     threshold: 2,
@@ -11,5 +17,10 @@ export const generateSafeInfo = (safeInfo?: Partial<ISafeInfo>): ISafeInfo => ({
     version: '1.4.1',
     modules: [],
     guard: null,
+    meta: {
+        source: 'chain',
+        fetchedAt: '2026-08-26T12:00:00.000Z',
+        stale: false,
+    },
     ...safeInfo,
 });

@@ -1,9 +1,20 @@
-import { HttpService, type IRequestQueryParams } from '../httpService';
+import {
+    HttpService,
+    type HttpServiceErrorHandler,
+    type IRequestQueryParams,
+} from '../httpService';
 import { AragonBackendServiceError } from './aragonBackendServiceError';
 import type { IPaginatedResponse } from './domain';
 
 export class AragonBackendService extends HttpService {
-    constructor() {
+    /**
+     * @param errorHandler Overrides the default backend error envelope. Routes that answer a
+     * different failure shape — `/v2/safe/*` emits `{ error, code, retryAfter }` so the Safe client
+     * keeps its own error vocabulary — pass their own parser.
+     */
+    constructor(
+        errorHandler: HttpServiceErrorHandler = AragonBackendServiceError.fromResponse,
+    ) {
         // Send the request directly to the backend server when the request is done on the server side, otherwise proxy
         // it through the /api/backend NextJs route.
         const baseUrl =
@@ -12,7 +23,7 @@ export class AragonBackendService extends HttpService {
                 : '/api/backend';
         super(
             baseUrl,
-            AragonBackendServiceError.fromResponse,
+            errorHandler,
             process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY,
         );
     }

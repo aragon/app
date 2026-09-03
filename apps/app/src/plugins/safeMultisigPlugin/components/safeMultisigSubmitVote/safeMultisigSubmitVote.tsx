@@ -201,7 +201,6 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             queryClient.invalidateQueries({
                 queryKey: safeServiceKeys.safePendingTransactions({
                     urlParams,
-                    queryParams: { currentNonce: safeInfo.nonce },
                 }),
             }),
         ]);
@@ -291,7 +290,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         },
                     ],
                     onlyCalls: true,
-                    options: { nonce: toSafeNonce(nextNonce) },
+                    options: { nonce: toSafeNonce(nextNonce.nextNonce) },
                 });
                 const safeTxHash =
                     await protocolKit.getTransactionHash(safeTransaction);

@@ -9,10 +9,12 @@ export {
     isSafeConfirmation,
 } from './safeConfirmation';
 export { type ISafeInfo, isSafeInfo } from './safeInfo';
+export { type ISafeMeta, isSafeMeta } from './safeMeta';
 export {
     type ISafeMultisigTransaction,
     isSafeMultisigTransaction,
 } from './safeMultisigTransaction';
+export { type ISafeNextNonce, isSafeNextNonce } from './safeNextNonce';
 export {
     type ISafePaginatedResponse,
     isSafePaginatedResponse,

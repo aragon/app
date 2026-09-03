@@ -20,6 +20,8 @@ export * from './response';
 export * from './safeBalance';
 export * from './safeConfirmation';
 export * from './safeInfo';
+export * from './safeMeta';
+export * from './safeResponse';
 export * from './safeTransaction';
 export * from './stepperResult';
 export * from './wizardContext';

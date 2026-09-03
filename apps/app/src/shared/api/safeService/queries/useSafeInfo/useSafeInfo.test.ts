@@ -1,6 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
-import { generateSafeInfo, ReactQueryWrapper } from '@/shared/testUtils';
+import {
+    generateSafeInfoResponse,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { safeService } from '../../safeService';
 import { useSafeInfo } from './useSafeInfo';
 
@@ -16,7 +19,7 @@ describe('useSafeInfo query', () => {
             network: Network.ETHEREUM_MAINNET,
             address: '0xd84C233A7D1578021d21E39785439bEdDB165F3D',
         };
-        const safeInfo = generateSafeInfo({
+        const safeInfo = generateSafeInfoResponse({
             owners: ['0xOwnerOne', '0xOwnerTwo'],
             threshold: 2,
         });

@@ -1,10 +1,13 @@
 import type { Network } from '../daoService';
+import type { IRequestUrlBodyParams, IRequestUrlParams } from '../httpService';
 import type {
-    IRequestUrlBodyParams,
-    IRequestUrlParams,
-    IRequestUrlQueryParams,
-} from '../httpService';
-import type { ISafeInfo, ISafeTransactionData } from './domain';
+    ISafeInfo,
+    ISafeMeta,
+    ISafeMultisigTransaction,
+    ISafeNextNonce,
+    ISafePaginatedResponse,
+    ISafeTransactionData,
+} from './domain';
 
 export interface ISafeUrlParams {
     /**
@@ -12,7 +15,7 @@ export interface ISafeUrlParams {
      */
     network: Network;
     /**
-     * Address of the Safe.
+     * Address of the Safe. Normalised to its checksummed form at the service boundary.
      */
     address: string;
 }
@@ -20,11 +23,6 @@ export interface ISafeUrlParams {
 export interface IGetSafeInfoParams extends IRequestUrlParams<ISafeUrlParams> {}
 
 export interface IGetSafePendingTransactionsQueryParams {
-    /**
-     * Current nonce of the Safe (`ISafeInfo.nonce`). Transactions below it can never execute, so
-     * the filter is what separates a live queue from permanently dead transactions.
-     */
-    currentNonce: ISafeInfo['nonce'];
     /**
      * Maximum number of transactions to return.
      */
@@ -36,16 +34,28 @@ export interface IGetSafePendingTransactionsQueryParams {
 }
 
 export interface IGetSafePendingTransactionsParams
-    extends IRequestUrlQueryParams<
-        ISafeUrlParams,
-        IGetSafePendingTransactionsQueryParams
-    > {}
+    extends IRequestUrlParams<ISafeUrlParams> {
+    queryParams?: IGetSafePendingTransactionsQueryParams;
+}
 
 export interface IGetSafeNextNonceParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 
 export interface IGetSafeBalancesParams
     extends IRequestUrlParams<ISafeUrlParams> {}
+
+export interface ISafeInfoResponse extends ISafeInfo {
+    meta: ISafeMeta;
+}
+
+export interface ISafeNextNonceResponse extends ISafeNextNonce {
+    meta: ISafeMeta;
+}
+
+export interface ISafeQueueResponse
+    extends ISafePaginatedResponse<ISafeMultisigTransaction> {
+    meta: ISafeMeta;
+}
 
 export interface IProposeSafeTransactionBody {
     safeTransactionData: ISafeTransactionData;

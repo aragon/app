@@ -1,7 +1,6 @@
 import { revalidateTag } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { SafeServiceErrorCode } from '@/shared/api/safeService/domain';
-import { safeFreshReadHeader } from '@/shared/api/safeService/safeQueryConfig';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 import {
@@ -280,7 +279,7 @@ export class ProxySafeUtils {
             return undefined;
         }
 
-        if (method === 'POST' && !this.isSupportedPostPath(path)) {
+        if (!this.isSupportedPath(method, path)) {
             return undefined;
         }
 
@@ -304,13 +303,8 @@ export class ProxySafeUtils {
             }
         }
 
-        // Reads are shared across viewers; writes are never cached. A read may also opt out: the
-        // data cache serves stale-while-revalidate, which is fine for display and fatal for nonce
-        // allocation, so that caller marks its reads fresh and the rule is enforced here rather
-        // than trusted. The marker is consumed, never forwarded upstream.
-        const isCacheableRead =
-            method === 'GET' &&
-            request.headers.get(safeFreshReadHeader) == null;
+        // Reads are shared across viewers; writes must never be cached.
+        const isCacheableRead = method === 'GET';
 
         return {
             method,
@@ -355,10 +349,24 @@ export class ProxySafeUtils {
     };
 
     /**
-     * POST is intentionally narrower than GET. The proxy API key must not become an authenticated
-     * open relay for unrelated transaction-service mutations.
+     * Every path this proxy will forward, by method.
+     *
+     * `/v2/safe/*` on the Aragon backend now serves the reads a governance body needs, so what is
+     * left here is only what the backend does not: balances, and the two signature-bearing writes.
+     * The surface is allowlisted rather than open because the route is unauthenticated and spends a
+     * shared API key — an open GET would let anyone drive the whole transaction service on our quota.
      */
-    private isSupportedPostPath = (path: string[]): boolean => {
+    private isSupportedPath = (method: string, path: string[]): boolean => {
+        if (method === 'GET') {
+            return (
+                path.length === 4 &&
+                path[0] === 'v1' &&
+                path[1] === 'safes' &&
+                safeAddressPattern.test(path[2]) &&
+                path[3] === 'balances'
+            );
+        }
+
         const isProposalPath =
             path.length === 4 &&
             path[0] === 'v1' &&

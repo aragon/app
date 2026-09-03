@@ -5,7 +5,7 @@ import * as safeServiceApi from '@/shared/api/safeService';
 import {
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
-    generateSafeInfo,
+    generateSafeInfoResponse,
 } from '@/shared/testUtils';
 import { type ISafeOwnerListProps, SafeOwnerList } from './safeOwnerList';
 
@@ -14,7 +14,9 @@ describe('<SafeOwnerList /> component', () => {
 
     beforeEach(() => {
         useSafeInfoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateSafeInfo() }),
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse(),
+            }),
         );
     });
 
@@ -43,7 +45,7 @@ describe('<SafeOwnerList /> component', () => {
         ];
         useSafeInfoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateSafeInfo({ owners, threshold: 2 }),
+                data: generateSafeInfoResponse({ owners, threshold: 2 }),
             }),
         );
         render(createTestComponent());

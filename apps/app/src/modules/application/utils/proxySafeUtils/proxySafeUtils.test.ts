@@ -32,9 +32,11 @@ describe('proxySafe utils', () => {
         revalidateTagSpy.mockReset();
     });
 
+    const safeAddress = `0x${'a'.repeat(40)}`;
+
     const createTestOptions = (
         chainId: string,
-        path: string[] = ['v1', 'safes', '0xSafeAddress'],
+        path: string[] = ['v1', 'safes', safeAddress, 'balances'],
     ): ISafeRequestOptions => ({
         params: Promise.resolve({ chainId, path }),
     });
@@ -66,24 +68,19 @@ describe('proxySafe utils', () => {
     describe('request', () => {
         it('forwards the request to the safe transaction service with the bearer authorization header', async () => {
             const testClass = new ProxySafeUtils();
-            const parsedResponse = { threshold: 2 };
+            const parsedResponse = [{ tokenAddress: null }];
             const fetchReturn = generateResponse({
                 json: jest.fn(() => Promise.resolve(parsedResponse)),
             });
             fetchSpy.mockResolvedValue(fetchReturn);
 
             await testClass.request(
-                createTestRequest('?executed=false&nonce__gte=3'),
-                createTestOptions('1', [
-                    'v2',
-                    'safes',
-                    '0xSafeAddress',
-                    'multisig-transactions',
-                ]),
+                createTestRequest('?trusted=true'),
+                createTestOptions('1'),
             );
 
             expect(fetchSpy).toHaveBeenCalledWith(
-                'https://api.safe.global/tx-service/eth/api/v2/safes/0xSafeAddress/multisig-transactions/?executed=false&nonce__gte=3',
+                `https://api.safe.global/tx-service/eth/api/v1/safes/${safeAddress}/balances/?trusted=true`,
                 expect.objectContaining({
                     method: 'GET',
                     credentials: 'omit',
@@ -93,6 +90,23 @@ describe('proxySafe utils', () => {
                 }),
             );
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
+        });
+
+        it('rejects a read outside the allowlisted surface', async () => {
+            // The route is unauthenticated and spends a shared API key. Governance-body reads moved
+            // to the Aragon backend, so an open GET here would only serve an abuser.
+            const testClass = new ProxySafeUtils();
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1', ['v1', 'safes', safeAddress]),
+            );
+
+            expect(fetchSpy).not.toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                expect.objectContaining({ code: 'upstream-error' }),
+                expect.objectContaining({ status: 400 }),
+            );
         });
 
         it('forwards an uncached proposal POST body only to the supported Safe endpoint', async () => {
@@ -176,13 +190,12 @@ describe('proxySafe utils', () => {
         it('caches a read against a per-safe tag so concurrent viewers share one upstream call', async () => {
             const testClass = new ProxySafeUtils();
             fetchSpy.mockResolvedValue(
-                generateResponse({ json: jest.fn().mockResolvedValue({}) }),
+                generateResponse({ json: jest.fn().mockResolvedValue([]) }),
             );
-            const safeAddress = `0x${'a'.repeat(40)}`;
 
             await testClass.request(
                 createTestRequest(),
-                createTestOptions('1', ['v1', 'safes', safeAddress]),
+                createTestOptions('1'),
             );
 
             expect(fetchSpy).toHaveBeenCalledWith(
@@ -194,35 +207,6 @@ describe('proxySafe utils', () => {
                     },
                 }),
             );
-        });
-
-        it('bypasses the cache for a read marked as needing fresh data', async () => {
-            // The data cache serves stale-while-revalidate, so a cached read hands back a stale
-            // payload synchronously. Nonce allocation bakes the result into an EIP-712 hash that
-            // cannot be changed once signed, so that caller opts out and the proxy must honour it.
-            const testClass = new ProxySafeUtils();
-            fetchSpy.mockResolvedValue(
-                generateResponse({ json: jest.fn().mockResolvedValue({}) }),
-            );
-            const request = generateNextRequest({
-                method: 'GET',
-                nextUrl: { search: '' } as NextURL,
-                headers: new Headers({ 'x-safe-fresh-read': '1' }),
-            });
-
-            await testClass.request(
-                request,
-                createTestOptions('1', ['v1', 'safes', `0x${'a'.repeat(40)}`]),
-            );
-
-            const [, options] = fetchSpy.mock.calls[0];
-
-            expect(options).toEqual(
-                expect.objectContaining({ cache: 'no-store' }),
-            );
-            expect(options).not.toHaveProperty('next');
-            // The marker is consumed by the proxy, never forwarded to the transaction service.
-            expect(options?.headers).not.toHaveProperty('x-safe-fresh-read');
         });
 
         it('never caches a write', async () => {

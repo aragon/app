@@ -26,8 +26,9 @@ export interface ISafePendingTransactionListProps {
      */
     address: string;
     /**
-     * Current nonce of the Safe. Undefined until the Safe info resolves — the queue cannot be read
-     * without it, as unexecuted transactions below the current nonce are permanently dead.
+     * Current nonce of the Safe. The backend returns every unexecuted transaction and does not
+     * filter by nonce — a server-side filter would put the nonce in the cache key and orphan an
+     * entry on every advance — so liveness is derived here. Undefined until the Safe info resolves.
      */
     currentNonce?: ISafeInfo['nonce'];
 }
@@ -43,15 +44,16 @@ export const SafePendingTransactionList: React.FC<
         data: pendingTransactions,
         isError,
         isLoading,
-    } = useSafePendingTransactions(
-        {
-            urlParams: { network, address },
-            queryParams: { currentNonce: currentNonce ?? '0' },
-        },
-        { enabled: currentNonce != null },
-    );
+    } = useSafePendingTransactions({ urlParams: { network, address } });
 
-    const transactions = pendingTransactions?.results ?? [];
+    // Unexecuted transactions below the current nonce are permanently dead, so they are never shown.
+    const transactions =
+        currentNonce == null
+            ? []
+            : (pendingTransactions?.results ?? []).filter(
+                  (transaction) =>
+                      BigInt(transaction.nonce) >= BigInt(currentNonce),
+              );
     const state = safeDataListUtils.getDataListState({
         isError,
         isLoading: isLoading || currentNonce == null,

@@ -63,6 +63,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         minApprovals: 2,
         membersCount: 3,
         isRateLimited: false,
+        isStale: false,
     } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
 
     beforeEach(() => {

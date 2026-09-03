@@ -15,6 +15,7 @@ import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
 import * as transactionServiceApi from '@/shared/api/transactionService';
 import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
+import { generateSafeNextNonceResponse } from '@/shared/testUtils';
 import { safeIndexingTimeout } from '../../constants';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
@@ -94,6 +95,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         approvalsAmount: 0,
         minApprovals: 1,
         membersCount: 1,
+        isStale: false,
     } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
 
     beforeEach(() => {
@@ -125,7 +127,12 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             data: undefined,
             isLoading: false,
         } as ReturnType<typeof Wagmi.useBytecode>);
-        getSafeNextNonceSpy.mockResolvedValue('0');
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '0',
+                currentNonce: '0',
+            }),
+        );
         // The report stays unattributed unless a test says otherwise, so the indexing hold is the
         // default post-execution state rather than a network-dependent one.
         useTransactionStatusSpy.mockReturnValue({ data: undefined } as never);
@@ -360,9 +367,14 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     it('proposes gaslessly and executes after a threshold-one signature', async () => {
         const { signature, safeTransaction, protocolKit, protocolKitModule } =
             mockThresholdOneExecution();
-        // The Safe sits at nonce 0; the queue already reaches 6. Signing at the current nonce
-        // would compete with whatever occupies it, so the report must take the next free one.
-        getSafeNextNonceSpy.mockResolvedValue('7');
+        // The Safe sits at nonce 6 and the queue already occupies it, so the backend resolves the
+        // next free nonce to 7. Signing at the current nonce would compete with what is there.
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '7',
+                currentNonce: '6',
+            }),
+        );
 
         render(createTestComponent());
         await userEvent.click(

@@ -3183,6 +3183,7 @@
           },
           "tag": {
             "competition": "Competing transaction",
+            "stale": "May be out of date",
             "superseded": "Superseded",
             "youSigned": "You have signed"
           },

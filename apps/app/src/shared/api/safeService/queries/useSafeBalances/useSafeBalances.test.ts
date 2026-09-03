@@ -1,11 +1,14 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import { generateSafeBalance, ReactQueryWrapper } from '@/shared/testUtils';
-import { safeService } from '../../safeService';
+import { safeTransactionService } from '../../safeTransactionService';
 import { useSafeBalances } from './useSafeBalances';
 
 describe('useSafeBalances query', () => {
-    const getSafeBalancesSpy = jest.spyOn(safeService, 'getSafeBalances');
+    const getSafeBalancesSpy = jest.spyOn(
+        safeTransactionService,
+        'getSafeBalances',
+    );
 
     afterEach(() => {
         getSafeBalancesSpy.mockReset();

@@ -85,15 +85,21 @@ export const useSafeMultisigBodyState = (
         isError: isTransactionsError,
         error: transactionsError,
     } = useSafePendingTransactions(
-        { urlParams, queryParams: { currentNonce: currentNonce ?? '0' } },
+        { urlParams },
         {
-            enabled: isNetworkSupported && currentNonce != null && !isSettled,
-            // The queue is keyed by the nonce it was read against, so keeping the previous page
-            // is what lets a transaction that dies while on screen be re-derived as superseded.
+            // No longer gated on the nonce: the backend returns every unexecuted transaction and
+            // liveness is derived below, so the two reads run in parallel instead of in a waterfall.
+            enabled: isNetworkSupported && !isSettled,
             placeholderData: keepPreviousData,
             refetchInterval,
         },
     );
+
+    // The backend serves a stale payload rather than failing when its own fresh window has lapsed.
+    // That is the right trade for a signing UI, but the user has to be told the count may lag.
+    const isStale =
+        pendingTransactions?.meta.stale === true ||
+        safeInfo?.meta.stale === true;
 
     const rateLimitedError = [safeInfoError, transactionsError].find((error) =>
         SafeServiceError.isRateLimitedError(error),
@@ -180,6 +186,7 @@ export const useSafeMultisigBodyState = (
         isError: isSafeInfoError || (!isSettled && isTransactionsError),
         isRateLimited: rateLimitedError != null,
         rateLimitedRetryAfter: rateLimitedError?.retryAfter,
+        isStale,
         pendingReport,
         settledResultType: bodyResult?.resultType,
         signers,
