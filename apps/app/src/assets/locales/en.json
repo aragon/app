@@ -3232,7 +3232,7 @@
           "veto": "Veto proposal",
           "vetoed": "Vetoed",
           "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners.",
-          "windowClosed": "The voting window has closed, but Safe transactions have no deadline. Confirming and executing now still counts for this stage, until its deadline to advance passes."
+          "windowClosed": "This shows as rejected because the voting window closed before approval was reached, but the stage has not expired and can still advance. Safe transactions have no deadline either, so confirming and executing still records this body's vote and still counts."
         },
         "safeMultisigVoteList": {
           "empty": {
