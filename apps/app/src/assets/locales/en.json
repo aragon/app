@@ -3208,10 +3208,6 @@
               "superseded": "Veto superseded — {{count}} of {{required}}"
             }
           },
-          "signers": {
-            "empty": "No owner has signed this report yet.",
-            "title": "Signers ({{count}})"
-          },
           "tag": {
             "competition": "Competing transaction",
             "stale": "May be out of date",
@@ -3250,6 +3246,17 @@
           "veto": "Veto proposal",
           "vetoed": "Vetoed",
           "waitingForOwners": "Your signature is submitted. Waiting for the remaining Safe owners."
+        },
+        "safeMultisigVoteList": {
+          "empty": {
+            "description": "Owner signatures appear here as they are collected.",
+            "heading": "No signatures yet"
+          },
+          "entity": "Signatures",
+          "error": {
+            "description": "The Safe signatures could not be loaded. Try again later.",
+            "heading": "Signatures unavailable"
+          }
         }
       },
       "spp": {

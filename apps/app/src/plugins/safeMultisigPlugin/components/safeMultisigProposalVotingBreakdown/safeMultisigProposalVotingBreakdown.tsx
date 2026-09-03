@@ -17,6 +17,7 @@ import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeTransactionState } from '../../types';
+import { SafeMultisigVoteList } from '../safeMultisigVoteList';
 
 export interface ISafeMultisigProposalVotingBreakdownProps {
     proposal: ISppProposal;
@@ -87,21 +88,38 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                   });
     }
 
+    // The Votes tab is the body's per-owner signature list, and it renders its own loading, error
+    // and empty states, so it is emitted in every branch rather than only alongside a readable Safe.
+    const votesTab = (
+        <ProposalVoting.Votes>
+            <SafeMultisigVoteList
+                isError={isError}
+                isLoading={isLoading}
+                isVeto={isVeto ?? false}
+                network={proposal.network}
+                signers={signers}
+            />
+        </ProposalVoting.Votes>
+    );
+
     if (safeInfo == null) {
         return (
-            <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
-                <div
-                    className={classNames(
-                        'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6',
-                        isLoading && 'animate-pulse',
-                    )}
-                >
-                    <p className="text-neutral-500 text-sm md:text-base">
-                        {placeholderText}
-                    </p>
-                </div>
-                {children}
-            </Tabs.Content>
+            <>
+                {votesTab}
+                <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
+                    <div
+                        className={classNames(
+                            'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6',
+                            isLoading && 'animate-pulse',
+                        )}
+                    >
+                        <p className="text-neutral-500 text-sm md:text-base">
+                            {placeholderText}
+                        </p>
+                    </div>
+                    {children}
+                </Tabs.Content>
+            </>
         );
     }
 
@@ -140,126 +158,106 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
     }
 
     return (
-        <ProposalVoting.BreakdownMultisig
-            approvalsAmount={approvalsAmount}
-            isVeto={isVeto}
-            membersCount={membersCount}
-            minApprovals={minApprovals}
-        >
-            <div className="mt-4 flex flex-col gap-4 md:gap-5">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <p
-                        className={classNames(
-                            'font-semibold text-base leading-tight md:text-lg',
-                            isSuperseded
-                                ? 'text-neutral-500'
-                                : 'text-neutral-800',
-                        )}
-                    >
-                        {reportLabel}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                        {isSuperseded && (
-                            <Tag
-                                label={t(`${translationKey}.tag.superseded`)}
-                                variant="neutral"
-                            />
-                        )}
-                        {pendingReport?.hasNonceCompetition === true &&
-                            !isStageClosed && (
+        <>
+            {votesTab}
+            <ProposalVoting.BreakdownMultisig
+                approvalsAmount={approvalsAmount}
+                isVeto={isVeto}
+                membersCount={membersCount}
+                minApprovals={minApprovals}
+            >
+                <div className="mt-4 flex flex-col gap-4 md:gap-5">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <p
+                            className={classNames(
+                                'font-semibold text-base leading-tight md:text-lg',
+                                isSuperseded
+                                    ? 'text-neutral-500'
+                                    : 'text-neutral-800',
+                            )}
+                        >
+                            {reportLabel}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {isSuperseded && (
                                 <Tag
                                     label={t(
-                                        `${translationKey}.tag.competition`,
+                                        `${translationKey}.tag.superseded`,
                                     )}
-                                    variant="warning"
+                                    variant="neutral"
                                 />
                             )}
-                        {isStale && (
-                            <Tag
-                                label={t(`${translationKey}.tag.stale`)}
-                                variant="neutral"
-                            />
-                        )}
-                        {hasConnectedWalletSigned && (
-                            <Tag
-                                label={t(`${translationKey}.tag.youSigned`)}
-                                variant="success"
-                            />
-                        )}
+                            {pendingReport?.hasNonceCompetition === true &&
+                                !isStageClosed && (
+                                    <Tag
+                                        label={t(
+                                            `${translationKey}.tag.competition`,
+                                        )}
+                                        variant="warning"
+                                    />
+                                )}
+                            {isStale && (
+                                <Tag
+                                    label={t(`${translationKey}.tag.stale`)}
+                                    variant="neutral"
+                                />
+                            )}
+                            {hasConnectedWalletSigned && (
+                                <Tag
+                                    label={t(`${translationKey}.tag.youSigned`)}
+                                    variant="success"
+                                />
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-neutral-100 border-t pt-4 md:grid-cols-3">
-                    <div className="flex min-w-0 flex-col gap-1">
-                        <dt className="text-neutral-500 text-sm">
-                            {t(`${translationKey}.details.safeNonce`)}
-                        </dt>
-                        <dd className="truncate text-neutral-800 text-sm md:text-base">
-                            {safeInfo.nonce}
-                        </dd>
-                    </div>
-                    <div className="flex min-w-0 flex-col gap-1">
-                        <dt className="text-neutral-500 text-sm">
-                            {t(`${translationKey}.details.transactionNonce`)}
-                        </dt>
-                        <dd className="truncate text-neutral-800 text-sm md:text-base">
-                            {pendingReport?.transaction.nonce ??
-                                t(`${translationKey}.details.unavailable`)}
-                        </dd>
-                    </div>
-                    <div className="col-span-2 flex min-w-0 flex-col gap-1 md:col-span-1">
-                        <dt className="text-neutral-500 text-sm">
-                            {t(`${translationKey}.details.version`)}
-                        </dt>
-                        <dd className="truncate text-neutral-800 text-sm md:text-base">
-                            {safeInfo.version ??
-                                t(`${translationKey}.details.unknown`)}
-                        </dd>
-                    </div>
-                </dl>
+                    <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-neutral-100 border-t pt-4 md:grid-cols-3">
+                        <div className="flex min-w-0 flex-col gap-1">
+                            <dt className="text-neutral-500 text-sm">
+                                {t(`${translationKey}.details.safeNonce`)}
+                            </dt>
+                            <dd className="truncate text-neutral-800 text-sm md:text-base">
+                                {safeInfo.nonce}
+                            </dd>
+                        </div>
+                        <div className="flex min-w-0 flex-col gap-1">
+                            <dt className="text-neutral-500 text-sm">
+                                {t(
+                                    `${translationKey}.details.transactionNonce`,
+                                )}
+                            </dt>
+                            <dd className="truncate text-neutral-800 text-sm md:text-base">
+                                {pendingReport?.transaction.nonce ??
+                                    t(`${translationKey}.details.unavailable`)}
+                            </dd>
+                        </div>
+                        <div className="col-span-2 flex min-w-0 flex-col gap-1 md:col-span-1">
+                            <dt className="text-neutral-500 text-sm">
+                                {t(`${translationKey}.details.version`)}
+                            </dt>
+                            <dd className="truncate text-neutral-800 text-sm md:text-base">
+                                {safeInfo.version ??
+                                    t(`${translationKey}.details.unknown`)}
+                            </dd>
+                        </div>
+                    </dl>
 
-                {pendingReport != null && (
-                    <div className="flex flex-col gap-2 border-neutral-100 border-t pt-4">
-                        <p className="font-semibold text-neutral-800 text-sm md:text-base">
-                            {t(`${translationKey}.signers.title`, {
-                                count: signers.length,
-                            })}
+                    {isError && (
+                        <p className="border-neutral-100 border-t pt-4 text-neutral-500 text-sm">
+                            {t(`${translationKey}.partialError`)}
                         </p>
-                        {signers.length === 0 ? (
-                            <p className="text-neutral-500 text-sm">
-                                {t(`${translationKey}.signers.empty`)}
-                            </p>
-                        ) : (
-                            <ul className="flex flex-col gap-2 md:grid md:grid-cols-2">
-                                {signers.map((signer) => (
-                                    <li
-                                        className="truncate rounded-lg bg-neutral-50 px-3 py-2 text-neutral-700 text-sm"
-                                        key={signer}
-                                        title={signer}
-                                    >
-                                        {addressUtils.truncateAddress(signer)}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                    )}
+
+                    <div className="border-neutral-100 border-t pt-4">
+                        <Link
+                            href={`/safe/${proposal.network}/${addressUtils.getChecksum(body)}`}
+                        >
+                            {t(`${translationKey}.viewSafeAccount`)}
+                        </Link>
                     </div>
-                )}
-
-                {isError && (
-                    <p className="border-neutral-100 border-t pt-4 text-neutral-500 text-sm">
-                        {t(`${translationKey}.partialError`)}
-                    </p>
-                )}
-
-                <div className="border-neutral-100 border-t pt-4">
-                    <Link
-                        href={`/safe/${proposal.network}/${addressUtils.getChecksum(body)}`}
-                    >
-                        {t(`${translationKey}.viewSafeAccount`)}
-                    </Link>
                 </div>
-            </div>
-            {children}
-        </ProposalVoting.BreakdownMultisig>
+                {children}
+            </ProposalVoting.BreakdownMultisig>
+        </>
     );
 };

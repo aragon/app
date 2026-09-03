@@ -4,11 +4,14 @@ import {
     ProposalVotingTab,
 } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
+import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import type { ISppProposal, ISppStage, ISppStagePlugin } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppStageStatus } from './sppStageStatus';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
+
+const hiddenExternalTabs = [ProposalVotingTab.VOTES];
 
 export interface ISppVotingTerminalStageBodyContentProps {
     /**
@@ -43,6 +46,12 @@ export const SppVotingTerminalStageBodyContent: React.FC<
     const status = sppStageUtils.getStageStatus(proposal, stage);
 
     const isExternalPlugin = plugin.interfaceType == null;
+
+    // A Safe body has no indexed sub-proposal, so the generic external body has no votes to show.
+    // The Safe implementation builds the tab from live Safe confirmations instead, so it keeps it.
+    const hasSafeBodyVotes =
+        sppStageUtils.getBodyPluginId(plugin, proposal.network) ===
+        safeBodyPluginId;
     const defaultName =
         pluginEns ?? addressUtils.truncateAddress(plugin.address);
     const pluginName =
@@ -54,7 +63,11 @@ export const SppVotingTerminalStageBodyContent: React.FC<
                 isExternalPlugin ? brandedExternals[plugin.brandId] : undefined
             }
             bodyId={plugin.address}
-            hideTabs={isExternalPlugin ? [ProposalVotingTab.VOTES] : undefined}
+            hideTabs={
+                isExternalPlugin && !hasSafeBodyVotes
+                    ? hiddenExternalTabs
+                    : undefined
+            }
             key={plugin.address}
             name={pluginName}
             status={status}

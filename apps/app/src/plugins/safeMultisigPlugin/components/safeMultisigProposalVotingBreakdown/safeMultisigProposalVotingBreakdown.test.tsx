@@ -1,9 +1,4 @@
-import {
-    addressUtils,
-    ProposalStatus,
-    ProposalVotingTab,
-    Tabs,
-} from '@aragon/gov-ui-kit';
+import { ProposalStatus, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import {
@@ -137,7 +132,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         },
     );
 
-    it('renders the decoded effect, per-transaction threshold and signer state', () => {
+    it('renders the decoded effect, per-transaction threshold and viewer state', () => {
         render(createTestComponent());
 
         expect(
@@ -147,9 +142,6 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByText('of 3 members')).toBeInTheDocument();
         expect(screen.getByText('1.3.0')).toBeInTheDocument();
-        expect(
-            screen.getByText(addressUtils.truncateAddress(signer)),
-        ).toBeInTheDocument();
         expect(
             screen.getByText(
                 'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.tag.youSigned',
