@@ -46,7 +46,9 @@ describe('safeMultisigSettings utils', () => {
         expect(byTerm[`${key}.threshold`]).toEqual(
             `${key}.thresholdValue:{"min":3,"max":4}`,
         );
-        expect(byTerm[`${key}.nonce`]).toEqual('42');
+        // Named "current" because it is live account state: it advances with every transaction the
+        // Safe executes, so it is not the nonce this proposal's transaction used.
+        expect(byTerm[`${key}.currentNonce`]).toEqual('42');
         expect(byTerm[`${key}.version`]).toEqual('1.4.1+L2');
         expect(byTerm[`${key}.execution`]).toEqual(`${key}.executionValue`);
     });

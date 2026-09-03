@@ -54,7 +54,10 @@ class SafeMultisigSettingsUtils {
                 }),
             },
             {
-                term: t(`${translationKey}.nonce`),
+                // Live account state, not this body's configuration: it advances with every
+                // transaction the Safe executes, including ones with nothing to do with Aragon. Said
+                // as "current" so it is never read as the nonce this proposal's transaction used.
+                term: t(`${translationKey}.currentNonce`),
                 definition: safeInfo.nonce,
             },
             {

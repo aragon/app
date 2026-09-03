@@ -36,6 +36,12 @@ export interface ISafeMultisigConfirmSignatureDialogParams {
      */
     nonce?: string;
     /**
+     * Whether this confirmation reaches the Safe's threshold, so execution follows immediately in
+     * the same flow. The owner is then asked for two wallet interactions rather than one: a free
+     * signature, then a transaction that costs gas.
+     */
+    willExecute: boolean;
+    /**
      * Called once the owner confirms.
      */
     onConfirm: () => void;
@@ -64,6 +70,7 @@ export const SafeMultisigConfirmSignatureDialog: React.FC<
         network,
         isVeto,
         nonce,
+        willExecute,
         onConfirm,
     } = location.params;
 
@@ -108,10 +115,14 @@ export const SafeMultisigConfirmSignatureDialog: React.FC<
                         value={networkDefinitions[network].name}
                     />
                 </dl>
-                {/* The design showed a gas-fee row here, but proposing and confirming are offchain
-                    signatures posted to the Safe transaction service: there is no fee to quote. */}
+                {/* The design showed a gas-fee row here. Confirming alone is an offchain signature
+                    with no fee to quote - but the confirmation that reaches the threshold is
+                    followed straight away by execution, which is onchain and does cost gas. That is
+                    two wallet interactions from one click, so it is said before the first one. */}
                 <p className="pt-4 text-neutral-500 text-sm md:text-base">
-                    {t(`${translationKey}.gasless`)}
+                    {t(
+                        `${translationKey}.${willExecute ? 'bundledExecution' : 'gasless'}`,
+                    )}
                 </p>
             </Dialog.Content>
             <Dialog.Footer

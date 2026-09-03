@@ -93,6 +93,36 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         );
     };
 
+    it('links a reported body out to the Safe once its transaction executed', () => {
+        // The action slot is gone by then - the chrome drops it as soon as the proposal executes -
+        // so the provenance has to live on the body itself.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.VETO,
+        });
+
+        render(createTestComponent());
+
+        const link = screen.getByRole('link', {
+            name: 'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.executed',
+        });
+
+        expect(link).toHaveAttribute(
+            'href',
+            'https://app.safe.global/transactions/history?safe=eth:0x0000000000000000000000000000000000000001',
+        );
+    });
+
+    it('shows no Safe link while the body has not reported', () => {
+        render(createTestComponent());
+
+        expect(
+            screen.queryByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.executed',
+            }),
+        ).not.toBeInTheDocument();
+    });
+
     it.each([
         {
             label: 'with the upstream retry window',

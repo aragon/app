@@ -6,11 +6,13 @@ import {
     DataListContainer,
     DataListPagination,
     DataListRoot,
+    IconType,
     useBlockExplorer,
     VoteDataListItem,
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { safeAppHistoryUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { safeDataListUtils } from '@/modules/safe/utils/safeDataListUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -33,12 +35,21 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
 
     // Registered on the vote-list slot, so the component owns its own read. The Safe queries are
     // keyed by address, so this shares the body card's cache entry rather than refetching.
-    const { signers, isLoading, isError } = useSafeMultisigBodyState({
-        network,
-        address: body,
-        proposal,
-        stage,
-    });
+    const { signers, isLoading, isError, settledResultType } =
+        useSafeMultisigBodyState({
+            network,
+            address: body,
+            proposal,
+            stage,
+        });
+
+    /**
+     * Confirmations come from the Safe's queue, which serves unexecuted transactions only. Once the
+     * transaction executes it leaves that read, so an executed body has no confirmations to list -
+     * "none yet" would be false, since a full set was collected to execute at all.
+     */
+    const emptyKey = settledResultType != null ? 'settled' : 'empty';
+    const historyHref = safeAppHistoryUrl({ network, address: body });
 
     // The owner rows only need a chain link, so resolve the explorer from the body's own network
     // rather than fetching the DAO to rediscover it.
@@ -68,9 +79,20 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
         >
             <DataListContainer
                 emptyState={{
-                    heading: t(`${translationKey}.empty.heading`),
-                    description: t(`${translationKey}.empty.description`),
+                    heading: t(`${translationKey}.${emptyKey}.heading`),
+                    description: t(`${translationKey}.${emptyKey}.description`),
                     objectIllustration: { object: 'USERS' },
+                    ...(historyHref != null && settledResultType != null
+                        ? {
+                              primaryButton: {
+                                  label: t(`${translationKey}.settled.action`),
+                                  href: historyHref,
+                                  target: '_blank',
+                                  rel: 'noopener',
+                                  iconRight: IconType.LINK_EXTERNAL,
+                              },
+                          }
+                        : {}),
                 }}
                 errorState={{
                     heading: t(`${translationKey}.error.heading`),

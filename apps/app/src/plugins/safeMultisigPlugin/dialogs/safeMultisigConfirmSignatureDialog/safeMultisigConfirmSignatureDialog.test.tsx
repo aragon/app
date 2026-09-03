@@ -72,6 +72,7 @@ describe('<SafeMultisigConfirmSignatureDialog /> component', () => {
             signerAddress: '0x0000000000000000000000000000000000000011',
             network: Network.ETHEREUM_MAINNET,
             isVeto: false,
+            willExecute: false,
             onConfirm,
             ...params,
         };

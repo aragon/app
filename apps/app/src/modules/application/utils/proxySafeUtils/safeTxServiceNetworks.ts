@@ -49,17 +49,17 @@ export const safeShortNameFromNetwork = (
 ): string | undefined => safeTxServiceShortNames[network];
 
 /**
- * Link to a Safe's own account page in the Safe web app. The Safe app addresses a Safe EIP-3770
- * style, `<shortName>:<checksummedAddress>`, and rejects any other casing - so the address is
- * canonicalised here rather than trusted from the caller.
+ * Addresses a Safe in the Safe web app, EIP-3770 style (`<shortName>:<checksummedAddress>`). The app
+ * rejects any other casing, so the address is canonicalised here rather than trusted from the
+ * caller.
  *
  * Undefined when Safe does not serve the network, so a caller renders plain text instead of a link
  * that cannot resolve.
  */
-export const safeAppAccountUrl = (params: {
-    network: Network;
-    address: string;
-}): string | undefined => {
+const safeAppUrl = (
+    path: string,
+    params: { network: Network; address: string },
+): string | undefined => {
     const { network, address } = params;
     const shortName = safeShortNameFromNetwork(network);
 
@@ -67,5 +67,25 @@ export const safeAppAccountUrl = (params: {
         return undefined;
     }
 
-    return `https://app.safe.global/home?safe=${shortName}:${checksumSafeAddress(address)}`;
+    return `https://app.safe.global/${path}?safe=${shortName}:${checksumSafeAddress(address)}`;
 };
+
+/**
+ * Link to a Safe's own account page in the Safe web app.
+ */
+export const safeAppAccountUrl = (params: {
+    network: Network;
+    address: string;
+}): string | undefined => safeAppUrl('home', params);
+
+/**
+ * Link to a Safe's executed transactions in the Safe web app.
+ *
+ * The Safe's history rather than one transaction: a deep link needs the `safeTxHash`, which is only
+ * available while the transaction is still queued - the queue read serves unexecuted transactions,
+ * and Aragon's indexed body result carries no transaction hash.
+ */
+export const safeAppHistoryUrl = (params: {
+    network: Network;
+    address: string;
+}): string | undefined => safeAppUrl('transactions/history', params);

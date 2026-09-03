@@ -126,6 +126,21 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const thresholdReached =
         liveReport != null &&
         safeMultisigProposalUtils.isThresholdReached(liveReport.transaction);
+
+    /**
+     * Whether this owner's confirmation is the one that reaches the threshold, so execution follows
+     * in the same flow and the wallet opens twice: once to sign for free, once to pay gas.
+     *
+     * Covers the first confirmation too: on a 1-of-n Safe, proposing already satisfies the
+     * threshold, so the very first click executes.
+     */
+    const willCompleteThreshold =
+        !thresholdReached &&
+        !hasConnectedWalletSigned &&
+        (liveReport != null
+            ? liveReport.transaction.confirmations.length + 1 >=
+              liveReport.transaction.confirmationsRequired
+            : safeInfo != null && safeInfo.threshold <= 1);
     const supportsEip1271Signatures =
         safeMultisigProposalUtils.supportsEip1271Signatures(
             safeInfo?.version ?? null,
@@ -467,6 +482,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 network: proposal.network,
                 isVeto,
                 nonce: liveReport?.transaction.nonce,
+                willExecute: willCompleteThreshold,
                 onConfirm: runSubmit,
             },
         });
@@ -496,6 +512,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     // Safe: "Execute approval" reads as executing the proposal, which is a later step in an SPP
     // process and someone else's permission.
     let buttonKey = isVeto ? 'veto' : 'approve';
+
+    if (willCompleteThreshold) {
+        buttonKey = isVeto ? 'vetoAndExecute' : 'approveAndExecute';
+    }
 
     if (hasSettled) {
         buttonKey = isVeto ? 'vetoed' : 'approved';

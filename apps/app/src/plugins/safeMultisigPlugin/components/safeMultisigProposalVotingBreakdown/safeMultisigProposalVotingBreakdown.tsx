@@ -1,8 +1,15 @@
 'use client';
 
-import { ProposalVoting, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    IconType,
+    ProposalVoting,
+    ProposalVotingTab,
+    Tabs,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ReactNode } from 'react';
+import { safeAppHistoryUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
@@ -40,6 +47,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         isError,
         isRateLimited,
         rateLimitedRetryAfter,
+        settledResultType,
     } = useSafeMultisigBodyState({
         network: proposal.network,
         address: body,
@@ -80,6 +88,13 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         );
     }
 
+    // Once the body has reported, the action slot is gone - the shared chrome stops rendering it as
+    // soon as the proposal executes - so the provenance lives here, where the body always renders.
+    const historyHref = safeAppHistoryUrl({
+        network: proposal.network,
+        address: body,
+    });
+
     return (
         <ProposalVoting.BreakdownMultisig
             approvalsAmount={approvalsAmount}
@@ -88,6 +103,19 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             minApprovals={minApprovals}
         >
             {children}
+            {settledResultType != null && historyHref != null && (
+                <Button
+                    className="w-fit"
+                    href={historyHref}
+                    iconRight={IconType.LINK_EXTERNAL}
+                    rel="noopener"
+                    size="md"
+                    target="_blank"
+                    variant="success"
+                >
+                    {t(`${translationKey}.executed`)}
+                </Button>
+            )}
         </ProposalVoting.BreakdownMultisig>
     );
 };

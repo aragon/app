@@ -219,7 +219,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         // would be a lie.
         expect(
             screen.queryByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         ).not.toBeInTheDocument();
         expect(
@@ -240,7 +240,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         );
 
@@ -266,7 +266,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         ).toBeEnabled();
     });
@@ -294,7 +294,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         ).toBeDisabled();
     });
@@ -337,7 +337,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         );
 
@@ -349,6 +349,70 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                     safeAddress: safeInfo.address,
                     signerAddress: owner,
                 }),
+            }),
+        );
+    });
+
+    it('warns that the confirmation reaching threshold is followed by a gas transaction', async () => {
+        // One click, two wallet interactions: a free confirmation, then execution. Promising
+        // "signing costs no gas" and then opening a gas prompt would be a bait.
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeMultisigPluginDialogId.CONFIRM_SIGNATURE,
+            expect.objectContaining({
+                params: expect.objectContaining({ willExecute: true }),
+            }),
+        );
+    });
+
+    it('does not warn of a gas transaction when more owners are still needed', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            safeInfo: generateSafeInfo({
+                threshold: 3,
+                owners: [owner, nonOwner, `0x${'4'.repeat(40)}`],
+            }),
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '0',
+                    confirmationsRequired: 3,
+                    confirmations: [
+                        generateSafeConfirmation({ owner: nonOwner }),
+                    ],
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            approvalsAmount: 1,
+            minApprovals: 3,
+        });
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+            }),
+        );
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeMultisigPluginDialogId.CONFIRM_SIGNATURE,
+            expect.objectContaining({
+                params: expect.objectContaining({ willExecute: false }),
             }),
         );
     });
@@ -607,7 +671,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         render(createTestComponent());
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         );
 
@@ -648,7 +712,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         render(createTestComponent());
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         );
 
@@ -675,7 +739,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             render(createTestComponent());
             await user.click(
                 screen.getByRole('button', {
-                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
                 }),
             );
             await waitFor(() =>
@@ -693,7 +757,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
             expect(
                 screen.getByRole('button', {
-                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
                 }),
             ).toBeEnabled();
             expect(
