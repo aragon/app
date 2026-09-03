@@ -12,9 +12,10 @@ export interface ISafeMultisigSettingsParseParams {
      */
     safeName: string;
     /**
-     * Link to the Safe's account view.
+     * Link to the Safe's own account page in the Safe web app. Absent when Safe does not serve the
+     * network, in which case the row states the Safe without linking anywhere.
      */
-    safeHref: string;
+    safeHref?: string;
     t: TranslationFunction;
 }
 
@@ -39,7 +40,10 @@ class SafeMultisigSettingsUtils {
             {
                 term: t(`${translationKey}.safe`),
                 definition: safeName,
-                link: { href: safeHref },
+                link:
+                    safeHref == null
+                        ? undefined
+                        : { href: safeHref, isExternal: true },
                 copyValue: safeInfo.address,
             },
             {

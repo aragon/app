@@ -1,6 +1,7 @@
 'use client';
 
 import { keepPreviousData } from '@tanstack/react-query';
+import { DateTime } from 'luxon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
@@ -42,6 +43,25 @@ export const useSafeMultisigBodyState = (
         stage.stageIndex,
     );
     const isSettled = bodyResult != null;
+
+    /**
+     * Whether a verdict landing now would still be recorded: `reportProposalResult` has no
+     * deadline, so this turns on the stage still being the current one, never on the voting window
+     * having elapsed.
+     */
+    const isStageCurrent =
+        stage.stageIndex === proposal.stageIndex && !proposal.executed.status;
+
+    /**
+     * Whether it could still change anything. `maxAdvance` is an onchain bound - SPP's `state`
+     * returns `Expired` once `lastStageTransition + maxAdvance` has passed, and advancing requires
+     * `Advanceable` - so beyond it a Safe transaction still executes but the proposal is stuck.
+     */
+    const maxAdvanceDate = sppStageUtils.getStageMaxAdvance(proposal, stage);
+    const canStillAffectOutcome =
+        isStageCurrent &&
+        maxAdvanceDate != null &&
+        DateTime.now() < maxAdvanceDate;
 
     // An idle body card must cost nothing, so polling only runs while the Safe queue holds a
     // transaction that can still execute; otherwise the default focus refetch is enough.
@@ -87,9 +107,10 @@ export const useSafeMultisigBodyState = (
     } = useSafePendingTransactions(
         { urlParams },
         {
-            // No longer gated on the nonce: the backend returns every unexecuted transaction and
-            // liveness is derived below, so the two reads run in parallel instead of in a waterfall.
-            enabled: isNetworkSupported && !isSettled,
+            // Read while this stage can still be reported on, which an indexed result does not end:
+            // a Safe transaction has no expiry, so a queued report can execute later and overwrite
+            // the recorded verdict. Past the stage the queue is moot and the read stops.
+            enabled: isNetworkSupported && isStageCurrent,
             placeholderData: keepPreviousData,
             refetchInterval,
         },
@@ -126,7 +147,7 @@ export const useSafeMultisigBodyState = (
     const { stageIndex } = stage;
 
     const pendingReport = useMemo(() => {
-        if (currentNonce == null || isSettled) {
+        if (currentNonce == null) {
             return undefined;
         }
 
@@ -173,22 +194,38 @@ export const useSafeMultisigBodyState = (
         pluginAddress,
         proposalIndex,
         stageIndex,
-        isSettled,
+        isStageCurrent,
     ]);
 
     const signers =
         pendingReport?.transaction.confirmations.map(({ owner }) => owner) ??
         [];
 
+    // Nonce-exact: a Safe binds every signature to one nonce, so only the report sitting on the
+    // Safe's current nonce can execute. Anything further back is waiting, however well signed.
+    const reportNonce = pendingReport?.transaction.nonce;
+    const nonceGap =
+        reportNonce == null || currentNonce == null
+            ? 0
+            : BigInt(reportNonce) - BigInt(currentNonce);
+
     return {
         safeInfo,
-        isLoading: isSafeInfoLoading || (!isSettled && isTransactionsLoading),
-        isError: isSafeInfoError || (!isSettled && isTransactionsError),
+        isLoading:
+            isSafeInfoLoading || (isStageCurrent && isTransactionsLoading),
+        isError: isSafeInfoError || (isStageCurrent && isTransactionsError),
         isRateLimited: rateLimitedError != null,
         rateLimitedRetryAfter: rateLimitedError?.retryAfter,
         isStale,
         pendingReport,
         settledResultType: bodyResult?.resultType,
+        isStageCurrent,
+        canStillAffectOutcome,
+        isExecutableNow:
+            pendingReport != null &&
+            !pendingReport.transaction.isExecuted &&
+            nonceGap === BigInt(0),
+        transactionsAhead: nonceGap > BigInt(0) ? Number(nonceGap) : 0,
         signers,
         hasConnectedWalletSigned:
             pendingReport != null &&

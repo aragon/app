@@ -7,8 +7,8 @@ describe('safeMultisigSettings utils', () => {
     );
 
     const safeName = 'founders.safe.eth';
-    const safeHref = '/safe/ethereum-mainnet/0xSafe';
-
+    const safeHref =
+        'https://app.safe.global/home?safe=sep:0xd84C233A7D1578021d21E39785439bEdDB165F3D';
     afterEach(() => {
         t.mockClear();
     });
@@ -51,20 +51,38 @@ describe('safeMultisigSettings utils', () => {
         expect(byTerm[`${key}.execution`]).toEqual(`${key}.executionValue`);
     });
 
-    it('links the Safe row to its account view and offers the raw address to copy', () => {
-        const safeInfo = generateSafeInfo({
-            address: '0x0000000000000000000000000000000000000001',
-        });
-        const safeRow = parse(safeInfo).find(
+    const safeRowOf = (settings: ReturnType<typeof parse>) =>
+        settings.find(
             (setting) =>
                 setting.term ===
                 'app.plugins.safeMultisig.safeMultisigGovernanceSettings.safe',
         );
 
+    it('sends the Safe row out to the Safe app, and offers the raw address to copy', () => {
+        const safeInfo = generateSafeInfo({
+            address: '0x0000000000000000000000000000000000000001',
+        });
+        const safeRow = safeRowOf(parse(safeInfo));
+
         expect(safeRow?.definition).toEqual(safeName);
         expect(safeRow?.link?.href).toEqual(safeHref);
+        // The Safe's own account page is another product on another domain: leaving the app must be
+        // visible, not a surprise.
+        expect(safeRow?.link?.isExternal).toBe(true);
         // The truncated name is what reads well; the full address is what a user needs to paste.
         expect(safeRow?.copyValue).toEqual(safeInfo.address);
+    });
+
+    it('states the Safe without a link when the Safe app cannot address the network', () => {
+        const settings = safeMultisigSettingsUtils.parseSettings({
+            safeInfo: generateSafeInfo(),
+            safeName,
+            safeHref: undefined,
+            t,
+        });
+
+        expect(safeRowOf(settings)?.definition).toEqual(safeName);
+        expect(safeRowOf(settings)?.link).toBeUndefined();
     });
 
     it('states an unknown version explicitly rather than leaving the row blank', () => {

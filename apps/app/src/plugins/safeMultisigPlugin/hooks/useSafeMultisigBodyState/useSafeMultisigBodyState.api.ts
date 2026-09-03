@@ -89,10 +89,40 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     pendingReport?: ISafeMultisigBodyReport;
     /**
-     * Indexed SPP result for this body. Once present, it is the only settled-state trigger and the
-     * pending Safe queue is no longer consulted.
+     * Indexed SPP result for this body. A result does not close the queue: while the stage is still
+     * current a queued report can execute and overwrite it, so both are read together.
      */
     settledResultType?: SppProposalType;
+    /**
+     * Whether a report executing now would still affect the outcome - true only while this stage is
+     * the proposal's current stage and the proposal has not executed.
+     *
+     * `reportProposalResult` carries no deadline: it reverts only for a stage that has not started
+     * yet, and records unconditionally otherwise. So the elapsed voting window does not decide
+     * this, and a report landing after the window still counts. Past the stage it still succeeds
+     * onchain but changes nothing.
+     */
+    isStageCurrent: boolean;
+    /**
+     * Whether executing could still change the outcome. `maxAdvance` is an onchain bound: once
+     * `lastStageTransition + maxAdvance` has passed, SPP reports `Expired` and the stage can never
+     * advance, so a Safe transaction still executes but the proposal stays where it is.
+     */
+    canStillAffectOutcome: boolean;
+    /**
+     * Whether the queued transaction can execute against the Safe right now: its nonce is the
+     * Safe's current nonce. A Safe binds each confirmation to one exact nonce, so a fully-confirmed
+     * transaction one place further back is not executable - it is waiting.
+     */
+    isExecutableNow: boolean;
+    /**
+     * Safe transactions that must clear before the queued report can execute.
+     *
+     * Their contents are deliberately not interpreted: a Safe is a universal account, so what sits
+     * ahead may be any transaction from any application, proposed at any time, and is very possibly
+     * nothing to do with Aragon.
+     */
+    transactionsAhead: number;
     /**
      * Owners that have confirmed the queued report.
      */

@@ -36,6 +36,11 @@ export const initialiseSafeMultisigPlugin = () => {
             function: () => safeBodyHiddenTabs,
         })
         .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+            pluginId: safeBodyPluginId,
+            function: () => true,
+        })
+        .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: safeBodyPluginId,
             function: useSafeMultisigGovernanceSettings,

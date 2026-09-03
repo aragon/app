@@ -1,4 +1,5 @@
 import { Network } from '@/shared/api/daoService';
+import { checksumSafeAddress } from '@/shared/api/safeService/safeAddressUtils';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 /**
@@ -46,3 +47,25 @@ export const safeNetworkFromChainId = (
 export const safeShortNameFromNetwork = (
     network: Network,
 ): string | undefined => safeTxServiceShortNames[network];
+
+/**
+ * Link to a Safe's own account page in the Safe web app. The Safe app addresses a Safe EIP-3770
+ * style, `<shortName>:<checksummedAddress>`, and rejects any other casing - so the address is
+ * canonicalised here rather than trusted from the caller.
+ *
+ * Undefined when Safe does not serve the network, so a caller renders plain text instead of a link
+ * that cannot resolve.
+ */
+export const safeAppAccountUrl = (params: {
+    network: Network;
+    address: string;
+}): string | undefined => {
+    const { network, address } = params;
+    const shortName = safeShortNameFromNetwork(network);
+
+    if (shortName == null) {
+        return undefined;
+    }
+
+    return `https://app.safe.global/home?safe=${shortName}:${checksumSafeAddress(address)}`;
+};

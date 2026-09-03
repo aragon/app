@@ -7,6 +7,7 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { DateTime } from 'luxon';
 import { useEffect, useRef, useState } from 'react';
 import type { Hex } from 'viem';
 import { useBytecode } from 'wagmi';
@@ -22,6 +23,7 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
     safeService,
     safeServiceKeys,
@@ -108,6 +110,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         hasConnectedWalletSigned,
         settledResultType,
         isStale,
+        isExecutableNow,
+        transactionsAhead,
+        isStageCurrent,
+        canStillAffectOutcome,
     } = bodyState;
 
     const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
@@ -475,18 +481,20 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         liveReport != null && hasConnectedWalletSigned && !thresholdReached;
 
     /**
-     * A Safe executes strictly in nonce order, so a fully-signed report still cannot go until every
-     * transaction ahead of it clears. Naming the blocking nonce is the difference between "broken"
-     * and "waiting": the owner needs to know it is the queue, not their signature.
+     * A signature binds one exact nonce, so a fully-signed report cannot execute until the
+     * transactions ahead of it clear - and it cannot be moved: re-nonced calldata is a different
+     * transaction hash, which voids every signature collected so far.
+     *
+     * What is ahead is deliberately not described. A Safe is a universal account and its queue is
+     * shared with every other application using it, so the blocker may be unrelated to Aragon and
+     * unknowable here. Owners settle priority in the Safe itself.
      */
-    const blockingNonce =
-        liveReport != null &&
-        safeInfo != null &&
-        BigInt(liveReport.transaction.nonce) > BigInt(safeInfo.nonce)
-            ? safeInfo.nonce
-            : undefined;
-    const isQueuedBehindNonce = thresholdReached && blockingNonce != null;
+    const isQueuedBehindNonce = thresholdReached && transactionsAhead > 0;
 
+    // Below threshold the action produces a confirmation, so it is named for its governance intent.
+    // At threshold the only thing left is executing a Safe transaction, and that is named for the
+    // Safe: "Execute approval" reads as executing the proposal, which is a later step in an SPP
+    // process and someone else's permission.
     let buttonKey = isVeto ? 'veto' : 'approve';
 
     if (hasSettled) {
@@ -494,9 +502,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     } else if (isAwaitingIndexing) {
         buttonKey = 'finalizing';
     } else if (thresholdReached) {
-        buttonKey = isVeto ? 'executeVeto' : 'executeApproval';
+        buttonKey = 'executeSafeTransaction';
     } else if (isSuperseded) {
-        buttonKey = isVeto ? 'requeueVeto' : 'requeueApproval';
+        buttonKey = 'requeueSafeTransaction';
     }
 
     let helperText: string | undefined;
@@ -509,6 +517,11 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         helperText = t(`${translationKey}.finalizing`);
     } else if (hasIndexingTimedOut && !hasSettled) {
         helperText = t(`${translationKey}.indexingDelayed`);
+    } else if (thresholdReached && !hasSettled) {
+        // A Safe body passes through two gates, and gov-ui-kit's card only shows the first: enough
+        // owners have confirmed. Until the Safe transaction executes, Aragon has been told nothing
+        // and this body counts for nothing - so the second gate is named rather than implied.
+        helperText = t(`${translationKey}.awaitingExecution`);
     } else if (isWaitingForOwners) {
         helperText = t(`${translationKey}.waitingForOwners`);
     }
@@ -517,16 +530,47 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     // is true about the queue underneath it.
     const alerts: Array<{
         key: string;
-        variant: 'warning' | 'critical';
+        variant: 'info' | 'warning' | 'critical';
         message: string;
     }> = [];
+
+    /**
+     * The two surprising states, stated rather than left to be inferred from a rejected header
+     * sitting above a live action.
+     *
+     * A Safe transaction never expires and a verdict has no deadline, so while the stage can still
+     * advance the owners can still act and it still counts. Once `maxAdvance` has passed the stage
+     * can never advance: the transaction remains executable in the Safe forever, but it can no
+     * longer move this proposal.
+     */
+    const stageEndDate = sppStageUtils.getStageEndDate(proposal, stage);
+    const hasWindowClosed =
+        stageEndDate != null && DateTime.now() > stageEndDate;
+
+    if (!hasSettled && hasWindowClosed && canStillAffectOutcome) {
+        alerts.push({
+            key: 'windowClosed',
+            variant: 'info',
+            message: t(`${translationKey}.windowClosed`),
+        });
+    }
+
+    if (!hasSettled && !canStillAffectOutcome) {
+        alerts.push({
+            key: 'stageExpired',
+            variant: 'warning',
+            message: t(
+                `${translationKey}.${liveReport != null ? 'stageExpiredQueued' : 'stageExpired'}`,
+            ),
+        });
+    }
 
     if (isQueuedBehindNonce) {
         alerts.push({
             key: 'nonceQueued',
             variant: 'warning',
             message: t(`${translationKey}.nonceQueued`, {
-                nonce: blockingNonce,
+                count: transactionsAhead,
             }),
         });
     }
@@ -556,37 +600,41 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     variant={alert.variant}
                 />
             ))}
-            <div className="flex flex-col gap-3 md:flex-row">
-                <Button
-                    className="w-full md:w-fit"
-                    disabled={
-                        hasSettled ||
-                        isAwaitingIndexing ||
-                        isWaitingForOwners ||
-                        isQueuedBehindNonce ||
-                        hasUnsupportedContractOwner ||
-                        isContractOwnerCheckLoading ||
-                        safeInfo == null
-                    }
-                    iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
-                    isLoading={isExecuting || isAwaitingIndexing}
-                    onClick={hasSettled ? undefined : handleVoteClick}
-                    size="md"
-                    variant={hasSettled ? 'secondary' : 'primary'}
-                >
-                    {t(`${translationKey}.${buttonKey}`)}
-                </Button>
-                {isStale && (
+            {/* Nothing to offer once the stage can never advance: acting would change nothing, and
+                a disabled action beside an expired stage only invites the question. */}
+            {(hasSettled || canStillAffectOutcome) && (
+                <div className="flex flex-col gap-3 md:flex-row">
                     <Button
                         className="w-full md:w-fit"
-                        onClick={() => void invalidateSafeState()}
+                        disabled={
+                            hasSettled ||
+                            isAwaitingIndexing ||
+                            isWaitingForOwners ||
+                            isQueuedBehindNonce ||
+                            hasUnsupportedContractOwner ||
+                            isContractOwnerCheckLoading ||
+                            safeInfo == null
+                        }
+                        iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
+                        isLoading={isExecuting || isAwaitingIndexing}
+                        onClick={hasSettled ? undefined : handleVoteClick}
                         size="md"
-                        variant="tertiary"
+                        variant={hasSettled ? 'secondary' : 'primary'}
                     >
-                        {t(`${translationKey}.retry`)}
+                        {t(`${translationKey}.${buttonKey}`)}
                     </Button>
-                )}
-            </div>
+                    {isStale && (
+                        <Button
+                            className="w-full md:w-fit"
+                            onClick={() => void invalidateSafeState()}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(`${translationKey}.retry`)}
+                        </Button>
+                    )}
+                </div>
+            )}
             {!hasSettled && helperText != null && (
                 <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
                     {helperText}

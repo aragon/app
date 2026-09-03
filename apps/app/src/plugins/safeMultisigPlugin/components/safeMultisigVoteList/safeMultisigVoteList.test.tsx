@@ -9,7 +9,7 @@ import {
 } from '@/plugins/sppPlugin/testUtils';
 import { Network } from '@/shared/api/daoService';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
-import { generateSafeInfo } from '../../testUtils';
+import { generateSafeBodyState, generateSafeInfo } from '../../testUtils';
 import { SafeMultisigVoteList } from './safeMultisigVoteList';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
 
@@ -28,7 +28,7 @@ describe('<SafeMultisigVoteList /> component', () => {
         'useSafeMultisigBodyState',
     );
 
-    const bodyState = {
+    const bodyState = generateSafeBodyState({
         safeInfo: generateSafeInfo({ owners: [viewer, otherOwner] }),
         isLoading: false,
         isError: false,
@@ -39,7 +39,7 @@ describe('<SafeMultisigVoteList /> component', () => {
         membersCount: 2,
         isRateLimited: false,
         isStale: false,
-    } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
+    });
 
     const unresolved = {
         data: null,

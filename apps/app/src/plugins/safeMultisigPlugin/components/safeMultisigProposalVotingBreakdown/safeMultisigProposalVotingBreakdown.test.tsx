@@ -9,6 +9,7 @@ import { SppProposalType } from '../../../sppPlugin/types';
 import { sppStageUtils } from '../../../sppPlugin/utils/sppStageUtils';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
+    generateSafeBodyState,
     generateSafeConfirmation,
     generateSafeInfo,
     generateSafeMultisigTransaction,
@@ -27,7 +28,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
     const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
     const signer = '0x0000000000000000000000000000000000000011';
 
-    const state = {
+    const state = generateSafeBodyState({
         safeInfo: generateSafeInfo({
             nonce: '7',
             threshold: 3,
@@ -59,7 +60,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         membersCount: 3,
         isRateLimited: false,
         isStale: false,
-    } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
+    });
 
     beforeEach(() => {
         useSafeMultisigBodyStateSpy.mockReturnValue(state);

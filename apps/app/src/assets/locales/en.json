@@ -3165,7 +3165,7 @@
         "safeMultisigConfirmSignatureDialog": {
           "approval": {
             "action": "Approve",
-            "description": "Your signature is added to the Safe transaction that reports this body's approval. It takes effect once enough owners have signed.",
+            "description": "Your confirmation is added to the Safe transaction that approves this proposal for this body. It takes effect once enough owners have confirmed.",
             "title": "Approve proposal"
           },
           "cancel": "Cancel",
@@ -3179,7 +3179,7 @@
           "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
           "veto": {
             "action": "Veto",
-            "description": "Your signature is added to the Safe transaction that reports this body's veto. It takes effect once enough owners have signed.",
+            "description": "Your confirmation is added to the Safe transaction that vetoes this proposal for this body. It takes effect once enough owners have confirmed.",
             "title": "Veto proposal"
           }
         },
@@ -3214,33 +3214,35 @@
         "safeMultisigSubmitVote": {
           "approve": "Approve proposal",
           "approved": "Approved",
+          "awaitingExecution": "The Safe's threshold is met. This body's vote only counts once the Safe transaction is executed, and Safe transactions have no deadline - so that can still happen at any time.",
           "error": "The Safe action could not be completed. Try again.",
-          "executeApproval": "Execute approval",
-          "executeVeto": "Execute veto",
+          "executeSafeTransaction": "Execute Safe transaction",
           "finalizing": "Executed onchain. Waiting for indexing to complete.",
-          "indexingDelayed": "The report executed onchain but is still not indexed. The result will appear once indexing catches up.",
-          "nonceQueued": "Queued behind Safe nonce {{nonce}}. Execution is possible once it clears.",
+          "indexingDelayed": "The Safe transaction executed onchain but is still not indexed. The result will appear once indexing catches up.",
+          "nonceQueued": "Waiting on {{count}} earlier transaction(s) in the Safe queue. A Safe executes in nonce order and each confirmation is tied to its transaction's place in that order, so this one cannot be moved ahead. Owners can review the queue in Safe.",
           "ownerRequired": "Connect an owner wallet for this Safe to continue.",
-          "replaced": "Another Safe transaction executed at this nonce. The collected signatures no longer apply.",
-          "requeueApproval": "Re-queue approval",
-          "requeueVeto": "Re-queue veto",
+          "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. Its confirmations no longer apply.",
+          "requeueSafeTransaction": "Re-queue Safe transaction",
           "retry": "Retry",
+          "stageExpired": "This stage was not advanced in time, so the proposal has expired. A vote can no longer change its outcome.",
+          "stageExpiredQueued": "This stage expired before the Safe transaction was executed. Safe transactions have no deadline, so it can still be executed, but it will have no bearing on the proposal's outcome.",
           "unknownVersion": "unknown",
-          "unreachable": "Safe{Wallet} is unreachable. Approvals shown may be incomplete.",
+          "unreachable": "Safe{Wallet} is unreachable. Confirmations shown may be incomplete.",
           "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
           "veto": "Veto proposal",
           "vetoed": "Vetoed",
-          "waitingForOwners": "Your signature is submitted. Waiting for the remaining Safe owners."
+          "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners.",
+          "windowClosed": "The voting window has closed, but Safe transactions have no deadline. Confirming and executing now still counts for this stage, until its deadline to advance passes."
         },
         "safeMultisigVoteList": {
           "empty": {
-            "description": "Owner signatures appear here as they are collected.",
-            "heading": "No signatures yet"
+            "description": "Owner confirmations appear here as they are collected.",
+            "heading": "No confirmations yet"
           },
-          "entity": "Signatures",
+          "entity": "Confirmations",
           "error": {
-            "description": "The Safe signatures could not be loaded. Try again later.",
-            "heading": "Signatures unavailable"
+            "description": "The Safe confirmations could not be loaded. Try again later.",
+            "heading": "Confirmations unavailable"
           }
         }
       },

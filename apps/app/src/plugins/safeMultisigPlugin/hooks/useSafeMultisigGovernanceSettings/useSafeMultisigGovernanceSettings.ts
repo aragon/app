@@ -1,6 +1,7 @@
 'use client';
 
 import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import { safeAppAccountUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { useEnsName } from '@/modules/ens';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { useSafeInfo } from '@/shared/api/safeService';
@@ -26,7 +27,7 @@ export const useSafeMultisigGovernanceSettings = (
     return safeMultisigSettingsUtils.parseSettings({
         safeInfo,
         safeName: ensName ?? addressUtils.truncateAddress(pluginAddress),
-        safeHref: `/safe/${network}/${addressUtils.getChecksum(pluginAddress)}`,
+        safeHref: safeAppAccountUrl({ network, address: pluginAddress }),
         t,
     });
 };

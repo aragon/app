@@ -11,6 +11,7 @@ import { SppProposalType } from '../../../sppPlugin/types';
 import { sppStageUtils } from '../../../sppPlugin/utils/sppStageUtils';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
+    generateSafeBodyState,
     generateSafeConfirmation,
     generateSafeInfo,
     generateSafeMultisigTransaction,
@@ -36,38 +37,37 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
         isLoading: false,
     } as unknown as IUseEnsNameReturn;
 
-    const state = {
+    const pendingReport = {
+        transaction: generateSafeMultisigTransaction({
+            nonce: '7',
+            confirmationsRequired: 2,
+            confirmations: [generateSafeConfirmation({ owner: signer })],
+        }),
+        report: {
+            proposalId: BigInt(42),
+            stageId: 1,
+            resultType: SppProposalType.APPROVAL,
+            tryAdvance: false,
+        },
+        state: SafeTransactionState.LIVE,
+        status: ProposalStatus.ACTIVE,
+        hasNonceCompetition: false,
+    };
+
+    const state = generateSafeBodyState({
         safeInfo: generateSafeInfo({
             nonce: '7',
             threshold: 2,
             owners: [signer, `0x${'2'.repeat(40)}`, `0x${'3'.repeat(40)}`],
         }),
-        isLoading: false,
-        isError: false,
-        pendingReport: {
-            transaction: generateSafeMultisigTransaction({
-                nonce: '7',
-                confirmationsRequired: 2,
-                confirmations: [generateSafeConfirmation({ owner: signer })],
-            }),
-            report: {
-                proposalId: BigInt(42),
-                stageId: 1,
-                resultType: SppProposalType.APPROVAL,
-                tryAdvance: false,
-            },
-            state: SafeTransactionState.LIVE,
-            status: ProposalStatus.ACTIVE,
-            hasNonceCompetition: false,
-        },
+        pendingReport,
+        isExecutableNow: true,
         signers: [signer],
         hasConnectedWalletSigned: true,
         approvalsAmount: 1,
         minApprovals: 2,
         membersCount: 3,
-        isRateLimited: false,
-        isStale: false,
-    } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
+    });
 
     beforeEach(() => {
         useSafeMultisigBodyStateSpy.mockReturnValue(state);
@@ -135,7 +135,7 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
         useSafeMultisigBodyStateSpy.mockReturnValue({
             ...state,
             pendingReport: {
-                ...state.pendingReport,
+                ...pendingReport,
                 state: SafeTransactionState.SUPERSEDED,
             },
         });

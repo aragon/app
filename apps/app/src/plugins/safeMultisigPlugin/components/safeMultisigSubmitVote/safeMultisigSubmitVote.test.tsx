@@ -26,6 +26,7 @@ import {
 } from '../../constants';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
+    generateSafeBodyState,
     generateSafeConfirmation,
     generateSafeInfo,
     generateSafeMultisigTransaction,
@@ -92,20 +93,13 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     const proposeMutateAsync = jest.fn();
     const confirmMutateAsync = jest.fn();
 
-    const baseState = {
-        safeInfo: generateSafeInfo({ threshold: 1, owners: [owner] }),
-        isLoading: false,
-        isError: false,
-        isRateLimited: false,
-        pendingReport: undefined,
-        settledResultType: undefined,
-        signers: [],
-        hasConnectedWalletSigned: false,
-        approvalsAmount: 0,
+    const safeInfo = generateSafeInfo({ threshold: 1, owners: [owner] });
+
+    const baseState = generateSafeBodyState({
+        safeInfo,
         minApprovals: 1,
         membersCount: 1,
-        isStale: false,
-    } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
+    });
 
     beforeEach(() => {
         useWalletAccountSpy.mockReturnValue({
@@ -170,7 +164,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             proposal: generateSppProposal({
                 network: Network.ETHEREUM_SEPOLIA,
             }),
-            externalAddress: baseState.safeInfo.address,
+            externalAddress: safeInfo.address,
             stage: generateSppStage({ stageIndex: 1 }),
             isVeto: false,
             ...props,
@@ -182,6 +176,58 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             </QueryClientProvider>
         );
     };
+
+    it('states that the Safe can still act after the voting window closed', () => {
+        // The most surprising thing about a Safe body: Aragon's window closes, the Safe queue has
+        // no deadline, and a verdict still counts while the stage can still advance.
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            canStillAffectOutcome: true,
+        });
+
+        render(
+            createTestComponent({
+                stage: generateSppStage({
+                    stageIndex: 1,
+                    voteDuration: 60,
+                    maxAdvance: 60 * 60 * 24,
+                }),
+                proposal: generateSppProposal({
+                    network: Network.ETHEREUM_SEPOLIA,
+                    stageIndex: 1,
+                    lastStageTransition: Math.floor(Date.now() / 1000) - 3600,
+                }),
+            }),
+        );
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.windowClosed',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('withholds the action and names the expiry once the stage can never advance', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            canStillAffectOutcome: false,
+        });
+
+        render(createTestComponent());
+
+        // Executing would still succeed against the Safe and still change nothing, so offering it
+        // would be a lie.
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+            }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.stageExpired',
+            ),
+        ).toBeInTheDocument();
+    });
 
     it('rejects a connected wallet that is not a live Safe owner', async () => {
         useWalletAccountSpy.mockReturnValue({
@@ -274,13 +320,14 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             },
             hasConnectedWalletSigned: true,
             approvalsAmount: 1,
+            isExecutableNow: true,
         });
 
         render(createTestComponent());
 
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeApproval',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
             }),
         ).toBeEnabled();
     });
@@ -299,7 +346,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             expect.objectContaining({
                 params: expect.objectContaining({
                     isVeto: false,
-                    safeAddress: baseState.safeInfo.address,
+                    safeAddress: safeInfo.address,
                     signerAddress: owner,
                 }),
             }),
@@ -327,13 +374,14 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             },
             hasConnectedWalletSigned: true,
             approvalsAmount: 1,
+            isExecutableNow: true,
         });
 
         render(createTestComponent());
 
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeApproval',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
             }),
         );
 
@@ -369,7 +417,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         // able to sign a replacement rather than being told to wait for the other owners.
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.requeueApproval',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.requeueSafeTransaction',
             }),
         ).toBeEnabled();
         expect(
@@ -379,7 +427,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('blocks execution and names the blocking nonce while the report waits behind the queue', () => {
+    it('withholds execution while earlier Safe transactions are still ahead', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
             safeInfo: generateSafeInfo({
@@ -405,20 +453,63 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             },
             hasConnectedWalletSigned: true,
             approvalsAmount: 1,
+            isExecutableNow: false,
+            transactionsAhead: 2,
         });
 
         render(createTestComponent());
 
-        // Fully signed but not executable: a Safe runs strictly in nonce order, so the owner is
-        // waiting on the queue, not on a signature.
+        // Fully confirmed but not executable: a Safe runs in nonce order and a confirmation is
+        // bound to its slot, so the owner is waiting on the queue. The action stays named for what
+        // is pending - executing the Safe transaction - but must not be offered as available.
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeApproval',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
             }),
         ).toBeDisabled();
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueued (nonce=4)',
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueued (count=2)',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('names execution as the second gate once the threshold is met', () => {
+        // gov-ui-kit's card says "approval reached" at threshold, but a Safe body has told Aragon
+        // nothing until its transaction executes - so the card alone overstates the position.
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '0',
+                    confirmationsRequired: 1,
+                    confirmations: [generateSafeConfirmation({ owner })],
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+            isExecutableNow: true,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
+            }),
+        ).toBeEnabled();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.awaitingExecution',
             ),
         ).toBeInTheDocument();
     });
@@ -450,7 +541,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         };
         const safeTransaction = {
             data: {
-                to: baseState.safeInfo.address,
+                to: safeInfo.address,
                 value: '0',
                 data: '0xreport',
                 operation: 0,
@@ -536,7 +627,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         expect(getSafeNextNonceSpy).toHaveBeenCalledWith({
             urlParams: {
                 network: Network.ETHEREUM_SEPOLIA,
-                address: baseState.safeInfo.address,
+                address: safeInfo.address,
             },
         });
         expect(protocolKit.createTransaction).toHaveBeenCalledWith(

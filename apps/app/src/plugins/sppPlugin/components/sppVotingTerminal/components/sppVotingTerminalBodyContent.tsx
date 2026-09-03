@@ -16,6 +16,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
@@ -53,15 +54,36 @@ export const SppVotingTerminalBodyContent: React.FC<
 > = (props) => {
     const { plugin, daoId, subProposal, stage, proposal, children } = props;
 
-    const canVote = sppStageUtils.canBodyVote(proposal, stage, plugin);
+    const { network } = daoUtils.parseDaoId(daoId);
+    const bodyPluginId = sppStageUtils.getBodyPluginId(plugin, network);
+
+    /**
+     * Whether this body type can still be asked to act after its voting window closed. Asked of the
+     * registry, because it is a property of the body and not of the stage: a body that votes through
+     * an external queue has no say in when that queue clears, and `reportProposalResult` carries no
+     * deadline - it records while the stage is the proposal's current one.
+     *
+     * What is then offered is the body's own call. It knows whether anything is pending and whether
+     * the stage can still advance, so it can explain an expired stage instead of showing an action.
+     */
+    const votesAfterWindow =
+        pluginRegistryUtils.getSlotFunction<undefined, boolean>({
+            slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+            pluginId: bodyPluginId,
+        })?.(undefined) === true;
+
+    const canActLate =
+        votesAfterWindow &&
+        stage.stageIndex === proposal.stageIndex &&
+        !proposal.executed.status;
+
+    const canVote =
+        sppStageUtils.canBodyVote(proposal, stage, plugin) || canActLate;
 
     const isExternalBody = plugin.interfaceType == null;
     // Approve/veto is a per-body property: a single stage can mix approving and
     // vetoing bodies, so derive it from this body rather than the stage.
     const isVeto = sppStageUtils.isVetoBody(plugin);
-
-    const { network } = daoUtils.parseDaoId(daoId);
-    const bodyPluginId = sppStageUtils.getBodyPluginId(plugin, network);
 
     const pluginSettings = isExternalBody
         ? {}
