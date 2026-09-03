@@ -24,13 +24,8 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         safeBodyStateApi,
         'useSafeMultisigBodyState',
     );
+    const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
     const signer = '0x0000000000000000000000000000000000000011';
-
-    const transaction = generateSafeMultisigTransaction({
-        nonce: '7',
-        confirmationsRequired: 2,
-        confirmations: [generateSafeConfirmation({ owner: signer })],
-    });
 
     const state = {
         safeInfo: generateSafeInfo({
@@ -42,7 +37,11 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         isLoading: false,
         isError: false,
         pendingReport: {
-            transaction,
+            transaction: generateSafeMultisigTransaction({
+                nonce: '7',
+                confirmationsRequired: 2,
+                confirmations: [generateSafeConfirmation({ owner: signer })],
+            }),
             report: {
                 proposalId: BigInt(42),
                 stageId: 1,
@@ -61,8 +60,6 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         isRateLimited: false,
         isStale: false,
     } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
-
-    const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
 
     beforeEach(() => {
         useSafeMultisigBodyStateSpy.mockReturnValue(state);
@@ -132,129 +129,36 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         },
     );
 
-    it('renders the decoded effect, per-transaction threshold and viewer state', () => {
+    it('states the live approval count against the Safe owner set', () => {
         render(createTestComponent());
 
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.veto.pending (count=1,required=2)',
-            ),
-        ).toBeInTheDocument();
+        // Fed from live Safe state rather than an indexed snapshot: 1 of 3 owners have signed.
         expect(screen.getByText('of 3 members')).toBeInTheDocument();
-        expect(screen.getByText('1.3.0')).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.tag.youSigned',
-            ),
-        ).toBeInTheDocument();
     });
 
-    it('renders Safe state when no wallet has signed and no report is pending', () => {
-        useSafeMultisigBodyStateSpy.mockReturnValue({
-            ...state,
-            pendingReport: undefined,
-            signers: [],
-            hasConnectedWalletSigned: false,
-            approvalsAmount: 0,
-            minApprovals: state.safeInfo.threshold,
-        });
-
+    it('leaves the Safe particulars to the settings tab', () => {
         render(createTestComponent());
 
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.nonePending.veto',
-            ),
-        ).toBeInTheDocument();
-        expect(screen.getByText(state.safeInfo.nonce)).toBeInTheDocument();
-        expect(screen.getByText('1.3.0')).toBeInTheDocument();
-    });
-
-    it('renders the indexed settled result with the live Safe threshold', () => {
-        useSafeMultisigBodyStateSpy.mockReturnValue({
-            ...state,
-            safeInfo: generateSafeInfo({
-                threshold: 1,
-                owners: [signer, `0x${'2'.repeat(40)}`],
-            }),
-            pendingReport: undefined,
-            settledResultType: SppProposalType.APPROVAL,
-            signers: [],
-            hasConnectedWalletSigned: false,
-            approvalsAmount: 1,
-            minApprovals: 1,
-            membersCount: 2,
-        });
-
-        render(createTestComponent({ isVeto: false }));
-
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.approval.executed',
-            ),
-        ).toBeInTheDocument();
-        expect(screen.getByText('of 2 members')).toBeInTheDocument();
-    });
-
-    it('states the count that stopped short instead of pending once the stage is closed', () => {
-        getStageStatusSpy.mockReturnValue(ProposalStatus.REJECTED);
-
-        render(createTestComponent());
-
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.notReached.veto (count=1,required=2)',
-            ),
-        ).toBeInTheDocument();
+        // These used to be restated here beside gov-ui-kit's own approval header. Their home is the
+        // body's settings, so the breakdown must not grow them back.
+        expect(screen.queryByText('1.3.0')).not.toBeInTheDocument();
+        expect(screen.queryByText('7')).not.toBeInTheDocument();
         expect(
             screen.queryByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.veto.pending (count=1,required=2)',
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.viewSafeAccount',
             ),
         ).not.toBeInTheDocument();
     });
 
-    it('keeps the executed result when the stage is closed, because that is what happened', () => {
-        getStageStatusSpy.mockReturnValue(ProposalStatus.VETOED);
-        useSafeMultisigBodyStateSpy.mockReturnValue({
-            ...state,
-            settledResultType: SppProposalType.VETO,
-        });
-
-        render(createTestComponent());
+    it('renders the action passed by the terminal', () => {
+        render(
+            createTestComponent({
+                children: <button type="button">Approve</button>,
+            }),
+        );
 
         expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.veto.executed',
-            ),
+            screen.getByRole('button', { name: 'Approve' }),
         ).toBeInTheDocument();
     });
-
-    it.each([
-        { status: ProposalStatus.ACTIVE, closed: false },
-        { status: ProposalStatus.REJECTED, closed: true },
-    ])(
-        'renders the competing-transaction tag only while the stage is open (closed=$closed)',
-        ({ status, closed }) => {
-            getStageStatusSpy.mockReturnValue(status);
-            useSafeMultisigBodyStateSpy.mockReturnValue({
-                ...state,
-                pendingReport: {
-                    ...state.pendingReport,
-                    hasNonceCompetition: true,
-                },
-            });
-
-            render(createTestComponent());
-
-            const tag = screen.queryByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.tag.competition',
-            );
-
-            if (closed) {
-                expect(tag).not.toBeInTheDocument();
-            } else {
-                expect(tag).toBeInTheDocument();
-            }
-        },
-    );
 });

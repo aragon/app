@@ -3184,58 +3184,22 @@
           }
         },
         "safeMultisigGovernanceSettings": {
-          "approvalRule": "Approval rule",
-          "owners": "Owners",
-          "threshold": "{{min}} of {{max}} owners",
+          "execution": "Execution",
+          "executionValue": "Any owner, once threshold is met",
+          "nonce": "Safe nonce",
+          "safe": "Safe",
+          "strategy": "Strategy",
+          "strategyValue": "Safe multisig",
+          "threshold": "Threshold",
+          "thresholdValue": "{{min}} of {{max}} owners",
           "unknownVersion": "Unknown",
-          "version": "Safe version",
-          "vetoRule": "Veto rule"
+          "version": "Safe version"
         },
         "safeMultisigProposalVotingBreakdown": {
-          "details": {
-            "safeNonce": "Safe nonce",
-            "transactionNonce": "Transaction nonce",
-            "unavailable": "Not available",
-            "unknown": "Unknown",
-            "version": "Safe version"
-          },
           "error": "Safe state could not be loaded. Try again later.",
-          "loading": "Loading Safe state…",
-          "partialError": "The pending transaction state could not be refreshed.",
-          "rateLimited": "Safe state is temporarily unavailable — the shared Safe API limit was reached. This retries on its own.",
-          "rateLimitedRetry": "Safe state is temporarily unavailable — the shared Safe API limit was reached. Retrying in about {{seconds}} seconds.",
-          "report": {
-            "approval": {
-              "executed": "Approved and executed",
-              "pending": "Approval pending — {{count}} of {{required}}",
-              "superseded": "Approval superseded — {{count}} of {{required}}"
-            },
-            "none": {
-              "executed": "No result executed",
-              "pending": "No-result report pending — {{count}} of {{required}}",
-              "superseded": "No-result report superseded — {{count}} of {{required}}"
-            },
-            "nonePending": {
-              "approval": "No approval submitted yet",
-              "veto": "No veto submitted yet"
-            },
-            "notReached": {
-              "approval": "Approval not reached — {{count}} of {{required}}",
-              "veto": "No veto submitted"
-            },
-            "veto": {
-              "executed": "Vetoed and executed",
-              "pending": "Veto pending — {{count}} of {{required}}",
-              "superseded": "Veto superseded — {{count}} of {{required}}"
-            }
-          },
-          "tag": {
-            "competition": "Competing transaction",
-            "stale": "May be out of date",
-            "superseded": "Superseded",
-            "youSigned": "You have signed"
-          },
-          "viewSafeAccount": "View Safe account"
+          "loading": "Loading Safe state\u2026",
+          "rateLimited": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. This retries on its own.",
+          "rateLimitedRetry": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. Retrying in about {{seconds}} seconds."
         },
         "safeMultisigProposalVotingSummary": {
           "approvalLabel": "approvals",

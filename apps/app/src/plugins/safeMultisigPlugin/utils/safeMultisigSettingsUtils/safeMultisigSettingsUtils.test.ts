@@ -6,52 +6,76 @@ describe('safeMultisigSettings utils', () => {
         params == null ? key : `${key}:${JSON.stringify(params)}`,
     );
 
+    const safeName = 'founders.safe.eth';
+    const safeHref = '/safe/ethereum-mainnet/0xSafe';
+
     afterEach(() => {
         t.mockClear();
     });
 
-    it('returns the live Safe approval rule, owner count and version', () => {
-        const settings = safeMultisigSettingsUtils.parseSettings({
-            safeInfo: generateSafeInfo({
-                threshold: 1,
+    const parse = (safeInfo = generateSafeInfo()) =>
+        safeMultisigSettingsUtils.parseSettings({
+            safeInfo,
+            safeName,
+            safeHref,
+            t,
+        });
+
+    it('states the Safe particulars that used to be repeated on the breakdown', () => {
+        const settings = parse(
+            generateSafeInfo({
+                address: '0x0000000000000000000000000000000000000001',
+                threshold: 3,
                 owners: [
                     '0x0000000000000000000000000000000000000011',
                     '0x0000000000000000000000000000000000000012',
+                    '0x0000000000000000000000000000000000000013',
+                    '0x0000000000000000000000000000000000000014',
                 ],
+                nonce: '42',
                 version: '1.4.1+L2',
             }),
-            isVeto: false,
-            t,
-        });
+        );
 
-        expect(settings).toEqual([
-            {
-                term: 'app.plugins.safeMultisig.safeMultisigGovernanceSettings.approvalRule',
-                definition:
-                    'app.plugins.safeMultisig.safeMultisigGovernanceSettings.threshold:{"min":1,"max":2}',
-            },
-            {
-                term: 'app.plugins.safeMultisig.safeMultisigGovernanceSettings.owners',
-                definition: '2',
-            },
-            {
-                term: 'app.plugins.safeMultisig.safeMultisigGovernanceSettings.version',
-                definition: '1.4.1+L2',
-            },
-        ]);
+        const byTerm = Object.fromEntries(
+            settings.map((setting) => [setting.term, setting.definition]),
+        );
+        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+
+        expect(byTerm[`${key}.strategy`]).toEqual(`${key}.strategyValue`);
+        expect(byTerm[`${key}.threshold`]).toEqual(
+            `${key}.thresholdValue:{"min":3,"max":4}`,
+        );
+        expect(byTerm[`${key}.nonce`]).toEqual('42');
+        expect(byTerm[`${key}.version`]).toEqual('1.4.1+L2');
+        expect(byTerm[`${key}.execution`]).toEqual(`${key}.executionValue`);
     });
 
-    it('uses the veto term and an explicit fallback for an unknown version', () => {
-        const settings = safeMultisigSettingsUtils.parseSettings({
-            safeInfo: generateSafeInfo({ version: null }),
-            isVeto: true,
-            t,
+    it('links the Safe row to its account view and offers the raw address to copy', () => {
+        const safeInfo = generateSafeInfo({
+            address: '0x0000000000000000000000000000000000000001',
         });
-
-        expect(settings[0].term).toEqual(
-            'app.plugins.safeMultisig.safeMultisigGovernanceSettings.vetoRule',
+        const safeRow = parse(safeInfo).find(
+            (setting) =>
+                setting.term ===
+                'app.plugins.safeMultisig.safeMultisigGovernanceSettings.safe',
         );
-        expect(settings[2].definition).toEqual(
+
+        expect(safeRow?.definition).toEqual(safeName);
+        expect(safeRow?.link?.href).toEqual(safeHref);
+        // The truncated name is what reads well; the full address is what a user needs to paste.
+        expect(safeRow?.copyValue).toEqual(safeInfo.address);
+    });
+
+    it('states an unknown version explicitly rather than leaving the row blank', () => {
+        const settings = parse(generateSafeInfo({ version: null }));
+        const versionRow = settings.find(
+            (setting) =>
+                setting.term ===
+                'app.plugins.safeMultisig.safeMultisigGovernanceSettings.version',
+        );
+
+        expect(versionRow?.definition).toEqual(
             'app.plugins.safeMultisig.safeMultisigGovernanceSettings.unknownVersion',
         );
     });
