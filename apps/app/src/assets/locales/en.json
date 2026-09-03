@@ -3198,6 +3198,10 @@
               "approval": "No approval submitted yet",
               "veto": "No veto submitted yet"
             },
+            "notReached": {
+              "approval": "Approval not reached — {{count}} of {{required}}",
+              "veto": "No veto submitted"
+            },
             "veto": {
               "executed": "Vetoed and executed",
               "pending": "Veto pending — {{count}} of {{required}}",

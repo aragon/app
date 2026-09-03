@@ -3,6 +3,7 @@
 import {
     addressUtils,
     Link,
+    ProposalStatus,
     ProposalVoting,
     ProposalVotingTab,
     Tabs,
@@ -12,6 +13,7 @@ import classNames from 'classnames';
 import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeTransactionState } from '../../types';
@@ -32,6 +34,15 @@ const resultTypeKey: Record<SppProposalType, string> = {
     [SppProposalType.APPROVAL]: 'approval',
     [SppProposalType.VETO]: 'veto',
 };
+
+// Stage outcomes after which no report can land, so a live pending report is moot. ACCEPTED and
+// ADVANCEABLE are deliberately absent: a veto body can still act inside the veto window.
+const closedStageStatuses = [
+    ProposalStatus.REJECTED,
+    ProposalStatus.VETOED,
+    ProposalStatus.UNREACHED,
+    ProposalStatus.EXPIRED,
+];
 
 export const SafeMultisigProposalVotingBreakdown: React.FC<
     ISafeMultisigProposalVotingBreakdownProps
@@ -97,22 +108,36 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
     const isSuperseded =
         pendingReport?.state === SafeTransactionState.SUPERSEDED;
     const reportStateKey = isSuperseded ? 'superseded' : 'pending';
-    const reportLabel =
-        settledResultType != null
-            ? t(
-                  `${translationKey}.report.${resultTypeKey[settledResultType]}.executed`,
-              )
-            : pendingReport == null
-              ? t(
-                    `${translationKey}.report.nonePending.${isVeto ? 'veto' : 'approval'}`,
-                )
-              : t(
-                    `${translationKey}.report.${resultTypeKey[pendingReport.report.resultType]}.${reportStateKey}`,
-                    {
-                        count: approvalsAmount,
-                        required: minApprovals,
-                    },
-                );
+    const countParams = { count: approvalsAmount, required: minApprovals };
+
+    // Once the stage is closed the queue can still hold a signed-but-unexecutable report. Calling it
+    // "pending" invites a signature that can never take effect, so state the count that stopped
+    // short instead. An executed result still wins: that is what actually happened.
+    const isStageClosed = closedStageStatuses.includes(
+        sppStageUtils.getStageStatus(proposal, stage),
+    );
+
+    let reportLabel: string;
+
+    if (settledResultType != null) {
+        reportLabel = t(
+            `${translationKey}.report.${resultTypeKey[settledResultType]}.executed`,
+        );
+    } else if (isStageClosed) {
+        reportLabel = t(
+            `${translationKey}.report.notReached.${isVeto ? 'veto' : 'approval'}`,
+            countParams,
+        );
+    } else if (pendingReport == null) {
+        reportLabel = t(
+            `${translationKey}.report.nonePending.${isVeto ? 'veto' : 'approval'}`,
+        );
+    } else {
+        reportLabel = t(
+            `${translationKey}.report.${resultTypeKey[pendingReport.report.resultType]}.${reportStateKey}`,
+            countParams,
+        );
+    }
 
     return (
         <ProposalVoting.BreakdownMultisig
@@ -140,12 +165,15 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                                 variant="neutral"
                             />
                         )}
-                        {pendingReport?.hasNonceCompetition === true && (
-                            <Tag
-                                label={t(`${translationKey}.tag.competition`)}
-                                variant="warning"
-                            />
-                        )}
+                        {pendingReport?.hasNonceCompetition === true &&
+                            !isStageClosed && (
+                                <Tag
+                                    label={t(
+                                        `${translationKey}.tag.competition`,
+                                    )}
+                                    variant="warning"
+                                />
+                            )}
                         {isStale && (
                             <Tag
                                 label={t(`${translationKey}.tag.stale`)}

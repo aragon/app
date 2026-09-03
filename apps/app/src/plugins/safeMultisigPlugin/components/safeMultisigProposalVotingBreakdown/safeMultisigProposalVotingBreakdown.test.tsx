@@ -11,6 +11,7 @@ import {
     generateSppStage,
 } from '../../../sppPlugin/testUtils';
 import { SppProposalType } from '../../../sppPlugin/types';
+import { sppStageUtils } from '../../../sppPlugin/utils/sppStageUtils';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
     generateSafeConfirmation,
@@ -66,12 +67,16 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         isStale: false,
     } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
 
+    const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
+
     beforeEach(() => {
         useSafeMultisigBodyStateSpy.mockReturnValue(state);
+        getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
     });
 
     afterEach(() => {
         useSafeMultisigBodyStateSpy.mockReset();
+        getStageStatusSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -198,4 +203,66 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByText('of 2 members')).toBeInTheDocument();
     });
+
+    it('states the count that stopped short instead of pending once the stage is closed', () => {
+        getStageStatusSpy.mockReturnValue(ProposalStatus.REJECTED);
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.notReached.veto (count=1,required=2)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.veto.pending (count=1,required=2)',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('keeps the executed result when the stage is closed, because that is what happened', () => {
+        getStageStatusSpy.mockReturnValue(ProposalStatus.VETOED);
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.VETO,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.veto.executed',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it.each([
+        { status: ProposalStatus.ACTIVE, closed: false },
+        { status: ProposalStatus.REJECTED, closed: true },
+    ])(
+        'renders the competing-transaction tag only while the stage is open (closed=$closed)',
+        ({ status, closed }) => {
+            getStageStatusSpy.mockReturnValue(status);
+            useSafeMultisigBodyStateSpy.mockReturnValue({
+                ...state,
+                pendingReport: {
+                    ...state.pendingReport,
+                    hasNonceCompetition: true,
+                },
+            });
+
+            render(createTestComponent());
+
+            const tag = screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.tag.competition',
+            );
+
+            if (closed) {
+                expect(tag).not.toBeInTheDocument();
+            } else {
+                expect(tag).toBeInTheDocument();
+            }
+        },
+    );
 });
