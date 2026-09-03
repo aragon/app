@@ -1,6 +1,11 @@
 'use client';
 
-import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    addressUtils,
+    Button,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import type { Hex } from 'viem';
@@ -96,6 +101,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         pendingReport,
         hasConnectedWalletSigned,
         settledResultType,
+        isStale,
     } = bodyState;
 
     const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
@@ -443,6 +449,19 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const isWaitingForOwners =
         liveReport != null && hasConnectedWalletSigned && !thresholdReached;
 
+    /**
+     * A Safe executes strictly in nonce order, so a fully-signed report still cannot go until every
+     * transaction ahead of it clears. Naming the blocking nonce is the difference between "broken"
+     * and "waiting": the owner needs to know it is the queue, not their signature.
+     */
+    const blockingNonce =
+        liveReport != null &&
+        safeInfo != null &&
+        BigInt(liveReport.transaction.nonce) > BigInt(safeInfo.nonce)
+            ? safeInfo.nonce
+            : undefined;
+    const isQueuedBehindNonce = thresholdReached && blockingNonce != null;
+
     let buttonKey = isVeto ? 'veto' : 'approve';
 
     if (hasSettled) {
@@ -465,32 +484,84 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         helperText = t(`${translationKey}.finalizing`);
     } else if (hasIndexingTimedOut && !hasSettled) {
         helperText = t(`${translationKey}.indexingDelayed`);
-    } else if (isSuperseded) {
-        helperText = t(`${translationKey}.supersededNotice`);
     } else if (isWaitingForOwners) {
         helperText = t(`${translationKey}.waitingForOwners`);
     }
 
+    // Safe-only realities are alerts, not layout: the card keeps the multisig grammar and says what
+    // is true about the queue underneath it.
+    const alerts: Array<{
+        key: string;
+        variant: 'warning' | 'critical';
+        message: string;
+    }> = [];
+
+    if (isQueuedBehindNonce) {
+        alerts.push({
+            key: 'nonceQueued',
+            variant: 'warning',
+            message: t(`${translationKey}.nonceQueued`, {
+                nonce: blockingNonce,
+            }),
+        });
+    }
+
+    if (isSuperseded) {
+        alerts.push({
+            key: 'replaced',
+            variant: 'critical',
+            message: t(`${translationKey}.replaced`),
+        });
+    }
+
+    if (isStale) {
+        alerts.push({
+            key: 'stale',
+            variant: 'warning',
+            message: t(`${translationKey}.unreachable`),
+        });
+    }
+
     return (
         <div className="flex w-full flex-col gap-3">
-            <Button
-                className="w-full md:w-fit"
-                disabled={
-                    hasSettled ||
-                    isAwaitingIndexing ||
-                    isWaitingForOwners ||
-                    hasUnsupportedContractOwner ||
-                    isContractOwnerCheckLoading ||
-                    safeInfo == null
-                }
-                iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
-                isLoading={isExecuting || isAwaitingIndexing}
-                onClick={hasSettled ? undefined : handleVoteClick}
-                size="md"
-                variant={hasSettled ? 'secondary' : 'primary'}
-            >
-                {t(`${translationKey}.${buttonKey}`)}
-            </Button>
+            {alerts.map((alert) => (
+                <AlertInline
+                    key={alert.key}
+                    message={alert.message}
+                    variant={alert.variant}
+                />
+            ))}
+            <div className="flex flex-col gap-3 md:flex-row">
+                <Button
+                    className="w-full md:w-fit"
+                    disabled={
+                        hasSettled ||
+                        isAwaitingIndexing ||
+                        isWaitingForOwners ||
+                        isQueuedBehindNonce ||
+                        hasUnsupportedContractOwner ||
+                        isContractOwnerCheckLoading ||
+                        safeInfo == null
+                    }
+                    iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
+                    isLoading={isExecuting || isAwaitingIndexing}
+                    onClick={hasSettled ? undefined : handleVoteClick}
+                    size="md"
+                    variant={hasSettled ? 'secondary' : 'primary'}
+                >
+                    {t(`${translationKey}.${buttonKey}`)}
+                </Button>
+                {isStale && (
+                    <Button
+                        className="w-full md:w-fit"
+                        onClick={() => void invalidateSafeState()}
+                        size="md"
+                        variant="tertiary"
+                    >
+                        {t(`${translationKey}.retry`)}
+                    </Button>
+                )}
+            </div>
             {!hasSettled && helperText != null && (
                 <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
                     {helperText}

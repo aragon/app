@@ -298,9 +298,70 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeEnabled();
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigSubmitVote.supersededNotice',
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.replaced',
             ),
         ).toBeInTheDocument();
+    });
+
+    it('blocks execution and names the blocking nonce while the report waits behind the queue', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            safeInfo: generateSafeInfo({
+                threshold: 1,
+                owners: [owner],
+                nonce: '4',
+            }),
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '6',
+                    confirmationsRequired: 1,
+                    confirmations: [generateSafeConfirmation({ owner })],
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+        });
+
+        render(createTestComponent());
+
+        // Fully signed but not executable: a Safe runs strictly in nonce order, so the owner is
+        // waiting on the queue, not on a signature.
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeApproval',
+            }),
+        ).toBeDisabled();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueued (nonce=4)',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('offers a retry when the Safe read is stale, instead of passing the count off as current', () => {
+        useSafeBodyStateSpy.mockReturnValue({ ...baseState, isStale: true });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.unreachable',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.retry',
+            }),
+        ).toBeEnabled();
     });
 
     const mockThresholdOneExecution = () => {
