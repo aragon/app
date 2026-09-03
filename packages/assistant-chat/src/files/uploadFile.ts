@@ -11,8 +11,12 @@ export type UploadFileErrorCode = IAssistantErrorCode | 'network' | 'aborted';
 export class UploadFileError extends Error {
     readonly code: UploadFileErrorCode;
 
-    constructor(code: UploadFileErrorCode, message: string) {
-        super(message);
+    constructor(
+        code: UploadFileErrorCode,
+        message: string,
+        options?: ErrorOptions,
+    ) {
+        super(message, options);
         this.name = 'UploadFileError';
         this.code = code;
     }
@@ -113,8 +117,11 @@ const confirmUpload = async (
 
     try {
         return uploadFileResponseSchema.parse(body);
-    } catch {
-        throw new UploadFileError('internal', 'Unexpected upload response.');
+    } catch (error) {
+        // biome-ignore lint/style/useErrorCause: the cause is forwarded through the options argument.
+        throw new UploadFileError('internal', 'Unexpected upload response.', {
+            cause: error,
+        });
     }
 };
 
@@ -159,8 +166,11 @@ export const deleteFile = async (params: IDeleteFileParams): Promise<void> => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sessionId }),
         });
-    } catch {
-        throw new UploadFileError('network', 'Network error during removal.');
+    } catch (error) {
+        // biome-ignore lint/style/useErrorCause: the cause is forwarded through the options argument.
+        throw new UploadFileError('network', 'Network error during removal.', {
+            cause: error,
+        });
     }
 
     if (!response.ok) {

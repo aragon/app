@@ -186,7 +186,7 @@ jobs:
       - name: Linear — complete release
         if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
         continue-on-error: true
-        uses: linear/linear-release-action@v0
+        uses: linear/linear-release-action@3f31fcf14c110cc53579fcc3575a26d469c413b4 # v0.17.1 (https://github.com/linear/linear-release-action/releases/tag/v0.17.1)
         with:
           access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: complete

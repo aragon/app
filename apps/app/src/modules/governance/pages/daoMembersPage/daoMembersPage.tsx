@@ -7,6 +7,7 @@ import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
+import { notFoundUtils } from '@/shared/utils/notFoundUtils';
 import { memberListOptions } from '../../api/governanceService';
 import { DaoMembersPageClient } from './daoMembersPageClient';
 
@@ -30,12 +31,23 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
 
     const queryClient = new QueryClient();
 
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
+    // Bots constantly probe DAO URLs with unknown or malformed addresses — render the
+    // 404 page for those instead of failing the request.
+    const daoId = await notFoundUtils.fetchOrNotFound(() =>
+        daoUtils.resolveDaoId(daoPageParams),
+    );
     const daoUrlParams = { id: daoId };
-    const [dao, daoOverrides, featuredDelegates] = await Promise.all([
-        queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams })),
-        queryClient.fetchQuery(daoOverridesOptions()),
-        cmsService.getFeaturedDelegates(),
+    // Only the DAO read is addressed by the URL, so only it maps a rejected identifier onto the
+    // 404 page. The CMS reads answer "what does the CMS say about DAOs", not "does this DAO
+    // exist" — folding them in would turn a content hiccup into a not-found page.
+    const [dao, [daoOverrides, featuredDelegates]] = await Promise.all([
+        notFoundUtils.fetchOrNotFound(() =>
+            queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams })),
+        ),
+        Promise.all([
+            queryClient.fetchQuery(daoOverridesOptions()),
+            cmsService.getFeaturedDelegates(),
+        ]),
     ]);
 
     const daoOverride = daoOverrides[daoId];

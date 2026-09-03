@@ -322,7 +322,7 @@ describe('<TransactionList.Default /> component', () => {
 
         render(createTestComponent({ onTransactionClick }));
 
-        await user.click(screen.getByText('0 ABC'));
+        await user.click(screen.getByRole('link', { name: /0 ABC/ }));
         expect(onTransactionClick).not.toHaveBeenCalled();
 
         await user.click(screen.getByRole('link', { name: /Executed/ }));
