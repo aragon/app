@@ -29,11 +29,13 @@ export const useProposalPermissionCheckGuard = (
 
     const router = useRouter();
 
-    const { meta: plugin } = useDaoPlugins({
+    // The plugin is undefined when the DAO is not loaded yet or the plugin address is
+    // unknown (e.g. a stale link to an uninstalled process) — the guard is skipped then.
+    const plugin = useDaoPlugins({
         daoId,
         pluginAddress,
         includeLinkedAccounts: true,
-    })![0];
+    })?.[0]?.meta;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -59,9 +61,13 @@ export const useProposalPermissionCheckGuard = (
     const hasCalledGuardRef = useRef(false);
 
     useEffect(() => {
-        if (!canCreateProposal && !hasCalledGuardRef.current) {
+        if (
+            plugin != null &&
+            !canCreateProposal &&
+            !hasCalledGuardRef.current
+        ) {
             hasCalledGuardRef.current = true;
             createProposalGuard();
         }
-    }, [canCreateProposal, createProposalGuard]);
+    }, [plugin, canCreateProposal, createProposalGuard]);
 };

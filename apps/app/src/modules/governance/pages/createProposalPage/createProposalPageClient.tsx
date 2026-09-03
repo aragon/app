@@ -1,12 +1,16 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import {
@@ -48,11 +52,18 @@ export const CreateProposalPageClient: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { meta: plugin } = useDaoPlugins({
+    // Undefined only when the plugin address is unknown (e.g. a stale link to an uninstalled
+    // process), which is why the not-found state below needs no loading guard: the route's
+    // wizard layout fetches the DAO and dehydrates it into this tree, so `useDao` already holds
+    // it on the first render — server and client alike. Should that layout ever stop
+    // prefetching, this branch would flash a not-found on every legitimate load.
+    const plugin = useDaoPlugins({
         daoId,
         pluginAddress,
         includeLinkedAccounts: true,
-    })![0];
+    })?.[0]?.meta;
+
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     useProposalPermissionCheckGuard({
         daoId,
@@ -76,6 +87,31 @@ export const CreateProposalPageClient: React.FC<
         () => ({ prepareActions, addPrepareAction, processPlugin: plugin }),
         [prepareActions, addPrepareAction, plugin],
     );
+
+    const processedSteps = useMemo(
+        () =>
+            createProposalWizardSteps.map((step) => ({
+                ...step,
+                meta: { ...step.meta, name: t(step.meta.name) },
+            })),
+        [t],
+    );
+
+    if (plugin == null) {
+        const pluginNotFoundError = new AragonBackendServiceError(
+            AragonBackendServiceError.pluginNotFoundCode,
+            `CreateProposalPageClient: no plugin found for address ${pluginAddress}`,
+            404,
+        );
+
+        return (
+            <Page.Error
+                actionLink={daoUtils.getDaoUrl(dao, 'proposals')}
+                error={errorUtils.serialize(pluginNotFoundError)}
+                errorNamespace="app.governance.createProposalPage.error"
+            />
+        );
+    }
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
@@ -150,15 +186,6 @@ export const CreateProposalPageClient: React.FC<
 
         openPublishDialog();
     };
-
-    const processedSteps = useMemo(
-        () =>
-            createProposalWizardSteps.map((step) => ({
-                ...step,
-                meta: { ...step.meta, name: t(step.meta.name) },
-            })),
-        [t],
-    );
 
     return (
         <Page.Main fullWidth={true}>

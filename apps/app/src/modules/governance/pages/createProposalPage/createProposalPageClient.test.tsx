@@ -221,4 +221,19 @@ describe('<CreateProposalPageClient /> component', () => {
             params: resumeParams,
         });
     });
+
+    it('renders a not-found state instead of the wizard when the plugin address matches no DAO plugin', () => {
+        useDaoPluginsSpy.mockReturnValue([]);
+
+        render(
+            <CreateProposalPageClient daoId="dao-id" pluginAddress="0x123" />,
+        );
+
+        expect(
+            screen.getByText(
+                'app.governance.createProposalPage.error.notFound.title',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.queryByTestId('steps-mock')).not.toBeInTheDocument();
+    });
 });

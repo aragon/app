@@ -114,7 +114,12 @@ const buildFilterPlugins = (
                   return true;
               }
 
-              return daoAddress === rootDaoAddress;
+              // Case-insensitive: the backend may return a differently-checksummed
+              // daoAddress than the DAO record, which must not drop the plugin.
+              return (
+                  rootDaoAddress != null &&
+                  daoAddress.toLowerCase() === rootDaoAddress.toLowerCase()
+              );
           });
 
     const processedPlugins = filteredPlugins.map((plugin) => ({

@@ -7,6 +7,7 @@ import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
+import { notFoundUtils } from '@/shared/utils/notFoundUtils';
 import { proposalListOptions } from '../../api/governanceService';
 import { DaoProposalsPageClient } from './daoProposalsPageClient';
 
@@ -33,10 +34,16 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
 
     const queryClient = new QueryClient();
 
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
+    // Bots constantly probe DAO URLs with unknown or malformed addresses — render the
+    // 404 page for those instead of failing the request.
+    const daoId = await notFoundUtils.fetchOrNotFound(() =>
+        daoUtils.resolveDaoId(daoPageParams),
+    );
     const daoUrlParams = { id: daoId };
     const daoParams = { urlParams: daoUrlParams };
-    const dao = await queryClient.fetchQuery(daoOptions(daoParams));
+    const dao = await notFoundUtils.fetchOrNotFound(() =>
+        queryClient.fetchQuery(daoOptions(daoParams)),
+    );
 
     const daoOverrides = await queryClient.fetchQuery(daoOverridesOptions());
     const daoOverride = daoOverrides[daoId];

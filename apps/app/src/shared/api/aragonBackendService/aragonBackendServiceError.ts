@@ -15,6 +15,7 @@ export class AragonBackendServiceError extends Error {
     constructor(code: string, description: string, status: number) {
         super(description);
 
+        this.name = 'AragonBackendServiceError';
         this.code = code;
         this.description = description;
         this.status = status;
@@ -79,4 +80,22 @@ export class AragonBackendServiceError extends Error {
      */
     static isExpectedNotFoundError = (error: unknown) =>
         this.isNotFoundError(error) || this.isPluginNotFoundError(error);
+
+    /**
+     * True when the backend rejected the identifier the URL carries: a 404, or a 400 refusing
+     * the address or slug itself ("Bad parameters" — what a bot probing a malformed DAO address
+     * produces). For lookups addressed purely by URL parts (DAO address/ENS, proposal slug) both
+     * mean the URL points at nothing, so such lookups render the 404 page instead of reporting
+     * the failure.
+     *
+     * Deliberately not the whole 4xx range: a 401, 403 or 429 means the request was refused, not
+     * that the resource is gone. Folding those into a not-found would show a legitimate visitor
+     * the 404 page and hide a rate limit or an auth outage from Sentry. Only meaningful for
+     * URL-addressed reads; the same statuses on app-built requests still indicate bugs.
+     */
+    static isUnresolvableResourceError = (
+        error: unknown,
+    ): error is AragonBackendServiceError =>
+        error instanceof AragonBackendServiceError &&
+        (error.status === 400 || error.status === 404);
 }
