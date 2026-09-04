@@ -56,10 +56,6 @@ export const VotingPowerConditionSlot: React.FC<
         stringUtils.isNonEmptyString(token) && addressUtils.isAddress(token)
             ? token
             : undefined;
-    const tokenLabel =
-        tokenAddress != null
-            ? addressUtils.truncateAddress(tokenAddress)
-            : EMPTY_VALUE;
     const tokenUrl =
         tokenAddress != null
             ? buildEntityUrl({
@@ -72,15 +68,18 @@ export const VotingPowerConditionSlot: React.FC<
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                copyValue={tokenAddress}
                 link={
                     tokenUrl != null
-                        ? { href: tokenUrl, isExternal: true }
+                        ? {
+                              href: tokenUrl,
+                              isExternal: true,
+                              isOnchainEntity: true,
+                          }
                         : undefined
                 }
                 term={t('app.settings.votingPowerConditionSlot.token')}
             >
-                {tokenLabel}
+                {tokenAddress ?? EMPTY_VALUE}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.votingPowerConditionSlot.minVotingPower')}

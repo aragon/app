@@ -25,12 +25,15 @@ export const PermissionAddressListItem: React.FC<
 
     return (
         <DefinitionList.Item
-            copyValue={address}
             description={description}
-            link={{ href: explorerUrl, isExternal: true }}
+            link={{
+                href: explorerUrl,
+                isExternal: true,
+                isOnchainEntity: true,
+            }}
             term={term}
         >
-            {truncatedAddress}
+            {address}
         </DefinitionList.Item>
     );
 };

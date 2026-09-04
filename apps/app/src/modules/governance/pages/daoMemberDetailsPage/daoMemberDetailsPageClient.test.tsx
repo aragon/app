@@ -189,7 +189,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('supports member address and ens copy', async () => {
+    it('copies the member address from address and ENS rows', async () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ address });
@@ -206,7 +206,8 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         await userEvent.click(clipboards[0]);
         expect(clipboardCopySpy).toHaveBeenCalledWith(address);
         await userEvent.click(clipboards[1]);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(ens);
+        expect(clipboardCopySpy).toHaveBeenCalledTimes(2);
+        expect(clipboardCopySpy).toHaveBeenLastCalledWith(address);
     });
 
     it('renders the member information', () => {

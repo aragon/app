@@ -1,11 +1,9 @@
 'use client';
 
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
-    Clipboard,
     DaoAvatar,
-    Link,
     Wallet,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -135,15 +133,13 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">
                             {daoDisplayName}
                         </p>
-                        <Clipboard className="w-full" copyValue={dao.address}>
-                            <Link
-                                className="truncate text-neutral-500 text-sm sm:text-base"
-                                href={addressLink}
-                                isExternal={true}
-                            >
-                                {addressUtils.truncateAddress(dao.address)}
-                            </Link>
-                        </Clipboard>
+                        <AddressOutput
+                            address={dao.address}
+                            className="w-full text-neutral-500 text-sm sm:text-base"
+                            copy={false}
+                            href={addressLink}
+                            isExternal={true}
+                        />
                     </div>
                 </div>
             </Navigation.Dialog>

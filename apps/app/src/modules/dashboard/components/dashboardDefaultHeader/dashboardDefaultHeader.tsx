@@ -58,7 +58,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
             }
             description={dao.description}
             stats={stats}
-            title={daoDisplayName}
+            title={dao.name?.trim() || dao.address}
         />
     );
 };

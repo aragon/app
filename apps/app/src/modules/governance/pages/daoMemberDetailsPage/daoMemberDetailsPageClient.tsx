@@ -236,7 +236,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                 }
                 breadcrumbs={pageBreadcrumbs}
                 description={ensRecords?.description ?? undefined}
-                title={memberName}
+                title={displayName ?? address}
             />
             <Page.Content>
                 <Page.Main>
@@ -286,18 +286,23 @@ export const DaoMemberDetailsPageClient: React.FC<
                     >
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                copyValue={address}
-                                link={{ href: addressUrl }}
+                                link={{
+                                    href: addressUrl,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.governance.daoMemberDetailsPage.aside.details.address',
                                 )}
                             >
-                                {truncatedAddress}
+                                {address}
                             </DefinitionList.Item>
                             {ensName && addressUrl && (
                                 <DefinitionList.Item
-                                    copyValue={ensName}
-                                    link={{ href: addressUrl }}
+                                    copyValue={address}
+                                    link={{
+                                        href: addressUrl,
+                                        isOnchainEntity: true,
+                                    }}
                                     term={t(
                                         'app.governance.daoMemberDetailsPage.aside.details.ens',
                                     )}

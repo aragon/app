@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    addressUtils,
     Button,
     ChainEntityType,
     DateFormat,
@@ -83,7 +82,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         adminPlugin != null && nonAdminProcessPlugins.length === 0;
 
     const daoEns = daoUtils.getDaoEns(dao);
-    const truncatedAddress = addressUtils.truncateAddress(dao.address);
 
     const daoLaunchedAt = isMounted
         ? formatterUtils.formatDate(dao.blockTimestamp * 1000, {
@@ -138,18 +136,23 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                copyValue={dao.address}
-                                link={{ href: daoAddressLink }}
+                                link={{
+                                    href: daoAddressLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.dashboard.daoDashboardPage.aside.details.address',
                                 )}
                             >
-                                {truncatedAddress}
+                                {dao.address}
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item
-                                    copyValue={daoEns}
-                                    link={{ href: daoAddressLink }}
+                                    copyValue={dao.address}
+                                    link={{
+                                        href: daoAddressLink,
+                                        isOnchainEntity: true,
+                                    }}
                                     term={t(
                                         'app.dashboard.daoDashboardPage.aside.details.ens',
                                     )}

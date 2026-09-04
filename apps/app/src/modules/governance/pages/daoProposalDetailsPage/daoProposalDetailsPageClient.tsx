@@ -3,7 +3,6 @@
 import {
     ActionSimulation,
     AlertCard,
-    addressUtils,
     CardCollapsible,
     ChainEntityType,
     DateFormat,
@@ -205,9 +204,6 @@ export const DaoProposalDetailsPageClient: React.FC<
           })
         : '-';
 
-    const creatorName =
-        creatorEnsName ?? addressUtils.truncateAddress(creator.address);
-
     const creatorLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
         id: creator.address,
@@ -406,13 +402,20 @@ export const DaoProposalDetailsPageClient: React.FC<
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                copyValue={creatorEnsName ?? creator.address}
-                                link={{ href: creatorLink }}
+                                copyValue={
+                                    creatorEnsName != null
+                                        ? creator.address
+                                        : undefined
+                                }
+                                link={{
+                                    href: creatorLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.governance.daoProposalDetailsPage.aside.details.creator',
                                 )}
                             >
-                                {creatorName}
+                                {creatorEnsName ?? creator.address}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 link={{

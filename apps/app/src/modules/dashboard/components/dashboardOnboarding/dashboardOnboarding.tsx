@@ -1,6 +1,6 @@
 'use client';
 
-import { addressUtils, invariant } from '@aragon/gov-ui-kit';
+import { AddressOutput, invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
@@ -41,9 +41,13 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
         network: dao.network,
     });
 
-    const displayName =
-        ensName ??
-        (address ? addressUtils.truncateAddress(address) : undefined);
+    const displayName = address ? (
+        <AddressOutput
+            address={address}
+            copy={false}
+            label={ensName ?? undefined}
+        />
+    ) : undefined;
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 

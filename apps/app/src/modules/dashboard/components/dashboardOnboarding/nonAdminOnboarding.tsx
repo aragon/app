@@ -5,9 +5,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface INonAdminOnboardingProps {
     /**
-     * Display name of the connected user (ENS or truncated address).
+     * Display name of the connected user (ENS name or address output).
      */
-    displayName?: string;
+    displayName?: React.ReactNode;
     /**
      * Name of the DAO.
      */

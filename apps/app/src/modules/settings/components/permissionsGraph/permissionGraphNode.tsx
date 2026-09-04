@@ -1,4 +1,10 @@
-import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
+import {
+    AddressOutput,
+    Avatar,
+    DaoAvatar,
+    InteractiveAncestorContext,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import type { NodeProps } from '@xyflow/react';
 import classNames from 'classnames';
 import { PermissionEntityExternalBrandId } from '@/shared/api/daoService';
@@ -66,7 +72,6 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
         kind === 'actor' && address.toLowerCase() === ANY_ADDR.toLowerCase();
     const isSelected = selectionRole != null || active === true;
     const subtitleKey = getPermissionNodeTypeKey(data);
-
     return (
         <div
             className={classNames(
@@ -89,28 +94,38 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                     !isSelected && 'border-neutral-300 shadow-neutral-sm',
                 )}
             >
-                <PermissionGraphHandles />
-                <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="truncate text-neutral-800">{label}</span>
-                    <span className="truncate text-neutral-500 text-sm">
-                        {t(subtitleKey)}
-                    </span>
-                </div>
-                {isDaoKind && (
-                    <DaoAvatar
-                        name={label}
-                        size="sm"
-                        src={avatarSrc ?? undefined}
-                    />
-                )}
-                {isSafeBody && <SafeAccountAvatar />}
-                {kind === 'plugin' && !isSafeBody && tag != null && (
-                    <Tag className="self-start" label={tag} variant="primary" />
-                )}
-                {isAnyoneActor && !isSafeBody && <MembersAvatarIcon />}
-                {kind === 'actor' && !isSafeBody && !isAnyoneActor && (
-                    <Avatar size="sm" />
-                )}
+                <InteractiveAncestorContext.Provider value={true}>
+                    <PermissionGraphHandles />
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                        <AddressOutput
+                            address={address}
+                            className="text-neutral-800"
+                            label={label}
+                        />
+                        <span className="truncate text-neutral-500 text-sm">
+                            {t(subtitleKey)}
+                        </span>
+                    </div>
+                    {isDaoKind && (
+                        <DaoAvatar
+                            name={label}
+                            size="sm"
+                            src={avatarSrc ?? undefined}
+                        />
+                    )}
+                    {isSafeBody && <SafeAccountAvatar />}
+                    {kind === 'plugin' && !isSafeBody && tag != null && (
+                        <Tag
+                            className="self-start"
+                            label={tag}
+                            variant="primary"
+                        />
+                    )}
+                    {isAnyoneActor && !isSafeBody && <MembersAvatarIcon />}
+                    {kind === 'actor' && !isSafeBody && !isAnyoneActor && (
+                        <Avatar size="sm" />
+                    )}
+                </InteractiveAncestorContext.Provider>
             </div>
         </div>
     );
