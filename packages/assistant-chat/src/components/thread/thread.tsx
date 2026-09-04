@@ -213,7 +213,7 @@ const EmailEscalation: React.FC = () => (
         {/* Styled after the gov-ui-kit Link (its own type scale is too large for this caption
             line): the app's plain link look, opening in a new tab so the chat stays put. */}
         <a
-            className="focus-ring-primary inline-flex items-center gap-0.5 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700"
+            className="focus-ring-primary inline-flex items-center gap-1.5 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700"
             href={supportEmailHref}
             rel="noopener noreferrer"
             target="_blank"

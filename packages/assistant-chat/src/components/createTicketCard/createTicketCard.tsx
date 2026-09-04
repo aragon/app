@@ -216,7 +216,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                             onClick={() =>
                                 respondToApproval({ approved: true })
                             }
-                            size="md"
+                            size="sm"
                             variant="primary"
                         >
                             {chatCopy.ticketCard.create}
@@ -230,7 +230,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                                     reason: 'The user dismissed the draft.',
                                 })
                             }
-                            size="md"
+                            size="sm"
                             variant="tertiary"
                         >
                             {chatCopy.ticketCard.dismiss}
