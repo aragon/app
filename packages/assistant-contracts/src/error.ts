@@ -10,6 +10,10 @@ export const assistantErrorCodeSchema = z.enum([
     'file_too_large',
     'file_limit',
     'unsupported_file',
+    // Server-to-server endpoints (/analysis/*): missing or wrong bearer secret.
+    'unauthorized',
+    // The caller speaks another version of the proposal-analysis contract than this deployment.
+    'contract_version_mismatch',
     'internal',
 ]);
 

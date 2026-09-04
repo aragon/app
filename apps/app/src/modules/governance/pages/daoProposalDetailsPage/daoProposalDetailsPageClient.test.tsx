@@ -55,6 +55,12 @@ jest.mock('../../components/proposalActionsItem', () => ({
     ),
 }));
 
+jest.mock('../../components/proposalAnalysisCard', () => ({
+    ProposalAnalysisCard: () => (
+        <div data-testid="proposal-analysis-card-mock" />
+    ),
+}));
+
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
     const useProposalActionsSpy = jest.spyOn(

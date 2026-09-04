@@ -7,7 +7,8 @@ export type IAssistantStep =
     | 'removeFile'
     | 'transferFiles'
     | 'cleanupBlobs'
-    | 'rateLimit';
+    | 'rateLimit'
+    | 'analyzeProposal';
 
 export type IRefusalReason =
     | 'off_topic'
@@ -32,6 +33,10 @@ export interface IStepLogEntry {
     // Model stop reason ('stop', 'length', 'tool-calls', …): a 'length' means the reply or the
     // tool arguments were truncated before completing.
     finishReason?: string;
+    // Proposal analysis: the final severity code and the intent verdict — categories, never the
+    // report text.
+    severity?: string;
+    verdict?: string;
     // Error name/code only, never a message that could carry user content.
     error?: string;
 }

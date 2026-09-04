@@ -48,6 +48,34 @@ const toStreamResult = (
     }),
 });
 
+// Mock analysis model: answers one generateObject call with `object` serialized as the text
+// content (the SDK parses and validates it against the report schema), or throws `error` to
+// simulate an upstream failure.
+export const createMockAnalysisModel = (params: {
+    object?: unknown;
+    error?: Error;
+    modelId?: string;
+}) => {
+    const { object, error, modelId = 'mock-analysis-model' } = params;
+
+    return new MockLanguageModelV4({
+        modelId,
+        doGenerate: error
+            ? () => {
+                  throw error;
+              }
+            : {
+                  content: [
+                      { type: 'text' as const, text: JSON.stringify(object) },
+                  ],
+                  finishReason: { unified: 'stop' as const, raw: undefined },
+                  usage: buildMockUsage(),
+                  warnings: [],
+                  response: { modelId },
+              },
+    });
+};
+
 // Mock chat agent: streams `streamedText`, optionally proposing a `toolCall` (the route gates it
 // behind approval), or throws `streamError` to simulate an upstream failure.
 export const createMockChatModel = (params: {

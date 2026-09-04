@@ -47,5 +47,5 @@ jobs:
       vault-prefix: "kv_assistant"
       patch-root-directory: false
       # VERCEL_ENV=production maps correctly at runtime; only the secrets need lifting.
-      runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"
+      runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET ANALYSIS_API_SECRET SENTRY_DSN"
       upload-sentry-source-maps: true

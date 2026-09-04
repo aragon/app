@@ -13,6 +13,8 @@ export interface IAppDependencies {
     getSessionStore: () => ISessionStore;
     getLinear: () => ILinearGateway;
     getChatModel: () => LanguageModel;
+    // Proposal analysis runs on its own model (different criteria than the chat agent, see config).
+    getAnalysisModel: () => LanguageModel;
     getBlobStore: () => IBlobStore;
 }
 

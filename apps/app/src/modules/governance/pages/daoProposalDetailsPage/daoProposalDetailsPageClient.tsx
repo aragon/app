@@ -43,6 +43,7 @@ import {
     useProposalBySlug,
 } from '../../api/governanceService';
 import { ProposalActionsItem } from '../../components/proposalActionsItem';
+import { ProposalAnalysisCard } from '../../components/proposalAnalysisCard';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -441,6 +442,9 @@ export const DaoProposalDetailsPageClient: React.FC<
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
+                    {proposal.hasActions && (
+                        <ProposalAnalysisCard proposalId={proposal.id} />
+                    )}
                     {resources.length > 0 && (
                         <Page.AsideCard
                             title={t(
