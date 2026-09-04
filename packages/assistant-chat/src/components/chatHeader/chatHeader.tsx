@@ -3,10 +3,9 @@ import {
     type ICreateTicketToolInput,
     type ICreateTicketToolOutput,
 } from '@aragon/assistant-contracts';
-import { Heading, Icon, IconType } from '@aragon/gov-ui-kit';
+import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import { type AssistantState, useAuiState } from '@assistant-ui/react';
 import { chatCopy } from '../../copy';
-import { TooltipIconButton } from '../tooltipIconButton';
 import { AragonMark } from './aragonMark';
 
 export interface IChatHeaderProps {
@@ -96,14 +95,15 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
     // padding around a 50px control row, plus the 1px rule): anything else meets the bar's bottom
     // border in a step at the panel edge.
     return (
-        <div className="flex min-h-[91px] flex-none items-center gap-3.5 border-neutral-100 border-b pr-3.5 pl-5">
+        <div className="flex h-[91px] flex-none items-center gap-3.5 border-neutral-100 border-b pr-3.5 pl-5">
             {isViewingRequests ? (
-                <TooltipIconButton
+                <Button
+                    aria-label={chatCopy.header.back}
+                    iconLeft={IconType.CHEVRON_LEFT}
                     onClick={onBack}
-                    tooltip={chatCopy.header.back}
-                >
-                    <Icon icon={IconType.CHEVRON_LEFT} size="sm" />
-                </TooltipIconButton>
+                    size="sm"
+                    variant="tertiary"
+                />
             ) : (
                 <AragonMark />
             )}
@@ -113,26 +113,28 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
                 </Heading>
                 <p className="truncate text-neutral-400 text-xs">{context}</p>
             </div>
-            <div className="ml-auto flex items-center gap-1">
+            <div className="ml-auto flex items-center gap-2">
                 {/* One conversation can file several tickets, so a fresh start is always offered —
                     it rotates the session and clears the transcript. Hidden on an already-empty
                     chat where it would do nothing. */}
                 {!(isEmpty || isViewingRequests) && (
-                    <TooltipIconButton
+                    <Button
+                        aria-label={chatCopy.header.startNewChat}
+                        iconLeft={IconType.PLUS}
                         onClick={onNewChat}
-                        tooltip={chatCopy.header.startNewChat}
-                    >
-                        <Icon icon={IconType.PLUS} size="sm" />
-                    </TooltipIconButton>
+                        size="sm"
+                        variant="tertiary"
+                    />
                 )}
                 {/* The chevron points at the panel edge the chat tucks away to; the navigation
                     trigger brings it back. */}
-                <TooltipIconButton
+                <Button
+                    aria-label={chatCopy.header.collapse}
+                    iconLeft={IconType.CHEVRON_RIGHT}
                     onClick={onClose}
-                    tooltip={chatCopy.header.collapse}
-                >
-                    <Icon icon={IconType.CHEVRON_RIGHT} size="sm" />
-                </TooltipIconButton>
+                    size="sm"
+                    variant="tertiary"
+                />
             </div>
         </div>
     );

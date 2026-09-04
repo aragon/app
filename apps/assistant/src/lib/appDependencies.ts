@@ -12,7 +12,9 @@ export interface IAppDependencies {
     getRedis: () => Redis;
     getSessionStore: () => ISessionStore;
     getLinear: () => ILinearGateway;
-    getChatModel: () => LanguageModel;
+    // Takes the Gateway model id so a stalled turn can restart on a fallback (see modelFailover);
+    // omitting it resolves the configured agent model.
+    getChatModel: (model?: string) => LanguageModel;
     getBlobStore: () => IBlobStore;
 }
 

@@ -19,14 +19,15 @@ import { useEffect } from 'react';
 import { chatCopy } from '../../copy';
 import { appendRequestToHistory } from '../../requests';
 
-// The top margin separates the card from the assistant text preceding it in the same message.
+// The vertical margins separate the card from the assistant text around it in the same message —
+// the model narrates both into a draft and past a result, so text can sit on either side.
 const cardClassName =
-    'mt-3 flex w-full flex-col gap-3.5 rounded-xl border border-neutral-100 bg-neutral-0 p-5 shadow-neutral-md first:mt-0';
+    'my-3 flex w-full flex-col gap-3.5 rounded-xl border border-neutral-100 bg-neutral-0 p-5 shadow-neutral-md first:mt-0 last:mb-0';
 
 // A draft nobody acted on is not an event worth a card: it collapses into a quiet line so the
 // transcript stays readable while still reading honestly.
 const spentNoteClassName =
-    'mt-3 text-center text-neutral-400 text-xs leading-normal first:mt-0';
+    'my-3 text-center text-neutral-400 text-xs leading-normal first:mt-0 last:mb-0';
 
 // The ticket draft the model assembled, rendered as an approval card in the transcript. It walks
 // four states: the draft streaming in, the draft awaiting the user's Create/Dismiss decision, the
@@ -51,14 +52,14 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         if (result != null && !isError) {
             appendRequestToHistory({
                 identifier: result.identifier,
-                url: result.url,
                 summary: args.title ?? '',
                 createdAt: new Date().toISOString(),
             });
         }
     }, [result, isError, args.title]);
 
-    // Terminal success: the created ticket, linked out. The request history keeps its own copy.
+    // Terminal success: the ticket reference to quote in follow-ups. Deliberately not linked —
+    // the ticket lives in a Linear workspace the user has no access to.
     if (result != null && !isError) {
         return (
             <div className={cardClassName}>
@@ -72,18 +73,14 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         {chatCopy.ticketCard.successTitle}
                     </Heading>
                 </div>
-                <a
-                    className="flex items-center gap-2"
-                    href={result.url}
-                    rel="noreferrer"
-                    target="_blank"
-                >
+                <div className="flex items-center gap-2">
                     <Tag label={result.identifier} variant="primary" />
-                    <span className="flex items-center gap-1 text-primary-400 text-sm underline">
-                        {chatCopy.ticketCard.viewTicket}
-                        <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
-                    </span>
-                </a>
+                    {args.title != null && (
+                        <span className="min-w-0 truncate text-neutral-500 text-sm">
+                            {args.title}
+                        </span>
+                    )}
+                </div>
                 <p className="text-neutral-500 text-sm leading-normal">
                     {chatCopy.ticketCard.contactUpdates}
                 </p>
@@ -219,7 +216,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                             onClick={() =>
                                 respondToApproval({ approved: true })
                             }
-                            size="md"
+                            size="sm"
                             variant="primary"
                         >
                             {chatCopy.ticketCard.create}
@@ -233,7 +230,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                                     reason: 'The user dismissed the draft.',
                                 })
                             }
-                            size="md"
+                            size="sm"
                             variant="tertiary"
                         >
                             {chatCopy.ticketCard.dismiss}
