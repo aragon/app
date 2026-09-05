@@ -3161,6 +3161,105 @@
           "entity": "Votes"
         }
       },
+      "safeMultisig": {
+        "safeMultisigConfirmSignatureDialog": {
+          "approval": {
+            "action": "Approve",
+            "description": "Your confirmation is added to the Safe transaction that approves this proposal for this body. It takes effect once enough owners have confirmed.",
+            "title": "Approve proposal"
+          },
+          "bundledExecution": "Your confirmation reaches the Safe's threshold, so the Safe transaction is executed straight after it. Your wallet will ask twice: first to confirm, which is free, then to execute onchain, which costs gas.",
+          "cancel": "Cancel",
+          "details": {
+            "network": "Network",
+            "nonce": "Safe nonce",
+            "proposal": "Proposal",
+            "safe": "Safe",
+            "signingAs": "Signing as"
+          },
+          "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
+          "veto": {
+            "action": "Veto",
+            "description": "Your confirmation is added to the Safe transaction that vetoes this proposal for this body. It takes effect once enough owners have confirmed.",
+            "title": "Veto proposal"
+          }
+        },
+        "safeMultisigGovernanceSettings": {
+          "currentNonce": "Current Safe nonce",
+          "execution": "Execution",
+          "executionValue": "Any owner, once threshold is met",
+          "safe": "Safe",
+          "strategy": "Strategy",
+          "strategyValue": "Safe multisig",
+          "threshold": "Threshold",
+          "thresholdValue": "{{min}} of {{max}} owners",
+          "unknownVersion": "Unknown",
+          "version": "Safe version"
+        },
+        "safeMultisigProposalVotingBreakdown": {
+          "error": "Safe state could not be loaded. Try again later.",
+          "executed": "Safe transaction executed",
+          "loading": "Loading Safe state\u2026",
+          "rateLimited": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. This retries on its own.",
+          "rateLimitedRetry": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. Retrying in about {{seconds}} seconds."
+        },
+        "safeMultisigProposalVotingSummary": {
+          "approvalLabel": "approvals",
+          "approved": "approved",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "ownerCount": "of {{count}} owners",
+          "replaced": "replaced",
+          "vetoLabel": "veto",
+          "vetoed": "vetoed"
+        },
+        "safeMultisigSubmitVote": {
+          "approve": "Approve proposal",
+          "approveAndExecute": "Approve and execute",
+            "approveOnly": "Approve only",
+          "approved": "Approved",
+          "awaitingExecution": "The Safe's threshold is met. This body's vote only counts once the Safe transaction is executed, and Safe transactions have no deadline - so that can still happen at any time.",
+          "awaitingIndexing": "Executed onchain. Waiting for indexing to complete.",
+          "error": "The Safe action could not be completed. Try again.",
+          "executeSafeTransaction": "Execute Safe transaction",
+          "finalizing": "Finalizing",
+          "indexingDelayed": "The Safe transaction executed onchain but is still not indexed. The result will appear once indexing catches up.",
+            "moreActions": "More approval options",
+          "nonceQueued": "Waiting on {{count}} earlier transaction(s) in the Safe queue. A Safe executes in nonce order and each confirmation is tied to its transaction's place in that order, so this one cannot be moved ahead. Owners can review the queue in Safe.",
+          "nonceShared": "Another queued Safe transaction holds this same nonce. Only one of them can execute — whichever goes first voids the other, along with its confirmations.",
+          "ownerRequired": "Connect an owner wallet for this Safe to continue.",
+          "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. Its confirmations no longer apply.",
+          "requeueSafeTransaction": "Re-queue Safe transaction",
+          "retry": "Retry",
+          "stageExpired": "This stage was not advanced in time, so the proposal has expired. A vote can no longer change its outcome.",
+          "stageExpiredQueued": "This stage expired before the Safe transaction was executed. Safe transactions have no deadline, so it can still be executed, but it will have no bearing on the proposal's outcome.",
+          "unknownVersion": "unknown",
+          "unreachable": "Safe{Wallet} is unreachable. Confirmations shown may be incomplete.",
+          "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
+          "veto": "Veto proposal",
+          "vetoAndExecute": "Veto and execute",
+            "vetoOnly": "Veto only",
+          "vetoed": "Vetoed",
+          "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners.",
+          "windowClosed": "This shows as rejected because the voting window closed before approval was reached, but the stage has not expired and can still advance. Safe transactions have no deadline either, so confirming and executing still records this body's vote and still counts."
+        },
+        "safeMultisigVoteList": {
+          "empty": {
+            "description": "Owner confirmations appear here as they are collected.",
+            "heading": "No confirmations yet"
+          },
+          "entity": "Confirmations",
+          "error": {
+            "description": "The Safe confirmations could not be loaded. Try again later.",
+            "heading": "Confirmations unavailable"
+          },
+          "settled": {
+            "action": "View in Safe",
+            "description": "The Safe serves confirmations for queued transactions only. This one has executed, so its confirmations live in the Safe's own history.",
+            "heading": "Confirmations no longer listed"
+          }
+        }
+      },
       "spp": {
         "advanceStageDialog": {
           "button": {
@@ -3235,7 +3334,6 @@
           "approve": "Approve proposal",
           "approved": "Approved",
           "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
-          "helpTextSafe": "To approve this proposal from the Safe{Wallet} UI, add Aragon as a custom Safe App or connect directly with a WalletConnect QR code.",
           "veto": "Veto proposal",
           "vetoed": "Vetoed"
         },
@@ -3620,6 +3718,85 @@
             "title": "Wrap tokens",
             "transactionInfoTitle": "Wrap {{symbol}}"
           }
+        }
+      }
+    },
+    "safe": {
+      "safeAccountPage": {
+        "aside": {
+          "details": {
+            "address": "Address",
+            "chain": "Chain",
+            "nonce": "Nonce",
+            "threshold": "Threshold",
+            "thresholdValue": "{{threshold}} of {{owners}}",
+            "title": "Details",
+            "unknown": "Unknown",
+            "version": "Version"
+          }
+        },
+        "header": {
+          "description": "A read-only view of this Safe: its owners, signing threshold, contract version, nonce, queued transactions and balances."
+        },
+        "main": {
+          "assets": {
+            "title": "Assets"
+          },
+          "owners": {
+            "title": "Owners"
+          },
+          "pending": {
+            "description": "Transactions waiting to be executed. Transactions below the current nonce can never execute and are not shown.",
+            "title": "Pending transactions"
+          }
+        },
+        "stats": {
+          "nonce": "Nonce",
+          "owners": "Owners",
+          "threshold": "Threshold",
+          "thresholdSuffix": "of {{owners}}"
+        },
+        "unsupportedNetwork": {
+          "description": "Safe does not run a transaction service on {{network}}, so this Safe cannot be read here.",
+          "heading": "Not supported on this network"
+        }
+      },
+      "safeBalanceList": {
+        "empty": {
+          "description": "This Safe does not hold any assets yet.",
+          "heading": "No assets"
+        },
+        "entity": "Assets",
+        "error": {
+          "description": "The balances of this Safe could not be loaded. Please try again later.",
+          "heading": "Unable to load assets"
+        }
+      },
+      "safeOwnerList": {
+        "empty": {
+          "description": "No owners were reported for this Safe.",
+          "heading": "No owners"
+        },
+        "entity": "Owners",
+        "error": {
+          "description": "The owners of this Safe could not be loaded. Please try again later.",
+          "heading": "Unable to load owners"
+        }
+      },
+      "safePendingTransactionList": {
+        "empty": {
+          "description": "This Safe has no transactions waiting to be executed.",
+          "heading": "No pending transactions"
+        },
+        "entity": "Transactions",
+        "error": {
+          "description": "The pending transactions of this Safe could not be loaded. Please try again later.",
+          "heading": "Unable to load pending transactions"
+        },
+        "item": {
+          "confirmations": "{{count}} of {{required}} confirmations",
+          "nonce": "Nonce {{nonce}}",
+          "submittedOn": "Submitted {{date}}"
         }
       }
     },

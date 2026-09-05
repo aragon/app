@@ -1,7 +1,10 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-// biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsName (centralises chainId and cache)
-import { useEnsName as useWagmiEnsName } from 'wagmi';
+import {
+    type UseEnsNameReturnType,
+    // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsName (centralises chainId and cache)
+    useEnsName as useWagmiEnsName,
+} from 'wagmi';
 import { memberRegistrySubdomainSuffix } from '../constants/contracts';
 import { ensCache, ensChainId } from '../constants/ensConfig';
 import { logEnsError } from '../utils/logEnsError';
@@ -16,6 +19,13 @@ export interface IUseEnsNameOptions {
      */
     stripAragonRegistrySuffix?: boolean;
 }
+
+/**
+ * Result of {@link useEnsName}: wagmi's query result, with `data` narrowed by the
+ * `stripAragonRegistrySuffix` option. Named here so consumers and tests state the contract instead
+ * of reaching back into the hook's inferred shape.
+ */
+export type IUseEnsNameReturn = UseEnsNameReturnType;
 
 /**
  * Resolves the primary ENS name for a given Ethereum address.

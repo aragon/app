@@ -4,11 +4,15 @@ import {
     ProposalVotingTab,
 } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppProposal, ISppStage, ISppStagePlugin } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppStageStatus } from './sppStageStatus';
 import { SppVotingTerminalBodyContent } from './sppVotingTerminalBodyContent';
+
+const hiddenExternalTabs = [ProposalVotingTab.VOTES];
 
 export interface ISppVotingTerminalStageBodyContentProps {
     /**
@@ -43,6 +47,20 @@ export const SppVotingTerminalStageBodyContent: React.FC<
     const status = sppStageUtils.getStageStatus(proposal, stage);
 
     const isExternalPlugin = plugin.interfaceType == null;
+
+    // The tab set is a per-body-type policy, so it is asked of the registry rather than branched on
+    // here. Nothing registered means the generic external fallback, which has no indexed
+    // sub-proposal and so no votes to show.
+    const getHiddenTabs = pluginRegistryUtils.getSlotFunction<
+        undefined,
+        ProposalVotingTab[]
+    >({
+        slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
+        pluginId: sppStageUtils.getBodyPluginId(plugin, proposal.network),
+    });
+    const hideTabs =
+        getHiddenTabs?.(undefined) ??
+        (isExternalPlugin ? hiddenExternalTabs : undefined);
     const defaultName =
         pluginEns ?? addressUtils.truncateAddress(plugin.address);
     const pluginName =
@@ -54,7 +72,7 @@ export const SppVotingTerminalStageBodyContent: React.FC<
                 isExternalPlugin ? brandedExternals[plugin.brandId] : undefined
             }
             bodyId={plugin.address}
-            hideTabs={isExternalPlugin ? [ProposalVotingTab.VOTES] : undefined}
+            hideTabs={hideTabs}
             key={plugin.address}
             name={pluginName}
             status={status}

@@ -89,34 +89,45 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
                             id={plugin.address}
                             key={plugin.address}
                         >
-                            {plugin.interfaceType != null && (
-                                <PluginSingleComponent
-                                    isExecuted={proposal.executed.status}
-                                    isVeto={sppStageUtils.isVetoBody(plugin)}
-                                    name={plugin.name}
-                                    pluginId={plugin.interfaceType}
-                                    proposal={sppStageUtils.getBodySubProposal(
-                                        proposal,
-                                        plugin.address,
-                                        stage.stageIndex,
-                                    )}
-                                    slotId={
-                                        GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
-                                    }
-                                />
-                            )}
-                            {plugin.interfaceType == null && (
-                                <SppVotingTerminalMultiBodySummaryDefault
-                                    body={plugin.address}
-                                    canVote={sppStageUtils.canBodyVote(
-                                        proposal,
-                                        stage,
-                                        plugin,
-                                    )}
-                                    proposal={proposal}
-                                    stage={stage}
-                                />
-                            )}
+                            <PluginSingleComponent
+                                body={
+                                    plugin.interfaceType === undefined
+                                        ? plugin.address
+                                        : undefined
+                                }
+                                canVote={sppStageUtils.canBodyVote(
+                                    proposal,
+                                    stage,
+                                    plugin,
+                                )}
+                                Fallback={
+                                    SppVotingTerminalMultiBodySummaryDefault
+                                }
+                                isExecuted={proposal.executed.status}
+                                isVeto={sppStageUtils.isVetoBody(plugin)}
+                                name={
+                                    plugin.interfaceType === undefined
+                                        ? undefined
+                                        : plugin.name
+                                }
+                                pluginId={sppStageUtils.getBodyPluginId(
+                                    plugin,
+                                    proposal.network,
+                                )}
+                                proposal={
+                                    plugin.interfaceType === undefined
+                                        ? proposal
+                                        : sppStageUtils.getBodySubProposal(
+                                              proposal,
+                                              plugin.address,
+                                              stage.stageIndex,
+                                          )
+                                }
+                                slotId={
+                                    GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
+                                }
+                                stage={stage}
+                            />
                         </ProposalVoting.BodySummaryListItem>
                     ))}
                 </ProposalVoting.BodySummaryList>

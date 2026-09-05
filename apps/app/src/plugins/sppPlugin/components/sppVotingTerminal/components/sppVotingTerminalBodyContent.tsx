@@ -16,6 +16,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
@@ -53,7 +54,31 @@ export const SppVotingTerminalBodyContent: React.FC<
 > = (props) => {
     const { plugin, daoId, subProposal, stage, proposal, children } = props;
 
-    const canVote = sppStageUtils.canBodyVote(proposal, stage, plugin);
+    const { network } = daoUtils.parseDaoId(daoId);
+    const bodyPluginId = sppStageUtils.getBodyPluginId(plugin, network);
+
+    /**
+     * Whether this body type can still be asked to act after its voting window closed. Asked of the
+     * registry, because it is a property of the body and not of the stage: a body that votes through
+     * an external queue has no say in when that queue clears, and `reportProposalResult` carries no
+     * deadline - it records while the stage is the proposal's current one.
+     *
+     * What is then offered is the body's own call. It knows whether anything is pending and whether
+     * the stage can still advance, so it can explain an expired stage instead of showing an action.
+     */
+    const votesAfterWindow =
+        pluginRegistryUtils.getSlotFunction<undefined, boolean>({
+            slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+            pluginId: bodyPluginId,
+        })?.(undefined) === true;
+
+    const canActLate =
+        votesAfterWindow &&
+        stage.stageIndex === proposal.stageIndex &&
+        !proposal.executed.status;
+
+    const canVote =
+        sppStageUtils.canBodyVote(proposal, stage, plugin) || canActLate;
 
     const isExternalBody = plugin.interfaceType == null;
     // Approve/veto is a per-body property: a single stage can mix approving and
@@ -74,7 +99,7 @@ export const SppVotingTerminalBodyContent: React.FC<
             pluginAddress: plugin.address,
         },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.interfaceType ?? 'external',
+        pluginId: bodyPluginId,
         fallback: useSppGovernanceSettingsDefault,
     });
 
@@ -83,7 +108,6 @@ export const SppVotingTerminalBodyContent: React.FC<
         address: plugin.address,
         settings,
     });
-    const { network } = daoUtils.parseDaoId(daoId);
 
     const voteListParams = {
         queryParams: {
@@ -116,9 +140,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                         canVote={canVote}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}
                         isVeto={isVeto}
-                        pluginId={
-                            isExternalBody ? 'external' : plugin.interfaceType
-                        }
+                        pluginId={bodyPluginId}
                         proposal={isExternalBody ? proposal : subProposal}
                         slotId={
                             GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN
@@ -128,11 +150,6 @@ export const SppVotingTerminalBodyContent: React.FC<
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
-                                    brandId={
-                                        isExternalBody
-                                            ? plugin.brandId
-                                            : undefined
-                                    }
                                     daoId={daoId}
                                     externalAddress={
                                         isExternalBody
@@ -141,11 +158,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                                     }
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                     isVeto={isVeto}
-                                    pluginId={
-                                        isExternalBody
-                                            ? 'external'
-                                            : plugin.interfaceType
-                                    }
+                                    pluginId={bodyPluginId}
                                     proposal={
                                         isExternalBody
                                             ? proposal
@@ -160,13 +173,27 @@ export const SppVotingTerminalBodyContent: React.FC<
                             {children}
                         </div>
                     </PluginSingleComponent>
-                    {processedSubProposal && (
+                    {/* An indexed sub-proposal has indexed votes; a body without one can still have
+                        its own notion of votes, so the slot answers for it. Nothing registered means
+                        no votes to show, and the tab-policy slot has already hidden the tab. */}
+                    {processedSubProposal != null ? (
                         <ProposalVoting.Votes>
                             <VoteList
                                 daoId={daoId}
                                 initialParams={voteListParams}
                                 isVeto={isVeto}
                                 pluginAddress={plugin.address}
+                            />
+                        </ProposalVoting.Votes>
+                    ) : (
+                        <ProposalVoting.Votes>
+                            <PluginSingleComponent
+                                body={plugin.address}
+                                isVeto={isVeto}
+                                pluginId={bodyPluginId}
+                                proposal={proposal}
+                                slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+                                stage={stage}
                             />
                         </ProposalVoting.Votes>
                     )}
