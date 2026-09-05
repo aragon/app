@@ -139,29 +139,7 @@ describe('safeMultisigProposal utils', () => {
         });
     });
 
-    describe('getExecutableTransactions', () => {
-        it('returns a single executable transaction for a pair queued above the current nonce', () => {
-            const transactions = [
-                generateSafeMultisigTransaction({
-                    nonce: '13',
-                    safeTxHash: '0xnext',
-                }),
-                generateSafeMultisigTransaction({
-                    nonce: '14',
-                    safeTxHash: '0xlater',
-                }),
-            ];
-
-            const result = safeMultisigProposalUtils.getExecutableTransactions({
-                transactions,
-                currentNonce: '13',
-            });
-
-            expect(result.map(({ safeTxHash }) => safeTxHash)).toEqual([
-                '0xnext',
-            ]);
-        });
-
+    describe('getNonceCompetitors', () => {
         it('surfaces both candidates of a same-nonce collision as competitors', () => {
             const transaction = generateSafeMultisigTransaction({
                 nonce: '13',
@@ -174,11 +152,10 @@ describe('safeMultisigProposal utils', () => {
             const transactions = [transaction, competitor];
 
             expect(
-                safeMultisigProposalUtils.getExecutableTransactions({
-                    transactions,
-                    currentNonce: '13',
-                }),
-            ).toHaveLength(2);
+                safeMultisigProposalUtils
+                    .getNonceCompetitors({ transactions, transaction })
+                    .map(({ safeTxHash }) => safeTxHash),
+            ).toEqual(['0xvariantB']);
             expect(
                 safeMultisigProposalUtils.hasNonceCompetition({
                     transactions,
@@ -188,6 +165,8 @@ describe('safeMultisigProposal utils', () => {
         });
 
         it('marks the sibling of an executed transaction as dead once the nonce is consumed', () => {
+            // A reverted execution still consumes its nonce, so the sibling is unexecutable however
+            // completely it was confirmed.
             const executed = generateSafeMultisigTransaction({
                 nonce: '47',
                 safeTxHash: '0xreverted',
@@ -202,12 +181,16 @@ describe('safeMultisigProposal utils', () => {
                 ),
             });
 
+            // The rival was a genuine competitor for the slot, and winning it stranded the sibling:
+            // a reverted execution consumes the nonce just as a successful one does.
             expect(
-                safeMultisigProposalUtils.getExecutableTransactions({
-                    transactions: [executed, sibling],
-                    currentNonce: '48',
-                }),
-            ).toEqual([]);
+                safeMultisigProposalUtils
+                    .getNonceCompetitors({
+                        transactions: [executed, sibling],
+                        transaction: sibling,
+                    })
+                    .map(({ safeTxHash }) => safeTxHash),
+            ).toEqual(['0xreverted']);
             expect(
                 safeMultisigProposalUtils.getTransactionState({
                     transaction: sibling,

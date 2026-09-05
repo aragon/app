@@ -119,22 +119,6 @@ class SafeMultisigProposalUtils {
         );
     };
 
-    /**
-     * Transactions that can execute next: the live transactions sitting on the Safe's current
-     * nonce. More than one means they compete — executing either one permanently kills the rest.
-     */
-    getExecutableTransactions = (
-        params: ISafeTransactionListParams,
-    ): ISafeMultisigTransaction[] => {
-        const { transactions, currentNonce } = params;
-
-        return transactions.filter(
-            (transaction) =>
-                !transaction.isExecuted &&
-                BigInt(transaction.nonce) === BigInt(currentNonce),
-        );
-    };
-
     getNonceCompetitors = (
         params: ISafeNonceCompetitorsParams,
     ): ISafeMultisigTransaction[] => {

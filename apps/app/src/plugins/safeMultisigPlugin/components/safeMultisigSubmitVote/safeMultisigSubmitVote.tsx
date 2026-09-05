@@ -640,6 +640,19 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         });
     }
 
+    /**
+     * Two transactions on one nonce are mutually exclusive: whichever executes first consumes the
+     * nonce and voids the other, however completely it was signed. Worth saying before the
+     * signatures are spent - afterwards the report is already superseded and only re-queueable.
+     */
+    if (liveReport?.hasNonceCompetition === true && !hasSettled) {
+        alerts.push({
+            key: 'nonceShared',
+            variant: 'warning',
+            message: t(`${translationKey}.nonceShared`),
+        });
+    }
+
     if (isSuperseded) {
         alerts.push({
             key: 'replaced',

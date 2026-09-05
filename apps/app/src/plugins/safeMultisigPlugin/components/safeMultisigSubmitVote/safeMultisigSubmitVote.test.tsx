@@ -491,6 +491,39 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('warns while another queued transaction still holds the same nonce', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({
+                    confirmationsRequired: 2,
+                    confirmations: [generateSafeConfirmation({ owner })],
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: true,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+        });
+
+        render(createTestComponent());
+
+        // Said while the collision is still live: once the rival executes this report is already
+        // superseded, and the signatures it competed for are spent.
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceShared',
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('withholds execution while earlier Safe transactions are still ahead', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,

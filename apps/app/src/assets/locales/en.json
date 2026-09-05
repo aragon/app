@@ -3226,6 +3226,7 @@
           "indexingDelayed": "The Safe transaction executed onchain but is still not indexed. The result will appear once indexing catches up.",
             "moreActions": "More approval options",
           "nonceQueued": "Waiting on {{count}} earlier transaction(s) in the Safe queue. A Safe executes in nonce order and each confirmation is tied to its transaction's place in that order, so this one cannot be moved ahead. Owners can review the queue in Safe.",
+          "nonceShared": "Another queued Safe transaction holds this same nonce. Only one of them can execute — whichever goes first voids the other, along with its confirmations.",
           "ownerRequired": "Connect an owner wallet for this Safe to continue.",
           "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. Its confirmations no longer apply.",
           "requeueSafeTransaction": "Re-queue Safe transaction",
