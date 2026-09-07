@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation-original';
+import { notFound } from 'next/navigation-server';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { notFoundUtils } from './notFoundUtils';
 
-jest.mock('next/navigation-original', () => ({
+jest.mock('next/navigation-server', () => ({
     notFound: jest.fn(() => {
         throw new Error('NEXT_HTTP_ERROR_FALLBACK;404');
     }),

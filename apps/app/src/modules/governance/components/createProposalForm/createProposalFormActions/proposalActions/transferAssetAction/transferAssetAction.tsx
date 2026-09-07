@@ -10,7 +10,6 @@ import {
     erc20Abi,
     formatUnits,
     type Hex,
-    parseUnits,
     zeroAddress,
 } from 'viem';
 import { useBalance, useReadContract } from 'wagmi';
@@ -28,6 +27,7 @@ import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps
@@ -155,9 +155,10 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         ? receiver?.address
         : zeroAddress;
 
-    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
-    // (e.g. when the user clears the amount field).
-    const weiAmount = parseUnits(amount || '0', tokenDecimals);
+    // Tolerant of what the field can hold: an empty value (the user cleared the field) and
+    // scientific notation (an amount that went through a Number conversion, e.g. "5.6e-10"),
+    // both of which make viem's parseUnits throw InvalidDecimalNumberError mid-render.
+    const weiAmount = bigIntUtils.parseUnits(amount, tokenDecimals);
 
     // Initialize asset field for transferActionLocked case
     useEffect(() => {

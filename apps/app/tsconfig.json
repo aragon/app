@@ -23,6 +23,9 @@
             ],
             "next/navigation-original": [
                 "./node_modules/next/navigation"
+            ],
+            "next/navigation-server": [
+                "./node_modules/next/dist/api/navigation.react-server"
             ]
         },
         "plugins": [

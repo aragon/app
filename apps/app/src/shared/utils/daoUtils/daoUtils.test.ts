@@ -1,4 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+import { notFound } from 'next/navigation-server';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import {
     daoService,
     Network,
@@ -15,7 +17,14 @@ import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { daoUtils } from './daoUtils';
 
+jest.mock('next/navigation-server', () => ({
+    notFound: jest.fn(() => {
+        throw new Error('NEXT_HTTP_ERROR_FALLBACK;404');
+    }),
+}));
+
 describe('dao utils', () => {
+    const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const getDaoByEnsSpy = jest.spyOn(daoService, 'getDaoByEns');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
@@ -27,6 +36,7 @@ describe('dao utils', () => {
     const getPluginsSpy = jest.spyOn(pluginRegistryUtils, 'getPlugins');
 
     afterEach(() => {
+        notFoundMock.mockClear();
         getDaoSpy.mockReset();
         getDaoByEnsSpy.mockReset();
         cidToSrcSpy.mockReset();
@@ -950,19 +960,31 @@ describe('dao utils', () => {
     });
 
     describe('resolveDaoId', () => {
+        const daoAddress = '0x31bBD7a242A38372DE92CA304fE29C12C90A382C';
+
         it('returns the daoId when the id is an address', async () => {
-            const addressOrEns = '0x1234';
             const network = Network.ETHEREUM_MAINNET;
-            const params = { addressOrEns, network };
-            const expectedDaoId = `${network}-${addressOrEns}`;
+            const params = { addressOrEns: daoAddress, network };
+            const expectedDaoId = `${network}-${daoAddress}`;
 
             const result = await daoUtils.resolveDaoId(params);
             expect(result).toEqual(expectedDaoId);
+            expect(notFoundMock).not.toHaveBeenCalled();
+        });
+
+        it('accepts a well-formed address regardless of its casing', async () => {
+            const network = Network.ETHEREUM_MAINNET;
+            const addressOrEns = daoAddress.toLowerCase();
+
+            const result = await daoUtils.resolveDaoId({
+                addressOrEns,
+                network,
+            });
+            expect(result).toEqual(`${network}-${addressOrEns}`);
         });
 
         it('returns the daoId when the id is an ENS name by resolving name to address', async () => {
             const addressOrEns = 'my-dao.dao.eth';
-            const daoAddress = '0x1234';
             const network = Network.ETHEREUM_MAINNET;
             const params = { addressOrEns, network };
             const expectedDaoId = `${network}-${daoAddress}`;
@@ -976,6 +998,70 @@ describe('dao utils', () => {
                 urlParams: { network, ens: addressOrEns },
             });
             expect(result).toEqual(expectedDaoId);
+        });
+
+        // The URL segments are attacker-controlled: injection payloads and mangled links must
+        // render the 404 page instead of reaching the backend and failing the render.
+        it.each([
+            [
+                'an injection payload in the address',
+                `${daoAddress}-1) OR 1=1--`,
+            ],
+            ['a truncated address', '0x1234'],
+            ['a plain word', 'dashboard'],
+        ])(
+            'renders the 404 page without calling the backend for %s',
+            async (_, addressOrEns) => {
+                const params = {
+                    addressOrEns,
+                    network: Network.ETHEREUM_MAINNET,
+                };
+                await expect(daoUtils.resolveDaoId(params)).rejects.toThrow(
+                    'NEXT_HTTP_ERROR_FALLBACK;404',
+                );
+                expect(notFoundMock).toHaveBeenCalled();
+                expect(getDaoByEnsSpy).not.toHaveBeenCalled();
+            },
+        );
+
+        it('renders the 404 page when the network is not supported', async () => {
+            const params = {
+                addressOrEns: 'my-dao.dao.eth',
+                network: '(select 1 from DUAL)' as Network,
+            };
+            await expect(daoUtils.resolveDaoId(params)).rejects.toThrow(
+                'NEXT_HTTP_ERROR_FALLBACK;404',
+            );
+            expect(getDaoByEnsSpy).not.toHaveBeenCalled();
+        });
+
+        it('renders the 404 page when the backend does not know the ENS name', async () => {
+            const params = {
+                addressOrEns: 'unknown.dao.eth',
+                network: Network.ETHEREUM_MAINNET,
+            };
+            getDaoByEnsSpy.mockRejectedValue(
+                new AragonBackendServiceError('notFound', 'Not found', 404),
+            );
+            await expect(daoUtils.resolveDaoId(params)).rejects.toThrow(
+                'NEXT_HTTP_ERROR_FALLBACK;404',
+            );
+            expect(notFoundMock).toHaveBeenCalled();
+        });
+
+        it('propagates backend failures that say nothing about the URL', async () => {
+            const params = {
+                addressOrEns: 'my-dao.dao.eth',
+                network: Network.ETHEREUM_MAINNET,
+            };
+            const error = new AragonBackendServiceError(
+                'serverError',
+                'Internal error',
+                500,
+            );
+            getDaoByEnsSpy.mockRejectedValue(error);
+            await expect(daoUtils.resolveDaoId(params)).rejects.toBe(error);
+            expect(notFoundMock).not.toHaveBeenCalled();
         });
     });
 

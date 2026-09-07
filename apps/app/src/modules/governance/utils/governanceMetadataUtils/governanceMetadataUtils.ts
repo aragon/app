@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { unstable_rethrow } from 'next/navigation-server';
 import { governanceService } from '@/modules/governance/api/governanceService';
 import type { IDaoProposalPageParams } from '@/modules/governance/types';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
@@ -46,6 +47,10 @@ class GovernanceMetadataUtils {
                 type: 'article',
             });
         } catch (error: unknown) {
+            // A malformed DAO URL ends in notFound() inside resolveDaoId: Next turns it into
+            // the 404 response, so it must not be swallowed into fallback metadata.
+            unstable_rethrow(error);
+
             // Suppress the errors that mean the URL points at nothing: the slug/address comes
             // straight from the URL, so a rejected identifier means an arbitrary URL (bots,
             // stale links, malformed slugs) — not a bug, and would flood Sentry. A refused
