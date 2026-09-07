@@ -1,3 +1,4 @@
+import type { GetTokenVotingMembershipRequestDTO } from '@aragon/aragon-domain';
 import { type NextRequest, NextResponse } from 'next/server';
 // biome-ignore lint/style/noRestrictedImports: server-only BFF validation; strict EIP-55 validation is explicitly disabled.
 import { isAddress } from 'viem';
@@ -6,39 +7,38 @@ import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 
 const maximumPageSize = 250;
 
-interface ITokenVotingMembershipQueryParams {
-    pluginAddress: string;
-    tokenContractAddress: string;
-    page?: number;
-    pageSize?: number;
-}
+const isPositiveInteger = (value: number): boolean =>
+    Number.isInteger(value) && value > 0;
 
 const validateQueryParams = (
     params: URLSearchParams,
-): ITokenVotingMembershipQueryParams | undefined => {
+): GetTokenVotingMembershipRequestDTO | undefined => {
+    const chainId = params.get('chainId');
     const pluginAddress = params.get('pluginAddress');
     const tokenContractAddress = params.get('tokenContractAddress');
     const page = params.get('page');
     const pageSize = params.get('pageSize');
+    const parsedChainId = chainId != null ? Number(chainId) : undefined;
     const parsedPage = page != null ? Number(page) : undefined;
     const parsedPageSize = pageSize != null ? Number(pageSize) : undefined;
 
     if (
+        parsedChainId == null ||
+        !isPositiveInteger(parsedChainId) ||
         pluginAddress == null ||
         tokenContractAddress == null ||
         !isAddress(pluginAddress, { strict: false }) ||
         !isAddress(tokenContractAddress, { strict: false }) ||
-        (parsedPage != null &&
-            (!Number.isInteger(parsedPage) || parsedPage <= 0)) ||
+        (parsedPage != null && !isPositiveInteger(parsedPage)) ||
         (parsedPageSize != null &&
-            (!Number.isInteger(parsedPageSize) ||
-                parsedPageSize <= 0 ||
+            (!isPositiveInteger(parsedPageSize) ||
                 parsedPageSize > maximumPageSize))
     ) {
         return;
     }
 
     return {
+        chainId: parsedChainId,
         pluginAddress,
         tokenContractAddress,
         page: parsedPage,
@@ -52,7 +52,7 @@ export const GET = async (req: NextRequest) => {
     if (queryParams == null) {
         return NextResponse.json(
             {
-                error: 'pluginAddress and tokenContractAddress must be valid addresses; page must be a positive integer; pageSize must be a positive integer no greater than 250',
+                error: 'chainId must be a positive integer; pluginAddress and tokenContractAddress must be valid addresses; page must be a positive integer; pageSize must be a positive integer no greater than 250',
             },
             { status: 400 },
         );
@@ -69,6 +69,7 @@ export const GET = async (req: NextRequest) => {
         monitoringUtils.logError(error, {
             context: {
                 errorType: 'get_token_voting_membership_error',
+                chainId: queryParams.chainId,
                 pluginAddress: queryParams.pluginAddress,
                 tokenContractAddress: queryParams.tokenContractAddress,
             },

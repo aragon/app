@@ -89,6 +89,7 @@ describe('governance service', () => {
                 tokenAddress: '0xToken',
                 network: Network.ETHEREUM_MAINNET,
                 pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                domainSourceEnabled: true,
                 page: 2,
                 pageSize: 25,
             },
@@ -97,6 +98,7 @@ describe('governance service', () => {
         expect(requestSpy).not.toHaveBeenCalled();
         expect(domainMembersSpy).toHaveBeenCalledWith({
             queryParams: {
+                chainId: 1,
                 pluginAddress: '0xplugin',
                 tokenContractAddress: '0xtoken',
                 page: 2,
