@@ -19,6 +19,7 @@ In scope:
 - A mocked, `localStorage`-backed workspace registry.
 - A minimal `/workspace/{workspaceId}` read page so creation is demonstrable end to end.
 - A CTA on the explore page.
+- The whole feature behind the `workspaces` feature flag.
 
 Out of scope (deliberate, deferred to follow-ups):
 
@@ -266,6 +267,31 @@ skipping it keeps the collision surface to nothing.
 `LayoutWizard` is an async server component that resolves a DAO from `params` when present; with no params it
 just renders `NavigationWizard` with no DAO, which is what both create flows want.
 
+## Feature flag
+
+The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/featureFlags.constants.ts`, key
+added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local`, `development` and `preview`; `false`
+by default, so staging and production are off — the registry is a `localStorage` mock, so it must not ship on.
+
+Three gates, one per entry point:
+
+| Entry point | Gate |
+| --- | --- |
+| `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
+| `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
+| Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
+
+Notes:
+
+- `notFound()` must be imported from **`next/navigation-original`**, not `next/navigation`: the latter is aliased
+  to the client-hooks wrapper (`src/shared/lib/nextNavigation`), which cannot re-export server functions. See the
+  comment in `src/shared/utils/notFoundUtils/notFoundUtils.ts`.
+- The route gates are server-side, so a disabled feature is not reachable by typing the URL.
+- `/create/workspace` keeps its wizard layout around the 404 (the layout is a separate segment and still renders),
+  which leaves the user an exit button. Gate the layout too if that is not wanted.
+- `workspaceDialogsDefinitions` stays registered in `providersDialogs` unconditionally. The publish dialog can
+  only be opened from the create wizard, which is itself gated, so registration alone exposes nothing.
+
 ## Wiring
 
 - `src/modules/application/components/providers/providersDialogs.ts` — spread `workspaceDialogsDefinitions`.
@@ -313,7 +339,9 @@ src/app/create/workspace/{page.tsx,layout.tsx}
 src/app/workspace/[workspaceId]/page.tsx
 ```
 
-Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`.
+Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,
+`src/shared/featureFlags/{featureFlags.constants.ts,featureFlags.api.ts}`, `src/shared/testUtils/formWrapper.tsx`
+(gained an optional `defaultValues` prop).
 Deleted: `src/app/create/layout.tsx`.
 
 ## Relationship to branch 1096

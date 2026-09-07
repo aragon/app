@@ -11,6 +11,7 @@ import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { CtaCard } from '@/shared/components/ctaCard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import NetBackground from '../../../../assets/images/net_bg.svg';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
@@ -37,6 +38,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
     const { open } = useDialogContext();
     const { data: featuredDaos } = useFeaturedDaos();
     const router = useRouter();
+    const { isEnabled } = useFeatureFlags();
 
     return (
         <>
@@ -141,26 +143,28 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     'app.explore.exploreDaosPage.noCodeSetup.title',
                                 )}
                             />
-                            <CtaCard
-                                className="flex-1"
-                                description={t(
-                                    'app.explore.exploreDaosPage.createWorkspace.subtitle',
-                                )}
-                                isPrimary={false}
-                                objectType="CHAIN"
-                                primaryAction={{
-                                    label: t(
-                                        'app.explore.exploreDaosPage.createWorkspace.actionLabel',
-                                    ),
-                                    onClick: () => {
-                                        router.push('/create/workspace');
-                                    },
-                                }}
-                                textSize="smaller"
-                                title={t(
-                                    'app.explore.exploreDaosPage.createWorkspace.title',
-                                )}
-                            />
+                            {isEnabled('workspaces') && (
+                                <CtaCard
+                                    className="flex-1"
+                                    description={t(
+                                        'app.explore.exploreDaosPage.createWorkspace.subtitle',
+                                    )}
+                                    isPrimary={false}
+                                    objectType="CHAIN"
+                                    primaryAction={{
+                                        label: t(
+                                            'app.explore.exploreDaosPage.createWorkspace.actionLabel',
+                                        ),
+                                        onClick: () => {
+                                            router.push('/create/workspace');
+                                        },
+                                    }}
+                                    textSize="smaller"
+                                    title={t(
+                                        'app.explore.exploreDaosPage.createWorkspace.title',
+                                    )}
+                                />
+                            )}
                             <CtaCard
                                 className="flex-1"
                                 description={t(
