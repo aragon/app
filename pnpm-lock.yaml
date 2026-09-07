@@ -229,8 +229,8 @@ importers:
   apps/app:
     dependencies:
       '@aragon/aragon-domain':
-        specifier: 0.0.0-20260806160246
-        version: 0.0.0-20260806160246(typescript@5.9.3)
+        specifier: 0.0.0-20260908085601
+        version: 0.0.0-20260908085601(typescript@5.9.3)
       '@aragon/assistant-chat':
         specifier: workspace:*
         version: link:../../packages/assistant-chat
@@ -698,8 +698,8 @@ packages:
   '@apm-js-collab/tracing-hooks@0.13.0':
     resolution: {integrity: sha512-mTvWz9rnQwx1U3h0XPTHaX7bgfkpipLLTQyjlC2cdhQpQEuoLT0AGzoydeoq2NxfEVv6fWOOETcSbb2nptleyw==}
 
-  '@aragon/aragon-domain@0.0.0-20260806160246':
-    resolution: {integrity: sha512-t2WJj5c5CEjjy/+JMWeKvHCTL1Y3visYkHGeqPHt4sjWOGU42x8cV2JpRqCguW9GAwVg6swTSw7mmwpywNSUwQ==}
+  '@aragon/aragon-domain@0.0.0-20260908085601':
+    resolution: {integrity: sha512-e1fdlXseec4jEEu6m1fh1IR/Mvl4SOppahpizTwhTZwEA+MlyzZ/odk83qQFBZnk09RF8vruAJfrVpyldZtW/A==}
     engines: {node: '>=24.13.0', pnpm: '>=11.0.0'}
 
   '@aragon/gov-ui-kit@2.11.3':
@@ -9620,7 +9620,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@aragon/aragon-domain@0.0.0-20260806160246(typescript@5.9.3)':
+  '@aragon/aragon-domain@0.0.0-20260908085601(typescript@5.9.3)':
     dependencies:
       bignumber.js: 11.1.4
       ddd-core-ts: 0.1.1

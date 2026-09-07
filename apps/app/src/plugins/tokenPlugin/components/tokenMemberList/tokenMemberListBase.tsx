@@ -18,6 +18,7 @@ import type { IDaoMemberListDefaultProps } from '@/modules/governance/components
 import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useTokenPinnedMembers } from '../../hooks/useTokenPinnedMembers';
 import type { ITokenMember } from '../../types';
@@ -62,6 +63,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     } = props;
 
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
     const { daoId } = initialParams.queryParams;
 
     // Always use the parent DAO for the UI context (member URLs, etc.).
@@ -70,9 +72,13 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
 
     // Shared with the members-page RSC prefetch. Both sides must build
     // identical params so the dehydrated cache resolves this query.
+    const domainSourceEnabled = isEnabled('domainMemberList');
     const apiParams = useMemo(
-        () => buildTokenVotingMembershipParams(initialParams, plugin, dao),
-        [initialParams, plugin, dao],
+        () =>
+            buildTokenVotingMembershipParams(initialParams, plugin, dao, {
+                domainSourceEnabled,
+            }),
+        [initialParams, plugin, dao, domainSourceEnabled],
     );
 
     const {
