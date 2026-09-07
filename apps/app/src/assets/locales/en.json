@@ -1705,6 +1705,11 @@
         }
       },
       "exploreDaosPage": {
+        "createWorkspace": {
+          "actionLabel": "Create a workspace",
+          "subtitle": "Group DAOs and accounts across networks into a single workspace to see their assets, transactions and members together.",
+          "title": "Multi-DAO workspace"
+        },
         "doItYourself": {
           "actionLabel": "Developer portal",
           "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
@@ -4036,6 +4041,13 @@
       "governanceBodyInfo": {
         "external": "External address"
       },
+      "networkInput": {
+        "label": "Network",
+        "tag": {
+          "beta": "Beta",
+          "testnet": "Testnet"
+        }
+      },
       "networkSwitchAlert": {
         "body": "Switch to {{networkName}} in your wallet.",
         "title": "Switch network"
@@ -4162,6 +4174,102 @@
             }
           }
         }
+      }
+    },
+    "workspace": {
+      "createWorkspaceForm": {
+        "accounts": {
+          "add": "Add account",
+          "helpText": "The DAOs and accounts whose assets, transactions and members this workspace brings together.",
+          "label": "Accounts",
+          "metadata": {
+            "description": {
+              "label": "Account description"
+            },
+            "hide": "Remove metadata",
+            "name": {
+              "label": "Account name"
+            },
+            "show": "Add metadata",
+            "title": "Metadata"
+          },
+          "remove": "Remove account"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "0x… or ENS name"
+        },
+        "error": {
+          "duplicateAddress": "This address is already used on the selected network.",
+          "invalidAddress": "Enter a valid address or ENS name."
+        },
+        "metadata": {
+          "description": {
+            "helpText": "This is shown on the workspace pages so visitors know what this workspace covers.",
+            "label": "Description"
+          },
+          "name": {
+            "label": "Workspace name"
+          },
+          "resources": {
+            "helpText": "These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels."
+          }
+        },
+        "targets": {
+          "add": "Add target",
+          "helpText": "Addresses this workspace relates to. They are stored as-is for now and will later be used to discover accounts automatically.",
+          "label": "Targets",
+          "remove": "Remove target"
+        }
+      },
+      "createWorkspacePage": {
+        "finalStep": "Create workspace",
+        "steps": {
+          "ACCOUNTS": {
+            "description": "Add the DAOs and accounts belonging to this workspace. Each one is identified by its network and address.",
+            "name": "Add accounts",
+            "title": "Add accounts"
+          },
+          "METADATA": {
+            "description": "Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later.",
+            "name": "Describe your workspace",
+            "title": "Describe your workspace"
+          },
+          "TARGETS": {
+            "description": "Add the addresses this workspace relates to. This step is optional and can be left empty.",
+            "name": "Add targets",
+            "title": "Add targets"
+          }
+        },
+        "submitLabel": "Create workspace"
+      },
+      "layoutWizardCreateWorkspace": {
+        "name": "Create workspace"
+      },
+      "publishWorkspaceDialog": {
+        "button": {
+          "retry": "Try again",
+          "submit": "Create workspace",
+          "success": "View workspace"
+        },
+        "error": {
+          "description": "The workspace could not be created. Check your connection and try again.",
+          "title": "Unable to create the workspace"
+        },
+        "success": {
+          "title": "Workspace created"
+        },
+        "summary": "{{accounts}} accounts · {{targets}} targets",
+        "title": "Create workspace"
+      },
+      "workspaceDetailsPage": {
+        "accounts": "Accounts ({{count}})",
+        "links": "Resources",
+        "notFound": {
+          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
+          "title": "Workspace not found"
+        },
+        "targets": "Targets ({{count}})"
       }
     }
   }
