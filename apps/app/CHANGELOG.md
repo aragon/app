@@ -1,5 +1,30 @@
 # @aragon/app
 
+## 1.38.1
+
+### Patch Changes
+
+- [#1350](https://github.com/aragon/app/pull/1350) [`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Iterate the support assistant on the second round of design feedback: the header and composer controls (new chat, collapse, back, add attachment) become gov-ui-kit buttons and drop their tooltips, the "Email support" escape hatch follows the app's plain link style — no underline, an external-link icon, opening in a new tab — and typing in a fresh chat no longer bounces the layout: the suggestion chips retire through visibility instead of unmounting. The ticket card gains a bottom margin so text following it in the same message no longer sits against its edge, and nothing links to Linear anymore — the success card and the past-requests view quote the ticket reference instead of linking out to a workspace the user has no access to.
+
+- [#1358](https://github.com/aragon/app/pull/1358) [`c1cdcf9`](https://github.com/aragon/app/commit/c1cdcf91c64c156311576acf7c67f13eecc8a9d1) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (gov-ui-kit 2.11.2, next 16.3.2, Sentry 10.71, react-query 5.102, deepmerge-ts 8 closing its stack-exhaustion advisory), bump pnpm to 11.24, and hold the @assistant-ui/tap transitive at 0.9.12 — 0.9.13+ loops forever under the exact-pinned @assistant-ui/react 0.14.27.
+
+- [#1349](https://github.com/aragon/app/pull/1349) [`11b6722`](https://github.com/aragon/app/commit/11b6722a912185427e3fef9ed8d87b70b038012d) Thanks [@milosh86](https://github.com/milosh86)! - Filter out plugins flagged by the backend as unsupported.
+
+- [#1357](https://github.com/aragon/app/pull/1357) [`7c717cf`](https://github.com/aragon/app/commit/7c717cf3e0d6aa16dac20027afbaf52cdeafb498) Thanks [@harryburger](https://github.com/harryburger)! - Show the missing proposal metadata warning only when both title and description are missing. Before, the warning was shown whenever the title was not set, even when the description resolved fine and was rendered right below it.
+
+- [#1364](https://github.com/aragon/app/pull/1364) [`e89d38d`](https://github.com/aragon/app/commit/e89d38d8a1de15892a52bd8669495d2a1ab466bd) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix the explore smoke tests' DAO card locator: gov-ui-kit 2.11.1 renders a DataListItem link as an empty overlay named via aria-labelledby, so the card content is no longer inside the link and the tests matched nothing.
+
+- [#1361](https://github.com/aragon/app/pull/1361) [`c70fb6a`](https://github.com/aragon/app/commit/c70fb6a3eadddfbe0793d87cae4b26da7200d24f) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Make Lock to vote available to everyone and clarify its token-locking requirement.
+
+- [#1345](https://github.com/aragon/app/pull/1345) [`aefdffc`](https://github.com/aragon/app/commit/aefdffca9eb61d6d63e21e134eab344645673fe2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Adopt `AddressOutput` for visible address values.
+
+- [#1351](https://github.com/aragon/app/pull/1351) [`660bb6a`](https://github.com/aragon/app/commit/660bb6a63cbab569f9a6268be8f20be83d5382ba) Thanks [@evanaronson](https://github.com/evanaronson)! - Move Permissions below Transactions and above Settings in the DAO navigation
+
+- [#1360](https://github.com/aragon/app/pull/1360) [`16a47ca`](https://github.com/aragon/app/commit/16a47ca63673d4d17b283f234993a19ba1b0bfa7) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix the Sentry-audit crash and noise findings: enrich SPP sub-proposals routed to lock-to-vote by their stage body so the proposals page no longer crashes on inconsistent backend data, render a not-found state on the create proposal/process routes for unknown plugin addresses, serve the 404 page (instead of a reported server error) for bot-probed DAO and proposal URLs, format dates after mount to stop SSR hydration mismatches on the members/proposals/proposal-details/dashboard pages, compare plugin daoAddress case-insensitively in useDaoPlugins, and classify environment noise (in-app browsers, wallet-extension conflicts, private-mode storage, deploy skew) as expected in the monitoring taxonomy.
+
+- Updated dependencies [[`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23), [`c1cdcf9`](https://github.com/aragon/app/commit/c1cdcf91c64c156311576acf7c67f13eecc8a9d1), [`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23)]:
+    - @aragon/assistant-chat@0.5.0
+
 ## 1.38.0
 
 ### Minor Changes
