@@ -109,18 +109,6 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'enableAllPlugins',
-        name: 'Enable all plugins',
-        description:
-            'Enables all plugins for DAO creation flows, bypassing whitelist validation',
-        defaultValue: false,
-        environments: {
-            local: true,
-            development: true,
-            preview: true,
-        },
-    },
-    {
         key: 'existingProposalCreationCondition',
         name: 'Existing proposal creation condition',
         description:
@@ -159,10 +147,10 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'permissionsPage',
-        name: 'Permissions page',
+        key: 'telegramSubscription',
+        name: 'Telegram subscription',
         description:
-            'Enables the DAO settings permissions subpage and its entry points. Kept off in staging/production until the APP-953 backend is available.',
+            'Enables the Telegram subscription card on the DAO dashboard aside, linking to the notification bot.',
         defaultValue: false,
         environments: {
             local: true,

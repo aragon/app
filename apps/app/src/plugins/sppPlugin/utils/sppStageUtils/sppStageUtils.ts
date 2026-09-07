@@ -314,8 +314,6 @@ class SppStageUtils {
     isVetoBody = (plugin: ISppStagePlugin): boolean =>
         plugin.proposalType === SppProposalType.VETO;
 
-    // An objection stage only allows "No" votes on tallies carried over from the previous
-    // stage, so its result must not be considered final while the window is still open.
     isObjectionStage = (proposal: ISppProposal, stage: ISppStage): boolean =>
         proposal.subProposals.some(
             (subProposal) =>

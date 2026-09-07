@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
+import { ImportedContractAbisProvider } from '@/modules/governance/components/importedContractAbisProvider';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DebugContextProvider } from '@/shared/components/debugProvider/debugProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider';
@@ -97,13 +98,17 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                     initialSnapshot={featureFlagsSnapshot}
                                 >
                                     <DialogProvider>
-                                        <DesyncWatcher />
-                                        <SentryUserSync />
-                                        {children}
-                                        <DialogRoot
-                                            dialogs={providersDialogs}
-                                        />
-                                        <ReactQueryDevtools />
+                                        {/* Wraps the dialog root too, so an action composer rendered
+                                            inside a dialog shares the imported contracts. */}
+                                        <ImportedContractAbisProvider>
+                                            <DesyncWatcher />
+                                            <SentryUserSync />
+                                            {children}
+                                            <DialogRoot
+                                                dialogs={providersDialogs}
+                                            />
+                                            <ReactQueryDevtools />
+                                        </ImportedContractAbisProvider>
                                     </DialogProvider>
                                 </FeatureFlagsProvider>
                             </GukModulesProvider>

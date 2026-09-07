@@ -3,17 +3,17 @@ import { env } from '../lib/env';
 
 // Seam over the Linear SDK: routes and tests only consume this interface.
 export interface ILinearGateway {
-    createIssue(input: {
+    createIssue: (input: {
         title: string;
         description: string;
         labelName: string;
-    }): Promise<{ issueId: string; identifier: string; url: string }>;
-    uploadFile(input: {
+    }) => Promise<{ issueId: string; identifier: string }>;
+    uploadFile: (input: {
         filename: string;
         contentType: string;
         size: number;
         data: Uint8Array;
-    }): Promise<{ assetUrl: string }>;
+    }) => Promise<{ assetUrl: string }>;
 }
 
 export const createLinearGateway = (): ILinearGateway => {
@@ -57,7 +57,6 @@ export const createLinearGateway = (): ILinearGateway => {
             return {
                 issueId: issue.id,
                 identifier: issue.identifier,
-                url: issue.url,
             };
         },
         uploadFile: async ({ filename, contentType, size, data }) => {

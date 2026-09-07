@@ -1,5 +1,6 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import {
     generateSppPluginSettings,
@@ -22,7 +23,10 @@ describe('<SppProposalListItem /> component', () => {
         getProposalStatusSpy.mockReset();
     });
 
-    const defaultPlugin = generateDaoPlugin({ slug: 'spp' });
+    const defaultPlugin = generateDaoPlugin({
+        slug: 'spp',
+        interfaceType: PluginInterfaceType.SPP,
+    });
     const defaultDao = generateDao({
         address: '0x123',
         plugins: [defaultPlugin],

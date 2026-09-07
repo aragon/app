@@ -15,7 +15,6 @@ const generateReactQueryResultBase = <TData, TError>(
     result?: Partial<QueryObserverBaseResult<TData, TError>>,
 ): QueryObserverBaseResult<TData, TError> => ({
     data: undefined,
-    promise: new Promise((resolve) => resolve({} as TData)),
     error: null,
     isError: false,
     isLoading: false,

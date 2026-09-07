@@ -36,6 +36,7 @@ const UNKNOWN_LABEL = 'Unrecognized condition';
 const CONDITION_LABELS: Record<string, string> = {
     'voting-power': 'VotingPower',
     'execute-selector': 'ExecuteSelector',
+    'spp-rule': 'SPP rule',
 };
 
 /**

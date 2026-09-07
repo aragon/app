@@ -4,6 +4,7 @@ import {
     formatterUtils,
     IconType,
     InputContainer,
+    InteractiveAncestorContext,
     NumberFormat,
     Toggle,
     ToggleGroup,
@@ -256,7 +257,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 size={size}
                 variant={assetField.alert ? 'critical' : 'tertiary'}
             >
-                <AssetInputToken token={assetField.value?.token} />
+                <InteractiveAncestorContext.Provider value={true}>
+                    <AssetInputToken token={assetField.value?.token} />
+                </InteractiveAncestorContext.Provider>
             </Button>
         );
 

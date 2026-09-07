@@ -68,20 +68,38 @@ const commitMatchesPathFilter = (commit, patterns, git = runGit) => {
 // and would otherwise leak into the summary as "Other Changes".
 const RELEASE_COMMIT_RE = /^Release @aragon\/[^@\s]+@\d+\.\d+\.\d+/;
 
-// A PR landed as a merge commit carries its PR title in the commit body; the subject only says
-// "Merge pull request #N from org/branch". Surface the title so the entry reads like a squash.
-const resolveCommitTitle = (commit, subject, git = runGit) => {
-    const merge = subject.match(/^Merge pull request #(\d+)\b/);
-    if (!merge) {
+// Linear issue identifiers like "APP-1234" embedded in commit messages.
+const LINEAR_ID_RE = /\b[A-Za-z]{2,}-\d+\b/g;
+
+// A mainline commit that kept a merge-style title ("Merge pull request #N …") says nothing
+// in its subject — its real changes live in the body. This covers both PRs landed as merge
+// commits (GitHub puts the PR title into the body) and squashes that kept the merge title.
+const MERGE_TITLE_RE = /^Merge /i;
+
+// Body-harvesting cutoff: a squashed bulk-sync PR (e.g. a release back-merge) lists a whole
+// release worth of commits in its body, and harvesting tickets from it would resurface
+// already-released work. No genuine single PR references this many.
+const MAX_BODY_TICKETS = 8;
+
+// A merge-style subject carries no information: prefer the first real body line (the PR
+// title for a merge commit or single-commit squash, the first commit message for a
+// multi-commit squash), keeping the PR number visible.
+const resolveCommitTitle = (subject, body) => {
+    if (!MERGE_TITLE_RE.test(subject)) {
         return subject;
     }
 
-    const bodyTitle = git(['show', '-s', '--format=%b', commit])
+    const bodyTitle = (body ?? '')
         .split('\n')
-        .map((line) => line.trim())
+        .map((line) => line.replace(/^[\s*-]+/, '').trim())
         .find(Boolean);
 
-    return bodyTitle ? `${bodyTitle} (#${merge[1]})` : subject;
+    if (!bodyTitle) {
+        return subject;
+    }
+
+    const [pr] = subject.match(/#\d+\b/g) ?? [];
+    return /#\d+/.test(bodyTitle) || !pr ? bodyTitle : `${bodyTitle} (${pr})`;
 };
 
 // Mainline commits since the release boundary. The boundary is the previous release tag itself:
@@ -95,31 +113,38 @@ const collectScopedCommits = ({
     git = runGit,
 }) => {
     const range = baseRef ? `${baseRef}..${headRef}` : headRef;
+    // NUL-separated hash/subject/body per commit, record-separated so multiline bodies parse.
     const log = git([
         'log',
         '--first-parent',
         range,
-        '--pretty=format:%H%x00%s',
+        '--pretty=format:%H%x00%s%x00%b%x1e',
     ]);
 
     return (
         log
-            .split('\n')
+            .split('\x1e')
+            .map((record) => record.trim())
             .filter(Boolean)
-            .map((line) => {
-                const [commit, subject] = line.split('\0');
-                return { commit, subject };
+            .map((record) => {
+                const [commit = '', subject = '', body = ''] =
+                    record.split('\0');
+                return {
+                    commit: commit.trim(),
+                    subject: subject.trim(),
+                    body: body.trim(),
+                };
             })
             // Resolve titles before filtering: a release PR merged with GitHub's default
-            // merge subject only reveals its "Release @aragon/…" title after resolution,
-            // and RELEASE_COMMIT_RE must see that title to drop the commit.
-            .map(({ commit, subject }) => ({
-                commit,
-                subject: resolveCommitTitle(commit, subject, git),
+            // merge subject only reveals its "Release @aragon/…" title in its body, and
+            // RELEASE_COMMIT_RE must see that title to drop the commit.
+            .map((commit) => ({
+                ...commit,
+                title: resolveCommitTitle(commit.subject, commit.body),
             }))
             .filter(
-                ({ commit, subject }) =>
-                    !RELEASE_COMMIT_RE.test(subject) &&
+                ({ commit, title }) =>
+                    !RELEASE_COMMIT_RE.test(title) &&
                     commitMatchesPathFilter(commit, patterns, git),
             )
     );
@@ -168,6 +193,134 @@ const fetchLinearIssue = async (issueId, token) => {
     }
 };
 
+const SECTION_RANK = { features: 0, fixes: 1, others: 2 };
+
+// Section for a message: any feat/perf line wins over fix, fix over other. Lines are
+// stripped of list markers so squash bodies ("* feat: …") classify like subjects.
+const sectionOf = (text) => {
+    const lines = text.split('\n').map((line) => line.replace(/^[\s*-]+/, ''));
+    if (lines.some((line) => /^(feat|perf)[\s(:!]/i.test(line))) {
+        return 'features';
+    }
+    if (lines.some((line) => /^fix[\s(:!]/i.test(line))) {
+        return 'fixes';
+    }
+    return 'others';
+};
+
+// Groups commits by the Linear tickets they reference (subject always; body too for
+// merge-titled commits, capped): one entry per ticket regardless of how many commits
+// carry it, titled by the ticket itself and placed in the strongest section among its
+// commits. Commits with no resolvable ticket stay visible under their own title, so
+// missing Linear data can hide enrichment but never a change.
+const categorize = async (commits, { linearToken, repository }) => {
+    // Linear enrichment is optional: only attempted when a token is present, and each
+    // issue is fetched at most once across all commits. A failed fetch caches null, which
+    // degrades the commit to the title path — the release never fails on Linear.
+    const issueCache = new Map();
+    const resolveIssue = async (id) => {
+        if (!issueCache.has(id)) {
+            issueCache.set(
+                id,
+                linearToken ? await fetchLinearIssue(id, linearToken) : null,
+            );
+        }
+        return issueCache.get(id);
+    };
+
+    const prLink = (number) =>
+        `[#${number}](https://github.com/${repository}/pull/${number})`;
+
+    const tickets = new Map(); // id -> { issue, section, prs }
+    const titleEntries = [];
+    const seenTitles = new Set();
+
+    for (const { subject, body, title } of commits) {
+        const isMergeTitle = MERGE_TITLE_RE.test(subject);
+
+        const ids = new Set(
+            (subject.match(LINEAR_ID_RE) ?? []).map((id) => id.toUpperCase()),
+        );
+        if (isMergeTitle) {
+            const bodyIds = new Set(
+                (body.match(LINEAR_ID_RE) ?? []).map((id) => id.toUpperCase()),
+            );
+            if (bodyIds.size <= MAX_BODY_TICKETS) {
+                for (const id of bodyIds) {
+                    ids.add(id);
+                }
+            }
+        }
+
+        const section = sectionOf(
+            isMergeTitle ? `${subject}\n${body}` : subject,
+        );
+        const prs = (subject.match(/#\d+\b/g) ?? []).map((pr) => pr.slice(1));
+
+        const resolved = [];
+        for (const id of ids) {
+            const issue = await resolveIssue(id);
+            if (issue) {
+                resolved.push({ id, issue });
+            }
+        }
+
+        if (resolved.length > 0) {
+            for (const { id, issue } of resolved) {
+                const entry = tickets.get(id) ?? {
+                    issue,
+                    section,
+                    prs: new Set(),
+                };
+                if (SECTION_RANK[section] < SECTION_RANK[entry.section]) {
+                    entry.section = section;
+                }
+                for (const pr of prs) {
+                    entry.prs.add(pr);
+                }
+                tickets.set(id, entry);
+            }
+            continue;
+        }
+
+        // No resolvable ticket: keep the commit under its own (merge-resolved) title,
+        // deduplicating identical titles across commits.
+        if (seenTitles.has(title)) {
+            continue;
+        }
+        seenTitles.add(title);
+        titleEntries.push({
+            section,
+            text: title.replace(
+                /\(#(\d+)\)/g,
+                (_, number) => `(${prLink(number)})`,
+            ),
+        });
+    }
+
+    const sections = { features: [], fixes: [], others: [] };
+    for (const [id, { issue, section, prs }] of tickets) {
+        const refs =
+            prs.size > 0 ? ` (${[...prs].map(prLink).join(', ')})` : '';
+        sections[section].push(`[${id}: ${issue.title}](${issue.url})${refs}`);
+    }
+    for (const { section, text } of titleEntries) {
+        sections[section].push(text);
+    }
+
+    // Tickets referenced by this range that are not completed/canceled yet. Unresolved
+    // ids (false positives like "UTF-8", missing issues) are cached as null and never
+    // reach the warning.
+    const openIssues = [];
+    for (const [id, issue] of issueCache) {
+        if (issue?.state && !CLOSED_STATE_TYPES.has(issue.state.type)) {
+            openIssues.push({ ...issue, id });
+        }
+    }
+
+    return { ...sections, openIssues };
+};
+
 const generateSummary = async ({ core }) => {
     const linearToken = process.env.LINEAR_API_TOKEN;
     const packageName = process.env.PACKAGE_NAME;
@@ -208,73 +361,10 @@ const generateSummary = async ({ core }) => {
         `Generating ${packageName} release summary for range ${range} with path filter "${pathFilter}".`,
     );
 
-    const categories = {
-        features: [],
-        fixes: [],
-        others: [],
-    };
-
-    const linearRegex = /([a-zA-Z]{2,}-\d+)/g;
-    const issuesFound = new Set();
-    const openIssues = [];
-
-    for (const { subject: line } of commits) {
-        const lower = line.toLowerCase();
-        const linearMatches = line.match(linearRegex);
-
-        let category = 'others';
-        if (lower.startsWith('feat')) {
-            category = 'features';
-        } else if (lower.startsWith('fix')) {
-            category = 'fixes';
-        }
-
-        // Clean line prefix
-        let cleanLine = line
-            .replace(
-                /^(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?:/,
-                '',
-            )
-            .trim();
-
-        // Linkify PR numbers (#123 -> [#123](url))
-        const repository = process.env.GITHUB_REPOSITORY || 'aragon/app';
-        cleanLine = cleanLine.replace(
-            /\(#(\d+)\)/g,
-            `([#$1](https://github.com/${repository}/pull/$1))`,
-        );
-
-        // Extract linear issues
-        let additionalInfo = '';
-        if (linearMatches && linearToken) {
-            const addedIssues = new Set();
-            for (const issueId of linearMatches) {
-                if (issuesFound.has(issueId) || addedIssues.has(issueId)) {
-                    continue;
-                }
-                issuesFound.add(issueId);
-                addedIssues.add(issueId);
-
-                const issue = await fetchLinearIssue(issueId, linearToken);
-                if (issue) {
-                    additionalInfo += ` [${issueId}: ${issue.title}](${issue.url})`;
-                    if (
-                        issue.state &&
-                        !CLOSED_STATE_TYPES.has(issue.state.type)
-                    ) {
-                        openIssues.push(issue);
-                    }
-                } else {
-                    additionalInfo += ` ${issueId}`;
-                }
-            }
-        }
-
-        const entry = additionalInfo
-            ? `${cleanLine} —${additionalInfo}`
-            : cleanLine;
-        categories[category].push(entry);
-    }
+    const { features, fixes, others, openIssues } = await categorize(commits, {
+        linearToken,
+        repository: process.env.GITHUB_REPOSITORY || 'aragon/app',
+    });
 
     // 2. Format Output
     let summary = '';
@@ -290,21 +380,21 @@ const generateSummary = async ({ core }) => {
         summary += '\n';
     }
 
-    if (categories.features.length > 0) {
+    if (features.length > 0) {
         summary += '## Features\n';
-        categories.features.forEach((item) => (summary += `- ${item}\n`));
+        features.forEach((item) => (summary += `- ${item}\n`));
         summary += '\n';
     }
 
-    if (categories.fixes.length > 0) {
+    if (fixes.length > 0) {
         summary += '## Fixes\n';
-        categories.fixes.forEach((item) => (summary += `- ${item}\n`));
+        fixes.forEach((item) => (summary += `- ${item}\n`));
         summary += '\n';
     }
 
-    if (categories.others.length > 0) {
+    if (others.length > 0) {
         summary += '## Other Changes\n';
-        categories.others.forEach((item) => (summary += `- ${item}\n`));
+        others.forEach((item) => (summary += `- ${item}\n`));
         summary += '\n';
     }
 

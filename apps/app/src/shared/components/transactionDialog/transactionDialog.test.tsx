@@ -435,7 +435,7 @@ describe('<TransactionDialog /> component', () => {
             createTestComponent({
                 analytics: {
                     flow: 'create_proposal',
-                    transactionKind: 'governance_proposal_create',
+                    transactionTypeEvent: 'governance_proposal_create',
                 },
                 stepper,
                 network,
@@ -450,8 +450,7 @@ describe('<TransactionDialog /> component', () => {
 
         expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_start', {
             flow: 'create_proposal',
-            transactionKind: 'governance_proposal_create',
-            transactionType: TransactionType.PROPOSAL_CREATE,
+            transactionTypeEvent: 'governance_proposal_create',
             network,
             chainId: networkDefinitions[network].id,
             attemptKind: 'new',
@@ -765,7 +764,7 @@ describe('<TransactionDialog /> component', () => {
             createTestComponent({
                 analytics: {
                     flow: 'create_proposal',
-                    transactionKind: 'governance_proposal_create',
+                    transactionTypeEvent: 'governance_proposal_create',
                 },
                 transactionType: TransactionType.PROPOSAL_CREATE,
             }),
@@ -773,8 +772,7 @@ describe('<TransactionDialog /> component', () => {
 
         expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_failed', {
             flow: 'create_proposal',
-            transactionKind: 'governance_proposal_create',
-            transactionType: TransactionType.PROPOSAL_CREATE,
+            transactionTypeEvent: 'governance_proposal_create',
             network: Network.ETHEREUM_MAINNET,
             chainId: networkDefinitions[Network.ETHEREUM_MAINNET].id,
             step: TransactionDialogStep.CONFIRM,
@@ -1048,7 +1046,7 @@ describe('<TransactionDialog /> onIndexed callback', () => {
         const propsWithCallback: Partial<ITransactionDialogProps> = {
             analytics: {
                 flow: 'create_proposal',
-                transactionKind: 'governance_proposal_create',
+                transactionTypeEvent: 'governance_proposal_create',
             },
             onIndexed,
         };
@@ -1073,8 +1071,7 @@ describe('<TransactionDialog /> onIndexed callback', () => {
         expect(onIndexed).toHaveBeenCalledWith({ slug: 'abc' });
         expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_end', {
             flow: 'create_proposal',
-            transactionKind: 'governance_proposal_create',
-            transactionType: TransactionType.PROPOSAL_CREATE,
+            transactionTypeEvent: 'governance_proposal_create',
             chainId: networkDefinitions[Network.ETHEREUM_MAINNET].id,
             network: Network.ETHEREUM_MAINNET,
             status: 'indexed',

@@ -126,6 +126,26 @@ describe('<DaoDashboardPageClient /> component', () => {
         );
     };
 
+    it('renders a permissions link on the contract aside card', () => {
+        const dao = generateDao({
+            ens: 'somedao.dao.eth',
+            network: Network.ETHEREUM_MAINNET,
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('link', {
+                name: /daoDashboardPage.aside.details.permissions/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/dao/ethereum-mainnet/somedao.dao.eth/permissions',
+        );
+    });
+
     it('fetches and renders the dao name, description and avatar', () => {
         const daoId = 'test-id';
         const dao = generateDao({
@@ -345,7 +365,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         );
     });
 
-    it('supports dao address and ens copy', async () => {
+    it('copies the DAO address from address and ENS rows', async () => {
         const dao = generateDao({
             address: '0xeed34C7B9B9A7B16B26125650C0f7202D4018620',
             ens: 'test-dao.dao.eth',
@@ -359,7 +379,8 @@ describe('<DaoDashboardPageClient /> component', () => {
         await userEvent.click(clipboards[0]);
         expect(clipboardCopySpy).toHaveBeenCalledWith(dao.address);
         await userEvent.click(clipboards[1]);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(daoUtils.getDaoEns(dao));
+        expect(clipboardCopySpy).toHaveBeenCalledTimes(2);
+        expect(clipboardCopySpy).toHaveBeenLastCalledWith(dao.address);
     });
 
     it('renders the dao links', () => {

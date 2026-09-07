@@ -62,6 +62,7 @@ next-env.d.ts
 .vscode
 .zed
 .tempor
+.omp/
 .agents/**
 !.agents/shared/
 !.agents/shared/**
@@ -73,3 +74,5 @@ next-env.d.ts
 ds-bundle/
 .design-sync/.cache/
 .design-sync/learnings/
+.ds-sync/
+.design-sync/node_modules

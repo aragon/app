@@ -10,7 +10,6 @@ import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
-import { whitelistedAddressesOptions } from '@/shared/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
 import { DebugPanelLazy } from '../../debugPanel/lazyDebugPanel';
@@ -57,7 +56,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const queryClient = new QueryClient();
     await Promise.all([
         queryClient.prefetchQuery(sanctionedAddressesOptions()),
-        queryClient.prefetchQuery(whitelistedAddressesOptions()),
     ]);
     const dehydratedState = dehydrate(queryClient);
 

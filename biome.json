@@ -142,7 +142,9 @@
                 "noNamespaceImport": "off",
                 "useTopLevelRegex": "off",
                 "noAccumulatingSpread": "off",
-                "noDelete": "off"
+                "noDelete": "off",
+                "noAwaitInLoops": "off",
+                "noJsxPropsBind": "off"
             },
             "security": {
                 "noDangerouslySetInnerHtmlWithChildren": "error",
@@ -165,6 +167,8 @@
                 "useUnifiedTypeSignatures": "error",
                 "noNegationElse": "off",
                 "noNestedTernary": "off",
+                "noIncrementDecrement": "off",
+                "useDestructuring": "off",
                 "noEnum": "off",
                 "noExportedImports": "off",
                 "useFilenamingConvention": "off",
@@ -251,7 +255,8 @@
                 "noUnusedExpressions": "off",
                 "noShadow": "off",
                 "noEqualsToNull": "off",
-                "noLeakedRender": "off"
+                "noLeakedRender": "off",
+                "noUnnecessaryConditions": "off"
             }
         },
         "includes": [
@@ -384,7 +389,8 @@
                 "organizeImports": "on",
                 "useSortedAttributes": "on",
                 "useSortedInterfaceMembers": "off",
-                "useSortedProperties": "off"
+                "useSortedProperties": "off",
+                "useSortedKeys": "off"
             }
         }
     },

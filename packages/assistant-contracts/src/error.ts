@@ -5,6 +5,9 @@ export const assistantErrorCodeSchema = z.enum([
     'rate_limited',
     'session_limit',
     'upstream_rate_limited',
+    // The model call was cancelled by the service's own wall-clock cap: the upstream stalled
+    // without ever failing, so the turn produced no reply at all.
+    'timeout',
     'turn_limit',
     'token_budget',
     'file_too_large',

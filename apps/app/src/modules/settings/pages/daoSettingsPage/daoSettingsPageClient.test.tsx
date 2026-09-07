@@ -96,6 +96,14 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByTestId('update-dao-contracts')).toBeInTheDocument();
     });
 
+    it('renders the hierarchy permissions link', () => {
+        render(createTestComponent({ isLinkedAccountEnabled: true }));
+
+        expect(
+            screen.getByText(/daoSettingsInfo.permissionsLink/),
+        ).toBeInTheDocument();
+    });
+
     it('renders the governance processes of the DAO', () => {
         const plugins = [
             generateFilterComponentPlugin({

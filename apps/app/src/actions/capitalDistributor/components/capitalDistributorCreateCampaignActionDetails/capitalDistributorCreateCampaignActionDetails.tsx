@@ -4,7 +4,6 @@ import {
     Avatar,
     addressUtils,
     ChainEntityType,
-    Clipboard,
     DateFormat,
     DefinitionList,
     formatterUtils,
@@ -186,15 +185,13 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                copyValue={payoutTokenAddress}
-                link={{ href: payoutTokenLink }}
+                copyValue={tokenSymbol ? payoutTokenAddress : undefined}
+                link={{ href: payoutTokenLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.assetTerm',
                 )}
             >
-                {tokenSymbol
-                    ? `${tokenSymbol} (${addressUtils.truncateAddress(payoutTokenAddress)})`
-                    : addressUtils.truncateAddress(payoutTokenAddress)}
+                {tokenSymbol ?? payoutTokenAddress}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(
@@ -204,13 +201,12 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 {t(payoutTypeKey)}
             </DefinitionList.Item>
             <DefinitionList.Item
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.merkleRootTerm',
                 )}
             >
-                <Clipboard copyValue={merkleRoot}>
-                    {addressUtils.truncateHash(merkleRoot)}
-                </Clipboard>
+                {merkleRoot}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(

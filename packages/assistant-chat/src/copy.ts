@@ -1,7 +1,4 @@
-import {
-    assistantLimits,
-    type ITicketIntent,
-} from '@aragon/assistant-contracts';
+import { assistantLimits } from '@aragon/assistant-contracts';
 import type { FileRejectReason } from './files/fileValidation';
 
 // Single source of every user-facing string of the widget, grouped by component. Change wording
@@ -19,13 +16,16 @@ const maxFileSizeMb = Math.round(
 
 export const chatCopy = {
     header: {
-        title: 'Aragon Support Assistant',
-        close: 'Close',
+        title: 'Aragon Assistant',
+        collapse: 'Collapse chat',
+        back: 'Back to chat',
         startNewChat: 'Start new chat',
+        contextNew: 'New conversation',
+        // Rendered ahead of the drafted ticket title, e.g. "Draft: Voting page crashes".
+        contextDraftPrefix: 'Draft:',
     },
     welcome: {
-        greeting:
-            "Hi! Tell us what's going on and we'll get it to the right team.",
+        greeting: 'What do you need help with?',
         suggestions: [
             { label: 'Report a bug', message: "I'd like to report a bug." },
             {
@@ -38,21 +38,27 @@ export const chatCopy = {
     thread: {
         typing: 'Assistant is typing',
         copyMessage: 'Copy',
+        // Prefix of the time divider of messages sent today, e.g. "Today 14:26".
+        today: 'Today',
         chatErrorFallback:
             'Something went wrong. Please try sending your message again.',
         emailEscapeHatch: `…or email your request to ${supportEmail} →`,
     },
     composer: {
-        placeholder: 'Message…',
+        placeholder: 'Describe the issue…',
+        placeholderReply: 'Reply…',
         inputLabel: 'Message',
         send: 'Send message',
         stop: 'Stop generating',
         addAttachment: 'Add attachment',
         attachmentsShared: 'Attachments are shared with the support team.',
+        escalationPrompt: 'Prefer a human?',
+        escalationLink: 'Email support',
     },
     attachments: {
         remove: 'Remove file',
         previewTitle: 'Image attachment preview',
+        closePreview: 'Close preview',
         typeLabel: {
             image: 'Image',
             document: 'Document',
@@ -72,28 +78,22 @@ export const chatCopy = {
         string
     >,
     ticketCard: {
-        draftHeading: 'Review your request',
-        intentLabel: {
-            feedback: 'Feedback',
-            bug: 'Bug report',
-            support: 'Support request',
-        } satisfies Record<ITicketIntent, string>,
-        descriptionLabel: 'Details',
         stepsLabel: 'Steps to reproduce',
-        contactLabel: 'Contact',
+        // Rendered ahead of the contact the user left, e.g. "We'll reply to evan@aragon.org".
+        contactPrefix: "We'll reply to",
         preparing: 'Putting your request together…',
-        addMore: 'Anything to add? Any detail helps — just keep typing.',
-        create: 'Create',
+        addMore: 'Anything to add? Keep typing — this draft updates.',
+        create: 'Create ticket',
         dismiss: 'Dismiss',
         creating: 'Creating your request…',
         dismissed: 'Draft dismissed. Keep chatting to prepare a new one.',
-        superseded: 'This draft was set aside after your newer messages.',
+        superseded:
+            'Earlier draft set aside — your newer messages replaced it.',
         draftInterrupted:
             'That draft did not come through. Keep chatting to prepare a new one.',
         successTitle: 'Request created',
         contactUpdates:
             'If you left a way to reach you, the team will follow up there.',
-        viewTicket: 'View request',
         errorTitle: "We couldn't create your request",
         errorFallback: 'Nothing was lost. Check your connection and try again.',
         retry: 'Retry',
@@ -103,6 +103,7 @@ export const chatCopy = {
     },
     requestHistory: {
         heading: 'Past requests',
+        empty: 'No requests from this device yet.',
     },
     serviceErrors: {
         rateLimited:
@@ -110,5 +111,7 @@ export const chatCopy = {
         sessionLimit: `You've reached today's limit for new support chats. Email ${supportEmail} to open a new ticket.`,
         upstreamRateLimited:
             'The assistant is handling a lot of requests right now. Please try again in a minute.',
+        timeout:
+            'The assistant took too long to answer. Nothing was lost — send your message again.',
     },
 } as const;

@@ -28,23 +28,19 @@ ApplicationSlotId             ...
 |---|---|
 | Use an existing slot in a page or component | [Consuming Slots](./consuming-slots.md) |
 | Create a new slot or register a new plugin | [Creating Slots](./creating-slots.md) |
-| See all governance slots | [Governance Slots Reference](./governance-slots.md) |
-| See all settings slots | [Settings Slots Reference](./settings-slots.md) |
-| See all create DAO slots | [Create DAO Slots Reference](./create-dao-slots.md) |
-| See application & DAO-level slots | [Application Slots Reference](./application-slots.md) |
 
 ## Slot Inventory
 
-| Module | Enum | Slots | Reference |
-|---|---|---|---|
-| Governance | `GovernanceSlotId` | 20 | [governance-slots.md](./governance-slots.md) |
-| Settings | `SettingsSlotId` | 4 | [settings-slots.md](./settings-slots.md) |
-| Create DAO | `CreateDaoSlotId` | 5 | [create-dao-slots.md](./create-dao-slots.md) |
-| Application | `ApplicationSlotId` | 1 | [application-slots.md](./application-slots.md) |
-| Dashboard (DAO-level) | `DashboardDaoSlotId` | 1 | [application-slots.md](./application-slots.md#dao-level-slots) |
-| Capital Flow (DAO-level) | `CapitalFlowDaoSlotId` | 2 | [application-slots.md](./application-slots.md#dao-level-slots) |
+Slot enums are the source of truth — each module defines its slots in code:
 
-**Total: 33 slots** across 6 enums. See [metrics](./_metrics.md) for the full coverage matrix.
+| Module | Enum | Source |
+|---|---|---|
+| Governance | `GovernanceSlotId` | `src/modules/governance/constants/moduleSlots.ts` |
+| Settings | `SettingsSlotId` | `src/modules/settings/constants/moduleSlots.ts` |
+| Create DAO | `CreateDaoSlotId` | `src/modules/createDao/constants/moduleSlots.ts` |
+| Application | `ApplicationSlotId` | `src/modules/application/constants/moduleSlots.ts` |
+| Dashboard (DAO-level) | `DashboardDaoSlotId` | `src/modules/dashboard/constants/moduleDaoSlots.ts` |
+| Capital Flow (DAO-level) | `CapitalFlowDaoSlotId` | `src/modules/capitalFlow/constants/moduleDaoSlots.ts` |
 
 ## Registered Plugins
 

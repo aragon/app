@@ -72,8 +72,9 @@ export const TooltipIconButton = forwardRef<
         ...rest
     } = props;
 
+    // Tailwind's reset gives buttons the default arrow cursor; every control in the app points.
     const classes = classNames(
-        'focus-ring-primary inline-flex shrink-0 items-center justify-center rounded-full outline-none transition-colors active:scale-90 disabled:pointer-events-none disabled:opacity-50',
+        'focus-ring-primary inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-colors active:scale-90 disabled:pointer-events-none disabled:opacity-50',
         variantClasses[variant],
         sizeClasses[size],
         className,

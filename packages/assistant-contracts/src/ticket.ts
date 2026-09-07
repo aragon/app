@@ -30,11 +30,11 @@ export type ICreateTicketToolInput = z.infer<
     typeof createTicketToolInputSchema
 >;
 
-// Result of a successful creation: rendered by the card as a link and appended to the client-side
-// request history.
+// Result of a successful creation: the ticket reference the card renders and the client-side
+// request history stores. Deliberately excludes the Linear URL — users have no access to the
+// workspace, and anything in the output also reaches the model, which would narrate the link.
 export const createTicketToolOutputSchema = z.object({
     identifier: z.string(),
-    url: z.string(),
 });
 
 export type ICreateTicketToolOutput = z.infer<

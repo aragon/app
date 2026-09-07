@@ -1,0 +1,28 @@
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import type { IPluginInfo } from '@/shared/types';
+
+export const crossChainControllerPlugin: IPluginInfo = {
+    id: PluginInterfaceType.CROSS_CHAIN_CONTROLLER,
+    subdomain: 'cross-chain-controller',
+    name: 'Cross-chain controller',
+    installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },
+    repositoryAddresses: {
+        [Network.ARBITRUM_MAINNET]:
+            '0x0000000000000000000000000000000000000000',
+        [Network.BASE_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.CITREA_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.HEMI_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.ETHEREUM_MAINNET]:
+            '0x0000000000000000000000000000000000000000',
+        [Network.ETHEREUM_SEPOLIA]:
+            '0x0000000000000000000000000000000000000000',
+        [Network.POLYGON_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.ZKSYNC_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.OPTIMISM_MAINNET]:
+            '0x0000000000000000000000000000000000000000',
+        [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.AVAX_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
+    },
+};

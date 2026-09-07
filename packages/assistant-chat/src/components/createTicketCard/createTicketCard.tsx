@@ -19,9 +19,15 @@ import { useEffect } from 'react';
 import { chatCopy } from '../../copy';
 import { appendRequestToHistory } from '../../requests';
 
-// The top margin separates the card from the assistant text preceding it in the same message.
+// The vertical margins separate the card from the assistant text around it in the same message —
+// the model narrates both into a draft and past a result, so text can sit on either side.
 const cardClassName =
-    'mt-3 flex w-full flex-col gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-4 first:mt-0';
+    'my-3 flex w-full flex-col gap-3.5 rounded-xl border border-neutral-100 bg-neutral-0 p-5 shadow-neutral-md first:mt-0 last:mb-0';
+
+// A draft nobody acted on is not an event worth a card: it collapses into a quiet line so the
+// transcript stays readable while still reading honestly.
+const spentNoteClassName =
+    'my-3 text-center text-neutral-400 text-xs leading-normal first:mt-0 last:mb-0';
 
 // The ticket draft the model assembled, rendered as an approval card in the transcript. It walks
 // four states: the draft streaming in, the draft awaiting the user's Create/Dismiss decision, the
@@ -46,14 +52,14 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         if (result != null && !isError) {
             appendRequestToHistory({
                 identifier: result.identifier,
-                url: result.url,
                 summary: args.title ?? '',
                 createdAt: new Date().toISOString(),
             });
         }
     }, [result, isError, args.title]);
 
-    // Terminal success: the created ticket, linked out. The request history keeps its own copy.
+    // Terminal success: the ticket reference to quote in follow-ups. Deliberately not linked —
+    // the ticket lives in a Linear workspace the user has no access to.
     if (result != null && !isError) {
         return (
             <div className={cardClassName}>
@@ -67,18 +73,14 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         {chatCopy.ticketCard.successTitle}
                     </Heading>
                 </div>
-                <a
-                    className="flex items-center gap-2"
-                    href={result.url}
-                    rel="noreferrer"
-                    target="_blank"
-                >
+                <div className="flex items-center gap-2">
                     <Tag label={result.identifier} variant="primary" />
-                    <span className="flex items-center gap-1 text-primary-400 text-sm underline">
-                        {chatCopy.ticketCard.viewTicket}
-                        <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
-                    </span>
-                </a>
+                    {args.title != null && (
+                        <span className="min-w-0 truncate text-neutral-500 text-sm">
+                            {args.title}
+                        </span>
+                    )}
+                </div>
                 <p className="text-neutral-500 text-sm leading-normal">
                     {chatCopy.ticketCard.contactUpdates}
                 </p>
@@ -87,15 +89,12 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
     }
 
     // A draft that broke before the user ever approved it (clipped stream, invalid tool input)
-    // is not a failed creation — nothing was attempted. Render it as a quiet spent card so the
-    // conversation just moves on.
+    // is not a failed creation — nothing was attempted, so the conversation just moves on.
     if (isError && approval?.approved !== true) {
         return (
-            <div className={cardClassName}>
-                <p className="text-neutral-400 text-sm leading-normal">
-                    {chatCopy.ticketCard.draftInterrupted}
-                </p>
-            </div>
+            <p className={spentNoteClassName}>
+                {chatCopy.ticketCard.draftInterrupted}
+            </p>
         );
     }
 
@@ -131,26 +130,21 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
     }
 
     // Superseded draft: the user kept typing past an undecided card, so the approval was never
-    // answered — the server resolves it as superseded and a fresh draft follows. A quiet spent
-    // card, kept in place so the transcript reads honestly.
+    // answered — the server resolves it as superseded and a fresh draft follows.
     if (approval?.approved == null && !isLastMessage) {
         return (
-            <div className={cardClassName}>
-                <p className="text-neutral-400 text-sm leading-normal">
-                    {chatCopy.ticketCard.superseded}
-                </p>
-            </div>
+            <p className={spentNoteClassName}>
+                {chatCopy.ticketCard.superseded}
+            </p>
         );
     }
 
     // Dismissed or cancelled draft: the user explicitly declined it.
     if (approval?.approved === false || approval?.resolution != null) {
         return (
-            <div className={cardClassName}>
-                <p className="text-neutral-400 text-sm leading-normal">
-                    {chatCopy.ticketCard.dismissed}
-                </p>
-            </div>
+            <p className={spentNoteClassName}>
+                {chatCopy.ticketCard.dismissed}
+            </p>
         );
     }
 
@@ -180,54 +174,29 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
 
     return (
         <div className={cardClassName}>
-            <div className="flex items-center justify-between gap-2">
-                <Heading as="h3" size="h5">
-                    {chatCopy.ticketCard.draftHeading}
-                </Heading>
-                {args.intent != null && (
-                    <Tag
-                        label={chatCopy.ticketCard.intentLabel[args.intent]}
-                        variant="neutral"
-                    />
-                )}
-            </div>
+            {/* The ticket leads with itself: its title is the card's heading. */}
             {args.title != null && (
-                <p className="font-semibold text-neutral-800 text-sm leading-normal">
+                <Heading as="h3" size="h4">
                     {args.title}
-                </p>
+                </Heading>
             )}
             {args.description != null && (
-                <div className="flex flex-col gap-0.5">
-                    <p className="text-neutral-500 text-xs uppercase tracking-wide">
-                        {chatCopy.ticketCard.descriptionLabel}
-                    </p>
-                    <p className="whitespace-pre-wrap text-neutral-800 text-sm leading-normal">
-                        {args.description}
-                    </p>
-                </div>
+                <p className="whitespace-pre-wrap text-neutral-600 text-sm leading-normal">
+                    {args.description}
+                </p>
             )}
             {steps.length > 0 && (
-                <div className="flex flex-col gap-0.5">
-                    <p className="text-neutral-500 text-xs uppercase tracking-wide">
+                <div className="flex flex-col gap-1">
+                    <p className="font-semibold text-neutral-800 text-sm leading-normal">
                         {chatCopy.ticketCard.stepsLabel}
                     </p>
-                    <ol className="list-decimal pl-5 text-neutral-800 text-sm leading-normal">
+                    <ol className="list-decimal pl-5 text-neutral-600 text-sm leading-normal">
                         {steps.map((step, index) => (
                             // Steps are positional and may repeat verbatim, so the index is the
                             // only stable identity available.
                             <li key={`step-${index}`}>{step}</li>
                         ))}
                     </ol>
-                </div>
-            )}
-            {args.contact != null && args.contact.length > 0 && (
-                <div className="flex flex-col gap-0.5">
-                    <p className="text-neutral-500 text-xs uppercase tracking-wide">
-                        {chatCopy.ticketCard.contactLabel}
-                    </p>
-                    <p className="text-neutral-800 text-sm leading-normal">
-                        {args.contact}
-                    </p>
                 </div>
             )}
             {awaitingDecision ? (
@@ -237,7 +206,12 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                     <p className="text-neutral-400 text-xs leading-normal">
                         {chatCopy.ticketCard.addMore}
                     </p>
-                    <div className="flex items-center gap-2 pt-1">
+                    {args.contact != null && args.contact.length > 0 && (
+                        <p className="text-neutral-400 text-xs leading-normal">
+                            {`${chatCopy.ticketCard.contactPrefix} ${args.contact}`}
+                        </p>
+                    )}
+                    <div className="flex items-center gap-3 border-neutral-100 border-t pt-3.5">
                         <Button
                             onClick={() =>
                                 respondToApproval({ approved: true })

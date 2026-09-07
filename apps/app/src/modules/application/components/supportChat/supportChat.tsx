@@ -10,7 +10,7 @@ const assistantUrl = process.env.NEXT_PUBLIC_ASSISTANT_URL ?? '';
 
 // The trigger opens the chat whenever the feature flag is on — no availability gate in front of
 // the panel. Service failures surface inside the widget, where mailing the support team stays
-// one click away (header link + error escape hatches).
+// one click away (the line under the composer + error escape hatches).
 export const SupportChat: React.FC = () => {
     const { isOpen, close } = useSupportChatContext();
 

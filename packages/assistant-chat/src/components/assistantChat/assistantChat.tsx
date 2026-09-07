@@ -1,9 +1,10 @@
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { noopMonitoring } from '../../monitoring';
 import { useAssistantRuntime } from '../../runtime';
 import { useChatSession } from '../../session';
 import { ChatHeader } from '../chatHeader';
+import { ChatRequestHistory } from '../chatRequestHistory';
 import { Thread } from '../thread';
 import type { IAssistantChatProps } from './assistantChat.api';
 
@@ -23,6 +24,18 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
 
     const { sessionId, rotate } = useChatSession();
 
+    // The panel shows either the conversation or the requests filed from this device; the composer
+    // lives inside the thread, so swapping the thread out is what hides it in the requests view.
+    const [isViewingRequests, setIsViewingRequests] = useState(false);
+
+    // The requests are a detour off the conversation, not a place to come back to: closing the
+    // panel drops the detour, so reopening lands on the chat the user was having.
+    useEffect(() => {
+        if (!isOpen) {
+            setIsViewingRequests(false);
+        }
+    }, [isOpen]);
+
     const runtime = useAssistantRuntime({
         assistantUrl,
         sessionId,
@@ -38,13 +51,26 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
         void runtime.thread.composer.clearAttachments();
         // The runtime starts a fresh thread when the session identifier changes.
         rotate();
+        setIsViewingRequests(false);
     }, [runtime, rotate]);
 
     return (
         <AssistantRuntimeProvider runtime={runtime}>
             <div className="flex h-full min-h-0 flex-col">
-                <ChatHeader onClose={onClose} onNewChat={startNewChat} />
-                <Thread isOpen={isOpen} />
+                <ChatHeader
+                    isViewingRequests={isViewingRequests}
+                    onBack={() => setIsViewingRequests(false)}
+                    onClose={onClose}
+                    onNewChat={startNewChat}
+                />
+                {isViewingRequests ? (
+                    <ChatRequestHistory />
+                ) : (
+                    <Thread
+                        isOpen={isOpen}
+                        onViewRequests={() => setIsViewingRequests(true)}
+                    />
+                )}
             </div>
         </AssistantRuntimeProvider>
     );

@@ -48,9 +48,9 @@ export const isSafeUrl = (href: string): boolean => /^(https?:|\/)/i.test(href);
 // This applies for all sanitizations below
 interface AnchorNode {
     tagName?: string;
-    getAttribute(name: string): string | null;
-    setAttribute(name: string, value: string): void;
-    removeAttribute(name: string): void;
+    getAttribute: (name: string) => string | null;
+    setAttribute: (name: string, value: string) => void;
+    removeAttribute: (name: string) => void;
 }
 
 const isAnchorNode = (node: unknown): node is AnchorNode =>

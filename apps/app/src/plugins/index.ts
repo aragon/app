@@ -2,6 +2,7 @@ import { initialiseAdminPlugin } from './adminPlugin';
 import { adminPluginDialogsDefinitions } from './adminPlugin/constants/adminPluginDialogsDefinitions';
 import { initialiseCapitalDistributorPlugin } from './capitalDistributorPlugin';
 import { capitalDistributorPluginDialogsDefinitions } from './capitalDistributorPlugin/constants/capitalDistributorPluginDialogsDefinitions';
+import { initialiseCrossChainControllerPlugin } from './crossChainControllerPlugin';
 import { initialiseGaugeVoterPlugin } from './gaugeVoterPlugin';
 import { gaugeVoterPluginDialogsDefinitions } from './gaugeVoterPlugin/constants/gaugeVoterPluginDialogsDefinitions';
 import { initialiseLockToVotePlugin } from './lockToVotePlugin';
@@ -21,6 +22,7 @@ export const initialisePlugins = () => {
     initialiseLockToVotePlugin();
     initialiseSppPlugin();
     initialiseGaugeVoterPlugin();
+    initialiseCrossChainControllerPlugin();
 };
 
 export const pluginDialogsDefinitions = {

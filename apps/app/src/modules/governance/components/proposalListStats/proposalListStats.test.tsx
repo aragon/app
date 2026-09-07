@@ -66,16 +66,15 @@ describe('<ProposalListStats /> component', () => {
 
     it('renders all stats with valid data and formatted relative date', () => {
         const proposals = [generateProposal({ blockTimestamp: 1_720_000_000 })];
-        useProposalListDataSpy
-            .mockReturnValueOnce(
-                createProposalListData({
-                    proposalList: proposals,
-                    itemsCount: 20,
-                }),
-            )
-            .mockReturnValueOnce(
-                createProposalListData({ proposalList: [], itemsCount: 5 }),
-            );
+        // Keyed on params (not call order) as the component re-renders after mount.
+        useProposalListDataSpy.mockImplementation((params) =>
+            params.queryParams.isExecuted
+                ? createProposalListData({ proposalList: [], itemsCount: 5 })
+                : createProposalListData({
+                      proposalList: proposals,
+                      itemsCount: 20,
+                  }),
+        );
 
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin(),
@@ -106,13 +105,9 @@ describe('<ProposalListStats /> component', () => {
     });
 
     it('renders "-" when data is missing', () => {
-        useProposalListDataSpy
-            .mockReturnValueOnce(
-                createProposalListData({ itemsCount: undefined }),
-            )
-            .mockReturnValueOnce(
-                createProposalListData({ itemsCount: undefined }),
-            );
+        useProposalListDataSpy.mockReturnValue(
+            createProposalListData({ itemsCount: undefined }),
+        );
 
         useDaoPluginsSpy.mockReturnValue(undefined);
         formatDateSpy.mockReturnValue('-');

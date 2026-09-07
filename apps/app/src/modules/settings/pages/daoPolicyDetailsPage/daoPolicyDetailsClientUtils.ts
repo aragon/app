@@ -1,4 +1,3 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     type IDao,
     type IDaoPolicy,
@@ -75,9 +74,7 @@ export const getPolicySettingsForCard = (
             targetAddress: source.vaultAddress,
         });
 
-        const sourceName =
-            targetDao?.name ??
-            addressUtils.truncateAddress(source.vaultAddress);
+        const sourceName = targetDao?.name ?? source.vaultAddress;
 
         settings.push({
             term: t('app.settings.daoPolicyDetailsInfo.source'),
@@ -94,7 +91,7 @@ export const getPolicySettingsForCard = (
             const { token } = policy.strategy.source;
             settings.push({
                 term: t('app.settings.daoPolicyDetailsInfo.token'),
-                value: addressUtils.truncateAddress(token.address),
+                value: token.address,
                 description: token.symbol
                     ? `${token.name ?? token.symbol} ($${token.symbol})`
                     : undefined,
@@ -109,7 +106,7 @@ export const getPolicySettingsForCard = (
             if (uniswapRouterAddress) {
                 settings.push({
                     term: t('app.settings.daoPolicyDetailsInfo.uniswapRouter'),
-                    value: addressUtils.truncateAddress(uniswapRouterAddress),
+                    value: uniswapRouterAddress,
                     address: uniswapRouterAddress,
                     copyValue: uniswapRouterAddress,
                 });
@@ -134,9 +131,7 @@ export const getPolicySettingsForCard = (
         ) {
             settings.push({
                 term: t('app.settings.daoPolicyDetailsInfo.gaugeVoter'),
-                value: addressUtils.truncateAddress(
-                    policy.strategy.model.gaugeVoterAddress,
-                ),
+                value: policy.strategy.model.gaugeVoterAddress,
                 address: policy.strategy.model.gaugeVoterAddress,
                 copyValue: policy.strategy.model.gaugeVoterAddress,
             });

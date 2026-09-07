@@ -5,6 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import type * as Navigation from '@/shared/components/navigation';
 import {
@@ -26,6 +27,9 @@ jest.mock('@aragon/gov-ui-kit', () => ({
         <button onClick={props.onClick} type="button">
             {props.user ? props.user.address : 'connect-mock'}
         </button>
+    ),
+    Icon: (props: { icon: string }) => (
+        <span data-testid={`icon-${props.icon}`} />
     ),
 }));
 
@@ -105,6 +109,7 @@ describe('<NavigationDao /> component', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
 
         const plugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({ id: 'test', plugins: [plugin] });
@@ -155,6 +160,18 @@ describe('<NavigationDao /> component', () => {
         expect(triggerButton.className).toContain('md:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('shows the permissions link in the dao dialog menu', async () => {
+        render(createTestComponent());
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        expect(
+            screen.getByRole('link', {
+                name: /navigationDao.link.permissions/,
+            }),
+        ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
+        expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

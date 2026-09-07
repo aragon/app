@@ -17,6 +17,7 @@ import {
     generateVote,
 } from '../../testUtils';
 import { tokenVotingMembershipServiceClient } from '../tokenVotingMembershipService';
+import type { IProposal, IVote } from './domain';
 import { governanceService } from './governanceService';
 import * as fetchTokensTotalSupplyHelpers from './utils/fetchTokensTotalSupply';
 
@@ -116,29 +117,32 @@ describe('governance service', () => {
             'wrapped / VE-adapter governance token',
             { tokenUnderlying: '0xunderlying' },
         ],
-    ])('getTokenVotingMembership routes to the legacy backend for %s', async (_label, routingOverrides) => {
-        requestSpy.mockResolvedValue(generatePaginatedResponse({}));
-        await governanceService.getTokenVotingMembership({
-            queryParams: {
-                daoId: 'dao-id-test',
-                pluginAddress: '0x123',
-                tokenAddress: '0xtoken',
-                network: Network.ETHEREUM_MAINNET,
-                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
-                ...routingOverrides,
-            },
-        });
-
-        expect(domainMembersSpy).not.toHaveBeenCalled();
-        expect(requestSpy).toHaveBeenCalledWith(
-            governanceService['urls'].members,
-            expect.objectContaining({
-                queryParams: expect.objectContaining({
+    ])(
+        'getTokenVotingMembership routes to the legacy backend for %s',
+        async (_label, routingOverrides) => {
+            requestSpy.mockResolvedValue(generatePaginatedResponse({}));
+            await governanceService.getTokenVotingMembership({
+                queryParams: {
+                    daoId: 'dao-id-test',
                     pluginAddress: '0x123',
+                    tokenAddress: '0xtoken',
+                    network: Network.ETHEREUM_MAINNET,
+                    pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    ...routingOverrides,
+                },
+            });
+
+            expect(domainMembersSpy).not.toHaveBeenCalled();
+            expect(requestSpy).toHaveBeenCalledWith(
+                governanceService['urls'].members,
+                expect.objectContaining({
+                    queryParams: expect.objectContaining({
+                        pluginAddress: '0x123',
+                    }),
                 }),
-            }),
-        );
-    });
+            );
+        },
+    );
 
     it('getTokenVotingMembership maps the backend members to DTOs when routing to the legacy backend', async () => {
         const member = generateTokenMember({
@@ -378,6 +382,7 @@ describe('governance service', () => {
         const multisigSub = {
             ...generateMultisigProposal({
                 id: 'sub-multisig',
+                pluginAddress: '0x456',
                 pluginInterfaceType: PluginInterfaceType.MULTISIG,
             }),
             stageIndex: 0,
@@ -434,6 +439,63 @@ describe('governance service', () => {
         ).toBeUndefined();
     });
 
+    it('getProposalBySlug enriches a sub-proposal of a lock-to-vote stage body even when its own interface type disagrees', async () => {
+        const tokenAddress = '0xCcCc';
+        const bodyAddress = '0xBodyLtv';
+        // SPP dispatches by the stage plugin's interface type, so a sub-proposal whose own
+        // pluginInterfaceType is inconsistent must still receive the supply enrichment.
+        const mismatchedSub = {
+            ...generateProposal({
+                id: 'sub-mismatched',
+                pluginAddress: bodyAddress,
+                pluginInterfaceType: PluginInterfaceType.MULTISIG,
+            }),
+            stageIndex: 0,
+        };
+        const proposal = generateSppProposal({
+            id: '004',
+            network: Network.ETHEREUM_MAINNET,
+            pluginInterfaceType: PluginInterfaceType.SPP,
+            settings: generateSppPluginSettings({
+                stages: [
+                    generateSppStage({
+                        plugins: [
+                            generateLockToVoteStagePlugin({
+                                address: bodyAddress.toUpperCase(),
+                                settings: generateLockToVotePluginSettings({
+                                    token: generateLockToVotePluginSettingsToken(
+                                        { address: tokenAddress },
+                                    ),
+                                }),
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+            subProposals: [mismatchedSub],
+        });
+        const proposalParams = {
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'test-id' },
+        };
+        requestSpy.mockResolvedValue(proposal);
+        fetchTokensTotalSupplySpy.mockResolvedValue({
+            [tokenAddress.toLowerCase()]: '5000',
+        });
+
+        const result =
+            await governanceService.getProposalBySlug<ISppProposal>(
+                proposalParams,
+            );
+
+        const [decoratedSub] = result.subProposals;
+        expect(
+            (decoratedSub as unknown as ILockToVoteProposal).tokensTotalSupply,
+        ).toEqual({
+            [tokenAddress.toLowerCase()]: '5000',
+        });
+    });
+
     it('getProposalBySlug leaves non-LTV non-SPP proposals untouched', async () => {
         const proposal = generateProposal({
             id: '003',
@@ -451,6 +513,52 @@ describe('governance service', () => {
 
         expect(fetchTokensTotalSupplySpy).not.toHaveBeenCalled();
         expect(result.tokensTotalSupply).toBeUndefined();
+    });
+
+    it('getProposalBySlug normalizes unset title and summary to empty strings', async () => {
+        const proposal = {
+            ...generateProposal({ id: '004' }),
+            title: null,
+            summary: null,
+        } as unknown as IProposal;
+        const proposalParams = {
+            urlParams: { slug: '004' },
+            queryParams: { daoId: 'test-id' },
+        };
+        requestSpy.mockResolvedValue(proposal);
+
+        const result =
+            await governanceService.getProposalBySlug(proposalParams);
+
+        expect(result.title).toEqual('');
+        expect(result.summary).toEqual('');
+    });
+
+    it('getProposalBySlug normalizes the metadata of SPP sub-proposals', async () => {
+        const subProposal = {
+            ...generateMultisigProposal({ id: 'sub-multisig' }),
+            stageIndex: 0,
+            title: null,
+            summary: null,
+        } as unknown as ISppProposal['subProposals'][number];
+        const proposal = generateSppProposal({
+            id: '005',
+            pluginInterfaceType: PluginInterfaceType.SPP,
+            subProposals: [subProposal],
+        });
+        const proposalParams = {
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'test-id' },
+        };
+        requestSpy.mockResolvedValue(proposal);
+
+        const result =
+            await governanceService.getProposalBySlug<ISppProposal>(
+                proposalParams,
+            );
+
+        expect(result.subProposals[0].title).toEqual('');
+        expect(result.subProposals[0].summary).toEqual('');
     });
 
     it('getCanCreateProposal fetches if the member can create a proposal on the specified plugin', async () => {
@@ -474,10 +582,12 @@ describe('governance service', () => {
     });
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
-        const votes = [
-            generateVote({ transactionHash: '0' }),
-            generateVote({ transactionHash: '1' }),
-        ];
+        const votes = generatePaginatedResponse({
+            data: [
+                generateVote({ transactionHash: '0' }),
+                generateVote({ transactionHash: '1' }),
+            ],
+        });
         const params = {
             queryParams: {
                 proposalId: 'proposal-id',
@@ -494,5 +604,42 @@ describe('governance service', () => {
             params,
         );
         expect(result).toEqual(votes);
+    });
+
+    it('getVoteList normalizes the metadata of the proposals attached to the votes', async () => {
+        const proposal = {
+            ...generateProposal({ id: '0' }),
+            title: null,
+            summary: null,
+        } as unknown as IProposal;
+        const parentProposal = {
+            id: '1',
+            pluginAddress: '0x123',
+            incrementalId: 1,
+            title: null,
+        } as unknown as IVote['parentProposal'];
+        const votes = generatePaginatedResponse({
+            data: [
+                generateVote({
+                    transactionHash: '0',
+                    proposal,
+                    parentProposal,
+                }),
+            ],
+        });
+        const params = {
+            queryParams: {
+                proposalId: 'proposal-id',
+                pluginAddress: '0x123',
+                network: Network.BASE_MAINNET,
+            },
+        };
+
+        requestSpy.mockResolvedValue(votes);
+        const result = await governanceService.getVoteList(params);
+
+        expect(result.data[0].proposal?.title).toEqual('');
+        expect(result.data[0].proposal?.summary).toEqual('');
+        expect(result.data[0].parentProposal?.title).toEqual('');
     });
 });

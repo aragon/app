@@ -96,6 +96,27 @@ describe('useDaoPlugins hook', () => {
         });
     });
 
+    it('forwards includeUnsupported to the plugin filters', () => {
+        const dao = generateDao({
+            plugins: [
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.UNKNOWN,
+                }),
+            ],
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+
+        renderHook(
+            () => useDaoPlugins({ daoId: dao.id, includeUnsupported: true }),
+            { wrapper: FeatureFlagsProvider },
+        );
+        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
+            includeUnsupported: true,
+        });
+    });
+
     it('hides plugins listed in the DAO override when visibleOnly is true', () => {
         const hiddenPlugin = generateDaoPlugin({
             interfaceType: PluginInterfaceType.TOKEN_VOTING,

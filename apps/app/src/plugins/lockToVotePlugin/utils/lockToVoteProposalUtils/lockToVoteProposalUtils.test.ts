@@ -11,7 +11,10 @@ import {
 } from '../../../tokenPlugin/types';
 import { generateLockToVotePluginSettings } from '../../testUtils/generators/lockToVotePluginSettings';
 import { generateLockToVoteProposal } from '../../testUtils/generators/lockToVoteProposal';
-import type { ILockToVoteProposal } from '../../types';
+import type {
+    ILockToVotePluginSettings,
+    ILockToVoteProposal,
+} from '../../types';
 import { lockToVoteProposalUtils } from './lockToVoteProposalUtils';
 
 describe('lockToVoteProposalUtils', () => {
@@ -529,6 +532,27 @@ describe('lockToVoteProposalUtils', () => {
 
         it('returns undefined when tokensTotalSupply has no entry for the token', () => {
             const proposal = generateLockToVoteProposal();
+            expect(
+                lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
+            ).toBeUndefined();
+        });
+
+        it('returns undefined when the enrichment is missing entirely', () => {
+            const proposal = generateLockToVoteProposal({
+                tokensTotalSupply: undefined,
+            });
+            expect(
+                lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
+            ).toBeUndefined();
+        });
+
+        it('returns undefined when the proposal carries foreign settings without a token', () => {
+            const proposal = generateLockToVoteProposal({
+                settings: {
+                    ...generateLockToVotePluginSettings(),
+                    token: undefined,
+                } as unknown as ILockToVotePluginSettings,
+            });
             expect(
                 lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
             ).toBeUndefined();

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    addressUtils,
     TransactionType as DataListTransactionType,
     type ITransactionDataListItemProps,
     TransactionDataListItem,
@@ -85,11 +84,9 @@ const getExecutionLabel = (
         return daoUtils.getPluginName(sourcePlugin);
     }
 
-    const label = transaction.source ?? transaction.fromAddress;
-
-    return addressUtils.isAddress(label)
-        ? addressUtils.truncateAddress(label)
-        : label;
+    // The kit renders `label` through AddressOutput when it is an address, so
+    // hand it the raw value instead of a pre-truncated string.
+    return transaction.source ?? transaction.fromAddress;
 };
 
 const buildExecutionProps = (

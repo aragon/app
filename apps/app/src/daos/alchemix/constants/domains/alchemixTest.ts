@@ -1,4 +1,4 @@
 export const alchemixTest = {
-    id: 'ethereum-sepolia-0x1F0D1ab1ebbBFeeaD2cc5566dBCb2e7403b42499',
+    id: 'base-mainnet-0x32d627b081e0f4fF28474820f20128049DA55360',
     name: 'alchemixTest',
 };

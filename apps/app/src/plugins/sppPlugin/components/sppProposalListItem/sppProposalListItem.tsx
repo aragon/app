@@ -6,7 +6,7 @@ import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/comp
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
 
@@ -17,8 +17,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
     props,
 ) => {
     const { proposal, dao, proposalSlug } = props;
-    const { id, title, summary, stageIndex, settings, executed, creator } =
-        proposal;
+    const { id, summary, stageIndex, settings, executed, creator } = proposal;
 
     const { t } = useTranslations();
 
@@ -57,7 +56,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             status={proposalStatus}
             statusContext={statusContext}
             summary={summary}
-            title={title}
+            title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
         />
     );
 };

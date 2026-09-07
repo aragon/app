@@ -19,6 +19,7 @@ export {
     type IAssistantErrorCode,
 } from './error';
 export {
+    attachmentPartType,
     confirmFileRequestSchema,
     deleteFileRequestSchema,
     type IConfirmFileRequest,

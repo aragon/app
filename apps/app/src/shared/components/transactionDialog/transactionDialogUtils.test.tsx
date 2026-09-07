@@ -16,18 +16,16 @@ describe('transactionDialog utils', () => {
             ).toEqual('idle');
         });
 
-        it.each([
-            { queryStatus: 'success' },
-            { queryStatus: 'error' },
-        ])('returns $queryStatus when query status is $queryStatus', ({
-            queryStatus,
-        }) => {
-            const result = transactionDialogUtils.queryToStepState(
-                queryStatus as UseQueryReturnType['status'],
-                'idle',
-            );
-            expect(result).toEqual(queryStatus);
-        });
+        it.each([{ queryStatus: 'success' }, { queryStatus: 'error' }])(
+            'returns $queryStatus when query status is $queryStatus',
+            ({ queryStatus }) => {
+                const result = transactionDialogUtils.queryToStepState(
+                    queryStatus as UseQueryReturnType['status'],
+                    'idle',
+                );
+                expect(result).toEqual(queryStatus);
+            },
+        );
     });
 
     describe('getTransactionErrorLabel', () => {

@@ -1,9 +1,4 @@
-import {
-    addressUtils,
-    Button,
-    ChainEntityType,
-    DefinitionList,
-} from '@aragon/gov-ui-kit';
+import { Button, ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -128,7 +123,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                 {/* Target */}
                 {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
-                        copyValue={targetAddress}
                         description={targetName}
                         link={{
                             href: buildEntityUrl({
@@ -136,10 +130,11 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                                 id: targetAddress,
                             }),
                             isExternal: true,
+                            isOnchainEntity: true,
                         }}
                         term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
-                        {addressUtils.truncateAddress(targetAddress)}
+                        {targetAddress}
                     </DefinitionList.Item>
                 )}
 

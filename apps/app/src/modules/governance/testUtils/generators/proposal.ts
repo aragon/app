@@ -12,6 +12,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     startDate: 0,
     endDate: 1_234_567_890,
     summary: 'summary',
+    metadataUri: 'ipfs://metadata-cid',
     creator: generateAddressInfo(),
     blockTimestamp: 0,
     description: 'description',

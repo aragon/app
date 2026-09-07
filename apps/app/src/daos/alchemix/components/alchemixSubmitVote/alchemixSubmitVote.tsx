@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     addressUtils,
     Button,
     Card,
@@ -34,6 +35,7 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useAlchemixOverrideStatus } from '../../hooks/useAlchemixOverrideStatus';
 import type { IAlchemixVoteOption } from '../../utils/alchemixTransactionUtils';
+import { AlchemixObjectionVote } from './components';
 
 export interface IAlchemixSubmitVoteProps {
     /**
@@ -62,6 +64,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     const { daoId, proposal, isVeto } = props;
     const { pluginAddress, network, proposalIndex, settings } = proposal;
     const { token } = settings;
+    const isObjection = settings.isObjection === true;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -90,6 +93,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
         pluginAddress,
         network,
         userAddress: address,
+        enabled: !isObjection,
     });
 
     const { data: delegateeEnsName } = useEnsName(delegatee);
@@ -127,16 +131,20 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     // display the updated position.
     const latestVoteTransactionHash = latestVote?.transactionHash;
     useEffect(() => {
-        if (latestVoteTransactionHash != null) {
+        if (!isObjection && latestVoteTransactionHash != null) {
             refetch();
             setShowOptions(false);
             setSelectedOption(undefined);
         }
-    }, [latestVoteTransactionHash, refetch]);
+    }, [isObjection, latestVoteTransactionHash, refetch]);
 
-    // Fall back to the default token-voting controls when the override feature does not apply to the connected
-    // user or its status cannot be resolved. While the status is loading, render nothing to avoid briefly showing
-    // the default controls to a user that is only allowed to override.
+    if (isObjection) {
+        return <AlchemixObjectionVote {...props} />;
+    }
+
+    // Fall back to the plain voting controls when the override feature does not apply to the connected user or its
+    // status cannot be resolved. While the status is loading, render nothing to avoid briefly showing the default
+    // controls to a user that is only allowed to override.
     if (address == null || plugin == null || isError) {
         return <TokenSubmitVoteDefault {...props} />;
     }
@@ -170,7 +178,6 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     );
     const delegateeName =
         delegateeEnsName ?? addressUtils.truncateAddress(delegatee);
-    const userName = userEnsName ?? addressUtils.truncateAddress(address);
 
     const disabledOptions: IDisabledVotingOption[] = [];
 
@@ -210,7 +217,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             voteLabel === 'abstain'
                 ? undefined
                 : t(
-                      `app.plugins.token.tokenSubmitVote.voteDescription.${settings.isObjection ? 'objection' : isVeto ? 'veto' : 'approve'}`,
+                      `app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`,
                   );
         // Without override permission the delegated power cannot be moved: leave the vote type unset so that the
         // DAO-level build-vote-data slot falls back to the plain vote of the token plugin.
@@ -286,7 +293,12 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             <div className="flex min-w-0 grow flex-col gap-0.5">
                 <div className="flex items-center gap-2">
                     <p className="truncate font-semibold text-base text-neutral-800 leading-tight">
-                        {delegateeName}
+                        {delegatee != null && (
+                            <AddressOutput
+                                address={delegatee}
+                                label={delegateeEnsName ?? undefined}
+                            />
+                        )}
                     </p>
                     <Tag
                         label={t(
@@ -327,7 +339,12 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                     <div className="flex min-w-0 grow flex-col gap-0.5">
                         <div className="flex items-center gap-2">
                             <p className="truncate font-semibold text-base text-neutral-800 leading-tight">
-                                {userName}
+                                {address != null && (
+                                    <AddressOutput
+                                        address={address}
+                                        label={userEnsName ?? undefined}
+                                    />
+                                )}
                             </p>
                             <Tag
                                 label={t(
@@ -410,7 +427,6 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                 <>
                     <TokenVotingOptions
                         disabledOptions={disabledOptions}
-                        isObjection={settings.isObjection}
                         isVeto={isVeto}
                         onChange={setSelectedOption}
                         value={selectedOption}

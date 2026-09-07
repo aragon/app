@@ -31,7 +31,6 @@ export const createTestLinearGateway = (): ITestLinearGateway => {
             return Promise.resolve({
                 issueId: `issue-${gateway.createIssueCalls.length}`,
                 identifier: `SUP-${gateway.createIssueCalls.length}`,
-                url: `https://linear.app/aragon/issue/SUP-${gateway.createIssueCalls.length}`,
             });
         },
         uploadFile: (input) => {

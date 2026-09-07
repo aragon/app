@@ -66,7 +66,7 @@ const out = kitCssOut;
 // refreshed in the same PR as the Tailwind bump.
 if (!existsSync(cli) || !existsSync(cliPackageJson)) {
     throw new Error(
-        '@tailwindcss/cli is missing. Run `corepack pnpm install` from the repo root before design-sync.',
+        '@tailwindcss/cli is missing. Run `pnpm install` from the repo root before design-sync.',
     );
 }
 const tailwindVersion = JSON.parse(

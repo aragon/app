@@ -49,6 +49,17 @@ export interface IGetDaoPluginsParams {
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
+    /**
+     * Keeps plugins the app cannot govern with: those whose interface type could
+     * not be resolved, and those the backend flags as unsupported (`isSupported:
+     * false`, e.g. installed outside the standard OSx flow). They are dropped by
+     * default because the app has no UI to render them with. Set this to `true`
+     * ONLY for surfaces describing what is installed on-chain (permissions,
+     * contract versions), where omitting a contract would give a wrong picture
+     * of the DAO.
+     * @default false
+     */
+    includeUnsupported?: boolean;
 }
 
 export interface IDaoAvailableUpdates {
@@ -64,14 +75,37 @@ export interface IDaoAvailableUpdates {
 
 class DaoUtils {
     hasPluginBody = (dao?: IDao): boolean =>
-        dao?.plugins?.some((p) => p.isBody) ?? false;
+        dao?.plugins?.some((p) => p.isBody && this.isSupportedPlugin(p)) ??
+        false;
 
+    /**
+     * Checks if the DAO has at least one plugin the app can render. Plugins the
+     * backend cannot resolve or flags as unsupported are dropped first, so this
+     * stays in sync with what `getDaoPlugins` returns — otherwise sections and
+     * navigation items would be rendered for a DAO with no usable plugin.
+     * Client-side only: the plugin registry is populated on demand.
+     */
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds =
-            dao?.plugins?.map(({ interfaceType }) => interfaceType) ?? [];
+            dao?.plugins
+                ?.filter((plugin) => this.isSupportedPlugin(plugin))
+                .map(({ interfaceType }) => interfaceType) ?? [];
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
+
+    /**
+     * Checks if the backend could resolve the interface type of the plugin and
+     * did not flag it as unsupported (e.g. installed outside the standard OSx
+     * flow). Deliberately based on those backend fields and not on the plugin
+     * registry: the registry is populated on demand, so a registry lookup here
+     * would report every plugin as unsupported during server rendering.
+     */
+    isSupportedPlugin = (
+        plugin: Pick<IDaoPlugin, 'interfaceType' | 'isSupported'>,
+    ): boolean =>
+        plugin.interfaceType !== PluginInterfaceType.UNKNOWN &&
+        plugin.isSupported !== false;
 
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.ens != null && dao.ens !== '' ? dao.ens : undefined;
@@ -108,6 +142,7 @@ class DaoUtils {
             interfaceType,
             hasExecute,
             slug,
+            includeUnsupported = false,
         } = params ?? {};
 
         return dao?.plugins?.filter(
@@ -122,7 +157,8 @@ class DaoUtils {
                 ) &&
                 this.filterByInterfaceType(plugin, interfaceType) &&
                 this.filterByHasExecute(plugin, hasExecute) &&
-                this.filterBySlug(plugin, slug),
+                this.filterBySlug(plugin, slug) &&
+                this.filterBySupported(plugin, includeUnsupported),
         );
     };
 
@@ -187,9 +223,17 @@ class DaoUtils {
                     registeredPlugin.subdomain === plugin.subdomain,
             );
 
+            // Skip plugins that do not pin down to a single registered entry.
+            // Preparing the update looks the plugin info up by interfaceType, so
+            // both lookups have to agree, otherwise we would prepare the update
+            // against the wrong repository.
+            if (target == null || target.id !== plugin.interfaceType) {
+                return false;
+            }
+
             return versionComparatorUtils.isLessThan(
                 plugin,
-                target?.installVersion,
+                target.installVersion,
             );
         });
 
@@ -278,10 +322,7 @@ class DaoUtils {
     private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
         type == null ||
         (type === PluginType.BODY && plugin.isBody) ||
-        (type === PluginType.PROCESS &&
-            plugin.isProcess &&
-            // TODO (APP-1012): just a temp solution to fix regression in SelectPluginDialog. Implement a consistent way to handle unknowns across the app!
-            plugin.interfaceType !== PluginInterfaceType.UNKNOWN);
+        (type === PluginType.PROCESS && plugin.isProcess);
 
     private filterBySubPlugin = (
         plugin: IDaoPlugin,
@@ -310,6 +351,11 @@ class DaoUtils {
 
     private filterByHasExecute = (plugin: IDaoPlugin, hasExecute?: boolean) =>
         !hasExecute || plugin.conditionAddress == null;
+
+    private filterBySupported = (
+        plugin: IDaoPlugin,
+        includeUnsupported: boolean,
+    ) => includeUnsupported || this.isSupportedPlugin(plugin);
 }
 
 export const daoUtils = new DaoUtils();

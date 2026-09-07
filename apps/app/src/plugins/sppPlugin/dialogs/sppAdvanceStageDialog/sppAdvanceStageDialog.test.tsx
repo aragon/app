@@ -9,6 +9,7 @@ import * as Wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogProps,
@@ -142,7 +143,13 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
         // so proposalUtils.getProposalSlug resolves to SLUG-1.
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateDao({ plugins: [generateDaoPlugin()] }),
+                data: generateDao({
+                    plugins: [
+                        generateDaoPlugin({
+                            interfaceType: PluginInterfaceType.SPP,
+                        }),
+                    ],
+                }),
             }),
         );
         const indexedProposal = generateProposal({ id: 'advanced-1' });

@@ -31,15 +31,13 @@ describe('dateUtils', () => {
             { days: 0, hours: 1, minutes: 0, result: 3600 },
             { days: 0, hours: 0, minutes: 1, result: 60 },
             { days: 10, hours: 2, minutes: 55, result: 874_500 },
-        ])('correctly converts $days days, $hours hours, $minutes minutes to $result seconds', ({
-            days,
-            hours,
-            minutes,
-            result,
-        }) => {
-            const duration = { days, hours, minutes };
-            expect(dateUtils.durationToSeconds(duration)).toEqual(result);
-        });
+        ])(
+            'correctly converts $days days, $hours hours, $minutes minutes to $result seconds',
+            ({ days, hours, minutes, result }) => {
+                const duration = { days, hours, minutes };
+                expect(dateUtils.durationToSeconds(duration)).toEqual(result);
+            },
+        );
     });
 
     describe('parseFixedDate', () => {
@@ -194,13 +192,13 @@ describe('dateUtils', () => {
                 durationOne: undefined,
                 durationTwo: { days: 1, hours: 10, minutes: 3 },
             },
-        ])('returns false when time durations are not equal', ({
-            durationOne,
-            durationTwo,
-        }) => {
-            expect(
-                dateUtils.compareDuration(durationOne, durationTwo),
-            ).toBeFalsy();
-        });
+        ])(
+            'returns false when time durations are not equal',
+            ({ durationOne, durationTwo }) => {
+                expect(
+                    dateUtils.compareDuration(durationOne, durationTwo),
+                ).toBeFalsy();
+            },
+        );
     });
 });

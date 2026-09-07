@@ -1,9 +1,4 @@
-import {
-    addressUtils,
-    ChainEntityType,
-    DefinitionList,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, DefinitionList, Tag } from '@aragon/gov-ui-kit';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -43,13 +38,16 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<
         <div className="flex flex-col gap-y-4">
             <DefinitionList.Container>
                 <DefinitionList.Item
-                    copyValue={gauge.address}
-                    link={{ href: gaugeAddressLink, isExternal: true }}
+                    link={{
+                        href: gaugeAddressLink,
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t(
                         'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.contract',
                     )}
                 >
-                    {addressUtils.truncateAddress(gauge.address)}
+                    {gauge.address}
                 </DefinitionList.Item>
                 {gauge.links &&
                     gauge.links.length > 0 &&

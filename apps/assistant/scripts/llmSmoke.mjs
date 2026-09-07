@@ -2,6 +2,10 @@
 // (real models, real Linear team of that environment). Non-blocking by design — it validates that
 // the prompts, the pipeline and the Linear integration still work end to end, not unit behavior.
 //
+// Tickets are created the way the widget creates them: the agent drafts a createLinearTicket tool
+// call, the stream pauses on a tool approval request, and a resume request carrying the approved
+// tool part executes the creation.
+//
 // Usage: node scripts/llmSmoke.mjs [baseUrl]
 // The base URL defaults to ASSISTANT_SMOKE_URL or https://dev.assistant.aragon.org.
 
@@ -14,6 +18,16 @@ const baseUrl = (
 ).replace(/\/$/, '');
 
 const appContext = { route: '/llm-smoke', appVersion: 'llm-smoke' };
+
+// The assistant domains sit behind Vercel's bot challenge, which a plain fetch cannot solve;
+// automation passes it with the secret checked by the assistant-smoke-bypass firewall rule.
+// Without the secret the header is omitted and every scenario fails with the challenge's 403.
+const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+const bypassHeaders = bypassSecret
+    ? { 'x-vercel-protection-bypass': bypassSecret }
+    : {};
+
+const createTicketToolName = 'createLinearTicket';
 
 const failures = [];
 
@@ -43,10 +57,13 @@ const chunksToText = (chunks) =>
         .map((chunk) => chunk.delta)
         .join('');
 
+// One request against /chat, digested into what the scenarios assert on: the assembled reply
+// text, the createLinearTicket draft (input + approval request) when the agent produced one,
+// and the executed tool output on a resume.
 const sendChatTurn = async (sessionId, messages) => {
     const response = await fetch(`${baseUrl}/chat`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', ...bypassHeaders },
         body: JSON.stringify({ sessionId, messages, appContext }),
     });
 
@@ -58,28 +75,78 @@ const sendChatTurn = async (sessionId, messages) => {
 
     const chunks = await readStream(response);
     const text = chunksToText(chunks);
+    const messageId = chunks.find((chunk) => chunk.type === 'start')?.messageId;
+    const draftInput = chunks.find(
+        (chunk) =>
+            chunk.type === 'tool-input-available' &&
+            chunk.toolName === createTicketToolName,
+    );
+    const approvalRequest = chunks.find(
+        (chunk) =>
+            chunk.type === 'tool-approval-request' &&
+            chunk.toolCallId === draftInput?.toolCallId,
+    );
+    const toolOutput = chunks.find(
+        (chunk) => chunk.type === 'tool-output-available',
+    );
 
-    return {
-        messages: [
-            ...messages,
-            {
-                id: randomUUID(),
-                role: 'assistant',
-                parts: [{ type: 'text', text }],
-            },
-        ],
-        text,
-    };
+    return { approvalRequest, draftInput, messageId, text, toolOutput };
 };
 
-const postJson = async (path, sessionId, messages) => {
-    const response = await fetch(`${baseUrl}${path}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ sessionId, messages, appContext }),
-    });
+// Drives the conversation until the agent drafts a ticket, tolerating one clarifying question
+// (a real model sometimes asks for details before drafting). Returns the transcript so far and
+// the draft; throws when no draft appeared within the allowed turns.
+const converseUntilDraft = async (sessionId, openingText, followUpText) => {
+    const messages = [buildUserMessage(openingText)];
+    let turn = await sendChatTurn(sessionId, messages);
 
-    return { status: response.status, body: await response.json() };
+    if (!(turn.draftInput && turn.approvalRequest)) {
+        if (turn.text.length === 0) {
+            throw new Error('expected a reply, got an empty stream');
+        }
+        logStep('no draft on the first turn, answering the follow-up');
+        messages.push(
+            {
+                id: turn.messageId ?? randomUUID(),
+                role: 'assistant',
+                parts: [{ type: 'text', text: turn.text }],
+            },
+            buildUserMessage(followUpText),
+        );
+        turn = await sendChatTurn(sessionId, messages);
+    }
+
+    if (!(turn.draftInput && turn.approvalRequest)) {
+        throw new Error(
+            `expected a ${createTicketToolName} draft with an approval request, got: ${turn.text.slice(0, 200)}`,
+        );
+    }
+
+    return { messages, turn };
+};
+
+// Rebuilds the widget's approval resume: the history is re-sent ending on the assistant message
+// whose tool part carries the user's approval; executing that part is what creates the ticket.
+const approveDraft = async (sessionId, messages, turn) => {
+    const assistantMessage = {
+        id: turn.messageId ?? randomUUID(),
+        role: 'assistant',
+        parts: [
+            { type: 'text', text: turn.text },
+            {
+                type: `tool-${createTicketToolName}`,
+                toolCallId: turn.draftInput.toolCallId,
+                state: 'approval-responded',
+                input: turn.draftInput.input,
+                approval: {
+                    id: turn.approvalRequest.approvalId,
+                    approved: true,
+                },
+            },
+        ],
+    };
+
+    return sendChatTurn(sessionId, [...messages, assistantMessage]);
 };
 
 const runScenario = async (name, scenario) => {
@@ -94,7 +161,9 @@ const runScenario = async (name, scenario) => {
 };
 
 await runScenario('health', async () => {
-    const response = await fetch(`${baseUrl}/health`);
+    const response = await fetch(`${baseUrl}/health`, {
+        headers: bypassHeaders,
+    });
     const body = await response.json();
     if (!response.ok || body.status !== 'ok') {
         throw new Error(`unexpected health response: ${JSON.stringify(body)}`);
@@ -114,103 +183,60 @@ await runScenario(
             throw new Error('expected a refusal message, got an empty stream');
         }
 
-        // The transcript carries no support request: the preview must come back unclear and
-        // creation (without a stored snapshot) must be refused.
-        const preview = await postJson(
-            '/issues/preview',
-            sessionId,
-            turn.messages,
-        );
-        if (preview.status !== 200 || preview.body.status !== 'unclear') {
+        // The transcript carries no support request: the agent must decline in text and never
+        // draft a ticket for approval.
+        if (turn.draftInput || turn.approvalRequest) {
             throw new Error(
-                `expected an unclear preview, got ${preview.status}: ${JSON.stringify(preview.body)}`,
-            );
-        }
-
-        const issue = await postJson('/issues', sessionId, turn.messages);
-        if (issue.status !== 422) {
-            throw new Error(
-                `expected 422 for an off-topic transcript, got ${issue.status}`,
+                `expected no ticket draft for an off-topic transcript, got: ${JSON.stringify(turn.draftInput?.input)}`,
             );
         }
     },
 );
 
 await runScenario(
-    'bug report previews a reviewable ticket and creates it',
+    'bug report drafts a reviewable ticket and creates it on approval',
     async () => {
         const sessionId = randomUUID();
-        const turn = await sendChatTurn(sessionId, [
-            buildUserMessage(
-                'I found a bug in the app: the proposal page crashes with a blank screen whenever I open any proposal on ethereum mainnet. It started today and reproduces every time I click a proposal in the list. My email is llm-smoke@aragon.org.',
-            ),
-        ]);
-        if (turn.text.length === 0) {
-            throw new Error('expected a reply, got an empty stream');
-        }
-
-        const preview = await postJson(
-            '/issues/preview',
+        const { messages, turn } = await converseUntilDraft(
             sessionId,
-            turn.messages,
-        );
-        if (
-            preview.status !== 200 ||
-            preview.body.status !== 'ready' ||
-            !preview.body.summary
-        ) {
-            throw new Error(
-                `expected a ready preview with a summary, got ${preview.status}: ${JSON.stringify(preview.body)}`,
-            );
-        }
-        logStep(
-            `preview: intent=${preview.body.intent} summary=${preview.body.summary}`,
+            'I found a bug in the app: the proposal page crashes with a blank screen whenever I open any proposal on ethereum mainnet. It started today and reproduces every time I click a proposal in the list. My email is llm-smoke@aragon.org.',
+            'It happens on every proposal, Chrome on desktop, no console access. Please just file the ticket with what we have.',
         );
 
-        const issue = await postJson('/issues', sessionId, turn.messages);
-        if (issue.status !== 201) {
+        const { input } = turn.draftInput;
+        if (!input.title || !input.description) {
             throw new Error(
-                `expected 201 from POST /issues, got ${issue.status}: ${JSON.stringify(issue.body)}`,
+                `draft misses title/description: ${JSON.stringify(input)}`,
             );
         }
-        if (!issue.body.identifier || !issue.body.url) {
-            throw new Error(
-                `issue response misses identifier/url: ${JSON.stringify(issue.body)}`,
-            );
-        }
-        logStep(`created ${issue.body.identifier} (${issue.body.url})`);
+        logStep(`draft: intent=${input.intent} title=${input.title}`);
 
-        // Retrying the same session must be idempotent and return the same issue.
-        const retry = await postJson('/issues', sessionId, turn.messages);
-        if (retry.status !== 200 || retry.body.issueId !== issue.body.issueId) {
+        const resume = await approveDraft(sessionId, messages, turn);
+        const output = resume.toolOutput?.output;
+        if (!output?.identifier || !output?.url) {
             throw new Error(
-                `expected an idempotent retry, got ${retry.status}: ${JSON.stringify(retry.body)}`,
+                `expected the executed tool output with identifier/url, got: ${JSON.stringify(resume.toolOutput ?? resume.text.slice(0, 200))}`,
             );
         }
+        if (resume.text.length === 0) {
+            throw new Error('expected a closing message after the creation');
+        }
+        logStep(`created ${output.identifier} (${output.url})`);
     },
 );
 
 await runScenario('feedback intent is understood', async () => {
     const sessionId = randomUUID();
-    const turn = await sendChatTurn(sessionId, [
-        buildUserMessage(
-            'Just some feedback: I love the new governance designer, but the save button is hard to find on small screens.',
-        ),
-    ]);
+    // Draft only — the approval is never sent, so no ticket is created.
+    const { turn } = await converseUntilDraft(
+        sessionId,
+        'Just some feedback: I love the new governance designer, but the save button is hard to find on small screens. Please pass it on to the team.',
+        'Nothing more to add — please just file the feedback as described.',
+    );
 
-    if (turn.text.length === 0) {
-        throw new Error('expected a reply, got an empty stream');
-    }
-
-    const preview = await postJson('/issues/preview', sessionId, turn.messages);
-    if (preview.status !== 200 || preview.body.status !== 'ready') {
+    if (turn.draftInput.input.intent !== 'feedback') {
         throw new Error(
-            `expected a ready preview, got ${preview.status}: ${JSON.stringify(preview.body)}`,
-        );
-    }
-    if (preview.body.intent !== 'feedback') {
-        throw new Error(
-            `expected intent 'feedback', got '${String(preview.body.intent)}'`,
+            `expected intent 'feedback', got '${String(turn.draftInput.input.intent)}'`,
         );
     }
 });

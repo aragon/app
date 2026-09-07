@@ -10,6 +10,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IGetProposalListParams } from '../../api/governanceService';
@@ -49,14 +50,20 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
     });
     const buttonUrl = daoUtils.getDaoUrl(dao, 'settings#governance');
 
+    // Relative time is computed against "now" (and the viewer's timezone), so the server
+    // and client render different text — format only after mount to avoid a hydration
+    // mismatch; the stat shows the same placeholder as the loading state until then.
+    const isMounted = useIsMounted();
+
     const latestProposalDate =
         proposalList != null && proposalList.length > 0
             ? proposalList[0].blockTimestamp * 1000
             : undefined;
-    const formattedProposalDate = formatterUtils.formatDate(
-        latestProposalDate,
-        { format: DateFormat.RELATIVE },
-    );
+    const formattedProposalDate = isMounted
+        ? formatterUtils.formatDate(latestProposalDate, {
+              format: DateFormat.RELATIVE,
+          })
+        : undefined;
 
     const [proposalDateValue, proposalDateUnit] = formattedProposalDate?.split(
         ' ',

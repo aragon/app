@@ -1,3 +1,4 @@
+import { AragonBackendServiceError } from './shared/api/aragonBackendService';
 import { monitoringUtils } from './shared/utils/monitoringUtils';
 
 export async function register() {
@@ -10,4 +11,17 @@ export async function register() {
     }
 }
 
-export const onRequestError = monitoringUtils.logRequestError;
+// Expected not-found lookups (bots and stale links probing removed DAO/plugin URLs)
+// render 404-style states and are not reported — mirrors the suppression in the
+// metadata utils and PageError for render paths without their own error handling.
+export const onRequestError: typeof monitoringUtils.logRequestError = (
+    error,
+    request,
+    context,
+) => {
+    if (AragonBackendServiceError.isExpectedNotFoundError(error)) {
+        return;
+    }
+
+    return monitoringUtils.logRequestError(error, request, context);
+};

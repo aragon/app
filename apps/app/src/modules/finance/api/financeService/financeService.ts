@@ -6,9 +6,10 @@ import {
     AragonBackendService,
     type IPaginatedResponse,
 } from '@/shared/api/aragonBackendService';
-import type { IAsset } from './domain';
+import type { IAsset, IToken } from './domain';
 import type {
     IGetAssetListParams,
+    IGetTokenInfoParams,
     IGetTransactionActionsParams,
     IGetTransactionListParams,
 } from './financeService.api';
@@ -16,8 +17,15 @@ import type {
 class FinanceService extends AragonBackendService {
     private urls = {
         assets: '/v2/assets',
+        token: '/v2/tokens/:network/:address',
         transactions: '/v2/transactions',
         transactionActions: '/v2/transactions/:network/:id/actions',
+    };
+
+    getTokenInfo = async (params: IGetTokenInfoParams): Promise<IToken> => {
+        const result = await this.request<IToken>(this.urls.token, params);
+
+        return result;
     };
 
     getAssetList = async (

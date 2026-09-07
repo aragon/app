@@ -5,6 +5,7 @@ export type {
     IDaoPermission,
     IDaoPermissionCondition,
     IPermissionEntityRef,
+    ISppConditionRule,
 } from './daoPermission';
 export type { IDaoPlugin } from './daoPlugin';
 export {

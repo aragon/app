@@ -106,4 +106,8 @@ export interface IDaoPlugin<
      * Address of the create proposal condition of the plugin.
      */
     proposalCreationConditionAddress?: string;
+    /**
+     * Set to false if a plugin is not installed following standard OSx flow.
+     */
+    isSupported?: boolean;
 }

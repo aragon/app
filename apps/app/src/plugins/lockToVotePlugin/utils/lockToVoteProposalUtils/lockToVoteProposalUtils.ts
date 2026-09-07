@@ -152,10 +152,17 @@ class LockToVoteProposalUtils {
         IDaoPlugin<ILockToVotePluginSettings> =>
         plugin.interfaceType === PluginInterfaceType.LOCK_TO_VOTE;
 
-    getProposalTokenTotalSupply = (proposal: ILockToVoteProposal) => {
-        const tokenAddress = proposal.settings.token.address.toLowerCase();
+    getProposalTokenTotalSupply = (
+        proposal: ILockToVoteProposal,
+    ): string | undefined => {
+        // SPP routes sub-proposals here based on the STAGE plugin's interface type, so the
+        // proposal may carry inconsistent backend data (foreign settings or missing supply
+        // enrichment). Returns undefined in that case; callers safe-parse the value to 0.
+        const tokenAddress = proposal.settings.token?.address.toLowerCase();
 
-        return proposal.tokensTotalSupply[tokenAddress];
+        return tokenAddress != null
+            ? proposal.tokensTotalSupply?.[tokenAddress]
+            : undefined;
     };
 }
 

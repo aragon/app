@@ -82,7 +82,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
             voteLabel === 'abstain'
                 ? undefined
                 : t(
-                      `app.plugins.token.tokenSubmitVote.voteDescription.${proposal.settings.isObjection ? 'objection' : isVeto ? 'veto' : 'approve'}`,
+                      `app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`,
                   );
         const vote = {
             value: Number(selectedOption),
@@ -190,7 +190,6 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
             {showOptions && (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <TokenVotingOptions
-                        isObjection={proposal.settings.isObjection}
                         isVeto={isVeto}
                         onChange={setSelectedOption}
                         value={selectedOption}

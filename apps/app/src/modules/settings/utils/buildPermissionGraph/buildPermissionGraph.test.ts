@@ -129,6 +129,61 @@ describe('buildPermissionGraph', () => {
         );
     });
 
+    it('preserves an enriched external DAO as a linked DAO node', () => {
+        const externalDaoAddress = '0x2222222222222222222222222222222222222222';
+        const graph = buildPermissionGraph({
+            rows: [
+                buildRow({
+                    whoAddress: externalDaoAddress,
+                    who: {
+                        address: externalDaoAddress,
+                        avatarSrc: 'https://external-dao.png',
+                        label: 'External DAO',
+                        layer: 'dao',
+                    },
+                }),
+            ],
+            dao,
+            accountRefs,
+        });
+
+        expect(
+            graph.nodes.find(
+                (node) => node.id === externalDaoAddress.toLowerCase(),
+            ),
+        ).toMatchObject({
+            kind: 'linkedDao',
+            label: 'External DAO',
+            avatarSrc: 'https://external-dao.png',
+        });
+    });
+    it('falls back to the address for an unresolved external DAO', () => {
+        const externalDaoAddress = '0x3333333333333333333333333333333333333333';
+        const graph = buildPermissionGraph({
+            rows: [
+                buildRow({
+                    whoAddress: externalDaoAddress,
+                    who: {
+                        address: externalDaoAddress,
+                        label: 'Unknown address',
+                        layer: 'dao',
+                    },
+                }),
+            ],
+            dao,
+            accountRefs,
+        });
+
+        expect(
+            graph.nodes.find(
+                (node) => node.id === externalDaoAddress.toLowerCase(),
+            ),
+        ).toMatchObject({
+            kind: 'linkedDao',
+            label: '0x3333…3333',
+        });
+    });
+
     it.each([
         {
             name: 'uses backend entity metadata without installed plugin lookup',
@@ -336,6 +391,48 @@ describe('buildPermissionGraph', () => {
         expect(graph.edges.map((edge) => edge.conditionLabel)).toEqual([
             'Unrecognized condition',
             'Unrecognized condition',
+        ]);
+    });
+
+    it('deduplicates the primary DAO actor across governance bodies by canonical address', () => {
+        const rows = [
+            buildRow({
+                whoAddress: daoAddress,
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+            buildRow({
+                whoAddress: daoAddress,
+                whereAddress: secondPluginAddress,
+                where: {
+                    address: secondPluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Polling',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+        ];
+
+        const graph = buildPermissionGraph({
+            rows,
+            dao,
+            daoPlugins,
+            accountRefs,
+        });
+
+        const daoNodes = graph.nodes.filter(
+            (node) => node.id === daoAddress.toLowerCase(),
+        );
+        expect(daoNodes).toHaveLength(1);
+        expect(daoNodes[0].kind).toBe('dao');
+        expect(graph.edges.map((edge) => edge.source)).toEqual([
+            daoAddress.toLowerCase(),
+            daoAddress.toLowerCase(),
         ]);
     });
 

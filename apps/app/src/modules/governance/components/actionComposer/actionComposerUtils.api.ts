@@ -62,6 +62,26 @@ export interface IGetAllowedActionItemsParams
     extends IGetAllowedActionBaseParams,
         Pick<IGetNativeActionItemsParams, 'nativeItems'> {}
 
+export interface IBuildUnverifiedAllowedActionParams
+    extends Pick<IGetActionBaseParams, 't'> {
+    /**
+     * Address of the contract being called (`where`).
+     */
+    target: string;
+    /**
+     * Selector of the allowed function.
+     */
+    selector: string;
+    /**
+     * Name of the called function, set only when the backend decoded it.
+     */
+    functionName?: string;
+    /**
+     * Index of the action inside the allowed-actions list, keeping the built item id unique.
+     */
+    index: number;
+}
+
 export interface IGetDaoActionsParams extends IGetActionBaseParams {
     /**
      * Permissions granted to DAO.

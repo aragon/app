@@ -113,9 +113,18 @@ describe('assistant wire contract', () => {
         expect(
             createTicketToolOutputSchema.safeParse({
                 identifier: 'SUP-123',
-                url: 'https://linear.app/aragon/issue/SUP-123',
             }).success,
         ).toBeTruthy();
+
+        // The Linear URL must never travel in the output: users cannot access the workspace and
+        // the model would narrate the link. A stored ticket from before the field was dropped
+        // still parses — unknown keys are stripped, not rejected.
+        expect(
+            createTicketToolOutputSchema.parse({
+                identifier: 'SUP-123',
+                url: 'https://linear.app/aragon/issue/SUP-123',
+            }),
+        ).toEqual({ identifier: 'SUP-123' });
     });
 
     it('pins the shared error shape and its codes', () => {

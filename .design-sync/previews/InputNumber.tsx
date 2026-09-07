@@ -6,8 +6,8 @@ export const Default = () => (
         helpText="How long members can vote on a proposal."
         label="Voting duration"
         min={1}
-        suffix="hours"
-        value="72"
+        suffix="days"
+        value="7"
     />
 );
 
@@ -25,6 +25,12 @@ export const PrefixSuffix = () => (
             className="w-full"
             label="Proposal deposit"
             prefix="ANT"
+            value="250"
+        />
+        <InputNumber
+            className="w-full"
+            label="Amount to stake"
+            suffix="aUSDC"
             value="250"
         />
     </div>

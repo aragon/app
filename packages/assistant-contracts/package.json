@@ -1,14 +1,16 @@
 {
     "name": "@aragon/assistant-contracts",
     "version": "0.2.0",
-    "description": "Shared zod contracts between the Aragon assistant service and the assistant-chat widget",
-    "author": "Aragon Association",
-    "homepage": "https://github.com/aragon/app#readme",
     "private": true,
+    "description": "Shared zod contracts between the Aragon assistant service and the assistant-chat widget",
+    "homepage": "https://github.com/aragon/app#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
     "license": "GPL-3.0",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
+    "author": "Aragon Association",
+    "sideEffects": false,
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -16,18 +18,20 @@
             "require": "./dist/index.js"
         }
     },
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
     "files": [
         "dist"
     ],
-    "sideEffects": false,
     "scripts": {
         "build": "tsup",
         "dev": "tsup --watch",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "test": "jest",
         "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
         "test:coverage": "jest --coverage",
-        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
-        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
@@ -41,10 +45,6 @@
         "ts-jest": "catalog:",
         "tsup": "catalog:",
         "typescript": "catalog:"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/aragon/app.git"
     },
     "engines": {
         "node": ">=24.16.0"

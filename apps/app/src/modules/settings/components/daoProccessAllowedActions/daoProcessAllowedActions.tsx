@@ -83,8 +83,8 @@ export const DaoProcessAllowedActions: React.FC<
                     <SmartContractFunctionDataListItem.Structure
                         chainId={networkDefinitions[network].id}
                         contractAddress={action.target}
-                        contractName={action.decoded.contractName}
-                        functionName={action.decoded.functionName}
+                        contractName={action.decoded?.contractName}
+                        functionName={action.decoded?.functionName}
                         functionSelector={action.selector ?? undefined}
                         key={index}
                     />

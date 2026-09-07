@@ -10,6 +10,37 @@ Below are the testing strategies used across the application.
 Unit testing involves testing individual units of code, typically functions or components, in isolation from the rest of
 the application.
 
+### What a test may assert
+
+A test asserts the behaviour of the **directly paired code subject** — its states and its input/output.
+Render whatever the subject needs, including third-party components, but never assert what a dependency
+does. Such an assertion breaks whenever the dependency changes while guarding nothing of your own.
+
+The failure is concrete. `advancedDateInputDuration.test.tsx` once asserted
+`expect(minutesInput).toHaveValue('6 min')` — that string is `@aragon/gov-ui-kit` `InputNumber` masking a
+keystroke, not anything the app component does. A kit upgrade changed the masking and broke the test,
+while the component's own logic had no coverage at all.
+
+Assert at the subject's output boundary instead:
+
+- **Callback props** — pass `jest.fn()` and assert `toHaveBeenCalledWith`.
+- **Form components** — own the form in the test (`useForm` + `FormProvider`), then read
+  `form.getValues(field)` and `form.getFieldState(field).error`.
+
+Finally, prove the assertion can fail: break the matching line in the subject, confirm exactly that test
+fails, then revert. Derive expectations from the contract — a prop's JSDoc, a util's spec — never by
+copying a failure's `Received:` value into the expectation.
+
+### How a test may select
+
+`getByRole`, `getByLabelText` and `getByText` are all fine. Never use a `data-testid`, a CSS or class
+selector, or DOM traversal (`parentElement`, next/sibling hops) to reach a node you cannot target
+directly.
+
+This is a design rule, not a style preference: a node that cannot be targeted on its own terms means the
+composition is too dense, so the fix is to
+[split the component](../codingGuidelines/codingGuidelines.md#react-components), never to add a handle.
+
 ### Writing Tests
 
 #### Components

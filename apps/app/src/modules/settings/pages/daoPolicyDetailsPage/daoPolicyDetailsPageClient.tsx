@@ -120,27 +120,39 @@ export const DaoPolicyDetailsPageClient: React.FC<
                     >
                         <Card className="px-6 py-3">
                             <DefinitionList.Container>
-                                {policySettings.map((setting) => (
-                                    <DefinitionList.Item
-                                        copyValue={setting.copyValue}
-                                        description={setting.description}
-                                        key={setting.term}
-                                        link={
-                                            setting.link ??
-                                            (setting.address
-                                                ? {
-                                                      href: getAddressLink(
-                                                          setting.address,
-                                                      ),
-                                                      isExternal: true,
-                                                  }
-                                                : undefined)
-                                        }
-                                        term={setting.term}
-                                    >
-                                        {setting.value}
-                                    </DefinitionList.Item>
-                                ))}
+                                {policySettings.map((setting) => {
+                                    const addressLink =
+                                        setting.address != null
+                                            ? getAddressLink(setting.address)
+                                            : undefined;
+
+                                    return (
+                                        <DefinitionList.Item
+                                            copyValue={setting.copyValue}
+                                            description={setting.description}
+                                            key={setting.term}
+                                            link={
+                                                addressLink != null
+                                                    ? {
+                                                          ...setting.link,
+                                                          href:
+                                                              setting.link
+                                                                  ?.href ??
+                                                              addressLink,
+                                                          isExternal:
+                                                              setting.link
+                                                                  ?.isExternal ??
+                                                              true,
+                                                          isOnchainEntity: true,
+                                                      }
+                                                    : setting.link
+                                            }
+                                            term={setting.term}
+                                        >
+                                            {setting.value}
+                                        </DefinitionList.Item>
+                                    );
+                                })}
                             </DefinitionList.Container>
                         </Card>
                         {isMultiDispatch && subRouterPolicies.length > 0 && (

@@ -1,11 +1,17 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import type { IConditionData } from '@/modules/settings/types';
+import type { IDaoPermissionCondition } from '@/shared/api/daoService';
 import { VotingPowerConditionSlot } from './votingPowerConditionSlot';
 
 describe('<VotingPowerConditionSlot /> component', () => {
-    const createTestComponent = (props?: Partial<IConditionData>) => {
-        const completeProps: IConditionData = {
+    type VotingPowerConditionProps = IDaoPermissionCondition & {
+        chainId?: number;
+    };
+
+    const createTestComponent = (
+        props?: Partial<VotingPowerConditionProps>,
+    ) => {
+        const completeProps: VotingPowerConditionProps = {
             conditionType: 'voting-power',
             ...props,
         };
@@ -34,6 +40,25 @@ describe('<VotingPowerConditionSlot /> component', () => {
         ).toBeInTheDocument();
         // 1e18 base units formatted with the default 18 decimals.
         expect(screen.getByText('1')).toBeInTheDocument();
+    });
+
+    it('links a valid token address to its explorer and exposes copy', () => {
+        const token = '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5';
+
+        render(createTestComponent({ chainId: 1, token }));
+
+        const tokenLink = screen.getByText('0x0bA4…a2e5').closest('a');
+        expect(tokenLink?.getAttribute('href')).toContain(`/address/${token}`);
+        expect(screen.getByTestId(IconType.COPY)).toBeInTheDocument();
+    });
+
+    it('does not link or copy malformed token payloads', () => {
+        const { container } = render(
+            createTestComponent({ chainId: 1, token: 'not-an-address' }),
+        );
+
+        expect(container.querySelector('a')).toBeNull();
+        expect(screen.queryByTestId(IconType.COPY)).not.toBeInTheDocument();
     });
 
     it('falls back to a placeholder when payload fields are absent', () => {

@@ -2,6 +2,7 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { TelegramSubscriptionCard } from '@/modules/dashboard/components/telegramSubscriptionCard';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
@@ -135,6 +136,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
                         />
                     )}
                 </Page.AsideCard>
+                <TelegramSubscriptionCard daoId={daoId} />
             </Page.Aside>
         </>
     );
