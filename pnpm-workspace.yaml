@@ -20,7 +20,7 @@ catalog:
   "@hono/node-server": ^1.19.17
   "@linear/sdk": ^89.0.0
   "@radix-ui/react-dialog": ^1.1.23
-  "@sentry/cli": ^3.6.2
+  "@sentry/cli": ^3.7.0
   "@sentry/hono": ^10.71.0
   "@sentry/node": ^10.71.0
   "@sentry/profiling-node": ^10.71.0
