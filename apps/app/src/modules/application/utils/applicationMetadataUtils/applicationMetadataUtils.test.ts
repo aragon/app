@@ -10,6 +10,8 @@ describe('applicationMetadata utils', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
 
+    const daoAddress = '0x1234567890123456789012345678901234567890';
+
     afterEach(() => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
@@ -27,7 +29,7 @@ describe('applicationMetadata utils', () => {
             const metadata = await applicationMetadataUtils.generateDaoMetadata(
                 {
                     params: Promise.resolve({
-                        addressOrEns: 'test-dao-address',
+                        addressOrEns: daoAddress,
                         network: Network.ETHEREUM_SEPOLIA,
                     }),
                 },
@@ -48,13 +50,30 @@ describe('applicationMetadata utils', () => {
             const metadata = await applicationMetadataUtils.generateDaoMetadata(
                 {
                     params: Promise.resolve({
-                        addressOrEns: 'test-dao-id',
+                        addressOrEns: daoAddress,
                         network: Network.ETHEREUM_SEPOLIA,
                     }),
                 },
             );
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
+        });
+
+        // A malformed address never reaches the backend: resolveDaoId renders the 404 page and
+        // the catch block lets that navigation signal through instead of building fallback metadata.
+        it('renders the 404 page for a malformed DAO address without fetching the DAO', async () => {
+            const metadata = applicationMetadataUtils.generateDaoMetadata({
+                params: Promise.resolve({
+                    addressOrEns: '0x1234-1) OR 1=1--',
+                    network: Network.ETHEREUM_SEPOLIA,
+                }),
+            });
+
+            await expect(metadata).rejects.toThrow(
+                'NEXT_HTTP_ERROR_FALLBACK;404',
+            );
+            expect(getDaoSpy).not.toHaveBeenCalled();
+            expect(logErrorSpy).not.toHaveBeenCalled();
         });
 
         it('does not log to monitoring when the DAO is not found', async () => {
@@ -68,7 +87,7 @@ describe('applicationMetadata utils', () => {
             const metadata = await applicationMetadataUtils.generateDaoMetadata(
                 {
                     params: Promise.resolve({
-                        addressOrEns: 'unknown-dao',
+                        addressOrEns: daoAddress,
                         network: Network.ETHEREUM_SEPOLIA,
                     }),
                 },
@@ -84,7 +103,7 @@ describe('applicationMetadata utils', () => {
 
             await applicationMetadataUtils.generateDaoMetadata({
                 params: Promise.resolve({
-                    addressOrEns: 'test-dao-id',
+                    addressOrEns: daoAddress,
                     network: Network.ETHEREUM_SEPOLIA,
                 }),
             });
@@ -99,7 +118,7 @@ describe('applicationMetadata utils', () => {
             const metadata = await applicationMetadataUtils.generateDaoMetadata(
                 {
                     params: Promise.resolve({
-                        addressOrEns: 'test-dao-id',
+                        addressOrEns: daoAddress,
                         network: Network.ETHEREUM_SEPOLIA,
                     }),
                 },

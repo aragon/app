@@ -62,7 +62,12 @@ export const GaugeVoterLockFormChart: React.FC<
 
     const processedAmount =
         Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
-    const processedAmountWei = parseUnits(processedAmount, 18).toString();
+    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
+    // (e.g. when the user clears the amount field).
+    const processedAmountWei = parseUnits(
+        processedAmount || '0',
+        18,
+    ).toString();
 
     const oneYearInSeconds = 365 * 24 * 60 * 60;
     const chartTimeframe = Math.min(maxTime, oneYearInSeconds);

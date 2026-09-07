@@ -67,7 +67,9 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
         control,
         name: 'amount',
     });
-    const lockAmountWei = parseUnits(lockAmount ?? '0', decimals);
+    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
+    // (e.g. when the user clears the amount field).
+    const lockAmountWei = parseUnits(lockAmount || '0', decimals);
 
     const needsApprovalForAmount = isConnected && lockAmountWei > allowance;
 

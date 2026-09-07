@@ -88,7 +88,9 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (
 
     const { symbol: tokenSymbol, decimals: tokenDecimals } =
         action.meta.settings.token;
-    const parsedAmount = parseUnits(amountField.value ?? '0', tokenDecimals);
+    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
+    // (e.g. when the user clears the amount field).
+    const parsedAmount = parseUnits(amountField.value || '0', tokenDecimals);
 
     useEffect(() => {
         const receiverAddress = addressUtils.isAddress(receiver?.address)
