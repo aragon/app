@@ -1,9 +1,10 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    type ICreateWorkspaceBody,
-    type IWorkspaceAccount,
-    type IWorkspaceAccountMetadata,
-    WorkspaceAccountType,
+import type { IWorkspaceAccountInfo } from '../../api/workspaceQueryService';
+import type {
+    ICreateWorkspaceBody,
+    IWorkspaceAccount,
+    IWorkspaceAccountMetadata,
 } from '../../api/workspaceService';
 import type {
     ICreateWorkspaceFormAccount,
@@ -28,6 +29,10 @@ export interface IBuildWorkspaceParams {
      * CIDs of the pinned account avatars, ordered as the accounts of the form values.
      */
     accountAvatarCids: (string | undefined)[];
+    /**
+     * Accounts as resolved by the workspace accounts API, used to store the type of each account.
+     */
+    accountInfos: IWorkspaceAccountInfo[];
 }
 
 class PublishWorkspaceDialogUtils {
@@ -37,7 +42,8 @@ class PublishWorkspaceDialogUtils {
      * @returns The workspace to be sent to the registry, without an ID as it is assigned by the registry.
      */
     buildWorkspace = (params: IBuildWorkspaceParams): ICreateWorkspaceBody => {
-        const { values, owner, avatarCid, accountAvatarCids } = params;
+        const { values, owner, avatarCid, accountAvatarCids, accountInfos } =
+            params;
         const { name, description, resources, targets, accounts } = values;
 
         return {
@@ -47,7 +53,11 @@ class PublishWorkspaceDialogUtils {
             links: resources,
             owner,
             accounts: accounts.map((account, index) =>
-                this.buildAccount(account, accountAvatarCids[index]),
+                this.buildAccount(
+                    account,
+                    accountInfos,
+                    accountAvatarCids[index],
+                ),
             ),
             targets: targets.map(({ address, network }) => ({
                 address,
@@ -81,13 +91,27 @@ class PublishWorkspaceDialogUtils {
 
     private buildAccount = (
         account: ICreateWorkspaceFormAccount,
+        accountInfos: IWorkspaceAccountInfo[],
         avatarCid?: string,
     ): IWorkspaceAccount => {
         const { address, network } = account;
 
+        const accountInfo = workspaceUtils.findAccountInfo(accountInfos, {
+            address,
+            network,
+        });
+        const type = workspaceUtils.getAccountType(accountInfo);
+
+        // The address was validated against the same API while the form was filled in, so an unresolved account
+        // here means it stopped resolving in the meantime. Storing a guessed type would corrupt the registry.
+        invariant(
+            type != null,
+            `PublishWorkspaceDialogUtils: unable to resolve the type of the account (network=${network}, address=${address}).`,
+        );
+
         return {
             id: workspaceUtils.buildAccountId({ address, network }),
-            type: WorkspaceAccountType.DAO,
+            type,
             address,
             network,
             metadata: this.buildAccountMetadata(account, avatarCid),

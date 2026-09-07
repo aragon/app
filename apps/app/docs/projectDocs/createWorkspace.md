@@ -23,7 +23,8 @@ In scope:
 
 Out of scope (deliberate, deferred to follow-ups):
 
-- Safe accounts and the account `type` picker.
+- An account `type` picker — the type is detected, not chosen.
+- The other four workspace query endpoints (assets, transactions, proposals, members).
 - Target-based account discovery.
 - Editing and deleting workspaces.
 - Per-account `links` / `nickname` metadata.
@@ -70,11 +71,12 @@ interface IWorkspaceTarget {
 // enum/workspaceAccountType.ts
 enum WorkspaceAccountType {
     DAO = 'DAO',
+    SAFE = 'SAFE',
 }
 ```
 
-`type` is written on every account even though the form has no field for it, so stored objects satisfy
-`IWorkspaceAccount` and 1096's pages can consume them unchanged.
+`type` has no form field: it is detected from the accounts API (see [Account resolution](#account-resolution)),
+so stored objects satisfy `IWorkspaceAccount` and 1096's pages can consume them unchanged.
 
 A target is an **opaque `{ network, address }` pair in v1** — no derived behaviour, no validation beyond address
 format. The next phase is expected to scan targets for permissions/access control and offer the discovered
@@ -158,9 +160,9 @@ block).
 
 ### Validation
 
-- Addresses: **format only** — `addressUtils.isAddress`, plus `AddressInput`'s ENS resolution. There is no
-  `daoService.getDao` existence check, so a valid-but-wrong address is accepted and only surfaces as empty
-  workspace pages later. Deliberate call; revisit if it bites.
+- Addresses: format (`addressUtils.isAddress` plus `AddressInput`'s ENS resolution), then — **for accounts only** —
+  resolved against `POST /v2/workspaces/query/accounts` (see [Account resolution](#account-resolution)). Targets are
+  arbitrary addresses and are never resolved.
 - Duplicates: rejected on the `(network, address)` pair **within** a list. The same pair may appear as both a
   target and an account (the seed data does this). Same address on different networks is legal.
 - Changing a row's network re-triggers validation of that row's address field (`useFormContext().trigger`),
@@ -292,6 +294,58 @@ Notes:
 - `workspaceDialogsDefinitions` stays registered in `providersDialogs` unconditionally. The publish dialog can
   only be opened from the create wizard, which is itself gated, so registration alone exposes nothing.
 
+## Account resolution
+
+Account addresses are resolved through the workspace query API
+([app-backend#1556](https://github.com/aragon/app-backend/pull/1556)):
+
+```
+POST /v2/workspaces/query/accounts     body: { accounts: [{ network, address }] }
+     -> { data: [{ network, address, type, status, indexed, name?, safe?, error? }] }
+```
+
+`src/modules/workspace/api/workspaceQueryService/` wraps it. Notes that shape the client:
+
+- **v2 only** — the version is forced with `apiVersionUtils.buildVersionedUrl(path, { forceVersion: 'v2' })`, the
+  same way `daoService` forces v2 for permissions.
+- **POST that only reads.** The account list does not fit in a URL. Query-string params are rejected with 400.
+- **Never match the response by index.** The backend removes duplicates and checksums addresses, so the response can
+  be shorter and reordered than the request — `workspaceUtils.findAccountInfo` matches on network + address.
+- Max 100 accounts per request; a bigger list is a 400. Not enforced in the UI yet (see Known gaps).
+- The response `safe` field (full Safe configuration) is intentionally not modelled: nothing in the create flow
+  needs it.
+
+### Validation and type detection
+
+`status` drives both:
+
+| `status` | Meaning | Row validation | Stored `type` |
+| --- | --- | --- | --- |
+| `available` | Indexed DAO or readable Safe | passes | `DAO` / `SAFE` from `type` |
+| `unsupported` | Neither a DAO nor a Safe on a covered network | `error.unsupportedAccount` | — |
+| `unavailable` | Source exists but could not be read now (rate limit, timeout, gateway down) | `error.unverifiedAccount` | — |
+
+`unavailable` is transient, so its message asks the user to retry rather than calling the address invalid. It still
+blocks: storing an account whose type is unknown would corrupt the registry, and `WorkspaceAccountType` deliberately
+has no `UNKNOWN` member. Locally this means Safe accounts need `aragon-gateway` running — without it every non-DAO
+address comes back `unavailable`.
+
+Each account row also shows what resolved, under its network and address fields
+(`createWorkspaceFormAccountIdentity`): a `DaoAvatar` plus the DAO's name and a `DAO` tag, or a wallet
+`AvatarIcon` plus the truncated address and a `Safe` tag, with a spinner while the lookup is in flight. Nothing is
+rendered for an `unsupported`/`unavailable` address — the field error already states the reason. The endpoint names
+DAOs only (`name: dao.name ?? null`) and returns no logo, so a Safe shows its address and the avatar falls back to
+its initial; naming a Safe is what the optional account metadata is for.
+
+The row lookup follows the `manageMembershipAddressList` precedent: a React Query hook (`useWorkspaceAccounts`)
+gated with `enabled` on a well-formed address, a synchronous validator reading its data, and an effect that
+re-`trigger`s the field once the lookup resolves. `staleTime` is 5 minutes because resolving a non-DAO address costs
+one upstream Safe call — the API docs say explicitly not to poll it.
+
+At submit, `publishWorkspaceDialog` re-resolves **all** accounts in one batched `fetchQuery` and
+`buildWorkspace` reads each account's type from it. An account that no longer resolves throws an `invariant` rather
+than storing a guessed type, which surfaces as the dialog's error state with a retry.
+
 ## Wiring
 
 - `src/modules/application/components/providers/providersDialogs.ts` — spread `workspaceDialogsDefinitions`.
@@ -312,6 +366,12 @@ src/shared/components/forms/networkInput/{networkInput.tsx,networkInput.api.ts,n
 src/shared/types/workspacePageParams.ts
 
 src/modules/workspace/
+├── api/workspaceQueryService/          # POST /v2/workspaces/query/accounts
+│   ├── domain/{workspaceAccountInfo.ts,index.ts}
+│   ├── domain/enum/{workspaceAccountInfoStatus.ts,workspaceAccountInfoType.ts,index.ts}
+│   ├── queries/useWorkspaceAccounts/{useWorkspaceAccounts.ts,index.ts}
+│   ├── queries/index.ts
+│   └── {workspaceQueryService.ts,workspaceQueryService.api.ts,workspaceQueryServiceKeys.ts,workspaceQueryService.test.ts,index.ts}
 ├── api/workspaceService/
 │   ├── domain/{workspace.ts,workspaceAccount.ts,workspaceTarget.ts,index.ts}
 │   ├── domain/enum/{workspaceAccountType.ts,index.ts}
@@ -322,6 +382,7 @@ src/modules/workspace/
 │   ├── {workspaceService.ts,workspaceService.api.ts,workspaceServiceKeys.ts,workspaceService.test.ts,index.ts}
 ├── components/createWorkspaceForm/
 │   ├── createWorkspaceFormDefinitions.ts
+│   ├── createWorkspaceFormAccountIdentity/{createWorkspaceFormAccountIdentity.tsx,index.ts}
 │   ├── createWorkspaceFormMetadata/{createWorkspaceFormMetadata.tsx,index.ts}
 │   ├── createWorkspaceFormTargets/{createWorkspaceFormTargets.tsx,createWorkspaceFormTargetsItem.tsx,index.ts}
 │   ├── createWorkspaceFormAccounts/{createWorkspaceFormAccounts.tsx,createWorkspaceFormAccountsItem.tsx,index.ts}
@@ -368,8 +429,8 @@ Keep it that way when extending this.
 
 ## Known gaps
 
-- A created workspace referencing a DAO the backend doesn't index renders empty pages with no warning
-  (format-only validation).
+- The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
+- Only `query/accounts` is wired. The workspace pages still read nothing from `query/{assets,transactions,proposals,members}`.
 - `/workspace/{id}` is a minimal read page; 1096 replaces it with the real page set.
 - Nothing lists workspaces — the seed `demo` and anything created are reachable only by URL or the success link.
 - No editing, so a typo means creating a new workspace.

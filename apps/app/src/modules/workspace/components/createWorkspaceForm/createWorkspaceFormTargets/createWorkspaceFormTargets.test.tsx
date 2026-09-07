@@ -1,7 +1,9 @@
 import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { Network } from '@/shared/api/daoService';
 import { FormWrapper, ReactQueryWrapper } from '@/shared/testUtils';
+import { workspaceQueryService } from '../../../api/workspaceQueryService';
 import { createWorkspaceFormDefaultValues } from '../createWorkspaceFormDefinitions';
 import {
     CreateWorkspaceFormTargets,
@@ -9,17 +11,29 @@ import {
 } from './createWorkspaceFormTargets';
 
 describe('<CreateWorkspaceFormTargets /> component', () => {
+    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+
+    beforeEach(() => {
+        getAccountsSpy.mockResolvedValue([]);
+    });
+
+    afterEach(() => {
+        getAccountsSpy.mockReset();
+    });
+
     const createTestComponent = (
         props?: Partial<ICreateWorkspaceFormTargetsProps>,
+        defaultValues: Record<
+            string,
+            unknown
+        > = createWorkspaceFormDefaultValues,
     ) => {
         const completeProps: ICreateWorkspaceFormTargetsProps = { ...props };
 
         return (
             <ReactQueryWrapper>
                 <GukModulesProvider>
-                    <FormWrapper
-                        defaultValues={createWorkspaceFormDefaultValues}
-                    >
+                    <FormWrapper defaultValues={defaultValues}>
                         <CreateWorkspaceFormTargets {...completeProps} />
                     </FormWrapper>
                 </GukModulesProvider>
@@ -82,5 +96,16 @@ describe('<CreateWorkspaceFormTargets /> component', () => {
                 /createWorkspaceForm.address.placeholder/,
             ),
         ).toHaveLength(1);
+    });
+
+    it('does not resolve targets through the workspace accounts API, a target is an arbitrary address', () => {
+        const target = {
+            network: Network.ETHEREUM_SEPOLIA,
+            address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+        };
+
+        render(createTestComponent(undefined, { targets: [target] }));
+
+        expect(getAccountsSpy).not.toHaveBeenCalled();
     });
 });

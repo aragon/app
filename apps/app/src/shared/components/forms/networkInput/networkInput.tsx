@@ -58,12 +58,8 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
         onValueChange?.(network);
     };
 
-    const {
-        name: selectedName,
-        logo: selectedLogo,
-        testnet: selectedTestnet,
-        beta: selectedBeta,
-    } = networkDefinitions[value];
+    const { name: selectedName, logo: selectedLogo } =
+        networkDefinitions[value];
 
     const getTagLabel = (params: { testnet?: boolean; beta?: boolean }) => {
         const { testnet, beta } = params;
@@ -74,11 +70,6 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
 
         return beta ? t('app.shared.networkInput.tag.beta') : undefined;
     };
-
-    const selectedTagLabel = getTagLabel({
-        testnet: selectedTestnet,
-        beta: selectedBeta,
-    });
 
     return (
         <InputContainer
@@ -98,19 +89,17 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                     >
                         <Avatar
                             alt={selectedName}
+                            className="shrink-0"
                             size="sm"
                             src={selectedLogo}
                         />
+                        {/* The testnet/beta tag is only rendered on the dropdown items: on the trigger it competes
+                         * with the network name for the little width the field has, and truncates it. */}
                         <span className="grow truncate text-base text-neutral-800 leading-tight">
                             {selectedName}
                         </span>
-                        {selectedTagLabel != null && (
-                            <span className={networkTagClassName}>
-                                {selectedTagLabel}
-                            </span>
-                        )}
                         <Icon
-                            className="text-neutral-300"
+                            className="shrink-0 text-neutral-300"
                             icon={IconType.CHEVRON_DOWN}
                         />
                     </button>

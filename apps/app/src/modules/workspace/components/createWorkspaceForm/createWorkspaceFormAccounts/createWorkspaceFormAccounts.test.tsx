@@ -1,7 +1,9 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { Network } from '@/shared/api/daoService';
 import { FormWrapper, ReactQueryWrapper } from '@/shared/testUtils';
+import { workspaceQueryService } from '../../../api/workspaceQueryService';
 import { createWorkspaceFormDefaultValues } from '../createWorkspaceFormDefinitions';
 import {
     CreateWorkspaceFormAccounts,
@@ -9,17 +11,29 @@ import {
 } from './createWorkspaceFormAccounts';
 
 describe('<CreateWorkspaceFormAccounts /> component', () => {
+    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+
+    beforeEach(() => {
+        getAccountsSpy.mockResolvedValue([]);
+    });
+
+    afterEach(() => {
+        getAccountsSpy.mockReset();
+    });
+
     const createTestComponent = (
         props?: Partial<ICreateWorkspaceFormAccountsProps>,
+        defaultValues: Record<
+            string,
+            unknown
+        > = createWorkspaceFormDefaultValues,
     ) => {
         const completeProps: ICreateWorkspaceFormAccountsProps = { ...props };
 
         return (
             <ReactQueryWrapper>
                 <GukModulesProvider>
-                    <FormWrapper
-                        defaultValues={createWorkspaceFormDefaultValues}
-                    >
+                    <FormWrapper defaultValues={defaultValues}>
                         <CreateWorkspaceFormAccounts {...completeProps} />
                     </FormWrapper>
                 </GukModulesProvider>
@@ -54,6 +68,27 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
                 /createWorkspaceForm.address.placeholder/,
             ),
         ).toHaveLength(2);
+    });
+
+    it('resolves a filled in account address through the workspace accounts API', async () => {
+        const account = {
+            network: Network.ETHEREUM_SEPOLIA,
+            address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+        };
+
+        render(createTestComponent(undefined, { accounts: [account] }));
+
+        await waitFor(() =>
+            expect(getAccountsSpy).toHaveBeenCalledWith({
+                body: { accounts: [account] },
+            }),
+        );
+    });
+
+    it('does not resolve an empty account address', () => {
+        render(createTestComponent());
+
+        expect(getAccountsSpy).not.toHaveBeenCalled();
     });
 
     it('hides the account metadata fields until the metadata section is opened', async () => {

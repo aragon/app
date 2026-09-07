@@ -87,6 +87,32 @@ describe('<NetworkInput /> component', () => {
         }
     });
 
+    it('keeps the testnet tag off the trigger so the network name is not truncated', async () => {
+        render(createTestComponent({ defaultValue: Network.ETHEREUM_SEPOLIA }));
+
+        const trigger = screen.getByRole('button', {
+            name: /shared.networkInput.label/,
+        });
+
+        expect(trigger).toHaveTextContent(
+            networkDefinitions[Network.ETHEREUM_SEPOLIA].name,
+        );
+        expect(trigger).not.toHaveTextContent(
+            /shared.networkInput.tag.testnet/,
+        );
+
+        // The tag still identifies the network while choosing one.
+        await userEvent.click(trigger);
+
+        expect(
+            screen.getByRole('menuitem', {
+                name: new RegExp(
+                    networkDefinitions[Network.ETHEREUM_SEPOLIA].name,
+                ),
+            }),
+        ).toHaveTextContent(/shared.networkInput.tag.testnet/);
+    });
+
     it('renders the network items with valid DOM nesting', async () => {
         // Dropdown.Item renders its children inside a paragraph, therefore rendering flow content (e.g. the Tag
         // component, which renders a div) inside an item triggers a React hydration error.

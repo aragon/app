@@ -1,6 +1,12 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
 import type { Network } from '@/shared/api/daoService';
+import {
+    type IWorkspaceAccountInfo,
+    WorkspaceAccountInfoStatus,
+    WorkspaceAccountInfoType,
+} from '../../api/workspaceQueryService';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 
 /**
  * A network and address pair, i.e. what identifies a workspace account or target.
@@ -119,6 +125,72 @@ class WorkspaceUtils {
 
         return isDuplicate ? `${errorNamespace}.duplicateAddress` : true;
     };
+
+    /**
+     * Validates the account resolved by the workspace accounts API, rejecting addresses that are neither an indexed
+     * DAO nor a readable Safe.
+     * @param accountInfo - Account as resolved by the API, undefined while the lookup is still pending.
+     * @returns True when the account can be added to a workspace, otherwise the translation key of the error.
+     */
+    validateAccountInfo = (
+        accountInfo: IWorkspaceAccountInfo | undefined,
+    ): true | string => {
+        const errorNamespace = 'app.workspace.createWorkspaceForm.error';
+
+        // The lookup has not resolved yet, the field is revalidated once it does.
+        if (accountInfo == null) {
+            return true;
+        }
+
+        if (accountInfo.status === WorkspaceAccountInfoStatus.UNSUPPORTED) {
+            return `${errorNamespace}.unsupportedAccount`;
+        }
+
+        // Transient source failure: the address may well be a Safe, we just cannot tell right now. Blocking the
+        // form would be wrong, but so would storing an account whose type is unknown, so the user retries.
+        if (accountInfo.status === WorkspaceAccountInfoStatus.UNAVAILABLE) {
+            return `${errorNamespace}.unverifiedAccount`;
+        }
+
+        return true;
+    };
+
+    /**
+     * Maps the type resolved by the workspace accounts API to the account type stored on the workspace.
+     * @param accountInfo - Account as resolved by the API.
+     * @returns The stored account type, or undefined when the API could not tell what the address is.
+     */
+    getAccountType = (
+        accountInfo: IWorkspaceAccountInfo | undefined,
+    ): WorkspaceAccountType | undefined => {
+        if (accountInfo?.status !== WorkspaceAccountInfoStatus.AVAILABLE) {
+            return undefined;
+        }
+
+        const typeMap: Partial<
+            Record<WorkspaceAccountInfoType, WorkspaceAccountType>
+        > = {
+            [WorkspaceAccountInfoType.DAO]: WorkspaceAccountType.DAO,
+            [WorkspaceAccountInfoType.SAFE]: WorkspaceAccountType.SAFE,
+        };
+
+        return typeMap[accountInfo.type];
+    };
+
+    /**
+     * Finds the account resolved by the API for the given network and address. The API removes duplicates and
+     * checksums addresses, therefore the response cannot be matched by index.
+     * @param accountInfos - Accounts as resolved by the API.
+     * @param networkAddress - Network and address to look up.
+     * @returns The matching account, or undefined when the API returned none for it.
+     */
+    findAccountInfo = (
+        accountInfos: IWorkspaceAccountInfo[] | undefined,
+        networkAddress: IWorkspaceNetworkAddress,
+    ): IWorkspaceAccountInfo | undefined =>
+        accountInfos?.find((accountInfo) =>
+            this.isSameNetworkAddress(accountInfo, networkAddress),
+        );
 }
 
 export const workspaceUtils = new WorkspaceUtils();

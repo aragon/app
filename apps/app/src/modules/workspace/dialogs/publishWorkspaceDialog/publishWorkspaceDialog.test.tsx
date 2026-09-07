@@ -6,6 +6,11 @@ import { Network } from '@/shared/api/daoService';
 import * as blockNavigationContext from '@/shared/components/blockNavigationContext';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
+import {
+    WorkspaceAccountInfoStatus,
+    WorkspaceAccountInfoType,
+    workspaceQueryService,
+} from '../../api/workspaceQueryService';
 import { workspaceService } from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
 import {
@@ -26,6 +31,7 @@ describe('<PublishWorkspaceDialog /> component', () => {
         useWalletAccountHook,
         'useWalletAccount',
     );
+    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
 
     // Re-created on every test so that the spy calls through to the real registry by default.
     let createWorkspaceSpy: jest.SpyInstance<
@@ -42,6 +48,15 @@ describe('<PublishWorkspaceDialog /> component', () => {
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ close: closeSpy }),
         );
+        getAccountsSpy.mockResolvedValue([
+            {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+                type: WorkspaceAccountInfoType.DAO,
+                status: WorkspaceAccountInfoStatus.AVAILABLE,
+                indexed: true,
+            },
+        ]);
         useWalletAccountSpy.mockReturnValue({
             address: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
             chainId: 1,
@@ -54,6 +69,7 @@ describe('<PublishWorkspaceDialog /> component', () => {
         useBlockNavigationContextSpy.mockReset();
         useDialogContextSpy.mockReset();
         useWalletAccountSpy.mockReset();
+        getAccountsSpy.mockReset();
         createWorkspaceSpy.mockRestore();
         setIsBlockedSpy.mockClear();
         closeSpy.mockClear();

@@ -7,6 +7,7 @@ import {
     Heading,
     invariant,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { usePinFile } from '@/shared/api/ipfsService/mutations';
@@ -16,6 +17,7 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { workspaceAccountsOptions } from '../../api/workspaceQueryService';
 import { useCreateWorkspace } from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
@@ -60,6 +62,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
 
     const { mutateAsync: pinFile } = usePinFile();
     const { mutateAsync: createWorkspace } = useCreateWorkspace();
+    const queryClient = useQueryClient();
 
     const pinAvatar = async (file?: File) => {
         if (file == null) {
@@ -75,6 +78,19 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         setStatus('pending');
 
         try {
+            // Resolve the type of every account in one call. The rows were resolved individually during validation,
+            // so this is the authoritative read right before the workspace is stored.
+            const accountInfos = await queryClient.fetchQuery(
+                workspaceAccountsOptions({
+                    body: {
+                        accounts: accounts.map(({ network, address }) => ({
+                            network,
+                            address,
+                        })),
+                    },
+                }),
+            );
+
             const avatarCid = await pinAvatar(avatar?.file);
             const accountAvatarFiles =
                 publishWorkspaceDialogUtils.getAccountAvatarFiles(accounts);
@@ -89,6 +105,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                 owner: address,
                 avatarCid,
                 accountAvatarCids,
+                accountInfos,
             });
             const workspace = await createWorkspace({ body });
 

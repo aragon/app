@@ -4181,6 +4181,13 @@
         "accounts": {
           "add": "Add account",
           "helpText": "The DAOs and accounts whose assets, transactions and members this workspace brings together.",
+          "identity": {
+            "resolving": "Checking address…",
+            "type": {
+              "dao": "DAO",
+              "safe": "Safe"
+            }
+          },
           "label": "Accounts",
           "metadata": {
             "description": {
@@ -4201,7 +4208,9 @@
         },
         "error": {
           "duplicateAddress": "This address is already used on the selected network.",
-          "invalidAddress": "Enter a valid address or ENS name."
+          "invalidAddress": "Enter a valid address or ENS name.",
+          "unsupportedAccount": "This address is not an Aragon DAO or a Safe on the selected network.",
+          "unverifiedAccount": "This address could not be verified right now. Please try again."
         },
         "metadata": {
           "description": {

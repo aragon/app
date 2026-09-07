@@ -1,4 +1,9 @@
 import { Network } from '@/shared/api/daoService';
+import {
+    type IWorkspaceAccountInfo,
+    WorkspaceAccountInfoStatus,
+    WorkspaceAccountInfoType,
+} from '../../api/workspaceQueryService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import type {
     ICreateWorkspaceFormAccount,
@@ -17,6 +22,19 @@ describe('publishWorkspaceDialog utils', () => {
         network: Network.ETHEREUM_SEPOLIA,
         ...account,
     });
+
+    const buildAccountInfo = (
+        accountInfo?: Partial<IWorkspaceAccountInfo>,
+    ): IWorkspaceAccountInfo => ({
+        network: Network.ETHEREUM_SEPOLIA,
+        address: accountAddress,
+        type: WorkspaceAccountInfoType.DAO,
+        status: WorkspaceAccountInfoStatus.AVAILABLE,
+        indexed: true,
+        ...accountInfo,
+    });
+
+    const accountInfos = [buildAccountInfo()];
 
     const buildValues = (
         values?: Partial<ICreateWorkspaceFormData>,
@@ -40,6 +58,7 @@ describe('publishWorkspaceDialog utils', () => {
                 values,
                 owner,
                 accountAvatarCids: [undefined],
+                accountInfos,
             });
 
             expect(workspace).toEqual({
@@ -67,6 +86,7 @@ describe('publishWorkspaceDialog utils', () => {
                 owner,
                 avatarCid: 'workspace-cid',
                 accountAvatarCids: [undefined],
+                accountInfos,
             });
 
             expect(workspace.avatar).toEqual('ipfs://workspace-cid');
@@ -88,6 +108,7 @@ describe('publishWorkspaceDialog utils', () => {
                 values,
                 owner,
                 accountAvatarCids: ['account-cid'],
+                accountInfos,
             });
 
             expect(workspace.accounts[0].metadata).toEqual({
@@ -108,6 +129,7 @@ describe('publishWorkspaceDialog utils', () => {
                 values,
                 owner,
                 accountAvatarCids: [undefined],
+                accountInfos,
             });
 
             expect(workspace.accounts[0].metadata).toBeUndefined();
@@ -126,9 +148,54 @@ describe('publishWorkspaceDialog utils', () => {
                 values,
                 owner,
                 accountAvatarCids: [undefined],
+                accountInfos,
             });
 
             expect(workspace.accounts[0].metadata?.description).toBeUndefined();
+        });
+    });
+
+    describe('buildWorkspace account type', () => {
+        it('stores the type resolved by the accounts API', () => {
+            const workspace = publishWorkspaceDialogUtils.buildWorkspace({
+                values: buildValues(),
+                owner,
+                accountAvatarCids: [undefined],
+                accountInfos: [
+                    buildAccountInfo({ type: WorkspaceAccountInfoType.SAFE }),
+                ],
+            });
+
+            expect(workspace.accounts[0].type).toEqual(
+                WorkspaceAccountType.SAFE,
+            );
+        });
+
+        it('throws when the accounts API did not resolve the account', () => {
+            expect(() =>
+                publishWorkspaceDialogUtils.buildWorkspace({
+                    values: buildValues(),
+                    owner,
+                    accountAvatarCids: [undefined],
+                    accountInfos: [],
+                }),
+            ).toThrow(/unable to resolve the type of the account/);
+        });
+
+        it('throws when the account stopped being available', () => {
+            expect(() =>
+                publishWorkspaceDialogUtils.buildWorkspace({
+                    values: buildValues(),
+                    owner,
+                    accountAvatarCids: [undefined],
+                    accountInfos: [
+                        buildAccountInfo({
+                            type: WorkspaceAccountInfoType.UNKNOWN,
+                            status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+                        }),
+                    ],
+                }),
+            ).toThrow(/unable to resolve the type of the account/);
         });
     });
 

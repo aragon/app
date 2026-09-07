@@ -1,5 +1,11 @@
 import { Network } from '@/shared/api/daoService';
 import {
+    type IWorkspaceAccountInfo,
+    WorkspaceAccountInfoStatus,
+    WorkspaceAccountInfoType,
+} from '../../api/workspaceQueryService';
+import { WorkspaceAccountType } from '../../api/workspaceService';
+import {
     type IWorkspaceNetworkAddress,
     workspaceUtils,
 } from './workspaceUtils';
@@ -44,6 +50,114 @@ describe('workspace utils', () => {
             expect(
                 workspaceUtils.buildWorkspaceId('Demo Workspace', existingIds),
             ).toEqual('demo-workspace-3');
+        });
+    });
+
+    const buildAccountInfo = (
+        accountInfo?: Partial<IWorkspaceAccountInfo>,
+    ): IWorkspaceAccountInfo => ({
+        network: Network.ETHEREUM_MAINNET,
+        address: addressOne,
+        type: WorkspaceAccountInfoType.DAO,
+        status: WorkspaceAccountInfoStatus.AVAILABLE,
+        indexed: true,
+        ...accountInfo,
+    });
+
+    describe('validateAccountInfo', () => {
+        it('returns true while the lookup has not resolved yet', () => {
+            expect(workspaceUtils.validateAccountInfo(undefined)).toBeTruthy();
+        });
+
+        it.each([WorkspaceAccountInfoType.DAO, WorkspaceAccountInfoType.SAFE])(
+            'returns true for an available %s account',
+            (type) => {
+                const accountInfo = buildAccountInfo({
+                    type,
+                    status: WorkspaceAccountInfoStatus.AVAILABLE,
+                });
+
+                expect(
+                    workspaceUtils.validateAccountInfo(accountInfo),
+                ).toBeTruthy();
+            },
+        );
+
+        it('returns an error for an address that is neither a DAO nor a Safe', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNSUPPORTED,
+            });
+
+            expect(workspaceUtils.validateAccountInfo(accountInfo)).toEqual(
+                'app.workspace.createWorkspaceForm.error.unsupportedAccount',
+            );
+        });
+
+        it('returns a retryable error when the source could not be read', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+            });
+
+            expect(workspaceUtils.validateAccountInfo(accountInfo)).toEqual(
+                'app.workspace.createWorkspaceForm.error.unverifiedAccount',
+            );
+        });
+    });
+
+    describe('getAccountType', () => {
+        it.each([
+            [WorkspaceAccountInfoType.DAO, WorkspaceAccountType.DAO],
+            [WorkspaceAccountInfoType.SAFE, WorkspaceAccountType.SAFE],
+        ])('maps the %s type to the stored type', (type, expected) => {
+            expect(
+                workspaceUtils.getAccountType(buildAccountInfo({ type })),
+            ).toEqual(expected);
+        });
+
+        it('returns undefined when the account is not available', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+            });
+
+            expect(workspaceUtils.getAccountType(accountInfo)).toBeUndefined();
+        });
+
+        it('returns undefined when there is no account info', () => {
+            expect(workspaceUtils.getAccountType(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('findAccountInfo', () => {
+        it('matches by network and address regardless of casing and order', () => {
+            const accountInfos = [
+                buildAccountInfo({
+                    network: Network.POLYGON_MAINNET,
+                    address: addressTwo,
+                }),
+                buildAccountInfo({
+                    network: Network.ETHEREUM_MAINNET,
+                    address: addressOne,
+                }),
+            ];
+
+            const result = workspaceUtils.findAccountInfo(accountInfos, {
+                network: Network.ETHEREUM_MAINNET,
+                address: addressOne.toLowerCase(),
+            });
+
+            expect(result).toEqual(accountInfos[1]);
+        });
+
+        it('returns undefined when the API returned no entry for the address', () => {
+            const result = workspaceUtils.findAccountInfo([], {
+                network: Network.ETHEREUM_MAINNET,
+                address: addressOne,
+            });
+
+            expect(result).toBeUndefined();
         });
     });
 
