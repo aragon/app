@@ -19,6 +19,19 @@ export interface ITokenVotingMembershipPluginSettings extends IPluginSettings {
         address: string;
         underlying?: string | null;
     };
+    /**
+     * Voting-escrow settings, only set when the plugin's voting power comes
+     * from escrow locks instead of plain ERC-20 balances.
+     */
+    votingEscrow?: unknown;
+}
+
+export interface IBuildTokenVotingMembershipParamsOptions {
+    /**
+     * Whether the aragon-domain source is enabled (feature flag). When false
+     * every query is served by the legacy backend.
+     */
+    domainSourceEnabled: boolean;
 }
 
 const tokenMemberListPlugins: PluginInterfaceType[] = [
@@ -51,7 +64,8 @@ export const isTokenMemberListPlugin = (
 export const buildTokenVotingMembershipParams = (
     initialParams: IGetMemberListParams,
     plugin: IDaoPlugin<ITokenVotingMembershipPluginSettings>,
-    dao?: IDao,
+    dao: IDao | undefined,
+    options: IBuildTokenVotingMembershipParamsOptions,
 ): IGetTokenVotingMembershipParams => {
     const resolvedDaoId = daoUtils.resolvePluginDaoId(
         initialParams.queryParams.daoId,
@@ -59,7 +73,7 @@ export const buildTokenVotingMembershipParams = (
         dao,
     );
 
-    const { token } = plugin.settings;
+    const { token, votingEscrow } = plugin.settings;
 
     return {
         ...initialParams,
@@ -70,6 +84,8 @@ export const buildTokenVotingMembershipParams = (
             pluginInterfaceType: plugin.interfaceType,
             tokenAddress: token.address,
             tokenUnderlying: token.underlying ?? null,
+            hasVotingEscrow: votingEscrow != null,
+            domainSourceEnabled: options.domainSourceEnabled,
         },
     };
 };

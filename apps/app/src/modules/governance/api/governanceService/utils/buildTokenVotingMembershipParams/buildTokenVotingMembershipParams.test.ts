@@ -19,19 +19,27 @@ describe('buildTokenVotingMembershipParams', () => {
         },
     };
 
+    const options = { domainSourceEnabled: true };
+
     const generateMembershipPlugin = (
         interfaceType: PluginInterfaceType,
-        token: ITokenVotingMembershipPluginSettings['token'],
+        settings: Partial<
+            Pick<ITokenVotingMembershipPluginSettings, 'token' | 'votingEscrow'>
+        >,
     ) =>
         generateDaoPlugin<ITokenVotingMembershipPluginSettings>({
             interfaceType,
-            settings: { ...generatePluginSettings(), token },
+            settings: {
+                ...generatePluginSettings(),
+                token: { address: '0xToken' },
+                ...settings,
+            },
         });
 
-    it('builds the routing params from the plugin settings and DAO network', () => {
+    it('builds the routing params from the plugin settings, DAO network and options', () => {
         const plugin = generateMembershipPlugin(
             PluginInterfaceType.TOKEN_VOTING,
-            { address: '0xToken', underlying: '0xUnderlying' },
+            { token: { address: '0xToken', underlying: '0xUnderlying' } },
         );
         const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
 
@@ -39,6 +47,7 @@ describe('buildTokenVotingMembershipParams', () => {
             initialParams,
             plugin,
             dao,
+            options,
         );
 
         expect(result.queryParams).toEqual({
@@ -49,13 +58,47 @@ describe('buildTokenVotingMembershipParams', () => {
             pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
             tokenAddress: '0xToken',
             tokenUnderlying: '0xUnderlying',
+            hasVotingEscrow: false,
+            domainSourceEnabled: true,
         });
+    });
+
+    it('flags voting-escrow backed plugins', () => {
+        const plugin = generateMembershipPlugin(
+            PluginInterfaceType.TOKEN_VOTING,
+            { votingEscrow: { escrowAddress: '0xEscrow' } },
+        );
+
+        const { queryParams } = buildTokenVotingMembershipParams(
+            initialParams,
+            plugin,
+            generateDao(),
+            options,
+        );
+
+        expect(queryParams.hasVotingEscrow).toBe(true);
+    });
+
+    it('forwards a disabled domain source', () => {
+        const plugin = generateMembershipPlugin(
+            PluginInterfaceType.TOKEN_VOTING,
+            {},
+        );
+
+        const { queryParams } = buildTokenVotingMembershipParams(
+            initialParams,
+            plugin,
+            generateDao(),
+            { domainSourceEnabled: false },
+        );
+
+        expect(queryParams.domainSourceEnabled).toBe(false);
     });
 
     it('normalizes a missing underlying to null (lock-to-vote tokens do not carry the field)', () => {
         const plugin = generateMembershipPlugin(
             PluginInterfaceType.LOCK_TO_VOTE,
-            { address: '0xToken' },
+            {},
         );
         const dao = generateDao({ network: Network.POLYGON_MAINNET });
 
@@ -63,6 +106,7 @@ describe('buildTokenVotingMembershipParams', () => {
             initialParams,
             plugin,
             dao,
+            options,
         );
 
         expect(queryParams.tokenAddress).toBe('0xToken');
@@ -75,13 +119,14 @@ describe('buildTokenVotingMembershipParams', () => {
     it('preserves the original daoId for non-linked-account plugins', () => {
         const plugin = generateMembershipPlugin(
             PluginInterfaceType.TOKEN_VOTING,
-            { address: '0xToken' },
+            {},
         );
 
         const { queryParams } = buildTokenVotingMembershipParams(
             initialParams,
             plugin,
             generateDao(),
+            options,
         );
 
         expect(queryParams.daoId).toBe('dao-id');
