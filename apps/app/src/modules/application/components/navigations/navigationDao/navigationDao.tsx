@@ -82,7 +82,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     return (
         <Navigation.Container
             containerClasses={classNames(
-                'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
+                'flex flex-col gap-2 py-3 @app-md/app:py-5 @app-lg/app:gap-3',
                 containerClasses,
             )}
             trailing={<SupportChatTrigger />}
@@ -94,17 +94,17 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     onClick={() => setIsDialogOpen(true)}
                 />
                 <Navigation.Links
-                    className="hidden lg:flex"
+                    className="@app-lg/app:flex hidden"
                     links={navigationDaoUtils.buildLinks(
                         daoWithVisiblePlugins,
                         'page',
                         daoOverride?.navLinksToHide,
                     )}
                 />
-                <div className="flex items-center gap-x-2 lg:gap-x-3">
+                <div className="flex items-center @app-lg/app:gap-x-3 gap-x-2">
                     <Wallet onClick={handleWalletClick} user={walletUser} />
                     <Navigation.Trigger
-                        className="md:hidden"
+                        className="@app-md/app:hidden"
                         onClick={() => setIsDialogOpen(true)}
                     />
                 </div>

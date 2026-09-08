@@ -46,7 +46,7 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
                 'flex min-w-0 flex-col',
                 { 'w-full': !fullWidth },
                 {
-                    'm-auto h-full max-w-[1024px] px-4 pt-6 pb-10 md:px-6 md:pb-20 lg:px-28':
+                    'm-auto h-full max-w-[1024px] @app-lg/app:px-28 @app-md/app:px-6 px-4 pt-6 @app-md/app:pb-20 pb-10':
                         fullWidth,
                 },
                 { 'gap-12': title == null },

@@ -29,7 +29,7 @@ export const NavigationLinks: React.FC<INavigationLinksProps> = (props) => {
             className={classNames(
                 'flex',
                 {
-                    'item-center flex-row gap-x-6 xl:gap-x-10':
+                    'item-center flex-row @app-xl/app:gap-x-10 gap-x-6':
                         variant === 'row',
                 },
                 { 'flex-col gap-y-1': variant === 'column' },
@@ -39,9 +39,8 @@ export const NavigationLinks: React.FC<INavigationLinksProps> = (props) => {
         >
             {links
                 .filter((link) => !link.hidden)
-                .map(({ link, label, icon, lgHidden }) => (
+                .map(({ link, label, icon }) => (
                     <NavigationLinksItem
-                        className={classNames({ 'lg:hidden': lgHidden })}
                         href={link}
                         icon={icon}
                         key={link}

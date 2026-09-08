@@ -61,8 +61,12 @@ class NavigationDaoUtils {
         const hasBodyPlugin = daoUtils.hasPluginBody(dao);
 
         const isPageContext = context === 'page';
-        const isDialogContext = context === 'dialog';
 
+        // The dialog lists every destination, including the ones the navigation bar shows inline.
+        // The bar switches to its compact mode on the width of the application pane (a container
+        // query), while the dialog is portalled to the document body and can only see the viewport
+        // — so it cannot mirror that decision in CSS. Listing everything keeps the destinations
+        // reachable whenever the bar is compact, e.g. while the AI assistant is docked.
         return [
             {
                 label: 'app.application.navigationDao.link.dashboard',
@@ -83,7 +87,6 @@ class NavigationDaoUtils {
                 link: `${baseUrl}/proposals`,
                 icon: IconType.APP_PROPOSALS,
                 hidden: !isSupported,
-                lgHidden: isDialogContext,
                 order: 200,
             },
             {
@@ -91,21 +94,18 @@ class NavigationDaoUtils {
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
                 hidden: !(isSupported && hasBodyPlugin),
-                lgHidden: isDialogContext,
                 order: 300,
             },
             {
                 label: 'app.application.navigationDao.link.assets',
                 link: `${baseUrl}/assets`,
                 icon: IconType.APP_ASSETS,
-                lgHidden: isDialogContext,
                 order: 400,
             },
             {
                 label: 'app.application.navigationDao.link.transactions',
                 link: `${baseUrl}/transactions`,
                 icon: IconType.APP_TRANSACTIONS,
-                lgHidden: isDialogContext,
                 order: 500,
             },
             {

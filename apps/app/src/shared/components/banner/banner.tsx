@@ -18,17 +18,17 @@ export const Banner: React.FC<IBannerProps> = (props) => {
             className={classNames('flex w-full bg-warning-100', className)}
             {...otherProps}
         >
-            <Container className="flex w-full grow flex-col justify-between gap-3 py-6 lg:flex-row">
-                <div className="flex gap-x-3 lg:items-center">
+            <Container className="flex w-full grow @app-lg/app:flex-row flex-col justify-between gap-3 py-6">
+                <div className="flex @app-lg/app:items-center gap-x-3">
                     <Icon
-                        className="mt-1 text-warning-500 lg:mt-0"
+                        className="@app-lg/app:mt-0 mt-1 text-warning-500"
                         icon={IconType.WARNING}
                     />
-                    <p className="place-self-start text-warning-800 lg:self-center">
+                    <p className="place-self-start @app-lg/app:self-center text-warning-800">
                         {message}
                     </p>
                 </div>
-                <div className="ml-7 flex shrink-0 justify-start lg:ml-0 lg:justify-end">
+                <div className="@app-lg/app:ml-0 ml-7 flex shrink-0 justify-start @app-lg/app:justify-end">
                     {children}
                 </div>
             </Container>

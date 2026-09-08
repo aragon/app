@@ -73,6 +73,21 @@ describe('<LayoutRoot /> component', () => {
         expect(screen.getByText(/footer.link.explore/)).toBeInTheDocument();
     });
 
+    // The application column is the `app` query container: the layout below it sizes itself
+    // against the column instead of the browser, so docking the chat panel beside it downgrades
+    // the app to a narrower layout instead of leaving desktop rules to collide.
+    it('renders the children and the footer inside the app query container', async () => {
+        const children = 'test-children';
+        render(await createTestComponent({ children }));
+        const appColumn = screen
+            .getByText(children)
+            .closest('[class*="@container/app"]');
+        expect(appColumn).not.toBeNull();
+        expect(appColumn).toContainElement(
+            screen.getByText(/footer.link.explore/),
+        );
+    });
+
     it('renders the providers components and passes the english translations', async () => {
         const assets = await translations.en();
         render(await createTestComponent());
