@@ -1,11 +1,11 @@
 'use client';
 
-import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { TelegramSubscriptionCard } from '@/modules/dashboard/components/telegramSubscriptionCard';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -14,6 +14,7 @@ import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrl
 import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import type { IGetProposalListParams } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { ProposalListStats } from '../../components/proposalListStats';
@@ -50,25 +51,45 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
             name: daoProposalsPageFilterParam,
         });
 
-    invariant(
-        activePlugin != null,
-        'DaoProposalsPageClient: no valid plugin found.',
-    );
-
     const buildProposalUrl = (plugin: IDaoPlugin) =>
         daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
 
-    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
-        router.push(buildProposalUrl(plugin ?? activePlugin.meta));
+    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) => {
+        const targetPlugin = plugin ?? activePlugin?.meta;
+
+        if (targetPlugin != null) {
+            router.push(buildProposalUrl(targetPlugin));
+        }
+    };
 
     const { check: createProposalGuard, result: canCreateProposal } =
         usePermissionCheckGuard({
             permissionNamespace: 'proposal',
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
             onSuccess: handlePermissionGuardSuccess,
-            plugin: activePlugin.meta,
+            plugin: activePlugin?.meta,
             daoId,
         });
+
+    // No process to list proposals for: every plugin of the DAO is one the app cannot govern
+    // with (see isSupportedPlugin) or is hidden through the CMS. The DAO layout dehydrates the
+    // DAO into this tree, so the list is already resolved on the first render and this is a
+    // stable state, not a loading gap: render the not-found state instead of crashing the page.
+    if (activePlugin == null) {
+        const noProcessError = new AragonBackendServiceError(
+            AragonBackendServiceError.pluginNotFoundCode,
+            `DaoProposalsPageClient: no process plugin to display for DAO ${daoId}`,
+            404,
+        );
+
+        return (
+            <Page.Error
+                actionLink={daoUtils.getDaoUrl(dao, 'dashboard')}
+                error={errorUtils.serialize(noProcessError)}
+                errorNamespace="app.governance.daoProposalsPage.error"
+            />
+        );
+    }
 
     const handlePluginSelected = (plugin: IDaoPlugin) =>
         createProposalGuard({

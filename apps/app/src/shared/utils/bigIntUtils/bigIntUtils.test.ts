@@ -153,4 +153,45 @@ describe('bigIntUtils', () => {
             expect(bigIntUtils.safeParse('1.2.3e5')).toBe(BigInt(0));
         });
     });
+
+    describe('parseUnits', () => {
+        it('converts a plain decimal amount to base units', () => {
+            expect(bigIntUtils.parseUnits('1.5', 18)).toBe(
+                BigInt('1500000000000000000'),
+            );
+        });
+
+        it('keeps the full precision of long decimal amounts', () => {
+            expect(
+                bigIntUtils.parseUnits('885588.515160248658699836', 18),
+            ).toBe(BigInt('885588515160248658699836'));
+        });
+
+        it.each([[''], ['   '], [undefined], [null]])(
+            'treats %p as zero',
+            (value) => {
+                expect(bigIntUtils.parseUnits(value, 18)).toBe(BigInt(0));
+            },
+        );
+
+        it('converts a scientific-notation amount by shifting its exponent with the decimals', () => {
+            expect(bigIntUtils.parseUnits('5.60699509e-10', 18)).toBe(
+                BigInt('560699509'),
+            );
+        });
+
+        it('converts a positive exponent', () => {
+            expect(bigIntUtils.parseUnits('1.5e3', 6)).toBe(
+                BigInt('1500000000'),
+            );
+        });
+
+        it('truncates fractions finer than the token decimals', () => {
+            expect(bigIntUtils.parseUnits('1e-20', 18)).toBe(BigInt(0));
+        });
+
+        it('throws on values that are not a number', () => {
+            expect(() => bigIntUtils.parseUnits('abc', 18)).toThrow();
+        });
+    });
 });

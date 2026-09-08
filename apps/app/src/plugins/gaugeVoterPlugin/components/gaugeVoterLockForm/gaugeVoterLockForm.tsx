@@ -125,7 +125,9 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
         control,
         name: 'amount',
     });
-    const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
+    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
+    // (e.g. when the user clears the amount field).
+    const lockAmountWei = parseUnits(lockAmount || '0', token.decimals);
 
     const needsApproval =
         effectiveIsConnected &&

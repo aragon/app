@@ -6,6 +6,7 @@ import type { Address } from 'viem';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { TokenDelegationForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -18,6 +19,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import type { IGauge, IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { useEpochMetrics, useGaugeList } from '../../api/gaugeVoterService';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
@@ -49,10 +51,18 @@ enum GaugeVoterLocksPanelTab {
 
 export const gaugeVoterLocksPanelFilterParam = 'locksPanel';
 
-export const GaugeVoterGaugesPageClient: React.FC<
-    IGaugeVoterGaugesPageClientProps
+interface IGaugeVoterGaugesPageContentProps
+    extends IGaugeVoterGaugesPageClientProps {
+    /**
+     * Gauge voter plugin the page renders.
+     */
+    plugin: IFilterComponentPlugin<IGaugeVoterPlugin>;
+}
+
+const GaugeVoterGaugesPageContent: React.FC<
+    IGaugeVoterGaugesPageContentProps
 > = (props) => {
-    const { dao, initialParams } = props;
+    const { dao, initialParams, plugin } = props;
 
     const { address } = useWalletAccount();
     const { open } = useDialogContext();
@@ -62,14 +72,6 @@ export const GaugeVoterGaugesPageClient: React.FC<
     const isMounted = useIsMounted();
     const isUserConnected = isMounted && !!address;
     const { data: gaugeListData } = useGaugeList(initialParams);
-
-    // There are possible multiple gaugeVoter plugins, but we don't support it currently (so we display only the first one).
-    const plugins = useDaoPlugins({
-        daoId: dao.id,
-        interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeLinkedAccounts: false,
-    }) as IFilterComponentPlugin<IGaugeVoterPlugin>[];
-    const plugin = plugins[0];
 
     // There are cases, e.g. Citrea, where a 3rd party escrow contract is used. In this case `ivotesadapter` is a zero address, and there are no votingEscrow addresses in the plugin.
     // In that case, `plugin.settings.token.address` is the address of the 3rd party IVotes adapter, and `plugin.settings.token.underlaying` is the address of the underlying token that is locked (into escrow contract).
@@ -402,5 +404,46 @@ export const GaugeVoterGaugesPageClient: React.FC<
                 </Page.AsideCard>
             </Page.Aside>
         </Page.Content>
+    );
+};
+
+export const GaugeVoterGaugesPageClient: React.FC<
+    IGaugeVoterGaugesPageClientProps
+> = (props) => {
+    const { dao, initialParams } = props;
+
+    // There are possible multiple gaugeVoter plugins, but we don't support it currently (so we display only the first one).
+    const plugins = useDaoPlugins({
+        daoId: dao.id,
+        interfaceType: PluginInterfaceType.GAUGE_VOTER,
+        includeLinkedAccounts: false,
+    }) as IFilterComponentPlugin<IGaugeVoterPlugin>[] | undefined;
+    const plugin = plugins?.[0];
+
+    // Undefined only when the DAO carries no gauge voter plugin the app can render: the DAO
+    // layout dehydrates the DAO into this tree, so the lookup is already resolved on the first
+    // render. Render the not-found state instead of dereferencing a missing plugin.
+    if (plugin == null) {
+        const pluginNotFoundError = new AragonBackendServiceError(
+            AragonBackendServiceError.pluginNotFoundCode,
+            `GaugeVoterGaugesPageClient: no gauge voter plugin found for DAO ${dao.id}`,
+            404,
+        );
+
+        return (
+            <Page.Error
+                actionLink={daoUtils.getDaoUrl(dao, 'dashboard')}
+                error={errorUtils.serialize(pluginNotFoundError)}
+                errorNamespace="app.plugins.gaugeVoter.gaugeVoterGaugesPage.error"
+            />
+        );
+    }
+
+    return (
+        <GaugeVoterGaugesPageContent
+            dao={dao}
+            initialParams={initialParams}
+            plugin={plugin}
+        />
     );
 };

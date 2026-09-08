@@ -1,3 +1,5 @@
+import { parseUnits as viemParseUnits } from 'viem';
+
 class BigIntUtils {
     private readonly scientificNotationRegex =
         /^([+-]?)(\d+\.?\d*)[eE]([+-]?\d+)$/;
@@ -49,6 +51,37 @@ class BigIntUtils {
         } catch {
             return fallback;
         }
+    };
+
+    /**
+     * Converts a human-readable token amount to base units like viem's `parseUnits`, but
+     * tolerant of the strings a form field can hold: an empty value counts as zero, and
+     * scientific notation (what a Number-to-string conversion produces for very small or very
+     * large amounts, e.g. "5.6e-10") is shifted by `decimals` and parsed with full precision
+     * instead of throwing InvalidDecimalNumberError mid-render. Fractions finer than `decimals`
+     * are truncated towards zero. Any other malformed value still throws, like viem does.
+     */
+    parseUnits = (
+        value: string | null | undefined,
+        decimals: number,
+    ): bigint => {
+        const str = value?.trim() ?? '';
+
+        if (str === '') {
+            return BigInt(0);
+        }
+
+        const match = str.match(this.scientificNotationRegex);
+
+        if (match == null) {
+            return viemParseUnits(str, decimals);
+        }
+
+        const [, sign, mantissa, expStr] = match;
+
+        return this.safeParse(
+            `${sign}${mantissa}e${Number(expStr) + decimals}`,
+        );
     };
 
     /**

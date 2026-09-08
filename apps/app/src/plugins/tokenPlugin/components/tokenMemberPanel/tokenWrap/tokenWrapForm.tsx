@@ -107,7 +107,9 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         control,
         name: 'amount',
     });
-    const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
+    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
+    // (e.g. when the user clears the amount field).
+    const wrapAmountWei = parseUnits(wrapAmount || '0', token.decimals);
 
     const needsApproval =
         isConnected && (allowance == null || allowance < wrapAmountWei);

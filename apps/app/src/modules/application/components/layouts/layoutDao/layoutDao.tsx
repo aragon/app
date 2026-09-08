@@ -3,6 +3,7 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
+import { unstable_rethrow } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
@@ -51,6 +52,9 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
             queryClient.prefetchQuery(daoOverridesOptions()),
         ]);
     } catch (error: unknown) {
+        // A malformed DAO URL ends in notFound() inside resolveDaoId; let Next render the 404
+        // page instead of turning it into the generic error state.
+        unstable_rethrow(error);
         const parsedError = errorUtils.serialize(error);
         return (
             <Page.Error
