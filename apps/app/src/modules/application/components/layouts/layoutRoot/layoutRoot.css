@@ -4,6 +4,19 @@
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";
 
+/* Container-query breakpoints for the `app` container established by the application column in
+   layoutRoot.tsx. They mirror the viewport breakpoint scale of the design system (40/48/64/80/96rem)
+   so that `@app-lg/app:*` reads on the application pane exactly like `lg:*` reads on the browser
+   window. Tailwind's built-in container scale is deliberately not reused: its `@lg` is 32rem, which
+   would silently retune every migrated layout. */
+@theme {
+    --container-app-sm: 40rem;
+    --container-app-md: 48rem;
+    --container-app-lg: 64rem;
+    --container-app-xl: 80rem;
+    --container-app-2xl: 96rem;
+}
+
 :root {
     --guk-avatar-container-position: relative;
 

@@ -76,10 +76,15 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     wagmiInitialState={wagmiInitialState}
                 >
                     {/* App column + chat panel: the panel is an in-flow sibling so the whole
-                        app (header, content and footer) resizes to fit when the chat is open. */}
+                        app (header, content and footer) resizes to fit when the chat is open.
+                        The app column is the `app` query container: everything it lays out
+                        responds to its own width through `@app-{size}/app:` variants instead of the
+                        browser width, so opening the chat downgrades the app to a narrower
+                        layout instead of leaving desktop rules to collide. The chat panel and
+                        portalled overlays stay on viewport breakpoints. */}
                     <SupportChatContextProvider>
                         <div className="flex grow flex-row">
-                            <div className="flex min-w-0 grow flex-col">
+                            <div className="@container/app flex min-w-0 grow flex-col">
                                 <ErrorBoundary>
                                     <div className="flex grow flex-col">
                                         {children}

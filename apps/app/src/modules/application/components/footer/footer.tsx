@@ -13,7 +13,7 @@ import { footerLinks } from './footerLinks';
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
 const linkClassNames =
-    'truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0';
+    'truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none @app-md/app:border-none @app-md/app:py-0';
 
 export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
@@ -24,8 +24,8 @@ export const Footer: React.FC<IFooterProps> = (props) => {
 
     const layoutClassNames = [
         "[grid-template-areas:'metadata''links''copyright']", // Default
-        "md:[grid-template-areas:'links''metadata''copyright'] md:justify-items-center", // MD
-        "lg:grid-cols-[1fr_min-content_1fr] lg:[grid-template-areas:'metadata_links_copyright']", // LG
+        "@app-md/app:[grid-template-areas:'links''metadata''copyright'] @app-md/app:justify-items-center", // MD
+        "@app-lg/app:grid-cols-[1fr_min-content_1fr] @app-lg/app:[grid-template-areas:'metadata_links_copyright']", // LG
     ];
 
     const version = useApplicationVersion();
@@ -40,13 +40,13 @@ export const Footer: React.FC<IFooterProps> = (props) => {
         >
             <Container
                 className={classNames(
-                    'grid items-center md:gap-6',
+                    'grid items-center @app-md/app:gap-6',
                     layoutClassNames,
                 )}
             >
-                <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
+                <div className="flex flex-row items-center @app-md/app:justify-normal justify-between gap-4 @app-lg/app:justify-self-start @app-md/app:py-0 pt-3 pb-4 [grid-area:metadata]">
                     <div className="flex items-center gap-2.5">
-                        <p className="text-nowrap text-neutral-800 text-sm leading-tight md:text-base">
+                        <p className="text-nowrap @app-md/app:text-base text-neutral-800 text-sm leading-tight">
                             {t('app.application.footer.governed')}
                         </p>
                         <AragonLogo size="sm" />
@@ -57,7 +57,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         variant="primary"
                     />
                 </div>
-                <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
+                <div className="flex min-w-0 @app-md/app:flex-row flex-col content-center @app-md/app:gap-6 [grid-area:links]">
                     {footerLinks.map(({ link, label, target }) => (
                         <Link
                             className={linkClassNames}
@@ -69,7 +69,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         </Link>
                     ))}
                 </div>
-                <p className="truncate pt-6 pb-3 font-normal text-base text-neutral-500 leading-tight [grid-area:copyright] md:py-0 lg:justify-self-end">
+                <p className="@app-lg/app:justify-self-end truncate @app-md/app:py-0 pt-6 pb-3 font-normal text-base text-neutral-500 leading-tight [grid-area:copyright]">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

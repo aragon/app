@@ -32,7 +32,7 @@ export const SupportChatTrigger: React.FC = () => {
     }
 
     return (
-        <div className="flex items-center pr-3 pl-2 lg:pr-4">
+        <div className="flex items-center @app-lg/app:pr-4 pr-3 pl-2">
             <Button
                 aria-label={t('app.application.supportChat.trigger.open')}
                 iconLeft={IconType.FEEDBACK}

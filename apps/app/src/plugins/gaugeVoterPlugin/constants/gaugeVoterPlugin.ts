@@ -30,12 +30,11 @@ export const gaugeVoterPlugin: IPluginInfo = {
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
-    pageLinks: (baseUrl, context) => [
+    pageLinks: (baseUrl) => [
         {
             label: 'app.plugins.gaugeVoter.meta.link.gauges',
             link: `${baseUrl}/${GaugeVoterPluginPages.GAUGES}`,
             icon: IconType.APP_GAUGE,
-            lgHidden: context === 'dialog',
             order: 250,
         },
     ],

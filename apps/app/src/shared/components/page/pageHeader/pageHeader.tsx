@@ -57,7 +57,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'bg-gradient-to-b from-neutral-0 to-neutral-50 pt-6 md:pt-10',
+                'bg-gradient-to-b from-neutral-0 to-neutral-50 @app-md/app:pt-10 pt-6',
                 className,
             )}
             {...otherProps}
@@ -66,9 +66,9 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 {breadcrumbs && (
                     <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />
                 )}
-                <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
+                <div className="flex w-full min-w-0 flex-row @app-lg/app:gap-10 @app-md/app:gap-16 @app-xl/app:gap-16 gap-10">
                     <div className="flex w-full flex-col gap-6">
-                        <div className="flex flex-col gap-y-2 md:gap-y-3">
+                        <div className="flex flex-col @app-md/app:gap-y-3 gap-y-2">
                             <Heading size="h1">
                                 {title != null &&
                                 addressUtils.isAddress(title) ? (
@@ -88,7 +88,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                                     buttonLabelOpened={t(
                                         'app.shared.page.header.readLess',
                                     )}
-                                    className="text-base text-neutral-500 md:text-lg"
+                                    className="@app-md/app:text-lg text-base text-neutral-500"
                                     collapsedLines={2}
                                 >
                                     {description}
@@ -96,7 +96,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             )}
                         </div>
                         {stats != null && stats.length > 0 && (
-                            <div className="flex flex-row gap-6 py-3 lg:gap-10 xl:gap-16">
+                            <div className="flex flex-row @app-lg/app:gap-10 @app-xl/app:gap-16 gap-6 py-3">
                                 {stats.map((stat) => (
                                     <PageHeaderStat
                                         key={stat.label}
@@ -107,7 +107,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                         )}
                     </div>
                     {avatar && (
-                        <div className="hidden w-[400px] shrink-0 lg:block">
+                        <div className="@app-lg/app:block hidden w-[400px] shrink-0">
                             {avatar}
                         </div>
                     )}

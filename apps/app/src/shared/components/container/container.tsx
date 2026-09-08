@@ -9,7 +9,7 @@ export const Container: React.FC<IContainerProps> = (props) => {
     return (
         <div
             className={classNames(
-                'mx-auto max-w-screen-xl px-4 md:px-6 lg:px-10 xl:px-6',
+                'mx-auto max-w-screen-xl @app-lg/app:px-10 @app-md/app:px-6 @app-xl/app:px-6 px-4',
                 className,
             )}
             {...otherProps}

@@ -119,7 +119,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
             containerClasses="flex flex-row items-center gap-x-6 justify-between py-5"
             trailing={<SupportChatTrigger />}
         >
-            <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
+            <div className="flex min-w-0 grow items-center @app-md/app:gap-x-4 gap-x-3">
                 <Link className={linkClassName} href={exitPath}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>

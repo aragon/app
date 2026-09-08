@@ -1,6 +1,6 @@
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
@@ -153,11 +153,11 @@ describe('<NavigationDao /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('renders a button to open the navigation dialog on mobile devices', async () => {
+    it('renders a button to open the navigation dialog on narrow application panes', async () => {
         render(createTestComponent());
         const triggerButton = screen.getByTestId('nav-trigger-mock');
         expect(triggerButton).toBeInTheDocument();
-        expect(triggerButton.className).toContain('md:hidden');
+        expect(triggerButton.className).toContain('@app-md/app:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
@@ -172,6 +172,29 @@ describe('<NavigationDao /> component', () => {
             }),
         ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
         expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
+    });
+
+    // The bar drops its inline links on the width of the application pane, which the portalled
+    // dialog cannot observe, so the dialog has to list every destination unconditionally.
+    it('lists the links of the navigation bar in the dao dialog menu as well', async () => {
+        hasSupportedPluginsSpy.mockReturnValue(true);
+        const plugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.MULTISIG,
+            isBody: true,
+        });
+        render(
+            createTestComponent({ dao: generateDao({ plugins: [plugin] }) }),
+        );
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        const dialog = within(screen.getByRole('dialog'));
+        for (const link of ['proposals', 'members', 'assets', 'transactions']) {
+            expect(
+                dialog.getByRole('link', {
+                    name: new RegExp(`navigationDao.link.${link}`),
+                }),
+            ).toBeInTheDocument();
+        }
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

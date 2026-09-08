@@ -30,12 +30,11 @@ export const capitalDistributorPlugin: IPluginInfo = {
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
-    pageLinks: (baseUrl, context) => [
+    pageLinks: (baseUrl) => [
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
             link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
             icon: IconType.REWARDS,
-            lgHidden: context === 'dialog',
             order: 700,
         },
     ],
