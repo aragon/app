@@ -12,4 +12,5 @@ export enum Network {
     AVAX_MAINNET = 'avax-mainnet',
     KATANA_MAINNET = 'katana-mainnet',
     MONAD_MAINNET = 'monad-mainnet',
+    ROBINHOOD_MAINNET = 'robinhood-mainnet',
 }

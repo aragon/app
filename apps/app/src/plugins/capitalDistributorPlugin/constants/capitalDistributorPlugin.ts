@@ -29,6 +29,8 @@ export const capitalDistributorPlugin: IPluginInfo = {
         [Network.AVAX_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.ROBINHOOD_MAINNET]:
+            '0x0000000000000000000000000000000000000000',
     },
     pageLinks: (baseUrl, context) => [
         {
