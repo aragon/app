@@ -36,6 +36,9 @@ catalogs:
     '@linear/sdk':
       specifier: ^89.0.0
       version: 89.0.0
+    '@orama/orama':
+      specifier: ~3.1.18
+      version: 3.1.18
     '@radix-ui/react-dialog':
       specifier: ^1.1.23
       version: 1.1.23
@@ -454,6 +457,9 @@ importers:
       '@linear/sdk':
         specifier: 'catalog:'
         version: 89.0.0(graphql@16.14.1)
+      '@orama/orama':
+        specifier: 'catalog:'
+        version: 3.1.18
       '@sentry/hono':
         specifier: 'catalog:'
         version: 10.71.0(@hono/node-server@1.19.17(hono@4.13.4))(@sentry/node@10.71.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(supports-color@8.1.1))(hono@4.13.4)
@@ -515,6 +521,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.0
 
   packages/assistant-chat:
     dependencies:
@@ -2179,6 +2188,10 @@ packages:
   '@opentelemetry/semantic-conventions@1.41.1':
     resolution: {integrity: sha512-/UhIkaZgPutTFmQ7RnIJGgDXZmtEJ7Dvi86xNTFWcnRxVRNk/aotsqDJYeEvDP+FSMB2SdW+pQzNMcWP0rwuNA==}
     engines: {node: '>=14'}
+
+  '@orama/orama@3.1.18':
+    resolution: {integrity: sha512-a61ljmRVVyG5MC/698C8/FfFDw5a8LOIvyOLW5fztgUXqUpc1jOfQzOitSCbge657OgXXThmY3Tk8fpiDb4UcA==}
+    engines: {node: '>= 20.0.0'}
 
   '@oxc-project/types@0.110.0':
     resolution: {integrity: sha512-6Ct21OIlrEnFEJk5LT4e63pk3btsI6/TusD/GStLi7wYlGJNOl1GI9qvXAnRAxQU9zqA2Oz+UwhfTOU2rPZVow==}
@@ -11508,6 +11521,8 @@ snapshots:
       '@opentelemetry/semantic-conventions': 1.41.1
 
   '@opentelemetry/semantic-conventions@1.41.1': {}
+
+  '@orama/orama@3.1.18': {}
 
   '@oxc-project/types@0.110.0': {}
 

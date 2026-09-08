@@ -3,6 +3,7 @@ import {
     attachmentPartType,
     chatRequestSchema,
     createTicketToolName,
+    docsToolNameSet,
     type IAssistantError,
     type IChatMessage,
 } from '@aragon/assistant-contracts';
@@ -17,6 +18,7 @@ import {
     type UIMessageStreamWriter,
 } from 'ai';
 import { Hono } from 'hono';
+import { buildDocsNarrationFilter } from '../chat/docsNarrationFilter';
 import {
     isModelContentChunk,
     streamFirstRespondingModel,
@@ -34,8 +36,8 @@ import {
 } from '../chat/prompts/fixedMessages';
 import { buildTimeoutErrorTransform } from '../chat/timeoutErrorStream';
 import { buildCreateLinearTicketTool } from '../chat/tools/createLinearTicket';
+import { buildDocsTools } from '../chat/tools/docsTools';
 import { buildFlagOffTopicTool } from '../chat/tools/flagOffTopic';
-import { searchDocsTool } from '../chat/tools/searchDocs';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { getConfig } from '../lib/config';
 import { type IRefusalReason, observability } from '../lib/observability';
@@ -272,8 +274,10 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                                 abortSignal,
                                 maxOutputTokens:
                                     assistantLimits.maxOutputTokens,
-                                // Draft → tool → post-approval summary all happen within a bounded step count.
-                                stopWhen: stepCountIs(5),
+                                // Bounded step count: a documentation answer is a search, at
+                                // most a couple of page reads and the reply; a report is the
+                                // draft, the tool and the post-approval summary.
+                                stopWhen: stepCountIs(8),
                                 system: buildAgentSystemPrompt({
                                     appContext,
                                     hasAttachments: hasAttachments(messages),
@@ -290,10 +294,17 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                                         }),
                                     // Auto-approved (absent from toolApproval): records off-topic attempts
                                     // for analytics; the model calls it before declining.
-                                    flagOffTopic:
-                                        buildFlagOffTopicTool(sessionId),
+                                    flagOffTopic: buildFlagOffTopicTool(
+                                        sessionId,
+                                        { docsSearchEnabled },
+                                    ),
+                                    // Auto-approved as well: they only read the index built
+                                    // into the bundle.
                                     ...(docsSearchEnabled
-                                        ? { searchDocs: searchDocsTool }
+                                        ? buildDocsTools({
+                                              docsSearch: deps.getDocsSearch(),
+                                              sessionId,
+                                          })
                                         : {}),
                                 },
                                 // Ticket creation is gated behind an explicit user approval of the draft; the
@@ -323,8 +334,18 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                         }),
                 });
 
+                // The sentence a model writes before a documentation tool call never reaches
+                // the widget (see the filter); the failover above already read the raw stream.
+                const answerStream = docsSearchEnabled
+                    ? modelStream.pipeThrough(
+                          buildDocsNarrationFilter({
+                              toolNames: docsToolNameSet,
+                          }),
+                      )
+                    : modelStream;
+
                 writer.merge(
-                    modelStream.pipeThrough(
+                    answerStream.pipeThrough(
                         buildTimeoutErrorTransform({
                             sessionId,
                             timeoutSignal,
