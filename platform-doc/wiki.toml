@@ -1,0 +1,11 @@
+spec = "0.1"
+# The parent bundle is the composite graph: platform-doc plus the protocol-doc
+# submodule. Keep this vocabulary as the union of both bundles.
+types = ["concept", "capability", "pattern", "decision", "principle", "risk", "reference", "guide", "example", "opportunity", "task", "note"]
+
+# Files that are NOT wiki entries (excluded from index and check; globs supported)
+ignore = ["AGENTS.md", "CLAUDE.md", "WORKFLOW.md", "voice.md", "raw/**", "inbox/**", "research/**", "protocol-doc/AGENTS.md", "protocol-doc/CLAUDE.md", "protocol-doc/WORKFLOW.md", "protocol-doc/README.md", "protocol-doc/raw/**", "protocol-doc/scripts/**"]
+
+# `wiki` does not merge a nested wiki.toml, so mirror the upstream orphan policy
+# here while keeping protocol entries indexed and checked as part of this graph.
+ignore_orphans = ["protocol-doc/backlog/**"]
