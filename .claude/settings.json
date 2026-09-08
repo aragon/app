@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'MANDATORY OPERATING RULES (auto-injected from AGENTS.md; CLAUDE.md pointer pre-dereferenced — these govern ALL work in this repo, including read-only lookups):' && cat \"$CLAUDE_PROJECT_DIR/AGENTS.md\"",
+            "shell": "bash",
+            "timeout": 10,
+            "statusMessage": "Injecting AGENTS.md operating rules"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"Reminder (AGENTS.md): base lookups go through the wiki CLI first — wiki --root . search/list/backlinks/read. Grep/Glob are the last resort, and sweep .claude/worktrees/ duplicates as noise.\"}}'",
+            "shell": "bash",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
