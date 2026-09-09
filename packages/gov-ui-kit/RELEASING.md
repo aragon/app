@@ -85,8 +85,26 @@ Deployed separately from the release, straight off `main`:
   a throwaway URL commented on the PR.
 
 Both are gated on the `gov-ui-kit` paths filter (`.github/filters.yml`), so app-only changes don't
-trigger a Storybook deploy. The build command and output directory come from the Vercel project's
-own settings, not from this repo.
+trigger a Storybook deploy.
+
+The build is declared in `vercel.json` here as `{ "framework": "storybook" }`, the same minimal
+shape `apps/app` uses for `nextjs`. The preset supplies `storybook build` and `storybook-static`
+as its build command and output directory — identical to what the dashboard had, so moving this
+into the repo changed nothing — and adds three things a bare `framework: null` would not:
+
+- `defaultRoutes` — filesystem handling plus an `/index.html` fallback, the correct static-site
+  behaviour.
+- `ignoreRuntimes: ["@vercel/next", "@vercel/node"]` — matters in this monorepo, where a Next app
+  is present and must not have its runtime applied to a static Storybook.
+- `disableRootMiddleware: true` — the app ships a Next middleware; this keeps it out of the
+  Storybook deployment.
+
+Note the preset sets `ignorePackageJsonScript: true`, so Vercel deliberately runs `storybook build`
+rather than this package's `build:storybook` script. The two are equivalent today; keep them so, or
+the deployed Storybook and `pnpm build:storybook` can diverge.
+
+The project's **Root Directory** is still a dashboard setting — until it is set there,
+`shared-storybook-deploy.yml` patches it in with `patch-root-directory: true`.
 
 ## Secrets
 
