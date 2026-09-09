@@ -1,0 +1,51 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import classNames from 'classnames';
+
+<Meta title="Theme/Tokens/Primitive/Typography" />
+
+# Typography
+
+export const lineHeights = ['leading-normal', 'leading-tight', 'leading-relaxed'];
+export const fontWeights = ['font-normal', 'font-semibold'];
+export const fontSizes = [
+    'text-5xl',
+    'text-4xl',
+    'text-3xl',
+    'text-2xl',
+    'text-xl',
+    'text-lg',
+    'text-base',
+    'text-sm',
+    'text-xs',
+];
+
+<div className="w-full sb-unstyled">
+    {lineHeights.map((lineHeight) => (
+        <div key={lineHeight} className="p-16 pt-0 text-neutral-900">
+            <p className={classNames('text-3xl text-neutral-800', lineHeight)}>
+                {`Line Height -> ${lineHeight.replace('leading-', '')}`}
+            </p>
+            <p className={classNames('text-lg text-neutral-600', lineHeight)}>
+                {lineHeight}
+            </p>
+            <div className="mt-5 flex w-full gap-x-10">
+                {fontWeights.map((fontWeight) => (
+                    <div key={fontWeight} className="flex-1">
+                        <p className={classNames('text-3xl capitalize text-neutral-800', lineHeight, fontWeight )}>
+                            {fontWeight.replace('font-', '')}
+                        </p>
+                        <p className={classNames('text-lg text-neutral-600', lineHeight, fontWeight )}>
+                            {fontWeight}
+                        </p>
+                        <div className="mt-5 space-y-5">
+                            {fontSizes.map((fontSize) => (
+                                <p key={fontSize} className={classNames(lineHeight, fontWeight, fontSize)}>{fontSize}</p>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    ))}
+
+</div>

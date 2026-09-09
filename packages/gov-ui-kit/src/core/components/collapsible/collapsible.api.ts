@@ -1,0 +1,47 @@
+import type { ComponentProps } from 'react';
+
+export interface ICollapsibleProps extends Omit<ComponentProps<'div'>, 'onToggle'> {
+    /**
+     * Number of text lines to show while collapsed.
+     * @default 3
+     */
+    collapsedLines?: number;
+    /**
+     * Exact pixel height for the collapsible container that will override collapsedLines prop if defined.
+     */
+    collapsedPixels?: number;
+    /**
+     * Number of text lines used for the gradient overlay height when collapsed.
+     * Has effect only when `showOverlay` is true and the content is collapsed.
+     * Overlay height will be clamped to at most (collapsedLines - 1).
+     * @default 2
+     */
+    overlayLines?: number;
+    /**
+     * Controlled state of the collapsible container.
+     * @default false
+     */
+    isOpen?: boolean;
+    /**
+     * Default state of the collapsible container.
+     * @default false
+     */
+    defaultOpen?: boolean;
+    /**
+     * The label to display on the trigger button when the collapsible container is closed.
+     */
+    buttonLabelClosed?: string;
+    /**
+     * The label to display on the trigger button when the collapsible container is open.
+     */
+    buttonLabelOpened?: string;
+    /**
+     * Show overlay when the collapsible container is open.
+     * @default false
+     */
+    showOverlay?: boolean;
+    /**
+     * Callback function that is called when the collapsible container is toggled.
+     */
+    onToggle?: (isOpen: boolean) => void;
+}

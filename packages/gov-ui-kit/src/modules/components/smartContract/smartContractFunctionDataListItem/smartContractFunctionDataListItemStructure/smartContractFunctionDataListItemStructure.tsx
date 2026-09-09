@@ -1,0 +1,113 @@
+import classNames from 'classnames';
+import { mainnet } from 'viem/chains';
+import {
+    AddressOutput,
+    Button,
+    DataList,
+    Dropdown,
+    Icon,
+    IconType,
+    type IDataListItemProps,
+    LinkBase,
+} from '../../../../../core';
+import { ChainEntityType, useBlockExplorer } from '../../../../hooks';
+import { useGukModulesContext } from '../../../gukModulesProvider';
+
+export type ISmartContractFunctionDataListItemProps = IDataListItemProps & {
+    /**
+     * The name of the smart contract function.
+     */
+    functionName?: string;
+    /**
+     * The name of the smart contract.
+     */
+    contractName?: string;
+    /**
+     * The address of the smart contract.
+     */
+    contractAddress: string;
+    /**
+     * Function selector of the given smart contract function.
+     */
+    functionSelector?: string;
+    /**
+     * Callback when function is removed.
+     */
+    onRemove?: () => void;
+    /**
+     * The chain ID of the smart contract.
+     * @default mainnet.id (1)
+     */
+    chainId?: number;
+    /**
+     * Flag to determine whether or not the item is a child of another component so we can apply the correct styles.
+     */
+    asChild?: boolean;
+    /**
+     * Flag to determine whether or not to display warning icon.
+     * @default false
+     */
+    displayWarning?: boolean;
+};
+
+export const SmartContractFunctionDataListItemStructure: React.FC<ISmartContractFunctionDataListItemProps> = (
+    props,
+) => {
+    const {
+        functionName,
+        functionSelector,
+        contractName,
+        contractAddress,
+        chainId = mainnet.id,
+        className,
+        onRemove,
+        asChild,
+        displayWarning = false,
+        ...otherProps
+    } = props;
+
+    const { copy } = useGukModulesContext();
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+
+    const blockExplorerHref = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: contractAddress });
+
+    const functionLabel = functionName ?? copy.smartContractFunctionDataListItemStructure.notVerified.function;
+    const contractLabel = contractName ?? copy.smartContractFunctionDataListItemStructure.notVerified.contract;
+
+    const hasVerifiedNames = !!functionName && !!contractName;
+    const displayWarningFeedback = displayWarning || !hasVerifiedNames;
+
+    const containerClassName = asChild
+        ? '!p-0 border-none shadow-none'
+        : 'flex items-center justify-between gap-x-3 py-3 md:gap-x-4 md:py-5';
+
+    const functionLabelStyle = displayWarningFeedback ? 'text-warning-800' : 'text-neutral-800';
+
+    return (
+        <DataList.Item className={classNames(containerClassName, className)} {...otherProps}>
+            <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-3">
+                    <p className={classNames('text-lg text-neutral-800', functionLabelStyle)}>{functionLabel}</p>
+                    {functionSelector && <p className="text-lg text-neutral-500">{functionSelector}</p>}
+                    {displayWarningFeedback && <Icon className="text-warning-500" icon={IconType.WARNING} size="md" />}
+                </div>
+                <LinkBase className="flex w-fit items-center gap-3" href={blockExplorerHref} target="_blank">
+                    <p className="text-neutral-500">{contractLabel}</p>
+                    {/* Using solution from https://kizu.dev/nested-links/ to nest anchor tags */}
+                    <object type="unknown">
+                        <AddressOutput address={contractAddress} href={blockExplorerHref} reveal={true} />
+                    </object>
+                </LinkBase>
+            </div>
+            {onRemove && (
+                <Dropdown.Container
+                    customTrigger={<Button iconLeft={IconType.DOTS_VERTICAL} size="md" variant="tertiary" />}
+                >
+                    <Dropdown.Item icon={IconType.REMOVE} iconPosition="left" onClick={onRemove}>
+                        {copy.smartContractFunctionDataListItemStructure.remove}
+                    </Dropdown.Item>
+                </Dropdown.Container>
+            )}
+        </DataList.Item>
+    );
+};

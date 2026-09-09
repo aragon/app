@@ -1,0 +1,165 @@
+import { Placeholder } from '@tiptap/extensions';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
+import { StarterKit } from '@tiptap/starter-kit';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Markdown, type MarkdownStorage } from 'tiptap-markdown';
+import { useRandomId } from '../../../hooks';
+import { type IInputContainerProps, InputContainer } from '../inputContainer';
+import { TextAreaRichTextActions } from './textAreaRichTextActions';
+
+export type ValueFormat = 'html' | 'markdown' | 'text';
+
+export interface ITextAreaRichTextProps
+    extends Omit<IInputContainerProps, 'maxLength' | 'inputLength' | 'value' | 'onChange' | 'id'> {
+    /**
+     * Current value of the input.
+     */
+    value?: string;
+    /**
+     * Id of the input.
+     */
+    id?: string;
+    /**
+     * Callback called on value change.
+     */
+    onChange?: (value: string) => void;
+    /**
+     * Placeholder of the input.
+     */
+    placeholder?: string;
+    /**
+     * Whether to render the editor on the first render or not.
+     */
+    immediatelyRender?: boolean;
+    /**
+     * Format of the input value, which determines how content is interpreted and returned.
+     * Can be serialized HTML, markdown, or plain text.
+     *
+     * @default 'html'
+     */
+    valueFormat?: ValueFormat;
+}
+
+// Classes to properly style the TipTap placeholder
+// (see https://tiptap.dev/docs/editor/api/extensions/placeholder#additional-setup)
+const placeholderClasses = classNames(
+    'first:before:pointer-events-none first:before:absolute first:before:top-5', // General
+    'first:before:font-normal first:before:text-base/tight first:before:text-neutral-300', // Typography
+    'first:before:content-[attr(data-placeholder)]', // Content
+);
+
+export const TextAreaRichText: React.FC<ITextAreaRichTextProps> = (props) => {
+    const {
+        value,
+        onChange,
+        placeholder,
+        disabled,
+        className,
+        id,
+        immediatelyRender,
+        valueFormat = 'html',
+        ...containerProps
+    } = props;
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const randomId = useRandomId(id);
+
+    const extensions = [
+        StarterKit.configure({ trailingNode: false }),
+        Placeholder.configure({ placeholder, emptyNodeClass: placeholderClasses, showOnlyWhenEditable: false }),
+        Markdown.configure({ transformPastedText: true }),
+    ];
+
+    const editor = useEditor({
+        extensions,
+        content: value,
+        editable: !disabled,
+        immediatelyRender,
+        editorProps: {
+            attributes: {
+                class: 'relative outline-hidden p-4 [overflow-wrap:anywhere]! prose prose-neutral min-h-40 h-full max-w-none leading-normal',
+                role: 'textbox',
+                'aria-labelledby': randomId,
+            },
+        },
+        onUpdate: ({ editor }) => {
+            if (editor.getText() === '') {
+                onChange?.('');
+                return;
+            }
+
+            const handlers: Record<ValueFormat, () => string | undefined> = {
+                html: () => editor.getHTML(),
+                text: () => editor.getText(),
+                markdown: () => {
+                    const { storage } = editor;
+                    const markdownStorage = 'markdown' in storage ? (storage.markdown as MarkdownStorage) : undefined;
+
+                    // Replace soft break syntax emitted by tiptap-markdown (backslash + newline) with standard two-space newline
+                    return markdownStorage?.getMarkdown().replace(/\\\n/g, '  \n');
+                },
+            };
+
+            const value = handlers[valueFormat]() ?? editor.getHTML();
+
+            onChange?.(value);
+        },
+    }) as Editor | null;
+
+    const toggleExpanded = () => setIsExpanded((current) => !current);
+
+    // Hide page overflow and set pointer-event to auto (e.g. if the component is rendered inside a modal) when
+    // component is expanded
+    useEffect(() => {
+        document.body.style.overflow = isExpanded ? 'hidden' : 'auto';
+
+        if (isExpanded) {
+            document.body.style.pointerEvents = 'auto';
+        }
+    }, [isExpanded]);
+
+    // Update editable setting on Tiptap editor on disabled property change
+    useEffect(() => editor?.setEditable(!disabled), [editor, disabled]);
+
+    // Add keydown listener to reset expanded state on ESC key down
+    useEffect(() => {
+        const handleKeyDown = ({ key }: KeyboardEvent) => {
+            if (key === 'Escape') {
+                setIsExpanded(false);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    const textAreaRichText = (
+        <InputContainer
+            className={classNames(className, {
+                'fixed top-0 left-0 z-[var(--guk-text-area-rich-text-expanded-z-index)] h-screen w-full [&>label]:hidden':
+                    isExpanded,
+            })}
+            disabled={disabled}
+            id={randomId}
+            wrapperClassName={classNames('grow overflow-hidden', {
+                'rounded-none!': isExpanded,
+            })}
+            {...containerProps}
+        >
+            <div className="flex h-full grow flex-col self-start overflow-auto">
+                <TextAreaRichTextActions disabled={disabled} editor={editor} onExpandClick={toggleExpanded} />
+                <EditorContent className="h-full" editor={editor} />
+            </div>
+        </InputContainer>
+    );
+
+    if (isExpanded) {
+        return createPortal(textAreaRichText, document.body);
+    }
+
+    return textAreaRichText;
+};

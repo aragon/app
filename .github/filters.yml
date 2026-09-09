@@ -9,6 +9,7 @@ app:
   - "apps/app/**"
   - "packages/assistant-chat/**"
   - "packages/assistant-contracts/**"
+  - "packages/gov-ui-kit/**"
   - ".changeset/config.json"
   - ".github/actions/**"
   - ".github/workflows/app-*.yml"

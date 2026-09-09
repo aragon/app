@@ -8,7 +8,6 @@ packages:
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
   "@ai-sdk/react": ^4.0.82
-  "@aragon/gov-ui-kit": 2.11.4
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
   "@assistant-ui/react": 0.14.27
@@ -57,7 +56,10 @@ catalog:
   tsx: ^4.23.12
   turbo: ^2.10.11
   typescript: ^5.9.3
-  ultracite: ^7.10.6
+  # ultracite: pinned EXACT — minor releases add lint rules, which breaks CI for every workspace
+  # at once (7.8.3 -> 7.10.6 surfaced ~1400 findings in gov-ui-kit alone). Bump by hand together
+  # with the resulting fixes, and keep it in step with @biomejs/biome.
+  ultracite: 7.10.6
   # vercel: pinned EXACT — releases after 58.4.4 ship without SLSA provenance and trip the
   # trustPolicy; move by hand once provenance returns (a range would resolve to an untrusted one).
   vercel: 58.4.4
@@ -69,7 +71,6 @@ catalog:
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude:
   # https://pnpm.io/settings#minimumreleaseageexclude
-  - "@aragon/gov-ui-kit"
   - "@aragon/aragon-domain"
 strictDepBuilds: true
 blockExoticSubdeps: true
@@ -144,3 +145,9 @@ overrides:
   dompurify@<=3.4.10: '>=3.4.11'
   js-yaml@>=4.0.0 <4.1.2: '>=4.2.0'
   brace-expansion@<1.1.18: ^1.1.18
+  # gov-ui-kit specific
+  '@testing-library/jest-dom@>6.9.1 <7': 6.9.1
+  nanoid@<3.3.18: ^3.3.18
+  'linkify-it@>=5.0.0 <5.0.2': '>=5.0.2'
+  serialize-javascript@<7.0.3: ^7.0.3
+

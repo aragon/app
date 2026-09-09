@@ -76,3 +76,4 @@ ds-bundle/
 .design-sync/learnings/
 .ds-sync/
 .design-sync/node_modules
+packages/gov-ui-kit/.design-sync-kit-styles.css
