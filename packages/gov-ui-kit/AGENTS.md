@@ -1,16 +1,24 @@
 # AGENTS.md — @aragon/gov-ui-kit
 
-Published React 19 + TypeScript component library for Aragon governance UIs. This is a
-single package shipped to npm and consumed downstream (including aragon/app), so public
-exports, peer dependencies, and semver are part of the product contract.
+Published React 19 + TypeScript component library for Aragon governance UIs. It lives in the
+aragon/app monorepo alongside its main consumer, and is **still published to npm** for external
+consumers — so public exports, peer dependencies, and semver remain part of the product contract.
+
+`apps/app` builds against this workspace copy, not the npm one: a change here reaches the app as
+soon as it merges, with no publish in between. Releasing to npm is a separate, deliberate act —
+see `RELEASING.md`. Monorepo-wide conventions live in the root `AGENTS.md`; this file supplements
+them for this package.
 
 ## Commands
 
-Use pnpm only. Node is pinned in `.nvmrc`; pnpm and engine requirements live in
-`package.json` and `pnpm-workspace.yaml` (`engineStrict: true`). npm/yarn installs fail.
+Use pnpm only; npm/yarn installs fail. Node, pnpm and the engine requirements are pinned at the
+**repo root** (`.nvmrc`, root `package.json`, `pnpm-workspace.yaml` with `engineStrict: true`) —
+this package has none of those files of its own.
 
-- Setup: install pnpm (https://pnpm.io/installation; pnpm ≥10 self-manages the version pinned
-  in `packageManager`, no corepack needed) → `pnpm install` → `pnpm run setup` (husky hooks).
+Run `pnpm install` **once from the repo root**; it installs every workspace. Git hooks are
+root-owned too, so there is no per-package setup step. The scripts below work from this directory,
+or from the root as `pnpm --filter @aragon/gov-ui-kit <script>`.
+
 - `pnpm storybook` — Storybook dev server on :6006; primary component dev surface.
 - `pnpm build` — Rollup build to `dist/` plus compiled `build.css`.
 - `pnpm build:storybook` — static Storybook build used in CI.
@@ -20,14 +28,32 @@ Use pnpm only. Node is pinned in `.nvmrc`; pnpm and engine requirements live in
 - `pnpm css:check` — verify `build.css` still matches a source compile (runs in CI after `pnpm build`).
 
 Before a PR: `pnpm lint:check && pnpm type-check && pnpm test`.
-CI also runs `pnpm build`, `pnpm build:storybook`, `pnpm test:coverage`, and on PRs
-`pnpm changeset status --since origin/main`. A changeset is required only when `src/**`
-changes (`.changeset/config.json`).
+
+CI runs `type-check`, `lint:check` and `test:coverage` for **every** workspace from the repo root
+through Turbo (`app-development.yml`), so this package's checks run on every PR automatically —
+there is no library-specific test workflow. `pnpm build` runs as part of that fan-out because
+`type-check` depends on `^build`. Storybook builds and deploys run in the `gov-ui-kit-*` workflows,
+gated on the `gov-ui-kit` paths filter (`.github/filters.yml`).
+
+A changeset is required only when `src/**` changes (`.changeset/config.json`), and it must name
+**only** `@aragon/gov-ui-kit` — a changeset may never mix release scopes, so a PR touching both the
+app and the kit needs two changeset files. `pnpm validate:changesets` enforces this.
 
 ## Architecture
 
-- **Single package, not a workspace.** `pnpm-workspace.yaml` has pnpm settings/overrides
-  only; no `packages:` globs. `turbo.json` caches `lint:check`, `type-check`, and `test`.
+- **One workspace package inside the aragon/app monorepo.** Install policy, dependency overrides
+  and the catalog live in the root `pnpm-workspace.yaml`. `turbo.json` here extends the root
+  config and overrides only `build` (`outputs: ["dist/**", "build.css"]`, cached), which is what
+  lets `^build` compile the package before dependents type-check. `build.css` must stay listed
+  explicitly — it is emitted to the package root, not into `dist/`.
+- **Lint/format is a local `biome.jsonc`**, carried over from the standalone repo so the migration
+  caused no reformatting. It sets `"root": false` and must stay `.jsonc`: Biome silently treats a
+  commented `biome.json` as a *root* config and fails with "Found a nested root configuration".
+  There is a TODO in that file to fold it into the root config later.
+- **`tsconfig.json` extends the root `tsconfig.base.json`** but keeps `outDir` literal, because
+  `rollup.config.mjs` reads it via `require('./tsconfig.json')` as raw JSON and does not follow
+  `extends`. That also means the file can never contain comments. `incremental: false` is set
+  deliberately: the base enables it, which makes the rollup TS plugin emit a stray `.rollup.cache/`.
 - **One public JS entry.** `src/index.ts` re-exports `./core` and `./modules`, which re-export
   their `assets`, `components`, `hooks`, `types`, and `utils` barrels. Every public symbol
   must ride this chain into `dist/index.es.js`.
@@ -97,8 +123,12 @@ changes (`.changeset/config.json`).
 - `src/theme/tokens/` — design-token source; CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
-- `package.json`, `pnpm-workspace.yaml`, `turbo.json` — scripts, deps, pnpm/Turbo rules.
+- `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules
+  for this package. Install policy and the dependency catalog are at the repo root.
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
-- `scripts/` — the checks CI runs outside Biome/tsc/Jest.
-  `check-build-css.mjs`. Plain Node, no framework; keep new checks in that shape.
-- `.github/workflows/library-test.yml` — CI truth for build/test/type/lint/changeset gates.
+- `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`. Plain Node, no
+  framework; keep new checks in that shape.
+- `RELEASING.md` — how a version reaches npm, and the four constraints that break OIDC publishing.
+- Root `AGENTS.md` — monorepo layout, release scopes, CI split and Turbo caching.
+- `.github/workflows/app-development.yml` — CI truth for the type/lint/test gates (all workspaces);
+  `.github/workflows/gov-ui-kit-*.yml` — Storybook deploys, release and npm publish.

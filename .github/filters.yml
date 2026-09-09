@@ -31,3 +31,12 @@ assistant:
   - ".github/workflows/assistant-*.yml"
   - ".github/workflows/shared-deploy.yml"
   - ".github/filters.yml"
+
+# Gates the Storybook deploys only. Deliberately narrow: adding shared build inputs such as
+# pnpm-lock.yaml here would redeploy the Storybook on every unrelated dependency change. The kit's
+# commits reach app release notes through the `app` filter above, which already lists its path.
+gov-ui-kit:
+  - "packages/gov-ui-kit/**"
+  - ".github/workflows/gov-ui-kit-*.yml"
+  - ".github/workflows/shared-storybook-deploy.yml"
+  - ".github/filters.yml"
