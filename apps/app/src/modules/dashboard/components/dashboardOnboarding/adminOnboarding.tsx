@@ -6,9 +6,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IAdminOnboardingProps {
     /**
-     * Display name of the connected user (ENS or truncated address).
+     * Display name of the connected user (ENS name or address output).
      */
-    displayName?: string;
+    displayName?: React.ReactNode;
     /**
      * Callback to open the governance designer dialog.
      */

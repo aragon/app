@@ -94,7 +94,6 @@ export const chatCopy = {
         successTitle: 'Request created',
         contactUpdates:
             'If you left a way to reach you, the team will follow up there.',
-        viewTicket: 'View request',
         errorTitle: "We couldn't create your request",
         errorFallback: 'Nothing was lost. Check your connection and try again.',
         retry: 'Retry',
@@ -112,5 +111,7 @@ export const chatCopy = {
         sessionLimit: `You've reached today's limit for new support chats. Email ${supportEmail} to open a new ticket.`,
         upstreamRateLimited:
             'The assistant is handling a lot of requests right now. Please try again in a minute.',
+        timeout:
+            'The assistant took too long to answer. Nothing was lost — send your message again.',
     },
 } as const;

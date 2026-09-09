@@ -136,13 +136,17 @@ test.describe('Support chat', () => {
             panel.getByRole('link', { name: 'Email support' }),
         ).toHaveAttribute('href', supportEmailHref);
 
-        // Approving resumes the stream: the tool executes and the card links to the ticket.
+        // Approving resumes the stream: the tool executes and the card names the ticket.
         await panel.getByRole('button', { name: 'Create ticket' }).click();
 
         await expect(page.getByText('Request created')).toBeVisible();
-        await expect(
-            panel.getByRole('link', { name: /SUP-123/ }),
-        ).toHaveAttribute('href', 'https://linear.app/aragon/issue/SUP-123');
+        // The ticket travels as a reference, never a link: the workspace is not reachable by
+        // users. The mocked stream still carries the legacy `url` field an older service sends,
+        // which the widget must ignore rather than render.
+        await expect(panel.getByText('SUP-123', { exact: true })).toBeVisible();
+        await expect(panel.getByRole('link', { name: /SUP-123/ })).toHaveCount(
+            0,
+        );
 
         // The header follows the ticket from draft to created.
         await expect(

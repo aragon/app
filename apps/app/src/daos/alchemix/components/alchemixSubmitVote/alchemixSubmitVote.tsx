@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     addressUtils,
     Button,
     Card,
@@ -177,7 +178,6 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     );
     const delegateeName =
         delegateeEnsName ?? addressUtils.truncateAddress(delegatee);
-    const userName = userEnsName ?? addressUtils.truncateAddress(address);
 
     const disabledOptions: IDisabledVotingOption[] = [];
 
@@ -293,7 +293,12 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             <div className="flex min-w-0 grow flex-col gap-0.5">
                 <div className="flex items-center gap-2">
                     <p className="truncate font-semibold text-base text-neutral-800 leading-tight">
-                        {delegateeName}
+                        {delegatee != null && (
+                            <AddressOutput
+                                address={delegatee}
+                                label={delegateeEnsName ?? undefined}
+                            />
+                        )}
                     </p>
                     <Tag
                         label={t(
@@ -334,7 +339,12 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                     <div className="flex min-w-0 grow flex-col gap-0.5">
                         <div className="flex items-center gap-2">
                             <p className="truncate font-semibold text-base text-neutral-800 leading-tight">
-                                {userName}
+                                {address != null && (
+                                    <AddressOutput
+                                        address={address}
+                                        label={userEnsName ?? undefined}
+                                    />
+                                )}
                             </p>
                             <Tag
                                 label={t(

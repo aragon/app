@@ -48,10 +48,7 @@ const successChunks = (toolCallId: string) => [
     {
         type: 'tool-output-available',
         toolCallId,
-        output: {
-            identifier: 'SUP-123',
-            url: 'https://linear.app/aragon/issue/SUP-123',
-        },
+        output: { identifier: 'SUP-123' },
     },
     { type: 'finish' },
 ];
@@ -198,7 +195,7 @@ describe('<AssistantChat /> integration', () => {
         return screen.getByRole('button', { name: 'Create ticket' });
     };
 
-    it('drafts the ticket, creates it on approval and links to it', async () => {
+    it('drafts the ticket and creates it on approval', async () => {
         chatResponses = [
             createChatResponse(draftChunks('tc-1')),
             createChatResponse(successChunks('tc-1')),
@@ -335,6 +332,9 @@ describe('<AssistantChat /> integration', () => {
     });
 
     it('opens the requests filed from this device from the link under the composer', async () => {
+        // The stored entry carries the Linear URL of the era when entries deep-linked out: it
+        // still parses (unknown keys are stripped) but must no longer render as a link — the
+        // user has no access to the Linear workspace.
         localStorage.setItem(
             'aragon-assistant:requests',
             JSON.stringify([
@@ -352,13 +352,13 @@ describe('<AssistantChat /> integration', () => {
             await screen.findByRole('button', { name: 'Past requests (1)' }),
         );
 
-        // The requests take over the panel: the entry deep-links to the ticket, the composer is
-        // gone until the user comes back to the conversation.
+        // The requests take over the panel: the entry quotes the ticket reference (no link out),
+        // the composer is gone until the user comes back to the conversation.
         expect(
-            screen.getByRole('link', {
-                name: /Treasury shows a stale balance/,
-            }),
-        ).toHaveAttribute('href', 'https://linear.app/aragon/issue/SUP-1');
+            screen.getByText('Treasury shows a stale balance'),
+        ).toBeInTheDocument();
+        expect(screen.getByText('SUP-1')).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
         expect(
             screen.queryByRole('textbox', { name: 'Message' }),
         ).not.toBeInTheDocument();
@@ -377,7 +377,6 @@ describe('<AssistantChat /> integration', () => {
             JSON.stringify([
                 {
                     identifier: 'SUP-1',
-                    url: 'https://linear.app/aragon/issue/SUP-1',
                     summary: 'Treasury shows a stale balance',
                     createdAt: '2026-07-24T10:00:00.000Z',
                 },

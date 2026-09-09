@@ -2,7 +2,6 @@
 
 import {
     Avatar,
-    addressUtils,
     ChainEntityType,
     DefinitionList,
     type IProposalAction,
@@ -114,13 +113,12 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                copyValue={qiTokenAddress}
-                link={{ href: qiTokenAddressLink }}
+                link={{ href: qiTokenAddressLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.qiTokenTerm',
                 )}
             >
-                {addressUtils.truncateAddress(qiTokenAddress)}
+                {qiTokenAddress}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(
@@ -132,13 +130,15 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                     : 'Borrow'}
             </DefinitionList.Item>
             <DefinitionList.Item
-                copyValue={rewardControllerAddress}
-                link={{ href: rewardControllerAddressLink }}
+                link={{
+                    href: rewardControllerAddressLink,
+                    isOnchainEntity: true,
+                }}
                 term={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.rewardControllerTerm',
                 )}
             >
-                {addressUtils.truncateAddress(rewardControllerAddress)}
+                {rewardControllerAddress}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

@@ -1,11 +1,9 @@
 import {
-    addressUtils,
+    AddressOutput,
     Button,
     ChainEntityType,
-    Clipboard,
     Dialog,
     IconType,
-    Link,
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -43,8 +41,6 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
         stripAragonRegistrySuffix: true,
     });
     const { data: ensAvatar } = useEnsAvatar(ensName);
-
-    const formattedAddress = addressUtils.truncateAddress(address);
 
     const { buildEntityUrl } = useBlockExplorer();
     const addressLink = buildEntityUrl({
@@ -147,22 +143,18 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                         <p className="font-normal text-neutral-800 text-xl leading-tight">
                             {displayName}
                         </p>
-                        <Clipboard copyValue={address}>
-                            <Link
-                                className="truncate text-base"
-                                href={addressLink}
-                                isExternal={true}
-                            >
-                                {formattedAddress}
-                            </Link>
-                        </Clipboard>
+                        <AddressOutput
+                            address={address}
+                            className="text-base"
+                            href={addressLink}
+                            isExternal={true}
+                        />
                     </div>
                 ) : (
-                    <Clipboard copyValue={address}>
-                        <span className="truncate text-neutral-800 text-xl">
-                            {formattedAddress}
-                        </span>
-                    </Clipboard>
+                    <AddressOutput
+                        address={address}
+                        className="text-neutral-800 text-xl"
+                    />
                 )}
             </div>
             <div className="flex flex-col gap-3 px-8">

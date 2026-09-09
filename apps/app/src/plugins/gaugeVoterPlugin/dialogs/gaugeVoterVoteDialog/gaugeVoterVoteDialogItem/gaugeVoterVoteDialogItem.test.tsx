@@ -86,8 +86,10 @@ describe('<GaugeVoterVoteDialogItem /> component', () => {
     it('calls onRemove with the gauge address when the close button is clicked', async () => {
         const onRemove = jest.fn();
         render(createTestComponent({ onRemove }));
-        const closeButtons = screen.getAllByRole('button');
-        await userEvent.click(closeButtons[0]);
+        const closeButton = screen.getByRole('button', {
+            name: 'Remove gauge',
+        });
+        await userEvent.click(closeButton);
         expect(onRemove).toHaveBeenCalledWith(
             '0x1234567890123456789012345678901234567890',
         );

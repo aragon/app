@@ -2,7 +2,6 @@
 
 import {
     Avatar,
-    addressUtils,
     ChainEntityType,
     DefinitionList,
     type IProposalAction,
@@ -47,13 +46,12 @@ export const GaugeVoterUpdateGaugeMetadataActionDetails: React.FC<
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                copyValue={gaugeAddress}
-                link={{ href: gaugeAddressLink }}
+                link={{ href: gaugeAddressLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionDetails.gaugeAddressTerm',
                 )}
             >
-                {addressUtils.truncateAddress(gaugeAddress)}
+                {gaugeAddress}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(

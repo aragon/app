@@ -5,12 +5,15 @@ import { PermissionAddressListItem } from './permissionAddressListItem';
 /**
  * The subset of a resolved permission entity the detail rows actually render.
  * Kept narrow so callers without a full resolution (e.g. graph nodes) can map
- * into it.
+ * into it. `label` is optional for those callers: without a resolved name the
+ * row falls back to rendering the raw address itself.
  */
 export type IPermissionDetailsEntity = Pick<
     IPermissionEntity,
-    'address' | 'label' | 'isSentinel' | 'detailName'
->;
+    'address' | 'isSentinel' | 'detailName'
+> & {
+    label?: IPermissionEntity['label'];
+};
 
 interface IPermissionEntityListItemProps {
     entity: IPermissionDetailsEntity;
@@ -24,9 +27,15 @@ export const PermissionEntityListItem: React.FC<
     if (entity.isSentinel) {
         // Sentinels resolve to a human label whose truncated address is the
         // same string, so a description line would duplicate the primary.
+        // Without that label the raw sentinel address is what shows, so it
+        // renders as an address and owns its own copy control.
         return (
-            <DefinitionList.Item copyValue={entity.address} term={term}>
-                {entity.label}
+            <DefinitionList.Item
+                copyValue={entity.label != null ? entity.address : undefined}
+                link={{ isOnchainEntity: true }}
+                term={term}
+            >
+                {entity.label ?? entity.address}
             </DefinitionList.Item>
         );
     }

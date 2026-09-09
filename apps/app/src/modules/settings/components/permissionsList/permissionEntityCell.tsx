@@ -1,4 +1,10 @@
-import { Avatar, addressUtils, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
+import {
+    AddressOutput,
+    Avatar,
+    addressUtils,
+    DaoAvatar,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import { PermissionEntityExternalBrandId } from '@/shared/api/daoService';
 import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionEntity } from '../../utils/permissionEntityUtils';
@@ -12,7 +18,7 @@ export const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     entity,
 }) => (
     <span className="flex min-w-0 items-center gap-2 text-neutral-800">
-        <span className="truncate">{entity.label}</span>
+        <AddressOutput address={entity.address} label={entity.label} />
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}

@@ -1,9 +1,8 @@
 'use client';
 
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
-    Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -55,16 +54,15 @@ export const AllowedActionsList: React.FC<IAllowedActionsListProps> = ({
                                 {EMPTY_ALLOWED_ACTION_VALUE}
                             </span>
                         ) : (
-                            <Link
-                                className="w-fit shrink-0"
-                                href={buildEntityUrl({
-                                    type: ChainEntityType.ADDRESS,
-                                    id: action.target,
-                                })}
-                                isExternal={true}
-                            >
-                                {addressUtils.truncateAddress(action.target)}
-                            </Link>
+                            <span className="w-fit shrink-0">
+                                <AddressOutput
+                                    address={action.target}
+                                    href={buildEntityUrl({
+                                        type: ChainEntityType.ADDRESS,
+                                        id: action.target,
+                                    })}
+                                />
+                            </span>
                         )}
                     </div>
                 </div>

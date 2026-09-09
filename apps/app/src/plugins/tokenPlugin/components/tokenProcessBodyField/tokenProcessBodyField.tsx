@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    addressUtils,
     ChainEntityType,
     DefinitionList,
     formatterUtils,
@@ -118,6 +117,10 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         : membership.members.length;
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const tokenLink = buildEntityUrl({
+        type: ChainEntityType.TOKEN,
+        id: tokenAddress,
+    });
     const tokenDescription =
         tokenName && tokenSymbol
             ? t('app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol', {
@@ -127,13 +130,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             : undefined;
 
     const tokenProps = {
-        link: {
-            href: buildEntityUrl({
-                type: ChainEntityType.TOKEN,
-                id: tokenAddress,
-            }),
-        },
-        copyValue: tokenAddress,
+        link: { href: tokenLink, isOnchainEntity: true },
         description: tokenDescription,
     };
 
@@ -166,7 +163,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
                 {...tokenProps}
             >
-                {addressUtils.truncateAddress(tokenAddress)}
+                {tokenAddress}
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item

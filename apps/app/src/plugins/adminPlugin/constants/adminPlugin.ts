@@ -31,5 +31,7 @@ export const adminPlugin: IPluginInfo = {
         [Network.AVAX_MAINNET]: '0x4802d2A374D4e9E390BAb92674B552C03d54bbF1',
         [Network.KATANA_MAINNET]: '0x95d1ACA58E631774bDE4d1bC67DD784f01cCDAeC',
         [Network.MONAD_MAINNET]: '0x5B126edff0dbdD983068c3E5e1b68324aBAfFB46',
+        [Network.ROBINHOOD_MAINNET]:
+            '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
     },
 };

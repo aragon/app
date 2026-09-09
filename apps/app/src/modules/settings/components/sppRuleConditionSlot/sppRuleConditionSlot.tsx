@@ -121,14 +121,12 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                                     </span>
                                 </DefinitionList.Item>
                                 <DefinitionList.Item
-                                    copyValue={rule.permissionId}
+                                    link={{ isOnchainEntity: true }}
                                     term={t(
                                         'app.settings.sppRuleConditionSlot.permissionId',
                                     )}
                                 >
-                                    <span className="break-all">
-                                        {rule.permissionId}
-                                    </span>
+                                    {rule.permissionId}
                                 </DefinitionList.Item>
                                 {rule.ruleIndexes != null &&
                                     rule.ruleIndexes.length > 0 && (
@@ -143,14 +141,12 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                                 {rule.conditionAddress != null &&
                                     rule.conditionAddress !== '' && (
                                         <DefinitionList.Item
-                                            copyValue={rule.conditionAddress}
+                                            link={{ isOnchainEntity: true }}
                                             term={t(
                                                 'app.settings.sppRuleConditionSlot.conditionAddress',
                                             )}
                                         >
-                                            {addressUtils.truncateAddress(
-                                                rule.conditionAddress,
-                                            )}
+                                            {rule.conditionAddress}
                                         </DefinitionList.Item>
                                     )}
                             </DefinitionList.Container>

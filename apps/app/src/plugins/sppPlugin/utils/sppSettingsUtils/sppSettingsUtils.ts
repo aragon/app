@@ -1,4 +1,4 @@
-import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { ISppPluginSettings } from '../../types';
 
@@ -50,15 +50,14 @@ class SppSettingsUtils {
     ): IDefinitionSetting[] => {
         const { address, name, url, t } = params;
 
-        const link = { href: url };
-        const truncatedAddress = addressUtils.truncateAddress(address);
+        const link = { href: url, isOnchainEntity: true as const };
 
         const settings: IDefinitionSetting[] = [
             {
                 term: t(
                     'app.plugins.spp.sppGovernanceSettings.default.address',
                 ),
-                definition: truncatedAddress,
+                definition: address,
                 link,
             },
         ];
@@ -66,6 +65,7 @@ class SppSettingsUtils {
         if (name != null) {
             settings.unshift({
                 term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
+                copyValue: address,
                 definition: name,
                 link,
             });
