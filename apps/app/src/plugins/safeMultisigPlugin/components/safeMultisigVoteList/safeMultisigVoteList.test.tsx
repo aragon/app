@@ -7,6 +7,7 @@ import {
     generateSppProposal,
     generateSppStage,
 } from '@/plugins/sppPlugin/testUtils';
+import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import { generateSafeBodyState, generateSafeInfo } from '../../testUtils';
@@ -110,6 +111,38 @@ describe('<SafeMultisigVoteList /> component', () => {
                 'app.plugins.safeMultisig.safeMultisigVoteList.empty.heading',
             ),
         ).toBeInTheDocument();
+    });
+
+    it('says where the confirmations are when a settled report is beyond the scan', () => {
+        // The scan gives up past the stage start or its page cap. Claiming "none yet" would be
+        // false: a full set was collected to execute at all.
+        useSafeBodyStateSpy.mockReturnValue({
+            ...bodyState,
+            signers: [],
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: undefined,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigVoteList.settled.heading',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigVoteList.empty.heading',
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigVoteList.settled.action',
+            }),
+        ).toHaveAttribute(
+            'href',
+            'https://app.safe.global/transactions/history?safe=eth:0x0000000000000000000000000000000000000001',
+        );
     });
 
     it('separates an unreadable Safe from a body nobody has signed', () => {

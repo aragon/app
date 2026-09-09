@@ -6,11 +6,13 @@ import {
     DataListContainer,
     DataListPagination,
     DataListRoot,
+    IconType,
     useBlockExplorer,
     VoteDataListItem,
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { safeAppHistoryUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { safeDataListUtils } from '@/modules/safe/utils/safeDataListUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -37,12 +39,27 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
     // `signers` covers both halves of a body's life: the queued report while it is collecting
     // confirmations, and the executed one afterwards - the queue stops serving a transaction the
     // moment it executes, so a settled body's confirmations come from history.
-    const { signers, isLoading, isError } = useSafeMultisigBodyState({
-        network,
-        address: body,
-        proposal,
-        stage,
-    });
+    const { signers, isLoading, isError, settledResultType, settledReport } =
+        useSafeMultisigBodyState({
+            network,
+            address: body,
+            proposal,
+            stage,
+        });
+
+    /**
+     * A settled body whose executed report was not found: the scan gives up once it walks past the
+     * stage's start date or hits its page cap, which a Safe busy enough can trigger.
+     *
+     * "No confirmations yet" would be false here - a full set was collected to execute at all - so
+     * this case says where they are instead.
+     */
+    const hasUnresolvedSettledReport =
+        settledResultType != null && settledReport == null;
+    const emptyKey = hasUnresolvedSettledReport ? 'settled' : 'empty';
+    const historyHref = hasUnresolvedSettledReport
+        ? safeAppHistoryUrl({ network, address: body })
+        : undefined;
 
     // The owner rows only need a chain link, so resolve the explorer from the body's own network
     // rather than fetching the DAO to rediscover it.
@@ -72,9 +89,20 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
         >
             <DataListContainer
                 emptyState={{
-                    heading: t(`${translationKey}.empty.heading`),
-                    description: t(`${translationKey}.empty.description`),
+                    heading: t(`${translationKey}.${emptyKey}.heading`),
+                    description: t(`${translationKey}.${emptyKey}.description`),
                     objectIllustration: { object: 'USERS' },
+                    ...(historyHref != null
+                        ? {
+                              primaryButton: {
+                                  label: t(`${translationKey}.settled.action`),
+                                  href: historyHref,
+                                  target: '_blank',
+                                  rel: 'noopener',
+                                  iconRight: IconType.LINK_EXTERNAL,
+                              },
+                          }
+                        : {}),
                 }}
                 errorState={{
                     heading: t(`${translationKey}.error.heading`),
