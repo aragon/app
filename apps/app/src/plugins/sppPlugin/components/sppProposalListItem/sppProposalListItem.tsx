@@ -1,9 +1,12 @@
 'use client';
 
-import { ProposalDataListItem } from '@aragon/gov-ui-kit';
+import { AlertInline, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
-import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import {
+    ProposalMetadataStatus,
+    proposalUtils,
+} from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -41,12 +44,16 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
     const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const { data: publisherEnsName } = useEnsName(creator.address);
 
+    const metadataStatus = proposalUtils.getMetadataStatus(proposal);
+    const hasStandardMetadata =
+        metadataStatus === ProposalMetadataStatus.STANDARD;
+
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
             date={proposalDate}
             href={proposalLink}
-            id={proposalSlug}
+            id={proposal.title ? proposalSlug : undefined}
             key={id}
             publisher={{
                 address: creator.address,
@@ -57,6 +64,15 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             statusContext={statusContext}
             summary={summary}
             title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
-        />
+        >
+            {!hasStandardMetadata && (
+                <AlertInline
+                    message={t(
+                        `app.governance.daoProposalList.metadataAlert.${metadataStatus}`,
+                    )}
+                    variant="warning"
+                />
+            )}
+        </ProposalDataListItem.Structure>
     );
 };

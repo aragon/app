@@ -78,7 +78,7 @@ export const DaoProposalListDefaultItem: React.FC<
             className="min-w-0"
             date={processedEndDate}
             href={proposalHref}
-            id={proposalSlug}
+            id={proposal.title ? proposalSlug : undefined}
             key={id}
             publisher={{
                 address: creator.address,
