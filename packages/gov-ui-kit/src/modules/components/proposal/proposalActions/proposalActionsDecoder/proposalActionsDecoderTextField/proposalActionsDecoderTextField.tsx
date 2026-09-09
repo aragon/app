@@ -1,0 +1,34 @@
+import { InputText, TextArea } from '../../../../../../core';
+import { ProposalActionsDecoderMode } from '../proposalActionsDecoder.api';
+import { proposalActionsDecoderUtils } from '../proposalActionsDecoderUtils';
+import type { IProposalActionsDecoderTextFieldProps } from './proposalActionsDecoderTextField.api';
+import { ProposalActionsDecoderTextFieldEdit } from './proposalActionsDecoderTextFieldEdit';
+import { ProposalActionsDecoderTextFieldWatch } from './proposalActionsDecoderTextFieldWatch';
+
+export const ProposalActionsDecoderTextField: React.FC<IProposalActionsDecoderTextFieldProps> = (props) => {
+    const { parameter, mode, hideLabels, component = 'input', fieldName, formPrefix, className } = props;
+    const { name, notice, value, type } = parameter;
+
+    const label = (
+        <>
+            {name} <span className="text-neutral-500">({type})</span>
+        </>
+    );
+    const inputLabels = hideLabels ? undefined : { label, helpText: notice };
+    const formFieldName = proposalActionsDecoderUtils.getFieldName(fieldName, formPrefix);
+
+    const commonProps = { className, ...inputLabels };
+    const fieldProps = { parameter, component, fieldName: formFieldName, ...commonProps };
+
+    if (mode === ProposalActionsDecoderMode.WATCH) {
+        return <ProposalActionsDecoderTextFieldWatch {...fieldProps} />;
+    }
+
+    if (mode === ProposalActionsDecoderMode.EDIT) {
+        return <ProposalActionsDecoderTextFieldEdit {...fieldProps} />;
+    }
+
+    const Component = component === 'textarea' ? TextArea : InputText;
+
+    return <Component disabled={true} value={value?.toString()} {...commonProps} />;
+};
