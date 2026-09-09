@@ -78,7 +78,7 @@ export const DaoProposalListDefaultItem: React.FC<
             className="min-w-0"
             date={processedEndDate}
             href={proposalHref}
-            id={proposal.title ? proposalSlug : undefined}
+            id={proposalSlug}
             key={id}
             publisher={{
                 address: creator.address,
@@ -87,7 +87,7 @@ export const DaoProposalListDefaultItem: React.FC<
             }}
             status={proposalStatus}
             summary={summary}
-            title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
+            title={proposal.title}
             voted={userVote != null}
         >
             {!hasStandardMetadata && (

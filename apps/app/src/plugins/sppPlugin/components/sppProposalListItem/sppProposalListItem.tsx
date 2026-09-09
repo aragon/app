@@ -53,7 +53,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             className="min-w-0"
             date={proposalDate}
             href={proposalLink}
-            id={proposal.title ? proposalSlug : undefined}
+            id={proposalSlug}
             key={id}
             publisher={{
                 address: creator.address,
@@ -63,7 +63,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             status={proposalStatus}
             statusContext={statusContext}
             summary={summary}
-            title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
+            title={proposal.title}
         >
             {!hasStandardMetadata && (
                 <AlertInline

@@ -100,9 +100,9 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('falls back to the proposal slug as title when the metadata is not resolved', () => {
+    it('renders the proposal identifier once when the title is empty', () => {
         const proposal = generateProposal({ title: '', summary: '' });
-        render(createTestComponent({ proposal, proposalSlug: 'admin-2' }));
+        render(createTestComponent({ proposal, proposalSlug: 'ADMIN-2' }));
         expect(screen.getByText('ADMIN-2')).toBeInTheDocument();
     });
 
