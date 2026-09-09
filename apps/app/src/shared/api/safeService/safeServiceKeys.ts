@@ -4,11 +4,13 @@ import type {
     IGetSafeBalancesParams,
     IGetSafeInfoParams,
     IGetSafePendingTransactionsParams,
+    IGetSafeTransactionHistoryParams,
 } from './safeService.api';
 
 export enum SafeServiceKey {
     SAFE_INFO = 'SAFE_INFO',
     SAFE_PENDING_TRANSACTIONS = 'SAFE_PENDING_TRANSACTIONS',
+    SAFE_TRANSACTION_HISTORY = 'SAFE_TRANSACTION_HISTORY',
     SAFE_BALANCES = 'SAFE_BALANCES',
 }
 
@@ -37,6 +39,11 @@ export const safeServiceKeys = {
     ],
     safePendingTransactions: (params: IGetSafePendingTransactionsParams) => [
         SafeServiceKey.SAFE_PENDING_TRANSACTIONS,
+        apiVersionUtils.getApiVersion(),
+        withChecksummedAddress(params),
+    ],
+    safeTransactionHistory: (params: IGetSafeTransactionHistoryParams) => [
+        SafeServiceKey.SAFE_TRANSACTION_HISTORY,
         apiVersionUtils.getApiVersion(),
         withChecksummedAddress(params),
     ],

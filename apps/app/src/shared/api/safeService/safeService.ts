@@ -13,6 +13,7 @@ import type {
     IGetSafeInfoParams,
     IGetSafeNextNonceParams,
     IGetSafePendingTransactionsParams,
+    IGetSafeTransactionHistoryParams,
     ISafeUrlParams,
 } from './safeService.api';
 import { SafeServiceError } from './safeServiceError';
@@ -34,6 +35,7 @@ class SafeService extends AragonBackendService {
         safeInfo: '/v2/safe/:network/:address/info',
         safeQueue: '/v2/safe/:network/:address/queue',
         safeNextNonce: '/v2/safe/:network/:address/next-nonce',
+        safeHistory: '/v2/safe/:network/:address/history',
     };
 
     constructor() {
@@ -73,6 +75,35 @@ class SafeService extends AragonBackendService {
             !this.hasMeta(response)
         ) {
             return this.throwInvalidResponse('Safe pending transactions');
+        }
+
+        return response;
+    };
+
+    /**
+     * Reads the executed transactions of a Safe, newest nonce first.
+     *
+     * The queue serves unexecuted transactions only, so this is the sole source for a settled
+     * report's confirmations, the nonce it consumed and the onchain hash that executed it.
+     *
+     * Deliberately **not** filtered by `to`: a report batched through MultiSend targets the
+     * MultiSend contract, so a target filter would silently miss exactly the out-of-band case this
+     * exists to surface. Correlation is done client-side against the decoded calldata.
+     */
+    getSafeTransactionHistory = async ({
+        urlParams,
+        queryParams,
+    }: IGetSafeTransactionHistoryParams) => {
+        const response = await this.request<unknown>(this.urls.safeHistory, {
+            urlParams: this.buildUrlParams(urlParams),
+            queryParams,
+        });
+
+        if (
+            !isSafePaginatedResponse(response, isSafeMultisigTransaction) ||
+            !this.hasMeta(response)
+        ) {
+            return this.throwInvalidResponse('Safe transaction history');
         }
 
         return response;

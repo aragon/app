@@ -56,6 +56,22 @@ export interface ISafeMultisigBodyReport {
     hasNonceCompetition: boolean;
 }
 
+/**
+ * A report that has executed. Deliberately narrower than `ISafeMultisigBodyReport`: liveness,
+ * status and nonce competition are all questions about whether a transaction can still execute,
+ * and this one already has.
+ */
+export interface ISafeMultisigSettledReport {
+    /**
+     * Executed Safe transaction carrying the report, directly or inside a MultiSend batch.
+     */
+    transaction: ISafeMultisigTransaction;
+    /**
+     * Decoded report, including the governance effect it produced.
+     */
+    report: ISafeProposalResultReport;
+}
+
 export interface IUseSafeMultisigBodyStateReturn {
     /**
      * Live Safe state: owners, threshold, version and nonce.
@@ -88,6 +104,15 @@ export interface IUseSafeMultisigBodyStateReturn {
      * Report queued for this proposal and stage, live or superseded.
      */
     pendingReport?: ISafeMultisigBodyReport;
+    /**
+     * Executed transaction that produced the recorded verdict, read from history once the body has
+     * settled.
+     *
+     * The queue serves unexecuted transactions only, so this is the sole source of a settled
+     * report's confirmations, the nonce it consumed and the onchain hash that executed it - none of
+     * which the indexed result carries.
+     */
+    settledReport?: ISafeMultisigSettledReport;
     /**
      * Indexed SPP result for this body. A result does not close the queue: while the stage is still
      * current a queued report can execute and overwrite it, so both are read together.

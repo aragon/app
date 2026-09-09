@@ -10,8 +10,9 @@ import {
     SafeServiceError,
     useSafeInfo,
     useSafePendingTransactions,
+    useSafeTransactionHistory,
 } from '@/shared/api/safeService';
-import { safeBodyPollInterval } from '../../constants';
+import { safeBodyPollInterval, settledHistoryPageSize } from '../../constants';
 import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
 import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
@@ -116,6 +117,19 @@ export const useSafeMultisigBodyState = (
         },
     );
 
+    const { data: executedTransactions } = useSafeTransactionHistory(
+        { urlParams, queryParams: { limit: settledHistoryPageSize } },
+        {
+            /**
+             * Only once a verdict is recorded. Until then the queue holds everything worth showing,
+             * and this read costs Safe quota where `info` does not.
+             *
+             * No `refetchInterval`: executed transactions are immutable, so there is nothing to
+             * poll for.
+             */
+            enabled: isNetworkSupported && isSettled,
+        },
+    );
     // The backend serves a stale payload rather than failing when its own fresh window has lapsed.
     // That is the right trade for a signing UI, but the user has to be told the count may lag.
     const isStale =
@@ -197,9 +211,37 @@ export const useSafeMultisigBodyState = (
         isStageCurrent,
     ]);
 
+    /**
+     * The executed transaction that produced the recorded verdict, recovered from history.
+     *
+     * Correlated the same way as a queued one - decoded calldata, MultiSend-aware - because a
+     * report batched with other calls targets the MultiSend contract, not the plugin. History is
+     * newest-nonce-first, so a re-report that overwrote an earlier verdict wins, which matches what
+     * the indexer recorded.
+     */
+    const settledReport = useMemo(() => {
+        for (const transaction of executedTransactions?.results ?? []) {
+            const report =
+                safeMultisigTransactionUtils.findProposalResultReport({
+                    transaction,
+                    pluginAddress,
+                    proposalId: proposalIndex,
+                    stageId: stageIndex,
+                });
+
+            if (report != null) {
+                return { transaction, report };
+            }
+        }
+
+        return undefined;
+    }, [executedTransactions, pluginAddress, proposalIndex, stageIndex]);
+
+    // A settled body's confirmations are the ones that executed it; the queue no longer serves them.
     const signers =
-        pendingReport?.transaction.confirmations.map(({ owner }) => owner) ??
-        [];
+        (
+            pendingReport?.transaction ?? settledReport?.transaction
+        )?.confirmations.map(({ owner }) => owner) ?? [];
 
     // Nonce-exact: a Safe binds every signature to one nonce, so only the report sitting on the
     // Safe's current nonce can execute. Anything further back is waiting, however well signed.
@@ -231,6 +273,7 @@ export const useSafeMultisigBodyState = (
         rateLimitedRetryAfter: rateLimitedError?.retryAfter,
         isStale,
         pendingReport,
+        settledReport,
         settledResultType: bodyResult?.resultType,
         isStageCurrent,
         canStillAffectOutcome,

@@ -41,6 +41,22 @@ export interface IGetSafePendingTransactionsParams
 export interface IGetSafeNextNonceParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 
+export interface IGetSafeTransactionHistoryQueryParams {
+    /**
+     * Maximum number of transactions to return.
+     */
+    limit?: number;
+    /**
+     * Number of transactions to skip.
+     */
+    offset?: number;
+}
+
+export interface IGetSafeTransactionHistoryParams
+    extends IRequestUrlParams<ISafeUrlParams> {
+    queryParams?: IGetSafeTransactionHistoryQueryParams;
+}
+
 export interface IGetSafeBalancesParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 

@@ -93,9 +93,42 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         );
     };
 
-    it('links a reported body out to the Safe once its transaction executed', () => {
-        // The action slot is gone by then - the chrome drops it as soon as the proposal executes -
-        // so the provenance has to live on the body itself.
+    it('deep-links the exact transaction once history has resolved it', () => {
+        const safeTxHash = `0x${'b'.repeat(64)}`;
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: {
+                transaction: generateSafeMultisigTransaction({
+                    safeTxHash,
+                    isExecuted: true,
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+            },
+        });
+
+        render(createTestComponent());
+
+        // Both query parameters are required for Safe's page to resolve, and the colon in the
+        // EIP-3770 pair must stay literal.
+        expect(
+            screen.getByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.executed',
+            }),
+        ).toHaveAttribute(
+            'href',
+            `https://app.safe.global/transactions/tx?safe=eth:0x0000000000000000000000000000000000000001&id=multisig_0x0000000000000000000000000000000000000001_${safeTxHash}`,
+        );
+    });
+
+    it('falls back to the Safe history when the executed transaction is not resolved', () => {
+        // The settled read can be pending, stale or beyond its page: "somewhere in this Safe" still
+        // beats no link at all.
         useSafeMultisigBodyStateSpy.mockReturnValue({
             ...state,
             settledResultType: SppProposalType.VETO,

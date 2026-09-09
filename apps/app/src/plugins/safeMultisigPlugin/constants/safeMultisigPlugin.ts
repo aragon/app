@@ -22,6 +22,15 @@ export const safeBodyPluginId = 'external-safe';
 export const safeBodyPollInterval = 30_000;
 
 /**
+ * How far back into a Safe's executed transactions to look for a settled report.
+ *
+ * A page rather than an unbounded scan: the target report is almost always among the most recent
+ * executions, and the read is metered. Deep enough to survive a busy treasury executing unrelated
+ * transactions after the report, shallow enough to stay one request.
+ */
+export const settledHistoryPageSize = 40;
+
+/**
  * Poll cadence of the indexer while waiting for an executed report to be attributed.
  */
 export const safeIndexingPollInterval = 1000;

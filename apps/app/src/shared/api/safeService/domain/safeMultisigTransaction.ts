@@ -63,6 +63,18 @@ export interface ISafeMultisigTransaction {
      * ISO date the transaction was submitted.
      */
     submissionDate: string;
+    /**
+     * ISO date the transaction executed. Absent while it is queued - the backend omits both
+     * executed-only fields rather than sending them null.
+     */
+    executionDate?: string;
+    /**
+     * Hash of the onchain transaction that executed this Safe transaction. Absent while queued.
+     *
+     * This is the only durable handle on a settled report: the indexed body result carries no
+     * transaction hash, so provenance is unrecoverable without it.
+     */
+    transactionHash?: string;
 }
 
 export const isSafeMultisigTransaction = (
@@ -89,4 +101,8 @@ export const isSafeMultisigTransaction = (
     (typeof value.signatures === 'string' || value.signatures === null) &&
     typeof value.isExecuted === 'boolean' &&
     (typeof value.isSuccessful === 'boolean' || value.isSuccessful === null) &&
-    typeof value.submissionDate === 'string';
+    typeof value.submissionDate === 'string' &&
+    (value.executionDate === undefined ||
+        typeof value.executionDate === 'string') &&
+    (value.transactionHash === undefined ||
+        typeof value.transactionHash === 'string');

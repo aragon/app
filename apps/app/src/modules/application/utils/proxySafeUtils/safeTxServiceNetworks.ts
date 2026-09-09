@@ -59,6 +59,7 @@ export const safeShortNameFromNetwork = (
 const safeAppUrl = (
     path: string,
     params: { network: Network; address: string },
+    query?: Record<string, string>,
 ): string | undefined => {
     const { network, address } = params;
     const shortName = safeShortNameFromNetwork(network);
@@ -67,7 +68,14 @@ const safeAppUrl = (
         return undefined;
     }
 
-    return `https://app.safe.global/${path}?safe=${shortName}:${checksumSafeAddress(address)}`;
+    // Assembled by hand rather than with `URLSearchParams`: it percent-encodes the colon in the
+    // EIP-3770 `safe=<shortName>:<address>` pair, and every value here is already URL-safe.
+    const search = [
+        `safe=${shortName}:${checksumSafeAddress(address)}`,
+        ...Object.entries(query ?? {}).map(([key, value]) => `${key}=${value}`),
+    ].join('&');
+
+    return `https://app.safe.global/${path}?${search}`;
 };
 
 /**
@@ -80,12 +88,29 @@ export const safeAppAccountUrl = (params: {
 
 /**
  * Link to a Safe's executed transactions in the Safe web app.
- *
- * The Safe's history rather than one transaction: a deep link needs the `safeTxHash`, which is only
- * available while the transaction is still queued - the queue read serves unexecuted transactions,
- * and Aragon's indexed body result carries no transaction hash.
  */
 export const safeAppHistoryUrl = (params: {
     network: Network;
     address: string;
 }): string | undefined => safeAppUrl('transactions/history', params);
+
+/**
+ * Link to one transaction in the Safe web app.
+ *
+ * Both query parameters are required for the page to resolve, and the transaction id is
+ * `multisig_<safeAddress>_<safeTxHash>` - the Safe address appears twice by design.
+ */
+export const safeAppTransactionUrl = (params: {
+    network: Network;
+    address: string;
+    safeTxHash: string;
+}): string | undefined => {
+    const { network, address, safeTxHash } = params;
+    const safeAddress = checksumSafeAddress(address);
+
+    return safeAppUrl(
+        'transactions/tx',
+        { network, address },
+        { id: `multisig_${safeAddress}_${safeTxHash}` },
+    );
+};

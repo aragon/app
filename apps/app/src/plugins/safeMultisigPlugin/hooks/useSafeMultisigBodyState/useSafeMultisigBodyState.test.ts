@@ -9,6 +9,7 @@ import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
 import {
+    generateSafeConfirmation,
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
@@ -26,6 +27,10 @@ describe('useSafeMultisigBodyState hook', () => {
     const useSafePendingTransactionsSpy = jest.spyOn(
         safeServiceApi,
         'useSafePendingTransactions',
+    );
+    const useSafeTransactionHistorySpy = jest.spyOn(
+        safeServiceApi,
+        'useSafeTransactionHistory',
     );
     const useWalletAccountSpy = jest.spyOn(
         walletAccountApi,
@@ -108,6 +113,13 @@ describe('useSafeMultisigBodyState hook', () => {
             isConnecting: false,
             isReconnecting: false,
         });
+        useSafeTransactionHistorySpy.mockReturnValue({
+            data: undefined,
+            isLoading: false,
+            isError: false,
+        } as unknown as ReturnType<
+            typeof safeServiceApi.useSafeTransactionHistory
+        >);
         useSafeInfoSpy.mockReturnValue({
             data: generateSafeInfo({ nonce: '6', threshold: 1 }),
             isLoading: false,
@@ -161,6 +173,66 @@ describe('useSafeMultisigBodyState hook', () => {
         const { result } = renderState();
 
         expect(result.current.isCurrentNonceFree).toBe(false);
+    });
+
+    it('recovers the executed report and its confirmations from history once settled', () => {
+        // The queue serves unexecuted transactions only, so a settled body has nothing there.
+        const signer = '0x0000000000000000000000000000000000000099';
+        useSafeTransactionHistorySpy.mockReturnValue({
+            data: {
+                results: [
+                    generateSafeMultisigTransaction({
+                        nonce: '5',
+                        to: plugin,
+                        isExecuted: true,
+                        transactionHash: `0x${'a'.repeat(64)}`,
+                        confirmations: [
+                            generateSafeConfirmation({ owner: signer }),
+                        ],
+                        data: safeMultisigTransactionUtils.buildReportProposalResultData(
+                            {
+                                proposalId: BigInt(proposalIndex),
+                                stageId: stageIndex,
+                                resultType: SppProposalType.APPROVAL,
+                            },
+                        ),
+                    }),
+                ],
+                meta: { stale: false },
+            },
+            isLoading: false,
+            isError: false,
+        } as unknown as ReturnType<
+            typeof safeServiceApi.useSafeTransactionHistory
+        >);
+
+        const { result } = renderState({
+            results: [
+                {
+                    pluginAddress: body,
+                    stage: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ],
+        });
+
+        expect(
+            result.current.settledReport?.transaction.transactionHash,
+        ).toEqual(`0x${'a'.repeat(64)}`);
+        expect(result.current.signers).toEqual([signer]);
+    });
+
+    it('does not read history while the body has no recorded result', () => {
+        // The read costs Safe quota, and until a verdict lands the queue holds everything worth
+        // showing.
+        mockQueuedTransaction('6');
+
+        renderState();
+
+        expect(useSafeTransactionHistorySpy).toHaveBeenCalledWith(
+            expect.any(Object),
+            expect.objectContaining({ enabled: false }),
+        );
     });
 
     it('keeps watching the queue on a reportable stage even once a result is indexed', () => {

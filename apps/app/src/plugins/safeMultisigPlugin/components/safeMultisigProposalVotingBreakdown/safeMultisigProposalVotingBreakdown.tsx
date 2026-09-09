@@ -9,7 +9,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ReactNode } from 'react';
-import { safeAppHistoryUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import {
+    safeAppHistoryUrl,
+    safeAppTransactionUrl,
+} from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
@@ -48,6 +51,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         isRateLimited,
         rateLimitedRetryAfter,
         settledResultType,
+        settledReport,
     } = useSafeMultisigBodyState({
         network: proposal.network,
         address: body,
@@ -88,12 +92,23 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         );
     }
 
-    // Once the body has reported, the action slot is gone - the shared chrome stops rendering it as
-    // soon as the proposal executes - so the provenance lives here, where the body always renders.
-    const historyHref = safeAppHistoryUrl({
-        network: proposal.network,
-        address: body,
-    });
+    /**
+     * Once the body has reported, the action slot is gone - the shared chrome stops rendering it as
+     * soon as the proposal executes - so the provenance lives here, where the body always renders.
+     *
+     * The exact transaction when history has resolved it, the Safe's history as the fallback: the
+     * settled read can be pending, stale or beyond its page, and "somewhere in this Safe" still
+     * beats no link at all.
+     */
+    const executedHref =
+        (settledReport != null
+            ? safeAppTransactionUrl({
+                  network: proposal.network,
+                  address: body,
+                  safeTxHash: settledReport.transaction.safeTxHash,
+              })
+            : undefined) ??
+        safeAppHistoryUrl({ network: proposal.network, address: body });
 
     return (
         <ProposalVoting.BreakdownMultisig
@@ -103,10 +118,10 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             minApprovals={minApprovals}
         >
             {children}
-            {settledResultType != null && historyHref != null && (
+            {settledResultType != null && executedHref != null && (
                 <Button
                     className="w-fit"
-                    href={historyHref}
+                    href={executedHref}
                     iconRight={IconType.LINK_EXTERNAL}
                     rel="noopener"
                     size="md"

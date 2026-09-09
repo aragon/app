@@ -3252,11 +3252,6 @@
           "error": {
             "description": "The Safe confirmations could not be loaded. Try again later.",
             "heading": "Confirmations unavailable"
-          },
-          "settled": {
-            "action": "View in Safe",
-            "description": "The Safe serves confirmations for queued transactions only. This one has executed, so its confirmations live in the Safe's own history.",
-            "heading": "Confirmations no longer listed"
           }
         }
       },
