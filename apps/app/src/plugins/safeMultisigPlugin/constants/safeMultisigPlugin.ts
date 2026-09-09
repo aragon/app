@@ -31,6 +31,15 @@ export const safeBodyPollInterval = 30_000;
 export const settledHistoryPageSize = 40;
 
 /**
+ * How many history pages the settled-report scan will walk before giving up.
+ *
+ * The scan normally stops on its own once a page predates the stage, so this only bounds the
+ * pathological case: a Safe whose executions carry no dates, or a stage that opened long ago behind
+ * thousands of unrelated transactions. Giving up renders the honest empty state rather than looping.
+ */
+export const settledHistoryMaxPages = 10;
+
+/**
  * Poll cadence of the indexer while waiting for an executed report to be attributed.
  */
 export const safeIndexingPollInterval = 1000;

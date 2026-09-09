@@ -61,17 +61,10 @@ export interface ISafeMultisigBodyReport {
  * status and nonce competition are all questions about whether a transaction can still execute,
  * and this one already has.
  */
-export interface ISafeMultisigSettledReport {
-    /**
-     * Executed Safe transaction carrying the report, directly or inside a MultiSend batch.
-     */
-    transaction: ISafeMultisigTransaction;
-    /**
-     * Decoded report, including the governance effect it produced.
-     */
-    report: ISafeProposalResultReport;
-}
-
+export type ISafeMultisigSettledReport = Pick<
+    ISafeMultisigBodyReport,
+    'transaction' | 'report'
+>;
 export interface IUseSafeMultisigBodyStateReturn {
     /**
      * Live Safe state: owners, threshold, version and nonce.

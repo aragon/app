@@ -5,6 +5,7 @@ export {
     safeBodyPollInterval,
     safeIndexingPollInterval,
     safeIndexingTimeout,
+    settledHistoryMaxPages,
     settledHistoryPageSize,
 } from './safeMultisigPlugin';
 export { SafeMultisigPluginDialogId } from './safeMultisigPluginDialogId';

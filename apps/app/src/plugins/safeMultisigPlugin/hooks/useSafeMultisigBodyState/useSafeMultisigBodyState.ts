@@ -10,12 +10,12 @@ import {
     SafeServiceError,
     useSafeInfo,
     useSafePendingTransactions,
-    useSafeTransactionHistory,
 } from '@/shared/api/safeService';
-import { safeBodyPollInterval, settledHistoryPageSize } from '../../constants';
+import { safeBodyPollInterval } from '../../constants';
 import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
 import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
+import { useSafeSettledReport } from '../useSafeSettledReport';
 import type {
     ISafeMultisigBodyReport,
     IUseSafeMultisigBodyStateParams,
@@ -117,19 +117,27 @@ export const useSafeMultisigBodyState = (
         },
     );
 
-    const { data: executedTransactions } = useSafeTransactionHistory(
-        { urlParams, queryParams: { limit: settledHistoryPageSize } },
-        {
-            /**
-             * Only once a verdict is recorded. Until then the queue holds everything worth showing,
-             * and this read costs Safe quota where `info` does not.
-             *
-             * No `refetchInterval`: executed transactions are immutable, so there is nothing to
-             * poll for.
-             */
-            enabled: isNetworkSupported && isSettled,
-        },
-    );
+    /**
+     * Only scanned once a verdict is recorded. Until then the queue holds everything worth showing,
+     * and this read costs Safe quota where `info` does not.
+     *
+     * The stage's start date bounds the scan: `reportProposalResult` reverts for a stage that has
+     * not started, so no earlier execution can carry this verdict.
+     */
+    const {
+        settledReport,
+        isLoading: isSettledReportLoading,
+        isError: isSettledReportError,
+    } = useSafeSettledReport({
+        network,
+        address,
+        pluginAddress: proposal.pluginAddress,
+        proposalId: BigInt(proposal.proposalIndex),
+        stageId: stage.stageIndex,
+        notBefore: sppStageUtils.getStageStartDate(proposal, stage),
+        enabled: isNetworkSupported && isSettled,
+    });
+
     // The backend serves a stale payload rather than failing when its own fresh window has lapsed.
     // That is the right trade for a signing UI, but the user has to be told the count may lag.
     const isStale =
@@ -211,32 +219,6 @@ export const useSafeMultisigBodyState = (
         isStageCurrent,
     ]);
 
-    /**
-     * The executed transaction that produced the recorded verdict, recovered from history.
-     *
-     * Correlated the same way as a queued one - decoded calldata, MultiSend-aware - because a
-     * report batched with other calls targets the MultiSend contract, not the plugin. History is
-     * newest-nonce-first, so a re-report that overwrote an earlier verdict wins, which matches what
-     * the indexer recorded.
-     */
-    const settledReport = useMemo(() => {
-        for (const transaction of executedTransactions?.results ?? []) {
-            const report =
-                safeMultisigTransactionUtils.findProposalResultReport({
-                    transaction,
-                    pluginAddress,
-                    proposalId: proposalIndex,
-                    stageId: stageIndex,
-                });
-
-            if (report != null) {
-                return { transaction, report };
-            }
-        }
-
-        return undefined;
-    }, [executedTransactions, pluginAddress, proposalIndex, stageIndex]);
-
     // A settled body's confirmations are the ones that executed it; the queue no longer serves them.
     const signers =
         (
@@ -266,9 +248,19 @@ export const useSafeMultisigBodyState = (
 
     return {
         safeInfo,
+        /**
+         * Each read only counts while it is the one being consulted: the queue while the stage is
+         * reportable, the history scan once a verdict is recorded. Leaving the scan out made a
+         * settled Votes tab claim "no confirmations yet" while it was still fetching.
+         */
         isLoading:
-            isSafeInfoLoading || (isStageCurrent && isTransactionsLoading),
-        isError: isSafeInfoError || (isStageCurrent && isTransactionsError),
+            isSafeInfoLoading ||
+            (isStageCurrent && isTransactionsLoading) ||
+            isSettledReportLoading,
+        isError:
+            isSafeInfoError ||
+            (isStageCurrent && isTransactionsError) ||
+            isSettledReportError,
         isRateLimited: rateLimitedError != null,
         rateLimitedRetryAfter: rateLimitedError?.retryAfter,
         isStale,
