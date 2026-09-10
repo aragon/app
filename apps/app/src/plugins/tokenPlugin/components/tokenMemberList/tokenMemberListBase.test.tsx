@@ -2,8 +2,9 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
-import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
+import * as useTokenVotingMembershipDataModule from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import * as daoService from '@/shared/api/daoService';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
     generateDaoPlugin,
@@ -14,6 +15,7 @@ import * as useTokenCurrentDelegateModule from '../../hooks/useTokenCurrentDeleg
 import {
     generateTokenMember,
     generateTokenPluginSettings,
+    generateTokenVotingMember,
 } from '../../testUtils';
 import type { ITokenMember } from '../../types';
 import {
@@ -33,9 +35,9 @@ jest.mock('./components/tokenMemberListItem', () => ({
 }));
 
 describe('<TokenMemberListBase />', () => {
-    const useMemberListDataSpy = jest.spyOn(
-        useMemberListData,
-        'useMemberListData',
+    const useTokenVotingMembershipDataSpy = jest.spyOn(
+        useTokenVotingMembershipDataModule,
+        'useTokenVotingMembershipData',
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const resolvePluginDaoIdSpy = jest.spyOn(daoUtils, 'resolvePluginDaoId');
@@ -45,9 +47,18 @@ describe('<TokenMemberListBase />', () => {
         'useTokenCurrentDelegate',
     );
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
 
     beforeEach(() => {
-        useMemberListDataSpy.mockReturnValue({
+        useFeatureFlagsSpy.mockReturnValue({
+            isEnabled: () => false,
+        } as unknown as ReturnType<
+            typeof featureFlagsProvider.useFeatureFlags
+        >);
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: undefined,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -75,12 +86,13 @@ describe('<TokenMemberListBase />', () => {
     });
 
     afterEach(() => {
-        useMemberListDataSpy.mockReset();
+        useTokenVotingMembershipDataSpy.mockReset();
         useDaoSpy.mockReset();
         resolvePluginDaoIdSpy.mockReset();
         useConnectionSpy.mockReset();
         useTokenCurrentDelegateSpy.mockReset();
         useMemberSpy.mockReset();
+        useFeatureFlagsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -105,10 +117,10 @@ describe('<TokenMemberListBase />', () => {
 
     it('renders the member list', () => {
         const members = [
-            generateTokenMember({ address: '0x123' }),
-            generateTokenMember({ address: '0x456' }),
+            generateTokenVotingMember({ address: '0x123' }),
+            generateTokenVotingMember({ address: '0x456' }),
         ];
-        useMemberListDataSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: members,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -125,8 +137,8 @@ describe('<TokenMemberListBase />', () => {
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
-        useMemberListDataSpy.mockReturnValue({
-            memberList: [generateTokenMember()],
+        useTokenVotingMembershipDataSpy.mockReturnValue({
+            memberList: [generateTokenVotingMember()],
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
@@ -153,11 +165,11 @@ describe('<TokenMemberListBase />', () => {
     it('pins the connected user to the top when they have voting power', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const paginatedMembers = [
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x9999999999999999999999999999999999999999',
                 votingPower: '5000',
             }),
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x8888888888888888888888888888888888888888',
                 votingPower: '4000',
             }),
@@ -171,7 +183,7 @@ describe('<TokenMemberListBase />', () => {
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
 
-        useMemberListDataSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -203,11 +215,11 @@ describe('<TokenMemberListBase />', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
         const paginatedMembers = [
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x9999999999999999999999999999999999999999',
                 votingPower: '5000',
             }),
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x8888888888888888888888888888888888888888',
                 votingPower: '4000',
             }),
@@ -231,7 +243,7 @@ describe('<TokenMemberListBase />', () => {
             isError: false,
         });
 
-        useMemberListDataSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -270,11 +282,11 @@ describe('<TokenMemberListBase />', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
         const paginatedMembers = [
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x9999999999999999999999999999999999999999',
                 votingPower: '5000',
             }),
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x8888888888888888888888888888888888888888',
                 votingPower: '4000',
             }),
@@ -298,7 +310,7 @@ describe('<TokenMemberListBase />', () => {
             isError: false,
         });
 
-        useMemberListDataSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -339,11 +351,11 @@ describe('<TokenMemberListBase />', () => {
         // a real member, and the "X of Y" counter must reflect what's rendered.
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const paginatedMembers = [
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x9999999999999999999999999999999999999999',
                 votingPower: '5000',
             }),
-            generateTokenMember({
+            generateTokenVotingMember({
                 address: '0x8888888888888888888888888888888888888888',
                 votingPower: '4000',
             }),
@@ -357,7 +369,7 @@ describe('<TokenMemberListBase />', () => {
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
 
-        useMemberListDataSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -391,20 +403,29 @@ describe('<TokenMemberListBase />', () => {
     });
 
     describe('linked-account daoId resolution', () => {
-        it('passes the original params to useMemberListData for non-linked-account plugins', () => {
+        it('augments params with domain routing fields for non-linked-account plugins', () => {
             const initialParams = {
                 queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
             };
             resolvePluginDaoIdSpy.mockReturnValue('dao-id');
             render(createTestComponent({ initialParams }));
-            expect(useMemberListDataSpy).toHaveBeenCalledWith(initialParams);
+            expect(useTokenVotingMembershipDataSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    queryParams: expect.objectContaining({
+                        daoId: 'dao-id',
+                        pluginAddress: '0x123',
+                        pluginInterfaceType: expect.any(String),
+                        tokenAddress: expect.any(String),
+                    }),
+                }),
+            );
         });
 
-        it('passes the resolved daoId to useMemberListData for linked-account plugins', () => {
+        it('passes the resolved daoId to useTokenVotingMembershipData for linked-account plugins', () => {
             const resolvedDaoId = 'eth-mainnet-0xlinked';
             resolvePluginDaoIdSpy.mockReturnValue(resolvedDaoId);
             render(createTestComponent());
-            expect(useMemberListDataSpy).toHaveBeenCalledWith(
+            expect(useTokenVotingMembershipDataSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     queryParams: expect.objectContaining({
                         daoId: resolvedDaoId,

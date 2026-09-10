@@ -4,10 +4,9 @@ import type { IGetEnsTextRecordsParams } from './memberProfileService.api';
 
 class MemberProfileServiceServer {
     getEnsTextRecords = async ({ urlParams }: IGetEnsTextRecordsParams) => {
-        const result =
-            await aragonDomainServiceBackend.getMemberProfileTextRecords(
-                urlParams,
-            );
+        const result = await aragonDomainServiceBackend
+            .getDomain()
+            .getMemberProfileTextRecords(urlParams);
 
         if (!result.success) {
             throw new Error(

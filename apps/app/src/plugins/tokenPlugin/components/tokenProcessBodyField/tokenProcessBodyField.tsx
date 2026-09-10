@@ -14,15 +14,17 @@ import type {
     ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
-import { useMemberList } from '@/modules/governance/api/governanceService';
-import { useDao } from '@/shared/api/daoService';
+import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { DaoTokenVotingMode } from '../../types';
+import { DaoTokenVotingMode, type ITokenPluginSettings } from '../../types';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
 import type {
     ITokenSetupMembershipForm,
@@ -61,16 +63,39 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
 
     const isExisting = body.type === BodyType.EXISTING;
     const { membership, governance } = body;
 
+    // The form only carries the token; the escrow flag that keeps VE plugins
+    // on the legacy backend lives on the installed plugin's settings.
+    const existingPlugin = useDaoPlugins({
+        daoId,
+        pluginAddress: isExisting ? body.address : '',
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+    })?.[0];
+    const existingPluginSettings = existingPlugin?.meta.settings as
+        | ITokenPluginSettings
+        | undefined;
+
     const initialParams = {
-        queryParams: { daoId, pluginAddress: isExisting ? body.address : '' },
+        queryParams: {
+            daoId,
+            pluginAddress: isExisting ? body.address : '',
+            network: dao?.network,
+            pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+            tokenAddress: membership.token.address,
+            tokenUnderlying: membership.token.underlying ?? null,
+            hasVotingEscrow: existingPluginSettings?.votingEscrow != null,
+            domainSourceEnabled: isEnabled('domainMemberList'),
+        },
     };
-    const { data: memberList } = useMemberList(initialParams, {
-        enabled: isExisting,
-    });
+    const { itemsCount: memberCount } = useTokenVotingMembershipData(
+        initialParams,
+        { enabled: isExisting },
+    );
 
     const {
         address: tokenAddress,
@@ -113,7 +138,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     );
 
     const numberOfMembers = isExisting
-        ? memberList?.pages[0].metadata.totalRecords
+        ? memberCount
         : membership.members.length;
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });

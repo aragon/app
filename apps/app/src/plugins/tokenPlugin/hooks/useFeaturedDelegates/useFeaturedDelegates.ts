@@ -1,7 +1,11 @@
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { IToken } from '@/modules/finance/api/financeService';
-import { memberOptions } from '@/modules/governance/api/governanceService';
+import {
+    mapBackendMemberToTokenVotingDTO,
+    memberOptions,
+} from '@/modules/governance/api/governanceService';
 import type { ITokenMember } from '../../types';
 
 export interface IUseFeaturedDelegatesParams {
@@ -49,27 +53,22 @@ export const useFeaturedDelegates = (params: IUseFeaturedDelegatesParams) => {
 
     return useMemo(
         () =>
-            addresses.map((address, index) => {
+            addresses.map((address, index): TokenVotingMemberDTO => {
                 const member = results[index]?.data;
 
                 if (member != null) {
-                    return member;
+                    return mapBackendMemberToTokenVotingDTO(member);
                 }
 
-                // Fallback: non-member delegate — return minimal token member shape
+                // Fallback: non-member delegate — return minimal member shape
                 return {
                     address,
                     ens: null,
-                    type: 'token-voting' as const,
                     votingPower: null,
-                    firstActive: null,
-                    lastActive: null,
-                    metrics: {
-                        delegationCount: 0,
-                        firstActivity: null,
-                        lastActivity: null,
-                    },
-                } satisfies ITokenMember;
+                    delegationCount: 0,
+                    firstActivityTimestamp: null,
+                    lastActivityTimestamp: null,
+                };
             }),
         [addresses, results],
     );

@@ -1,9 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as wagmi from 'wagmi';
-import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
+import * as useTokenVotingMembershipDataModule from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import * as daoService from '@/shared/api/daoService';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
     generateDaoPlugin,
@@ -33,9 +34,9 @@ jest.mock('./lockToVoteMemberListLockCardEmptyState', () => ({
 }));
 
 describe('<LockToVoteMemberList /> component', () => {
-    const useMemberListDataSpy = jest.spyOn(
-        useMemberListData,
-        'useMemberListData',
+    const useTokenVotingMembershipDataSpy = jest.spyOn(
+        useTokenVotingMembershipDataModule,
+        'useTokenVotingMembershipData',
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
@@ -43,9 +44,18 @@ describe('<LockToVoteMemberList /> component', () => {
         useLockToVoteLockOnboardingCheckModule,
         'useLockToVoteLockOnboardingCheck',
     );
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
 
     beforeEach(() => {
-        useMemberListDataSpy.mockReturnValue({
+        useFeatureFlagsSpy.mockReturnValue({
+            isEnabled: () => false,
+        } as unknown as ReturnType<
+            typeof featureFlagsProvider.useFeatureFlags
+        >);
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: undefined,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -67,7 +77,8 @@ describe('<LockToVoteMemberList /> component', () => {
     });
 
     afterEach(() => {
-        useMemberListDataSpy.mockReset();
+        useFeatureFlagsSpy.mockReset();
+        useTokenVotingMembershipDataSpy.mockReset();
         useDaoSpy.mockReset();
         useConnectionSpy.mockReset();
         useLockOnboardingCheckSpy.mockReset();

@@ -4,4 +4,5 @@ export * from './useMemberList';
 export * from './useProposalActions';
 export * from './useProposalBySlug';
 export * from './useProposalList';
+export * from './useTokenVotingMembership';
 export * from './useVoteList';

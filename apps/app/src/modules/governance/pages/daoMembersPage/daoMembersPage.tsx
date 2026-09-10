@@ -3,12 +3,18 @@ import { cmsService, daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
+import { featureFlags } from '@/shared/featureFlags';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { notFoundUtils } from '@/shared/utils/notFoundUtils';
-import { memberListOptions } from '../../api/governanceService';
+import {
+    buildTokenVotingMembershipParams,
+    isTokenMemberListPlugin,
+    memberListOptions,
+} from '../../api/governanceService';
+import { tokenVotingMembershipOptionsServer } from '../../api/governanceService/queries/useTokenVotingMembership/useTokenVotingMembership.server';
 import { DaoMembersPageClient } from './daoMembersPageClient';
 
 export interface IDaoMembersPageProps {
@@ -69,16 +75,36 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
         return <RedirectToUrl url={daoUrl} />;
     }
 
-    const bodyPluginAddress = plugins[0].address;
+    const bodyPlugin = plugins[0];
     const memberListQueryParams = {
         daoId,
-        pluginAddress: bodyPluginAddress,
+        pluginAddress: bodyPlugin.address,
         pageSize: daoMembersCount,
     };
     const memberListParams = { queryParams: memberListQueryParams };
-    await queryClient.prefetchInfiniteQuery(
-        memberListOptions({ queryParams: memberListQueryParams }),
-    );
+
+    // Token-voting and lock-to-vote lists consume the token-voting membership
+    // query. Every other plugin uses the generic member list. The prefetched
+    // key must match what the list component builds on the client, so the
+    // domain-source flag is resolved here exactly as the client resolves it.
+    if (isTokenMemberListPlugin(bodyPlugin)) {
+        const domainSourceEnabled =
+            await featureFlags.isEnabled('domainMemberList');
+        await queryClient.prefetchInfiniteQuery(
+            tokenVotingMembershipOptionsServer(
+                buildTokenVotingMembershipParams(
+                    memberListParams,
+                    bodyPlugin,
+                    dao,
+                    { domainSourceEnabled },
+                ),
+            ),
+        );
+    } else {
+        await queryClient.prefetchInfiniteQuery(
+            memberListOptions({ queryParams: memberListQueryParams }),
+        );
+    }
 
     return (
         <Page.Container queryClient={queryClient}>

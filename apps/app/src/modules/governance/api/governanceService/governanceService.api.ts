@@ -2,7 +2,7 @@ import type {
     IOrderedRequest,
     IPaginatedRequest,
 } from '@/shared/api/aragonBackendService';
-import type { Network } from '@/shared/api/daoService';
+import type { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     IRequestQueryParams,
     IRequestUrlParams,
@@ -58,6 +58,42 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
 
 export interface IGetMemberListParams
     extends IRequestQueryParams<IGetMemberListQueryParams> {}
+
+export interface IGetTokenVotingMembershipQueryParams
+    extends IGetMemberListQueryParams {
+    /**
+     * Network of the plugin, used to route the query to the aragon-domain BFF
+     * when the network is indexed by Envio.
+     */
+    network?: Network;
+    /**
+     * Interface type of the plugin.
+     */
+    pluginInterfaceType?: PluginInterfaceType;
+    /**
+     * Address of the governance token.
+     */
+    tokenAddress?: string;
+    /**
+     * Address of the underlying token when the governance token is a wrapped
+     * or voting-escrow adapter. `null` / `undefined` means the governance
+     * token is a plain ERC-20.
+     */
+    tokenUnderlying?: string | null;
+    /**
+     * Whether the plugin's voting power comes from voting-escrow locks. Such
+     * plugins are served by the legacy backend regardless of the token shape.
+     */
+    hasVotingEscrow?: boolean;
+    /**
+     * Whether the aragon-domain source is enabled (feature flag). Unset or
+     * false routes every query to the legacy backend.
+     */
+    domainSourceEnabled?: boolean;
+}
+
+export interface IGetTokenVotingMembershipParams
+    extends IRequestQueryParams<IGetTokenVotingMembershipQueryParams> {}
 
 export interface IGetMemberUrlParams {
     /**
