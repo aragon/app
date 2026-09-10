@@ -288,18 +288,17 @@ export const useSafeMultisigBodyState = (
                 address: connectedAddress,
             }),
         /**
-         * A Safe binds `confirmationsRequired` into the transaction when it is proposed, so a
-         * settled report carries the threshold that actually applied. Substituting the live
-         * threshold would restate today's rules as history: a report executed by a 1-of-2 Safe
-         * reads "2 of 2" once the owners raise the threshold.
+         * A Safe binds `confirmationsRequired` into the transaction when it is proposed, so the
+         * report carries the threshold that actually applied. The live threshold is only a
+         * stand-in for a body with nothing queued yet - never for a settled one, where it would
+         * restate today's rules as history: a report executed by a 1-of-2 Safe would read "2 of 2"
+         * once the owners raise the threshold. When the scan cannot find the report, these stay
+         * empty and the surface says so rather than inventing a count.
          */
-        approvalsAmount:
-            reportTransaction?.confirmations.length ??
-            (isSettled ? (safeInfo?.threshold ?? 0) : 0),
+        approvalsAmount: reportTransaction?.confirmations.length ?? 0,
         minApprovals:
             reportTransaction?.confirmationsRequired ??
-            safeInfo?.threshold ??
-            0,
+            (isSettled ? 0 : (safeInfo?.threshold ?? 0)),
         membersCount: safeInfo?.owners.length ?? 0,
     };
 };

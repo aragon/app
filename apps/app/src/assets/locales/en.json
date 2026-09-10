@@ -3188,11 +3188,11 @@
           "currentNonce": "Current Safe nonce",
           "execution": "Execution",
           "executionValue": "Any owner, once threshold is met",
+          "nonce": "Safe nonce used",
           "safe": "Safe",
           "strategy": "Strategy",
           "strategyValue": "Safe multisig",
-          "threshold": "Threshold",
-          "thresholdValue": "{{min}} of {{max}} owners",
+          "threshold": "Approvals required",
           "unknownVersion": "Unknown",
           "version": "Safe version"
         },
@@ -3202,7 +3202,8 @@
           "executedLabel": "Executed:",
           "loading": "Loading Safe state\u2026",
           "rateLimited": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. This retries on its own.",
-          "rateLimitedRetry": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. Retrying in about {{seconds}} seconds."
+          "rateLimitedRetry": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. Retrying in about {{seconds}} seconds.",
+          "settledUnfound": "This body's confirmations are further back in the Safe's history than this view reads."
         },
         "safeMultisigProposalVotingSummary": {
           "approvalLabel": "approvals",

@@ -178,6 +178,33 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         );
     });
 
+    it('states no approval count when the scan never found the settled report', () => {
+        // The Safe's live threshold is not this decision's history: a report executed by a 1-of-2
+        // Safe would read as "2 of 2" once the owners raise the threshold. Say the confirmations
+        // are out of reach and keep the link, rather than filling the gap with today's numbers.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: undefined,
+            approvalsAmount: 0,
+            minApprovals: 0,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.settledUnfound',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.executed',
+            }),
+        ).toBeInTheDocument();
+    });
+
     it('shows no Safe link while the body has not reported', () => {
         render(createTestComponent());
 

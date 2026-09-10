@@ -97,6 +97,10 @@ export const SppVotingTerminalBodyContent: React.FC<
             settings: pluginSettings,
             isVeto,
             pluginAddress: plugin.address,
+            // A native body's settings are snapshotted on the sub-proposal above; a body read live
+            // has to recover its own, so hand it the decision these settings are being read for.
+            proposal,
+            stage,
         },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: bodyPluginId,

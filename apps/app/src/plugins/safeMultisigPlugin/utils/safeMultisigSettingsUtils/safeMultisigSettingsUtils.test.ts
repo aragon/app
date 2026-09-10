@@ -1,4 +1,7 @@
-import { generateSafeInfo } from '../../testUtils';
+import {
+    generateSafeInfo,
+    generateSafeMultisigTransaction,
+} from '../../testUtils';
 import { safeMultisigSettingsUtils } from './safeMultisigSettingsUtils';
 
 describe('safeMultisigSettings utils', () => {
@@ -43,14 +46,41 @@ describe('safeMultisigSettings utils', () => {
         const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
 
         expect(byTerm[`${key}.strategy`]).toEqual(`${key}.strategyValue`);
-        expect(byTerm[`${key}.threshold`]).toEqual(
-            `${key}.thresholdValue:{"min":3,"max":4}`,
-        );
+        // The requirement alone: owners change and Safe keeps no historical owner set, so a
+        // denominator would describe today's Safe rather than the decision being read.
+        expect(byTerm[`${key}.threshold`]).toEqual('3');
         // Named "current" because it is live account state: it advances with every transaction the
         // Safe executes, so it is not the nonce this proposal's transaction used.
         expect(byTerm[`${key}.currentNonce`]).toEqual('42');
         expect(byTerm[`${key}.version`]).toEqual('1.4.1+L2');
         expect(byTerm[`${key}.execution`]).toEqual(`${key}.executionValue`);
+    });
+
+    it('states the configuration the decision ran under once the body has reported', () => {
+        // A Safe binds `confirmationsRequired` into each transaction, so a report executed by a
+        // 1-of-2 Safe still says 1 after the owners raise the threshold to 3.
+        const settings = safeMultisigSettingsUtils.parseSettings({
+            safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
+            safeName,
+            safeHref,
+            settledTransaction: generateSafeMultisigTransaction({
+                confirmationsRequired: 1,
+                nonce: '5',
+            }),
+            t,
+        });
+
+        const byTerm = Object.fromEntries(
+            settings.map((setting) => [setting.term, setting.definition]),
+        );
+        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+
+        expect(byTerm[`${key}.threshold`]).toEqual('1');
+        expect(byTerm[`${key}.nonce`]).toEqual('5');
+        expect(byTerm[`${key}.currentNonce`]).toBeUndefined();
+        // Safe serves only the current version, and a contract can be upgraded after a decision
+        // executes: no row beats a row that quietly means "today".
+        expect(byTerm[`${key}.version`]).toBeUndefined();
     });
 
     const safeRowOf = (settings: ReturnType<typeof parse>) =>

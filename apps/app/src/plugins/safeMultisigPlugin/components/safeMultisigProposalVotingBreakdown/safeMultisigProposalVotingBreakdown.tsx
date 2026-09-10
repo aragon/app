@@ -75,24 +75,6 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                   });
     }
 
-    if (safeInfo == null) {
-        return (
-            <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
-                <div
-                    className={classNames(
-                        'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6',
-                        isLoading && 'animate-pulse',
-                    )}
-                >
-                    <p className="text-neutral-500 text-sm md:text-base">
-                        {placeholderText}
-                    </p>
-                </div>
-                {children}
-            </Tabs.Content>
-        );
-    }
-
     /**
      * Once the body has reported, the action slot is gone - the shared chrome stops rendering it as
      * soon as the proposal executes - so the provenance lives here, where the body always renders.
@@ -124,6 +106,54 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                   format: DateFormat.YEAR_MONTH_DAY,
               });
 
+    const provenance =
+        settledResultType != null && executedHref != null ? (
+            <div className="mt-3 flex flex-row items-center gap-x-1 text-neutral-500 text-sm">
+                {executedDate != null && (
+                    <p>{t(`${translationKey}.executedLabel`)}</p>
+                )}
+                <Link
+                    className="w-fit md:text-sm"
+                    href={executedHref}
+                    isExternal={true}
+                    showUrl={false}
+                >
+                    {executedDate ?? t(`${translationKey}.executed`)}
+                </Link>
+            </div>
+        ) : null;
+
+    /**
+     * An indexed verdict whose transaction the scan never found: real confirmations exist, they are
+     * just further back than this read reaches. Stating the count from the Safe's live threshold
+     * would present today's configuration as the decision's own history.
+     */
+    const hasUnfoundSettledReport =
+        settledResultType != null && settledReport == null && !isLoading;
+
+    if (hasUnfoundSettledReport) {
+        placeholderText = t(`${translationKey}.settledUnfound`);
+    }
+
+    if (safeInfo == null || hasUnfoundSettledReport) {
+        return (
+            <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
+                <div
+                    className={classNames(
+                        'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6',
+                        isLoading && 'animate-pulse',
+                    )}
+                >
+                    <p className="text-neutral-500 text-sm md:text-base">
+                        {placeholderText}
+                    </p>
+                    {provenance}
+                </div>
+                {children}
+            </Tabs.Content>
+        );
+    }
+
     return (
         <ProposalVoting.BreakdownMultisig
             approvalsAmount={approvalsAmount}
@@ -132,21 +162,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             minApprovals={minApprovals}
         >
             {children}
-            {settledResultType != null && executedHref != null && (
-                <div className="mt-3 flex flex-row items-center gap-x-1 text-neutral-500 text-sm">
-                    {executedDate != null && (
-                        <p>{t(`${translationKey}.executedLabel`)}</p>
-                    )}
-                    <Link
-                        className="w-fit md:text-sm"
-                        href={executedHref}
-                        isExternal={true}
-                        showUrl={false}
-                    >
-                        {executedDate ?? t(`${translationKey}.executed`)}
-                    </Link>
-                </div>
-            )}
+            {provenance}
         </ProposalVoting.BreakdownMultisig>
     );
 };
