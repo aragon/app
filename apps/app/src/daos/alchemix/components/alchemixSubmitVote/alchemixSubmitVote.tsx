@@ -296,6 +296,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                         {delegatee != null && (
                             <AddressOutput
                                 address={delegatee}
+                                copy={false}
                                 label={delegateeEnsName ?? undefined}
                             />
                         )}
@@ -342,6 +343,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                                 {address != null && (
                                     <AddressOutput
                                         address={address}
+                                        copy={false}
                                         label={userEnsName ?? undefined}
                                     />
                                 )}
