@@ -32,6 +32,16 @@ describe('sanitizeFilename', () => {
         expect(sanitizeFilename('re\u0007port.txt')).toEqual('report.txt');
     });
 
+    it('strips invisible format characters used to disguise the extension', () => {
+        // A right-to-left override makes the rest of the name render reversed, so this shows up
+        // as "invoiceexe.png" to whoever reads the ticket.
+        expect(sanitizeFilename('invoice\u202Egnp.exe')).toEqual(
+            'invoicegnp.exe',
+        );
+        // Zero-width characters would otherwise let two files carry the same visible name.
+        expect(sanitizeFilename('report\u200B.pdf')).toEqual('report.pdf');
+    });
+
     it('falls back for empty or dot-only names', () => {
         expect(sanitizeFilename('..')).toEqual('file');
         expect(sanitizeFilename('')).toEqual('file');

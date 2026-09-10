@@ -1,5 +1,42 @@
 import { type AssistantEnvironment, env } from './env';
 
+/**
+ * How strictly one scan engine gates an upload:
+ * - `off`: the engine's verdict is ignored entirely.
+ * - `optional`: only a positive detection blocks; an engine failure or a missing verdict passes.
+ * - `mandatory`: a detection blocks, and so does a missing verdict (fail-closed, retriable).
+ */
+export type IMalwareEngineMode = 'off' | 'optional' | 'mandatory';
+
+export interface IMalwareScanConfig {
+    /**
+     * Master switch. When false no scan runs and uploads behave exactly as before.
+     */
+    enabled: boolean;
+    /**
+     * Base URL of the file-malware-scanner worker (its /v1/scan contract).
+     */
+    serviceUrl: string;
+    /**
+     * Strictness of the AI analyzer.
+     */
+    claude: IMalwareEngineMode;
+    /**
+     * Strictness of VirusTotal. Kept `optional` by default: the free tier allows 4 requests per
+     * minute and does not know hashes of freshly created files, so its failures must not block.
+     */
+    virusTotal: IMalwareEngineMode;
+    /**
+     * Whether the scanner may upload hash-unknown files to VirusTotal. Off for user attachments:
+     * uploaded files are shared with the VirusTotal community.
+     */
+    virusTotalUpload: boolean;
+    /**
+     * Budget for the scan call; a timeout counts as a missing verdict.
+     */
+    timeoutMs: number;
+}
+
 export interface IAssistantConfig {
     /**
      * Origins allowed to call the API: exact origins or *suffix patterns. All environments accept
@@ -25,6 +62,10 @@ export interface IAssistantConfig {
         agentModel: string;
         fallbackModels: string[];
     };
+    /**
+     * Malware scanning of confirmed uploads, before the file is queued for the ticket.
+     */
+    malwareScan: IMalwareScanConfig;
 }
 
 const appOrigins = ['https://app.aragon.org', '*.app.aragon.org'];
@@ -51,6 +92,20 @@ const defaultChat = {
     fallbackModels: ['google/gemini-2.5-flash-lite'],
 };
 
+// Attachments are scanned by the file-malware-scanner worker (see the cloudflare-management repo)
+// between the blob download and the queueing of the file. Claude is mandatory — it inspects the
+// content itself and its verdict is the reason we scan at all — while VirusTotal stays optional:
+// on the free tier it rate-limits at 4 requests/minute and returns no verdict for files it has
+// never seen, neither of which should cost an honest user their attachment.
+const defaultMalwareScan: IMalwareScanConfig = {
+    enabled: true,
+    serviceUrl: 'https://file-malware-scanner-0.aragon-project.workers.dev',
+    claude: 'mandatory',
+    virusTotal: 'optional',
+    virusTotalUpload: false,
+    timeoutMs: 20_000,
+};
+
 // Non-secret per-environment configuration. Kept as a checked-in typed module because Vercel
 // functions receive no .env file at runtime; secrets stay in 1Password and reach the runtime as
 // environment variables (see .env.example).
@@ -60,24 +115,30 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        malwareScan: defaultMalwareScan,
     },
     development: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        malwareScan: defaultMalwareScan,
     },
     preview: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        malwareScan: defaultMalwareScan,
     },
     production: {
         corsAllowedOrigins: appOrigins,
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        // Rolled out to dev/preview first; flip `enabled` once the scanner has been observed
+        // there (the ASSISTANT_MALWARE_SCAN_ENABLED override can also enable it per deployment).
+        malwareScan: { ...defaultMalwareScan, enabled: false },
     },
 };
 
@@ -92,6 +153,18 @@ export const getConfig = (): IAssistantConfig => {
             sessionsPerDay:
                 env.rateLimitSessionsPerDay() ??
                 config.rateLimit.sessionsPerDay,
+        },
+        // Env overrides let a single deployment flip the scan (or loosen one engine) without a
+        // code change — the kill switch when the scanner misbehaves in production.
+        malwareScan: {
+            ...config.malwareScan,
+            enabled: env.malwareScanEnabled() ?? config.malwareScan.enabled,
+            serviceUrl:
+                env.malwareScannerUrl() ?? config.malwareScan.serviceUrl,
+            claude: env.malwareScanClaudeMode() ?? config.malwareScan.claude,
+            virusTotal:
+                env.malwareScanVirusTotalMode() ??
+                config.malwareScan.virusTotal,
         },
     };
 };
