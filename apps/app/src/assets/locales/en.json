@@ -421,6 +421,16 @@
           "transactions": "Transactions"
         }
       },
+      "navigationWorkspace": {
+        "a11y": {
+          "description": "Navigate between the pages of this workspace",
+          "title": "Workspace navigation"
+        },
+        "accounts": "{{count}} accounts",
+        "link": {
+          "overview": "Overview"
+        }
+      },
       "notFoundBase": {
         "action": "Explore DAOs",
         "description": "We couldn't find the page you're looking for.",
@@ -4271,14 +4281,31 @@
         "summary": "{{accounts}} accounts · {{targets}} targets",
         "title": "Create workspace"
       },
+      "workspaceAccountItem": {
+        "type": {
+          "dao": "DAO",
+          "safe": "Safe"
+        }
+      },
       "workspaceDetailsPage": {
-        "accounts": "Accounts ({{count}})",
-        "links": "Resources",
+        "aside": {
+          "details": "Details",
+          "owner": "Owner",
+          "resources": "Resources"
+        },
         "notFound": {
           "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
           "title": "Workspace not found"
         },
-        "targets": "Targets ({{count}})"
+        "section": {
+          "accounts": "Accounts",
+          "targets": "Targets",
+          "targetsDescription": "Addresses this workspace relates to."
+        },
+        "stat": {
+          "accounts": "Accounts",
+          "targets": "Targets"
+        }
       }
     }
   }

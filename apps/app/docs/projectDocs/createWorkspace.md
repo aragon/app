@@ -17,7 +17,7 @@ In scope:
 - A `/create/workspace` wizard page modelled on `/create/dao`: workspace metadata, a list of targets, a list of
   accounts (each account with optional metadata).
 - A mocked, `localStorage`-backed workspace registry.
-- A minimal `/workspace/{workspaceId}` read page so creation is demonstrable end to end.
+- A `/workspace/{workspaceId}` overview page with the workspace layout and navigation.
 - A CTA on the explore page.
 - The whole feature behind the `workspaces` feature flag.
 
@@ -241,11 +241,11 @@ taken. Falls back to `workspace` when the name slugifies to nothing.
 
 ### Consequence: no server prefetch
 
-`localStorage` is client-only, so `/workspace/[workspaceId]/page.tsx` is a thin `Page.Container` shell with
-**no** `prefetchQuery`; the client component calls `useWorkspace`. This diverges from the prefetch-then-hydrate
-pattern in `dataFetching.md` and is the one shape that can work with a client-side registry. It reverts to the
-normal pattern when a real registry lands. Do not add a server prefetch to this page while the registry is
-`localStorage`-backed — it will always miss and can produce hydration mismatches.
+`localStorage` is client-only, so the workspace pages are thin `Page.Container` shells with **no** `prefetchQuery`;
+their client components call `useWorkspace`, and `workspaceService` rejects when called on the server. This
+diverges from the prefetch-then-hydrate pattern in `dataFetching.md` and is the one shape that can work with a
+client-side registry. It reverts to the normal pattern when a real registry lands. Do not add a server prefetch
+while the registry is `localStorage`-backed — it will always miss and can produce hydration mismatches.
 
 ## Routes and layouts
 
@@ -256,18 +256,54 @@ would put "Create DAO" in the workspace wizard header, and a nested layout would
 So the layout moves down one level, one thin wrapper per flow:
 
 - **delete** `src/app/create/layout.tsx`
-- **add** `src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
+- **add** `src/modules/application/components/layouts/layoutWorkspace/{layoutWorkspace.tsx,index.ts}
+src/modules/application/components/navigations/navigationWorkspace/{navigationWorkspace.tsx,navigationWorkspaceUtils.ts,index.ts}
+src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 - **add** `src/app/create/workspace/layout.tsx` → new `LayoutWizardCreateWorkspace`
   (`src/modules/workspace/components/layoutWizardCreateWorkspace/`, same body as `LayoutWizardCreateDao` with
   `name="app.workspace.layoutWizardCreateWorkspace.name"`)
 - **add** `src/app/create/workspace/page.tsx` → `CreateWorkspacePage`
-- **add** `src/app/workspace/[workspaceId]/page.tsx` → `WorkspaceDetailsPage`
+- **add** `src/app/workspace/[workspaceId]/{layout.tsx,page.tsx}` → `WorkspaceDetailsPage`
 
 No `src/app/workspace/[workspaceId]/layout.tsx` is added, deliberately: branch 1096 adds that exact file, so
 skipping it keeps the collision surface to nothing.
 
 `LayoutWizard` is an async server component that resolves a DAO from `params` when present; with no params it
 just renders `NavigationWizard` with no DAO, which is what both create flows want.
+
+## Workspace layout
+
+`/workspace/{workspaceId}` is wrapped by `LayoutWorkspace`
+(`src/modules/application/components/layouts/layoutWorkspace/`), adapted from the same file on branch 1096. Three
+differences, all forced by this branch:
+
+| 1096 | Here |
+| --- | --- |
+| Server component: `fetchQuery` for the workspace, `prefetchQuery` per account DAO, `HydrationBoundary` | Fetches nothing. The registry is local storage, unreadable during a server render, so there is no query to hydrate |
+| `Page.Error` when the workspace lookup fails | No lookup to fail here; the page renders the not-found empty state itself |
+| `NavigationWorkspace` receives the resolved `workspace` | Receives the `workspaceId` and resolves the workspace itself with `useWorkspace` on the client |
+
+`src/app/workspace/[workspaceId]/layout.tsx` is byte-identical to 1096's, so it merges cleanly — the divergence is
+contained in the layout component. When a real registry lands, the fetch/hydrate shape of 1096 becomes correct
+again and this layout should adopt it.
+
+`navigationWorkspaceUtils.buildLinks` lists **only the pages that exist** — an Overview link at order 200. 1096's
+members/assets/transactions entries (orders 300/400/500) slot in beside it untouched once those pages land, which
+is why the order numbers are already spaced.
+
+### Overview page
+
+`workspaceDetailsPageClient` composes the standard page primitives, matching the DAO pages:
+
+- `Page.Header` — workspace avatar, name, description and `stats` for the account and target counts.
+- `Page.Main` → `Page.MainSection` for Accounts, and for Targets only when the workspace has any.
+- `Page.Aside` → `Page.AsideCard` for the owner and, when present, the workspace resources.
+
+Each account renders as a `WorkspaceAccountItem`. The **type tag comes from the registry**, not from a lookup: it
+was resolved at creation time and decides which APIs the workspace pages query, so the row keeps showing it even
+when the lookup fails. Names are resolved with one batched `useWorkspaceAccounts` call, because the registry does
+not store the DAO name — and the account metadata name wins over it, being what the workspace owner chose to call
+the account.
 
 ## Feature flag
 
@@ -387,6 +423,7 @@ src/modules/workspace/
 │   ├── createWorkspaceFormTargets/{createWorkspaceFormTargets.tsx,createWorkspaceFormTargetsItem.tsx,index.ts}
 │   ├── createWorkspaceFormAccounts/{createWorkspaceFormAccounts.tsx,createWorkspaceFormAccountsItem.tsx,index.ts}
 │   └── index.ts
+├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── constants/{workspaceMocks.ts,workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
@@ -395,9 +432,11 @@ src/modules/workspace/
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 └── index.ts
 
+src/modules/application/components/layouts/layoutWorkspace/{layoutWorkspace.tsx,index.ts}
+src/modules/application/components/navigations/navigationWorkspace/{navigationWorkspace.tsx,navigationWorkspaceUtils.ts,index.ts}
 src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
-src/app/workspace/[workspaceId]/page.tsx
+src/app/workspace/[workspaceId]/{layout.tsx,page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,
@@ -422,7 +461,10 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
 | `constants/workspaceMocks.ts` | this branch's `demo` gains `targets` + `owner` |
 | `index.ts` | both export from the module root — additive |
-| `src/app/workspace/[workspaceId]/` | 1096 adds `layout.tsx` + 3 sub-pages, this adds `page.tsx` |
+| `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
+| `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
+| `application/components/navigations/navigationWorkspace/` | 1096 takes the resolved workspace, this one resolves it client-side; `buildLinks` lists different pages |
+| `src/app/workspace/[workspaceId]/` | 1096 adds 3 sub-pages, this adds `page.tsx` |
 
 Paths, type names and file layout were chosen to match 1096 exactly so the merge is additive wherever possible.
 Keep it that way when extending this.
@@ -431,6 +473,6 @@ Keep it that way when extending this.
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
 - Only `query/accounts` is wired. The workspace pages still read nothing from `query/{assets,transactions,proposals,members}`.
-- `/workspace/{id}` is a minimal read page; 1096 replaces it with the real page set.
+- `/workspace/{id}` is an overview page only; 1096 adds the aggregated assets, transactions and members pages.
 - Nothing lists workspaces — the seed `demo` and anything created are reachable only by URL or the success link.
 - No editing, so a typo means creating a new workspace.
