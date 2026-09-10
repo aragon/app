@@ -210,14 +210,7 @@ export const useSafeMultisigBodyState = (
             reports.find(({ state }) => state === SafeTransactionState.LIVE) ??
             reports[0]
         );
-    }, [
-        transactions,
-        currentNonce,
-        pluginAddress,
-        proposalIndex,
-        stageIndex,
-        isStageCurrent,
-    ]);
+    }, [transactions, currentNonce, pluginAddress, proposalIndex, stageIndex]);
 
     /**
      * The transaction this body's verdict rests on: the queued one while it is collecting, the

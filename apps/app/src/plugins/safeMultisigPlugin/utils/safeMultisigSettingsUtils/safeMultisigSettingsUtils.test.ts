@@ -83,14 +83,15 @@ describe('safeMultisigSettings utils', () => {
         expect(byTerm[`${key}.version`]).toBeUndefined();
     });
 
-    it('states no configuration when the scan never reached the settled report', () => {
-        // A report older than the scan's page bound is never recovered, so this is the permanent
-        // state for old proposals - and the live Safe is exactly what must not fill the gap.
+    it('states no configuration once a body is decided but its numbers are unrecoverable', () => {
+        // Two ways to land here: a report older than the scan's page bound, and a veto body that
+        // never vetoed, which leaves no transaction at all. Both are permanent, and the live Safe
+        // is exactly what must not fill the gap.
         const settings = safeMultisigSettingsUtils.parseSettings({
             safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
             safeName,
             safeHref,
-            isSettled: true,
+            isDecided: true,
             t,
         });
 

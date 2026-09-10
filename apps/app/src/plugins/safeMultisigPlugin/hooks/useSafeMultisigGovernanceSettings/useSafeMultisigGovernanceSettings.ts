@@ -40,6 +40,19 @@ export const useSafeMultisigGovernanceSettings = (
             stage.stageIndex,
         ) != null;
 
+    /**
+     * Whether this body's say is over. A veto body that never vetoed leaves no transaction to
+     * recover, so settledness alone would leave it reading live Safe state forever. Only an
+     * elapsed stage counts, and nothing else: a body on a stage the proposal has not reached yet
+     * has done nothing, and the live account is still what would apply to it.
+     */
+    const isDecided =
+        proposal != null &&
+        stage != null &&
+        (isSettled ||
+            stage.stageIndex < proposal.stageIndex ||
+            proposal.executed.status);
+
     const { settledReport } = useSafeSettledReport({
         network,
         address: pluginAddress,
@@ -62,7 +75,7 @@ export const useSafeMultisigGovernanceSettings = (
         safeInfo,
         safeName: ensName ?? addressUtils.truncateAddress(pluginAddress),
         safeHref: safeAppAccountUrl({ network, address: pluginAddress }),
-        isSettled,
+        isDecided,
         settledTransaction: settledReport?.transaction,
         t,
     });

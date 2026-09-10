@@ -20,10 +20,12 @@ export interface ISafeMultisigSettingsParseParams {
      */
     safeHref?: string;
     /**
-     * Whether this body's verdict has been recorded. Once it has, the live Safe stops describing
-     * the decision, whether or not the transaction behind it was recovered.
+     * Whether this body's say is over - it reported, or its stage elapsed. Live Safe state stops
+     * describing the decision at that point, whether or not a transaction was recovered: a veto
+     * body that never vetoed leaves no transaction at all, and its threshold at the time is
+     * unrecoverable rather than merely unfound.
      */
-    isSettled?: boolean;
+    isDecided?: boolean;
     /**
      * The executed transaction that reported this body's verdict, when the scan recovered it. It
      * carries the configuration the decision actually ran under, which the live Safe no longer does.
@@ -51,7 +53,7 @@ class SafeMultisigSettingsUtils {
             safeInfo,
             safeName,
             safeHref,
-            isSettled = false,
+            isDecided = false,
             settledTransaction,
             t,
         } = params;
@@ -72,10 +74,10 @@ class SafeMultisigSettingsUtils {
                         : { href: safeHref, isExternal: true },
                 copyValue: safeInfo.address,
             },
-            // Three cases, and the third is the one worth naming: a recorded verdict whose
-            // transaction the scan never reached states nothing here rather than reprinting the
-            // live account, which would be today's configuration wearing this decision's label -
-            // and would stay wrong permanently for a report older than the scan's page bound.
+            // Three cases, and the third is the one worth naming: a body whose say is over but
+            // whose numbers were never recovered - a report beyond the scan's page bound, or a veto
+            // that never fired - states nothing here rather than reprinting the live account, which
+            // would be today's configuration wearing this decision's label.
             ...(settledTransaction != null
                 ? [
                       {
@@ -92,7 +94,7 @@ class SafeMultisigSettingsUtils {
                           definition: settledTransaction.nonce,
                       },
                   ]
-                : isSettled
+                : isDecided
                   ? []
                   : [
                         {
