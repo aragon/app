@@ -219,11 +219,16 @@ export const useSafeMultisigBodyState = (
         isStageCurrent,
     ]);
 
+    /**
+     * The transaction this body's verdict rests on: the queued one while it is collecting, the
+     * executed one afterwards. Counts and signers both come from it, so they cannot disagree.
+     */
+    const reportTransaction =
+        pendingReport?.transaction ?? settledReport?.transaction;
+
     // A settled body's confirmations are the ones that executed it; the queue no longer serves them.
     const signers =
-        (
-            pendingReport?.transaction ?? settledReport?.transaction
-        )?.confirmations.map(({ owner }) => owner) ?? [];
+        reportTransaction?.confirmations.map(({ owner }) => owner) ?? [];
 
     // Nonce-exact: a Safe binds every signature to one nonce, so only the report sitting on the
     // Safe's current nonce can execute. Anything further back is waiting, however well signed.
@@ -282,11 +287,17 @@ export const useSafeMultisigBodyState = (
                 transaction: pendingReport.transaction,
                 address: connectedAddress,
             }),
-        approvalsAmount: isSettled
-            ? (safeInfo?.threshold ?? 0)
-            : (pendingReport?.transaction.confirmations.length ?? 0),
+        /**
+         * A Safe binds `confirmationsRequired` into the transaction when it is proposed, so a
+         * settled report carries the threshold that actually applied. Substituting the live
+         * threshold would restate today's rules as history: a report executed by a 1-of-2 Safe
+         * reads "2 of 2" once the owners raise the threshold.
+         */
+        approvalsAmount:
+            reportTransaction?.confirmations.length ??
+            (isSettled ? (safeInfo?.threshold ?? 0) : 0),
         minApprovals:
-            pendingReport?.transaction.confirmationsRequired ??
+            reportTransaction?.confirmationsRequired ??
             safeInfo?.threshold ??
             0,
         membersCount: safeInfo?.owners.length ?? 0,

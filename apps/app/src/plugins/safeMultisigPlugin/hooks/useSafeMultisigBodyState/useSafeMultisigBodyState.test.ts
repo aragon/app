@@ -214,6 +214,48 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.signers).toEqual([signer]);
     });
 
+    it('reports the threshold that applied, not the one the Safe has now', () => {
+        // Owners can raise the threshold after a report executes. The Safe binds
+        // confirmationsRequired at propose time, so a 1-of-2 execution must keep reading as one
+        // approval of one required - reading the live threshold restates today's rules as history.
+        useSafeSettledReportSpy.mockReturnValue({
+            settledReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '5',
+                    isExecuted: true,
+                    confirmationsRequired: 1,
+                    confirmations: [generateSafeConfirmation()],
+                }),
+                report: {
+                    proposalId: BigInt(proposalIndex),
+                    stageId: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+            },
+            isLoading: false,
+            isError: false,
+        });
+        useSafeInfoSpy.mockReturnValue({
+            data: generateSafeInfo({ nonce: '6', threshold: 2 }),
+            isLoading: false,
+            isError: false,
+        } as unknown as ReturnType<typeof safeServiceApi.useSafeInfo>);
+
+        const { result } = renderState({
+            results: [
+                {
+                    pluginAddress: body,
+                    stage: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ],
+        });
+
+        expect(result.current.approvalsAmount).toBe(1);
+        expect(result.current.minApprovals).toBe(1);
+    });
+
     it('counts the settled scan as loading so a settled body never claims no confirmations', () => {
         useSafeSettledReportSpy.mockReturnValue({
             settledReport: undefined,
