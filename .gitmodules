@@ -1,0 +1,8 @@
+# platform-doc/ is a squashed git subtree of aragon/platform-doc (branch development), not a
+# pnpm workspace. It carries the upstream protocol-doc submodule as a gitlink; the mapping below
+# makes `git submodule update --init platform-doc/protocol-doc` work for anyone who needs the
+# protocol pages locally (nothing in the build does — the assistant indexes platform-doc only).
+[submodule "platform-doc/protocol-doc"]
+	path = platform-doc/protocol-doc
+	url = https://github.com/aragon/protocol-doc.git
+	branch = main

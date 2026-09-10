@@ -3,7 +3,11 @@ import type {
     IChatMessage,
     ICreateTicketToolInput,
 } from '@aragon/assistant-contracts';
-import { buildIssueDescription, buildIssueTitle } from './issueBody';
+import {
+    buildIssueDescription,
+    buildIssueTitle,
+    issueLabelByIntent,
+} from './issueBody';
 
 const sessionId = 'b3b8f8a2-6c9d-4c9e-8f6a-2d1e0c9b8a7f';
 
@@ -157,5 +161,12 @@ describe('buildIssueDescription', () => {
         expect(description).toContain('## Recent transactions');
         expect(description).toContain('- vote — SUBMITTED `0xdeadbeef`');
         expect(description).toContain('- transaction — FAILED');
+    });
+});
+
+describe('issueLabelByIntent', () => {
+    it('files an unanswered product question as a documentation gap', () => {
+        expect(issueLabelByIntent.question).toEqual('docs-gap');
+        expect(issueLabelByIntent.support).toEqual('bug');
     });
 });

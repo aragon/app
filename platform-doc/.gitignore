@@ -1,0 +1,11 @@
+.wiki/
+.obsidian/
+.env
+.env.local
+.DS_Store
+
+# Ephemeral scratch, regenerable content
+raw/
+
+# Owner-private local research; not part of the portable knowledge base
+research/

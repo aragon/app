@@ -19,6 +19,9 @@ catalog:
   "@changesets/cli": ^2.31.1
   "@hono/node-server": ^1.19.17
   "@linear/sdk": ^89.0.0
+  # orama: tilde-pinned to the 3.1 line — the assistant persists its documentation index in a
+  # shape the runtime re-inserts into Orama, and a major/minor bump can change search behavior.
+  "@orama/orama": ~3.1.18
   "@radix-ui/react-dialog": ^1.1.23
   "@sentry/cli": ^3.6.2
   "@sentry/hono": ^10.71.0

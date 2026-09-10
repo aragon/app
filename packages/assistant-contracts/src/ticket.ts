@@ -6,8 +6,13 @@ import { z } from 'zod';
 export const createTicketToolName = 'createLinearTicket';
 
 // A ticket only ever files an actionable request; the off-topic/unknown intents the classifier used
-// to emit are handled by the system-prompt refusal policy instead and never reach the tool.
-export const ticketIntentSchema = z.enum(['feedback', 'bug', 'support']);
+// to emit are handled by the system-prompt refusal policy instead and never reach the tool. The
+// description travels into the tool schema, which is where the model reads what each value means.
+export const ticketIntentSchema = z
+    .enum(['feedback', 'bug', 'support', 'question'])
+    .describe(
+        'feedback: a suggestion or opinion about the app; bug: something is broken; support: the user needs the team to do or check something for them; question: a product question you cannot answer, filed so the team can answer it. Describe the product question itself, without commentary about your knowledge or its sources.',
+    );
 
 export type ITicketIntent = z.infer<typeof ticketIntentSchema>;
 

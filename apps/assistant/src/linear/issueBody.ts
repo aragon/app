@@ -13,10 +13,13 @@ export interface IIssueAttachment {
     assetUrl: string;
 }
 
+// A question the documentation could not answer is filed as a documentation gap, so the docs
+// team sees where the knowledge base falls short of what users ask.
 export const issueLabelByIntent: Record<ITicketIntent, string> = {
     feedback: 'feedback',
     bug: 'bug',
     support: 'bug',
+    question: 'docs-gap',
 };
 
 export const buildIssueTitle = (fields: ICreateTicketToolInput): string =>

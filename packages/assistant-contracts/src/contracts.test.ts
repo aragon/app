@@ -3,6 +3,7 @@ import {
     chatRequestSchema,
     createTicketToolInputSchema,
     createTicketToolOutputSchema,
+    docSearchResultSchema,
 } from './index';
 
 // Pinned wire contract between the assistant service and the chat widget. These payloads are
@@ -105,6 +106,38 @@ describe('assistant wire contract', () => {
                 title: 'Voting transaction reverts',
                 description:
                     'Submitting a vote on a proposal reverts with an unknown error.',
+            }).success,
+        ).toBeFalsy();
+    });
+
+    it('accepts a question the documentation could not answer as a ticket intent', () => {
+        expect(
+            createTicketToolInputSchema.safeParse({
+                intent: 'question',
+                title: 'How do delegations expire?',
+                description:
+                    'The user asked how delegations expire; the documentation does not cover it.',
+            }).success,
+        ).toBeTruthy();
+    });
+
+    it('pins the documentation search hit shape', () => {
+        expect(
+            docSearchResultSchema.safeParse({
+                path: 'accounts/account.md',
+                title: 'Account',
+                breadcrumb: 'Accounts › Account › What an account is',
+                excerpt: 'An account holds assets and acts on-chain.',
+                score: 0.87,
+            }).success,
+        ).toBeTruthy();
+        // A hit names a page path, never a URL: the knowledge base has no public home yet.
+        expect(
+            docSearchResultSchema.safeParse({
+                url: 'https://docs.example/accounts/account',
+                title: 'Account',
+                excerpt: 'An account holds assets.',
+                score: 0.87,
             }).success,
         ).toBeFalsy();
     });
