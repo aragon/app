@@ -62,6 +62,7 @@ export const useSafeMultisigGovernanceSettings = (
         safeInfo,
         safeName: ensName ?? addressUtils.truncateAddress(pluginAddress),
         safeHref: safeAppAccountUrl({ network, address: pluginAddress }),
+        isSettled,
         settledTransaction: settledReport?.transaction,
         t,
     });

@@ -83,6 +83,27 @@ describe('safeMultisigSettings utils', () => {
         expect(byTerm[`${key}.version`]).toBeUndefined();
     });
 
+    it('states no configuration when the scan never reached the settled report', () => {
+        // A report older than the scan's page bound is never recovered, so this is the permanent
+        // state for old proposals - and the live Safe is exactly what must not fill the gap.
+        const settings = safeMultisigSettingsUtils.parseSettings({
+            safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
+            safeName,
+            safeHref,
+            isSettled: true,
+            t,
+        });
+
+        const terms = settings.map((setting) => setting.term);
+        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+
+        expect(terms).not.toContain(`${key}.threshold`);
+        expect(terms).not.toContain(`${key}.currentNonce`);
+        expect(terms).not.toContain(`${key}.version`);
+        // The Safe itself is still worth stating: identity is not configuration.
+        expect(terms).toContain(`${key}.safe`);
+    });
+
     const safeRowOf = (settings: ReturnType<typeof parse>) =>
         settings.find(
             (setting) =>

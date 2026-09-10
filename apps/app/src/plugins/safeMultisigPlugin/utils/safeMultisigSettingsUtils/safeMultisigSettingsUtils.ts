@@ -20,8 +20,13 @@ export interface ISafeMultisigSettingsParseParams {
      */
     safeHref?: string;
     /**
-     * The executed transaction that reported this body's verdict, when there is one. It carries the
-     * configuration the decision actually ran under, which the live Safe no longer does.
+     * Whether this body's verdict has been recorded. Once it has, the live Safe stops describing
+     * the decision, whether or not the transaction behind it was recovered.
+     */
+    isSettled?: boolean;
+    /**
+     * The executed transaction that reported this body's verdict, when the scan recovered it. It
+     * carries the configuration the decision actually ran under, which the live Safe no longer does.
      */
     settledTransaction?: ISafeMultisigTransaction;
     t: TranslationFunction;
@@ -42,7 +47,14 @@ class SafeMultisigSettingsUtils {
     parseSettings = (
         params: ISafeMultisigSettingsParseParams,
     ): IDefinitionSetting[] => {
-        const { safeInfo, safeName, safeHref, settledTransaction, t } = params;
+        const {
+            safeInfo,
+            safeName,
+            safeHref,
+            isSettled = false,
+            settledTransaction,
+            t,
+        } = params;
         const translationKey =
             'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
 
@@ -60,41 +72,49 @@ class SafeMultisigSettingsUtils {
                         : { href: safeHref, isExternal: true },
                 copyValue: safeInfo.address,
             },
-            {
-                // The requirement, without the owner count it is measured against: a Safe binds
-                // `confirmationsRequired` into each transaction, so the number a decision had to
-                // meet is recoverable, while the owner set it was drawn from is not.
-                term: t(`${translationKey}.threshold`),
-                definition: (
-                    settledTransaction?.confirmationsRequired ??
-                    safeInfo.threshold
-                ).toString(),
-            },
-            settledTransaction == null
-                ? {
-                      // Live account state while the decision is open: it advances with every
-                      // transaction the Safe executes, including ones with nothing to do with
-                      // Aragon, so it is said as "current" and never as this proposal's nonce.
-                      term: t(`${translationKey}.currentNonce`),
-                      definition: safeInfo.nonce,
-                  }
-                : {
-                      // The slot this decision occupied, which is a fact about the decision.
-                      term: t(`${translationKey}.nonce`),
-                      definition: settledTransaction.nonce,
-                  },
-            // Omitted once settled: Safe serves only the current version, and a contract can be
-            // upgraded after a decision executes.
-            ...(settledTransaction == null
+            // Three cases, and the third is the one worth naming: a recorded verdict whose
+            // transaction the scan never reached states nothing here rather than reprinting the
+            // live account, which would be today's configuration wearing this decision's label -
+            // and would stay wrong permanently for a report older than the scan's page bound.
+            ...(settledTransaction != null
                 ? [
                       {
-                          term: t(`${translationKey}.version`),
+                          // A Safe binds `confirmationsRequired` into each transaction, so the
+                          // number this decision had to meet is recoverable. The owner set it was
+                          // drawn from is not, so the row carries no denominator.
+                          term: t(`${translationKey}.threshold`),
                           definition:
-                              safeInfo.version ??
-                              t(`${translationKey}.unknownVersion`),
+                              settledTransaction.confirmationsRequired.toString(),
+                      },
+                      {
+                          // The slot this decision occupied, which is a fact about the decision.
+                          term: t(`${translationKey}.nonce`),
+                          definition: settledTransaction.nonce,
                       },
                   ]
-                : []),
+                : isSettled
+                  ? []
+                  : [
+                        {
+                            term: t(`${translationKey}.threshold`),
+                            definition: safeInfo.threshold.toString(),
+                        },
+                        {
+                            // Live account state while the decision is open: it advances with every
+                            // transaction the Safe executes, including ones with nothing to do with
+                            // Aragon, so it is said as "current", never as this proposal's nonce.
+                            term: t(`${translationKey}.currentNonce`),
+                            definition: safeInfo.nonce,
+                        },
+                        {
+                            // Safe serves only the current version and a contract can be upgraded
+                            // after a decision executes, so this row can only ever mean "now".
+                            term: t(`${translationKey}.version`),
+                            definition:
+                                safeInfo.version ??
+                                t(`${translationKey}.unknownVersion`),
+                        },
+                    ]),
             {
                 term: t(`${translationKey}.execution`),
                 definition: t(`${translationKey}.executionValue`),
