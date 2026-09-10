@@ -127,7 +127,8 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
     });
 
     it('names the execution date once history supplies one', () => {
-        // "Executed" alone repeats the approval header above it; the date is the part worth reading.
+        // A bare date says nothing on its own, and "executed" alone repeats the approval header
+        // above it: the line only reads as provenance with both halves.
         useSafeMultisigBodyStateSpy.mockReturnValue({
             ...state,
             settledResultType: SppProposalType.APPROVAL,
@@ -147,7 +148,14 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText(/September 3, 2026/)).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.executedLabel',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'September 3, 2026' }),
+        ).toHaveAttribute('href', expect.stringContaining('/transactions/tx?'));
     });
 
     it('falls back to the Safe history when the executed transaction is not resolved', () => {

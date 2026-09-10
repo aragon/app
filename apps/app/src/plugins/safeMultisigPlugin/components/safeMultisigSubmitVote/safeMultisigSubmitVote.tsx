@@ -562,7 +562,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         buttonKey = isVeto ? 'vetoAndExecute' : 'approveAndExecute';
     }
 
-    if (isAwaitingIndexing) {
+    if (hasSettled) {
+        buttonKey = isVeto ? 'vetoed' : 'approved';
+    } else if (isAwaitingIndexing) {
         buttonKey = 'finalizing';
     } else if (thresholdReached) {
         buttonKey = 'executeSafeTransaction';
@@ -668,6 +670,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     }
 
     const isActionDisabled =
+        hasSettled ||
         isAwaitingIndexing ||
         isWaitingForOwners ||
         isQueuedBehindNonce ||
@@ -686,18 +689,20 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             {/* Nothing to offer once the stage can never advance: acting would change nothing, and
                 a disabled action beside an expired stage only invites the question.
 
-                A settled body gets no control either. "Approved", greyed out and unpressable, was
-                status wearing a button - and the approval header directly above it already says so.
-                What the reader still wants is the provenance, which lives on the body itself. */}
-            {!hasSettled && canStillAffectOutcome && (
+                A settled body keeps the slot: the verdict reads as the action that was taken, and
+                the card does not reflow the moment a body reports. */}
+            {(hasSettled || canStillAffectOutcome) && (
                 <div className="flex flex-col gap-3 md:flex-row">
                     <Button
                         className="w-full md:w-fit"
                         disabled={isActionDisabled}
+                        iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
                         isLoading={isExecuting || isAwaitingIndexing}
-                        onClick={() => handleVoteClick(true)}
+                        onClick={
+                            hasSettled ? undefined : () => handleVoteClick(true)
+                        }
                         size="md"
-                        variant="primary"
+                        variant={hasSettled ? 'secondary' : 'primary'}
                     >
                         {t(`${translationKey}.${buttonKey}`)}
                     </Button>

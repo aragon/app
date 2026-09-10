@@ -113,17 +113,15 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
 
     /**
      * Provenance is a fact, not a control, so it renders as a link rather than a button. The date
-     * is what makes it worth reading - "executed" alone repeats what the approval header above it
-     * already says.
+     * carries the label; without one there is nothing to introduce, so the link stands alone and
+     * says what it points at.
      */
     const executedAt = settledReport?.transaction.executionDate;
-    const executedLabel =
+    const executedDate =
         executedAt == null
-            ? t(`${translationKey}.executed`)
-            : t(`${translationKey}.executedAt`, {
-                  date: formatterUtils.formatDate(executedAt, {
-                      format: DateFormat.YEAR_MONTH_DAY,
-                  }),
+            ? undefined
+            : formatterUtils.formatDate(executedAt, {
+                  format: DateFormat.YEAR_MONTH_DAY,
               });
 
     return (
@@ -135,14 +133,19 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         >
             {children}
             {settledResultType != null && executedHref != null && (
-                <Link
-                    className="w-fit"
-                    href={executedHref}
-                    isExternal={true}
-                    showUrl={false}
-                >
-                    {executedLabel}
-                </Link>
+                <div className="mt-3 flex flex-row items-center gap-x-1 text-neutral-500 text-sm">
+                    {executedDate != null && (
+                        <p>{t(`${translationKey}.executedLabel`)}</p>
+                    )}
+                    <Link
+                        className="w-fit md:text-sm"
+                        href={executedHref}
+                        isExternal={true}
+                        showUrl={false}
+                    >
+                        {executedDate ?? t(`${translationKey}.executed`)}
+                    </Link>
+                </div>
             )}
         </ProposalVoting.BreakdownMultisig>
     );

@@ -491,7 +491,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('offers no control once the body has reported', () => {
+    it('states the reported verdict without offering to act again', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
             settledResultType: SppProposalType.APPROVAL,
@@ -499,9 +499,13 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         render(createTestComponent());
 
-        // A disabled "Approved" is status wearing a button, and the approval header above it
-        // already carries that fact. The provenance link on the body is what remains useful.
-        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+        // The slot stays filled so the card does not reflow when a body reports, but a recorded
+        // verdict is not an invitation: pressing it would re-report over a settled result.
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approved',
+            }),
+        ).toBeDisabled();
     });
 
     it('warns while another queued transaction still holds the same nonce', () => {
