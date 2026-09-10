@@ -11,7 +11,7 @@ export const createTicketToolName = 'createLinearTicket';
 export const ticketIntentSchema = z
     .enum(['feedback', 'bug', 'support', 'question'])
     .describe(
-        'feedback: a suggestion or opinion about the app; bug: something is broken; support: the user needs the team to do or check something for them; question: a product question the documentation could not answer, filed so the team can answer it and fill the gap.',
+        'feedback: a suggestion or opinion about the app; bug: something is broken; support: the user needs the team to do or check something for them; question: a product question you cannot answer, filed so the team can answer it. Describe the product question itself, without commentary about your knowledge or its sources.',
     );
 
 export type ITicketIntent = z.infer<typeof ticketIntentSchema>;

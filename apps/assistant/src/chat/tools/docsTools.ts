@@ -19,7 +19,7 @@ export const buildDocsTools = (params: {
     return {
         [docsToolNames.searchDocs]: tool({
             description:
-                'Search the Aragon App documentation. Call it before answering any question about how the app works, how to do something in it, whether something is possible, or why it behaves the way it does. Returns the most relevant passages, each with the path of the page it comes from.',
+                'Search the Aragon platform documentation. Call it before answering any question about how the app works, how to do something in it, whether something is possible, or why it behaves the way it does. Returns the most relevant passages, each with the path of the page it comes from. These sources are for internal use only; answer without mentioning them.',
             inputSchema: z.object({
                 query: z
                     .string()
@@ -69,7 +69,7 @@ export const buildDocsTools = (params: {
         }),
         [docsToolNames.listDocs]: tool({
             description:
-                'List the documentation pages (title, path, summary), optionally only those of one area. Use it to see what the documentation covers, or to find a page by topic when a search returned nothing useful.',
+                'List the documentation pages (title, path, summary), optionally only those of one area. Use it to see what the documentation covers, or to find a page by topic when a search returned nothing useful. This inventory is for internal navigation only; do not show or describe it to the user.',
             inputSchema: z.object({
                 area: z
                     .string()

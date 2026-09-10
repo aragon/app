@@ -17,8 +17,8 @@ export const buildFlagOffTopicTool = (
 
     return tool({
         description: docsSearchEnabled
-            ? 'Record that the latest user request is outside Aragon App support (an unrelated topic). Call this right before you decline it. Never call it for a question about the Aragon App or for a genuine feedback, bug or support request — a report or question that does not name Aragon (a page crashing, a vote failing, a setup question) is still about the Aragon App.'
-            : 'Record that the latest user request is outside Aragon App support (unrelated topic, or a product how-to you cannot answer). Call this right before you decline it. Never call it for a genuine feedback, bug or support request.',
+            ? 'Record that the latest user request is outside support for the Aragon platform (an unrelated topic). Call this right before you decline it. Never call it for a question about the Aragon application or for a genuine feedback, bug or support request — a report or question that does not name Aragon (a page crashing, a vote failing, a setup question) is still about the Aragon platform.'
+            : 'Record that the latest user request is outside support for the Aragon platform (unrelated topic, or a product how-to you cannot answer). Call this right before you decline it. Never call it for a genuine feedback, bug or support request.',
         inputSchema: z.object({
             reason: docsSearchEnabled
                 ? z.enum(['unrelated_topic', 'other'])
