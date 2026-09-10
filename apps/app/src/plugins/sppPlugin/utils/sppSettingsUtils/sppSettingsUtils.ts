@@ -65,9 +65,8 @@ class SppSettingsUtils {
         if (name != null) {
             settings.unshift({
                 term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
-                copyValue: address,
                 definition: name,
-                link,
+                link: { href: url },
             });
         }
 
