@@ -80,7 +80,7 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         render(createTestComponent({ proposal }));
         expect(
             screen.getByText(
-                'app.governance.daoProposalList.metadataAlert.nonStandard',
+                'app.governance.proposalMetadataAlert.nonStandard',
             ),
         ).toBeInTheDocument();
     });
@@ -92,12 +92,11 @@ describe('<DaoProposalListDefaultItem /> component', () => {
             description: '',
             metadataUri: null,
         });
-        render(createTestComponent({ proposal }));
+        render(createTestComponent({ proposal, proposalSlug: 'ADMIN-2' }));
         expect(
-            screen.getByText(
-                'app.governance.daoProposalList.metadataAlert.missing',
-            ),
+            screen.getByText('app.governance.proposalMetadataAlert.missing'),
         ).toBeInTheDocument();
+        expect(screen.getByText('ADMIN-2')).toBeInTheDocument();
     });
 
     it('renders the proposal identifier once when the title is empty', () => {

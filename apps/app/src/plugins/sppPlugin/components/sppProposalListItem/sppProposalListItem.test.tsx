@@ -55,6 +55,46 @@ describe('<SppProposalListItem /> component', () => {
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
 
+    it('renders the identifier once without a warning when only the title is empty', () => {
+        const proposal = generateSppProposal({ title: '' });
+        render(createTestComponent({ proposal, proposalSlug: 'SPP-2' }));
+
+        expect(screen.getByText('SPP-2')).toBeInTheDocument();
+        expect(
+            screen.queryByText('app.governance.proposalMetadataAlert.missing'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.governance.proposalMetadataAlert.nonStandard',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it.each([
+        {
+            metadataUri: null,
+            warning: 'app.governance.proposalMetadataAlert.missing',
+        },
+        {
+            metadataUri: 'raw-metadata-string',
+            warning: 'app.governance.proposalMetadataAlert.nonStandard',
+        },
+    ])(
+        'renders $warning with the identifier once',
+        ({ metadataUri, warning }) => {
+            const proposal = generateSppProposal({
+                title: '',
+                summary: '',
+                description: '',
+                metadataUri,
+            });
+            render(createTestComponent({ proposal, proposalSlug: 'SPP-2' }));
+
+            expect(screen.getByText(warning)).toBeInTheDocument();
+            expect(screen.getByText('SPP-2')).toBeInTheDocument();
+        },
+    );
+
     it('sets the correct link for proposal page', () => {
         const proposal = generateSppProposal({ incrementalId: 5 });
         render(createTestComponent({ proposal, proposalSlug: 'SPP-5' }));

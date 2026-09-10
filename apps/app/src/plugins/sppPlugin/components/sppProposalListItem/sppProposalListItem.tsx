@@ -1,12 +1,10 @@
 'use client';
 
-import { AlertInline, ProposalDataListItem } from '@aragon/gov-ui-kit';
+import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
-import {
-    ProposalMetadataStatus,
-    proposalUtils,
-} from '@/modules/governance/utils/proposalUtils';
+import { ProposalMetadataAlert } from '@/modules/governance/components/proposalMetadataAlert';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -44,10 +42,6 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
     const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const { data: publisherEnsName } = useEnsName(creator.address);
 
-    const metadataStatus = proposalUtils.getMetadataStatus(proposal);
-    const hasStandardMetadata =
-        metadataStatus === ProposalMetadataStatus.STANDARD;
-
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
@@ -65,14 +59,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             summary={summary}
             title={proposal.title}
         >
-            {!hasStandardMetadata && (
-                <AlertInline
-                    message={t(
-                        `app.governance.daoProposalList.metadataAlert.${metadataStatus}`,
-                    )}
-                    variant="warning"
-                />
-            )}
+            <ProposalMetadataAlert proposal={proposal} />
         </ProposalDataListItem.Structure>
     );
 };

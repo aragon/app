@@ -2133,11 +2133,7 @@
           "description": "There was an error loading the DAO proposals. Try again later.",
           "title": "Error loading proposals"
         },
-        "groupTab": "All proposals",
-        "metadataAlert": {
-          "missing": "Proposal metadata is missing",
-          "nonStandard": "Unexpected proposal metadata format"
-        }
+        "groupTab": "All proposals"
       },
       "daoProposalsPage": {
         "aside": {
@@ -2316,6 +2312,10 @@
         "recentUnit": " {{unit}} ago",
         "total": "Total",
         "types": "Types"
+      },
+      "proposalMetadataAlert": {
+        "missing": "Proposal metadata is missing",
+        "nonStandard": "Unexpected proposal metadata format"
       },
       "publishProposalDialog": {
         "button": {
