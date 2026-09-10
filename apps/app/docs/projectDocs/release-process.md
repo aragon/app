@@ -2,7 +2,12 @@
 
 This document describes the release process for Aragon App.
 
-This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows — e.g. the assistant service via its own release-PR flow (`assistant-release-start` → merge → `assistant-release-pr-finalize`). See the "Releases" section of the root `AGENTS.md` for the per-package model.
+This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows, each following the same shape:
+
+- **Assistant** — `assistant-release-start` → merge → `assistant-release-pr-finalize`, then a production deploy.
+- **Gov UI Kit** — `gov-ui-kit-release-start` → merge → `gov-ui-kit-release-pr-finalize`, then an **npm publish** rather than a deploy. It is the only published package in the repo; see `packages/gov-ui-kit/RELEASING.md`.
+
+See the "Releases" section of the root `AGENTS.md` for the per-package model.
 
 ## Versioning & tags (monorepo)
 
@@ -10,7 +15,10 @@ Each workspace is versioned independently via changesets and gets its own tags i
 changesets-native format `<package-name>@<version>`:
 
 - App releases: tag `@aragon/app@1.17.0`, branch `release/app/YYYY-MM-DD_HH-mm`, hotfix branch `hotfix/app/<version>_<timestamp>`, hotfix tag `@aragon/app@1.17.0-hotfix.1`.
-- Future workspaces (e.g. `@aragon/gov-ui-kit`) follow the same pattern with their own prefix and their own `<pkg>-*.yml` workflow copies.
+- Assistant releases: tag `@aragon/assistant@0.2.0`, branch `release/assistant/YYYY-MM-DD_HH-mm`.
+- Gov UI Kit releases: tag `@aragon/gov-ui-kit@2.12.0`, branch `release/gov-ui-kit/YYYY-MM-DD_HH-mm`. Tags from before the monorepo migration keep the standalone repo's `vX.Y.Z` scheme and stay in the archived `aragon/gov-ui-kit`.
+- Future workspaces (e.g. the planned indexer app) follow the same pattern with their own prefix and their own `<pkg>-*.yml` workflow copies.
+- Every production workflow filters `release: published` by tag prefix (`startsWith(github.event.release.tag_name, '@aragon/app@')` and the equivalents), so one workspace's release never triggers another's deploy or publish. Any new workspace flow must do the same.
 - Packages that must release in lockstep (planned: `@aragon/domain` + the indexer app) go into the `fixed` group in `.changeset/config.json` once they land in the workspace — changesets then bumps them together.
 
 Tags created before the monorepo migration keep the old `vX.Y.Z` format and point at the old
@@ -19,10 +27,10 @@ repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (s
 ## Overview
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  Start Release  │───▶│  Test & Stage   │───▶│  Approve & Tag  │───▶│  Auto Deploy    │───▶│   Merge PR      │
-│  (auto/manual)  │    │  (automatic)    │    │  (label+review) │    │  (automatic)    │    │  (manual)       │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  Start Release  │───▶│  Test & Stage   │───▶│ Approve & Merge │───▶│ Tag, Release &  │
+│  (auto/manual)  │    │  (automatic)    │    │    (manual)     │    │ Deploy (auto)   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
 ## Step-by-Step Guide
@@ -63,36 +71,33 @@ The scheduled run green-skips when there are no pending changesets for `@aragon/
 
 > **Important:** PR description contains `<!-- slack_ts: ... -->` — this is needed to send all notifications to the same Slack thread. Don't delete this comment!
 
-### 3. Approve & Create Release
+### 3. Approve & Merge
 
 **Who:** Developer from CODEOWNERS  
 **Action:**
 
 1. Approve the Release PR (at least 1 approval from CODEOWNERS)
-2. Add label `release:ready`
+2. Merge it into `main`
 
-**What happens automatically:**
-1. 🏷️ Slack: "Release marked as verified and ready!"
-2. Git tag is created
-3. GitHub Release is created
-4. 📦 Slack: "GitHub Release Created!" + link to release
+**Merging is the release act** — everything after this is automatic.
+
+**What happens automatically on merge** (`app-release-pr-finalize.yml`):
+1. Guard: the release branch must carry no new app-scope changesets (see the FAQ below)
+2. 🏷️ Slack: "PR merged! Creating tag and GitHub Release..."
+3. Git tag `@aragon/app@<version>` is created on the staging-tested head SHA
+4. GitHub Release is created with the changelog as its notes
+5. 📦 Slack: "GitHub Release Created!" + link to release
 
 ### 4. Deploy to Production
 
-**What happens automatically when GitHub Release is published:**
+**What happens automatically when the GitHub Release is published** (`app-production.yml`):
 
 1. 🚀 Slack: "Production build & deploy started..."
-2. Application build
+2. Application build from the tag
 3. Deploy to [app.aragon.org](https://app.aragon.org)
-4. 🎉 Slack: "Production Deployed!" + team ping + PR merge reminder
+4. 🎉 Slack: "Production Deployed!" + team ping
 
-### 5. Merge PR
-
-**Who:** Developer  
-**Action:** After successful production deploy — merge Release PR into `main`.
-
-**What happens automatically:**
-- ✅ Slack: "PR merged, release complete!"
+The deploy job only runs for tags starting `@aragon/app@`, so assistant and gov-ui-kit releases do not trigger it.
 
 ---
 
@@ -117,7 +122,7 @@ The rest of the process is the same as a regular release.
 3. Create changeset: `pnpm changeset`
 4. Push and create PR to `main`
 5. Test on staging
-6. Approve + add label `release:ready`
+6. Approve and merge the PR
 
 ---
 
@@ -137,10 +142,10 @@ Production will be rebuilt and deployed from the specified tag.
 
 ### What if the release is approved but new bugs are found?
 
-1. **Don't add** label `release:ready`
+1. **Don't merge** the Release PR
 2. Create PR with fixes to release branch
 3. After fixes are merged — test on staging again
-4. Only then add `release:ready`
+4. Only then approve and merge the Release PR
 
 ### Can new features be added to release branch?
 

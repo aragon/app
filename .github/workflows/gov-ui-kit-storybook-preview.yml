@@ -1,0 +1,61 @@
+# The "Gov UI Kit Storybook Preview" workflow deploys a throwaway Storybook for a pull request and
+# comments the URL on it. Opt-in via the `preview` label, and additionally gated on the kit's paths
+# filter: the label also exists on app PRs, so without the filter a labelled app-only PR would
+# deploy a Storybook that is identical to the one already on uikit.aragon.org.
+
+name: Gov UI Kit Storybook Preview
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  changes:
+    if: contains(github.event.pull_request.labels.*.name, 'preview')
+    runs-on: ubuntu-latest
+    outputs:
+      # Bracket access is required: the filter name contains hyphens, which GitHub Actions
+      # expressions would otherwise parse as subtraction.
+      changed: ${{ steps.filter.outputs['gov-ui-kit'] }}
+    steps:
+      # File-based `filters:` is read from disk by paths-filter, so the file must be checked out.
+      - name: Checkout filters
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/filters.yml
+
+      - name: Detect gov-ui-kit changes
+        id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v3.0.2 (https://github.com/dorny/paths-filter/releases/tag/v3.0.2)
+        with:
+          filters: .github/filters.yml
+
+  deploy:
+    needs: changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
+    uses: ./.github/workflows/shared-storybook-deploy.yml
+    secrets: inherit
+
+  comment:
+    needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment preview PR
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1 (https://github.com/thollander/actions-comment-pull-request/releases/tag/v3.0.1)
+        with:
+          message: "📚 **Storybook Preview:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})"
+          comment-tag: storybook-preview-url
+          github-token: ${{ secrets.GITHUB_TOKEN }}
