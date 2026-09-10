@@ -491,6 +491,19 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('offers no control once the body has reported', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            settledResultType: SppProposalType.APPROVAL,
+        });
+
+        render(createTestComponent());
+
+        // A disabled "Approved" is status wearing a button, and the approval header above it
+        // already carries that fact. The provenance link on the body is what remains useful.
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
+
     it('warns while another queued transaction still holds the same nonce', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,

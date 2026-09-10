@@ -1,8 +1,9 @@
 'use client';
 
 import {
-    Button,
-    IconType,
+    DateFormat,
+    formatterUtils,
+    Link,
     ProposalVoting,
     ProposalVotingTab,
     Tabs,
@@ -110,6 +111,21 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             : undefined) ??
         safeAppHistoryUrl({ network: proposal.network, address: body });
 
+    /**
+     * Provenance is a fact, not a control, so it renders as a link rather than a button. The date
+     * is what makes it worth reading - "executed" alone repeats what the approval header above it
+     * already says.
+     */
+    const executedAt = settledReport?.transaction.executionDate;
+    const executedLabel =
+        executedAt == null
+            ? t(`${translationKey}.executed`)
+            : t(`${translationKey}.executedAt`, {
+                  date: formatterUtils.formatDate(executedAt, {
+                      format: DateFormat.YEAR_MONTH_DAY,
+                  }),
+              });
+
     return (
         <ProposalVoting.BreakdownMultisig
             approvalsAmount={approvalsAmount}
@@ -119,17 +135,14 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         >
             {children}
             {settledResultType != null && executedHref != null && (
-                <Button
+                <Link
                     className="w-fit"
                     href={executedHref}
-                    iconRight={IconType.LINK_EXTERNAL}
-                    rel="noopener"
-                    size="md"
-                    target="_blank"
-                    variant="success"
+                    isExternal={true}
+                    showUrl={false}
                 >
-                    {t(`${translationKey}.executed`)}
-                </Button>
+                    {executedLabel}
+                </Link>
             )}
         </ProposalVoting.BreakdownMultisig>
     );

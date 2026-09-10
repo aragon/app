@@ -126,6 +126,30 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         );
     });
 
+    it('names the execution date once history supplies one', () => {
+        // "Executed" alone repeats the approval header above it; the date is the part worth reading.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: {
+                transaction: generateSafeMultisigTransaction({
+                    isExecuted: true,
+                    executionDate: '2026-09-03T23:20:36Z',
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+            },
+        });
+
+        render(createTestComponent());
+
+        expect(screen.getByText(/September 3, 2026/)).toBeInTheDocument();
+    });
+
     it('falls back to the Safe history when the executed transaction is not resolved', () => {
         // The settled read can be pending, stale or beyond its page: "somewhere in this Safe" still
         // beats no link at all.
