@@ -68,6 +68,21 @@ describe('<PermissionManagerPermissionField /> component', () => {
         );
     });
 
+    it('stores a custom hash for a permission outside the dictionary', async () => {
+        const user = userEvent.setup();
+        const customId = `0x${'ab'.repeat(32)}`;
+
+        render(<TestHarness />);
+
+        await user.click(screen.getByLabelText(/permission\.label/u));
+        await user.type(screen.getByLabelText(/permission\.label/u), customId);
+        await user.click(screen.getByText(/permission\.customItem/u));
+
+        expect(form?.getValues('actions.0.inputData.parameters.2.value')).toBe(
+            customId,
+        );
+    });
+
     it('keeps the raw hash and tags the resolved permission name', () => {
         const permissionId =
             permissionNameUtils.getPermissionId('ROOT_PERMISSION');

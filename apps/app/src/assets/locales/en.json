@@ -1912,7 +1912,9 @@
         },
         "permissionManagerAction": {
           "permission": {
+            "customItem": "Use a custom permission ID",
             "helpText": "Choose a known permission ID from the shared permission dictionary.",
+            "invalid": "Enter a valid 32-byte permission ID.",
             "label": "Permission ID",
             "placeholder": "Search permissions",
             "selectItem": "Select permission"

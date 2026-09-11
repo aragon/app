@@ -27,6 +27,10 @@ const permissionItems = permissionOptions.map(({ id, name }) => ({
 
 type PermissionManagerFormValues = Record<string, string>;
 
+/** Synthetic option letting a permission outside the dictionary be entered by hash. */
+const customPermissionItemId = 'custom-permission-id';
+const permissionIdRegex = /^0x[0-9a-f]{64}$/iu;
+
 const PermissionManagerPermissionEditField: React.FC<
     IProposalActionsDecoderParameterComponentProps
 > = ({ fieldName, formPrefix }) => {
@@ -38,7 +42,15 @@ const PermissionManagerPermissionEditField: React.FC<
             label: t(
                 'app.governance.actionComposer.permissionManagerAction.permission.label',
             ),
-            rules: { required: true },
+            rules: {
+                required: true,
+                pattern: {
+                    value: permissionIdRegex,
+                    message: t(
+                        'app.governance.actionComposer.permissionManagerAction.permission.invalid',
+                    ),
+                },
+            },
             sanitizeMode: 'none',
         },
     );
@@ -46,6 +58,26 @@ const PermissionManagerPermissionEditField: React.FC<
     const selectedPermission = permissionOptions.find(
         ({ id }) => id.toLowerCase() === permissionId.toLowerCase(),
     );
+
+    // The picker only lists known permissions, but a DAO can grant any bytes32. Selecting
+    // the custom option writes whatever hash was typed, so plugin permissions missing from
+    // the dictionary stay composable.
+    const items = [
+        ...permissionItems,
+        {
+            id: customPermissionItemId,
+            name: t(
+                'app.governance.actionComposer.permissionManagerAction.permission.customItem',
+            ),
+            icon: IconType.PLUS,
+            alwaysVisible: true,
+        },
+    ];
+
+    const handleChange = (value: string, inputValue: string) => {
+        const isCustom = value === customPermissionItemId;
+        permissionField.onChange(isCustom ? inputValue.trim() : value);
+    };
 
     return (
         <AutocompleteInput
@@ -56,13 +88,13 @@ const PermissionManagerPermissionEditField: React.FC<
                     'app.governance.actionComposer.permissionManagerAction.permission.helpText',
                 )
             }
-            items={permissionItems}
+            items={items}
             label={t(
                 'app.governance.actionComposer.permissionManagerAction.permission.label',
             )}
             name={permissionField.name}
             onBlur={permissionField.onBlur}
-            onChange={permissionField.onChange}
+            onChange={handleChange}
             placeholder={
                 selectedPermission?.name ??
                 t(
