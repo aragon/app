@@ -4288,13 +4288,34 @@
           "safe": "Safe"
         }
       },
+      "workspaceAssetList": {
+        "emptyState": {
+          "description": "The accounts of this workspace hold no assets yet.",
+          "heading": "No assets",
+          "unknownDescription": "Some accounts could not be read, so their assets are missing from this list. Try again in a moment.",
+          "unknownHeading": "Assets could not be loaded"
+        },
+        "entity": "Assets",
+        "errorState": {
+          "description": "The assets of this workspace could not be loaded.",
+          "heading": "Unable to load assets"
+        },
+        "unavailable": {
+          "description": "{{count}} of the accounts in this workspace could not be read, so their assets are missing from the totals below.",
+          "title": "Some assets are missing"
+        }
+      },
+      "workspaceAssetsAsideCard": {
+        "hiddenSpam": "Hidden spam",
+        "tokens": "Unique tokens",
+        "totalValue": "Total value (USD)"
+      },
       "workspaceAssetsPage": {
+        "filter": {
+          "allAccounts": "All assets"
+        },
         "main": {
           "title": "Assets"
-        },
-        "placeholder": {
-          "description": "The assets of every account in this workspace will be listed here, grouped by network and token.",
-          "title": "Assets are coming soon"
         }
       },
       "workspaceDetailsPage": {

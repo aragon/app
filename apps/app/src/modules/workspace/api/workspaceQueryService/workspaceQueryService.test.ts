@@ -1,8 +1,13 @@
 import { Network } from '@/shared/api/daoService';
+import type { IWorkspaceAssetListResponse } from './domain';
 import { WorkspaceAccountInfoStatus, WorkspaceAccountInfoType } from './domain';
 import { workspaceQueryService } from './workspaceQueryService';
+import type { IGetWorkspaceAssetListParams } from './workspaceQueryService.api';
 
 describe('workspaceQuery service', () => {
+    const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
+    const account = { network: Network.ETHEREUM_SEPOLIA, address };
+
     const requestSpy = jest.spyOn(workspaceQueryService, 'request');
 
     afterEach(() => {
@@ -12,8 +17,7 @@ describe('workspaceQuery service', () => {
     describe('getAccounts', () => {
         it('posts the accounts to the v2 workspace accounts endpoint and unwraps the response', async () => {
             const accountInfo = {
-                network: Network.ETHEREUM_SEPOLIA,
-                address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+                ...account,
                 type: WorkspaceAccountInfoType.DAO,
                 status: WorkspaceAccountInfoStatus.AVAILABLE,
                 indexed: true,
@@ -21,16 +25,7 @@ describe('workspaceQuery service', () => {
             };
             requestSpy.mockResolvedValue({ data: [accountInfo] });
 
-            const params = {
-                body: {
-                    accounts: [
-                        {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: accountInfo.address,
-                        },
-                    ],
-                },
-            };
+            const params = { body: { accounts: [account] } };
             const result = await workspaceQueryService.getAccounts(params);
 
             expect(requestSpy).toHaveBeenCalledWith(
@@ -39,6 +34,81 @@ describe('workspaceQuery service', () => {
                 { method: 'POST' },
             );
             expect(result).toEqual([accountInfo]);
+        });
+    });
+
+    describe('getAssetList', () => {
+        it('posts the accounts to the v2 workspace assets endpoint', async () => {
+            const response = { data: [], metadata: {}, coverage: [] };
+            requestSpy.mockResolvedValue(response);
+
+            const params: IGetWorkspaceAssetListParams = {
+                body: { accounts: [account], pagination: { pageSize: 20 } },
+            };
+            const result = await workspaceQueryService.getAssetList(params);
+
+            expect(requestSpy).toHaveBeenCalledWith(
+                '/v2/workspaces/query/assets',
+                params,
+                { method: 'POST' },
+            );
+            expect(result).toEqual(response);
+        });
+    });
+
+    describe('getNextBodyPageParams', () => {
+        const params: IGetWorkspaceAssetListParams = {
+            body: { accounts: [account], pagination: { pageSize: 20 } },
+        };
+
+        const buildResponse = (
+            metadata?: Partial<IWorkspaceAssetListResponse['metadata']>,
+        ): IWorkspaceAssetListResponse => ({
+            data: [],
+            metadata: {
+                page: 1,
+                pageSize: 20,
+                totalPages: 3,
+                totalRecords: 45,
+                ...metadata,
+            },
+            coverage: [],
+            partial: false,
+        });
+
+        it('increments the page inside the request body, not the query string', () => {
+            const result = workspaceQueryService.getNextBodyPageParams(
+                buildResponse({ page: 1 }),
+                [],
+                params,
+            );
+
+            expect(result).toEqual({
+                body: {
+                    ...params.body,
+                    pagination: { pageSize: 20, page: 2 },
+                },
+            });
+        });
+
+        it('returns undefined on the last page', () => {
+            const result = workspaceQueryService.getNextBodyPageParams(
+                buildResponse({ page: 3, totalPages: 3 }),
+                [],
+                params,
+            );
+
+            expect(result).toBeUndefined();
+        });
+
+        it('returns undefined when the page has no metadata', () => {
+            const result = workspaceQueryService.getNextBodyPageParams(
+                null,
+                [],
+                params,
+            );
+
+            expect(result).toBeUndefined();
         });
     });
 });

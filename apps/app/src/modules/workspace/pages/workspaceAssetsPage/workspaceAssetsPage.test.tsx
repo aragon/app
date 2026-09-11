@@ -33,7 +33,10 @@ describe('<WorkspaceAssetsPage /> component', () => {
     const createTestComponent = async (
         props?: Partial<IWorkspaceAssetsPageProps>,
     ) => {
-        const completeProps: IWorkspaceAssetsPageProps = { ...props };
+        const completeProps: IWorkspaceAssetsPageProps = {
+            params: Promise.resolve({ workspaceId: 'demo' }),
+            ...props,
+        };
         const Component = await WorkspaceAssetsPage(completeProps);
 
         return <GukModulesProvider>{Component}</GukModulesProvider>;
