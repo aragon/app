@@ -1912,12 +1912,18 @@
         },
         "permissionManagerAction": {
           "permission": {
-            "customItem": "Use a custom permission ID",
+            "customItem": "Use custom ID",
             "helpText": "Choose a known permission ID from the shared permission dictionary.",
-            "invalid": "Enter a valid 32-byte permission ID.",
-            "label": "Permission ID",
-            "placeholder": "Search permissions",
-            "selectItem": "Select permission"
+            "invalid": "Enter a permission name or a 32-byte ID starting with 0x.",
+            "label": "Permission",
+            "placeholder": "Search a permission or paste an ID",
+            "provenance": "Matched locally against known OSx permissions, not read from the contract.",
+            "selectItem": "Select permission",
+            "unknown": "Not a known OSx permission. It will be used exactly as entered."
+          },
+          "riskWarning": {
+            "title": "Modifying permissions is very high risk",
+            "description": "This changes who can call privileged functions on the target contract. It requires an understanding of the smart contracts involved, and it is not reversible without another proposal."
           }
         },
         "rawCalldataFunction": "Unknown",

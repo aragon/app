@@ -1,4 +1,5 @@
 import {
+    addressUtils,
     type IProposalActionInputDataParameter,
     ProposalActionsDecoderMode,
 } from '@aragon/gov-ui-kit';
@@ -83,7 +84,7 @@ describe('<PermissionManagerPermissionField /> component', () => {
         );
     });
 
-    it('keeps the raw hash and tags the resolved permission name', () => {
+    it('renders the resolved name as the value with the hash as evidence', () => {
         const permissionId =
             permissionNameUtils.getPermissionId('ROOT_PERMISSION');
 
@@ -95,11 +96,19 @@ describe('<PermissionManagerPermissionField /> component', () => {
             />,
         );
 
-        expect(screen.getByDisplayValue(permissionId)).toBeInTheDocument();
         expect(screen.getByText('ROOT_PERMISSION')).toBeInTheDocument();
+        expect(screen.getByText('_permissionId (bytes32)')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                new RegExp(addressUtils.truncateHash(permissionId), 'u'),
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByDisplayValue(permissionId),
+        ).not.toBeInTheDocument();
     });
 
-    it('renders no tag for an unknown permission', () => {
+    it('warns and keeps the hash primary for an unknown permission', () => {
         const unknownId = `0x${'ab'.repeat(32)}`;
 
         render(
@@ -110,8 +119,8 @@ describe('<PermissionManagerPermissionField /> component', () => {
             />,
         );
 
-        expect(screen.getByDisplayValue(unknownId)).toBeInTheDocument();
-        expect(screen.queryByText(/_PERMISSION$/u)).not.toBeInTheDocument();
+        expect(screen.getByText(unknownId)).toBeInTheDocument();
+        expect(screen.getByText(/permission\.unknown/u)).toBeInTheDocument();
     });
 
     it('reads the permission from the form context on watch mode', () => {
@@ -139,7 +148,6 @@ describe('<PermissionManagerPermissionField /> component', () => {
 
         render(<WatchHarness />);
 
-        expect(screen.getByDisplayValue(permissionId)).toBeInTheDocument();
         expect(screen.getByText('EXECUTE_PERMISSION')).toBeInTheDocument();
     });
 });
