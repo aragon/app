@@ -263,7 +263,7 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
   (`src/modules/workspace/components/layoutWizardCreateWorkspace/`, same body as `LayoutWizardCreateDao` with
   `name="app.workspace.layoutWizardCreateWorkspace.name"`)
 - **add** `src/app/create/workspace/page.tsx` → `CreateWorkspacePage`
-- **add** `src/app/workspace/[workspaceId]/{layout.tsx,page.tsx}` → `WorkspaceDetailsPage`
+- **add** `src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}` → `WorkspaceDetailsPage`
 
 No `src/app/workspace/[workspaceId]/layout.tsx` is added, deliberately: branch 1096 adds that exact file, so
 skipping it keeps the collision surface to nothing.
@@ -287,9 +287,57 @@ differences, all forced by this branch:
 contained in the layout component. When a real registry lands, the fetch/hydrate shape of 1096 becomes correct
 again and this layout should adopt it.
 
-`navigationWorkspaceUtils.buildLinks` lists **only the pages that exist** — an Overview link at order 200. 1096's
-members/assets/transactions entries (orders 300/400/500) slot in beside it untouched once those pages land, which
-is why the order numbers are already spaced.
+`navigationWorkspaceUtils.buildLinks` lists **only the pages that exist** — Overview at order 200 and Assets at
+400, reusing 1096's ordering so its members (300) and transactions (500) entries slot in untouched once those
+pages land.
+
+### Assets page
+
+`/workspace/{workspaceId}/assets` mirrors `daoAssetsPage`: `Page.Main` with a tab strip over the list, plus an
+aside. Tabs come from `useWorkspaceAccountFilter` (on the shared `useFilterUrlParam`, so the selection is a URL
+param like the DAO page's `?linkedaccount=`) and render through `WorkspaceAccountFilter` (`ToggleGroup`), skipping
+the plugin-slot indirection of `DaoFilterComponent`, which a workspace has no use for.
+
+| Tab | Reads |
+| --- | --- |
+| an account | the **single DAO endpoints** via `AssetList.Default` — identical to the DAO page, so the numbers agree |
+| All assets | **`POST /v2/workspaces/query/assets`** via `WorkspaceAssetList`, the only view that spans networks |
+
+**Only DAO accounts get a tab.** A per-account view is served by the single DAO endpoints, which cannot answer for
+a Safe; Safe accounts still contribute to the aggregated tab. Tab labels use the same precedence as the overview
+rows — `metadata.name ?? accounts-API name ?? truncated address` — so a tab and its row never disagree.
+
+The aside follows the same split: an account tab renders the DAO page's own `DaoFilterAsideCard` (fed the fetched
+`IDao`, a synthesised `IDaoFilterOption` with `isParent: true` so the card reads the account's own stats rather
+than looking for a linked account, and the DAO list's first-page metadata), while the aggregated tab renders
+`WorkspaceAssetsAsideCard` with `totalAmountUsd`, `totalRecords` and `spamCount` from the workspace response.
+
+Reusing the DAO card means its content is **gated by the `linkedAccount` flag**, exactly as on the DAO page:
+enabled (local only) it shows the description, the stats it is handed, the chain/address list and the Octav link;
+disabled it falls back to `FinanceDetailsList`, ignoring those stats. That is the DAO page's existing behaviour,
+inherited rather than introduced — the workspace page now matches it in both states.
+
+The aggregated row **reuses `AssetListItem` unchanged**: the backend projects the same nested `token` (network and
+address included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused in v1 — the
+per-account tabs already answer "which account holds this".
+
+Two details that do not transfer from the DAO page:
+
+- `getNextPageParam` must bump **`body.pagination.page`**; the inherited `AragonBackendService.getNextPageParams`
+  only knows `queryParams`, so `workspaceQueryService.getNextBodyPageParams` replaces it. It is generic over the
+  response and params, so every workspace list endpoint can reuse it.
+- `useAssetListData` is DAO-specific (it hardcodes `useAssetList` and reads `queryParams.pageSize`), so the
+  aggregated list has its own `useWorkspaceAssetListData`. The amount/`priceUsd` derivation both need was extracted
+  into `finance/utils/assetUtils.normalizeAsset`, so the two tabs cannot show a different price for one token.
+
+#### Coverage
+
+`coverage` is surfaced only when an account is `unavailable` — an actual failed read — as an `AlertCard` above the
+list, and the empty state then says the assets could not be loaded rather than that there are none. `unverified`
+is the permanent state of every non-indexed account (so every Safe) and is deliberately **not** warned about;
+otherwise the banner would always be on and would stop being read.
+
+Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry.
 
 ### Overview page
 
@@ -317,6 +365,7 @@ Three gates, one per entry point:
 | --- | --- |
 | `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
 | `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
+| `/workspace/{workspaceId}/assets` | `workspaceAssetsPage` (server) — same |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
 Notes:
@@ -340,7 +389,9 @@ POST /v2/workspaces/query/accounts     body: { accounts: [{ network, address }] 
      -> { data: [{ network, address, type, status, indexed, name?, safe?, error? }] }
 ```
 
-`src/modules/workspace/api/workspaceQueryService/` wraps it. Notes that shape the client:
+`src/modules/workspace/api/workspaceQueryService/` wraps **the whole `query/*` surface**, one client service per
+API surface rather than one per resource — `accounts` and `assets` today, the remaining three when they are wired.
+Notes that shape the client:
 
 - **v2 only** — the version is forced with `apiVersionUtils.buildVersionedUrl(path, { forceVersion: 'v2' })`, the
   same way `daoService` forces v2 for permissions.
@@ -402,10 +453,11 @@ src/shared/components/forms/networkInput/{networkInput.tsx,networkInput.api.ts,n
 src/shared/types/workspacePageParams.ts
 
 src/modules/workspace/
-├── api/workspaceQueryService/          # POST /v2/workspaces/query/accounts
-│   ├── domain/{workspaceAccountInfo.ts,index.ts}
-│   ├── domain/enum/{workspaceAccountInfoStatus.ts,workspaceAccountInfoType.ts,index.ts}
+├── api/workspaceQueryService/          # the whole POST /v2/workspaces/query/* surface
+│   ├── domain/{workspaceAccountInfo.ts,workspaceAsset.ts,workspaceAssetListResponse.ts,workspaceCoverage.ts,index.ts}
+│   ├── domain/enum/{workspaceAccountInfoStatus.ts,workspaceAccountInfoType.ts,workspaceCoverageStatus.ts,workspaceCoverageSource.ts,index.ts}
 │   ├── queries/useWorkspaceAccounts/{useWorkspaceAccounts.ts,index.ts}
+│   ├── queries/useWorkspaceAssetList/{useWorkspaceAssetList.ts,index.ts}
 │   ├── queries/index.ts
 │   └── {workspaceQueryService.ts,workspaceQueryService.api.ts,workspaceQueryServiceKeys.ts,workspaceQueryService.test.ts,index.ts}
 ├── api/workspaceService/
@@ -428,6 +480,12 @@ src/modules/workspace/
 ├── constants/{workspaceMocks.ts,workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
+├── components/workspaceAccountFilter/{workspaceAccountFilter.tsx,index.ts}
+├── components/workspaceAssetList/{workspaceAssetList.tsx,index.ts}
+├── components/workspaceAssetsAsideCard/{workspaceAssetsAsideCard.tsx,index.ts}  # aggregated tab only
+├── hooks/useWorkspaceAccountFilter/{useWorkspaceAccountFilter.ts,index.ts}
+├── hooks/useWorkspaceAssetListData/{useWorkspaceAssetListData.ts,index.ts}
+├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 └── index.ts
@@ -436,10 +494,12 @@ src/modules/application/components/layouts/layoutWorkspace/{layoutWorkspace.tsx,
 src/modules/application/components/navigations/navigationWorkspace/{navigationWorkspace.tsx,navigationWorkspaceUtils.ts,index.ts}
 src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
-src/app/workspace/[workspaceId]/{layout.tsx,page.tsx}
+src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,
+`finance/hooks/useAssetListData` (uses the extracted normaliser), `finance/components/assetList/index.ts` (exposes
+`AssetList.Item`),
 `src/shared/featureFlags/{featureFlags.constants.ts,featureFlags.api.ts}`, `src/shared/testUtils/formWrapper.tsx`
 (gained an optional `defaultValues` prop).
 Deleted: `src/app/create/layout.tsx`.
@@ -459,12 +519,13 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/domain/workspaceAccount.ts` | identical — should merge clean |
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
+| `api/workspaceQueryService/` vs 1096's `api/workspaceFinanceService/` | 1096 splits the query API per resource; this keeps one service for the whole `query/*` surface |
 | `constants/workspaceMocks.ts` | this branch's `demo` gains `targets` + `owner` |
 | `index.ts` | both export from the module root — additive |
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
 | `application/components/navigations/navigationWorkspace/` | 1096 takes the resolved workspace, this one resolves it client-side; `buildLinks` lists different pages |
-| `src/app/workspace/[workspaceId]/` | 1096 adds 3 sub-pages, this adds `page.tsx` |
+| `src/app/workspace/[workspaceId]/` | both add `assets/page.tsx`; 1096 also adds members and transactions |
 
 Paths, type names and file layout were chosen to match 1096 exactly so the merge is additive wherever possible.
 Keep it that way when extending this.
@@ -473,6 +534,10 @@ Keep it that way when extending this.
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
 - Only `query/accounts` is wired. The workspace pages still read nothing from `query/{assets,transactions,proposals,members}`.
-- `/workspace/{id}` is an overview page only; 1096 adds the aggregated assets, transactions and members pages.
+- Only assets are aggregated; the transactions, proposals and members query endpoints are not wired.
+- The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only
+  appear on a later page. That is the API's design.
+- The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show
+  different numbers for one DAO; the shared normaliser only removes the client-side source of drift.
 - Nothing lists workspaces — the seed `demo` and anything created are reachable only by URL or the success link.
 - No editing, so a typo means creating a new workspace.

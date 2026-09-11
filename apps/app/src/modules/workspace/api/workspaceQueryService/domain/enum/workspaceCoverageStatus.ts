@@ -3,25 +3,24 @@
  */
 export enum WorkspaceCoverageStatus {
     /**
-     * The source was read in full.
+     * The source was read fully.
      */
     AVAILABLE = 'available',
     /**
-     * The source holds more than was read, e.g. a Safe queue longer than 50 entries or a governance body with more
-     * than 1000 members. Only reported for proposals and members.
+     * The source holds more than was read, e.g. a Safe queue longer than one page.
      */
     PARTIAL = 'partial',
     /**
-     * The address is not an indexed DAO, so rows may exist but their history is not guaranteed to be complete. Only
-     * reported for assets and transactions.
+     * The address is not an indexed DAO, so rows may exist but the history is not guaranteed to be complete. This
+     * is the permanent state of every Safe account, not a failure.
      */
     UNVERIFIED = 'unverified',
     /**
-     * The address is neither an indexed DAO nor a Safe on a network the Safe service covers.
+     * The address is neither an indexed DAO nor a Safe on a covered network.
      */
     UNSUPPORTED = 'unsupported',
     /**
-     * The source exists but could not be read right now (rate limit, timeout, gateway down). Transient.
+     * The source exists but the read failed right now: rate limit, timeout, gateway down.
      */
     UNAVAILABLE = 'unavailable',
 }

@@ -1,30 +1,17 @@
-import type {
-    WorkspaceCoverageResource,
-    WorkspaceCoverageSource,
-    WorkspaceCoverageStatus,
-} from './enum';
-import type {
-    IWorkspaceAccountInfoError,
-    IWorkspaceAccountRef,
-} from './workspaceAccountInfo';
+import type { WorkspaceCoverageSource, WorkspaceCoverageStatus } from './enum';
+import type { IWorkspaceAccountRef } from './workspaceAccountInfo';
 
-/**
- * Per-account report of whether a source could be read, returned by every workspace query endpoint except accounts.
- *
- * It is what separates "this account has nothing" from "this account could not be read", so it must be consulted
- * before rendering an empty result as if it were complete.
- */
 export interface IWorkspaceCoverage {
     /**
-     * Account the entry reports on.
+     * Account the coverage refers to.
      */
     account: IWorkspaceAccountRef;
     /**
-     * Resource the entry reports on.
+     * Resource the coverage refers to, e.g. `assets`.
      */
-    resource: WorkspaceCoverageResource;
+    resource: string;
     /**
-     * Source the resource was read from.
+     * Where the data came from.
      */
     source: WorkspaceCoverageSource;
     /**
@@ -32,15 +19,15 @@ export interface IWorkspaceCoverage {
      */
     status: WorkspaceCoverageStatus;
     /**
-     * Set when the data comes from the stale cache window of the Safe service. Such data is still displayed.
+     * Set when the data came from the stale cache window. The data is still usable and must be displayed.
      */
     stale?: boolean;
     /**
-     * Selected DAO the account was reached through, set for Safes that were not selected themselves.
-     */
-    via?: IWorkspaceAccountRef;
-    /**
      * Error reported by the source, set when the status is unavailable.
      */
-    error?: IWorkspaceAccountInfoError;
+    error?: { code: string; retryAfter?: number };
+    /**
+     * Set when the account was not selected itself but reached through this selected DAO's process.
+     */
+    via?: IWorkspaceAccountRef;
 }

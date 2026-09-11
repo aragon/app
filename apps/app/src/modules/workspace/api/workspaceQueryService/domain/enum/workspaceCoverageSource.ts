@@ -1,7 +1,13 @@
 /**
- * Source a coverage entry was read from: the Aragon index or the Safe transaction service.
+ * Where the data of an account came from. Values match the backend response.
  */
 export enum WorkspaceCoverageSource {
+    /**
+     * The Aragon index.
+     */
     INDEX = 'index',
+    /**
+     * The Safe transaction service.
+     */
     SAFE = 'safe',
 }
