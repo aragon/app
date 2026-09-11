@@ -49,7 +49,10 @@ describe('navigationWorkspace utils', () => {
                 'page',
             );
 
-            expect(links.map((link) => link.link)).toEqual(['/workspace/demo']);
+            expect(links.map((link) => link.link)).toEqual([
+                '/workspace/demo',
+                '/workspace/demo/transactions',
+            ]);
         });
 
         it('hides the links on large screens when rendered in the navigation dialog', () => {

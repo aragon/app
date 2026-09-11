@@ -1,7 +1,11 @@
 import { AragonBackendService } from '@/shared/api/aragonBackendService';
 import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
-import type { IWorkspaceAccountInfo } from './domain';
-import type { IGetWorkspaceAccountsParams } from './workspaceQueryService.api';
+import type { IWorkspaceAccountInfo, IWorkspaceTransaction } from './domain';
+import type {
+    IGetWorkspaceAccountsParams,
+    IGetWorkspaceTransactionsParams,
+    IWorkspaceQueryResponse,
+} from './workspaceQueryService.api';
 
 /**
  * Workspace query API.
@@ -12,12 +16,17 @@ import type { IGetWorkspaceAccountsParams } from './workspaceQueryService.api';
 class WorkspaceQueryService extends AragonBackendService {
     private basePaths = {
         accounts: '/workspaces/query/accounts',
+        transactions: '/workspaces/query/transactions',
     };
 
     private get urls() {
         return {
             accounts: apiVersionUtils.buildVersionedUrl(
                 this.basePaths.accounts,
+                { forceVersion: 'v2' },
+            ),
+            transactions: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.transactions,
                 { forceVersion: 'v2' },
             ),
         };
@@ -36,6 +45,27 @@ class WorkspaceQueryService extends AragonBackendService {
         );
 
         return data;
+    };
+
+    /**
+     * Fetches the deposits, withdrawals and executions of the given accounts as one list sorted by block timestamp
+     * across networks. The lists are merged before being paged, so a single busy account can fill the first pages.
+     */
+    getTransactions = async (
+        params: IGetWorkspaceTransactionsParams,
+    ): Promise<IWorkspaceQueryResponse<IWorkspaceTransaction>> => {
+        const { queryParams, body } = params;
+
+        // The endpoint rejects query-string parameters with a 400 and takes the pagination in the body. Moving it
+        // here is what lets the queries above declare it as query parameters like every other list of the app and
+        // page through it with the inherited getNextPageParams.
+        const requestParams = { body: { ...body, pagination: queryParams } };
+
+        const result = await this.request<
+            IWorkspaceQueryResponse<IWorkspaceTransaction>
+        >(this.urls.transactions, requestParams, { method: 'POST' });
+
+        return result;
     };
 }
 

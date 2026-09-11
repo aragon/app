@@ -19,8 +19,8 @@ class NavigationWorkspaceUtils {
 
     /**
      * Navigation links of a workspace. Only the pages that exist are listed, so no entry points to a route that has
-     * not been implemented yet: the aggregated members, assets and transactions pages join the overview here once
-     * they land, at orders 300, 400 and 500.
+     * not been implemented yet: the aggregated members and assets pages join the overview and the transactions here
+     * once they land, at orders 300 and 400.
      * @param workspace - Workspace to build the links for.
      * @param context - Whether the links are rendered in the navigation bar or in the navigation dialog.
      * @returns The navigation links.
@@ -35,6 +35,13 @@ class NavigationWorkspaceUtils {
             icon: IconType.APP_DASHBOARD,
             lgHidden: context === 'dialog',
             order: 200,
+        },
+        {
+            label: 'app.application.navigationWorkspace.link.transactions',
+            link: this.getWorkspaceUrl(workspace, 'transactions'),
+            icon: IconType.APP_TRANSACTIONS,
+            lgHidden: context === 'dialog',
+            order: 500,
         },
     ];
 }

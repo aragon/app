@@ -4,3 +4,11 @@ export type {
     IWorkspaceAccountInfoError,
     IWorkspaceAccountRef,
 } from './workspaceAccountInfo';
+export type { IWorkspaceCoverage } from './workspaceCoverage';
+export type {
+    IWorkspaceTransaction,
+    IWorkspaceTransactionBase,
+    IWorkspaceTransactionExecution,
+    IWorkspaceTransactionTransfer,
+    WorkspaceTransactionTransferType,
+} from './workspaceTransaction';

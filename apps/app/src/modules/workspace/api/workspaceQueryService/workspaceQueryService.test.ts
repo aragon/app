@@ -1,4 +1,8 @@
 import { Network } from '@/shared/api/daoService';
+import {
+    generateWorkspaceQueryResponse,
+    generateWorkspaceTransaction,
+} from '../../testUtils';
 import { WorkspaceAccountInfoStatus, WorkspaceAccountInfoType } from './domain';
 import { workspaceQueryService } from './workspaceQueryService';
 
@@ -39,6 +43,49 @@ describe('workspaceQuery service', () => {
                 { method: 'POST' },
             );
             expect(result).toEqual([accountInfo]);
+        });
+    });
+
+    describe('getTransactions', () => {
+        const accounts = [
+            {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+            },
+        ];
+
+        it('posts the accounts to the v2 workspace transactions endpoint and returns the response', async () => {
+            const transactions = generateWorkspaceQueryResponse({
+                data: [generateWorkspaceTransaction()],
+            });
+            requestSpy.mockResolvedValue(transactions);
+
+            const result = await workspaceQueryService.getTransactions({
+                queryParams: { pageSize: 20 },
+                body: { accounts },
+            });
+
+            expect(requestSpy).toHaveBeenCalledWith(
+                '/v2/workspaces/query/transactions',
+                expect.anything(),
+                { method: 'POST' },
+            );
+            expect(result).toEqual(transactions);
+        });
+
+        it('moves the pagination into the request body, as the endpoint rejects query parameters', async () => {
+            requestSpy.mockResolvedValue(generateWorkspaceQueryResponse());
+
+            await workspaceQueryService.getTransactions({
+                queryParams: { page: 2, pageSize: 20 },
+                body: { accounts },
+            });
+
+            const [, requestParams] = requestSpy.mock.calls[0];
+
+            expect(requestParams).toEqual({
+                body: { accounts, pagination: { page: 2, pageSize: 20 } },
+            });
         });
     });
 });

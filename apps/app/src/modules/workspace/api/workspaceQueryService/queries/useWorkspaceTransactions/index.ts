@@ -1,8 +1,4 @@
 export {
-    useWorkspaceAccounts,
-    workspaceAccountsOptions,
-} from './useWorkspaceAccounts';
-export {
     useWorkspaceTransactions,
     workspaceTransactionsOptions,
 } from './useWorkspaceTransactions';
