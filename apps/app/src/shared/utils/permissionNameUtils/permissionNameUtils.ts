@@ -127,6 +127,40 @@ const permissionNames: string[] = [
     'CREATE_PERMISSIONS_ROLE',
 ];
 
+/**
+ * One-line descriptions for the permissions a DAO is most likely to grant or revoke.
+ * Only covers the common OSx set on purpose: a missing entry falls back to the hash,
+ * which is better than a vague sentence that reads as authoritative.
+ */
+const permissionDescriptions: Record<string, string> = {
+    ROOT_PERMISSION: 'Full control of the DAO, including all other permissions',
+    EXECUTE_PERMISSION: 'Execute actions on behalf of the DAO',
+    UPGRADE_DAO_PERMISSION: 'Replace the DAO implementation contract',
+    UPGRADE_PLUGIN_PERMISSION: 'Replace the plugin implementation contract',
+    SET_METADATA_PERMISSION: 'Change the DAO name, description and links',
+    SET_TRUSTED_FORWARDER_PERMISSION:
+        'Change the trusted forwarder used for meta transactions',
+    REGISTER_STANDARD_CALLBACK_PERMISSION:
+        'Register callbacks the DAO responds to',
+    APPLY_INSTALLATION_PERMISSION: 'Install a plugin on the DAO',
+    APPLY_UPDATE_PERMISSION: 'Update an installed plugin',
+    APPLY_UNINSTALLATION_PERMISSION: 'Uninstall a plugin from the DAO',
+    CREATE_PROPOSAL_PERMISSION: 'Create proposals on a process',
+    EXECUTE_PROPOSAL_PERMISSION: 'Execute a passed proposal',
+    CANCEL_PERMISSION: 'Cancel a proposal before it completes',
+    ADVANCE_PERMISSION: 'Advance a proposal to its next stage',
+    UPDATE_MULTISIG_SETTINGS_PERMISSION:
+        'Change multisig members and approval threshold',
+    UPDATE_VOTING_SETTINGS_PERMISSION:
+        'Change voting duration, support and participation',
+    UPDATE_ADDRESSES_PERMISSION: 'Add or remove addresses from the member list',
+    SET_TARGET_CONFIG_PERMISSION:
+        'Change which contract the plugin executes through',
+    MANAGE_SELECTORS_PERMISSION: 'Change which functions the plugin may call',
+    MINT_PERMISSION: 'Mint new governance tokens',
+    BURN_PERMISSION: 'Burn governance tokens',
+};
+
 class PermissionNameUtils {
     private permissionNamesByHash: Record<string, string> = Object.fromEntries(
         permissionNames.map((name) => [
@@ -176,6 +210,13 @@ class PermissionNameUtils {
             ? displayName.charAt(0).toUpperCase() + displayName.slice(1)
             : permissionName;
     };
+
+    /**
+     * One-line description of what a permission allows, when we have one. Returns
+     * undefined for permissions outside the documented set rather than inventing copy.
+     */
+    getPermissionDescription = (permissionName: string): string | undefined =>
+        permissionDescriptions[permissionName];
 
     /**
      * Returns the keccak256 permission-id hash for a raw permission name. Inverse

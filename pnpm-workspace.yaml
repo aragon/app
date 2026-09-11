@@ -10,7 +10,7 @@ catalog:
   "@ai-sdk/react": ^4.0.82
   # TEMPORARY snapshot from aragon/gov-ui-kit#782 (customParameterComponents on the decoded
   # action view). Move to the released minor once that PR merges and publishes.
-  "@aragon/gov-ui-kit": 0.0.0-20260911070910
+  "@aragon/gov-ui-kit": 0.0.0-20260911092806
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
   "@assistant-ui/react": 0.14.27
