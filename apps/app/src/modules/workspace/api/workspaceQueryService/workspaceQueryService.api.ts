@@ -61,29 +61,6 @@ export interface IWorkspaceQueryResponse<TData>
     partial: boolean;
 }
 
-/*
- * Pagination of a workspace query request. Shared by every list endpoint of the API: the pagination travels in the
- * request body, not in the query string, and `pageSize` is capped at 50 by the backend.
- */
-export interface IWorkspaceQueryPagination {
-    /**
-     * Page to read, starting at 1.
-     */
-    page?: number;
-    /**
-     * Number of rows per page, capped at 50 by the backend.
-     */
-    pageSize?: number;
-    /**
-     * Sort direction.
-     */
-    order?: 'asc' | 'desc';
-    /**
-     * Free text search, matching the same fields as the single DAO endpoints.
-     */
-    search?: string;
-}
-
 export interface IGetWorkspaceAccountsBody {
     /**
      * Accounts to resolve. Duplicates are removed and addresses are checksummed by the backend, so the response may
