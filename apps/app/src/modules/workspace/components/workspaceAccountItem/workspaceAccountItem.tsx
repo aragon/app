@@ -8,6 +8,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAccountItemProps {
     /**
@@ -40,8 +41,7 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     const networkName = networkDefinitions[network].name;
     const truncatedAddress = addressUtils.truncateAddress(address);
 
-    // The account metadata is what the workspace owner called this account, so it wins over the indexed DAO name.
-    const name = metadata?.name ?? accountInfo?.name ?? undefined;
+    const name = workspaceUtils.getAccountName(account, accountInfo);
 
     return (
         <Card className="flex items-center gap-3 border border-neutral-100 p-4 shadow-neutral-sm md:p-6">

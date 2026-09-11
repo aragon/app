@@ -13,3 +13,10 @@ export type {
     IWorkspaceAssetListResponse,
 } from './workspaceAssetListResponse';
 export type { IWorkspaceCoverage } from './workspaceCoverage';
+export type {
+    IWorkspaceTransaction,
+    IWorkspaceTransactionBase,
+    IWorkspaceTransactionExecution,
+    IWorkspaceTransactionTransfer,
+    WorkspaceTransactionTransferType,
+} from './workspaceTransaction';

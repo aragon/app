@@ -51,6 +51,7 @@ describe('navigationWorkspace utils', () => {
 
             expect(links.map((link) => link.link)).toEqual([
                 '/workspace/demo',
+                '/workspace/demo/transactions',
                 '/workspace/demo/assets',
             ]);
         });

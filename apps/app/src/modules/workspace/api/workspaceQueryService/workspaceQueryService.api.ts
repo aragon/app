@@ -1,6 +1,20 @@
+import type { TransactionSide } from '@/modules/finance/api/financeService';
+import type {
+    IOrderedRequest,
+    IPaginatedRequest,
+    IPaginatedResponse,
+    ISearchedRequest,
+} from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestBodyParams } from '@/shared/api/httpService';
-import type { IWorkspaceAccountRef } from './domain';
+import type {
+    IRequestBodyParams,
+    IRequestQueryBodyParams,
+} from '@/shared/api/httpService';
+import type {
+    IWorkspaceAccountRef,
+    IWorkspaceCoverage,
+    WorkspaceTransactionType,
+} from './domain';
 
 /**
  * Maximum number of accounts accepted per request by the workspace query API.
@@ -8,26 +22,43 @@ import type { IWorkspaceAccountRef } from './domain';
 export const workspaceAccountsRequestLimit = 100;
 
 /**
- * Pagination of a workspace query request. Shared by every list endpoint of the API: the pagination travels in the
- * request body, not in the query string, and `pageSize` is capped at 50 by the backend.
+ * Maximum page size accepted by the workspace query API. A bigger value is rejected with a 400.
  */
-export interface IWorkspaceQueryPagination {
+export const workspaceQueryPageSizeLimit = 50;
+
+/**
+ * Pagination of a workspace query request.
+ *
+ * It is declared as query parameters so that the infinite queries of this service behave like every other list of
+ * the app and can be driven by {@link AragonBackendService.getNextPageParams}. The endpoints actually take it in
+ * the request body and reject query-string parameters with a 400, so the service moves it there before requesting.
+ *
+ * Only the sort key of the endpoint being called is accepted, hence the type parameter.
+ */
+export interface IWorkspaceQueryPagination<TSort extends string = string>
+    extends IPaginatedRequest,
+        IOrderedRequest,
+        ISearchedRequest {
     /**
-     * Page to read, starting at 1.
+     * Property to order the results by.
      */
-    page?: number;
+    sort?: TSort;
+}
+
+/**
+ * Response of the paginated workspace query endpoints.
+ */
+export interface IWorkspaceQueryResponse<TData>
+    extends IPaginatedResponse<TData> {
     /**
-     * Number of rows per page, capped at 50 by the backend.
+     * Per-account report of whether each source could be read. An empty `data` only means "nothing to show" when
+     * every entry here is available.
      */
-    pageSize?: number;
+    coverage: IWorkspaceCoverage[];
     /**
-     * Sort direction.
+     * True when any coverage entry is not available.
      */
-    order?: 'asc' | 'desc';
-    /**
-     * Free text search, matching the same fields as the single DAO endpoints.
-     */
-    search?: string;
+    partial: boolean;
 }
 
 export interface IGetWorkspaceAccountsBody {
@@ -41,6 +72,10 @@ export interface IGetWorkspaceAccountsBody {
 export interface IGetWorkspaceAccountsParams
     extends IRequestBodyParams<IGetWorkspaceAccountsBody> {}
 
+/**
+ * Includes the rows of tokens flagged as spam, which are hidden by default.
+ *
+ */
 export interface IWorkspaceAssetListFilters {
     /**
      * Keeps only the accounts on this network for the request. The other accounts drop out of the data and of the
@@ -73,5 +108,56 @@ export interface IGetWorkspaceAssetListBody {
     pagination?: IWorkspaceQueryPagination;
 }
 
+/**
+ * Filters of the transactions request. They narrow the rows within the selected accounts and can never add an
+ * account: `network` keeps only the accounts on that network and drops the others from the data and the coverage.
+ */
+export interface IGetWorkspaceTransactionsFilters {
+    /**
+     * Keeps only the accounts on this network.
+     */
+    network?: Network;
+    /**
+     * Token of the transfers. Requires `network`, as the same address is a different token on another chain.
+     */
+    tokenAddress?: string;
+    /**
+     * Sender of the transfers.
+     */
+    fromAddress?: string;
+    /**
+     * Receiver of the transfers.
+     */
+    toAddress?: string;
+    /**
+     * Direction of the transfers from the point of view of the account.
+     */
+    side?: TransactionSide;
+    /**
+     * Kind of rows to return.
+     */
+    type?: WorkspaceTransactionType;
+}
+
 export interface IGetWorkspaceAssetListParams
     extends IRequestBodyParams<IGetWorkspaceAssetListBody> {}
+
+export interface IGetWorkspaceTransactionsBody {
+    /**
+     * Accounts to aggregate the transactions of, max {@link workspaceAccountsRequestLimit} entries. An empty list
+     * is valid and returns an empty result.
+     */
+    accounts: IWorkspaceAccountRef[];
+    /**
+     * Filters narrowing the rows within the selected accounts.
+     */
+    filters?: IGetWorkspaceTransactionsFilters;
+}
+
+export type WorkspaceTransactionsSort = 'blockTimestamp';
+
+export interface IGetWorkspaceTransactionsParams
+    extends IRequestQueryBodyParams<
+        IWorkspaceQueryPagination<WorkspaceTransactionsSort>,
+        IGetWorkspaceTransactionsBody
+    > {}

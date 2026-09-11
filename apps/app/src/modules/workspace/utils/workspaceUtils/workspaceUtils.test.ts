@@ -4,7 +4,10 @@ import {
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
 } from '../../api/workspaceQueryService';
-import { WorkspaceAccountType } from '../../api/workspaceService';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+} from '../../api/workspaceService';
 import {
     type IWorkspaceNetworkAddress,
     workspaceUtils,
@@ -127,6 +130,47 @@ describe('workspace utils', () => {
 
         it('returns undefined when there is no account info', () => {
             expect(workspaceUtils.getAccountType(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('getAccountName and getAccountLabel', () => {
+        const buildAccount = (
+            account?: Partial<IWorkspaceAccount>,
+        ): IWorkspaceAccount => ({
+            id: `ethereum-mainnet-${addressOne}`,
+            type: WorkspaceAccountType.DAO,
+            address: addressOne,
+            network: Network.ETHEREUM_MAINNET,
+            ...account,
+        });
+
+        it('prefers the stored metadata name over the name resolved by the API', () => {
+            const account = buildAccount({ metadata: { name: 'Treasury' } });
+            const accountInfo = buildAccountInfo({ name: 'Indexed DAO' });
+
+            expect(workspaceUtils.getAccountName(account, accountInfo)).toEqual(
+                'Treasury',
+            );
+        });
+
+        it('falls back to the name resolved by the API', () => {
+            const accountInfo = buildAccountInfo({ name: 'Indexed DAO' });
+
+            expect(
+                workspaceUtils.getAccountName(buildAccount(), accountInfo),
+            ).toEqual('Indexed DAO');
+        });
+
+        it('returns undefined as a name when neither source has one', () => {
+            expect(
+                workspaceUtils.getAccountName(buildAccount()),
+            ).toBeUndefined();
+        });
+
+        it('labels a nameless account with its truncated address', () => {
+            expect(workspaceUtils.getAccountLabel(buildAccount())).toEqual(
+                '0xA941…6419',
+            );
         });
     });
 
