@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { keccak256, toBytes } from 'viem';
+import { type Hex, keccak256, toBytes } from 'viem';
 
 /**
  * Canonical list of Aragon OSx, plugin, and AccessControl permission names.
@@ -182,8 +182,19 @@ class PermissionNameUtils {
      * of {@link getPermissionName}; the {@link permissionNames} list is the single
      * source of truth for both directions.
      */
-    getPermissionId = (permissionName: string): string =>
+    getPermissionId = (permissionName: string): Hex =>
         keccak256(toBytes(permissionName));
+
+    /**
+     * Returns the known permission names together with their keccak256 IDs.
+     * The permission viewer and permission-management action builder use this
+     * same dictionary so labels and encoded values cannot drift apart.
+     */
+    getKnownPermissions = (): Array<{ id: Hex; name: string }> =>
+        permissionNames.map((name) => ({
+            id: this.getPermissionId(name),
+            name,
+        }));
 
     private normaliseHash = (hash: string): string => {
         const lowerCased = hash.toLowerCase();

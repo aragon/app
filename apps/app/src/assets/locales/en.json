@@ -1910,6 +1910,14 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
+        "permissionManagerAction": {
+          "permission": {
+            "helpText": "Choose a known permission ID from the shared permission dictionary.",
+            "label": "Permission ID",
+            "placeholder": "Search permissions",
+            "selectItem": "Select permission"
+          }
+        },
         "rawCalldataFunction": "Unknown",
         "removeAllActions": "Remove all actions",
         "unknownFunction": "Unknown",
