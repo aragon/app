@@ -3,6 +3,7 @@ import {
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
+import { getPermissionManagerParameterComponents } from '@/actions/core/permissionManager';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import type { IProposalActionData } from '../createProposalForm';
 
@@ -63,6 +64,9 @@ export const ProposalActionsEditList: React.FC<
                         arrayControls={getArrayControls(index)}
                         CustomComponent={customActionComponents[action.type]}
                         chainId={chainId}
+                        customParameterComponents={getPermissionManagerParameterComponents(
+                            action,
+                        )}
                         editMode={true}
                         formPrefix={`actions.${index.toString()}`}
                         key={action.fieldId}
