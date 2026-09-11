@@ -428,6 +428,7 @@
         },
         "accounts": "{{count}} accounts",
         "link": {
+          "assets": "Assets",
           "overview": "Overview"
         }
       },
@@ -4285,6 +4286,15 @@
         "type": {
           "dao": "DAO",
           "safe": "Safe"
+        }
+      },
+      "workspaceAssetsPage": {
+        "main": {
+          "title": "Assets"
+        },
+        "placeholder": {
+          "description": "The assets of every account in this workspace will be listed here, grouped by network and token.",
+          "title": "Assets are coming soon"
         }
       },
       "workspaceDetailsPage": {

@@ -263,7 +263,7 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
   (`src/modules/workspace/components/layoutWizardCreateWorkspace/`, same body as `LayoutWizardCreateDao` with
   `name="app.workspace.layoutWizardCreateWorkspace.name"`)
 - **add** `src/app/create/workspace/page.tsx` → `CreateWorkspacePage`
-- **add** `src/app/workspace/[workspaceId]/{layout.tsx,page.tsx}` → `WorkspaceDetailsPage`
+- **add** `src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}` → `WorkspaceDetailsPage`
 
 No `src/app/workspace/[workspaceId]/layout.tsx` is added, deliberately: branch 1096 adds that exact file, so
 skipping it keeps the collision surface to nothing.
@@ -287,9 +287,16 @@ differences, all forced by this branch:
 contained in the layout component. When a real registry lands, the fetch/hydrate shape of 1096 becomes correct
 again and this layout should adopt it.
 
-`navigationWorkspaceUtils.buildLinks` lists **only the pages that exist** — an Overview link at order 200. 1096's
-members/assets/transactions entries (orders 300/400/500) slot in beside it untouched once those pages land, which
-is why the order numbers are already spaced.
+`navigationWorkspaceUtils.buildLinks` lists **only the pages that exist** — Overview at order 200 and Assets at
+400, reusing 1096's ordering so its members (300) and transactions (500) entries slot in untouched once those
+pages land.
+
+### Assets page
+
+`/workspace/{workspaceId}/assets` is a **placeholder**: the route and the navigation entry exist, and the body is an
+`EmptyState` inside `Page.Content` → `Page.Main`, laid out like `daoAssetsPageClient` so that the asset list can
+replace the empty state without moving anything. It reads nothing — not even the workspace — and will be wired to
+`POST /v2/workspaces/query/assets` in a follow-up. The feature flag is gated exactly as on the other pages.
 
 ### Overview page
 
@@ -317,6 +324,7 @@ Three gates, one per entry point:
 | --- | --- |
 | `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
 | `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
+| `/workspace/{workspaceId}/assets` | `workspaceAssetsPage` (server) — same |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
 Notes:
@@ -428,6 +436,7 @@ src/modules/workspace/
 ├── constants/{workspaceMocks.ts,workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
+├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 └── index.ts
@@ -436,7 +445,7 @@ src/modules/application/components/layouts/layoutWorkspace/{layoutWorkspace.tsx,
 src/modules/application/components/navigations/navigationWorkspace/{navigationWorkspace.tsx,navigationWorkspaceUtils.ts,index.ts}
 src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
-src/app/workspace/[workspaceId]/{layout.tsx,page.tsx}
+src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,
@@ -464,7 +473,7 @@ Whichever branch lands second must reconcile:
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
 | `application/components/navigations/navigationWorkspace/` | 1096 takes the resolved workspace, this one resolves it client-side; `buildLinks` lists different pages |
-| `src/app/workspace/[workspaceId]/` | 1096 adds 3 sub-pages, this adds `page.tsx` |
+| `src/app/workspace/[workspaceId]/` | both add `assets/page.tsx`; 1096 also adds members and transactions |
 
 Paths, type names and file layout were chosen to match 1096 exactly so the merge is additive wherever possible.
 Keep it that way when extending this.
@@ -473,6 +482,6 @@ Keep it that way when extending this.
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
 - Only `query/accounts` is wired. The workspace pages still read nothing from `query/{assets,transactions,proposals,members}`.
-- `/workspace/{id}` is an overview page only; 1096 adds the aggregated assets, transactions and members pages.
+- `/workspace/{id}/assets` is a placeholder; the aggregated assets, transactions and members pages are not built.
 - Nothing lists workspaces — the seed `demo` and anything created are reachable only by URL or the success link.
 - No editing, so a typo means creating a new workspace.
