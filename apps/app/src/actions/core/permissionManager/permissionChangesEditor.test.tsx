@@ -6,26 +6,6 @@ import { ReactQueryWrapper } from '@/shared/testUtils/reactQueryWrapper';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { PermissionChangesEditor } from './permissionChangesEditor';
 
-// AddressInput resolves ENS through wagmi; the editor only cares about its value
-// contract, so the network half is mocked away.
-jest.mock('@aragon/gov-ui-kit', () => ({
-    ...jest.requireActual('@aragon/gov-ui-kit'),
-    AddressInput: (props: {
-        label?: string;
-        value?: string;
-        onChange?: (value?: string) => void;
-    }) => (
-        <div>
-            <span>{props.label}</span>
-            <input
-                aria-label={props.label}
-                onChange={(event) => props.onChange?.(event.target.value)}
-                value={props.value ?? ''}
-            />
-        </div>
-    ),
-}));
-
 describe('<PermissionChangesEditor /> component', () => {
     const zeroAddress = `0x${'0'.repeat(40)}`;
     const where = '0xAB98085757BFd1C2718fF3cFa390a3db2e8fd209';
@@ -151,12 +131,29 @@ describe('<PermissionChangesEditor /> component', () => {
 
         render(<TestHarness rows={[['1', where, who, zeroAddress, rootId]]} />);
 
-        const [removeRow] = screen.getAllByRole('button', { name: '' });
+        const [removeRow] = screen.getAllByRole('button', {
+            name: /multiTarget\.removeChange/u,
+        });
         await user.click(removeRow);
 
         // Deleting the last imported row must leave it deleted, not hand back a blank
         // grant with empty required fields.
         expect(readRows()).toHaveLength(0);
+    });
+
+    it('ignores a deselect on the operation toggle', async () => {
+        const user = userEvent.setup({ delay: null });
+        const rootId = permissionNameUtils.getPermissionId('ROOT_PERMISSION');
+
+        render(<TestHarness rows={[['1', where, who, zeroAddress, rootId]]} />);
+
+        // Clicking the selected toggle deselects and emits ''. Number('') is 0, which
+        // would silently turn this Revoke into a Grant.
+        await user.click(
+            screen.getByText(/permissionManagerAction\.operation\.revoke/u),
+        );
+
+        expect(readRows()[0][0]).toBe('1');
     });
 
     it('clears the condition when leaving conditional mode', async () => {
@@ -265,7 +262,9 @@ describe('<PermissionChangesEditor /> component', () => {
             />,
         );
 
-        const [removeFirst] = screen.getAllByRole('button', { name: '' });
+        const [removeFirst] = screen.getAllByRole('button', {
+            name: /multiTarget\.removeChange/u,
+        });
         await user.click(removeFirst);
 
         const rows = readRows();

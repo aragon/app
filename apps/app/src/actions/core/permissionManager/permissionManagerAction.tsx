@@ -234,26 +234,29 @@ const isSingleTargetPermissionsAction = (
         parameters?.length === 2 &&
         parameters[0]?.type === 'address' &&
         parameters[1]?.type === 'tuple[]' &&
-        hasComponents(parameters[1], ['operation', 'who', 'permissionId'])
+        hasComponents(parameters[1], [
+            { name: 'operation', type: 'uint8' },
+            { name: 'who', type: 'address' },
+            { name: 'permissionId', type: 'bytes32' },
+        ])
     );
 };
 
 /** A DAO `applyMultiTargetPermissions` call: one `_items` tuple array of changes. */
 const hasComponents = (
     parameter: IProposalActionInputDataParameter | undefined,
-    expected: string[],
+    expected: Array<{ name: string; type: string }>,
 ): boolean => {
-    if (parameter == null) {
-        return false;
-    }
-
-    const names = (parameter.components ?? []).map(
-        (component) => component.name,
-    );
+    const components = parameter?.components ?? [];
 
     return (
-        names.length === expected.length &&
-        expected.every((name) => names.includes(name))
+        components.length === expected.length &&
+        expected.every(({ name, type }) =>
+            components.some(
+                (component) =>
+                    component.name === name && component.type === type,
+            ),
+        )
     );
 };
 
@@ -270,11 +273,11 @@ const isMultiTargetPermissionsAction = (
         // The editor serialises rows by component name, so a tuple shaped differently
         // would be silently rewritten. Anything else keeps the kit's default fields.
         hasComponents(items, [
-            'operation',
-            'where',
-            'who',
-            'condition',
-            'permissionId',
+            { name: 'operation', type: 'uint8' },
+            { name: 'where', type: 'address' },
+            { name: 'who', type: 'address' },
+            { name: 'condition', type: 'address' },
+            { name: 'permissionId', type: 'bytes32' },
         ])
     );
 };

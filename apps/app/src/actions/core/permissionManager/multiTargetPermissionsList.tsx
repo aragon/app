@@ -41,9 +41,9 @@ const PermissionChangeRow: React.FC<{
     resolveAddress: ResolveAddress;
 }> = ({ change, resolveAddress }) => {
     const { t } = useTranslations();
-    const operation =
-        operationCopy[change.operation] ??
-        operationCopy[PermissionOperation.GRANT];
+    const operation = operationCopy[change.operation] as
+        | (typeof operationCopy)[PermissionOperation]
+        | undefined;
     const isRevoke = change.operation === PermissionOperation.REVOKE;
     const isUnrecognised = change.permissionName == null;
 
@@ -59,10 +59,16 @@ const PermissionChangeRow: React.FC<{
             <div className="flex flex-row flex-wrap items-center gap-2">
                 <Tag
                     className="uppercase"
-                    label={t(
-                        `app.governance.actionComposer.permissionManagerAction.operation.${operation.key}`,
-                    )}
-                    variant={operation.variant}
+                    label={
+                        operation
+                            ? t(
+                                  `app.governance.actionComposer.permissionManagerAction.operation.${operation.key}`,
+                              )
+                            : t(`${copyPrefix}.unknownOperation`, {
+                                  operation: change.operation,
+                              })
+                    }
+                    variant={operation?.variant ?? 'warning'}
                 />
                 {/* The name is the meaning, the hash is the evidence: keep both, and keep
                     the hash copyable in full even though it renders truncated. */}
@@ -165,7 +171,12 @@ const ResolvedPermissionChanges: React.FC<{
     daoId: string;
 }> = ({ changes, daoId }) => {
     const { t } = useTranslations();
-    const daoPlugins = useDaoPlugins({ daoId });
+    const daoPlugins = useDaoPlugins({
+        daoId,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+        includeUnsupported: true,
+    });
     const daoAddress = daoUtils.parseDaoId(daoId).address;
 
     const resolveAddress: ResolveAddress = (address) => {

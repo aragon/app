@@ -257,31 +257,37 @@ export const PermissionChangesEditor: React.FC<
                             >
                                 <ToggleGroup
                                     isMultiSelect={false}
-                                    onChange={(value?: string) =>
-                                        value != null &&
+                                    onChange={(value?: string) => {
+                                        const next = operationOrder.find(
+                                            (operation) =>
+                                                operation.toString() === value,
+                                        );
+
+                                        if (next == null) {
+                                            return;
+                                        }
+
                                         writeChanges(
                                             changes.map((item, current) =>
                                                 current === index
                                                     ? {
                                                           ...item,
-                                                          operation: Number(
-                                                              value,
-                                                          ) as PermissionOperation,
+                                                          operation: next,
                                                           // A condition only applies to a
                                                           // conditional grant. Leaving it
                                                           // set breaks encoding when it is
                                                           // malformed, and OSx rejects an
                                                           // ordinary grant that carries one.
                                                           condition:
-                                                              Number(value) ===
+                                                              next ===
                                                               PermissionOperation.GRANT_WITH_CONDITION
                                                                   ? item.condition
                                                                   : undefined,
                                                       }
                                                     : item,
                                             ),
-                                        )
-                                    }
+                                        );
+                                    }}
                                     value={change.operation.toString()}
                                 >
                                     {operationOrder
@@ -303,6 +309,7 @@ export const PermissionChangesEditor: React.FC<
                                 </ToggleGroup>
                             </InputContainer>
                             <Button
+                                aria-label={t(`${copyPrefix}.removeChange`)}
                                 iconLeft={IconType.CLOSE}
                                 onClick={() =>
                                     writeChanges(

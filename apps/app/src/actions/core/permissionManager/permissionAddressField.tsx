@@ -71,14 +71,19 @@ const PermissionAddressEdit: React.FC<IPermissionAddressFieldProps> = ({
  * Returns undefined when nothing matches, so the raw address stays the value rather than
  * the account being presented as anonymous.
  */
-const PermissionAddressRead: React.FC<
-    IPermissionAddressFieldProps & { address: string }
+const ResolvedAddressRead: React.FC<
+    IPermissionAddressFieldProps & { address: string; daoId: string }
 > = ({ parameter, address, daoId }) => {
     const { t } = useTranslations();
-    const daoPlugins = useDaoPlugins({ daoId: daoId ?? '' });
+    const daoPlugins = useDaoPlugins({
+        daoId,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+        includeUnsupported: true,
+    });
 
     const resolveLabel = (): string | undefined => {
-        if (!(address && daoId)) {
+        if (!address) {
             return undefined;
         }
 
@@ -98,29 +103,49 @@ const PermissionAddressRead: React.FC<
         return plugin ? daoUtils.getPluginName(plugin.meta) : undefined;
     };
 
-    const label = resolveLabel();
-
     return (
-        <DefinitionList.Container>
-            <DefinitionList.Item
-                copyValue={address || undefined}
-                description={
-                    label
-                        ? [
-                              parameter.notice,
-                              addressUtils.truncateAddress(address),
-                          ]
-                              .filter(Boolean)
-                              .join(' · ')
-                        : parameter.notice
-                }
-                term={`${parameter.name} (${parameter.type})`}
-            >
-                {label ?? address}
-            </DefinitionList.Item>
-        </DefinitionList.Container>
+        <AddressDefinition
+            address={address}
+            label={resolveLabel()}
+            parameter={parameter}
+        />
     );
 };
+
+/** Presentational half, so the plugin query only runs where a DAO context exists. */
+const AddressDefinition: React.FC<{
+    parameter: IPermissionAddressFieldProps['parameter'];
+    address: string;
+    label?: string;
+}> = ({ parameter, address, label }) => (
+    <DefinitionList.Container>
+        <DefinitionList.Item
+            copyValue={address || undefined}
+            description={
+                label
+                    ? [parameter.notice, addressUtils.truncateAddress(address)]
+                          .filter(Boolean)
+                          .join(' · ')
+                    : parameter.notice
+            }
+            term={`${parameter.name} (${parameter.type})`}
+        >
+            {label ?? address}
+        </DefinitionList.Item>
+    </DefinitionList.Container>
+);
+
+const PermissionAddressRead: React.FC<
+    IPermissionAddressFieldProps & { address: string }
+> = (props) =>
+    props.daoId ? (
+        <ResolvedAddressRead {...props} daoId={props.daoId} />
+    ) : (
+        <AddressDefinition
+            address={props.address}
+            parameter={props.parameter}
+        />
+    );
 
 const PermissionAddressWatch: React.FC<IPermissionAddressFieldProps> = (
     props,
@@ -133,8 +158,8 @@ const PermissionAddressWatch: React.FC<IPermissionAddressFieldProps> = (
 };
 
 /**
- * `_where` / `_who` on a permission action. Editing uses the address input so ENS works
- * and the value is validated; reading names the address instead of showing bare hex.
+ * `_where` / `_who` on a permission action. Editing keeps the kit's plain text input and
+ * its strict address check; reading names the address instead of showing bare hex.
  */
 export const PermissionAddressField: React.FC<IPermissionAddressFieldProps> = (
     props,

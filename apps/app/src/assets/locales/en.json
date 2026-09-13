@@ -1920,11 +1920,13 @@
             "heading": "What changes",
             "invalidAddress": "Enter a valid address.",
             "on": "on",
+            "removeChange": "Remove change",
             "required": "This field is required.",
             "summary": "{{count}} permission changes",
             "thisDao": "This DAO",
             "to": "to",
             "unconditional": "unconditional",
+            "unknownOperation": "Unknown operation {{operation}}",
             "unrecognised": "Unrecognised",
             "verifyUnrecognised": "verify this ID against the target contract"
           },
