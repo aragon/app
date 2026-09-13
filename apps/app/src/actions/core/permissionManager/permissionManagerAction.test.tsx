@@ -51,15 +51,15 @@ describe('<PermissionManagerPermissionField /> component', () => {
     });
 
     it('stores the hash of the selected permission', async () => {
-        const user = userEvent.setup();
+        const user = userEvent.setup({ delay: null });
         const permissionId =
             permissionNameUtils.getPermissionId('EXECUTE_PERMISSION');
 
         render(<TestHarness />);
 
-        await user.click(screen.getByLabelText(/permission\.label/u));
+        await user.click(screen.getByLabelText(/_permissionId/u));
         await user.type(
-            screen.getByLabelText(/permission\.label/u),
+            screen.getByLabelText(/_permissionId/u),
             'EXECUTE_PERMISSION',
         );
         await user.click(screen.getByText('EXECUTE_PERMISSION'));
@@ -70,18 +70,21 @@ describe('<PermissionManagerPermissionField /> component', () => {
     });
 
     it('stores a custom hash for a permission outside the dictionary', async () => {
-        const user = userEvent.setup();
+        const user = userEvent.setup({ delay: null });
         const customId = `0x${'ab'.repeat(32)}`;
 
         render(<TestHarness />);
 
-        await user.click(screen.getByLabelText(/permission\.label/u));
-        await user.type(screen.getByLabelText(/permission\.label/u), customId);
+        await user.click(screen.getByLabelText(/_permissionId/u));
+        await user.type(screen.getByLabelText(/_permissionId/u), customId);
         await user.click(screen.getByText(/permission\.customItem/u));
 
         expect(form?.getValues('actions.0.inputData.parameters.2.value')).toBe(
             customId,
         );
+        // The stored value has no name to fall back on, so it must stay readable here
+        // rather than only in another view.
+        expect(screen.getByText(new RegExp(customId, 'u'))).toBeInTheDocument();
     });
 
     it('renders the resolved name as the value with the hash as evidence', () => {
@@ -174,9 +177,12 @@ describe('getPermissionManagerParameterComponents', () => {
                 'bytes32',
             ]);
 
-            expect(getPermissionManagerParameterComponents(action)?.[2]).toBe(
-                PermissionManagerPermissionField,
-            );
+            const components = getPermissionManagerParameterComponents(action);
+
+            // Every parameter is claimed: addresses on 0 and 1, the permission on 2.
+            expect(components?.[2]).toBe(PermissionManagerPermissionField);
+            expect(components?.[0]).toBeDefined();
+            expect(components?.[1]).toBeDefined();
         },
     );
 

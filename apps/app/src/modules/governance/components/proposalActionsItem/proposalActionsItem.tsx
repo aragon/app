@@ -4,6 +4,7 @@ import {
     type IProposalAction as IGukProposalAction,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
 import { getPermissionManagerParameterComponents } from '@/actions/core/permissionManager';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -40,8 +41,10 @@ export const ProposalActionsItem: React.FC<IProposalActionsItemProps> = (
         actionViewRegistry.getViewBySelector(fnSelector) ??
         actionViewRegistry.getViewByActionType(action.type);
 
-    const customParameterComponents =
-        getPermissionManagerParameterComponents(action);
+    const customParameterComponents = useMemo(
+        () => getPermissionManagerParameterComponents(action, false, daoId),
+        [action, daoId],
+    );
 
     return customActionView ? (
         <ProposalActions.Item<IProposalActionData>

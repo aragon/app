@@ -1911,11 +1911,32 @@
           "Transfer": "Transfer"
         },
         "permissionManagerAction": {
+          "multiTarget": {
+            "addChange": "Add change",
+            "conditionRequired": "Enter the condition contract. The zero address means no condition.",
+            "emptyEditor": "No permission changes yet. Add one to start.",
+            "from": "from",
+            "gatedBy": ", gated by condition {{condition}}",
+            "heading": "What changes",
+            "invalidAddress": "Enter a valid address.",
+            "on": "on",
+            "required": "This field is required.",
+            "summary": "{{count}} permission changes",
+            "thisDao": "This DAO",
+            "to": "to",
+            "unconditional": "unconditional",
+            "unrecognised": "Unrecognised",
+            "verifyUnrecognised": "verify this ID against the target contract"
+          },
+          "operation": {
+            "grant": "Grant",
+            "grantWithCondition": "Grant with condition",
+            "revoke": "Revoke"
+          },
           "permission": {
             "customItem": "Use custom ID",
             "helpText": "Choose a known permission ID from the shared permission dictionary.",
             "invalid": "Enter a permission name or a 32-byte ID starting with 0x.",
-            "label": "Permission",
             "placeholder": "Search a permission or paste an ID",
             "provenance": "Matched locally against known OSx permissions, not read from the contract.",
             "selectItem": "Select permission",
