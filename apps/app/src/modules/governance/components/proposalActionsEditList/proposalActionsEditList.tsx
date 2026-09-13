@@ -70,6 +70,7 @@ export const ProposalActionsEditList: React.FC<
                         chainId={chainId}
                         customParameterComponents={getPermissionManagerParameterComponents(
                             action,
+                            true,
                         )}
                         editMode={true}
                         formPrefix={`actions.${index.toString()}`}
