@@ -128,6 +128,27 @@ describe('<MultiTargetPermissionsList /> component', () => {
         ).toBeGreaterThan(0);
     });
 
+    it('does not present an unknown operation as a grant', () => {
+        const rootId = permissionNameUtils.getPermissionId('ROOT_PERMISSION');
+
+        render(
+            <MultiTargetPermissionsList
+                fieldName="value"
+                mode={ProposalActionsDecoderMode.READ}
+                parameter={buildParameter([
+                    ['7', where, who, zeroAddress, rootId],
+                ])}
+            />,
+        );
+
+        expect(
+            screen.getByText(/multiTarget\.unknownOperation/u),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(/operation\.grant$/u),
+        ).not.toBeInTheDocument();
+    });
+
     it('falls back to the truncated hash for an unknown permission', () => {
         const unknownId = `0x${'ab'.repeat(32)}`;
 
