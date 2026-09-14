@@ -3189,6 +3189,7 @@
           "execution": "Execution",
           "executionValue": "Any owner, once threshold is met",
           "nonce": "Safe nonce used",
+          "notRecovered": "Not recovered",
           "safe": "Safe",
           "strategy": "Strategy",
           "strategyValue": "Safe multisig",
@@ -3203,6 +3204,9 @@
           "loading": "Loading Safe state\u2026",
           "rateLimited": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. This retries on its own.",
           "rateLimitedRetry": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. Retrying in about {{seconds}} seconds.",
+          "settledCounts": "Decided with {{approvals}} of {{required}} required confirmations. The owner set that applied is not recoverable from the Safe transaction.",
+          "settledNotReported": "This result was recorded onchain, but no Safe transaction reporting it appears anywhere in this Safe's history.",
+          "settledScanExhausted": "This body's confirmations are further back in the Safe's history than this view reads.",
           "settledUnfound": "This body's confirmations are further back in the Safe's history than this view reads."
         },
         "safeMultisigProposalVotingSummary": {
@@ -3222,15 +3226,29 @@
             "approved": "Approved",
           "awaitingExecution": "The Safe's threshold is met. This body's vote only counts once the Safe transaction is executed, and Safe transactions have no deadline - so that can still happen at any time.",
           "awaitingIndexing": "Executed onchain. Waiting for indexing to complete.",
+          "authorityChanged": "The Safe's owners or threshold changed after these confirmations were collected, so they no longer authorise this transaction. Your confirmation is kept — the remaining owners can still sign.",
           "error": "The Safe action could not be completed. Try again.",
           "executeSafeTransaction": "Execute Safe transaction",
+          "executionInnerFailed": "The Safe transaction executed but its call failed, so this body's result was not reported. The nonce is used up and this transaction cannot be retried — a new one has to be built and signed.",
+          "executionReverted": "The execution reverted onchain and nothing was recorded. Your confirmation is still in the Safe, so the transaction can be executed again.",
+          "executionRejected": "The Safe rejected this transaction in simulation, so it was not submitted and no gas was spent. Nothing about your confirmation changed.",
+          "executionUnconfirmed": "The transaction was mined but the Safe reported no result for it. Check the Safe before executing again.",
           "finalizing": "Finalizing",
           "indexingDelayed": "The Safe transaction executed onchain but is still not indexed. The result will appear once indexing catches up.",
             "moreActions": "More approval options",
           "nonceQueued": "Waiting on {{count}} earlier transaction(s) in the Safe queue. A Safe executes in nonce order and each confirmation is tied to its transaction's place in that order, so this one cannot be moved ahead. Owners can review the queue in Safe.",
           "nonceShared": "Another queued Safe transaction holds this same nonce. Only one of them can execute — whichever goes first voids the other, along with its confirmations.",
+          "nonceConsumed": "The Safe has moved past the nonce this transaction was built for, so it can never execute. Start again to build one at the next free nonce.",
+          "nonceContested": "Another Safe transaction took this nonce while you were reviewing. Nothing was signed. Start again to build one at the next free nonce.",
           "ownerRequired": "Connect an owner wallet for this Safe to continue.",
           "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. Its confirmations no longer apply.",
+          "reportGone": "This Safe transaction is no longer in the queue — it was executed or removed while this page was open. Nothing was signed.",
+          "review": {
+            "bundledExecution": "Your confirmation reaches the Safe's threshold, so the Safe transaction is executed straight after it. Your wallet will ask twice: first to confirm, which is free, then to execute onchain, which costs gas.",
+            "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
+            "mixed": "This Safe transaction does more than report this body's result. Review every call below before authorising it.",
+            "reportOnly": "Reports this body's result for \"{{proposal}}\" to the governance process. Signing is free and does not execute anything by itself."
+          },
           "requeueSafeTransaction": "Re-queue Safe transaction",
           "retry": "Retry",
           "stageExpired": "This stage was not advanced in time, so the proposal has expired. A vote can no longer change its outcome.",
@@ -3256,6 +3274,15 @@
             "heading": "Confirmations unavailable"
           },
           "settled": {
+            "action": "View in Safe",
+            "description": "This result was executed, so its confirmations were collected. The transaction sits further back in the Safe's history than this view reads.",
+            "heading": "Confirmations not listed"
+          },
+          "settledNotReported": {
+            "description": "This result was recorded onchain, but no Safe transaction reporting it appears anywhere in this Safe's history. It may have been reported by a different account.",
+            "heading": "Confirmations not found"
+          },
+          "settledScanExhausted": {
             "action": "View in Safe",
             "description": "This result was executed, so its confirmations were collected. The transaction sits further back in the Safe's history than this view reads.",
             "heading": "Confirmations not listed"
@@ -3796,10 +3823,37 @@
           "heading": "Unable to load pending transactions"
         },
         "item": {
+          "confirm": "Confirm",
           "confirmations": "{{count}} of {{required}} confirmations",
+          "error": "The confirmation could not be submitted. Please try again.",
           "nonce": "Nonce {{nonce}}",
+          "review": "Review",
           "submittedOn": "Submitted {{date}}"
         }
+      },
+      "safeTransactionReviewDialog": {
+        "callTarget": "To {{target}} · {{value}} wei",
+        "cancel": "Cancel",
+        "fields": {
+          "baseGas": "Base gas",
+          "gasPrice": "Gas price",
+          "gasToken": "Gas token",
+          "network": "Network",
+          "nonce": "Nonce",
+          "refundReceiver": "Refund receiver",
+          "safe": "Safe",
+          "safeTxGas": "Safe tx gas",
+          "safeTxHash": "Transaction hash"
+        },
+        "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",
+        "hashUnverifiable": "The transaction hash could not be recomputed, so its fields could not be checked against it.",
+        "incompleteBatch": "Part of this transaction could not be read. The calls below are not the whole transaction.",
+        "operation": {
+          "call": "Call",
+          "delegateCall": "Delegate call"
+        },
+        "title": "Review transaction",
+        "unknownAction": "Unknown action"
       }
     },
     "settings": {
