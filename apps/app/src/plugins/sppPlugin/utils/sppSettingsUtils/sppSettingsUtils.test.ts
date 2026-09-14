@@ -44,9 +44,8 @@ describe('sppSettings utils', () => {
             expect(result).toEqual([
                 {
                     term: 'app.plugins.spp.sppGovernanceSettings.default.name',
-                    copyValue: address,
                     definition: name,
-                    link,
+                    link: { href: url },
                 },
                 {
                     term: 'app.plugins.spp.sppGovernanceSettings.default.address',

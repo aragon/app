@@ -56,6 +56,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (
                     <AddressOutput
                         address={address}
                         className="text-base text-neutral-500 md:text-lg"
+                        copy={false}
                     />
                 </div>
                 <p className="text-neutral-500 text-sm md:text-base">
