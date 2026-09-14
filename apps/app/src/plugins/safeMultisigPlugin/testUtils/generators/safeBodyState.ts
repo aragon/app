@@ -18,7 +18,7 @@ export const generateSafeBodyState = (
     canStillAffectOutcome: true,
     isExecutableNow: false,
     isCurrentNonceFree: true,
-    transactionsAhead: 0,
+    nonceDistance: 0,
     signers: [],
     hasConnectedWalletSigned: false,
     approvalsAmount: 0,

@@ -1239,7 +1239,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             hasConnectedWalletSigned: true,
             approvalsAmount: 1,
             isExecutableNow: false,
-            transactionsAhead: 2,
+            nonceDistance: 2,
         });
 
         render(createTestComponent());
@@ -1252,9 +1252,11 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
             }),
         ).toBeDisabled();
+        // Named by nonce position, never as a quantity of transactions: the gap between nonces is
+        // neither an upper nor a lower bound on what is queued.
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueued (count=2)',
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueued (currentNonce=4,transactionNonce=6)',
             ),
         ).toBeInTheDocument();
     });

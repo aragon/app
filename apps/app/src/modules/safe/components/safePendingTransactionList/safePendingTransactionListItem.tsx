@@ -13,8 +13,12 @@ import type { Network } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { SafeDialogId } from '../../constants';
-import { useSafeTransactionConfirmation } from '../../hooks/useSafeTransactionConfirmation';
+import {
+    type ISafeExecutionActionOutcome,
+    useSafeTransactionActions,
+} from '../../hooks/useSafeTransactionActions';
 
 export interface ISafePendingTransactionListItemProps {
     /**
@@ -38,26 +42,38 @@ export interface ISafePendingTransactionListItemProps {
      * unverifiable rather than wrong.
      */
     safeVersion: string | null;
+    /**
+     * Keeps an execution result visible after a successful execution removes the row.
+     */
+    onExecutionOutcome: (outcome: ISafeExecutionActionOutcome) => void;
 }
 
 export const SafePendingTransactionListItem: React.FC<
     ISafePendingTransactionListItemProps
 > = (props) => {
-    const { transaction, safeAddress, network, chainId, safeVersion } = props;
+    const {
+        transaction,
+        safeAddress,
+        network,
+        chainId,
+        safeVersion,
+        onExecutionOutcome,
+    } = props;
     const { nonce, safeTxHash, confirmations, confirmationsRequired } =
         transaction;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
-    const { confirm, isConfirming, hasFailed } = useSafeTransactionConfirmation(
-        { network, safeAddress, chainId },
-    );
+    const { withNetworkSwitch } = useNetworkSwitch({ network });
+    const { confirm, confirmError, execute, isConfirming, isExecuting } =
+        useSafeTransactionActions({ network, safeAddress, chainId });
+    const shouldExecute = confirmations.length >= confirmationsRequired;
+    const actionTranslationKey = shouldExecute ? 'execute' : 'confirm';
 
     const submittedOn = formatterUtils.formatDate(transaction.submissionDate, {
         format: DateFormat.YEAR_MONTH_DAY,
     });
-
     const handleReviewClick = () =>
         open(SafeDialogId.TRANSACTION_REVIEW, {
             params: {
@@ -66,13 +82,27 @@ export const SafePendingTransactionListItem: React.FC<
                 network,
                 safeVersion,
                 confirmLabel: t(
-                    'app.safe.safePendingTransactionList.item.confirm',
+                    `app.safe.safePendingTransactionList.item.${actionTranslationKey}`,
                 ),
-                // Reviewing needs no wallet; signing does. The guard runs on the authorisation,
-                // so a disconnected viewer still sees the payload before being asked to connect.
+                // Reviewing needs no wallet; the guard and chain switch run on authorisation, so a
+                // disconnected viewer still sees the payload before being asked to connect.
                 onConfirm: () =>
                     checkWalletConnection({
-                        onSuccess: () => void confirm(transaction),
+                        onSuccess: () =>
+                            withNetworkSwitch(() => {
+                                if (shouldExecute) {
+                                    void execute(transaction).then(
+                                        onExecutionOutcome,
+                                        () =>
+                                            onExecutionOutcome({
+                                                status: 'error',
+                                                messageKey: 'error',
+                                            }),
+                                    );
+                                } else {
+                                    void confirm(transaction);
+                                }
+                            }),
                     }),
             },
         });
@@ -109,7 +139,7 @@ export const SafePendingTransactionListItem: React.FC<
                     )}
                 </span>
                 <Button
-                    isLoading={isConfirming}
+                    isLoading={isConfirming || isExecuting}
                     onClick={handleReviewClick}
                     size="sm"
                     variant="secondary"
@@ -117,9 +147,11 @@ export const SafePendingTransactionListItem: React.FC<
                     {t('app.safe.safePendingTransactionList.item.review')}
                 </Button>
             </div>
-            {hasFailed && (
+            {confirmError != null && (
                 <span className="text-critical-500 text-sm">
-                    {t('app.safe.safePendingTransactionList.item.error')}
+                    {t(
+                        `app.safe.safePendingTransactionList.item.${confirmError}`,
+                    )}
                 </span>
             )}
         </DataListItem>

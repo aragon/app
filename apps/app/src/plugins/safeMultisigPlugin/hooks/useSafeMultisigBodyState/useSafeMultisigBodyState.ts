@@ -283,7 +283,7 @@ export const useSafeMultisigBodyState = (
             !pendingReport.transaction.isExecuted &&
             nonceGap === BigInt(0),
         isCurrentNonceFree,
-        transactionsAhead: nonceGap > BigInt(0) ? Number(nonceGap) : 0,
+        nonceDistance: nonceGap > BigInt(0) ? Number(nonceGap) : 0,
         signers,
         hasConnectedWalletSigned:
             pendingReport != null &&

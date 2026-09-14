@@ -3214,7 +3214,7 @@
           "finalizing": "Finalizing",
           "indexingDelayed": "The Safe transaction executed onchain but is still not indexed. The result will appear once indexing catches up.",
             "moreActions": "More approval options",
-          "nonceQueued": "Waiting on {{count}} earlier transaction(s) in the Safe queue. A Safe executes in nonce order and each confirmation is tied to its transaction's place in that order, so this one cannot be moved ahead. Owners can review the queue in Safe.",
+          "nonceQueued": "This transaction uses nonce {{transactionNonce}}; the Safe is currently at nonce {{currentNonce}}. It can execute only when the Safe reaches its nonce. Changing the nonce would invalidate its confirmations.",
           "nonceShared": "Another queued Safe transaction holds this same nonce. Only one of them can execute — whichever goes first voids the other, along with its confirmations.",
           "nonceConsumed": "The Safe has moved past the nonce this transaction was built for, so it can never execute. Start again to build one at the next free nonce.",
           "nonceContested": "Another Safe transaction took this nonce while you were reviewing. Nothing was signed. Start again to build one at the next free nonce.",
@@ -3740,7 +3740,7 @@
           }
         },
         "header": {
-          "description": "A read-only view of this Safe: its owners, signing threshold, contract version, nonce, queued transactions and balances."
+          "description": "An interactive view of this Safe: review, confirm and execute transactions alongside its owners, signing threshold, contract version, nonce and balances."
         },
         "main": {
           "assets": {
@@ -3801,9 +3801,28 @@
           "confirm": "Confirm",
           "confirmations": "{{count}} of {{required}} confirmations",
           "error": "The confirmation could not be submitted. Please try again.",
+          "execute": "Execute",
+          "hashMismatch": "This transaction changed after review, so it was not submitted.",
           "nonce": "Nonce {{nonce}}",
+          "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
+          "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
           "review": "Review",
-          "submittedOn": "Submitted {{date}}"
+          "stale": "The Safe queue could not be re-read, so nothing was signed. Please try again.",
+          "submittedOn": "Submitted {{date}}",
+          "unavailable": "This transaction is no longer available in the Safe queue."
+        },
+        "execution": {
+          "authorityChanged": "The Safe owners or signing threshold changed, so this transaction was not submitted.",
+          "error": "The transaction could not be executed. Please try again.",
+          "executed": "The Safe transaction was executed successfully.",
+          "innerFailed": "The Safe transaction was submitted, but the transaction inside the Safe failed.",
+          "nonceConsumed": "This transaction can no longer execute because the Safe already used its nonce.",
+          "nonceQueued": "This transaction is queued behind the Safe's current nonce and was not submitted.",
+          "rejected": "The Safe rejected this transaction during simulation, so it was not submitted.",
+          "reverted": "The Safe transaction reverted before its inner call ran.",
+          "transactionHash": "View the submitted transaction",
+          "unavailable": "This transaction is no longer available in the Safe queue.",
+          "unconfirmed": "The Safe transaction was submitted, but its execution could not be confirmed."
         }
       },
       "safeTransactionReviewDialog": {

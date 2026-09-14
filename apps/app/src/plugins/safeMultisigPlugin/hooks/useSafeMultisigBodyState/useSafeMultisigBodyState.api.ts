@@ -147,13 +147,10 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     isCurrentNonceFree: boolean;
     /**
-     * Safe transactions that must clear before the queued report can execute.
-     *
-     * Their contents are deliberately not interpreted: a Safe is a universal account, so what sits
-     * ahead may be any transaction from any application, proposed at any time, and is very possibly
-     * nothing to do with Aragon.
+     * Positive distance from the Safe's current nonce to the queued report's nonce, or zero.
+     * Not a transaction count: nonce slots may be empty or have competing transactions.
      */
-    transactionsAhead: number;
+    nonceDistance: number;
     /**
      * Owners that confirmed the report the verdict rests on: the executed one once settled, the
      * queued one while it is still collecting.

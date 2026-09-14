@@ -142,18 +142,17 @@ describe('useSafeMultisigBodyState hook', () => {
 
         expect(result.current.pendingReport).toBeDefined();
         expect(result.current.isExecutableNow).toBe(true);
-        expect(result.current.transactionsAhead).toEqual(0);
+        expect(result.current.nonceDistance).toEqual(0);
     });
 
-    it('counts the transactions ahead rather than calling a confirmed transaction executable', () => {
-        // A confirmation binds one exact nonce, so a transaction two places back is waiting however
-        // completely it is confirmed - and it cannot be moved without voiding those confirmations.
+    it('withholds execution across empty nonce slots', () => {
+        // Only nonce 8 is queued; the missing slots 6 and 7 still prevent execution.
         mockQueuedTransaction('8');
 
         const { result } = renderState();
 
         expect(result.current.isExecutableNow).toBe(false);
-        expect(result.current.transactionsAhead).toEqual(2);
+        expect(result.current.nonceDistance).toEqual(2);
     });
 
     it('reports the current nonce free when nothing in the queue holds it', () => {

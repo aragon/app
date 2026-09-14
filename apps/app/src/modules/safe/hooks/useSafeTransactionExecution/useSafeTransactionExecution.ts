@@ -1,6 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type Safe from '@safe-global/protocol-kit';
-import { buildSignatureBytes } from '@safe-global/protocol-kit';
 import type { Hex } from 'viem';
 import { sendTransaction, waitForTransactionReceipt } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
@@ -152,6 +151,11 @@ export const useSafeTransactionExecution = () => {
             safeTransaction.addSignature(signature);
         }
 
+        // Dynamic: signature-byte encoding is only needed on execution and should not pull the SDK
+        // into account and governance surfaces before an action is requested.
+        const { buildSignatureBytes } = await import(
+            '@safe-global/protocol-kit'
+        );
         if (
             safeTransaction.encodedSignatures() !==
             buildSignatureBytes(applicableSignatures)

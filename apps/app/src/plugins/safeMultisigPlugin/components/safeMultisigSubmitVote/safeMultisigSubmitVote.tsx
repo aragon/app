@@ -162,7 +162,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         isStale,
         isExecutableNow,
         isCurrentNonceFree,
-        transactionsAhead,
+        nonceDistance,
         canStillAffectOutcome,
         isStageCurrent,
     } = bodyState;
@@ -660,11 +660,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             const landsOnCurrentNonce =
                 BigInt(transaction.nonce) === BigInt(nextNonce.currentNonce);
 
-            const {
-                buildSignatureBytes,
-                EthSafeSignature,
-                EthSafeTransaction,
-            } = await import('@safe-global/protocol-kit');
+            const { EthSafeSignature, EthSafeTransaction } = await import(
+                '@safe-global/protocol-kit'
+            );
             const protocolKit = await initProtocolKit(ownerAddress);
 
             const envelope =
@@ -878,16 +876,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const isWaitingForOwners =
         liveReport != null && hasConnectedWalletSigned && !thresholdReached;
 
-    /**
-     * A signature binds one exact nonce, so a fully-signed report cannot execute until the
-     * transactions ahead of it clear - and it cannot be moved: re-nonced calldata is a different
-     * transaction hash, which voids every signature collected so far.
-     *
-     * What is ahead is deliberately not described. A Safe is a universal account and its queue is
-     * shared with every other application using it, so the blocker may be unrelated to Aragon and
-     * unknowable here. Owners settle priority in the Safe itself.
-     */
-    const isQueuedBehindNonce = thresholdReached && transactionsAhead > 0;
+    // A signature binds an exact nonce. Gaps and competing transactions mean nonce distance
+    // cannot tell us how many queued transactions exist.
+    const isQueuedBehindNonce = thresholdReached && nonceDistance > 0;
 
     // Below threshold the action produces a confirmation, so it is named for its governance intent.
     // At threshold the only thing left is executing a Safe transaction, and that is named for the
@@ -989,7 +980,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             key: 'nonceQueued',
             variant: 'warning',
             message: t(`${translationKey}.nonceQueued`, {
-                count: transactionsAhead,
+                currentNonce: safeInfo?.nonce,
+                transactionNonce: liveReport?.transaction.nonce,
             }),
         });
     }
