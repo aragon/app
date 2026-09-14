@@ -6,7 +6,10 @@ import {
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
 } from '../../api/workspaceQueryService';
-import { WorkspaceAccountType } from '../../api/workspaceService';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+} from '../../api/workspaceService';
 
 /**
  * A network and address pair, i.e. what identifies a workspace account or target.
@@ -176,6 +179,33 @@ class WorkspaceUtils {
 
         return typeMap[accountInfo.type];
     };
+
+    /**
+     * Returns the name of an account, or undefined when it has none.
+     *
+     * The metadata is what the workspace owner called this account, so it wins over the indexed DAO name.
+     * @param account - Account as stored on the registry.
+     * @param accountInfo - Account as resolved by the accounts API, undefined while the lookup is pending.
+     * @returns The name of the account, or undefined when neither source has one.
+     */
+    getAccountName = (
+        account: IWorkspaceAccount,
+        accountInfo?: IWorkspaceAccountInfo,
+    ): string | undefined =>
+        account.metadata?.name ?? accountInfo?.name ?? undefined;
+
+    /**
+     * Returns how an account should be labelled, falling back to its truncated address when it has no name.
+     * @param account - Account as stored on the registry.
+     * @param accountInfo - Account as resolved by the accounts API, undefined while the lookup is pending.
+     * @returns The label of the account.
+     */
+    getAccountLabel = (
+        account: IWorkspaceAccount,
+        accountInfo?: IWorkspaceAccountInfo,
+    ): string =>
+        this.getAccountName(account, accountInfo) ??
+        addressUtils.truncateAddress(account.address);
 
     /**
      * Finds the account resolved by the API for the given network and address. The API removes duplicates and

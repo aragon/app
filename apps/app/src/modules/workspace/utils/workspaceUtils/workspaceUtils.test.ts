@@ -1,10 +1,14 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { Network } from '@/shared/api/daoService';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
 } from '../../api/workspaceQueryService';
-import { WorkspaceAccountType } from '../../api/workspaceService';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+} from '../../api/workspaceService';
 import {
     type IWorkspaceNetworkAddress,
     workspaceUtils,
@@ -127,6 +131,69 @@ describe('workspace utils', () => {
 
         it('returns undefined when there is no account info', () => {
             expect(workspaceUtils.getAccountType(undefined)).toBeUndefined();
+        });
+    });
+
+    const buildAccount = (
+        account?: Partial<IWorkspaceAccount>,
+    ): IWorkspaceAccount => ({
+        id: `ethereum-mainnet-${addressOne}`,
+        type: WorkspaceAccountType.DAO,
+        address: addressOne,
+        network: Network.ETHEREUM_MAINNET,
+        ...account,
+    });
+
+    describe('getAccountName', () => {
+        it('prefers the account metadata name, it is what the owner called the account', () => {
+            const account = buildAccount({
+                metadata: { name: 'Main treasury' },
+            });
+
+            expect(
+                workspaceUtils.getAccountName(
+                    account,
+                    buildAccountInfo({ name: 'Demo DAO' }),
+                ),
+            ).toEqual('Main treasury');
+        });
+
+        it('falls back to the name resolved by the accounts API', () => {
+            expect(
+                workspaceUtils.getAccountName(
+                    buildAccount(),
+                    buildAccountInfo({ name: 'Demo DAO' }),
+                ),
+            ).toEqual('Demo DAO');
+        });
+
+        it('returns undefined when neither source names the account', () => {
+            expect(
+                workspaceUtils.getAccountName(buildAccount()),
+            ).toBeUndefined();
+            expect(
+                workspaceUtils.getAccountName(
+                    buildAccount(),
+                    buildAccountInfo({ name: null }),
+                ),
+            ).toBeUndefined();
+        });
+    });
+
+    describe('getAccountLabel', () => {
+        it('labels an account with its name', () => {
+            expect(
+                workspaceUtils.getAccountLabel(
+                    buildAccount(),
+                    buildAccountInfo({ name: 'Demo DAO' }),
+                ),
+            ).toEqual('Demo DAO');
+        });
+
+        it('falls back to the truncated address for an account with no name', () => {
+            expect(workspaceUtils.getAccountLabel(buildAccount())).toEqual(
+                addressUtils.truncateAddress(addressOne),
+            );
         });
     });
 
