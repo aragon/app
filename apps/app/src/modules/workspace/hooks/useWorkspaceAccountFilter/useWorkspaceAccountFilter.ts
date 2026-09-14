@@ -1,6 +1,5 @@
 'use client';
 
-import { addressUtils } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import type { IWorkspaceAccountInfo } from '../../api/workspaceQueryService';
@@ -93,10 +92,7 @@ export const useWorkspaceAccountFilter = (
                 return {
                     id: account.id,
                     // Same precedence as the workspace overview rows, so a tab and its row never disagree.
-                    label:
-                        account.metadata?.name ??
-                        accountInfo?.name ??
-                        addressUtils.truncateAddress(account.address),
+                    label: workspaceUtils.getAccountLabel(account, accountInfo),
                     account,
                     isAllAccounts: false,
                 };

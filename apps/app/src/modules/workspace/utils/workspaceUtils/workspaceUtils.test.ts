@@ -1,3 +1,4 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { Network } from '@/shared/api/daoService';
 import {
     type IWorkspaceAccountInfo,
@@ -133,43 +134,65 @@ describe('workspace utils', () => {
         });
     });
 
-    describe('getAccountName and getAccountLabel', () => {
-        const buildAccount = (
-            account?: Partial<IWorkspaceAccount>,
-        ): IWorkspaceAccount => ({
-            id: `ethereum-mainnet-${addressOne}`,
-            type: WorkspaceAccountType.DAO,
-            address: addressOne,
-            network: Network.ETHEREUM_MAINNET,
-            ...account,
-        });
+    const buildAccount = (
+        account?: Partial<IWorkspaceAccount>,
+    ): IWorkspaceAccount => ({
+        id: `ethereum-mainnet-${addressOne}`,
+        type: WorkspaceAccountType.DAO,
+        address: addressOne,
+        network: Network.ETHEREUM_MAINNET,
+        ...account,
+    });
 
-        it('prefers the stored metadata name over the name resolved by the API', () => {
-            const account = buildAccount({ metadata: { name: 'Treasury' } });
-            const accountInfo = buildAccountInfo({ name: 'Indexed DAO' });
-
-            expect(workspaceUtils.getAccountName(account, accountInfo)).toEqual(
-                'Treasury',
-            );
-        });
-
-        it('falls back to the name resolved by the API', () => {
-            const accountInfo = buildAccountInfo({ name: 'Indexed DAO' });
+    describe('getAccountName', () => {
+        it('prefers the account metadata name, it is what the owner called the account', () => {
+            const account = buildAccount({
+                metadata: { name: 'Main treasury' },
+            });
 
             expect(
-                workspaceUtils.getAccountName(buildAccount(), accountInfo),
-            ).toEqual('Indexed DAO');
+                workspaceUtils.getAccountName(
+                    account,
+                    buildAccountInfo({ name: 'Demo DAO' }),
+                ),
+            ).toEqual('Main treasury');
         });
 
-        it('returns undefined as a name when neither source has one', () => {
+        it('falls back to the name resolved by the accounts API', () => {
+            expect(
+                workspaceUtils.getAccountName(
+                    buildAccount(),
+                    buildAccountInfo({ name: 'Demo DAO' }),
+                ),
+            ).toEqual('Demo DAO');
+        });
+
+        it('returns undefined when neither source names the account', () => {
             expect(
                 workspaceUtils.getAccountName(buildAccount()),
             ).toBeUndefined();
+            expect(
+                workspaceUtils.getAccountName(
+                    buildAccount(),
+                    buildAccountInfo({ name: null }),
+                ),
+            ).toBeUndefined();
+        });
+    });
+
+    describe('getAccountLabel', () => {
+        it('labels an account with its name', () => {
+            expect(
+                workspaceUtils.getAccountLabel(
+                    buildAccount(),
+                    buildAccountInfo({ name: 'Demo DAO' }),
+                ),
+            ).toEqual('Demo DAO');
         });
 
-        it('labels a nameless account with its truncated address', () => {
+        it('falls back to the truncated address for an account with no name', () => {
             expect(workspaceUtils.getAccountLabel(buildAccount())).toEqual(
-                '0xA941…6419',
+                addressUtils.truncateAddress(addressOne),
             );
         });
     });
