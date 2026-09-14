@@ -821,9 +821,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
 
                 /**
                  * A mined transaction is not a successful one, and a successful outer transaction
-                 * is not a successful Safe transaction. Only the Safe's own event entitles this
-                 * surface to say the report executed and to start waiting for it to be indexed -
-                 * waiting for a verdict that was never emitted just ages out as "indexer is slow".
+                 * is not a successful Safe transaction. The Safe's own event is the first of two
+                 * gates: it rules out an outer revert and a failed inner call, but not a payload
+                 * that ran and did nothing, which is what the second gate below is for.
                  */
                 const outcome = safeExecutionOutcomeUtils.classify({
                     receipt,

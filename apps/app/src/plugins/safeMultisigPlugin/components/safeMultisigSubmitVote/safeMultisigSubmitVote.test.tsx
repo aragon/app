@@ -177,10 +177,15 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     /**
      * Shared so the receipt mock and the rendered component cannot drift: the report event only
      * counts when its emitter, proposal and stage are the ones this card is reporting for.
+     *
+     * `proposalIndex` is the real onchain id from the sepolia fixture rather than the generator's
+     * `0`, which encodes to all zeros and would match almost any encoding bug.
      */
     const reportedProposal = generateSppProposal({
         network: Network.ETHEREUM_SEPOLIA,
         pluginAddress: `0x${'ab'.repeat(20)}`,
+        proposalIndex:
+            '88995626346429952950895700040679797192033948228404734175794720873791947498256',
     });
     const reportedStageIndex = 1;
 
@@ -1499,6 +1504,27 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 safeTransaction,
             );
         });
+    });
+
+    it('derives the report topic and topics the plugin actually emits onchain', () => {
+        /**
+         * Ground truth, not a restatement. These three strings are copied from the log the SPP
+         * plugin `0xc18021bf…` emitted on sepolia when a report really landed (tx `0xda718cd5…`,
+         * nonce 4). The component and the mocks below derive theirs from the same signature and
+         * encoding, so without this they would agree with each other while matching nothing on
+         * chain - a check that silently never fires, and a suite that passes anyway.
+         */
+        expect(
+            toEventSelector('ProposalResultReported(uint256,uint16,address)'),
+        ).toBe(
+            '0xbfaa970a350cc4e6c21888b5c4b888e2750f035ce824e40cfc7dc5f07e3936c5',
+        );
+        expect(pad(numberToHex(BigInt(reportedProposal.proposalIndex)))).toBe(
+            '0xc4c1bd4e48d9e9b8f017822f273e886c1646cb5a742fa12cb7320e8812736310',
+        );
+        expect(pad(numberToHex(reportedStageIndex))).toBe(
+            '0x0000000000000000000000000000000000000000000000000000000000000001',
+        );
     });
 
     it('says nothing was recorded when the Safe succeeded but no report was emitted', async () => {
