@@ -94,11 +94,13 @@ export const SafeMultisigProposalVotingSummary: React.FC<
     }
 
     // Owners are read live and a Safe can be emptied, so guard the division rather than trusting a
-    // positive member count the way a snapshotted body can.
+    // positive member count the way a snapshotted body can. Only an undecided body reaches here, so
+    // the live count applies; it is optional, and absent draws no bar.
+    const liveMembersCount = membersCount ?? 0;
     const approvalsPercentage =
-        membersCount > 0 ? (approvalsAmount / membersCount) * 100 : 0;
+        liveMembersCount > 0 ? (approvalsAmount / liveMembersCount) * 100 : 0;
     const thresholdPercentage =
-        membersCount > 0 ? (minApprovals / membersCount) * 100 : 0;
+        liveMembersCount > 0 ? (minApprovals / liveMembersCount) * 100 : 0;
     const isThresholdReached = approvalsAmount >= minApprovals;
 
     return (

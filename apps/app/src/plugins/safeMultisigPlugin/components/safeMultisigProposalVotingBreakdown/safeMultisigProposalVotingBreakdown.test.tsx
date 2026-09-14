@@ -8,6 +8,7 @@ import {
 import { SppProposalType } from '../../../sppPlugin/types';
 import { sppStageUtils } from '../../../sppPlugin/utils/sppStageUtils';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
+import { SafeSettledReportOutcome } from '../../hooks/useSafeSettledReport';
 import {
     generateSafeBodyState,
     generateSafeConfirmation,
@@ -178,7 +179,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         );
     });
 
-    it('states no approval count when the scan never found the settled report', () => {
+    it('says the search was incomplete when the scan ran out of pages', () => {
         // The Safe's live threshold is not this decision's history: a report executed by a 1-of-2
         // Safe would read as "2 of 2" once the owners raise the threshold. Say the confirmations
         // are out of reach and keep the link, rather than filling the gap with today's numbers.
@@ -186,6 +187,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
             ...state,
             settledResultType: SppProposalType.APPROVAL,
             settledReport: undefined,
+            settledReportOutcome: SafeSettledReportOutcome.SCAN_EXHAUSTED,
             approvalsAmount: 0,
             minApprovals: 0,
             isLoading: false,
@@ -195,13 +197,111 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
 
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.settledUnfound',
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.settledScanExhausted',
             ),
         ).toBeInTheDocument();
         expect(
             screen.getByRole('link', {
                 name: 'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.executed',
             }),
+        ).toBeInTheDocument();
+    });
+
+    it('says no report exists when the whole history was walked', () => {
+        // A different claim from an incomplete search: the verdict is real and recorded, and no
+        // transaction in this Safe reports it. Offering "look further back" would be misleading.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: undefined,
+            settledReportOutcome: SafeSettledReportOutcome.NOT_REPORTED,
+            approvalsAmount: 0,
+            minApprovals: 0,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.settledNotReported',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('offers no history link once the history was walked without the report', () => {
+        // The fallback link exists for a report that is somewhere in this Safe. Here the whole
+        // history was read and it is not, so the link would point at its own counter-evidence.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: undefined,
+            settledReportOutcome: SafeSettledReportOutcome.NOT_REPORTED,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    });
+
+    it('does not claim the report is missing when the scan itself failed', () => {
+        // A failed read has no standing to say the report does not exist. Both statements would be
+        // about the Safe; only the error is about this read.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: undefined,
+            settledReportOutcome: undefined,
+            isError: true,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.error',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.settledNotReported',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('states the recovered counts without a denominator once settled', () => {
+        // The owner set behind those confirmations is unrecoverable, so the bar cannot be drawn.
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '4',
+                    isExecuted: true,
+                    confirmationsRequired: 2,
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+            },
+            settledReportOutcome: SafeSettledReportOutcome.FOUND,
+            approvalsAmount: 2,
+            minApprovals: 2,
+            membersCount: undefined,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.settledCounts (approvals=2,required=2)',
+            ),
         ).toBeInTheDocument();
     });
 

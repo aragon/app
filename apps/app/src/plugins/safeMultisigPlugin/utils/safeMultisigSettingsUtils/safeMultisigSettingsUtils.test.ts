@@ -84,9 +84,8 @@ describe('safeMultisigSettings utils', () => {
     });
 
     it('states no configuration once a body is decided but its numbers are unrecoverable', () => {
-        // Two ways to land here: a report older than the scan's page bound, and a veto body that
-        // never vetoed, which leaves no transaction at all. Both are permanent, and the live Safe
-        // is exactly what must not fill the gap.
+        // A veto body that never vetoed leaves no transaction at all, so there is nothing to
+        // recover and the live Safe is exactly what must not fill the gap.
         const settings = safeMultisigSettingsUtils.parseSettings({
             safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
             safeName,
@@ -103,6 +102,31 @@ describe('safeMultisigSettings utils', () => {
         expect(terms).not.toContain(`${key}.version`);
         // The Safe itself is still worth stating: identity is not configuration.
         expect(terms).toContain(`${key}.safe`);
+    });
+
+    it('says the threshold was not recovered when the scan ran out of pages', () => {
+        // An incomplete read is not the same claim as "there is nothing to recover": the number
+        // exists in the Safe's history, past where this view looked. Silence would read as the
+        // permanent case, and the live threshold would be today's configuration mislabelled.
+        const settings = safeMultisigSettingsUtils.parseSettings({
+            safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
+            safeName,
+            safeHref,
+            isDecided: true,
+            isScanExhausted: true,
+            t,
+        });
+
+        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+        const threshold = settings.find(
+            (setting) => setting.term === `${key}.threshold`,
+        );
+
+        expect(threshold?.definition).toBe(`${key}.notRecovered`);
+        // Still never today's numbers: no live nonce, no live version.
+        expect(settings.map((setting) => setting.term)).not.toContain(
+            `${key}.currentNonce`,
+        );
     });
 
     const safeRowOf = (settings: ReturnType<typeof parse>) =>

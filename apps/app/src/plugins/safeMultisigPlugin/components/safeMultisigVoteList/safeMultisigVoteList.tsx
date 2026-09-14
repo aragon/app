@@ -18,6 +18,7 @@ import { safeDataListUtils } from '@/modules/safe/utils/safeDataListUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
+import { SafeSettledReportOutcome } from '../../hooks/useSafeSettledReport';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
 
 const signersPerPage = 6;
@@ -39,7 +40,7 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
     // `signers` covers both halves of a body's life: the queued report while it is collecting
     // confirmations, and the executed one afterwards - the queue stops serving a transaction the
     // moment it executes, so a settled body's confirmations come from history.
-    const { signers, isLoading, isError, settledResultType, settledReport } =
+    const { signers, isLoading, isError, settledReportOutcome } =
         useSafeMultisigBodyState({
             network,
             address: body,
@@ -48,16 +49,26 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
         });
 
     /**
-     * A settled body whose executed report was not found: the scan gives up once it walks past the
-     * stage's start date or hits its page cap, which a Safe busy enough can trigger.
-     *
-     * "No confirmations yet" would be false here - a full set was collected to execute at all - so
-     * this case says where they are instead.
+     * A settled body whose executed report was not recovered. "No confirmations yet" would be false
+     * either way - a full set was collected to execute at all - but only a scan that reached an
+     * answer may say why: a failed read has no standing to claim the report does not exist, and the
+     * list's own error state covers it.
      */
-    const hasUnresolvedSettledReport =
-        settledResultType != null && settledReport == null;
-    const emptyKey = hasUnresolvedSettledReport ? 'settled' : 'empty';
-    const historyHref = hasUnresolvedSettledReport
+    const isScanExhausted =
+        settledReportOutcome === SafeSettledReportOutcome.SCAN_EXHAUSTED;
+    const isNotReported =
+        settledReportOutcome === SafeSettledReportOutcome.NOT_REPORTED;
+
+    let emptyKey = 'empty';
+
+    if (isScanExhausted) {
+        emptyKey = 'settledScanExhausted';
+    } else if (isNotReported) {
+        emptyKey = 'settledNotReported';
+    }
+
+    // The link is only worth offering where there is more history to look through.
+    const historyHref = isScanExhausted
         ? safeAppHistoryUrl({ network, address: body })
         : undefined;
 
@@ -95,7 +106,9 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
                     ...(historyHref != null
                         ? {
                               primaryButton: {
-                                  label: t(`${translationKey}.settled.action`),
+                                  label: t(
+                                      `${translationKey}.${emptyKey}.action`,
+                                  ),
                                   href: historyHref,
                                   target: '_blank',
                                   rel: 'noopener',

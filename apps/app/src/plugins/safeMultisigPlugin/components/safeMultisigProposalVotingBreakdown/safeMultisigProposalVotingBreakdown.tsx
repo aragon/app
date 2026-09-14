@@ -17,6 +17,7 @@ import {
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
+import { SafeSettledReportOutcome } from '../../hooks/useSafeSettledReport';
 
 export interface ISafeMultisigProposalVotingBreakdownProps {
     proposal: ISppProposal;
@@ -53,6 +54,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         rateLimitedRetryAfter,
         settledResultType,
         settledReport,
+        settledReportOutcome,
     } = useSafeMultisigBodyState({
         network: proposal.network,
         address: body,
@@ -81,8 +83,14 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
      *
      * The exact transaction when history has resolved it, the Safe's history as the fallback: the
      * settled read can be pending, stale or beyond its page, and "somewhere in this Safe" still
-     * beats no link at all.
+     * beats no link at all. Once the whole history has been walked without finding it, that stops
+     * being true - the link would point at the history that demonstrably lacks it.
      */
+    const historyHref =
+        settledReportOutcome === SafeSettledReportOutcome.NOT_REPORTED
+            ? undefined
+            : safeAppHistoryUrl({ network: proposal.network, address: body });
+
     const executedHref =
         (settledReport != null
             ? safeAppTransactionUrl({
@@ -90,8 +98,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                   address: body,
                   safeTxHash: settledReport.transaction.safeTxHash,
               })
-            : undefined) ??
-        safeAppHistoryUrl({ network: proposal.network, address: body });
+            : undefined) ?? historyHref;
 
     /**
      * Provenance is a fact, not a control, so it renders as a link rather than a button. The date
@@ -124,18 +131,39 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         ) : null;
 
     /**
-     * An indexed verdict whose transaction the scan never found: real confirmations exist, they are
-     * just further back than this read reaches. Stating the count from the Safe's live threshold
-     * would present today's configuration as the decision's own history.
+     * An indexed verdict whose transaction was not recovered, and the absence is only worth
+     * explaining once the scan actually reached an answer. A failed or still-running read has no
+     * standing to say the report does not exist, so the copy keys off the outcome rather than off
+     * a missing report: the history ran out without it, or this read's page budget did.
      */
-    const hasUnfoundSettledReport =
+    const isUnfound =
         settledResultType != null && settledReport == null && !isLoading;
 
-    if (hasUnfoundSettledReport) {
-        placeholderText = t(`${translationKey}.settledUnfound`);
+    /**
+     * A recovered report states its own confirmations and the threshold that applied, but the owner
+     * set behind them is not recoverable from a transaction. The breakdown bar needs a denominator,
+     * so a settled body states the counts in prose instead of drawing "N of today's owners".
+     */
+    const hasSettledCounts =
+        settledReport != null && membersCount == null && !isLoading;
+
+    if (settledReportOutcome === SafeSettledReportOutcome.SCAN_EXHAUSTED) {
+        placeholderText = t(`${translationKey}.settledScanExhausted`);
+    } else if (settledReportOutcome === SafeSettledReportOutcome.NOT_REPORTED) {
+        placeholderText = t(`${translationKey}.settledNotReported`);
     }
 
-    if (safeInfo == null || hasUnfoundSettledReport) {
+    if (hasSettledCounts) {
+        placeholderText = t(`${translationKey}.settledCounts`, {
+            approvals: approvalsAmount,
+            required: minApprovals,
+        });
+    }
+
+    // `membersCount` is absent exactly when the body has settled, so it - not the two copy flags -
+    // decides whether the bar can be drawn at all. The flags suppress themselves while loading, so
+    // gating on them would let a settled body reach the bar with no denominator.
+    if (safeInfo == null || membersCount == null || isUnfound) {
         return (
             <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
                 <div

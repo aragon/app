@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
     SafeServiceError,
@@ -121,11 +122,13 @@ export const useSafeMultisigBodyState = (
      * Only scanned once a verdict is recorded. Until then the queue holds everything worth showing,
      * and this read costs Safe quota where `info` does not.
      *
-     * The stage's start date bounds the scan: `reportProposalResult` reverts for a stage that has
-     * not started, so no earlier execution can carry this verdict.
+     * The recorded verdict bounds it instead of a date: `reportProposalResult` rejects only a
+     * future stage, so a report can execute before its stage opened, and what identifies the right
+     * transaction is the result it carried rather than when it ran.
      */
     const {
         settledReport,
+        outcome: settledReportOutcome,
         isLoading: isSettledReportLoading,
         isError: isSettledReportError,
     } = useSafeSettledReport({
@@ -134,7 +137,7 @@ export const useSafeMultisigBodyState = (
         pluginAddress: proposal.pluginAddress,
         proposalId: BigInt(proposal.proposalIndex),
         stageId: stage.stageIndex,
-        notBefore: sppStageUtils.getStageStartDate(proposal, stage),
+        resultType: bodyResult?.resultType ?? SppProposalType.NONE,
         enabled: isNetworkSupported && isSettled,
     });
 
@@ -213,11 +216,18 @@ export const useSafeMultisigBodyState = (
     }, [transactions, currentNonce, pluginAddress, proposalIndex, stageIndex]);
 
     /**
-     * The transaction this body's verdict rests on: the queued one while it is collecting, the
-     * executed one afterwards. Counts and signers both come from it, so they cannot disagree.
+     * The transaction this body's verdict rests on. The executed report wins: once a verdict is
+     * recorded, a later queued attempt is an attempt, not the record. Counts and signers both come
+     * from it, so they cannot disagree.
+     *
+     * The queue is therefore not a fallback once the body has settled. A decided body whose report
+     * the scan did not recover has no confirmations to show - presenting an unexecuted attempt's
+     * signatures as the verdict's would be the misattribution this read exists to prevent, and the
+     * surfaces carry outcome-specific copy for exactly that gap.
      */
-    const reportTransaction =
-        pendingReport?.transaction ?? settledReport?.transaction;
+    const reportTransaction = isSettled
+        ? settledReport?.transaction
+        : pendingReport?.transaction;
 
     // A settled body's confirmations are the ones that executed it; the queue no longer serves them.
     const signers =
@@ -264,6 +274,7 @@ export const useSafeMultisigBodyState = (
         isStale,
         pendingReport,
         settledReport,
+        settledReportOutcome,
         settledResultType: bodyResult?.resultType,
         isStageCurrent,
         canStillAffectOutcome,
@@ -292,6 +303,11 @@ export const useSafeMultisigBodyState = (
         minApprovals:
             reportTransaction?.confirmationsRequired ??
             (isSettled ? 0 : (safeInfo?.threshold ?? 0)),
-        membersCount: safeInfo?.owners.length ?? 0,
+        /**
+         * The owner set that applied is not recoverable from the transaction, so a settled body has
+         * no denominator rather than today's count: "1 of 3" against an owner set that has since
+         * grown is the same substitution the threshold above refuses to make.
+         */
+        membersCount: isSettled ? undefined : safeInfo?.owners.length,
     };
 };

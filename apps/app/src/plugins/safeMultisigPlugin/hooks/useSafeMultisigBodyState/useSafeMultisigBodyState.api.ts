@@ -13,6 +13,7 @@ import type {
     ISafeProposalResultReport,
     SafeTransactionState,
 } from '../../types';
+import type { SafeSettledReportOutcome } from '../useSafeSettledReport';
 
 export interface IUseSafeMultisigBodyStateParams {
     /**
@@ -107,6 +108,12 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     settledReport?: ISafeMultisigSettledReport;
     /**
+     * Why the history scan stopped. Distinguishes a body that never reported from one whose report
+     * sits beyond the scan's page budget, so the surface can say which it is instead of showing the
+     * same blank for both.
+     */
+    settledReportOutcome?: SafeSettledReportOutcome;
+    /**
      * Indexed SPP result for this body. A result does not close the queue: while the stage is still
      * current a queued report can execute and overwrite it, so both are read together.
      */
@@ -148,7 +155,8 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     transactionsAhead: number;
     /**
-     * Owners that have confirmed the queued report.
+     * Owners that confirmed the report the verdict rests on: the executed one once settled, the
+     * queued one while it is still collecting.
      */
     signers: string[];
     /**
@@ -156,16 +164,17 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     hasConnectedWalletSigned: boolean;
     /**
-     * Confirmations collected by the queued report.
+     * Confirmations collected by the report the verdict rests on.
      */
     approvalsAmount: number;
     /**
-     * Confirmations the queued report requires. Captured per transaction, since the Safe threshold
-     * can change while a transaction is queued.
+     * Confirmations the report the verdict rests on required. Captured per transaction, since the
+     * Safe threshold can change while a transaction is queued and again after one executes.
      */
     minApprovals: number;
     /**
-     * Number of current Safe owners.
+     * Number of current Safe owners, or undefined once the body has settled: the owner set that
+     * applied to the decision is not recoverable, and today's is not a substitute for it.
      */
-    membersCount: number;
+    membersCount?: number;
 }

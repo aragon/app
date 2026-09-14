@@ -214,6 +214,151 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.signers).toEqual([signer]);
     });
 
+    it('keeps the executed report as the record when a later attempt is queued', () => {
+        // Requeue-after-supersession: the body has already decided, and a fresh attempt is sitting
+        // in the queue. The decision's confirmations are the ones that executed it, not the
+        // attempt's - but the attempt must stay visible as a pending report.
+        const executor = '0x0000000000000000000000000000000000000099';
+        useSafeSettledReportSpy.mockReturnValue({
+            settledReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '5',
+                    isExecuted: true,
+                    confirmationsRequired: 1,
+                    confirmations: [
+                        generateSafeConfirmation({ owner: executor }),
+                    ],
+                }),
+                report: {
+                    proposalId: BigInt(proposalIndex),
+                    stageId: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+            },
+            outcome: settledReportApi.SafeSettledReportOutcome.FOUND,
+            isLoading: false,
+            isError: false,
+        });
+        mockQueuedTransaction('6');
+
+        const { result } = renderState({
+            results: [
+                {
+                    pluginAddress: body,
+                    stage: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ],
+        });
+
+        expect(result.current.signers).toEqual([executor]);
+        expect(result.current.approvalsAmount).toBe(1);
+        expect(result.current.minApprovals).toBe(1);
+        expect(result.current.pendingReport?.transaction.nonce).toEqual('6');
+    });
+
+    it('shows no confirmations for a settled body whose report was not recovered', () => {
+        // The queue is not a fallback once the body has decided. A transaction still collecting
+        // signatures did not produce the recorded verdict, so presenting its signers as the
+        // decision's confirmations would attribute the result to owners who never executed it.
+        useSafeSettledReportSpy.mockReturnValue({
+            settledReport: undefined,
+            outcome: settledReportApi.SafeSettledReportOutcome.SCAN_EXHAUSTED,
+            isLoading: false,
+            isError: false,
+        });
+        // The rival carries real signatures, which is what makes the fallback dangerous rather
+        // than merely redundant: they belong to owners who never executed anything.
+        const bystander = '0x0000000000000000000000000000000000000077';
+        useSafePendingTransactionsSpy.mockReturnValue({
+            data: {
+                results: [
+                    generateSafeMultisigTransaction({
+                        nonce: '6',
+                        to: plugin,
+                        confirmationsRequired: 2,
+                        confirmations: [
+                            generateSafeConfirmation({ owner: bystander }),
+                        ],
+                        data: safeMultisigTransactionUtils.buildReportProposalResultData(
+                            {
+                                proposalId: BigInt(proposalIndex),
+                                stageId: stageIndex,
+                                resultType: SppProposalType.APPROVAL,
+                            },
+                        ),
+                    }),
+                ],
+                meta: { stale: false },
+            },
+            isLoading: false,
+            isError: false,
+        } as unknown as ReturnType<
+            typeof safeServiceApi.useSafePendingTransactions
+        >);
+
+        const { result } = renderState({
+            results: [
+                {
+                    pluginAddress: body,
+                    stage: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ],
+        });
+
+        expect(result.current.signers).toEqual([]);
+        expect(result.current.approvalsAmount).toBe(0);
+        // The attempt is still real and still worth showing as an attempt.
+        expect(result.current.pendingReport?.transaction.nonce).toEqual('6');
+    });
+
+    it('states no member count for a settled body, whose owner set is unrecoverable', () => {
+        // "1 of 3" against today's owners is the same substitution the threshold refuses to make.
+        useSafeSettledReportSpy.mockReturnValue({
+            settledReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '5',
+                    isExecuted: true,
+                    confirmationsRequired: 1,
+                    confirmations: [generateSafeConfirmation()],
+                }),
+                report: {
+                    proposalId: BigInt(proposalIndex),
+                    stageId: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+            },
+            outcome: settledReportApi.SafeSettledReportOutcome.FOUND,
+            isLoading: false,
+            isError: false,
+        });
+
+        const { result } = renderState({
+            results: [
+                {
+                    pluginAddress: body,
+                    stage: stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ],
+        });
+
+        expect(result.current.membersCount).toBeUndefined();
+    });
+
+    it('states the live member count while the body is still deciding', () => {
+        mockQueuedTransaction('6');
+
+        const { result } = renderState();
+
+        expect(result.current.membersCount).toBe(
+            generateSafeInfo({}).owners.length,
+        );
+    });
+
     it('reports the threshold that applied, not the one the Safe has now', () => {
         // Owners can raise the threshold after a report executes. The Safe binds
         // confirmationsRequired at propose time, so a 1-of-2 execution must keep reading as one

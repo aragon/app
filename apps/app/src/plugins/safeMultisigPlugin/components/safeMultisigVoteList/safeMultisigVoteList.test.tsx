@@ -10,6 +10,7 @@ import {
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
+import { SafeSettledReportOutcome } from '../../hooks/useSafeSettledReport';
 import { generateSafeBodyState, generateSafeInfo } from '../../testUtils';
 import { SafeMultisigVoteList } from './safeMultisigVoteList';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
@@ -113,21 +114,22 @@ describe('<SafeMultisigVoteList /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('says where the confirmations are when a settled report is beyond the scan', () => {
-        // The scan gives up past the stage start or its page cap. Claiming "none yet" would be
-        // false: a full set was collected to execute at all.
+    it('offers the Safe history when the scan ran out of pages', () => {
+        // The scan gives up at its page cap. Claiming "none yet" would be false: a full set was
+        // collected to execute at all, and there is more history to look through.
         useSafeBodyStateSpy.mockReturnValue({
             ...bodyState,
             signers: [],
             settledResultType: SppProposalType.APPROVAL,
             settledReport: undefined,
+            settledReportOutcome: SafeSettledReportOutcome.SCAN_EXHAUSTED,
         });
 
         render(createTestComponent());
 
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigVoteList.settled.heading',
+                'app.plugins.safeMultisig.safeMultisigVoteList.settledScanExhausted.heading',
             ),
         ).toBeInTheDocument();
         expect(
@@ -137,12 +139,32 @@ describe('<SafeMultisigVoteList /> component', () => {
         ).not.toBeInTheDocument();
         expect(
             screen.getByRole('link', {
-                name: 'app.plugins.safeMultisig.safeMultisigVoteList.settled.action',
+                name: 'app.plugins.safeMultisig.safeMultisigVoteList.settledScanExhausted.action',
             }),
         ).toHaveAttribute(
             'href',
             'https://app.safe.global/transactions/history?safe=eth:0x0000000000000000000000000000000000000001',
         );
+    });
+
+    it('offers no history link when the whole history was already walked', () => {
+        // Nothing further back to find, so sending the owner to Safe's history would be a dead end.
+        useSafeBodyStateSpy.mockReturnValue({
+            ...bodyState,
+            signers: [],
+            settledResultType: SppProposalType.APPROVAL,
+            settledReport: undefined,
+            settledReportOutcome: SafeSettledReportOutcome.NOT_REPORTED,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigVoteList.settledNotReported.heading',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 
     it('separates an unreadable Safe from a body nobody has signed', () => {
