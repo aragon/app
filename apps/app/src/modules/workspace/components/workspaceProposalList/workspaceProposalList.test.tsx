@@ -62,13 +62,15 @@ describe('<WorkspaceProposalList /> component', () => {
             pluginAddress: '0xPlugin',
             incrementalId: 4,
         }),
-        dao: {
-            address,
-            name: 'Embedded DAO name',
-            description: 'description',
-            avatar: null,
-            links: [],
-        },
+        dao: [
+            {
+                address,
+                name: 'Embedded DAO name',
+                description: 'description',
+                avatar: null,
+                links: [],
+            },
+        ],
         ...proposal,
     });
 

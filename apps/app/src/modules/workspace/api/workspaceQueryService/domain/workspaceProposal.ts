@@ -37,7 +37,7 @@ export interface IWorkspaceProposalDao {
  */
 export interface IWorkspaceProposal extends IProposal {
     /**
-     * DAO the proposal belongs to.
+     * DAO the proposal belongs to. The backend wraps it in a single-element array.
      */
-    dao: IWorkspaceProposalDao;
+    dao: IWorkspaceProposalDao[];
 }
