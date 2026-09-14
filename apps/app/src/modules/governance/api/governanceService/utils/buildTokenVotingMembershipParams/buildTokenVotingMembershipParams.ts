@@ -1,38 +1,11 @@
+import type { IGetTokenVotingMembershipParams } from '@/modules/governance/api/tokenVotingMembershipService';
 import {
     type IDao,
     type IDaoPlugin,
-    type IPluginSettings,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type {
-    IGetMemberListParams,
-    IGetTokenVotingMembershipParams,
-} from '../../governanceService.api';
-
-export interface ITokenVotingMembershipPluginSettings extends IPluginSettings {
-    /**
-     * Governance token of the plugin. `underlying` is only set on the token
-     * plugin's wrapped / VE-adapter governance tokens.
-     */
-    token: {
-        address: string;
-        underlying?: string | null;
-    };
-    /**
-     * Voting-escrow settings, only set when the plugin's voting power comes
-     * from escrow locks instead of plain ERC-20 balances.
-     */
-    votingEscrow?: unknown;
-}
-
-export interface IBuildTokenVotingMembershipParamsOptions {
-    /**
-     * Whether the aragon-domain source is enabled (feature flag). When false
-     * every query is served by the legacy backend.
-     */
-    domainSourceEnabled: boolean;
-}
+import type { IGetMemberListParams } from '../../governanceService.api';
 
 const tokenMemberListPlugins: PluginInterfaceType[] = [
     PluginInterfaceType.TOKEN_VOTING,
@@ -42,14 +15,9 @@ const tokenMemberListPlugins: PluginInterfaceType[] = [
 /**
  * Plugins whose member list renders through `TokenMemberListBase` and thus
  * consumes the token-voting membership query instead of the generic member
- * list.
- *
- * The guard narrows a generic plugin to the token-carrying settings this
- * module needs.
+ * list. Which source serves that query is decided by the BFF, not here.
  */
-export const isTokenMemberListPlugin = (
-    plugin: IDaoPlugin,
-): plugin is IDaoPlugin<ITokenVotingMembershipPluginSettings> =>
+export const isTokenMemberListPlugin = (plugin: IDaoPlugin): boolean =>
     tokenMemberListPlugins.includes(plugin.interfaceType);
 
 /**
@@ -58,34 +26,22 @@ export const isTokenMemberListPlugin = (
  * the two MUST build byte-identical params, otherwise the query keys diverge
  * and the dehydrated server cache never resolves the client query.
  *
- * For linked account plugins the API call must target the linked account's
- * own daoId so the backend queries the correct DAO.
+ * For linked account plugins the query must target the linked account's own
+ * daoId so that the correct DAO is queried.
  */
 export const buildTokenVotingMembershipParams = (
     initialParams: IGetMemberListParams,
-    plugin: IDaoPlugin<ITokenVotingMembershipPluginSettings>,
+    plugin: IDaoPlugin,
     dao: IDao | undefined,
-    options: IBuildTokenVotingMembershipParamsOptions,
 ): IGetTokenVotingMembershipParams => {
-    const resolvedDaoId = daoUtils.resolvePluginDaoId(
-        initialParams.queryParams.daoId,
-        plugin,
-        dao,
-    );
-
-    const { token, votingEscrow } = plugin.settings;
+    const { daoId, pluginAddress, page, pageSize } = initialParams.queryParams;
 
     return {
-        ...initialParams,
         queryParams: {
-            ...initialParams.queryParams,
-            daoId: resolvedDaoId,
-            network: dao?.network,
-            pluginInterfaceType: plugin.interfaceType,
-            tokenAddress: token.address,
-            tokenUnderlying: token.underlying ?? null,
-            hasVotingEscrow: votingEscrow != null,
-            domainSourceEnabled: options.domainSourceEnabled,
+            daoId: daoUtils.resolvePluginDaoId(daoId, plugin, dao),
+            pluginAddress,
+            page,
+            pageSize,
         },
     };
 };

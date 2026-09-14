@@ -4,7 +4,6 @@ import * as wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import * as useTokenVotingMembershipDataModule from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import * as daoService from '@/shared/api/daoService';
-import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
     generateDaoPlugin,
@@ -47,17 +46,8 @@ describe('<TokenMemberListBase />', () => {
         'useTokenCurrentDelegate',
     );
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
-    const useFeatureFlagsSpy = jest.spyOn(
-        featureFlagsProvider,
-        'useFeatureFlags',
-    );
 
     beforeEach(() => {
-        useFeatureFlagsSpy.mockReturnValue({
-            isEnabled: () => false,
-        } as unknown as ReturnType<
-            typeof featureFlagsProvider.useFeatureFlags
-        >);
         useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: undefined,
             onLoadMore: jest.fn(),
@@ -92,7 +82,6 @@ describe('<TokenMemberListBase />', () => {
         useConnectionSpy.mockReset();
         useTokenCurrentDelegateSpy.mockReset();
         useMemberSpy.mockReset();
-        useFeatureFlagsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -403,22 +392,20 @@ describe('<TokenMemberListBase />', () => {
     });
 
     describe('linked-account daoId resolution', () => {
-        it('augments params with domain routing fields for non-linked-account plugins', () => {
+        it('asks the membership BFF for the plugin members, without any routing input of its own', () => {
             const initialParams = {
                 queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
             };
             resolvePluginDaoIdSpy.mockReturnValue('dao-id');
             render(createTestComponent({ initialParams }));
-            expect(useTokenVotingMembershipDataSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    queryParams: expect.objectContaining({
-                        daoId: 'dao-id',
-                        pluginAddress: '0x123',
-                        pluginInterfaceType: expect.any(String),
-                        tokenAddress: expect.any(String),
-                    }),
-                }),
-            );
+            expect(useTokenVotingMembershipDataSpy).toHaveBeenCalledWith({
+                queryParams: {
+                    daoId: 'dao-id',
+                    pluginAddress: '0x123',
+                    page: undefined,
+                    pageSize: undefined,
+                },
+            });
         });
 
         it('passes the resolved daoId to useTokenVotingMembershipData for linked-account plugins', () => {

@@ -1,35 +1,37 @@
-import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type {
     InfiniteQueryOptions,
     SharedInfiniteQueryOptions,
 } from '@/shared/types';
-import { governanceService } from '../../governanceService';
-import type { IGetTokenVotingMembershipParams } from '../../governanceService.api';
-import { governanceServiceKeys } from '../../governanceServiceKeys';
+import type {
+    IGetTokenVotingMembershipParams,
+    ITokenVotingMembershipPage,
+} from '../../tokenVotingMembershipService.api';
+import { tokenVotingMembershipServiceClient } from '../../tokenVotingMembershipService.client';
+import { tokenVotingMembershipServiceKeys } from '../../tokenVotingMembershipServiceKeys';
 
 export const tokenVotingMembershipOptions = (
     params: IGetTokenVotingMembershipParams,
     options?: InfiniteQueryOptions<
-        PageDTO<TokenVotingMemberDTO>,
+        ITokenVotingMembershipPage,
         IGetTokenVotingMembershipParams
     >,
 ): SharedInfiniteQueryOptions<
-    PageDTO<TokenVotingMemberDTO>,
+    ITokenVotingMembershipPage,
     IGetTokenVotingMembershipParams
 > => ({
-    queryKey: governanceServiceKeys.tokenVotingMembership(params),
+    queryKey: tokenVotingMembershipServiceKeys.membership(params),
     initialPageParam: params,
     queryFn: ({ pageParam }) =>
-        governanceService.getTokenVotingMembership(pageParam),
-    getNextPageParam: governanceService.getNextPageParams,
+        tokenVotingMembershipServiceClient.getTokenVotingMembership(pageParam),
+    getNextPageParam: tokenVotingMembershipServiceClient.getNextPageParams,
     ...options,
 });
 
 export const useTokenVotingMembership = (
     params: IGetTokenVotingMembershipParams,
     options?: InfiniteQueryOptions<
-        PageDTO<TokenVotingMemberDTO>,
+        ITokenVotingMembershipPage,
         IGetTokenVotingMembershipParams
     >,
 ) => useInfiniteQuery(tokenVotingMembershipOptions(params, options));

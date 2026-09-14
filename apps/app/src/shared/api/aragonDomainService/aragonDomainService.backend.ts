@@ -1,16 +1,10 @@
 import 'server-only';
 import { AragonDomain, EnvioClient, type RpcUrls } from '@aragon/aragon-domain';
 import { resolveServerRpcUrl } from '@/modules/application/utils/proxyRpcUtils/resolveServerRpcUrl';
-import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { domainNetworks } from './aragonDomainService.constants';
 
-export type AragonDomainController = ReturnType<typeof AragonDomain.load>;
-
-/**
- * Networks the domain controller can read on-chain data from. Expand as more
- * networks are indexed by aragon-indexer.
- */
-const domainRpcNetworks = [Network.ETHEREUM_MAINNET] as const;
+type AragonDomainController = ReturnType<typeof AragonDomain.load>;
 
 /**
  * Server-side singleton wrapping aragon-domain.
@@ -32,7 +26,7 @@ class AragonDomainServiceBackend {
             }
 
             const rpcUrls: RpcUrls = Object.fromEntries(
-                domainRpcNetworks.map((network) => [
+                domainNetworks.map((network) => [
                     networkDefinitions[network].id,
                     resolveServerRpcUrl(network),
                 ]),
