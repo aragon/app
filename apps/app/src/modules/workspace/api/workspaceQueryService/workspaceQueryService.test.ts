@@ -1,8 +1,15 @@
 import { Network } from '@/shared/api/daoService';
+import {
+    generateWorkspaceQueryResponse,
+    generateWorkspaceTransaction,
+} from '../../testUtils';
 import type { IWorkspaceAssetListResponse } from './domain';
 import { WorkspaceAccountInfoStatus, WorkspaceAccountInfoType } from './domain';
 import { workspaceQueryService } from './workspaceQueryService';
-import type { IGetWorkspaceAssetListParams } from './workspaceQueryService.api';
+import type {
+    IGetWorkspaceAssetListParams,
+    IGetWorkspaceTransactionsParams,
+} from './workspaceQueryService.api';
 
 describe('workspaceQuery service', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
@@ -34,6 +41,34 @@ describe('workspaceQuery service', () => {
                 { method: 'POST' },
             );
             expect(result).toEqual([accountInfo]);
+        });
+    });
+
+    describe('getTransactions', () => {
+        const accounts = [
+            {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+            },
+        ];
+
+        it('posts the accounts to the v2 workspace transactions endpoint and returns the response', async () => {
+            const transactions = generateWorkspaceQueryResponse({
+                data: [generateWorkspaceTransaction()],
+            });
+            requestSpy.mockResolvedValue(transactions);
+
+            const params: IGetWorkspaceTransactionsParams = {
+                body: { accounts, pagination: { pageSize: 20 } },
+            };
+            const result = await workspaceQueryService.getTransactions(params);
+
+            expect(requestSpy).toHaveBeenCalledWith(
+                '/v2/workspaces/query/transactions',
+                params,
+                { method: 'POST' },
+            );
+            expect(result).toEqual(transactions);
         });
     });
 
@@ -86,6 +121,25 @@ describe('workspaceQuery service', () => {
             expect(result).toEqual({
                 body: {
                     ...params.body,
+                    pagination: { pageSize: 20, page: 2 },
+                },
+            });
+        });
+
+        it('increments the page of the transactions params as well', () => {
+            const transactionsParams: IGetWorkspaceTransactionsParams = {
+                body: { accounts: [account], pagination: { pageSize: 20 } },
+            };
+
+            const result = workspaceQueryService.getNextBodyPageParams(
+                buildResponse({ page: 1 }),
+                [],
+                transactionsParams,
+            );
+
+            expect(result).toEqual({
+                body: {
+                    ...transactionsParams.body,
                     pagination: { pageSize: 20, page: 2 },
                 },
             });
