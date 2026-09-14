@@ -108,7 +108,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
                         />
                     </span>
                     <span className="truncate text-neutral-500 text-sm">
-                        <AddressOutput address={gaugeAddress} />
+                        <AddressOutput address={gaugeAddress} copy={false} />
                     </span>
                 </div>
             </div>
