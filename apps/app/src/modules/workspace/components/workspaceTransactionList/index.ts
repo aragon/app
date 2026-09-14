@@ -1,5 +1,5 @@
 export {
-    type IWorkspaceAccountFilterOption,
+    buildWorkspaceTransactionListParams,
     type IWorkspaceTransactionListProps,
     WorkspaceTransactionList,
     workspaceTransactionListTypeFilterParam,

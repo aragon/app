@@ -33,16 +33,10 @@ export const WorkspaceTransactionsPage: React.FC<
 
     const { workspaceId } = await params;
 
-    // Only the pagination can be built here: the accounts complete the request on the client, where the registry
-    // is readable.
-    const initialParams = {
-        queryParams: { pageSize: workspaceTransactionsCount },
-    };
-
     return (
         <Page.Container>
             <WorkspaceTransactionsPageClient
-                initialParams={initialParams}
+                pageSize={workspaceTransactionsCount}
                 workspaceId={workspaceId}
             />
         </Page.Container>

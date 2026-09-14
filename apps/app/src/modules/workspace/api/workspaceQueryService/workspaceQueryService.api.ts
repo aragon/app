@@ -6,10 +6,7 @@ import type {
     ISearchedRequest,
 } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type {
-    IRequestBodyParams,
-    IRequestQueryBodyParams,
-} from '@/shared/api/httpService';
+import type { IRequestBodyParams } from '@/shared/api/httpService';
 import type {
     IWorkspaceAccountRef,
     IWorkspaceCoverage,
@@ -29,9 +26,10 @@ export const workspaceQueryPageSizeLimit = 50;
 /**
  * Pagination of a workspace query request.
  *
- * It is declared as query parameters so that the infinite queries of this service behave like every other list of
- * the app and can be driven by {@link AragonBackendService.getNextPageParams}. The endpoints actually take it in
- * the request body and reject query-string parameters with a 400, so the service moves it there before requesting.
+ * It travels in the request body like the rest of the request: the endpoints reject query-string parameters with a
+ * 400. The infinite queries of this service therefore page through it with
+ * {@link WorkspaceQueryService.getNextBodyPageParams} instead of the query-parameter based
+ * {@link AragonBackendService.getNextPageParams} every other list of the app uses.
  *
  * Only the sort key of the endpoint being called is accepted, hence the type parameter.
  */
@@ -142,6 +140,8 @@ export interface IGetWorkspaceTransactionsFilters {
 export interface IGetWorkspaceAssetListParams
     extends IRequestBodyParams<IGetWorkspaceAssetListBody> {}
 
+export type WorkspaceTransactionsSort = 'blockTimestamp';
+
 export interface IGetWorkspaceTransactionsBody {
     /**
      * Accounts to aggregate the transactions of, max {@link workspaceAccountsRequestLimit} entries. An empty list
@@ -152,12 +152,11 @@ export interface IGetWorkspaceTransactionsBody {
      * Filters narrowing the rows within the selected accounts.
      */
     filters?: IGetWorkspaceTransactionsFilters;
+    /**
+     * Page to read.
+     */
+    pagination?: IWorkspaceQueryPagination<WorkspaceTransactionsSort>;
 }
 
-export type WorkspaceTransactionsSort = 'blockTimestamp';
-
 export interface IGetWorkspaceTransactionsParams
-    extends IRequestQueryBodyParams<
-        IWorkspaceQueryPagination<WorkspaceTransactionsSort>,
-        IGetWorkspaceTransactionsBody
-    > {}
+    extends IRequestBodyParams<IGetWorkspaceTransactionsBody> {}

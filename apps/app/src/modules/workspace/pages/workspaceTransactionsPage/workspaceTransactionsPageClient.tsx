@@ -1,27 +1,14 @@
 'use client';
 
 import { Card, EmptyState } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
-import type { IGetWorkspaceTransactionsParams } from '../../api/workspaceQueryService';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
+import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
-import { workspaceUtils } from '../../utils/workspaceUtils';
-
-export const workspaceTransactionsAccountFilterParam = 'account';
-
-/**
- * Identifier of the account filter option that keeps every account of the workspace selected.
- */
-const allAccountsOptionId = 'all';
-
-/**
- * Number of accounts below which the account filter is not worth showing.
- */
-const accountFilterMinAccounts = 2;
+import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
+import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 
 export interface IWorkspaceTransactionsPageClientProps {
     /**
@@ -29,16 +16,15 @@ export interface IWorkspaceTransactionsPageClientProps {
      */
     workspaceId: string;
     /**
-     * Initial parameters to use to fetch the workspace transactions. The accounts are omitted because they come
-     * from the registry, which is only readable here on the client.
+     * Number of transactions to read per page.
      */
-    initialParams: Omit<IGetWorkspaceTransactionsParams, 'body'>;
+    pageSize: number;
 }
 
 export const WorkspaceTransactionsPageClient: React.FC<
     IWorkspaceTransactionsPageClientProps
 > = (props) => {
-    const { workspaceId, initialParams } = props;
+    const { workspaceId, pageSize } = props;
 
     const { t } = useTranslations();
 
@@ -48,59 +34,31 @@ export const WorkspaceTransactionsPageClient: React.FC<
         isError: isWorkspaceError,
     } = useWorkspace({ urlParams: { id: workspaceId } }, { retry: false });
 
-    const accounts = useMemo(() => workspace?.accounts ?? [], [workspace]);
+    const accounts = workspace?.accounts ?? [];
+    const accountRefs = accounts.map(({ network, address }) => ({
+        network,
+        address,
+    }));
 
-    // Resolved once for the whole filter to label the DAO accounts, whose names the registry does not store.
+    // Resolved once to label the tabs with the indexed DAO names, shared with the overview page's cache.
     const { data: accountInfos } = useWorkspaceAccounts(
         {
-            body: {
-                accounts: accounts.map(({ network, address }) => ({
-                    network,
-                    address,
-                })),
-            },
+            body: { accounts: accountRefs },
         },
         { enabled: accounts.length > 0 },
     );
 
-    const options = useMemo(
-        () => [
-            {
-                id: allAccountsOptionId,
-                label: t(
-                    'app.workspace.workspaceTransactionsPage.accountFilter.all',
-                ),
-            },
-            ...accounts.map((account) => ({
-                id: workspaceUtils.buildAccountId(account),
-                label: workspaceUtils.getAccountLabel(
-                    account,
-                    workspaceUtils.findAccountInfo(accountInfos, account),
-                ),
-            })),
-        ],
-        [accounts, accountInfos, t],
-    );
+    const { activeOption, setActiveOption, options } =
+        useWorkspaceAccountFilter({
+            accounts,
+            accountInfos,
+            allAccountsLabel: t(
+                'app.workspace.workspaceTransactionsPage.filter.allAccounts',
+            ),
+        });
 
-    const [activeOption, setActiveOption] = useFilterUrlParam({
-        fallbackValue: allAccountsOptionId,
-        name: workspaceTransactionsAccountFilterParam,
-        validValues: options.map((option) => option.id),
-    });
-
-    const selectedAccounts =
-        activeOption == null || activeOption === allAccountsOptionId
-            ? accounts
-            : accounts.filter(
-                  (account) =>
-                      workspaceUtils.buildAccountId(account) === activeOption,
-              );
-
-    // The filter only means something once there is more than one account to choose between.
-    const accountFilter =
-        accounts.length >= accountFilterMinAccounts && activeOption != null
-            ? { options, value: activeOption, onSelect: setActiveOption }
-            : undefined;
+    const accountsToDisplay =
+        activeOption?.account != null ? [activeOption.account] : accounts;
 
     if (isWorkspaceError) {
         return (
@@ -126,13 +84,28 @@ export const WorkspaceTransactionsPageClient: React.FC<
             <Page.Main
                 title={t('app.workspace.workspaceTransactionsPage.main.title')}
             >
-                <WorkspaceTransactionList
-                    accountFilter={accountFilter}
-                    accounts={selectedAccounts}
-                    initialParams={initialParams}
-                    isPending={isWorkspacePending}
-                />
+                <div className="flex flex-col gap-4 md:gap-6">
+                    <WorkspaceAccountDropdown
+                        onSelect={setActiveOption}
+                        options={options}
+                        value={activeOption}
+                    />
+                    <WorkspaceTransactionList
+                        accounts={accountsToDisplay}
+                        isPending={isWorkspacePending}
+                        pageSize={pageSize}
+                    />
+                </div>
             </Page.Main>
+            <Page.Aside>
+                {workspace != null && (
+                    <WorkspaceTransactionsAsideCard
+                        activeOption={activeOption}
+                        pageSize={pageSize}
+                        workspace={workspace}
+                    />
+                )}
+            </Page.Aside>
         </Page.Content>
     );
 };

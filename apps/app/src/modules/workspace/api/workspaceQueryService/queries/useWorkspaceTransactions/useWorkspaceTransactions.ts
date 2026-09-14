@@ -25,7 +25,7 @@ export const workspaceTransactionsOptions = (
     initialPageParam: params,
     queryFn: ({ pageParam }) =>
         workspaceQueryService.getTransactions(pageParam),
-    getNextPageParam: workspaceQueryService.getNextPageParams,
+    getNextPageParam: workspaceQueryService.getNextBodyPageParams,
     ...options,
 });
 

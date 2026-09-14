@@ -6,7 +6,10 @@ import {
 import type { IWorkspaceAssetListResponse } from './domain';
 import { WorkspaceAccountInfoStatus, WorkspaceAccountInfoType } from './domain';
 import { workspaceQueryService } from './workspaceQueryService';
-import type { IGetWorkspaceAssetListParams } from './workspaceQueryService.api';
+import type {
+    IGetWorkspaceAssetListParams,
+    IGetWorkspaceTransactionsParams,
+} from './workspaceQueryService.api';
 
 describe('workspaceQuery service', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
@@ -55,32 +58,17 @@ describe('workspaceQuery service', () => {
             });
             requestSpy.mockResolvedValue(transactions);
 
-            const result = await workspaceQueryService.getTransactions({
-                queryParams: { pageSize: 20 },
-                body: { accounts },
-            });
+            const params: IGetWorkspaceTransactionsParams = {
+                body: { accounts, pagination: { pageSize: 20 } },
+            };
+            const result = await workspaceQueryService.getTransactions(params);
 
             expect(requestSpy).toHaveBeenCalledWith(
                 '/v2/workspaces/query/transactions',
-                expect.anything(),
+                params,
                 { method: 'POST' },
             );
             expect(result).toEqual(transactions);
-        });
-
-        it('moves the pagination into the request body, as the endpoint rejects query parameters', async () => {
-            requestSpy.mockResolvedValue(generateWorkspaceQueryResponse());
-
-            await workspaceQueryService.getTransactions({
-                queryParams: { page: 2, pageSize: 20 },
-                body: { accounts },
-            });
-
-            const [, requestParams] = requestSpy.mock.calls[0];
-
-            expect(requestParams).toEqual({
-                body: { accounts, pagination: { page: 2, pageSize: 20 } },
-            });
         });
     });
 
@@ -133,6 +121,25 @@ describe('workspaceQuery service', () => {
             expect(result).toEqual({
                 body: {
                     ...params.body,
+                    pagination: { pageSize: 20, page: 2 },
+                },
+            });
+        });
+
+        it('increments the page of the transactions params as well', () => {
+            const transactionsParams: IGetWorkspaceTransactionsParams = {
+                body: { accounts: [account], pagination: { pageSize: 20 } },
+            };
+
+            const result = workspaceQueryService.getNextBodyPageParams(
+                buildResponse({ page: 1 }),
+                [],
+                transactionsParams,
+            );
+
+            expect(result).toEqual({
+                body: {
+                    ...transactionsParams.body,
                     pagination: { pageSize: 20, page: 2 },
                 },
             });

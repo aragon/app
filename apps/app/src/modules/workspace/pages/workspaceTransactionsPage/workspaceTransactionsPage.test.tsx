@@ -54,7 +54,7 @@ describe('<WorkspaceTransactionsPage /> component', () => {
         expect(WorkspaceTransactionsPageClient).toHaveBeenCalledWith(
             expect.objectContaining({
                 workspaceId: 'demo',
-                initialParams: { queryParams: { pageSize: 20 } },
+                pageSize: 20,
             }),
             undefined,
         );

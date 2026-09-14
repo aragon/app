@@ -2,18 +2,15 @@
 
 import {
     AlertInline,
-    Button,
     DataListContainer,
     DataListPagination,
     DataListRoot,
-    Dropdown,
-    IconType,
     Toggle,
     ToggleGroup,
     TransactionDataListItem,
 } from '@aragon/gov-ui-kit';
 import { useQueries } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import { TransactionList } from '@/modules/finance/components/transactionList';
 import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
@@ -25,6 +22,7 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 import {
     type IGetWorkspaceTransactionsFilters,
     type IGetWorkspaceTransactionsParams,
+    type IWorkspaceAccountRef,
     useWorkspaceTransactions,
     WorkspaceTransactionType,
 } from '../../api/workspaceQueryService';
@@ -61,36 +59,31 @@ const typeFilterBody: Record<
     },
 };
 
-export interface IWorkspaceAccountFilterOption {
-    /**
-     * Identifier of the option, used as the value of the URL parameter.
-     */
-    id: string;
-    /**
-     * Label of the option.
-     */
-    label: string;
-}
+/**
+ * Parameters of the list's main query for the given type filter, "all" by default. Exposed so other components can
+ * read the list's first page under the same query key, which adds no request of their own.
+ */
+export const buildWorkspaceTransactionListParams = (
+    accounts: IWorkspaceAccountRef[],
+    pageSize: number,
+    filter = WorkspaceTransactionListTypeFilter.ALL,
+): IGetWorkspaceTransactionsParams => ({
+    body: {
+        accounts,
+        filters: typeFilterBody[filter],
+        pagination: { pageSize },
+    },
+});
 
 export interface IWorkspaceTransactionListProps {
     /**
-     * Accounts to fetch the transactions of, i.e. the accounts of the active account filter option.
+     * Accounts to aggregate the transactions of.
      */
     accounts: IWorkspaceAccount[];
     /**
-     * Initial parameters to use to fetch the transactions. The accounts are set from the prop above.
+     * Number of transactions to read per page.
      */
-    initialParams: Omit<IGetWorkspaceTransactionsParams, 'body'>;
-    /**
-     * Account filter state. Owned by the page so that the selection survives a refetch: `useFilterUrlParam` drops
-     * its URL parameter on unmount, and this list does unmount while the accounts change. The page leaves it unset
-     * when the workspace has too few accounts for the filter to mean anything.
-     */
-    accountFilter?: {
-        options: IWorkspaceAccountFilterOption[];
-        value: string;
-        onSelect: (optionId: string) => void;
-    };
+    pageSize: number;
     /**
      * Keeps the list in its loading state while the accounts are still being resolved.
      */
@@ -107,12 +100,10 @@ export interface IWorkspaceTransactionListProps {
 export const WorkspaceTransactionList: React.FC<
     IWorkspaceTransactionListProps
 > = (props) => {
-    const { accounts, initialParams, accountFilter, isPending } = props;
+    const { accounts, pageSize, isPending } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-
-    const [isAccountFilterOpen, setIsAccountFilterOpen] = useState(false);
 
     const accountRefs = accounts.map(({ network, address }) => ({
         network,
@@ -128,8 +119,11 @@ export const WorkspaceTransactionList: React.FC<
             WorkspaceTransactionListTypeFilter.ALL
         >,
     ): IGetWorkspaceTransactionsParams => ({
-        queryParams: { ...initialParams.queryParams, pageSize: 1 },
-        body: { accounts: accountRefs, filters: typeFilterBody[filter] },
+        body: {
+            accounts: accountRefs,
+            filters: typeFilterBody[filter],
+            pagination: { pageSize: 1 },
+        },
     });
 
     const receivedTransactions = useWorkspaceTransactions(
@@ -190,16 +184,11 @@ export const WorkspaceTransactionList: React.FC<
 
     const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } =
         useWorkspaceTransactions(
-            {
-                ...initialParams,
-                body: {
-                    accounts: accountRefs,
-                    filters:
-                        typeFilterBody[
-                            activeTypeFilter as WorkspaceTransactionListTypeFilter
-                        ],
-                },
-            },
+            buildWorkspaceTransactionListParams(
+                accountRefs,
+                pageSize,
+                activeTypeFilter as WorkspaceTransactionListTypeFilter,
+            ),
             { enabled: hasAccounts },
         );
 
@@ -253,75 +242,34 @@ export const WorkspaceTransactionList: React.FC<
         });
     };
 
-    const activeAccountLabel = accountFilter?.options.find(
-        (option) => option.id === accountFilter.value,
-    )?.label;
-
     return (
         <DataListRoot
             entityLabel={t('app.workspace.workspaceTransactionList.entity')}
             itemsCount={metadata?.totalRecords}
             onLoadMore={fetchNextPage}
-            pageSize={initialParams.queryParams.pageSize ?? metadata?.pageSize}
+            pageSize={pageSize}
             state={listState()}
         >
-            {(accountFilter != null || showTypeFilters) && (
-                <div className="flex flex-col items-start gap-2 md:gap-3">
-                    {accountFilter != null && (
-                        <Dropdown.Container
-                            constrainContentWidth={false}
-                            customTrigger={
-                                <Button
-                                    className="max-w-full md:max-w-64 [&>div]:min-w-0 [&>div]:truncate"
-                                    iconRight={
-                                        isAccountFilterOpen
-                                            ? IconType.CHEVRON_UP
-                                            : IconType.CHEVRON_DOWN
-                                    }
-                                    size="md"
-                                    variant="tertiary"
-                                >
-                                    {activeAccountLabel}
-                                </Button>
-                            }
-                            onOpenChange={setIsAccountFilterOpen}
-                            open={isAccountFilterOpen}
-                        >
-                            {accountFilter.options.map((option) => (
-                                <Dropdown.Item
-                                    key={option.id}
-                                    onSelect={() =>
-                                        accountFilter.onSelect(option.id)
-                                    }
-                                    selected={option.id === accountFilter.value}
-                                >
-                                    {option.label}
-                                </Dropdown.Item>
-                            ))}
-                        </Dropdown.Container>
-                    )}
-                    {showTypeFilters && (
-                        <ToggleGroup
-                            isMultiSelect={false}
-                            onChange={(value) => {
-                                if (typeof value === 'string') {
-                                    setActiveTypeFilter(value);
-                                }
-                            }}
-                            value={activeTypeFilter}
-                        >
-                            {visibleTypeFilters.map((filter) => (
-                                <Toggle
-                                    key={filter}
-                                    label={t(
-                                        `app.workspace.workspaceTransactionList.typeFilter.${filter}`,
-                                    )}
-                                    value={filter}
-                                />
-                            ))}
-                        </ToggleGroup>
-                    )}
-                </div>
+            {showTypeFilters && (
+                <ToggleGroup
+                    isMultiSelect={false}
+                    onChange={(value) => {
+                        if (typeof value === 'string') {
+                            setActiveTypeFilter(value);
+                        }
+                    }}
+                    value={activeTypeFilter}
+                >
+                    {visibleTypeFilters.map((filter) => (
+                        <Toggle
+                            key={filter}
+                            label={t(
+                                `app.workspace.workspaceTransactionList.typeFilter.${filter}`,
+                            )}
+                            value={filter}
+                        />
+                    ))}
+                </ToggleGroup>
             )}
             {isPartial && (
                 <AlertInline

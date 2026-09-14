@@ -87,7 +87,7 @@ describe('<WorkspaceTransactionList /> component', () => {
         options?: { partial?: boolean },
     ) => {
         useWorkspaceTransactionsSpy.mockImplementation((params) => {
-            const isProbe = params.queryParams.pageSize === 1;
+            const isProbe = params.body.pagination?.pageSize === 1;
 
             if (!isProbe) {
                 return buildResult(transactions, options);
@@ -125,7 +125,7 @@ describe('<WorkspaceTransactionList /> component', () => {
     ) => {
         const completeProps: IWorkspaceTransactionListProps = {
             accounts: [buildAccount()],
-            initialParams: { queryParams: { pageSize: 20 } },
+            pageSize: 20,
             ...props,
         };
 
@@ -179,10 +179,10 @@ describe('<WorkspaceTransactionList /> component', () => {
 
         expect(useWorkspaceTransactionsSpy).toHaveBeenCalledWith(
             {
-                queryParams: { pageSize: 20 },
                 body: {
                     accounts: [account],
                     filters: { side: TransactionSide.WITHDRAW },
+                    pagination: { pageSize: 20 },
                 },
             },
             expect.anything(),
@@ -200,35 +200,6 @@ describe('<WorkspaceTransactionList /> component', () => {
                 'app.workspace.workspaceTransactionList.typeFilter.all',
             ),
         ).not.toBeInTheDocument();
-    });
-
-    it('renders the account filter options and reports the selected one', async () => {
-        const onSelect = jest.fn();
-        render(
-            createTestComponent({
-                accountFilter: {
-                    options: [
-                        { id: 'all', label: 'All accounts' },
-                        { id: 'account-1', label: 'Demo DAO' },
-                    ],
-                    value: 'all',
-                    onSelect,
-                },
-            }),
-        );
-
-        await userEvent.click(
-            screen.getByRole('button', { name: 'All accounts' }),
-        );
-        await userEvent.click(screen.getByText('Demo DAO'));
-
-        expect(onSelect).toHaveBeenCalledWith('account-1');
-    });
-
-    it('does not render the account filter when the page provides none', () => {
-        render(createTestComponent());
-
-        expect(screen.queryByText('All accounts')).not.toBeInTheDocument();
     });
 
     it('warns that the list is incomplete when the response is partial', () => {

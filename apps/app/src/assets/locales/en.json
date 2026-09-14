@@ -4339,6 +4339,10 @@
           "targets": "Targets"
         }
       },
+      "workspaceInfoAside": {
+        "accounts": "Accounts",
+        "owner": "Owner"
+      },
       "workspaceTransactionList": {
         "emptyState": {
           "description": "This will show the transactions of every account in this workspace when available.",
@@ -4357,9 +4361,13 @@
           "sent": "Withdrawals"
         }
       },
+      "workspaceTransactionsAsideCard": {
+        "lastActivity": "Last activity",
+        "transactions": "Transactions"
+      },
       "workspaceTransactionsPage": {
-        "accountFilter": {
-          "all": "All accounts"
+        "filter": {
+          "allAccounts": "All accounts"
         },
         "main": {
           "title": "Transactions"

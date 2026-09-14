@@ -69,20 +69,12 @@ class WorkspaceQueryService extends AragonBackendService {
      */
     getTransactions = async (
         params: IGetWorkspaceTransactionsParams,
-    ): Promise<IWorkspaceQueryResponse<IWorkspaceTransaction>> => {
-        const { queryParams, body } = params;
-
-        // The endpoint rejects query-string parameters with a 400 and takes the pagination in the body. Moving it
-        // here is what lets the queries above declare it as query parameters like every other list of the app and
-        // page through it with the inherited getNextPageParams.
-        const requestParams = { body: { ...body, pagination: queryParams } };
-
-        const result = await this.request<
-            IWorkspaceQueryResponse<IWorkspaceTransaction>
-        >(this.urls.transactions, requestParams, { method: 'POST' });
-
-        return result;
-    };
+    ): Promise<IWorkspaceQueryResponse<IWorkspaceTransaction>> =>
+        await this.request<IWorkspaceQueryResponse<IWorkspaceTransaction>>(
+            this.urls.transactions,
+            params,
+            { method: 'POST' },
+        );
 
     /**
      * Reads the token balances of the given accounts, grouped by network and token.
