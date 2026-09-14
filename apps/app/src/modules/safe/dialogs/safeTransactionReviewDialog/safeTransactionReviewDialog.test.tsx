@@ -147,9 +147,10 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     const generateSignedTransaction = (overrides?: {
         data?: string;
         operation?: 0 | 1;
+        to?: Hex;
     }) => {
         const fields = {
-            to: target,
+            to: overrides?.to ?? target,
             value: '0',
             data: overrides?.data ?? '0xdeadbeef',
             operation: overrides?.operation ?? (0 as const),
@@ -308,6 +309,58 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         expect(
             screen.queryByText(
                 'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    /**
+     * The signal that needs no network: a delegate call executes in the Safe's own context, so an
+     * unrecognised target can rewrite owners, threshold or the code the Safe runs. Unlike the
+     * bytecode read this holds while the chain is unreachable, and for a target that has code.
+     */
+    it('warns that a delegate call target is not a known batching contract', () => {
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+            }),
+        );
+
+        expect(
+            screen.getByText(
+                'app.safe.safeTransactionReviewDialog.unrecognisedDelegateCall',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('accepts a delegate call to the canonical MultiSend without comment', () => {
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({
+                    operation: 1,
+                    to: getAddress(
+                        '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526',
+                    ),
+                }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.unrecognisedDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('does not call an ordinary call an unrecognised delegate call', () => {
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 0 }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.unrecognisedDelegateCall',
             ),
         ).not.toBeInTheDocument();
     });

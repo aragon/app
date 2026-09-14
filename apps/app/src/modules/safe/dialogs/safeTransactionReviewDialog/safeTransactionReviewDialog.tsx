@@ -119,6 +119,17 @@ const collectCalls = (
     };
 };
 
+/**
+ * Canonical MultiSend and MultiSendCallOnly deployments for Safe 1.3.0 and 1.4.1, lowercased for
+ * comparison. Deterministic across the standard EVM chains this app supports.
+ */
+const knownDelegateTargets: Record<string, true> = {
+    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
+    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
+    '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
+    '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
+};
+
 export const SafeTransactionReviewDialog: React.FC<
     ISafeTransactionReviewDialogProps
 > = (props) => {
@@ -180,15 +191,30 @@ export const SafeTransactionReviewDialog: React.FC<
         decodedActions?.length === calls.length ? decodedActions : undefined;
 
     /**
-     * A delegate call to an address holding no code succeeds and runs nothing: the Safe consumes
-     * the nonce, emits `ExecutionSuccess`, and every call listed below never happens. Observed on
-     * sepolia at nonce 6 of the gate Safe - a fully reviewed, correctly hashed, fully signed batch
-     * that did nothing at all. Safe's own interface warns about this shape and this one did not.
+     * A delegate call runs in the Safe's own context: it can rewrite owners, threshold and the
+     * singleton the Safe delegates to. Batching is the only reason an ordinary Aragon transaction
+     * uses one, so a target that is not a canonical MultiSend deserves saying out loud - and this
+     * needs no network read, so it holds for every call at every depth of the batch.
      *
-     * Scoped to the outer target, which is the one the Safe delegates its own context to. Inner
-     * targets would need a read per call, and a plain call to a codeless address only wastes its
-     * own slot rather than voiding the whole batch.
-     * ponytail: outer target only, extend per-call if an empty inner target shows up in practice.
+     * ponytail: canonical 1.3.0/1.4.1 addresses only. Chains with non-standard deployments (the
+     * zkSync-style forks) would mislabel a legitimate MultiSend as unrecognised; widen from
+     * `safe-deployments` if one of those networks is ever supported.
+     */
+    const delegateCalls = calls.filter(({ call }) => call.operation === 1);
+    const hasUnrecognisedDelegateTarget = delegateCalls.some(
+        ({ call }) => knownDelegateTargets[call.to.toLowerCase()] !== true,
+    );
+
+    /**
+     * The sharper case, and the one that needs the chain: a delegate call to an address holding no
+     * code succeeds and runs nothing. The Safe consumes the nonce, emits `ExecutionSuccess`, and
+     * every call listed below never happens. Observed on sepolia at nonce 6 of the gate Safe - a
+     * fully reviewed, correctly hashed, fully signed batch that did nothing at all.
+     *
+     * `useBytecode` is one address and hook-bound, so it reads the outer target: the one receiving
+     * the Safe's context, and the only one whose emptiness voids the whole batch. An empty inner
+     * delegate target wastes its own slot, and the unrecognised-target warning above already names
+     * it, since an empty address is never a canonical MultiSend.
      */
     const outerCall = safeTransactionEnvelopeUtils.getCall(transaction);
     const isDelegateCall = outerCall.operation === 1;
@@ -235,6 +261,14 @@ export const SafeTransactionReviewDialog: React.FC<
                     <AlertInline
                         message={t(`${translationKey}.codelessDelegateCall`)}
                         variant="critical"
+                    />
+                )}
+                {hasUnrecognisedDelegateTarget && !hasCodelessTarget && (
+                    <AlertInline
+                        message={t(
+                            `${translationKey}.unrecognisedDelegateCall`,
+                        )}
+                        variant="warning"
                     />
                 )}
                 <dl className="flex flex-col gap-3 pt-4">

@@ -3809,6 +3809,7 @@
       "safeTransactionReviewDialog": {
         "callTarget": "To {{target}} · {{value}} wei",
         "codelessDelegateCall": "This transaction delegate-calls an address that holds no code. It will use up a Safe nonce, report success, and run none of the calls listed below. Do not sign or execute it.",
+        "unrecognisedDelegateCall": "This transaction delegate-calls an address that is not a known Safe batching contract. A delegate call runs in the Safe's own context and can change its owners, threshold or code. Check the target before signing.",
         "cancel": "Cancel",
         "fields": {
           "baseGas": "Base gas",
