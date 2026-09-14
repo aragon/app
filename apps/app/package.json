@@ -67,7 +67,7 @@
         "@xyflow/react": "^12.11.3",
         "classnames": "catalog:",
         "deepmerge-ts": "^8.0.2",
-        "framer-motion": "^12.43.0",
+        "framer-motion": "^13.2.0",
         "import-in-the-middle": "^3.3.3",
         "isomorphic-dompurify": "^3.23.0",
         "jsdom": "^29.1.1",
