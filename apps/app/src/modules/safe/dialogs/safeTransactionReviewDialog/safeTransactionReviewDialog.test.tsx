@@ -365,6 +365,41 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    it('warns about a delegate call nested inside an otherwise canonical batch', () => {
+        // The outer target is the real MultiSend, so an outer-only check sees nothing wrong. The
+        // inner entry carries operation byte 1 into an unrecognised address, which hands the
+        // Safe's context to it just as effectively.
+        const innerData = '0x1234' as Hex;
+        const data = encodeFunctionData({
+            abi: safeMultiSendAbi,
+            functionName: 'multiSend',
+            args: [
+                encodePacked(
+                    ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
+                    [1, target, BigInt(0), BigInt(size(innerData)), innerData],
+                ),
+            ],
+        });
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({
+                    data,
+                    operation: 1,
+                    to: getAddress(
+                        '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526',
+                    ),
+                }),
+            }),
+        );
+
+        expect(
+            screen.getByText(
+                'app.safe.safeTransactionReviewDialog.unrecognisedDelegateCall',
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('lists every call of a batch so an extra effect cannot hide behind the first', () => {
         const packedCalls = [
             { to: target, data: '0x1234' as Hex },
