@@ -10,7 +10,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import { useEffect, useRef, useState } from 'react';
-import type { Hex } from 'viem';
+import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
 import { useBytecode } from 'wagmi';
 import {
     getBytecode,
@@ -108,9 +108,20 @@ interface IPreparedReport {
 const translationKey = 'app.plugins.safeMultisig.safeMultisigSubmitVote';
 
 /**
+ * The event the SPP plugin emits when a body result is actually stored. Its presence in the
+ * receipt is the only proof the report inside the Safe transaction ran: a Safe emits
+ * `ExecutionSuccess` for a payload that did nothing at all - a `DELEGATECALL` to an address with
+ * no code returns success, consumes the nonce and records no result. Observed live on sepolia
+ * (`0x4c8e665d…`, nonce 6): reviewed, signed and executed correctly, two logs, no report.
+ */
+const proposalResultReportedTopic = toEventSelector(
+    'ProposalResultReported(uint256,uint16,address)',
+);
+
+/**
  * What to tell the owner when the Safe ran but the report did not land. Each outcome is a
  * different situation: the nonce survives an outer revert and is gone in the other two, and only
- * `UNMATCHED` leaves the result genuinely unknown.
+ * one of them leaves anything to wait for.
  */
 const executionOutcomeKeys = {
     [SafeExecutionOutcome.OUTER_REVERT]: 'executionReverted',
@@ -328,6 +339,34 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     };
 
     /**
+     * Gas is only charged if execution actually follows: the nonce must be live, the owner must
+     * have asked to bundle, and the threshold must be met or about to be. Which note applies then
+     * depends on whether a signature is still owed - that is what decides if the wallet opens once
+     * or twice.
+     */
+    const resolveCostNote = (prepared: IPreparedReport) => {
+        const { transaction } = prepared;
+        const executes =
+            prepared.bundleExecution &&
+            prepared.landsOnCurrentNonce &&
+            (thresholdReached || willCompleteThreshold);
+
+        if (!executes) {
+            return 'gasless';
+        }
+
+        const signatureStillOwed =
+            transaction.confirmations.length <
+                transaction.confirmationsRequired &&
+            !safeMultisigProposalUtils.hasAddressConfirmed({
+                transaction,
+                address: latestConnectedAddress.current,
+            });
+
+        return signatureStillOwed ? 'bundledExecution' : 'executionOnly';
+    };
+
+    /**
      * Opens the account-level review. The narrow approve/veto wording is only claimed when the
      * transaction reports the expected result and nothing else: an extra call, an opposite effect
      * or a stage advance makes the transaction more than this body's verdict, and the owner is sent
@@ -364,17 +403,14 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     `${translationKey}.review.${isReportOnly ? 'reportOnly' : 'mixed'}`,
                     { proposal: proposal.title },
                 ),
-                // Gas is only charged if execution actually follows: the nonce must be live, the
-                // owner must have asked to bundle, and this signature must complete the threshold
-                // (or it was already complete and executing is all that is left).
+                /**
+                 * The note promises a number of wallet prompts, so it has to be derived from the
+                 * same condition the submit path branches on. A transaction that already carries
+                 * its signatures is executed with one prompt - telling the owner their confirmation
+                 * completes the threshold would describe a step that never happens.
+                 */
                 costNote: t(
-                    `${translationKey}.review.${
-                        prepared.bundleExecution &&
-                        prepared.landsOnCurrentNonce &&
-                        (thresholdReached || willCompleteThreshold)
-                            ? 'bundledExecution'
-                            : 'gasless'
-                    }`,
+                    `${translationKey}.review.${resolveCostNote(prepared)}`,
                 ),
                 onConfirm: () =>
                     withNetworkSwitch(
@@ -794,11 +830,34 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     safeTxHash,
                     safeAddress: externalAddress,
                 });
-                if (outcome === SafeExecutionOutcome.EXECUTION_SUCCESS) {
+                /**
+                 * The Safe's own event is not enough. It says the Safe ran the payload, not that
+                 * the payload did anything, so the report's own event has to be in the same
+                 * receipt - emitted by this plugin, for this proposal and this stage. Without it
+                 * there is nothing to index, and waiting would spend the whole timeout to arrive
+                 * at "the indexer is slow" for a result that was never recorded.
+                 */
+                const hasReportedResult = receipt.logs.some(
+                    (log) =>
+                        addressUtils.isAddressEqual(
+                            log.address,
+                            proposal.pluginAddress,
+                        ) &&
+                        log.topics[0] === proposalResultReportedTopic &&
+                        log.topics[1] ===
+                            pad(numberToHex(BigInt(proposal.proposalIndex))) &&
+                        log.topics[2] === pad(numberToHex(stage.stageIndex)),
+                );
+
+                if (outcome !== SafeExecutionOutcome.EXECUTION_SUCCESS) {
+                    setActionError(
+                        t(`${translationKey}.${executionOutcomeKeys[outcome]}`),
+                    );
+                } else if (hasReportedResult) {
                     setExecutedHash(hash);
                 } else {
                     setActionError(
-                        t(`${translationKey}.${executionOutcomeKeys[outcome]}`),
+                        t(`${translationKey}.executionRecordedNothing`),
                     );
                 }
             }

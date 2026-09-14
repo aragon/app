@@ -2,7 +2,7 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { pad, toEventSelector } from 'viem';
+import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
 import * as Wagmi from 'wagmi';
 import * as WagmiActions from 'wagmi/actions';
 import * as connectedWalletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
@@ -174,17 +174,25 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         jest.clearAllMocks();
     });
 
+    /**
+     * Shared so the receipt mock and the rendered component cannot drift: the report event only
+     * counts when its emitter, proposal and stage are the ones this card is reporting for.
+     */
+    const reportedProposal = generateSppProposal({
+        network: Network.ETHEREUM_SEPOLIA,
+        pluginAddress: `0x${'ab'.repeat(20)}`,
+    });
+    const reportedStageIndex = 1;
+
     const createTestComponent = (
         props?: Partial<ISafeMultisigSubmitVoteProps>,
         queryClient = new QueryClient(),
     ) => {
         const completeProps: ISafeMultisigSubmitVoteProps = {
             daoId: `sep:${owner}`,
-            proposal: generateSppProposal({
-                network: Network.ETHEREUM_SEPOLIA,
-            }),
+            proposal: reportedProposal,
             externalAddress: safeInfo.address,
-            stage: generateSppStage({ stageIndex: 1 }),
+            stage: generateSppStage({ stageIndex: reportedStageIndex }),
             isVeto: false,
             ...props,
         };
@@ -492,15 +500,16 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             }),
         );
 
-        // Executing is the act with consequences, so the payload is disclosed here too — and the
-        // note says gas is due, rather than repeating the free-signature claim.
+        // Executing is the act with consequences, so the payload is disclosed here too - and the
+        // note says gas is due for a single prompt, not that this owner's confirmation completes a
+        // threshold that is already complete.
         await waitFor(() =>
             expect(dialogOpen).toHaveBeenCalledWith(
                 SafeDialogId.TRANSACTION_REVIEW,
                 expect.objectContaining({
                     params: expect.objectContaining({
                         costNote:
-                            'app.plugins.safeMultisig.safeMultisigSubmitVote.review.bundledExecution',
+                            'app.plugins.safeMultisig.safeMultisigSubmitVote.review.executionOnly',
                     }),
                 }),
             ),
@@ -1316,8 +1325,13 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         jest.mocked(WagmiActions.sendTransaction).mockResolvedValue(
             `0x${'2'.repeat(64)}`,
         );
-        // A bare receipt proves nothing: the surface reads the Safe's own event, so the successful
-        // path has to carry one for this transaction's hash.
+        /**
+         * A bare receipt proves nothing, and neither does the Safe's own event on its own: a
+         * `DELEGATECALL` to a codeless address emits `ExecutionSuccess` having done nothing at all.
+         * The successful path therefore carries both - the Safe's event for this hash, and the
+         * plugin's `ProposalResultReported` for this proposal and stage, which is what a real
+         * report emits (observed on sepolia at nonce 4).
+         */
         jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
             status: 'success',
             logs: [
@@ -1328,6 +1342,21 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                         safeTxHash,
                     ],
                     data: pad('0x01'),
+                },
+                {
+                    // Same proposal and stage the component under test is rendered with.
+                    address: reportedProposal.pluginAddress,
+                    topics: [
+                        toEventSelector(
+                            'ProposalResultReported(uint256,uint16,address)',
+                        ),
+                        pad(
+                            numberToHex(BigInt(reportedProposal.proposalIndex)),
+                        ),
+                        pad(numberToHex(reportedStageIndex)),
+                        pad(safeInfo.address as Hex),
+                    ],
+                    data: '0x',
                 },
             ],
         } as never);
@@ -1471,6 +1500,111 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             );
         });
     });
+
+    it('says nothing was recorded when the Safe succeeded but no report was emitted', async () => {
+        const { safeTxHash } = mockThresholdOneExecution();
+        /**
+         * Reproduced from sepolia `0x4c8e665d…` (nonce 6): the batch was reviewed, signed by both
+         * owners and executed honestly, but its `DELEGATECALL` target held no code, so the Safe
+         * emitted `ExecutionSuccess` having run nothing. Two logs, no report.
+         */
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
+            status: 'success',
+            logs: [
+                {
+                    address: safeInfo.address,
+                    topics: [
+                        toEventSelector('ExecutionSuccess(bytes32,uint256)'),
+                        safeTxHash,
+                    ],
+                    data: pad('0x01'),
+                },
+            ],
+        } as never);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        // The nonce is spent and nothing will ever be indexed, so waiting would age out into
+        // "the indexer is slow" for a result that was never recorded.
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.executionRecordedNothing',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.finalizing',
+            }),
+        ).not.toBeInTheDocument();
+    });
+
+    /**
+     * A batch executes arbitrary calls, so any contract in it can emit this event with any topics.
+     * A report only counts when the plugin itself emitted it for this proposal and this stage -
+     * each of the three has to be checked, or a neighbouring report would be read as this one.
+     */
+    it.each([
+        { case: 'another contract', emitter: `0x${'cd'.repeat(20)}` },
+        { case: 'another proposal', proposalId: BigInt(99) },
+        { case: 'another stage', stageIndex: 7 },
+    ])(
+        'does not accept a report event from $case',
+        async ({ emitter, proposalId, stageIndex }) => {
+            const { safeTxHash } = mockThresholdOneExecution();
+            jest.mocked(
+                WagmiActions.waitForTransactionReceipt,
+            ).mockResolvedValue({
+                status: 'success',
+                logs: [
+                    {
+                        address: safeInfo.address,
+                        topics: [
+                            toEventSelector(
+                                'ExecutionSuccess(bytes32,uint256)',
+                            ),
+                            safeTxHash,
+                        ],
+                        data: pad('0x01'),
+                    },
+                    {
+                        address: emitter ?? reportedProposal.pluginAddress,
+                        topics: [
+                            toEventSelector(
+                                'ProposalResultReported(uint256,uint16,address)',
+                            ),
+                            pad(
+                                numberToHex(
+                                    proposalId ??
+                                        BigInt(reportedProposal.proposalIndex),
+                                ),
+                            ),
+                            pad(numberToHex(stageIndex ?? reportedStageIndex)),
+                            pad(safeInfo.address as Hex),
+                        ],
+                        data: '0x',
+                    },
+                ],
+            } as never);
+
+            render(createTestComponent());
+            await userEvent.click(
+                screen.getByRole('button', {
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+                }),
+            );
+
+            expect(
+                await screen.findByText(
+                    'app.plugins.safeMultisig.safeMultisigSubmitVote.executionRecordedNothing',
+                ),
+            ).toBeInTheDocument();
+        },
+    );
 
     it('holds the action while an executed report is not indexed yet', async () => {
         mockThresholdOneExecution();
