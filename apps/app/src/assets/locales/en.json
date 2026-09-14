@@ -4363,7 +4363,8 @@
       },
       "workspaceTransactionsAsideCard": {
         "lastActivity": "Last activity",
-        "transactions": "Transactions"
+        "transactions": "Transactions",
+        "allTransactions": "All transactions"
       },
       "workspaceTransactionsPage": {
         "filter": {

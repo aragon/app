@@ -12,7 +12,6 @@ import {
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
-import { WorkspaceInfoAside } from '../workspaceInfoAside';
 import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
 
 export interface IWorkspaceTransactionsAsideCardProps {
@@ -109,13 +108,9 @@ export const WorkspaceTransactionsAsideCard: React.FC<
     const title =
         selectedAccount != null && activeOption != null
             ? activeOption.label
-            : workspace.name;
+            : t('app.workspace.workspaceTransactionsAsideCard.allTransactions');
 
     const renderContent = () => {
-        if (selectedAccount == null) {
-            return <WorkspaceInfoAside stats={stats} workspace={workspace} />;
-        }
-
         if (isDaoAccountSelected && dao != null) {
             return (
                 <DaoInfoAside
