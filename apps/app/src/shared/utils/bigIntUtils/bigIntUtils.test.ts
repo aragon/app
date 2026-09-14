@@ -152,6 +152,17 @@ describe('bigIntUtils', () => {
         it('returns fallback for malformed scientific notation', () => {
             expect(bigIntUtils.safeParse('1.2.3e5')).toBe(BigInt(0));
         });
+
+        it('parses an exponent at the supported limit', () => {
+            expect(bigIntUtils.safeParse('1e1024')).toBe(
+                BigInt(10) ** BigInt(1024),
+            );
+        });
+
+        it('returns fallback for an exponent past the supported limit instead of building the BigInt', () => {
+            expect(bigIntUtils.safeParse('1e1025')).toBe(BigInt(0));
+            expect(bigIntUtils.safeParse('1e100000000')).toBe(BigInt(0));
+        });
     });
 
     describe('parseUnits', () => {
@@ -192,6 +203,18 @@ describe('bigIntUtils', () => {
 
         it('throws on values that are not a number', () => {
             expect(() => bigIntUtils.parseUnits('abc', 18)).toThrow();
+        });
+
+        it('throws on an exponent too large to shift instead of returning zero', () => {
+            // The shifted exponent stringifies as "1e+21", which used to fall out of the
+            // scientific path as a silent zero.
+            expect(() =>
+                bigIntUtils.parseUnits('1e1000000000000000000000', 18),
+            ).toThrow();
+        });
+
+        it('throws on an exponent that would build a multi-million-digit BigInt', () => {
+            expect(() => bigIntUtils.parseUnits('1e100000000', 18)).toThrow();
         });
     });
 });
