@@ -261,6 +261,61 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
+    /**
+     * The settled surface renders a verdict with a checkmark and says nothing else, so a result
+     * written after its stage advanced reads exactly like one that decided the stage. The record
+     * is real and the gas was spent; the authority is what it lacks.
+     */
+    it('says a recorded result had no effect when the stage had already advanced', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            settledResultType: SppProposalType.APPROVAL,
+            isStageCurrent: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.recordedAfterAdvance',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('does not claim a recorded result was ineffective while its stage is current', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            settledResultType: SppProposalType.APPROVAL,
+            isStageCurrent: true,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.recordedAfterAdvance',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('does not call an unwritten result ineffective when the stage merely expired', () => {
+        // Expiry without an advance is a dead proposal, not a forfeited vote - and nothing was
+        // recorded, so there is no result to describe as having had no effect.
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            isStageCurrent: false,
+            canStillAffectOutcome: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.recordedAfterAdvance',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
     it('rejects a connected wallet that is not a live Safe owner', async () => {
         useWalletAccountSpy.mockReturnValue({
             address: nonOwner,

@@ -11,6 +11,7 @@ import {
     hashTypedData,
     size,
 } from 'viem';
+import * as Wagmi from 'wagmi';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
@@ -72,6 +73,7 @@ jest.mock('@aragon/gov-ui-kit', () => {
 
 describe('<SafeTransactionReviewDialog /> component', () => {
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const useBytecodeSpy = jest.spyOn(Wagmi, 'useBytecode');
 
     const safeAddress = getAddress(
         '0x5afe000000000000000000000000000000000001',
@@ -83,10 +85,16 @@ describe('<SafeTransactionReviewDialog /> component', () => {
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
+        // Default to an unresolved read: an unanswered node must not accuse a valid batch.
+        useBytecodeSpy.mockReturnValue({
+            data: undefined,
+            isSuccess: false,
+        } as never);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
+        useBytecodeSpy.mockReset();
     });
 
     /**
@@ -210,6 +218,98 @@ describe('<SafeTransactionReviewDialog /> component', () => {
                 'app.safe.safeTransactionReviewDialog.operation.delegateCall',
             ),
         ).toBeInTheDocument();
+    });
+
+    /**
+     * Observed on sepolia: a delegate call to an address holding no code consumed nonce 6 of the
+     * gate Safe, emitted `ExecutionSuccess`, and ran none of its inner calls. Every other signal
+     * on this dialog looked correct - the hash verified and the payload decoded - so the missing
+     * code at the target is the only thing that distinguishes it from a batch that works.
+     */
+    it.each([
+        { code: undefined, label: 'no code' },
+        { code: '0x' as Hex, label: 'empty code' },
+    ])(
+        'warns that a delegate call to a target with $label will run nothing',
+        ({ code }) => {
+            useBytecodeSpy.mockReturnValue({
+                data: code,
+                isSuccess: true,
+            } as never);
+
+            render(
+                createTestComponent({
+                    transaction: generateSignedTransaction({ operation: 1 }),
+                }),
+            );
+
+            expect(
+                screen.getByText(
+                    'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+                ),
+            ).toBeInTheDocument();
+        },
+    );
+
+    it('does not warn when the delegate call target holds code', () => {
+        useBytecodeSpy.mockReturnValue({
+            data: '0x6080604052' as Hex,
+            isSuccess: true,
+        } as never);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('stays silent while the target read is unresolved', () => {
+        // An unanswered or failed node read is not evidence of an empty target. Warning on it
+        // would tell an owner not to sign a batch that is sound, on the strength of nothing.
+        useBytecodeSpy.mockReturnValue({
+            data: undefined,
+            isSuccess: false,
+        } as never);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('does not warn about a plain call to an address with no code', () => {
+        // A call to a codeless address wastes its own slot; it does not void the other calls, and
+        // only the Safe's own context - which delegatecall hands over - can be voided wholesale.
+        useBytecodeSpy.mockReturnValue({
+            data: undefined,
+            isSuccess: true,
+        } as never);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 0 }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
     });
 
     it('lists every call of a batch so an extra effect cannot hide behind the first', () => {

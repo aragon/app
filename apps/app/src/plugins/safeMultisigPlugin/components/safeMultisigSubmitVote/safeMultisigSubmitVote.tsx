@@ -168,6 +168,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         isCurrentNonceFree,
         transactionsAhead,
         canStillAffectOutcome,
+        isStageCurrent,
     } = bodyState;
 
     const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
@@ -1012,6 +1013,23 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             message: t(
                 `${translationKey}.${liveReport != null ? 'stageExpiredQueued' : 'stageExpired'}`,
             ),
+        });
+    }
+
+    /**
+     * The mirror of `stageExpiredQueued`, for after the write rather than before it. A report can
+     * land on a stage that has already advanced: the record is stored and the gas is spent, but it
+     * moved nothing. Left unsaid, the settled surface shows a verdict with a checkmark and reads
+     * as though it decided something - the one place this card would claim authority it lacks.
+     *
+     * Keyed on `isStageCurrent` rather than `canStillAffectOutcome`, which also goes false when a
+     * stage merely expires unadvanced - true of a dead proposal, but not an advance.
+     */
+    if (hasSettled && !isStageCurrent) {
+        alerts.push({
+            key: 'recordedAfterAdvance',
+            variant: 'warning',
+            message: t(`${translationKey}.recordedAfterAdvance`),
         });
     }
 

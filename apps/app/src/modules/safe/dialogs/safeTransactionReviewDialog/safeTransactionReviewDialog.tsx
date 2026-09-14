@@ -8,6 +8,8 @@ import {
     Tag,
 } from '@aragon/gov-ui-kit';
 import { useQuery } from '@tanstack/react-query';
+import type { Hex } from 'viem';
+import { useBytecode } from 'wagmi';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import type { Network } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
@@ -177,6 +179,26 @@ export const SafeTransactionReviewDialog: React.FC<
     const decoded =
         decodedActions?.length === calls.length ? decodedActions : undefined;
 
+    /**
+     * A delegate call to an address holding no code succeeds and runs nothing: the Safe consumes
+     * the nonce, emits `ExecutionSuccess`, and every call listed below never happens. Observed on
+     * sepolia at nonce 6 of the gate Safe - a fully reviewed, correctly hashed, fully signed batch
+     * that did nothing at all. Safe's own interface warns about this shape and this one did not.
+     *
+     * Scoped to the outer target, which is the one the Safe delegates its own context to. Inner
+     * targets would need a read per call, and a plain call to a codeless address only wastes its
+     * own slot rather than voiding the whole batch.
+     * ponytail: outer target only, extend per-call if an empty inner target shows up in practice.
+     */
+    const outerCall = safeTransactionEnvelopeUtils.getCall(transaction);
+    const isDelegateCall = outerCall.operation === 1;
+    const { data: outerBytecode, isSuccess: isBytecodeKnown } = useBytecode({
+        address: outerCall.to as Hex,
+        chainId: networkDefinitions[network].id,
+        query: { enabled: isDelegateCall },
+    });
+    const hasCodelessTarget =
+        isDelegateCall && isBytecodeKnown && (outerBytecode ?? '0x') === '0x';
     const isHashMismatch = verification === SafeHashVerification.MISMATCH;
 
     const handleConfirm = () => {
@@ -207,6 +229,12 @@ export const SafeTransactionReviewDialog: React.FC<
                     <AlertInline
                         message={t(`${translationKey}.incompleteBatch`)}
                         variant="warning"
+                    />
+                )}
+                {hasCodelessTarget && (
+                    <AlertInline
+                        message={t(`${translationKey}.codelessDelegateCall`)}
+                        variant="critical"
                     />
                 )}
                 <dl className="flex flex-col gap-3 pt-4">
