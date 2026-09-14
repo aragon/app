@@ -12,21 +12,17 @@ import { DateTime } from 'luxon';
 import { useEffect, useRef, useState } from 'react';
 import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
 import { useBytecode } from 'wagmi';
-import {
-    getBytecode,
-    getConnection,
-    sendTransaction,
-    waitForTransactionReceipt,
-} from 'wagmi/actions';
+import { getBytecode, getConnection } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
 import { SafeDialogId } from '@/modules/safe/constants';
 import {
-    SafeExecutionOutcome,
-    safeExecutionOutcomeUtils,
-} from '@/modules/safe/utils/safeExecutionOutcomeUtils';
+    SafeExecutionResult,
+    useSafeTransactionExecution,
+} from '@/modules/safe/hooks/useSafeTransactionExecution';
+import { SafeExecutionOutcome } from '@/modules/safe/utils/safeExecutionOutcomeUtils';
 import {
     SafeBatchStatus,
     safeTransactionEnvelopeUtils,
@@ -173,6 +169,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
 
     const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
     const { mutateAsync: confirmTransaction } = useConfirmSafeTransaction();
+    const { execute: executeSafeTransaction } = useSafeTransactionExecution();
 
     const liveReport =
         pendingReport?.state === SafeTransactionState.LIVE
@@ -756,106 +753,60 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 landsOnCurrentNonce &&
                 signatures.length >= transaction.confirmationsRequired
             ) {
-                /**
-                 * Authority is read from the Safe, not from the service record. A transaction
-                 * carries the `confirmationsRequired` it was proposed under, but the Safe validates
-                 * against the threshold and owner set it holds *now*: owners can be replaced and
-                 * the threshold raised after a signature is collected, which silently voids it.
-                 * Read from the contract rather than the cached info endpoint - it is chain truth
-                 * and costs no Safe API quota.
-                 */
-                const [liveThreshold, liveOwners] = await Promise.all([
-                    protocolKit.getThreshold(),
-                    protocolKit.getOwners(),
-                ]);
-                const applicableSignatures = signatures.filter(({ signer }) =>
-                    liveOwners.some((owner) =>
-                        addressUtils.isAddressEqual(owner, signer),
-                    ),
-                );
+                const report = await executeSafeTransaction({
+                    protocolKit,
+                    safeTransaction,
+                    safeTxHash,
+                    safeAddress: externalAddress,
+                    chainId: requiredChainId,
+                    signatures,
+                    /**
+                     * The Safe's own event is not enough. It says the Safe ran the payload, not
+                     * that the payload did anything, so the report's own event has to be in the
+                     * same receipt - emitted by this plugin, for this proposal and this stage.
+                     * Without it there is nothing to index, and waiting would spend the whole
+                     * timeout to arrive at "the indexer is slow" for a result never recorded.
+                     *
+                     * This is the governance-specific half of execution and stays here: the shared
+                     * hook knows nothing of proposals or stages, and asks the caller instead.
+                     */
+                    verifyEffect: (receipt) =>
+                        receipt.logs.some(
+                            (log) =>
+                                addressUtils.isAddressEqual(
+                                    log.address,
+                                    proposal.pluginAddress,
+                                ) &&
+                                log.topics[0] === proposalResultReportedTopic &&
+                                log.topics[1] ===
+                                    pad(
+                                        numberToHex(
+                                            BigInt(proposal.proposalIndex),
+                                        ),
+                                    ) &&
+                                log.topics[2] ===
+                                    pad(numberToHex(stage.stageIndex)),
+                        ),
+                });
 
-                if (applicableSignatures.length < liveThreshold) {
-                    // Below the applicable threshold: leave the collected signatures in the queue
-                    // for the remaining owners rather than paying gas to be turned away.
+                if (report.result === SafeExecutionResult.AUTHORITY_CHANGED) {
                     setActionError(t(`${translationKey}.authorityChanged`));
                     return;
                 }
 
-                for (const signature of applicableSignatures) {
-                    safeTransaction.addSignature(signature);
-                }
-
-                const signatureBytes =
-                    buildSignatureBytes(applicableSignatures);
-
-                if (safeTransaction.encodedSignatures() !== signatureBytes) {
-                    throw new Error(
-                        'Protocol Kit produced inconsistent Safe signature bytes',
-                    );
-                }
-
-                /**
-                 * The last gate before gas, and only here: this eth_calls `execTransaction` with
-                 * the signatures now attached, so it answers "would this execution go through as
-                 * assembled". Asked any earlier - before signatures exist - it would report a
-                 * below-threshold transaction as broken, indistinguishably from a failing call.
-                 */
-                const canExecute =
-                    await protocolKit.isValidTransaction(safeTransaction);
-
-                if (!canExecute) {
+                if (report.result === SafeExecutionResult.REJECTED) {
                     setActionError(t(`${translationKey}.executionRejected`));
                     return;
                 }
 
-                const data =
-                    await protocolKit.getEncodedTransaction(safeTransaction);
-                const hash = await sendTransaction(wagmiConfig, {
-                    chainId: requiredChainId,
-                    to: externalAddress as Hex,
-                    data: data as Hex,
-                    value: BigInt(0),
-                });
-                const receipt = await waitForTransactionReceipt(wagmiConfig, {
-                    hash,
-                });
-
-                /**
-                 * A mined transaction is not a successful one, and a successful outer transaction
-                 * is not a successful Safe transaction. The Safe's own event is the first of two
-                 * gates: it rules out an outer revert and a failed inner call, but not a payload
-                 * that ran and did nothing, which is what the second gate below is for.
-                 */
-                const outcome = safeExecutionOutcomeUtils.classify({
-                    receipt,
-                    safeTxHash,
-                    safeAddress: externalAddress,
-                });
-                /**
-                 * The Safe's own event is not enough. It says the Safe ran the payload, not that
-                 * the payload did anything, so the report's own event has to be in the same
-                 * receipt - emitted by this plugin, for this proposal and this stage. Without it
-                 * there is nothing to index, and waiting would spend the whole timeout to arrive
-                 * at "the indexer is slow" for a result that was never recorded.
-                 */
-                const hasReportedResult = receipt.logs.some(
-                    (log) =>
-                        addressUtils.isAddressEqual(
-                            log.address,
-                            proposal.pluginAddress,
-                        ) &&
-                        log.topics[0] === proposalResultReportedTopic &&
-                        log.topics[1] ===
-                            pad(numberToHex(BigInt(proposal.proposalIndex))) &&
-                        log.topics[2] === pad(numberToHex(stage.stageIndex)),
-                );
-
-                if (outcome !== SafeExecutionOutcome.EXECUTION_SUCCESS) {
+                if (report.result === SafeExecutionResult.FAILED) {
                     setActionError(
-                        t(`${translationKey}.${executionOutcomeKeys[outcome]}`),
+                        t(
+                            `${translationKey}.${executionOutcomeKeys[report.outcome]}`,
+                        ),
                     );
-                } else if (hasReportedResult) {
-                    setExecutedHash(hash);
+                } else if (report.result === SafeExecutionResult.EXECUTED) {
+                    setExecutedHash(report.hash);
                 } else {
                     setActionError(
                         t(`${translationKey}.executionRecordedNothing`),
