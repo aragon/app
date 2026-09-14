@@ -1,23 +1,22 @@
-import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import {
-    type IGetTokenVotingMembershipParams,
-    tokenVotingMembershipOptions,
-} from '@/modules/governance/api/governanceService';
+import { tokenVotingMembershipOptions } from '@/modules/governance/api/governanceService';
+import type {
+    IGetTokenVotingMembershipParams,
+    ITokenVotingMembershipPage,
+} from '@/modules/governance/api/tokenVotingMembershipService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { InfiniteQueryOptions } from '@/shared/types';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 
 /**
- * Gets the membership for token-voting plugins.
- *
- * This routes between the aragon-domain BFF and the legacy backend
- * regardless of source. The generic `getMemberList` still serves multisig/admin.
+ * Gets the membership of a token-voting plugin from the membership BFF, which
+ * owns the choice between the aragon-domain and the legacy backend. The
+ * generic `getMemberList` still serves multisig/admin.
  */
 export const useTokenVotingMembershipData = (
     params: IGetTokenVotingMembershipParams,
     options?: InfiniteQueryOptions<
-        PageDTO<TokenVotingMemberDTO>,
+        ITokenVotingMembershipPage,
         IGetTokenVotingMembershipParams
     >,
 ) => {

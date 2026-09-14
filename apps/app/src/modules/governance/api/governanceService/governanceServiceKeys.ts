@@ -1,3 +1,4 @@
+import type { IGetTokenVotingMembershipParams } from '@/modules/governance/api/tokenVotingMembershipService';
 import type {
     IGetCanCreateProposalParams,
     IGetMemberExistsParams,
@@ -6,7 +7,6 @@ import type {
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
     IGetProposalListParams,
-    IGetTokenVotingMembershipParams,
     IGetVoteListParams,
 } from './governanceService.api';
 

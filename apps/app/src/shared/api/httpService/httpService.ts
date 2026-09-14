@@ -41,7 +41,7 @@ export class HttpService {
         const response = await fetch(completeUrl, {
             body: parsedBody,
             ...processedOptions,
-            ...this.fetchCacheConfig,
+            ...(options?.fetchCacheConfig ?? this.fetchCacheConfig),
         });
 
         if (!response.ok) {
@@ -73,7 +73,12 @@ export class HttpService {
     };
 
     private buildOptions = (options?: IRequestOptions, body?: unknown) => {
-        const { method, headers, ...otherOptions } = options ?? {};
+        const {
+            method,
+            headers,
+            fetchCacheConfig: _fetchCacheConfig,
+            ...otherOptions
+        } = options ?? {};
 
         const processedHeaders = new Headers(headers);
 

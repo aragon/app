@@ -1,22 +1,21 @@
 import 'server-only';
-import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
-import type { ITokenMember } from '@/plugins/tokenPlugin/types';
+import type {
+    IGetTokenVotingMembershipParams,
+    ITokenVotingMembershipPage,
+} from '@/modules/governance/api/tokenVotingMembershipService';
+import { tokenVotingMembershipServiceServer } from '@/modules/governance/api/tokenVotingMembershipService/tokenVotingMembershipService.server';
 import type {
     InfiniteQueryOptions,
     SharedInfiniteQueryOptions,
 } from '@/shared/types';
-import { tokenVotingMembershipServiceServer } from '../../../tokenVotingMembershipService/tokenVotingMembershipService.server';
-import { governanceService } from '../../governanceService';
-import type { IGetTokenVotingMembershipParams } from '../../governanceService.api';
-import { fetchTokenVotingMembership } from '../../utils/fetchTokenVotingMembership';
 import { tokenVotingMembershipOptions } from './useTokenVotingMembership';
 
 /**
  * Server variant of `tokenVotingMembershipOptions` for RSC prefetching. It
  * shares the query key with the client options, so the dehydrated cache
- * resolves the client query without a second network call, but routes the
- * aragon-domain branch through the in-process controller instead of the BFF
- * route (a server-side relative fetch would fail).
+ * resolves the client query without a second network call, and calls the same
+ * BFF service in-process instead of going through the route (a server-side
+ * relative fetch would fail).
  *
  * @example
  * await queryClient.prefetchInfiniteQuery(
@@ -26,19 +25,14 @@ import { tokenVotingMembershipOptions } from './useTokenVotingMembership';
 export const tokenVotingMembershipOptionsServer = (
     params: IGetTokenVotingMembershipParams,
     options?: InfiniteQueryOptions<
-        PageDTO<TokenVotingMemberDTO>,
+        ITokenVotingMembershipPage,
         IGetTokenVotingMembershipParams
     >,
 ): SharedInfiniteQueryOptions<
-    PageDTO<TokenVotingMemberDTO>,
+    ITokenVotingMembershipPage,
     IGetTokenVotingMembershipParams
 > => ({
     ...tokenVotingMembershipOptions(params, options),
     queryFn: ({ pageParam }) =>
-        fetchTokenVotingMembership(
-            pageParam,
-            tokenVotingMembershipServiceServer.getTokenVotingMembership,
-            (legacyParams) =>
-                governanceService.getMemberList<ITokenMember>(legacyParams),
-        ),
+        tokenVotingMembershipServiceServer.getTokenVotingMembership(pageParam),
 });

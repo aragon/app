@@ -4,7 +4,6 @@ import * as wagmi from 'wagmi';
 import * as useTokenVotingMembershipDataModule from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import * as daoService from '@/shared/api/daoService';
-import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
     generateDaoPlugin,
@@ -44,17 +43,8 @@ describe('<LockToVoteMemberList /> component', () => {
         useLockToVoteLockOnboardingCheckModule,
         'useLockToVoteLockOnboardingCheck',
     );
-    const useFeatureFlagsSpy = jest.spyOn(
-        featureFlagsProvider,
-        'useFeatureFlags',
-    );
 
     beforeEach(() => {
-        useFeatureFlagsSpy.mockReturnValue({
-            isEnabled: () => false,
-        } as unknown as ReturnType<
-            typeof featureFlagsProvider.useFeatureFlags
-        >);
         useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: undefined,
             onLoadMore: jest.fn(),
@@ -77,7 +67,6 @@ describe('<LockToVoteMemberList /> component', () => {
     });
 
     afterEach(() => {
-        useFeatureFlagsSpy.mockReset();
         useTokenVotingMembershipDataSpy.mockReset();
         useDaoSpy.mockReset();
         useConnectionSpy.mockReset();

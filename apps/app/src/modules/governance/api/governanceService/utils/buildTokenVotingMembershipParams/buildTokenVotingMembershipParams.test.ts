@@ -1,135 +1,63 @@
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generatePluginSettings,
-} from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     buildTokenVotingMembershipParams,
-    type ITokenVotingMembershipPluginSettings,
     isTokenMemberListPlugin,
 } from './buildTokenVotingMembershipParams';
 
 describe('buildTokenVotingMembershipParams', () => {
     const initialParams = {
         queryParams: {
-            daoId: 'dao-id',
+            daoId: 'ethereum-mainnet-0xdao',
             pluginAddress: '0xPlugin',
             pageSize: 18,
         },
     };
 
-    const options = { domainSourceEnabled: true };
-
-    const generateMembershipPlugin = (
-        interfaceType: PluginInterfaceType,
-        settings: Partial<
-            Pick<ITokenVotingMembershipPluginSettings, 'token' | 'votingEscrow'>
-        >,
-    ) =>
-        generateDaoPlugin<ITokenVotingMembershipPluginSettings>({
-            interfaceType,
-            settings: {
-                ...generatePluginSettings(),
-                token: { address: '0xToken' },
-                ...settings,
-            },
+    it('builds the params the BFF needs and nothing else', () => {
+        const plugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
         });
-
-    it('builds the routing params from the plugin settings, DAO network and options', () => {
-        const plugin = generateMembershipPlugin(
-            PluginInterfaceType.TOKEN_VOTING,
-            { token: { address: '0xToken', underlying: '0xUnderlying' } },
-        );
         const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
 
         const result = buildTokenVotingMembershipParams(
             initialParams,
             plugin,
             dao,
-            options,
         );
 
         expect(result.queryParams).toEqual({
-            daoId: 'dao-id',
+            daoId: 'ethereum-mainnet-0xdao',
             pluginAddress: '0xPlugin',
+            page: undefined,
             pageSize: 18,
-            network: Network.ETHEREUM_MAINNET,
-            pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
-            tokenAddress: '0xToken',
-            tokenUnderlying: '0xUnderlying',
-            hasVotingEscrow: false,
-            domainSourceEnabled: true,
         });
     });
 
-    it('flags voting-escrow backed plugins', () => {
-        const plugin = generateMembershipPlugin(
-            PluginInterfaceType.TOKEN_VOTING,
-            { votingEscrow: { escrowAddress: '0xEscrow' } },
-        );
-
-        const { queryParams } = buildTokenVotingMembershipParams(
-            initialParams,
-            plugin,
-            generateDao(),
-            options,
-        );
-
-        expect(queryParams.hasVotingEscrow).toBe(true);
-    });
-
-    it('forwards a disabled domain source', () => {
-        const plugin = generateMembershipPlugin(
-            PluginInterfaceType.TOKEN_VOTING,
-            {},
-        );
-
-        const { queryParams } = buildTokenVotingMembershipParams(
-            initialParams,
-            plugin,
-            generateDao(),
-            { domainSourceEnabled: false },
-        );
-
-        expect(queryParams.domainSourceEnabled).toBe(false);
-    });
-
-    it('normalizes a missing underlying to null (lock-to-vote tokens do not carry the field)', () => {
-        const plugin = generateMembershipPlugin(
-            PluginInterfaceType.LOCK_TO_VOTE,
-            {},
-        );
-        const dao = generateDao({ network: Network.POLYGON_MAINNET });
+    it('targets the linked account own DAO for linked-account plugins', () => {
+        const plugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+        });
+        const dao = generateDao();
+        const resolvePluginDaoIdSpy = jest
+            .spyOn(daoUtils, 'resolvePluginDaoId')
+            .mockReturnValue('ethereum-mainnet-0xlinked');
 
         const { queryParams } = buildTokenVotingMembershipParams(
             initialParams,
             plugin,
             dao,
-            options,
         );
 
-        expect(queryParams.tokenAddress).toBe('0xToken');
-        expect(queryParams.tokenUnderlying).toBeNull();
-        expect(queryParams.pluginInterfaceType).toBe(
-            PluginInterfaceType.LOCK_TO_VOTE,
-        );
-    });
-
-    it('preserves the original daoId for non-linked-account plugins', () => {
-        const plugin = generateMembershipPlugin(
-            PluginInterfaceType.TOKEN_VOTING,
-            {},
-        );
-
-        const { queryParams } = buildTokenVotingMembershipParams(
-            initialParams,
+        expect(resolvePluginDaoIdSpy).toHaveBeenCalledWith(
+            initialParams.queryParams.daoId,
             plugin,
-            generateDao(),
-            options,
+            dao,
         );
+        expect(queryParams.daoId).toBe('ethereum-mainnet-0xlinked');
 
-        expect(queryParams.daoId).toBe('dao-id');
+        resolvePluginDaoIdSpy.mockRestore();
     });
 });
 

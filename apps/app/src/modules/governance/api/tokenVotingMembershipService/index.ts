@@ -1,2 +1,7 @@
-export type { IGetTokenVotingMembersParams } from './tokenVotingMembershipService.api';
+export type {
+    IGetTokenVotingMembershipParams,
+    IGetTokenVotingMembershipQueryParams,
+    ITokenVotingMembershipPage,
+    TokenVotingMembershipSource,
+} from './tokenVotingMembershipService.api';
 export { tokenVotingMembershipServiceClient } from './tokenVotingMembershipService.client';

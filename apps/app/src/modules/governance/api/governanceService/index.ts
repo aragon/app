@@ -8,7 +8,6 @@ export {
 export * from './queries';
 export {
     buildTokenVotingMembershipParams,
-    type ITokenVotingMembershipPluginSettings,
     isTokenMemberListPlugin,
 } from './utils/buildTokenVotingMembershipParams';
 export { mapBackendMemberToTokenVotingDTO } from './utils/mapBackendMemberToTokenVotingDTO';
