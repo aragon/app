@@ -25,7 +25,6 @@ import {
     generateWorkspaceQueryResponse,
     generateWorkspaceTransaction,
 } from '../../testUtils';
-import * as workspaceInfoAside from '../workspaceInfoAside';
 import {
     type IWorkspaceTransactionsAsideCardProps,
     WorkspaceTransactionsAsideCard,
@@ -41,10 +40,6 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const daoInfoAsideSpy = jest.spyOn(daoInfoAside, 'DaoInfoAside');
-    const workspaceInfoAsideSpy = jest.spyOn(
-        workspaceInfoAside,
-        'WorkspaceInfoAside',
-    );
 
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
@@ -120,20 +115,13 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         daoInfoAsideSpy.mockImplementation(() => (
             <div data-testid="dao-info-mock" />
         ));
-        workspaceInfoAsideSpy.mockImplementation(() => (
-            <div data-testid="workspace-info-mock" />
-        ));
     });
 
     afterEach(() => {
         useWorkspaceTransactionsSpy.mockReset();
         useDaoSpy.mockReset();
         daoInfoAsideSpy.mockReset();
-        workspaceInfoAsideSpy.mockReset();
     });
-
-    const lastStats = (spy: jest.SpyInstance) =>
-        (spy.mock.lastCall as [{ stats: Array<{ value: string }> }])[0].stats;
 
     const createTestComponent = (
         props?: Partial<IWorkspaceTransactionsAsideCardProps>,
@@ -172,17 +160,23 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         });
     });
 
-    it('titles the card after the workspace and renders its metadata with the stats', () => {
+    it('titles the card generically and renders the stats on their own when no account is selected', () => {
         mockTransactions({ totalRecords: 12 });
         render(createTestComponent());
 
-        expect(screen.getByText('Test Workspace')).toBeInTheDocument();
-        expect(screen.getByTestId('workspace-info-mock')).toBeInTheDocument();
-        expect(workspaceInfoAsideSpy).toHaveBeenLastCalledWith(
-            expect.objectContaining({ workspace }),
-            undefined,
-        );
-        expect(lastStats(workspaceInfoAsideSpy)[0].value).toEqual('12');
+        expect(
+            screen.getByText(
+                /workspaceTransactionsAsideCard\.allTransactions$/,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/workspaceTransactionsAsideCard\.transactions$/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/workspaceTransactionsAsideCard\.lastActivity$/),
+        ).toBeInTheDocument();
+        expect(screen.getByText('12')).toBeInTheDocument();
+        expect(screen.queryByTestId('dao-info-mock')).not.toBeInTheDocument();
     });
 
     it('treats the aggregated option like no selection', () => {
@@ -196,8 +190,13 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
             }),
         );
 
-        expect(screen.getByText('Test Workspace')).toBeInTheDocument();
-        expect(screen.getByTestId('workspace-info-mock')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                /workspaceTransactionsAsideCard\.allTransactions$/,
+            ),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('All accounts')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('dao-info-mock')).not.toBeInTheDocument();
     });
 
     it('narrows the stats to the selected account and reads its DAO', () => {
@@ -233,9 +232,6 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
 
         expect(screen.getByText('Demo DAO')).toBeInTheDocument();
         expect(screen.getByTestId('dao-info-mock')).toBeInTheDocument();
-        expect(
-            screen.queryByTestId('workspace-info-mock'),
-        ).not.toBeInTheDocument();
         expect(daoInfoAsideSpy).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 dao,
@@ -255,9 +251,6 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
             screen.getByText(/workspaceTransactionsAsideCard\.transactions$/),
         ).toBeInTheDocument();
         expect(screen.queryByTestId('dao-info-mock')).not.toBeInTheDocument();
-        expect(
-            screen.queryByTestId('workspace-info-mock'),
-        ).not.toBeInTheDocument();
     });
 
     it('formats the last activity relatively to now', () => {
@@ -268,7 +261,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         const expected = formatterUtils.formatDate(oneDayAgo * 1000, {
             format: DateFormat.RELATIVE,
         });
-        expect(lastStats(workspaceInfoAsideSpy)[1].value).toEqual(expected);
+        expect(screen.getByText(expected as string)).toBeInTheDocument();
     });
 
     it('falls back to a placeholder while the transactions are loading', () => {
@@ -279,15 +272,13 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         );
         render(createTestComponent());
 
-        expect(
-            lastStats(workspaceInfoAsideSpy).map((stat) => stat.value),
-        ).toEqual(['-', '-']);
+        expect(screen.getAllByText('-')).toHaveLength(2);
     });
 
     it('marks the count as a lower bound when the selection is partial', () => {
         mockTransactions({ totalRecords: 12, partial: true });
         render(createTestComponent());
 
-        expect(lastStats(workspaceInfoAsideSpy)[0].value).toEqual('12+');
+        expect(screen.getByText('12+')).toBeInTheDocument();
     });
 });
