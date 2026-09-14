@@ -33,11 +33,21 @@ export const settledHistoryPageSize = 40;
 /**
  * How many history pages the settled-report scan will walk before giving up.
  *
- * The scan normally stops on its own once a page predates the stage, so this only bounds the
- * pathological case: a Safe whose executions carry no dates, or a stage that opened long ago behind
- * thousands of unrelated transactions. Giving up renders the honest empty state rather than looping.
+ * This is the scan's only bound, so it is load-bearing rather than pathological: there is no date
+ * floor to stop earlier, because a report can execute before its stage opened. At the page size
+ * above it covers the most recent 400 executed transactions; past that the scan reports that it ran
+ * out rather than that the report does not exist.
  */
 export const settledHistoryMaxPages = 10;
+
+/**
+ * How much of the queue a pre-signing read asks for in one request.
+ *
+ * The queue endpoint cannot filter by nonce, so a transaction the read does not see is either
+ * absent or merely past the page. This is set deep enough that a real queue fits in one request;
+ * when it does not, the caller reads `next` and declines to treat absence as a fact.
+ */
+export const safeQueueReadLimit = 100;
 
 /**
  * Poll cadence of the indexer while waiting for an executed report to be attributed.

@@ -11,6 +11,7 @@ import type { Network } from '@/shared/api/daoService';
 import { SafeServiceError, useSafeInfo } from '@/shared/api/safeService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { SafeBalanceList } from '../../components/safeBalanceList';
 import { SafeOwnerList } from '../../components/safeOwnerList';
@@ -133,8 +134,10 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                     >
                         <SafePendingTransactionList
                             address={checksummedAddress}
+                            chainId={networkDefinitions[network].id}
                             currentNonce={safeInfo?.nonce}
                             network={network}
+                            safeVersion={safeInfo?.version}
                         />
                     </Page.MainSection>
                     <Page.MainSection

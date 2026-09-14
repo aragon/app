@@ -2,16 +2,19 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { pad, toEventSelector } from 'viem';
 import * as Wagmi from 'wagmi';
 import * as WagmiActions from 'wagmi/actions';
 import * as connectedWalletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
+import { SafeDialogId } from '@/modules/safe/constants';
 import {
     generateSppProposal,
     generateSppStage,
 } from '@/plugins/sppPlugin/testUtils';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
+import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import * as safeServiceApi from '@/shared/api/safeService';
 import * as transactionServiceApi from '@/shared/api/transactionService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
@@ -20,10 +23,7 @@ import {
     generateDialogContext,
     generateSafeNextNonceResponse,
 } from '@/shared/testUtils';
-import {
-    SafeMultisigPluginDialogId,
-    safeIndexingTimeout,
-} from '../../constants';
+import { safeIndexingTimeout } from '../../constants';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
     generateSafeBodyState,
@@ -82,6 +82,10 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     const getSafeNextNonceSpy = jest.spyOn(
         safeServiceApi.safeService,
         'getSafeNextNonce',
+    );
+    const getQueueSpy = jest.spyOn(
+        safeServiceApi.safeService,
+        'getSafePendingTransactions',
     );
     const useTransactionStatusSpy = jest.spyOn(
         transactionServiceApi,
@@ -152,12 +156,27 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         useTransactionStatusSpy.mockReturnValue({ data: undefined } as never);
     });
 
+    /**
+     * The existing-report path re-reads the queue before review, so a queued report has to be
+     * visible to the service as well as to the polled body state - a transaction the service no
+     * longer serves is one the component refuses to sign.
+     */
+    const mockQueuedReport = (transaction: ISafeMultisigTransaction) =>
+        getQueueSpy.mockResolvedValue({
+            count: 1,
+            next: null,
+            previous: null,
+            results: [transaction],
+            meta: { stale: false, source: 'safe-api', fetchedAt: '' },
+        } as never);
+
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     const createTestComponent = (
         props?: Partial<ISafeMultisigSubmitVoteProps>,
+        queryClient = new QueryClient(),
     ) => {
         const completeProps: ISafeMultisigSubmitVoteProps = {
             daoId: `sep:${owner}`,
@@ -171,7 +190,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         };
 
         return (
-            <QueryClientProvider client={new QueryClient()}>
+            <QueryClientProvider client={queryClient}>
                 <SafeMultisigSubmitVote {...completeProps} />
             </QueryClientProvider>
         );
@@ -332,7 +351,14 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeEnabled();
     });
 
-    it('confirms the governance effect before producing a signature', async () => {
+    it('reviews the exact payload before producing a signature', async () => {
+        const { safeTxHash } = mockThresholdOneExecution();
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '5',
+                currentNonce: '5',
+            }),
+        );
         render(createTestComponent());
 
         await userEvent.click(
@@ -341,38 +367,54 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             }),
         );
 
-        expect(dialogOpen).toHaveBeenCalledWith(
-            SafeMultisigPluginDialogId.CONFIRM_SIGNATURE,
-            expect.objectContaining({
-                params: expect.objectContaining({
-                    isVeto: false,
-                    safeAddress: safeInfo.address,
-                    signerAddress: owner,
+        await waitFor(() =>
+            expect(dialogOpen).toHaveBeenCalledWith(
+                SafeDialogId.TRANSACTION_REVIEW,
+                expect.objectContaining({
+                    params: expect.objectContaining({
+                        safeAddress: safeInfo.address,
+                        transaction: expect.objectContaining({
+                            safeTxHash,
+                            data: '0xreport',
+                            nonce: '0',
+                        }),
+                    }),
                 }),
-            }),
+            ),
         );
     });
 
     it('warns that the confirmation reaching threshold is followed by a gas transaction', async () => {
         // One click, two wallet interactions: a free confirmation, then execution. Promising
         // "signing costs no gas" and then opening a gas prompt would be a bait.
+        mockThresholdOneExecution();
         render(createTestComponent());
-
         await userEvent.click(
             screen.getByRole('button', {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         );
 
-        expect(dialogOpen).toHaveBeenCalledWith(
-            SafeMultisigPluginDialogId.CONFIRM_SIGNATURE,
-            expect.objectContaining({
-                params: expect.objectContaining({ willExecute: true }),
-            }),
+        await waitFor(() =>
+            expect(dialogOpen).toHaveBeenCalledWith(
+                SafeDialogId.TRANSACTION_REVIEW,
+                expect.objectContaining({
+                    params: expect.objectContaining({
+                        costNote:
+                            'app.plugins.safeMultisig.safeMultisigSubmitVote.review.bundledExecution',
+                    }),
+                }),
+            ),
         );
     });
 
     it('does not warn of a gas transaction when more owners are still needed', async () => {
+        const queued = generateSafeMultisigTransaction({
+            nonce: '0',
+            confirmationsRequired: 3,
+            confirmations: [generateSafeConfirmation({ owner: nonOwner })],
+        });
+        mockQueuedReport(queued);
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
             safeInfo: generateSafeInfo({
@@ -380,13 +422,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 owners: [owner, nonOwner, `0x${'4'.repeat(40)}`],
             }),
             pendingReport: {
-                transaction: generateSafeMultisigTransaction({
-                    nonce: '0',
-                    confirmationsRequired: 3,
-                    confirmations: [
-                        generateSafeConfirmation({ owner: nonOwner }),
-                    ],
-                }),
+                transaction: queued,
                 report: {
                     proposalId: BigInt(1),
                     stageId: 1,
@@ -409,23 +445,30 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             }),
         );
 
-        expect(dialogOpen).toHaveBeenCalledWith(
-            SafeMultisigPluginDialogId.CONFIRM_SIGNATURE,
-            expect.objectContaining({
-                params: expect.objectContaining({ willExecute: false }),
-            }),
+        await waitFor(() =>
+            expect(dialogOpen).toHaveBeenCalledWith(
+                SafeDialogId.TRANSACTION_REVIEW,
+                expect.objectContaining({
+                    params: expect.objectContaining({
+                        costNote:
+                            'app.plugins.safeMultisig.safeMultisigSubmitVote.review.gasless',
+                    }),
+                }),
+            ),
         );
     });
 
-    it('sends execution straight to the wallet, which already prices the transaction', async () => {
+    it('reviews the payload before executing an already-signed report, and says it costs gas', async () => {
+        const queued = generateSafeMultisigTransaction({
+            nonce: '0',
+            confirmationsRequired: 1,
+            confirmations: [generateSafeConfirmation({ owner })],
+        });
+        mockQueuedReport(queued);
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
             pendingReport: {
-                transaction: generateSafeMultisigTransaction({
-                    nonce: '0',
-                    confirmationsRequired: 1,
-                    confirmations: [generateSafeConfirmation({ owner })],
-                }),
+                transaction: queued,
                 report: {
                     proposalId: BigInt(1),
                     stageId: 1,
@@ -449,8 +492,489 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             }),
         );
 
-        // A gasless-signature confirmation in front of a gas-paying transaction would be a lie.
+        // Executing is the act with consequences, so the payload is disclosed here too — and the
+        // note says gas is due, rather than repeating the free-signature claim.
+        await waitFor(() =>
+            expect(dialogOpen).toHaveBeenCalledWith(
+                SafeDialogId.TRANSACTION_REVIEW,
+                expect.objectContaining({
+                    params: expect.objectContaining({
+                        costNote:
+                            'app.plugins.safeMultisig.safeMultisigSubmitVote.review.bundledExecution',
+                    }),
+                }),
+            ),
+        );
+    });
+
+    it('refuses a queued report the service no longer serves', async () => {
+        // Executed by another owner, or deleted, while this card sat open. The polled body state
+        // still shows it as signable; the queue is the authority and it is gone.
+        const queued = generateSafeMultisigTransaction({
+            nonce: '0',
+            confirmationsRequired: 1,
+            confirmations: [generateSafeConfirmation({ owner })],
+        });
+        getQueueSpy.mockResolvedValue({
+            count: 0,
+            next: null,
+            previous: null,
+            results: [],
+            meta: { stale: false, source: 'safe-api', fetchedAt: '' },
+        } as never);
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: queued,
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+            isExecutableNow: true,
+        });
+
+        const queryClient = new QueryClient();
+        const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+        render(createTestComponent(undefined, queryClient));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.reportGone',
+            ),
+        ).toBeInTheDocument();
         expect(dialogOpen).not.toHaveBeenCalled();
+
+        // The body state that offered this action is now known to be wrong, so the read that
+        // disproved it replaces it: the card stops offering a transaction the queue does not hold.
+        await waitFor(() =>
+            expect(invalidateSpy).toHaveBeenCalledWith({
+                queryKey:
+                    safeServiceApi.safeServiceKeys.safePendingTransactions({
+                        urlParams: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: safeInfo.address,
+                        },
+                    }),
+            }),
+        );
+    });
+
+    it('does not claim a report is gone when the queue read was partial', async () => {
+        // `next` set means pages went unread, and the endpoint cannot filter by nonce, so absence
+        // from the pages read is a gap in the read rather than a missing transaction.
+        const queued = generateSafeMultisigTransaction({
+            nonce: '0',
+            confirmationsRequired: 1,
+            confirmations: [generateSafeConfirmation({ owner })],
+        });
+        getQueueSpy.mockResolvedValue({
+            count: 500,
+            next: 'https://safe/api/next-page',
+            previous: null,
+            results: [],
+            meta: { stale: false, source: 'safe-api', fetchedAt: '' },
+        } as never);
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: queued,
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+            isExecutableNow: true,
+        });
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.error',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.reportGone',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('refuses a queued report whose nonce the Safe has passed', async () => {
+        // Polled state said executable. The fresh read says the Safe is at nonce 4, so this
+        // transaction is dead however many signatures it holds - and gas would be wasted proving it.
+        const queued = generateSafeMultisigTransaction({
+            nonce: '2',
+            confirmationsRequired: 1,
+            confirmations: [generateSafeConfirmation({ owner })],
+        });
+        mockQueuedReport(queued);
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '4',
+                currentNonce: '4',
+            }),
+        );
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: queued,
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+            isExecutableNow: true,
+        });
+
+        const queryClient = new QueryClient();
+        const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+        render(createTestComponent(undefined, queryClient));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.replaced',
+            ),
+        ).toBeInTheDocument();
+        expect(dialogOpen).not.toHaveBeenCalled();
+
+        // The card is still offering execution off the polled state this read just disproved. The
+        // disproving read is pushed into the cache, so the body re-derives to superseded and offers
+        // a re-queue now rather than at the next poll.
+        await waitFor(() =>
+            expect(invalidateSpy).toHaveBeenCalledWith({
+                queryKey:
+                    safeServiceApi.safeServiceKeys.safePendingTransactions({
+                        urlParams: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: safeInfo.address,
+                        },
+                    }),
+            }),
+        );
+    });
+
+    it('reviews the confirmations the service holds now, not the polled ones', async () => {
+        // Another owner signed while the card was idle. Signing the stale envelope would assemble
+        // a signature set the Safe rejects, so the review shows what the queue holds.
+        const polled = generateSafeMultisigTransaction({
+            nonce: '0',
+            confirmationsRequired: 2,
+            confirmations: [generateSafeConfirmation({ owner: nonOwner })],
+        });
+        const fresh = generateSafeMultisigTransaction({
+            nonce: '0',
+            safeTxHash: polled.safeTxHash,
+            confirmationsRequired: 2,
+            confirmations: [
+                generateSafeConfirmation({ owner: nonOwner }),
+                generateSafeConfirmation({ owner: `0x${'7'.repeat(40)}` }),
+            ],
+        });
+        mockQueuedReport(fresh);
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: polled,
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            approvalsAmount: 1,
+            minApprovals: 2,
+        });
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+            }),
+        );
+
+        await waitFor(() =>
+            expect(dialogOpen).toHaveBeenCalledWith(
+                SafeDialogId.TRANSACTION_REVIEW,
+                expect.objectContaining({
+                    params: expect.objectContaining({
+                        transaction: expect.objectContaining({
+                            confirmations: fresh.confirmations,
+                        }),
+                    }),
+                }),
+            ),
+        );
+    });
+
+    it('refuses to execute when the owner set no longer authorises the signatures', async () => {
+        // The Safe validates against the owners it holds now, not the ones recorded when the
+        // transaction was proposed. A replaced owner's signature is bytes the Safe will not accept.
+        const { protocolKit } = mockThresholdOneExecution();
+        protocolKit.getOwners.mockResolvedValue([`0x${'9'.repeat(40)}`]);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.authorityChanged',
+            ),
+        ).toBeInTheDocument();
+        // No gas spent proving what the contract read already said.
+        expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
+        // The confirmation before it still stands.
+        expect(proposeMutateAsync).toHaveBeenCalled();
+    });
+
+    it('refuses to execute when the live threshold outgrew the confirmations', async () => {
+        const { protocolKit } = mockThresholdOneExecution();
+        protocolKit.getThreshold.mockResolvedValue(2);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.authorityChanged',
+            ),
+        ).toBeInTheDocument();
+        expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
+    });
+
+    it('does not submit a transaction the Safe rejects in simulation', async () => {
+        // Checked with the signatures attached and only at the execution step, which is the one
+        // moment the answer means "this would go through" rather than "it is not signed yet".
+        const { protocolKit } = mockThresholdOneExecution();
+        protocolKit.isValidTransaction.mockResolvedValue(false);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.executionRejected',
+            ),
+        ).toBeInTheDocument();
+        expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
+    });
+
+    it('claims nothing when the receipt carries no Safe event for this transaction', async () => {
+        // A mined transaction whose Safe said nothing about it. Neither success nor failure is
+        // known, so the copy says exactly that instead of picking one.
+        mockThresholdOneExecution();
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
+            status: 'success',
+            logs: [],
+        } as never);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.executionUnconfirmed',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('refetches the history scan after its own report executes', async () => {
+        // The scan answers "which executed transaction produced this verdict". An execution that
+        // just happened is exactly what it is looking for, so serving the pre-execution answer from
+        // cache would leave the body reading as unreported until the entry expired on its own.
+        const { safeTransaction } = mockThresholdOneExecution({ nonce: 6 });
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '6',
+                currentNonce: '6',
+            }),
+        );
+        const queryClient = new QueryClient();
+        const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+        render(createTestComponent(undefined, queryClient));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        await waitFor(() =>
+            expect(WagmiActions.sendTransaction).toHaveBeenCalled(),
+        );
+        expect(safeTransaction.data.nonce).toBe(6);
+
+        // By prefix: the scan's own key carries the indexed verdict, which has not caught up yet at
+        // this point, so only the history prefix reliably reaches the entry that exists.
+        await waitFor(() =>
+            expect(invalidateSpy).toHaveBeenCalledWith({
+                queryKey: safeServiceApi.safeServiceKeys.safeTransactionHistory(
+                    {
+                        urlParams: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: safeInfo.address,
+                        },
+                    },
+                ),
+            }),
+        );
+    });
+
+    it('signs nothing when the Safe consumes the reviewed nonce during review', async () => {
+        // Review takes as long as a person takes, and nothing reserved the nonce. Re-noncing the
+        // reviewed payload silently would sign a transaction nobody saw.
+        const { protocolKit } = mockThresholdOneExecution({ nonce: 5 });
+        getSafeNextNonceSpy
+            .mockResolvedValueOnce(
+                generateSafeNextNonceResponse({
+                    nextNonce: '5',
+                    currentNonce: '5',
+                }),
+            )
+            .mockResolvedValueOnce(
+                generateSafeNextNonceResponse({
+                    nextNonce: '6',
+                    currentNonce: '6',
+                }),
+            );
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceConsumed',
+            ),
+        ).toBeInTheDocument();
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('signs nothing when another transaction takes the reviewed nonce during review', async () => {
+        // The nonce is still live, so this is not a dead payload — but competing for it is a
+        // deliberate replacement, not something to do on the owner's behalf.
+        const { protocolKit } = mockThresholdOneExecution({ nonce: 5 });
+        getSafeNextNonceSpy
+            .mockResolvedValueOnce(
+                generateSafeNextNonceResponse({
+                    nextNonce: '5',
+                    currentNonce: '5',
+                }),
+            )
+            .mockResolvedValueOnce(
+                generateSafeNextNonceResponse({
+                    nextNonce: '6',
+                    currentNonce: '5',
+                }),
+            );
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceContested',
+            ),
+        ).toBeInTheDocument();
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('signs nothing when the rebuilt envelope no longer hashes to the reviewed transaction', async () => {
+        // The reviewed hash is the whole consent. If rebuilding the envelope produces a different
+        // one, the two disagree about what is being authorised and neither can be signed.
+        const { protocolKit } = mockThresholdOneExecution({ nonce: 6 });
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '6',
+                currentNonce: '6',
+            }),
+        );
+        protocolKit.getTransactionHash
+            .mockResolvedValueOnce(`0x${'1'.repeat(64)}`)
+            .mockResolvedValueOnce(`0x${'9'.repeat(64)}`);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.error',
+            ),
+        ).toBeInTheDocument();
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
     });
 
     it('offers a re-queue when the pending report lost its nonce', () => {
@@ -489,6 +1013,84 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 'app.plugins.safeMultisig.safeMultisigSubmitVote.replaced',
             ),
         ).toBeInTheDocument();
+    });
+
+    it('rebuilds a superseded report instead of re-submitting its signatures', async () => {
+        // The superseded transaction still carries a full signature set, and reusing it is the one
+        // thing that must never happen: a new nonce means a new hash, so those signatures authorise
+        // a transaction that can no longer execute. The owner signs a freshly built envelope after
+        // reviewing it again, and the replacement is proposed rather than confirmed.
+        const { safeTxHash } = mockThresholdOneExecution({ nonce: 7 });
+        const superseded = generateSafeMultisigTransaction({
+            nonce: '2',
+            safeTxHash: '0xdead',
+            confirmationsRequired: 1,
+            confirmations: [generateSafeConfirmation({ owner })],
+        });
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '7',
+                currentNonce: '5',
+            }),
+        );
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: superseded,
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.SUPERSEDED,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+        });
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.requeueSafeTransaction',
+            }),
+        );
+
+        await waitFor(() =>
+            expect(dialogOpen).toHaveBeenCalledWith(
+                SafeDialogId.TRANSACTION_REVIEW,
+                expect.objectContaining({
+                    params: expect.objectContaining({
+                        transaction: expect.objectContaining({
+                            safeTxHash,
+                            nonce: '7',
+                            confirmations: [],
+                        }),
+                    }),
+                }),
+            ),
+        );
+        // The positive half: what actually reaches the service is a propose carrying the rebuilt
+        // hash and a signature produced in this flow - never the dead hash or its stored
+        // confirmation, and never a confirm against the superseded transaction.
+        await waitFor(() =>
+            expect(proposeMutateAsync).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    body: expect.objectContaining({
+                        safeTxHash,
+                        senderSignature: '0xsignature',
+                    }),
+                }),
+            ),
+        );
+        expect(proposeMutateAsync).not.toHaveBeenCalledWith(
+            expect.objectContaining({
+                body: expect.objectContaining({ safeTxHash: '0xdead' }),
+            }),
+        );
+        expect(confirmMutateAsync).not.toHaveBeenCalled();
     });
 
     it('states the reported verdict without offering to act again', () => {
@@ -645,7 +1247,12 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeEnabled();
     });
 
-    const mockThresholdOneExecution = () => {
+    /**
+     * `nonce` must match whatever `getSafeNextNonce` is mocked to allocate: the component
+     * revalidates the reviewed nonce before signing, so a stub built for a different one is
+     * correctly refused.
+     */
+    const mockThresholdOneExecution = ({ nonce = 0 } = {}) => {
         const signature = {
             signer: owner,
             data: '0xsignature',
@@ -664,17 +1271,21 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 gasPrice: '0',
                 gasToken: '0x0000000000000000000000000000000000000000',
                 refundReceiver: '0x0000000000000000000000000000000000000000',
-                nonce: 0,
+                nonce,
             },
             addSignature: jest.fn(),
             encodedSignatures: jest.fn(() => '0xsignatureBytes'),
         };
+        const safeTxHash = `0x${'1'.repeat(64)}`;
         const protocolKit = {
             createTransaction: jest.fn().mockResolvedValue(safeTransaction),
-            getTransactionHash: jest
-                .fn()
-                .mockResolvedValue(`0x${'1'.repeat(64)}`),
+            getTransactionHash: jest.fn().mockResolvedValue(safeTxHash),
             signTypedData: jest.fn().mockResolvedValue(signature),
+            // Authority is read from the Safe at the execution step, so the stub answers as a
+            // 1-of-1 whose owner is the connected wallet and whose simulation passes.
+            getThreshold: jest.fn().mockResolvedValue(1),
+            getOwners: jest.fn().mockResolvedValue([owner]),
+            isValidTransaction: jest.fn().mockResolvedValue(true),
             getEncodedTransaction: jest
                 .fn()
                 .mockResolvedValue('0xexecTransaction'),
@@ -684,10 +1295,16 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ) as {
             default: { init: jest.Mock };
             buildSignatureBytes: jest.Mock;
+            EthSafeTransaction: jest.Mock;
         };
         protocolKitModule.default.init.mockResolvedValue(protocolKit);
         protocolKitModule.buildSignatureBytes.mockReturnValue(
             '0xsignatureBytes',
+        );
+        // Submitting rebuilds the reviewed envelope rather than reusing the object built before
+        // consent, so the constructor stands in for the same transaction.
+        protocolKitModule.EthSafeTransaction.mockImplementation(
+            () => safeTransaction,
         );
         jest.mocked(WagmiActions.getConnection).mockReturnValue({
             connector: {
@@ -699,16 +1316,34 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         jest.mocked(WagmiActions.sendTransaction).mockResolvedValue(
             `0x${'2'.repeat(64)}`,
         );
-        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
-            {} as never,
-        );
+        // A bare receipt proves nothing: the surface reads the Safe's own event, so the successful
+        // path has to carry one for this transaction's hash.
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
+            status: 'success',
+            logs: [
+                {
+                    address: safeInfo.address,
+                    topics: [
+                        toEventSelector('ExecutionSuccess(bytes32,uint256)'),
+                        safeTxHash,
+                    ],
+                    data: pad('0x01'),
+                },
+            ],
+        } as never);
 
-        return { signature, safeTransaction, protocolKit, protocolKitModule };
+        return {
+            signature,
+            safeTransaction,
+            safeTxHash,
+            protocolKit,
+            protocolKitModule,
+        };
     };
 
     it('proposes gaslessly and executes after a threshold-one signature', async () => {
         const { signature, safeTransaction, protocolKit, protocolKitModule } =
-            mockThresholdOneExecution();
+            mockThresholdOneExecution({ nonce: 6 });
         // The Safe sits at nonce 6 with that slot free, so the report lands on it and can execute
         // in the same flow.
         getSafeNextNonceSpy.mockResolvedValue(
@@ -757,7 +1392,9 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     });
 
     it('proposes without executing when the allocated nonce sits behind the queue', async () => {
-        const { signature, safeTransaction } = mockThresholdOneExecution();
+        const { signature, safeTransaction } = mockThresholdOneExecution({
+            nonce: 7,
+        });
         // Something else holds nonce 6, so the report is allocated 7. A Safe executes in strict
         // nonce order, so executing now would pay gas for a revert.
         getSafeNextNonceSpy.mockResolvedValue(
@@ -788,7 +1425,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     });
 
     it('signs without executing when the owner chooses to approve only', async () => {
-        mockThresholdOneExecution();
+        mockThresholdOneExecution({ nonce: 6 });
         getSafeNextNonceSpy.mockResolvedValue(
             generateSafeNextNonceResponse({
                 nextNonce: '6',
@@ -854,6 +1491,98 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 }),
             ).toBeDisabled();
         });
+    });
+
+    it('does not claim a report executed when the execution reverted', async () => {
+        mockThresholdOneExecution();
+        // A receipt arrives for a reverted transaction too. Nothing was recorded and the nonce was
+        // never consumed, so waiting for an indexed verdict would wait for one that cannot come.
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
+            status: 'reverted',
+            logs: [],
+        } as never);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.executionReverted',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.awaitingIndexing',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('distinguishes a failed inner call from a failed execution', async () => {
+        const { safeTxHash } = mockThresholdOneExecution();
+        // The Safe ran and the nonce is gone, but the report never reached the plugin. Retrying
+        // this transaction is impossible, which is why it cannot share the revert copy.
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
+            status: 'success',
+            logs: [
+                {
+                    address: safeInfo.address,
+                    topics: [
+                        toEventSelector('ExecutionFailure(bytes32,uint256)'),
+                        safeTxHash,
+                    ],
+                    data: pad('0x01'),
+                },
+            ],
+        } as never);
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.executionInnerFailed',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('refreshes Safe state even when the execution did not succeed', async () => {
+        // The confirmation before it was accepted by the service and is real work. Skipping the
+        // refresh would leave the queue showing the pre-signature state.
+        mockThresholdOneExecution();
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue({
+            status: 'reverted',
+            logs: [],
+        } as never);
+        const invalidateSpy = jest.spyOn(
+            QueryClient.prototype,
+            'invalidateQueries',
+        );
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        await waitFor(() =>
+            expect(invalidateSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    queryKey: expect.arrayContaining([
+                        'SAFE_PENDING_TRANSACTIONS',
+                    ]),
+                }),
+            ),
+        );
+        invalidateSpy.mockRestore();
     });
 
     it('releases the hold when the executed report is never indexed', async () => {

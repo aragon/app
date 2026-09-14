@@ -3162,28 +3162,6 @@
         }
       },
       "safeMultisig": {
-        "safeMultisigConfirmSignatureDialog": {
-          "approval": {
-            "action": "Approve",
-            "description": "Your confirmation is added to the Safe transaction that approves this proposal for this body. It takes effect once enough owners have confirmed.",
-            "title": "Approve proposal"
-          },
-          "bundledExecution": "Your confirmation reaches the Safe's threshold, so the Safe transaction is executed straight after it. Your wallet will ask twice: first to confirm, which is free, then to execute onchain, which costs gas.",
-          "cancel": "Cancel",
-          "details": {
-            "network": "Network",
-            "nonce": "Safe nonce",
-            "proposal": "Proposal",
-            "safe": "Safe",
-            "signingAs": "Signing as"
-          },
-          "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
-          "veto": {
-            "action": "Veto",
-            "description": "Your confirmation is added to the Safe transaction that vetoes this proposal for this body. It takes effect once enough owners have confirmed.",
-            "title": "Veto proposal"
-          }
-        },
         "safeMultisigGovernanceSettings": {
           "currentNonce": "Current Safe nonce",
           "execution": "Execution",

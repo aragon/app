@@ -1,0 +1,3 @@
+export enum SafeDialogId {
+    TRANSACTION_REVIEW = 'SAFE_TRANSACTION_REVIEW',
+}

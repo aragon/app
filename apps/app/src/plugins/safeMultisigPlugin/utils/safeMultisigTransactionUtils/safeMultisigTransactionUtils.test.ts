@@ -5,9 +5,9 @@ import {
     type Hex,
     size,
 } from 'viem';
+import { safeMultiSendAbi } from '@/modules/safe/utils/safeTransactionEnvelopeUtils';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { generateSafeMultisigTransaction } from '../../testUtils';
-import { safeMultiSendAbi } from './safeMultiSendAbi';
 import { safeMultisigTransactionUtils } from './safeMultisigTransactionUtils';
 
 describe('safeMultisigTransaction utils', () => {

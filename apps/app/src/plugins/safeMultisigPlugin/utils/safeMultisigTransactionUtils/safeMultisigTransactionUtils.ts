@@ -7,11 +7,15 @@ import {
     type Hex,
     toFunctionSelector,
 } from 'viem';
+import {
+    type ISafeCall,
+    maxSafeBatchDepth,
+    safeTransactionEnvelopeUtils,
+} from '@/modules/safe/utils/safeTransactionEnvelopeUtils';
 import { sppReportProposalResultAbi } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog/sppReportProposalResultAbi';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
-import type { ISafeCall, ISafeProposalResultReport } from '../../types';
-import { safeMultiSendAbi, safeMultiSendSelector } from './safeMultiSendAbi';
+import type { ISafeProposalResultReport } from '../../types';
 
 export interface IBuildReportProposalResultDataParams {
     /**
@@ -58,13 +62,6 @@ const reportProposalResultSelector = toFunctionSelector(
     reportProposalResultAbiItem,
 );
 
-// Each packed MultiSend call is operation (1 byte) + to (20) + value (32) + data length (32),
-// expressed here in hex characters.
-const multiSendHeaderLength = 2 + 40 + 64 + 64;
-
-// Batches nest in theory but never deeply in practice; the cap bounds a hostile payload.
-const maxMultiSendDepth = 4;
-
 const isSppProposalType = (value: number): value is SppProposalType =>
     [
         SppProposalType.NONE,
@@ -104,12 +101,7 @@ class SafeMultisigTransactionUtils {
     ): ISafeProposalResultReport | undefined => {
         const { transaction, pluginAddress, proposalId, stageId } = params;
 
-        const call: ISafeCall = {
-            to: transaction.to,
-            data: transaction.data,
-            operation: transaction.operation,
-            value: BigInt(transaction.value),
-        };
+        const call = safeTransactionEnvelopeUtils.getCall(transaction);
 
         return this.findReportInCall(call, {
             pluginAddress,
@@ -151,22 +143,13 @@ class SafeMultisigTransactionUtils {
         return { proposalId, stageId, resultType, tryAdvance };
     };
 
-    decodeMultiSendCalls = (data: string | null): ISafeCall[] => {
-        if (this.getSelector(data) !== safeMultiSendSelector) {
-            return [];
-        }
-
-        try {
-            const { args } = decodeFunctionData({
-                abi: safeMultiSendAbi,
-                data: data as Hex,
-            });
-
-            return this.unpackMultiSendCalls(args[0]);
-        } catch {
-            return [];
-        }
-    };
+    /**
+     * Calls carried by a batch, if the data is one. A truncated batch yields the prefix that did
+     * unpack: a report found there is still a report, and one hidden behind the truncation is
+     * simply not found — the payload review in the account surface is what states the difference.
+     */
+    decodeMultiSendCalls = (data: string | null): ISafeCall[] =>
+        safeTransactionEnvelopeUtils.inspectBatch(data).calls;
 
     private findReportInCall = (
         call: ISafeCall,
@@ -189,7 +172,7 @@ class SafeMultisigTransactionUtils {
             }
         }
 
-        if (depth >= maxMultiSendDepth) {
+        if (depth >= maxSafeBatchDepth) {
             return undefined;
         }
 
@@ -202,43 +185,6 @@ class SafeMultisigTransactionUtils {
         }
 
         return undefined;
-    };
-
-    private unpackMultiSendCalls = (packedCalls: Hex): ISafeCall[] => {
-        const packed = packedCalls.slice(2);
-        const calls: ISafeCall[] = [];
-        let cursor = 0;
-
-        while (cursor + multiSendHeaderLength <= packed.length) {
-            const operation = Number.parseInt(
-                packed.slice(cursor, cursor + 2),
-                16,
-            );
-            const to = `0x${packed.slice(cursor + 2, cursor + 42)}`;
-            const value = BigInt(
-                `0x${packed.slice(cursor + 42, cursor + 106)}`,
-            );
-            const dataLength = Number(
-                BigInt(`0x${packed.slice(cursor + 106, cursor + 170)}`),
-            );
-
-            const dataStart = cursor + multiSendHeaderLength;
-            const dataEnd = dataStart + dataLength * 2;
-
-            if (dataEnd > packed.length) {
-                return calls;
-            }
-
-            calls.push({
-                to,
-                operation,
-                value,
-                data: `0x${packed.slice(dataStart, dataEnd)}`,
-            });
-            cursor = dataEnd;
-        }
-
-        return calls;
     };
 
     private getSelector = (data: string | null): string | undefined =>

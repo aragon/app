@@ -31,12 +31,21 @@ export interface ISafePendingTransactionListProps {
      * entry on every advance — so liveness is derived here. Undefined until the Safe info resolves.
      */
     currentNonce?: ISafeInfo['nonce'];
+    /**
+     * Chain the Safe is deployed on, used to sign confirmations for the right network.
+     */
+    chainId: number;
+    /**
+     * Contract version of the Safe, needed to recompute a transaction hash. Undefined until the
+     * Safe info resolves.
+     */
+    safeVersion?: ISafeInfo['version'];
 }
 
 export const SafePendingTransactionList: React.FC<
     ISafePendingTransactionListProps
 > = (props) => {
-    const { network, address, currentNonce } = props;
+    const { network, address, currentNonce, chainId, safeVersion } = props;
 
     const { t } = useTranslations();
 
@@ -88,7 +97,11 @@ export const SafePendingTransactionList: React.FC<
             >
                 {transactions.map((transaction) => (
                     <SafePendingTransactionListItem
+                        chainId={chainId}
                         key={transaction.safeTxHash}
+                        network={network}
+                        safeAddress={address}
+                        safeVersion={safeVersion ?? null}
                         transaction={transaction}
                     />
                 ))}
