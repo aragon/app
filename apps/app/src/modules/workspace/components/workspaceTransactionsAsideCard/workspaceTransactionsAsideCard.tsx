@@ -104,7 +104,7 @@ export const WorkspaceTransactionsAsideCard: React.FC<
         },
     ];
 
-    // The aggregated view describes the workspace itself, so it is titled after it.
+    // The aggregated view describes the workspace itself, so it is titled generically.
     const title =
         selectedAccount != null && activeOption != null
             ? activeOption.label
@@ -122,7 +122,6 @@ export const WorkspaceTransactionsAsideCard: React.FC<
             );
         }
 
-        // DAO metadata still loading: the stats are displayed on their own meanwhile.
         return (
             <div className="grid w-full grid-cols-2 gap-3">
                 {stats.map((stat) => (
