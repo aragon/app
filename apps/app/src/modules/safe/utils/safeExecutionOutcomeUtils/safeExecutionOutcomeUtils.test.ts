@@ -149,4 +149,93 @@ describe('safeExecutionOutcome utils', () => {
             }),
         ).toBe(SafeExecutionOutcome.UNMATCHED);
     });
+
+    /**
+     * Two receipts read back from the sepolia gate Safe `0x8442c05d…725c39A` (v1.4.1), which is
+     * what makes them worth keeping: the emitter addresses, topics and log ordering below are the
+     * chain's, copied verbatim, not this file's constructions. Only the `data` of each
+     * `SafeMultiSigTransaction` log is elided to `0x` - classification reads the emitter and the
+     * topics, never that payload.
+     */
+    describe('real sepolia receipts', () => {
+        const gateSafe = '0x8442c05d620e11009bdaeddefda3b5303725c39a';
+        const sppPlugin = '0xc18021bf09671a21f474a8c059c987ba895bdbf7';
+        const multiSigTopic =
+            '0x66753cd2356569ee081232e3be8909b950e0a76c1f8460c3a5e3c2be32b11bed' as Hex;
+        const zeroPayment =
+            '0x0000000000000000000000000000000000000000000000000000000000000000' as Hex;
+
+        it('reads ExecutionFailure from a batch whose outer call succeeded', () => {
+            // nonce 5, tx 0x6b5e021d…, safeTxGas 250000. Safe's own app lists it as Failed.
+            const failedTxHash =
+                '0x36833f17568b0284836585969f41705b3f71c8400ff9e3280a9f260301526bee';
+
+            expect(
+                safeExecutionOutcomeUtils.classify({
+                    receipt: {
+                        status: 'success',
+                        logs: [
+                            {
+                                address: gateSafe,
+                                topics: [multiSigTopic],
+                                data: '0x',
+                            },
+                            {
+                                address: gateSafe,
+                                topics: [
+                                    '0x23428b18acfb3ea64b08dc0c1d296ea9c09702c09083ca5272e64d115b687d23',
+                                    failedTxHash,
+                                ] as Hex[],
+                                data: zeroPayment,
+                            },
+                        ],
+                    },
+                    safeTxHash: failedTxHash,
+                    safeAddress: gateSafe,
+                }),
+            ).toBe(SafeExecutionOutcome.EXECUTION_FAILURE);
+        });
+
+        it('reads ExecutionSuccess past a foreign event in the same receipt', () => {
+            // nonce 4, tx 0xda718cd5…: the SPP plugin's ProposalResultReported sits between the
+            // Safe's two events, and its topics[3] even carries the Safe's own address.
+            const reportedTxHash =
+                '0xc1f06a767eab76d4484dc52e115f97f66482b73c99488a4bc35b28b64ff73d3d';
+
+            expect(
+                safeExecutionOutcomeUtils.classify({
+                    receipt: {
+                        status: 'success',
+                        logs: [
+                            {
+                                address: gateSafe,
+                                topics: [multiSigTopic],
+                                data: '0x',
+                            },
+                            {
+                                address: sppPlugin,
+                                topics: [
+                                    '0xbfaa970a350cc4e6c21888b5c4b888e2750f035ce824e40cfc7dc5f07e3936c5',
+                                    '0xc4c1bd4e48d9e9b8f017822f273e886c1646cb5a742fa12cb7320e8812736310',
+                                    '0x0000000000000000000000000000000000000000000000000000000000000001',
+                                    '0x0000000000000000000000008442c05d620e11009bdaeddefda3b5303725c39a',
+                                ] as Hex[],
+                                data: '0x',
+                            },
+                            {
+                                address: gateSafe,
+                                topics: [
+                                    '0x442e715f626346e8c54381002da614f62bee8d27386535b2521ec8540898556e',
+                                    reportedTxHash,
+                                ] as Hex[],
+                                data: zeroPayment,
+                            },
+                        ],
+                    },
+                    safeTxHash: reportedTxHash,
+                    safeAddress: gateSafe,
+                }),
+            ).toBe(SafeExecutionOutcome.EXECUTION_SUCCESS);
+        });
+    });
 });
