@@ -6,10 +6,12 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import type {
     IWorkspaceAccountInfo,
     IWorkspaceAssetListResponse,
+    IWorkspaceProposalListResponse,
 } from './domain';
 import type {
     IGetWorkspaceAccountsParams,
     IGetWorkspaceAssetListParams,
+    IGetWorkspaceProposalListParams,
 } from './workspaceQueryService.api';
 
 /**
@@ -22,6 +24,7 @@ class WorkspaceQueryService extends AragonBackendService {
     private basePaths = {
         accounts: '/workspaces/query/accounts',
         assetList: '/workspaces/query/assets',
+        proposalList: '/workspaces/query/proposals',
     };
 
     private get urls() {
@@ -32,6 +35,10 @@ class WorkspaceQueryService extends AragonBackendService {
             ),
             assetList: apiVersionUtils.buildVersionedUrl(
                 this.basePaths.assetList,
+                { forceVersion: 'v2' },
+            ),
+            proposalList: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.proposalList,
                 { forceVersion: 'v2' },
             ),
         };
@@ -60,6 +67,21 @@ class WorkspaceQueryService extends AragonBackendService {
     ): Promise<IWorkspaceAssetListResponse> =>
         await this.request<IWorkspaceAssetListResponse>(
             this.urls.assetList,
+            params,
+            { method: 'POST' },
+        );
+
+    /**
+     * Reads the indexed proposals of the given accounts, newest first.
+     *
+     * The response also carries a `pending` block of queued Safe transactions and a coverage report, both of which
+     * are dropped here — see `IWorkspaceProposalListResponse`.
+     */
+    getProposalList = async (
+        params: IGetWorkspaceProposalListParams,
+    ): Promise<IWorkspaceProposalListResponse> =>
+        await this.request<IWorkspaceProposalListResponse>(
+            this.urls.proposalList,
             params,
             { method: 'POST' },
         );

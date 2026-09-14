@@ -33,12 +33,18 @@ export interface IDaoProposalListDefaultItemProps<
      * item renders without a link.
      */
     proposalSlug?: string;
+    /**
+     * Optional tag displayed on the item. Unused on the DAO pages, where every
+     * proposal belongs to the same DAO; the workspace proposal list uses it to
+     * name the DAO a row comes from.
+     */
+    tag?: string;
 }
 
 export const DaoProposalListDefaultItem: React.FC<
     IDaoProposalListDefaultItemProps
 > = (props) => {
-    const { proposal, dao, proposalSlug } = props;
+    const { proposal, dao, proposalSlug, tag } = props;
 
     const { t } = useTranslations();
 
@@ -87,6 +93,7 @@ export const DaoProposalListDefaultItem: React.FC<
             }}
             status={proposalStatus}
             summary={summary}
+            tag={tag}
             title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
             voted={userVote != null}
         >

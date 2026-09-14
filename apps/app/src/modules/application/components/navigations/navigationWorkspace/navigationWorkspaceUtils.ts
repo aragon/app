@@ -43,9 +43,9 @@ class NavigationWorkspaceUtils {
     };
 
     /**
-     * Navigation links of a workspace. Only the pages that exist are listed, so no entry points to a route that has
-     * not been implemented yet: the aggregated members and transactions pages join these once they land, at orders
-     * 300 and 500.
+     * Navigation links of a workspace. The orders mirror the DAO navigation slot for slot, so the two read alike.
+     * Only the pages that exist are listed, so no entry points to a route that has not been implemented yet: the
+     * aggregated members and transactions pages join these once they land, at orders 300 and 500.
      * @param workspace - Workspace to build the links for.
      * @param context - Whether the links are rendered in the navigation bar or in the navigation dialog.
      * @returns The navigation links.
@@ -58,6 +58,13 @@ class NavigationWorkspaceUtils {
             label: 'app.application.navigationWorkspace.link.overview',
             link: this.getWorkspaceUrl(workspace),
             icon: IconType.APP_DASHBOARD,
+            lgHidden: context === 'dialog',
+            order: 100,
+        },
+        {
+            label: 'app.application.navigationWorkspace.link.proposals',
+            link: this.getWorkspaceUrl(workspace, 'proposals'),
+            icon: IconType.APP_PROPOSALS,
             lgHidden: context === 'dialog',
             order: 200,
         },
