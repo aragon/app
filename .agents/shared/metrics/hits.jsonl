@@ -247,3 +247,4 @@
 {"ts":"2026-09-11T07:23:15.341Z","tool":"Write","file":"apps/app/src/modules/workspace/pages/workspaceAssetsPage/workspaceAssetsPageClient.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-09-15T07:57:45.475Z","tool":"Edit","file":"apps/app/src/modules/workspace/components/workspaceProposalList/workspaceProposalList.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-09-15T07:57:50.229Z","tool":"Edit","file":"apps/app/src/modules/workspace/components/workspaceProposalList/workspaceProposalList.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-09-15T09:03:25.941Z","tool":"Write","file":"apps/app/src/modules/governance/hooks/useProposalActionsField/repro.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":3,"adapter":"claude"}
