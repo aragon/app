@@ -103,7 +103,7 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
                             slotId={
                                 GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM
                             }
-                            tag={proposal.dao[0]?.name}
+                            tag={dao.name}
                         />
                     );
                 })}

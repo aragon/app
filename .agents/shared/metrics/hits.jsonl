@@ -245,3 +245,5 @@
 {"ts":"2026-09-10T14:07:06.043Z","tool":"Write","file":"apps/app/src/modules/application/components/layouts/layoutWorkspace/layoutWorkspace.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-09-11T07:23:08.683Z","tool":"Write","file":"apps/app/src/modules/workspace/pages/workspaceAssetsPage/workspaceAssetsPage.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-09-11T07:23:15.341Z","tool":"Write","file":"apps/app/src/modules/workspace/pages/workspaceAssetsPage/workspaceAssetsPageClient.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-09-15T07:57:45.475Z","tool":"Edit","file":"apps/app/src/modules/workspace/components/workspaceProposalList/workspaceProposalList.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-09-15T07:57:50.229Z","tool":"Edit","file":"apps/app/src/modules/workspace/components/workspaceProposalList/workspaceProposalList.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}

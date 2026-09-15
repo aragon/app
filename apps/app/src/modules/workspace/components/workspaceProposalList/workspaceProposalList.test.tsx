@@ -62,15 +62,6 @@ describe('<WorkspaceProposalList /> component', () => {
             pluginAddress: '0xPlugin',
             incrementalId: 4,
         }),
-        dao: [
-            {
-                address,
-                name: 'Embedded DAO name',
-                description: 'description',
-                avatar: null,
-                links: [],
-            },
-        ],
         ...proposal,
     });
 
@@ -149,6 +140,7 @@ describe('<WorkspaceProposalList /> component', () => {
             generateDao({
                 address,
                 network,
+                name: 'Embedded DAO name',
                 plugins: [generateDaoPlugin({ address: '0xPlugin' })],
             }),
         );

@@ -13,10 +13,7 @@ export type {
     IWorkspaceAssetListResponse,
 } from './workspaceAssetListResponse';
 export type { IWorkspaceCoverage } from './workspaceCoverage';
-export type {
-    IWorkspaceProposal,
-    IWorkspaceProposalDao,
-} from './workspaceProposal';
+export type { IWorkspaceProposal } from './workspaceProposal';
 export type { IWorkspaceProposalListResponse } from './workspaceProposalListResponse';
 export type {
     IWorkspaceTransaction,

@@ -45,7 +45,19 @@ export const useWorkspaceDaos = (
                 const id = ids[index];
 
                 if (result.data != null && id != null) {
-                    daos[id] = result.data;
+                    const dao = result.data;
+                    const workspaceAccount = accounts.find(
+                        (account) => account.id === dao.id,
+                    );
+                    const workspaceAccountMetadata = workspaceAccount?.metadata;
+
+                    dao.avatar = workspaceAccountMetadata?.avatar ?? dao.avatar;
+                    dao.name = workspaceAccountMetadata?.name ?? dao.name;
+                    dao.description =
+                        workspaceAccountMetadata?.description ??
+                        dao.description;
+
+                    daos[id] = dao;
                 }
             });
 
