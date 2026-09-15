@@ -23,8 +23,28 @@ describe('dao service', () => {
         requestSpy.mockResolvedValue(dao);
         const result = await daoService.getDao(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(daoService['urls'].dao, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            daoService['urls'].dao,
+            params,
+            undefined,
+        );
         expect(result).toEqual(dao);
+    });
+
+    it('getDao forwards the request options, e.g. a per-request cache config', async () => {
+        const params = { urlParams: { id: 'dao-test' } };
+        const options = {
+            fetchCacheConfig: { cache: 'force-cache' as const },
+        };
+
+        requestSpy.mockResolvedValue(generateDao());
+        await daoService.getDao(params, options);
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            daoService['urls'].dao,
+            params,
+            options,
+        );
     });
 
     it('getDaoByEns fetches the specified DAO by ENS', async () => {

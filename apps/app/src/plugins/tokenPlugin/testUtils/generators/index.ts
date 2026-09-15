@@ -4,3 +4,4 @@ export * from './tokenPluginSettings';
 export * from './tokenPluginSettingsToken';
 export * from './tokenProposal';
 export * from './tokenVote';
+export * from './tokenVotingMember';

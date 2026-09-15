@@ -2,11 +2,19 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { daoOptions, Network } from '@/shared/api/daoService';
+import {
+    daoOptions,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { memberListOptions } from '../../api/governanceService';
+import {
+    buildTokenVotingMembershipParams,
+    memberListOptions,
+    tokenVotingMembershipOptions,
+} from '../../api/governanceService';
 import {
     DaoMembersPage,
     daoMembersCount,
@@ -98,6 +106,35 @@ describe('<DaoMembersPage /> component', () => {
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             memberListOptions({ queryParams: memberListParams }).queryKey,
+        );
+    });
+
+    it('prefetches the token-voting membership query for token-voting body plugins', async () => {
+        const expectedDaoId = 'test-dao-id';
+        const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
+        const bodyPlugin = generateDaoPlugin({
+            address: '0x123',
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+        });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
+
+        render(await createTestComponent());
+
+        const expectedParams = buildTokenVotingMembershipParams(
+            {
+                queryParams: {
+                    daoId: expectedDaoId,
+                    pluginAddress: bodyPlugin.address,
+                    pageSize: daoMembersCount,
+                },
+            },
+            bodyPlugin,
+            dao,
+        );
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            tokenVotingMembershipOptions(expectedParams).queryKey,
         );
     });
 

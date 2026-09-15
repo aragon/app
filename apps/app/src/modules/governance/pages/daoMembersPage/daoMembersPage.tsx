@@ -8,7 +8,12 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { notFoundUtils } from '@/shared/utils/notFoundUtils';
-import { memberListOptions } from '../../api/governanceService';
+import {
+    buildTokenVotingMembershipParams,
+    isTokenMemberListPlugin,
+    memberListOptions,
+} from '../../api/governanceService';
+import { tokenVotingMembershipOptionsServer } from '../../api/governanceService/queries/useTokenVotingMembership/useTokenVotingMembership.server';
 import { DaoMembersPageClient } from './daoMembersPageClient';
 
 export interface IDaoMembersPageProps {
@@ -69,16 +74,32 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
         return <RedirectToUrl url={daoUrl} />;
     }
 
-    const bodyPluginAddress = plugins[0].address;
+    const bodyPlugin = plugins[0];
     const memberListQueryParams = {
         daoId,
-        pluginAddress: bodyPluginAddress,
+        pluginAddress: bodyPlugin.address,
         pageSize: daoMembersCount,
     };
     const memberListParams = { queryParams: memberListQueryParams };
-    await queryClient.prefetchInfiniteQuery(
-        memberListOptions({ queryParams: memberListQueryParams }),
-    );
+
+    // Token-voting and lock-to-vote lists consume the token-voting membership
+    // query, which the BFF serves from the aragon-domain or the legacy
+    // backend. Every other plugin uses the generic member list.
+    if (isTokenMemberListPlugin(bodyPlugin)) {
+        await queryClient.prefetchInfiniteQuery(
+            tokenVotingMembershipOptionsServer(
+                buildTokenVotingMembershipParams(
+                    memberListParams,
+                    bodyPlugin,
+                    dao,
+                ),
+            ),
+        );
+    } else {
+        await queryClient.prefetchInfiniteQuery(
+            memberListOptions({ queryParams: memberListQueryParams }),
+        );
+    }
 
     return (
         <Page.Container queryClient={queryClient}>

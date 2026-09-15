@@ -2,9 +2,9 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
 import {
-    generateTokenMember,
     generateTokenPluginSettings,
     generateTokenPluginSettingsToken,
+    generateTokenVotingMember,
 } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
@@ -47,7 +47,7 @@ describe('<TokenMemberListItem /> component', () => {
         props?: Partial<ITokenMemberListItemProps>,
     ) => {
         const completeProps: ITokenMemberListItemProps = {
-            member: generateTokenMember(),
+            member: generateTokenVotingMember(),
             daoId: 'test-dao-id',
             plugin: generateDaoPlugin({
                 settings: generateTokenPluginSettings(),
@@ -64,7 +64,7 @@ describe('<TokenMemberListItem /> component', () => {
 
     it('renders the token member', () => {
         const ensName = 'tttt.eth';
-        const member = generateTokenMember({
+        const member = generateTokenVotingMember({
             ens: 'tttt.eth',
             address: '0x123',
         });
@@ -77,7 +77,7 @@ describe('<TokenMemberListItem /> component', () => {
     });
 
     it('shows the shortened aragon name when the member has an aragon subdomain', () => {
-        const member = generateTokenMember({ address: '0x123' });
+        const member = generateTokenVotingMember({ address: '0x123' });
         useEnsNameSpy.mockImplementation(
             (_address, options) =>
                 ({
@@ -95,7 +95,9 @@ describe('<TokenMemberListItem /> component', () => {
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {
         const token = generateTokenPluginSettingsToken({ decimals: 6 });
         const pluginSettings = generateTokenPluginSettings({ token });
-        const member = generateTokenMember({ votingPower: '47928374987234' });
+        const member = generateTokenVotingMember({
+            votingPower: '47928374987234',
+        });
         const plugin = generateDaoPlugin({ settings: pluginSettings });
         const daoAddress = '0x123';
         const daoNetwork = Network.ETHEREUM_SEPOLIA;

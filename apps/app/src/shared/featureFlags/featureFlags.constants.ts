@@ -158,4 +158,11 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
+    {
+        key: 'domainMemberList',
+        name: 'Aragon domain member list',
+        description:
+            'Lets the membership BFF serve token-voting member lists from the aragon-domain (Envio indexer) instead of the legacy backend on indexed networks. Resolved server-side only. Off everywhere by default; enable per environment through the CMS override or the local override cookie.',
+        defaultValue: false,
+    },
 ];
