@@ -4415,7 +4415,6 @@
         "title": "Select an account"
       },
       "workspaceSelectAccountDialogItem": {
-        "noProcesses": "No process available",
         "type": {
           "dao": "DAO",
           "safe": "Safe"

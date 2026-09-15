@@ -1,15 +1,9 @@
 import { Dialog, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as cmsService from '@/shared/api/cmsService';
-import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateDialogContext,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
+import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
@@ -26,7 +20,6 @@ describe('<WorkspaceSelectAccountDialog /> component', () => {
         useWorkspaceDaos,
         'useWorkspaceDaos',
     );
-    const useDaoOverridesSpy = jest.spyOn(cmsService, 'useDaoOverrides');
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     const network = Network.ETHEREUM_SEPOLIA;
@@ -43,46 +36,28 @@ describe('<WorkspaceSelectAccountDialog /> component', () => {
     const firstAccount = buildAccount(firstAddress);
     const secondAccount = buildAccount(secondAddress);
 
-    const buildDao = (
-        account: IWorkspaceAccount,
-        name: string,
-        hasProcess: boolean,
-    ) =>
+    const buildDao = (account: IWorkspaceAccount, name: string) =>
         generateDao({
             id: account.id,
             address: account.address,
             network,
             name,
-            plugins: hasProcess
-                ? [
-                      generateDaoPlugin({
-                          address: '0xProcess',
-                          isProcess: true,
-                          interfaceType: PluginInterfaceType.MULTISIG,
-                          slug: 'multisig',
-                      }),
-                  ]
-                : [],
         });
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useWorkspaceDaosSpy.mockReturnValue({
             daos: {
-                [firstAccount.id]: buildDao(firstAccount, 'First DAO', true),
-                [secondAccount.id]: buildDao(secondAccount, 'Second DAO', true),
+                [firstAccount.id]: buildDao(firstAccount, 'First DAO'),
+                [secondAccount.id]: buildDao(secondAccount, 'Second DAO'),
             },
             isPending: false,
         });
-        useDaoOverridesSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: {} }),
-        );
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         useWorkspaceDaosSpy.mockReset();
-        useDaoOverridesSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -148,29 +123,5 @@ describe('<WorkspaceSelectAccountDialog /> component', () => {
                 name: /workspaceSelectAccountDialog\.action\.select$/,
             }),
         ).toBeDisabled();
-    });
-
-    it('does not offer a DAO account running no visible process', () => {
-        useWorkspaceDaosSpy.mockReturnValue({
-            daos: {
-                [firstAccount.id]: buildDao(firstAccount, 'First DAO', true),
-                [secondAccount.id]: buildDao(
-                    secondAccount,
-                    'Second DAO',
-                    false,
-                ),
-            },
-            isPending: false,
-        });
-        render(createTestComponent());
-
-        expect(
-            screen.getByText(
-                'app.workspace.workspaceSelectAccountDialogItem.noProcesses',
-            ),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByRole('button', { name: /Second DAO/ }),
-        ).not.toBeInTheDocument();
     });
 });

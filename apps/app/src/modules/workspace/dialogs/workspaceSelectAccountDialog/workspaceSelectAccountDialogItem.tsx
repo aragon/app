@@ -31,34 +31,19 @@ export type IWorkspaceSelectAccountDialogItemProps = IDataListItemProps & {
      * Renders the account as selected when set to true.
      */
     isActive?: boolean;
-    /**
-     * Renders the account as not selectable when set to true.
-     */
-    isDisabled?: boolean;
-    /**
-     * Displays a help text that the account runs no process to create a proposal in.
-     */
-    showNoProcessesHelpText?: boolean;
 };
 
 /**
  * Selectable row of the `WorkspaceSelectAccountDialog`.
  *
  * It is the selectable counterpart of the `WorkspaceAccountItem` card of the workspace overview: the rows of a
- * selection dialog are data-list items, which carry the click and the active and disabled states, exactly as the
- * process rows of the `SelectPluginDialog` do.
+ * selection dialog are data-list items, which carry the click and the active state, exactly as the process rows
+ * of the `SelectPluginDialog` do.
  */
 export const WorkspaceSelectAccountDialogItem: React.FC<
     IWorkspaceSelectAccountDialogItemProps
 > = (props) => {
-    const {
-        account,
-        dao,
-        isActive,
-        isDisabled,
-        showNoProcessesHelpText,
-        ...otherProps
-    } = props;
+    const { account, dao, isActive, ...otherProps } = props;
 
     const { t } = useTranslations();
 
@@ -78,59 +63,44 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
             className={classNames('px-4 py-3 md:p-6', {
                 'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
                     isActive,
-                'border-neutral-100 bg-neutral-50': isDisabled,
             })}
             {...otherProps}
-            {...(isDisabled ? { onClick: undefined } : {})}
         >
-            <div className="flex flex-col gap-3 md:gap-4">
-                <div
-                    className={classNames('flex items-center gap-3', {
-                        'opacity-60': isDisabled,
-                    })}
-                >
-                    {isDao ? (
-                        <DaoAvatar
-                            className="shrink-0"
-                            name={name}
-                            size="md"
-                            src={ipfsUtils.cidToSrc(avatar)}
-                        />
-                    ) : (
-                        <Avatar
-                            alt={t(
-                                'app.workspace.workspaceSelectAccountDialogItem.type.safe',
-                            )}
-                            className="shrink-0"
-                            size="md"
-                            src={ipfsUtils.cidToSrc(avatar) ?? safeWallet.src}
-                        />
-                    )}
-                    <div className="flex min-w-0 grow flex-col">
-                        <span className="truncate text-base text-neutral-800 leading-tight">
-                            {name ?? truncatedAddress}
-                        </span>
-                        <span className="truncate text-neutral-500 text-sm leading-tight">
-                            {name != null
-                                ? `${networkName} · ${truncatedAddress}`
-                                : networkName}
-                        </span>
-                    </div>
-                    <Tag
+            <div className="flex items-center gap-3">
+                {isDao ? (
+                    <DaoAvatar
                         className="shrink-0"
-                        label={t(
-                            `app.workspace.workspaceSelectAccountDialogItem.type.${isDao ? 'dao' : 'safe'}`,
-                        )}
-                        variant={isDao ? 'primary' : 'neutral'}
+                        name={name}
+                        size="md"
+                        src={ipfsUtils.cidToSrc(avatar)}
                     />
-                </div>
-                {showNoProcessesHelpText && (
-                    <div className="text-neutral-300 text-sm md:text-base">
-                        {t(
-                            'app.workspace.workspaceSelectAccountDialogItem.noProcesses',
+                ) : (
+                    <Avatar
+                        alt={t(
+                            'app.workspace.workspaceSelectAccountDialogItem.type.safe',
                         )}
-                    </div>
+                        className="shrink-0"
+                        size="md"
+                        src={ipfsUtils.cidToSrc(avatar) ?? safeWallet.src}
+                    />
                 )}
+                <div className="flex min-w-0 grow flex-col">
+                    <span className="truncate text-base text-neutral-800 leading-tight">
+                        {name ?? truncatedAddress}
+                    </span>
+                    <span className="truncate text-neutral-500 text-sm leading-tight">
+                        {name != null
+                            ? `${networkName} · ${truncatedAddress}`
+                            : networkName}
+                    </span>
+                </div>
+                <Tag
+                    className="shrink-0"
+                    label={t(
+                        `app.workspace.workspaceSelectAccountDialogItem.type.${isDao ? 'dao' : 'safe'}`,
+                    )}
+                    variant={isDao ? 'primary' : 'neutral'}
+                />
             </div>
         </DataList.Item>
     );
