@@ -111,4 +111,14 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         render(createTestComponent());
         expect(screen.getByText(/Executable/)).toBeInTheDocument();
     });
+
+    it('displays the tag when set, used by the workspace list to name the DAO of the row', () => {
+        render(createTestComponent({ tag: 'Demo DAO' }));
+        expect(screen.getByText('Demo DAO')).toBeInTheDocument();
+    });
+
+    it('displays no tag by default, the DAO pages show one proposal source at a time', () => {
+        render(createTestComponent());
+        expect(screen.queryByText('Demo DAO')).not.toBeInTheDocument();
+    });
 });

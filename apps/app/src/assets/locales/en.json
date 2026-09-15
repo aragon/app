@@ -421,6 +421,19 @@
           "transactions": "Transactions"
         }
       },
+      "navigationWorkspace": {
+        "a11y": {
+          "description": "Navigate between the pages of this workspace",
+          "title": "Workspace navigation"
+        },
+        "accounts": "{{count}} accounts",
+        "link": {
+          "assets": "Assets",
+          "overview": "Overview",
+          "proposals": "Proposals",
+          "transactions": "Transactions"
+        }
+      },
       "notFoundBase": {
         "action": "Explore DAOs",
         "description": "We couldn't find the page you're looking for.",
@@ -1705,6 +1718,11 @@
         }
       },
       "exploreDaosPage": {
+        "createWorkspace": {
+          "actionLabel": "Create a workspace",
+          "subtitle": "Group DAOs and accounts across networks into a single workspace to see their assets, transactions and members together.",
+          "title": "Multi-DAO workspace"
+        },
         "doItYourself": {
           "actionLabel": "Developer portal",
           "subtitle": "Build your own custom Aragon OSx DAO or your own web application using our Governance UI Kit and App Template.",
@@ -2333,6 +2351,7 @@
       },
       "selectPluginDialog": {
         "action": {
+          "back": "Back",
           "cancel": "Cancel",
           "select": "Create proposal"
         },
@@ -4036,6 +4055,13 @@
       "governanceBodyInfo": {
         "external": "External address"
       },
+      "networkInput": {
+        "label": "Network",
+        "tag": {
+          "beta": "Beta",
+          "testnet": "Testnet"
+        }
+      },
       "networkSwitchAlert": {
         "body": "Switch to {{networkName}} in your wallet.",
         "title": "Switch network"
@@ -4161,6 +4187,237 @@
               "title": "Missing data"
             }
           }
+        }
+      }
+    },
+    "workspace": {
+      "createWorkspaceForm": {
+        "accounts": {
+          "add": "Add account",
+          "helpText": "The DAOs and accounts whose assets, transactions and members this workspace brings together.",
+          "identity": {
+            "resolving": "Checking address…",
+            "type": {
+              "dao": "DAO",
+              "safe": "Safe"
+            }
+          },
+          "label": "Accounts",
+          "metadata": {
+            "description": {
+              "label": "Account description"
+            },
+            "hide": "Remove metadata",
+            "name": {
+              "label": "Account name"
+            },
+            "show": "Add metadata",
+            "title": "Metadata"
+          },
+          "remove": "Remove account"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "0x… or ENS name"
+        },
+        "error": {
+          "duplicateAddress": "This address is already used on the selected network.",
+          "invalidAddress": "Enter a valid address or ENS name.",
+          "unsupportedAccount": "This address is not an Aragon DAO or a Safe on the selected network.",
+          "unverifiedAccount": "This address could not be verified right now. Please try again."
+        },
+        "metadata": {
+          "description": {
+            "helpText": "This is shown on the workspace pages so visitors know what this workspace covers.",
+            "label": "Description"
+          },
+          "name": {
+            "label": "Workspace name"
+          },
+          "resources": {
+            "helpText": "These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels."
+          }
+        },
+        "targets": {
+          "add": "Add target",
+          "helpText": "Addresses this workspace relates to. They are stored as-is for now and will later be used to discover accounts automatically.",
+          "label": "Targets",
+          "remove": "Remove target"
+        }
+      },
+      "createWorkspacePage": {
+        "finalStep": "Create workspace",
+        "steps": {
+          "ACCOUNTS": {
+            "description": "Add the DAOs and accounts belonging to this workspace. Each one is identified by its network and address.",
+            "name": "Add accounts",
+            "title": "Add accounts"
+          },
+          "METADATA": {
+            "description": "Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later.",
+            "name": "Describe your workspace",
+            "title": "Describe your workspace"
+          },
+          "TARGETS": {
+            "description": "Add the addresses this workspace relates to. This step is optional and can be left empty.",
+            "name": "Add targets",
+            "title": "Add targets"
+          }
+        },
+        "submitLabel": "Create workspace"
+      },
+      "layoutWizardCreateWorkspace": {
+        "name": "Create workspace"
+      },
+      "publishWorkspaceDialog": {
+        "button": {
+          "retry": "Try again",
+          "submit": "Create workspace",
+          "success": "View workspace"
+        },
+        "error": {
+          "description": "The workspace could not be created. Check your connection and try again.",
+          "title": "Unable to create the workspace"
+        },
+        "success": {
+          "title": "Workspace created"
+        },
+        "summary": "{{accounts}} accounts · {{targets}} targets",
+        "title": "Create workspace"
+      },
+      "workspaceAccountItem": {
+        "type": {
+          "dao": "DAO",
+          "safe": "Safe"
+        }
+      },
+      "workspaceAssetList": {
+        "emptyState": {
+          "description": "The accounts of this workspace hold no assets yet.",
+          "heading": "No assets",
+          "unknownDescription": "Some accounts could not be read, so their assets are missing from this list. Try again in a moment.",
+          "unknownHeading": "Assets could not be loaded"
+        },
+        "entity": "Assets",
+        "errorState": {
+          "description": "The assets of this workspace could not be loaded.",
+          "heading": "Unable to load assets"
+        },
+        "unavailable": {
+          "description": "{{count}} of the accounts in this workspace could not be read, so their assets are missing from the totals below.",
+          "title": "Some assets are missing"
+        }
+      },
+      "workspaceAssetsAsideCard": {
+        "hiddenSpam": "Hidden spam",
+        "tokens": "Unique tokens",
+        "totalValue": "Total value (USD)"
+      },
+      "workspaceAssetsPage": {
+        "filter": {
+          "allAccounts": "All accounts"
+        },
+        "main": {
+          "title": "Assets"
+        }
+      },
+      "workspaceDetailsPage": {
+        "aside": {
+          "details": "Details",
+          "owner": "Owner",
+          "resources": "Resources"
+        },
+        "notFound": {
+          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
+          "title": "Workspace not found"
+        },
+        "section": {
+          "accounts": "Accounts",
+          "targets": "Targets",
+          "targetsDescription": "Addresses this workspace relates to."
+        },
+        "stat": {
+          "accounts": "Accounts",
+          "targets": "Targets"
+        }
+      },
+      "workspaceInfoAside": {
+        "accounts": "Accounts",
+        "owner": "Owner"
+      },
+      "workspaceTransactionList": {
+        "emptyState": {
+          "description": "This will show the transactions of every account in this workspace when available.",
+          "heading": "No transactions found"
+        },
+        "entity": "Transactions",
+        "errorState": {
+          "description": "There was an error loading the transactions. Try again later.",
+          "heading": "Error loading transactions"
+        },
+        "partial": "Some accounts of this workspace could not be read, so this list may be incomplete.",
+        "typeFilter": {
+          "all": "All transactions",
+          "executions": "Executions",
+          "received": "Deposits",
+          "sent": "Withdrawals"
+        }
+      },
+      "workspaceTransactionsAsideCard": {
+        "lastActivity": "Last activity",
+        "transactions": "Transactions",
+        "allTransactions": "All transactions"
+      },
+      "workspaceTransactionsPage": {
+        "filter": {
+          "allAccounts": "All accounts"
+        },
+        "main": {
+          "title": "Transactions"
+        },
+        "notFound": {
+          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
+          "title": "Workspace not found"
+        }
+      },
+      "workspaceProposalList": {
+        "emptyState": {
+          "description": "The DAOs of this workspace have no proposals yet.",
+          "heading": "No proposals"
+        },
+        "entity": "Proposals",
+        "errorState": {
+          "description": "The proposals of this workspace could not be loaded.",
+          "heading": "Unable to load proposals"
+        }
+      },
+      "workspaceProposalsAsideCard": {
+        "daos": "DAOs",
+        "mostRecent": "Most recent",
+        "recentUnit": "{{unit}} ago",
+        "total": "Total proposals"
+      },
+      "workspaceProposalsPage": {
+        "filter": {
+          "allAccounts": "All accounts"
+        },
+        "main": {
+          "action": "New proposal",
+          "title": "Proposals"
+        }
+      },
+      "workspaceSelectAccountDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "select": "Next"
+        },
+        "description": "Select the account you want to create a proposal for. You pick the process of that account on the next step.",
+        "title": "Select an account"
+      },
+      "workspaceSelectAccountDialogItem": {
+        "type": {
+          "dao": "DAO",
+          "safe": "Safe"
         }
       }
     }
