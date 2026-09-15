@@ -4401,8 +4401,17 @@
           "allAccounts": "All accounts"
         },
         "main": {
+          "action": "New proposal",
           "title": "Proposals"
         }
+      },
+      "workspaceSelectProcessDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "select": "Select"
+        },
+        "description": "Select the process you want to create a proposal in. Each process is labelled with the DAO it belongs to.",
+        "title": "Select a process"
       }
     }
   }

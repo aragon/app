@@ -1,10 +1,15 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { ProposalListStats } from '@/modules/governance/components/proposalListStats';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -14,6 +19,11 @@ import {
 import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
 import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposalsAsideCard';
+import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
+import type {
+    IWorkspaceSelectProcessDialogParams,
+    IWorkspaceSelectProcessTarget,
+} from '../../dialogs/workspaceSelectProcessDialog';
 import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
@@ -41,6 +51,8 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { workspaceId, pageSize } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
+    const router = useRouter();
 
     const { data: workspace } = useWorkspace(
         { urlParams: { id: workspaceId } },
@@ -103,9 +115,51 @@ export const WorkspaceProposalsPageClient: React.FC<
         },
     };
 
+    // A single guard instance serves every DAO: the hook freezes its own `plugin` in a ref, but `check` merges the
+    // parameters it is called with, and the permission dialog resolves the check from those.
+    const { check: createProposalGuard } = usePermissionCheckGuard({
+        permissionNamespace: 'proposal',
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        daoId: '',
+    });
+
+    const handleProcessSelected = (target: IWorkspaceSelectProcessTarget) => {
+        const { dao, plugin } = target;
+
+        createProposalGuard({
+            plugin,
+            daoId: dao.id,
+            onSuccess: () =>
+                router.push(
+                    daoUtils.getDaoUrl(
+                        dao,
+                        `create/${plugin.address}/proposal`,
+                    )!,
+                ),
+        });
+    };
+
+    const openSelectProcessDialog = () => {
+        const params: IWorkspaceSelectProcessDialogParams = {
+            accounts: daoAccounts,
+            onProcessSelected: handleProcessSelected,
+        };
+        open(WorkspaceDialogId.SELECT_PROCESS, { params });
+    };
+
     return (
         <Page.Content>
             <Page.Main
+                action={
+                    daoAccounts.length > 0
+                        ? {
+                              label: t(
+                                  'app.workspace.workspaceProposalsPage.main.action',
+                              ),
+                              onClick: openSelectProcessDialog,
+                          }
+                        : undefined
+                }
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
                 <div className="flex flex-col gap-4 md:gap-6">

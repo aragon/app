@@ -1,3 +1,4 @@
 export enum WorkspaceDialogId {
     PUBLISH_WORKSPACE = 'PUBLISH_WORKSPACE',
+    SELECT_PROCESS = 'WORKSPACE_SELECT_PROCESS',
 }
