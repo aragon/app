@@ -137,14 +137,24 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         return { component, ...addresses };
     };
 
-    it('gives a tab to the aggregated view and to DAO accounts only', async () => {
+    // The accounts are behind the account dropdown, labelled with the currently selected option.
+    const openAccountDropdown = async () =>
+        userEvent.click(
+            await screen.findByRole('button', {
+                name: 'app.workspace.workspaceAssetsPage.filter.allAccounts',
+            }),
+        );
+
+    it('gives an option to the aggregated view and to DAO accounts only', async () => {
         const { component, daoAddress, safeAddress } = createTestComponent();
         render(component);
+
+        await openAccountDropdown();
 
         expect(
             await screen.findByText(addressUtils.truncateAddress(daoAddress)),
         ).toBeInTheDocument();
-        // The Safe has no tab: the single DAO endpoints cannot answer for it.
+        // The Safe has no option: the single DAO endpoints cannot answer for it.
         expect(
             screen.queryByText(addressUtils.truncateAddress(safeAddress)),
         ).not.toBeInTheDocument();
@@ -175,14 +185,14 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         expect(getDaoAssetsSpy).not.toHaveBeenCalled();
     });
 
-    it('reads the single DAO assets API when an account tab is selected', async () => {
+    it('reads the single DAO assets API when an account is selected', async () => {
         const { component, daoAddress } = createTestComponent();
         render(component);
 
-        const accountTab = await screen.findByText(
-            addressUtils.truncateAddress(daoAddress),
+        await openAccountDropdown();
+        await userEvent.click(
+            await screen.findByText(addressUtils.truncateAddress(daoAddress)),
         );
-        await userEvent.click(accountTab);
 
         await waitFor(() =>
             expect(getDaoAssetsSpy).toHaveBeenCalledWith(
@@ -195,7 +205,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         );
     });
 
-    it('displays the DAO aside card of the account when its tab is selected', async () => {
+    it('displays the DAO aside card of the account when it is selected', async () => {
         // `DaoInfoAside` only renders the stats it is given when `linkedAccount` is enabled, exactly as on the DAO
         // assets page; with the flag off it falls back to `FinanceDetailsList`.
         useFeatureFlagsSpy.mockReturnValue({
@@ -206,6 +216,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         const { component, daoAddress } = createTestComponent();
         render(component);
 
+        await openAccountDropdown();
         await userEvent.click(
             await screen.findByText(addressUtils.truncateAddress(daoAddress)),
         );
