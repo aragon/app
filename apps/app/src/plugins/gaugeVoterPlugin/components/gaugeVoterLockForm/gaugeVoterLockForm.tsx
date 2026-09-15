@@ -1,7 +1,7 @@
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
@@ -18,6 +18,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterLocksDialogParams } from '../../dialogs/gaugeVoterLocksDialog';
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
@@ -125,7 +126,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
         control,
         name: 'amount',
     });
-    const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
+    const lockAmountWei = bigIntUtils.parseUnits(lockAmount, token.decimals);
 
     const needsApproval =
         effectiveIsConnected &&

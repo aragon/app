@@ -133,4 +133,22 @@ describe('<DaoProposalsPageClient /> component', () => {
             `create/${pluginAddress}/proposal`,
         );
     });
+
+    it('renders the not-found state linking to the dashboard when the DAO has no process plugin to display', () => {
+        const dashboardUrl = '/dao/ethereum-sepolia/test-dao/dashboard';
+        useDaoPluginsSpy.mockReturnValue([]);
+        getDaoUrlSpy.mockReturnValue(dashboardUrl);
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/daoProposalsPage.error.notFound.title/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /daoProposalsPage.error.action/ }),
+        ).toHaveAttribute('href', dashboardUrl);
+        expect(
+            screen.queryByTestId('proposal-list-mock'),
+        ).not.toBeInTheDocument();
+    });
 });

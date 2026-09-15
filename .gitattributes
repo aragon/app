@@ -1,0 +1,5 @@
+# The guardrail metrics log is append-only and every line stands on its own, so two branches
+# that both recorded hits want each other's lines, never a resolution. Union-merge keeps both
+# sets instead of asking every rebase to settle a conflict by hand.
+# See .agents/shared/metrics/README.md.
+.agents/shared/metrics/hits.jsonl merge=union

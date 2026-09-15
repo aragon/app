@@ -22,7 +22,7 @@ describe('<CreateProposalPage /> component', () => {
     ) => {
         const completeProps: ICreateProposalPageProps = {
             params: Promise.resolve({
-                addressOrEns: '0x987',
+                addressOrEns: '0x1234567890123456789012345678901234567890',
                 network: Network.ETHEREUM_MAINNET,
                 pluginAddress: '0x123',
             }),

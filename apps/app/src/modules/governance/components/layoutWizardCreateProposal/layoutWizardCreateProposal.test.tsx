@@ -24,6 +24,8 @@ describe('<LayoutWizardCreateProposal /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
+    const daoAddress = '0x1234567890123456789012345678901234567890';
+
     afterEach(() => {
         fetchQuerySpy.mockReset();
         getDaoPluginsSpy.mockReset();
@@ -34,7 +36,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
     ) => {
         const completeProps: ILayoutWizardCreateProposalProps = {
             params: Promise.resolve({
-                addressOrEns: 'dao-address',
+                addressOrEns: daoAddress,
                 network: Network.ETHEREUM_SEPOLIA,
                 pluginAddress: '0x123',
             }),
@@ -51,7 +53,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
             throw new Error('fetch DAO error');
         });
         const params = {
-            addressOrEns: 'dao-address',
+            addressOrEns: daoAddress,
             network: Network.ETHEREUM_SEPOLIA,
             pluginAddress: '0x123',
         };
@@ -60,7 +62,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
     });
 
     it('renders the plugin name on the wizard name when DAO has multiple process plugins', async () => {
-        const dao = generateDao({ address: '0x987' });
+        const dao = generateDao({ address: daoAddress });
         const plugins = [
             generateDaoPlugin({
                 subdomain: 'token',
@@ -89,7 +91,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
     });
 
     it('only renders the wizard name when DAO has one process plugin', async () => {
-        const dao = generateDao({ address: '0x987' });
+        const dao = generateDao({ address: daoAddress });
         const plugins = [
             generateDaoPlugin({
                 subdomain: 'spp',

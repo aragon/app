@@ -2,7 +2,6 @@
 
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { parseUnits } from 'viem';
 import {
     AssetInput,
     type IAssetInputFormData,
@@ -12,6 +11,7 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { useLockToVoteData } from '../../hooks/useLockToVoteData';
 import type { ILockToVotePlugin } from '../../types';
 
@@ -59,7 +59,7 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<
         control: formValues.control,
         name: 'amount',
     });
-    const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
+    const lockAmountWei = bigIntUtils.parseUnits(lockAmount, token.decimals);
 
     const primaryAction = {
         label: t(
