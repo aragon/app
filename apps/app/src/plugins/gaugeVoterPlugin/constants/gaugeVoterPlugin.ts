@@ -32,12 +32,11 @@ export const gaugeVoterPlugin: IPluginInfo = {
         [Network.ROBINHOOD_MAINNET]:
             '0x0000000000000000000000000000000000000000',
     },
-    pageLinks: (baseUrl, context) => [
+    pageLinks: (baseUrl) => [
         {
             label: 'app.plugins.gaugeVoter.meta.link.gauges',
             link: `${baseUrl}/${GaugeVoterPluginPages.GAUGES}`,
             icon: IconType.APP_GAUGE,
-            lgHidden: context === 'dialog',
             order: 250,
         },
     ],

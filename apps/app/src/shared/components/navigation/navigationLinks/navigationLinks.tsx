@@ -39,9 +39,8 @@ export const NavigationLinks: React.FC<INavigationLinksProps> = (props) => {
         >
             {links
                 .filter((link) => !link.hidden)
-                .map(({ link, label, icon, lgHidden }) => (
+                .map(({ link, label, icon }) => (
                     <NavigationLinksItem
-                        className={classNames({ 'lg:hidden': lgHidden })}
                         href={link}
                         icon={icon}
                         key={link}

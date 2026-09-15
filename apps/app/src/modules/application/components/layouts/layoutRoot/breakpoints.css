@@ -1,0 +1,66 @@
+/* Responsive variants of the application.
+
+   The AI assistant docks as an in-flow sibling of the application column, so the pane the app lays
+   out can be much narrower than the browser window: a 1280px window with the assistant open leaves
+   the app 780px. Viewport breakpoints inside that pane lie — they promote it to a desktop layout
+   that no longer fits (APP-1143). The breakpoint variants are therefore redefined as container
+   queries on the `app` container:
+
+   - `layoutRoot.tsx` declares `@container/app` on the application column, so everything laid out
+     inside it measures the column.
+   - `body` is the fallback `app` container below. A container query resolves against the nearest
+     ancestor container of that name, so the assistant panel, dialogs and anything else portalled
+     to the document body measure the window, as they always did.
+
+   The thresholds are the design system's viewport scale (`--breakpoint-*`: 40/48/64/80/96rem), so
+   with the assistant collapsed the column is laid out exactly as the window would have been.
+   Custom properties cannot be used inside a container query condition, hence the literal values;
+   breakpoints.test.ts pins them to the theme.
+
+   gov-ui-kit ships its components uncompiled and this build generates their utility CSS (see the
+   `@source` in layoutRoot.css), so kit components inside the column follow the column too.
+
+   `screen-*` / `screen-max-*` are the viewport equivalents, for the few surfaces that must measure
+   the window wherever they render: the assistant shell (its CSS and its `matchMedia` a11y logic
+   must agree) and fixed-position overlays rendered inside the column. Tailwind's `min-*`,
+   `max-[…]` and raw `@media` rules are viewport queries as well and are left untouched. The whole
+   scale is declared even though only a few sizes are used today: an undeclared variant is not an
+   error, the class simply does nothing, and utilities are only generated for the classes the build
+   finds, so the unused declarations cost nothing.
+
+   This file is excluded from Biome (root biome.json): its CSS parser rejects `2xl` as a variant
+   name because it starts with a digit, and Tailwind rejects the CSS-escaped spelling of it. */
+
+@custom-variant sm (@container app (width >= 40rem));
+@custom-variant md (@container app (width >= 48rem));
+@custom-variant lg (@container app (width >= 64rem));
+@custom-variant xl (@container app (width >= 80rem));
+@custom-variant 2xl (@container app (width >= 96rem));
+
+/* Declared widest-first so that, like Tailwind's own `max-*`, the narrower range wins the cascade. */
+@custom-variant max-2xl (@container app (width < 96rem));
+@custom-variant max-xl (@container app (width < 80rem));
+@custom-variant max-lg (@container app (width < 64rem));
+@custom-variant max-md (@container app (width < 48rem));
+@custom-variant max-sm (@container app (width < 40rem));
+
+@custom-variant screen-sm (@media (width >= 40rem));
+@custom-variant screen-md (@media (width >= 48rem));
+@custom-variant screen-lg (@media (width >= 64rem));
+@custom-variant screen-xl (@media (width >= 80rem));
+@custom-variant screen-2xl (@media (width >= 96rem));
+
+@custom-variant screen-max-2xl (@media (width < 96rem));
+@custom-variant screen-max-xl (@media (width < 80rem));
+@custom-variant screen-max-lg (@media (width < 64rem));
+@custom-variant screen-max-md (@media (width < 48rem));
+@custom-variant screen-max-sm (@media (width < 40rem));
+
+@layer base {
+    /* Fallback `app` container: surfaces outside the application column measure the window. Note that
+       `body` cannot query itself — a breakpoint variant on the body element never matches; use
+       `screen-*` there. */
+    body {
+        container: app / inline-size;
+    }
+}

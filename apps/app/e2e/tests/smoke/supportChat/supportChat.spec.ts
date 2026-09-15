@@ -1,4 +1,11 @@
-import { type BrowserContext, expect, type Page, test } from '@playwright/test';
+import { DaoDashboardPage, getDaosWithFeature } from '@e2e/helpers';
+import {
+    type BrowserContext,
+    expect,
+    type Locator,
+    type Page,
+    test,
+} from '@playwright/test';
 
 const featureFlagCookieName = 'aragon.featureFlags.overrides';
 
@@ -78,6 +85,15 @@ const getChatTrigger = (page: Page) =>
 // while it is open.
 const getChatPanel = (page: Page) =>
     page.getByRole('complementary', { name: 'Support chat' });
+
+const getBoundingBox = async (locator: Locator) => {
+    const box = await locator.boundingBox();
+    if (box == null) {
+        throw new Error(`${locator.toString()} is not rendered`);
+    }
+
+    return box;
+};
 
 test.describe('Support chat', () => {
     test('opens the chat, drafts the ticket and creates it on approval', async ({
@@ -175,5 +191,92 @@ test.describe('Support chat', () => {
         // Flag off: neither the navigation-bar trigger nor the chat panel are rendered.
         await expect(getChatTrigger(page)).toHaveCount(0);
         await expect(getChatPanel(page)).toHaveCount(0);
+    });
+
+    // The app is laid out against the width of its own column, not the browser window (APP-1143):
+    // docked, the panel takes 500px of the 1280px window, so the dashboard has to drop to its
+    // stacked layout instead of squeezing the 400px aside next to the main column.
+    test('lays the dashboard out against the width left beside the docked panel', async ({
+        baseURL,
+        context,
+        page,
+    }) => {
+        await setSupportChatFlag(context, baseURL!, true);
+
+        const [dao] = getDaosWithFeature('multisig');
+        const dashboard = await new DaoDashboardPage({
+            page,
+            network: dao.network,
+            address: dao.address,
+        }).navigate();
+
+        const main = dashboard.mainContent();
+        // The page aside and the chat panel are both `complementary` landmarks; the details card
+        // tells the page one apart.
+        const aside = page
+            .getByRole('complementary')
+            .filter({ has: page.getByRole('heading', { name: 'Contract' }) });
+        const panel = getChatPanel(page);
+
+        await expect(main).toBeVisible();
+        await expect(aside).toBeVisible();
+
+        // Panel closed: the desktop layout, the aside beside the main column.
+        const closedMain = await getBoundingBox(main);
+        const closedAside = await getBoundingBox(aside);
+        expect(closedAside.x).toBeGreaterThanOrEqual(
+            closedMain.x + closedMain.width,
+        );
+
+        await getChatTrigger(page).click();
+        await expect(panel).toBeVisible();
+
+        // The panel animates its width in, so poll until the layout has settled. The app keeps
+        // 780px, below its `lg` breakpoint: the aside stacks under the main column at the same
+        // width, and nothing reaches under the panel or overflows the window.
+        await expect(async () => {
+            const [openMain, openAside, openPanel] = await Promise.all(
+                [main, aside, panel].map(getBoundingBox),
+            );
+            expect(openPanel.x).toBeGreaterThanOrEqual(
+                openMain.x + openMain.width,
+            );
+            expect(openPanel.x).toBeGreaterThanOrEqual(
+                openAside.x + openAside.width,
+            );
+            expect(openAside.y).toBeGreaterThanOrEqual(
+                openMain.y + openMain.height,
+            );
+            expect(Math.abs(openAside.width - openMain.width)).toBeLessThan(1);
+        }).toPass();
+
+        // Subpixel widths round the scroll width up, so allow a pixel.
+        const horizontalOverflow = await page.evaluate(
+            () =>
+                document.documentElement.scrollWidth -
+                document.documentElement.clientWidth,
+        );
+        expect(horizontalOverflow).toBeLessThanOrEqual(1);
+
+        // Narrower window, panel still docked (a window decision): the app keeps 600px, below its
+        // `md` breakpoint, so the gov-ui-kit definition list in the details card follows the column
+        // too and stacks each term over its value instead of laying them out as a row. 1100px
+        // rather than the ticket's 1024px: docking is decided at exactly 64rem, and a window that
+        // wide leaves the decision to whether the runner's scrollbar takes layout space.
+        await page.setViewportSize({ width: 1100, height: 720 });
+        const term = aside.getByRole('term').first();
+        const definition = aside.getByRole('definition').first();
+        await expect(async () => {
+            const [narrowMain, narrowPanel, termBox, definitionBox] =
+                await Promise.all(
+                    [main, panel, term, definition].map(getBoundingBox),
+                );
+            expect(narrowPanel.x).toBeGreaterThanOrEqual(
+                narrowMain.x + narrowMain.width,
+            );
+            expect(definitionBox.y).toBeGreaterThanOrEqual(
+                termBox.y + termBox.height,
+            );
+        }).toPass();
     });
 });
