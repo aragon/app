@@ -2351,6 +2351,7 @@
       },
       "selectPluginDialog": {
         "action": {
+          "back": "Back",
           "cancel": "Cancel",
           "select": "Create proposal"
         },
@@ -4401,7 +4402,22 @@
           "allAccounts": "All accounts"
         },
         "main": {
+          "action": "New proposal",
           "title": "Proposals"
+        }
+      },
+      "workspaceSelectAccountDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "select": "Next"
+        },
+        "description": "Select the account you want to create a proposal for. You pick the process of that account on the next step.",
+        "title": "Select an account"
+      },
+      "workspaceSelectAccountDialogItem": {
+        "type": {
+          "dao": "DAO",
+          "safe": "Safe"
         }
       }
     }

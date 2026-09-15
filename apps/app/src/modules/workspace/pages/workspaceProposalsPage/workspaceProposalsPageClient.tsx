@@ -1,10 +1,17 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { ProposalListStats } from '@/modules/governance/components/proposalListStats';
-import { useDao } from '@/shared/api/daoService';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -14,6 +21,8 @@ import {
 import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
 import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposalsAsideCard';
+import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
+import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
@@ -41,6 +50,8 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { workspaceId, pageSize } = props;
 
     const { t } = useTranslations();
+    const { open, close } = useDialogContext();
+    const router = useRouter();
 
     const { data: workspace } = useWorkspace(
         { urlParams: { id: workspaceId } },
@@ -74,7 +85,7 @@ export const WorkspaceProposalsPageClient: React.FC<
 
     const isAllAccountsSelected = activeOption?.isAllAccounts ?? true;
 
-    const { isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
+    const { daos, isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
 
     // Totals of the aggregated view. Shares its key with the list's own query, so this adds no extra request.
     const { metadata, proposalList } = useWorkspaceProposalListData({
@@ -103,9 +114,85 @@ export const WorkspaceProposalsPageClient: React.FC<
         },
     };
 
+    // A single guard instance serves every DAO: the hook freezes its own `plugin` in a ref, but `check` merges the
+    // parameters it is called with, and the permission dialog resolves the check from those.
+    const { check: createProposalGuard } = usePermissionCheckGuard({
+        permissionNamespace: 'proposal',
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        daoId: '',
+    });
+
+    const handlePluginSelected = (
+        account: IWorkspaceAccount,
+        plugin: IDaoPlugin,
+    ) => {
+        const dao = daos[account.id];
+
+        createProposalGuard({
+            plugin,
+            daoId: account.id,
+            onSuccess: () => {
+                const createProposalUrl = daoUtils.getDaoUrl(
+                    dao,
+                    `create/${plugin.address}/proposal`,
+                );
+
+                if (createProposalUrl != null) {
+                    router.push(createProposalUrl);
+                }
+            },
+        });
+    };
+
+    // Second step of the flow, stacked on top of the account step when there is one so that its back action pops
+    // only this dialog and reveals the account selection again.
+    const openSelectPluginDialog = (
+        account: IWorkspaceAccount,
+        hasAccountStep: boolean,
+    ) => {
+        const params: ISelectPluginDialogParams = {
+            daoId: account.id,
+            variant: 'process',
+            onPluginSelected: (plugin) => handlePluginSelected(account, plugin),
+            onBack: hasAccountStep
+                ? () => close(GovernanceDialogId.SELECT_PLUGIN)
+                : undefined,
+        };
+        open(GovernanceDialogId.SELECT_PLUGIN, {
+            params,
+            stack: hasAccountStep,
+        });
+    };
+
+    const handleCreateProposal = () => {
+        // The account step has nothing to ask when the page is already filtered down to a single account.
+        if (selectedAccount != null) {
+            openSelectPluginDialog(selectedAccount, false);
+
+            return;
+        }
+
+        const params: IWorkspaceSelectAccountDialogParams = {
+            accounts: daoAccounts,
+            onAccountSelected: (account) =>
+                openSelectPluginDialog(account, true),
+        };
+        open(WorkspaceDialogId.SELECT_ACCOUNT, { params });
+    };
+
     return (
         <Page.Content>
             <Page.Main
+                action={
+                    daoAccounts.length > 0
+                        ? {
+                              label: t(
+                                  'app.workspace.workspaceProposalsPage.main.action',
+                              ),
+                              onClick: handleCreateProposal,
+                          }
+                        : undefined
+                }
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
                 <div className="flex flex-col gap-4 md:gap-6">
