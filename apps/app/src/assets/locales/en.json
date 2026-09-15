@@ -2351,6 +2351,7 @@
       },
       "selectPluginDialog": {
         "action": {
+          "back": "Back",
           "cancel": "Cancel",
           "select": "Create proposal"
         },
@@ -4405,13 +4406,20 @@
           "title": "Proposals"
         }
       },
-      "workspaceSelectProcessDialog": {
+      "workspaceSelectAccountDialog": {
         "action": {
           "cancel": "Cancel",
-          "select": "Select"
+          "select": "Next"
         },
-        "description": "Select the process you want to create a proposal in. Each process is labelled with the DAO it belongs to.",
-        "title": "Select a process"
+        "description": "Select the account you want to create a proposal for. You pick the process of that account on the next step.",
+        "title": "Select an account"
+      },
+      "workspaceSelectAccountDialogItem": {
+        "noProcesses": "No process available",
+        "type": {
+          "dao": "DAO",
+          "safe": "Safe"
+        }
       }
     }
   }

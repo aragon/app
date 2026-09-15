@@ -34,11 +34,6 @@ export type IProcessDataListItemProps = IDataListItemProps & {
      * Displays a help text that the connected user is not eligible to create proposals in this process.
      */
     showNotEligibleHelpText?: boolean;
-    /**
-     * Labels the item with its DAO even when that DAO has no linked account, for listings spanning several DAOs.
-     * @default false
-     */
-    isMultiDaoContext?: boolean;
 };
 
 export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
@@ -50,7 +45,6 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
         isDisabled,
         dao,
         showNotEligibleHelpText,
-        isMultiDaoContext,
         ...otherProps
     } = props;
 
@@ -93,12 +87,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                             </p>
                         )}
                     </div>
-                    <DaoTargetIndicator
-                        dao={dao}
-                        isMultiDaoContext={isMultiDaoContext}
-                        plugin={process}
-                        size="sm"
-                    />
+                    <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
                 {showNotEligibleHelpText && (
                     <div className="text-neutral-300 text-sm md:text-base">

@@ -25,15 +25,6 @@ export interface IDaoTargetIndicatorProps {
      * - 'xs': text-xs (12px)
      */
     size?: 'sm' | 'xs';
-    /**
-     * Renders the indicator even when the DAO has no linked account, for listings that already span several DAOs.
-     *
-     * The indicator exists to disambiguate which DAO an item belongs to, which it normally infers from the DAO
-     * having linked accounts. A workspace listing is the other way round: the DAOs are independent of each other
-     * and the multiplicity lives in the listing, so the caller asserts it.
-     * @default false
-     */
-    isMultiDaoContext?: boolean;
 }
 
 /**
@@ -63,12 +54,11 @@ const sizeConfig = {
 export const DaoTargetIndicator: React.FC<IDaoTargetIndicatorProps> = (
     props,
 ) => {
-    const { dao, plugin, targetDaoAddress, size, isMultiDaoContext } = props;
+    const { dao, plugin, targetDaoAddress, size } = props;
 
-    // Only show when more than one DAO is in play, either because this one has linked accounts or because the
-    // caller is listing several DAOs side by side.
+    // Only show when there are linked accounts
     const hasLinkedAccounts = (dao?.linkedAccounts?.length ?? 0) > 0;
-    if ((!hasLinkedAccounts && !isMultiDaoContext) || dao == null) {
+    if (!hasLinkedAccounts || dao == null) {
         return null;
     }
 

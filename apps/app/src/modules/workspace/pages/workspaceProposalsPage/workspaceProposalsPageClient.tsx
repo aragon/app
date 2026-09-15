@@ -3,9 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { ProposalListStats } from '@/modules/governance/components/proposalListStats';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { useDao } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -20,10 +22,7 @@ import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilte
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
 import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposalsAsideCard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
-import type {
-    IWorkspaceSelectProcessDialogParams,
-    IWorkspaceSelectProcessTarget,
-} from '../../dialogs/workspaceSelectProcessDialog';
+import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
@@ -51,7 +50,7 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { workspaceId, pageSize } = props;
 
     const { t } = useTranslations();
-    const { open } = useDialogContext();
+    const { open, close } = useDialogContext();
     const router = useRouter();
 
     const { data: workspace } = useWorkspace(
@@ -86,7 +85,7 @@ export const WorkspaceProposalsPageClient: React.FC<
 
     const isAllAccountsSelected = activeOption?.isAllAccounts ?? true;
 
-    const { isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
+    const { daos, isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
 
     // Totals of the aggregated view. Shares its key with the list's own query, so this adds no extra request.
     const { metadata, proposalList } = useWorkspaceProposalListData({
@@ -123,28 +122,62 @@ export const WorkspaceProposalsPageClient: React.FC<
         daoId: '',
     });
 
-    const handleProcessSelected = (target: IWorkspaceSelectProcessTarget) => {
-        const { dao, plugin } = target;
+    const handlePluginSelected = (
+        account: IWorkspaceAccount,
+        plugin: IDaoPlugin,
+    ) => {
+        const dao = daos[account.id];
 
         createProposalGuard({
             plugin,
-            daoId: dao.id,
-            onSuccess: () =>
-                router.push(
-                    daoUtils.getDaoUrl(
-                        dao,
-                        `create/${plugin.address}/proposal`,
-                    )!,
-                ),
+            daoId: account.id,
+            onSuccess: () => {
+                const createProposalUrl = daoUtils.getDaoUrl(
+                    dao,
+                    `create/${plugin.address}/proposal`,
+                );
+
+                if (createProposalUrl != null) {
+                    router.push(createProposalUrl);
+                }
+            },
         });
     };
 
-    const openSelectProcessDialog = () => {
-        const params: IWorkspaceSelectProcessDialogParams = {
-            accounts: daoAccounts,
-            onProcessSelected: handleProcessSelected,
+    // Second step of the flow, stacked on top of the account step when there is one so that its back action pops
+    // only this dialog and reveals the account selection again.
+    const openSelectPluginDialog = (
+        account: IWorkspaceAccount,
+        hasAccountStep: boolean,
+    ) => {
+        const params: ISelectPluginDialogParams = {
+            daoId: account.id,
+            variant: 'process',
+            onPluginSelected: (plugin) => handlePluginSelected(account, plugin),
+            onBack: hasAccountStep
+                ? () => close(GovernanceDialogId.SELECT_PLUGIN)
+                : undefined,
         };
-        open(WorkspaceDialogId.SELECT_PROCESS, { params });
+        open(GovernanceDialogId.SELECT_PLUGIN, {
+            params,
+            stack: hasAccountStep,
+        });
+    };
+
+    const handleCreateProposal = () => {
+        // The account step has nothing to ask when the page is already filtered down to a single account.
+        if (selectedAccount != null) {
+            openSelectPluginDialog(selectedAccount, false);
+
+            return;
+        }
+
+        const params: IWorkspaceSelectAccountDialogParams = {
+            accounts: daoAccounts,
+            onAccountSelected: (account) =>
+                openSelectPluginDialog(account, true),
+        };
+        open(WorkspaceDialogId.SELECT_ACCOUNT, { params });
     };
 
     return (
@@ -156,7 +189,7 @@ export const WorkspaceProposalsPageClient: React.FC<
                               label: t(
                                   'app.workspace.workspaceProposalsPage.main.action',
                               ),
-                              onClick: openSelectProcessDialog,
+                              onClick: handleCreateProposal,
                           }
                         : undefined
                 }

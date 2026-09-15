@@ -7,7 +7,3 @@ export type {
     ISelectPluginDialogParams,
     ISelectPluginDialogProps,
 } from './selectPluginDialog';
-export {
-    type ISelectPluginDialogProcessListItemProps,
-    SelectPluginDialogProcessListItem,
-} from './selectPluginDialogProcessListItem';
