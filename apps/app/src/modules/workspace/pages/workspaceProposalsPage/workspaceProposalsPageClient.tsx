@@ -11,7 +11,7 @@ import {
     useWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { WorkspaceAccountFilter } from '../../components/workspaceAccountFilter';
+import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
 import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposalsAsideCard';
 import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
@@ -109,7 +109,7 @@ export const WorkspaceProposalsPageClient: React.FC<
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
                 <div className="flex flex-col gap-4 md:gap-6">
-                    <WorkspaceAccountFilter
+                    <WorkspaceAccountDropdown
                         onSelect={setActiveOption}
                         options={options}
                         value={activeOption}
