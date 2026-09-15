@@ -16,7 +16,7 @@ export interface ISppProposalListItemProps
 export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
     props,
 ) => {
-    const { proposal, dao, proposalSlug } = props;
+    const { proposal, dao, proposalSlug, tag } = props;
     const { id, summary, stageIndex, settings, executed, creator } = proposal;
 
     const { t } = useTranslations();
@@ -56,6 +56,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             status={proposalStatus}
             statusContext={statusContext}
             summary={summary}
+            tag={tag}
             title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
         />
     );

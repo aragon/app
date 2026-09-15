@@ -339,6 +339,39 @@ otherwise the banner would always be on and would stop being read.
 
 Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry.
 
+### Proposals page
+
+`/workspace/{workspaceId}/proposals` follows the same shape as the assets page: `WorkspaceAccountFilter` tabs over
+`Page.Main`, plus an aside. **Only DAO accounts take part** — Safes have no indexed proposals.
+
+Per-account tabs reuse `DaoProposalList` unchanged, so a DAO tab is the DAO page: plugin sub-tabs when the DAO runs
+several processes, plugin-specific rows, working links. The aggregated tab calls
+`POST /v2/workspaces/query/proposals` through `workspaceQueryService.getProposalList`.
+
+Three decisions worth keeping:
+
+- **The embedded `dao` is not an `IDao`.** The backend's `daoInfo` projection carries only `{ address, name,
+  description, avatar, links }` — **no `plugins`** — and `proposalUtils.getProposalSlug` resolves the plugin out of
+  `dao.plugins` to build a slug, without which `getProposalUrl` returns `undefined`. So the embedded metadata names
+  a row (via the `tag` prop) while `useWorkspaceDaos` reads the real DAOs with `useQueries` to make rows linkable.
+- **Rows wait for those DAOs.** `useWorkspaceProposalListData` forces `initialLoading` while any DAO read is
+  pending, because `getDisplayTitle` falls back to the slug: rendering early would show an untitled proposal blank
+  and then pop in, with links appearing late. A DAO that fails to read drops its rows rather than half-rendering.
+- **`pending` and `coverage` are not modelled.** `pending` is the queued-Safe-transaction block, which this page
+  does not show. And with DAO-only accounts the backend hardcodes every selected account's coverage to `available`
+  — the only entries that can report a problem describe process Safes, i.e. exactly the `pending` data that is not
+  displayed. Warning on `partial` would flag data the user cannot see. `metadata.totalRecords` counts `data` only,
+  so pagination stays correct without them.
+
+The aside shows `ProposalListStats` on a DAO tab (always the DAO-level stats; the page does not lift the plugin
+filter to swap in `DaoPluginInfo`) and `WorkspaceProposalsAsideCard` on the aggregated tab — total, DAO count and
+most recent, all free from the response. "Executed" is omitted: it needs a second full request, which also
+re-triggers the backend's Safe-queue reads.
+
+There is no "New proposal" action: creating a proposal is a single-DAO act with a per-DAO permission check, and a
+button that appeared and vanished per tab would read as a bug. Each DAO tab links to its DAO, where the real create
+flow lives.
+
 ### Overview page
 
 `workspaceDetailsPageClient` composes the standard page primitives, matching the DAO pages:
@@ -366,6 +399,7 @@ Three gates, one per entry point:
 | `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
 | `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
 | `/workspace/{workspaceId}/assets` | `workspaceAssetsPage` (server) — same |
+| `/workspace/{workspaceId}/proposals` | `workspaceProposalsPage` (server) — same |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
 Notes:
@@ -483,10 +517,15 @@ src/modules/workspace/
 ├── components/workspaceAccountFilter/{workspaceAccountFilter.tsx,index.ts}
 ├── components/workspaceAssetList/{workspaceAssetList.tsx,index.ts}
 ├── components/workspaceAssetsAsideCard/{workspaceAssetsAsideCard.tsx,index.ts}  # aggregated tab only
+├── components/workspaceProposalList/{workspaceProposalList.tsx,index.ts}
+├── components/workspaceProposalsAsideCard/{workspaceProposalsAsideCard.tsx,index.ts}  # aggregated tab only
 ├── hooks/useWorkspaceAccountFilter/{useWorkspaceAccountFilter.ts,index.ts}
 ├── hooks/useWorkspaceAssetListData/{useWorkspaceAssetListData.ts,index.ts}
+├── hooks/useWorkspaceDaos/{useWorkspaceDaos.ts,index.ts}
+├── hooks/useWorkspaceProposalListData/{useWorkspaceProposalListData.ts,index.ts}
 ├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
+├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 └── index.ts
 

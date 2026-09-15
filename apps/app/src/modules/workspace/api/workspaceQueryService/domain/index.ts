@@ -13,6 +13,8 @@ export type {
     IWorkspaceAssetListResponse,
 } from './workspaceAssetListResponse';
 export type { IWorkspaceCoverage } from './workspaceCoverage';
+export type { IWorkspaceProposal } from './workspaceProposal';
+export type { IWorkspaceProposalListResponse } from './workspaceProposalListResponse';
 export type {
     IWorkspaceTransaction,
     IWorkspaceTransactionBase,

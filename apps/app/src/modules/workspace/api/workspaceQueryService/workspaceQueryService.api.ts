@@ -160,3 +160,47 @@ export interface IGetWorkspaceTransactionsBody {
 
 export interface IGetWorkspaceTransactionsParams
     extends IRequestBodyParams<IGetWorkspaceTransactionsBody> {}
+
+export interface IWorkspaceProposalListFilters {
+    /**
+     * Keeps only the accounts on this network for the request.
+     */
+    network?: Network;
+    /**
+     * Keeps only the proposals of this plugin. Requires `network`, since the same address is a different plugin on
+     * another chain.
+     */
+    pluginAddress?: string;
+    /**
+     * Keeps only the proposals created by this address.
+     */
+    creatorAddress?: string;
+    /**
+     * Filters proposals for their executed status when set.
+     */
+    isExecuted?: boolean;
+    /**
+     * Returns only sub-proposals when set to true.
+     * @default false
+     */
+    isSubProposal?: boolean;
+}
+
+export interface IGetWorkspaceProposalListBody {
+    /**
+     * Accounts to aggregate. Only DAO accounts are sent: Safe accounts have no indexed proposals, they only
+     * contribute to the queued-transaction block this page does not render.
+     */
+    accounts: IWorkspaceAccountRef[];
+    /**
+     * Filters narrowing the rows inside the selected accounts. They can never add accounts.
+     */
+    filters?: IWorkspaceProposalListFilters;
+    /**
+     * Page to read. Rows are always sorted by `blockTimestamp`.
+     */
+    pagination?: IWorkspaceQueryPagination;
+}
+
+export interface IGetWorkspaceProposalListParams
+    extends IRequestBodyParams<IGetWorkspaceProposalListBody> {}

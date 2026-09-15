@@ -428,8 +428,9 @@
         },
         "accounts": "{{count}} accounts",
         "link": {
-          "overview": "Overview",
           "assets": "Assets",
+          "overview": "Overview",
+          "proposals": "Proposals",
           "transactions": "Transactions"
         }
       },
@@ -4376,6 +4377,31 @@
         "notFound": {
           "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
           "title": "Workspace not found"
+        }
+      },
+      "workspaceProposalList": {
+        "emptyState": {
+          "description": "The DAOs of this workspace have no proposals yet.",
+          "heading": "No proposals"
+        },
+        "entity": "Proposals",
+        "errorState": {
+          "description": "The proposals of this workspace could not be loaded.",
+          "heading": "Unable to load proposals"
+        }
+      },
+      "workspaceProposalsAsideCard": {
+        "daos": "DAOs",
+        "mostRecent": "Most recent",
+        "recentUnit": "{{unit}} ago",
+        "total": "Total proposals"
+      },
+      "workspaceProposalsPage": {
+        "filter": {
+          "allAccounts": "All proposals"
+        },
+        "main": {
+          "title": "Proposals"
         }
       }
     }
