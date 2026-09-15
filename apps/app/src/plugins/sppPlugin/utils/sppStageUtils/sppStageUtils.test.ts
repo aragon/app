@@ -1,5 +1,10 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import {
+    externalPluginId,
+    safeBodyPluginId,
+} from '@/plugins/safeMultisigPlugin/constants';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import {
@@ -9,7 +14,7 @@ import {
     generateSppStagePlugin,
     generateSppSubProposal,
 } from '../../testUtils';
-import { SppProposalType } from '../../types';
+import { SppProposalType, VotingBodyBrandIdentity } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {
@@ -20,6 +25,50 @@ describe('SppStageUtils', () => {
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
+    });
+
+    describe('getBodyPluginId', () => {
+        it.each([
+            {
+                label: 'an installed body',
+                plugin: generateSppStagePlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                }),
+                network: Network.ETHEREUM_MAINNET,
+                expected: PluginInterfaceType.MULTISIG,
+            },
+            {
+                label: 'a Safe on a supported network',
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.SAFE,
+                }),
+                network: Network.ETHEREUM_MAINNET,
+                expected: safeBodyPluginId,
+            },
+            {
+                label: 'a Safe on an unsupported network',
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.SAFE,
+                }),
+                network: Network.CITREA_MAINNET,
+                expected: externalPluginId,
+            },
+            {
+                label: 'a generic external body',
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.OTHER,
+                }),
+                network: Network.ETHEREUM_MAINNET,
+                expected: externalPluginId,
+            },
+        ])('resolves $label to $expected', ({ plugin, network, expected }) => {
+            expect(sppStageUtils.getBodyPluginId(plugin, network)).toEqual(
+                expected,
+            );
+        });
     });
 
     describe('getStageStartDate', () => {

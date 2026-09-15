@@ -1,0 +1,168 @@
+'use client';
+
+import {
+    DateFormat,
+    formatterUtils,
+    Link,
+    ProposalVoting,
+    ProposalVotingTab,
+    Tabs,
+} from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import type { ReactNode } from 'react';
+import {
+    safeAppHistoryUrl,
+    safeAppTransactionUrl,
+} from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
+
+export interface ISafeMultisigProposalVotingBreakdownProps {
+    proposal: ISppProposal;
+    body: string;
+    stage: ISppStage;
+    isVeto?: boolean;
+    children?: ReactNode;
+}
+
+const translationKey =
+    'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown';
+
+/**
+ * Breakdown of a Safe body: the multisig approval summary, fed from live Safe state.
+ *
+ * The Safe's own particulars - address, threshold, nonce, version - are the body's standing
+ * configuration and live in the Settings tab. Restating them here duplicated gov-ui-kit's own
+ * approval header, and the per-owner signature state belongs to the Votes tab.
+ */
+export const SafeMultisigProposalVotingBreakdown: React.FC<
+    ISafeMultisigProposalVotingBreakdownProps
+> = (props) => {
+    const { proposal, body, stage, isVeto, children } = props;
+    const { t } = useTranslations();
+
+    const {
+        safeInfo,
+        approvalsAmount,
+        minApprovals,
+        membersCount,
+        isLoading,
+        isError,
+        isRateLimited,
+        rateLimitedRetryAfter,
+        settledResultType,
+        settledReport,
+    } = useSafeMultisigBodyState({
+        network: proposal.network,
+        address: body,
+        proposal,
+        stage,
+    });
+
+    // A rate-limited read is a degraded state, not a bug: the poll backs off and recovers on its
+    // own, so it must not read as the generic hard failure the user is expected to act on.
+    let placeholderText = t(
+        `${translationKey}.${isError ? 'error' : 'loading'}`,
+    );
+
+    if (isRateLimited) {
+        placeholderText =
+            rateLimitedRetryAfter == null
+                ? t(`${translationKey}.rateLimited`)
+                : t(`${translationKey}.rateLimitedRetry`, {
+                      seconds: rateLimitedRetryAfter,
+                  });
+    }
+
+    /**
+     * Once the body has reported, the action slot is gone - the shared chrome stops rendering it as
+     * soon as the proposal executes - so the provenance lives here, where the body always renders.
+     *
+     * The exact transaction when history has resolved it, the Safe's history as the fallback: the
+     * settled read can be pending, stale or beyond its page, and "somewhere in this Safe" still
+     * beats no link at all.
+     */
+    const executedHref =
+        (settledReport != null
+            ? safeAppTransactionUrl({
+                  network: proposal.network,
+                  address: body,
+                  safeTxHash: settledReport.transaction.safeTxHash,
+              })
+            : undefined) ??
+        safeAppHistoryUrl({ network: proposal.network, address: body });
+
+    /**
+     * Provenance is a fact, not a control, so it renders as a link rather than a button. The date
+     * carries the label; without one there is nothing to introduce, so the link stands alone and
+     * says what it points at.
+     */
+    const executedAt = settledReport?.transaction.executionDate;
+    const executedDate =
+        executedAt == null
+            ? undefined
+            : formatterUtils.formatDate(executedAt, {
+                  format: DateFormat.YEAR_MONTH_DAY,
+              });
+
+    const provenance =
+        settledResultType != null && executedHref != null ? (
+            <div className="mt-3 flex flex-row items-center gap-x-1 text-neutral-500 text-sm">
+                {executedDate != null && (
+                    <p>{t(`${translationKey}.executedLabel`)}</p>
+                )}
+                <Link
+                    className="w-fit md:text-sm"
+                    href={executedHref}
+                    isExternal={true}
+                    showUrl={false}
+                >
+                    {executedDate ?? t(`${translationKey}.executed`)}
+                </Link>
+            </div>
+        ) : null;
+
+    /**
+     * An indexed verdict whose transaction the scan never found: real confirmations exist, they are
+     * just further back than this read reaches. Stating the count from the Safe's live threshold
+     * would present today's configuration as the decision's own history.
+     */
+    const hasUnfoundSettledReport =
+        settledResultType != null && settledReport == null && !isLoading;
+
+    if (hasUnfoundSettledReport) {
+        placeholderText = t(`${translationKey}.settledUnfound`);
+    }
+
+    if (safeInfo == null || hasUnfoundSettledReport) {
+        return (
+            <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
+                <div
+                    className={classNames(
+                        'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6',
+                        isLoading && 'animate-pulse',
+                    )}
+                >
+                    <p className="text-neutral-500 text-sm md:text-base">
+                        {placeholderText}
+                    </p>
+                    {provenance}
+                </div>
+                {children}
+            </Tabs.Content>
+        );
+    }
+
+    return (
+        <ProposalVoting.BreakdownMultisig
+            approvalsAmount={approvalsAmount}
+            isVeto={isVeto}
+            membersCount={membersCount}
+            minApprovals={minApprovals}
+        >
+            {children}
+            {provenance}
+        </ProposalVoting.BreakdownMultisig>
+    );
+};
