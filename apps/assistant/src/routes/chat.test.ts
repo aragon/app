@@ -443,4 +443,53 @@ describe('POST /chat guardrails', () => {
         expect(model.doStreamCalls).toHaveLength(0);
         expect(deps.linear.createIssueCalls).toHaveLength(0);
     });
+
+    it('gives the agent the documentation tools and guidance when docs search is enabled', async () => {
+        // The tests run as the local environment, where docsSearchEnabled is on.
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        await response.text();
+
+        const call = model.doStreamCalls[0];
+        const toolNames = (call?.tools ?? []).map((tool) => tool.name);
+        expect(toolNames).toEqual(
+            expect.arrayContaining([
+                'createLinearTicket',
+                'flagOffTopic',
+                'searchDocs',
+                'readDoc',
+                'listDocs',
+            ]),
+        );
+        const systemPrompt = JSON.stringify(call?.prompt[0]);
+        expect(systemPrompt).toContain('call searchDocs BEFORE replying');
+        expect(systemPrompt).toContain('only after they say yes');
+        expect(systemPrompt).not.toContain('You have NO knowledge');
+    });
+
+    it('runs a documentation search inline and hands the passages back to the model', async () => {
+        const model = createMockChatModel({
+            streamedText: 'Let me check.',
+            toolCall: {
+                toolName: 'searchDocs',
+                input: { query: 'linking control permissions' },
+            },
+            followUpText: 'Linking is a signal, not control.',
+        });
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        const body = await response.text();
+
+        expect(response.status).toEqual(200);
+        // No approval gate on a read-only tool: the result streams in the same turn and the
+        // model answers on top of it.
+        expect(body).toContain('tool-output-available');
+        expect(body).toContain('accounts/linked-account.md');
+        expect(body).toContain('Linking is a signal, not control.');
+        expect(body).not.toContain('tool-approval-request');
+        expect(model.doStreamCalls).toHaveLength(2);
+    });
 });

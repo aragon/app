@@ -193,6 +193,34 @@ await runScenario(
     },
 );
 
+// Where the documentation tools are on (every environment but production) the agent answers a
+// documented question from the knowledge base; where they are off it says it cannot answer and
+// offers to pass the question on. Either way a plain question never turns into a ticket draft by
+// itself — the user has to agree first.
+await runScenario(
+    'a product question is answered, or offered to the team, without a draft',
+    async () => {
+        const sessionId = randomUUID();
+        const turn = await sendChatTurn(sessionId, [
+            buildUserMessage(
+                'What is the difference between an account and a DAO in the Aragon App?',
+            ),
+        ]);
+
+        if (turn.text.length < 40) {
+            throw new Error(
+                `expected an answer, got: ${JSON.stringify(turn.text)}`,
+            );
+        }
+        if (turn.draftInput || turn.approvalRequest) {
+            throw new Error(
+                `expected no ticket draft for a plain question, got: ${JSON.stringify(turn.draftInput?.input)}`,
+            );
+        }
+        logStep(`answer: ${turn.text.slice(0, 160).replace(/\s+/g, ' ')}`);
+    },
+);
+
 await runScenario(
     'bug report drafts a reviewable ticket and creates it on approval',
     async () => {
@@ -213,15 +241,17 @@ await runScenario(
 
         const resume = await approveDraft(sessionId, messages, turn);
         const output = resume.toolOutput?.output;
-        if (!output?.identifier || !output?.url) {
+        // The output carries the ticket reference only: the Linear URL was dropped from it on
+        // purpose (users cannot open the workspace and the model would narrate the link).
+        if (!output?.identifier) {
             throw new Error(
-                `expected the executed tool output with identifier/url, got: ${JSON.stringify(resume.toolOutput ?? resume.text.slice(0, 200))}`,
+                `expected the executed tool output with an identifier, got: ${JSON.stringify(resume.toolOutput ?? resume.text.slice(0, 200))}`,
             );
         }
         if (resume.text.length === 0) {
             throw new Error('expected a closing message after the creation');
         }
-        logStep(`created ${output.identifier} (${output.url})`);
+        logStep(`created ${output.identifier}`);
     },
 );
 

@@ -2,7 +2,7 @@
 
 Aragon assistant service: the support-chat intake API behind the in-app support widget (`packages/assistant-chat`). Hono HTTP service deployed as its own Vercel project (`assistant.aragon.org`, dev on `dev.assistant.aragon.org`).
 
-Phase 1 scope: deterministic intake pipeline (classify intent → extract fields → ask for missing → create Linear issue) with hard limits, idempotent issue creation and structured observability. Docs answering (Phase 2) is out of scope; its seam is the `searchDocs` tool stub.
+Scope: an agentic intake conversation (one system prompt; the `createLinearTicket` tool runs only after the user approves the draft) with hard limits, idempotent issue creation and structured observability — and, behind `docsSearchEnabled`, answers to product questions grounded in the platform documentation (see [Documentation answering](#documentation-answering)).
 
 ## Development
 
@@ -17,7 +17,22 @@ The Aragon app (`apps/app`) reads `NEXT_PUBLIC_ASSISTANT_URL` from its own env c
 
 ## Texts & prompts
 
-All chat/assistant copy is centralized in two places: service-side texts live in `src/chat/prompts/` (LLM prompts `respond.ts` / `classifyIntent.ts` / `extractFields.ts`, fixed non-LLM replies `fixedMessages.ts`, Linear ticket texts `issueTexts.ts`), and every user-facing string of the widget lives in `packages/assistant-chat/src/copy.ts`.
+All chat/assistant copy is centralized in two places: service-side texts live in `src/chat/prompts/` (the agent system prompt `agentPrompt.ts`, fixed non-LLM replies `fixedMessages.ts`, Linear ticket texts `issueTexts.ts`), and every user-facing string of the widget lives in `packages/assistant-chat/src/copy.ts`.
+
+## Documentation answering
+
+With `docsSearchEnabled` on (see `src/lib/config.ts`), the agent answers product questions from the platform knowledge base and falls back to intake when the documentation does not cover a question: it says so, and offers to pass the question on to the team — the ticket (intent `question`, Linear label `docs-gap`) is drafted only after the user agrees. Answers carry no sources yet: where the knowledge base gets published, and therefore what a citation would link to, is still open (APP-1145).
+
+**Corpus.** The knowledge base lives at the repository root, `platform-doc/`, a squashed git subtree of [`aragon/platform-doc`](https://github.com/aragon/platform-doc) (branch `development`) — read-only here until that repository is archived; edits go upstream and come back by replacing the tree (`git fetch https://github.com/aragon/platform-doc.git development && git rm -r -q platform-doc && git checkout HEAD -- .gitmodules && git read-tree --prefix=platform-doc/ -u FETCH_HEAD`, then a normal commit) — not with `git subtree pull`, whose squash commit is unsigned and refused by the repository rules. A sync merged to `main` redeploys the dev assistant with the new corpus; production only picks it up with the next assistant release. Only knowledge pages make it into the index (`type` concept, capability, pattern, decision, principle, risk, reference, guide, example — never tasks, notes, opportunities or files without frontmatter), and only in the review states the environment's **corpus mode** publishes: `ready` is the product-owner-validated set (what the public docs site will publish) — pages the owner reviewed, which the base marks by removing `status: draft`, plus any page marked `status: ready`; `drafts` adds the pages still under review. A knowledge page in any other state (`blocked`, `candidate`, …) never publishes. Pages lose their frontmatter, title heading, `Open questions`/`Progress` sections and owner checklists; the protocol-doc submodule is never read.
+
+| Environment | `docsSearchEnabled` | `docsCorpus` |
+| --- | --- | --- |
+| local, development, preview | on | `drafts` — a real corpus to test against while the review is in progress |
+| production | off | `ready` — dark until enough pages are ready; a config change (and a release) flips it |
+
+**Index build.** `pnpm build:docs-index` (part of `pnpm build` and `pnpm dev`) cuts the pages into passages (one per level-two section, sub-split when long, each prefixed with its area › page › section breadcrumb and the page `summary:`), embeds them through the AI Gateway (`voyage/voyage-4`, about a cent for the whole corpus) and writes `src/docs/generated/docsIndex.js` — git-ignored, imported by the bundle. An unchanged corpus is not re-embedded (the module carries the corpus hash). Without `AI_GATEWAY_API_KEY` the index is built full-text only, which is fine locally and refused in CI (the deploy writes the key to `.env` before `vercel build`). `DOCS_CORPUS_DIR` overrides the corpus location.
+
+**Runtime.** The index is loaded into an in-process Orama database on the first search of an instance; a search embeds the query, runs a hybrid (BM25 + vector) retrieval for 20 candidates, reranks them with `voyage/rerank-2.5-lite` and hands the best five passages to the model; a failing embedding or rerank call is reported to Sentry and the search degrades around it. The agent has three tools — `searchDocs`, `readDoc` (a whole page by path) and `listDocs` — none of which needs an approval, and it is asked to call them silently. The model does not always comply, so `src/chat/docsNarrationFilter.ts` drops the sentence it writes right before a documentation tool call ("Let me look that up") from the stream, and the widget shows a spinner on a running documentation tool part instead of a blank bubble. Every search logs a `searchDocs` step (latency, hit count, top score, corpus mode; never the query). A docs merge redeploys the dev assistant through the `assistant` filter in `.github/filters.yml`; production only picks docs changes up with its next release.
 
 ## Attachments & content moderation
 

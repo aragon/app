@@ -12,8 +12,9 @@
     "author": "Aragon Association",
     "type": "module",
     "scripts": {
-        "build": "tsup",
-        "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
+        "build": "pnpm run build:docs-index && tsup",
+        "build:docs-index": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local src/docs/buildDocsIndex.ts",
+        "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && pnpm run build:docs-index && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "setup": "./scripts/setupEnv.sh",
@@ -26,6 +27,7 @@
     "dependencies": {
         "@aragon/assistant-contracts": "workspace:*",
         "@linear/sdk": "catalog:",
+        "@orama/orama": "catalog:",
         "@sentry/hono": "catalog:",
         "@sentry/node": "catalog:",
         "@sentry/profiling-node": "catalog:",
@@ -47,7 +49,8 @@
         "ts-jest": "catalog:",
         "tsup": "catalog:",
         "tsx": "catalog:",
-        "typescript": "catalog:"
+        "typescript": "catalog:",
+        "yaml": "catalog:"
     },
     "engines": {
         "node": ">=24.16.0"

@@ -10,10 +10,12 @@ export const assistantLimits = {
     // gemini-2.5-flash-lite spent 1168 thinking tokens on a draft and got clipped at 1200,
     // returning an empty turn). Roomy enough that thinking + a full draft is never clipped.
     maxOutputTokens: 4000,
-    // The agent resends the transcript on every turn, so late turns cost the most. Generous
-    // enough that a conversation hitting the turn limit is never cut off by tokens first: the
-    // turn count is the graceful limiter.
-    maxTokensPerSession: 60_000,
+    // The agent resends the transcript on every turn, so late turns cost the most, and a
+    // documentation answer adds its search hits and the pages it read to that transcript.
+    // Generous enough that a conversation hitting the turn limit is never cut off by tokens
+    // first: the turn count is the graceful limiter. At the agent model's price this caps a
+    // session at roughly $0.06.
+    maxTokensPerSession: 300_000,
     // The chat lives on after a ticket: the agent can file up to this many in one session.
     maxIssuesPerSession: 3,
     maxFileSizeBytes: 5 * 1024 * 1024,

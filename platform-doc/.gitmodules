@@ -1,0 +1,4 @@
+[submodule "protocol-doc"]
+	path = protocol-doc
+	url = https://github.com/aragon/protocol-doc.git
+	branch = main
