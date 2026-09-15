@@ -8,7 +8,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
-import { WorkspaceAccountFilter } from '../../components/workspaceAccountFilter';
+import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
 import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
@@ -94,7 +94,7 @@ export const WorkspaceAssetsPageClient: React.FC<
                 title={t('app.workspace.workspaceAssetsPage.main.title')}
             >
                 <div className="flex flex-col gap-4 md:gap-6">
-                    <WorkspaceAccountFilter
+                    <WorkspaceAccountDropdown
                         onSelect={setActiveOption}
                         options={options}
                         value={activeOption}

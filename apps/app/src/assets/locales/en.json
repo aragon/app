@@ -4314,7 +4314,7 @@
       },
       "workspaceAssetsPage": {
         "filter": {
-          "allAccounts": "All assets"
+          "allAccounts": "All accounts"
         },
         "main": {
           "title": "Assets"
@@ -4398,7 +4398,7 @@
       },
       "workspaceProposalsPage": {
         "filter": {
-          "allAccounts": "All proposals"
+          "allAccounts": "All accounts"
         },
         "main": {
           "title": "Proposals"
