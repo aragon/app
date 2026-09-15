@@ -28,7 +28,11 @@ const maxFilenameLength = 120;
 
 export const sanitizeFilename = (raw: string): string => {
     const withoutPath = raw.normalize('NFC').split(/[/\\]/).pop() ?? '';
-    const cleaned = withoutPath.replace(/\p{Cc}/gu, '').trim();
+    // Control chars (Cc) and invisible format chars (Cf) both go: a support engineer reads this
+    // name in the ticket, and a bidi override (U+202E) renders `invoice<RLO>gnp.exe` as
+    // `invoiceexe.png`. Cf also covers zero-width characters used to make two names look
+    // identical. Side effect: emoji joined by ZWJ render as their separate parts.
+    const cleaned = withoutPath.replace(/[\p{Cc}\p{Cf}]/gu, '').trim();
 
     if (cleaned.length === 0 || cleaned === '.' || cleaned === '..') {
         return 'file';
@@ -77,11 +81,9 @@ export const validateFile = async (
     if (magicType != null) {
         const contentType = allowedMagicTypes[magicType.ext];
 
-        // Everything sniffable but not allowlisted (svg/xml included) is rejected here.
-        // TODO(assistant): automated content moderation hook. This is where a vision-model safety
-        // scan for accepted images (contentType.startsWith('image/')) would slot in before the
-        // file is queued — see the moderation posture in README.md. Not implemented in p4; current
-        // posture is deterrence + reactive review of the private Linear queue.
+        // Everything sniffable but not allowlisted (svg/xml included) is rejected here. Accepted
+        // files then go through the malware scan in /files/confirm (see files.ts); NSFW/illegal
+        // content moderation stays deterrence + reactive review — see README.md.
         return contentType == null
             ? { error: 'unsupported_file' }
             : { data, filename, contentType, size: data.byteLength };
