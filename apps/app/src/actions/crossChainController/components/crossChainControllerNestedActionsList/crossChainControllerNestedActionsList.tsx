@@ -1,6 +1,7 @@
 'use client';
 
 import { ProposalActions } from '@aragon/gov-ui-kit';
+import { getPermissionManagerParameterComponents } from '@/actions/core/permissionManager';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IRawActionTuple } from '@/modules/governance/types';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
@@ -51,6 +52,9 @@ export const CrossChainControllerNestedActionsList: React.FC<
                             action,
                         )}
                         chainId={chainId}
+                        customParameterComponents={getPermissionManagerParameterComponents(
+                            action,
+                        )}
                         key={index}
                         readOnly={true}
                     />

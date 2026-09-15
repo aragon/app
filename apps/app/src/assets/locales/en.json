@@ -1910,6 +1910,45 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
+        "permissionManagerAction": {
+          "multiTarget": {
+            "addChange": "Add change",
+            "conditionRequired": "Enter the condition contract. The zero address means no condition.",
+            "emptyEditor": "No permission changes yet. Add one to start.",
+            "from": "from",
+            "gatedBy": ", gated by condition {{condition}}",
+            "heading": "What changes",
+            "invalidAddress": "Enter a valid address.",
+            "on": "on",
+            "removeChange": "Remove change",
+            "required": "This field is required.",
+            "summary": "{{count}} permission changes",
+            "thisDao": "This DAO",
+            "to": "to",
+            "unconditional": "unconditional",
+            "unknownOperation": "Unknown operation {{operation}}",
+            "unrecognised": "Unrecognised",
+            "verifyUnrecognised": "verify this ID against the target contract"
+          },
+          "operation": {
+            "grant": "Grant",
+            "grantWithCondition": "Grant with condition",
+            "revoke": "Revoke"
+          },
+          "permission": {
+            "customItem": "Use custom ID",
+            "helpText": "Choose a known permission ID from the shared permission dictionary.",
+            "invalid": "Enter a permission name or a 32-byte ID starting with 0x.",
+            "placeholder": "Search a permission or paste an ID",
+            "provenance": "Matched locally against known OSx permissions, not read from the contract.",
+            "selectItem": "Select permission",
+            "unknown": "Not a known OSx permission. It will be used exactly as entered."
+          },
+          "riskWarning": {
+            "title": "Modifying permissions is very high risk",
+            "description": "This changes who can call privileged functions on the target contract. It requires an understanding of the smart contracts involved, and it is not reversible without another proposal."
+          }
+        },
         "rawCalldataFunction": "Unknown",
         "removeAllActions": "Remove all actions",
         "unknownFunction": "Unknown",
