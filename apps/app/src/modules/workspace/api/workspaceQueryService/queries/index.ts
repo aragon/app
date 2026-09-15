@@ -10,3 +10,7 @@ export {
     useWorkspaceProposalList,
     workspaceProposalListOptions,
 } from './useWorkspaceProposalList';
+export {
+    useWorkspaceTransactions,
+    workspaceTransactionsOptions,
+} from './useWorkspaceTransactions';

@@ -430,7 +430,8 @@
         "link": {
           "assets": "Assets",
           "overview": "Overview",
-          "proposals": "Proposals"
+          "proposals": "Proposals",
+          "transactions": "Transactions"
         }
       },
       "notFoundBase": {
@@ -4337,6 +4338,45 @@
         "stat": {
           "accounts": "Accounts",
           "targets": "Targets"
+        }
+      },
+      "workspaceInfoAside": {
+        "accounts": "Accounts",
+        "owner": "Owner"
+      },
+      "workspaceTransactionList": {
+        "emptyState": {
+          "description": "This will show the transactions of every account in this workspace when available.",
+          "heading": "No transactions found"
+        },
+        "entity": "Transactions",
+        "errorState": {
+          "description": "There was an error loading the transactions. Try again later.",
+          "heading": "Error loading transactions"
+        },
+        "partial": "Some accounts of this workspace could not be read, so this list may be incomplete.",
+        "typeFilter": {
+          "all": "All transactions",
+          "executions": "Executions",
+          "received": "Deposits",
+          "sent": "Withdrawals"
+        }
+      },
+      "workspaceTransactionsAsideCard": {
+        "lastActivity": "Last activity",
+        "transactions": "Transactions",
+        "allTransactions": "All transactions"
+      },
+      "workspaceTransactionsPage": {
+        "filter": {
+          "allAccounts": "All accounts"
+        },
+        "main": {
+          "title": "Transactions"
+        },
+        "notFound": {
+          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
+          "title": "Workspace not found"
         }
       },
       "workspaceProposalList": {

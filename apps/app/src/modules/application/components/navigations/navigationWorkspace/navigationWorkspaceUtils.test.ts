@@ -135,6 +135,7 @@ describe('navigationWorkspace utils', () => {
                 '/workspace/demo',
                 '/workspace/demo/proposals',
                 '/workspace/demo/assets',
+                '/workspace/demo/transactions',
             ]);
         });
 

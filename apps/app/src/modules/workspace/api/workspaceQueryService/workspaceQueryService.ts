@@ -2,16 +2,22 @@ import {
     AragonBackendService,
     type IPaginatedResponseMetadata,
 } from '@/shared/api/aragonBackendService';
+
 import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
+
 import type {
     IWorkspaceAccountInfo,
     IWorkspaceAssetListResponse,
     IWorkspaceProposalListResponse,
+    IWorkspaceTransaction,
 } from './domain';
+
 import type {
     IGetWorkspaceAccountsParams,
     IGetWorkspaceAssetListParams,
     IGetWorkspaceProposalListParams,
+    IGetWorkspaceTransactionsParams,
+    IWorkspaceQueryResponse,
 } from './workspaceQueryService.api';
 
 /**
@@ -23,6 +29,7 @@ import type {
 class WorkspaceQueryService extends AragonBackendService {
     private basePaths = {
         accounts: '/workspaces/query/accounts',
+        transactions: '/workspaces/query/transactions',
         assetList: '/workspaces/query/assets',
         proposalList: '/workspaces/query/proposals',
     };
@@ -35,6 +42,10 @@ class WorkspaceQueryService extends AragonBackendService {
             ),
             assetList: apiVersionUtils.buildVersionedUrl(
                 this.basePaths.assetList,
+                { forceVersion: 'v2' },
+            ),
+            transactions: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.transactions,
                 { forceVersion: 'v2' },
             ),
             proposalList: apiVersionUtils.buildVersionedUrl(
@@ -58,6 +69,19 @@ class WorkspaceQueryService extends AragonBackendService {
 
         return data;
     };
+
+    /**
+     * Fetches the deposits, withdrawals and executions of the given accounts as one list sorted by block timestamp
+     * across networks. The lists are merged before being paged, so a single busy account can fill the first pages.
+     */
+    getTransactions = async (
+        params: IGetWorkspaceTransactionsParams,
+    ): Promise<IWorkspaceQueryResponse<IWorkspaceTransaction>> =>
+        await this.request<IWorkspaceQueryResponse<IWorkspaceTransaction>>(
+            this.urls.transactions,
+            params,
+            { method: 'POST' },
+        );
 
     /**
      * Reads the token balances of the given accounts, grouped by network and token.

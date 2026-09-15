@@ -18,3 +18,10 @@ export type {
     IWorkspaceProposalDao,
 } from './workspaceProposal';
 export type { IWorkspaceProposalListResponse } from './workspaceProposalListResponse';
+export type {
+    IWorkspaceTransaction,
+    IWorkspaceTransactionBase,
+    IWorkspaceTransactionExecution,
+    IWorkspaceTransactionTransfer,
+    WorkspaceTransactionTransferType,
+} from './workspaceTransaction';
