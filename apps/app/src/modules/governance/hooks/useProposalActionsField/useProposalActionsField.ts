@@ -43,13 +43,13 @@ const resolveActionCategory = (action: IProposalActionData) => {
 export const useProposalActionsField = () => {
     const { t } = useTranslations();
 
-    const { control, getValues, setValue } =
-        useFormContext<ICreateProposalFormData>();
+    const { control } = useFormContext<ICreateProposalFormData>();
 
     const {
         fields: actions,
         append,
         remove,
+        swap,
     } = useFieldArray({ control, name: 'actions' });
 
     // We need to watch because action views can update data, and it's not reflected otherwise!
@@ -71,32 +71,19 @@ export const useProposalActionsField = () => {
         fieldId: field.fieldId ?? field.id,
     }));
 
-    /**
-     * Note: We don't use useFieldArray.swap() or .move() because they create empty slots
-     * when dealing with complex nested objects, causing data loss and crashes. Instead,
-     * we use structuredClone to create a deep copy, manually swap elements, and update
-     * the entire array at once.
-     */
+    // Reorder through the field array, never `setValue('actions', ...)`: setValue rewrites only the
+    // values, stranding `errors`/`touchedFields` on the index they were recorded at, where they then
+    // render against whichever action took that slot (APP-1161). `swap` permutes the registered
+    // fields and both of those trees along with the values.
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {
             if (newIndex < 0 || newIndex >= actions.length) {
                 return;
             }
 
-            const currentActions = getValues('actions');
-            const actionsCopy = structuredClone(currentActions);
-
-            const temp = actionsCopy[index];
-            actionsCopy[index] = actionsCopy[newIndex];
-            actionsCopy[newIndex] = temp;
-
-            setValue('actions', actionsCopy, {
-                shouldValidate: false,
-                shouldDirty: true,
-                shouldTouch: false,
-            });
+            swap(index, newIndex);
         },
-        [actions, getValues, setValue],
+        [actions.length, swap],
     );
 
     const handleRemoveAction = (index: number) => {
