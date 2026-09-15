@@ -79,6 +79,31 @@ describe('<WorkspaceAccountItem /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('links a DAO account to its page on the app', () => {
+        render(createTestComponent());
+
+        expect(screen.getByRole('link')).toHaveAttribute(
+            'href',
+            `/dao/${Network.ETHEREUM_SEPOLIA}/${address}`,
+        );
+    });
+
+    it('links any other account to the block explorer on a new tab', () => {
+        const account = buildAccount({ type: WorkspaceAccountType.SAFE });
+        const explorerUrl =
+            networkDefinitions[Network.ETHEREUM_SEPOLIA].blockExplorers?.default
+                .url;
+
+        render(createTestComponent({ account }));
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute(
+            'href',
+            `${explorerUrl}/address/${address}`,
+        );
+        expect(link).toHaveAttribute('target', '_blank');
+    });
+
     it('displays the name resolved by the accounts API', () => {
         render(
             createTestComponent({

@@ -137,7 +137,7 @@ describe('<PublishWorkspaceDialog /> component', () => {
 
         expect(successLink).toHaveAttribute(
             'href',
-            '/workspace/demo-workspace',
+            '/workspace/demo-workspace/overview',
         );
         expect(setIsBlockedSpy).toHaveBeenCalledWith(false);
     });

@@ -130,7 +130,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     const primaryAction = isSuccess
         ? {
               label: t('app.workspace.publishWorkspaceDialog.button.success'),
-              href: `/workspace/${workspaceId!}`,
+              href: `/workspace/${workspaceId!}/overview`,
               onClick: () => close(location.id),
           }
         : {

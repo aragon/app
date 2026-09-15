@@ -1,6 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
 import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
@@ -206,6 +207,27 @@ class WorkspaceUtils {
     ): string =>
         this.getAccountName(account, accountInfo) ??
         addressUtils.truncateAddress(account.address);
+
+    /**
+     * Link pointing at an account outside of the workspace: its own page on the app for a DAO, its address on the
+     * block explorer for anything else, since only DAOs have a page here.
+     * @param account - Account as stored on the registry.
+     * @returns The URL of the account, or undefined when the network publishes no block explorer.
+     */
+    getAccountUrl = (account: IWorkspaceAccount): string | undefined => {
+        const { type, network, address } = account;
+
+        if (type === WorkspaceAccountType.DAO) {
+            return `/dao/${network}/${address}`;
+        }
+
+        const explorerUrl =
+            networkDefinitions[network].blockExplorers?.default.url;
+
+        return explorerUrl != null
+            ? `${explorerUrl}/address/${address}`
+            : undefined;
+    };
 
     /**
      * Finds the account resolved by the API for the given network and address. The API removes duplicates and

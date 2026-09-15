@@ -1,33 +1,8 @@
 import { IconType } from '@aragon/gov-ui-kit';
-import type { IWorkspaceAccountInfo } from '@/modules/workspace/api/workspaceQueryService';
-import {
-    type IWorkspace,
-    type IWorkspaceAccount,
-    WorkspaceAccountType,
-} from '@/modules/workspace/api/workspaceService';
-import { workspaceUtils } from '@/modules/workspace/utils/workspaceUtils';
+import type { IWorkspace } from '@/modules/workspace/api/workspaceService';
 import type { INavigationLink } from '@/shared/components/navigation';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export type NavigationWorkspaceContext = 'page' | 'dialog';
-
-/**
- * A link to an account of the workspace, displayed on the navigation dialog.
- */
-export interface IWorkspaceAccountLink {
-    /**
-     * ID of the account the link points at.
-     */
-    id: string;
-    /**
-     * Label of the link, i.e. the name of the account or its truncated address.
-     */
-    label: string;
-    /**
-     * URL of the account.
-     */
-    url: string;
-}
 
 class NavigationWorkspaceUtils {
     /**
@@ -55,9 +30,9 @@ class NavigationWorkspaceUtils {
     ): INavigationLink[] => [
         {
             label: 'app.application.navigationWorkspace.link.overview',
-            link: this.getWorkspaceUrl(workspace),
+            link: this.getWorkspaceUrl(workspace, 'overview'),
             icon: IconType.APP_DASHBOARD,
-            lgHidden: context === 'dialog',
+            hidden: context === 'page',
             order: 100,
         },
         {
@@ -82,64 +57,6 @@ class NavigationWorkspaceUtils {
             order: 500,
         },
     ];
-
-    /**
-     * Link pointing at an account outside of the workspace: its own page on the app for a DAO, its address on the
-     * block explorer for anything else, since only DAOs have a page here.
-     * @param account - Account to build the link for.
-     * @returns The URL of the account, or undefined when the network publishes no block explorer.
-     */
-    getAccountUrl = (account: IWorkspaceAccount): string | undefined => {
-        const { type, network, address } = account;
-
-        if (type === WorkspaceAccountType.DAO) {
-            return `/dao/${network}/${address}`;
-        }
-
-        const explorerUrl =
-            networkDefinitions[network].blockExplorers?.default.url;
-
-        return explorerUrl != null
-            ? `${explorerUrl}/address/${address}`
-            : undefined;
-    };
-
-    /**
-     * Links to the accounts of a workspace, listed on the navigation dialog.
-     *
-     * They are deliberately kept out of the navigation bar and out of the `INavigationLink` list: the bar lists the
-     * pages of the workspace, while these lead out of it, and their labels are account names rather than
-     * translation keys — `NavigationLinks` runs its labels through `t`, which would replace a name that happens to
-     * match a key.
-     * @param workspace - Workspace to build the links for.
-     * @param accountInfos - Accounts as resolved by the accounts API, used to label them with the indexed DAO name.
-     * @returns One link per account that has a destination.
-     */
-    buildAccountLinks = (
-        workspace: IWorkspace,
-        accountInfos?: IWorkspaceAccountInfo[],
-    ): IWorkspaceAccountLink[] =>
-        workspace.accounts.reduce<IWorkspaceAccountLink[]>((links, account) => {
-            const url = this.getAccountUrl(account);
-
-            if (url == null) {
-                return links;
-            }
-
-            const accountInfo = workspaceUtils.findAccountInfo(
-                accountInfos,
-                account,
-            );
-
-            return [
-                ...links,
-                {
-                    id: account.id,
-                    label: workspaceUtils.getAccountLabel(account, accountInfo),
-                    url,
-                },
-            ];
-        }, []);
 }
 
 export const navigationWorkspaceUtils = new NavigationWorkspaceUtils();

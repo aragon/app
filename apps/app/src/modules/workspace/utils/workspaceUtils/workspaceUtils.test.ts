@@ -1,5 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
@@ -193,6 +194,25 @@ describe('workspace utils', () => {
         it('falls back to the truncated address for an account with no name', () => {
             expect(workspaceUtils.getAccountLabel(buildAccount())).toEqual(
                 addressUtils.truncateAddress(addressOne),
+            );
+        });
+    });
+
+    describe('getAccountUrl', () => {
+        it('links a DAO account to its own page on the app', () => {
+            expect(workspaceUtils.getAccountUrl(buildAccount())).toEqual(
+                `/dao/${Network.ETHEREUM_MAINNET}/${addressOne}`,
+            );
+        });
+
+        it('links any other account to its address on the block explorer', () => {
+            const account = buildAccount({ type: WorkspaceAccountType.SAFE });
+            const explorerUrl =
+                networkDefinitions[Network.ETHEREUM_MAINNET].blockExplorers
+                    ?.default.url;
+
+            expect(workspaceUtils.getAccountUrl(account)).toEqual(
+                `${explorerUrl}/address/${addressOne}`,
             );
         });
     });

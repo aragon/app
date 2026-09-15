@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
-import { useWorkspaceAccounts } from '@/modules/workspace/api/workspaceQueryService';
 import { useWorkspace } from '@/modules/workspace/api/workspaceService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
@@ -18,7 +17,6 @@ import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWalletAccount } from '../../../hooks/useWalletAccount';
 import { SupportChatTrigger } from '../../supportChat';
-import { NavigationWorkspaceAccounts } from './navigationWorkspaceAccounts';
 import { navigationWorkspaceUtils } from './navigationWorkspaceUtils';
 
 export interface INavigationWorkspaceProps extends INavigationContainerProps {
@@ -68,28 +66,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
         isMounted && address != null
             ? { address, name: displayName ?? undefined }
             : undefined;
-
-    // Resolved to label the account links with the indexed DAO names, shared with the pages' cache.
-    const accounts = workspace?.accounts ?? [];
-    const { data: accountInfos } = useWorkspaceAccounts(
-        {
-            body: {
-                accounts: accounts.map(({ network, address }) => ({
-                    network,
-                    address,
-                })),
-            },
-        },
-        { enabled: accounts.length > 0 },
-    );
-
-    const accountLinks =
-        workspace != null
-            ? navigationWorkspaceUtils.buildAccountLinks(
-                  workspace,
-                  accountInfos,
-              )
-            : [];
 
     const workspaceAvatar = ipfsUtils.cidToSrc(workspace?.avatar);
     const links =
@@ -163,10 +139,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                         </p>
                     </div>
                 </div>
-                <NavigationWorkspaceAccounts
-                    links={accountLinks}
-                    onLinkClick={() => setIsDialogOpen(false)}
-                />
             </Navigation.Dialog>
         </Navigation.Container>
     );

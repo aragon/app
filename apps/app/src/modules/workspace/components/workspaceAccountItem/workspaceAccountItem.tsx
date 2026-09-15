@@ -1,4 +1,10 @@
-import { Avatar, addressUtils, Card, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    addressUtils,
+    DaoAvatar,
+    DataList,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -23,7 +29,8 @@ export interface IWorkspaceAccountItemProps {
 }
 
 /**
- * An account of a workspace, displayed as a row of the workspace overview.
+ * An account of a workspace, displayed as a row of the workspace overview and linking to the account itself: its
+ * page on the app for a DAO, its address on the block explorer for anything else.
  *
  * The type comes from the registry rather than from the lookup: it was resolved when the workspace was created and
  * is what decides which APIs the workspace pages query, so the row keeps showing it even when the lookup fails.
@@ -42,9 +49,14 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     const truncatedAddress = addressUtils.truncateAddress(address);
 
     const name = workspaceUtils.getAccountName(account, accountInfo);
+    const accountUrl = workspaceUtils.getAccountUrl(account);
 
     return (
-        <Card className="flex items-center gap-3 border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+        <DataList.Item
+            className="flex items-center gap-3 p-4 md:p-6"
+            href={accountUrl}
+            target="_blank"
+        >
             {isDao ? (
                 <DaoAvatar
                     className="shrink-0"
@@ -77,6 +89,6 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
                 )}
                 variant={isDao ? 'primary' : 'neutral'}
             />
-        </Card>
+        </DataList.Item>
     );
 };
