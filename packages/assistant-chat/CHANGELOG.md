@@ -1,5 +1,17 @@
 # @aragon/assistant-chat
 
+## 0.5.0
+
+### Minor Changes
+
+- [#1350](https://github.com/aragon/app/pull/1350) [`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Iterate the support assistant on the second round of design feedback: the header and composer controls (new chat, collapse, back, add attachment) become gov-ui-kit buttons and drop their tooltips, the "Email support" escape hatch follows the app's plain link style — no underline, an external-link icon, opening in a new tab — and typing in a fresh chat no longer bounces the layout: the suggestion chips retire through visibility instead of unmounting. The ticket card gains a bottom margin so text following it in the same message no longer sits against its edge, and nothing links to Linear anymore — the success card and the past-requests view quote the ticket reference instead of linking out to a workspace the user has no access to.
+
+### Patch Changes
+
+- [#1358](https://github.com/aragon/app/pull/1358) [`c1cdcf9`](https://github.com/aragon/app/commit/c1cdcf91c64c156311576acf7c67f13eecc8a9d1) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (gov-ui-kit 2.11.2, next 16.3.2, Sentry 10.71, react-query 5.102, deepmerge-ts 8 closing its stack-exhaustion advisory), bump pnpm to 11.24, and hold the @assistant-ui/tap transitive at 0.9.12 — 0.9.13+ loops forever under the exact-pinned @assistant-ui/react 0.14.27.
+
+- [#1350](https://github.com/aragon/app/pull/1350) [`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Give the assistant's new `timeout` error code its own wording, so a model call that stalled past the service's cap reads as "the assistant took too long — send your message again" instead of the generic failure text.
+
 ## 0.4.1
 
 ### Patch Changes

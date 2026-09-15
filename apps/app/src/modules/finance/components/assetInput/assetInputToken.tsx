@@ -25,6 +25,7 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
             {token ? (
                 <AddressOutput
                     address={token.address}
+                    copy={false}
                     label={token.symbol || undefined}
                 />
             ) : (

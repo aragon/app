@@ -11,6 +11,7 @@ import {
     monad,
     optimism,
     polygon,
+    robinhood,
     sepolia,
     zksync,
 } from 'viem/chains';
@@ -132,7 +133,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
         },
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -170,7 +171,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
         },
-        order: 4,
+        order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -189,7 +190,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
         },
-        order: 7,
+        order: 8,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -208,7 +209,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
         },
-        order: 6,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -227,7 +228,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/katana/',
         },
-        order: 8,
+        order: 9,
         protocolVersion: latestProtocolVersion,
         beta: false,
         tenderlySupport: true,
@@ -243,7 +244,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...citrea,
         name: 'Citrea',
         logo: '/networks/citrea.svg',
-        order: 10,
+        order: 11,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -262,7 +263,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://zksync-mainnet.g.alchemy.com/v2/',
         },
-        order: 9,
+        order: 10,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -281,7 +282,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ANKR,
             rpcUrl: 'https://rpc.ankr.com/chiliz/',
         },
-        order: 11,
+        order: 12,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -300,7 +301,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hemi/',
         },
-        order: 12,
+        order: 13,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -327,6 +328,24 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xc3a857B614D5B79B936Ce6640E5351dF8fA262eD',
             pluginSetupProcessor: '0x8C719Ef523C7e8Cb3Cf03540D6FDf537B0F09f28',
             globalExecutor: '0x4320503ED37A32B918a37D2C9A8eDf7202fbAf0C',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
+        },
+    },
+    [Network.ROBINHOOD_MAINNET]: {
+        ...robinhood,
+        logo: '/networks/robinhood.jpg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/robinhood/',
+        },
+        order: 4,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0xbe0ac805395e9CeAc1f445CDe380B23b86fA3742',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
             conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
         },
     },

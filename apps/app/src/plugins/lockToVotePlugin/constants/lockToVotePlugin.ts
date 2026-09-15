@@ -30,6 +30,8 @@ export const lockToVotePlugin: IPluginInfo = {
         [Network.AVAX_MAINNET]: '0x8CB279002127C6c1fc3fE05c81B29587c65B9150',
         [Network.KATANA_MAINNET]: '0xba588C53B6a368A2F80a741D9301b6f27bFEB483',
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.ROBINHOOD_MAINNET]:
+            '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
     },
     setup: {
         nameKey: 'app.plugins.lockToVote.meta.setup.name',

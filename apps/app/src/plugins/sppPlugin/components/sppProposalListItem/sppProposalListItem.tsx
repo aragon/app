@@ -3,6 +3,7 @@
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
+import { ProposalMetadataAlert } from '@/modules/governance/components/proposalMetadataAlert';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -57,7 +58,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             statusContext={statusContext}
             summary={summary}
             tag={tag}
-            title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
-        />
+            title={proposal.title}
+        >
+            <ProposalMetadataAlert proposal={proposal} />
+        </ProposalDataListItem.Structure>
     );
 };
