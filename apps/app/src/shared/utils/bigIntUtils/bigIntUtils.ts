@@ -19,7 +19,9 @@ class BigIntUtils {
      * that can come from external APIs like CoinGecko or EVM explorers.
      *
      * On-chain values (token supply, voting power, block numbers, etc.) are always
-     * integers, so any fractional part is truncated towards zero.
+     * integers, so any fractional part is truncated towards zero. A scientific value whose
+     * exponent exceeds `maxScientificExponent` counts as malformed and returns the fallback,
+     * where `parseUnits` throws instead — no on-chain value comes near that magnitude.
      */
     safeParse = (
         value: string | number | bigint | null | undefined,

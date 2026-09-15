@@ -30,11 +30,11 @@ import type { IGaugeVoterPlugin } from '../../types';
 
 export interface IGaugeVoterGaugesPageContentProps {
     /**
-     * The DAO with the capital-distributor plugin installed.
+     * The DAO with the gauge voter plugin installed.
      */
     dao: IDao;
     /**
-     * Initial parameters for the campaign list query.
+     * Initial parameters for the gauge list query.
      */
     initialParams: IGetGaugeListParams;
     /**
