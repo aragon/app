@@ -101,3 +101,22 @@ export interface IConfirmSafeTransactionParams
         IConfirmSafeTransactionUrlParams,
         IConfirmSafeTransactionBody
     > {}
+
+export interface IDeleteSafeTransactionUrlParams {
+    network: Network;
+    safeTxHash: string;
+}
+
+/**
+ * EIP-712 `DeleteRequest` signature authorising the removal. The service accepts it only from the
+ * address it recorded as the transaction's proposer.
+ */
+export interface IDeleteSafeTransactionBody {
+    signature: string;
+}
+
+export interface IDeleteSafeTransactionParams
+    extends IRequestUrlBodyParams<
+        IDeleteSafeTransactionUrlParams,
+        IDeleteSafeTransactionBody
+    > {}

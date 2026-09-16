@@ -171,16 +171,17 @@ export class ProxySafeUtils {
                 });
             }
 
-            // A signer must see their own signature on the next read, so drop the cached Safe
-            // state now rather than serving the pre-signature queue for the rest of its window.
-            if (request.method === 'POST') {
+            // A signer must see the effect of their own write on the next read, so drop the cached
+            // Safe state now rather than serving the pre-write queue for the rest of its window. A
+            // deletion counts: the row it removed would otherwise keep rendering as queued.
+            if (request.method !== 'GET') {
                 for (const tag of this.buildCacheTags(chainId, path)) {
                     revalidateTag(tag, { expire: 0 });
                 }
             }
 
             if (
-                request.method === 'POST' &&
+                request.method !== 'GET' &&
                 [201, 204, 205].includes(result.status)
             ) {
                 return new NextResponse(null, { status: result.status });
@@ -275,7 +276,7 @@ export class ProxySafeUtils {
     ): Promise<RequestInit | undefined> => {
         const method = request.method;
 
-        if (method !== 'GET' && method !== 'POST') {
+        if (method !== 'GET' && method !== 'POST' && method !== 'DELETE') {
             return undefined;
         }
 
@@ -283,9 +284,13 @@ export class ProxySafeUtils {
             return undefined;
         }
 
+        // Both signature-bearing writes carry a JSON object body; a deletion sends the proposer's
+        // authorising signature just as a confirmation POST does.
+        const carriesBody = method === 'POST' || method === 'DELETE';
+
         let body: string | undefined;
 
-        if (method === 'POST') {
+        if (carriesBody) {
             try {
                 const parsedBody: unknown = await request.json();
 
@@ -352,7 +357,7 @@ export class ProxySafeUtils {
      * Every path this proxy will forward, by method.
      *
      * `/v2/safe/*` on the Aragon backend now serves the reads a governance body needs, so what is
-     * left here is only what the backend does not: balances, and the two signature-bearing writes.
+     * left here is only what the backend does not: balances, and the signature-bearing writes.
      * The surface is allowlisted rather than open because the route is unauthenticated and spends a
      * shared API key — an open GET would let anyone drive the whole transaction service on our quota.
      */
@@ -364,6 +369,17 @@ export class ProxySafeUtils {
                 path[1] === 'safes' &&
                 safeAddressPattern.test(path[2]) &&
                 path[3] === 'balances'
+            );
+        }
+
+        // Deletion is addressed by transaction hash alone: the Safe is named in the EIP-712 domain
+        // the proposer signs, not in the URL. Nothing else is reachable by DELETE.
+        if (method === 'DELETE') {
+            return (
+                path.length === 3 &&
+                path[0] === 'v1' &&
+                path[1] === 'multisig-transactions' &&
+                safeTransactionHashPattern.test(path[2])
             );
         }
 

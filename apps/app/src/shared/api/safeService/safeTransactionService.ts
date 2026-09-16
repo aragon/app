@@ -4,6 +4,7 @@ import { isSafeBalance, SafeServiceErrorCode } from './domain';
 import { checksumSafeAddress } from './safeAddressUtils';
 import type {
     IConfirmSafeTransactionParams,
+    IDeleteSafeTransactionParams,
     IGetSafeBalancesParams,
     IProposeSafeTransactionParams,
     ISafeUrlParams,
@@ -33,6 +34,9 @@ class SafeTransactionService extends HttpService {
             '/:chainId/v1/safes/:address/multisig-transactions',
         confirmSafeTransaction:
             '/:chainId/v1/multisig-transactions/:safeTxHash/confirmations',
+        // Keyed by transaction hash alone: the Safe is named in the EIP-712 domain the proposer
+        // signs, so the service does not take it as a path parameter.
+        deleteSafeTransaction: '/:chainId/v1/multisig-transactions/:safeTxHash',
     };
 
     constructor() {
@@ -101,6 +105,29 @@ class SafeTransactionService extends HttpService {
                 body,
             },
             { method: 'POST' },
+        );
+
+    /**
+     * Removes a queued transaction from the service's own records. Offchain only: no nonce is
+     * consumed, nothing happens onchain, and the stored confirmations go with the record rather
+     * than being revoked — the same envelope stays re-derivable and executable by anyone still
+     * holding those signatures.
+     */
+    deleteSafeTransaction = async ({
+        urlParams,
+        body,
+    }: IDeleteSafeTransactionParams) =>
+        this.request<unknown>(
+            this.basePaths.deleteSafeTransaction,
+            {
+                urlParams: {
+                    chainId:
+                        networkDefinitions[urlParams.network].id.toString(),
+                    safeTxHash: urlParams.safeTxHash,
+                },
+                body,
+            },
+            { method: 'DELETE' },
         );
 
     private buildUrlParams = ({ network, address }: ISafeUrlParams) => ({

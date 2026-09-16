@@ -164,6 +164,63 @@ describe('proxySafe utils', () => {
             );
         });
 
+        it('forwards a queued-transaction deletion and drops the cached queue behind it', async () => {
+            // Deletion is addressed by transaction hash alone, and the row it removes must stop
+            // being served by the cached queue for the rest of the read window.
+            const testClass = new ProxySafeUtils();
+            const safeTxHash = `0x${'1'.repeat(64)}`;
+            fetchSpy.mockResolvedValue(
+                generateResponse({
+                    status: 204,
+                    text: jest.fn().mockResolvedValue(''),
+                }),
+            );
+
+            const response = await testClass.request(
+                createTestRequest('', 'DELETE', { signature: '0xsignature' }),
+                createTestOptions('1', [
+                    'v1',
+                    'multisig-transactions',
+                    safeTxHash,
+                ]),
+            );
+
+            expect(fetchSpy).toHaveBeenCalledWith(
+                `https://api.safe.global/tx-service/eth/api/v1/multisig-transactions/${safeTxHash}/`,
+                expect.objectContaining({
+                    method: 'DELETE',
+                    body: JSON.stringify({ signature: '0xsignature' }),
+                    cache: 'no-store',
+                }),
+            );
+            expect(response.status).toEqual(204);
+            expect(revalidateTagSpy).toHaveBeenCalledWith('safe:1', {
+                expire: 0,
+            });
+        });
+
+        it('rejects a deletion aimed at anything but a queued transaction', async () => {
+            const testClass = new ProxySafeUtils();
+
+            await testClass.request(
+                createTestRequest('', 'DELETE', { signature: '0xsignature' }),
+                createTestOptions('1', [
+                    'v1',
+                    'safes',
+                    safeAddress,
+                    'multisig-transactions',
+                ]),
+            );
+
+            expect(fetchSpy).not.toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    code: SafeServiceErrorCode.UPSTREAM_ERROR,
+                }),
+                expect.objectContaining({ status: 400 }),
+            );
+        });
+
         it('preserves a successful empty POST response', async () => {
             const testClass = new ProxySafeUtils();
             fetchSpy.mockResolvedValue(
