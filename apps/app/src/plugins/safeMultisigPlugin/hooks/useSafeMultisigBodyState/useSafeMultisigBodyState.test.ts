@@ -315,10 +315,10 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.pendingReport?.transaction.nonce).toEqual('6');
     });
 
-    it('voids the confirmations of a report whose nonce the Safe already spent', () => {
-        // Nonce 5 is behind the Safe's current 6, so those signatures can never execute anything.
-        // Serving them filled the breakdown bar to "reached" right above the card's own alert
-        // saying they are lost, and a re-queue collects signatures afresh at a new nonce.
+    it('keeps the confirmations of a report whose nonce the Safe already spent', () => {
+        // Nonce 5 is behind the Safe's current 6, so these signatures can never execute - but an
+        // owner who signed needs to see their own signature to read the alert telling them the
+        // transaction was replaced and a re-queue starts the round again.
         const signer = '0x0000000000000000000000000000000000000088';
         useSafePendingTransactionsSpy.mockReturnValue({
             data: {
@@ -353,8 +353,8 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.pendingReport?.state).toBe(
             SafeTransactionState.SUPERSEDED,
         );
-        expect(result.current.approvalsAmount).toBe(0);
-        expect(result.current.signers).toEqual([]);
+        expect(result.current.approvalsAmount).toBe(2);
+        expect(result.current.signers).toEqual([signer, body]);
     });
 
     it('states no member count for a settled body, whose owner set is unrecoverable', () => {

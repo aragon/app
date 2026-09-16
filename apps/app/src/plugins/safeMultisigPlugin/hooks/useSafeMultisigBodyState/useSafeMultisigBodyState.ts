@@ -248,18 +248,13 @@ export const useSafeMultisigBodyState = (
      * signatures as the verdict's would be the misattribution this read exists to prevent, and the
      * surfaces carry outcome-specific copy for exactly that gap.
      *
-     * A superseded attempt is excluded for the same reason from the other end: its signatures were
-     * bound to a nonce the Safe has spent, so they can never execute anything. Serving them filled
-     * the breakdown bar to "reached" directly above the alert saying they are lost.
+     * A superseded attempt still serves its own confirmations. They can never execute anything,
+     * but they are what happened: an owner who signed needs to see their signature to understand
+     * why the card is asking them to sign again, and the alert beside them says they are lost.
      */
-    const liveReportTransaction =
-        pendingReport?.state === SafeTransactionState.LIVE
-            ? pendingReport.transaction
-            : undefined;
-
     const reportTransaction = isSettled
         ? settledReport?.transaction
-        : liveReportTransaction;
+        : pendingReport?.transaction;
 
     // A settled body's confirmations are the ones that executed it; the queue no longer serves them.
     const signers =
