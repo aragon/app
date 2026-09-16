@@ -409,6 +409,14 @@ export const SafeTransactionReviewDialog: React.FC<
                         variant="critical"
                     />
                 )}
+                {isDelegateTargetUnresolved && (
+                    <AlertInline
+                        message={t(
+                            `${translationKey}.delegateTargetUnresolved`,
+                        )}
+                        variant="warning"
+                    />
+                )}
                 {hasCodelessTarget && (
                     <AlertInline
                         message={t(`${translationKey}.codelessDelegateCall`)}
@@ -501,8 +509,16 @@ export const SafeTransactionReviewDialog: React.FC<
                                 />
                             </>
                         )}
+                        {/* The label has to say which source the value came from. When local
+                            recomputation failed, falling back to the service's hash under the
+                            same label turns the one locally-derived value on screen into a
+                            backend echo - and the tool a signer is told to check it with fetches
+                            that same transaction from that same service by default, so the
+                            comparison passes and proves nothing. */}
                         <SafeTransactionReviewHash
-                            label={t(`${translationKey}.fields.safeTxHash`)}
+                            label={t(
+                                `${translationKey}.fields.${computedHash != null ? 'safeTxHash' : 'reportedSafeTxHash'}`,
+                            )}
                             value={computedHash ?? transaction.safeTxHash}
                         />
                     </dl>

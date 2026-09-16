@@ -369,9 +369,19 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
      * transaction reports the expected result and nothing else: an extra call, an opposite effect
      * or a stage advance makes the transaction more than this body's verdict, and the owner is sent
      * to the payload instead of a one-line promise.
+     *
+     * The button carries that too. A payload the app has just described as doing more than
+     * reporting the result cannot also be offered as "Approve proposal" - the label is the
+     * narrowest authority claim on the screen, and it is the part an owner reads instead of the
+     * paragraph above it. Ledger #13: correlation establishes relevance, never authority.
+     *
+     * Each way of failing that gets its own sentence. "Does more than report this body's result" is
+     * true of an extra call in the batch, but it is simply wrong about a report carrying the
+     * opposite verdict - which does less than claimed, in the other direction - and it does not
+     * name the stage advance a `tryAdvance` report performs. At a consent surface the disclosure
+     * has to say which one it is.
      */
-    const openReportReview = (prepared: IPreparedReport) => {
-        const { transaction } = prepared;
+    const resolveReviewIntent = (transaction: ISafeMultisigTransaction) => {
         const report = safeMultisigTransactionUtils.findProposalResultReport({
             transaction,
             pluginAddress: proposal.pluginAddress,
@@ -381,12 +391,49 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         const expectedResult = isVeto
             ? SppProposalType.VETO
             : SppProposalType.APPROVAL;
-        const isReportOnly =
-            report != null &&
-            report.resultType === expectedResult &&
-            !report.tryAdvance &&
+
+        if (report == null) {
+            return 'unrecognised';
+        }
+
+        // Ordered by how badly each one misdescribes the button: an opposite verdict is the wrong
+        // vote, an advance is an extra irreversible effect, extra calls are extra effects.
+        if (report.resultType !== expectedResult) {
+            return 'oppositeResult';
+        }
+
+        if (report.tryAdvance) {
+            return 'advancesStage';
+        }
+
+        // A delegate call carrying report calldata reports nothing: it runs that code in the
+        // Safe's own storage context, where it can rewrite owners, threshold and the singleton.
+        // The envelope on this path comes from the queue, so `operation` is attacker-chosen input
+        // and the narrow label must not survive it (logic map §7.1 - establish the operation, not
+        // just the target and effect).
+        if (transaction.operation !== 0) {
+            return 'delegateCall';
+        }
+
+        // Value on a report is an ETH transfer the label does not mention.
+        if (BigInt(transaction.value) !== BigInt(0)) {
+            return 'carriesValue';
+        }
+
+        if (
             safeTransactionEnvelopeUtils.inspectBatch(transaction.data)
-                .status === SafeBatchStatus.NOT_A_BATCH;
+                .status !== SafeBatchStatus.NOT_A_BATCH
+        ) {
+            return 'batched';
+        }
+
+        return 'reportOnly';
+    };
+
+    const openReportReview = (prepared: IPreparedReport) => {
+        const { transaction } = prepared;
+        const intentKey = resolveReviewIntent(transaction);
+        const isReportOnly = intentKey === 'reportOnly';
 
         open(SafeDialogId.TRANSACTION_REVIEW, {
             params: {
@@ -394,13 +441,12 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 safeAddress: externalAddress,
                 network: proposal.network,
                 safeVersion: safeInfo?.version ?? null,
-                confirmLabel: t(
-                    `${translationKey}.${isVeto ? 'veto' : 'approve'}`,
-                ),
-                intent: t(
-                    `${translationKey}.review.${isReportOnly ? 'reportOnly' : 'mixed'}`,
-                    { proposal: proposal.title },
-                ),
+                confirmLabel: isReportOnly
+                    ? t(`${translationKey}.${isVeto ? 'veto' : 'approve'}`)
+                    : t(`${translationKey}.review.mixedConfirm`),
+                intent: t(`${translationKey}.review.${intentKey}`, {
+                    proposal: proposal.title,
+                }),
                 /**
                  * The note promises a number of wallet prompts, so it has to be derived from the
                  * same condition the submit path branches on. A transaction that already carries

@@ -630,6 +630,29 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         expect(onConfirm).toHaveBeenCalled();
     });
 
+    it('labels the transaction hash as service-reported when it could not be recomputed', () => {
+        // Otherwise the one locally-derived value on screen silently becomes a backend echo, and
+        // the tool a signer is told to check it with fetches the same transaction from the same
+        // service by default - the comparison passes and proves nothing.
+        useReadContractSpy.mockReturnValue({
+            data: undefined,
+            isPending: false,
+        } as never);
+        const transaction = generateSignedTransaction({});
+        render(createTestComponent({ transaction }));
+
+        expect(
+            screen.getByText(
+                'app.safe.safeTransactionReviewDialog.fields.reportedSafeTxHash',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.fields.safeTxHash',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
     it('refuses to confirm when the local and remote decoders disagree about a call', async () => {
         // The remote decode arrives from the same backend as the envelope, so a benign label on a
         // hostile call is exactly the case the local set exists to catch.

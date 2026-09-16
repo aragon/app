@@ -2,12 +2,22 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
+import {
+    concatHex,
+    encodeFunctionData,
+    encodePacked,
+    type Hex,
+    numberToHex,
+    pad,
+    size,
+    toEventSelector,
+} from 'viem';
 import * as Wagmi from 'wagmi';
 import * as WagmiActions from 'wagmi/actions';
 import * as connectedWalletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import { SafeDialogId } from '@/modules/safe/constants';
+import { sppReportProposalResultAbi } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog/sppReportProposalResultAbi';
 import {
     generateSppProposal,
     generateSppStage,
@@ -23,6 +33,7 @@ import {
     generateDialogContext,
     generateSafeNextNonceResponse,
 } from '@/shared/testUtils';
+import { safeMultiSendAbi } from '../../../../modules/safe/utils/safeTransactionEnvelopeUtils/safeMultiSendAbi';
 import { safeIndexingTimeout } from '../../constants';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
@@ -32,6 +43,7 @@ import {
     generateSafeMultisigTransaction,
 } from '../../testUtils';
 import { SafeTransactionState } from '../../types';
+import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
 import {
     type ISafeMultisigSubmitVoteProps,
     SafeMultisigSubmitVote,
@@ -816,6 +828,208 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                     }),
                 }),
             ),
+        );
+    });
+
+    describe('authority claimed by the confirm button', () => {
+        const pluginAddress = reportedProposal.pluginAddress;
+        const approveLabel =
+            'app.plugins.safeMultisig.safeMultisigSubmitVote.approve';
+        const neutralLabel =
+            'app.plugins.safeMultisig.safeMultisigSubmitVote.review.mixedConfirm';
+
+        // `buildReportProposalResultData` pins `_tryAdvance` to false by design, so the advancing
+        // payload is encoded directly against the same ABI.
+        const buildReport = (
+            resultType = SppProposalType.APPROVAL,
+            tryAdvance = false,
+        ): Hex =>
+            tryAdvance
+                ? encodeFunctionData({
+                      abi: sppReportProposalResultAbi,
+                      functionName: 'reportProposalResult',
+                      args: [
+                          BigInt(reportedProposal.proposalIndex),
+                          reportedStageIndex,
+                          resultType,
+                          true,
+                      ],
+                  })
+                : safeMultisigTransactionUtils.buildReportProposalResultData({
+                      proposalId: BigInt(reportedProposal.proposalIndex),
+                      stageId: reportedStageIndex,
+                      resultType,
+                  });
+
+        const encodeMultiSend = (
+            calls: Array<{ to: string; data: Hex }>,
+        ): Hex =>
+            encodeFunctionData({
+                abi: safeMultiSendAbi,
+                functionName: 'multiSend',
+                args: [
+                    concatHex(
+                        calls.map(({ to, data }) =>
+                            encodePacked(
+                                [
+                                    'uint8',
+                                    'address',
+                                    'uint256',
+                                    'uint256',
+                                    'bytes',
+                                ],
+                                [
+                                    0,
+                                    to as Hex,
+                                    BigInt(0),
+                                    BigInt(size(data)),
+                                    data,
+                                ],
+                            ),
+                        ),
+                    ),
+                ],
+            });
+
+        const openReview = async (
+            data: string,
+            to: string,
+            overrides?: { operation?: number; value?: string },
+        ) => {
+            // The shared mock confirms the dialog immediately, which would run the whole signing
+            // path and replace the disclosure under test with a generic failure.
+            dialogOpen.mockImplementation(() => undefined);
+
+            const queued = generateSafeMultisigTransaction({
+                nonce: '0',
+                to,
+                data,
+                confirmationsRequired: 2,
+                confirmations: [generateSafeConfirmation({ owner: nonOwner })],
+                ...overrides,
+            });
+            mockQueuedReport(queued);
+            useSafeBodyStateSpy.mockReturnValue({
+                ...baseState,
+                pendingReport: {
+                    transaction: queued,
+                    report: {
+                        proposalId: BigInt(reportedProposal.proposalIndex),
+                        stageId: reportedStageIndex,
+                        resultType: SppProposalType.APPROVAL,
+                        tryAdvance: false,
+                    },
+                    state: SafeTransactionState.LIVE,
+                    status: ProposalStatus.ACTIVE,
+                    hasNonceCompetition: false,
+                },
+                approvalsAmount: 1,
+                minApprovals: 2,
+            });
+
+            render(createTestComponent());
+            await userEvent.click(
+                screen.getByRole('button', { name: approveLabel }),
+            );
+
+            await waitFor(() => expect(dialogOpen).toHaveBeenCalled());
+
+            return (
+                dialogOpen.mock.calls[0][1] as {
+                    params: { confirmLabel: string; intent: string };
+                }
+            ).params;
+        };
+
+        /**
+         * The label is the narrowest authority claim on the consent surface, so it may only read
+         * "Approve proposal" for a payload that approves and does nothing else. Each row below is a
+         * different way of being more or other than that, and each gets its own disclosure: the
+         * batch sentence is true of an extra call but wrong about an opposite verdict.
+         */
+        it.each([
+            {
+                case: 'reports the selected result and nothing else',
+                data: () => buildReport(),
+                to: () => pluginAddress,
+                label: approveLabel,
+                intent: 'reportOnly',
+            },
+            {
+                case: 'reports the opposite verdict to the button pressed',
+                data: () => buildReport(SppProposalType.VETO),
+                to: () => pluginAddress,
+                label: neutralLabel,
+                intent: 'oppositeResult',
+            },
+            {
+                case: 'also advances the governance stage',
+                data: () => buildReport(SppProposalType.APPROVAL, true),
+                to: () => pluginAddress,
+                label: neutralLabel,
+                intent: 'advancesStage',
+            },
+            {
+                case: 'carries an unrelated call alongside the report',
+                data: () =>
+                    encodeMultiSend([
+                        { to: pluginAddress, data: buildReport() },
+                        { to: `0x${'4'.repeat(40)}`, data: '0xdeadbeef' },
+                    ]),
+                to: () => `0x${'5'.repeat(40)}`,
+                label: neutralLabel,
+                intent: 'batched',
+            },
+            {
+                case: 'carries no report this stage can read',
+                data: () => '0xdeadbeef',
+                to: () => pluginAddress,
+                label: neutralLabel,
+                intent: 'unrecognised',
+            },
+        ])(
+            'offers $label when the payload $case',
+            async ({ data, to, label, intent }) => {
+                const params = await openReview(data(), to());
+
+                expect(params.confirmLabel).toEqual(label);
+                expect(params.intent).toEqual(
+                    `app.plugins.safeMultisig.safeMultisigSubmitVote.review.${intent} (proposal=title)`,
+                );
+            },
+        );
+
+        /**
+         * `operation` and `value` arrive from the queue like the rest of the envelope, so report
+         * calldata alone must not earn the narrow label: a delegate call runs that code in the
+         * Safe's own storage context and reports nothing, and value moves ETH the label never
+         * mentions.
+         */
+        it.each([
+            {
+                case: 'is a delegate call',
+                overrides: { operation: 1 },
+                intent: 'delegateCall',
+            },
+            {
+                case: 'sends value from the Safe',
+                overrides: { value: '1' },
+                intent: 'carriesValue',
+            },
+        ])(
+            'refuses the approve wording when an otherwise valid report $case',
+            async ({ overrides, intent }) => {
+                const params = await openReview(
+                    buildReport(),
+                    pluginAddress,
+                    overrides,
+                );
+
+                expect(params.confirmLabel).toEqual(neutralLabel);
+                expect(params.intent).toEqual(
+                    `app.plugins.safeMultisig.safeMultisigSubmitVote.review.${intent} (proposal=title)`,
+                );
+            },
         );
     });
 
