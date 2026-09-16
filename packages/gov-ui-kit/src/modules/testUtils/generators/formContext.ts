@@ -3,6 +3,7 @@ import type { UseFormContextReturn } from '../../hooks';
 export const generateFormContext = (context?: Partial<UseFormContextReturn>): UseFormContextReturn => ({
     watch: jest.fn(),
     getValues: jest.fn(),
+    getErrors: jest.fn(),
     getFieldState: jest.fn(),
     setError: jest.fn(),
     clearErrors: jest.fn(),

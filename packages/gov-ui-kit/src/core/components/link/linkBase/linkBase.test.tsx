@@ -16,7 +16,7 @@ describe('<LinkBase /> component', () => {
     it('renders the link component set on the GukCoreProvider', () => {
         const Link = (props: object) => (
             <a data-testid="my-link-component" {...props}>
-                Link
+                Aragon documentation
             </a>
         );
         const context = { Link };

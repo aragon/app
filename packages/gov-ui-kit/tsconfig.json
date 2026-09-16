@@ -1,23 +1,19 @@
 {
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "target": "ES2020",
-        "module": "esnext",
-        "lib": ["dom", "esnext"],
-        "outDir": "dist",
         "allowJs": true,
-        "sourceMap": true,
-        "rootDir": ".",
-        "strict": true,
-        "noImplicitReturns": true,
+        "downlevelIteration": true,
+        "incremental": false,
+        "jsx": "react-jsx",
+        "lib": ["dom", "esnext"],
         "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "moduleResolution": "bundler",
-        "jsx": "react-jsx",
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "downlevelIteration": true
+        "outDir": "dist",
+        "rootDir": ".",
+        "sourceMap": true,
+        "target": "ES2020"
     },
     "include": ["src", ".storybook/**/*", "*.config.js", "*.config.mjs"],
     "exclude": ["node_modules", "dist", "storybook-static", "coverage"]

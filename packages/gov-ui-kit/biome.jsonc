@@ -1,5 +1,7 @@
 {
     "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    // porting gov-ui-kit biome config as is for now. TODO: merge with toplevel config if possible
+    "root": false,
     "extends": ["ultracite/biome/core", "ultracite/biome/react"],
     "vcs": {
         "enabled": true,
@@ -79,12 +81,18 @@
             "correctness": {
                 "useExhaustiveDependencies": "warn"
             },
+            // The four rules below mirror the root biome.json, which sets all of them off. They
+            // arrived with ultracite 7.10.6 (this config was written against 7.8.3) and fired on
+            // ~45 existing sites; the repo-wide decision is that they are off, so the kit follows
+            // it rather than diverging.
             "performance": {
                 "noBarrelFile": "off",
                 "noNamespaceImport": "off",
                 "useTopLevelRegex": "off",
                 "noAccumulatingSpread": "off",
-                "noDelete": "off"
+                "noDelete": "off",
+                "noJsxPropsBind": "off",
+                "noAwaitInLoops": "off"
             },
             "security": {
                 "noDangerouslySetInnerHtml": "off"
@@ -106,7 +114,8 @@
                 },
                 "noParameterProperties": "off",
                 "useReadonlyClassProperties": "off",
-                "useAtIndex": "off"
+                "useAtIndex": "off",
+                "useDestructuring": "off"
             },
             "suspicious": {
                 "noConsole": "warn",
@@ -124,7 +133,8 @@
                 "noReactForwardRef": "off",
                 "noShadow": "off",
                 "noEqualsToNull": "off",
-                "noLeakedRender": "off"
+                "noLeakedRender": "off",
+                "noUnnecessaryConditions": "off"
             }
         }
     },
@@ -219,7 +229,11 @@
                 "organizeImports": "on",
                 "useSortedAttributes": "on",
                 "useSortedInterfaceMembers": "off",
-                "useSortedProperties": "off"
+                "useSortedProperties": "off",
+                // Matches the root biome.json, which also sets this off. The kit's config was
+                // written against ultracite 7.8.3, before this action existed; cataloguing
+                // ultracite (7.10.6) turned it on and surfaced ~1400 findings.
+                "useSortedKeys": "off"
             }
         }
     }

@@ -7,6 +7,4 @@ export function invariant(condition: boolean, message: string): asserts conditio
 
         throw error;
     }
-
-    return;
 }

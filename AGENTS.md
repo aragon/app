@@ -26,7 +26,7 @@ Cross-cutting workspace knowledge lives in root-level mappers; register a new wo
 - `pnpm-workspace.yaml` `catalog:` — central version pins for shared tooling/deps; workspaces reference them as `"catalog:"`, bumps happen once at the root (then run the full test fan-out — a catalog bump touches every workspace and triggers releases everywhere).
 - Releases: a new deployable workspace gets its own release flow (or joins an existing domain flow) by adding its packages to a scope in `release-scopes.yml` and naming that scope in its `changeset-version` call — other flows are not touched.
 
-Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is already root-only (`biome.json`).
+Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is root-only (`biome.json`), with one exception: `packages/gov-ui-kit` carries a nested `biome.jsonc` (`"root": false`) so the migration caused no reformatting — there is a TODO in that file to fold it into the root config.
 
 ## Where things live
 
