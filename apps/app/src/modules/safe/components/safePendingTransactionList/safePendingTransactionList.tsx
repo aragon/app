@@ -129,9 +129,18 @@ export const SafePendingTransactionList: React.FC<
                       (transaction) =>
                           BigInt(transaction.nonce) >= BigInt(currentNonce),
                   )
-                  .sort((left, right) =>
-                      BigInt(left.nonce) < BigInt(right.nonce) ? -1 : 1,
-                  );
+                  .sort((left, right) => {
+                      const leftNonce = BigInt(left.nonce);
+                      const rightNonce = BigInt(right.nonce);
+
+                      if (leftNonce === rightNonce) {
+                          // Same-nonce rivals keep the order the service answered in: neither is
+                          // ahead of the other, and an arbitrary swap would read as a ranking.
+                          return 0;
+                      }
+
+                      return leftNonce < rightNonce ? -1 : 1;
+                  });
     // Two live transactions can share a nonce - the service accepts it, and only one of them can
     // ever execute. The governance card already discloses this; the account queue rendered them as
     // two independent, equally signable rows.
