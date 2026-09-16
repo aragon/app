@@ -142,7 +142,7 @@ overrides:
   # Drop once the kit unpins.
   sanitize-html@<2.17.7: ^2.17.7
   js-yaml@>=4.0.0 <4.3.2: ^4.3.2
-  # gov-ui-kit specific
+  # Carried over from the gov-ui-kit repo at the monorepo merge; they now apply repo-wide.
   nanoid@<3.3.18: ^3.3.18
   'linkify-it@>=5.0.0 <5.0.2': '>=5.0.2'
   serialize-javascript@<7.0.3: ^7.0.3
