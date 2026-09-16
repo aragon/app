@@ -12,8 +12,7 @@
             "!.next",
             "!coverage",
             "!.turbo",
-            "!**/*.svg",
-            "!apps/app/src/modules/application/components/layouts/layoutRoot/breakpoints.css"
+            "!**/*.svg"
         ]
     },
     "formatter": {

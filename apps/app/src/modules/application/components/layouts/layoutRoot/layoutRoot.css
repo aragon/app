@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "../../../../../../node_modules/@aragon/gov-ui-kit/index.css";
-@import "./breakpoints.css";
 
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";
