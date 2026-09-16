@@ -32,11 +32,12 @@ export const capitalDistributorPlugin: IPluginInfo = {
         [Network.ROBINHOOD_MAINNET]:
             '0x0000000000000000000000000000000000000000',
     },
-    pageLinks: (baseUrl) => [
+    pageLinks: (baseUrl, context) => [
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
             link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
             icon: IconType.REWARDS,
+            lgHidden: context === 'dialog',
             order: 700,
         },
     ],
