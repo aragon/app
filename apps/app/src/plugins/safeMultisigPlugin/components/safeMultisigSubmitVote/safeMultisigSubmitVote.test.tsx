@@ -1613,6 +1613,24 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeNull();
     });
 
+    // The budget is per read: the queue 429s while the owner read still answers fresh, so the
+    // counts freeze with nothing flagged stale. Saying nothing there passes frozen counts off as
+    // current on a signing surface.
+    it('warns when the read budget is spent even though no read is flagged stale', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            isRateLimited: true,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.budgetSpent',
+            ),
+        ).toBeInTheDocument();
+    });
+
     /**
      * `nonce` must match whatever `getSafeNextNonce` is mocked to allocate: the component
      * revalidates the reviewed nonce before signing, so a stub built for a different one is

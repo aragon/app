@@ -141,9 +141,10 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         settledResultType != null && settledReport == null && !isLoading;
 
     /**
-     * A recovered report states its own confirmations and the threshold that applied, but the owner
-     * set behind them is not recoverable from a transaction. The breakdown bar needs a denominator,
-     * so a settled body states the counts in prose instead of drawing "N of today's owners".
+     * A recovered report carries its own confirmations and the threshold that applied, but not the
+     * owner count at that time - and today's owner count is the wrong denominator for history. So
+     * a settled body states the counts in prose rather than drawing "N of today's owners", and
+     * points at the Votes tab, which lists the signers from the same transaction.
      */
     const hasSettledCounts =
         settledReport != null && membersCount == null && !isLoading;

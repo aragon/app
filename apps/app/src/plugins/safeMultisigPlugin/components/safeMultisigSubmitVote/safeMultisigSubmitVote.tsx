@@ -1087,20 +1087,31 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     }
 
     /**
-     * Two different reasons the numbers may lag, and only one of them is worth a button. An
-     * exhausted read budget answers every refetch with the same 429, so offering "Retry" there is
-     * a control that provably cannot work - the wait is the remedy, and it is stated instead.
+     * Two reasons the numbers may lag, and they are independent: a spent read budget 429s the
+     * queue read while `safeInfo` still answers fresh, so gating on staleness alone left the card
+     * silent with frozen counts. Only one of them is worth a button - every refetch against an
+     * exhausted budget returns the same 429, so the wait is the remedy and the copy says so.
      */
-    if (isStale) {
+    const getLaggingReadMessage = () => {
+        if (!isRateLimited) {
+            return t(`${translationKey}.unreachable`);
+        }
+
+        // The service states its own wait; without one there is no countdown to promise.
+        if (rateLimitedRetryAfter == null) {
+            return t(`${translationKey}.budgetSpent`);
+        }
+
+        return t(`${translationKey}.budgetSpentRetry`, {
+            seconds: rateLimitedRetryAfter,
+        });
+    };
+
+    if (isStale || isRateLimited) {
         alerts.push({
             key: 'stale',
             variant: 'warning',
-            message: isRateLimited
-                ? t(
-                      `${translationKey}.${rateLimitedRetryAfter == null ? 'budgetSpent' : 'budgetSpentRetry'}`,
-                      { seconds: rateLimitedRetryAfter },
-                  )
-                : t(`${translationKey}.unreachable`),
+            message: getLaggingReadMessage(),
         });
     }
     /**

@@ -3177,7 +3177,7 @@
           "executedLabel": "Executed:",
           "rateLimited": "Safe state is temporarily unavailable — the shared Safe API limit was reached. This retries on its own.",
           "rateLimitedRetry": "Safe state is temporarily unavailable — the shared Safe API limit was reached. Retrying in about {{seconds}} seconds.",
-          "settledCounts": "Decided with {{approvals}} of {{required}} required confirmations. The owner set that applied is not recoverable from the Safe transaction.",
+          "settledCounts": "Decided with {{approvals}} of {{required}} required confirmations. The Votes tab lists the owners who signed it.",
           "settledNotReported": "This result was recorded onchain, but no Safe transaction reporting it appears anywhere in this Safe's history.",
           "settledScanExhausted": "This body's confirmations are further back in the Safe's history than this view reads."
         },
