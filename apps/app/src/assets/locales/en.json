@@ -3244,7 +3244,7 @@
           "vetoAndExecute": "Veto and execute",
           "vetoOnly": "Veto only",
           "vetoed": "Vetoed",
-          "viewInAccountQueue": "See this transaction in the Safe's queue",
+          "viewInAccountQueue": "See this transaction in the Safe's account",
           "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners.",
           "stillCounts": "The stage has not advanced or expired, so this report still counts — executing it records this body's vote.",
           "stillCountsVeto": "The stage has not advanced or expired, so this veto still counts — executing it blocks the stage. An advance landing first forfeits it."
