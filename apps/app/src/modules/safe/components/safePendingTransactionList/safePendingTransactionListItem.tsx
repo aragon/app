@@ -216,15 +216,18 @@ export const SafePendingTransactionListItem: React.FC<
     /**
      * Routes out of this nonce slot, offered by eligibility rather than as a fallback chain (W2).
      *
-     * Removal is the service's own record and the service accepts it only from the proposer, so
-     * offering it to anyone else would spend a wallet prompt on a call that is refused. Replacement
-     * is a real Safe transaction any owner can propose. Both cost and authority differ, so neither
-     * is presented as "cancel" and the app never escalates silently from one to the other.
+     * Removal is the service's own record and the service accepts it only from the proposer, so a
+     * wallet that is demonstrably someone else is told instead of prompted. A disconnected viewer
+     * is not someone else: the route stays open, the click prompts for a wallet, and ineligibility
+     * is reported after connecting rather than dressed up as an app that forgot the action.
+     * Replacement is a real Safe transaction any owner can propose. Both cost and authority
+     * differ, so neither is presented as "cancel" and the app never escalates silently from one to
+     * the other.
      */
     const canRemove =
-        connectedAddress != null &&
-        transaction.from != null &&
-        addressUtils.isAddressEqual(transaction.from, connectedAddress);
+        connectedAddress == null ||
+        (transaction.from != null &&
+            addressUtils.isAddressEqual(transaction.from, connectedAddress));
     const isSlotActionBusy = isRemoving || isReplacing;
 
     const handleSlotAction = (mode: SafeQueueSlotMode) =>
