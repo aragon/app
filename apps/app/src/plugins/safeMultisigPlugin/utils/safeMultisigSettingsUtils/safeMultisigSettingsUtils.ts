@@ -1,24 +1,13 @@
 import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
-import type {
-    ISafeInfo,
-    ISafeMultisigTransaction,
-} from '@/shared/api/safeService';
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import {
+    type ISafeSettingsRowsParams,
+    safeSettingsTranslationKey,
+    safeSettingsUtils,
+} from '@/modules/safe/utils/safeSettingsUtils';
+import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 
-export interface ISafeMultisigSettingsParseParams {
-    /**
-     * Live Safe state: owners, threshold, version and nonce.
-     */
-    safeInfo: ISafeInfo;
-    /**
-     * Name the Safe is shown under - its ENS name, or the truncated address.
-     */
-    safeName: string;
-    /**
-     * Link to the Safe's own account page in the Safe web app. Absent when Safe does not serve the
-     * network, in which case the row states the Safe without linking anywhere.
-     */
-    safeHref?: string;
+export interface ISafeMultisigSettingsParseParams
+    extends ISafeSettingsRowsParams {
     /**
      * Whether this body's say is over - it reported, or its stage elapsed. Live Safe state stops
      * describing the decision at that point, whether or not a transaction was recovered: a veto
@@ -37,7 +26,6 @@ export interface ISafeMultisigSettingsParseParams {
      * read as incomplete.
      */
     isScanExhausted?: boolean;
-    t: TranslationFunction;
 }
 
 class SafeMultisigSettingsUtils {
@@ -54,38 +42,10 @@ class SafeMultisigSettingsUtils {
      */
     parseSettings = (
         params: ISafeMultisigSettingsParseParams,
-    ): IDefinitionSetting[] => {
-        const { safeInfo, safeName, safeHref, t } = params;
-        const translationKey =
-            'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
-
-        return [
-            {
-                term: t(`${translationKey}.safe`),
-                definition: safeName,
-                // `isOnchainEntity` hands the row to the kit's address output, which owns the
-                // reveal and copies the checksummed address rather than the shown label.
-                link:
-                    safeHref == null
-                        ? undefined
-                        : {
-                              href: safeHref,
-                              isExternal: true,
-                              isOnchainEntity: true,
-                          },
-                copyValue: safeInfo.address,
-                // Safe serves only the current version and a contract can be upgraded after a
-                // decision executes, so this can only ever mean "now" - which is why it sits under
-                // the live address rather than in a row of its own beside decided configuration.
-                description: t(`${translationKey}.versionHelp`, {
-                    version:
-                        safeInfo.version ??
-                        t(`${translationKey}.unknownVersion`),
-                }),
-            },
-            ...this.configurationRows(params),
-        ];
-    };
+    ): IDefinitionSetting[] => [
+        safeSettingsUtils.addressRow(params),
+        ...this.configurationRows(params),
+    ];
 
     /**
      * The rows whose subject changes with the body's standing: while the decision is open they
@@ -96,14 +56,11 @@ class SafeMultisigSettingsUtils {
         params: ISafeMultisigSettingsParseParams,
     ): IDefinitionSetting[] => {
         const {
-            safeInfo,
             isDecided = false,
             isScanExhausted = false,
             settledTransaction,
             t,
         } = params;
-        const translationKey =
-            'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
 
         // The transaction carries the configuration the decision actually ran under. A Safe binds
         // `confirmationsRequired` into each one, so the number this decision had to meet is
@@ -111,13 +68,13 @@ class SafeMultisigSettingsUtils {
         if (settledTransaction != null) {
             return [
                 {
-                    term: t(`${translationKey}.threshold`),
+                    term: t(`${safeSettingsTranslationKey}.threshold`),
                     definition:
                         settledTransaction.confirmationsRequired.toString(),
                 },
                 {
                     // The slot this decision occupied, which is a fact about the decision.
-                    term: t(`${translationKey}.nonce`),
+                    term: t(`${safeSettingsTranslationKey}.nonce`),
                     definition: settledTransaction.nonce,
                 },
             ];
@@ -128,8 +85,8 @@ class SafeMultisigSettingsUtils {
         if (isScanExhausted) {
             return [
                 {
-                    term: t(`${translationKey}.threshold`),
-                    definition: t(`${translationKey}.notRecovered`),
+                    term: t(`${safeSettingsTranslationKey}.threshold`),
+                    definition: t(`${safeSettingsTranslationKey}.notRecovered`),
                 },
             ];
         }
@@ -139,19 +96,7 @@ class SafeMultisigSettingsUtils {
             return [];
         }
 
-        return [
-            {
-                term: t(`${translationKey}.threshold`),
-                definition: safeInfo.threshold.toString(),
-            },
-            {
-                // Live account state while the decision is open: it advances with every transaction
-                // the Safe executes, including ones with nothing to do with Aragon, so it is said
-                // as "current", never as this proposal's nonce.
-                term: t(`${translationKey}.currentNonce`),
-                definition: safeInfo.nonce,
-            },
-        ];
+        return safeSettingsUtils.liveConfigurationRows(params);
     };
 }
 

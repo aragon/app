@@ -39,7 +39,7 @@ describe('useSafeMultisigGovernanceSettings hook', () => {
         jest.clearAllMocks();
     });
 
-    const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+    const key = 'app.safe.safeSettings';
 
     const termsFor = (stageIndex: number, currentStage: number) => {
         const { result } = renderHook(() =>

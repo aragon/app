@@ -3162,15 +3162,6 @@
         }
       },
       "safeMultisig": {
-        "safeMultisigGovernanceSettings": {
-          "currentNonce": "Current Safe nonce",
-          "nonce": "Safe nonce used",
-          "notRecovered": "Not recovered",
-          "safe": "Safe address",
-          "threshold": "Required confirmations",
-          "unknownVersion": "unknown version",
-          "versionHelp": "Safe {{version}}"
-        },
         "safeMultisigProposalVotingBreakdown": {
           "error": "Safe state could not be loaded. Try again later.",
           "executed": "Safe transaction executed",
@@ -3738,17 +3729,8 @@
       "safeAccountPage": {
         "aside": {
           "details": {
-            "address": "Address",
             "chain": "Chain",
-            "guard": "Transaction guard",
-            "modules": "Enabled modules",
-            "modulesValue": "{{count}}",
-            "nonce": "Nonce",
-            "threshold": "Threshold",
-            "thresholdValue": "{{threshold}} of {{owners}}",
-            "title": "Details",
-            "unknown": "Unknown",
-            "version": "Version"
+            "title": "Details"
           }
         },
         "header": {
@@ -3868,6 +3850,18 @@
           "confirm": "Replace onchain",
           "title": "Replace onchain"
         }
+      },
+      "safeSettings": {
+        "currentNonce": "Current Safe nonce",
+        "guard": "Transaction guard",
+        "modules": "Enabled modules",
+        "modulesValue": "{{count}}",
+        "nonce": "Safe nonce used",
+        "notRecovered": "Not recovered",
+        "safe": "Safe address",
+        "threshold": "Required confirmations",
+        "unknownVersion": "unknown version",
+        "versionHelp": "Safe {{version}}"
       },
       "safeTransactionReviewDialog": {
         "callTarget": "To {{target}} · {{value}} wei",

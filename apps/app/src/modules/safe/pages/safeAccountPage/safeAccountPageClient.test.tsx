@@ -85,7 +85,11 @@ describe('<SafeAccountPageClient /> component', () => {
         );
         render(createTestComponent());
 
-        expect(screen.getByText('1.4.1+L2')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.safe.safeSettings.versionHelp (version=1.4.1+L2)',
+            ),
+        ).toBeInTheDocument();
     });
 
     it('discloses a transaction guard and enabled modules, because owners and threshold alone understate who can move the Safe', () => {
@@ -100,9 +104,7 @@ describe('<SafeAccountPageClient /> component', () => {
         render(createTestComponent());
 
         expect(
-            screen.getByText(
-                'app.safe.safeAccountPage.aside.details.modulesValue (count=2)',
-            ),
+            screen.getByText('app.safe.safeSettings.modulesValue (count=2)'),
         ).toBeInTheDocument();
         expect(
             screen.getByText(
@@ -122,9 +124,7 @@ describe('<SafeAccountPageClient /> component', () => {
         render(createTestComponent());
 
         expect(
-            screen.queryByText(
-                'app.safe.safeAccountPage.aside.details.modules',
-            ),
+            screen.queryByText('app.safe.safeSettings.modules'),
         ).not.toBeInTheDocument();
     });
 
@@ -137,7 +137,7 @@ describe('<SafeAccountPageClient /> component', () => {
         render(createTestComponent());
 
         expect(
-            screen.queryByText('app.safe.safeAccountPage.aside.details.guard'),
+            screen.queryByText('app.safe.safeSettings.guard'),
         ).not.toBeInTheDocument();
     });
 
@@ -149,7 +149,11 @@ describe('<SafeAccountPageClient /> component', () => {
         );
         render(createTestComponent());
 
-        expect(screen.getByText('1.1.1')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.safe.safeSettings.versionHelp (version=1.1.1)',
+            ),
+        ).toBeInTheDocument();
         expect(screen.getByTestId('owner-list-mock')).toBeInTheDocument();
     });
 

@@ -43,7 +43,7 @@ describe('safeMultisigSettings utils', () => {
         const byTerm = Object.fromEntries(
             settings.map((setting) => [setting.term, setting.definition]),
         );
-        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+        const key = 'app.safe.safeSettings';
 
         // The requirement alone, live or settled: Safe keeps no historical owner set, so a
         // denominator here would describe today's Safe rather than this decision.
@@ -75,7 +75,7 @@ describe('safeMultisigSettings utils', () => {
         const byTerm = Object.fromEntries(
             settings.map((setting) => [setting.term, setting.definition]),
         );
-        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+        const key = 'app.safe.safeSettings';
 
         expect(byTerm[`${key}.threshold`]).toEqual('1');
         expect(byTerm[`${key}.nonce`]).toEqual('5');
@@ -101,7 +101,7 @@ describe('safeMultisigSettings utils', () => {
         });
 
         const terms = settings.map((setting) => setting.term);
-        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+        const key = 'app.safe.safeSettings';
 
         expect(terms).not.toContain(`${key}.threshold`);
         expect(terms).not.toContain(`${key}.currentNonce`);
@@ -123,7 +123,7 @@ describe('safeMultisigSettings utils', () => {
             t,
         });
 
-        const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
+        const key = 'app.safe.safeSettings';
         const threshold = settings.find(
             (setting) => setting.term === `${key}.threshold`,
         );
@@ -137,9 +137,7 @@ describe('safeMultisigSettings utils', () => {
 
     const safeRowOf = (settings: ReturnType<typeof parse>) =>
         settings.find(
-            (setting) =>
-                setting.term ===
-                'app.plugins.safeMultisig.safeMultisigGovernanceSettings.safe',
+            (setting) => setting.term === 'app.safe.safeSettings.safe',
         );
 
     it('sends the Safe row out to the Safe app, and offers the raw address to copy', () => {
@@ -175,7 +173,7 @@ describe('safeMultisigSettings utils', () => {
         expect(
             safeRowOf(parse(generateSafeInfo({ version: null })))?.description,
         ).toEqual(
-            'app.plugins.safeMultisig.safeMultisigGovernanceSettings.versionHelp:{"version":"app.plugins.safeMultisig.safeMultisigGovernanceSettings.unknownVersion"}',
+            'app.safe.safeSettings.versionHelp:{"version":"app.safe.safeSettings.unknownVersion"}',
         );
     });
 });

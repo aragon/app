@@ -16,6 +16,7 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { SafeBalanceList } from '../../components/safeBalanceList';
 import { SafeOwnerList } from '../../components/safeOwnerList';
 import { SafePendingTransactionList } from '../../components/safePendingTransactionList';
+import { safeSettingsUtils } from '../../utils/safeSettingsUtils';
 
 export interface ISafeAccountPageClientProps {
     /**
@@ -59,6 +60,26 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
         type: ChainEntityType.ADDRESS,
         id: checksummedAddress,
     });
+
+    /**
+     * The same rows a governance body's Settings tab states, because it is the same account read
+     * from the same endpoint. Only the chain above is the account page's own: a body states its
+     * network elsewhere. The address links to the explorer here rather than to the Safe app - this
+     * page is the in-app account view, so pointing at Safe's own would send the reader away from it.
+     */
+    const detailRows =
+        safeInfo == null
+            ? []
+            : [
+                  safeSettingsUtils.addressRow({
+                      safeInfo,
+                      safeName: truncatedAddress,
+                      safeHref: addressLink,
+                      t,
+                  }),
+                  ...safeSettingsUtils.liveConfigurationRows({ safeInfo, t }),
+                  ...safeSettingsUtils.authorityRows({ safeInfo, t }),
+              ];
 
     const header = (
         <Page.Header
@@ -163,92 +184,23 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                                     {networkDefinition?.name}
                                 </p>
                             </DefinitionList.Item>
-                            <DefinitionList.Item
-                                copyValue={address}
-                                link={{ href: addressLink }}
-                                term={t(
-                                    'app.safe.safeAccountPage.aside.details.address',
-                                )}
-                            >
-                                {truncatedAddress}
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.safe.safeAccountPage.aside.details.version',
-                                )}
-                            >
-                                <p className="text-neutral-500">
-                                    {safeInfo?.version ??
-                                        t(
-                                            'app.safe.safeAccountPage.aside.details.unknown',
-                                        )}
-                                </p>
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.safe.safeAccountPage.aside.details.nonce',
-                                )}
-                            >
-                                <p className="text-neutral-500">
-                                    {safeInfo?.nonce}
-                                </p>
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.safe.safeAccountPage.aside.details.threshold',
-                                )}
-                            >
-                                <p className="text-neutral-500">
-                                    {safeInfo != null
-                                        ? t(
-                                              'app.safe.safeAccountPage.aside.details.thresholdValue',
-                                              {
-                                                  threshold: safeInfo.threshold,
-                                                  owners: safeInfo.owners
-                                                      .length,
-                                              },
-                                          )
-                                        : undefined}
-                                </p>
-                            </DefinitionList.Item>
-                            {/*
-                             * Owners and threshold alone are an incomplete authority picture: a
-                             * guard can make an otherwise-valid transaction unexecutable, and a
-                             * module can move funds with no owner signature at all. Both are
-                             * already fetched and validated, so withholding them would be an
-                             * active choice to understate who can move this Safe. Disclosure
-                             * only - managing either belongs to the Safe app.
-                             */}
-                            {safeInfo?.guard != null && (
+                            {detailRows.map((row) => (
                                 <DefinitionList.Item
-                                    copyValue={safeInfo.guard}
-                                    term={t(
-                                        'app.safe.safeAccountPage.aside.details.guard',
-                                    )}
+                                    copyValue={row.copyValue}
+                                    description={row.description}
+                                    key={row.term}
+                                    link={row.link}
+                                    term={row.term}
                                 >
-                                    {addressUtils.truncateAddress(
-                                        safeInfo.guard,
+                                    {row.link == null ? (
+                                        <p className="text-neutral-500">
+                                            {row.definition}
+                                        </p>
+                                    ) : (
+                                        row.definition
                                     )}
                                 </DefinitionList.Item>
-                            )}
-                            {safeInfo != null &&
-                                safeInfo.modules.length > 0 && (
-                                    <DefinitionList.Item
-                                        term={t(
-                                            'app.safe.safeAccountPage.aside.details.modules',
-                                        )}
-                                    >
-                                        <p className="text-neutral-500">
-                                            {t(
-                                                'app.safe.safeAccountPage.aside.details.modulesValue',
-                                                {
-                                                    count: safeInfo.modules
-                                                        .length,
-                                                },
-                                            )}
-                                        </p>
-                                    </DefinitionList.Item>
-                                )}
+                            ))}
                         </DefinitionList.Container>
                     </Page.AsideCard>
                 </Page.Aside>
