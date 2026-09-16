@@ -3194,6 +3194,7 @@
         "safeMultisigSubmitVote": {
           "approve": "Approve proposal",
           "approveAndExecute": "Approve and execute",
+          "approveAndRequeue": "Approve and re-queue",
           "approveOnly": "Approve only",
           "approved": "Approved",
           "authorityChanged": "The Safe's owners or threshold changed after these confirmations were collected, so they no longer authorise this transaction. Your confirmation is kept — the remaining owners can still sign.",
@@ -3216,9 +3217,8 @@
           "nonceShared": "Another queued Safe transaction holds this same nonce. Only one of them can execute — whichever goes first voids the other, along with its confirmations.",
           "recordedAfterAdvance": "This vote was recorded after the stage had already advanced, so it did not affect the outcome. The gas was spent and the result is stored, but nothing about the proposal changed.",
           "refreshSafeState": "Refresh Safe state",
-          "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. Its confirmations no longer apply.",
+          "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. You can re-queue the transaction by confirming again, previous confirmations will be lost.",
           "reportGone": "This Safe transaction is no longer in the queue — it was executed or removed while this page was open. Nothing was signed.",
-          "requeueSafeTransaction": "Re-queue Safe transaction",
           "review": {
             "bundledExecution": "Your confirmation looks like the one that reaches the Safe's threshold, so the Safe transaction would be executed straight after it. Your wallet asks to confirm first, which is free, and then to execute onchain, which costs gas - the second prompt is skipped if the Safe no longer needs it by then.",
             "executionOnly": "This transaction already carries every signature it needs, so your wallet will ask once, to execute it onchain, which costs gas.",
@@ -3241,6 +3241,7 @@
           "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
           "veto": "Veto proposal",
           "vetoAndExecute": "Veto and execute",
+          "vetoAndRequeue": "Veto and re-queue",
           "vetoOnly": "Veto only",
           "vetoed": "Vetoed",
           "viewInAccountQueue": "See Tx in Safe account",

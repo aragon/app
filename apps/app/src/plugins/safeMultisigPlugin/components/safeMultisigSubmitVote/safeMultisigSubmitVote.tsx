@@ -970,7 +970,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     } else if (thresholdReached) {
         buttonKey = 'executeSafeTransaction';
     } else if (isSuperseded) {
-        buttonKey = 'requeueSafeTransaction';
+        // The signatures died with the nonce, so this is a fresh signing round, not a resend -
+        // named for the act it re-opens, with the alert above stating what was lost.
+        buttonKey = isVeto ? 'vetoAndRequeue' : 'approveAndRequeue';
     }
 
     let helperText: string | undefined;

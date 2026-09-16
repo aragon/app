@@ -247,10 +247,19 @@ export const useSafeMultisigBodyState = (
      * the scan did not recover has no confirmations to show - presenting an unexecuted attempt's
      * signatures as the verdict's would be the misattribution this read exists to prevent, and the
      * surfaces carry outcome-specific copy for exactly that gap.
+     *
+     * A superseded attempt is excluded for the same reason from the other end: its signatures were
+     * bound to a nonce the Safe has spent, so they can never execute anything. Serving them filled
+     * the breakdown bar to "reached" directly above the alert saying they are lost.
      */
+    const liveReportTransaction =
+        pendingReport?.state === SafeTransactionState.LIVE
+            ? pendingReport.transaction
+            : undefined;
+
     const reportTransaction = isSettled
         ? settledReport?.transaction
-        : pendingReport?.transaction;
+        : liveReportTransaction;
 
     // A settled body's confirmations are the ones that executed it; the queue no longer serves them.
     const signers =

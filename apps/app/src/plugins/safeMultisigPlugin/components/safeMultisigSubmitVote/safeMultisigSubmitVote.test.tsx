@@ -1335,7 +1335,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         // able to sign a replacement rather than being told to wait for the other owners.
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.requeueSafeTransaction',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndRequeue',
             }),
         ).toBeEnabled();
         expect(
@@ -1394,7 +1394,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         render(createTestComponent());
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.requeueSafeTransaction',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndRequeue',
             }),
         );
 

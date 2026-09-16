@@ -14,6 +14,7 @@ import {
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
+import { SafeTransactionState } from '../../types';
 import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
 import * as settledReportApi from '../useSafeSettledReport';
 import { useSafeMultisigBodyState } from './useSafeMultisigBodyState';
@@ -312,6 +313,48 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.approvalsAmount).toBe(0);
         // The attempt is still real and still worth showing as an attempt.
         expect(result.current.pendingReport?.transaction.nonce).toEqual('6');
+    });
+
+    it('voids the confirmations of a report whose nonce the Safe already spent', () => {
+        // Nonce 5 is behind the Safe's current 6, so those signatures can never execute anything.
+        // Serving them filled the breakdown bar to "reached" right above the card's own alert
+        // saying they are lost, and a re-queue collects signatures afresh at a new nonce.
+        const signer = '0x0000000000000000000000000000000000000088';
+        useSafePendingTransactionsSpy.mockReturnValue({
+            data: {
+                results: [
+                    generateSafeMultisigTransaction({
+                        nonce: '5',
+                        to: plugin,
+                        confirmationsRequired: 2,
+                        confirmations: [
+                            generateSafeConfirmation({ owner: signer }),
+                            generateSafeConfirmation({ owner: body }),
+                        ],
+                        data: safeMultisigTransactionUtils.buildReportProposalResultData(
+                            {
+                                proposalId: BigInt(proposalIndex),
+                                stageId: stageIndex,
+                                resultType: SppProposalType.APPROVAL,
+                            },
+                        ),
+                    }),
+                ],
+                meta: { stale: false },
+            },
+            isLoading: false,
+            isError: false,
+        } as unknown as ReturnType<
+            typeof safeServiceApi.useSafePendingTransactions
+        >);
+
+        const { result } = renderState();
+
+        expect(result.current.pendingReport?.state).toBe(
+            SafeTransactionState.SUPERSEDED,
+        );
+        expect(result.current.approvalsAmount).toBe(0);
+        expect(result.current.signers).toEqual([]);
     });
 
     it('states no member count for a settled body, whose owner set is unrecoverable', () => {
