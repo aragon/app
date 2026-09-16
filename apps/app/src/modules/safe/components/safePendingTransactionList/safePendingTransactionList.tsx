@@ -142,28 +142,13 @@ export const SafePendingTransactionList: React.FC<
                       return leftNonce < rightNonce ? -1 : 1;
                   });
     // Two live transactions can share a nonce - the service accepts it, and only one of them can
-    // ever execute. The governance card already discloses this; the account queue rendered them as
+    // ever execute. The governance card already discloses this; the account queue renders them as
     // two independent, equally signable rows.
     const contestedNonces = new Set(
         transactions
             .map(({ nonce }) => nonce)
             .filter((nonce, index, all) => all.indexOf(nonce) !== index),
     );
-    /**
-     * Followed here but absent from the live queue: it executed, was replaced at its nonce, or the
-     * link is stale. Saying so beats a page that silently shows a queue without it.
-     *
-     * Only claimed while this response is the whole queue. `next` means the service is holding
-     * more rows back, and "it may already have executed" would then be a guess about a page nobody
-     * read.
-     */
-    const isFollowedMissing =
-        followedTxHash != null &&
-        !isLoading &&
-        pendingTransactions?.next == null &&
-        !transactions.some(
-            ({ safeTxHash }) => safeTxHash.toLowerCase() === followedTxHash,
-        );
     const state = safeDataListUtils.getDataListState({
         isError,
         isLoading: isLoading || currentNonce == null,
@@ -204,15 +189,6 @@ export const SafePendingTransactionList: React.FC<
                     className="mb-4"
                     message={t('app.safe.safePendingTransactionList.stale')}
                     variant="warning"
-                />
-            )}
-            {isFollowedMissing && (
-                <AlertInline
-                    className="mb-4"
-                    message={t(
-                        'app.safe.safePendingTransactionList.followedMissing',
-                    )}
-                    variant="info"
                 />
             )}
             <DataListRoot

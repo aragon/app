@@ -1130,14 +1130,15 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
      * this body's report and offers the route, deep-linked to the same `safeTxHash` it was
      * showing, so one transaction resolves to one review payload on both surfaces.
      *
-     * Offered for a report the Safe's nonce sequence can still answer something about - queued
-     * behind the nonce, sharing one, or superseded by whatever took it. A superseded report is
-     * filtered out of the account queue as permanently dead, and the queue says so on arrival,
-     * which is the answer an owner came for. An executed report is the breakdown's provenance
-     * links, not a queue lookup.
+     * Offered only while the report actually occupies a queue slot. Superseded means the
+     * transaction lost the nonce and is filtered out of the account queue as permanently dead -
+     * this path would deep-link to an empty queue, and the re-queued report lives at a fresh
+     * nonce this address no longer knows. Executed is the breakdown's provenance links, not a
+     * queue lookup.
      */
     const queuedReportHref =
         pendingReport == null ||
+        isSuperseded ||
         pendingReport.state === SafeTransactionState.EXECUTED
             ? undefined
             : `/safe/${proposal.network}/${externalAddress}?tx=${pendingReport.transaction.safeTxHash}`;

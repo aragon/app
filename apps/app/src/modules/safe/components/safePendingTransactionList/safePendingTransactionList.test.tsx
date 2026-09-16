@@ -772,44 +772,6 @@ describe('<SafePendingTransactionList /> component', () => {
             ).toHaveLength(1);
             expect(openDialog).not.toHaveBeenCalled();
         });
-
-        it('says a followed transaction is gone rather than showing a queue without it', () => {
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateResponse([generateSafeTransaction({ nonce: '11' })]),
-            );
-            followTransaction(followed);
-
-            render(createTestComponent());
-
-            expect(
-                screen.getByText(
-                    'app.safe.safePendingTransactionList.followedMissing',
-                ),
-            ).toBeInTheDocument();
-        });
-
-        it('stays silent about a followed transaction while the service holds rows back', () => {
-            // `next` means this response is one page of the queue. "It may already have executed"
-            // would then be a guess about rows nobody read.
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateReactQueryResultSuccess<ISafeQueueResponse, Error>({
-                    data: generateSafeQueueResponse({
-                        count: 8,
-                        next: 'https://safe.example/queue?offset=6',
-                        results: [generateSafeTransaction({ nonce: '11' })],
-                    }),
-                }),
-            );
-            followTransaction(followed);
-
-            render(createTestComponent());
-
-            expect(
-                screen.queryByText(
-                    'app.safe.safePendingTransactionList.followedMissing',
-                ),
-            ).not.toBeInTheDocument();
-        });
     });
 
     describe('routes out of a queued nonce slot', () => {

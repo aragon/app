@@ -1305,7 +1305,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         expect(proposeMutateAsync).not.toHaveBeenCalled();
     });
 
-    it('offers a re-queue and the account queue when the pending report lost its nonce', () => {
+    it('re-queues a superseded report without deep-linking to a nonce the queue no longer shows', () => {
         const superseded = generateSafeMultisigTransaction({
             safeTxHash: `0x${'ef'.repeat(32)}`,
             confirmationsRequired: 1,
@@ -1343,16 +1343,15 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 'app.plugins.safeMultisig.safeMultisigSubmitVote.replaced',
             ),
         ).toBeInTheDocument();
-        // Whatever took the nonce is account-level traffic, so the queue answers it - the proposal
-        // states the report is dead and hands over the lookup.
+        // Whatever took the nonce is account-level traffic, so the queue answers it. The proposal
+        // states the report is dead and offers the re-queue; it does not hand over a lookup to a
+        // nonce the queue no longer shows - a superseded report is filtered out as permanently
+        // dead, so the deep-link would land on an empty queue.
         expect(
-            screen.getByRole('link', {
+            screen.queryByRole('link', {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
             }),
-        ).toHaveAttribute(
-            'href',
-            `/safe/${Network.ETHEREUM_SEPOLIA}/${safeInfo.address}?tx=${superseded.safeTxHash}`,
-        );
+        ).toBeNull();
     });
 
     it('rebuilds a superseded report instead of re-submitting its signatures', async () => {

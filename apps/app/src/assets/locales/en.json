@@ -3790,7 +3790,6 @@
           "description": "The pending transactions of this Safe could not be loaded. Please try again later.",
           "heading": "Unable to load pending transactions"
         },
-        "followedMissing": "The transaction you followed here is not in this queue. It may already have executed, or another transaction may have taken its nonce.",
         "execution": {
           "authorityChanged": "The Safe owners or signing threshold changed, so this transaction was not submitted.",
           "error": "The transaction could not be executed. Please try again.",
