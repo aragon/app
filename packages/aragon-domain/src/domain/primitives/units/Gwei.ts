@@ -32,6 +32,17 @@ export class Gwei extends ValueObject<GweiProps> implements EVMUnit {
   }
 
   /**
+   * Value-based equality: the inherited shallow props comparison would
+   * compare the inner BigNumber by reference, so compare numerically.
+   */
+  public equals(other?: Gwei): boolean {
+    if (!other) {
+      return false;
+    }
+    return this.props.gweiValue.isEqualTo(other.toBigNumber());
+  }
+
+  /**
    * Adds this value to another value.
    * @param other The other value to add to.
    */

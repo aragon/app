@@ -24,6 +24,7 @@
     "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
     "lint:ci": "biome ci --no-errors-on-unmatched --files-ignore-unknown=true",
     "test": "vitest run --coverage",
+    "test:contract": "vitest run --config vitest.contract.config.ts",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit",
     "changeset": "changeset"

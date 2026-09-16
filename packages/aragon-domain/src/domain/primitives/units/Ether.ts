@@ -32,6 +32,17 @@ export class Ether extends ValueObject<EtherProps> implements EVMUnit {
   }
 
   /**
+   * Value-based equality: the inherited shallow props comparison would
+   * compare the inner BigNumber by reference, so compare numerically.
+   */
+  public equals(other?: Ether): boolean {
+    if (!other) {
+      return false;
+    }
+    return this.props.etherValue.isEqualTo(other.toBigNumber());
+  }
+
+  /**
    * Adds this value to another value.
    * @param other The other value to add to.
    */

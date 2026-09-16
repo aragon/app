@@ -1,5 +1,6 @@
 // blockchain
 export { Address } from './blockchain/Address';
+export { ChainId } from './blockchain/ChainId';
 
 // events
 export { SomethingWentWrong } from './events/SomethingWentWrong';
@@ -11,6 +12,9 @@ export { HexNumber } from './math/HexNumber';
 export type { Page } from './pagination/Page';
 export { createPage } from './pagination/Page';
 export { PageRequest } from './pagination/PageRequest';
+
+// time
+export { earliest, latest } from './time/Timestamps';
 
 // units
 export { Ether } from './units/Ether';

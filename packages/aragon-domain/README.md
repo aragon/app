@@ -2,7 +2,7 @@
 
 Shared business-logic package for the Aragon governance platform. It is the single home for everything a frontend consumer needs that *isn't* raw on-chain data — membership rules, voting-power math, delegation logic, permission checks, ENS profile enrichment. Paired with [`aragon-indexer`](../aragon-indexer) (which provides only deterministic, indexed on-chain state), it lets any frontend consumer stay thin.
 
-Today the package ships one capability — looking up the ENS text records attached to a member's `.aragon.eth` subdomain — with the rest of the surface area arriving as the Envio migration progresses.
+Today the package ships two capabilities — listing the members of a TokenVoting plugin (ERC20Votes delegates with voting power, delegation count, activity window and primary ENS name) and looking up the ENS text records attached to a member's `.aragon.eth` subdomain — with the rest of the surface area arriving as the Envio migration progresses.
 
 ## How it fits in
 
@@ -43,15 +43,29 @@ pnpm run test
 ```ts
 import { AragonDomain, EnvioClient } from '@aragon/aragon-domain';
 
-const envioClient = new EnvioClient({ /* ... */ });
-const aragon = AragonDomain.load(envioClient);
+const envioClient = new EnvioClient(ENVIO_GRAPHQL_ENDPOINT, ENVIO_API_TOKEN);
+// RPC endpoints keyed by chain id. The mainnet (1) entry backs ENS reverse
+// resolution and is required — `load` throws without it.
+const aragon = AragonDomain.load(envioClient, { 1: MAINNET_RPC_URL });
+
+const membership = await aragon.getTokenVotingMembership({
+  chainId: 1,
+  pluginAddress: '0xCa6f…15F3', // a TokenVoting plugin…
+  tokenContractAddress: '0xcb8b…6905', // …and its ERC20Votes token
+  page: 1,
+  pageSize: 20,
+});
+// → { success: true, result: { metadata: { page, pageSize, totalPages, totalRecords },
+//                              data: [{ address, ens, votingPower, delegationCount, … }] } }
 
 const records = await aragon.getMemberProfileTextRecords({
   subdomain: 'alice.aragon.eth',
 });
-// → [{ key: 'avatar', value: 'ipfs://…' }, …]
-// Returns [] if the subdomain is unknown, has no resolver, or has no records.
+// → { success: true, result: [{ key: 'avatar', value: 'ipfs://…' }, …] }
+// The result is [] if the subdomain is unknown, has no resolver, or has no records.
 ```
+
+Every controller method returns a `ResultOrError` envelope from `ddd-core-ts`: check `success` before reading `result`; failures carry an `error` instead of throwing.
 
 ## Roadmap
 
@@ -88,6 +102,16 @@ Snapshot releases let you test unreleased changes from a branch on npm without c
    ```
 
 Each run gets its own dist-tag, so multiple in-flight branches can publish snapshots in parallel without colliding. The workflow won't publish anything if no changesets are pending.
+
+### Contract test against the deployed indexer
+
+The test suite runs on canned indexer responses, so it cannot notice when the deployed `aragon-indexer` changes shape. [`test/contract/`](./test/contract) sends the real query documents to a live endpoint and lets the mappers' schemas validate what comes back. `pnpm test` leaves it out, and it is skipped unless the endpoint is set:
+
+```bash
+ENVIO_GRAPHQL_ENDPOINT=https://… ENVIO_API_TOKEN=… pnpm test:contract
+```
+
+Run it against the dev indexer before cutting a release, and whenever the indexer's `schema.graphql` changes.
 
 ## Related projects
 

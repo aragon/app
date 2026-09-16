@@ -48,4 +48,17 @@ describe('Ether', () => {
     const token = Ether.create(new BigNumber(1.23));
     expect(token.toEther()).toBe(token);
   });
+
+  it('equals compares by numeric value across instances', () => {
+    const a = Ether.create(new BigNumber(1.23));
+    const b = Ether.create(new BigNumber(1.23));
+    const c = Ether.create(new BigNumber(4.56));
+    expect(a.equals(b)).toBe(true);
+    expect(a.equals(c)).toBe(false);
+  });
+
+  it('equals(undefined) returns false', () => {
+    const token = Ether.create(new BigNumber(1.23));
+    expect(token.equals(undefined)).toBe(false);
+  });
 });

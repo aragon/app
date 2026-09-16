@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -11,6 +11,9 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
+    // The contract suite needs a live indexer; `pnpm test:contract` runs it
+    // through `vitest.contract.config.ts` so the default run stays offline.
+    exclude: [...configDefaults.exclude, 'test/contract/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'html', 'lcov'],
@@ -23,6 +26,8 @@ export default defineConfig({
         'src/**/index.ts',
         'src/domain/member-profile/MemberProfileStore.ts',
         'src/domain/primitives/units/EVMUnit.ts',
+        'src/domain/member/MemberStore.ts',
+        'src/infrastructure/controllers/AragonController/maps/domain/PageMap.ts',
       ],
       thresholds: {
         statements: 100,

@@ -48,4 +48,17 @@ describe('Wei', () => {
     const token = Wei.create(new BigNumber('1230000000000000000'));
     expect(token.toWei()).toBe(token);
   });
+
+  it('equals compares by numeric value across instances', () => {
+    const a = Wei.create(new BigNumber(100));
+    const b = Wei.create(new BigNumber(100));
+    const c = Wei.create(new BigNumber(200));
+    expect(a.equals(b)).toBe(true);
+    expect(a.equals(c)).toBe(false);
+  });
+
+  it('equals(undefined) returns false', () => {
+    const token = Wei.create(new BigNumber(100));
+    expect(token.equals(undefined)).toBe(false);
+  });
 });
