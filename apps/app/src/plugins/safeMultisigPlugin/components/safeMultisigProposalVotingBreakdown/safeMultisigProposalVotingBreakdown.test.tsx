@@ -320,7 +320,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
             label: 'with the upstream retry window',
             rateLimitedRetryAfter: 42,
             expected:
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.rateLimitedRetry (seconds=42)',
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.rateLimitedRetry (wait=42 seconds)',
         },
         {
             label: 'without a retry window',

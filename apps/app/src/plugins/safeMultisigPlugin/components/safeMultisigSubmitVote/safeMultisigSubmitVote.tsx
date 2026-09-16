@@ -4,7 +4,9 @@ import {
     AlertCard,
     addressUtils,
     Button,
+    DateFormat,
     Dropdown,
+    formatterUtils,
     IconType,
     Link,
 } from '@aragon/gov-ui-kit';
@@ -1099,13 +1101,18 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             return t(`${translationKey}.unreachable`);
         }
 
-        // The service states its own wait; without one there is no countdown to promise.
+        // The service states its own wait; without one there is no countdown to promise, and the
+        // app has no published window to fall back on - Safe documents a per-second rate and a
+        // monthly quota, never an hourly one. Shown as a duration: "300 seconds" is arithmetic.
         if (rateLimitedRetryAfter == null) {
             return t(`${translationKey}.budgetSpent`);
         }
 
         return t(`${translationKey}.budgetSpentRetry`, {
-            seconds: rateLimitedRetryAfter,
+            wait: formatterUtils.formatDate(
+                Date.now() + rateLimitedRetryAfter * 1000,
+                { format: DateFormat.DURATION },
+            ),
         });
     };
 

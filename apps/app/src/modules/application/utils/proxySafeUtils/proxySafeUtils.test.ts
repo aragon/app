@@ -399,7 +399,10 @@ describe('proxySafe utils', () => {
             );
         });
 
-        it('provides a default backoff when a rate limit response omits retry-after', async () => {
+        it('does not invent a wait when a rate limit response omits retry-after', async () => {
+            // A 429 without `Retry-After` is what the application's own hourly budget produces:
+            // a fixed clock-hour window has no computed end time, so any number here would reach
+            // the signer as a wait the service never stated.
             const testClass = new ProxySafeUtils();
             fetchSpy.mockResolvedValue(
                 generateResponse({ ok: false, status: 429 }),
@@ -413,11 +416,11 @@ describe('proxySafe utils', () => {
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     code: SafeServiceErrorCode.RATE_LIMITED,
-                    retryAfter: 60,
+                    retryAfter: undefined,
                 }),
                 expect.objectContaining({
                     status: 429,
-                    headers: { 'Retry-After': '60' },
+                    headers: undefined,
                 }),
             );
         });

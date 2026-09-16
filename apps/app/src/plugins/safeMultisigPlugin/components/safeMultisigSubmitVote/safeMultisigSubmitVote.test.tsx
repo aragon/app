@@ -1603,7 +1603,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigSubmitVote.budgetSpentRetry (seconds=300)',
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.budgetSpentRetry (wait=5 minutes)',
             ),
         ).toBeInTheDocument();
         expect(

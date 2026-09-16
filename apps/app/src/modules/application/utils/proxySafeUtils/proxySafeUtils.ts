@@ -10,8 +10,6 @@ import {
 } from './resolveServerSafeUrl';
 import { safeNetworkFromChainId } from './safeTxServiceNetworks';
 
-const DEFAULT_RATE_LIMIT_BACKOFF_SECONDS = 60;
-
 /**
  * How long a Safe read may be served from Next's data cache.
  *
@@ -245,15 +243,23 @@ export class ProxySafeUtils {
         return `/${encodedPath}/`;
     };
 
-    private parseRetryAfter = (response: Response): number => {
+    /**
+     * The upstream's own wait, forwarded only when it states one. A rate limit without a
+     * `Retry-After` is exactly the case the application's own hourly budget produces - a fixed
+     * clock-hour window with no computed end time - so there is no number to invent: a fabricated
+     * one would be printed back to the signer as a promise the service never made. Consumers that
+     * need a poll floor apply their own.
+     */
+    private parseRetryAfter = (response: Response): number | undefined => {
         const retryAfterHeader = response.headers.get('retry-after');
-        const retryAfterSeconds = Number(retryAfterHeader);
-
-        if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
-            return Math.ceil(retryAfterSeconds);
-        }
 
         if (retryAfterHeader != null) {
+            const retryAfterSeconds = Number(retryAfterHeader);
+
+            if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+                return Math.ceil(retryAfterSeconds);
+            }
+
             const retryAt = Date.parse(retryAfterHeader);
 
             if (Number.isFinite(retryAt) && retryAt > Date.now()) {
@@ -261,7 +267,7 @@ export class ProxySafeUtils {
             }
         }
 
-        return DEFAULT_RATE_LIMIT_BACKOFF_SECONDS;
+        return undefined;
     };
 
     /**

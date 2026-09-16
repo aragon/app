@@ -70,12 +70,21 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
     let placeholderText = isError ? t(`${translationKey}.error`) : undefined;
 
     if (isRateLimited) {
-        placeholderText =
+        // The service states its own wait, and it is the only thing here anyone can rely on: no
+        // published Safe limit is hourly, so the app states the asked-for wait rather than
+        // inventing a window. Rendered as a duration because "300 seconds" makes a reader divide.
+        const retryWait =
             rateLimitedRetryAfter == null
+                ? undefined
+                : formatterUtils.formatDate(
+                      Date.now() + rateLimitedRetryAfter * 1000,
+                      { format: DateFormat.DURATION },
+                  );
+
+        placeholderText =
+            retryWait == null
                 ? t(`${translationKey}.rateLimited`)
-                : t(`${translationKey}.rateLimitedRetry`, {
-                      seconds: rateLimitedRetryAfter,
-                  });
+                : t(`${translationKey}.rateLimitedRetry`, { wait: retryWait });
     }
 
     /**
