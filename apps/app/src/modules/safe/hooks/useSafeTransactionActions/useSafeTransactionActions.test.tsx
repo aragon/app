@@ -8,8 +8,12 @@ import { type Hex, pad, toEventSelector } from 'viem';
 import * as WagmiActions from 'wagmi/actions';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
-import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
+import type {
+    ISafeMultisigTransaction,
+    ISafeQueueResponse,
+} from '@/shared/api/safeService';
 import * as safeServiceApi from '@/shared/api/safeService';
+import { safeServiceKeys } from '@/shared/api/safeService';
 import {
     generateSafeConfirmation,
     generateSafeNextNonceResponse,
@@ -71,6 +75,14 @@ describe('useSafeTransactionActions hook', () => {
     const init = jest.spyOn(Safe, 'init');
     const useConfirm = jest.spyOn(safeServiceApi, 'useConfirmSafeTransaction');
     const logError = jest.spyOn(monitoringUtils, 'logError');
+    const setConnectedWallet = (address: Hex) => {
+        useWalletAccount.mockReturnValue({
+            address,
+            chainId,
+            isConnecting: false,
+            isReconnecting: false,
+        });
+    };
 
     const renderActions = (queryClient = new QueryClient()) =>
         renderHook(
@@ -100,12 +112,7 @@ describe('useSafeTransactionActions hook', () => {
     });
 
     beforeEach(() => {
-        useWalletAccount.mockReturnValue({
-            address: owner,
-            chainId,
-            isConnecting: false,
-            isReconnecting: false,
-        });
+        setConnectedWallet(owner);
         jest.mocked(WagmiActions.getConnection).mockReturnValue({
             accounts: [owner],
             chainId,
@@ -167,6 +174,7 @@ describe('useSafeTransactionActions hook', () => {
             expect(await result.current.execute(transaction)).toEqual({
                 status: 'executed',
                 hash: outerHash,
+                safeTxHash: transaction.safeTxHash,
             });
         });
         expect(WagmiActions.sendTransaction).toHaveBeenCalledTimes(1);
@@ -194,6 +202,7 @@ describe('useSafeTransactionActions hook', () => {
     );
 
     it('does not sign a reviewed transaction after its nonce is consumed', async () => {
+        setConnectedWallet(secondOwner);
         getNonce.mockResolvedValue(
             generateSafeNextNonceResponse({ currentNonce: '8' }),
         );
@@ -204,7 +213,101 @@ describe('useSafeTransactionActions hook', () => {
         expect(confirmTransaction).not.toHaveBeenCalled();
     });
 
+    it('does not prompt an owner whose confirmation the live queue already holds', async () => {
+        // The row can be minutes stale, so the guard reads the queue rather than the reviewed copy.
+        const { result } = renderActions();
+        await act(() => result.current.confirm(transaction));
+        expect(result.current.confirmError).toBe('alreadyConfirmed');
+        expect(signTypedData).not.toHaveBeenCalled();
+        expect(confirmTransaction).not.toHaveBeenCalled();
+    });
+
+    it('leaves a cancelled signature retryable instead of reporting a failure', async () => {
+        setConnectedWallet(secondOwner);
+        signTypedData.mockRejectedValue(
+            Object.assign(new Error('wrapped'), {
+                cause: { code: 4001, message: 'User rejected the request' },
+            }),
+        );
+        const { result } = renderActions();
+        await act(() => result.current.confirm(transaction));
+        expect(result.current.confirmError).toBeUndefined();
+        expect(result.current.isConfirming).toBe(false);
+        expect(confirmTransaction).not.toHaveBeenCalled();
+        // Still reported: `beforeSend` tags expected wallet behaviour rather than dropping it.
+        expect(logError).toHaveBeenCalledTimes(1);
+    });
+
+    it('answers an accepted confirmation the lagging queue still omits, and never signs it twice', async () => {
+        // The backend serves the queue from a shared cache, so the read after signing can still be
+        // the pre-signature snapshot. The accepted signature is stored regardless.
+        setConnectedWallet(secondOwner);
+        jest.useFakeTimers();
+        const { result } = renderActions();
+        try {
+            await act(() => result.current.confirm(transaction));
+            expect(confirmTransaction).toHaveBeenCalledTimes(1);
+
+            const key = `${transaction.safeTxHash.toLowerCase()}:${secondOwner.toLowerCase()}`;
+            expect(result.current.submittedConfirmations.has(key)).toBe(true);
+            expect(result.current.confirmError).toBeUndefined();
+
+            // Every reconciliation read keeps returning the stale single confirmation.
+            await act(() => jest.advanceTimersByTimeAsync(20_000));
+            expect(result.current.submittedConfirmations.has(key)).toBe(true);
+            expect(result.current.confirmationSyncTimedOut).toBe(true);
+
+            // Asked again while the queue lags, the owner is told it is held, not re-prompted.
+            await act(() => result.current.confirm(transaction));
+            expect(result.current.confirmError).toBe('alreadyConfirmed');
+            expect(confirmTransaction).toHaveBeenCalledTimes(1);
+            expect(signTypedData).toHaveBeenCalledTimes(1);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('stops claiming a submission once the queue returns the confirmation', async () => {
+        setConnectedWallet(secondOwner);
+        jest.useFakeTimers();
+        const { result } = renderActions();
+        try {
+            await act(() => result.current.confirm(transaction));
+            getQueue.mockResolvedValue(
+                generateSafeQueueResponse({
+                    results: [
+                        {
+                            ...transaction,
+                            confirmations: [
+                                ...transaction.confirmations,
+                                generateSafeConfirmation({
+                                    owner: secondOwner,
+                                    signature,
+                                }),
+                            ],
+                        },
+                    ],
+                }),
+            );
+            await act(() => jest.advanceTimersByTimeAsync(20_000));
+            expect(result.current.submittedConfirmations.size).toBe(0);
+            expect(result.current.confirmationSyncTimedOut).toBe(false);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('claims no submission when the wallet prompt is cancelled', async () => {
+        setConnectedWallet(secondOwner);
+        signTypedData.mockRejectedValue({ code: 4001 });
+        const { result } = renderActions();
+        await act(() => result.current.confirm(transaction));
+        expect(result.current.submittedConfirmations.size).toBe(0);
+        expect(result.current.confirmationSyncTimedOut).toBe(false);
+    });
+
     it('keeps a stored signature when refreshing the queue afterwards fails', async () => {
+        setConnectedWallet(secondOwner);
         // The service already holds the signature. Reporting the failed refresh as a failed
         // confirmation would ask the owner to sign again for nothing.
         const client = new QueryClient();
@@ -245,15 +348,51 @@ describe('useSafeTransactionActions hook', () => {
         expect(signTypedData).not.toHaveBeenCalled();
     });
 
+    it('drops an executed transaction from the cached queue once the backend stops returning it', async () => {
+        // The executed transaction reaches the backend's cache after the receipt, so a single
+        // invalidation leaves the row it just executed rendering as pending.
+        jest.useFakeTimers();
+        const client = new QueryClient();
+        const queueKey = safeServiceKeys.safePendingTransactions({
+            urlParams: {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: safeAddress,
+            },
+        });
+        const { result } = renderActions(client);
+        try {
+            await act(async () => {
+                expect(await result.current.execute(transaction)).toEqual({
+                    status: 'executed',
+                    hash: outerHash,
+                    safeTxHash: transaction.safeTxHash,
+                });
+            });
+
+            // First reads still carry the executed transaction, then the backend catches up.
+            await act(() => jest.advanceTimersByTimeAsync(1500));
+            expect(
+                client
+                    .getQueryData<ISafeQueueResponse>(queueKey)
+                    ?.results.map(({ safeTxHash }) => safeTxHash),
+            ).toEqual([transaction.safeTxHash]);
+
+            getQueue.mockResolvedValue(
+                generateSafeQueueResponse({ results: [] }),
+            );
+            await act(() => jest.advanceTimersByTimeAsync(20_000));
+            expect(
+                client.getQueryData<ISafeQueueResponse>(queueKey)?.results,
+            ).toEqual([]);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
     it('refuses a disconnected review closure after the connected account changes to a non-owner', async () => {
         const { result, rerender } = renderActions();
         const reviewedAction = result.current.execute;
-        useWalletAccount.mockReturnValue({
-            address: `0x${'33'.repeat(20)}`,
-            chainId,
-            isConnecting: false,
-            isReconnecting: false,
-        });
+        setConnectedWallet(`0x${'33'.repeat(20)}` as Hex);
         rerender();
         await act(async () => {
             expect(await reviewedAction(transaction)).toEqual({
@@ -280,12 +419,14 @@ describe('useSafeTransactionActions hook', () => {
                     status: 'error',
                     messageKey,
                     hash: outerHash,
+                    safeTxHash: transaction.safeTxHash,
                 });
             });
         },
     );
 
     it('keeps an accepted confirmation when later execution loses authority', async () => {
+        setConnectedWallet(secondOwner);
         const { result } = renderActions();
         await act(() => result.current.confirm(transaction));
         expect(confirmTransaction).toHaveBeenCalledTimes(1);
@@ -294,6 +435,7 @@ describe('useSafeTransactionActions hook', () => {
             expect(await result.current.execute(transaction)).toEqual({
                 status: 'error',
                 messageKey: 'authorityChanged',
+                safeTxHash: transaction.safeTxHash,
             });
         });
         expect(result.current.confirmError).toBeUndefined();
@@ -310,6 +452,7 @@ describe('useSafeTransactionActions hook', () => {
             expect(await result.current.execute(transaction)).toEqual({
                 status: 'executed',
                 hash: outerHash,
+                safeTxHash: transaction.safeTxHash,
             });
         });
         expect(result.current.isExecuting).toBe(false);

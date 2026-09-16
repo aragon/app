@@ -3242,6 +3242,7 @@
           "unknownVersion": "unknown",
           "unreachable": "Safe{Wallet} is unreachable. Confirmations shown may be incomplete.",
           "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
+          "viewInAccountQueue": "See this transaction in the Safe's queue",
           "veto": "Veto proposal",
           "vetoAndExecute": "Veto and execute",
             "vetoOnly": "Veto only",
@@ -3738,6 +3739,9 @@
           "details": {
             "address": "Address",
             "chain": "Chain",
+            "guard": "Transaction guard",
+            "modules": "Enabled modules",
+            "modulesValue": "{{count}}",
             "nonce": "Nonce",
             "threshold": "Threshold",
             "thresholdValue": "{{threshold}} of {{owners}}",
@@ -3747,7 +3751,7 @@
           }
         },
         "header": {
-          "description": "An interactive view of this Safe: review, confirm and execute transactions alongside its owners, signing threshold, contract version, nonce and balances."
+          "description": "An interactive view of this Safe: review, confirm and execute transactions alongside its owners, signing threshold, contract version, nonce, balances, and any transaction guard or enabled modules that also govern what it can do."
         },
         "main": {
           "assets": {
@@ -3804,11 +3808,28 @@
           "description": "The pending transactions of this Safe could not be loaded. Please try again later.",
           "heading": "Unable to load pending transactions"
         },
+        "followedMissing": "The transaction you followed here is not in this queue. It may already have executed, or another transaction may have taken its nonce.",
+        "execution": {
+          "authorityChanged": "The Safe owners or signing threshold changed, so this transaction was not submitted.",
+          "error": "The transaction could not be executed. Please try again.",
+          "executed": "The Safe transaction was executed successfully.",
+          "innerFailed": "The Safe transaction was submitted, but the transaction inside the Safe failed.",
+          "nonceConsumed": "This transaction can no longer execute because the Safe already used its nonce.",
+          "nonceQueued": "This transaction is queued behind the Safe's current nonce and was not submitted.",
+          "rejected": "The Safe rejected this transaction during simulation, so it was not submitted.",
+          "reverted": "The Safe transaction reverted before its inner call ran.",
+          "safeTransaction": "View this transaction in the Safe app",
+          "transactionHash": "View the submitted transaction",
+          "unavailable": "This transaction is no longer available in the Safe queue.",
+          "unconfirmed": "The Safe transaction was submitted, but its execution could not be confirmed."
+        },
         "item": {
+          "alreadyConfirmed": "You already confirmed this transaction. It is waiting for the remaining owners.",
           "confirm": "Confirm",
           "confirmations": "{{count}} of {{required}} confirmations",
           "error": "The confirmation could not be submitted. Please try again.",
           "execute": "Execute",
+          "followed": "Followed here",
           "hashMismatch": "This transaction changed after review, so it was not submitted.",
           "nonce": "Nonce {{nonce}}",
           "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",

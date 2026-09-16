@@ -9,10 +9,12 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
 import {
     type ISafeMultisigTransaction,
+    type ISafeQueueResponse,
     safeService,
     safeServiceKeys,
     useConfirmSafeTransaction,
 } from '@/shared/api/safeService';
+import { errorUtils, type ISerializedError } from '@/shared/utils/errorUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { SafeExecutionOutcome } from '../../utils/safeExecutionOutcomeUtils';
 import { safeTransactionEnvelopeUtils } from '../../utils/safeTransactionEnvelopeUtils';
@@ -41,10 +43,20 @@ export interface IUseSafeTransactionActionsParams {
  * Result of an execution attempt, discriminated so a refusal cannot be read as a hash and a success
  * cannot be read as a failure. `hash` is present only when a transaction was actually sent — a
  * refusal spends no gas and has no hash to link to.
+ *
+ * `safeTxHash` identifies the queued transaction the attempt was made against, which is a different
+ * value from `hash`: the Safe transaction service and the Safe app address a transaction by the
+ * former, while a block explorer needs the latter. Both are carried so a caller can link either
+ * without re-deriving one from the other.
  */
 export type ISafeExecutionActionOutcome =
-    | { status: 'executed'; hash: string }
-    | { status: 'error'; messageKey: string; hash?: string };
+    | { status: 'executed'; hash: string; safeTxHash: string }
+    | {
+          status: 'error';
+          messageKey: string;
+          hash?: string;
+          safeTxHash?: string;
+      };
 
 export interface ISafeTransactionActions {
     /**
@@ -60,6 +72,22 @@ export interface ISafeTransactionActions {
      * under `app.safe.safePendingTransactionList.item`.
      */
     confirmError?: string;
+    /**
+     * Confirmation the Safe service accepted for the connected owner but the queue has not returned
+     * yet, keyed `<safeTxHash>:<owner>` in lowercase. Reports that the signature is stored, so the
+     * owner is neither re-prompted nor left without an answer; it never advances the confirmation
+     * count, which only the queue can do.
+     */
+    submittedConfirmations: Set<string>;
+    /**
+     * Whether reconciliation gave up before the queue returned the accepted confirmation. The
+     * signature is stored either way; only its visibility is outstanding.
+     */
+    confirmationSyncTimedOut: boolean;
+    /**
+     * Re-reads the queue on demand, for an owner whose accepted confirmation has not appeared.
+     */
+    refreshQueue: () => void;
     /**
      * Executes a queued transaction that already carries its signatures. Returns a classified
      * outcome the caller surfaces where it survives the row leaving the queue.
@@ -108,6 +136,43 @@ const hasEip1193Request = (value: unknown): boolean =>
     typeof value.request === 'function';
 
 /**
+ * Wallet rejection texts, mirroring the expected-behaviour patterns `monitoringUtils` routes out of
+ * the alert stream. Matched alongside the EIP-1193 code because a rejection can arrive as a wrapped
+ * `cause` whose code was lost, and because protocol-kit's signer can surface an ethers-shaped
+ * `ACTION_REJECTED` instead of a numeric code.
+ */
+const userRejectionMessages = [
+    'user rejected the request',
+    'signing aborted by user',
+    'user denied transaction signature',
+] as const;
+
+const isUserRejectionError = (error: unknown): boolean => {
+    let current: ISerializedError | undefined = errorUtils.serialize(error);
+
+    while (current != null) {
+        const message = current.message?.toLowerCase();
+
+        if (
+            current.code === 4001 ||
+            current.code === '4001' ||
+            current.code === 'ACTION_REJECTED' ||
+            current.name === 'UserRejectedRequestError' ||
+            (message != null &&
+                userRejectionMessages.some((pattern) =>
+                    message.includes(pattern),
+                ))
+        ) {
+            return true;
+        }
+
+        current = current.cause;
+    }
+
+    return false;
+};
+
+/**
  * Generic account copy for a Safe execution that ran but did not do what was intended. Each outcome
  * is a different situation — the nonce survives an outer revert and is spent by the other two — and
  * none of them claims a governance report effect: an ordinary account transaction has none to name.
@@ -120,17 +185,18 @@ const executionOutcomeKeys = {
 
 const classifyReport = (
     report: ISafeExecutionOutcomeReport,
+    safeTxHash: string,
 ): ISafeExecutionActionOutcome => {
     if (report.result === SafeExecutionResult.EXECUTED) {
-        return { status: 'executed', hash: report.hash };
+        return { status: 'executed', hash: report.hash, safeTxHash };
     }
 
     if (report.result === SafeExecutionResult.AUTHORITY_CHANGED) {
-        return { status: 'error', messageKey: 'authorityChanged' };
+        return { status: 'error', messageKey: 'authorityChanged', safeTxHash };
     }
 
     if (report.result === SafeExecutionResult.REJECTED) {
-        return { status: 'error', messageKey: 'rejected' };
+        return { status: 'error', messageKey: 'rejected', safeTxHash };
     }
 
     if (report.result === SafeExecutionResult.FAILED) {
@@ -138,12 +204,13 @@ const classifyReport = (
             status: 'error',
             messageKey: executionOutcomeKeys[report.outcome],
             hash: report.hash,
+            safeTxHash,
         };
     }
 
     // EFFECT_MISSING: reachable only with a `verifyEffect`, which the account path never passes.
     // Treated as unconfirmed rather than trusted as done.
-    return { status: 'error', messageKey: 'unconfirmed' };
+    return { status: 'error', messageKey: 'unconfirmed', safeTxHash };
 };
 
 /**
@@ -173,6 +240,19 @@ export const useSafeTransactionActions = (
     const [isConfirming, setIsConfirming] = useState(false);
     const [confirmError, setConfirmError] = useState<string>();
     const [isExecuting, setIsExecuting] = useState(false);
+    const [submittedConfirmations, setSubmittedConfirmations] = useState(
+        () => new Set<string>(),
+    );
+    const [confirmationSyncTimedOut, setConfirmationSyncTimedOut] =
+        useState(false);
+    const isMounted = useRef(true);
+
+    useEffect(
+        () => () => {
+            isMounted.current = false;
+        },
+        [],
+    );
 
     useEffect(() => {
         latestConnectedAddress.current = connectedAddress;
@@ -245,6 +325,127 @@ export const useSafeTransactionActions = (
     };
 
     /**
+     * Re-reads the queue on a backoff until `isSettled` accepts the snapshot, and returns whether
+     * it ever did.
+     *
+     * Needed because the backend serves the queue from a shared cache that can still hold the
+     * pre-action snapshot for a moment after the service accepted a signature or the chain
+     * executed a transaction. Delays back off rather than hammering a rate-limited service, and
+     * running out of them is not a failure — the action already happened, only its visibility is
+     * outstanding, and the list's own interval keeps trying.
+     */
+    const reconcileQueue = async (
+        operation: string,
+        safeTxHash: string,
+        isSettled: (queue: ISafeQueueResponse) => boolean,
+    ): Promise<boolean> => {
+        const queryKey = safeServiceKeys.safePendingTransactions({ urlParams });
+
+        try {
+            for (const delay of [1000, 2000, 4000, 8000]) {
+                const { promise, resolve } = Promise.withResolvers<void>();
+                setTimeout(resolve, delay);
+                await promise;
+
+                if (!isMounted.current) {
+                    return false;
+                }
+
+                // Read the service directly rather than refetching through the cache: the row's
+                // query may not be the only observer, and seeding the result updates the list in
+                // the same step.
+                const queue = await safeService.getSafePendingTransactions({
+                    urlParams,
+                });
+                queryClient.setQueryData<ISafeQueueResponse>(queryKey, queue);
+
+                if (isSettled(queue)) {
+                    return true;
+                }
+            }
+        } catch (error) {
+            monitoringUtils.logError(error, {
+                context: { safeAddress, safeTxHash, operation },
+            });
+        }
+
+        return false;
+    };
+
+    /**
+     * Answers an accepted confirmation as soon as the queue returns it. The signature is already
+     * stored by the time this runs, so the only question is when the row can stop saying so.
+     */
+    const reconcileConfirmation = async (safeTxHash: string, owner: string) => {
+        const key = `${safeTxHash.toLowerCase()}:${owner.toLowerCase()}`;
+
+        setSubmittedConfirmations((current) => new Set(current).add(key));
+        setConfirmationSyncTimedOut(false);
+
+        const settled = await reconcileQueue(
+            'safe_reconcile_confirmation',
+            safeTxHash,
+            (queue) => {
+                const live = queue.results.find(
+                    (candidate) =>
+                        candidate.safeTxHash.toLowerCase() ===
+                        safeTxHash.toLowerCase(),
+                );
+
+                // Gone from the queue (executed or replaced) counts as caught up: the row itself is
+                // no longer there to report anything about.
+                return (
+                    live == null ||
+                    live.confirmations.some((confirmation) =>
+                        addressUtils.isAddressEqual(confirmation.owner, owner),
+                    )
+                );
+            },
+        );
+
+        if (!isMounted.current) {
+            return;
+        }
+
+        if (settled) {
+            setSubmittedConfirmations((current) => {
+                const next = new Set(current);
+                next.delete(key);
+
+                return next;
+            });
+
+            return;
+        }
+
+        setConfirmationSyncTimedOut(true);
+    };
+
+    /**
+     * Drops an executed transaction from the queue as soon as the backend stops returning it.
+     *
+     * A single invalidation is not enough: the executed transaction reaches the backend's cache
+     * after the receipt, so the row it just executed keeps rendering as pending. Only the queue is
+     * re-read per pass — the executed transaction leaving it is enough to drop the row, and the
+     * advanced nonce the list also filters by arrives with the single `invalidateSafeState` once
+     * the queue has caught up, rather than costing an extra info read on every pass.
+     */
+    const reconcileExecution = async (safeTxHash: string) => {
+        await reconcileQueue(
+            'safe_reconcile_execution',
+            safeTxHash,
+            (queue) =>
+                !queue.results.some(
+                    (candidate) =>
+                        candidate.safeTxHash.toLowerCase() ===
+                        safeTxHash.toLowerCase(),
+                ),
+        );
+
+        invalidateSafeState();
+    };
+
+    /**
      * Refreshed on every execution exit, success or refusal. An executed transaction has left the
      * queue and moved the nonce, and a refusal was decided against a queue and nonce that are now
      * the stale part — so info, queue and history are all re-read.
@@ -302,6 +503,21 @@ export const useSafeTransactionActions = (
                 setConfirmError('hashMismatch');
                 return;
             }
+            const connectedSignerAddress = latestConnectedAddress.current;
+            // A confirmation this session already had accepted counts as held even while the queue
+            // still serves the older snapshot, so the owner is never asked to sign it twice.
+            if (
+                connectedSignerAddress != null &&
+                (live.confirmations.some(({ owner }) =>
+                    addressUtils.isAddressEqual(owner, connectedSignerAddress),
+                ) ||
+                    submittedConfirmations.has(
+                        `${transaction.safeTxHash.toLowerCase()}:${connectedSignerAddress.toLowerCase()}`,
+                    ))
+            ) {
+                setConfirmError('alreadyConfirmed');
+                return;
+            }
 
             const nextNonce = await safeService.getSafeNextNonce({ urlParams });
 
@@ -328,11 +544,15 @@ export const useSafeTransactionActions = (
                 body: { signature: signature.data },
             });
 
-            // Never awaited and never fatal: the signature is already stored by the service, and
-            // reporting a failed cache refresh as a failed confirmation would re-prompt the owner
-            // for a signature the Safe already holds.
-            refreshQueue();
+            // The POST resolved, so the signature is stored. Reconciliation runs detached and is
+            // never fatal: reporting a failed cache re-read as a failed confirmation would re-prompt
+            // the owner for a signature the Safe already holds.
+            void reconcileConfirmation(safeTxHash, signerAddress);
         } catch (error) {
+            // Always reported, rejections included: `monitoringUtils.beforeSend` tags expected
+            // wallet behaviour so it stays searchable without alerting. Only the row copy is
+            // withheld — an owner who dismissed the prompt knows what they did, and "could not be
+            // submitted, try again" would describe a failure that never happened.
             monitoringUtils.logError(error, {
                 context: {
                     safeAddress,
@@ -340,7 +560,10 @@ export const useSafeTransactionActions = (
                     operation: 'safe_confirm_transaction',
                 },
             });
-            setConfirmError('error');
+
+            if (!isUserRejectionError(error)) {
+                setConfirmError('error');
+            }
         } finally {
             setIsConfirming(false);
         }
@@ -355,6 +578,7 @@ export const useSafeTransactionActions = (
         transaction: ISafeMultisigTransaction,
     ): Promise<ISafeExecutionActionOutcome> => {
         setIsExecuting(true);
+        let outcome: ISafeExecutionActionOutcome | undefined;
 
         try {
             // Read the transaction as the service holds it *now*, not as it was reviewed: a
@@ -424,7 +648,9 @@ export const useSafeTransactionActions = (
                 ),
             });
 
-            return classifyReport(report);
+            outcome = classifyReport(report, transaction.safeTxHash);
+
+            return outcome;
         } catch (error) {
             monitoringUtils.logError(error, {
                 context: {
@@ -433,12 +659,45 @@ export const useSafeTransactionActions = (
                     operation: 'safe_execute_transaction',
                 },
             });
-            return { status: 'error', messageKey: 'error' };
+            outcome = {
+                status: 'error',
+                messageKey: 'error',
+                safeTxHash: transaction.safeTxHash,
+            };
+
+            return outcome;
         } finally {
             setIsExecuting(false);
-            invalidateSafeState();
+
+            // Only an outcome that actually spent the nonce leaves the queue, so only those are
+            // worth waiting for. A refusal decided before sending — not an owner, wrong nonce,
+            // stale queue — leaves the transaction exactly where it was, so reconciling would
+            // spend every delay against a rate-limited service and hold the rest of the Safe's
+            // state behind a loop that can never settle. An outer revert rolls the nonce back,
+            // so it belongs with the refusals.
+            const hasLeftQueue =
+                outcome?.status === 'executed' ||
+                outcome?.messageKey === 'innerFailed' ||
+                outcome?.messageKey === 'unconfirmed';
+
+            if (hasLeftQueue) {
+                // Detached and never fatal: the receipt is already classified, so a failed re-read
+                // must not turn a sent transaction into an error.
+                void reconcileExecution(transaction.safeTxHash);
+            } else {
+                invalidateSafeState();
+            }
         }
     };
 
-    return { confirm, isConfirming, confirmError, execute, isExecuting };
+    return {
+        confirm,
+        isConfirming,
+        confirmError,
+        submittedConfirmations,
+        confirmationSyncTimedOut,
+        refreshQueue,
+        execute,
+        isExecuting,
+    };
 };
