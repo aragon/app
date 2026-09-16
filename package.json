@@ -9,6 +9,7 @@
     "license": "GPL-3.0",
     "scripts": {
         "build": "turbo run build",
+        "css:check": "turbo run css:check",
         "design-sync:build-css": "node .design-sync/build-css.mjs",
         "dev": "turbo run dev",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
