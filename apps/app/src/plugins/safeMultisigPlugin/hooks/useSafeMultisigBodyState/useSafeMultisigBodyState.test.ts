@@ -481,11 +481,7 @@ describe('useSafeMultisigBodyState hook', () => {
         );
     });
 
-    /**
-     * Owners and threshold change with no DAO transaction and nothing queued, so an empty queue
-     * must not stop the account read: tying it to the queue left the card describing the Safe as it
-     * was when the page loaded. The queue read stays gated, because that one costs Safe quota.
-     */
+    /** Reads the poll cadence a query was actually mounted with. */
     const pollOf = (spy: jest.SpyInstance) => {
         const lastCall = spy.mock.calls.at(-1) as unknown[];
         const options = lastCall[1] as {
@@ -497,6 +493,11 @@ describe('useSafeMultisigBodyState hook', () => {
         return options.refetchInterval({ state: { error: null } });
     };
 
+    /**
+     * Owners and threshold change with no DAO transaction and nothing queued, so an empty queue
+     * must not stop the account read: tying it to the queue left the card describing the Safe as it
+     * was when the page loaded. The queue read stays gated, because that one costs Safe quota.
+     */
     it('keeps reading the account while the body can still act, with nothing queued', () => {
         const { result } = renderState();
 
