@@ -114,6 +114,25 @@ describe('SppProposalUtils', () => {
             );
         });
 
+        /**
+         * A stage stays ACTIVE after its voting window while `maxAdvance` is open, because a late
+         * result still decides it. Passing that closed window as the proposal's end read the
+         * proposal as REJECTED while its own stage card was still offering a vote.
+         */
+        it('leaves the end date open while the last stage can still be answered', () => {
+            const lastStage = generateSppStage({ stageIndex: 1 });
+            const settings = generateSppPluginSettings({
+                stages: [generateSppStage(), lastStage],
+            });
+            const proposal = generateProposalWithStage({ settings });
+            getStageEndDateSpy.mockReturnValue(DateTime.fromSeconds(456));
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            sppProposalUtils.getProposalStatus(proposal);
+            expect(getProposalStatusSpy).toHaveBeenCalledWith(
+                expect.objectContaining({ endDate: undefined }),
+            );
+        });
+
         it('sets the execution expiry date param to the max advance date of the last stage', () => {
             const maxAdvance = 789;
             const lastStage = generateSppStage({ stageIndex: 1 });
