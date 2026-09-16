@@ -65,26 +65,49 @@ export const useSafeMultisigBodyState = (
         maxAdvanceDate != null &&
         DateTime.now() < maxAdvanceDate;
 
-    // An idle body card must cost nothing, so polling only runs while the Safe queue holds a
+    // The queue read costs Safe transaction service quota, so it polls only while it holds a
     // transaction that can still execute; otherwise the default focus refetch is enough.
     const [isQueueLive, setIsQueueLive] = useState(false);
 
-    // A rate-limited read means the shared quota is already exhausted, so the poll must slow down
-    // rather than keep asking at the normal cadence. The upstream `Retry-After` is honoured when it
-    // is longer than the usual interval.
-    const refetchInterval = useCallback(
-        ({ state }: { state: { error: unknown } }) => {
-            if (!isQueueLive) {
-                return false;
-            }
+    /**
+     * A rate-limited read means the shared quota is already exhausted, so the poll must slow down
+     * rather than keep asking at the normal cadence. The upstream `Retry-After` is honoured when it
+     * is longer than the usual interval.
+     */
+    const pollWhile = useCallback(
+        (isActive: boolean) =>
+            ({ state }: { state: { error: unknown } }) => {
+                if (!isActive) {
+                    return false as const;
+                }
 
-            const retryAfter = SafeServiceError.isRateLimitedError(state.error)
-                ? state.error.retryAfter
-                : undefined;
+                const retryAfter = SafeServiceError.isRateLimitedError(
+                    state.error,
+                )
+                    ? state.error.retryAfter
+                    : undefined;
 
-            return Math.max(safeBodyPollInterval, (retryAfter ?? 0) * 1000);
-        },
-        [isQueueLive],
+                return Math.max(safeBodyPollInterval, (retryAfter ?? 0) * 1000);
+            },
+        [],
+    );
+
+    /**
+     * Owners and threshold change with no DAO transaction and nothing queued: an owner added while
+     * this page is open changes who may report and how many confirmations it takes. Tying this read
+     * to the queue left the card describing the Safe as it was when the page loaded until a focus
+     * change happened to refresh it.
+     *
+     * Affordable because it is served from Aragon's own contract reads, not the rate-limited Safe
+     * service - so it follows what the body can still do rather than what is already queued.
+     */
+    const infoRefetchInterval = useMemo(
+        () => pollWhile(canStillAffectOutcome || isQueueLive),
+        [pollWhile, canStillAffectOutcome, isQueueLive],
+    );
+    const queueRefetchInterval = useMemo(
+        () => pollWhile(isQueueLive),
+        [pollWhile, isQueueLive],
     );
 
     const urlParams = useMemo(() => ({ network, address }), [network, address]);
@@ -96,7 +119,7 @@ export const useSafeMultisigBodyState = (
         error: safeInfoError,
     } = useSafeInfo(
         { urlParams },
-        { enabled: isNetworkSupported, refetchInterval },
+        { enabled: isNetworkSupported, refetchInterval: infoRefetchInterval },
     );
 
     const currentNonce = safeInfo?.nonce;
@@ -114,7 +137,7 @@ export const useSafeMultisigBodyState = (
             // the recorded verdict. Past the stage the queue is moot and the read stops.
             enabled: isNetworkSupported && isStageCurrent,
             placeholderData: keepPreviousData,
-            refetchInterval,
+            refetchInterval: queueRefetchInterval,
         },
     );
 

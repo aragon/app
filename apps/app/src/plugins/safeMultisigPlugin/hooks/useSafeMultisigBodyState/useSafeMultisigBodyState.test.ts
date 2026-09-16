@@ -8,6 +8,7 @@ import {
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
+import { safeBodyPollInterval } from '../../constants';
 import {
     generateSafeConfirmation,
     generateSafeInfo,
@@ -478,5 +479,36 @@ describe('useSafeMultisigBodyState hook', () => {
             expect.any(Object),
             expect.objectContaining({ enabled: false }),
         );
+    });
+
+    /**
+     * Owners and threshold change with no DAO transaction and nothing queued, so an empty queue
+     * must not stop the account read: tying it to the queue left the card describing the Safe as it
+     * was when the page loaded. The queue read stays gated, because that one costs Safe quota.
+     */
+    it('keeps reading the account while the body can still act, with nothing queued', () => {
+        const { result } = renderState();
+        const pollOf = (spy: jest.SpyInstance) =>
+            (
+                spy.mock.calls.at(-1)?.[1] as {
+                    refetchInterval: (query: {
+                        state: { error: unknown };
+                    }) => number | false;
+                }
+            ).refetchInterval({ state: { error: null } });
+
+        expect(result.current.canStillAffectOutcome).toBe(true);
+        expect(pollOf(useSafeInfoSpy)).toEqual(safeBodyPollInterval);
+        expect(pollOf(useSafePendingTransactionsSpy)).toBe(false);
+    });
+
+    it('stops reading the account once the stage can no longer be affected', () => {
+        renderState({ currentStage: stageIndex + 1 });
+
+        const { refetchInterval } = useSafeInfoSpy.mock.calls.at(-1)?.[1] as {
+            refetchInterval: (query: { state: { error: unknown } }) => unknown;
+        };
+
+        expect(refetchInterval({ state: { error: null } })).toBe(false);
     });
 });
