@@ -23,9 +23,11 @@ Storybook reflects the latest design tokens, styles, and components, so should b
 
 ## Development Setup
 
-To start developing with the UI Kit:
+The UI Kit lives in the [aragon/app](https://github.com/aragon/app) monorepo, so Node, pnpm and the git hooks are
+owned by the repo root — this package has no `.nvmrc`, `packageManager` or setup step of its own.
 
-1. Use the Node.js version pinned in [`.nvmrc`](./.nvmrc) (Node >= 24.16). With [nvm](https://github.com/nvm-sh/nvm):
+1. Use the Node.js version pinned in the repo root's [`.nvmrc`](../../.nvmrc) (Node >= 24.16). With
+   [nvm](https://github.com/nvm-sh/nvm), from the repo root:
 
 ```bash
 nvm install   # installs the version from .nvmrc
@@ -33,19 +35,20 @@ nvm use
 ```
 
 2. Install [pnpm](https://pnpm.io/installation) (>= 10). pnpm self-manages the version pinned in `packageManager` in
-   `package.json`, so no Corepack is needed:
+   the root `package.json`, so no Corepack is needed:
 
 ```bash
 npm install -g pnpm
 ```
 
-3. Install dependencies and setup husky:
+3. Install dependencies **once from the repo root** — it installs every workspace and sets up the root-owned hooks:
 
 ```bash
-pnpm install && pnpm run setup
+pnpm install
 ```
 
-4. Start Storybook for component development:
+4. Start Storybook for component development (from this directory, or from the root as
+   `pnpm --filter @aragon/gov-ui-kit storybook`):
 
 ```bash
 pnpm storybook

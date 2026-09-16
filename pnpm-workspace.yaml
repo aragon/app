@@ -145,7 +145,10 @@ overrides:
   dompurify@<=3.4.10: '>=3.4.11'
   js-yaml@>=4.0.0 <4.1.2: '>=4.2.0'
   brace-expansion@<1.1.18: ^1.1.18
-  # gov-ui-kit specific
+  # Carried over from the gov-ui-kit repo at the monorepo merge; they now apply repo-wide.
+  # The jest-dom clamp holds the 6.x line at 6.9.1 for every workspace on the catalog range
+  # (^6.9.1) — the app and assistant-chat. It does not reach packages/gov-ui-kit, which pins
+  # 7.0.1 outright.
   '@testing-library/jest-dom@>6.9.1 <7': 6.9.1
   nanoid@<3.3.18: ^3.3.18
   'linkify-it@>=5.0.0 <5.0.2': '>=5.0.2'
