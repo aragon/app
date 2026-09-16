@@ -17,8 +17,6 @@ Use pnpm only. Node is pinned in `.nvmrc`; pnpm and engine requirements live in
 - `pnpm test` — Jest. Variants: `pnpm test:watch`, `pnpm test:coverage`.
 - `pnpm type-check` — `tsc --noemit`.
 - `pnpm lint` — Biome check with writes. `pnpm lint:check` — no writes.
-- `pnpm agents:check` — verify this file's scripts, paths, and agent entry points (runs in CI).
-- `pnpm agents:sync` — regenerate `.github/copilot-instructions.md` from AGENTS.md.
 - `pnpm css:check` — verify `build.css` still matches a source compile (runs in CI after `pnpm build`).
 
 Before a PR: `pnpm lint:check && pnpm type-check && pnpm test`.
@@ -50,9 +48,7 @@ changes (`.changeset/config.json`).
   `*.test.tsx` / `*.spec.ts(x)`. Storybook reads `docs/**/*.@(md|mdx)`,
   `src/**/*.stories.@(js|jsx|ts|tsx)`, and `src/**/*.@(md|mdx)`.
 - **Agent entry points:** `AGENTS.md` is canonical. `CLAUDE.md` imports it via `@AGENTS.md`,
-  and Cursor reads `AGENTS.md` natively. `.github/copilot-instructions.md` is a generated
-  byte-copy of `AGENTS.md` (Copilot code review does not follow symlinks); regenerate it with
-  `pnpm agents:sync` after editing this file — `pnpm agents:check` fails if it drifts.
+  and Cursor reads `AGENTS.md` natively.
 
 ## Hard Rules
 
@@ -74,6 +70,15 @@ changes (`.changeset/config.json`).
   optimizer in `rollup.config.mjs`; a nesting-unaware pass merges the selector lists of nested
   variant rules and silently corrupts the published bundle. `pnpm css:check` enforces this.
 - **Do not add ESLint or Prettier.** Lint/format is Biome via Ultracite.
+- **Shared tooling comes from the root catalog** — declare it as `"catalog:"`, never as a local
+  version. Git hooks, changesets and the Turbo binary are root-owned and must not reappear here.
+  Two deliberate exceptions, both of which regress something if catalogued:
+  - `zod` is pinned to `3.25.76` (catalog: `^4.4.3`). The kit never imports zod; it exists only to
+    satisfy viem's optional peer, and it must match what `apps/app` resolves. Otherwise pnpm gives
+    the two workspaces different peer sets, installs two `viem`/`wagmi` copies, and the app's
+    `WagmiProvider` becomes invisible to the kit's hooks (`WagmiProviderNotFoundError`).
+  - `@testing-library/jest-dom` is pinned to `7.0.1` (catalog: `^6.9.1`). The kit is on 7.x;
+    the root override holds the 6.x line at 6.9.1 for everyone else.
 - **Do not move peer deps into `dependencies`:** react, react-dom, react-hook-form,
   @tanstack/react-query, viem, wagmi, tailwindcss, @tailwindcss/typography.
 - **Do not break public API casually.** Removing/renaming an exported symbol or prop is a
@@ -94,6 +99,6 @@ changes (`.changeset/config.json`).
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `pnpm-workspace.yaml`, `turbo.json` — scripts, deps, pnpm/Turbo rules.
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
-- `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-agents-md.mjs`, `sync-agents.mjs`,
+- `scripts/` — the checks CI runs outside Biome/tsc/Jest.
   `check-build-css.mjs`. Plain Node, no framework; keep new checks in that shape.
 - `.github/workflows/library-test.yml` — CI truth for build/test/type/lint/changeset gates.
