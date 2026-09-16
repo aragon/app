@@ -47,6 +47,12 @@ export interface ISafePendingTransactionListItemProps {
      */
     safeVersion: string | null;
     /**
+     * Signing threshold read from the Safe itself, preferred over the response's
+     * `confirmationsRequired` wherever this row states how many signatures are still needed.
+     * Undefined until the Safe info resolves.
+     */
+    threshold?: number;
+    /**
      * Keeps an execution result visible after a successful execution removes the row.
      */
     onExecutionOutcome: (outcome: ISafeExecutionActionOutcome) => void;
@@ -61,6 +67,7 @@ export const SafePendingTransactionListItem: React.FC<
         network,
         chainId,
         safeVersion,
+        threshold,
         onExecutionOutcome,
     } = props;
     const {
@@ -84,7 +91,17 @@ export const SafePendingTransactionListItem: React.FC<
         isConfirming,
         isExecuting,
     } = useSafeTransactionActions({ network, safeAddress, chainId });
-    const shouldExecute = confirmations.length >= confirmationsRequired;
+    /**
+     * The chain threshold decides, not the queue's `confirmationsRequired`. That field is
+     * service-derived (upstream falls back to the Safe's latest status, then to the indexed
+     * confirmation count) and sits outside the EIP-712 `SafeTx` struct, so no hash comparison can
+     * detect a wrong value. Deflated, it flips this row to "Execute" and stops offering Confirm to
+     * owners whose signature is still required; inflated, it keeps owners signing something that
+     * has been executable for hours. Falls back to the reported value only until the Safe info
+     * resolves.
+     */
+    const requiredConfirmations = threshold ?? confirmationsRequired;
+    const shouldExecute = confirmations.length >= requiredConfirmations;
     const actionTranslationKey = shouldExecute ? 'execute' : 'confirm';
     const { address: connectedAddress } = useWalletAccount();
     const isConfirmedInQueue =
@@ -226,7 +243,7 @@ export const SafePendingTransactionListItem: React.FC<
                             'app.safe.safePendingTransactionList.item.confirmations',
                             {
                                 count: confirmations.length,
-                                required: confirmationsRequired,
+                                required: requiredConfirmations,
                             },
                         )}
                     </span>

@@ -8,6 +8,7 @@ import {
     DataListRoot,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { safeAppTransactionUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import type { Network } from '@/shared/api/daoService';
 import {
     type ISafeInfo,
@@ -46,12 +47,22 @@ export interface ISafePendingTransactionListProps {
      * Safe info resolves.
      */
     safeVersion?: ISafeInfo['version'];
+    /**
+     * Signing threshold read from the Safe itself. The queue response's own
+     * `confirmationsRequired` is service-derived — upstream falls back to the Safe's latest status
+     * and then to the indexed confirmation count — and it is not part of the EIP-712 `SafeTx`
+     * struct, so no hash comparison can detect a wrong value. The chain threshold is preferred
+     * wherever a row states how many signatures a transaction still needs. Undefined until the
+     * Safe info resolves.
+     */
+    threshold?: ISafeInfo['threshold'];
 }
 
 export const SafePendingTransactionList: React.FC<
     ISafePendingTransactionListProps
 > = (props) => {
-    const { network, address, currentNonce, chainId, safeVersion } = props;
+    const { network, address, currentNonce, chainId, safeVersion, threshold } =
+        props;
 
     const { t } = useTranslations();
     const [executionOutcome, setExecutionOutcome] =
@@ -62,7 +73,12 @@ export const SafePendingTransactionList: React.FC<
         data: pendingTransactions,
         isError,
         isLoading,
-    } = useSafePendingTransactions({ urlParams: { network, address } });
+    } = useSafePendingTransactions(
+        { urlParams: { network, address } },
+        // A post-signature refetch can still see the backend's previous snapshot.
+        // Keep the open account view current, including confirmations from other owners.
+        { refetchInterval: 30_000 },
+    );
     const outcomeMessageKey =
         executionOutcome == null
             ? undefined
@@ -75,6 +91,18 @@ export const SafePendingTransactionList: React.FC<
             : buildEntityUrl({
                   type: ChainEntityType.TRANSACTION,
                   id: executionOutcome.hash,
+              });
+    // Two different identities for one attempt: the explorer needs the execution transaction's
+    // hash, the Safe app addresses the queued transaction by its `safeTxHash`. Both are carried on
+    // the outcome so neither has to be derived from the other. Undefined on a network with no Safe
+    // short name.
+    const safeTransactionLink =
+        executionOutcome?.safeTxHash == null
+            ? undefined
+            : safeAppTransactionUrl({
+                  network,
+                  address,
+                  safeTxHash: executionOutcome.safeTxHash,
               });
 
     // Unexecuted transactions below the current nonce are permanently dead, so they are never shown.
@@ -108,6 +136,13 @@ export const SafePendingTransactionList: React.FC<
                         <Link href={executionHashLink} target="_blank">
                             {t(
                                 'app.safe.safePendingTransactionList.execution.transactionHash',
+                            )}
+                        </Link>
+                    )}
+                    {safeTransactionLink != null && (
+                        <Link href={safeTransactionLink} target="_blank">
+                            {t(
+                                'app.safe.safePendingTransactionList.execution.safeTransaction',
                             )}
                         </Link>
                     )}
@@ -147,6 +182,7 @@ export const SafePendingTransactionList: React.FC<
                             onExecutionOutcome={setExecutionOutcome}
                             safeAddress={address}
                             safeVersion={safeVersion ?? null}
+                            threshold={threshold}
                             transaction={transaction}
                         />
                     ))}

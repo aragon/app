@@ -138,6 +138,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                             currentNonce={safeInfo?.nonce}
                             network={network}
                             safeVersion={safeInfo?.version}
+                            threshold={safeInfo?.threshold}
                         />
                     </Page.MainSection>
                     <Page.MainSection
@@ -213,6 +214,44 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                                         : undefined}
                                 </p>
                             </DefinitionList.Item>
+                            {/*
+                             * Owners and threshold alone are an incomplete authority picture: a
+                             * guard can make an otherwise-valid transaction unexecutable, and a
+                             * module can move funds with no owner signature at all. Both are
+                             * already fetched and validated, so withholding them would be an
+                             * active choice to understate who can move this Safe. Disclosure
+                             * only - managing either belongs to the Safe app.
+                             */}
+                            {safeInfo?.guard != null && (
+                                <DefinitionList.Item
+                                    copyValue={safeInfo.guard}
+                                    term={t(
+                                        'app.safe.safeAccountPage.aside.details.guard',
+                                    )}
+                                >
+                                    {addressUtils.truncateAddress(
+                                        safeInfo.guard,
+                                    )}
+                                </DefinitionList.Item>
+                            )}
+                            {safeInfo != null &&
+                                safeInfo.modules.length > 0 && (
+                                    <DefinitionList.Item
+                                        term={t(
+                                            'app.safe.safeAccountPage.aside.details.modules',
+                                        )}
+                                    >
+                                        <p className="text-neutral-500">
+                                            {t(
+                                                'app.safe.safeAccountPage.aside.details.modulesValue',
+                                                {
+                                                    count: safeInfo.modules
+                                                        .length,
+                                                },
+                                            )}
+                                        </p>
+                                    </DefinitionList.Item>
+                                )}
                         </DefinitionList.Container>
                     </Page.AsideCard>
                 </Page.Aside>

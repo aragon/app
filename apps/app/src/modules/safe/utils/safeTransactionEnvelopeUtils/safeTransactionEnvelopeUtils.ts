@@ -1,5 +1,5 @@
 import { calculateSafeTransactionHash } from '@safe-global/protocol-kit';
-import { decodeFunctionData, type Hex } from 'viem';
+import { decodeFunctionData, type Hex, hashDomain, hashStruct } from 'viem';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import { safeMultiSendAbi, safeMultiSendSelector } from './safeMultiSendAbi';
 
@@ -109,6 +109,56 @@ export interface ISafeTransactionHashVerification {
 }
 
 /**
+ * Domain a Safe v1.3.0+ signs under: chain and Safe address only, no name or version. Passed
+ * explicitly because the domain type is itself part of the hash.
+ */
+const safeDomainTypes = {
+    EIP712Domain: [
+        { name: 'chainId', type: 'uint256' },
+        { name: 'verifyingContract', type: 'address' },
+    ],
+} as const;
+
+/**
+ * EIP-712 struct the Safe signs. Field order is part of the type hash, so it mirrors the contract
+ * exactly and must not be reordered.
+ */
+const safeTxTypes = {
+    SafeTx: [
+        { name: 'to', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'data', type: 'bytes' },
+        { name: 'operation', type: 'uint8' },
+        { name: 'safeTxGas', type: 'uint256' },
+        { name: 'baseGas', type: 'uint256' },
+        { name: 'gasPrice', type: 'uint256' },
+        { name: 'gasToken', type: 'address' },
+        { name: 'refundReceiver', type: 'address' },
+        { name: 'nonce', type: 'uint256' },
+    ],
+} as const;
+
+export interface ISafeVerificationHashes {
+    /**
+     * Outcome of comparing the locally computed `safeTxHash` with the reported one.
+     */
+    verification: SafeHashVerification;
+    /**
+     * Locally computed `safeTxHash`. Undefined when it could not be computed.
+     */
+    safeTxHash?: string;
+    /**
+     * EIP-712 domain hash, as a hardware wallet displays it. Undefined for a Safe whose version
+     * is unknown or predates `chainId` in the domain.
+     */
+    domainHash?: string;
+    /**
+     * EIP-712 hash of the `SafeTx` struct, as a hardware wallet displays it.
+     */
+    messageHash?: string;
+}
+
+/**
  * The transaction an owner is asked to sign, field for field. Amounts stay strings: a wei value or
  * a gas price does not survive a JS number, and the signed envelope must read back exactly.
  */
@@ -178,6 +228,11 @@ class SafeTransactionEnvelopeUtils {
      * The service is trusted for discovery, not for authorisation: a transaction whose fields hash
      * to something else is not the transaction its hash identifies, and signing either of them
      * authorises the wrong thing.
+     *
+     * What a MATCH does not prove: the envelope, the reported `safeTxHash` and `safeVersion` all
+     * arrive from the same backend, so this detects an inconsistent response, not a dishonest
+     * one. A coherent malicious envelope matches its own hash. Reading `VERSION()` from chain
+     * would remove one of those inputs from the trusted set (W11).
      */
     verifyTransactionHash = (
         params: IVerifySafeTransactionHashParams,
@@ -217,6 +272,81 @@ class SafeTransactionEnvelopeUtils {
                 : SafeHashVerification.MISMATCH;
 
         return { verification, computedHash };
+    };
+
+    /**
+     * The three hashes a signer can compare, computed here from the envelope rather than taken
+     * from any response.
+     *
+     * A hardware wallet shows the **domain hash** and the **message hash**, not the `safeTxHash`,
+     * so an owner cannot check a Safe transaction against a device unless the app shows those two.
+     * Both are derived locally: `domainHash` from the Safe address, chain and version, and
+     * `messageHash` from the envelope fields. Undefined when the version is unknown, because the
+     * EIP-712 domain changed across versions and a hash computed from the wrong domain is worse
+     * than no hash.
+     *
+     * `chainId` entered the domain in Safe v1.3.0. For an earlier Safe the domain is
+     * `verifyingContract` only, so these are returned undefined rather than computed from a
+     * domain that version never used.
+     */
+    getVerificationHashes = (
+        params: IVerifySafeTransactionHashParams,
+    ): ISafeVerificationHashes => {
+        const { transaction, safeAddress, safeVersion, chainId } = params;
+        const { verification, computedHash } =
+            this.verifyTransactionHash(params);
+
+        if (safeVersion == null || !this.hasChainIdInDomain(safeVersion)) {
+            return { verification, safeTxHash: computedHash };
+        }
+
+        const envelope = this.getEnvelope(transaction);
+
+        try {
+            const message = {
+                to: envelope.to as Hex,
+                value: BigInt(envelope.value),
+                data: envelope.data as Hex,
+                operation: envelope.operation,
+                safeTxGas: BigInt(envelope.safeTxGas),
+                baseGas: BigInt(envelope.baseGas),
+                gasPrice: BigInt(envelope.gasPrice),
+                gasToken: envelope.gasToken as Hex,
+                refundReceiver: envelope.refundReceiver as Hex,
+                nonce: BigInt(envelope.nonce),
+            };
+
+            return {
+                verification,
+                safeTxHash: computedHash,
+                domainHash: hashDomain({
+                    domain: {
+                        chainId,
+                        verifyingContract: safeAddress as Hex,
+                    },
+                    types: safeDomainTypes,
+                }),
+                messageHash: hashStruct({
+                    data: message,
+                    primaryType: 'SafeTx',
+                    types: safeTxTypes,
+                }),
+            };
+        } catch {
+            return { verification, safeTxHash: computedHash };
+        }
+    };
+
+    /**
+     * Safe v1.3.0 added `chainId` to the EIP-712 domain. Anything below that hashes a different
+     * domain, which this deliberately declines to reconstruct.
+     */
+    private hasChainIdInDomain = (safeVersion: string): boolean => {
+        const [major = 0, minor = 0] = safeVersion
+            .split('.')
+            .map((part) => Number.parseInt(part, 10));
+
+        return major > 1 || (major === 1 && minor >= 3);
     };
 
     /**
@@ -264,6 +394,15 @@ class SafeTransactionEnvelopeUtils {
             const dataLength = Number(
                 BigInt(`0x${packed.slice(cursor + 106, cursor + 170)}`),
             );
+
+            // MultiSend's assembly switches on `case 0` / `case 1` with no default, so any other
+            // operation byte leaves `success = 0` and reverts the whole batch - while still
+            // consuming the nonce. The top-level guard restricts `operation` to 0|1, but these
+            // bytes are packed inside the payload and unchecked, so a value outside that set is
+            // treated as an unreadable batch rather than rendered as a benign "Call".
+            if (operation !== 0 && operation !== 1) {
+                return { status: SafeBatchStatus.TRUNCATED, calls };
+            }
 
             const dataStart = cursor + multiSendHeaderLength;
             const dataEnd = dataStart + dataLength * 2;

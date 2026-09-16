@@ -109,6 +109,43 @@ describe('<SafePendingTransactionList /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('states the threshold read from the Safe, not the one the service reported', async () => {
+        // `confirmationsRequired` is service-derived and sits outside the EIP-712 struct, so no
+        // hash comparison can catch a wrong value. Deflated, it would flip the row to "Execute"
+        // and stop asking owners whose signature is still required.
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateResponse([
+                generateSafeTransaction({
+                    nonce: '11',
+                    safeTxHash: '0xTxHash',
+                    confirmations: [generateSafeConfirmation()],
+                    confirmationsRequired: 1,
+                }),
+            ]),
+        );
+        render(createTestComponent({ threshold: 3 }));
+
+        expect(
+            screen.getByText(
+                'app.safe.safePendingTransactionList.item.confirmations (count=1,required=3)',
+            ),
+        ).toBeInTheDocument();
+        // The action the row offers follows the same source: the confirm label reaches the review
+        // dialog, so a deflated reported value must not turn this into an execution.
+        await userEvent.click(
+            screen.getByText('app.safe.safePendingTransactionList.item.review'),
+        );
+        expect(openDialog).toHaveBeenCalledWith(
+            SafeDialogId.TRANSACTION_REVIEW,
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    confirmLabel:
+                        'app.safe.safePendingTransactionList.item.confirm',
+                }),
+            }),
+        );
+    });
+
     it('renders an empty state when the queue is empty', () => {
         render(createTestComponent());
 

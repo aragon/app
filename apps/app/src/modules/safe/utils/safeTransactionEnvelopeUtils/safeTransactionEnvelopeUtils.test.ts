@@ -5,6 +5,7 @@ import {
     getAddress,
     type Hex,
     hashTypedData,
+    keccak256,
     size,
 } from 'viem';
 import { generateSafeTransaction } from '@/shared/testUtils';
@@ -228,6 +229,55 @@ describe('safeTransactionEnvelope utils', () => {
         });
     });
 
+    describe('getVerificationHashes', () => {
+        const transaction = generateSafeTransaction({
+            to: target,
+            value: '1000000000000000001',
+            data: '0xdeadbeef',
+            nonce: '9',
+        });
+
+        it('derives a domain hash and message hash that compose into the safeTxHash a wallet signs', () => {
+            const result = safeTransactionEnvelopeUtils.getVerificationHashes({
+                transaction,
+                safeAddress,
+                safeVersion,
+                chainId,
+            });
+
+            // A device shows the domain and message hashes, never the safeTxHash, so the two are
+            // only useful to a signer if `0x1901 || domain || message` is provably the same
+            // transaction identity the app matched against the service.
+            expect(
+                keccak256(
+                    concatHex([
+                        '0x1901',
+                        result.domainHash as Hex,
+                        result.messageHash as Hex,
+                    ]),
+                ),
+            ).toEqual(result.safeTxHash);
+        });
+
+        it.each([
+            { label: 'the version is unknown', safeVersion: null },
+            {
+                label: 'the Safe predates chainId in the domain',
+                safeVersion: '1.1.1',
+            },
+        ])('withholds device hashes when $label', (params) => {
+            const result = safeTransactionEnvelopeUtils.getVerificationHashes({
+                transaction,
+                safeAddress,
+                safeVersion: params.safeVersion,
+                chainId,
+            });
+
+            expect(result.domainHash).toBeUndefined();
+            expect(result.messageHash).toBeUndefined();
+        });
+    });
+
     describe('inspectBatch', () => {
         it('unpacks every call of a complete batch in order', () => {
             const data = encodeBatch(
@@ -276,6 +326,22 @@ describe('safeTransactionEnvelope utils', () => {
             const data = encodeBatch(
                 packCall({ to: target, data: '0x1234' }),
                 '0xdead',
+            );
+
+            const { status, calls } =
+                safeTransactionEnvelopeUtils.inspectBatch(data);
+
+            expect(status).toEqual(SafeBatchStatus.TRUNCATED);
+            expect(calls).toHaveLength(1);
+        });
+
+        it('stops at an operation byte that is neither call nor delegate call', () => {
+            // MultiSend switches on `case 0` / `case 1` with no default, so this batch reverts in
+            // full while still consuming the nonce. Rendering the entry as a benign "Call" would
+            // present a guaranteed failure as an ordinary transaction.
+            const data = encodeBatch(
+                packCall({ to: target, data: '0x1234' }),
+                packCall({ to: safeAddress, data: '0xabcd', operation: 2 }),
             );
 
             const { status, calls } =
