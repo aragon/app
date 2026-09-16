@@ -9,7 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
-import { useBytecode } from 'wagmi';
+import { useBytecode, useReadContract } from 'wagmi';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import type { Network } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
@@ -46,9 +46,10 @@ export interface ISafeTransactionReviewDialogParams {
      */
     safeVersion: string | null;
     /**
-     * Label of the action the owner confirms with, e.g. "Approve" for a governance report.
+     * Label of the action the owner confirms with, e.g. "Approve" for a governance report. Omit it
+     * when the connected owner already confirmed, leaving this as a review-only dialog.
      */
-    confirmLabel: string;
+    confirmLabel?: string;
     /**
      * What the confirmation is claimed to do, when the caller knows. Shown above the payload so a
      * narrow claim sits next to the calls that back it.
@@ -81,6 +82,26 @@ interface IReviewedCall {
 }
 
 const translationKey = 'app.safe.safeTransactionReviewDialog';
+
+/**
+ * `VERSION()` is a plain string getter present on every Safe singleton from 1.0.0 onward.
+ */
+const safeVersionAbi = [
+    {
+        inputs: [],
+        name: 'VERSION',
+        outputs: [{ type: 'string' }],
+        stateMutability: 'view',
+        type: 'function',
+    },
+] as const;
+
+/**
+ * The transaction service reports L2 singletons as `1.4.1+L2` while the contract's own `VERSION()`
+ * returns the bare `1.4.1`, so a strict comparison would refuse signing on every L2 Safe. Only the
+ * semver core selects the EIP-712 domain, so only the core is compared.
+ */
+const semverCore = (version: string): string => version.split('+')[0];
 
 /**
  * Flattens a transaction into the calls it actually executes, depth first, and reports whether the
@@ -155,19 +176,56 @@ export const SafeTransactionReviewDialog: React.FC<
     const { close } = useDialogContext();
 
     const envelope = safeTransactionEnvelopeUtils.getEnvelope(transaction);
-    const { verification, computedHash } =
-        safeTransactionEnvelopeUtils.verifyTransactionHash({
-            transaction,
-            safeAddress,
-            safeVersion,
-            chainId: BigInt(networkDefinitions[network].id),
-        });
+
+    /**
+     * The EIP-712 domain depends on the Safe's version, so whoever supplies the version chooses
+     * which domain the hashes are computed under. Taking it from the same backend that supplied
+     * the envelope and the reported hash makes a match a statement about one source's internal
+     * consistency; reading `VERSION()` from the Safe removes that input from the trusted set (W11).
+     *
+     * The backend value is never a fallback. While this read is outstanding or failed the version
+     * is simply unknown, which withholds the device pair exactly as a pre-1.3.0 Safe already does
+     * - a hash computed under a domain the Safe never used fails against the device and teaches
+     * signers to ignore mismatches.
+     */
+    const { data: chainVersion } = useReadContract({
+        abi: safeVersionAbi,
+        address: safeAddress as Hex,
+        functionName: 'VERSION',
+        chainId: networkDefinitions[network].id,
+    });
+    const {
+        verification,
+        safeTxHash: computedHash,
+        domainHash,
+        messageHash,
+    } = safeTransactionEnvelopeUtils.getVerificationHashes({
+        transaction,
+        safeAddress,
+        safeVersion: chainVersion ?? null,
+        chainId: BigInt(networkDefinitions[network].id),
+    });
+
+    /**
+     * Two sources disagreeing about what the Safe is means the dialog cannot describe the payload
+     * correctly, so this is the misdescription class rather than the uncertainty class: refuse and
+     * show both values. An absent backend version is not a disagreement.
+     */
+    const isVersionMismatch =
+        chainVersion != null &&
+        safeVersion != null &&
+        semverCore(chainVersion) !== semverCore(safeVersion);
+
     const { calls, isComplete } = collectCalls(
         safeTransactionEnvelopeUtils.getCall(transaction),
     );
 
-    // Decoding is a readability aid, never an authorisation check: the raw calldata below is what
-    // executes, so a failed or missing decode leaves the payload reviewable.
+    // Decoding is a readability aid, never an authorisation check - and the reason is stronger than
+    // "a decode can fail": this decode is an Aragon backend call, so the friendly labels arrive
+    // from the same trust domain as the envelope they describe. A backend that served a malicious
+    // envelope can label it a benign transfer. The raw `to`/`value`/`data` below are unpacked
+    // locally and are what a signer must actually check. Decoding offline from a bundled selector
+    // set is W12; until then this stays a convenience, and the copy says so.
     const { data: decodedActions } = useQuery({
         queryKey: ['SAFE_TRANSACTION_DECODE', network, transaction.safeTxHash],
         queryFn: () =>
@@ -196,6 +254,13 @@ export const SafeTransactionReviewDialog: React.FC<
      * uses one, so a target that is not a canonical MultiSend deserves saying out loud - and this
      * needs no network read, so it holds for every call at every depth of the batch.
      *
+     * Narrower than the equivalent check in `safe-tx-hashes-util`, whose Rule 2 pairs "always
+     * independently decode and verify transaction calldata" with "don't sign untrusted delegate
+     * calls" against a curated allowlist of trusted `delegatecall`able contracts. This recognises
+     * MultiSend only, so a legitimate delegate call to any other audited helper is flagged
+     * unrecognised. That is the safe direction to be wrong in - it warns rather than permits - but
+     * it means the warning is about "not MultiSend", not about "not trusted".
+     *
      * ponytail: canonical 1.3.0/1.4.1 addresses only. Chains with non-standard deployments (the
      * zkSync-style forks) would mislabel a legitimate MultiSend as unrecognised; widen from
      * `safe-deployments` if one of those networks is ever supported.
@@ -218,14 +283,51 @@ export const SafeTransactionReviewDialog: React.FC<
      */
     const outerCall = safeTransactionEnvelopeUtils.getCall(transaction);
     const isDelegateCall = outerCall.operation === 1;
-    const { data: outerBytecode, isSuccess: isBytecodeKnown } = useBytecode({
+    const {
+        data: outerBytecode,
+        isSuccess: isBytecodeKnown,
+        isError: isBytecodeUnavailable,
+    } = useBytecode({
         address: outerCall.to as Hex,
         chainId: networkDefinitions[network].id,
         query: { enabled: isDelegateCall },
     });
     const hasCodelessTarget =
         isDelegateCall && isBytecodeKnown && (outerBytecode ?? '0x') === '0x';
+
+    /**
+     * Until that read answers, a codeless target is indistinguishable from a legitimate one, so a
+     * delegate call is refused while it is outstanding and if it fails outright. Without this the
+     * gate is a race an owner wins by clicking quickly — `hasCodelessTarget` is false until the
+     * node replies, which is exactly the window the check exists to cover. Failure is treated the
+     * same way rather than optimistically: the whole batch's effect hangs on this one answer.
+     */
+    const isDelegateTargetUnresolved =
+        isDelegateCall && (!isBytecodeKnown || isBytecodeUnavailable);
     const isHashMismatch = verification === SafeHashVerification.MISMATCH;
+
+    /**
+     * Refused rather than disclosed, because in these states what this dialog *says* is wrong, not
+     * merely incomplete:
+     *
+     * - a hash mismatch means the fields and the identity they are stored under disagree, so
+     *   nothing about the transaction can be signed;
+     * - an incomplete batch means the calls listed below are a decoded prefix, and a prefix
+     *   presented as the transaction understates what executing it does;
+     * - a codeless delegate target means every call listed below never happens, while the Safe
+     *   still spends the nonce and emits `ExecutionSuccess`.
+     *
+     * An unverifiable hash and an undecodable call stay signable on purpose: both are honest about
+     * themselves — the fields are shown either way, and the owner can still read the calldata. A
+     * gate there would lock owners out of legitimately exotic payloads, which §7.1 of the logic map
+     * rules out: a narrow refusal must not become the only route to signing.
+     */
+    const isPayloadMisdescribed =
+        isHashMismatch ||
+        !isComplete ||
+        hasCodelessTarget ||
+        isDelegateTargetUnresolved ||
+        isVersionMismatch;
 
     const handleConfirm = () => {
         close(location.id);
@@ -245,6 +347,15 @@ export const SafeTransactionReviewDialog: React.FC<
                         variant="critical"
                     />
                 )}
+                {isVersionMismatch && (
+                    <AlertInline
+                        message={t(`${translationKey}.versionMismatch`, {
+                            chainVersion,
+                            reportedVersion: safeVersion,
+                        })}
+                        variant="critical"
+                    />
+                )}
                 {verification === SafeHashVerification.UNVERIFIABLE && (
                     <AlertInline
                         message={t(`${translationKey}.hashUnverifiable`)}
@@ -254,7 +365,7 @@ export const SafeTransactionReviewDialog: React.FC<
                 {!isComplete && (
                     <AlertInline
                         message={t(`${translationKey}.incompleteBatch`)}
-                        variant="warning"
+                        variant="critical"
                     />
                 )}
                 {hasCodelessTarget && (
@@ -285,12 +396,6 @@ export const SafeTransactionReviewDialog: React.FC<
                         value={envelope.nonce}
                     />
                     <SafeTransactionReviewRow
-                        label={t(`${translationKey}.fields.safeTxHash`)}
-                        value={addressUtils.truncateHash(
-                            computedHash ?? transaction.safeTxHash,
-                        )}
-                    />
-                    <SafeTransactionReviewRow
                         label={t(`${translationKey}.fields.safeTxGas`)}
                         value={envelope.safeTxGas}
                     />
@@ -313,6 +418,54 @@ export const SafeTransactionReviewDialog: React.FC<
                         )}
                     />
                 </dl>
+                {/*
+                 * The values a signer compares somewhere this app does not control: the domain and
+                 * message hashes against the hardware wallet's screen, the safeTxHash against an
+                 * independent tool. Rendered in full and selectable - a truncated hash is
+                 * checkable only at its ends, which is exactly where a grinding attacker makes it
+                 * match.
+                 *
+                 * Deliberately never labelled verified, and never accompanied by a checkmark or
+                 * green state. These are computed from an envelope and a Safe version this app
+                 * received over the wire, so a self-consistent malicious payload produces hashes
+                 * that match the device perfectly. The comparison catches a UI that displays one
+                 * thing and sends another (Bybit, Feb 2025); it cannot catch a coherent lie. Any
+                 * affirmation here would overstate what these values prove.
+                 *
+                 * The device pair is withheld when it cannot be derived exactly - below Safe
+                 * v1.3.0 the EIP-712 domain has no chainId, and pre-1.1.0 the SafeTx struct
+                 * itself differs - never approximated. The safeTxHash is still computed and
+                 * shown in that case: protocol-kit handles the older domains, so an old-Safe
+                 * signer can still cross-check it with an external tool that supports 0.1.0+,
+                 * they just cannot complete the device comparison here.
+                 */}
+                <div className="flex flex-col gap-2 border-neutral-100 border-t pt-4">
+                    <p className="text-neutral-500 text-sm">
+                        {t(`${translationKey}.hashComparison`)}
+                    </p>
+                    <dl className="flex flex-col gap-2">
+                        {domainHash != null && messageHash != null && (
+                            <>
+                                <SafeTransactionReviewHash
+                                    label={t(
+                                        `${translationKey}.fields.domainHash`,
+                                    )}
+                                    value={domainHash}
+                                />
+                                <SafeTransactionReviewHash
+                                    label={t(
+                                        `${translationKey}.fields.messageHash`,
+                                    )}
+                                    value={messageHash}
+                                />
+                            </>
+                        )}
+                        <SafeTransactionReviewHash
+                            label={t(`${translationKey}.fields.safeTxHash`)}
+                            value={computedHash ?? transaction.safeTxHash}
+                        />
+                    </dl>
+                </div>
                 <ol className="flex flex-col gap-3 pt-4">
                     {calls.map(({ call, depth }, index) => (
                         <li
@@ -364,11 +517,15 @@ export const SafeTransactionReviewDialog: React.FC<
                 )}
             </Dialog.Content>
             <Dialog.Footer
-                primaryAction={{
-                    label: confirmLabel,
-                    disabled: isHashMismatch,
-                    onClick: handleConfirm,
-                }}
+                primaryAction={
+                    confirmLabel == null
+                        ? undefined
+                        : {
+                              label: confirmLabel,
+                              disabled: isPayloadMisdescribed,
+                              onClick: handleConfirm,
+                          }
+                }
                 secondaryAction={{
                     label: t(`${translationKey}.cancel`),
                     onClick: () => close(location.id),
@@ -388,6 +545,27 @@ const SafeTransactionReviewRow: React.FC<{
         <div className="flex flex-row items-baseline justify-between gap-4">
             <dt className="text-neutral-500 text-sm md:text-base">{label}</dt>
             <dd className="truncate text-neutral-800 text-sm md:text-base">
+                {value}
+            </dd>
+        </div>
+    );
+};
+
+/**
+ * A hash a signer must compare against a device, so it renders in full and stays selectable.
+ * `break-all` rather than `truncate`: a partially shown hash is a hash that cannot be checked,
+ * and the first and last characters matching is the exact weakness an attacker exploits.
+ */
+const SafeTransactionReviewHash: React.FC<{
+    label: string;
+    value: string;
+}> = (props) => {
+    const { label, value } = props;
+
+    return (
+        <div className="flex flex-col gap-0.5">
+            <dt className="text-neutral-500 text-sm">{label}</dt>
+            <dd className="break-all font-mono text-neutral-800 text-xs md:text-sm">
                 {value}
             </dd>
         </div>

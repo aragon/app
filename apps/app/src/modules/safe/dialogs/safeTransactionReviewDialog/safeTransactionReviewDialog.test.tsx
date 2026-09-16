@@ -12,6 +12,7 @@ import {
     size,
 } from 'viem';
 import * as Wagmi from 'wagmi';
+import locales from '@/assets/locales/en.json';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
@@ -19,7 +20,10 @@ import {
     generateDialogContext,
     generateSafeTransaction,
 } from '@/shared/testUtils';
-import { safeMultiSendAbi } from '../../utils/safeTransactionEnvelopeUtils';
+import {
+    safeMultiSendAbi,
+    safeTransactionEnvelopeUtils,
+} from '../../utils/safeTransactionEnvelopeUtils';
 import {
     type ISafeTransactionReviewDialogParams,
     SafeTransactionReviewDialog,
@@ -74,6 +78,7 @@ jest.mock('@aragon/gov-ui-kit', () => {
 describe('<SafeTransactionReviewDialog /> component', () => {
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useBytecodeSpy = jest.spyOn(Wagmi, 'useBytecode');
+    const useReadContractSpy = jest.spyOn(Wagmi, 'useReadContract');
 
     const safeAddress = getAddress(
         '0x5afe000000000000000000000000000000000001',
@@ -90,11 +95,14 @@ describe('<SafeTransactionReviewDialog /> component', () => {
             data: undefined,
             isSuccess: false,
         } as never);
+        // The dialog hashes under the version it reads from the Safe, never the reported one.
+        useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         useBytecodeSpy.mockReset();
+        useReadContractSpy.mockReset();
     });
 
     /**
@@ -460,6 +468,101 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('refuses to confirm a truncated batch, because the listed calls understate it', async () => {
+        const onConfirm = jest.fn();
+        const data = encodeFunctionData({
+            abi: safeMultiSendAbi,
+            functionName: 'multiSend',
+            args: [
+                concatHex([
+                    encodePacked(
+                        ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
+                        [0, target as Hex, BigInt(0), BigInt(32), '0xab'],
+                    ),
+                ]),
+            ],
+        });
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ data }),
+                onConfirm,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+        expect(onConfirm).not.toHaveBeenCalled();
+    });
+
+    it('refuses to confirm a delegate call to a codeless target, which would run none of the calls', async () => {
+        const onConfirm = jest.fn();
+        useBytecodeSpy.mockReturnValue({
+            data: undefined,
+            isSuccess: true,
+        } as never);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+                onConfirm,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+        expect(onConfirm).not.toHaveBeenCalled();
+    });
+
+    it('still allows confirming when the hash merely could not be recomputed', async () => {
+        // Honest about itself: the fields are shown either way, so refusing here would lock owners
+        // out of a legitimate payload without making anything safer.
+        const onConfirm = jest.fn();
+        useReadContractSpy.mockReturnValue({ data: undefined } as never);
+        render(createTestComponent({ onConfirm }));
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+        expect(onConfirm).toHaveBeenCalled();
+    });
+
+    it('refuses to confirm a delegate call while the target bytecode read is unresolved', async () => {
+        // The codeless check cannot answer yet, so the gate would otherwise be a race an owner wins
+        // by clicking before the node replies. `beforeEach` already leaves the read unresolved.
+        const onConfirm = jest.fn();
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+                onConfirm,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+        expect(onConfirm).not.toHaveBeenCalled();
+    });
+
+    it('refuses to confirm a delegate call whose target bytecode read failed', async () => {
+        const onConfirm = jest.fn();
+        useBytecodeSpy.mockReturnValue({
+            data: undefined,
+            isSuccess: false,
+            isError: true,
+        } as never);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+                onConfirm,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+        expect(onConfirm).not.toHaveBeenCalled();
+    });
+
     it('refuses to confirm a transaction whose fields do not match its hash', async () => {
         const onConfirm = jest.fn();
         const transaction = generateSafeTransaction({
@@ -493,7 +596,10 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     });
 
     it('says the hash could not be checked rather than claiming a mismatch', () => {
-        render(createTestComponent({ safeVersion: null }));
+        // Unknown now means the chain read has not answered: the reported version is never a
+        // fallback for it.
+        useReadContractSpy.mockReturnValue({ data: undefined } as never);
+        render(createTestComponent());
 
         expect(
             screen.getByText(
@@ -561,5 +667,118 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         expect(screen.queryByText('transfer')).not.toBeInTheDocument();
 
         decodeSpy.mockRestore();
+    });
+
+    describe('out-of-band hash comparison', () => {
+        it('renders the domain, message and transaction hashes in full, because a truncated hash cannot be checked against a device', () => {
+            const transaction = generateSignedTransaction({});
+            const { domainHash, messageHash, safeTxHash } =
+                safeTransactionEnvelopeUtils.getVerificationHashes({
+                    transaction,
+                    safeAddress,
+                    safeVersion: '1.4.1',
+                    chainId: BigInt(1),
+                });
+
+            render(createTestComponent({ transaction }));
+
+            for (const hash of [domainHash, messageHash, safeTxHash]) {
+                expect(screen.getByText(hash as string)).toBeInTheDocument();
+            }
+        });
+
+        it('withholds the device hashes for a Safe whose version cannot produce them, rather than showing a hash a device will never match', () => {
+            useReadContractSpy.mockReturnValue({ data: '1.1.1' } as never);
+            render(createTestComponent({ safeVersion: '1.1.1' }));
+
+            expect(
+                screen.queryByText(
+                    'app.safe.safeTransactionReviewDialog.fields.domainHash',
+                ),
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByText(
+                    'app.safe.safeTransactionReviewDialog.fields.messageHash',
+                ),
+            ).not.toBeInTheDocument();
+        });
+
+        it('hashes under the version read from the Safe rather than the one reported with the transaction', () => {
+            // A backend that reports a different version would otherwise choose the EIP-712
+            // domain the device is asked to match.
+            const transaction = generateSignedTransaction({});
+            const { domainHash } =
+                safeTransactionEnvelopeUtils.getVerificationHashes({
+                    transaction,
+                    safeAddress,
+                    safeVersion: '1.4.1',
+                    chainId: BigInt(1),
+                });
+            useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
+            render(
+                createTestComponent({ transaction, safeVersion: '1.3.0+L2' }),
+            );
+
+            expect(screen.getByText(domainHash as string)).toBeInTheDocument();
+        });
+
+        it('refuses to confirm when the chain and the service disagree about the version', async () => {
+            const onConfirm = jest.fn();
+            useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
+            render(createTestComponent({ safeVersion: '1.3.0', onConfirm }));
+
+            expect(screen.getByText(/versionMismatch/)).toBeInTheDocument();
+
+            await userEvent.click(
+                screen.getByRole('button', { name: 'Confirm' }),
+            );
+            expect(onConfirm).not.toHaveBeenCalled();
+        });
+
+        it('treats an L2 build tag as the same version, because the service suffixes what the contract does not', async () => {
+            // `1.4.1+L2` from the service against `1.4.1` onchain is every L2 Safe; a strict
+            // comparison would refuse signing on all of them.
+            const onConfirm = jest.fn();
+            useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
+            render(createTestComponent({ safeVersion: '1.4.1+L2', onConfirm }));
+
+            expect(
+                screen.queryByText(/versionMismatch/),
+            ).not.toBeInTheDocument();
+
+            await userEvent.click(
+                screen.getByRole('button', { name: 'Confirm' }),
+            );
+            expect(onConfirm).toHaveBeenCalled();
+        });
+
+        it('never affirms a payload as verified or safe, because every hash shown is derived from an envelope this app received over the wire', () => {
+            render(createTestComponent());
+
+            expect(
+                screen.getByText(
+                    'app.safe.safeTransactionReviewDialog.hashComparison',
+                ),
+            ).toBeInTheDocument();
+
+            // Asserted against the copy, not the rendered keys: this suite renders translation
+            // keys, so scanning the DOM would only ever search key names. The signing path must
+            // carry no affirmation - a compromised frontend renders its own reassurance, so a
+            // "verified" state here would be worth exactly nothing and read as everything.
+            const copy = JSON.stringify(
+                (
+                    locales.app.safe as unknown as Record<
+                        string,
+                        Record<string, unknown>
+                    >
+                ).safeTransactionReviewDialog,
+            );
+
+            // `(?<!un)` deliberately: "unverified" is the *honest* label RFP requirement 5 asks
+            // for on undecodable calldata, so this must not push a future dev into weakening it.
+            expect(copy).not.toMatch(
+                /(?<!un)verified|safe to sign|confirmed safe|✓/i,
+            );
+        });
     });
 });
