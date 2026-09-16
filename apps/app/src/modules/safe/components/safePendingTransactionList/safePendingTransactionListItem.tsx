@@ -273,6 +273,13 @@ export const SafePendingTransactionListItem: React.FC<
                         governance report as an anonymous payload and discard what the backend
                         knows. Entries stay in calldata order, duplicates included, and each
                         carries its own `daoId` - so no DAO context is hoisted to the row. */}
+                    {/* The claim is attributed, not asserted (audit B2): the correlation is the
+                        indexer's reading of the calldata, and this surface cannot check it. The
+                        `proposalId` here is the backend's incremental id while the calldata carries
+                        the contract's own, so closing the loop locally needs a mapping only the
+                        backend holds - and the decoder that would read the rest lives in
+                        `safeMultisigPlugin`, outside this SPP-agnostic module. Naming the source
+                        is what keeps an informational link from reading as a verified one. */}
                     {aragonReports != null && aragonReports.length === 0 && (
                         <span className="text-neutral-500 text-sm leading-tight">
                             {t(
