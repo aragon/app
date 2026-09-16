@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    AlertInline,
+    AlertCard,
     addressUtils,
     Button,
     Dropdown,
@@ -1120,7 +1120,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     return (
         <div className="flex w-full flex-col gap-3">
             {alerts.map((alert) => (
-                <AlertInline
+                <AlertCard
                     key={alert.key}
                     message={alert.message}
                     variant={alert.variant}

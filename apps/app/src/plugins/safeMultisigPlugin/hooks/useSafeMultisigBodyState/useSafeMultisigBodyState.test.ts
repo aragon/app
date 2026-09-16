@@ -486,16 +486,19 @@ describe('useSafeMultisigBodyState hook', () => {
      * must not stop the account read: tying it to the queue left the card describing the Safe as it
      * was when the page loaded. The queue read stays gated, because that one costs Safe quota.
      */
+    const pollOf = (spy: jest.SpyInstance) => {
+        const lastCall = spy.mock.calls.at(-1) as unknown[];
+        const options = lastCall[1] as {
+            refetchInterval: (query: {
+                state: { error: unknown };
+            }) => number | false;
+        };
+
+        return options.refetchInterval({ state: { error: null } });
+    };
+
     it('keeps reading the account while the body can still act, with nothing queued', () => {
         const { result } = renderState();
-        const pollOf = (spy: jest.SpyInstance) =>
-            (
-                spy.mock.calls.at(-1)?.[1] as {
-                    refetchInterval: (query: {
-                        state: { error: unknown };
-                    }) => number | false;
-                }
-            ).refetchInterval({ state: { error: null } });
 
         expect(result.current.canStillAffectOutcome).toBe(true);
         expect(pollOf(useSafeInfoSpy)).toEqual(safeBodyPollInterval);
@@ -505,10 +508,6 @@ describe('useSafeMultisigBodyState hook', () => {
     it('stops reading the account once the stage can no longer be affected', () => {
         renderState({ currentStage: stageIndex + 1 });
 
-        const { refetchInterval } = useSafeInfoSpy.mock.calls.at(-1)?.[1] as {
-            refetchInterval: (query: { state: { error: unknown } }) => unknown;
-        };
-
-        expect(refetchInterval({ state: { error: null } })).toBe(false);
+        expect(pollOf(useSafeInfoSpy)).toBe(false);
     });
 });
