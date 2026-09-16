@@ -6,6 +6,7 @@ import {
     Button,
     Dropdown,
     IconType,
+    Link,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
@@ -1062,6 +1063,24 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             message: t(`${translationKey}.unreachable`),
         });
     }
+    /**
+     * W4's handoff: the account queue is where this Safe's nonce sequence is answered, and the
+     * proposal must not answer it inline — most of that queue is unrelated traffic, and rendering
+     * it here would imply a relationship that does not exist. So the card states what is true of
+     * this body's report and offers the route, deep-linked to the same `safeTxHash` it was
+     * showing, so one transaction resolves to one review payload on both surfaces.
+     *
+     * Offered for a report the Safe's nonce sequence can still answer something about - queued
+     * behind the nonce, sharing one, or superseded by whatever took it. A superseded report is
+     * filtered out of the account queue as permanently dead, and the queue says so on arrival,
+     * which is the answer an owner came for. An executed report is the breakdown's provenance
+     * links, not a queue lookup.
+     */
+    const queuedReportHref =
+        pendingReport == null ||
+        pendingReport.state === SafeTransactionState.EXECUTED
+            ? undefined
+            : `/safe/${proposal.network}/${externalAddress}?tx=${pendingReport.transaction.safeTxHash}`;
 
     const isActionDisabled =
         hasSettled ||
@@ -1080,6 +1099,11 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     variant={alert.variant}
                 />
             ))}
+            {queuedReportHref != null && (
+                <Link href={queuedReportHref} textClassName="text-sm">
+                    {t(`${translationKey}.viewInAccountQueue`)}
+                </Link>
+            )}
             {/* Nothing to offer once the stage can never advance: acting would change nothing, and
                 a disabled action beside an expired stage only invites the question.
 

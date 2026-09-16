@@ -488,6 +488,43 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
     });
 
+    it('routes a queued report to the same transaction in the account queue', () => {
+        // W4's handoff: the proposal states what is true of this body's report and hands the
+        // Safe's nonce sequence to the account surface, deep-linked to the same transaction so one
+        // `safeTxHash` resolves to one review payload on both sides.
+        const queued = generateSafeMultisigTransaction({
+            nonce: '4',
+            safeTxHash: `0x${'cd'.repeat(32)}`,
+        });
+        mockQueuedReport(queued);
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: queued,
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
+            }),
+        ).toHaveAttribute(
+            'href',
+            `/safe/${Network.ETHEREUM_SEPOLIA}/${safeInfo.address}?tx=${queued.safeTxHash}`,
+        );
+    });
+
     it('does not warn of a gas transaction when more owners are still needed', async () => {
         const queued = generateSafeMultisigTransaction({
             nonce: '0',
@@ -1260,14 +1297,16 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         expect(proposeMutateAsync).not.toHaveBeenCalled();
     });
 
-    it('offers a re-queue when the pending report lost its nonce', () => {
+    it('offers a re-queue and the account queue when the pending report lost its nonce', () => {
+        const superseded = generateSafeMultisigTransaction({
+            safeTxHash: `0x${'ef'.repeat(32)}`,
+            confirmationsRequired: 1,
+            confirmations: [generateSafeConfirmation({ owner })],
+        });
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
             pendingReport: {
-                transaction: generateSafeMultisigTransaction({
-                    confirmationsRequired: 1,
-                    confirmations: [generateSafeConfirmation({ owner })],
-                }),
+                transaction: superseded,
                 report: {
                     proposalId: BigInt(1),
                     stageId: 1,
@@ -1296,6 +1335,16 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 'app.plugins.safeMultisig.safeMultisigSubmitVote.replaced',
             ),
         ).toBeInTheDocument();
+        // Whatever took the nonce is account-level traffic, so the queue answers it - the proposal
+        // states the report is dead and hands over the lookup.
+        expect(
+            screen.getByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
+            }),
+        ).toHaveAttribute(
+            'href',
+            `/safe/${Network.ETHEREUM_SEPOLIA}/${safeInfo.address}?tx=${superseded.safeTxHash}`,
+        );
     });
 
     it('rebuilds a superseded report instead of re-submitting its signatures', async () => {

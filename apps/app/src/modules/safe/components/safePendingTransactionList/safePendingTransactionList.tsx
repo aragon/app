@@ -7,6 +7,7 @@ import {
     DataListPagination,
     DataListRoot,
 } from '@aragon/gov-ui-kit';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { safeAppTransactionUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import type { Network } from '@/shared/api/daoService';
@@ -68,6 +69,14 @@ export const SafePendingTransactionList: React.FC<
     const [executionOutcome, setExecutionOutcome] =
         useState<ISafeExecutionActionOutcome>();
     const { buildEntityUrl } = useDaoChain({ network });
+    /**
+     * A proposal body card links here with the `safeTxHash` it was showing, so one transaction
+     * resolves to one review payload on both surfaces (W4's handoff). The row is named, never
+     * auto-opened: a URL that pops a signing review is an affordance this surface must not hand
+     * to whoever wrote the link. Nothing here says the transaction affects that proposal - this
+     * view answers the Safe's nonce sequence and nothing else.
+     */
+    const followedTxHash = useSearchParams().get('tx')?.toLowerCase();
 
     const {
         data: pendingTransactions,
@@ -121,6 +130,14 @@ export const SafePendingTransactionList: React.FC<
             .map(({ nonce }) => nonce)
             .filter((nonce, index, all) => all.indexOf(nonce) !== index),
     );
+    // Followed here but absent from the live queue: it executed, was replaced at its nonce, or the
+    // link is stale. Saying so beats a page that silently shows a queue without it.
+    const isFollowedMissing =
+        followedTxHash != null &&
+        !isLoading &&
+        !transactions.some(
+            ({ safeTxHash }) => safeTxHash.toLowerCase() === followedTxHash,
+        );
     const state = safeDataListUtils.getDataListState({
         isError,
         isLoading: isLoading || currentNonce == null,
@@ -163,6 +180,15 @@ export const SafePendingTransactionList: React.FC<
                     variant="warning"
                 />
             )}
+            {isFollowedMissing && (
+                <AlertInline
+                    className="mb-4"
+                    message={t(
+                        'app.safe.safePendingTransactionList.followedMissing',
+                    )}
+                    variant="info"
+                />
+            )}
             <DataListRoot
                 entityLabel={t('app.safe.safePendingTransactionList.entity')}
                 itemsCount={transactions.length}
@@ -196,6 +222,10 @@ export const SafePendingTransactionList: React.FC<
                             hasNonceRival={contestedNonces.has(
                                 transaction.nonce,
                             )}
+                            isFollowed={
+                                transaction.safeTxHash.toLowerCase() ===
+                                followedTxHash
+                            }
                             key={transaction.safeTxHash}
                             network={network}
                             onExecutionOutcome={setExecutionOutcome}
