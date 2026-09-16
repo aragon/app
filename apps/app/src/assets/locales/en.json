@@ -3271,6 +3271,7 @@
             "success": "View proposal"
           },
           "description": "To advance the proposal to the next stage, confirm the onchain transaction in your wallet.",
+          "queuedReportWarning": "If a body has a Safe transaction queued for this stage, advancing now permanently forfeits its effect — the result would be recorded but change nothing. Advancing does not cancel that transaction: it stays executable, still spends its nonce and gas, and still writes to stored history.",
           "title": "Advance proposal"
         },
         "sppCreateProposalSettingsForm": {

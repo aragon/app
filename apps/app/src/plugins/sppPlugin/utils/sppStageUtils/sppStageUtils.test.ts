@@ -471,6 +471,18 @@ describe('SppStageUtils', () => {
             );
         });
 
+        it('does not let a veto recorded after the proposal advanced decide the stage it left', () => {
+            // `reportProposalResult` accepts a result for an earlier stage and does not roll
+            // progression back, so this write is history. Reporting VETOED for a stage the
+            // proposal already passed claims an authority the record does not carry.
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ stageIndex: 1 });
+            isVetoReachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).not.toEqual(
+                ProposalStatus.VETOED,
+            );
+        });
+
         it('returns unreached is current stage cannot be reached', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal();
@@ -560,7 +572,7 @@ describe('SppStageUtils', () => {
             );
         });
 
-        it('returns advanceable when stage is active, approval is reached, but minAdvanceDate has not yet passed', () => {
+        it('does not report advanceable while the minAdvance floor blocks the advance action', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 });
             const minAdvance = DateTime.fromISO(now).plus({ days: 1 });
@@ -585,8 +597,60 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
 
+            // The stage's threshold is met, so the stage reads ACCEPTED - but `canStageAdvance`
+            // refuses until `minAdvance` passes, and the label must not claim an advance the
+            // action blocks.
             expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
-                ProposalStatus.ADVANCEABLE,
+                ProposalStatus.ACCEPTED,
+            );
+            expect(sppStageUtils.canStageAdvance(proposal, stages[1])).toBe(
+                false,
+            );
+        });
+
+        it('does not let a veto recorded after execution decide the final stage', () => {
+            // A proposal never advances past its last stage, so `stageIndex >= currentStage`
+            // alone leaves an executed proposal flippable to VETOED by a late write.
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                executed: { status: true },
+                stageIndex: 0,
+            });
+            isVetoReachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).not.toEqual(
+                ProposalStatus.VETOED,
+            );
+        });
+
+        it('does not report rejected while a late approval can still advance the stage', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 3 });
+            const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const minAdvance = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 2 });
+
+            const stages = [
+                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({ stageIndex: 1 }),
+            ];
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 0,
+                settings: generateSppPluginSettings({ stages }),
+            });
+
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvance);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(false);
+            timeUtils.setTime(now);
+
+            // Voting has closed with the threshold unmet, but a report landing before
+            // `maxAdvance` still counts - telling an owner the proposal is dead while their
+            // signature would change the outcome is the harm here.
+            expect(sppStageUtils.getStageStatus(proposal, stages[0])).toBe(
+                ProposalStatus.ACTIVE,
             );
         });
 

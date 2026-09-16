@@ -67,7 +67,15 @@ class SppStageUtils {
 
         const approvalReached = this.isApprovalReached(proposal, stage);
         const isSignalling = this.isSignalingProposal(proposal, stage);
-        const isVetoed = this.isVetoReached(proposal, stage);
+        // A veto decides a stage only while the proposal has neither left that stage nor
+        // executed. `reportProposalResult` accepts a result for an earlier stage, and that write
+        // does not roll progression back - so a late veto is recorded history, not this stage's
+        // verdict. Without the guard a stage the proposal advanced past, or a final stage of an
+        // executed proposal, renders VETOED and claims an authority the record does not carry.
+        const isVetoed =
+            this.isVetoReached(proposal, stage) &&
+            stageIndex >= currentStage &&
+            !executed.status;
         const isUnreached = this.isStageUnreached(proposal, stageIndex);
 
         const startsInFuture = startDate != null && now < startDate;
@@ -81,12 +89,11 @@ class SppStageUtils {
             ? endsInFuture
             : endsInFuture && (!approvalReached || isSignalling);
 
+        // Actionability is not this function's answer: defer to the same predicate the advance
+        // action uses, so the label cannot claim an advance the action correctly blocks. Deriving
+        // it here separately dropped the `minAdvance` floor (nonce-map defect #12).
         const isAdvanceable =
-            stageIndex === currentStage &&
-            approvalReached &&
-            isWithinMaxAdvance &&
-            !isSignalling &&
-            !isLastStage;
+            !isLastStage && this.canStageAdvance(proposal, stage);
 
         const isExpired =
             !executed.status &&
@@ -116,7 +123,13 @@ class SppStageUtils {
         }
 
         if (!approvalReached) {
-            return ProposalStatus.REJECTED;
+            // An unmet threshold after voting close is not yet met, not rejected: a late approval
+            // still counts while the stage can advance, and a body's signature would still change
+            // the outcome. Only once the stage can no longer advance is the result final
+            // (nonce-map defect #2).
+            return isWithinMaxAdvance
+                ? ProposalStatus.ACTIVE
+                : ProposalStatus.REJECTED;
         }
 
         if (isExpired) {
