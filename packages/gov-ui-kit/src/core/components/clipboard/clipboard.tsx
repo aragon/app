@@ -1,0 +1,75 @@
+import classNames from 'classnames';
+import { useCopy } from '../../hooks';
+import { AvatarIcon, type AvatarIconSize } from '../avatars';
+import { Button, type ButtonSize } from '../button';
+import { useGukCoreContext } from '../gukCoreProvider';
+import { IconType } from '../icon';
+import { Tooltip } from '../tooltip';
+
+export type ClipboardVariant = 'button' | 'avatar' | 'avatar-neutral';
+
+export interface IClipboardProps {
+    /**
+     * Text value to be copied to the clipboard.
+     */
+    copyValue: string;
+    /**
+     * Size of the button or avatar.
+     * @default sm
+     */
+    size?: ButtonSize | AvatarIconSize;
+    /**
+     * Variant of the button.
+     * @default avatar
+     */
+    variant?: ClipboardVariant;
+    /**
+     * Class name to be applied to the wrapper.
+     */
+    className?: string;
+    /**
+     * Optional children to be rendered next to the clipboard.
+     */
+    children?: React.ReactNode;
+}
+
+export const Clipboard: React.FC<IClipboardProps> = (props) => {
+    const { copyValue, size = 'sm', variant = 'avatar', className, children } = props;
+    const { isCopied, handleCopy } = useCopy();
+
+    const { copy: copyTexts } = useGukCoreContext();
+    const tooltipText = copyTexts.clipboard.copy;
+
+    const icon = isCopied ? IconType.CHECKMARK : IconType.COPY;
+    const handleCopyClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation(); // to block nextjs-toploader
+        e.preventDefault(); // when inside links
+
+        void handleCopy(copyValue);
+    };
+
+    return (
+        <span className={classNames('inline-flex min-w-0 max-w-full items-center gap-2', className)}>
+            {children}
+            {(variant === 'avatar' || variant === 'avatar-neutral') && (
+                <Tooltip content={tooltipText} triggerAsChild={true}>
+                    <button aria-label={tooltipText} className="cursor-pointer" onClick={handleCopyClick} type="button">
+                        <AvatarIcon icon={icon} size={size} variant={variant === 'avatar' ? 'primary' : 'neutral'} />
+                    </button>
+                </Tooltip>
+            )}
+            {variant === 'button' && (
+                <Tooltip content={tooltipText} triggerAsChild={true}>
+                    <Button
+                        aria-label={tooltipText}
+                        iconLeft={icon}
+                        onClick={handleCopyClick}
+                        size={size}
+                        variant="tertiary"
+                    />
+                </Tooltip>
+            )}
+        </span>
+    );
+};
