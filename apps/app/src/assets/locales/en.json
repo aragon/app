@@ -3831,11 +3831,16 @@
           "execute": "Execute",
           "followed": "Followed here",
           "hashMismatch": "This transaction changed after review, so it was not submitted.",
+          "moreActions": "More actions",
           "nonce": "Nonce {{nonce}}",
           "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
           "nonceRival": "Another queued transaction uses this same nonce. Only one of them can execute; the other becomes permanently unexecutable.",
           "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
+          "notProposer": "The Safe service did not accept this: the connected wallet is not the transaction's proposer.",
           "refresh": "Refresh",
+          "removeFromQueue": "Remove from queue",
+          "removeProposerOnly": "Only the transaction's proposer can remove it from the queue.",
+          "replaceOnchain": "Replace onchain",
           "reportApproves": "(would approve)",
           "reportsTo": "Aragon's indexer reads this as reporting to",
           "reportsToUnresolved": "Aragon's indexer reads this as a governance report but could not identify the proposal",
@@ -3850,6 +3855,19 @@
           "waitingForTurn": "Fully signed. It executes once the Safe reaches this nonce; nonce {{currentNonce}} is next."
         },
         "stale": "This queue could not be re-read from the Safe service, so it may be out of date."
+      },
+      "safeQueueSlotDialog": {
+        "dismiss": "Go back",
+        "remove": {
+          "body": "This removes the offchain service record and its stored confirmations. No nonce is consumed, no gas is spent, and nothing happens onchain. It does not revoke anything: the existing signatures still work, so anyone still holding them can re-derive and execute this exact transaction. Only the proposer can remove it.",
+          "confirm": "Remove from queue",
+          "title": "Remove from queue"
+        },
+        "replace": {
+          "body": "This proposes a new transaction at the same nonce that sends zero value to the Safe itself. It must collect the Safe's full signing threshold and be executed onchain, so it costs gas, consumes the nonce, and stays permanently visible. It cannot be a unilateral act, and other owners may already have signed the original transaction.",
+          "confirm": "Replace onchain",
+          "title": "Replace onchain"
+        }
       },
       "safeTransactionReviewDialog": {
         "callTarget": "To {{target}} · {{value}} wei",

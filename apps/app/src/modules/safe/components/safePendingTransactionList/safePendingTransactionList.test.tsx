@@ -52,6 +52,23 @@ describe('<SafePendingTransactionList /> component', () => {
             }),
         });
 
+    const generateActions = (
+        overrides?: Partial<safeTransactionActionsApi.ISafeTransactionActions>,
+    ): safeTransactionActionsApi.ISafeTransactionActions => ({
+        confirm: jest.fn(),
+        isConfirming: false,
+        submittedConfirmations: new Set(),
+        confirmationSyncTimedOut: false,
+        refreshQueue: jest.fn(),
+        execute: jest.fn(),
+        isExecuting: false,
+        removeFromQueue: jest.fn(),
+        isRemoving: false,
+        replaceOnchain: jest.fn(),
+        isReplacing: false,
+        ...overrides,
+    });
+
     beforeEach(() => {
         useSafePendingTransactionsSpy.mockReturnValue(generateResponse([]));
         useDialogContextSpy.mockReturnValue(
@@ -174,15 +191,7 @@ describe('<SafePendingTransactionList /> component', () => {
             } as never);
         const useActionsSpy = jest
             .spyOn(safeTransactionActionsApi, 'useSafeTransactionActions')
-            .mockReturnValue({
-                confirm: jest.fn(),
-                isConfirming: false,
-                submittedConfirmations: new Set(),
-                confirmationSyncTimedOut: false,
-                refreshQueue: jest.fn(),
-                execute,
-                isExecuting: false,
-            });
+            .mockReturnValue(generateActions({ execute }));
         useSafePendingTransactionsSpy.mockReturnValue(
             generateResponse([
                 generateSafeTransaction({
@@ -623,17 +632,14 @@ describe('<SafePendingTransactionList /> component', () => {
             'useSafeTransactionActions',
         );
         useWalletAccountSpy.mockReturnValue({ address: owner } as never);
-        useActionsSpy.mockReturnValue({
-            confirm: jest.fn(),
-            isConfirming: false,
-            submittedConfirmations: new Set([
-                `${safeTxHash.toLowerCase()}:${owner.toLowerCase()}`,
-            ]),
-            confirmationSyncTimedOut: true,
-            refreshQueue: jest.fn(),
-            execute: jest.fn(),
-            isExecuting: false,
-        });
+        useActionsSpy.mockReturnValue(
+            generateActions({
+                submittedConfirmations: new Set([
+                    `${safeTxHash.toLowerCase()}:${owner.toLowerCase()}`,
+                ]),
+                confirmationSyncTimedOut: true,
+            }),
+        );
         useSafePendingTransactionsSpy.mockReturnValue(
             generateResponse([
                 generateSafeTransaction({
@@ -756,6 +762,105 @@ describe('<SafePendingTransactionList /> component', () => {
                     'app.safe.safePendingTransactionList.followedMissing',
                 ),
             ).toBeInTheDocument();
+        });
+    });
+
+    describe('routes out of a queued nonce slot', () => {
+        const proposer = '0x5043b9fE61961a46BE7f2930452d0833103f0Ca1';
+        const otherOwner = '0x2222222222222222222222222222222222222222';
+
+        const mockConnectedWallet = (address: string) =>
+            jest
+                .spyOn(walletAccountApi, 'useWalletAccount')
+                .mockReturnValue({ address, isConnected: true } as never);
+
+        beforeEach(() => {
+            useSafePendingTransactionsSpy.mockReturnValue(
+                generateResponse([
+                    generateSafeTransaction({ nonce: '11', from: proposer }),
+                ]),
+            );
+        });
+
+        it('offers removal only to the proposer the Safe service would accept', () => {
+            // Deletion is authorised by the proposer's own signature, so offering it to another
+            // owner would spend a wallet prompt on a request the service refuses.
+            const walletSpy = mockConnectedWallet(otherOwner);
+
+            try {
+                render(createTestComponent());
+
+                expect(
+                    screen.queryByText(
+                        'app.safe.safePendingTransactionList.item.removeFromQueue',
+                    ),
+                ).not.toBeInTheDocument();
+                expect(
+                    screen.getByText(
+                        'app.safe.safePendingTransactionList.item.removeProposerOnly',
+                    ),
+                ).toBeInTheDocument();
+            } finally {
+                walletSpy.mockRestore();
+            }
+        });
+
+        it('discloses what a route costs before it acts on the slot', async () => {
+            const walletSpy = mockConnectedWallet(proposer);
+
+            try {
+                render(createTestComponent());
+
+                await userEvent.click(
+                    screen.getByRole('button', {
+                        name: 'app.safe.safePendingTransactionList.item.moreActions',
+                    }),
+                );
+                await userEvent.click(
+                    screen.getByText(
+                        'app.safe.safePendingTransactionList.item.removeFromQueue',
+                    ),
+                );
+
+                // The disclosure dialog stands between the menu and the service call: neither
+                // route is taken on the strength of a menu click.
+                expect(openDialog).toHaveBeenCalledWith(
+                    SafeDialogId.QUEUE_SLOT,
+                    expect.objectContaining({
+                        params: expect.objectContaining({ mode: 'remove' }),
+                    }),
+                );
+            } finally {
+                walletSpy.mockRestore();
+            }
+        });
+
+        it('keeps the onchain replacement available to any connected owner', async () => {
+            const walletSpy = mockConnectedWallet(otherOwner);
+
+            try {
+                render(createTestComponent());
+
+                await userEvent.click(
+                    screen.getByRole('button', {
+                        name: 'app.safe.safePendingTransactionList.item.moreActions',
+                    }),
+                );
+                await userEvent.click(
+                    screen.getByText(
+                        'app.safe.safePendingTransactionList.item.replaceOnchain',
+                    ),
+                );
+
+                expect(openDialog).toHaveBeenCalledWith(
+                    SafeDialogId.QUEUE_SLOT,
+                    expect.objectContaining({
+                        params: expect.objectContaining({ mode: 'replace' }),
+                    }),
+                );
+            } finally {
+                walletSpy.mockRestore();
+            }
         });
     });
 });

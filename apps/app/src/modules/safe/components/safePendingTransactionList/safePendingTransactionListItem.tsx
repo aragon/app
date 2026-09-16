@@ -6,7 +6,9 @@ import {
     Button,
     DataListItem,
     DateFormat,
+    Dropdown,
     formatterUtils,
+    IconType,
     Link,
     Tag,
 } from '@aragon/gov-ui-kit';
@@ -19,6 +21,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { SafeDialogId } from '../../constants';
+import type { SafeQueueSlotMode } from '../../dialogs/safeQueueSlotDialog';
 import {
     type ISafeExecutionActionOutcome,
     useSafeTransactionActions,
@@ -110,6 +113,12 @@ export const SafePendingTransactionListItem: React.FC<
         execute,
         isConfirming,
         isExecuting,
+        removeFromQueue,
+        isRemoving,
+        removeError,
+        replaceOnchain,
+        isReplacing,
+        replaceError,
     } = useSafeTransactionActions({ network, safeAddress, chainId });
     /**
      * The chain threshold decides, not the queue's `confirmationsRequired`. That field is
@@ -198,6 +207,40 @@ export const SafePendingTransactionListItem: React.FC<
                                     );
                                 } else {
                                     void confirm(transaction);
+                                }
+                            }),
+                    }),
+            },
+        });
+
+    /**
+     * Routes out of this nonce slot, offered by eligibility rather than as a fallback chain (W2).
+     *
+     * Removal is the service's own record and the service accepts it only from the proposer, so
+     * offering it to anyone else would spend a wallet prompt on a call that is refused. Replacement
+     * is a real Safe transaction any owner can propose. Both cost and authority differ, so neither
+     * is presented as "cancel" and the app never escalates silently from one to the other.
+     */
+    const canRemove =
+        connectedAddress != null &&
+        transaction.from != null &&
+        addressUtils.isAddressEqual(transaction.from, connectedAddress);
+    const isSlotActionBusy = isRemoving || isReplacing;
+
+    const handleSlotAction = (mode: SafeQueueSlotMode) =>
+        open(SafeDialogId.QUEUE_SLOT, {
+            params: {
+                mode,
+                // The disclosure is worth reading while disconnected; the wallet is only needed
+                // once the owner accepts it, exactly as the review dialog does.
+                onConfirm: () =>
+                    checkWalletConnection({
+                        onSuccess: () =>
+                            withNetworkSwitch(() => {
+                                if (mode === 'remove') {
+                                    void removeFromQueue(transaction);
+                                } else {
+                                    void replaceOnchain(transaction);
                                 }
                             }),
                     }),
@@ -321,12 +364,65 @@ export const SafePendingTransactionListItem: React.FC<
                     >
                         {t('app.safe.safePendingTransactionList.item.review')}
                     </Button>
+                    {/* A queued transaction holds a nonce no later transaction can skip, so the
+                        routes out of the slot belong on the row that holds it. Grouped behind one
+                        trigger because they are the secondary answer to "this is stuck", not the
+                        action the row is for. */}
+                    <Dropdown.Container
+                        align="end"
+                        constrainContentWidth={false}
+                        customTrigger={
+                            <Button
+                                aria-label={t(
+                                    'app.safe.safePendingTransactionList.item.moreActions',
+                                )}
+                                iconLeft={IconType.DOTS_VERTICAL}
+                                isLoading={isSlotActionBusy}
+                                size="sm"
+                                variant="tertiary"
+                            />
+                        }
+                    >
+                        {canRemove && (
+                            <Dropdown.Item
+                                onClick={() => handleSlotAction('remove')}
+                            >
+                                {t(
+                                    'app.safe.safePendingTransactionList.item.removeFromQueue',
+                                )}
+                            </Dropdown.Item>
+                        )}
+                        <Dropdown.Item
+                            onClick={() => handleSlotAction('replace')}
+                        >
+                            {t(
+                                'app.safe.safePendingTransactionList.item.replaceOnchain',
+                            )}
+                        </Dropdown.Item>
+                    </Dropdown.Container>
                 </div>
             </div>
             {confirmError != null && (
                 <span className="text-critical-500 text-sm leading-tight">
                     {t(
                         `app.safe.safePendingTransactionList.item.${confirmError}`,
+                    )}
+                </span>
+            )}
+            {/* Said once, as a fact about the service rather than a disabled button: only the
+                address that proposed a transaction can have the service forget it. Withheld from a
+                disconnected viewer, for whom it would be noise on every row. */}
+            {connectedAddress != null && !canRemove && (
+                <span className="text-neutral-500 text-sm leading-tight">
+                    {t(
+                        'app.safe.safePendingTransactionList.item.removeProposerOnly',
+                    )}
+                </span>
+            )}
+            {(removeError ?? replaceError) != null && (
+                <span className="text-critical-500 text-sm leading-tight">
+                    {t(
+                        `app.safe.safePendingTransactionList.item.${removeError ?? replaceError}`,
                     )}
                 </span>
             )}
