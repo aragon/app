@@ -68,11 +68,8 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                     ? undefined
                     : [
                           {
+                              // No "of N" here: the owner count is the next stat along.
                               value: safeInfo?.threshold,
-                              suffix: t(
-                                  'app.safe.safeAccountPage.stats.thresholdSuffix',
-                                  { owners: safeInfo?.owners.length ?? 0 },
-                              ),
                               label: t(
                                   'app.safe.safeAccountPage.stats.threshold',
                               ),

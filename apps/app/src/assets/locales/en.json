@@ -3744,6 +3744,7 @@
             "modulesValue": "{{count}}",
             "nonce": "Nonce",
             "threshold": "Threshold",
+            "thresholdValue": "{{threshold}} of {{owners}}",
             "title": "Details",
             "unknown": "Unknown",
             "version": "Version"
@@ -3767,8 +3768,7 @@
         "stats": {
           "nonce": "Nonce",
           "owners": "Owners",
-          "threshold": "Threshold",
-          "thresholdSuffix": "of {{owners}}"
+          "threshold": "Threshold"
         },
         "unsupportedNetwork": {
           "description": "Safe does not run a transaction service on {{network}}, so this Safe cannot be read here.",
@@ -3828,7 +3828,7 @@
           "confirmations": "{{count}} of {{required}} confirmations",
           "error": "The confirmation could not be submitted. Please try again.",
           "execute": "Execute",
-          "followed": "Followed here",
+          "followed": "From your link",
           "hashMismatch": "This transaction changed after review, so it was not submitted.",
           "moreActions": "More actions",
           "nonce": "Nonce {{nonce}}",
