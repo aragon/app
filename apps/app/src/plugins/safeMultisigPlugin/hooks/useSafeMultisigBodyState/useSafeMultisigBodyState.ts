@@ -292,12 +292,18 @@ export const useSafeMultisigBodyState = (
                 address: connectedAddress,
             }),
         /**
-         * A Safe binds `confirmationsRequired` into the transaction when it is proposed, so the
-         * report carries the threshold that actually applied. The live threshold is only a
-         * stand-in for a body with nothing queued yet - never for a settled one, where it would
-         * restate today's rules as history: a report executed by a 1-of-2 Safe would read "2 of 2"
-         * once the owners raise the threshold. When the scan cannot find the report, these stay
-         * empty and the surface says so rather than inventing a count.
+         * The transaction's own `confirmationsRequired` tracks the rules that applied far better
+         * than the live threshold, which is only a stand-in for a body with nothing queued yet -
+         * never for a settled one, where it would restate today's rules as history: a report
+         * executed by a 1-of-2 Safe would read "2 of 2" once the owners raise the threshold.
+         *
+         * It is not an immutable proposal-time value though. Upstream derives it from the Safe
+         * status at `(safe, nonce)` - the mining-time threshold once executed - and falls back to
+         * the Safe's latest status and finally the indexed confirmation count. A queued report has
+         * no status at its nonce yet, so this line serves a mining-time threshold for settled
+         * reports and a current-threshold fallback while queued. Best available record, not a
+         * guarantee. When the scan cannot find the report, these stay empty and the surface says
+         * so rather than inventing a count.
          */
         approvalsAmount: reportTransaction?.confirmations.length ?? 0,
         minApprovals:

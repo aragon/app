@@ -359,9 +359,11 @@ describe('useSafeMultisigBodyState hook', () => {
     });
 
     it('reports the threshold that applied, not the one the Safe has now', () => {
-        // Owners can raise the threshold after a report executes. The Safe binds
-        // confirmationsRequired at propose time, so a 1-of-2 execution must keep reading as one
-        // approval of one required - reading the live threshold restates today's rules as history.
+        // Owners can raise the threshold after a report executes. The transaction carries the
+        // threshold the service recorded for the block it was mined in, so a 1-of-2 execution must
+        // keep reading as one approval of one required - reading the live threshold restates
+        // today's rules as history. Not a propose-time immutable: upstream falls back to the
+        // Safe's latest status and then the indexed confirmation count.
         useSafeSettledReportSpy.mockReturnValue({
             settledReport: {
                 transaction: generateSafeMultisigTransaction({

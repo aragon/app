@@ -1,3 +1,4 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
@@ -85,6 +86,59 @@ describe('<SafeAccountPageClient /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText('1.4.1+L2')).toBeInTheDocument();
+    });
+
+    it('discloses a transaction guard and enabled modules, because owners and threshold alone understate who can move the Safe', () => {
+        useSafeInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse({
+                    guard: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+                    modules: ['0xModuleOne', '0xModuleTwo'],
+                }),
+            }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.safe.safeAccountPage.aside.details.modulesValue (count=2)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                addressUtils.truncateAddress(
+                    '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+                ),
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('renders no module count for a Safe with no modules, rather than an empty authority field', () => {
+        useSafeInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse({ modules: [] }),
+            }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeAccountPage.aside.details.modules',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('renders no guard row for a Safe with no guard', () => {
+        useSafeInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse({ guard: null }),
+            }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText('app.safe.safeAccountPage.aside.details.guard'),
+        ).not.toBeInTheDocument();
     });
 
     it('renders a Safe below the EIP-1271 floor without gating the read view', () => {

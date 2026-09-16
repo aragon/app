@@ -82,8 +82,10 @@ class SafeMultisigTransactionUtils {
     ): Hex => {
         const { proposalId, stageId, resultType } = params;
 
-        // `_tryAdvance` stays false: advancing the stage closes the report-overwrite window that
-        // makes recovery from a wrong report possible.
+        // `_tryAdvance` stays false: it separates reporting from advancement and preserves the
+        // chance to correct a wrong report before progression becomes irreversible. Advancing
+        // closes that effective recovery window - it does not make a later report revert, and an
+        // advance by any other authorized actor closes the window just the same.
         return encodeFunctionData({
             abi: sppReportProposalResultAbi,
             functionName: 'reportProposalResult',
