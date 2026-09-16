@@ -1,5 +1,11 @@
 # @aragon/aragon-domain
 
+## 0.4.0
+
+### Minor Changes
+
+- [#4](https://github.com/aragon/aragon-domain/pull/4) [`318c1e8`](https://github.com/aragon/aragon-domain/commit/318c1e807311405960f2af1d2bcc21ae21ad6696) Thanks [@asciiman](https://github.com/asciiman)! - Add the `getTokenVotingMembership` use case: a paginated, voting-power-ordered list of a TokenVoting plugin's ERC20Votes members, scoped by chain id and enriched with primary ENS names resolved through viem. `AragonDomain.load` now takes an `RpcUrls` map (RPC endpoints keyed by chain id) alongside the `EnvioClient`; the mainnet (chain id 1) entry is required and `load` throws without it instead of letting ENS lookups fall back to viem's public endpoint.
+
 ## 0.3.1
 
 ### Patch Changes
