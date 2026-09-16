@@ -78,7 +78,28 @@ jest.mock('@aragon/gov-ui-kit', () => {
 
 describe('<SafeTransactionReviewDialog /> component', () => {
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-    const useBytecodeSpy = jest.spyOn(Wagmi, 'useBytecode');
+    const usePublicClientSpy = jest.spyOn(Wagmi, 'usePublicClient');
+
+    /**
+     * The dialog reads code for every delegate target through the public client, so a test states
+     * what the chain answers: a resolved value, a read that never answers, or a failed one.
+     */
+    const mockDelegateCode = (
+        code?: Hex,
+        state: 'resolved' | 'pending' | 'failed' = 'resolved',
+    ) => {
+        const getCode = jest.fn();
+
+        if (state === 'resolved') {
+            getCode.mockResolvedValue(code);
+        } else if (state === 'failed') {
+            getCode.mockRejectedValue(new Error('rpc unavailable'));
+        } else {
+            getCode.mockReturnValue(new Promise(() => undefined));
+        }
+
+        usePublicClientSpy.mockReturnValue({ getCode } as never);
+    };
     const useReadContractSpy = jest.spyOn(Wagmi, 'useReadContract');
 
     const safeAddress = getAddress(
@@ -92,17 +113,14 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         // Default to an unresolved read: an unanswered node must not accuse a valid batch.
-        useBytecodeSpy.mockReturnValue({
-            data: undefined,
-            isSuccess: false,
-        } as never);
+        mockDelegateCode(undefined, 'pending');
         // The dialog hashes under the version it reads from the Safe, never the reported one.
         useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
-        useBytecodeSpy.mockReset();
+        usePublicClientSpy.mockReset();
         useReadContractSpy.mockReset();
     });
 
@@ -190,9 +208,13 @@ describe('<SafeTransactionReviewDialog /> component', () => {
             ...params,
         };
 
+        // `GukModulesProvider` falls back to a module-level singleton client, which would serve
+        // one test's delegate-target code read to the next under the same query key.
+        const queryClient = new QueryClient();
+
         return (
-            <QueryClientProvider client={new QueryClient()}>
-                <GukModulesProvider>
+            <QueryClientProvider client={queryClient}>
+                <GukModulesProvider queryClient={queryClient}>
                     <SafeTransactionReviewDialog
                         location={{
                             id: 'safe-transaction-review',
@@ -241,11 +263,8 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         { code: '0x' as Hex, label: 'empty code' },
     ])(
         'warns that a delegate call to a target with $label will run nothing',
-        ({ code }) => {
-            useBytecodeSpy.mockReturnValue({
-                data: code,
-                isSuccess: true,
-            } as never);
+        async ({ code }) => {
+            mockDelegateCode(code);
 
             render(
                 createTestComponent({
@@ -254,18 +273,66 @@ describe('<SafeTransactionReviewDialog /> component', () => {
             );
 
             expect(
-                screen.getByText(
+                await screen.findByText(
                     'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
                 ),
             ).toBeInTheDocument();
         },
     );
 
+    it('refuses a batch whose inner delegate call targets an address holding no code', async () => {
+        // MultiSend's inner delegatecall to a codeless address also returns success, so the batch
+        // continues and its siblings run: the constraining call of a batch can be neutered while
+        // the value-moving ones execute, and the surface then reports success.
+        const onConfirm = jest.fn();
+        mockDelegateCode(undefined);
+        const data = encodeFunctionData({
+            abi: safeMultiSendAbi,
+            functionName: 'multiSend',
+            args: [
+                concatHex(
+                    [
+                        { to: target, data: '0x1234' as Hex, operation: 0 },
+                        {
+                            to: zeroAddress,
+                            data: '0xabcd' as Hex,
+                            operation: 1,
+                        },
+                    ].map(({ to, data: callData, operation }) =>
+                        encodePacked(
+                            ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
+                            [
+                                operation,
+                                to as Hex,
+                                BigInt(0),
+                                BigInt(size(callData)),
+                                callData,
+                            ],
+                        ),
+                    ),
+                ),
+            ],
+        });
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ data }),
+                onConfirm,
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.safe.safeTransactionReviewDialog.callRunsNothing',
+            ),
+        ).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+        expect(onConfirm).not.toHaveBeenCalled();
+    });
+
     it('does not warn when the delegate call target holds code', () => {
-        useBytecodeSpy.mockReturnValue({
-            data: '0x6080604052' as Hex,
-            isSuccess: true,
-        } as never);
+        mockDelegateCode('0x6080604052' as Hex);
 
         render(
             createTestComponent({
@@ -283,10 +350,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     it('stays silent while the target read is unresolved', () => {
         // An unanswered or failed node read is not evidence of an empty target. Warning on it
         // would tell an owner not to sign a batch that is sound, on the strength of nothing.
-        useBytecodeSpy.mockReturnValue({
-            data: undefined,
-            isSuccess: false,
-        } as never);
+        mockDelegateCode(undefined, 'pending');
 
         render(
             createTestComponent({
@@ -304,10 +368,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     it('does not warn about a plain call to an address with no code', () => {
         // A call to a codeless address wastes its own slot; it does not void the other calls, and
         // only the Safe's own context - which delegatecall hands over - can be voided wholesale.
-        useBytecodeSpy.mockReturnValue({
-            data: undefined,
-            isSuccess: true,
-        } as never);
+        mockDelegateCode(undefined);
 
         render(
             createTestComponent({
@@ -498,10 +559,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
 
     it('refuses to confirm a delegate call to a codeless target, which would run none of the calls', async () => {
         const onConfirm = jest.fn();
-        useBytecodeSpy.mockReturnValue({
-            data: undefined,
-            isSuccess: true,
-        } as never);
+        mockDelegateCode(undefined);
 
         render(
             createTestComponent({
@@ -546,11 +604,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
 
     it('refuses to confirm a delegate call whose target bytecode read failed', async () => {
         const onConfirm = jest.fn();
-        useBytecodeSpy.mockReturnValue({
-            data: undefined,
-            isSuccess: false,
-            isError: true,
-        } as never);
+        mockDelegateCode(undefined, 'failed');
 
         render(
             createTestComponent({

@@ -9,7 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQuery } from '@tanstack/react-query';
 import type { Hex } from 'viem';
-import { useBytecode, useReadContract } from 'wagmi';
+import { usePublicClient, useReadContract } from 'wagmi';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import type { Network } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
@@ -299,37 +299,61 @@ export const SafeTransactionReviewDialog: React.FC<
     /**
      * The sharper case, and the one that needs the chain: a delegate call to an address holding no
      * code succeeds and runs nothing. The Safe consumes the nonce, emits `ExecutionSuccess`, and
-     * every call listed below never happens. Observed on sepolia at nonce 6 of the gate Safe - a
+     * the call listed below never happens. Observed on sepolia at nonce 6 of the gate Safe - a
      * fully reviewed, correctly hashed, fully signed batch that did nothing at all.
      *
-     * `useBytecode` is one address and hook-bound, so it reads the outer target: the one receiving
-     * the Safe's context, and the only one whose emptiness voids the whole batch. An empty inner
-     * delegate target wastes its own slot, and the unrecognised-target warning above already names
-     * it, since an empty address is never a canonical MultiSend.
+     * Read for EVERY delegate target in the batch, not just the outer one. MultiSend's inner
+     * `delegatecall` to a codeless address also returns success, so the batch continues and its
+     * siblings run: put the constraining call of a batch at a codeless target and the
+     * value-moving calls still execute, while the account path reports "executed successfully".
+     * The earlier reasoning - that an empty inner target only wastes its own slot - understated
+     * that, because the calls around it are the point.
      */
-    const outerCall = safeTransactionEnvelopeUtils.getCall(transaction);
-    const isDelegateCall = outerCall.operation === 1;
-    const {
-        data: outerBytecode,
-        isSuccess: isBytecodeKnown,
-        isError: isBytecodeUnavailable,
-    } = useBytecode({
-        address: outerCall.to as Hex,
+    const delegateTargets = [
+        ...new Set(
+            calls
+                .filter(({ call }) => call.operation === 1)
+                .map(({ call }) => call.to.toLowerCase()),
+        ),
+    ];
+    const publicClient = usePublicClient({
         chainId: networkDefinitions[network].id,
-        query: { enabled: isDelegateCall },
     });
-    const hasCodelessTarget =
-        isDelegateCall && isBytecodeKnown && (outerBytecode ?? '0x') === '0x';
+    const {
+        data: codelessTargets,
+        isSuccess: isDelegateCodeKnown,
+        isError: isDelegateCodeUnavailable,
+    } = useQuery({
+        queryKey: [
+            'SAFE_DELEGATE_TARGET_CODE',
+            networkDefinitions[network].id,
+            delegateTargets,
+        ],
+        queryFn: async () => {
+            const codes = await Promise.all(
+                delegateTargets.map((address) =>
+                    publicClient?.getCode({ address: address as Hex }),
+                ),
+            );
+
+            return delegateTargets.filter(
+                (_, index) => (codes[index] ?? '0x') === '0x',
+            );
+        },
+        enabled: delegateTargets.length > 0 && publicClient != null,
+    });
+
+    const hasCodelessTarget = (codelessTargets?.length ?? 0) > 0;
 
     /**
      * Until that read answers, a codeless target is indistinguishable from a legitimate one, so a
      * delegate call is refused while it is outstanding and if it fails outright. Without this the
-     * gate is a race an owner wins by clicking quickly — `hasCodelessTarget` is false until the
-     * node replies, which is exactly the window the check exists to cover. Failure is treated the
-     * same way rather than optimistically: the whole batch's effect hangs on this one answer.
+     * gate is a race an owner wins by clicking quickly. Failure is treated the same way rather
+     * than optimistically: the whole batch's effect hangs on this answer.
      */
     const isDelegateTargetUnresolved =
-        isDelegateCall && (!isBytecodeKnown || isBytecodeUnavailable);
+        delegateTargets.length > 0 &&
+        (!isDelegateCodeKnown || isDelegateCodeUnavailable);
     const isHashMismatch = verification === SafeHashVerification.MISMATCH;
 
     /**
@@ -554,6 +578,17 @@ export const SafeTransactionReviewDialog: React.FC<
                                         t(`${translationKey}.unknownAction`)}
                                 </span>
                             </div>
+                            {call.operation === 1 &&
+                                codelessTargets?.includes(
+                                    call.to.toLowerCase(),
+                                ) === true && (
+                                    <AlertInline
+                                        message={t(
+                                            `${translationKey}.callRunsNothing`,
+                                        )}
+                                        variant="critical"
+                                    />
+                                )}
                             <span className="text-neutral-500 text-sm">
                                 {t(`${translationKey}.callTarget`, {
                                     target: addressUtils.truncateAddress(

@@ -61,9 +61,32 @@ export const SafeProposalReportLink: React.FC<ISafeProposalReportLinkProps> = ({
         );
     }
 
+    /**
+     * The verdict belongs next to the proposal. An approval and a veto on the same proposal
+     * otherwise render as identical rows, so an owner who recognises a proposal they support can
+     * confirm a transaction that vetoes it. Still a backend claim about the calldata, framed as
+     * context like the link itself: `1` and `2` are SPP's APPROVAL and VETO, and anything else is
+     * left unnamed rather than guessed.
+     */
+    const verdictKey =
+        report.resultType === 1
+            ? 'reportApproves'
+            : report.resultType === 2
+              ? 'reportVetoes'
+              : undefined;
+
     return (
-        <Link href={proposalUrl} textClassName="text-sm leading-tight">
-            {proposalUtils.getProposalSlug(proposalParams, dao)}
-        </Link>
+        <span className="flex flex-row items-center gap-1">
+            <Link href={proposalUrl} textClassName="text-sm leading-tight">
+                {proposalUtils.getProposalSlug(proposalParams, dao)}
+            </Link>
+            {verdictKey != null && (
+                <span className="text-neutral-500 text-sm leading-tight">
+                    {t(
+                        `app.safe.safePendingTransactionList.item.${verdictKey}`,
+                    )}
+                </span>
+            )}
+        </span>
     );
 };

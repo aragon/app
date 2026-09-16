@@ -3814,7 +3814,9 @@
           "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
           "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
           "refresh": "Refresh",
+          "reportApproves": "(approve)",
           "reportUnidentified": "an unidentified proposal",
+          "reportVetoes": "(veto)",
           "reportsTo": "Reports to",
           "reportsToUnresolved": "Reports to an Aragon proposal that could not be identified yet",
           "review": "Review",
@@ -3857,6 +3859,7 @@
           "safeTxGas": "Safe tx gas",
           "safeTxHash": "Transaction hash"
         },
+        "callRunsNothing": "The address this delegate call targets holds no code, so this call executes nothing while the rest of the transaction still runs.",
         "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does, so it cannot be signed here.",
         "delegateTargetUnresolved": "The code at this delegate call's target could not be read, so whether the calls below would actually run is unknown. Nothing can be signed until that read succeeds — refresh to try again.",
         "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",

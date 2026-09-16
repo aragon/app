@@ -270,6 +270,26 @@ describe('<SafePendingTransactionList /> component', () => {
             ).not.toBeInTheDocument();
         });
 
+        it('says which verdict a report carries, so an approval and a veto do not render alike', () => {
+            mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
+            useSafePendingTransactionsSpy.mockReturnValue(
+                generateResponse([
+                    generateSafeTransaction({
+                        nonce: '11',
+                        aragonReports: [{ ...report, resultType: 2 }],
+                    }),
+                ]),
+            );
+            render(createTestComponent());
+
+            expect(screen.getByText('SAT-4')).toBeInTheDocument();
+            expect(
+                screen.getByText(
+                    'app.safe.safePendingTransactionList.item.reportVetoes',
+                ),
+            ).toBeInTheDocument();
+        });
+
         it('says a transaction is an unidentified report when the backend decoded one but resolved none', () => {
             // `[]` is information, not silence (app-backend#1574): the calldata is a governance
             // report whose target is not yet indexed, was refused by the body check, or whose
