@@ -1124,24 +1124,19 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         });
     }
     /**
-     * W4's handoff: the account queue is where this Safe's nonce sequence is answered, and the
-     * proposal must not answer it inline — most of that queue is unrelated traffic, and rendering
-     * it here would imply a relationship that does not exist. So the card states what is true of
-     * this body's report and offers the route, deep-linked to the same `safeTxHash` it was
-     * showing, so one transaction resolves to one review payload on both surfaces.
-     *
-     * Offered only while the report actually occupies a queue slot. Superseded means the
-     * transaction lost the nonce and is filtered out of the account queue as permanently dead -
-     * this path would deep-link to an empty queue, and the re-queued report lives at a fresh
-     * nonce this address no longer knows. Executed is the breakdown's provenance links, not a
-     * queue lookup.
+     * The route to the account queue while this report actually occupies a slot there. It is where
+     * an owner sees co-signer state, and it stays worth offering even once the stage can no longer
+     * advance - the transaction is lost to the proposal, not to the Safe's queue, which still
+     * holds it. Superseded means the transaction lost the nonce and is filtered out of the queue as
+     * permanently dead; re-queued lives at a fresh nonce this address does not know. Executed is
+     * the breakdown's provenance links, not a queue lookup.
      */
     const queuedReportHref =
         pendingReport == null ||
         isSuperseded ||
         pendingReport.state === SafeTransactionState.EXECUTED
             ? undefined
-            : `/safe/${proposal.network}/${externalAddress}?tx=${pendingReport.transaction.safeTxHash}`;
+            : `/safe/${proposal.network}/${externalAddress}`;
 
     const isActionDisabled =
         hasSettled ||
@@ -1266,7 +1261,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     )}
                     {/* The queued transaction, offered beside the action rather than above it: it
                         is where an owner goes to see co-signer state, so it reads as the second
-                        route out of the card. Absent when there is no transaction to see. */}
+                        route out of the card. The account queue shows it regardless of whether the
+                        stage can still advance - the transaction is lost to the proposal, not to
+                        the queue. Absent when there is no transaction to see. */}
                     {queuedReportHref != null && (
                         <Link
                             href={queuedReportHref}

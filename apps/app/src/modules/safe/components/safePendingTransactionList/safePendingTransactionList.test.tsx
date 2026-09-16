@@ -2,7 +2,6 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useSearchParams } from 'next/navigation';
 import * as walletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import * as daoServiceApi from '@/shared/api/daoService';
@@ -728,50 +727,6 @@ describe('<SafePendingTransactionList /> component', () => {
             'href',
             expect.stringContaining(safeTxHash),
         );
-    });
-
-    describe('transaction followed here from a proposal', () => {
-        const followed = `0x${'cd'.repeat(32)}`;
-        const followTransaction = (hash: string) =>
-            jest
-                .mocked(useSearchParams)
-                .mockReturnValue(
-                    new URLSearchParams(`tx=${hash}`) as never as ReturnType<
-                        typeof useSearchParams
-                    >,
-                );
-
-        afterEach(() => {
-            jest.mocked(useSearchParams).mockReturnValue(
-                new URLSearchParams() as never as ReturnType<
-                    typeof useSearchParams
-                >,
-            );
-        });
-
-        it('names the linked transaction among the account traffic around it', () => {
-            // W4's handoff: the proposal hands over one `safeTxHash`, and this surface has to make
-            // it findable without auto-opening a signing review for whoever wrote the link.
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateResponse([
-                    generateSafeTransaction({
-                        nonce: '11',
-                        safeTxHash: followed.toUpperCase(),
-                    }),
-                    generateSafeTransaction({ nonce: '12' }),
-                ]),
-            );
-            followTransaction(followed);
-
-            render(createTestComponent());
-
-            expect(
-                screen.getAllByText(
-                    'app.safe.safePendingTransactionList.item.followed',
-                ),
-            ).toHaveLength(1);
-            expect(openDialog).not.toHaveBeenCalled();
-        });
     });
 
     describe('routes out of a queued nonce slot', () => {

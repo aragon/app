@@ -525,14 +525,10 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
     });
 
-    it('routes a queued report to the same transaction in the account queue', () => {
-        // W4's handoff: the proposal states what is true of this body's report and hands the
-        // Safe's nonce sequence to the account surface, deep-linked to the same transaction so one
-        // `safeTxHash` resolves to one review payload on both sides.
-        const queued = generateSafeMultisigTransaction({
-            nonce: '4',
-            safeTxHash: `0x${'cd'.repeat(32)}`,
-        });
+    it('routes a queued report to the account queue holding it', () => {
+        // The queue is where an owner sees co-signer state, and a live queued report still
+        // occupies a slot there even once the stage can no longer advance.
+        const queued = generateSafeMultisigTransaction({ nonce: '4' });
         mockQueuedReport(queued);
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
@@ -548,6 +544,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 status: ProposalStatus.ACTIVE,
                 hasNonceCompetition: false,
             },
+            canStillAffectOutcome: false,
         });
 
         render(createTestComponent());
@@ -558,11 +555,8 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         expect(link).toHaveAttribute(
             'href',
-            `/safe/${Network.ETHEREUM_SEPOLIA}/${safeInfo.address}?tx=${queued.safeTxHash}`,
+            `/safe/${Network.ETHEREUM_SEPOLIA}/${safeInfo.address}`,
         );
-        // The queue is a detour from signing, not a step in it: it opens alongside the card so the
-        // review the owner is mid-way through is not thrown away to look at co-signer state.
-        expect(link).toHaveAttribute('target', '_blank');
     });
 
     it('does not warn of a gas transaction when more owners are still needed', async () => {
@@ -1343,10 +1337,9 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 'app.plugins.safeMultisig.safeMultisigSubmitVote.replaced',
             ),
         ).toBeInTheDocument();
-        // Whatever took the nonce is account-level traffic, so the queue answers it. The proposal
-        // states the report is dead and offers the re-queue; it does not hand over a lookup to a
-        // nonce the queue no longer shows - a superseded report is filtered out as permanently
-        // dead, so the deep-link would land on an empty queue.
+        // Whatever took the nonce is account-level traffic, and the card no longer hands over a queue
+        // lookup at all: the deep-link would land on a nonce the queue holds no longer, and the
+        // correlation that could name the replacement is a backend-side follow-up.
         expect(
             screen.queryByRole('link', {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',

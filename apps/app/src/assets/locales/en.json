@@ -3810,7 +3810,6 @@
           "confirmations": "{{count}} of {{required}} confirmations",
           "error": "The confirmation could not be submitted. Please try again.",
           "execute": "Execute",
-          "followed": "From your link",
           "hashMismatch": "This transaction changed after review, so it was not submitted.",
           "moreActions": "More actions",
           "nonce": "Nonce {{nonce}}",

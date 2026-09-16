@@ -67,12 +67,6 @@ export interface ISafePendingTransactionListItemProps {
      */
     hasNonceRival?: boolean;
     /**
-     * This row is the transaction a proposal body card linked to. Named so the owner can find it
-     * among unrelated account traffic; it says nothing about that proposal, because this surface
-     * answers the Safe's nonce sequence and not any proposal's outcome.
-     */
-    isFollowed?: boolean;
-    /**
      * Keeps an execution result visible after a successful execution removes the row.
      */
     onExecutionOutcome: (outcome: ISafeExecutionActionOutcome) => void;
@@ -90,7 +84,6 @@ export const SafePendingTransactionListItem: React.FC<
         threshold,
         currentNonce,
         hasNonceRival,
-        isFollowed,
         onExecutionOutcome,
     } = props;
     const {
@@ -264,16 +257,6 @@ export const SafePendingTransactionListItem: React.FC<
                                 variant="neutral"
                             />
                         </span>
-                        {isFollowed === true && (
-                            <span className="shrink-0">
-                                <Tag
-                                    label={t(
-                                        'app.safe.safePendingTransactionList.item.followed',
-                                    )}
-                                    variant="info"
-                                />
-                            </span>
-                        )}
                         {safeAppLink == null ? (
                             <span className="truncate text-base text-neutral-800 leading-tight md:text-lg">
                                 {addressUtils.truncateHash(safeTxHash)}
