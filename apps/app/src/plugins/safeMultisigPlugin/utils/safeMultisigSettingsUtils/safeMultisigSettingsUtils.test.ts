@@ -2,7 +2,10 @@ import {
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
-import { safeMultisigSettingsUtils } from './safeMultisigSettingsUtils';
+import {
+    type ISafeMultisigSettingsParseParams,
+    safeMultisigSettingsUtils,
+} from './safeMultisigSettingsUtils';
 
 describe('safeMultisigSettings utils', () => {
     const t = jest.fn((key: string, params?: Record<string, unknown>) =>
@@ -16,12 +19,18 @@ describe('safeMultisigSettings utils', () => {
         t.mockClear();
     });
 
-    const parse = (safeInfo = generateSafeInfo()) =>
+    const parse = (
+        safeInfo = generateSafeInfo(),
+        overrides?: Partial<ISafeMultisigSettingsParseParams>,
+    ) =>
         safeMultisigSettingsUtils.parseSettings({
             safeInfo,
+            address: safeInfo.address,
+            version: safeInfo.version,
             safeName,
             safeHref,
             t,
+            ...overrides,
         });
 
     it('states the Safe particulars that used to be repeated on the breakdown', () => {
@@ -45,9 +54,11 @@ describe('safeMultisigSettings utils', () => {
         );
         const key = 'app.safe.safeSettings';
 
-        // The requirement alone, live or settled: Safe keeps no historical owner set, so a
-        // denominator here would describe today's Safe rather than this decision.
-        expect(byTerm[`${key}.threshold`]).toEqual('3');
+        // A live threshold's owner set is readable, so the row carries its denominator; the
+        // settled row below cannot, which is what makes the two read differently.
+        expect(byTerm[`${key}.threshold`]).toEqual(
+            `${key}.thresholdValue:{"threshold":3,"owners":4}`,
+        );
         // Named "current" because it is live account state: it advances with every transaction the
         // Safe executes, so it is not the nonce this proposal's transaction used.
         expect(byTerm[`${key}.currentNonce`]).toEqual('42');
@@ -61,16 +72,15 @@ describe('safeMultisigSettings utils', () => {
     it('states the configuration the decision ran under once the body has reported', () => {
         // A Safe binds `confirmationsRequired` into each transaction, so a report executed by a
         // 1-of-2 Safe still says 1 after the owners raise the threshold to 3.
-        const settings = safeMultisigSettingsUtils.parseSettings({
-            safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
-            safeName,
-            safeHref,
-            settledTransaction: generateSafeMultisigTransaction({
-                confirmationsRequired: 1,
-                nonce: '5',
-            }),
-            t,
-        });
+        const settings = parse(
+            generateSafeInfo({ threshold: 3, nonce: '42' }),
+            {
+                settledTransaction: generateSafeMultisigTransaction({
+                    confirmationsRequired: 1,
+                    nonce: '5',
+                }),
+            },
+        );
 
         const byTerm = Object.fromEntries(
             settings.map((setting) => [setting.term, setting.definition]),
@@ -92,13 +102,12 @@ describe('safeMultisigSettings utils', () => {
     it('states no configuration once a body is decided but its numbers are unrecoverable', () => {
         // A veto body that never vetoed leaves no transaction at all, so there is nothing to
         // recover and the live Safe is exactly what must not fill the gap.
-        const settings = safeMultisigSettingsUtils.parseSettings({
-            safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
-            safeName,
-            safeHref,
-            isDecided: true,
-            t,
-        });
+        const settings = parse(
+            generateSafeInfo({ threshold: 3, nonce: '42' }),
+            {
+                isDecided: true,
+            },
+        );
 
         const terms = settings.map((setting) => setting.term);
         const key = 'app.safe.safeSettings';
@@ -114,14 +123,13 @@ describe('safeMultisigSettings utils', () => {
         // An incomplete read is not the same claim as "there is nothing to recover": the number
         // exists in the Safe's history, past where this view looked. Silence would read as the
         // permanent case, and the live threshold would be today's configuration mislabelled.
-        const settings = safeMultisigSettingsUtils.parseSettings({
-            safeInfo: generateSafeInfo({ threshold: 3, nonce: '42' }),
-            safeName,
-            safeHref,
-            isDecided: true,
-            isScanExhausted: true,
-            t,
-        });
+        const settings = parse(
+            generateSafeInfo({ threshold: 3, nonce: '42' }),
+            {
+                isDecided: true,
+                isScanExhausted: true,
+            },
+        );
 
         const key = 'app.safe.safeSettings';
         const threshold = settings.find(
@@ -158,12 +166,7 @@ describe('safeMultisigSettings utils', () => {
     });
 
     it('states the Safe without a link when the Safe app cannot address the network', () => {
-        const settings = safeMultisigSettingsUtils.parseSettings({
-            safeInfo: generateSafeInfo(),
-            safeName,
-            safeHref: undefined,
-            t,
-        });
+        const settings = parse(generateSafeInfo(), { safeHref: undefined });
 
         expect(safeRowOf(settings)?.definition).toEqual(safeName);
         expect(safeRowOf(settings)?.link).toBeUndefined();

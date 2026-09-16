@@ -4,11 +4,13 @@ import type { TranslationFunction } from '@/shared/components/translationsProvid
 
 export const safeSettingsTranslationKey = 'app.safe.safeSettings';
 
-export interface ISafeSettingsRowsParams {
+export interface ISafeAddressRowParams {
     /**
-     * Live Safe state: owners, threshold, version and nonce.
+     * Checksummed address of the Safe. Stated separately from `safeInfo` because the address is
+     * known from the route or the body: the row states which Safe this is while the account read
+     * is still in flight, and on a network Safe does not serve at all.
      */
-    safeInfo: ISafeInfo;
+    address: string;
     /**
      * Name the Safe is shown under - its ENS name, or the truncated address.
      */
@@ -19,6 +21,19 @@ export interface ISafeSettingsRowsParams {
      * row states the Safe without linking anywhere.
      */
     safeHref?: string;
+    /**
+     * Deployed Safe contract version, absent until the account read resolves or where it never
+     * will. The help text says so rather than leaving the address looking unversioned.
+     */
+    version?: string | null;
+    t: TranslationFunction;
+}
+
+export interface ISafeSettingsRowsParams {
+    /**
+     * Live Safe state: owners, threshold and nonce.
+     */
+    safeInfo: ISafeInfo;
     t: TranslationFunction;
 }
 
@@ -39,8 +54,8 @@ class SafeSettingsUtils {
      * executes, so the version can only ever mean "now" - which is why it sits under the live
      * address as help text rather than claiming a row of its own.
      */
-    addressRow = (params: ISafeSettingsRowsParams): IDefinitionSetting => {
-        const { safeInfo, safeName, safeHref, t } = params;
+    addressRow = (params: ISafeAddressRowParams): IDefinitionSetting => {
+        const { address, safeName, safeHref, version, t } = params;
 
         return {
             term: t(`${safeSettingsTranslationKey}.safe`),
@@ -53,10 +68,10 @@ class SafeSettingsUtils {
                           isExternal: true,
                           isOnchainEntity: true,
                       },
-            copyValue: safeInfo.address,
+            copyValue: address,
             description: t(`${safeSettingsTranslationKey}.versionHelp`, {
                 version:
-                    safeInfo.version ??
+                    version ??
                     t(`${safeSettingsTranslationKey}.unknownVersion`),
             }),
         };
@@ -68,14 +83,19 @@ class SafeSettingsUtils {
      * as "current" and never as one proposal's nonce.
      */
     liveConfigurationRows = (
-        params: Pick<ISafeSettingsRowsParams, 'safeInfo' | 't'>,
+        params: ISafeSettingsRowsParams,
     ): IDefinitionSetting[] => {
         const { safeInfo, t } = params;
 
         return [
+            // The owner set a live threshold is drawn from is readable, so the row carries its
+            // denominator. A decided body's is not, which is why that row states a bare number.
             {
                 term: t(`${safeSettingsTranslationKey}.threshold`),
-                definition: safeInfo.threshold.toString(),
+                definition: t(`${safeSettingsTranslationKey}.thresholdValue`, {
+                    threshold: safeInfo.threshold,
+                    owners: safeInfo.owners.length,
+                }),
             },
             {
                 term: t(`${safeSettingsTranslationKey}.currentNonce`),
@@ -91,9 +111,7 @@ class SafeSettingsUtils {
      * to understate who can move this Safe. Disclosure only - managing either belongs to the Safe
      * app, and a Safe with neither gets no rows rather than two empty ones.
      */
-    authorityRows = (
-        params: Pick<ISafeSettingsRowsParams, 'safeInfo' | 't'>,
-    ): IDefinitionSetting[] => {
+    authorityRows = (params: ISafeSettingsRowsParams): IDefinitionSetting[] => {
         const { safeInfo, t } = params;
         const rows: IDefinitionSetting[] = [];
 

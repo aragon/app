@@ -3860,6 +3860,7 @@
         "notRecovered": "Not recovered",
         "safe": "Safe address",
         "threshold": "Required confirmations",
+        "thresholdValue": "{{threshold}} of {{owners}}",
         "unknownVersion": "unknown version",
         "versionHelp": "Safe {{version}}"
       },

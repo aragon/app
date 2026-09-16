@@ -66,20 +66,25 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
      * from the same endpoint. Only the chain above is the account page's own: a body states its
      * network elsewhere. The address links to the explorer here rather than to the Safe app - this
      * page is the in-app account view, so pointing at Safe's own would send the reader away from it.
+     *
+     * The address comes from the route, so its row stands while the account read is in flight and
+     * on networks Safe never serves; everything below it is account state and waits for the read.
      */
-    const detailRows =
-        safeInfo == null
+    const detailRows = [
+        safeSettingsUtils.addressRow({
+            address: checksummedAddress,
+            safeName: truncatedAddress,
+            safeHref: addressLink,
+            version: safeInfo?.version,
+            t,
+        }),
+        ...(safeInfo == null
             ? []
             : [
-                  safeSettingsUtils.addressRow({
-                      safeInfo,
-                      safeName: truncatedAddress,
-                      safeHref: addressLink,
-                      t,
-                  }),
                   ...safeSettingsUtils.liveConfigurationRows({ safeInfo, t }),
                   ...safeSettingsUtils.authorityRows({ safeInfo, t }),
-              ];
+              ]),
+    ];
 
     const header = (
         <Page.Header

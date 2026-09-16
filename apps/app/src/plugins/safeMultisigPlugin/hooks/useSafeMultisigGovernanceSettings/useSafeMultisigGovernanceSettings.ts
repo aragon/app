@@ -76,6 +76,8 @@ export const useSafeMultisigGovernanceSettings = (
 
     return safeMultisigSettingsUtils.parseSettings({
         safeInfo,
+        address: safeInfo.address,
+        version: safeInfo.version,
         safeName: ensName ?? addressUtils.truncateAddress(pluginAddress),
         safeHref: safeAppAccountUrl({ network, address: pluginAddress }),
         isDecided,

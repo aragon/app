@@ -1,5 +1,6 @@
 import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 import {
+    type ISafeAddressRowParams,
     type ISafeSettingsRowsParams,
     safeSettingsTranslationKey,
     safeSettingsUtils,
@@ -7,7 +8,8 @@ import {
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 
 export interface ISafeMultisigSettingsParseParams
-    extends ISafeSettingsRowsParams {
+    extends ISafeAddressRowParams,
+        ISafeSettingsRowsParams {
     /**
      * Whether this body's say is over - it reported, or its stage elapsed. Live Safe state stops
      * describing the decision at that point, whether or not a transaction was recovered: a veto
