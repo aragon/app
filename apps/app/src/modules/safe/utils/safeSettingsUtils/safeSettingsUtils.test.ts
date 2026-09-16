@@ -36,16 +36,17 @@ describe('safeSettings utils', () => {
         nonce: '9',
     });
 
-    it('states what a live Safe requires against the owner set it is drawn from', () => {
+    it('states the live requirement and current nonce', () => {
         const [threshold, nonce] = safeSettingsUtils.liveConfigurationRows({
             safeInfo,
             t,
         });
 
         expect(threshold.term).toEqual('Required confirmations');
-        // "2" alone understates the account: two signatures out of three owners is the authority
-        // picture, and no owner row sits beside this one to supply the denominator.
-        expect(threshold.definition).toEqual('2 of 3');
+        // The requirement alone: Safe keeps no historical owner set, so a denominator would
+        // describe today's Safe rather than this decision - and the account page header already
+        // states threshold alongside the owner count.
+        expect(threshold.definition).toEqual('2');
         expect(nonce.term).toEqual('Current Safe nonce');
         expect(nonce.definition).toEqual('9');
     });

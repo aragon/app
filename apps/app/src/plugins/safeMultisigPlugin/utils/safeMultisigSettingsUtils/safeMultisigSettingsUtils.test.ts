@@ -54,11 +54,9 @@ describe('safeMultisigSettings utils', () => {
         );
         const key = 'app.safe.safeSettings';
 
-        // A live threshold's owner set is readable, so the row carries its denominator; the
-        // settled row below cannot, which is what makes the two read differently.
-        expect(byTerm[`${key}.threshold`]).toEqual(
-            `${key}.thresholdValue:{"threshold":3,"owners":4}`,
-        );
+        // The requirement alone, live or settled: Safe keeps no historical owner set, so a
+        // denominator here would describe today's Safe rather than this decision.
+        expect(byTerm[`${key}.threshold`]).toEqual('3');
         // Named "current" because it is live account state: it advances with every transaction the
         // Safe executes, so it is not the nonce this proposal's transaction used.
         expect(byTerm[`${key}.currentNonce`]).toEqual('42');

@@ -88,14 +88,11 @@ class SafeSettingsUtils {
         const { safeInfo, t } = params;
 
         return [
-            // The owner set a live threshold is drawn from is readable, so the row carries its
-            // denominator. A decided body's is not, which is why that row states a bare number.
+            // The requirement alone, live or settled: Safe keeps no historical owner set, so a
+            // denominator here would describe today's Safe rather than this decision.
             {
                 term: t(`${safeSettingsTranslationKey}.threshold`),
-                definition: t(`${safeSettingsTranslationKey}.thresholdValue`, {
-                    threshold: safeInfo.threshold,
-                    owners: safeInfo.owners.length,
-                }),
+                definition: safeInfo.threshold.toString(),
             },
             {
                 term: t(`${safeSettingsTranslationKey}.currentNonce`),
