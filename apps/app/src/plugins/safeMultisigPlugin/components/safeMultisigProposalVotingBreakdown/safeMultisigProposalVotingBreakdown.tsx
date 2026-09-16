@@ -9,7 +9,6 @@ import {
     StateSkeletonBar,
     Tabs,
 } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 import type { ReactNode } from 'react';
 import {
     safeAppHistoryUrl,
@@ -168,12 +167,9 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
     if (safeInfo == null || membersCount == null || isUnfound) {
         return (
             <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
-                <div
-                    className={classNames(
-                        'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6',
-                        isLoading && 'animate-pulse',
-                    )}
-                >
+                {/* The skeleton animates itself, so the wrapper must not pulse too: nested pulses
+                    multiply opacity and flicker. */}
+                <div className="rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6">
                     {placeholderText == null ? (
                         <div className="flex flex-col gap-2">
                             <StateSkeletonBar size="lg" width="40%" />
