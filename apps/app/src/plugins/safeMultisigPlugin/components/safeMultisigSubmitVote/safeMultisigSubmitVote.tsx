@@ -10,7 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
 import { useBytecode } from 'wagmi';
 import { getBytecode, getConnection } from 'wagmi/actions';
@@ -142,11 +142,19 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
      * The Safe body is an external plugin, so it has no `interfaceType` of its own: the registry
      * addresses its slots by `safeBodyPluginId`, the same id `sppStageUtils.getBodyPluginId`
      * resolves for a Safe on a supported chain.
+     *
+     * The guard pins this object in a ref on its first render, so the card is keyed to one Safe for
+     * its lifetime. A different body must be a different card, which is how the terminal renders
+     * them - the memo keeps the object from churning on every render in the meantime.
      */
-    const guardPlugin = {
-        address: externalAddress,
-        interfaceType: safeBodyPluginId,
-    } as unknown as IDaoPlugin;
+    const guardPlugin = useMemo(
+        () =>
+            ({
+                address: externalAddress,
+                interfaceType: safeBodyPluginId,
+            }) as unknown as IDaoPlugin,
+        [externalAddress],
+    );
     const { check: submitVoteGuard, result: canSubmitVote } =
         usePermissionCheckGuard({
             permissionNamespace: 'vote',

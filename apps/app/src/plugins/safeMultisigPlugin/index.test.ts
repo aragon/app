@@ -9,6 +9,7 @@ import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigPr
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
 import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
+import { useSafeMultisigVotePermissionCheck } from './hooks/useSafeMultisigVotePermissionCheck';
 import { initialiseSafeMultisigPlugin } from './index';
 
 describe('safeMultisigPlugin registrations', () => {
@@ -69,6 +70,20 @@ describe('safeMultisigPlugin registrations', () => {
         });
 
         expect(getHiddenTabs?.(undefined)).toEqual([]);
+    });
+
+    // Without this registration the guard's own fallback answers `hasPermission: true`, so
+    // ownership gating disappears while every other test stays green.
+    it('answers the vote-permission slot with the Safe ownership check', () => {
+        const checkPermission = pluginRegistryUtils.getSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+            pluginId: sppStageUtils.getBodyPluginId(
+                safeBody,
+                Network.ETHEREUM_SEPOLIA,
+            ),
+        });
+
+        expect(checkPermission).toEqual(useSafeMultisigVotePermissionCheck);
     });
 
     it('leaves a Safe on an unserved network to the external fallbacks', () => {

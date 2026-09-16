@@ -3237,6 +3237,8 @@
           "retry": "Retry",
           "stageExpired": "This stage was not advanced in time, so the proposal has expired. A vote can no longer change its outcome.",
           "stageExpiredQueued": "This stage expired before the Safe transaction was executed. Safe transactions have no deadline, so it can still be executed, but it will have no bearing on the proposal's outcome.",
+          "stillCounts": "The stage has not advanced or expired, so this report still counts — executing it records this body's vote.",
+          "stillCountsVeto": "The stage has not advanced or expired, so this veto still counts — executing it blocks the stage. An advance landing first forfeits it.",
           "unknownVersion": "unknown",
           "unreachable": "Safe{Wallet} is unreachable. Confirmations shown may be incomplete.",
           "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
@@ -3245,9 +3247,7 @@
           "vetoOnly": "Veto only",
           "vetoed": "Vetoed",
           "viewInAccountQueue": "See this transaction in the Safe's account",
-          "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners.",
-          "stillCounts": "The stage has not advanced or expired, so this report still counts — executing it records this body's vote.",
-          "stillCountsVeto": "The stage has not advanced or expired, so this veto still counts — executing it blocks the stage. An advance landing first forfeits it."
+          "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners."
         },
         "safeMultisigVotePermissionCheck": {
           "ownerOnly": "Not an owner of this Safe",
