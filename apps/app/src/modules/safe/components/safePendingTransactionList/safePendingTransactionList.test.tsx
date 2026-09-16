@@ -181,6 +181,13 @@ describe('<SafePendingTransactionList /> component', () => {
             render(createTestComponent());
 
             expect(screen.queryByText(/^SAT-/)).not.toBeInTheDocument();
+            // Plain text, not nothing: rendering nothing left the row's "Reports to" label with
+            // no object and hid that the transaction is a governance report at all.
+            expect(
+                screen.getByText(
+                    'app.safe.safePendingTransactionList.item.reportUnidentified',
+                ),
+            ).toBeInTheDocument();
             expect(
                 screen.getByText(addressUtils.truncateHash('0xTxHash')),
             ).toBeInTheDocument();

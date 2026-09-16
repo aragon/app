@@ -3808,6 +3808,7 @@
           "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
           "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
           "refresh": "Refresh",
+          "reportUnidentified": "an unidentified proposal",
           "reportsTo": "Reports to",
           "reportsToUnresolved": "Reports to an Aragon proposal that could not be identified yet",
           "review": "Review",
