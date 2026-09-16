@@ -65,15 +65,20 @@ describe('Safe domain guards', () => {
         },
     );
 
-    it.each(['value', 'safeTxGas', 'baseGas', 'gasPrice'])(
-        'rejects a transaction whose %s is not an unsigned integer string, because hashing parses it',
-        (field) => {
-            // `BigInt('0x…')` would throw out of envelope hashing and reach the signer as a
-            // generic failure, so the shape guard refuses the row instead.
+    // Both failure shapes matter and only one throws: `BigInt('0xdead')` parses to 57005, so a hex
+    // string is hashed as a number the row never displayed, while a non-numeric one throws out of
+    // envelope hashing and reaches the signer as a generic failure.
+    it.each(
+        ['value', 'safeTxGas', 'baseGas', 'gasPrice'].flatMap((field) =>
+            ['0xdead', 'not-a-number'].map((value) => ({ field, value })),
+        ),
+    )(
+        'rejects a transaction whose $field is $value, because envelope hashing parses it',
+        ({ field, value }) => {
             expect(
                 isSafeMultisigTransaction({
                     ...generateSafeTransaction(),
-                    [field]: '0xdead',
+                    [field]: value,
                 }),
             ).toBe(false);
         },
