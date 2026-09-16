@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AlertInline,
     addressUtils,
     Button,
     DataListItem,
@@ -53,6 +54,16 @@ export interface ISafePendingTransactionListItemProps {
      */
     threshold?: number;
     /**
+     * Current nonce of the Safe. A transaction executes only at this exact nonce, so anything
+     * above it can be signed but not executed. Undefined until the Safe info resolves.
+     */
+    currentNonce?: string;
+    /**
+     * Another live transaction in the queue holds this same nonce, so at most one of them can ever
+     * execute and the rest become permanently unexecutable.
+     */
+    hasNonceRival?: boolean;
+    /**
      * Keeps an execution result visible after a successful execution removes the row.
      */
     onExecutionOutcome: (outcome: ISafeExecutionActionOutcome) => void;
@@ -68,6 +79,8 @@ export const SafePendingTransactionListItem: React.FC<
         chainId,
         safeVersion,
         threshold,
+        currentNonce,
+        hasNonceRival,
         onExecutionOutcome,
     } = props;
     const {
@@ -101,7 +114,16 @@ export const SafePendingTransactionListItem: React.FC<
      * resolves.
      */
     const requiredConfirmations = threshold ?? confirmationsRequired;
-    const shouldExecute = confirmations.length >= requiredConfirmations;
+    /**
+     * A Safe executes strictly in nonce order: `execTransaction` reverts unless the transaction's
+     * nonce equals the Safe's current one. Offering "Execute" on a fully signed row further up the
+     * queue sends an owner to a wallet prompt for gas on a call that cannot succeed, so the action
+     * is withheld until this row is the next one and the wait is stated instead.
+     */
+    const isNextInQueue =
+        currentNonce != null && BigInt(nonce) === BigInt(currentNonce);
+    const isFullySigned = confirmations.length >= requiredConfirmations;
+    const shouldExecute = isFullySigned && isNextInQueue;
     const actionTranslationKey = shouldExecute ? 'execute' : 'confirm';
     const { address: connectedAddress } = useWalletAccount();
     const isConfirmedInQueue =
@@ -122,6 +144,9 @@ export const SafePendingTransactionListItem: React.FC<
     // and the queue has not caught up yet. Both mean this owner must not be asked to sign again.
     const alreadyConfirmed =
         !shouldExecute && (isSubmitted || isConfirmedInQueue);
+    // Fully signed but not yet the Safe's turn: there is nothing left to sign and nothing that can
+    // be executed, so no action is offered and the reason is stated below instead.
+    const isWaitingForTurn = isFullySigned && !isNextInQueue;
 
     const submittedOn = formatterUtils.formatDate(transaction.submissionDate, {
         format: DateFormat.YEAR_MONTH_DAY,
@@ -143,11 +168,12 @@ export const SafePendingTransactionListItem: React.FC<
                 safeAddress,
                 network,
                 safeVersion,
-                confirmLabel: alreadyConfirmed
-                    ? undefined
-                    : t(
-                          `app.safe.safePendingTransactionList.item.${actionTranslationKey}`,
-                      ),
+                confirmLabel:
+                    alreadyConfirmed || isWaitingForTurn
+                        ? undefined
+                        : t(
+                              `app.safe.safePendingTransactionList.item.${actionTranslationKey}`,
+                          ),
                 // Reviewing needs no wallet; the guard and chain switch run on authorisation, so a
                 // disconnected viewer still sees the payload before being asked to connect.
                 onConfirm: () =>
@@ -207,6 +233,22 @@ export const SafePendingTransactionListItem: React.FC<
                             },
                         )}
                     </span>
+                    {isWaitingForTurn && (
+                        <span className="text-neutral-500 text-sm leading-tight">
+                            {t(
+                                'app.safe.safePendingTransactionList.item.waitingForTurn',
+                                { currentNonce },
+                            )}
+                        </span>
+                    )}
+                    {hasNonceRival === true && (
+                        <AlertInline
+                            message={t(
+                                'app.safe.safePendingTransactionList.item.nonceRival',
+                            )}
+                            variant="warning"
+                        />
+                    )}
                     {/* Three states, per the backend contract: absent means the calldata is not a
                         recognised report, `[]` means reports decoded but none resolved (not yet
                         indexed, refused by the body check, or the correlation read failed), and a

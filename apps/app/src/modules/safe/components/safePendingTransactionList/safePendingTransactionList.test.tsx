@@ -2,6 +2,7 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as walletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import * as daoServiceApi from '@/shared/api/daoService';
 import {
@@ -16,6 +17,7 @@ import type {
 import * as safeServiceApi from '@/shared/api/safeService';
 import { useSafePendingTransactions } from '@/shared/api/safeService/queries/useSafePendingTransactions/useSafePendingTransactions';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
 import {
     generateDao,
     generateDaoPlugin,
@@ -144,6 +146,144 @@ describe('<SafePendingTransactionList /> component', () => {
                 }),
             }),
         );
+    });
+
+    it('withholds execution from a fully signed transaction that is not the Safe next nonce', async () => {
+        // `execTransaction` reverts unless the nonce equals the Safe's current one, so offering
+        // "Execute" here sends an owner to a gas prompt for a call that cannot succeed.
+        const execute = jest.fn();
+        // The guard and the chain switch run before the action; both must pass through for this
+        // test to reach the row's own gate rather than stopping at a disconnected wallet.
+        const useWalletGuardSpy = jest
+            .spyOn(walletGuardApi, 'useConnectedWalletGuard')
+            .mockReturnValue({
+                check: ({ onSuccess }: { onSuccess: () => void }) =>
+                    onSuccess(),
+            } as never);
+        const useNetworkSwitchSpy = jest
+            .spyOn(networkSwitchApi, 'useNetworkSwitch')
+            .mockReturnValue({
+                withNetworkSwitch: (action: () => void) => action(),
+            } as never);
+        const useWalletAccountSpy = jest
+            .spyOn(walletAccountApi, 'useWalletAccount')
+            .mockReturnValue({
+                address: '0x2222222222222222222222222222222222222222',
+                isConnected: true,
+            } as never);
+        const useActionsSpy = jest
+            .spyOn(safeTransactionActionsApi, 'useSafeTransactionActions')
+            .mockReturnValue({
+                confirm: jest.fn(),
+                isConfirming: false,
+                submittedConfirmations: new Set(),
+                confirmationSyncTimedOut: false,
+                refreshQueue: jest.fn(),
+                execute,
+                isExecuting: false,
+            });
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateResponse([
+                generateSafeTransaction({
+                    nonce: '12',
+                    safeTxHash: '0xTxHash',
+                    confirmations: [generateSafeConfirmation()],
+                }),
+            ]),
+        );
+
+        try {
+            render(createTestComponent({ currentNonce: '10', threshold: 1 }));
+
+            expect(
+                screen.getByText(
+                    'app.safe.safePendingTransactionList.item.waitingForTurn (currentNonce=10)',
+                ),
+            ).toBeInTheDocument();
+            await userEvent.click(
+                screen.getByText(
+                    'app.safe.safePendingTransactionList.item.review',
+                ),
+            );
+
+            const params = openDialog.mock.calls[0][1].params as {
+                confirmLabel?: string;
+                onConfirm: () => void;
+            };
+
+            expect(params.confirmLabel).toBeUndefined();
+            // The dialog offers no button here, but the handler it receives must not execute
+            // either: the row's own gate is what keeps a revert-bound call off the wire.
+            params.onConfirm();
+            expect(execute).not.toHaveBeenCalled();
+        } finally {
+            useWalletAccountSpy.mockRestore();
+            useActionsSpy.mockRestore();
+            useWalletGuardSpy.mockRestore();
+            useNetworkSwitchSpy.mockRestore();
+        }
+    });
+
+    it('offers execution once the queued transaction is the Safe next nonce', async () => {
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateResponse([
+                generateSafeTransaction({
+                    nonce: '10',
+                    safeTxHash: '0xTxHash',
+                    confirmations: [generateSafeConfirmation()],
+                }),
+            ]),
+        );
+        render(createTestComponent({ currentNonce: '10', threshold: 1 }));
+
+        await userEvent.click(
+            screen.getByText('app.safe.safePendingTransactionList.item.review'),
+        );
+        expect(openDialog).toHaveBeenCalledWith(
+            SafeDialogId.TRANSACTION_REVIEW,
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    confirmLabel:
+                        'app.safe.safePendingTransactionList.item.execute',
+                }),
+            }),
+        );
+    });
+
+    it('discloses that two queued transactions share a nonce, because only one can execute', () => {
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateResponse([
+                generateSafeTransaction({ nonce: '11', safeTxHash: '0xOne' }),
+                generateSafeTransaction({ nonce: '11', safeTxHash: '0xTwo' }),
+                generateSafeTransaction({ nonce: '12', safeTxHash: '0xThree' }),
+            ]),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getAllByText(
+                'app.safe.safePendingTransactionList.item.nonceRival',
+            ),
+        ).toHaveLength(2);
+    });
+
+    it('says the queue may be out of date when the response is served stale', () => {
+        // The action path already refuses on this flag; the queue rendered the same rows without
+        // saying the read behind them failed.
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess<ISafeQueueResponse, Error>({
+                data: generateSafeQueueResponse({
+                    count: 1,
+                    results: [generateSafeTransaction({ nonce: '11' })],
+                    meta: { source: 'cache', fetchedAt: '', stale: true },
+                }),
+            }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByText('app.safe.safePendingTransactionList.stale'),
+        ).toBeInTheDocument();
     });
 
     it('renders an empty state when the queue is empty', () => {

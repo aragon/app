@@ -113,6 +113,14 @@ export const SafePendingTransactionList: React.FC<
                   (transaction) =>
                       BigInt(transaction.nonce) >= BigInt(currentNonce),
               );
+    // Two live transactions can share a nonce - the service accepts it, and only one of them can
+    // ever execute. The governance card already discloses this; the account queue rendered them as
+    // two independent, equally signable rows.
+    const contestedNonces = new Set(
+        transactions
+            .map(({ nonce }) => nonce)
+            .filter((nonce, index, all) => all.indexOf(nonce) !== index),
+    );
     const state = safeDataListUtils.getDataListState({
         isError,
         isLoading: isLoading || currentNonce == null,
@@ -148,6 +156,13 @@ export const SafePendingTransactionList: React.FC<
                     )}
                 </div>
             )}
+            {pendingTransactions?.meta.stale === true && (
+                <AlertInline
+                    className="mb-4"
+                    message={t('app.safe.safePendingTransactionList.stale')}
+                    variant="warning"
+                />
+            )}
             <DataListRoot
                 entityLabel={t('app.safe.safePendingTransactionList.entity')}
                 itemsCount={transactions.length}
@@ -177,6 +192,10 @@ export const SafePendingTransactionList: React.FC<
                     {transactions.map((transaction) => (
                         <SafePendingTransactionListItem
                             chainId={chainId}
+                            currentNonce={currentNonce}
+                            hasNonceRival={contestedNonces.has(
+                                transaction.nonce,
+                            )}
                             key={transaction.safeTxHash}
                             network={network}
                             onExecutionOutcome={setExecutionOutcome}

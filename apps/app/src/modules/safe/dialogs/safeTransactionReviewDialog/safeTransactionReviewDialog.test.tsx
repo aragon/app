@@ -854,6 +854,24 @@ describe('<SafeTransactionReviewDialog /> component', () => {
                     'app.safe.safeTransactionReviewDialog.fields.messageHash',
                 ),
             ).not.toBeInTheDocument();
+            // Withholding them is correct; leaving it unexplained asks the signer to complete a
+            // device comparison against values that are not on screen.
+            expect(
+                screen.getByText(
+                    'app.safe.safeTransactionReviewDialog.hashComparisonPartial',
+                ),
+            ).toBeInTheDocument();
+        });
+
+        it('does not explain a withheld device pair while the version read is still in flight', () => {
+            useReadContractSpy.mockReturnValue({ isPending: true } as never);
+            render(createTestComponent({ safeVersion: null }));
+
+            expect(
+                screen.queryByText(
+                    'app.safe.safeTransactionReviewDialog.hashComparisonPartial',
+                ),
+            ).not.toBeInTheDocument();
         });
 
         it('hashes under the version read from the Safe rather than the one reported with the transaction', () => {

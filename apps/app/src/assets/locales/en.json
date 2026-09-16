@@ -3222,7 +3222,7 @@
           "replaced": "Another Safe transaction executed at this nonce, so this one can never execute. Its confirmations no longer apply.",
           "reportGone": "This Safe transaction is no longer in the queue — it was executed or removed while this page was open. Nothing was signed.",
           "review": {
-            "bundledExecution": "Your confirmation reaches the Safe's threshold, so the Safe transaction is executed straight after it. Your wallet will ask twice: first to confirm, which is free, then to execute onchain, which costs gas.",
+            "bundledExecution": "Your confirmation looks like the one that reaches the Safe's threshold, so the Safe transaction would be executed straight after it. Your wallet asks to confirm first, which is free, and then to execute onchain, which costs gas - the second prompt is skipped if the Safe no longer needs it by then.",
             "executionOnly": "This transaction already carries every signature it needs, so your wallet will ask once, to execute it onchain, which costs gas.",
             "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
             "reportOnly": "Reports this body's result for \"{{proposal}}\" to the governance process. Signing is free and does not execute anything by itself.",
@@ -3812,33 +3812,23 @@
           "hashMismatch": "This transaction changed after review, so it was not submitted.",
           "nonce": "Nonce {{nonce}}",
           "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
+          "nonceRival": "Another queued transaction uses this same nonce. Only one of them can execute; the other becomes permanently unexecutable.",
           "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
           "refresh": "Refresh",
           "reportApproves": "(would approve)",
-          "reportUnidentified": "an unidentified proposal",
-          "reportVetoes": "(would veto)",
           "reportsTo": "Reports to",
           "reportsToUnresolved": "Reports to an Aragon proposal that could not be identified yet",
+          "reportUnidentified": "an unidentified proposal",
+          "reportVetoes": "(would veto)",
           "review": "Review",
           "stale": "The Safe queue could not be re-read, so nothing was signed. Please try again.",
           "submittedOn": "Submitted {{date}}",
           "submittedSyncing": "Confirmation submitted. Refreshing this transaction…",
           "submittedUnsynced": "Confirmation submitted. The updated status is not available yet.",
-          "unavailable": "This transaction is no longer available in the Safe queue."
-        },
-        "execution": {
-          "authorityChanged": "The Safe owners or signing threshold changed, so this transaction was not submitted.",
-          "error": "The transaction could not be executed. Please try again.",
-          "executed": "The Safe transaction was executed successfully.",
-          "innerFailed": "The Safe transaction was submitted, but the transaction inside the Safe failed.",
-          "nonceConsumed": "This transaction can no longer execute because the Safe already used its nonce.",
-          "nonceQueued": "This transaction is queued behind the Safe's current nonce and was not submitted.",
-          "rejected": "The Safe rejected this transaction during simulation, so it was not submitted.",
-          "reverted": "The Safe transaction reverted before its inner call ran.",
-          "transactionHash": "View the submitted transaction",
           "unavailable": "This transaction is no longer available in the Safe queue.",
-          "unconfirmed": "The Safe transaction was submitted, but its execution could not be confirmed."
-        }
+          "waitingForTurn": "Fully signed. It executes once the Safe reaches this nonce; nonce {{currentNonce}} is next."
+        },
+        "stale": "This queue could not be re-read from the Safe service, so it may be out of date."
       },
       "safeTransactionReviewDialog": {
         "callTarget": "To {{target}} · {{value}} wei",
@@ -3860,8 +3850,10 @@
           "safeTxHash": "Transaction hash"
         },
         "callRunsNothing": "The address this delegate call targets holds no code, so this call executes nothing while the rest of the transaction still runs.",
-        "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does, so it cannot be signed here.",
+        "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does - one of them is the remote decoder, which may be the wrong one - so it cannot be signed here.",
         "delegateTargetUnresolved": "The code at this delegate call's target could not be read, so whether the calls below would actually run is unknown. Nothing can be signed until that read succeeds — refresh to try again.",
+        "hashComparison": "Compare the domain hash and message hash below with the ones your hardware wallet shows, and the transaction hash with an independent hash tool. Matching values prove this screen sends what it displays; they cannot prove the transaction is safe.",
+        "hashComparisonPartial": "The domain and message hashes are withheld because this Safe's version does not derive them exactly, so the device comparison cannot be completed here. The transaction hash below can still be checked with an external tool.",
         "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",
         "hashUnverifiable": "The transaction hash could not be recomputed, so its fields could not be checked against it.",
         "incompleteBatch": "Part of this transaction could not be read. The calls below are not the whole transaction, so it cannot be signed here. Review it in the Safe app if you intend to approve it.",

@@ -516,6 +516,15 @@ export const SafeTransactionReviewDialog: React.FC<
                     <p className="text-neutral-500 text-sm">
                         {t(`${translationKey}.hashComparison`)}
                     </p>
+                    {/* Only once the version is known: while the read is in flight the pair is
+                        missing because nothing has been derived yet, not because this Safe cannot
+                        derive it, and the same suppression applies to `hashUnverifiable`. */}
+                    {!isVersionPending &&
+                        (domainHash == null || messageHash == null) && (
+                            <p className="text-neutral-500 text-sm">
+                                {t(`${translationKey}.hashComparisonPartial`)}
+                            </p>
+                        )}
                     <dl className="flex flex-col gap-2">
                         {domainHash != null && messageHash != null && (
                             <>
