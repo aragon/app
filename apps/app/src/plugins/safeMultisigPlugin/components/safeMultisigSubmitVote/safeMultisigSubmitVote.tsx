@@ -415,8 +415,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             return 'delegateCall';
         }
 
-        // Value on a report is an ETH transfer the label does not mention.
-        if (BigInt(transaction.value) !== BigInt(0)) {
+        // Value on a report is an ETH transfer the label does not mention. The queue's `value` is
+        // only shape-checked as a string, so anything that is not a plain zero - including a
+        // string `BigInt` would throw on - refuses the narrow label rather than parsing it.
+        if (transaction.value !== '0') {
             return 'carriesValue';
         }
 

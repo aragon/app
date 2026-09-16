@@ -894,7 +894,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         const openReview = async (
             data: string,
             to: string,
-            overrides?: { operation?: number; value?: string },
+            overrides?: { operation?: 0 | 1; value?: string },
         ) => {
             // The shared mock confirms the dialog immediately, which would run the whole signing
             // path and replace the disclosure under test with a generic failure.
@@ -1008,7 +1008,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         it.each([
             {
                 case: 'is a delegate call',
-                overrides: { operation: 1 },
+                overrides: { operation: 1 as const },
                 intent: 'delegateCall',
             },
             {

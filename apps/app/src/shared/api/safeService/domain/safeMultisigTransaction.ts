@@ -156,12 +156,15 @@ export const isSafeMultisigTransaction = (
     typeof value.safeTxHash === 'string' &&
     (typeof value.from === 'string' || value.from === null) &&
     typeof value.to === 'string' &&
-    typeof value.value === 'string' &&
+    // Every field below that reaches `BigInt(...)` while hashing the EIP-712 envelope is validated
+    // as an unsigned integer string here, not at each parse site: a non-numeric one would
+    // otherwise throw out of hashing and surface as a generic failure instead of a refusal.
+    isUnsignedIntegerString(value.value) &&
     (typeof value.data === 'string' || value.data === null) &&
     (value.operation === 0 || value.operation === 1) &&
-    typeof value.safeTxGas === 'string' &&
-    typeof value.baseGas === 'string' &&
-    typeof value.gasPrice === 'string' &&
+    isUnsignedIntegerString(value.safeTxGas) &&
+    isUnsignedIntegerString(value.baseGas) &&
+    isUnsignedIntegerString(value.gasPrice) &&
     typeof value.gasToken === 'string' &&
     typeof value.refundReceiver === 'string' &&
     Array.isArray(value.confirmations) &&
