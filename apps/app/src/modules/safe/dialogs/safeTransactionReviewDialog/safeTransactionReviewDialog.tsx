@@ -19,6 +19,7 @@ import {
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { safeCalldataUtils } from '../../utils/safeCalldataUtils';
 import {
     type ISafeCall,
     maxSafeBatchDepth,
@@ -249,6 +250,29 @@ export const SafeTransactionReviewDialog: React.FC<
         decodedActions?.length === calls.length ? decodedActions : undefined;
 
     /**
+     * Local decode first (W12). The remote decode arrives from the same backend as the envelope it
+     * describes, so a backend that served a malicious payload can also label it benignly; a
+     * bundled governance selector set removes that input for the calls Aragon actually originates.
+     * The remote answer is kept only for selectors outside that set, where it is strictly more
+     * than nothing and the copy already frames decoding as a convenience.
+     */
+    const localNames = calls.map(({ call }) =>
+        safeCalldataUtils.decodeFunctionName(call.data),
+    );
+
+    /**
+     * Two decoders naming different functions for the same bytes means the label above the
+     * calldata is wrong in one of them, and nothing here can say which. That is the
+     * misdescription class, so it refuses rather than picking a winner.
+     */
+    const hasDecoderDisagreement = localNames.some((localName, index) =>
+        safeCalldataUtils.disagrees(
+            localName,
+            decoded?.[index]?.inputData?.function,
+        ),
+    );
+
+    /**
      * A delegate call runs in the Safe's own context: it can rewrite owners, threshold and the
      * singleton the Safe delegates to. Batching is the only reason an ordinary Aragon transaction
      * uses one, so a target that is not a canonical MultiSend deserves saying out loud - and this
@@ -315,7 +339,9 @@ export const SafeTransactionReviewDialog: React.FC<
      * - an incomplete batch means the calls listed below are a decoded prefix, and a prefix
      *   presented as the transaction understates what executing it does;
      * - a codeless delegate target means every call listed below never happens, while the Safe
-     *   still spends the nonce and emits `ExecutionSuccess`.
+     *   still spends the nonce and emits `ExecutionSuccess`;
+     * - two decoders disagreeing about a call means its label is wrong in one of them;
+     * - a version disagreement means the two sources describe different Safes.
      *
      * An unverifiable hash and an undecodable call stay signable on purpose: both are honest about
      * themselves — the fields are shown either way, and the owner can still read the calldata. A
@@ -327,7 +353,8 @@ export const SafeTransactionReviewDialog: React.FC<
         !isComplete ||
         hasCodelessTarget ||
         isDelegateTargetUnresolved ||
-        isVersionMismatch;
+        isVersionMismatch ||
+        hasDecoderDisagreement;
 
     const handleConfirm = () => {
         close(location.id);
@@ -353,6 +380,12 @@ export const SafeTransactionReviewDialog: React.FC<
                             chainVersion,
                             reportedVersion: safeVersion,
                         })}
+                        variant="critical"
+                    />
+                )}
+                {hasDecoderDisagreement && (
+                    <AlertInline
+                        message={t(`${translationKey}.decoderDisagreement`)}
                         variant="critical"
                     />
                 )}
@@ -489,9 +522,10 @@ export const SafeTransactionReviewDialog: React.FC<
                                     }
                                 />
                                 <span className="truncate text-neutral-800 text-sm md:text-base">
-                                    {/* A blank type is the service saying it could not decode,
-                                        not a name. */}
-                                    {decoded?.[index]?.inputData?.function ||
+                                    {/* Local decode wins; a blank remote type is the service
+                                        saying it could not decode, not a name. */}
+                                    {localNames[index] ||
+                                        decoded?.[index]?.inputData?.function ||
                                         decoded?.[index]?.type ||
                                         t(`${translationKey}.unknownAction`)}
                                 </span>

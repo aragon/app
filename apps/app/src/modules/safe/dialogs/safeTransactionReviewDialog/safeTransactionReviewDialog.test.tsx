@@ -6,6 +6,7 @@ import {
     concatHex,
     encodeFunctionData,
     encodePacked,
+    erc20Abi,
     getAddress,
     type Hex,
     hashTypedData,
@@ -608,6 +609,57 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('refuses to confirm when the local and remote decoders disagree about a call', async () => {
+        // The remote decode arrives from the same backend as the envelope, so a benign label on a
+        // hostile call is exactly the case the local set exists to catch.
+        const onConfirm = jest.fn();
+        const data = encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'transfer',
+            args: [target, BigInt(1)],
+        });
+        jest.spyOn(
+            smartContractService,
+            'decodeTransactionsLight',
+        ).mockResolvedValue([{ inputData: { function: 'approve' } } as never]);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ data }),
+                onConfirm,
+            }),
+        );
+
+        expect(
+            await screen.findByText(
+                'app.safe.safeTransactionReviewDialog.decoderDisagreement',
+            ),
+        ).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+        expect(onConfirm).not.toHaveBeenCalled();
+    });
+
+    it('labels a governance call from the local decode, so a backend label cannot rename it', async () => {
+        const data = encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'transfer',
+            args: [target, BigInt(1)],
+        });
+        jest.spyOn(
+            smartContractService,
+            'decodeTransactionsLight',
+        ).mockResolvedValue([]);
+
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ data }),
+            }),
+        );
+
+        expect(await screen.findByText('transfer')).toBeInTheDocument();
+    });
+
     it('labels nothing when the decode response does not line up with the calls', async () => {
         // Decoded actions are matched by position, so a short response would otherwise put one
         // call's function name on another inside a surface the owner authorises from.
@@ -659,11 +711,14 @@ describe('<SafeTransactionReviewDialog /> component', () => {
             }),
         );
 
+        // The outer `multiSend` is now named by the local decode; the two inner calls hold no
+        // bundled selector, so they stay unlabelled rather than borrowing the one-entry response.
         expect(
             await screen.findAllByText(
                 'app.safe.safeTransactionReviewDialog.unknownAction',
             ),
-        ).toHaveLength(3);
+        ).toHaveLength(2);
+        expect(screen.getByText('multiSend')).toBeInTheDocument();
         expect(screen.queryByText('transfer')).not.toBeInTheDocument();
 
         decodeSpy.mockRestore();
