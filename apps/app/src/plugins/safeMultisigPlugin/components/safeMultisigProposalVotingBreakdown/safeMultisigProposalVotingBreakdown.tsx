@@ -6,6 +6,7 @@ import {
     Link,
     ProposalVoting,
     ProposalVotingTab,
+    StateSkeletonBar,
     Tabs,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -64,9 +65,10 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
 
     // A rate-limited read is a degraded state, not a bug: the poll backs off and recovers on its
     // own, so it must not read as the generic hard failure the user is expected to act on.
-    let placeholderText = t(
-        `${translationKey}.${isError ? 'error' : 'loading'}`,
-    );
+    //
+    // Absent means "nothing to say yet" and draws the skeleton: a first read has no news, and
+    // narrating it is worse than showing the shape of what is arriving.
+    let placeholderText = isError ? t(`${translationKey}.error`) : undefined;
 
     if (isRateLimited) {
         placeholderText =
@@ -172,9 +174,16 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                         isLoading && 'animate-pulse',
                     )}
                 >
-                    <p className="text-neutral-500 text-sm md:text-base">
-                        {placeholderText}
-                    </p>
+                    {placeholderText == null ? (
+                        <div className="flex flex-col gap-2">
+                            <StateSkeletonBar size="lg" width="40%" />
+                            <StateSkeletonBar size="lg" width="70%" />
+                        </div>
+                    ) : (
+                        <p className="text-neutral-500 text-sm md:text-base">
+                            {placeholderText}
+                        </p>
+                    )}
                     {provenance}
                 </div>
                 {children}

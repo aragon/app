@@ -1126,11 +1126,6 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     variant={alert.variant}
                 />
             ))}
-            {queuedReportHref != null && (
-                <Link href={queuedReportHref} textClassName="text-sm">
-                    {t(`${translationKey}.viewInAccountQueue`)}
-                </Link>
-            )}
             {!hasSettled && helperText != null && (
                 <p className="font-normal text-neutral-500 text-sm leading-normal">
                     {helperText}
@@ -1146,73 +1141,98 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
 
                 A settled body keeps the slot: the verdict reads as the action that was taken, and
                 the card does not reflow the moment a body reports. */}
-            {(hasSettled || canStillAffectOutcome) && (
-                <div className="flex flex-col gap-3 md:flex-row">
-                    {/* Signing and executing are separate acts, so the two routes are peers inside
+            {(hasSettled ||
+                canStillAffectOutcome ||
+                queuedReportHref != null) && (
+                <div className="flex flex-col items-start gap-3 md:flex-row md:items-center">
+                    {(hasSettled || canStillAffectOutcome) && (
+                        <>
+                            {/* Signing and executing are separate acts, so the two routes are peers inside
                         one button rather than a primary with an opt-out: an owner who only wants to
                         authorise can leave the gas to whoever executes. Offered only when execution
                         would actually follow and the card is idle - otherwise there is nothing to
                         choose between. */}
-                    {canBundleExecution &&
-                    !hasSettled &&
-                    !isPreparing &&
-                    !isExecuting &&
-                    !isAwaitingIndexing ? (
-                        <Dropdown.Container
-                            align="end"
-                            constrainContentWidth={false}
-                            disabled={isActionDisabled}
-                            label={t(
-                                `${translationKey}.${isVeto ? 'veto' : 'approve'}`,
+                            {canBundleExecution &&
+                            !hasSettled &&
+                            !isPreparing &&
+                            !isExecuting &&
+                            !isAwaitingIndexing ? (
+                                <Dropdown.Container
+                                    align="end"
+                                    constrainContentWidth={false}
+                                    disabled={isActionDisabled}
+                                    label={t(
+                                        `${translationKey}.${isVeto ? 'veto' : 'approve'}`,
+                                    )}
+                                    size="md"
+                                    variant="primary"
+                                >
+                                    <Dropdown.Item
+                                        onClick={() => handleVoteClick(true)}
+                                    >
+                                        {t(
+                                            `${translationKey}.${isVeto ? 'vetoAndExecute' : 'approveAndExecute'}`,
+                                        )}
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        onClick={() => handleVoteClick(false)}
+                                    >
+                                        {t(
+                                            `${translationKey}.${isVeto ? 'vetoOnly' : 'approveOnly'}`,
+                                        )}
+                                    </Dropdown.Item>
+                                </Dropdown.Container>
+                            ) : (
+                                <Button
+                                    className="w-full md:w-fit"
+                                    disabled={isActionDisabled}
+                                    iconLeft={
+                                        hasSettled
+                                            ? IconType.CHECKMARK
+                                            : undefined
+                                    }
+                                    isLoading={
+                                        isPreparing ||
+                                        isExecuting ||
+                                        isAwaitingIndexing
+                                    }
+                                    onClick={
+                                        hasSettled
+                                            ? undefined
+                                            : () => handleVoteClick(true)
+                                    }
+                                    size="md"
+                                    variant={
+                                        hasSettled ? 'secondary' : 'primary'
+                                    }
+                                >
+                                    {t(`${translationKey}.${buttonKey}`)}
+                                </Button>
                             )}
-                            size="md"
-                            variant="primary"
-                        >
-                            <Dropdown.Item
-                                onClick={() => handleVoteClick(true)}
-                            >
-                                {t(
-                                    `${translationKey}.${isVeto ? 'vetoAndExecute' : 'approveAndExecute'}`,
-                                )}
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                                onClick={() => handleVoteClick(false)}
-                            >
-                                {t(
-                                    `${translationKey}.${isVeto ? 'vetoOnly' : 'approveOnly'}`,
-                                )}
-                            </Dropdown.Item>
-                        </Dropdown.Container>
-                    ) : (
-                        <Button
-                            className="w-full md:w-fit"
-                            disabled={isActionDisabled}
-                            iconLeft={
-                                hasSettled ? IconType.CHECKMARK : undefined
-                            }
-                            isLoading={
-                                isPreparing || isExecuting || isAwaitingIndexing
-                            }
-                            onClick={
-                                hasSettled
-                                    ? undefined
-                                    : () => handleVoteClick(true)
-                            }
-                            size="md"
-                            variant={hasSettled ? 'secondary' : 'primary'}
-                        >
-                            {t(`${translationKey}.${buttonKey}`)}
-                        </Button>
+                            {isStale && (
+                                <Button
+                                    className="w-full md:w-fit"
+                                    onClick={() => void invalidateSafeState()}
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    {t(`${translationKey}.retry`)}
+                                </Button>
+                            )}
+                        </>
                     )}
-                    {isStale && (
-                        <Button
-                            className="w-full md:w-fit"
-                            onClick={() => void invalidateSafeState()}
-                            size="md"
-                            variant="tertiary"
+                    {/* The queued transaction, offered beside the action rather than above it: it
+                        is where an owner goes to see co-signer state, so it reads as the second
+                        route out of the card. Absent when there is no transaction to see. */}
+                    {queuedReportHref != null && (
+                        <Link
+                            href={queuedReportHref}
+                            isExternal={true}
+                            showUrl={false}
+                            textClassName="text-sm"
                         >
-                            {t(`${translationKey}.retry`)}
-                        </Button>
+                            {t(`${translationKey}.viewInAccountQueue`)}
+                        </Link>
                     )}
                 </div>
             )}

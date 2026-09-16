@@ -552,14 +552,17 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         render(createTestComponent());
 
-        expect(
-            screen.getByRole('link', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
-            }),
-        ).toHaveAttribute(
+        const link = screen.getByRole('link', {
+            name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
+        });
+
+        expect(link).toHaveAttribute(
             'href',
             `/safe/${Network.ETHEREUM_SEPOLIA}/${safeInfo.address}?tx=${queued.safeTxHash}`,
         );
+        // The queue is a detour from signing, not a step in it: it opens alongside the card so the
+        // review the owner is mid-way through is not thrown away to look at co-signer state.
+        expect(link).toHaveAttribute('target', '_blank');
     });
 
     it('does not warn of a gas transaction when more owners are still needed', async () => {

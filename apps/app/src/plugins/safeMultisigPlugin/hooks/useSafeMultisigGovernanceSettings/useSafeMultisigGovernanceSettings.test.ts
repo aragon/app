@@ -58,22 +58,14 @@ describe('useSafeMultisigGovernanceSettings hook', () => {
     it('states live Safe state for the stage the proposal is on', () => {
         // Nothing has been decided yet, so the Safe as it stands is what would apply.
         expect(termsFor(1, 1)).toEqual(
-            expect.arrayContaining([
-                `${key}.threshold`,
-                `${key}.currentNonce`,
-                `${key}.version`,
-            ]),
+            expect.arrayContaining([`${key}.threshold`, `${key}.currentNonce`]),
         );
     });
 
     it('states live Safe state for a stage the proposal has not reached', () => {
         // A pending later stage has had no say yet: its body has done nothing to record.
         expect(termsFor(2, 1)).toEqual(
-            expect.arrayContaining([
-                `${key}.threshold`,
-                `${key}.currentNonce`,
-                `${key}.version`,
-            ]),
+            expect.arrayContaining([`${key}.threshold`, `${key}.currentNonce`]),
         );
     });
 

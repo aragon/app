@@ -61,23 +61,29 @@ class SafeMultisigSettingsUtils {
 
         return [
             {
-                term: t(`${translationKey}.strategy`),
-                definition: t(`${translationKey}.strategyValue`),
-            },
-            {
                 term: t(`${translationKey}.safe`),
                 definition: safeName,
+                // `isOnchainEntity` hands the row to the kit's address output, which owns the
+                // reveal and copies the checksummed address rather than the shown label.
                 link:
                     safeHref == null
                         ? undefined
-                        : { href: safeHref, isExternal: true },
+                        : {
+                              href: safeHref,
+                              isExternal: true,
+                              isOnchainEntity: true,
+                          },
                 copyValue: safeInfo.address,
+                // Safe serves only the current version and a contract can be upgraded after a
+                // decision executes, so this can only ever mean "now" - which is why it sits under
+                // the live address rather than in a row of its own beside decided configuration.
+                description: t(`${translationKey}.versionHelp`, {
+                    version:
+                        safeInfo.version ??
+                        t(`${translationKey}.unknownVersion`),
+                }),
             },
             ...this.configurationRows(params),
-            {
-                term: t(`${translationKey}.execution`),
-                definition: t(`${translationKey}.executionValue`),
-            },
         ];
     };
 
@@ -144,13 +150,6 @@ class SafeMultisigSettingsUtils {
                 // as "current", never as this proposal's nonce.
                 term: t(`${translationKey}.currentNonce`),
                 definition: safeInfo.nonce,
-            },
-            {
-                // Safe serves only the current version and a contract can be upgraded after a
-                // decision executes, so this row can only ever mean "now".
-                term: t(`${translationKey}.version`),
-                definition:
-                    safeInfo.version ?? t(`${translationKey}.unknownVersion`),
             },
         ];
     };

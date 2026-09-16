@@ -45,15 +45,17 @@ describe('safeMultisigSettings utils', () => {
         );
         const key = 'app.plugins.safeMultisig.safeMultisigGovernanceSettings';
 
-        expect(byTerm[`${key}.strategy`]).toEqual(`${key}.strategyValue`);
-        // The requirement alone: owners change and Safe keeps no historical owner set, so a
-        // denominator would describe today's Safe rather than the decision being read.
+        // The requirement alone, live or settled: Safe keeps no historical owner set, so a
+        // denominator here would describe today's Safe rather than this decision.
         expect(byTerm[`${key}.threshold`]).toEqual('3');
         // Named "current" because it is live account state: it advances with every transaction the
         // Safe executes, so it is not the nonce this proposal's transaction used.
         expect(byTerm[`${key}.currentNonce`]).toEqual('42');
-        expect(byTerm[`${key}.version`]).toEqual('1.4.1+L2');
-        expect(byTerm[`${key}.execution`]).toEqual(`${key}.executionValue`);
+        // The version qualifies the live address rather than standing as configuration of its own.
+        expect(
+            settings.find((setting) => setting.term === `${key}.safe`)
+                ?.description,
+        ).toEqual(`${key}.versionHelp:{"version":"1.4.1+L2"}`);
     });
 
     it('states the configuration the decision ran under once the body has reported', () => {
@@ -81,6 +83,10 @@ describe('safeMultisigSettings utils', () => {
         // Safe serves only the current version, and a contract can be upgraded after a decision
         // executes: no row beats a row that quietly means "today".
         expect(byTerm[`${key}.version`]).toBeUndefined();
+        // Strategy and execution left with the rows that restated the plugin's own name and a rule
+        // the advance gate already enforces.
+        expect(byTerm[`${key}.strategy`]).toBeUndefined();
+        expect(byTerm[`${key}.execution`]).toBeUndefined();
     });
 
     it('states no configuration once a body is decided but its numbers are unrecoverable', () => {
@@ -147,6 +153,8 @@ describe('safeMultisigSettings utils', () => {
         // The Safe's own account page is another product on another domain: leaving the app must be
         // visible, not a surprise.
         expect(safeRow?.link?.isExternal).toBe(true);
+        // Hands the row to the kit's address output: the label reads, the full address reveals.
+        expect(safeRow?.link?.isOnchainEntity).toBe(true);
         // The truncated name is what reads well; the full address is what a user needs to paste.
         expect(safeRow?.copyValue).toEqual(safeInfo.address);
     });
@@ -163,16 +171,11 @@ describe('safeMultisigSettings utils', () => {
         expect(safeRowOf(settings)?.link).toBeUndefined();
     });
 
-    it('states an unknown version explicitly rather than leaving the row blank', () => {
-        const settings = parse(generateSafeInfo({ version: null }));
-        const versionRow = settings.find(
-            (setting) =>
-                setting.term ===
-                'app.plugins.safeMultisig.safeMultisigGovernanceSettings.version',
-        );
-
-        expect(versionRow?.definition).toEqual(
-            'app.plugins.safeMultisig.safeMultisigGovernanceSettings.unknownVersion',
+    it('states an unknown version explicitly rather than trailing an empty qualifier', () => {
+        expect(
+            safeRowOf(parse(generateSafeInfo({ version: null })))?.description,
+        ).toEqual(
+            'app.plugins.safeMultisig.safeMultisigGovernanceSettings.versionHelp:{"version":"app.plugins.safeMultisig.safeMultisigGovernanceSettings.unknownVersion"}',
         );
     });
 });

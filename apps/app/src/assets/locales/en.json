@@ -3164,22 +3164,17 @@
       "safeMultisig": {
         "safeMultisigGovernanceSettings": {
           "currentNonce": "Current Safe nonce",
-          "execution": "Execution",
-          "executionValue": "Any owner, once threshold is met",
           "nonce": "Safe nonce used",
           "notRecovered": "Not recovered",
-          "safe": "Safe",
-          "strategy": "Strategy",
-          "strategyValue": "Safe multisig",
-          "threshold": "Approvals required",
-          "unknownVersion": "Unknown",
-          "version": "Safe version"
+          "safe": "Safe address",
+          "threshold": "Required confirmations",
+          "unknownVersion": "unknown version",
+          "versionHelp": "Safe {{version}}"
         },
         "safeMultisigProposalVotingBreakdown": {
           "error": "Safe state could not be loaded. Try again later.",
           "executed": "Safe transaction executed",
           "executedLabel": "Executed:",
-          "loading": "Loading Safe state\u2026",
           "rateLimited": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. This retries on its own.",
           "rateLimitedRetry": "Safe state is temporarily unavailable \u2014 the shared Safe API limit was reached. Retrying in about {{seconds}} seconds.",
           "settledCounts": "Decided with {{approvals}} of {{required}} required confirmations. The owner set that applied is not recoverable from the Safe transaction.",
@@ -3246,7 +3241,7 @@
           "vetoAndExecute": "Veto and execute",
           "vetoOnly": "Veto only",
           "vetoed": "Vetoed",
-          "viewInAccountQueue": "See this transaction in the Safe's account",
+          "viewInAccountQueue": "See Tx in Safe account",
           "waitingForOwners": "Your confirmation is submitted. Waiting for the remaining owners."
         },
         "safeMultisigVotePermissionCheck": {
@@ -3747,7 +3742,6 @@
             "modulesValue": "{{count}}",
             "nonce": "Nonce",
             "threshold": "Threshold",
-            "thresholdValue": "{{threshold}} of {{owners}}",
             "title": "Details",
             "unknown": "Unknown",
             "version": "Version"
