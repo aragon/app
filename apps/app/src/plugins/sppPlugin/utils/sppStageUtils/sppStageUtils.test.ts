@@ -654,6 +654,29 @@ describe('SppStageUtils', () => {
             );
         });
 
+        it('does not reopen a stage as active for a late result once the proposal executed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 2 });
+
+            const stages = [generateSppStage({ stageIndex: 0 })];
+            const proposal = generateSppProposal({
+                executed: { status: true },
+                hasActions: true,
+                stageIndex: 0,
+                settings: generateSppPluginSettings({ stages }),
+            });
+
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(false);
+            timeUtils.setTime(now);
+
+            expect(sppStageUtils.getStageStatus(proposal, stages[0])).not.toBe(
+                ProposalStatus.ACTIVE,
+            );
+        });
+
         it('returns active when stage has not ended yet, approval has been reached, proposal has actions and stage is optimistic', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 });
@@ -1191,8 +1214,13 @@ describe('SppStageUtils', () => {
             getStageEndDateSpy.mockRestore();
         });
 
-        it('allows any body to vote while the stage is active', () => {
+        it('allows any body to vote while the stage is active and its voting window is open', () => {
+            const now = '2023-01-01T12:00:00.000Z';
             getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
             const stage = generateSppStage();
             const proposal = generateSppProposal();
             const approveBody = generateSppStagePlugin({
@@ -1208,6 +1236,27 @@ describe('SppStageUtils', () => {
             expect(
                 sppStageUtils.canBodyVote(proposal, stage, vetoBody),
             ).toBeTruthy();
+        });
+
+        it('stops an approving body voting once the window closed, even though the stage still reads active for a late report', () => {
+            // Between voting close and `maxAdvance` the stage stays ACTIVE so a late report still
+            // counts, but an ordinary body's onchain vote would revert there. Only bodies wired to
+            // the late-report slot may act, and that path is gated separately.
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).minus({ hours: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            const approveBody = generateSppStagePlugin({
+                proposalType: SppProposalType.APPROVAL,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, approveBody),
+            ).toBeFalsy();
         });
 
         it('lets a vetoing body veto while the stage is advanceable and the voting window is still open', () => {

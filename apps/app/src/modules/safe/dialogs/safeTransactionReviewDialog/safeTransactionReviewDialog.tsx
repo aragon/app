@@ -189,12 +189,14 @@ export const SafeTransactionReviewDialog: React.FC<
      * - a hash computed under a domain the Safe never used fails against the device and teaches
      * signers to ignore mismatches.
      */
-    const { data: chainVersion } = useReadContract({
-        abi: safeVersionAbi,
-        address: safeAddress as Hex,
-        functionName: 'VERSION',
-        chainId: networkDefinitions[network].id,
-    });
+    const { data: chainVersion, isPending: isVersionPending } = useReadContract(
+        {
+            abi: safeVersionAbi,
+            address: safeAddress as Hex,
+            functionName: 'VERSION',
+            chainId: networkDefinitions[network].id,
+        },
+    );
     const {
         verification,
         safeTxHash: computedHash,
@@ -389,12 +391,18 @@ export const SafeTransactionReviewDialog: React.FC<
                         variant="critical"
                     />
                 )}
-                {verification === SafeHashVerification.UNVERIFIABLE && (
-                    <AlertInline
-                        message={t(`${translationKey}.hashUnverifiable`)}
-                        variant="warning"
-                    />
-                )}
+                {/* While the version read is in flight the hash is not unverifiable, it is
+                    unchecked - and this alert is one signers are being taught to take seriously,
+                    so it must not appear and then retract a moment later. A resolved unknown
+                    (failed read, or a Safe whose version cannot produce the hashes) still shows
+                    it. */}
+                {verification === SafeHashVerification.UNVERIFIABLE &&
+                    !isVersionPending && (
+                        <AlertInline
+                            message={t(`${translationKey}.hashUnverifiable`)}
+                            variant="warning"
+                        />
+                    )}
                 {!isComplete && (
                     <AlertInline
                         message={t(`${translationKey}.incompleteBatch`)}

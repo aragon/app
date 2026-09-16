@@ -609,6 +609,27 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('does not claim the hash is unverifiable while the version read is still in flight', async () => {
+        // The alert would appear and retract a moment later, which is the worst thing to do to a
+        // warning signers are being taught to act on. Confirm stays available: an unchecked hash
+        // is not a misdescribed payload.
+        const onConfirm = jest.fn();
+        useReadContractSpy.mockReturnValue({
+            data: undefined,
+            isPending: true,
+        } as never);
+        render(createTestComponent({ onConfirm }));
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.hashUnverifiable',
+            ),
+        ).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+        expect(onConfirm).toHaveBeenCalled();
+    });
+
     it('refuses to confirm when the local and remote decoders disagree about a call', async () => {
         // The remote decode arrives from the same backend as the envelope, so a benign label on a
         // hostile call is exactly the case the local set exists to catch.

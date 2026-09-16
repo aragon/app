@@ -125,9 +125,15 @@ class SppStageUtils {
         if (!approvalReached) {
             // An unmet threshold after voting close is not yet met, not rejected: a late approval
             // still counts while the stage can advance, and a body's signature would still change
-            // the outcome. Only once the stage can no longer advance is the result final
-            // (nonce-map defect #2).
-            return isWithinMaxAdvance
+            // the outcome (nonce-map defect #2). Scoped to the live stage of an unexecuted
+            // proposal: a stage the proposal already left, or one under an executed proposal, has
+            // a settled result and must not reopen as active.
+            const isAwaitingLateResult =
+                stageIndex === currentStage &&
+                !executed.status &&
+                isWithinMaxAdvance;
+
+            return isAwaitingLateResult
                 ? ProposalStatus.ACTIVE
                 : ProposalStatus.REJECTED;
         }
@@ -170,8 +176,14 @@ class SppStageUtils {
     ): boolean => {
         const status = this.getStageStatus(proposal, stage);
 
-        // While the stage is active any of its bodies may still vote.
-        if (status === ProposalStatus.ACTIVE) {
+        // While the stage is active and its voting window is open, any of its bodies may still
+        // vote. The window check matters because a stage now also reads ACTIVE between voting
+        // close and `maxAdvance`, where a late report is still useful but an ordinary body's
+        // onchain vote would revert - only bodies wired to the late-report slot act there.
+        if (
+            status === ProposalStatus.ACTIVE &&
+            this.isVotingWindowOpen(proposal, stage)
+        ) {
             return true;
         }
 
@@ -198,6 +210,21 @@ class SppStageUtils {
         return (
             hasPendingVeto &&
             isCurrentStage &&
+            endDate != null &&
+            DateTime.now() < endDate
+        );
+    };
+
+    // Whether the stage's own voting window is still open. Separate from `isVetoWindowOpen`, which
+    // additionally requires an unmet veto requirement.
+    isVotingWindowOpen = (
+        proposal: ISppProposal,
+        stage: ISppStage,
+    ): boolean => {
+        const endDate = this.getStageEndDate(proposal, stage);
+
+        return (
+            stage.stageIndex === proposal.stageIndex &&
             endDate != null &&
             DateTime.now() < endDate
         );

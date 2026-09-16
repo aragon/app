@@ -3807,9 +3807,14 @@
           "nonce": "Nonce {{nonce}}",
           "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
           "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
+          "refresh": "Refresh",
+          "reportsTo": "Reports to",
+          "reportsToUnresolved": "Reports to an Aragon proposal that could not be identified yet",
           "review": "Review",
           "stale": "The Safe queue could not be re-read, so nothing was signed. Please try again.",
           "submittedOn": "Submitted {{date}}",
+          "submittedSyncing": "Confirmation submitted. Refreshing this transaction…",
+          "submittedUnsynced": "Confirmation submitted. The updated status is not available yet.",
           "unavailable": "This transaction is no longer available in the Safe queue."
         },
         "execution": {
@@ -3842,18 +3847,18 @@
           "safeTxGas": "Safe tx gas",
           "safeTxHash": "Transaction hash"
         },
+        "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does, so it cannot be signed here.",
         "hashComparison": "Check these against something this page does not control. If your wallet shows hashes rather than decoded fields, the domain and message hashes are the two it displays — they must match character for character. You can also recompute the transaction hash with an independent tool such as safe-tx-hashes-util or Cyfrin safe-hash, ideally run locally on another device. Matching hashes prove this page sends what it shows; they do not prove the transaction is the one you intended, so check the target, value and calldata below against what you expect.",
         "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",
         "hashUnverifiable": "The transaction hash could not be recomputed, so its fields could not be checked against it.",
-        "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does, so it cannot be signed here.",
-        "versionMismatch": "This Safe reports version {{chainVersion}} onchain, but the service describing this transaction says {{reportedVersion}}. The two disagree about which Safe this is, so nothing can be signed here.",
         "incompleteBatch": "Part of this transaction could not be read. The calls below are not the whole transaction, so it cannot be signed here. Review it in the Safe app if you intend to approve it.",
         "operation": {
           "call": "Call",
           "delegateCall": "Delegate call"
         },
         "title": "Review transaction",
-        "unknownAction": "Unknown action"
+        "unknownAction": "Unknown action",
+        "versionMismatch": "This Safe reports version {{chainVersion}} onchain, but the service describing this transaction says {{reportedVersion}}. The two disagree about which Safe this is, so nothing can be signed here."
       }
     },
     "settings": {
