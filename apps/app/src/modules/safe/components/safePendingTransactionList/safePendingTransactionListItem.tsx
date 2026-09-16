@@ -383,12 +383,22 @@ export const SafePendingTransactionListItem: React.FC<
                             />
                         }
                     >
-                        {canRemove && (
+                        {/* The reason stands where the offer would have been, so it is read once
+                            by whoever asked for the routes rather than repeated down a queue of
+                            rows nobody is acting on. Disabled rather than absent: removal silently
+                            missing looks like an app that forgot it. */}
+                        {canRemove ? (
                             <Dropdown.Item
                                 onClick={() => handleSlotAction('remove')}
                             >
                                 {t(
                                     'app.safe.safePendingTransactionList.item.removeFromQueue',
+                                )}
+                            </Dropdown.Item>
+                        ) : (
+                            <Dropdown.Item disabled={true}>
+                                {t(
+                                    'app.safe.safePendingTransactionList.item.removeProposerOnly',
                                 )}
                             </Dropdown.Item>
                         )}
@@ -406,16 +416,6 @@ export const SafePendingTransactionListItem: React.FC<
                 <span className="text-critical-500 text-sm leading-tight">
                     {t(
                         `app.safe.safePendingTransactionList.item.${confirmError}`,
-                    )}
-                </span>
-            )}
-            {/* Said once, as a fact about the service rather than a disabled button: only the
-                address that proposed a transaction can have the service forget it. Withheld from a
-                disconnected viewer, for whom it would be noise on every row. */}
-            {connectedAddress != null && !canRemove && (
-                <span className="text-neutral-500 text-sm leading-tight">
-                    {t(
-                        'app.safe.safePendingTransactionList.item.removeProposerOnly',
                     )}
                 </span>
             )}

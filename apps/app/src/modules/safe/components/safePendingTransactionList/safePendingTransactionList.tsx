@@ -114,14 +114,24 @@ export const SafePendingTransactionList: React.FC<
                   safeTxHash: executionOutcome.safeTxHash,
               });
 
-    // Unexecuted transactions below the current nonce are permanently dead, so they are never shown.
+    /**
+     * Unexecuted transactions below the current nonce are permanently dead, so they are never
+     * shown. What is left is rendered in nonce order, ascending: the service answers newest first,
+     * which puts the only transaction that can execute now at the bottom — and off the first page
+     * entirely once a Safe has more live rows than fit on it. This surface exists to answer the
+     * Safe's nonce sequence, so it renders that sequence.
+     */
     const transactions =
         currentNonce == null
             ? []
-            : (pendingTransactions?.results ?? []).filter(
-                  (transaction) =>
-                      BigInt(transaction.nonce) >= BigInt(currentNonce),
-              );
+            : (pendingTransactions?.results ?? [])
+                  .filter(
+                      (transaction) =>
+                          BigInt(transaction.nonce) >= BigInt(currentNonce),
+                  )
+                  .sort((left, right) =>
+                      BigInt(left.nonce) < BigInt(right.nonce) ? -1 : 1,
+                  );
     // Two live transactions can share a nonce - the service accepts it, and only one of them can
     // ever execute. The governance card already discloses this; the account queue rendered them as
     // two independent, equally signable rows.
@@ -130,11 +140,18 @@ export const SafePendingTransactionList: React.FC<
             .map(({ nonce }) => nonce)
             .filter((nonce, index, all) => all.indexOf(nonce) !== index),
     );
-    // Followed here but absent from the live queue: it executed, was replaced at its nonce, or the
-    // link is stale. Saying so beats a page that silently shows a queue without it.
+    /**
+     * Followed here but absent from the live queue: it executed, was replaced at its nonce, or the
+     * link is stale. Saying so beats a page that silently shows a queue without it.
+     *
+     * Only claimed while this response is the whole queue. `next` means the service is holding
+     * more rows back, and "it may already have executed" would then be a guess about a page nobody
+     * read.
+     */
     const isFollowedMissing =
         followedTxHash != null &&
         !isLoading &&
+        pendingTransactions?.next == null &&
         !transactions.some(
             ({ safeTxHash }) => safeTxHash.toLowerCase() === followedTxHash,
         );

@@ -507,6 +507,30 @@ describe('<SafePendingTransactionList /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    it('renders the live queue in nonce order, not the order the service answered in', () => {
+        // The service answers newest first, which puts the only transaction that can execute now
+        // last - and off the first page entirely on a Safe with more live rows than fit.
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateResponse([
+                generateSafeTransaction({ nonce: '12', safeTxHash: '0xLater' }),
+                generateSafeTransaction({ nonce: '6', safeTxHash: '0xNext' }),
+                generateSafeTransaction({ nonce: '9', safeTxHash: '0xMiddle' }),
+            ]),
+        );
+
+        render(createTestComponent({ currentNonce: '6' }));
+
+        const nonces = screen
+            .getAllByText(/item\.nonce \(nonce=/)
+            .map((element) => element.textContent);
+
+        expect(nonces).toEqual([
+            'app.safe.safePendingTransactionList.item.nonce (nonce=6)',
+            'app.safe.safePendingTransactionList.item.nonce (nonce=9)',
+            'app.safe.safePendingTransactionList.item.nonce (nonce=12)',
+        ]);
+    });
+
     it('starts the queue request before the current nonce is available', async () => {
         const getQueue = jest
             .spyOn(safeServiceApi.safeService, 'getSafePendingTransactions')
@@ -763,6 +787,29 @@ describe('<SafePendingTransactionList /> component', () => {
                 ),
             ).toBeInTheDocument();
         });
+
+        it('stays silent about a followed transaction while the service holds rows back', () => {
+            // `next` means this response is one page of the queue. "It may already have executed"
+            // would then be a guess about rows nobody read.
+            useSafePendingTransactionsSpy.mockReturnValue(
+                generateReactQueryResultSuccess<ISafeQueueResponse, Error>({
+                    data: generateSafeQueueResponse({
+                        count: 8,
+                        next: 'https://safe.example/queue?offset=6',
+                        results: [generateSafeTransaction({ nonce: '11' })],
+                    }),
+                }),
+            );
+            followTransaction(followed);
+
+            render(createTestComponent());
+
+            expect(
+                screen.queryByText(
+                    'app.safe.safePendingTransactionList.followedMissing',
+                ),
+            ).not.toBeInTheDocument();
+        });
     });
 
     describe('routes out of a queued nonce slot', () => {
@@ -782,13 +829,26 @@ describe('<SafePendingTransactionList /> component', () => {
             );
         });
 
-        it('offers removal only to the proposer the Safe service would accept', () => {
+        it('offers removal only to the proposer the Safe service would accept', async () => {
             // Deletion is authorised by the proposer's own signature, so offering it to another
-            // owner would spend a wallet prompt on a request the service refuses.
+            // owner would spend a wallet prompt on a request the service refuses. The reason takes
+            // the offer's place instead of being repeated down every row of the queue.
             const walletSpy = mockConnectedWallet(otherOwner);
 
             try {
                 render(createTestComponent());
+
+                expect(
+                    screen.queryByText(
+                        'app.safe.safePendingTransactionList.item.removeProposerOnly',
+                    ),
+                ).not.toBeInTheDocument();
+
+                await userEvent.click(
+                    screen.getByRole('button', {
+                        name: 'app.safe.safePendingTransactionList.item.moreActions',
+                    }),
+                );
 
                 expect(
                     screen.queryByText(
