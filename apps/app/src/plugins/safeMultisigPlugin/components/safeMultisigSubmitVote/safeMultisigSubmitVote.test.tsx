@@ -1572,7 +1572,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('offers a retry when the Safe read is stale, instead of passing the count off as current', () => {
+    it('offers a refresh when the Safe read is stale, instead of passing the count off as current', () => {
         useSafeBodyStateSpy.mockReturnValue({ ...baseState, isStale: true });
 
         render(createTestComponent());
@@ -1584,9 +1584,33 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.retry',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.refreshSafeState',
             }),
         ).toBeEnabled();
+    });
+
+    // A spent read budget answers every refetch with the same 429, so a refresh control there is
+    // one that provably cannot work: the wait is the remedy and the copy says so.
+    it('withholds the refresh while the Safe read budget is spent', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            isStale: true,
+            isRateLimited: true,
+            rateLimitedRetryAfter: 300,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.budgetSpentRetry (seconds=300)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.refreshSafeState',
+            }),
+        ).toBeNull();
     });
 
     /**

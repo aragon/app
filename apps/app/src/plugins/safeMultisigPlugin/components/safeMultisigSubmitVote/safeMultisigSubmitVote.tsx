@@ -169,6 +169,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const [actionError, setActionError] = useState<string>();
     const [isExecuting, setIsExecuting] = useState(false);
     const [isPreparing, setIsPreparing] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [executedHash, setExecutedHash] = useState<Hex>();
     const [hasIndexingTimedOut, setHasIndexingTimedOut] = useState(false);
 
@@ -188,6 +189,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         hasConnectedWalletSigned,
         settledResultType,
         isStale,
+        isRateLimited,
+        rateLimitedRetryAfter,
         isExecutableNow,
         isCurrentNonceFree,
         nonceDistance,
@@ -1083,11 +1086,21 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         });
     }
 
+    /**
+     * Two different reasons the numbers may lag, and only one of them is worth a button. An
+     * exhausted read budget answers every refetch with the same 429, so offering "Retry" there is
+     * a control that provably cannot work - the wait is the remedy, and it is stated instead.
+     */
     if (isStale) {
         alerts.push({
             key: 'stale',
             variant: 'warning',
-            message: t(`${translationKey}.unreachable`),
+            message: isRateLimited
+                ? t(
+                      `${translationKey}.${rateLimitedRetryAfter == null ? 'budgetSpent' : 'budgetSpentRetry'}`,
+                      { seconds: rateLimitedRetryAfter },
+                  )
+                : t(`${translationKey}.unreachable`),
         });
     }
     /**
@@ -1209,14 +1222,23 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                     {t(`${translationKey}.${buttonKey}`)}
                                 </Button>
                             )}
-                            {isStale && (
+                            {/* Only when a re-read can actually change the answer, and named for
+                                what it re-reads: beside a vote button, "Retry" reads as retrying
+                                the vote. */}
+                            {isStale && !isRateLimited && (
                                 <Button
                                     className="w-full md:w-fit"
-                                    onClick={() => void invalidateSafeState()}
+                                    isLoading={isRefreshing}
+                                    onClick={() => {
+                                        setIsRefreshing(true);
+                                        void invalidateSafeState().finally(() =>
+                                            setIsRefreshing(false),
+                                        );
+                                    }}
                                     size="md"
                                     variant="tertiary"
                                 >
-                                    {t(`${translationKey}.retry`)}
+                                    {t(`${translationKey}.refreshSafeState`)}
                                 </Button>
                             )}
                         </>
