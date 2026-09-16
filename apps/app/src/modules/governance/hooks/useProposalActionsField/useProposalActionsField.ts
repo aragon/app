@@ -74,7 +74,10 @@ export const useProposalActionsField = () => {
     // Reorder through the field array, never `setValue('actions', ...)`: setValue rewrites only the
     // values, stranding `errors`/`touchedFields` on the index they were recorded at, where they then
     // render against whichever action took that slot (APP-1161). `swap` permutes the registered
-    // fields and both of those trees along with the values.
+    // fields and both of those trees along with the values. The field-array reorder crashes that
+    // pushed this code onto `setValue` in the first place (APP-247, against `move()`) no longer
+    // reproduce on current RHF — stress-tested against deeply nested action data, sparse `_fields`
+    // and repeated reorders — so the field array is safe to reorder through again.
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {
             if (newIndex < 0 || newIndex >= actions.length) {
