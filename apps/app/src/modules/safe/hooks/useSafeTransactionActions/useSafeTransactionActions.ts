@@ -3,7 +3,8 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import type Safe from '@safe-global/protocol-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { getConnection } from 'wagmi/actions';
+import type { Hex } from 'viem';
+import { getConnection, signTypedData } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
@@ -13,6 +14,8 @@ import {
     safeService,
     safeServiceKeys,
     useConfirmSafeTransaction,
+    useDeleteSafeTransaction,
+    useProposeSafeTransaction,
 } from '@/shared/api/safeService';
 import { errorUtils, type ISerializedError } from '@/shared/utils/errorUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
@@ -99,6 +102,43 @@ export interface ISafeTransactionActions {
      * Whether an execution is in flight.
      */
     isExecuting: boolean;
+    /**
+     * Removes the transaction from the offchain queue via the Safe transaction service. This
+     * deletes the service's record and its stored confirmations only: it consumes no nonce, has no
+     * onchain effect, and revokes nothing — the envelope stays re-derivable and executable by
+     * anyone still holding the signatures. Copy must say "removed", never "cancelled". Offchain and
+     * free, and only the persisted proposer may do it. Returns true when the service accepted the
+     * deletion.
+     */
+    removeFromQueue: (
+        transaction: ISafeMultisigTransaction,
+    ) => Promise<boolean>;
+    /**
+     * Whether a removal is in flight.
+     */
+    isRemoving: boolean;
+    /**
+     * Leaf translation key of the last removal refusal, or undefined. Namespaced by the caller
+     * under `app.safe.safePendingTransactionList.item`.
+     */
+    removeError?: string;
+    /**
+     * Proposes an onchain replacement at the transaction's nonce: a zero-value self-call the Safe's
+     * owners can confirm and execute in its place. This only enters the replacement into the queue;
+     * it neither confirms nor executes anything, so the existing row actions collect its threshold
+     * and execute it like any other transaction. It costs gas to execute and consumes the nonce.
+     * Returns true when the replacement was proposed.
+     */
+    replaceOnchain: (transaction: ISafeMultisigTransaction) => Promise<boolean>;
+    /**
+     * Whether a replacement proposal is in flight.
+     */
+    isReplacing: boolean;
+    /**
+     * Leaf translation key of the last replacement refusal, or undefined. Namespaced by the caller
+     * under `app.safe.safePendingTransactionList.item`.
+     */
+    replaceError?: string;
 }
 
 const toSafeNonce = (nonce: string): number => {
@@ -237,6 +277,8 @@ export const useSafeTransactionActions = (
     const latestConnectedAddress = useRef(connectedAddress);
     const { mutateAsync: confirmTransaction } = useConfirmSafeTransaction();
     const { execute: executeSafeTransaction } = useSafeTransactionExecution();
+    const { mutateAsync: deleteTransaction } = useDeleteSafeTransaction();
+    const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
     const [isConfirming, setIsConfirming] = useState(false);
     const [confirmError, setConfirmError] = useState<string>();
     const [isExecuting, setIsExecuting] = useState(false);
@@ -245,6 +287,10 @@ export const useSafeTransactionActions = (
     );
     const [confirmationSyncTimedOut, setConfirmationSyncTimedOut] =
         useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
+    const [removeError, setRemoveError] = useState<string>();
+    const [isReplacing, setIsReplacing] = useState(false);
+    const [replaceError, setReplaceError] = useState<string>();
     const isMounted = useRef(true);
 
     useEffect(
@@ -433,6 +479,29 @@ export const useSafeTransactionActions = (
     const reconcileExecution = async (safeTxHash: string) => {
         await reconcileQueue(
             'safe_reconcile_execution',
+            safeTxHash,
+            (queue) =>
+                !queue.results.some(
+                    (candidate) =>
+                        candidate.safeTxHash.toLowerCase() ===
+                        safeTxHash.toLowerCase(),
+                ),
+        );
+
+        invalidateSafeState();
+    };
+
+    /**
+     * Drops a removed transaction from the queue as soon as the service stops returning it.
+     *
+     * The deletion returns 204 the moment the service drops its record, but the backend serves the
+     * queue from a shared cache that can still hold the row for a moment. Only the queue is re-read
+     * per pass — the row leaving it is the whole signal — and `invalidateSafeState` refreshes the
+     * rest once it has, exactly as an execution settles.
+     */
+    const reconcileRemoval = async (safeTxHash: string) => {
+        await reconcileQueue(
+            'safe_reconcile_removal',
             safeTxHash,
             (queue) =>
                 !queue.results.some(
@@ -690,6 +759,212 @@ export const useSafeTransactionActions = (
         }
     };
 
+    /**
+     * Removes the transaction from the offchain queue. Free and offchain: it deletes the service's
+     * record and its stored confirmations, consumes no nonce, and has no onchain effect. It does
+     * not revoke anything — the envelope stays re-derivable and executable by anyone still holding
+     * the signatures — so this is a removal, never a cancellation.
+     */
+    const removeFromQueue = async (
+        transaction: ISafeMultisigTransaction,
+    ): Promise<boolean> => {
+        setIsRemoving(true);
+        setRemoveError(undefined);
+
+        try {
+            const pending = await safeService.getSafePendingTransactions({
+                urlParams,
+            });
+
+            if (pending.meta.stale) {
+                setRemoveError('stale');
+                return false;
+            }
+
+            const live = pending.results.find(
+                (candidate) =>
+                    candidate.safeTxHash.toLowerCase() ===
+                    transaction.safeTxHash.toLowerCase(),
+            );
+
+            if (live == null) {
+                setRemoveError('unavailable');
+                return false;
+            }
+
+            if (!isSameEnvelope(live, transaction)) {
+                setRemoveError('hashMismatch');
+                return false;
+            }
+
+            const nextNonce = await safeService.getSafeNextNonce({ urlParams });
+
+            if (BigInt(nextNonce.currentNonce) > BigInt(transaction.nonce)) {
+                setRemoveError('nonceConsumed');
+                return false;
+            }
+
+            const connectedSignerAddress = latestConnectedAddress.current;
+            // The service accepts a deletion only from the persisted proposer, read live off the
+            // row rather than the reviewed copy. A null `from` can never match, and prompting
+            // anyone else spends a wallet prompt on a call the service will reject.
+            if (
+                connectedSignerAddress == null ||
+                live.from == null ||
+                !addressUtils.isAddressEqual(live.from, connectedSignerAddress)
+            ) {
+                setRemoveError('notProposer');
+                return false;
+            }
+
+            const deleteSignature = await signTypedData(wagmiConfig, {
+                domain: {
+                    name: 'Safe Transaction Service',
+                    version: '1.0',
+                    chainId,
+                    verifyingContract: safeAddress as Hex,
+                },
+                types: {
+                    DeleteRequest: [
+                        { name: 'safeTxHash', type: 'bytes32' },
+                        { name: 'totp', type: 'uint256' },
+                    ],
+                },
+                primaryType: 'DeleteRequest',
+                message: {
+                    safeTxHash: transaction.safeTxHash as Hex,
+                    // The service accepts a signature bound to the current or previous hour only,
+                    // so the time slot is the hour count since the epoch.
+                    totp: BigInt(Math.floor(Date.now() / 1000 / 3600)),
+                },
+            });
+
+            await deleteTransaction({
+                urlParams: { network, safeTxHash: transaction.safeTxHash },
+                body: { signature: deleteSignature },
+            });
+
+            // The 204 means the record is gone. Reconciliation runs detached and is never fatal:
+            // the deletion already happened, so a failed cache re-read must not read as a failure.
+            void reconcileRemoval(transaction.safeTxHash);
+
+            return true;
+        } catch (error) {
+            // Always reported, rejections included: `beforeSend` tags expected wallet behaviour so
+            // it stays searchable without alerting. Only the row copy is withheld — a proposer who
+            // dismissed the prompt knows what they did, and an error message would describe a
+            // failure that never happened.
+            monitoringUtils.logError(error, {
+                context: {
+                    safeAddress,
+                    safeTxHash: transaction.safeTxHash,
+                    operation: 'safe_remove_transaction',
+                },
+            });
+
+            if (!isUserRejectionError(error)) {
+                setRemoveError('error');
+            }
+
+            return false;
+        } finally {
+            setIsRemoving(false);
+        }
+    };
+
+    /**
+     * Proposes an onchain replacement at the transaction's nonce: a zero-value self-call built by
+     * protocol-kit. It does not confirm or execute anything — the replacement enters the queue and
+     * the existing row actions collect its threshold and execute it — so this returns once the
+     * proposal is accepted. Executing it later costs gas and consumes the nonce.
+     */
+    const replaceOnchain = async (
+        transaction: ISafeMultisigTransaction,
+    ): Promise<boolean> => {
+        setIsReplacing(true);
+        setReplaceError(undefined);
+
+        try {
+            const pending = await safeService.getSafePendingTransactions({
+                urlParams,
+            });
+
+            if (pending.meta.stale) {
+                setReplaceError('stale');
+                return false;
+            }
+
+            const live = pending.results.find(
+                (candidate) =>
+                    candidate.safeTxHash.toLowerCase() ===
+                    transaction.safeTxHash.toLowerCase(),
+            );
+
+            if (live == null) {
+                setReplaceError('unavailable');
+                return false;
+            }
+
+            // No `hashMismatch` gate: the replacement is proposed for the nonce, not the envelope,
+            // so a payload that changed since review is exactly what replacing the slot clears
+            // rather than a reason to refuse.
+            const nextNonce = await safeService.getSafeNextNonce({ urlParams });
+
+            if (BigInt(nextNonce.currentNonce) > BigInt(transaction.nonce)) {
+                setReplaceError('nonceConsumed');
+                return false;
+            }
+
+            const { protocolKit, signerAddress } = await prepare(transaction);
+            // Only an owner's signature is accepted for a new proposal. The owner set is read from
+            // chain, so a rejected wallet prompt is worse than not prompting a non-owner at all.
+            if (!(await isSafeOwner(protocolKit, signerAddress))) {
+                setReplaceError('notOwner');
+                return false;
+            }
+
+            const rejectionTransaction =
+                await protocolKit.createRejectionTransaction(
+                    toSafeNonce(transaction.nonce),
+                );
+            const replacementHash =
+                await protocolKit.getTransactionHash(rejectionTransaction);
+            const signature =
+                await protocolKit.signTypedData(rejectionTransaction);
+
+            await proposeTransaction({
+                urlParams,
+                body: {
+                    safeTransactionData: rejectionTransaction.data,
+                    safeTxHash: replacementHash,
+                    senderAddress: signerAddress,
+                    senderSignature: signature.data,
+                    origin: 'Aragon',
+                },
+            });
+
+            invalidateSafeState();
+
+            return true;
+        } catch (error) {
+            monitoringUtils.logError(error, {
+                context: {
+                    safeAddress,
+                    safeTxHash: transaction.safeTxHash,
+                    operation: 'safe_replace_transaction',
+                },
+            });
+
+            if (!isUserRejectionError(error)) {
+                setReplaceError('error');
+            }
+
+            return false;
+        } finally {
+            setIsReplacing(false);
+        }
+    };
+
     return {
         confirm,
         isConfirming,
@@ -699,5 +974,11 @@ export const useSafeTransactionActions = (
         refreshQueue,
         execute,
         isExecuting,
+        removeFromQueue,
+        isRemoving,
+        removeError,
+        replaceOnchain,
+        isReplacing,
+        replaceError,
     };
 };

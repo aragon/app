@@ -29,6 +29,7 @@ jest.mock('wagmi/actions', () => ({
     getConnection: jest.fn(),
     sendTransaction: jest.fn(),
     waitForTransactionReceipt: jest.fn(),
+    signTypedData: jest.fn(),
 }));
 
 describe('useSafeTransactionActions hook', () => {
@@ -70,10 +71,15 @@ describe('useSafeTransactionActions hook', () => {
     const getOwners = jest.fn();
     const getThreshold = jest.fn();
     const signTypedData = jest.fn();
+    const createRejectionTransaction = jest.fn();
+    const proposeTransaction = jest.fn();
+    const deleteTransaction = jest.fn();
     const confirmTransaction = jest.fn();
     const useWalletAccount = jest.spyOn(walletAccountApi, 'useWalletAccount');
     const init = jest.spyOn(Safe, 'init');
     const useConfirm = jest.spyOn(safeServiceApi, 'useConfirmSafeTransaction');
+    const usePropose = jest.spyOn(safeServiceApi, 'useProposeSafeTransaction');
+    const useDelete = jest.spyOn(safeServiceApi, 'useDeleteSafeTransaction');
     const logError = jest.spyOn(monitoringUtils, 'logError');
     const setConnectedWallet = (address: Hex) => {
         useWalletAccount.mockReturnValue({
@@ -134,15 +140,41 @@ describe('useSafeTransactionActions hook', () => {
         useConfirm.mockReturnValue({
             mutateAsync: confirmTransaction,
         } as never);
+        createRejectionTransaction.mockImplementation(
+            async (nonce: number) => ({
+                data: {
+                    to: safeAddress,
+                    value: '0',
+                    data: '0x',
+                    operation: 0,
+                    safeTxGas: '0',
+                    baseGas: '0',
+                    gasPrice: '0',
+                    gasToken: `0x${'0'.repeat(40)}`,
+                    refundReceiver: `0x${'0'.repeat(40)}`,
+                    nonce,
+                },
+            }),
+        );
         init.mockResolvedValue({
             getOwners,
             getThreshold,
             signTypedData,
+            createRejectionTransaction,
             getTransactionHash: async (tx: EthSafeTransaction) =>
                 hashOf(tx.data),
             isValidTransaction: async () => true,
             getEncodedTransaction: async () => '0xdeadbeef',
         } as never);
+        proposeTransaction.mockResolvedValue(undefined);
+        deleteTransaction.mockResolvedValue(undefined);
+        usePropose.mockReturnValue({
+            mutateAsync: proposeTransaction,
+        } as never);
+        useDelete.mockReturnValue({ mutateAsync: deleteTransaction } as never);
+        jest.mocked(WagmiActions.signTypedData).mockResolvedValue(
+            signature as Hex,
+        );
         jest.mocked(WagmiActions.sendTransaction).mockResolvedValue(outerHash);
         jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
             receipt('ExecutionSuccess(bytes32,uint256)') as never,
@@ -456,5 +488,121 @@ describe('useSafeTransactionActions hook', () => {
             });
         });
         expect(result.current.isExecuting).toBe(false);
+    });
+
+    it('refuses a removal from a non-proposer before any prompt', async () => {
+        // The service accepts a deletion only from the persisted proposer, so prompting anyone
+        // else spends a wallet prompt on a call it will reject.
+        setConnectedWallet(secondOwner);
+        getQueue.mockResolvedValue(
+            generateSafeQueueResponse({
+                results: [{ ...transaction, from: owner }],
+            }),
+        );
+        const { result } = renderActions();
+        await act(async () => {
+            expect(await result.current.removeFromQueue(transaction)).toBe(
+                false,
+            );
+        });
+        expect(result.current.removeError).toBe('notProposer');
+        expect(WagmiActions.signTypedData).not.toHaveBeenCalled();
+        expect(deleteTransaction).not.toHaveBeenCalled();
+    });
+
+    it('removes a proposer transaction and drops the row once the service stops returning it', async () => {
+        // The 204 is immediate, but the shared backend cache can keep serving the row, so the
+        // removal reconciles the queue until the row is gone.
+        jest.useFakeTimers();
+        const client = new QueryClient();
+        const queueKey = safeServiceKeys.safePendingTransactions({
+            urlParams: {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: safeAddress,
+            },
+        });
+        getQueue.mockResolvedValue(
+            generateSafeQueueResponse({
+                results: [{ ...transaction, from: owner }],
+            }),
+        );
+        const { result } = renderActions(client);
+        try {
+            await act(async () => {
+                expect(await result.current.removeFromQueue(transaction)).toBe(
+                    true,
+                );
+            });
+            expect(deleteTransaction).toHaveBeenCalledTimes(1);
+
+            await act(() => jest.advanceTimersByTimeAsync(1500));
+            expect(
+                client
+                    .getQueryData<ISafeQueueResponse>(queueKey)
+                    ?.results.map(({ safeTxHash }) => safeTxHash),
+            ).toEqual([transaction.safeTxHash]);
+
+            getQueue.mockResolvedValue(
+                generateSafeQueueResponse({ results: [] }),
+            );
+            await act(() => jest.advanceTimersByTimeAsync(20_000));
+            expect(
+                client.getQueryData<ISafeQueueResponse>(queueKey)?.results,
+            ).toEqual([]);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('leaves a dismissed removal retryable instead of reporting a failure', async () => {
+        getQueue.mockResolvedValue(
+            generateSafeQueueResponse({
+                results: [{ ...transaction, from: owner }],
+            }),
+        );
+        jest.mocked(WagmiActions.signTypedData).mockRejectedValue({
+            code: 4001,
+        });
+        const { result } = renderActions();
+        await act(async () => {
+            expect(await result.current.removeFromQueue(transaction)).toBe(
+                false,
+            );
+        });
+        expect(result.current.removeError).toBeUndefined();
+        expect(result.current.isRemoving).toBe(false);
+        expect(deleteTransaction).not.toHaveBeenCalled();
+        // Still reported: `beforeSend` tags expected wallet behaviour rather than dropping it.
+        expect(logError).toHaveBeenCalledTimes(1);
+    });
+
+    it('proposes a replacement as a zero-value self-call at the original nonce', async () => {
+        const { result } = renderActions();
+        await act(async () => {
+            expect(await result.current.replaceOnchain(transaction)).toBe(true);
+        });
+        expect(proposeTransaction).toHaveBeenCalledTimes(1);
+        const { body } = proposeTransaction.mock.calls[0][0];
+        expect(body.safeTransactionData).toMatchObject({
+            to: safeAddress,
+            value: '0',
+            data: '0x',
+            operation: 0,
+            nonce: Number(transaction.nonce),
+        });
+        expect(body.senderAddress).toBe(owner);
+    });
+
+    it('refuses a replacement from a non-owner before any prompt', async () => {
+        setConnectedWallet(`0x${'33'.repeat(20)}` as Hex);
+        const { result } = renderActions();
+        await act(async () => {
+            expect(await result.current.replaceOnchain(transaction)).toBe(
+                false,
+            );
+        });
+        expect(result.current.replaceError).toBe('notOwner');
+        expect(signTypedData).not.toHaveBeenCalled();
+        expect(proposeTransaction).not.toHaveBeenCalled();
     });
 });
