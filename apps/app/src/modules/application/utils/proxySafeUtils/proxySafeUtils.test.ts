@@ -191,6 +191,11 @@ describe('proxySafe utils', () => {
                     method: 'DELETE',
                     body: JSON.stringify({ signature: '0xsignature' }),
                     cache: 'no-store',
+                    // Without the content type the service never parses the body and answers
+                    // "signature required", which reads as a bad signature rather than a header.
+                    headers: expect.objectContaining({
+                        'Content-Type': 'application/json',
+                    }) as unknown,
                 }),
             );
             expect(response.status).toEqual(204);

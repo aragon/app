@@ -325,9 +325,11 @@ export class ProxySafeUtils {
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${apiKey}`,
-                ...(method === 'POST'
-                    ? { 'Content-Type': 'application/json' }
-                    : {}),
+                // Every method that carries a body needs it: the service is a DRF app, which
+                // parses a request body only when its content type says JSON. Without the header a
+                // deletion arrives with its signature unparsed and comes back as "signature
+                // required" — a refusal that looks like a bad signature.
+                ...(carriesBody ? { 'Content-Type': 'application/json' } : {}),
             },
             credentials: 'omit',
         };
