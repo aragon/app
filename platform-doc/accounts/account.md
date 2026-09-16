@@ -2,55 +2,43 @@
 type: concept
 title: Account
 tags: [accounts, semantics, naming, identity, metadata]
-status: draft
-source: aragon-knowledge-base/product/concepts/account-vs-dao.md (first-slice brain dump + product-owner Q&A, 2026-07-06) + product-owner briefings (2026-07-28, see log.md) + product-owner principles review (2026-07-29, see log.md) + product-owner authority-vocabulary answer and authorization-model review (2026-08-04, see log.md) + product-owner release-notes briefing (2026-08-03; releases 1.3.0, 1.4, and the dictated 1.20.22/likely 1.22) + app source verification (2026-08-04, app@122f1bd1; see log.md) + protocol-doc/core/dao-metadata.md + protocol-doc/framework/dao-registry.md
+source: aragon-knowledge-base/product/concepts/account-vs-dao.md (first-slice brain dump + product-owner Q&A, 2026-07-06) + product-owner briefings (2026-07-28, see log.md) + product-owner principles review (2026-07-29, see log.md) + product-owner authority-vocabulary answer and authorization-model review (2026-08-04, see log.md) + product-owner release-notes briefing (2026-08-03; releases 1.3.0, 1.4, and the dictated 1.20.22/likely 1.22) + app source verification (2026-08-04, app@122f1bd1; see log.md) + protocol-doc/core/dao-metadata.md + protocol-doc/framework/dao-registry.md + product-owner semantic-anchor review and Safe core/extension verification (2026-09-10, see log.md) + product-owner editorial feedback (2026-09-13, see log.md)
 ---
 
 # Account
 
-The entity a user deploys and governs through the app. Two vocabularies name it, and both are correct in their own context:
+An **account** is an address that can act: given a target, a value, and calldata, it makes that call as itself, so the target sees the account as its caller. That general-purpose execution capability lets it operate contracts and manage a treasury on its own behalf.
 
-- **Account** — the product term, and the more general concept: the thing that holds assets and acts.
-- **DAO** — two narrower things. At the protocol layer, it names the account's contract: OSx's [`DAO.sol`](../protocol-doc/core/dao.md). In its own right, a *decentralized autonomous organization* — an accurate description of an account when its holders govern it as one, typically through token-based governance.
+Two kinds qualify. An **externally-owned account** acts because whoever holds its private key can sign transactions. A **smart contract account** acts because its code exposes a general-purpose execution entry point: an Aragon account through [`execute`](../protocol-doc/core/execution.md), a [Safe](./safe.md) through its own equivalent.
 
-The terms nest rather than compete: every DAO is an account. Product and experience copy says **account**; "DAO" is right when a sentence names the OSx contract or an exact protocol identifier, or when it presents an explicitly token-governed use case whose token context is visible in the same passage. A DAO is one use case of the platform, never its product category — and the boundary has soft edges (an optimistic, veto-gated setup may or may not read as a DAO), so when in doubt, say account. The UI does not yet follow this rule everywhere; completing the product-copy rollout is tracked as a design opportunity, and these docs write the target copy rather than mirroring legacy labels.
+Most contracts are not accounts in this sense. A standard ERC-20 contract has an address and can hold assets, but its token-ledger operations do not provide a general-purpose execution entry point. Ethereum's [account model](https://ethereum.org/en/developers/docs/accounts/) uses “contract account” more broadly for contracts with state; the Aragon product term identifies the narrower capability to make arbitrary calls as oneself.
 
-## What an account is
+## Account versus DAO
 
-An account is an address that can **act**: hand it a target, a value, and calldata, and it makes that call *as itself*, so the target sees the account as its caller. That generic execution entry point is the whole of it — an account is defined by being able to do arbitrary things on its own behalf, which is also what lets it meaningfully hold a treasury.
+**Account** is the product term for the entity people deploy and govern through the app. **DAO** names its [Aragon OSx contract](../protocol-doc/core/dao.md), and can also describe a decentralized autonomous organization governed through that account, typically using token-based governance. A DAO is one use case of the platform.
 
-Two kinds qualify. An **externally-owned account** acts because whoever holds its private key can sign any transaction. A **smart contract account** acts because its code exposes such an entry point: an Aragon account through [`execute`](../protocol-doc/core/execution.md), a [Safe](./safe.md) through its own equivalent.
+Product and experience copy uses **account**. Use **DAO** when naming the OSx contract or an exact protocol identifier, or when describing an explicitly token-governed use case whose token context is visible in the same passage. When the organizational characterization is ambiguous, as it can be for an optimistic veto-gated setup, use account. Some existing UI labels still say “DAO”; the product-copy rule remains account.
 
-Most contracts are not accounts in this sense. An ERC-20 has an address, and tokens or ether can sit at it, but nothing can tell it to make a call on anyone's behalf — it exposes ledger operations, not execution. Ethereum's own state model does keep a record for every address, and its documentation calls those records accounts, "contract account" included ([Ethereum's account model](https://ethereum.org/en/developers/docs/accounts/)); that broader usage is worth recognizing when reading protocol material, but this base means the narrower thing, because the capability is what carries product meaning.
-
-Protocol-doc names this same hat "the executor" ([DAO](../protocol-doc/core/dao.md)). At the product layer the noun is *account* and executing is what it does: an account **is** an executor rather than something paired with one.
-
-In the normal OSx route, that capability makes the account the execution intermediary for its [plugins](../governance/plugin.md): a plugin calls `DAO.execute`, and the DAO account calls each action target as itself. A plugin's [target configuration](../governance/target.md) can also route approved actions through the plugin's own context. The normal account-mediated route is the kernel-like layer that lets one shared framework span different governance arrangements ([platform design principles](../principles.md)).
+An account is itself an [executor](../protocol-doc/core/dao.md). In the normal OSx route, a [plugin](../governance/plugin.md) calls `DAO.execute`, and the account calls each action target as itself. A plugin's [target configuration](../governance/target.md) can also route approved actions through the plugin's own context. The normal account-mediated route lets one shared execution framework support different governance arrangements.
 
 ## Account and governor are distinct capabilities
 
 An account acts; a **governor** resolves actors' preferences over proposed actions. A governor is an entity or component, commonly a contract with an address and state, that implements a voting or decision method ([authorization and execution model](../access-control/authorization-and-execution.md)). The two capabilities can be separate or live in the same contract.
 
-Aragon commonly separates them: a governance [plugin](../governance/plugin.md) can be the governor, while the account executes the approved actions. A [Safe](./safe.md) combines them because its multisignature governance primitive and arbitrary-call capability are baked into the same smart account. An account with no attached governor, or one that has never made a call, is still an account.
+Aragon commonly separates them: a governance plugin can be the governor, while the account executes the approved actions. A [Safe](./safe.md) is a **governor/account monolith**: its core contract performs both roles, checking signer approvals and executing approved transactions. Its owners and approval threshold remain configurable, and modules can add alternative authorization paths.
 
-Because the account is the address external targets authorize, it outlives the governors installed behind it: replacing the governor plugin can leave those targets' ownership or role configuration unchanged ([scoped authority](../access-control/scoped-authority.md#separate-responsibilities-without-changing-the-account)).
+An account with no attached governor, or one that has never made a call, is still an account.
 
-## How the app names and presents an account
+Because external targets authorize the account's address, the account can outlive the governors installed behind it. For example, an organization can replace a council's multisig process with token voting while keeping its assets at the same address and retaining that address's ownership or roles on protocol contracts. The new process receives the appropriate execution scope; external contracts can continue recognizing the same account without each needing a new role assignment. [Scoped authority](../access-control/scoped-authority.md#separate-responsibilities-without-changing-the-account) determines which of those powers each process can exercise.
 
-An account's execution capability is separate from how the app names and renders it. **User promise:** see a human-readable account identity when its metadata is usable, retain an address fallback when it is not, and use an optional account-address ENS subname where the deployment supports one.
+## Identifying an account
 
-One account can also be presented alongside others it relates to — a primary account with any number of [linked accounts](./linked-account.md).
+An account is first identified by its Ethereum address on its deployment network. Metadata and an optional ENS subname make that identity more readable.
 
-### Metadata-backed display
+The [account-creation flow](./account-creation.md) gives the account a name, description, logo, and resource links. These make the address recognizable in the app. Where no usable name is available, the default dashboard header displays a shortened account address.
 
-The account-creation flow pins the account's name, description, **logo** (serialized in the metadata's `avatar` field), and links as [DAO metadata](../protocol-doc/core/dao-metadata.md) ([creation payload](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialogUtils.tsx#L36-L47)). The app uses that metadata where the surface supports it. Its common display-name helper trims the metadata name and falls back to the truncated account address when the name is absent, empty, or whitespace ([display-name rule](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/shared/utils/daoUtils/daoUtils.ts#L77-L86)); the default dashboard header is one consumer of the same rule ([header presentation](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/modules/dashboard/components/dashboardDefaultHeader/dashboardDefaultHeader.tsx#L16-L62)). This is a bounded fallback for the surfaces using that helper, not a claim that every account string in the app is rendered through one universal component.
+On Ethereum mainnet, creation also offers an optional `<label>.dao.eth` subname, assigned to the account during [registration](../protocol-doc/framework/dao-registry.md). Leaving it blank still creates and registers the account. This account name is distinct from `name.aragon.eth`, the [Aragon Name](../application/aragon-names.md#claiming) associated with a connected user's wallet.
 
-### The account's optional `dao.eth` subname
+The `dao.eth` subname resolves to the account address and provides a human-readable destination for sending assets. The app also uses it in account URLs when available; the address remains usable when no subname exists.
 
-For an Ethereum-mainnet deployment, the creation wizard offers an optional label under `dao.eth`; it validates `<label>.dao.eth` and passes the chosen label to the DAO factory ([mainnet-only field and validation](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/modules/createDao/components/createDaoForm/createDaoFormMetadata/createDaoFormMetadata.tsx#L33-L71), [field rendering](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/modules/createDao/components/createDaoForm/createDaoFormMetadata/createDaoFormMetadata.tsx#L101-L122), [factory transaction](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialogUtils.tsx#L49-L69)). When supplied, factory registration assigns the optional `<label>.dao.eth` record to the deployed account; leaving it blank still creates and registers the account ([DAO Registry](../protocol-doc/framework/dao-registry.md)).
-
-The subname resolves to the account address, so it is a human-readable destination for sending assets to that address. The app also prefers the ENS value to the raw address in account routes when it is available ([URL construction](https://github.com/aragon/app/blob/122f1bd161b9d308b19ff509023429af8d118e72/apps/app/src/shared/utils/daoUtils/daoUtils.ts#L249-L260)). The address remains the durable fallback when no subname exists.
-
-### Account identity vs. user identity
-
-`<label>.dao.eth` names the deployed account's address. It is separate from `name.aragon.eth`, the Ethereum-mainnet ENS name for connected user wallets and uses as a primary ENS name and [Aragon Profile](./claiming-an-aragon-eth-name.md). One belongs to the governed account; the other belongs to the connected user, usually a person or organizational member.
+For presenting a primary account alongside related accounts, see [Linked accounts](./linked-account.md).

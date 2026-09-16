@@ -67,8 +67,13 @@ const defaultChat = {
     // deepseek-v4-flash won the in-budget bake-off (4/4 tool calls with a warm sentence, clean
     // refusals); gemini-2.5-flash-lite skipped tool calls and once fabricated a ticket number,
     // gpt-5-nano never called the tool, gpt-oss-20b leaked harmony markup into the chat (which
-    // also rules it out as a fallback).
-    agentModel: 'deepseek/deepseek-v4-flash',
+    // also rules it out as a fallback). v4.1-flash replaced v4-flash after a ten-scenario sweep
+    // over the documentation prompt: it kept every rule the older model kept and dropped the
+    // ones it broke (three mentions of "the documentation" and three closing offers in ten
+    // answers, against none), answered in 4–6.5 s instead of 8–15 s, and v4-flash is being
+    // retired by its hosts anyway (Fireworks drops it on 2026-09-25; DeepSeek redirects legacy
+    // endpoints to the 4.1 family). Twice the price per token, still well under a cent a turn.
+    agentModel: 'deepseek/deepseek-v4.1-flash',
     fallbackModels: ['google/gemini-2.5-flash-lite'],
 };
 // Retrieval models settled in the APP-1069 analysis: voyage-4 for its retrieval quality at

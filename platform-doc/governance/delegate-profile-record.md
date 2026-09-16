@@ -39,10 +39,10 @@ The CID resolves to the versioned JSON shape written by the current editor:
 }
 ```
 
-On a delegation-enabled token body's member profile, the connected member-address holder is offered a rich-text editor for the Markdown content; the resolver enforces write permission in the eventual mainnet transaction. The app pins the editor's JSON to IPFS, resolves the primary name's mainnet resolver, and writes the resulting URI to the token-specific ENS key.
+On a delegation-enabled token body's [Member page](./member.md#identifying-a-member), the connected member-address holder is offered a rich-text editor for the Markdown content; the resolver enforces write permission in the eventual mainnet transaction. The app pins the editor's JSON to IPFS, resolves the primary name's mainnet resolver, and writes the resulting URI to the token-specific ENS key.
 
 On read, the backend accepts a nonempty string `content`, normalizes the returned statement, and the app safely renders that content. It does not enforce the complete writer schema for an externally supplied record. A viewer sees the card only when a readable statement exists; the connected member-address holder also sees the create or edit control.
 
-The ENS record is the portable pointer and the JSON is off-chain content on IPFS. An interface can implement this same convention without depending on an Aragon-owned profile database, following the [ENS profile-layer decision](../accounts/ens-as-the-profile-layer.md).
+The ENS record is the portable pointer and the JSON is off-chain content on IPFS. An interface can implement this same convention without depending on an Aragon-owned profile database, following the [ENS profile-layer decision](../application/aragon-profiles.md#ens-as-the-profile-layer).
 
 ENS reviewed this key and document shape and endorsed the approach. Aragon does not present that feedback as a general ENS standard.

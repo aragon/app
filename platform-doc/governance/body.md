@@ -3,31 +3,58 @@ type: concept
 title: Body
 tags: [governance, semantics]
 status: draft
-source: aragon-knowledge-base/product/concepts/process-vs-body.md (product-owner Q&A, 2026-07-06) + product-owner briefing (2026-07-28, multisig gates) + product-owner principles review (2026-07-29, see log.md) + product-owner release-notes briefing (2026-08-03, see log.md) + product-owner briefings (2026-08-04, see log.md)
+source: aragon-knowledge-base/product/concepts/process-vs-body.md (product-owner Q&A, 2026-07-06) + product-owner briefing (2026-07-28, multisig gates) + product-owner principles review (2026-07-29, see log.md) + product-owner release-notes briefing (2026-08-03, see log.md) + product-owner briefings (2026-08-04, see log.md) + product-owner structural-review preparation (2026-09-10, see log.md) + product-owner Body review (2026-09-10, see log.md) + live application-page coverage at app@adad67873c8f9dd75e3ed340b70df3e985ae3557 (2026-09-13, see log.md); relocated section provenance in log.md (section-audit observations, 2026-09-13) (2026-09-13; no fresh source verification)
 ---
 
 # Body
 
-A **body** describes who supplies preferences to a governance decision: a group of people, token holders, or a single address. A governor representing the body records those inputs and applies its voting or approval method. When the body is configured as a stage in a wider [governance process](./process.md), that result alone does not complete the process or act on the DAO; any ability to create or execute comes from the actual function grant and call route.
+A **body** is a set of [members](./member.md) who supply preferences to a governance decision. Its [governor](../access-control/authorization-and-execution.md) records those preferences and applies the voting or approval method.
 
-Bodies are how the product talks about *who decides*, separately from *how the decision reaches the DAO*:
+## Membership
 
-- A multisig or [token voting plugin](../protocol-doc/plugins/token-voting-plugin.md) whose result feeds a stage of a [staged proposal processor](../protocol-doc/plugins/spp-plugin.md) represents a body and is its governor: its output goes to the pipeline, not to the DAO.
-- Whether a given [plugin](./plugin.md) is *also* a [process](./process.md) depends on what its approved actions accomplish ([target](./target.md)); [process](./process.md) holds the worked contrast.
-- A body need not be a plugin at all — a [Safe](../accounts/safe.md) can serve as a [stage's governing body](./safe-as-a-body.md), standing in as an external account rather than a plugin installed on the DAO. The Safe remains an account and governor globally; **body** describes what it contributes to this process. Whether it or its members may create or execute the process's proposal is a separate authorization configuration ([proposal creation](./proposal-creation.md)).
+Membership can be defined in different ways, such as an explicit list of member addresses, token ownership, or staking. The body's membership rules determine who can participate.
 
-Like a process, a body is an app-built abstraction over the [plugin substrate](./plugin.md#the-product-abstractions-sit-on-top), not a separate protocol fact.
+### Members page
 
-## Why the distinction matters
+In the app, the **members list is partitioned by body**. The Members page presents the members of the selected body. Bodies from [linked accounts](../accounts/linked-account.md) join the same set of body tabs, with an indicator showing which account they belong to; selecting a body displays its members.
 
-Advanced governance composes **multiple bodies into one process** (e.g. a council stage followed by a token-holder stage; per-stage composition and thresholds are on [stage](./stage.md)). UI, permissions, and analytics must attribute decisions to bodies while attributing execution and proposal lifecycle to the process — collapsing the two breaks as soon as a setup is more than a single plugin.
+An individual [Member page](./member.md#member-page) shows the participant's identity and governance activity.
 
-The partition is visible in the app's two member-facing lists: the [proposals](./proposal.md) list is partitioned by **process**, while the **members list** is partitioned by **body** — members belong to a governing body, and that body is one of the bodies installed on the DAO (a plugin — a Safe serving as a stage's body is deliberately *not* shown on the members list; see [Safe as a body](./safe-as-a-body.md)). For a token-based body, the [token panel](./token-panel.md) places its available wrap, voting-escrow lock, and delegation controls in the Members-page aside; [veLocker](./velocker.md) owns the voting-escrow-specific position and dynamic-delegation semantics. Bodies (and processes) belonging to a [linked account](../accounts/linked-account.md) are folded into these same lists, flat, with an indicator marking that they belong to a linked account.
+The aside describes the selected body and its governance settings. For a token-based body, its available [token-panel controls](./token-panel.md#available-controls) let a connected holder prepare voting power or manage delegation while browsing members.
 
-If one plugin is both a process and a body, these partitions do not create two identities: its single [plugin metadata](../design/metadata-input.md#plugin-metadata-follows-the-plugin) record can be presented in both places.
+[Featured delegates](../application/app-cms.md#five-established-uses) help users discover participants. When a non-empty featured-delegate configuration matches a Token Voting body, the Members page adds the featured list as its first, default tab, and the dashboard replaces its ordinary Members section with that list.
 
-## Reusing a plugin body
+A Safe serving as a governing body appears in the process and proposal experience. The Safe body is omitted from the Members page ([Safe presentation](./safe-as-a-body.md#how-the-app-presents-it)).
 
-One installed plugin can serve as a body in more than one governance process. That reuses the **same body and the same governance settings** in every process it serves. Minimum-duration interactions can make this shape especially risky, so configurations that share a body across processes follow the [reach-out-to-the-team pattern](../design/reach-out-to-the-team.md) rather than being treated as an ordinary self-serve setup.
+#### Member-list order
 
-The product has no separate object for a body's underlying **census**. Two plugin instances may represent the same people or token holders while using different governance parameters in different processes; those are still two bodies. This is a different choice from reusing one plugin instance: separate instances allow different settings, while reuse keeps one shared configuration. When this produces duplicate-looking member lists, [App CMS](../app-cms.md#five-established-uses) can hide one plugin from the datalist presentation without changing either body or its configuration.
+The member API defaults to voting power in descending order, with record ID as the descending tiebreaker. The Members page supplies no alternative sort or sort control, so this is the fixed order for that surface before client-side pinning. The rendered list then makes two contextual exceptions:
+
+1. The connected wallet is first when its individually fetched member record has positive voting power.
+2. A distinct, nonzero delegate is next when delegation is enabled for the token.
+
+The client de-duplicates those addresses case-insensitively and preserves the backend order for every remaining member. If a live single-member read finds a pinned participant before that participant reaches the paginated index, the list keeps every indexed row and expands its displayed count rather than evicting someone from the page.
+
+### Token-based participation
+
+For a token-based body, the [token panel](./token-panel.md) provides the available wrapping, locking, and delegation controls. [veLocker](./velocker.md) supports voting-escrow positions and dynamic delegation where configured.
+
+## Participating in a process
+
+A body expresses its preferences to a [governance process](./process.md). In staged governance, each [stage](./stage.md) determines how the decisions of its participating bodies combine.
+
+A governance [plugin](./plugin.md#governance-semantics-of-plugins), such as Multisig or Token Voting, can act as both a body and a process when it carries proposals through decision to account execution. In staged governance, the plugin represents a body whose decision state is managed by the Staged Proposal Processor.
+
+Any other address can be registered as a governing body, including another smart contract or an EOA. For example, a [Safe](./safe-as-a-body.md) can report its owners' decision, while an EOA controlled through an MPC signing setup can submit the outcome of an offchain decision process. The registered address expresses the body's approval or veto to the process. The app provides additional recognition and signing support for Safe bodies.
+
+Who may [create a proposal](./proposal-creation.md) and who may execute it follow the process's permission configuration and [execution route](./target.md). Those permissions determine how the body and its members can act beyond supplying a decision.
+
+## Bodies that span multiple processes
+
+One installed plugin can serve as a body in more than one governance process. Every process using that body shares its governance settings. Minimum-duration configurations must be set carefully to work with the timing rules of every process that uses the body. Configure shared bodies with caution, and [reach out to the Aragon team](../application/getting-help.md#when-the-app-needs-the-aragon-team) to check that the setup is safe across those processes.
+
+In contrast, separate plugin instances can represent the same membership while using different governance settings. Each instance is a distinct body, allowing those settings to vary independently.
+
+## Identifying a body
+
+A plugin body's name, description, and resources come from its [plugin metadata](../application/metadata-input.md#plugin-metadata-follows-the-plugin). When one plugin acts as both a process and a body, that single identity appears in both contexts.

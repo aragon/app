@@ -10,7 +10,9 @@ This folder is an **agentic wiki bundle**: plain Markdown (someone's notes, docu
 
 `wiki` runs within the bundle (it walks up to find `wiki.toml`) or from anywhere with `wiki --root <dir>`. This file teaches *how to operate it*; run `wiki <command> -h` for a command's exact flags, and `wiki help` for the full list.
 
-**How *this* base is organized (its types, folders, and the loop you follow) lives in [WORKFLOW.md](./WORKFLOW.md); read it next.** Before creating or substantively rewriting reader-facing prose, then read [voice.md](./voice.md) in full and apply it. Do not load the voice policy for read-only queries, graph maintenance, path changes, or other structural-only work.
+**How *this* base is organized (its types, folders, and the loop you follow) lives in [WORKFLOW.md](./WORKFLOW.md); read it next.** Before adding or changing reader-facing prose, consult [voice.md](./voice.md) using its reading guidance and apply it, including its preflight for small edits. The [product-content boundary](./WORKFLOW.md#product-content-and-documentation-operations) governs where editorial material and unfinished work belong; apply it during every authoring or review pass. Do not load the voice policy for read-only queries, graph maintenance, path changes, or other structural-only work.
+
+For user-facing reading or retrieval, exclude `internal/` from the indexed platform content. The product front door is `index.md`; [internal navigation](./internal/index.md) leads to design guidance, documentation work, and product opportunities. [WORKFLOW.md](./WORKFLOW.md#user-facing-content-and-existing-metadata) defines this location boundary. Types describe entries and tags describe topics; neither adds an audience exception.
 
 On a brand-new base, treat `WORKFLOW.md` as the starting point, not the final spec: before populating the base, help the user commit its conventions (prune it to what they will actually use), scaffold a small skeleton, and have them validate it. Consolidate first, populate second. (This base came from a `--workflow` starter; `wiki init -h` lists the others, and both this file and `WORKFLOW.md` are yours to reshape.)
 
@@ -18,15 +20,15 @@ On a brand-new base, treat `WORKFLOW.md` as the starting point, not the final sp
 
 Three orthogonal axes classify every entry (keep them separate and the base stays friction-free):
 
-- **Folder** = one stable home, by domain (`finance/`, `tech/infra/`). Moving is `wiki move` (it rewrites the links for you); never hand-move a file.
+- **Folder** = one stable home, first by reading context (product or `internal/`), then by domain (`finance/`, `tech/infra/`). Moving is `wiki move` (it rewrites the links for you); never hand-move a file.
 - **`type`** = what an entry *is* (`note`, `concept`, `dataset`, `task`, …), required on every entry. Free-form by default; declare a `types` vocabulary in `wiki.toml` to enforce a fixed set (`wiki check` then errors on any undeclared type). `wiki property type --counts` shows what's in use.
 - **Tags** = everything cross-cutting (`2026`, `needs-review`, a task's `feature`/`bug`). If a thing would ever live in two folders, it's a tag, not a folder.
 
 **One thing per entry.** Similar-but-distinct things (a `type` and its factory) each get their own entry, linked to each other, never folded into one. Being adjacent or similarly named is a reason to link, not to merge. Merge only true duplicates: two entries for the *same* thing.
 
-Entries link with standard Markdown, relative to the linking file: `[Income](../finance/income.md)`, so they navigate in any renderer. Two conveniences, both normalized by `wiki tidy`: a hand-written root-absolute link (`/finance/income.md`) still resolves and `tidy --links` respells it relative; an Obsidian `[[wikilink]]` resolves too and `tidy --wikilinks` converts it to a standard Markdown link. Two reserved filenames carry no frontmatter at all (so no `type`): `index.md` (a folder's navigation surface) and the optional `log.md` (a dated chronicle); the one exception is the bundle-root `index.md`, which carries `okf_version`.
+Entries link with standard Markdown, relative to the linking file: `[Income](../finance/income.md)`, so they navigate in any renderer. Two conveniences, both normalized by `wiki tidy`: a hand-written root-absolute link (`/finance/income.md`) still resolves and `tidy --links` respells it relative; an Obsidian `[[wikilink]]` resolves too and `tidy --wikilinks` converts it to a standard Markdown link. Two reserved filenames carry no frontmatter: `index.md` (a collection's navigation surface) and the optional `log.md` (a dated chronicle). Only the bundle-root `index.md` carries `okf_version`. Their location and filename establish their role; do not add tags or a type.
 
-Since an `index.md` holds no frontmatter (no `type`, so no concept of its own), the two serve different jobs, and the deciding question is what the folder *is*.
+Since an `index.md` has no `type` and no concept of its own, the two serve different jobs, and the deciding question is what the folder *is*.
 
 - A **`thing.md` is load-bearing**: when a folder's contents are the parts of one thing (a project, a product, a plugin), that thing needs a home that can be typed, linked to, and found, so it gets a `thing.md` beside its `thing/` folder, never a typeless `thing/index.md`. 
 - A **folder `index.md` is only the entry point into a collection**: it fronts a folder of otherwise-independent entries (the bundle root, `projects/`, `people/`) to navigate what's inside, and carries no concept of its own.
@@ -118,7 +120,7 @@ wiki checkboxes /active/login.md  # just that entry's own subtasks
 wiki list --where type=task     # the task entries themselves
 ```
 
-A **board** (`index.md`) references task entries with **plain links**, not by checkboxing them: a link is an external reference and never carries the target's state (the entry owns that, so a board checkbox would just be a second copy that drifts). A genuinely trivial to-do not worth its own entry can sit as a bare `- [ ]` on the board, but then it is a checklist item, not a queryable entry, that is the trade-off. The board is **authored, not generated**: `wiki` never edits it, you keep it current; a task the board omits shows up under `wiki orphans` if nothing else links it.
+A **board** references task entries with **plain links**, not by checkboxing them: a link is an external reference and never carries the target's state. In this base, every unfinished documentation action has a finite task under `internal/maintenance/tasks/`, including questions, reviews, and source requests; follow [WORKFLOW.md](./WORKFLOW.md#product-content-and-documentation-operations) for question routing. Procedural checklists remain steps of their own entry. The board is **authored, not generated**: `wiki` never edits it, you keep it current; a task the board omits shows up under `wiki orphans` if nothing else links it.
 
 *(How this base runs a board (columns, priorities, pruning) is in [WORKFLOW.md](./WORKFLOW.md).)*
 
@@ -137,9 +139,12 @@ Groom in small steps that compound: turn `unresolved` links into entries when it
 
 Git is optional but highly recommended: it is the undo for a base an agent edits. When the base is at the root of a repo: pull before editing (otherwise ask the user), and after `wiki check` passes, leave the batch uncommitted for the user to review as diffs and commit themselves or ask specifically to (this base's convention — see [WORKFLOW.md](./WORKFLOW.md)); resolve conflicts by preserving both sides' intent and merging frontmatter sensibly. **Without git there is no undo, so don't groom or restructure unattended; make the change you were asked for and leave sweeping grooming for when the user is present.**
 
+For authorized mutating work that opens or switches to a development branch or worktree, load the `prepare-change-space` skill before creating the change space. It refreshes [the app release documentation checkpoint](./internal/maintenance/app-release-state.md) inside the prepared space and queues a finite reconciliation task when the shipped app has moved ahead. Do not run that workflow or edit the checkpoint for read-only queries, reviews, diagnoses, or audits.
+
 ## Conventions
 
 - Every entry has a `type` (reserved `index.md`/`log.md`); slug filenames (lowercase, hyphenated, no spaces); shallow folders (2–3 levels).
+- Typed local entries carry subject tags. Reserved indexes and logs have no frontmatter, except the root index's `okf_version`. Audience follows the `internal/` boundary.
 - Root-absolute links, no wikilinks: `wiki check` flags any `[[wikilink]]` (they're resolved into the graph for compatibility, but aren't part of the format), so rewrite them as standard Markdown links (or run `wiki tidy --wikilinks` to convert them).
 - Every command takes `--format text|json|csv|tsv` (`json`/`csv`/`tsv` for structured output you can pipe). `list --format json` carries each entry's full frontmatter (every field, not just the shown columns), so `wiki list --where type=task --format json | jq …` is the reporting surface for rollups the CLI does not compute itself. text and csv/tsv show only the canonical columns, the entry's path and `type` (the two fields every entry is guaranteed to have); everything else (title, tags, status, …) is json-only. In json the entry's own file path is under the reserved key `_path` (leading underscore; the basename is just `basename(_path)`), so a frontmatter field named `name:` or `path:` round-trips untouched; every other key is your frontmatter verbatim.
 - Exit codes: `0` ok (enumerations return `0` even when empty), `1` no match (`search`/`table`) or `check` errors, `2` a real error.

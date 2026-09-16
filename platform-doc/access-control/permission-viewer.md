@@ -3,7 +3,7 @@ type: capability
 title: Permission Viewer
 tags: [access-control, permissions]
 status: draft
-source: product-owner Permission Viewer launch briefing (2026-08-28, see log.md) + app@16d34dc3 + app-backend@107103b4
+source: product-owner Permission Viewer launch briefing (2026-08-28, see log.md) + app@16d34dc3 + app-backend@107103b4 + @aragon/app@1.38.0 tagged-source reconciliation (2026-09-09, see log.md) + @aragon/app@1.39.0 tagged-source reconciliation (2026-09-10, see log.md) + live application-page coverage at app@adad67873c8f9dd75e3ed340b70df3e985ae3557 (2026-09-13, see log.md)
 ---
 
 # Permission Viewer
@@ -18,14 +18,26 @@ The page shows one selected account at a time. When the app exposes [linked acco
 
 Here, **all permissions** means the records the platform index currently returns as active for that account. It does not include roles the account or another address may hold in external contracts. Permission IDs name capabilities; a grant becomes target-selector-scoped only when a condition such as the [execute selector condition](../protocol-doc/helpers/condition-library/execute-selector-condition.md) supplies that restriction. The general [permission-condition](../protocol-doc/common/permission-conditions.md) model supports other runtime rules.
 
-## List and graph views
+## Permissions page
 
-The viewer is available from the account navigation, dashboard, and Settings. The default URL state opens in the list view; URL parameters can preserve another view and filter state.
+The viewer is available from the account navigation, dashboard, and Settings. In the account navigation, **Permissions** sits below **Transactions** and above **Settings**. The default URL state opens in the list view; URL parameters can preserve another view and filter state.
 
 - **List** — every filtered row shows the permission holder (`who`), the contract where it applies (`where`), the resolved permission name or a truncated ID when the name is unknown, and the condition. Desktop details expand to expose addresses, the full permission ID, and recognized-condition configuration; mobile cards show permission details inline and offer a Condition tab. An unrecognized condition remains visible by its address.
-- **Graph** — entity nodes represent actors and targets, while permission pills between them represent individual records. Selecting a node or permission pill opens its details, and the canvas supports pan, zoom, fit-to-view, and full-screen inspection. The graph omits records whose `who` or `where` the app identifies as a condition contract; attached conditions remain visible on permission pills, so the list remains the complete filtered view. The graph can make relationships between actors, [governance processes](../governance/process.md), and the account easier to trace without changing their underlying meaning.
+- **Graph** — entity nodes represent actors and targets, while permission pills between them represent individual records. Selecting a node or permission pill opens its details, and the canvas supports pan, zoom, fit-to-view, and full-screen inspection. Account actors enriched by the backend remain account nodes instead of degrading to unknown addresses. The graph omits records whose `who` or `where` the app identifies as a condition contract; attached conditions remain visible on permission pills, so the list remains the complete filtered view. The graph can make relationships between actors, [governance processes](../governance/process.md), and the account easier to trace without changing their underlying meaning.
 
 The default URL state enables **Hide permissions granted to DAO** and **Hide subplugin permissions**. The first hides records whose `who` is the selected account; the second hides records whose `where` the app identifies as a subplugin. Each filter removes its own category without changing the fetched permission set, and a record that matches both remains hidden until both filters are off. When every fetched record matches both categories, both switches are disabled in the default state, so the views can appear empty even though indexed records exist.
+
+## Condition details
+
+The viewer selects a detail presenter from the condition type the app recognizes:
+
+- **Voting power** shows the token and minimum voting power.
+- **Execute selector** shows allowed contract targets and functions, retaining an unknown-contract fallback when the target has no friendly identity.
+- **Membership** shows whether [membership](../governance/member.md#membership-and-participation) in a correlated Aragon Multisig is required and the minimum approvals when the condition supplies one. The current backend only assigns this friendly type after matching the condition to an indexed Multisig plugin; a standalone Safe-owner condition falls back to the unrecognized-condition address view.
+- **SPP rule** first tries to correlate the condition with a known staged process and, when it can, reuses the friendly proposal-creation eligibility list. Otherwise it shows normalized rules, including the rule type, operator, and value; nested rules can expose a permission ID, condition address, or rule indexes as appropriate.
+- An unrecognized condition remains inspectable by address, while an unconditional grant has no condition configuration to present.
+
+These are readable views of indexed configuration. They do not evaluate the condition for a proposed call.
 
 ## Inspection jobs
 

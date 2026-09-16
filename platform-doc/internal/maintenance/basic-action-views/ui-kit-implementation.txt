@@ -1,0 +1,80 @@
+Installed @aragon/gov-ui-kit@2.11.2 implementation evidence
+Package bundle SHA-256: 909791d8c93041d9cc8e1d89ad82d2e28aebabc333ed79429b190ad95fd74293
+Source map has source names/mappings but null sourcesContent for every relevant source.
+These are actual bundle spans identified through VLQ mappings. Semicolons are followed by newlines for inspection; original line/column spans are retained.
+Original package: https://unpkg.com/@aragon/gov-ui-kit@2.11.2/dist/index.es.js
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 495908-497013
+Original mapped lines 8-53
+
+const dh=t=>{const{action:l,wagmiConfig:r,chainId:n}=t,{copy:i}=yp(),{buildEntityUrl:c}=Cp({chains:r?.chains,chainId:n});
+return a("div",{className:"flex w-full flex-col gap-y-6",children:[e("div",{className:"flex flex-wrap gap-2",children:l.members.map(a=>{return e(Ip.Structure,{address:a.address,avatarSrc:a.avatarSrc,className:"grow basis-60",ensName:a.name,href:(t=a.address,c({type:Op.ADDRESS,id:t})),target:"_blank"},a.address);
+var t})}),a("div",{children:[e(ap,{size:"h3",children:i.proposalActionChangeMembers.summary}),a(lu.Container,{children:[e(lu.Item,{term:l.type===sh.ADD_MEMBERS?i.proposalActionChangeMembers.added:i.proposalActionChangeMembers.removed,children:a("p",{className:"text-neutral-500",children:[l.type===sh.ADD_MEMBERS?"+":"-",l.members.length," ",i.proposalActionChangeMembers.members]})}),e(lu.Item,{term:i.proposalActionChangeMembers.existingMembers,children:a("p",{className:"text-neutral-500",children:[l.currentMembers," ",i.proposalActionChangeMembers.members]})})]}),e("p",{className:"text-neutral-500 text-sm",children:i.proposalActionChangeMembers.blockNote})]})]})},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 497249-497774
+Original mapped lines 6-26
+
+ph=t=>{const{action:l}=t,{copy:r}=yp(),[n,i]=v("proposedSettings"),{proposedSettings:c,existingSettings:s}=l,o="proposedSettings"===n?c:s;
+return a("div",{className:"flex w-full flex-col gap-2",children:[a(gp,{isMultiSelect:!1,onChange:i,value:n,children:[e(vp,{label:r.proposalActionsChangeSettings.proposedToggle,value:"proposedSettings"}),e(vp,{label:r.proposalActionsChangeSettings.existingToggle,value:"existingSettings"})]}),e(lu.Container,{children:o.map(a=>e(lu.Item,{term:a.term,children:a.definition},a.term))})]})},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 495501-495908
+Original mapped lines 7-24
+
+sh,oh;
+!function(e){e.WITHDRAW_TOKEN="WITHDRAW_TOKEN",e.ADD_MEMBERS="ADD_MEMBERS",e.REMOVE_MEMBERS="REMOVE_MEMBERS",e.UPDATE_METADATA="UPDATE_METADATA",e.TOKEN_MINT="TOKEN_MINT",e.CHANGE_SETTINGS_MULTISIG="CHANGE_SETTINGS_MULTISIG",e.CHANGE_SETTINGS_TOKENVOTE="CHANGE_SETTINGS_TOKENVOTE",e.UPDATE_PLUGIN_METADATA="UPDATE_PLUGIN_METADATA"}(sh||(sh={})),function(e){e.RAW_CALLDATA="RAW_CALLDATA"}(oh||(oh={}));
+
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 501492-505136
+Original mapped lines 22-310
+
+yh=(e,a)=>{try{const t=Je({control:e,name:a??""});
+if(null==t)return;
+return"string"==typeof t?t:"number"==typeof t||"bigint"==typeof t||"boolean"==typeof t?t.toString():void 0}catch{return}},Nh=t=>{const{action:l,actionFunctionSelector:r,index:n,value:i,CustomComponent:c,arrayControls:o,actionCount:d,editMode:m,formPrefix:u,readOnly:p=!1,chainId:x=De.id,...b}=t;
+pa(null!=n,"ProposalActionsItem: component must be used inside the ProposalActions.Container component to work properly.");
+const{copy:w}=yp(),{editMode:E}=Kp(),z=m??E,y=Ue().find(e=>e.id===x),N=y?.nativeCurrency.symbol??"ETH",C=f(null),O=f(!1),A=null!=c||Eh.isActionSupported(l),R=null!=l.inputData,_=l.type===oh.RAW_CALLDATA,T=(()=>{try{const e=l.value.trim();
+return""!==e&&BigInt(e)>BigInt(0)}catch{return!1}})(),I="0x"===l.data&&T&&!l.inputData?.parameters.length,M=R&&!_&&!I,[k,L]=v(A?"BASIC":M?Qp.DECODED:Qp.RAW);
+g(()=>{O.current&&(O.current=!1,requestAnimationFrame(()=>C.current?.scrollIntoView({behavior:"smooth",block:"center"})))},[]);
+const P=e=>{const a="up"===e?o?.moveUp:o?.moveDown;
+a&&(O.current=!0,a.onClick(n,l))},D=u?`${u}.value`:void 0,H=u?`${u}.data`:void 0;
+let j;
+try{j=$e().control}catch{j=void 0}const B=yh(j,D),V=yh(j,H),q=Boolean(!p&&null!=j&&null!=j.control&&u),U=q&&D?B??l.value:l.value,F=q&&H?V??l.data:l.data,G=(()=>{try{const e=U.trim();
+return""===e?BigInt(0):BigInt(e)}catch{return BigInt(0)}})(),K=G!==BigInt(0)&&"0x"!==F.trim(),W=_&&k===Qp.RAW,X=K||W,Z=S(G,18),$=[{mode:"BASIC",disabled:!A},{mode:Qp.DECODED,disabled:!M},{mode:Qp.RAW}],Y=$.filter(({disabled:e})=>!e).length>1,J=z&&o&&null!=d&&d>1,Q=Y||J,{EDIT:ee,WATCH:ae,READ:te}=eh,le=h(()=>z?A?ae:ee:te,[z,A]),re=h(()=>z?M||A?ae:ee:te,[z,A,M]);
+return a(Kn.Item,{ref:C,value:i??n.toString(),children:[e(Kn.ItemHeader,{className:"min-w-0",index:n,removeControl:z&&null!=o?o.remove:void 0,children:e(Zp.Structure,{asChild:!0,chainId:x,className:"w-full bg-transparent",contractAddress:l.to,contractName:l.inputData?.contract,displayWarning:X,functionName:l.inputData?.function,functionSelector:r})}),e(Kn.ItemContent,{className:s({"cursor-default":z}),forceMount:!!z||void 0,children:a("div",{className:"flex flex-col items-start gap-y-6 self-start md:gap-y-8",children:[W&&e(li,{className:"w-full",message:w.proposalActionsItem.decodeWarningAlert,variant:"warning",children:w.proposalActionsItem.decodeWarningDescription}),K&&e(li,{message:w.proposalActionsItem.nativeSendAlert,variant:"warning",children:w.proposalActionsItem.nativeSendDescription(Z,N)}),"BASIC"===k&&e(zh,{action:l,CustomComponent:c,chainId:x,index:n,...b}),k===Qp.DECODED&&e(ch,{action:l,formPrefix:u,mode:le,view:Qp.DECODED}),k===Qp.RAW&&e(ch,{action:l,formPrefix:u,mode:re,view:Qp.RAW}),Q&&a("div",{className:"flex w-full flex-row justify-between",children:[Y&&e(Um.Container,{label:w.proposalActionsItem.menu.dropdownLabel,size:"sm",children:$.map(({mode:a,disabled:t})=>e(Um.Item,{disabled:t,onSelect:()=>(e=>{L(e),C.current?.scrollIntoView({behavior:"smooth",block:"center"})})(a),selected:k===a,children:w.proposalActionsItem.menu[a]},a))}),J&&a("div",{className:"flex items-center gap-3 text-neutral-500",children:[e(Fn,{content:o.moveDown.label,triggerAsChild:!0,children:e(Vn,{"aria-label":o.moveDown.label,disabled:o.moveDown.disabled,iconLeft:xn.CHEVRON_DOWN,onClick:()=>P("down"),size:"sm",variant:"tertiary"})}),a("p",{className:"text-neutral-500 text-sm",children:[n+1," ",w.proposalActionsItem.of," ",d]}),e(Fn,{content:o.moveUp.label,triggerAsChild:!0,children:e(Vn,{"aria-label":o.moveUp.label,disabled:o.moveUp.disabled,iconLeft:xn.CHEVRON_UP,onClick:()=>P("up"),size:"sm",variant:"tertiary"})})]})]})]})})]})},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 501135-501492
+Original mapped lines 23-54
+
+zh=a=>{const{CustomComponent:t,action:l,index:r,...n}=a,i={index:r,...n};
+return t?e(t,{action:l,...i}):Eh.isWithdrawTokenAction(l)?e(bh,{action:l,...i}):Eh.isTokenMintAction(l)?e(vh,{action:l,...i}):Eh.isUpdateMetadataAction(l)?e(fh,{action:l,...i}):Eh.isChangeMembersAction(l)?e(dh,{action:l,...i}):Eh.isChangeSettingsAction(l)?e(ph,{action:l,...i}):null},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.ts
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 500651-501135
+Original mapped lines 10-30
+
+const Eh=new class{constructor(){this.isActionSupported=e=>Object.keys(sh).includes(e.type),this.isWithdrawTokenAction=e=>e.type===sh.WITHDRAW_TOKEN,this.isChangeMembersAction=e=>e.type===sh.ADD_MEMBERS||e.type===sh.REMOVE_MEMBERS,this.isUpdateMetadataAction=e=>e.type===sh.UPDATE_METADATA||e.type===sh.UPDATE_PLUGIN_METADATA,this.isTokenMintAction=e=>e.type===sh.TOKEN_MINT,this.isChangeSettingsAction=e=>e.type===sh.CHANGE_SETTINGS_MULTISIG||e.type===sh.CHANGE_SETTINGS_TOKENVOTE}},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 497871-498297
+Original mapped lines 5-26
+
+vh=a=>{const{action:t,wagmiConfig:l,chainId:r}=a,{tokenSymbol:n,receiver:i}=t,{currentBalance:c,newBalance:s,address:o,name:d,avatarSrc:m}=i,{buildEntityUrl:u}=Cp({chains:l?.chains,chainId:r}),p=u({type:Op.ADDRESS,id:o});
+return e("div",{className:"flex w-full flex-col gap-8",children:e(Sp,{address:o,avatarSrc:m,className:"w-full",ensName:d,hideLabelTokenVoting:!0,href:p,target:"_blank",tokenAmount:+s-+c,tokenSymbol:n})})},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 498455-499841
+Original mapped lines 7-50
+
+fh=t=>{const[l,r]=v("proposedMetadata"),{action:n}=t,{proposedMetadata:i,existingMetadata:c}=n,s="proposedMetadata"===l?i:c,o=n.type===sh.UPDATE_METADATA,d=n.type===sh.UPDATE_PLUGIN_METADATA,m=o?"descriptionTerm":"summaryTerm";
+return a("div",{className:"flex w-full flex-col gap-2",children:[a(gp,{isMultiSelect:!1,onChange:r,value:l,children:[e(vp,{label:fp.proposalActionsUpdateMetadata.proposedToggle,value:"proposedMetadata"}),e(vp,{label:fp.proposalActionsUpdateMetadata.existingToggle,value:"existingMetadata"})]}),a(lu.Container,{children:[o&&e(lu.Item,{className:"md:items-center",term:fp.proposalActionsUpdateMetadata.logoTerm,children:e(Na,{alt:"dao-logo",responsiveSize:{md:"md",sm:"sm"},src:s.avatar})}),e(lu.Item,{term:fp.proposalActionsUpdateMetadata.nameTerm,children:e("p",{className:"text-base text-neutral-800 leading-tight",children:s.name})}),d&&c.processKey&&e(lu.Item,{term:fp.proposalActionsUpdateMetadata.processKeyTerm,children:e("p",{className:"text-base text-neutral-800 leading-tight",children:s.processKey})}),e(lu.Item,{term:fp.proposalActionsUpdateMetadata[m],children:e("p",{className:"text-base text-neutral-800 leading-tight",children:s.description})}),e(lu.Item,{term:fp.proposalActionsUpdateMetadata.linkTerm,children:e("ul",{children:s.links.map(a=>e("li",{children:e(Rn,{href:a.href,isExternal:!0,showUrl:!0,children:a.label})},a.href))})})]})]})},
+
+Source-map identity: ../../src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionWithdrawToken/proposalActionWithdrawToken.tsx
+Installed 2.11.2 dist/index.es.js line 1, zero-based columns 500126-500372
+Original mapped lines 4-17
+
+bh=a=>{const{action:t,...l}=a;
+return e(Hp,{assetAddress:t.token.address,assetAmount:t.amount,assetFiatPrice:t.token.priceUsd,assetIconSrc:t.token.logo,assetName:t.token.name,assetSymbol:t.token.symbol,recipient:t.receiver,sender:t.sender,...l})},

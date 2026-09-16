@@ -1,6 +1,6 @@
 # Access control
 
-These pages explain how an intended action becomes an authorized call, how OSx implements the checks, how the app makes an account's permission configuration inspectable, how the product scopes the account's authority, and how those scopes can change over time. The protocol's [permission system](../protocol-doc/core/permissions.md) and [conditions](../protocol-doc/common/permission-conditions.md) remain the source for underlying mechanics.
+An intended action becomes an authorized call through a sequence of execution paths and permission checks. Inspect an account’s permissions, limit each process’s scope, or transfer those scopes as governance needs change. Start with [Aragon OSx and the platform](../osx-and-the-platform.md#how-do-permissions-and-conditions-work) for how the app presents that authority, then read [permissions](../protocol-doc/core/permissions.md) and [conditions](../protocol-doc/common/permission-conditions.md) for the protocol mechanics.
 
 - [Authorization and execution model](./authorization-and-execution.md) — the generic caller, target, authorization, and execution model, including how broad execution capability can collapse finer authority.
 - [OSx authorization paths](./osx-authorization-paths.md) — a concrete reference for tracing plugin → DAO → target checks, permission tuples, ROOT administration, and the SPP callback route.

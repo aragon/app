@@ -3,30 +3,33 @@ type: capability
 title: Executing on a linked account
 tags: [accounts, governance, transactions]
 status: draft
-source: product-owner linked-accounts briefing (2026-07-21, see log.md) + product-owner briefings (2026-07-28, see log.md) + product-owner principles review (2026-07-29, see log.md)
+source: product-owner linked-accounts briefing (2026-07-21, see log.md) + product-owner briefings (2026-07-28, see log.md) + product-owner principles review (2026-07-29, see log.md) + basic-action-view audit (2026-09-10, app@f8bf9e87 + installed @aragon/gov-ui-kit@2.11.2; see log.md) + direct and linked-account execution verification (2026-09-13, app@adad67873c8f9dd75e3ed340b70df3e985ae3557 + locked Reown WalletKit 1.5.6 and WalletConnect core/utils 2.23.10; see log.md)
 ---
 
 # Executing on a linked account
 
-**User promise:** when the primary account can [execute](../protocol-doc/core/execution.md) on a [linked account](./linked-account.md), drive that linked account's actions from the primary's own [proposal](../governance/proposal.md) flow — building them in the linked account's real UI rather than by hand — and let voters read exactly what will run.
+When the primary account can [execute](../protocol-doc/core/execution.md) on a [linked account](./linked-account.md), its own [proposal](../governance/proposal.md) can include actions built in the linked account's UI. Voters can inspect what the linked account will execute before the primary account submits the execution request.
 
-This is the payoff of granting one account Execute permission on another ([linking does not imply control](./linking-does-not-imply-control.md)). It works for **any actor** holding that permission — an EOA or a [Safe](./connecting-a-safe.md), not only a linked primary.
+Both accounts must be on the same network for this nested execution. [Cross-chain execution](../governance/cross-chain-execution.md) uses a separately configured route between networks.
+
+Linking accounts establishes a [display relationship](./linked-account.md#linking-does-not-imply-control); authority comes from the Execute grant. When the primary account calls the linked account's `execute` function, that function checks the primary account's Execute permission, including any conditions. The linked account then makes the inner calls as itself, so the [action targets](../governance/target.md#action-targets) see the linked account as the caller and apply their own authorization rules to it. These calls can target other accounts or contracts, independently of which accounts the app presents as linked.
+
+An authorized EOA or [Safe](../application/connecting-a-safe.md) can also use the [direct transaction flow](../treasury/create-transaction.md) with its own signing arrangement.
 
 ## The flow
 
-The app bridges two browser sessions over WalletConnect, building on the [action builder](../governance/action-builder.md)'s WalletConnect integration with the roles reversed — here the Aragon app itself is the dApp being connected to:
+The primary's [action builder](../application/action-builder.md#adding-through-walletconnect) receives transaction requests from the linked account's Aragon view over WalletConnect. Keep the primary's WalletConnect dialog open while using the linked-account view, until the request has been added. An already-open linked-account view still needs this WalletConnect pairing.
 
-1. In the primary account's [action builder](../governance/action-builder.md), the user selects **Connect** and connects to another app over WalletConnect.
-2. In another browser, the user opens the Aragon app on the **linked account** and gets its WalletConnect QR code.
-3. Supplying that code to the primary's action builder makes the **primary the connected actor** for the linked account.
-4. The linked account's [transactions](../treasury/transactions.md) page checks [Execute permission](../protocol-doc/core/permissions.md) for the connected actor in the background; when the actor has it, a **"+ Transaction"** button leads into the linked account's action builder — the same [create transaction](../treasury/create-transaction.md) flow.
-5. The user builds actions in the linked account's own UI and selects **Create transaction**; WalletConnect returns the result to the primary, where it becomes a [proposal](../governance/proposal.md) to execute on the linked account.
-6. On passing, the primary [executes](../protocol-doc/core/execution.md) a call to the linked account, which executes the inner actions (e.g. clawing back funds).
+For example, use another browser for the linked account to keep the two views separate:
+
+1. In the primary account's proposal Action builder, select **Connect**. If the process's [allowed-actions filter](../application/action-builder.md#filtering-to-allowed-actions) hides it, turn the filter off to expose WalletConnect; the process must still permit the intended call.
+2. Open the linked account in the other browser and choose **Connect wallet → WalletConnect**. Copy the URI from its QR-code flow into the primary's dialog and select **Connect dApp**.
+3. Confirm that the **primary account is the connected actor** in the linked-account view, on the linked account's network.
+4. Open the linked account's [Transactions](../treasury/transactions.md) page. When the primary passes the [direct-execution eligibility check](../treasury/create-transaction.md#mechanics), **Execution** opens its action builder.
+5. Build the inner actions, select **Execute**, and send the prepared transaction from the execution dialog. WalletConnect queues the call to the linked account in the primary's dialog.
+6. Return to the primary, add the received action to its action list, and finish creating the [proposal](../governance/proposal.md). This submits the nested call for governance approval.
+7. When that proposal is [executed](../protocol-doc/core/execution.md), the primary calls the linked account, which executes the inner actions, such as returning funds to the primary.
 
 ## Reading nested actions
 
-Because one account is telling another to execute, the calldata is **nested**, and generic decoders struggle with it. The app's [action](../governance/action.md) rendering **unnests and decodes the inner calls**, so reviewers see the actions that will ultimately run against the linked account rather than an opaque blob. That readability is central to the [action builder](../governance/action-builder.md)'s role as a control surface and applies the [abstract-then-drill-down pattern](../design/abstract-then-drill-down.md).
-
-## Open questions
-
-- [ ] Whether both browser sessions are always required, or the app can drive a linked account the user already has open without the WalletConnect round-trip.
+Because one account is telling another to execute, the calldata contains an inner action array. The Execute action's Basic details show that array and check its decoded children against the encoded calls. A mismatch makes the whole inner array fall back to Raw. Individual specialized views also depend on the app resolving the target's supporting data; the [action catalogue](../application/basic-action-views.md#calls-containing-other-actions) explains the available representations.

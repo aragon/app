@@ -40,7 +40,11 @@ const publishedStatusesByMode: Record<
 
 // Never knowledge, whatever they contain: version control and agent configuration, the read-only
 // protocol submodule, raw captures and the owner's inbox and research workspace (mirrors the
-// base's own ignore list in wiki.toml).
+// base's own ignore list in wiki.toml), and `internal/` — the base's own workflow keeps builder
+// guidance, design principles, documentation maintenance and product opportunities there and
+// excludes the folder from user-facing content (platform-doc/WORKFLOW.md, "User-facing content
+// and existing metadata"). Its pages carry ordinary knowledge types, so the location is the
+// only thing that tells them apart from product pages.
 const skippedDirectories: ReadonlySet<string> = new Set([
     '.git',
     '.claude',
@@ -52,7 +56,17 @@ const skippedDirectories: ReadonlySet<string> = new Set([
     'raw',
     'inbox',
     'research',
+    'internal',
 ]);
+
+/**
+ * Where a protocol page (a `protocol-doc/…` link in the base) can be read outside the wiki. The
+ * protocol documentation has no developer portal yet, so its GitHub pages stand in — the same
+ * destination the base's own "On GitHub" links use. When the portal exists, this is the one
+ * place to point at it.
+ */
+export const protocolDocPublicBaseUrl =
+    'https://github.com/aragon/protocol-doc/blob/main/';
 
 // Sections that hold the base's review bookkeeping rather than product knowledge: open owner
 // questions and parked progress notes. Matched on the heading text, at any heading level.
@@ -232,7 +246,7 @@ export const cleanBody = (markdown: string): string => {
             continue;
         }
 
-        kept.push(line);
+        kept.push(inFence ? line : rewriteLinks(line));
     }
 
     return kept
@@ -240,6 +254,33 @@ export const cleanBody = (markdown: string): string => {
         .replace(/\n{3,}/g, '\n\n')
         .trim();
 };
+
+// An inline markdown link, `[text](destination)` — the destination optionally in angle brackets,
+// as the base writes URLs with unusual characters — but never an image (`![alt](src)`).
+const inlineLinkPattern = /(?<!!)\[([^\]]*)\]\(<?([^)<>\s]+)>?\)/g;
+const absoluteLinkPattern = /^[a-z][a-z0-9+.-]*:/i;
+const protocolDocLinkPattern = /^(?:\.\.?\/)*\/?protocol-doc\/(.*)$/;
+
+/**
+ * Rewrites the links of one page line for a reader outside the wiki. Absolute links (aragon.org,
+ * GitHub, explorers) stay. A link into the protocol documentation — relative in the base, since
+ * it is a submodule there — becomes the public GitHub page of the same file, fragment included:
+ * the agent may hand it to a user with a protocol question. Any other relative link points at a
+ * page of this knowledge base, which has no public home yet (APP-1145), or at a section of the
+ * same page: only its text is kept, so a page path or name can never leave the corpus as a link.
+ */
+export const rewriteLinks = (line: string): string =>
+    line.replace(inlineLinkPattern, (_match, text: string, target: string) => {
+        if (absoluteLinkPattern.test(target)) {
+            return `[${text}](${target})`;
+        }
+
+        const protocolPath = protocolDocLinkPattern.exec(target)?.[1];
+
+        return protocolPath == null
+            ? text
+            : `[${text}](${protocolDocPublicBaseUrl}${protocolPath})`;
+    });
 
 // The first level-one heading of a markdown file, frontmatter skipped — how a folder's index page
 // names the area it fronts.

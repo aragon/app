@@ -1,15 +1,16 @@
 ---
+status: draft
 type: concept
 title: Authorization and execution model
 tags: [access-control, semantics]
-source: product-owner ACL one-pager and follow-up direction (2026-08-03) + product-owner authorization-model reviews (2026-08-04, see log.md) + product-owner access-control structure review (2026-08-05, see log.md) + Ethereum account and transaction documentation + OpenZeppelin Governor and access-control documentation + go-ethereum call-tracing documentation
+source: product-owner ACL one-pager and follow-up direction (2026-08-03) + product-owner authorization-model reviews (2026-08-04, see log.md) + product-owner access-control structure review (2026-08-05, see log.md) + Ethereum account and transaction documentation + OpenZeppelin Governor and access-control documentation + go-ethereum call-tracing documentation; relocated section provenance in log.md (section-audit observations, 2026-09-13) (2026-09-13; no fresh source verification)
 ---
 
 # Authorization and execution model
 
 Access control is the policy and set of guards that determine which callers may cause protected effects and who may change those rules. Authorization is one guard's decision about an attempted call. Execution turns an intended [action](../governance/action.md) into one or more calls, and each protected call boundary evaluates the caller and context it receives.
 
-This page presents a compositional access-control model for Ethereum systems. Effective authority is the set of protected effects an actor, process, or account can cause through its available execution paths. Access-control administration changes the policy. [OSx authorization paths](./osx-authorization-paths.md) applies the model to Aragon OSx.
+Effective authority in an Ethereum system is the set of protected effects an actor, process, or account can cause through its available execution paths. Access-control administration changes the policy. For Aragon’s concrete caller paths and checks, see [OSx authorization paths](./osx-authorization-paths.md).
 
 ## From an intended action to an onchain call
 
@@ -42,10 +43,16 @@ Authority can first bundle at one target: if one role permits two functions, eve
 
 Authority can also aggregate across targets. An account may hold ownership or roles for many target functions. Higher in the call stack, a governance process that directs the account can cause only the calls that its execution grant permits and downstream targets accept under the supplied calldata and value, the current authorization configuration, balances, and contract state. Downstream guards still run and see the account as caller.
 
-If the execution grant permits arbitrary targets and calldata, the process can exercise through that route all downstream authority the account can exercise. Limiting the grant to selected calls can preserve distinctions between processes when the configured scope enforces them; [scoped authority](./scoped-authority.md) owns that product rule, and [gradual permission handover](./gradual-permission-handover.md) applies it over time.
+If the execution grant permits arbitrary targets and calldata, the process can exercise through that route all downstream authority the account can exercise. Limiting the grant to selected calls can preserve distinctions between processes when the configured scope enforces them; see [scoped authority](./scoped-authority.md) for that product rule. [Gradual permission handover](./gradual-permission-handover.md) applies it over time.
+
+## Shared authority and execution custody
+
+OpenZeppelin [`AccessManager`](https://docs.openzeppelin.com/contracts/5.x/access-control#access-management) is also shared access control. Its core policy assigns caller roles to target-function selectors, with optional delays and a `schedule`/`execute` route. An `AccessManaged` target called directly authorizes the original caller, while a call routed through `AccessManager.execute` reaches the target with `AccessManager` as the caller after the manager authorizes or schedules the original caller. OSx records `(where, who, permissionId)` grants and can attach a condition that evaluates the full data supplied to the permission check; a permission ID names a capability independently of function selectors.
+
+In an AccessManager-based architecture, the designer separately chooses which component holds assets and broader execution authority. [`GovernorTimelockAccess`](https://docs.openzeppelin.com/contracts/5.x/api/governance) connects a Governor to the manager's workflow while the Governor can retain its assets and permissions. The comparable separation can therefore be composed from OpenZeppelin contracts; OSx provides the organization-specific account, treasury, permission authority, and execution boundary together in the DAO.
 
 ## Administer access control
 
 Grants, revocations, role assignments, and selector mappings are authorization configuration. An authorized administrator or governed account performs those configuration actions, and the resulting configuration changes who may call the protected functions. Changing that configuration does not upgrade a target contract's code.
 
-The design task is to inspect who may change the access-control policy and which calls the configured execution paths let each process cause a target to accept. [OSx authorization paths](./osx-authorization-paths.md) applies that inspection to Aragon's contracts.
+Understanding a configuration means inspecting who may change the access-control policy and which calls the configured execution paths let each process cause a target to accept; [OSx authorization paths](./osx-authorization-paths.md) applies that inspection to Aragon's contracts.
