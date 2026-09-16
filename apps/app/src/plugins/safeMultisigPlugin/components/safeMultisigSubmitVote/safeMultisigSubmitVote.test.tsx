@@ -16,6 +16,7 @@ import * as Wagmi from 'wagmi';
 import * as WagmiActions from 'wagmi/actions';
 import * as connectedWalletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
+import * as permissionCheckGuardApi from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { SafeDialogId } from '@/modules/safe/constants';
 import { sppReportProposalResultAbi } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog/sppReportProposalResultAbi';
 import {
@@ -75,6 +76,10 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         connectedWalletGuardApi,
         'useConnectedWalletGuard',
     );
+    const usePermissionCheckGuardSpy = jest.spyOn(
+        permissionCheckGuardApi,
+        'usePermissionCheckGuard',
+    );
     const useNetworkSwitchSpy = jest.spyOn(
         networkSwitchApi,
         'useNetworkSwitch',
@@ -117,6 +122,27 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         membersCount: 1,
     });
 
+    const clickVoteAction = async (
+        route:
+            | 'approveAndExecute'
+            | 'approveOnly'
+            | 'vetoAndExecute'
+            | 'vetoOnly' = 'approveAndExecute',
+    ) => {
+        const trigger = route.startsWith('veto') ? 'veto' : 'approve';
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: `app.plugins.safeMultisig.safeMultisigSubmitVote.${trigger}`,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('menuitem', {
+                name: `app.plugins.safeMultisig.safeMultisigSubmitVote.${route}`,
+            }),
+        );
+    };
+
     beforeEach(() => {
         useWalletAccountSpy.mockReturnValue({
             address: owner,
@@ -125,6 +151,10 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             isReconnecting: false,
         });
         useConnectedWalletGuardSpy.mockReturnValue({
+            check: ({ onSuccess } = {}) => onSuccess?.(),
+            result: true,
+        });
+        usePermissionCheckGuardSpy.mockReturnValue({
             check: ({ onSuccess } = {}) => onSuccess?.(),
             result: true,
         });
@@ -246,7 +276,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigSubmitVote.windowClosed',
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.stillCounts',
             ),
         ).toBeInTheDocument();
     });
@@ -263,7 +293,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         // would be a lie.
         expect(
             screen.queryByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
             }),
         ).not.toBeInTheDocument();
         expect(
@@ -328,27 +358,42 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('rejects a connected wallet that is not a live Safe owner', async () => {
+    it('routes an ineligible wallet through the standard vote guard', async () => {
+        // Ownership is the guard's business, exactly as membership is for every other body: the
+        // card offers the action and never explains eligibility beside its own button.
+        const check = jest.fn();
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check,
+            result: false,
+        });
+        render(createTestComponent());
+
+        await clickVoteAction('approveAndExecute');
+
+        expect(check).toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('guards the sign-only route exactly like the bundled one', async () => {
+        // Both routes are offered to anyone who can read the card; connection and eligibility are
+        // decided on click, so neither is hidden from a disconnected or ineligible viewer.
+        const check = jest.fn();
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check,
+            result: false,
+        });
         useWalletAccountSpy.mockReturnValue({
-            address: nonOwner,
+            address: undefined,
             chainId: 11_155_111,
             isConnecting: false,
             isReconnecting: false,
         });
         render(createTestComponent());
 
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveOnly');
 
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigSubmitVote.ownerRequired',
-            ),
-        ).toBeInTheDocument();
-        expect(screen.queryByText(/WalletConnect/i)).not.toBeInTheDocument();
+        expect(check).toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
     });
 
     it('keeps an EOA owner actionable on a pre-v1.4.1 Safe', () => {
@@ -365,7 +410,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
             }),
         ).toBeEnabled();
     });
@@ -393,7 +438,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
             }),
         ).toBeDisabled();
     });
@@ -441,11 +486,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
         render(createTestComponent());
 
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         await waitFor(() =>
             expect(dialogOpen).toHaveBeenCalledWith(
@@ -469,11 +510,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         // "signing costs no gas" and then opening a gas prompt would be a bait.
         mockThresholdOneExecution();
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         await waitFor(() =>
             expect(dialogOpen).toHaveBeenCalledWith(
@@ -1077,11 +1114,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         protocolKit.getOwners.mockResolvedValue([`0x${'9'.repeat(40)}`]);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1099,11 +1132,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         protocolKit.getThreshold.mockResolvedValue(2);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1120,11 +1149,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         protocolKit.isValidTransaction.mockResolvedValue(false);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1144,11 +1169,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         } as never);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1172,11 +1193,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
         render(createTestComponent(undefined, queryClient));
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         await waitFor(() =>
             expect(WagmiActions.sendTransaction).toHaveBeenCalled(),
@@ -1218,11 +1235,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             );
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1252,11 +1265,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             );
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1282,11 +1291,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             .mockResolvedValueOnce(`0x${'9'.repeat(64)}`);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -1708,11 +1713,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         await waitFor(() => {
             expect(proposeMutateAsync).toHaveBeenCalledWith(
@@ -1759,11 +1760,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         await waitFor(() => {
             expect(proposeMutateAsync).toHaveBeenCalledWith(
@@ -1788,16 +1785,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreActions',
-            }),
-        );
-        await userEvent.click(
-            screen.getByRole('menuitem', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveOnly',
-            }),
-        );
+        await clickVoteAction('approveOnly');
 
         // The signature is still collected and the transaction is left fully signed in the queue -
         // only the gas-paying half is declined.
@@ -1811,11 +1799,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         const { protocolKit, safeTransaction } = mockThresholdOneExecution();
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         // Signing the struct is what lets the wallet show the target, value and nonce. Hashing
         // offchain and signing the digest asks the owner to approve an opaque blob instead.
@@ -1869,11 +1853,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         } as never);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         // The nonce is spent and nothing will ever be indexed, so waiting would age out into
         // "the indexer is slow" for a result that was never recorded.
@@ -1938,11 +1918,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             } as never);
 
             render(createTestComponent());
-            await userEvent.click(
-                screen.getByRole('button', {
-                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-                }),
-            );
+            await clickVoteAction('approveAndExecute');
 
             expect(
                 await screen.findByText(
@@ -1956,11 +1932,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         mockThresholdOneExecution();
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         // The executed report has left the Safe queue but the indexed body result does not exist
         // yet. Re-offering the idle CTA here would invite a duplicate report at the next nonce.
@@ -1983,11 +1955,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         } as never);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -2020,11 +1988,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         } as never);
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         expect(
             await screen.findByText(
@@ -2047,11 +2011,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         );
 
         render(createTestComponent());
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
-            }),
-        );
+        await clickVoteAction('approveAndExecute');
 
         await waitFor(() =>
             expect(invalidateSpy).toHaveBeenCalledWith(
@@ -2077,6 +2037,11 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             render(createTestComponent());
             await user.click(
                 screen.getByRole('button', {
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                }),
+            );
+            await user.click(
+                screen.getByRole('menuitem', {
                     name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
                 }),
             );
@@ -2095,7 +2060,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
             expect(
                 screen.getByRole('button', {
-                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
                 }),
             ).toBeEnabled();
             expect(

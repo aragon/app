@@ -7,6 +7,7 @@ import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
 import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
 import { safeBodyHiddenTabs, safeBodyPluginId } from './constants';
 import { useSafeMultisigGovernanceSettings } from './hooks/useSafeMultisigGovernanceSettings';
+import { useSafeMultisigVotePermissionCheck } from './hooks/useSafeMultisigVotePermissionCheck';
 
 export const initialiseSafeMultisigPlugin = () => {
     pluginRegistryUtils
@@ -39,6 +40,11 @@ export const initialiseSafeMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
             pluginId: safeBodyPluginId,
             function: () => true,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+            pluginId: safeBodyPluginId,
+            function: useSafeMultisigVotePermissionCheck,
         })
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

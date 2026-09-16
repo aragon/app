@@ -15,9 +15,10 @@ import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
 import { useBytecode } from 'wagmi';
 import { getBytecode, getConnection } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { SafeDialogId } from '@/modules/safe/constants';
 import {
     SafeExecutionResult,
@@ -31,6 +32,7 @@ import {
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import {
     type ISafeMultisigTransaction,
     safeService,
@@ -47,6 +49,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import {
+    safeBodyPluginId,
     safeIndexingPollInterval,
     safeIndexingTimeout,
     safeQueueReadLimit,
@@ -129,13 +132,29 @@ const executionOutcomeKeys = {
 export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     props,
 ) => {
-    const { proposal, externalAddress, stage, isVeto } = props;
+    const { daoId, proposal, externalAddress, stage, isVeto } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const queryClient = useQueryClient();
     const { address: connectedAddress } = useWalletAccount();
     const latestConnectedAddress = useRef(connectedAddress);
-    const { check: checkWalletConnection } = useConnectedWalletGuard();
+    /**
+     * The Safe body is an external plugin, so it has no `interfaceType` of its own: the registry
+     * addresses its slots by `safeBodyPluginId`, the same id `sppStageUtils.getBodyPluginId`
+     * resolves for a Safe on a supported chain.
+     */
+    const guardPlugin = {
+        address: externalAddress,
+        interfaceType: safeBodyPluginId,
+    } as unknown as IDaoPlugin;
+    const { check: submitVoteGuard, result: canSubmitVote } =
+        usePermissionCheckGuard({
+            permissionNamespace: 'vote',
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
+            plugin: guardPlugin,
+            daoId,
+            proposal,
+        });
     const { requiredChainId, withNetworkSwitch } = useNetworkSwitch({
         network: proposal.network,
     });
@@ -881,19 +900,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         }
     };
 
-    const checkOwnershipAndPrepare = (bundleExecution: boolean) => {
-        const ownerAddress = latestConnectedAddress.current;
-        const isOwner =
-            ownerAddress != null &&
-            safeInfo?.owners.some((owner) =>
-                addressUtils.isAddressEqual(owner, ownerAddress),
-            ) === true;
-
-        if (!isOwner) {
-            setActionError(t(`${translationKey}.ownerRequired`));
-            return;
-        }
-
+    const prepareIfSupported = (bundleExecution: boolean) => {
         if (hasUnsupportedContractOwner) {
             setActionError(
                 t(`${translationKey}.versionUnsupported`, {
@@ -914,11 +921,17 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
      * Bundling is the default: when the confirmation completes the threshold there is nothing left
      * to wait for, so executing in the same flow saves a second visit. `Approve only` opts out and
      * leaves the fully-signed transaction in the queue for any owner to execute.
+     *
+     * Connection and Safe ownership are the standard vote guard's business, so an unconnected or
+     * non-owner wallet gets the wallet dialog and then the permission dialog - not a message
+     * beside the button.
      */
     const handleVoteClick = (bundleExecution = true) =>
-        checkWalletConnection({
-            onSuccess: () => checkOwnershipAndPrepare(bundleExecution),
-        });
+        canSubmitVote
+            ? prepareIfSupported(bundleExecution)
+            : submitVoteGuard({
+                  onSuccess: () => prepareIfSupported(bundleExecution),
+              });
 
     const isSuperseded =
         pendingReport?.state === SafeTransactionState.SUPERSEDED;
@@ -977,13 +990,17 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     }> = [];
 
     /**
-     * The two surprising states, stated rather than left to be inferred from a rejected header
-     * sitting above a live action.
+     * The two surprising states, stated rather than left to be inferred.
      *
      * A Safe transaction never expires and a verdict has no deadline, so while the stage can still
      * advance the owners can still act and it still counts. Once `maxAdvance` has passed the stage
      * can never advance: the transaction remains executable in the Safe forever, but it can no
      * longer move this proposal.
+     *
+     * Role-specific, because the two cases are not the same fact. A late approval waits to be
+     * counted; a late veto is decisive - the contract recomputes `_thresholdsMet` on every read, so
+     * a recorded veto blocks advancement until `maxAdvance` expires, and an advance landing first
+     * forfeits it.
      */
     const stageEndDate = sppStageUtils.getStageEndDate(proposal, stage);
     const hasWindowClosed =
@@ -991,9 +1008,11 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
 
     if (!hasSettled && hasWindowClosed && canStillAffectOutcome) {
         alerts.push({
-            key: 'windowClosed',
+            key: 'stillCounts',
             variant: 'info',
-            message: t(`${translationKey}.windowClosed`),
+            message: t(
+                `${translationKey}.${isVeto ? 'stillCountsVeto' : 'stillCounts'}`,
+            ),
         });
     }
 
@@ -1104,6 +1123,16 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     {t(`${translationKey}.viewInAccountQueue`)}
                 </Link>
             )}
+            {!hasSettled && helperText != null && (
+                <p className="font-normal text-neutral-500 text-sm leading-normal">
+                    {helperText}
+                </p>
+            )}
+            {actionError != null && (
+                <p className="text-critical-500 text-sm leading-normal">
+                    {actionError}
+                </p>
+            )}
             {/* Nothing to offer once the stage can never advance: acting would change nothing, and
                 a disabled action beside an expired stage only invites the question.
 
@@ -1111,41 +1140,33 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 the card does not reflow the moment a body reports. */}
             {(hasSettled || canStillAffectOutcome) && (
                 <div className="flex flex-col gap-3 md:flex-row">
-                    <Button
-                        className="w-full md:w-fit"
-                        disabled={isActionDisabled}
-                        iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
-                        isLoading={
-                            isPreparing || isExecuting || isAwaitingIndexing
-                        }
-                        onClick={
-                            hasSettled ? undefined : () => handleVoteClick(true)
-                        }
-                        size="md"
-                        variant={hasSettled ? 'secondary' : 'primary'}
-                    >
-                        {t(`${translationKey}.${buttonKey}`)}
-                    </Button>
-                    {/* Bundling is a convenience, not a requirement: the signature and the
-                        execution are separate acts, so an owner who only wants to authorise can
-                        leave the gas to whoever executes. Offered only when execution would
-                        actually follow - otherwise there is nothing to opt out of. */}
-                    {canBundleExecution && (
+                    {/* Signing and executing are separate acts, so the two routes are peers inside
+                        one button rather than a primary with an opt-out: an owner who only wants to
+                        authorise can leave the gas to whoever executes. Offered only when execution
+                        would actually follow and the card is idle - otherwise there is nothing to
+                        choose between. */}
+                    {canBundleExecution &&
+                    !hasSettled &&
+                    !isPreparing &&
+                    !isExecuting &&
+                    !isAwaitingIndexing ? (
                         <Dropdown.Container
                             align="end"
                             constrainContentWidth={false}
-                            customTrigger={
-                                <Button
-                                    aria-label={t(
-                                        `${translationKey}.moreActions`,
-                                    )}
-                                    disabled={isActionDisabled}
-                                    iconLeft={IconType.CHEVRON_DOWN}
-                                    size="md"
-                                    variant="primary"
-                                />
-                            }
+                            disabled={isActionDisabled}
+                            label={t(
+                                `${translationKey}.${isVeto ? 'veto' : 'approve'}`,
+                            )}
+                            size="md"
+                            variant="primary"
                         >
+                            <Dropdown.Item
+                                onClick={() => handleVoteClick(true)}
+                            >
+                                {t(
+                                    `${translationKey}.${isVeto ? 'vetoAndExecute' : 'approveAndExecute'}`,
+                                )}
+                            </Dropdown.Item>
                             <Dropdown.Item
                                 onClick={() => handleVoteClick(false)}
                             >
@@ -1154,6 +1175,26 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                 )}
                             </Dropdown.Item>
                         </Dropdown.Container>
+                    ) : (
+                        <Button
+                            className="w-full md:w-fit"
+                            disabled={isActionDisabled}
+                            iconLeft={
+                                hasSettled ? IconType.CHECKMARK : undefined
+                            }
+                            isLoading={
+                                isPreparing || isExecuting || isAwaitingIndexing
+                            }
+                            onClick={
+                                hasSettled
+                                    ? undefined
+                                    : () => handleVoteClick(true)
+                            }
+                            size="md"
+                            variant={hasSettled ? 'secondary' : 'primary'}
+                        >
+                            {t(`${translationKey}.${buttonKey}`)}
+                        </Button>
                     )}
                     {isStale && (
                         <Button
@@ -1166,16 +1207,6 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         </Button>
                     )}
                 </div>
-            )}
-            {!hasSettled && helperText != null && (
-                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
-                    {helperText}
-                </p>
-            )}
-            {actionError != null && (
-                <p className="text-center text-critical-500 text-sm md:text-left">
-                    {actionError}
-                </p>
             )}
         </div>
     );
