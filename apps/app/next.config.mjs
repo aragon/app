@@ -84,6 +84,11 @@ const nextConfig = {
                 destination: '/dao/:network/:addressOrEns/dashboard',
                 permanent: true,
             },
+            {
+                source: '/workspace/:workspaceId',
+                destination: '/workspace/:workspaceId/overview',
+                permanent: true,
+            },
         ];
     },
     async rewrites() {

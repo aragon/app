@@ -5,6 +5,7 @@ import {
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
+import { assetUtils } from '../../utils/assetUtils';
 
 export const useAssetListData = (params: IGetAssetListParams) => {
     const { t } = useTranslations();
@@ -25,30 +26,7 @@ export const useAssetListData = (params: IGetAssetListParams) => {
     if (assetListData?.pages) {
         for (const page of assetListData.pages) {
             for (const asset of page.data) {
-                const amount = Number(asset.amount) || 0;
-                const amountUsd = Number(asset.amountUsd) || 0;
-                const originalPriceUsd = asset.token.priceUsd;
-                const price = Number(originalPriceUsd) || 0;
-                let finalPrice = price;
-
-                if (finalPrice === 0 && amount > 0 && amountUsd > 0) {
-                    finalPrice = amountUsd / amount;
-                }
-                const priceUsd =
-                    finalPrice !== price
-                        ? String(finalPrice)
-                        : originalPriceUsd;
-
-                assetList.push({
-                    ...asset,
-                    amount: String(amount),
-                    token: {
-                        ...asset.token,
-                        name: asset.token.name || 'Unknown',
-                        symbol: asset.token.symbol || 'UNKNOWN',
-                        priceUsd,
-                    },
-                });
+                assetList.push(assetUtils.normalizeAsset(asset));
             }
         }
     }
