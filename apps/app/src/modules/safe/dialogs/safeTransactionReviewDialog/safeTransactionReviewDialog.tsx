@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AlertCard,
     AlertInline,
     addressUtils,
     Dialog,
@@ -17,6 +18,7 @@ import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
+import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { safeCalldataUtils } from '../../utils/safeCalldataUtils';
@@ -515,10 +517,10 @@ export const SafeTransactionReviewDialog: React.FC<
                  * signer can still cross-check it with an external tool that supports 0.1.0+,
                  * they just cannot complete the device comparison here.
                  */}
-                <div className="flex flex-col gap-2 border-neutral-100 border-t pt-4">
-                    <p className="text-neutral-500 text-sm">
-                        {t(`${translationKey}.hashComparison`)}
-                    </p>
+                <AlertCard
+                    message={t(`${translationKey}.hashComparison`)}
+                    variant="info"
+                >
                     {/* Only once the version is known: while the read is in flight the pair is
                         missing because nothing has been derived yet, not because this Safe cannot
                         derive it, and the same suppression applies to `hashUnverifiable`. */}
@@ -528,7 +530,7 @@ export const SafeTransactionReviewDialog: React.FC<
                                 {t(`${translationKey}.hashComparisonPartial`)}
                             </p>
                         )}
-                    <dl className="flex flex-col gap-2">
+                    <dl className="flex flex-col gap-2 pt-2">
                         {domainHash != null && messageHash != null && (
                             <>
                                 <SafeTransactionReviewHash
@@ -558,7 +560,23 @@ export const SafeTransactionReviewDialog: React.FC<
                             value={computedHash ?? transaction.safeTxHash}
                         />
                     </dl>
-                </div>
+                    {/* The tool is named, not generic: an unnamed "external tool" leaves a signer
+                        to pick one, and the tool that fetches from the same service the app does
+                        would make the comparison pass by construction. Cyfrin's safe-hash reads
+                        its parameters out of band, which is the one property the comparison
+                        needs. */}
+                    <p className="pt-2 text-neutral-500 text-sm">
+                        {t(`${translationKey}.hashComparisonTool`)}{' '}
+                        <Link
+                            href="https://github.com/Cyfrin/safe-hash-rs"
+                            isExternal={true}
+                            showUrl={false}
+                            textClassName="text-sm"
+                        >
+                            {t(`${translationKey}.hashComparisonToolLink`)}
+                        </Link>
+                    </p>
+                </AlertCard>
                 <ol className="flex flex-col gap-3 pt-4">
                     {calls.map(({ call, depth }, index) => (
                         <li
