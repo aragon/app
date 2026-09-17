@@ -3839,10 +3839,7 @@
         "callRunsNothing": "The address this delegate call targets holds no code, so this call executes nothing while the rest of the transaction still runs.",
         "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does - one of them is the remote decoder, which may be the wrong one - so it cannot be signed here.",
         "delegateTargetUnresolved": "The code at this delegate call's target could not be read, so whether the calls below would actually run is unknown. Nothing can be signed until that read succeeds — refresh to try again.",
-        "hashComparison": "Compare the domain hash and message hash below with the ones your hardware wallet shows, and the transaction hash with an independent hash tool. Matching values prove this screen sends what it displays; they cannot prove the transaction is safe.",
         "hashComparisonPartial": "The domain and message hashes are withheld because this Safe's version does not derive them exactly, so the device comparison cannot be completed here. The transaction hash below can still be checked with an external tool.",
-        "hashComparisonTool": "One tool that works is",
-        "hashComparisonToolLink": "Cyfrin's safe-hash (runs offline, takes its parameters out of band)",
         "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",
         "hashUnverifiable": "The transaction hash could not be recomputed, so its fields could not be checked against it.",
         "incompleteBatch": "Part of this transaction could not be read. The calls below are not the whole transaction, so it cannot be signed here. Review it in the Safe app if you intend to approve it.",
@@ -3852,7 +3849,10 @@
         },
         "title": "Review transaction",
         "unknownAction": "Unknown action",
-        "versionMismatch": "This Safe reports version {{chainVersion}} onchain, but the service describing this transaction says {{reportedVersion}}. The two disagree about which Safe this is, so nothing can be signed here."
+        "versionMismatch": "This Safe reports version {{chainVersion}} onchain, but the service describing this transaction says {{reportedVersion}}. The two disagree about which Safe this is, so nothing can be signed here.",
+        "hashComparison": "Compare the domain hash and message hash below with the ones your hardware wallet shows. Matching values prove this screen sends what it displays; they cannot prove the transaction is safe.",
+        "hashComparisonPartial": "The domain and message hashes are withheld because this Safe's version does not derive them exactly, so the device comparison cannot be completed here. The transaction hash below can still be checked with an external tool.",
+        "hashTool": "Tip: cross-check the transaction hash with an independent hash tool like"
       }
     },
     "settings": {

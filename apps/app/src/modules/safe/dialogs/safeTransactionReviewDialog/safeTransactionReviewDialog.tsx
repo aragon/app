@@ -6,6 +6,7 @@ import {
     addressUtils,
     Dialog,
     invariant,
+    Link as KitLink,
     Tag,
 } from '@aragon/gov-ui-kit';
 import { useQuery } from '@tanstack/react-query';
@@ -18,7 +19,6 @@ import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
-import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { safeCalldataUtils } from '../../utils/safeCalldataUtils';
@@ -518,65 +518,63 @@ export const SafeTransactionReviewDialog: React.FC<
                  * they just cannot complete the device comparison here.
                  */}
                 <AlertCard
+                    className="mt-4"
                     message={t(`${translationKey}.hashComparison`)}
                     variant="info"
-                >
-                    {/* Only once the version is known: while the read is in flight the pair is
-                        missing because nothing has been derived yet, not because this Safe cannot
-                        derive it, and the same suppression applies to `hashUnverifiable`. */}
-                    {!isVersionPending &&
-                        (domainHash == null || messageHash == null) && (
-                            <p className="text-neutral-500 text-sm">
-                                {t(`${translationKey}.hashComparisonPartial`)}
-                            </p>
+                />
+                {/* Only once the version is known: while the read is in flight the pair is
+                    missing because nothing has been derived yet, not because this Safe cannot
+                    derive it, and the same suppression applies to `hashUnverifiable`. */}
+                {!isVersionPending &&
+                    (domainHash == null || messageHash == null) && (
+                        <p className="text-neutral-500 text-sm">
+                            {t(`${translationKey}.hashComparisonPartial`)}
+                        </p>
+                    )}
+                <dl className="flex flex-col gap-2 pt-3">
+                    {domainHash != null && messageHash != null && (
+                        <>
+                            <SafeTransactionReviewHash
+                                label={t(`${translationKey}.fields.domainHash`)}
+                                value={domainHash}
+                            />
+                            <SafeTransactionReviewHash
+                                label={t(
+                                    `${translationKey}.fields.messageHash`,
+                                )}
+                                value={messageHash}
+                            />
+                        </>
+                    )}
+                    {/* The label has to say which source the value came from. When local
+                        recomputation failed, falling back to the service's hash under the
+                        same label turns the one locally-derived value on screen into a
+                        backend echo - and the tool a signer is told to check it with fetches
+                        that same transaction from that same service by default, so the
+                        comparison passes and proves nothing. */}
+                    <SafeTransactionReviewHash
+                        label={t(
+                            `${translationKey}.fields.${computedHash != null ? 'safeTxHash' : 'reportedSafeTxHash'}`,
                         )}
-                    <dl className="flex flex-col gap-2 pt-2">
-                        {domainHash != null && messageHash != null && (
-                            <>
-                                <SafeTransactionReviewHash
-                                    label={t(
-                                        `${translationKey}.fields.domainHash`,
-                                    )}
-                                    value={domainHash}
-                                />
-                                <SafeTransactionReviewHash
-                                    label={t(
-                                        `${translationKey}.fields.messageHash`,
-                                    )}
-                                    value={messageHash}
-                                />
-                            </>
-                        )}
-                        {/* The label has to say which source the value came from. When local
-                            recomputation failed, falling back to the service's hash under the
-                            same label turns the one locally-derived value on screen into a
-                            backend echo - and the tool a signer is told to check it with fetches
-                            that same transaction from that same service by default, so the
-                            comparison passes and proves nothing. */}
-                        <SafeTransactionReviewHash
-                            label={t(
-                                `${translationKey}.fields.${computedHash != null ? 'safeTxHash' : 'reportedSafeTxHash'}`,
-                            )}
-                            value={computedHash ?? transaction.safeTxHash}
-                        />
-                    </dl>
-                    {/* The tool is named, not generic: an unnamed "external tool" leaves a signer
-                        to pick one, and the tool that fetches from the same service the app does
-                        would make the comparison pass by construction. Cyfrin's safe-hash reads
-                        its parameters out of band, which is the one property the comparison
-                        needs. */}
-                    <p className="pt-2 text-neutral-500 text-sm">
-                        {t(`${translationKey}.hashComparisonTool`)}{' '}
-                        <Link
-                            href="https://github.com/Cyfrin/safe-hash-rs"
-                            isExternal={true}
-                            showUrl={false}
-                            textClassName="text-sm"
-                        >
-                            {t(`${translationKey}.hashComparisonToolLink`)}
-                        </Link>
-                    </p>
-                </AlertCard>
+                        value={computedHash ?? transaction.safeTxHash}
+                    />
+                </dl>
+                {/* The tool is named, not generic: an unnamed "external tool" leaves a signer to
+                    pick one, and a tool that fetches from the same service the app does would
+                    make the comparison pass by construction. Cyfrin's safe-hash takes its
+                    parameters out of band, which is the one property the comparison needs. */}
+                <p className="mt-1 text-neutral-500 text-sm">
+                    {t(`${translationKey}.hashTool`)}{' '}
+                    <KitLink
+                        href="https://github.com/Cyfrin/safe-hash-rs"
+                        isExternal={true}
+                        showUrl={false}
+                        textClassName="text-sm"
+                    >
+                        Cyfrin's safe-hash
+                    </KitLink>
+                    .
+                </p>
                 <ol className="flex flex-col gap-3 pt-4">
                     {calls.map(({ call, depth }, index) => (
                         <li
