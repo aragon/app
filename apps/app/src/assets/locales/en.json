@@ -3790,64 +3790,20 @@
           "description": "The pending transactions of this Safe could not be loaded. Please try again later.",
           "heading": "Unable to load pending transactions"
         },
-        "execution": {
-          "authorityChanged": "The Safe owners or signing threshold changed, so this transaction was not submitted.",
-          "error": "The transaction could not be executed. Please try again.",
-          "executed": "The Safe transaction was executed successfully.",
-          "innerFailed": "The Safe transaction was submitted, but the transaction inside the Safe failed.",
-          "nonceConsumed": "This transaction can no longer execute because the Safe already used its nonce.",
-          "nonceQueued": "This transaction is queued behind the Safe's current nonce and was not submitted.",
-          "rejected": "The Safe rejected this transaction during simulation, so it was not submitted.",
-          "reverted": "The Safe transaction reverted before its inner call ran.",
-          "safeTransaction": "View this transaction in the Safe app",
-          "transactionHash": "View the submitted transaction",
-          "unavailable": "This transaction is no longer available in the Safe queue.",
-          "unconfirmed": "The Safe transaction was submitted, but its execution could not be confirmed."
-        },
         "item": {
-          "alreadyConfirmed": "You already confirmed this transaction. It is waiting for the remaining owners.",
-          "confirm": "Confirm",
           "confirmations": "{{count}} of {{required}} confirmations",
-          "error": "The confirmation could not be submitted. Please try again.",
-          "execute": "Execute",
-          "hashMismatch": "This transaction changed after review, so it was not submitted.",
-          "moreActions": "More actions",
-          "nonce": "Nonce {{nonce}}",
-          "nonceConsumed": "The Safe already used this nonce, so this transaction can never execute. Nothing was signed.",
           "nonceRival": "Another queued transaction uses this same nonce. Only one of them can execute; the other becomes permanently unexecutable.",
-          "notOwner": "The connected wallet is not a Safe owner, so this action was not submitted.",
-          "notProposer": "The Safe service did not accept this: the connected wallet is not the transaction's proposer.",
-          "refresh": "Refresh",
-          "removeFromQueue": "Remove from queue",
-          "removeProposerOnly": "Only the transaction's proposer can remove it from the queue.",
-          "replaceOnchain": "Replace onchain",
           "reportApproves": "(would approve)",
           "reportsTo": "Aragon's indexer reads this as reporting to",
           "reportsToUnresolved": "Aragon's indexer reads this as a governance report but could not identify the proposal",
           "reportUnidentified": "an unidentified proposal",
           "reportVetoes": "(would veto)",
           "review": "Review",
-          "stale": "The Safe queue could not be re-read, so nothing was signed. Please try again.",
-          "submittedOn": "Submitted {{date}}",
-          "submittedSyncing": "Confirmation submitted. Refreshing this transaction…",
-          "submittedUnsynced": "Confirmation submitted. The updated status is not available yet.",
-          "unavailable": "This transaction is no longer available in the Safe queue.",
-          "waitingForTurn": "Fully signed. It executes once the Safe reaches this nonce; nonce {{currentNonce}} is next."
+          "waitingForTurn": "Fully signed. It executes once the Safe reaches this nonce; nonce {{currentNonce}} is next.",
+          "proposalTitle": "Aragon proposal",
+          "queuedOn": "Queued {{date}}"
         },
         "stale": "This queue could not be re-read from the Safe service, so it may be out of date."
-      },
-      "safeQueueSlotDialog": {
-        "dismiss": "Go back",
-        "remove": {
-          "body": "This removes the offchain service record and its stored confirmations. No nonce is consumed, no gas is spent, and nothing happens onchain. It does not revoke anything: the existing signatures still work, so anyone still holding them can re-derive and execute this exact transaction. Only the proposer can remove it.",
-          "confirm": "Remove from queue",
-          "title": "Remove from queue"
-        },
-        "replace": {
-          "body": "This proposes a new transaction at the same nonce that sends zero value to the Safe itself. It must collect the Safe's full signing threshold and be executed onchain, so it costs gas, consumes the nonce, and stays permanently visible. It cannot be a unilateral act, and other owners may already have signed the original transaction.",
-          "confirm": "Replace onchain",
-          "title": "Replace onchain"
-        }
       },
       "safeSettings": {
         "currentNonce": "Current Safe nonce",

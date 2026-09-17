@@ -1,4 +1,3 @@
 export enum SafeDialogId {
     TRANSACTION_REVIEW = 'SAFE_TRANSACTION_REVIEW',
-    QUEUE_SLOT = 'SAFE_QUEUE_SLOT',
 }

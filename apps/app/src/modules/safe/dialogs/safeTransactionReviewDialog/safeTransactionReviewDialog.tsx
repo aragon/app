@@ -63,9 +63,10 @@ export interface ISafeTransactionReviewDialogParams {
      */
     costNote?: string;
     /**
-     * Called once the owner authorises this exact payload.
+     * Called once the owner authorises this exact payload. Present when the caller offers the
+     * confirmation action; absent for a review-only opening, which renders no action.
      */
-    onConfirm: () => void;
+    onConfirm?: () => void;
 }
 
 export interface ISafeTransactionReviewDialogProps
@@ -382,9 +383,11 @@ export const SafeTransactionReviewDialog: React.FC<
         isVersionMismatch ||
         hasDecoderDisagreement;
 
+    // Reachable only through the confirm action, so an optional `onConfirm` is always present
+    // when it runs.
     const handleConfirm = () => {
         close(location.id);
-        onConfirm();
+        onConfirm?.();
     };
 
     return (

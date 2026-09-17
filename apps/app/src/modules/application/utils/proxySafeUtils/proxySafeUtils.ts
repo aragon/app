@@ -282,7 +282,7 @@ export class ProxySafeUtils {
     ): Promise<RequestInit | undefined> => {
         const method = request.method;
 
-        if (method !== 'GET' && method !== 'POST' && method !== 'DELETE') {
+        if (method !== 'GET' && method !== 'POST') {
             return undefined;
         }
 
@@ -290,9 +290,8 @@ export class ProxySafeUtils {
             return undefined;
         }
 
-        // Both signature-bearing writes carry a JSON object body; a deletion sends the proposer's
-        // authorising signature just as a confirmation POST does.
-        const carriesBody = method === 'POST' || method === 'DELETE';
+        // The signature-bearing write carries a JSON object body.
+        const carriesBody = method === 'POST';
 
         let body: string | undefined;
 
@@ -380,17 +379,8 @@ export class ProxySafeUtils {
             );
         }
 
-        // Deletion is addressed by transaction hash alone: the Safe is named in the EIP-712 domain
-        // the proposer signs, not in the URL. Nothing else is reachable by DELETE.
-        if (method === 'DELETE') {
-            return (
-                path.length === 3 &&
-                path[0] === 'v1' &&
-                path[1] === 'multisig-transactions' &&
-                safeTransactionHashPattern.test(path[2])
-            );
-        }
-
+        // Writes are signature-bearing: proposal POST carries the Safe address in its path, and a
+        // confirmation POST is addressed by its `safeTxHash`.
         const isProposalPath =
             path.length === 4 &&
             path[0] === 'v1' &&

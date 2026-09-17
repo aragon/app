@@ -94,27 +94,6 @@ describe('safe transaction service', () => {
         );
     });
 
-    it('deletes a queued transaction by its hash, without naming the Safe in the path', async () => {
-        // The Safe is named in the EIP-712 domain the proposer signed, not in the URL, so a
-        // deletion addressed by anything but the transaction hash would not be forwarded.
-        requestSpy.mockResolvedValue(undefined);
-        const safeTxHash = `0x${'3'.repeat(64)}`;
-
-        await safeTransactionService.deleteSafeTransaction({
-            urlParams: { network: Network.ETHEREUM_MAINNET, safeTxHash },
-            body: { signature: '0xdeleteSignature' },
-        });
-
-        expect(requestSpy).toHaveBeenCalledWith(
-            safeTransactionService['basePaths'].deleteSafeTransaction,
-            {
-                urlParams: { chainId: '1', safeTxHash },
-                body: { signature: '0xdeleteSignature' },
-            },
-            { method: 'DELETE' },
-        );
-    });
-
     it('rejects a balances response that does not match the contract', async () => {
         requestSpy.mockResolvedValue([{ tokenAddress: 1 }]);
 

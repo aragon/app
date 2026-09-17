@@ -6,7 +6,6 @@ describe('safeDialogsDefinitions', () => {
     // error to notice: the button simply does nothing.
     it('reaches the merged dialog registry', () => {
         expect(providersDialogs[SafeDialogId.TRANSACTION_REVIEW]).toBeDefined();
-        expect(providersDialogs[SafeDialogId.QUEUE_SLOT]).toBeDefined();
     });
 
     // Flagging the review dialog would make `DialogRoot` render nothing for a disconnected viewer,

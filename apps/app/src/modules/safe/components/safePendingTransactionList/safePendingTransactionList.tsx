@@ -2,22 +2,16 @@
 
 import {
     AlertInline,
-    ChainEntityType,
     DataListContainer,
     DataListPagination,
     DataListRoot,
 } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
-import { safeAppTransactionUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import type { Network } from '@/shared/api/daoService';
 import {
     type ISafeInfo,
     useSafePendingTransactions,
 } from '@/shared/api/safeService';
-import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import type { ISafeExecutionActionOutcome } from '../../hooks/useSafeTransactionActions';
 import { safeDataListUtils } from '../../utils/safeDataListUtils';
 import { SafePendingTransactionListItem } from './safePendingTransactionListItem';
 
@@ -39,10 +33,6 @@ export interface ISafePendingTransactionListProps {
      */
     currentNonce?: ISafeInfo['nonce'];
     /**
-     * Chain the Safe is deployed on, used to sign confirmations for the right network.
-     */
-    chainId: number;
-    /**
      * Contract version of the Safe, needed to recompute a transaction hash. Undefined until the
      * Safe info resolves.
      */
@@ -61,13 +51,9 @@ export interface ISafePendingTransactionListProps {
 export const SafePendingTransactionList: React.FC<
     ISafePendingTransactionListProps
 > = (props) => {
-    const { network, address, currentNonce, chainId, safeVersion, threshold } =
-        props;
+    const { network, address, currentNonce, safeVersion, threshold } = props;
 
     const { t } = useTranslations();
-    const [executionOutcome, setExecutionOutcome] =
-        useState<ISafeExecutionActionOutcome>();
-    const { buildEntityUrl } = useDaoChain({ network });
 
     const {
         data: pendingTransactions,
@@ -75,35 +61,9 @@ export const SafePendingTransactionList: React.FC<
         isLoading,
     } = useSafePendingTransactions(
         { urlParams: { network, address } },
-        // A post-signature refetch can still see the backend's previous snapshot.
         // Keep the open account view current, including confirmations from other owners.
         { refetchInterval: 30_000 },
     );
-    const outcomeMessageKey =
-        executionOutcome == null
-            ? undefined
-            : executionOutcome.status === 'executed'
-              ? 'executed'
-              : executionOutcome.messageKey;
-    const executionHashLink =
-        executionOutcome?.hash == null
-            ? undefined
-            : buildEntityUrl({
-                  type: ChainEntityType.TRANSACTION,
-                  id: executionOutcome.hash,
-              });
-    // Two different identities for one attempt: the explorer needs the execution transaction's
-    // hash, the Safe app addresses the queued transaction by its `safeTxHash`. Both are carried on
-    // the outcome so neither has to be derived from the other. Undefined on a network with no Safe
-    // short name.
-    const safeTransactionLink =
-        executionOutcome?.safeTxHash == null
-            ? undefined
-            : safeAppTransactionUrl({
-                  network,
-                  address,
-                  safeTxHash: executionOutcome.safeTxHash,
-              });
 
     /**
      * Unexecuted transactions below the current nonce are permanently dead, so they are never
@@ -147,34 +107,6 @@ export const SafePendingTransactionList: React.FC<
 
     return (
         <>
-            {outcomeMessageKey != null && (
-                <div className="mb-4 flex flex-col items-start gap-2">
-                    <AlertInline
-                        message={t(
-                            `app.safe.safePendingTransactionList.execution.${outcomeMessageKey}`,
-                        )}
-                        variant={
-                            executionOutcome?.status === 'executed'
-                                ? 'success'
-                                : 'critical'
-                        }
-                    />
-                    {executionHashLink != null && (
-                        <Link href={executionHashLink} target="_blank">
-                            {t(
-                                'app.safe.safePendingTransactionList.execution.transactionHash',
-                            )}
-                        </Link>
-                    )}
-                    {safeTransactionLink != null && (
-                        <Link href={safeTransactionLink} target="_blank">
-                            {t(
-                                'app.safe.safePendingTransactionList.execution.safeTransaction',
-                            )}
-                        </Link>
-                    )}
-                </div>
-            )}
             {pendingTransactions?.meta.stale === true && (
                 <AlertInline
                     className="mb-4"
@@ -210,14 +142,12 @@ export const SafePendingTransactionList: React.FC<
                 >
                     {transactions.map((transaction) => (
                         <SafePendingTransactionListItem
-                            chainId={chainId}
                             currentNonce={currentNonce}
                             hasNonceRival={contestedNonces.has(
                                 transaction.nonce,
                             )}
                             key={transaction.safeTxHash}
                             network={network}
-                            onExecutionOutcome={setExecutionOutcome}
                             safeAddress={address}
                             safeVersion={safeVersion ?? null}
                             threshold={threshold}
