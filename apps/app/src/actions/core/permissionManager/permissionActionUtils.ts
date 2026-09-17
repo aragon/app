@@ -1,6 +1,5 @@
 import type { IProposalActionInputDataParameter } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 
 /**
  * `PermissionLib.Operation` as deployed in OSx. Verified against the DAO implementation
@@ -18,8 +17,12 @@ const zeroAddress = `0x${'0'.repeat(40)}`;
 export interface IPermissionChange {
     /**
      * Whether the entry grants or revokes, and whether a condition gates it.
+     *
+     * Deliberately widened to `number`: calldata can carry a value outside the enum,
+     * and coercing it to a valid operation would show a reviewer a grant that is not
+     * what executes. Use {@link isKnownPermissionOperation} before labelling it.
      */
-    operation: PermissionOperation;
+    operation: PermissionOperation | number;
     /**
      * Contract the permission applies to.
      */
@@ -34,16 +37,35 @@ export interface IPermissionChange {
      */
     condition?: Hex;
     /**
-     * Raw keccak256 permission id, always kept as the audit trail.
+     * Raw keccak256 permission id, always kept as the audit trail. Resolving it to a
+     * name is a presentation concern and happens where it is displayed.
      */
     permissionId: Hex;
-    /**
-     * Resolved permission name, or undefined when the id is outside the known set.
-     */
-    permissionName?: string;
 }
 
-class PermissionOperationUtils {
+/**
+ * Translation key suffix for each operation, shared by the read and composer views.
+ */
+export const permissionOperationLabelKeys: Record<PermissionOperation, string> =
+    {
+        [PermissionOperation.GRANT]: 'grant',
+        [PermissionOperation.REVOKE]: 'revoke',
+        [PermissionOperation.GRANT_WITH_CONDITION]: 'grantWithCondition',
+    };
+
+/**
+ * Narrows a decoded operation to one this app knows how to label. An out-of-range
+ * value is a real possibility in decoded calldata, and it must surface as unknown
+ * rather than being rendered as a grant.
+ */
+export const isKnownPermissionOperation = (
+    operation: number,
+): operation is PermissionOperation =>
+    operation === PermissionOperation.GRANT ||
+    operation === PermissionOperation.REVOKE ||
+    operation === PermissionOperation.GRANT_WITH_CONDITION;
+
+class PermissionActionUtils {
     /**
      * Reads a permission tuple array into one entry per change, zipping each row against
      * the ABI component names rather than trusting a fixed field order.
@@ -76,9 +98,7 @@ class PermissionOperationUtils {
                 const where = field('where') || (fallbackWhere ?? '');
 
                 return {
-                    operation: Number(
-                        field('operation'),
-                    ) as PermissionOperation,
+                    operation: Number(field('operation')),
                     where: where as Hex,
                     who: field('who') as Hex,
                     condition:
@@ -86,10 +106,6 @@ class PermissionOperationUtils {
                             ? (condition as Hex)
                             : undefined,
                     permissionId,
-                    permissionName:
-                        permissionNameUtils.getKnownPermissionName(
-                            permissionId,
-                        ),
                 };
             });
     };
@@ -122,4 +138,4 @@ class PermissionOperationUtils {
         });
 }
 
-export const permissionOperationUtils = new PermissionOperationUtils();
+export const permissionActionUtils = new PermissionActionUtils();

@@ -3,10 +3,10 @@ import { encodeFunctionData } from 'viem';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import {
     PermissionOperation,
-    permissionOperationUtils,
-} from './permissionOperationUtils';
+    permissionActionUtils,
+} from './permissionActionUtils';
 
-describe('permissionOperationUtils', () => {
+describe('permissionActionUtils', () => {
     const zeroAddress = `0x${'0'.repeat(40)}`;
     const where = '0xAB98085757BFd1C2718fF3cFa390a3db2e8fd209';
     const who = '0x7bDAE736352aF4d2aa42fF4c828CeF9D92Ed0938';
@@ -28,7 +28,7 @@ describe('permissionOperationUtils', () => {
 
     it('reads each row into a change, resolving known permission names', () => {
         const rootId = permissionNameUtils.getPermissionId('ROOT_PERMISSION');
-        const changes = permissionOperationUtils.getPermissionChanges(
+        const changes = permissionActionUtils.getPermissionChanges(
             buildParameter([['0', where, who, zeroAddress, rootId]]),
         );
 
@@ -39,14 +39,13 @@ describe('permissionOperationUtils', () => {
                 who,
                 condition: undefined,
                 permissionId: rootId,
-                permissionName: 'ROOT_PERMISSION',
             },
         ]);
     });
 
     it('maps the operation enum as deployed, 0 grant and 1 revoke', () => {
         const id = permissionNameUtils.getPermissionId('EXECUTE_PERMISSION');
-        const changes = permissionOperationUtils.getPermissionChanges(
+        const changes = permissionActionUtils.getPermissionChanges(
             buildParameter([
                 ['0', where, who, zeroAddress, id],
                 ['1', where, who, zeroAddress, id],
@@ -63,7 +62,7 @@ describe('permissionOperationUtils', () => {
 
     it('normalises the zero-address condition to undefined and keeps a real one', () => {
         const id = permissionNameUtils.getPermissionId('ROOT_PERMISSION');
-        const changes = permissionOperationUtils.getPermissionChanges(
+        const changes = permissionActionUtils.getPermissionChanges(
             buildParameter([
                 ['0', where, who, zeroAddress, id],
                 ['2', where, who, where, id],
@@ -74,13 +73,12 @@ describe('permissionOperationUtils', () => {
         expect(changes[1].condition).toBe(where);
     });
 
-    it('leaves an unknown permission id unresolved rather than guessing', () => {
+    it('keeps an unknown permission id exactly as encoded', () => {
         const unknownId = `0x${'ab'.repeat(32)}`;
-        const [change] = permissionOperationUtils.getPermissionChanges(
+        const [change] = permissionActionUtils.getPermissionChanges(
             buildParameter([['1', where, who, zeroAddress, unknownId]]),
         );
 
-        expect(change.permissionName).toBeUndefined();
         expect(change.permissionId).toBe(unknownId);
     });
 
@@ -95,13 +93,12 @@ describe('permissionOperationUtils', () => {
             { name: 'operation', type: 'uint8' },
         ];
 
-        const [change] =
-            permissionOperationUtils.getPermissionChanges(parameter);
+        const [change] = permissionActionUtils.getPermissionChanges(parameter);
 
         expect(change.operation).toBe(PermissionOperation.REVOKE);
         expect(change.who).toBe(who);
         expect(change.where).toBe(where);
-        expect(change.permissionName).toBe('ROOT_PERMISSION');
+        expect(change.permissionId).toBe(id);
     });
 
     it('takes the target from the fallback when rows do not carry one', () => {
@@ -118,7 +115,7 @@ describe('permissionOperationUtils', () => {
             ],
         };
 
-        const [change] = permissionOperationUtils.getPermissionChanges(
+        const [change] = permissionActionUtils.getPermissionChanges(
             parameter,
             where,
         );
@@ -157,14 +154,14 @@ describe('permissionOperationUtils', () => {
                 ['2', where, who, where, rootId],
             ];
 
-            const changes = permissionOperationUtils.getPermissionChanges({
+            const changes = permissionActionUtils.getPermissionChanges({
                 name: '_items',
                 type: 'tuple[]',
                 value: rows,
                 components,
             });
             const serialised = changes.map((change) =>
-                permissionOperationUtils.toRowValues(
+                permissionActionUtils.toRowValues(
                     change,
                     components.map((component) => component.name),
                 ),
@@ -181,14 +178,14 @@ describe('permissionOperationUtils', () => {
                 ['2', where, who, where, rootId],
             ];
 
-            const changes = permissionOperationUtils.getPermissionChanges({
+            const changes = permissionActionUtils.getPermissionChanges({
                 name: '_items',
                 type: 'tuple[]',
                 value: rows,
                 components,
             });
             const serialised = changes.map((change) =>
-                permissionOperationUtils.toRowValues(
+                permissionActionUtils.toRowValues(
                     change,
                     components.map((component) => component.name),
                 ),
@@ -213,14 +210,14 @@ describe('permissionOperationUtils', () => {
             ];
             const rows = [[rootId, who, where, zeroAddress, '1']];
 
-            const changes = permissionOperationUtils.getPermissionChanges({
+            const changes = permissionActionUtils.getPermissionChanges({
                 name: '_items',
                 type: 'tuple[]',
                 value: rows,
                 components: reordered,
             });
             const serialised = changes.map((change) =>
-                permissionOperationUtils.toRowValues(
+                permissionActionUtils.toRowValues(
                     change,
                     reordered.map((component) => component.name),
                 ),
@@ -232,7 +229,7 @@ describe('permissionOperationUtils', () => {
 
     it('returns nothing when the parameter is not a decoded tuple array', () => {
         expect(
-            permissionOperationUtils.getPermissionChanges({
+            permissionActionUtils.getPermissionChanges({
                 name: '_items',
                 type: 'tuple[]',
                 value: undefined,

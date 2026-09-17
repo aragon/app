@@ -207,9 +207,8 @@ class ProposalActionUtils {
 
     actionToFunctionSelector = (action: IProposalAction): Hex | undefined => {
         const { inputData, data } = action;
-        const isNativeTransfer = data === '0x';
 
-        if (inputData == null || isNativeTransfer) {
+        if (inputData == null) {
             return;
         }
 
@@ -222,6 +221,16 @@ class ProposalActionUtils {
         // Parameters might be undefined at runtime despite type definitions
         const actionParameters = parameters as typeof parameters | undefined;
         if (!actionParameters) {
+            return;
+        }
+
+        // A native transfer is built with empty calldata and no parameters, and has no
+        // selector to show. A call whose parameters are not filled in yet also has empty
+        // calldata, but its selector comes from the ABI, not the calldata, and the action
+        // view registry needs it before anything is encoded.
+        const isNativeTransfer = data === '0x' && actionParameters.length === 0;
+
+        if (isNativeTransfer) {
             return;
         }
 
