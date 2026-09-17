@@ -621,21 +621,21 @@ export const SafeTransactionReviewDialog: React.FC<
                     </p>
                 )}
             </Dialog.Content>
-            <Dialog.Footer
-                primaryAction={
-                    confirmLabel == null
-                        ? undefined
-                        : {
-                              label: confirmLabel,
-                              disabled: isPayloadMisdescribed,
-                              onClick: handleConfirm,
-                          }
-                }
-                secondaryAction={{
-                    label: t(`${translationKey}.cancel`),
-                    onClick: () => close(location.id),
-                }}
-            />
+            {/* Review-only openings show nothing to act on and no footer button: the dialog is
+                dismissed like any viewer, and the action belongs to the proposal context. */}
+            {confirmLabel != null && (
+                <Dialog.Footer
+                    primaryAction={{
+                        label: confirmLabel,
+                        disabled: isPayloadMisdescribed,
+                        onClick: handleConfirm,
+                    }}
+                    secondaryAction={{
+                        label: t(`${translationKey}.cancel`),
+                        onClick: () => close(location.id),
+                    }}
+                />
+            )}
         </>
     );
 };
