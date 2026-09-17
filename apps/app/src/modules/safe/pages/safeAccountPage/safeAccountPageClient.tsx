@@ -6,7 +6,10 @@ import {
     ChainEntityType,
     DefinitionList,
 } from '@aragon/gov-ui-kit';
-import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import {
+    safeAppAccountUrl,
+    safeShortNameFromNetwork,
+} from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import type { Network } from '@/shared/api/daoService';
 import { SafeServiceError, useSafeInfo } from '@/shared/api/safeService';
 import { Page } from '@/shared/components/page';
@@ -55,16 +58,25 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
         SafeServiceError.isUnsupportedChainError(safeInfoError);
 
     const truncatedAddress = addressUtils.truncateAddress(checksummedAddress);
-    const addressLink = buildEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        id: checksummedAddress,
+    // The Safe app is the address's destination, not the explorer: this page is the in-app
+    // account view, and the Safe app is where an owner keeps working with the account
+    // (pending queue, history, owners) while the explorer only renders the address. Networks
+    // with no Safe short name fall back to the explorer.
+    const safeHref = safeAppAccountUrl({
+        network,
+        address: checksummedAddress,
     });
+    const addressLink =
+        safeHref ??
+        buildEntityUrl({
+            type: ChainEntityType.ADDRESS,
+            id: checksummedAddress,
+        });
 
     /**
      * The same rows a governance body's Settings tab states, because it is the same account read
      * from the same endpoint. Only the chain above is the account page's own: a body states its
-     * network elsewhere. The address links to the explorer here rather than to the Safe app - this
-     * page is the in-app account view, so pointing at Safe's own would send the reader away from it.
+     * network elsewhere.
      *
      * The address comes from the route, so its row stands while the account read is in flight and
      * on networks Safe never serves; everything below it is account state and waits for the read.
