@@ -92,6 +92,8 @@ export const DaoMemberDetailsPageClient: React.FC<
     };
     const { data: member } = useMember(memberParams);
 
+    // The single-member endpoint is still served by the legacy backend, which
+    // reports activity as block numbers. This resolves them to dates on-chain.
     const { firstActive, lastActive } = member ?? {};
 
     const { chainId, buildEntityUrl } = useDaoChain({ daoId });

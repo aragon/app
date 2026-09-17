@@ -229,8 +229,8 @@ importers:
   apps/app:
     dependencies:
       '@aragon/aragon-domain':
-        specifier: ^0.3.1
-        version: 0.3.1(typescript@5.9.3)
+        specifier: ^0.4.0
+        version: 0.4.0(typescript@5.9.3)
       '@aragon/assistant-chat':
         specifier: workspace:*
         version: link:../../packages/assistant-chat
@@ -698,8 +698,8 @@ packages:
   '@apm-js-collab/tracing-hooks@0.13.0':
     resolution: {integrity: sha512-mTvWz9rnQwx1U3h0XPTHaX7bgfkpipLLTQyjlC2cdhQpQEuoLT0AGzoydeoq2NxfEVv6fWOOETcSbb2nptleyw==}
 
-  '@aragon/aragon-domain@0.3.1':
-    resolution: {integrity: sha512-KV30X9uSM0vcX1EsbrKoE0DMxe0NsqTlW+2YoOJND2iKHgjnX8SnlZtO5f5HS6MIQkb/ihHUoRe/9Jjnin9uFA==}
+  '@aragon/aragon-domain@0.4.0':
+    resolution: {integrity: sha512-h23+GQ3vkoNBHBARyq4xovOcZgkB0DVucwAU4h1mPz6Gj3NA5pKKCK19pLP+zA0bHf7ooG1Wd6GW5taX3CPHrA==}
     engines: {node: '>=24.13.0', pnpm: '>=11.0.0'}
 
   '@aragon/gov-ui-kit@2.11.4':
@@ -5523,8 +5523,8 @@ packages:
   big.js@6.2.2:
     resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
 
-  bignumber.js@11.1.4:
-    resolution: {integrity: sha512-AJ9dSeaUGj2xu7tEwmdqb51dqdb633xo4njI9K8ZFfcLrNr0XN8/EPkkZUNaF9fkCblGt2zVwZymesUdGynEkQ==}
+  bignumber.js@11.1.5:
+    resolution: {integrity: sha512-6WmzCNtUnfKpbozq+hOgWaZMMzORmYBwF1xZScyoIX3QRYWeKTtxxwDOW5tIz7C9BdjkIYHGTcelCLkXg0mndw==}
 
   binary@0.3.0:
     resolution: {integrity: sha512-D4H1y5KYwpJgK8wk1Cue5LLPgmwHKYSChkbspQg5JtVuR5ulGckxfR62H3AE9UDkdMC8yyXlqYihuz3Aqg2XZg==}
@@ -9620,9 +9620,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@aragon/aragon-domain@0.3.1(typescript@5.9.3)':
+  '@aragon/aragon-domain@0.4.0(typescript@5.9.3)':
     dependencies:
-      bignumber.js: 11.1.4
+      bignumber.js: 11.1.5
       ddd-core-ts: 0.1.1
       graphql: 16.14.1
       graphql-request: 7.4.0(graphql@16.14.1)
@@ -15814,7 +15814,7 @@ snapshots:
 
   big.js@6.2.2: {}
 
-  bignumber.js@11.1.4: {}
+  bignumber.js@11.1.5: {}
 
   binary@0.3.0:
     dependencies:
