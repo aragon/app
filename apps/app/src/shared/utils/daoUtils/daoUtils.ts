@@ -1,4 +1,10 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+// Server navigation functions come from the react-server entry (see notFoundUtils): this module is
+// also bundled into route handlers such as the sitemap, where the client build of next/navigation
+// cannot load.
+import { notFound } from 'next/navigation-server';
+// biome-ignore lint/style/noRestrictedImports: resolveDaoId runs in Server Components, where the `@aragon/gov-ui-kit` alias is a 'use client' shim and `addressUtils.isAddress` is not callable; { strict: false } is passed explicitly below.
+import { isAddress } from 'viem';
 import {
     daoService,
     type IDao,
@@ -13,6 +19,8 @@ import {
     type IPluginInfo,
     PluginType,
 } from '@/shared/types';
+import { networkUtils } from '../networkUtils';
+import { notFoundUtils } from '../notFoundUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { versionComparatorUtils } from '../versionComparatorUtils';
 
@@ -238,19 +246,43 @@ class DaoUtils {
         return availablePluginUpdates ?? [];
     };
 
+    /**
+     * Resolves the DAO id from the URL parameters of a DAO route, looking ENS names up on the
+     * backend. Both segments come straight from the URL, so a value that is not a supported
+     * network plus an address or ENS name (bots probing injection payloads, mangled links)
+     * renders the 404 page: sending it to the backend only yields a "Bad parameters" rejection
+     * that every page would otherwise report as a server error. Server-only: `notFound` is
+     * meaningless outside a render, and the DAO pages and their metadata are its only callers.
+     */
     resolveDaoId = async (params: IDaoPageParams) => {
         const { addressOrEns, network } = params;
 
+        if (
+            !networkUtils.isValidNetwork(network) ||
+            !this.isDaoAddressOrEns(addressOrEns)
+        ) {
+            notFound();
+        }
+
         if (addressOrEns.endsWith('.eth')) {
-            const dao = await daoService.getDaoByEns({
-                urlParams: { network, ens: addressOrEns },
-            });
+            const dao = await notFoundUtils.fetchOrNotFound(() =>
+                daoService.getDaoByEns({
+                    urlParams: { network, ens: addressOrEns },
+                }),
+            );
 
             return `${network}-${dao.address}`;
         }
 
         return `${network}-${addressOrEns}`;
     };
+
+    /**
+     * Not strict about the checksum: the backend accepts any casing of a well-formed address,
+     * so a lowercase or mis-cased link must keep working.
+     */
+    private isDaoAddressOrEns = (value: string) =>
+        isAddress(value, { strict: false }) || value.endsWith('.eth');
 
     parseDaoId = (daoId: string) => {
         const lastDash = daoId.lastIndexOf('-');

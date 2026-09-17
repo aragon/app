@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import type { Route } from 'next';
+import { unstable_rethrow } from 'next/navigation-server';
 import { LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
 import { daoOptions, type Network } from '@/shared/api/daoService';
 import { PluginType } from '@/shared/types';
@@ -45,9 +46,11 @@ export const LayoutWizardCreatePolicy: React.FC<
         );
 
         targetDaoAddress = processPlugin?.daoAddress ?? dao.address;
-    } catch {
-        // If fetching fails, targetDaoAddress remains undefined
-        // LayoutWizard will use main DAO as fallback
+    } catch (error: unknown) {
+        // A malformed DAO URL ends in notFound() inside resolveDaoId; let Next render the 404
+        // page. Any other fetch failure leaves targetDaoAddress undefined and LayoutWizard
+        // falls back to the main DAO.
+        unstable_rethrow(error);
     }
 
     return (

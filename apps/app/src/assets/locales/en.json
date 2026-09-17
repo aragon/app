@@ -2157,6 +2157,13 @@
         "aside": {
           "stats": "All proposals"
         },
+        "error": {
+          "action": "Go to dashboard",
+          "notFound": {
+            "description": "This DAO has no governance process the app can show proposals for.",
+            "title": "No governance process"
+          }
+        },
         "main": {
           "action": "Proposal",
           "title": "Proposals"
@@ -2668,6 +2675,13 @@
             "tabs": {
               "delegate": "Delegate",
               "lock": "Lock"
+            }
+          },
+          "error": {
+            "action": "Go to dashboard",
+            "notFound": {
+              "description": "We couldn't find a gauge voting plugin for this DAO.",
+              "title": "Gauges not available"
             }
           },
           "main": {

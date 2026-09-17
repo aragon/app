@@ -1,6 +1,10 @@
 // The `next/navigation` alias points to the client-hooks wrapper (src/shared/lib/nextNavigation),
-// which cannot re-export server functions — import notFound from the real module instead.
-import { notFound } from 'next/navigation-original';
+// which cannot re-export server functions. `next/navigation-server` is the react-server entry that
+// Next itself resolves `next/navigation` to in Server Components and route handlers, so it loads in
+// every server bundle. The client build behind `next/navigation-original` does not: its hooks need
+// the router contexts that route handlers (e.g. the sitemap) do not vendor, and importing it there
+// fails the production build.
+import { notFound } from 'next/navigation-server';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 
 class NotFoundUtils {

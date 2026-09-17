@@ -3,6 +3,7 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
+import { unstable_rethrow } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import { ErrorBoundary } from '@/modules/application/components/errorBoundary';
 import {
@@ -59,6 +60,9 @@ export const LayoutWizard = async <
             );
         }
     } catch (error: unknown) {
+        // A malformed DAO URL ends in notFound() inside resolveDaoId; let Next render the 404
+        // page instead of turning it into the generic error state.
+        unstable_rethrow(error);
         const parsedError = errorUtils.serialize(error);
         return (
             <Page.Error
