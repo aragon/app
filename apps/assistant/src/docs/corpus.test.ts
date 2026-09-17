@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { cleanBody, loadCorpus } from './corpus';
+import { cleanBody, loadCorpus, rewriteLinks } from './corpus';
 
 // Jest runs from the workspace root (its rootDir), which is what the paths below assume.
 const fixtureRoot = path.resolve('src/test/fixtures/docsCorpus');
@@ -84,6 +84,57 @@ describe('loadCorpus', () => {
         );
     });
 
+    it('leaves the internal folder out in every mode: builder material, not product knowledge', async () => {
+        const { documents, skipped } = await loadCorpus({
+            rootDir: fixtureRoot,
+            mode: 'drafts',
+        });
+
+        // A validated principle page by every frontmatter rule — its folder alone excludes it,
+        // the way the base's own workflow excludes `internal/` from user-facing content.
+        expect(
+            documents.some((document) => document.path.startsWith('internal/')),
+        ).toBe(false);
+        expect(skipped.some(({ path }) => path.startsWith('internal/'))).toBe(
+            false,
+        );
+    });
+
+    it('rewrites the links of a page for a reader outside the wiki', async () => {
+        const { documents } = await loadCorpus({
+            rootDir: fixtureRoot,
+            mode: 'drafts',
+        });
+        const body =
+            documents.find(
+                (document) => document.path === 'governance/process.md',
+            )?.body ?? '';
+
+        // Protocol pages get their public GitHub address, fragment included, whichever way the
+        // base reached the submodule.
+        expect(body).toContain(
+            '[plugin](https://github.com/aragon/protocol-doc/blob/main/framework/plugins.md#what-a-plugin-is)',
+        );
+        expect(body).toContain(
+            '[Staged Proposal Processor](https://github.com/aragon/protocol-doc/blob/main/plugins/spp-plugin.md)',
+        );
+        // Links to other pages of the base, and to sections of the same page, keep their text
+        // only: the base has no public home to link to.
+        expect(body).toContain('installs it for an account.');
+        expect(body).toContain('one or more stages (stage). Each');
+        expect(body).toContain('see how a stage advances and the');
+        expect(body).not.toContain('accounts/account.md');
+        expect(body).not.toContain('stage.md');
+        // Absolute links stay (the angle-bracket form loses its brackets), images and fenced
+        // code are left alone.
+        expect(body).toContain('[Safe docs](https://help.safe.global/en/)');
+        expect(body).toContain(
+            '[assistance form](https://www.aragon.org/get-assistance-form)',
+        );
+        expect(body).toContain('![Stage diagram](./stage-diagram.png)');
+        expect(body).toContain('[not a link](./kept-verbatim.md)');
+    });
+
     it('names the area after the folder index heading, or the folder itself without one', async () => {
         const { documents } = await loadCorpus({
             rootDir: fixtureRoot,
@@ -159,6 +210,35 @@ describe('cleanBody', () => {
     it('keeps a second level-one heading: only the title is dropped', () => {
         expect(cleanBody('# Title\n\n# Another\n\nText.')).toEqual(
             '# Another\n\nText.',
+        );
+    });
+});
+
+describe('rewriteLinks', () => {
+    it('maps every relative form of a protocol link onto the same GitHub page', () => {
+        expect(rewriteLinks('[a](./protocol-doc/core/dao.md)')).toEqual(
+            '[a](https://github.com/aragon/protocol-doc/blob/main/core/dao.md)',
+        );
+        expect(
+            rewriteLinks('[b](../protocol-doc/core/dao.md#keep-in-mind)'),
+        ).toEqual(
+            '[b](https://github.com/aragon/protocol-doc/blob/main/core/dao.md#keep-in-mind)',
+        );
+        expect(rewriteLinks('[c](/protocol-doc/index.md)')).toEqual(
+            '[c](https://github.com/aragon/protocol-doc/blob/main/index.md)',
+        );
+    });
+
+    it('keeps the text of relative links and the whole of absolute ones, several per line', () => {
+        expect(
+            rewriteLinks(
+                'See [accounts](../accounts/account.md), [this section](#naming) and [Aragon](https://aragon.org).',
+            ),
+        ).toEqual(
+            'See accounts, this section and [Aragon](https://aragon.org).',
+        );
+        expect(rewriteLinks('Mail [us](mailto:support@aragon.org).')).toEqual(
+            'Mail [us](mailto:support@aragon.org).',
         );
     });
 });

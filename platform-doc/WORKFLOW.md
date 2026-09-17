@@ -4,7 +4,7 @@ This is the **workflow** layer for the Aragon platform product docs: the convent
 
 **Invoke the `wiki-cli` skill before your first `wiki` command, and before creating, editing, moving, or deleting any entry.** It carries the CLI mechanics this file assumes: the composite-root invocation, the query palette with verified flags, the `wiki check` gate, how to translate the POSIX recipes for this machine's shell, and the capture-only fallback when the CLI is missing. This file stays the *policy* layer — what the conventions are and why; the skill is *how to operate the tool* without stranding a link or checking the wrong root.
 
-Before creating or substantively rewriting reader-facing prose, read the active [voice policy](./voice.md) in full after this file. Skip it for read-only questions, graph operations, path-only changes, and maintenance edits whose wording is already prescribed here.
+Before adding or changing reader-facing prose, consult the active [voice policy](./voice.md) using its reading guidance and apply its preflight, including for small edits. Skip it for read-only questions, graph operations, path-only changes, and maintenance edits whose wording is already prescribed here.
 
 ## What this base is (and is not)
 
@@ -14,11 +14,17 @@ One product: the **Aragon platform**, the full-stack application for governing t
 
 **Keep the three layers distinct:** *protocol mechanism → product capability → interaction pattern*. Each has its own vocabulary and questions: protocol docs define mechanisms, this base defines product meaning and capability, and design patterns define how that meaning is presented. A clean correspondence between layers is useful when it exists, but no layer is required to mirror another or smuggle in its concerns.
 
-**Cross-bundle referencing convention:** link to protocol entries through the local submodule with a relative Markdown link — `./protocol-doc/core/dao.md` from a root page, `../protocol-doc/core/dao.md` from an area page. A branch-floating GitHub `blob/main` URL is external to `wiki`, so it cannot be target-, anchor-, or backlink-checked and is not an entry link. Exact upstream commit URLs are reserved for snapshot metadata such as the pin in [index.md](./index.md).
+**A distinction in explanation does not require a second page.** Keep a topic's behavior, rationale, interaction rules, and lifecycle together when they describe the same thing. A separate design page must contribute a reusable choice across different topics, not summarize another page's behavior under “Design rules.” After merging sections, test whether each former page still owns independent knowledge; preserve unique claims, examples, limits, and provenance before retiring duplicates.
 
-**Source material:** the `../app` (frontend) and `../app-backend` repos, the `../osx` contracts, and briefings from the product owner. The older `../aragon-knowledge-base` bundle's first slice (2026-07-06) has been mined into this base (entries carry `source:` fields pointing back into it; passes are recorded in [log.md](./log.md)); its protocol/mechanism pages stay in protocol-doc, and its base-internal ontology is not carried over.
+Shared interaction behavior belongs under `application/` even when its type is `pattern` or it carries a `design` tag. A separate builder page earns its place by explaining a reusable choice: [Alerts and advisories](./application/alerts.md) explains notices people encounter, while [Alert severity](./internal/design/alert-severity.md) explains how to choose severity, placement, and interruption. Make that distinction clear in the titles, openings, and links. Do not duplicate a feature's behavior under a second design heading.
 
-**The shape:** areas `accounts/`, `governance/`, `treasury/`, `access-control/`, and `design/`, a `guides/` layer, and at the root the general-purpose [principles](./principles.md), [value proposition](./value-proposition.md), [repositories](./repositories.md), and [product scope exclusions](./product-scope-exclusions.md) pages plus the documentation and product-planning boards (cross-cutting by nature, they belong to no area) and the task entries under `tasks/` that the documentation board orders. Add areas as real clusters appear, not before.
+**File by the subject that owns the rule.** Accounts holds account entities, creation, upgrades, account-specific views, and relationships. Governance holds processes, bodies, proposals, participation, and the installation or removal of governance authority, including temporary Admin governance. Application holds shared app identity, discovery, address handling, action composition and inspection, transaction submission, support, and delivery configuration. A flow's entry point or the presence of a governance transaction does not alone determine its folder. File opportunities under `internal/product-opportunities/`; use tags and links to identify the product areas they would improve.
+
+**Cross-bundle referencing convention:** link to protocol entries through the local submodule with a relative Markdown link — `./protocol-doc/core/dao.md` from a root page, `../protocol-doc/core/dao.md` from an area page. A branch-floating GitHub `blob/main` URL is external to `wiki`, so it cannot be target-, anchor-, or backlink-checked and is not an entry link. The [OSx protocol reference](./osx-and-the-platform.md#protocol-reference) pairs local entry links with shareable GitHub counterparts; those external links supplement the graph and require separate verification. Exact upstream commit URLs in wiki entries are reserved for snapshot metadata such as the [protocol pin](./internal/maintenance/index.md#protocol-snapshot). [External answer links](#links-in-answers-outside-the-checkout) may use the pinned revision to cite exactly what was read.
+
+**Source material:** the `../app` (frontend) and `../app-backend` repos, the `../osx` contracts, and briefings from the product owner. The older `../aragon-knowledge-base` bundle's first slice (2026-07-06) has been mined into this base (entries carry `source:` fields pointing back into it; passes are recorded in [log.md](./internal/maintenance/log.md)); its protocol/mechanism pages stay in protocol-doc, and its base-internal ontology is not carried over.
+
+**The shape:** product knowledge lives in `accounts/`, `governance/`, `treasury/`, `access-control/`, `application/`, and `guides/`, with the [OSx orientation](./osx-and-the-platform.md) and [value proposition](./value-proposition.md) at the root. [Internal documentation](./internal/index.md) holds design guidance and principles, documentation operations and tasks, and temporary product opportunities. Add areas as real clusters appear.
 
 This is **wiki-first product documentation**, in two layers:
 
@@ -27,7 +33,7 @@ This is **wiki-first product documentation**, in two layers:
 
 The concepts are the source of truth; guides apply them to user outcomes. Orientation for people reading or maintaining this knowledge base belongs in the root [index](./index.md) and the operating docs, not in a guide.
 
-Product opportunities form a separate planning overlay: their entries are area-filed for classification and gathered on one root board, but they are not part of the canonical product graph until an implemented outcome is folded into the relevant current-product pages.
+Product opportunities form a temporary planning collection under `internal/product-opportunities/`, gathered on its authored backlog. They link to canonical product context; verified shipped outcomes are folded into the relevant product pages.
 
 ## Voice: reader-facing prose
 
@@ -35,13 +41,54 @@ The active [voice policy](./voice.md) applies to canonical platform entries, gui
 
 The responsibility order is deliberate: [AGENTS.md](./AGENTS.md) governs the graph and safe operation; this file governs product scope, structure, source handling, and review state; `voice.md` governs wording. Voice never authorizes a semantic change, cannot turn an inference or candidate into current behavior, and yields to factual accuracy, explicit task constraints, and the structure defined here. Apply it after the page's claims are source-grounded and its page type and location are settled.
 
-Do not apply house voice while capturing source material into `raw/` or `inbox/`: clean it only as those sections permit and preserve every claim. Apply voice when that material is deliberately promoted into a reader-facing entry. The policy also excludes exact quotations, code and identifiers, the read-only `protocol-doc/` submodule, and maintenance artifacts such as tasks, `backlog.md`, `log.md`, these operating docs, and skills; their own local rules control their wording. A `status: draft` voice policy is advisory rather than active and is reviewed through a task if needed, never through the canonical-page drafts inventory.
+Do not apply house voice while capturing source material into `raw/` or `inbox/`: clean it only as those sections permit and preserve every claim. Apply voice when that material is deliberately promoted into a reader-facing entry. The policy also excludes exact quotations, code and identifiers, the read-only `protocol-doc/` submodule, and maintenance artifacts such as tasks, `internal/maintenance/backlog.md`, `internal/maintenance/log.md`, these operating docs, and skills; their own local rules control their wording. A `status: draft` voice policy is advisory rather than active and is reviewed through a task if needed, never through the canonical-page drafts inventory.
+
+### Product content and documentation operations
+
+**Product prose contains established product knowledge and useful reader guidance; documentation operations have separate homes.** This boundary applies to draft and reviewed canonical entries, guides, product-opportunity explanations, and the product-facing parts of indexes. [Voice rule V-R018](./voice.md#4-rules) prohibits editorial narration and supplies the wording test and examples. This section determines where the displaced material goes; skills and agent entry points link here rather than duplicating the policy.
+
+| Material | Its home |
+| --- | --- |
+| Product behavior, rationale, availability, material limits, and reader actions | The canonical product entry, with useful navigation and references that help the reader understand or act. |
+| Provenance and exact source revisions; investigation and review history | `source:` or a source reference for provenance; `internal/maintenance/log.md` for dated history. |
+| Draft/review state | Frontmatter and the backlog's draft inventory. |
+| Unfinished documentation: questions, verification, missing content, reviews, decisions, or source requests | A finite task under [Tasks](#tasks), linked once from the backlog. |
+| A candidate product improvement and the investigation needed to define it | An opportunity under [Product opportunities](#product-opportunities); candidate status and product investigation belong together. |
+| Repository or generated-file instructions; page-purpose and ownership inventories | Operating documents, skills, maintenance references/navigation, or the audit's working inventory. |
+
+**Verify from code; explain from product purpose.** Code inspection establishes whether a claim is accurate; it does not determine how much belongs in the article. Lead with the actor's purpose, the product rule, and the consequence. Include a detail only when it changes understanding or a meaningful decision. Exact labels belong where someone needs to find an action. Component inventories, styling props, callbacks, selector wiring, and line-by-line proofs stay out of product prose, including design patterns and opportunities. Design pages explain reusable interaction choices and their rationale.
+
+Do not link product prose to application source files or GitHub components as proof. Keep revision provenance in `source:` and necessary investigation evidence in its existing log or maintenance record. Prefer links to the concept that owns the explanation, relevant protocol documentation, or a service the reader can use. Do not create a permanent evidence page merely to preserve every observation. A completed verification can justify a shorter paragraph or no prose change.
+
+A design-system reference may name the component API, Storybook variants, and visual specification needed to build an interaction, as in the [Voting Terminal design reference](./internal/design/voting-terminal-reference.md). Keep that lookup under `internal/design/`, linked from builder navigation and to its canonical behavior. It is excluded from user-facing content. Repository inspection instructions and source-code evidence remain under maintenance; moving implementation details into an otherwise product-facing article does not make them reader guidance.
+
+Keep each rule's full explanation in one home. Check dependants for contradictions, but do not repeat a warning, recovery discussion, or edge case everywhere the feature is mentioned. Preserve material limits and uncertainty where they affect the reader's decision; source-level defects can stay in their scoped opportunity without becoming routine user instructions.
+
+**Check relevance before asking or routing a question.** Identify what its answer would materially change in the product explanation, reader guidance, or a concrete documentation decision. An existing checkbox or task does not establish that the question is useful. Missing decision authorship or a historical date is not a documentation gap; pursue it only when the owner requests that history or it resolves a material product ambiguity. Retire irrelevant questions with a brief reason in the log. Ask the owner only for necessary context or judgments that the available sources cannot settle, and explain what the answer will resolve.
+
+**Resolve before routing.** Check the relevant pages, task queries, backlinks, and recorded answers or scope rulings before treating an old note as open work. Apply an evidenced answer when available. For material unresolved work, follow [Tasks](#tasks) to reuse or extend an existing task, or create a bounded one, and assign its state and next actor. Preserve the question's meaning, known evidence, material uncertainty, and links to affected pages before deleting its old copy; rebase links when relocating it. A task closes only after its outcome reaches the affected docs or a recorded relevance or scope ruling closes the question.
+
+**Uncertainty must survive relocation.** Removing “not verified” must not imply either support or lack of support. State only the bounded product fact and retain any uncertainty that affects a reader's decision. Move the missing answer into its task; do not leave undefined-category rows or a research checklist in the article. Source captures and read-only upstream material retain their existing handling rules.
+
+**Finish against the diff.** Apply the [voice preflight](./voice.md#10-preflight) to every added or changed paragraph, including its surrounding claims, and verify every relocated item's destination. Wording cleanup does not approve a draft. Run `node .claude/skills/wiki-cli/scripts/check-product-links.mjs` to reject source-code proof links in product prose. That check and `wiki check` do not judge relevance, repetition, or explanatory quality; inspect the diff for those separately. Existing violations are cleanup work, not precedent.
 
 **This bundle is git-managed.** Commits are its history and its undo; pull before editing and initialize the upstream with `git submodule update --init protocol-doc` after a fresh clone. **Agents do not commit unless asked to:** once the composite `wiki --root . check` passes, leave the batch uncommitted — the product owner reviews the diffs in their editor and commits themselves (or explicitly asks for a commit).
 
+### User-facing content and existing metadata
+
+**Exclude `internal/` from user-facing platform content.** Product knowledge explains what the app does, its constraints, and choices people can make. Builder guidance and principles live in `internal/design/`; documentation operations, history and tasks in `internal/maintenance/`; proposed product changes in `internal/product-opportunities/`. The [exclusion summary](./internal/maintenance/product-knowledge-audit.md#user-facing-content-exclusions) records this boundary.
+
+Keep `internal/` indexed: wiki queries and link checks must still cover it. It is excluded from the reader view, not from the knowledge base. Ignored operating and source files remain outside the index. The read-only `protocol-doc/` submodule is a separate, optional source of deeper explanation, outside the default platform reading scope.
+
+**Location establishes audience; types describe entries; tags describe topics.** Keep `task`, `opportunity`, `principle`, `pattern` and `reference` as ordinary types. A product page may carry a `design` or `repositories` tag without becoming internal. Do not add audience tags or maintain a page-by-page allowlist. Draft status remains editorial review state; preserve client and availability qualifications independently.
+
+Typed local entries carry existing subject tags. Reserved `index.md` and `log.md` files carry no frontmatter; only the bundle-root index has `okf_version`. Their location identifies the collection or history they belong to, so tags on these reserved files add no audience information.
+
+The [product root](./index.md) and its area indexes provide the user reading path. [Internal navigation](./internal/index.md) provides the contributor path. After moving or excluding content, verify that essential product explanations remain reachable from the product root without entering `internal/`. Keep useful protocol links as optional destinations; do not expand the reader corpus through every linked page.
+
 ## Protocol-doc: read-only upstream and one composite graph
 
-The parent repository pins one exact protocol-doc commit even though `.gitmodules` records `main` as the update branch. The pin named in [index.md](./index.md) is the protocol baseline for every platform page. The dependency is intentionally one-way:
+The parent repository pins one exact protocol-doc commit even though `.gitmodules` records `main` as the update branch. The pin recorded under [Protocol snapshot](./internal/maintenance/index.md#protocol-snapshot) is the protocol baseline for every platform page. The dependency is intentionally one-way:
 
 - Platform entries **link into** `/protocol-doc/**`; those links are dependencies the combined graph can verify.
 - Protocol-doc remains upstream and read-only in this repository. Never add platform links to the submodule, edit its pages to manufacture backlinks, or treat the absence of protocol → platform links as an orphaning defect.
@@ -56,7 +103,7 @@ wiki --root . unresolved
 wiki --root . orphans
 ```
 
-The `wiki-cli` skill covers how to read each line of that gate (which findings are errors you must fix, which are the to-write list, and the one advisory to ignore). The submodule-status line must show the pinned SHA with a leading space; `-` means the upstream is uninitialized, `+` means it is checked out at a different commit, and `U` means it is conflicted. `wiki --root protocol-doc check` is a useful upstream-only diagnostic, but it never replaces the parent-root check: only the parent root verifies platform → protocol links and the combined vocabulary. The combined check emits one known advisory for `/protocol-doc/index.md` — `reserved file should carry no frontmatter` — because that file correctly carries `okf_version` as the upstream bundle root while the parent sees a nested index. Keep it indexed for its navigation edges; do not edit upstream or hide it from the composite config.
+The `wiki-cli` skill covers how to read each line of that gate (which findings are errors you must fix, which are the to-write list, and the known upstream-root advisory). The submodule-status line must show the pinned SHA with a leading space; `-` means the upstream is uninitialized, `+` means it is checked out at a different commit, and `U` means it is conflicted. `wiki --root protocol-doc check` is a useful upstream-only diagnostic, but it never replaces the parent-root check: only the parent root verifies platform → protocol links and the combined vocabulary. The combined check emits one known advisory for `/protocol-doc/index.md` — `reserved file should carry no frontmatter` — because that file correctly carries `okf_version` as the upstream bundle root while the parent sees a nested index. Keep it indexed for its navigation edges; do not edit upstream or hide it from the composite config.
 
 **Check upstream before writing overlapping material.** Search the whole graph, then narrow to the protocol subtree:
 
@@ -69,89 +116,79 @@ wiki backlinks /protocol-doc/<path>.md
 
 Read every relevant upstream hit before creating or changing the platform page. If protocol-doc already defines the mechanism, link to it and write only the product abstraction, rule, or consequence here. If both layers legitimately discuss the same term, make the platform page's added semantic layer explicit; do not leave two competing mechanism definitions.
 
-Treat composite wiki queries and checks as read-only over upstream. Never run `wiki move` or a bulk mutator such as `wiki tidy --all` against `/protocol-doc/**`; after any parent-root mutation, confirm the submodule is still clean. When deliberately advancing the submodule pin, compare the new `protocol-doc/wiki.toml` with the parent config, merge any new types/ignores/orphan exemptions into the prefixed union, update the exact SHA and date in [index.md](./index.md), then run both the upstream-only diagnostic and the parent-root gate.
+Treat composite wiki queries and checks as read-only over upstream. Never run `wiki move` or a bulk mutator such as `wiki tidy --all` against `/protocol-doc/**`; after any parent-root mutation, confirm the submodule is still clean. When deliberately advancing the submodule pin, compare the new `protocol-doc/wiki.toml` with the parent config, merge any new types/ignores/orphan exemptions into the prefixed union, update the exact SHA and date under [Protocol snapshot](./internal/maintenance/index.md#protocol-snapshot), then run both the upstream-only diagnostic and the parent-root gate.
 
 ## Types
 
-The composite vocabulary is enforced in [wiki.toml](./wiki.toml) and is the union of both bundles. Platform types in use are `concept` (an idea and why), `capability` (something a user can do in the app: its user promise and business logic), `pattern` (a reusable design rule — interaction, component, or content), `decision` (a deliberately chosen product rule: the current rule and the rationale for it — why the product behaves this way and not otherwise), `principle` (a cross-cutting product rule with enough rationale or examples to stand on its own), `reference` (lookup material), `guide` (a user-facing walkthrough for accomplishing a concrete Aragon task), `opportunity` (a candidate product improvement, not a current promise or roadmap commitment), `task` (executable documentation work waiting to be run; one entry per task under `tasks/` — see *Tasks*), and `note` (an authored maintenance board such as the [documentation backlog](./backlog.md) or [Product opportunities](./product-opportunities.md)). The union also declares `risk` (a known failure mode and its mitigations — currently no entries) and protocol-doc's `example` type. Add a new kind deliberately to the parent vocabulary; when upstream adds one, mirror it as part of advancing the submodule pin.
+The composite vocabulary is enforced in [wiki.toml](./wiki.toml) and is the union of both bundles. Platform types in use are `concept` (an idea and why), `capability` (something a user can do in the app: its purpose and business logic), `pattern` (a reusable interaction behavior or design rule — interaction, component, or content), `principle` (a cross-cutting product rule with enough rationale or examples to stand on its own), `reference` (lookup material), `guide` (a user-facing walkthrough for accomplishing a concrete Aragon task), `opportunity` (a candidate product improvement, not a current promise or roadmap commitment), `task` (executable documentation work waiting to be run; one entry per task under `internal/maintenance/tasks/` — see *Tasks*), and `note` (an authored maintenance board such as the [documentation backlog](./internal/maintenance/backlog.md) or [Product opportunities](./internal/product-opportunities/backlog.md)). The union also declares `risk` (a known failure mode and its mitigations — currently no entries) and protocol-doc's `example` type. There is no separate type for a chosen product rule: the rationale for a rule belongs with its subject's entry, and a reusable rule that stands on its own earns a page under an ordinary type such as `concept` or `pattern`. Add a new kind deliberately to the parent vocabulary; when upstream adds one, mirror it as part of advancing the submodule pin.
 
-**Canonical product pages speak in the product's present tense.** Concepts, capabilities, patterns, decisions, principles, risks, and references describe how the product works now and the design principle behind it, never how it got there: no prior behaviors, reversals, or retired framings in page prose. Product opportunities are the explicit planning exception: they describe a candidate improvement while making clear that it is neither current behavior nor a roadmap commitment. Git and [log.md](./log.md) hold the history; the `source:` field holds provenance. When an owner answer changes a canonical page, rewrite the page to the new present rather than narrating the correction. Draft pages carry `status: draft` in frontmatter until validated by the product owner; provenance goes in a `source:` frontmatter field pointing at the material the page was distilled from. When several same-day briefings touch one page, collapse their citations into one `+ product-owner briefings (<date>, see log.md)` tail rather than enumerating them — the log entry carries the detail.
+**Canonical product pages speak in the product's present tense.** Concepts, capabilities, patterns, principles, risks, and references describe how the product works now and the design principle behind it, never how it got there: no prior behaviors, reversals, or retired framings in page prose. Product opportunities are the explicit planning exception: they describe a candidate improvement while making clear that it is neither current behavior nor a roadmap commitment. Git and [log.md](./internal/maintenance/log.md) hold the history; the `source:` field holds provenance. When an owner answer changes a canonical page, rewrite the page to the new present rather than narrating the correction. Draft pages carry `status: draft` in frontmatter until validated by the product owner; provenance goes in a `source:` frontmatter field pointing at the material the page was distilled from. When several same-day briefings touch one page, collapse their citations into one `+ product-owner briefings (<date>, see log.md)` tail rather than enumerating them — the log entry carries the detail.
 
 ### Publication boundary: live product only
 
-Canonical product entries and guides document a feature only after the product owner confirms it is live. Code presence, tests, deployed infrastructure, a public endpoint, or local/preview reachability does not establish product availability; nor may a feature flag downgrade a feature the owner confirms is live. `status: draft` describes the review state of a documentation page, not the rollout state of the feature it covers. A live but team-assisted capability may be documented as partially supported; that is distinct from a partially implemented feature, which stays out of the product graph.
+**Release notes are inputs to the wiki, never the framing of a product article.** Keep release-note citations, version-by-version audit narration, and disputes between source snapshots in `source:` metadata and `internal/maintenance/log.md`. Canonical prose explains current behavior directly and links to the wiki pages that own related concepts. Describe the supported route and the constraints needed to use it; do not turn an article into an inventory of absent services, monitoring, or recovery support. Bespoke deployments do not require a shared address catalogue or an authoritative frozen revision to explain the capability.
 
-In-development, partially implemented, dark-launched, and local/preview-only features stay outside canonical pages, guides, and documentation tasks until they launch. [Product scope exclusions](./product-scope-exclusions.md) is the source of truth for the current list: add a row when the owner rules a source surface not live, state the evidence-independent product state and the event that will reopen it, and remove the row when the owner confirms launch. Do not turn an exclusion into current product truth or a roadmap promise.
+Canonical product entries and guides document a feature only after the product owner confirms it is live. Code presence, tests, deployed infrastructure, a public endpoint, or local/preview reachability does not establish product availability; nor may a feature flag downgrade a feature the owner confirms is live. `status: draft` describes the review state of a documentation page, not the rollout state of the feature it covers. A live capability with an app-supported experience and deployment carried out by Aragon follows the Aragon-deployed plugin model; its supported audience must still be established separately under [Client-specific integrations](#client-specific-integrations). A partially implemented feature stays out of the product graph until launch.
 
-Unused, incomplete, or misleading code attached to a live feature is not automatically a scope exclusion. When it suggests a concrete product or implementation improvement, create a `type: opportunity` entry and list it on [Product opportunities](./product-opportunities.md); if it also concerns an excluded surface, link the candidate from that surface's **Product opportunity** column. Code presence and product state remain separate decisions.
+In-development, partially implemented, dark-launched, and local/preview-only features stay outside canonical pages, guides, and documentation tasks until they launch. [Product scope exclusions](./internal/maintenance/product-scope-exclusions.md) is the source of truth for the current list: add a row when the owner rules a source surface not live, state the evidence-independent product state and the event that will reopen it, and remove the row when the owner confirms launch. Do not turn an exclusion into current product truth or a roadmap promise.
+
+Unused, incomplete, or misleading code attached to a live feature is not automatically a scope exclusion. When it suggests a concrete product or implementation improvement, create a `type: opportunity` entry and list it on [Product opportunities](./internal/product-opportunities/backlog.md); if it also concerns an excluded surface, link the candidate from that surface's **Product opportunity** column. Code presence and product state remain separate decisions.
+
+### Client-specific integrations
+
+**Classify audience, rollout, and deployment separately.** Work commissioned for a named client stays scoped to that client even when it reuses a general capability, ships in the shared app, or uses Aragon deployment. Launch does not establish availability to other clients. Technical compatibility, a shared registry, and a renderer's presence cannot establish a general product offering.
+
+[Client-specific integrations](./internal/maintenance/client-specific-integrations.md) records the owner-established audience, covered source surfaces, documentation homes, and any limits on coverage. Check it alongside [Product scope exclusions](./internal/maintenance/product-scope-exclusions.md) before source mining, release reconciliation, authoring, and review. Exclusions remain authoritative for not-live surfaces; a client scope ruling alone neither adds nor removes an exclusion. Record an explicit owner-authorized prelaunch example and its permitted depth without treating that exception as permission to expand it.
+
+File substantive client-specific behavior in a named-client entry under its product area, linked to the shared capability. Keep the ordinary `type`, and add `scope: client-specific` and `client: <lowercase-client-slug>` so dedicated entries can be queried. Do not mark an entire shared page as client-specific because it contains one example: keep a brief example or catalogue subsection visibly named for the client and register that exact home. Shared pages explain shared behavior and link to client integrations; avoid duplicating the client's business rules there. Every client-specific page opening, catalogue subsection, guide prerequisite, and navigation label must retain the client scope when read independently. Assistant retrieval and summaries must preserve that scope too.
+
+When reviewing a client integration, verify behavior and audience as distinct claims. Apply existing owner rulings without asking again; route only a material missing scope decision through a finite task. Broaden the documented supported audience only after the owner explicitly confirms that audience has expanded, then update the register and affected pages together. Documentation depth follows the publication boundary and any explicit coverage restriction; it can change while the supported audience stays the same. Keep review status independent: a source check or scope correction does not approve a draft.
 
 ## Structure
 
-A product's canonical pages live in two physical layers: **graph pages (concept/capability/pattern/decision/principle/risk/reference) filed by area**, and the **user-facing `guides/` layer** beside them. Opportunity entries are an area-filed planning overlay, navigated through their root board rather than the canonical area maps. Task entries live in `tasks/`, not in the areas: a task is transient documentation *work*, not product knowledge, and it is retired on completion. Each area is a folder with its own `index.md`; every new area-owned canonical page is filed into the area it belongs to. The load-bearing principle collection described below is the deliberate cross-cutting exception. The root is not a dumping ground: it carries the front-door `index.md`, the general-purpose [principles](./principles.md) overview and its expanded entries under `principles/`, the [value proposition](./value-proposition.md), [repositories](./repositories.md), and [product scope exclusions](./product-scope-exclusions.md) pages, the [documentation backlog](./backlog.md), [Product opportunities](./product-opportunities.md), `tasks/`, `inbox/`, `raw/`, `log.md`, and the read-only `protocol-doc/` upstream submodule. An owner-private `research/` workspace may also sit here locally, but it is outside the portable knowledge base.
+Product entries are filed by subject, with user guides beside them. Internal material has one separate home, organized by its purpose:
 
-```
+```text
 platform-doc/
-├── index.md                    # front door: intro + links to guides and each area's key pages
-├── principles.md               (type: concept)   load-bearing overview of the platform's principle set
-├── principles/                 # expanded entries from that specific principle set, not a generic type folder
-│   └── honest-abstraction.md   (type: principle)
-├── value-proposition.md        (type: concept)   general-purpose: what the product promises
-├── repositories.md             (type: reference) general-purpose: the source repos
-├── product-scope-exclusions.md (type: reference) current implemented surfaces excluded until live
-├── backlog.md                  (type: note)      the authored documentation review board
-├── product-opportunities.md    (type: note)      product-improvement intake and ticketing board
-│
-├── protocol-doc/               # read-only upstream submodule; indexed into the composite graph
-│   ├── index.md                # upstream protocol front door
-│   └── ...                     # protocol concepts, references, examples, and guides
-│
-├── tasks/                      # task entries (type: task), one file per task; ordered by the backlog's rows, no index.md of its own
-│   └── compare-stage-against-spp.md   (type: task)
-│
-├── guides/                     # user-facing how-tos (type: guide): the only layer not area-filed
-│   ├── index.md                # available guides, organized by user goal
-│   └── multisigs-in-advanced-governance.md
-│
-├── accounts/                   # an AREA: what a reader looks under (never a type)
-│   ├── index.md                # area map: what's here + where to start
-│   ├── account.md              (type: concept)     one area mixes types:
-│   ├── account-creation.md     (type: capability)  concepts, capabilities,
-│   ├── admin-plugin-by-default.md  (type: decision)  decisions, risks
-│   └── last-process-removal.md     (type: decision)
-│
-├── governance/                 # an AREA
-│   ├── index.md
-│   ├── process.md              (type: concept)     related but DISTINCT pages
-│   ├── body.md                 (type: concept)     co-located and linked, never merged
-│   ├── proposal.md             (type: concept)
-│   └── governance-designer.md  (type: capability)
-│
-├── treasury/                   # an AREA
-│   ├── index.md
-│   ├── vault.md                (type: concept)
-│   ├── assets.md               (type: capability)
-│   └── transactions.md         (type: capability)
-│
-├── access-control/             # an AREA
-│   ├── index.md
-│   └── scoped-authority.md     (type: concept)
-│
-├── design/                     # an AREA: the pattern library
-│   ├── index.md
-│   ├── full-screen-wizard.md   (type: pattern)
-│   └── dialog-taxonomy.md      (type: pattern)
-│
-├── inbox/                      # cleaned owner/source captures (committed, index-ignored; see The inbox)
-├── raw/                        # raw source captures (git-ignored, not wiki entries; see Ingesting)
-├── research/                   # owner-private local research (git-ignored and index-ignored)
-└── log.md                      # dated record of enrichment / sync passes (see Ingesting)
+├── index.md                         # product front door
+├── value-proposition.md
+├── osx-and-the-platform.md
+├── accounts/
+├── application/
+├── governance/
+├── treasury/
+├── access-control/
+├── guides/
+├── internal/
+│   ├── index.md                     # contributor front door
+│   ├── design/
+│   │   ├── index.md
+│   │   ├── principles.md           # typed overview
+│   │   ├── principles/             # expanded principles
+│   │   └── ...                     # patterns and design references
+│   ├── maintenance/
+│   │   ├── index.md
+│   │   ├── backlog.md              # authored documentation board
+│   │   ├── tasks/                  # finite documentation work
+│   │   ├── log.md
+│   │   ├── app-release-state.md
+│   │   ├── product-scope-exclusions.md
+│   │   └── ...                     # audits and source references
+│   └── product-opportunities/
+│       ├── backlog.md              # authored product-intake board
+│       └── ...                     # temporary opportunity entries
+├── protocol-doc/                    # read-only upstream
+├── AGENTS.md, WORKFLOW.md, voice.md  # ignored operating documents
+└── inbox/, raw/, research/          # excluded source/private workspaces
 ```
 
-**Principles are a load-bearing collection.** [principles.md](./principles.md) owns the authoritative set and the short statement of every platform principle. When one principle accumulates enough rationale, examples, or exceptions to need an atomic page, that page lives under `principles/` and links back to the overview. This is a folder for expanded parts of this specific set, not a generic folder for everything with `type: principle`; area-specific rules and patterns remain filed in their owning areas.
+**File product knowledge by area.** An area mixes concepts, capabilities, patterns and references. Shared application behavior belongs in `application/`; domain-specific behavior stays with its subject. Product-area indexes provide navigation, and guides apply the same canonical knowledge to concrete user outcomes.
 
-**File by area, from the first page.** Group by **area, not by `type`** (an area folder mixes concepts, capabilities, decisions, and risks; there is no `concepts/` folder), keep it **one level deep**, and give each area its own `index.md`. Add a new area when a real cluster appears, not before, and don't pre-build a taxonomy of empty folders past the two or three you started with. This is a browsing aid, not a boundary: pages link freely across areas (define-once-link-everywhere), and the graph, not the tree, carries the relationships. Only guides are exempt from area-filing; they live in the `guides/` layer. A genuinely tiny product (a handful of pages that won't grow) can stay flat, but the moment a second related page appears, that is its area asking to exist.
+**Keep internal collections purposeful.** Design owns reusable builder choices and component references. Maintenance owns documentation operations, evidence, source orientation, review and tasks. Product opportunities are a temporary intake collection; use tags and links to retain their product context. Both backlogs stay authored boards with `type: note`, and their entries own their own state. A task collection needs no separate index because its backlog provides navigation.
 
-**Multiple products?** Add one folder level, a folder per product (`checkout/`, `billing/`), each repeating the shape above (its own areas + `guides/` + `index.md`); the root `index.md` then links to each product. Keep it shallow either way.
+**Preserve load-bearing overviews.** [Principles](./internal/design/principles.md) remains the typed overview beside its `principles/` folder. A multi-part audit likewise has a typed parent beside its parts folder. Collection indexes remain untyped. Keep these meaningful parts together; the `internal/` boundary adds one necessary level without creating extra topic hierarchies.
+
+Use relative links across these homes and define each subject once. Add a new area only when a real cluster warrants it.
 
 ## The entry point (`index.md`)
 
@@ -159,9 +196,9 @@ A reader (or an agent) lands on `index.md`. Make it the front door, hand-curated
 
 - An introduction to the product.
 - Links to the **guides** (if any), for people who arrive with a concrete task to accomplish in Aragon.
-- Orientation and links to the **key concepts** for readers who want to understand or change the product (the handful of pages the rest of the graph hangs off).
+- Orientation and links to the **key concepts** for readers who want to understand the product (the handful of pages the rest of the graph hangs off).
 
-Keep the two routes distinct: guides serve platform users pursuing an outcome; the index's orientation and concept links serve people navigating the product model. Keep `index.md` to the important starting points, not every page, that is what queries are for.
+Keep the two routes distinct: guides serve platform users pursuing an outcome; the index's orientation and concept links serve people navigating the product model. Keep `index.md` to the important product starting points. Builder and documentation routes start at [internal navigation](./internal/index.md), which preserves the full contributor route without mixing it into the product front door.
 
 ## Concepts: the graph
 
@@ -173,6 +210,22 @@ Each concept is **one atomic idea**, defined **once**, and linked to what it rel
 - **concept vs reference**: a `concept` explains an idea ("what idempotency is, and why"); a `reference` is precise lookup material ("the `/charges` endpoint and its fields"). Same graph, different texture. Split them when readers want "understand" apart from "look up"; merge them if that is overkill.
 
 `wiki unresolved` is your **to-write list**: a link to a concept you haven't written yet is not an error, it is a promise. Writing docs is largely turning `unresolved` into pages.
+
+## Authoring and revising pages
+
+Let the reader's product question determine what the page explains. Establish its contribution to the graph: what the reader should understand, decide, look up, or accomplish here, and which related entries already own the surrounding ideas. This guides the writing; it does not need an editorial statement in the page.
+
+Choose an opening and structure that serve that question. A concept usually needs a direct definition and its relationships; a capability needs the purpose it serves and how it works; a principle needs the rule and its rationale; a reference needs lookup context; a guide needs an actionable route to an outcome. These are starting points, not a shared outline or a requirement to include every kind of explanation. Order and depth should follow the dependencies in the explanation. Group related claims under meaningful headings, and use a table when it makes real alternatives or properties easier to compare.
+
+Explain supported benefits through what people can do and why it matters. Keep concrete examples when they make an abstraction, causal relationship, or material distinction understandable; brevity alone is not a reason to remove them. Apply the [product-content boundary](#product-content-and-documentation-operations) to decide which mechanics and limits belong. Removing an editorial label or vague praise should preserve the useful feature purpose beneath it. For a small edit, work within the existing purpose and structure unless the change exposes a problem there; do not reopen the whole page by default.
+
+After moving, consolidating, or removing sections, close the structural loop: re-evaluate each affected page’s purpose against its remaining content and neighbouring homes. Record a final keep, narrow, merge, split, or retire verdict and apply it. An initial purpose is a hypothesis, not a reason to preserve a filename; a short page can still own a distinct concept, and a long page can still be redundant. Repeat the comparison for affected neighbours until the section homes and page purposes support one another. Keep these judgments in the audit inventory, not product prose.
+
+## Application-page coverage
+
+Every live application page needs one clear documentation home: a named section in the concept or capability it presents, or a dedicated entry when its purpose and behavior warrant one. Use the application's page name for that section or entry. Explain the page's user purpose, the information it presents, the actions it supports, and the context needed to interpret it. Link to the concepts and capabilities behind those actions rather than repeating their full definitions. Page coverage does not require a field-by-field catalogue, source-code walkthrough, or an entry for every route variant.
+
+Keep product explanations in those canonical homes. A finite coverage audit maps the live application pages to their entries or heading anchors in a maintenance inventory, records exclusions using the established product-scope rules, and routes missing coverage through tasks. The page-to-document map and audit progress stay outside product prose.
 
 ## Guides: accomplishing tasks in Aragon
 
@@ -203,9 +256,9 @@ Docs are usually distilled from **source material**: source code, specs, tickets
    **Direct product-owner briefings belong in `inbox/`, not `raw/`.** They are committed source material supplied by the owner and cannot be regenerated by re-reading a repository or document. Before saving one, clean up the wording and structure it into a coherent, readable capture while preserving every claim and its substance; do not put raw verbal notes or an unedited transcript in the bundle. Preserve the cleaned capture there until deliberately processed.
 2. **Build incrementally, from `raw/`.** Promote the raw notes into concept/reference entries a few at a time: write one atomic page, **file it into its area folder** (see *Structure*) rather than leaving everything at the root, link it to what exists, `wiki check`, then **delete the raw note you just mined** (or the lines of it you used) and repeat. `raw/` is thus a shrinking worklist: an empty `raw/` means the batch is done. (A `- [ ]` checkbox inside a raw note would track this too, but `wiki checkboxes` can't see `raw/` since it is unindexed, so deleting is the clearer signal.) Small batches keep the graph consistent and reviewable, and let `wiki unresolved` guide you, each concept you write names others, and those names become your next to-write items. Prefer this over a single massive dump: a hundred pages landed at once are unlinked, unreviewed, and dumped flat at the root.
 
-Keep **provenance**: link a concept back to where it came from (a `type: source` entry, or a `source:` / `resource:` field), so a fact can be re-checked against the source later.
+Keep **provenance** in a `source:` / `resource:` field or an appropriate source reference so a fact can be re-checked later. Unqualified `log.md` citations in existing source metadata refer to `internal/maintenance/log.md`; historical capture paths retain their original meaning. These references trace the evidence for a claim; they do not require a named decision maker or decision date to establish product behavior. Apply the product-content boundary when promoting material: publish the supported product explanation, retain the research history in provenance and the log, and route material unfinished work to tasks.
 
-**Record each pass in `log.md`, dated and high-level.** One dated line per enrichment or sync pass (what source you covered, roughly what you added), not one per edit, git already holds the fine detail. On the next pass, read the last date and re-sync only what changed in the source since then, rather than re-deriving everything. For docs kept in step with a moving product, that dated, high-level trail is what makes incremental sync cheap.
+**Record each pass in `internal/maintenance/log.md`, dated and high-level.** One dated line per enrichment or sync pass (what source you covered, roughly what you added), not one per edit, git already holds the fine detail. On the next pass, read the last date and re-sync only what changed in the source since then, rather than re-deriving everything. For docs kept in step with a moving product, that dated, high-level trail is what makes incremental sync cheap.
 
 Scale the ceremony to the job: a small, well-understood product can skip `raw/` and be written directly; a large or unfamiliar one benefits from the extract-then-iterate split. Either way, the unit is the **atomic concept**, never one monster page.
 
@@ -217,7 +270,7 @@ Handling rules:
 
 - **Everything in the inbox is a draft by definition** — unindexed, unreviewed, possibly contradictory or duplicating the wiki. Never treat inbox content as established fact, and never link wiki entries into `inbox/`.
 - **Do not read, reference, or process the inbox unless the product owner explicitly requests it.** It can grow large, and processing it is deliberate, time-consuming work — a requested task of its own, never a side effect of answering a question or writing a page.
-- **When asked to process it**, run the normal capture → refine → promote loop: mine an item into atomic entries (filed by area, linked in, `status: draft` until validated), `wiki check`, then **delete the mined material from the inbox** — like `raw/`, it is a shrinking worklist, and deletion is the "done" signal. Record the pass in `log.md`.
+- **When asked to process it**, run the normal capture → refine → promote loop: mine an item into atomic entries (filed by area, linked in, `status: draft` until validated), `wiki check`, then **delete the mined material from the inbox** — like `raw/`, it is a shrinking worklist, and deletion is the "done" signal. Record the pass in `internal/maintenance/log.md`.
 
 ## Personal research
 
@@ -225,7 +278,7 @@ Handling rules:
 
 - **Do not read, reference, or process `research/` unless the product owner explicitly requests it.** Personal research is not an ambient source for ordinary wiki work.
 - **The boundary is one-way.** Private research may link outward to portable wiki entries for local navigation; committed entries, boards, tasks, and logs never link inward to private paths. Personal review work stays on `research/index.md`, not the documentation backlog.
-- **Promote conclusions, never private paths.** When research produces durable platform knowledge, rewrite that conclusion into the normal area-filed entry or opportunity and give it portable provenance. Do not cite a local `research/` path that other clones cannot resolve.
+- **Promote conclusions, never private paths.** When research produces durable platform knowledge, rewrite that conclusion into a product entry in its area or an opportunity under `internal/product-opportunities/`, and give it portable provenance. Do not cite a local `research/` path that other clones cannot resolve.
 - Git cannot recover or synchronize ignored files. If the material starts needing history, backup, or sharing, move the research workspace into its own private repository rather than weakening this boundary.
 
 ## Degraded mode: no `wiki` CLI
@@ -242,24 +295,26 @@ Read-only work — answering questions from the base — stays fine without the 
 
 ## Documentation review: the backlog and open questions
 
-The product owner needs **one place to go** to find documentation work waiting on them: **[backlog.md](./backlog.md)** at the root. It is an authored board (agents keep it current, `wiki` never edits it), and it is organized by **who moves next** rather than by what kind of record sits underneath: **Ready for your input** (owner work that is actionable now), **Ready to run** (agent work that is actionable now), **Not yet ready** (truly blocked work that neither actor can move, each row naming the state that would change that), and **Inventories** (the supporting drafts, page-questions, and unwritten-pages lists, kept discoverable but out of the action flow). Product-improvement candidates are deliberately routed to [Product opportunities](./product-opportunities.md) instead.
+The product owner needs **one place to go** to find documentation work waiting on them: **[backlog.md](./internal/maintenance/backlog.md)** under maintenance. It is an authored board (agents keep it current, `wiki` never edits it), organized by **who moves next**: **Ready for your input** (owner tasks actionable now), **Ready to run** (agent tasks actionable now), **Not yet ready** (tasks with an external prerequisite), and **Inventories** (supporting release state, drafts, task-owned questions, and unwritten pages). Every unfinished documentation action has a task entry and one row in its actor's section. Product-improvement candidates follow [Product opportunities](./internal/product-opportunities/backlog.md).
 
 **Two rules keep that model from decaying.** *One item, one row, one section* — the section mirrors `next_actor`, so owner-actionable work sits in *Ready for your input*, agent-actionable work sits in *Ready to run*, and `status: blocked` work sits in *Not yet ready*. A task awaiting an answer, review, approval, or walkthrough the owner can provide now is **ready owner work, not blocked work**. *Position is the priority* — both actionable sections are deliberately ordered, and no second scheme is layered on top: no Now/Next/Later bands, no priority field, no impact labels, no unexplained markers. Every row instead carries a sentence saying why it is there, what it produces, and which surfaces it affects; a truly blocked row names the external state that must change. If an ordering needs justifying, that sentence is where the justification goes.
 
-**Anything the owner can move now is a row in *Ready for your input*** — an answer a page's open question needs, a task whose next action is an owner review or ruling, a knowledge gap's standing ask for source material, or the standing draft review. An agent that creates an owner ask during a pass puts it there before the pass ends; the session's closing message only mirrors the board and never carries an ask the board lacks. Reading that one section is therefore always sufficient — nothing actionable lives only in a conversation. The query for task-shaped owner work is `wiki list --where type=task --where status=ready --where next_actor=owner`; `status=blocked` is never a synonym for “waiting on the owner.”
+**Anything the owner can move now has a task row in *Ready for your input*** — an answer, bounded review or ruling, or request for source material. An agent that creates an owner ask puts its task there before the pass ends; the session's closing message mirrors the board. `wiki list --where type=task --where status=ready --where next_actor=owner` finds actionable owner tasks; `status=blocked` is never a synonym for “waiting on the owner.” Reviews name a finite cohort or completion boundary, not an endless standing task.
 
-The underlying state always lives on the pages (or the entries), never on the board — with one exception:
+The underlying state lives on the pages or task entries; the board owns navigation and ordering:
 
 - **A page needing review** carries `status: draft` in frontmatter. The board's drafts inventory lists it with a plain link while that status holds; `wiki list --where status=draft` is the authoritative query that inventory must reconcile with, and it is exhaustive: material under an ignored path (the owner's private `research/` workspace) stays off the board entirely rather than being listed as an exception.
-- **An open question** lives *on the page it belongs to*, under a `## Open questions` heading, as a `- [ ]` checkbox item — contextualized where a reader needs it, and aggregated across the base by `wiki checkboxes` — read that aggregate minus the read-only `protocol-doc/` subtree, whose upstream checklists are procedural steps, not owner questions (`--prefix` scopes in, not out, so the exclusion is by eye or by prefix-scoping the platform folders). The board never copies the full list; the handful that block most are promoted to input rows, and the rest are answered as their pages come up for review. **An open question is only ever a genuine question — something a person (the owner, a customer) must answer.** Work an agent could execute is a task, and never a page checkbox.
-- **A task** is a first-class entry in `tasks/` that owns its state in frontmatter; the board gives it one row, which owns only the ordering and the reason (see *Tasks*).
-- **A knowledge gap** is the one exception: it lives *only* on the board, as an input row — a gap has no page to live on, and only source material closes it, which is what makes the owner the next actor.
+- **An unresolved documentation question** belongs in a finite task, even when it concerns one existing page. Follow [Resolve before routing](#product-content-and-documentation-operations) to preserve its context and avoid reviving answered questions or duplicating existing work. The task's `## Work` bullets hold the question; its `status` and `next_actor` identify who can move.
+- **A task** is a first-class entry in `internal/maintenance/tasks/` that owns its state in frontmatter; the board gives it one row, which owns only the ordering and the reason (see *Tasks*).
+- **A knowledge gap** is tracked by a finite task to obtain the missing structural understanding. Its task states what cannot yet be documented, what source material would close the gap, and who can supply or research it.
+
+Use task queries to find documentation questions. `wiki checkboxes` inventories procedural steps; product pages and tasks do not carry documentation-question checkboxes or `## Open questions` sections.
 
 ### Tasks
 
 A **task** is finite documentation work for one named next actor: the owner may review a ledger or settle a bounded ruling, while an agent may analyze a codebase, compare a page against a repo, build an inventory, or ground a taxonomy in a component library. Tasks are how both actors see **what they can do next**; knowledge gaps separately show what source material the owner can supply.
 
-**One entry per task.** Each task is a first-class entry in `tasks/` (`type: task`) — AGENTS.md's native track-work model — so the work carries its full context instead of compressing into a board paragraph. Frontmatter: `title`, `tags` (area + cross-cutting, e.g. `maintenance`), `status` (`ready` | `in-progress` | `blocked`), `next_actor` (`owner` | `agent` | `none`), and `source` (who commissioned it, when). No `priority` field, no impact rating, and no dates: the board's order is the priority, and git carries time. A task names a **concrete, finite outcome** — never a standing process; recurring work gets a fresh task per run. A task never sits on a page as an `## Open questions` checkbox; a checkbox that turns out to be a task in disguise ("ground X in the code", "compare Y against Z") becomes a task entry and leaves the page.
+**One entry per task.** Each task is a first-class entry in `internal/maintenance/tasks/` (`type: task`) — AGENTS.md's native track-work model — so the work carries its full context instead of compressing into a board paragraph. Frontmatter: `title`, `tags` (area + cross-cutting, e.g. `maintenance`), `status` (`ready` | `in-progress` | `blocked`), `next_actor` (`owner` | `agent` | `none`), and `source` (the briefing, source revision, or investigation that established the work). No `priority` field, no impact rating, and no dates: the board's order is the priority, and git carries time. A task names a **concrete, finite outcome** — never a standing process; recurring work gets a fresh task per run. A task never sits on a page as an `## Open questions` checkbox; a checkbox that turns out to be a task in disguise ("ground X in the code", "compare Y against Z") becomes a task entry and leaves the page.
 
 `status` and `next_actor` answer different questions and must never be collapsed:
 
@@ -272,7 +327,7 @@ A **task** is finite documentation work for one named next actor: the owner may 
 - `## What this unblocks` — the pages waiting on the work, as links, each with what it is waiting for. These task→page links are the graph payoff: `wiki backlinks <page>` shows the pending work against a page, and the links clean themselves up when the task completes.
 - `**Next action — <actor>:**` (optional) — a one-line restatement of the immediately actionable step when the lead and `next_actor` do not make it obvious. It must match frontmatter and must not describe the actor as a blocker.
 - `**Trigger:**` (blocked tasks only) — the external event or prerequisite that makes action possible. An action the owner can perform now belongs under `## Work` or `**Next action — owner:**`, never under `Trigger`. When a trigger fires, set `status: ready` and name the actor who can move; if the firing material completes the task, run the completion sequence instead.
-- `## Work` — the remaining work as plain bullets, pruned as they complete (task files are present-tense like every entry). Each bullet is an **imperative action** — lead with the verb and the artifact it produces; keep rationale to a trailing clause. **Never checkboxes** — `wiki checkboxes` (minus `protocol-doc/`) is the owner-questions aggregate — and never an `## Open questions` section: a genuine question discovered while drafting a task belongs on the relevant page (or is the task's trigger).
+- `## Work` — the remaining work as plain bullets, pruned as they complete. Lead with the action and its outcome. Include a question or decision as an explicit work item with its context and affected-page links. **Never checkboxes or an `## Open questions` section.** When a task exposes another question, keep it in that task if it shares the outcome and next actor; otherwise route it to a bounded task with its own board row. An answer the owner can supply now is actionable work, not a blocked trigger.
 - `## Where to look` — repos, entry points, protocol-doc pages: the pointers that make the task runnable cold.
 - `## Scope boundary` — explicit non-goals, when the task needs them.
 - `## Done when` — the success criteria, one bullet per criterion, each answerable yes/no by a cold session against a named artifact (a page, a table row, a query result); the last criterion is always the completion sequence. A genuinely single-condition task may keep the inline `**Done when:** …` label instead.
@@ -284,41 +339,46 @@ A **task** is finite documentation work for one named next actor: the owner may 
 
 **Order by rework avoided, not by size.** In *Ready to run*, put work that settles shared vocabulary, a shared mechanism, or an area's framing ahead of the work that would otherwise re-invent or contradict it; product semantics ahead of the presentation layer that renders them (the three-layer rule above); cheap passes that several later rows depend on early; and scattered small-fact passes last, once the pages that will host their facts exist. Where two rows write the same page's same section, their relative order *is* the write order — say so in the later row, and have it cite the earlier row's output rather than restate it. A forward link to a page a later row will create is a promise, not an error (`wiki unresolved` tracks it), so a dependency in that direction never forces a reorder.
 
-**Only the board links into `tasks/`.** Canonical pages, indexes, and log.md never do — they name a task by plain-text slug when they must refer to one (the same one-way discipline as `inbox/` and the opportunities board). This is what keeps both safety nets honest: a task nothing links to shows up in `wiki orphans` (a board omission — provided nothing else links it, which this rule guarantees), and deleting a completed task can never strand a link into `wiki check` warnings or the `wiki unresolved` to-write list.
+**Cumulative knowledge leverage** means that completed work leaves verified facts, settled distinctions, and clear canonical homes that make later work faster and more reliable. Shared agent context can reduce setup effort, but durable reuse comes from the wiki: apply supported findings to their owning pages and affected dependants, preserve exact source revisions and evidence limits in provenance or a maintenance inventory, and record decisions and remaining uncertainty in the log and finite follow-up tasks. A later agent consumes those artifacts before repeating an investigation. An older app or UI-kit snapshot is reusable evidence, not proof of equivalent behavior in the selected release; verify the relevant difference before extending its claims. Keep independent outcomes separate even when adjacent execution lets them share source context, and state a required write order separately from a merely useful scheduling preference.
 
-**Completion is one sequence, log first:** (1) fold the close-out into the pass's dated log.md entry, naming the task by slug — what shipped, what diverged, what was deferred and to where (any `## Progress` bullets worth keeping fold in here); (2) remove its board row; (3) delete the task file; (4) the composite `wiki --root . check` gate. The log close-out is the commit point: a task file or board row that log.md already declares closed is an interrupted completion — finish the removal; it is never a board omission, and a broken board link into `tasks/` is never an unwritten page. A superseded task retires the same way, its close-out naming what replaced it. Git and log.md hold the history (the same retirement pattern as product opportunities); a deleted task's full framing stays reachable via `git log --diff-filter=D -- tasks/`.
+**Only the board links into `internal/maintenance/tasks/`.** Canonical pages, indexes, and log.md never do — they name a task by plain-text slug when they must refer to one (the same one-way discipline as `inbox/` and the opportunities board). This is what keeps both safety nets honest: a task nothing links to shows up in `wiki orphans` (a board omission — provided nothing else links it, which this rule guarantees), and deleting a completed task can never strand a link into `wiki check` warnings or the `wiki unresolved` to-write list.
+
+**Completion is one sequence, log first:** (1) fold the close-out into the pass's dated log.md entry, naming the task by slug — what shipped, what diverged, what was deferred and to where (any `## Progress` bullets worth keeping fold in here); (2) remove its board row; (3) delete the task file; (4) the composite `wiki --root . check` gate. The log close-out is the commit point: a task file or board row that log.md already declares closed is an interrupted completion — finish the removal; it is never a board omission, and a broken board link into `internal/maintenance/tasks/` is never an unwritten page. A superseded task retires the same way, its close-out naming what replaced it. Git and log.md hold the history (the same retirement pattern as product opportunities); a deleted task's full framing stays reachable via `git log --diff-filter=D -- internal/maintenance/tasks/ tasks/`.
 
 In degraded mode (no `wiki` CLI) a task commission parks as a dated `inbox/` capture like any other material — and the parking message must say the task is not yet on the board and will not surface until inbox processing is requested.
 
 ### Knowledge gaps
 
-A **knowledge gap** is a missing *structural* understanding: a whole topic, subsystem, or flow the base cannot speak about because no source material covers it. It is more than an open question — an open question refines a page that exists ("which networks are supported?"); a gap means the pages can't be written at all ("how the advanced governance flow works"). Gaps are how the owner sees **what source material to feed next** — by dumping material into `inbox/`, giving a briefing, or pointing an agent at a source to research.
+A **knowledge gap** is a missing *structural* understanding: a whole topic, subsystem, or flow cannot be documented because the necessary source material is absent. A page-local question refines existing knowledge; a gap prevents the pages from being written at all. Both have task homes. A gap task names the missing topic, the documentation it prevents, and the source handoff or research that would close it.
 
 The bar is high, and the list is curated, not performed:
 
-- **Structural understandings only, not minutiae.** If it is a genuine question that could sit as a `- [ ]` on an existing page and end in a question mark, it is an open question; if it is work to execute, it is a task entry queued on the board; a gap means the pages can't be written at all.
+- **Structural understandings only, not minutiae.** A question about an existing claim is ordinary task work. Call it a knowledge gap only when the missing understanding prevents a topic's pages from being written.
 - **Never invent gaps to appear thorough.** Add one only when writing or reading a page genuinely ran into a wall. An empty gap list is a fine state.
-- Each gap states the topic, why it is structural (what it blocks), and what source material would close it.
+- Each gap task states the topic, what it prevents, the material needed, and the next actor. Link it once from the appropriate backlog section; no separate board-only ask owns a second copy of the work.
 
 ### The loop, and the agent duties in it
 
-1. **Creating or changing a page** → make sure it is linked from the backlog's drafts inventory, its genuine unknowns are `- [ ]` items under `## Open questions`, and any executable work it surfaces becomes a task entry with its own board row instead. Once the claims and structure are correct, apply `voice.md` to reader-facing prose and run its preflight without changing the sourced meaning. Then **evaluate for gaps, in both directions**: did writing this page hit a fundamental hole in understanding (add a gap, if it clears the bar), and does the new page's content answer or narrow an existing gap (prune or adjust it)?
-2. **The owner reviews a draft** (says what's right or wrong) → apply the corrections, re-run the voice preflight on substantively rewritten reader-facing prose, remove `status: draft`, remove it from the board. If a correction changes a fact, term, or link restated elsewhere, follow `wiki backlinks` the same as step 3.
-3. **A question gets answered** → fold the answer into the page body and delete the checkbox (an answered question is content, not a checked box). If the answer exposes a possible enhancement rather than more current-product truth, promote that idea to a product opportunity instead of leaving it as a capability-page question. If the answer changes other pages, follow `wiki backlinks`.
-4. **New source material lands** (inbox processing, briefing, research pass) → after mining it, cross-reference the gap list — close what it covered, narrow what it partially covered — **and the truly blocked tasks' triggers** (`wiki list --where type=task --where status=blocked --where next_actor=none`): fire, flip, or complete each as the material warrants. Record the pass in `log.md`.
-5. **After any pass**, reconcile: every `status: draft` entry in the drafts inventory, nothing else (bar a documented unindexed draft); every `tasks/` entry has exactly one board row and vice versa; every task has a valid `status`/`next_actor` pair and its row sits in that actor's section; every row is a link, never prose; every row still explains who acts and what they do, and every truly blocked task has `next_actor: none` plus a real external trigger; no slug a log.md close-out already declares closed still has a file or a row; an `in-progress` task the current pass didn't park is an interrupted run to investigate; owner-input rows whose action is complete are removed or handed to the agent explicitly; knowledge-gap rows still honest. Then end the pass's log.md entry with a **`Board delta:`** tail — tasks added, merged, retired, or handed off (by slug, with status and next actor), owner asks added or resolved, gaps opened, closed, or narrowed; `none` when the board is untouched — so what a pass added, what can move now, and who moves it reads from the top of the log rather than from the session that ran it.
+1. **Creating or changing a page** → reconcile its review status with the drafts inventory and put every unresolved documentation question or unfinished action in a finite task with one board row. Once the claims and structure are correct, apply `voice.md` and its preflight to every added or changed paragraph without changing the sourced meaning. Then evaluate whether a missing structural understanding needs a source task, or whether the new content answers or narrows an existing task.
+2. **The owner reviews a draft** (says what's right or wrong) → apply the corrections, run the voice preflight on every added or changed reader-facing paragraph, remove `status: draft`, and remove it from the draft inventory when the review is settled. If a correction changes a fact, term, or link restated elsewhere, follow `wiki backlinks` as in step 3.
+3. **A question gets answered** → apply the supported answer to its owning page and every affected dependant, following `wiki backlinks`; preserve provenance without narrating the answer history in product prose. Retire the task only when its completion criteria are met. Route any resulting product-improvement candidate to an opportunity.
+4. **New source material lands** (inbox processing, briefing, research pass) → reconcile question and source tasks, closing what it answers and narrowing what it partially covers. Check the truly blocked tasks' triggers (`wiki list --where type=task --where status=blocked --where next_actor=none`): fire, flip, or complete each as the material warrants. Record the pass in `internal/maintenance/log.md`.
+5. **After any pass**, reconcile: every `status: draft` entry in the drafts inventory, nothing else (bar a documented unindexed draft); every `internal/maintenance/tasks/` entry has exactly one board row and vice versa; every task has a valid `status`/`next_actor` pair and its row sits in that actor's section; every row is a link, never prose; every row still explains who acts and what they do, and every truly blocked task has `next_actor: none` plus a real external trigger; no slug a log.md close-out already declares closed still has a file or a row; an `in-progress` task the current pass didn't park is an interrupted run to investigate; owner-input rows whose action is complete are removed or handed to the agent explicitly; knowledge-gap rows still honest. Then end the pass's log.md entry with a **`Board delta:`** tail — tasks added, merged, retired, or handed off (by slug, with status and next actor), owner asks added or resolved, gaps opened, closed, or narrowed; `none` when the board is untouched — so what a pass added, what can move now, and who moves it reads from the top of the log rather than from the session that ran it.
 
 ## Product opportunities
 
-Documentation sometimes exposes a possible product improvement rather than an unknown about how the product works. Those ideas live on **[product-opportunities.md](./product-opportunities.md)**, not in a capability's `## Open questions` list and not among documentation knowledge gaps.
+Documentation sometimes exposes a possible product improvement rather than an unknown about how the product works. Those ideas enter the **[product opportunity backlog](./internal/product-opportunities/backlog.md)** as temporary intake. Each candidate must be transferred to Linear or closed with a concrete relevance ruling through a finite triage task on the documentation backlog. Linear owns ongoing product planning and delivery; opportunity entries are retired when their disposition is recorded.
 
 `type: opportunity` is the explicit flag for a product improvement. A suspected bug, unused implementation, or missing route affecting a live feature belongs here when its disposition still needs investigation or ticketing; it does not become a product-scope exclusion merely because the source is incomplete or misleading.
 
-- Each distinct candidate gets one area-filed `type: opportunity` entry with `status: candidate`; do not create an `opportunities/` folder, because the product area remains its stable home.
-- The opportunity links to the current concept, capability, pattern, or decision that gives it context. The root board is its navigation surface; capability pages and area indexes do not link back, so canonical navigation stays present-tense product truth rather than an inventory of missing functionality.
+- Each distinct candidate gets one `type: opportunity` entry with `status: candidate` under `internal/product-opportunities/`. Reuse topic tags and link to the product areas it affects; do not file candidates beside current product behavior.
+- The opportunity links to the current concept, capability, or pattern that gives it context. The collection's backlog is its navigation surface; capability pages and product-area indexes do not link back, so canonical navigation stays present-tense product truth rather than an inventory of missing functionality.
 - A capability may still state a relevant user-facing scope boundary. What moves out is speculative improvement work or an implementation gap whose main value is informing product planning.
-- The root board uses plain links, grouped by area. It is not a checkbox list: `wiki checkboxes` remains the aggregate of documentation questions.
-- `status: candidate` means the idea has not become delivery work. When a product-backlog ticket is created, add its URL in a `ticket:` field, change the opportunity to `status: ticketed`, and move its board link from **Candidates** to **Ticketed** (create that section when first needed); the external tracker owns implementation state. When the change ships, fold the outcome into the canonical pages, record it in `log.md`, and retire the opportunity entry — Git and the external ticket retain the planning history.
+- The product backlog uses plain links, grouped by product area. Documentation questions and unfinished documentation work are tracked separately through task entries and their documentation-backlog rows.
+- `status: candidate` means the idea is awaiting disposition. For relevant work, create or reuse a Linear issue, preserve the story or technical task, context and benefit, constraints, provenance, and remaining investigation, and verify the transfer. Record the original opportunity path and Linear URL in `internal/maintenance/log.md`, then remove the board row, resolve remaining backlinks, and delete the opportunity file. Retire the local record at transfer; implementation continues in Linear.
+- Close irrelevant work with a concrete reason and supporting evidence or owner ruling in `internal/maintenance/log.md`, then remove its board row and file after checking backlinks. Git and the log preserve the disposition. Low priority alone does not establish irrelevance.
+- A `ticket:` URL or `status: ticketed` left by an interrupted transfer is a cue to verify the handoff and finish retirement, not a standing local delivery queue. When an improvement ships, reconcile the verified outcome into the canonical pages through the normal release/documentation workflow.
+- Every intake batch has a finite backlog task with a fixed cohort and a transfer-or-close completion boundary. Add new candidates to an appropriate pending triage task or commission a new bounded batch; do not keep an open-ended standing task. Keep the product board available as intake when empty.
 - Query unticketed candidates with `wiki list --where type=opportunity --where status=candidate`.
 
 ## Grooming
@@ -350,6 +410,28 @@ wiki list --prefix checkout/                               # everything for one 
 - **"What is an idempotency key?"**: `wiki search "idempotency key"`, then `wiki read` the concept (every word by default; `--any` broadens, `--exact` matches the phrase).
 - **"What must I understand first?"**: `wiki links <page>` (its prerequisites) and `wiki backlinks <page>` (what builds on it).
 - **"What's missing or unreachable?"**: `wiki unresolved` (unwritten) plus `wiki orphans` (unlinked).
+
+### Routing product questions
+
+Use [Getting help](./application/getting-help.md) as the canonical service and contact reference. The rules below apply to agents answering users; keep the product explanations in their existing reader-facing homes so retrieval does not depend on loading internal design guidance.
+
+| Request | Answer route |
+| --- | --- |
+| A goal beyond the standard platform capabilities | Check the relevant capability and [Aragon-deployed catalogue](./application/aragon-deployed-plugins.md) first. If the requirement needs new work, explain that Aragon offers custom development and provide the contact link from Getting help. Describe it as work to discuss and scope, without promising support or delivery. A missing search result alone does not establish that a feature is absent. |
+| An existing capability deployed by Aragon | Explain what is supported after deployment, state the absence of self-service setup in the app, and provide the contact link. Use the catalogue and capability page for the configuration boundary; preserve client-specific availability. Contract-level deployment instructions do not establish a supported app setup flow. |
+| Governance advice, configuration choices, or deployment planning | Give the relevant documented explanation and offer Aragon's paid governance advisory, including workshops, with the contact link. Name the decision the team can help with. General explanations do not establish that a particular configuration is safe or suitable. |
+| An OSx question | Start with [Aragon OSx and the platform](./osx-and-the-platform.md). Answer at that level where sufficient; for deeper mechanics, follow its [protocol reference](./osx-and-the-platform.md#protocol-reference), read the relevant upstream page or section, and link to that specific destination. A technical question alone does not require a services referral; add one when the request also involves custom work, team deployment, or advisory. |
+| An app problem or ordinary product-support request | Use the support-portal route in Getting help. |
+
+For a services referral, include the actual external contact URL and a short description of what to ask for, using the project's stated goal and any known account, chain, or configuration. The reader supplies that context in the form; opening a contact link does not submit a request or book a workshop. Keep the published contact destination in Getting help and retrieve it from there.
+
+### Links in answers outside the checkout
+
+The OSx page pairs graph-checked local topic links with public GitHub pages. Use those routes to select the subject, then follow to the most specific entry or heading that answers the question. Avoid returning only the whole protocol index when a more precise destination is known.
+
+For an external answer grounded in the pinned protocol snapshot, resolve a local `protocol-doc/<path>.md#<heading>` target to `https://github.com/aragon/protocol-doc/blob/<pinned-sha>/<path>.md#<heading>`. Obtain the SHA from the submodule pin recorded in [Protocol snapshot](./internal/maintenance/index.md#protocol-snapshot); normalize the path relative to `protocol-doc/` and preserve a verified heading fragment. For example, the local permission-system heading `protocol-doc/core/permissions.md#how-a-decision-is-made` maps to the same file and fragment below that GitHub base. Verify that the repository and destination are accessible before presenting the link.
+
+The shareable `main` links on the OSx page follow the public documentation branch. Check them separately from `wiki check`, including their correspondence to the pinned content when refreshing them. Keep local submodule links as the canonical graph edges. Once a developer portal publishes these references, verify its actual page and anchor mapping before replacing the external destinations; do not invent portal routes or assume that an existing documentation site serves this bundle. Change the public link mapping without restructuring or copying the protocol entries into platform-doc.
 
 ## Make it yours
 

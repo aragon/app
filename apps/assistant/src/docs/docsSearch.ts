@@ -78,9 +78,11 @@ export const searchResultLimit = 5;
 // so with the default the "hybrid" search was full-text only (a Spanish query found nothing).
 // The floor only keeps noise out; the candidate limit and the reranker pick the answer.
 export const vectorSimilarityFloor = 0.3;
-// A hit's excerpt is the passage clipped to about 400 tokens; the model reads the page with
-// readDoc when it needs more.
-export const excerptMaxChars = 1500;
+// A hit's excerpt is the passage clipped to about 600 tokens; the model reads the page with
+// readDoc when it needs more. Wide enough for a whole reference table: at 1,500 the supported
+// chains table lost its last rows and the answer named twelve chains out of fourteen, the model
+// having no reason to read a page whose excerpt looked complete.
+export const excerptMaxChars = 2500;
 
 const excerptEllipsis = ' …';
 

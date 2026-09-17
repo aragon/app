@@ -1,0 +1,8 @@
+---
+"@aragon/assistant": minor
+"@aragon/assistant-contracts": minor
+---
+
+Refresh the support assistant's product knowledge and how it answers from it. The `platform-doc` subtree is synced to upstream `cc6f0ca`, and the corpus loader now leaves the base's `internal/` folder out (builder guidance, design principles, maintenance and product opportunities, excluded from user-facing content by the base's own workflow) and rewrites page links for a reader outside the wiki: a relative link into `protocol-doc/` becomes the public GitHub page of that file, any other relative link keeps its text only. The prompt lets the agent pass those GitHub links on for a technical protocol question, after a high-level answer, and names the three cases in which it points to Aragon's contact form — custom development for what the platform does not offer, deployment by the team for capabilities without self-service setup, paid governance advisory for governance design questions. It never talks about its documentation or its sources, says "I don't know" when it does not know, and calls the product Aragon, never "Aragon App". Contracts: a message may be up to 8,000 characters (was 4,000), the same limit the widget now applies in the composer.
+
+The agent model moves from `deepseek/deepseek-v4-flash` to `deepseek/deepseek-v4.1-flash`, served by the DeepSeek host first and Together AI second instead of Fireworks, which drops v4-flash on 2026-09-25: in a ten-scenario sweep the new model kept every prose rule the old one broke and answered in 4–6.5 s instead of 8–15 s. Search excerpts grow from 1,500 to 2,500 characters so a reference table reaches the model whole.

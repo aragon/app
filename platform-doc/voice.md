@@ -2,26 +2,28 @@
 schema_version: "1.0"
 document_type: voice
 voice_id: aragon-platform-doc
-policy_version: "1.1.0"
+policy_version: "1.4.1"
 scope: platform-doc
 locales:
   - en-US
 status: active
 owner: Aragon product team
-last_reviewed: "2026-08-05"
+last_reviewed: "2026-09-15"
 references:
   - ./WORKFLOW.md
-  - ./principles.md
+  - ./internal/design/principles.md
   - ./accounts/account.md
 ---
 
 # Voice
 
+For prose work, read the contract, operational summary, rules, and preflight. Consult the relevant surface, terminology, examples, and references as the subject requires; reuse guidance already loaded in the session unless it has changed. Page purpose and structure belong to [WORKFLOW.md](./WORKFLOW.md#authoring-and-revising-pages).
+
 ## 1. Contract
 
 ### Applies to
 
-- Reader-facing prose in canonical platform entries: concepts, capabilities, patterns, decisions, principles, risks, and references.
+- Reader-facing prose in canonical platform entries: concepts, capabilities, patterns, principles, risks, and references.
 - Platform guides and the reader-facing parts of root, area, and guide indexes.
 - Product-opportunity entries and their board copy, with the planning modulation below.
 - Prose created when source material is promoted from `raw/`, `inbox/`, or requested research into a wiki entry.
@@ -47,8 +49,8 @@ references:
 
 ### Normative language
 
-- **MUST / MUST NOT:** deterministic constraint. A violation blocks completion of the affected prose.
-- **SHOULD / SHOULD NOT:** strong preference. Depart only when a more specific rule, source constraint, or explicit task requires it.
+- **MUST / MUST NOT:** requirement. A violation blocks completion of the affected prose; many requirements need semantic judgment rather than an automated check.
+- **SHOULD / SHOULD NOT:** default preference. Use judgment when another form better serves the reader's question, clarity, or accuracy while respecting requirements.
 - **MAY:** optional behavior.
 
 ### Activation and fallback
@@ -59,7 +61,7 @@ When no surface rule matches, use the global rules. When equally specific rules 
 
 ## 2. Operational summary
 
-Explain the Aragon platform as a precise product model: define the thing, state what it enables or changes, and connect it to protocol mechanics only when those mechanics affect the reader's understanding. Write with calm confidence and high information density, without promotional inflation or assumed familiarity. Start from the reader's goal in guides and from the product object in canonical pages; make limits and consequences visible before they can surprise the reader.
+Explain the Aragon platform through product meaning, purpose, and consequences. Answer the reader's central question directly, then build the explanation with enough context to understand it. State what a capability enables in concrete terms; connect it to mechanics when they affect understanding or a decision. Write with calm confidence, without promotional inflation or assumed familiarity. Preserve useful examples and supported benefits, and qualify claims where material limits apply. Follow the page's purpose rather than a universal outline.
 
 ## 3. Core dimensions
 
@@ -68,7 +70,7 @@ Explain the Aragon platform as a precise product model: define the thing, state 
 | `V-D01` | Semantic precision | Give each product object one stable meaning and distinguish adjacent concepts. | Do not collapse product abstractions into protocol primitives or use near-synonyms casually. | Definition before elaboration; canonical terms; contrasts only where they resolve a real ambiguity; links to the owning concept. |
 | `V-D02` | Honest abstraction | Expose the product-level model while preserving the route to relevant onchain facts. | Neither front-load implementation detail nor hide a detail that changes a decision, limit, or consequence. | Product meaning first; mechanism linked; limits and uncertainty stated where they matter. |
 | `V-D03` | Calm utility | Help the reader understand or act without hype, pressure, or condescension. | Do not advertise, dramatize, or minimize the reader's work. | Direct verbs; neutral claims; unsupported praise absent; no “easy” or “obvious” framing. |
-| `V-D04` | Deliberate structure | Make the page's purpose and the relationship between its claims visible on a scan. | Do not turn every sentence into a heading or every paragraph into a list. | Outcome- or definition-led opening; descriptive headings; one main claim per paragraph; lists only for real sets or sequences. |
+| `V-D04` | Deliberate structure | Make the page's purpose and the relationship between its claims visible on a scan. | Do not turn every sentence into a heading or every paragraph into a list. | Opening answers the reader's question; descriptive headings; connected paragraphs; lists and tables for real sets, comparisons, or sequences. |
 
 ## 4. Rules
 
@@ -77,7 +79,7 @@ Use one observable instruction per row. Hard constraints stay separate from pref
 | ID | Level | Scope | Category | Instruction | Rationale | Deterministic check |
 |---|---|---|---|---|---|---|
 | `V-R001` | MUST | global | accuracy | State current behavior in the present tense and qualify any availability, support, or evidence limit at the point it affects the claim. | Readers must be able to distinguish product truth from a partial or conditional route. | `—` |
-| `V-R002` | MUST | canonical | opening | Open with a direct definition of the page's object before its history, rationale, implementation, or examples. | A graph reader may land on the page without prior context. | `—` |
+| `V-R002` | MUST | canonical | opening | Answer the page's central product question at the opening, with enough context for a reader arriving from elsewhere. | Concepts, capabilities, principles, and references serve different questions; each needs a clear starting point. | `—` |
 | `V-R003` | MUST | guide | task framing | Open with the outcome and place prerequisites or availability limits before the first action. | A user should know whether the guide fits before investing effort. | `—` |
 | `V-R004` | MUST | global | terminology | Use the canonical product term for the layer being described and preserve exact technical names in code formatting. | Layer-aware vocabulary is part of the product model. | `—` |
 | `V-R005` | MUST | global | causality | Name the relevant actor, action, and user-visible consequence when explaining a rule or state change. | Vague agency hides how governance and authorization work. | `—` |
@@ -87,12 +89,19 @@ Use one observable instruction per row. Hard constraints stay separate from pref
 | `V-R009` | MUST NOT | global | tone | Use unsupported promotional superlatives or claims such as “best-in-class,” “revolutionary,” or “seamless.” | The docs explain the product; they do not manufacture evidence. | `—` |
 | `V-R010` | MUST NOT | canonical | layers | Use a product abstraction and its protocol substrate interchangeably when the distinction affects meaning. | Product capability and protocol mechanism answer different questions. | `—` |
 | `V-R011` | SHOULD | global | syntax | Prefer plain words, active constructions, and a concrete subject over formal or inflated phrasing. | Direct syntax makes dense product logic easier to follow. | `—` |
-| `V-R012` | SHOULD | global | structure | Give each paragraph one main claim and use a list only for a genuine set, contrast, or sequence. | Structure should reveal relationships rather than decorate prose. | `—` |
+| `V-R012` | SHOULD | global | structure | Develop one main idea per paragraph, with sentences building on each other; use lists or tables for genuine sets, comparisons, or sequences. | Structure should reveal relationships rather than decorate prose. | `—` |
 | `V-R013` | SHOULD | global | constraints | Put a material constraint, exception, or irreversible consequence before the action or conclusion it changes. | Readers should not discover a decisive limit after acting. | `—` |
 | `V-R014` | SHOULD | guide | address | Address the reader as “you” and write actions as direct imperatives. | Guides serve a person pursuing an outcome. | `—` |
-| `V-R015` | SHOULD | canonical | stance | Keep explanations object-centered and neutral; use “you” only for a genuine reader decision or consequence. | Canonical pages define the model rather than simulate a walkthrough. | `—` |
+| `V-R015` | SHOULD | canonical | stance | Keep product explanations direct and neutral; use “you” for a reader decision or consequence. | The viewpoint should suit the page's purpose without adding an unnecessary walkthrough. | `—` |
 | `V-R016` | SHOULD | global | terminology | Explain an unfamiliar product term at first use or link to the entry that owns its definition. | The graph should support readers arriving from any page. | `—` |
 | `V-R017` | SHOULD NOT | global | syntax | Attach a negated foil to a claim — “X, not Y”, “this is X, not a Y”, a “Do not …” heading — unless a reader in this context would actually reach reading Y. When the misreading is real, show where it comes from or what it would break; when it is only conceivable, state X and stop. | A foil that answers no real confusion adds length without information, and a real confusion deserves the explanation itself. | grep for `, not ` and `rather than`; each hit must name a misreading the surrounding text gives the reader a reason to have. |
+| `V-R018` | MUST NOT | global | editorial narration | Add self-referential editorial prose about a page's purpose, ownership, review state, source-processing history, or unfinished work to product-facing content. | [WORKFLOW.md](./WORKFLOW.md#product-content-and-documentation-operations) assigns those records to metadata, tasks, and maintenance documents; product prose serves the reader's product question. | No automatic check; read every added or changed paragraph using the distinction below. |
+
+Apply `V-R018` by the sentence's job: does it explain the product, help the reader act or navigate, or narrate how the documentation was authored? Rewrite the last kind as the supported fact or reader action, routing displaced context through WORKFLOW.md. Changing “this page owns…” to “the scope here is…” leaves the same problem.
+
+Use the linked concept or mechanism as the subject or link label. Avoid naming the documentation bundle in product prose: link to “OSx permissions” instead of saying “Protocol Doc defines permissions” or “Platform Doc explains this.” Repository identifiers, source metadata, and maintenance instructions retain their operational meaning.
+
+Judge meaning, not keywords. “The page shows one selected account,” contract verification, exact `DRAFT` UI labels, references that help the reader understand or act, and useful navigation can all serve the reader. Application source-code proofs belong in provenance and investigation records under the [product-content boundary](./WORKFLOW.md#product-content-and-documentation-operations); component mechanics do not become product explanation merely by removing their links. Repository orientation, generated-file warnings, and maintenance references may explain their own operation, including within an otherwise product-facing index. An opportunity may state its candidate status and product investigation. These exceptions do not permit editorial narration in product explanations; the contract's source-capture and upstream exclusions still apply.
 
 ## 5. Surface map
 
@@ -100,7 +109,7 @@ Create a separate surface only when it changes the default voice or adds a hard 
 
 | Surface ID | Surface or user state | User goal | Modulation from default | Hard constraints | Rule refs | Example refs | Checks |
 |---|---|---|---|---|---|---|---|
-| `canonical` | Concept, capability, pattern, decision, principle, risk, or reference entry | Understand the current product model or a precise lookup fact. | Definition-led, object-centered, and explicit about the product/protocol boundary. | Current truth only; distinguish abstractions whose difference affects behavior. | `V-R001`, `V-R002`, `V-R004`, `V-R005`, `V-R010`, `V-R015` | `V-E01`, `V-E03` | `—` |
+| `canonical` | Concept, capability, pattern, principle, risk, or reference entry | Understand the current product model, evaluate a rule, or find a precise lookup fact. | Lead with the answer appropriate to the page's purpose; explain the product/protocol boundary when it affects meaning. | Current truth only; distinguish abstractions whose difference affects behavior. | `V-R001`, `V-R002`, `V-R004`, `V-R005`, `V-R010`, `V-R015` | `V-E01`, `V-E03`, `V-E08` | `—` |
 | `guide` | A person completing a concrete task in Aragon | Decide whether the route fits, perform it, and recognize completion. | Outcome-led, second person, imperative, and chronological. | State availability and prerequisites before actions; end with a done state. | `V-R001`, `V-R003`, `V-R013`, `V-R014` | `V-E02` | `—` |
 | `navigation` | Root, area, or guides index | Choose a useful starting point or route through the graph. | Short, scannable, and organized by reader goal or product area. | Do not duplicate definitions or enumerate every entry. | `V-R011`, `V-R012`, `V-R016` | `V-E04` | `—` |
 | `planning` | Product-opportunity entry or opportunity-board copy | Evaluate a candidate improvement without confusing it with current behavior. | Concrete about the present gap and proposed outcome; restrained about value. | Label candidate state; never imply delivery commitment or silently rewrite canonical truth. | `V-R001`, `V-R007`, `V-R009` | `V-E05` | `—` |
@@ -119,6 +128,8 @@ Voice policy routes terminology to its authoritative product entry; it does not 
 | `action` | `transaction` when referring to one target/value/calldata call | Link when an action is first introduced in a technical explanation. | Several actions may travel in one transaction; [Action](./governance/action.md) owns the distinction. |
 | `Aragon platform` | `Aragon App` when referring to the whole product model | Use the full form on first use. | Use `Aragon App` only for the application client or the formal product name in quoted positioning. |
 | `OSx` | `OSX`; `Osx` | Expand as `Aragon OSx` when the audience may not know the protocol. | Preserve repository, package, and contract identifiers exactly. |
+| `onchain` | `on-chain` | Use `onchain` from first use. | Write it as one word, without a hyphen, in both adjective and adverb uses. |
+| `Aragon-deployed plugins` | `partially supported plugins` | Link to [Aragon-deployed plugins](./application/aragon-deployed-plugins.md) when introducing the deployment model. | The app supports the installed capability; Aragon handles deployment. Use `unsupported plugins` for installed plugins the app does not know how to present or operate. |
 
 ### Preferred and avoided choices
 
@@ -146,17 +157,17 @@ Each pair isolates named rules; examples calibrate structure and tone, not produ
 ### V-E01: Define the product object before its mechanism
 
 - **Surface:** `canonical`
-- **Do:** “A body describes who supplies preferences to a governance decision. A plugin may represent that body at the protocol layer.”
+- **Do:** “A body is a set of members who supply preferences to a governance decision. Its governor records those preferences and applies the voting or approval method.”
 - **Do not:** “A body is a plugin contract that implements a voting interface.”
-- **Why:** The first version preserves the product abstraction and then names a possible substrate.
+- **Why:** The definition identifies the product object and its relationship to the mechanism without turning it into a contract type.
 - **Rules demonstrated:** `V-R002`, `V-R004`, `V-R010`
 
 ### V-E02: Put availability before guide actions
 
 - **Surface:** `guide`
-- **Do:** “This route is currently available only in the development environment. For a production account, prepare the configuration below and give it to the Aragon team.”
-- **Do not:** “Open the advanced flow and configure the stages. Note that production accounts cannot open this flow.”
-- **Why:** The reader learns the route's limit before beginning it.
+- **Do:** “Deployment requires an Aragon services engagement. Prepare the configuration below and give it to the Aragon team.”
+- **Do not:** “Configure the setup below. At deployment, contact Aragon because this route requires a services engagement.”
+- **Why:** The reader learns the service prerequisite before beginning. This illustrates a live, team-assisted route; development-only features remain outside canonical guides under WORKFLOW.md.
 - **Rules demonstrated:** `V-R001`, `V-R003`, `V-R013`, `V-R014`
 
 ### V-E03: Name actor, action, and consequence
@@ -191,6 +202,23 @@ Each pair isolates named rules; examples calibrate structure and tone, not produ
 - **Why:** The first excludes a reading the interface actively invites — a stage rendering no votes looks failed or empty — so the foil carries information. The second denies a reading nobody holds: “transitional” already excludes an end state, so the foil is dead weight.
 - **Rules demonstrated:** `V-R011`, `V-R017`
 
+### V-E07: State the product fact without narrating the documentation
+
+- **Surface:** `canonical`, `guide`, `navigation`, `planning`
+- **Source narration → product behavior:** “The app derives the selector from the selected contract function, unlike the brief's raw selector-entry field” becomes “The app derives the selector from the selected contract function.” Preserve the source discrepancy in provenance or the log.
+- **Page ownership → navigation:** “This page owns timing” becomes “For proposal timing, see [Proposal status](./governance/proposal-status.md).” Keep the useful link.
+- **Evidence gap → relevant claim and task:** If an avatar fallback is unknown, retain the established product fact that the profile can use its ENS avatar. Keep the fallback question in its task only if the answer matters to readers. Do not substitute component wiring for the missing product explanation or invent an identicon.
+- **Why:** Each rewrite preserves what is known and gives displaced material a home. If uncertainty affects the reader's decision, it remains explicit alongside the product claim as well as in the task.
+- **Rules demonstrated:** `V-R001`, `V-R007`, `V-R018`
+
+### V-E08: Explain the benefit when removing editorial framing
+
+- **Surface:** `canonical`
+- **Do:** “The Action builder provides forms for common tasks so users can prepare calls without writing calldata by hand and inspect what the account is being asked to execute.”
+- **Do not:** “User promise: compose robust action batches with a powerful builder.”
+- **Why:** Replace the editorial label and vague praise with the supported feature purpose. Removing that framing does not invalidate the benefit or call for unrelated caveats.
+- **Rules demonstrated:** `V-R009`, `V-R011`, `V-R018`
+
 ## 8. Edge cases
 
 | ID | Case | Required behavior |
@@ -207,17 +235,18 @@ Each pair isolates named rules; examples calibrate structure and tone, not produ
 | ID | Path | Load when | Required for default use? |
 |---|---|---|---|
 | `V-REF01` | `WORKFLOW.md` | Before any content mutation; it owns scope, structure, and review state. | yes |
-| `V-REF02` | `principles.md` | When prose makes a cross-cutting product or abstraction claim. | no |
+| `V-REF02` | `internal/design/principles.md` | When prose makes a cross-cutting product or abstraction claim. | no |
 | `V-REF03` | `accounts/account.md` | When prose or quoted UI copy refers to an account or DAO. | no |
 
 ## 10. Preflight
 
 Before finalizing reader-facing prose, verify:
 
-- [ ] The requested surface and narrowest matching override were identified.
+- [ ] The opening, structure, and depth suit the reader's question and the applicable surface.
 - [ ] Every applicable **MUST** and **MUST NOT** rule was satisfied.
+- [ ] Every added or changed paragraph passes the purpose test for `V-R018`; displaced context has its WORKFLOW.md destination.
 - [ ] Protected terminology uses the canonical form for the layer being described.
-- [ ] Meaning, technical accuracy, and explicit task constraints were preserved.
+- [ ] Compared with the original and surrounding claims, the rewrite preserves actors, conditions, scope, exceptions, and certainty. Explicit task constraints still hold; missing evidence has not become support or lack of support.
 - [ ] Availability, evidence limits, and material consequences appear before they affect a decision.
-- [ ] Relevant examples were used as calibration rather than copied as a template.
+- [ ] The rewrite retains useful purpose and causal explanation; any examples serve this page's question. Calibration examples have not become a universal template.
 - [ ] Any unresolved conflict or missing rule was reported instead of silently invented.

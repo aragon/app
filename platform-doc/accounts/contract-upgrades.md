@@ -2,25 +2,23 @@
 type: capability
 title: Contract upgrades
 tags: [accounts, settings, upgradeability]
-status: draft
-source: product-owner release-notes briefing (2026-08-03, see log.md) + app source verification (2026-08-04, app@122f1bd1; see log.md) + pinned protocol-doc upgrade mechanism (2026-08-04, see log.md)
+source: product-owner release-notes briefing (2026-08-03, see log.md) + app source verification (2026-08-04, app@122f1bd1; see log.md) + pinned protocol-doc upgrade mechanism (2026-08-04, see log.md) + product-owner briefings and app 1.39.0 upgrade verification (2026-09-15, app@adad67873c8f9dd75e3ed340b70df3e985ae3557; see log.md)
 ---
 
 # Contract upgrades
 
-**User promise:** opt into available OSx DAO and compatible installed-plugin contract updates through a governed proposal, without treating every release as mandatory maintenance.
+Contract upgrades let an account upgrade its [Aragon OSx contract](../protocol-doc/core/dao.md#upgrades-across-versions) and supported installed [plugins](../governance/plugin.md) to newer versions. Upgrades are optional and must be initiated by a plugin or actor with sufficient authorization. For example, governance participants must weigh the value of the changes against the risks of changing contract code and then vote accordingly.
 
-## What can be upgraded
+## Available upgrades
 
-When this capability is enabled for an eligible account, the app surfaces an update entry in settings if an OSx DAO update or a compatible [plugin](../governance/plugin.md) update is available. Availability is selective: the [account contract](../protocol-doc/core/dao.md#upgrades-across-versions) has its own upgrade path, while only plugin types and versions supported by the [plugin update mechanism](../protocol-doc/guides/update-a-plugin.md) can update in place. An installed plugin appearing elsewhere in the app does not by itself promise an upgrade through this flow.
+The [Contracts panel](./settings.md#contracts) offers an upgrade when the account has an installed governance process and the app supports a newer version of its OSx contract or one of its plugins. Availability depends on the network and the installed contract versions.
 
-## Governed flow
+A plugin's [repository](../protocol-doc/framework/plugin-repo.md) records its published versions onchain. The app offers [plugin updates](../protocol-doc/guides/update-a-plugin.md) only when both the type and repository match an update it supports. A custom plugin published through a separate repository therefore needs its own supported update path. Unknown plugins are excluded from the upgrade list.
 
-1. Open the contract-update entry in account settings and review the available OSx and compatible plugin updates, including their release notes and contract addresses.
-2. Choose the governance process that will authorize the change.
-3. The app prepares any required plugin update data and opens the ordinary [proposal-creation flow](../governance/proposal-creation.md) with the upgrade actions.
-4. Account participants review the implications and decide the proposal through that process; the contracts change only if its governed actions execute.
+## Performing an upgrade
 
-## Deliberately opt-in
+The flow starts from account settings with [execution routing](../application/execution-routing.md). The app then shows the available upgrades, including current and new versions, contract addresses, and links to release notes.
 
-Upgrades are offered, never pushed as routine maintenance. An upgrade changes executable code and can introduce risk, while many releases only add features an account does not need. The account opts in when the value of the new behavior justifies that change; remaining on the current compatible version is a legitimate posture.
+If plugin updates are included, the user submits a preparation transaction. This runs the plugin's update setup, deploying any new supporting contracts it requires and preparing the initialization data and permission changes. The new implementation contract is supplied by the published plugin version; the installed plugin starts using it when the upgrade executes.
+
+The app assembles the upgrade actions and pre-populates the proposal's title, summary, and description. These fields cannot be edited in this flow. The user publishes the prepared proposal, and participants decide it through the selected governance process. The upgrades take effect when the approved proposal's [actions execute](../governance/proposal.md#actions-and-execution).

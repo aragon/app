@@ -7,5 +7,5 @@
 # Ephemeral scratch, regenerable content
 raw/
 
-# Owner-private local research; not part of the portable knowledge base
-research/
+# Local Git worktrees are integrated through their branches
+.claude/worktrees/

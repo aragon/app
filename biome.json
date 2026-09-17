@@ -13,7 +13,8 @@
             "!coverage",
             "!.turbo",
             "!**/*.svg",
-            "!apps/assistant/src/docs/generated/*.js"
+            "!apps/assistant/src/docs/generated/*.js",
+            "!platform-doc"
         ]
     },
     "formatter": {

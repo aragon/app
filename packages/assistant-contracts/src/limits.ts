@@ -26,7 +26,10 @@ export const assistantLimits = {
     // queued file into the ticket on creation). The queue drains on every created ticket, so
     // honest use never reaches this.
     maxFilesPerSession: 15,
-    maxMessageLength: 4000,
+    // Per text part, enforced by the request schema and mirrored by the composer's own limit (a
+    // longer message used to reach the server, fail validation and read as a broken chat). Room
+    // for a pasted error with its stack trace; longer material belongs in an attachment.
+    maxMessageLength: 8000,
     // 20 user turns + 20 assistant replies + slack for system/data-only entries.
     maxMessages: 44,
 } as const;

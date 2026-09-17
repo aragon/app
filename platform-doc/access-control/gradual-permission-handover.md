@@ -2,12 +2,12 @@
 type: pattern
 title: Gradual permission handover
 tags: [access-control, governance]
-source: product-owner Granular Access Control marketing brief + release-notes briefing (2026-08-03, see log.md) + app/protocol verification (2026-08-04, see log.md) + product-owner briefing on optimistic governance (2026-08-04, see log.md) + product-owner access-control structure review (2026-08-05, see log.md)
+source: product-owner Granular Access Control marketing brief + release-notes briefing (2026-08-03, see log.md) + app/protocol verification (2026-08-04, see log.md) + product-owner briefing on optimistic governance (2026-08-04, see log.md) + product-owner access-control structure review (2026-08-05, see log.md) + product-owner briefings (2026-09-11, see log.md)
 ---
 
 # Gradual permission handover
 
-Gradual permission handover is an optional pattern for transferring explicit action scopes between [governance processes](../governance/process.md) over time. It applies [scoped authority](./scoped-authority.md) to an [account](../accounts/account.md): each process receives the calls it may direct, and an organization can move one scope to another governance route as its risk, operating needs, and readiness change.
+Gradual permission handover is an optional pattern for transferring explicit action scopes between [governance processes](../governance/process.md) over time. Aragon recommends it when it fits the organization's needs. It applies [scoped authority](./scoped-authority.md) to an [account](../accounts/account.md): each process receives the calls it may direct, and an organization can move one scope to another governance route as its risk, operating needs, and readiness change.
 
 ## Transfer scopes independently
 

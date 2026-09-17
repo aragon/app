@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { IChatMonitoring } from '../../monitoring';
 import { AssistantChat } from './assistantChat';
@@ -280,31 +280,34 @@ describe('<AssistantChat /> integration', () => {
         ).toEqual([expect.objectContaining({ identifier: 'SUP-123' })]);
     });
 
-    it('shows a spinner while the documentation is searched and the answer once it arrives', async () => {
+    it('shows exactly one spinner from the send until the answer streams, through every lookup', async () => {
+        // The shape of a real documentation answer: a search, its result, a page read (a second
+        // step), its result, a pause while the model reads, then the answer.
+        const toolChunks = (
+            toolCallId: string,
+            toolName: string,
+            input: Record<string, string>,
+        ) => [
+            { type: 'start-step' },
+            { type: 'tool-input-start', toolCallId, toolName },
+            { type: 'tool-input-available', toolCallId, toolName, input },
+        ];
+        const toolResult = (toolCallId: string, output: unknown) => [
+            { type: 'tool-output-available', toolCallId, output },
+            { type: 'finish-step' },
+        ];
         const { response, advance } = createStagedChatResponse([
+            [{ type: 'start' }],
+            toolChunks('tc-docs-1', 'searchDocs', {
+                query: 'linked account control',
+            }),
+            toolResult('tc-docs-1', { results: [] }),
+            toolChunks('tc-docs-2', 'readDoc', {
+                path: 'accounts/linked-account.md',
+            }),
+            toolResult('tc-docs-2', { found: false }),
+            [{ type: 'start-step' }],
             [
-                { type: 'start' },
-                { type: 'start-step' },
-                {
-                    type: 'tool-input-start',
-                    toolCallId: 'tc-docs',
-                    toolName: 'searchDocs',
-                },
-                {
-                    type: 'tool-input-available',
-                    toolCallId: 'tc-docs',
-                    toolName: 'searchDocs',
-                    input: { query: 'linked account control' },
-                },
-            ],
-            [
-                {
-                    type: 'tool-output-available',
-                    toolCallId: 'tc-docs',
-                    output: { results: [] },
-                },
-                { type: 'finish-step' },
-                { type: 'start-step' },
                 { type: 'text-start', id: 'txt-1' },
                 {
                     type: 'text-delta',
@@ -324,23 +327,69 @@ describe('<AssistantChat /> integration', () => {
         });
         await userEvent.type(composer, 'Does linking give control?{Enter}');
 
-        // The search runs with no text around it: the running tool part is what fills the bubble.
-        expect(
-            await screen.findByRole('status', {
-                name: 'Looking through the documentation',
-            }),
-        ).toBeInTheDocument();
+        // A stage lands as one chunk whose events are applied one by one, so the screen is
+        // checked once the stage has settled — a macrotask later, all microtasks drained. The
+        // spinners are counted whatever their label: gov-ui-kit's Spinner is the progressbar.
+        const settle = () =>
+            act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+        const spinnerLabels = () =>
+            screen
+                .queryAllByRole('status')
+                .map((element) => element.getAttribute('aria-label'));
+        const spinnerCount = () =>
+            document.querySelectorAll('[role="progressbar"]').length;
 
+        // Nothing has arrived: the typing spinner, and only it.
+        await screen.findByRole('status', { name: 'Assistant is typing' });
+        await settle();
+        expect(spinnerCount()).toEqual(1);
+
+        // The search runs with no text around it: the same single spinner, relabelled. Before
+        // the fix the empty-message spinner stayed next to the tool's own and made two.
         advance();
+        await settle();
+        expect(spinnerLabels()).toEqual(['Looking that up']);
+        expect(spinnerCount()).toEqual(1);
 
+        // Its result is in, the page read starts and ends, the model reads: still one, never
+        // none.
+        for (let stage = 0; stage < 4; stage += 1) {
+            advance();
+            await settle();
+            expect(spinnerLabels()).toEqual(['Looking that up']);
+            expect(spinnerCount()).toEqual(1);
+        }
+        expect(
+            screen.queryByText('Linking is display only.'),
+        ).not.toBeInTheDocument();
+
+        // The answer takes over.
+        advance();
         expect(
             await screen.findByText('Linking is display only.'),
         ).toBeInTheDocument();
-        expect(
-            screen.queryByRole('status', {
-                name: 'Looking through the documentation',
-            }),
-        ).not.toBeInTheDocument();
+        expect(spinnerCount()).toEqual(0);
+    });
+
+    it('stops a message at the length limit and shows the count as it gets close', async () => {
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        // The service limit, applied by the textarea itself so an over-long message never
+        // leaves as a request that comes back as a failure.
+        expect(composer).toHaveAttribute('maxlength', '8000');
+        expect(screen.queryByText(/\/ 8,000$/)).not.toBeInTheDocument();
+
+        await userEvent.click(composer);
+        await userEvent.paste('x'.repeat(6500));
+        expect(screen.getByText('6,500 / 8,000')).toBeInTheDocument();
+
+        // A paste past the limit is clipped, and the count says so.
+        await userEvent.paste('y'.repeat(2000));
+        expect(composer).toHaveValue(`${'x'.repeat(6500)}${'y'.repeat(1500)}`);
+        expect(screen.getByText('8,000 / 8,000')).toBeInTheDocument();
     });
 
     it('shows a retryable failure when creation fails and recovers on retry', async () => {

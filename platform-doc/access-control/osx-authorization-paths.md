@@ -2,14 +2,14 @@
 type: reference
 title: OSx authorization paths
 tags: [access-control, semantics]
-source: product-owner ACL one-pager (2026-08-03) + product-owner authorization-model review (2026-08-04, see log.md) + product-owner authorization-mapping review (2026-08-05, see log.md) + product-owner access-control structure review (2026-08-05, see log.md) + protocol-doc dao/permissions/execution/auth/plugins pages + osx source
+source: product-owner ACL one-pager (2026-08-03) + product-owner authorization-model review (2026-08-04, see log.md) + product-owner authorization-mapping review (2026-08-05, see log.md) + product-owner access-control structure review (2026-08-05, see log.md) + protocol-doc dao/permissions/execution/auth/plugins pages + osx source + recovery verification against osx@4100bcf0bc0cefecdedac2ca292f6b32b4796c49 (2026-09-13, see log.md) + product-owner editorial feedback (2026-09-13, see log.md)
 ---
 
 # OSx authorization paths
 
 An OSx authorization path is the sequence of callers and permission checks from a governance [plugin](../governance/plugin.md), through the `DAO` (the organization's [account](../accounts/account.md)), to a protected function. Within one organization, the DAO is the shared access-control authority: it owns the permission table used by its own guarded functions and by `DaoAuthorizable` contracts that defer to it.
 
-For the generic meanings of caller, target, and selector, see [Authorization and execution model](./authorization-and-execution.md); for the product rationale for scopes, see [Scoped authority](./scoped-authority.md). The upstream pages own the full mechanics of [the DAO](../protocol-doc/core/dao.md), [execution](../protocol-doc/core/execution.md), [permissions](../protocol-doc/core/permissions.md), and [DAO-based authorization](../protocol-doc/common/auth.md).
+For the generic meanings of caller, target, and selector, see [Authorization and execution model](./authorization-and-execution.md); for the product rationale for scopes, see [Scoped authority](./scoped-authority.md). For the full protocol mechanics, see [the DAO](../protocol-doc/core/dao.md), [execution](../protocol-doc/core/execution.md), [permissions](../protocol-doc/core/permissions.md), and [DAO-based authorization](../protocol-doc/common/auth.md).
 
 ## Trace a standard plugin execution
 
@@ -60,6 +60,8 @@ The permission is stored on the DAO, but `where` is the plugin. Trace a plugin f
 `ROOT_PERMISSION_ID` gates `grant`, `grantWithCondition`, `revoke`, and the batch permission functions. It controls the DAO's permission table; it is not a runtime bypass for `EXECUTE_PERMISSION_ID` or any other guarded function. A ROOT holder can change those entries, including by granting itself another permission. A condition on a ROOT grant constrains that permission-management path.
 
 When D holds ROOT on itself, an action targeting D's `grant` or `revoke` is a self-call: `DAO.execute` calls D, so the permission check sees `(where = D, who = D, permissionId = ROOT_PERMISSION_ID)`. This works because `DAO.execute` blocks re-entry only into `execute`; a self-call to another DAO permission function remains valid. See [where ROOT ends up](../protocol-doc/core/dao.md#where-root-ends-up) and [ROOT in the permission system](../protocol-doc/core/permissions.md#root-the-permission-to-manage-permissions) for the lifecycle and restrictions.
+
+That self-call still needs an authorized execution route to begin. ROOT held only by D cannot restore a lost Execute route on its own.
 
 ## SPP callback through GlobalExecutor
 
