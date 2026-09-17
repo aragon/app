@@ -1,0 +1,6 @@
+---
+"@aragon/assistant": minor
+"@aragon/assistant-contracts": minor
+---
+
+Answer product questions in the support assistant from the platform knowledge base. The `platform-doc` repository now lives at the repository root as a squashed subtree; at build time the assistant keeps its knowledge pages (validated ones in production, drafts included everywhere else), cuts them into breadcrumb-prefixed passages, embeds them through the AI Gateway and bundles the index. Behind `docsSearchEnabled` — on everywhere but production — the agent gets `searchDocs`, `readDoc` and `listDocs` (in-process Orama hybrid retrieval plus reranking) and answers how-to and what-is questions from the documentation only, without sources for now; the tools run silently (a stream filter drops the sentence the model writes before calling one), and when the documentation does not cover a question the agent says so and offers to pass it on, drafting a ticket only once the user agrees. Contracts: the documentation hit shape names a page path instead of a URL, the ticket intent gains `question` (filed under the `docs-gap` label) and the session token budget grows to 300k, since documentation answers put passages and pages into the replayed transcript. A docs merge redeploys the dev assistant through the shared paths filter.

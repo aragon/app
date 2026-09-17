@@ -27,6 +27,9 @@ app:
 assistant:
   - "apps/assistant/**"
   - "packages/assistant-contracts/**"
+  # The assistant bundles a documentation index built from the platform-doc subtree at build time:
+  # a docs merge redeploys the dev assistant (production picks it up at its next release).
+  - "platform-doc/**"
   - ".github/workflows/assistant-*.yml"
   - ".github/workflows/shared-deploy.yml"
   - ".github/filters.yml"
