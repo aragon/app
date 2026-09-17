@@ -37,3 +37,11 @@ f5f578dfd4020c4a38f54eb5980a2310eefe94c3:.yarn/releases/yarn-4.3.0.cjs:generic-a
 59da625af2ff0be48f582d288d73cbf4c52bf105:.yarn/releases/yarn-4.1.1.cjs:generic-api-key:567
 73f7080432457e358b3678fb02d4b5c466e763eb:.yarn/releases/yarn-4.9.1.cjs:generic-api-key:589
 140074ec8d53b2cac8c8bf84f7eecd5522f53201:.yarn/releases/yarn-4.4.0.cjs:generic-api-key:567
+
+# Public ERC-20 contract address used as a test fixture in a variable named `token`
+# (blockchain address, not a credential) — gitleaks reads it as a generic API key. Same
+# finding as the permissionsList entry above, re-fingerprinted after the files moved to
+# apps/app in the monorepo migration.
+8f5ede4daeaaaa56ec7747fbf14a3c527b4c3194:apps/app/src/modules/settings/components/permissionCondition/permissionCondition.test.tsx:generic-api-key:41
+8f5ede4daeaaaa56ec7747fbf14a3c527b4c3194:apps/app/src/modules/settings/components/votingPowerConditionSlot/votingPowerConditionSlot.test.tsx:generic-api-key:46
+8f5ede4daeaaaa56ec7747fbf14a3c527b4c3194:apps/app/src/modules/settings/components/permissionsList/permissionsList.test.tsx:generic-api-key:381

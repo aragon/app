@@ -6,6 +6,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { getChatModel } from './chat/models';
 import { createVercelBlobStore } from './files/blobStore';
+import { createMalwareScanner } from './files/malwareScanner';
 import { type IAppDependencies, lazy } from './lib/appDependencies';
 import { getConfig } from './lib/config';
 import { resolveCorsOrigin } from './lib/cors';
@@ -32,6 +33,7 @@ const buildDefaultDependencies = (): IAppDependencies => {
         getLinear: lazy(() => createLinearGateway()),
         getChatModel,
         getBlobStore: lazy(() => createVercelBlobStore()),
+        getMalwareScanner: lazy(() => createMalwareScanner()),
     };
 };
 
