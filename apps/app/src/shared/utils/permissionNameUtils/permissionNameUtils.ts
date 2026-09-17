@@ -127,6 +127,33 @@ const permissionNames: string[] = [
     'CREATE_PERMISSIONS_ROLE',
 ];
 
+/**
+ * Names that exist only in OSx test suites and example contracts. They stay in the
+ * dictionary so a proposal that carries one still reads as a name, but nothing should
+ * offer them when composing a new action.
+ */
+const permissionFixtureNames = new Set<string>([
+    'MOCK_PERMISSION',
+    'TEST_PERMISSION',
+    'TEST_PERMISSION_1',
+    'TEST_PERMISSION_2',
+    'GREET_PERMISSION',
+    'MULTIPLY_PERMISSION',
+    'DO_SOMETHING_PERMISSION',
+    'STORE_PERMISSION',
+    'STORE_ACCOUNT_PERMISSION',
+    'STORE_NUMBER_PERMISSION',
+]);
+
+export interface IGetKnownPermissionsOptions {
+    /**
+     * Also returns the OSx test-fixture names. Off by default so composers only offer
+     * permissions that exist on shipped contracts.
+     * @default false
+     */
+    includeFixtures?: boolean;
+}
+
 class PermissionNameUtils {
     private permissionNamesByHash: Record<string, string> = Object.fromEntries(
         permissionNames.map((name) => [
@@ -198,11 +225,16 @@ class PermissionNameUtils {
      * The permission viewer and permission-management action builder use this
      * same dictionary so labels and encoded values cannot drift apart.
      */
-    getKnownPermissions = (): Array<{ id: Hex; name: string }> =>
-        permissionNames.map((name) => ({
-            id: this.getPermissionId(name),
-            name,
-        }));
+    getKnownPermissions = (
+        options: IGetKnownPermissionsOptions = {},
+    ): Array<{ id: Hex; name: string }> =>
+        permissionNames
+            .filter(
+                (name) =>
+                    options.includeFixtures ||
+                    !permissionFixtureNames.has(name),
+            )
+            .map((name) => ({ id: this.getPermissionId(name), name }));
 
     private normaliseHash = (hash: string): string => {
         const lowerCased = hash.toLowerCase();

@@ -1,5 +1,5 @@
 import type { IProposalActionInputDataParameter } from '@aragon/gov-ui-kit';
-import { encodeFunctionData } from 'viem';
+import { encodeFunctionData, zeroAddress } from 'viem';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import {
     PermissionOperation,
@@ -7,7 +7,6 @@ import {
 } from './permissionActionUtils';
 
 describe('permissionActionUtils', () => {
-    const zeroAddress = `0x${'0'.repeat(40)}`;
     const where = '0xAB98085757BFd1C2718fF3cFa390a3db2e8fd209';
     const who = '0x7bDAE736352aF4d2aa42fF4c828CeF9D92Ed0938';
 

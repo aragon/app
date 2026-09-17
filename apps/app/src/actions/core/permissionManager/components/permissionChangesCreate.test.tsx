@@ -1,7 +1,7 @@
 import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
 import { encodeFunctionData, zeroAddress } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { ReactQueryWrapper } from '@/shared/testUtils';
@@ -42,10 +42,37 @@ describe('<PermissionChangesCreate /> component', () => {
         }) as unknown as IProposalActionData;
 
     let formValues: Record<string, unknown> = {};
+    let formMethods: UseFormReturn | undefined;
+
+    const createSingleTargetAction = (rows: string[][]) =>
+        ({
+            daoId: 'test-dao',
+            type: 'unknown',
+            data: '0x',
+            value: '0',
+            inputData: {
+                function: 'applySingleTargetPermissions',
+                contract: 'DAO',
+                parameters: [
+                    { name: '_where', type: 'address', value: whereAddress },
+                    {
+                        name: 'items',
+                        type: 'tuple[]',
+                        components: [
+                            { name: 'operation', type: 'uint8' },
+                            { name: 'who', type: 'address' },
+                            { name: 'permissionId', type: 'bytes32' },
+                        ],
+                        value: rows,
+                    },
+                ],
+            },
+        }) as unknown as IProposalActionData;
 
     const TestForm = (props: { action: IProposalActionData }) => {
         const methods = useForm({ defaultValues: { actions: [props.action] } });
         formValues = methods.watch() as Record<string, unknown>;
+        formMethods = methods as unknown as UseFormReturn;
 
         return (
             <GukModulesProvider>
@@ -160,6 +187,52 @@ describe('<PermissionChangesCreate /> component', () => {
                 addressUtils.truncateAddress(whoAddress),
             ),
         ).not.toBeInTheDocument();
+    });
+
+    it('hoists the single target above the rows and reads it from the parameter before the tuple', () => {
+        render(
+            <TestForm
+                action={createSingleTargetAction([
+                    ['0', whoAddress, executeId],
+                ])}
+            />,
+        );
+
+        // One Where for the action, none inside the row.
+        expect(
+            screen.getAllByText(/permissionActionDetails.whereTerm/),
+        ).toHaveLength(1);
+        expect(
+            screen.getAllByText(/permissionActionDetails.whoTerm/),
+        ).toHaveLength(1);
+    });
+
+    it("does not hand the removed row's errors to the row that slides into its place", async () => {
+        const user = userEvent.setup();
+        const incompleteRow = ['1', whereAddress, '', zeroAddress, executeId];
+        const completeRow = [
+            '0',
+            whereAddress,
+            whoAddress,
+            zeroAddress,
+            executeId,
+        ];
+        render(createTestComponent([incompleteRow, completeRow]));
+
+        const whoOfFirstRow = 'actions.0.inputData.parameters.0.value.0.2';
+
+        await formMethods?.trigger(whoOfFirstRow);
+        expect(formMethods?.getFieldState(whoOfFirstRow).error).toBeDefined();
+
+        const [firstRemove] = screen.getAllByRole('button', {
+            name: /permissionChangesCreate.removeChange/,
+        });
+        await user.click(firstRemove);
+
+        await waitFor(() => expect(getRows()).toHaveLength(1));
+        // The surviving row now lives at index 0 and must not carry the old row's error.
+        expect(getRows()[0][2]).toEqual(whoAddress);
+        expect(formMethods?.getFieldState(whoOfFirstRow).error).toBeUndefined();
     });
 
     it('re-encodes the calldata from the rows', async () => {

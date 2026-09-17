@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { zeroAddress } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { PermissionChangesDetails } from './permissionChangesDetails';
@@ -31,7 +32,6 @@ jest.mock('../hooks/usePermissionEntityResolver', () => ({
 describe('<PermissionChangesDetails /> component', () => {
     const daoAddress = '0xC8da4C1d9BB59DD32ac39A925933188b7c66c311';
     const pluginAddress = '0x0150627b84a0C8257AB28cD0E1F71E81c7aafe3d';
-    const zeroAddress = `0x${'0'.repeat(40)}`;
     const executeId = permissionNameUtils.getPermissionId('EXECUTE_PERMISSION');
     const votingId = permissionNameUtils.getPermissionId(
         'UPDATE_VOTING_SETTINGS_PERMISSION',

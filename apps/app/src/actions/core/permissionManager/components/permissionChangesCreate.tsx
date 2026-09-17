@@ -49,7 +49,12 @@ export const PermissionChangesCreate: React.FC<
     const { action, index, chainId } = props;
 
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
+    const {
+        setValue,
+        clearErrors,
+        trigger,
+        formState: { isSubmitted },
+    } = useFormContext();
 
     const fieldPrefix = `actions.${index.toString()}`;
     const parameters = action.inputData?.parameters ?? [];
@@ -131,12 +136,20 @@ export const PermissionChangesCreate: React.FC<
         setValue(rowsFieldName, [...rows, newRow]);
     };
 
-    const handleRemoveChange = (rowIndex: number) => {
+    const handleRemoveChange = async (rowIndex: number) => {
         rowIds.current.splice(rowIndex, 1);
+        // Errors are keyed by path, so the row sliding into this index would inherit the
+        // removed row's messages. Clear them, and re-validate only once the user has
+        // already asked for validation by submitting.
+        clearErrors(rowsFieldName);
         setValue(
             rowsFieldName,
             rows.filter((_, currentIndex) => currentIndex !== rowIndex),
         );
+
+        if (isSubmitted) {
+            await trigger(rowsFieldName);
+        }
     };
 
     return (
@@ -157,7 +170,7 @@ export const PermissionChangesCreate: React.FC<
                     label={t(
                         'app.actions.core.permissionActionDetails.whereTerm',
                     )}
-                    name="inputData.parameters.0.value"
+                    name={`inputData.parameters.${(tupleIndex - 1).toString()}.value`}
                 />
             )}
             <div className="flex w-full flex-col gap-3">

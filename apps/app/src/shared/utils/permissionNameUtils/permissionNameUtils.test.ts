@@ -144,4 +144,32 @@ describe('permissionNameUtils', () => {
             ).toBe(executePermission!.name);
         });
     });
+
+    describe('getKnownPermissions', () => {
+        it('does not offer OSx test fixtures by default', () => {
+            const names = permissionNameUtils
+                .getKnownPermissions()
+                .map((permission) => permission.name);
+
+            expect(names).toContain('ROOT_PERMISSION');
+            expect(names).not.toContain('MOCK_PERMISSION');
+            expect(names).not.toContain('TEST_PERMISSION_1');
+        });
+
+        it('returns the fixtures when asked to', () => {
+            const names = permissionNameUtils
+                .getKnownPermissions({ includeFixtures: true })
+                .map((permission) => permission.name);
+
+            expect(names).toContain('MOCK_PERMISSION');
+        });
+
+        it('still resolves a fixture id when reading an existing proposal', () => {
+            const id = permissionNameUtils.getPermissionId('MOCK_PERMISSION');
+
+            expect(permissionNameUtils.getKnownPermissionName(id)).toBe(
+                'MOCK_PERMISSION',
+            );
+        });
+    });
 });

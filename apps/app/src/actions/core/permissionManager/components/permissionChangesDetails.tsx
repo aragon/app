@@ -38,14 +38,15 @@ export const PermissionChangesDetails: React.FC<
     });
 
     const parameters = action.inputData?.parameters ?? [];
-    const tupleParameter = parameters.find(
+    const tupleIndex = parameters.findIndex(
         (parameter) => parameter.components != null,
     );
+    const tupleParameter = parameters[tupleIndex];
 
     // A single-target action carries the shared target in the parameter preceding the rows.
     const hoistedWhere =
-        tupleParameter != null && parameters.indexOf(tupleParameter) > 0
-            ? String(parameters[0].value ?? '')
+        tupleIndex > 0
+            ? String(parameters[tupleIndex - 1].value ?? '')
             : undefined;
 
     const changes =

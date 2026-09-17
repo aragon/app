@@ -1,5 +1,5 @@
 import type { IProposalActionInputDataParameter } from '@aragon/gov-ui-kit';
-import type { Hex } from 'viem';
+import { type Hex, zeroAddress } from 'viem';
 
 /**
  * `PermissionLib.Operation` as deployed in OSx. Verified against the DAO implementation
@@ -11,8 +11,6 @@ export enum PermissionOperation {
     REVOKE = 1,
     GRANT_WITH_CONDITION = 2,
 }
-
-const zeroAddress = `0x${'0'.repeat(40)}`;
 
 export interface IPermissionChange {
     /**
