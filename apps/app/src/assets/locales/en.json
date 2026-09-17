@@ -3734,7 +3734,7 @@
           }
         },
         "header": {
-          "description": "An interactive view of this Safe: review, confirm and execute transactions alongside its owners, signing threshold, contract version, nonce, balances, and any transaction guard or enabled modules that also govern what it can do."
+          "description": "An overview of this Safe account: its owners, signing threshold, contract version, nonce, transaction queue, balances, and any transaction guard or enabled modules that govern what it can do.",
         },
         "main": {
           "assets": {
