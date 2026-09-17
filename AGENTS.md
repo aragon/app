@@ -7,7 +7,7 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 ## Monorepo layout
 
 - `apps/*` — deployable applications, one Vercel project each. Every app owns its source, configs, docs and CHANGELOG; workspace specifics live in the workspace's README, not here.
-- `packages/*` — version-only workspace libraries that ship inside their consumers. Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
+- `packages/*` — workspace libraries. Most are version-only and ship inside their consumers; `@aragon/gov-ui-kit` is the exception — it is also published to npm for external consumers and owns a release flow of its own (see Releases). Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
 - Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). The root `package.json` has no version.
 - CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`) plus reusable `shared-*.yml`. Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
 
@@ -15,7 +15,7 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 
 Every deployable workspace releases independently through the same PR-based flow; the packages each flow versions together are declared once in `.github/release-scopes.yml` (a flow names its scope via the `scope` input of the `changeset-version` action; the inversion into changesets `--ignore` flags happens inside the action). The shape: dispatch `<workspace>-release-start` → it runs `changeset version` for the scoped packages and opens a `Release <package>@x.y.z` PR (branch `release/<workspace>/…`) describing every bumped package → merging the PR is the release act → `<workspace>-release-pr-finalize` tags the release (`@aragon/app@1.17.0`) and the tag triggers the production deploy.
 
-`packages/*` get no tags or flows of their own and belong to the scope whose release deploys them (a package bundled by exactly one app joins that app's scope; a package shared across scopes stays with its domain owner). Versions never move in lockstep. A single changeset must never mix packages from different release scopes (changesets refuses mixed ignored/not-ignored changesets, which breaks every scoped flow) — write one changeset per scope; CI enforces this via `pnpm validate:changesets`. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
+Most `packages/*` get no tags or flows of their own and belong to the scope whose release deploys them (a package bundled by exactly one app joins that app's scope; a package shared across scopes stays with its domain owner). `@aragon/gov-ui-kit` is the exception: because it ships to npm, it owns the `gov-ui-kit` scope, its own `gov-ui-kit-release-start` / `gov-ui-kit-release-pr-finalize` flows and its own `@aragon/gov-ui-kit@x.y.z` tags — finalize creates the GitHub release, and that release (not a deploy) triggers `gov-ui-kit-publish.yml` behind the human-approved `npm-publish` environment. Versions never move in lockstep. A single changeset must never mix packages from different release scopes (changesets refuses mixed ignored/not-ignored changesets, which breaks every scoped flow) — write one changeset per scope; CI enforces this via `pnpm validate:changesets`. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
 
 ### Adding a new workspace — the mappers
 
@@ -26,7 +26,7 @@ Cross-cutting workspace knowledge lives in root-level mappers; register a new wo
 - `pnpm-workspace.yaml` `catalog:` — central version pins for shared tooling/deps; workspaces reference them as `"catalog:"`, bumps happen once at the root (then run the full test fan-out — a catalog bump touches every workspace and triggers releases everywhere).
 - Releases: a new deployable workspace gets its own release flow (or joins an existing domain flow) by adding its packages to a scope in `release-scopes.yml` and naming that scope in its `changeset-version` call — other flows are not touched.
 
-Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is already root-only (`biome.json`).
+Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is root-only (`biome.json`), with one exception: `packages/gov-ui-kit` carries a nested `biome.jsonc` (`"root": false`) so the migration caused no reformatting — there is a TODO in that file to fold it into the root config.
 
 ## Where things live
 

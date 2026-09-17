@@ -1,0 +1,48 @@
+# The "Gov UI Kit Storybook Publish" workflow deploys the kit's Storybook to uikit.aragon.org on
+# every merge to main that touches the kit (see .github/filters.yml). The paths filter matters here:
+# without it every app-only commit would rebuild and redeploy the Storybook.
+#
+# Repo-wide checks (type-check, lint, tests) run in app-development.yml via the Turbo fan-out.
+
+name: Gov UI Kit Storybook Publish
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      # Bracket access is required: the filter name contains hyphens, which GitHub Actions
+      # expressions would otherwise parse as subtraction.
+      changed: ${{ steps.filter.outputs['gov-ui-kit'] }}
+    steps:
+      # Push events are compared locally by paths-filter, so the repository must be checked out.
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Detect gov-ui-kit changes
+        id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v3.0.2 (https://github.com/dorny/paths-filter/releases/tag/v3.0.2)
+        with:
+          base: main
+          filters: .github/filters.yml
+
+  deploy:
+    needs: changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
+    uses: ./.github/workflows/shared-storybook-deploy.yml
+    secrets: inherit
+    with:
+      domain: "uikit.aragon.org"

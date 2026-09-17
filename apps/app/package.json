@@ -46,7 +46,7 @@
         "@aragon/aragon-domain": "^0.3.1",
         "@aragon/assistant-chat": "workspace:*",
         "@aragon/assistant-contracts": "workspace:*",
-        "@aragon/gov-ui-kit": "catalog:",
+        "@aragon/gov-ui-kit": "workspace:*",
         "@dagrejs/dagre": "^3.1.1",
         "@floating-ui/react": "^0.27.20",
         "@number-flow/react": "^0.6.2",
