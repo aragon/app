@@ -60,6 +60,30 @@ describe('useWorkspaceAccountFilter hook', () => {
         expect(result.current.activeOption?.isAllAccounts).toBeTruthy();
     });
 
+    it('offers no aggregated option and selects the first DAO account by default when no label is set for it', () => {
+        const accounts = [
+            buildAccount({
+                id: `ethereum-sepolia-${safeAddress}`,
+                type: WorkspaceAccountType.SAFE,
+                address: safeAddress,
+            }),
+            buildAccount(),
+        ];
+
+        const { result } = renderFilter({
+            accounts,
+            allAccountsLabel: undefined,
+        });
+
+        expect(result.current.options).toHaveLength(1);
+        expect(
+            result.current.options.some((option) => option.isAllAccounts),
+        ).toBeFalsy();
+        expect(result.current.activeOption?.account?.address).toEqual(
+            daoAddress,
+        );
+    });
+
     it('gives a tab to DAO accounts only, a Safe cannot be served by the single DAO endpoints', () => {
         const accounts = [
             buildAccount(),

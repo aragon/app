@@ -43,6 +43,13 @@ class NavigationWorkspaceUtils {
             order: 200,
         },
         {
+            label: 'app.application.navigationWorkspace.link.members',
+            link: this.getWorkspaceUrl(workspace, 'members'),
+            icon: IconType.APP_MEMBERS,
+            lgHidden: context === 'dialog',
+            order: 300,
+        },
+        {
             label: 'app.application.navigationWorkspace.link.assets',
             link: this.getWorkspaceUrl(workspace, 'assets'),
             icon: IconType.APP_ASSETS,

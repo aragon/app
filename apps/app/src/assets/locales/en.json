@@ -429,6 +429,7 @@
         "accounts": "{{count}} accounts",
         "link": {
           "assets": "Assets",
+          "members": "Members",
           "overview": "Overview",
           "proposals": "Proposals",
           "transactions": "Transactions"
@@ -4358,6 +4359,19 @@
       "workspaceInfoAside": {
         "accounts": "Accounts",
         "owner": "Owner"
+      },
+      "workspaceMembersPage": {
+        "emptyState": {
+          "description": "This will show the members of the DAOs in this workspace when available.",
+          "heading": "No members found"
+        },
+        "main": {
+          "title": "Members"
+        },
+        "notFound": {
+          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
+          "title": "Workspace not found"
+        }
       },
       "workspaceTransactionList": {
         "emptyState": {

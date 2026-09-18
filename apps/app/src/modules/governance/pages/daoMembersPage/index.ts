@@ -1,2 +1,6 @@
 export { DaoMembersPage, type IDaoMembersPageProps } from './daoMembersPage';
-export { daoMembersPageFilterParam } from './daoMembersPageClient';
+export {
+    DaoMembersPageClient,
+    daoMembersPageFilterParam,
+    type IDaoMembersPageClientProps,
+} from './daoMembersPageClient';

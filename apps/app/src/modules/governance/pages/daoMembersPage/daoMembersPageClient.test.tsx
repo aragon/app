@@ -38,6 +38,11 @@ describe('<DaoMembersPageClient /> component', () => {
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
         ]);
+        useFeaturedDelegatesPluginSpy.mockReturnValue({
+            hasFeaturedDelegates: false,
+            featuredDelegatesConfig: undefined,
+            featuredDelegatesPlugin: undefined,
+        });
     });
 
     afterEach(() => {
@@ -51,7 +56,7 @@ describe('<DaoMembersPageClient /> component', () => {
     ) => {
         const completeProps: IDaoMembersPageClientProps = {
             initialParams: {
-                queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
+                queryParams: { daoId: 'test-id' },
             },
             featuredDelegates: [],
             ...props,
@@ -68,6 +73,21 @@ describe('<DaoMembersPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByTestId('member-list-mock')).toBeInTheDocument();
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
+    });
+
+    it('renders the children above the members list', () => {
+        render(
+            createTestComponent({
+                children: <div data-testid="children-mock" />,
+            }),
+        );
+
+        const children = screen.getByTestId('children-mock');
+        const list = screen.getByTestId('member-list-mock');
+        expect(
+            children.compareDocumentPosition(list) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
     });
 
     it('renders the aside plugin info on the featured delegates tab for the plugin resolved by the CMS plugin address', () => {
