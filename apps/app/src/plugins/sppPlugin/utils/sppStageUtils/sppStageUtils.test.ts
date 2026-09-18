@@ -1,5 +1,10 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import {
+    externalPluginId,
+    safeBodyPluginId,
+} from '@/plugins/safeMultisigPlugin/constants';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import {
@@ -9,7 +14,7 @@ import {
     generateSppStagePlugin,
     generateSppSubProposal,
 } from '../../testUtils';
-import { SppProposalType } from '../../types';
+import { SppProposalType, VotingBodyBrandIdentity } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {
@@ -20,6 +25,50 @@ describe('SppStageUtils', () => {
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
+    });
+
+    describe('getBodyPluginId', () => {
+        it.each([
+            {
+                label: 'an installed body',
+                plugin: generateSppStagePlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                }),
+                network: Network.ETHEREUM_MAINNET,
+                expected: PluginInterfaceType.MULTISIG,
+            },
+            {
+                label: 'a Safe on a supported network',
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.SAFE,
+                }),
+                network: Network.ETHEREUM_MAINNET,
+                expected: safeBodyPluginId,
+            },
+            {
+                label: 'a Safe on an unsupported network',
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.SAFE,
+                }),
+                network: Network.CITREA_MAINNET,
+                expected: externalPluginId,
+            },
+            {
+                label: 'a generic external body',
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.OTHER,
+                }),
+                network: Network.ETHEREUM_MAINNET,
+                expected: externalPluginId,
+            },
+        ])('resolves $label to $expected', ({ plugin, network, expected }) => {
+            expect(sppStageUtils.getBodyPluginId(plugin, network)).toEqual(
+                expected,
+            );
+        });
     });
 
     describe('getStageStartDate', () => {
@@ -422,6 +471,18 @@ describe('SppStageUtils', () => {
             );
         });
 
+        it('does not let a veto recorded after the proposal advanced decide the stage it left', () => {
+            // `reportProposalResult` accepts a result for an earlier stage and does not roll
+            // progression back, so this write is history. Reporting VETOED for a stage the
+            // proposal already passed claims an authority the record does not carry.
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ stageIndex: 1 });
+            isVetoReachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).not.toEqual(
+                ProposalStatus.VETOED,
+            );
+        });
+
         it('returns unreached is current stage cannot be reached', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal();
@@ -511,7 +572,7 @@ describe('SppStageUtils', () => {
             );
         });
 
-        it('returns advanceable when stage is active, approval is reached, but minAdvanceDate has not yet passed', () => {
+        it('does not report advanceable while the minAdvance floor blocks the advance action', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 });
             const minAdvance = DateTime.fromISO(now).plus({ days: 1 });
@@ -536,8 +597,83 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
 
+            // The stage's threshold is met, so the stage reads ACCEPTED - but `canStageAdvance`
+            // refuses until `minAdvance` passes, and the label must not claim an advance the
+            // action blocks.
             expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
-                ProposalStatus.ADVANCEABLE,
+                ProposalStatus.ACCEPTED,
+            );
+            expect(sppStageUtils.canStageAdvance(proposal, stages[1])).toBe(
+                false,
+            );
+        });
+
+        it('does not let a veto recorded after execution decide the final stage', () => {
+            // A proposal never advances past its last stage, so `stageIndex >= currentStage`
+            // alone leaves an executed proposal flippable to VETOED by a late write.
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                executed: { status: true },
+                stageIndex: 0,
+            });
+            isVetoReachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).not.toEqual(
+                ProposalStatus.VETOED,
+            );
+        });
+
+        it('does not report rejected while a late approval can still advance the stage', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 3 });
+            const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const minAdvance = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 2 });
+
+            const stages = [
+                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({ stageIndex: 1 }),
+            ];
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 0,
+                settings: generateSppPluginSettings({ stages }),
+            });
+
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvance);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(false);
+            timeUtils.setTime(now);
+
+            // Voting has closed with the threshold unmet, but a report landing before
+            // `maxAdvance` still counts - telling an owner the proposal is dead while their
+            // signature would change the outcome is the harm here.
+            expect(sppStageUtils.getStageStatus(proposal, stages[0])).toBe(
+                ProposalStatus.ACTIVE,
+            );
+        });
+
+        it('does not reopen a stage as active for a late result once the proposal executed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 2 });
+
+            const stages = [generateSppStage({ stageIndex: 0 })];
+            const proposal = generateSppProposal({
+                executed: { status: true },
+                hasActions: true,
+                stageIndex: 0,
+                settings: generateSppPluginSettings({ stages }),
+            });
+
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(false);
+            timeUtils.setTime(now);
+
+            expect(sppStageUtils.getStageStatus(proposal, stages[0])).not.toBe(
+                ProposalStatus.ACTIVE,
             );
         });
 
@@ -1078,8 +1214,13 @@ describe('SppStageUtils', () => {
             getStageEndDateSpy.mockRestore();
         });
 
-        it('allows any body to vote while the stage is active', () => {
+        it('allows any body to vote while the stage is active and its voting window is open', () => {
+            const now = '2023-01-01T12:00:00.000Z';
             getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
             const stage = generateSppStage();
             const proposal = generateSppProposal();
             const approveBody = generateSppStagePlugin({
@@ -1095,6 +1236,27 @@ describe('SppStageUtils', () => {
             expect(
                 sppStageUtils.canBodyVote(proposal, stage, vetoBody),
             ).toBeTruthy();
+        });
+
+        it('stops an approving body voting once the window closed, even though the stage still reads active for a late report', () => {
+            // Between voting close and `maxAdvance` the stage stays ACTIVE so a late report still
+            // counts, but an ordinary body's onchain vote would revert there. Only bodies wired to
+            // the late-report slot may act, and that path is gated separately.
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).minus({ hours: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            const approveBody = generateSppStagePlugin({
+                proposalType: SppProposalType.APPROVAL,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, approveBody),
+            ).toBeFalsy();
         });
 
         it('lets a vetoing body veto while the stage is advanceable and the voting window is still open', () => {

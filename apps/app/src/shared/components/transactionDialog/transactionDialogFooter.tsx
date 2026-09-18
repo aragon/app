@@ -9,6 +9,7 @@ import { useTranslations } from '../translationsProvider';
 import {
     type IBuildTransactionDialogSuccessLinkHref,
     type ITransactionDialogActionParams,
+    type ITransactionDialogCompletion,
     type ITransactionDialogProps,
     type ITransactionDialogStep,
     TransactionDialogStep,
@@ -23,11 +24,11 @@ export interface ITransactionDialogFooterProps<
      */
     submitLabel: string;
     /**
-     * Link displayed when the transaction has been sent successfully.
+     * Link displayed when the managed transaction has been sent successfully.
      */
     successLink: ITransactionDialogProps['successLink'];
     /**
-     * Receipt of the transaction used for building the success link.
+     * Receipt of the transaction used for building the managed success link.
      */
     txReceipt?: TransactionReceipt;
     /**
@@ -39,7 +40,7 @@ export interface ITransactionDialogFooterProps<
      */
     onError: ITransactionDialogActionParams['onError'];
     /**
-     * Callback called on cancel button click.
+     * Callback called on managed cancel button click.
      */
     onCancelClick?: ITransactionDialogProps['onCancelClick'];
     /**
@@ -55,7 +56,27 @@ export interface ITransactionDialogFooterProps<
      */
     indexingFallbackUrl?: ITransactionDialogProps['indexingFallbackUrl'];
     /**
-     * When true, the cancel button is permanently disabled.
+     * When true, renders caller-owned completion instead of a receipt-backed managed success action.
+     */
+    mode?: 'custom';
+    /**
+     * Explicit caller-owned terminal state.
+     */
+    isComplete?: boolean;
+    /**
+     * Receipt-free completion action for custom mode.
+     */
+    completion?: ITransactionDialogCompletion;
+    /**
+     * Disables the custom primary action while caller-owned gates are unresolved.
+     */
+    primaryActionDisabled?: boolean;
+    /**
+     * Scoped custom dismissal handler.
+     */
+    onDismiss?: () => void;
+    /**
+     * When true, the cancel button in the dialog footer is permanently disabled.
      */
     disableCancel?: boolean;
 }
@@ -103,6 +124,11 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         indexingFallbackUrl,
         proposalSlug,
         disableCancel,
+        mode,
+        isComplete = false,
+        completion,
+        primaryActionDisabled = false,
+        onDismiss,
     } = props;
 
     // For two step transactions we move from first to second step automatically on success, so in those cases
@@ -121,13 +147,14 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const { close } = useDialogContext();
     const { t } = useTranslations();
 
+    const isCustom = mode === 'custom';
     const isIndexing = stepId === TransactionDialogStep.INDEXING;
 
     const [showProceedAnyway, setShowProceedAnyway] = useState(false);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        if (isIndexing && state === 'pending') {
+        if (!isCustom && isIndexing && state === 'pending') {
             timer = setTimeout(
                 () => setShowProceedAnyway(true),
                 indexingStepTimeout,
@@ -137,7 +164,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         return () => {
             clearTimeout(timer);
         };
-    }, [isIndexing, state]);
+    }, [isCustom, isIndexing, state]);
 
     const isErrorState = state === 'error';
     const isSuccessState = state === 'success';
@@ -148,46 +175,67 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         ? TransactionDialogStep.INDEXING
         : TransactionDialogStep.CONFIRM;
 
-    const displaySuccessLink = stepId === successStep && isSuccessState;
+    const displaySuccessLink =
+        !isCustom && stepId === successStep && isSuccessState;
+    const displayCompletion = isCustom && isComplete;
 
     // When the dialog reaches a state where we intentionally allow the user to navigate away
-    // (e.g. success link shown, or "proceed anyway" offered), ensure navigation is unblocked
-    // before the user clicks a link (our Link wrapper otherwise prompts a confirm dialog).
+    // (e.g. success link, completion action, or "proceed anyway"), ensure navigation is unblocked
+    // before the user clicks a link.
     useEffect(() => {
-        if (displaySuccessLink || showProceedAnyway) {
+        if (displaySuccessLink || displayCompletion || showProceedAnyway) {
             setIsBlocked(false);
         }
-    }, [displaySuccessLink, showProceedAnyway, setIsBlocked]);
+    }, [
+        displayCompletion,
+        displaySuccessLink,
+        showProceedAnyway,
+        setIsBlocked,
+    ]);
 
     const isCancelDisabled =
         disableCancel ||
-        ((stepId === TransactionDialogStep.CONFIRM ||
-            stepId === TransactionDialogStep.INDEXING) &&
+        (!isCustom &&
+            (stepId === TransactionDialogStep.CONFIRM ||
+                stepId === TransactionDialogStep.INDEXING) &&
             (isSuccessState || isPendingState));
 
     const customSubmitLabel =
-        stepId != null && state != null
+        !isCustom && stepId != null && state != null
             ? stepStateSubmitLabel[stepId]?.[state]
             : undefined;
-    const defaultSubmitLabel = isErrorState
-        ? t('app.shared.transactionDialog.footer.retry')
-        : displaySuccessLink
-          ? successLabel
-          : submitLabel;
+    const defaultSubmitLabel = displayCompletion
+        ? (completion?.label ?? submitLabel)
+        : isErrorState
+          ? t('app.shared.transactionDialog.footer.retry')
+          : displaySuccessLink
+            ? successLabel
+            : submitLabel;
 
     const processedSubmitLabel =
         customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
 
     const handlePrimaryActionClick = () => {
+        if (displayCompletion) {
+            completion?.onClick?.();
+            return;
+        }
+
         if (displaySuccessLink) {
             close();
             successOnClick?.(txReceipt!);
-        } else {
-            action?.({ onError });
+            return;
         }
+
+        action?.({ onError });
     };
 
     const handleCancelClick = () => {
+        if (isCustom) {
+            onDismiss?.();
+            return;
+        }
+
         // The cancel button becomes a "Proceed anyway" navigation action during indexing after a timeout.
         // Only unblock navigation in that specific flow.
         if (showProceedAnyway) {
@@ -200,15 +248,18 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     };
 
     const processedSuccessLink =
-        displaySuccessLink && successHref
+        !isCustom && displaySuccessLink && successHref
             ? buildSuccessLink(successHref, {
                   receipt: txReceipt!,
                   slug: proposalSlug,
               })
             : undefined;
+    const processedCompletionLink = displayCompletion
+        ? completion?.href
+        : undefined;
 
     // The cancel button becomes "Proceed anyway" during indexing after 8 seconds
-    // and navigates the user to a different page based on transaction type
+    // and navigates the user to a different page based on transaction type.
     const cancelButtonLabel = showProceedAnyway
         ? t('app.shared.transactionDialog.footer.proceedAnyway')
         : t('app.shared.transactionDialog.footer.cancel');
@@ -220,17 +271,22 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
                 label: processedSubmitLabel,
                 onClick: handlePrimaryActionClick,
                 iconLeft:
-                    isErrorState || isWarningState
+                    !displayCompletion && (isErrorState || isWarningState)
                         ? IconType.RELOAD
                         : undefined,
-                isLoading: isPendingState,
-                href: processedSuccessLink,
+                isLoading: !displayCompletion && isPendingState,
+                disabled: primaryActionDisabled,
+                href: processedCompletionLink ?? processedSuccessLink,
             }}
             secondaryAction={{
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
-                href: showProceedAnyway ? fallbackUrl : undefined,
-                disabled: showProceedAnyway ? isSuccessState : isCancelDisabled,
+                href: !isCustom && showProceedAnyway ? fallbackUrl : undefined,
+                disabled: isCustom
+                    ? isCancelDisabled
+                    : showProceedAnyway
+                      ? isSuccessState
+                      : isCancelDisabled,
             }}
         />
     );

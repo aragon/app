@@ -87,6 +87,12 @@ export interface ITransactionDialogProps<
     TCustomStepId extends string = string,
 > {
     /**
+     * Orchestration mode. Managed (default) drives wagmi send/receipt and appends the default
+     * PREPARE/APPROVE/CONFIRM(/INDEXING) steps. Use the discriminated custom mode
+     * (`ITransactionDialogCustomProps`) for caller-driven flows that own their own steps.
+     */
+    mode?: 'managed';
+    /**
      * Title of the dialog.
      */
     title: string;
@@ -178,4 +184,87 @@ export interface ITransactionDialogProps<
      * When true, the cancel button in the dialog footer is permanently disabled.
      */
     disableCancel?: boolean;
+}
+
+export interface ITransactionDialogCompletion {
+    /**
+     * Label for the action shown once the caller marks the flow complete.
+     */
+    label: string;
+    /**
+     * Optional static destination for the completion action.
+     */
+    href?: string;
+    /**
+     * Optional action for the completion button.
+     */
+    onClick?: () => void;
+}
+
+export interface ITransactionDialogCustomProps<
+    TCustomStepId extends string = string,
+> {
+    /**
+     * Caller-driven transaction flow. Custom callers own step states, transitions, lifecycle
+     * analytics, and network switching around each wallet action.
+     */
+    mode: 'custom';
+    /**
+     * Title of the dialog.
+     */
+    title: string;
+    /**
+     * Description of the dialog.
+     */
+    description: string;
+    /**
+     * Label for the primary action when the active step has no state-specific label.
+     */
+    submitLabel: string;
+    /**
+     * Caller-owned custom steps rendered by the shared transaction presentation.
+     */
+    customSteps: ITransactionDialogStep<TCustomStepId>[];
+    /**
+     * Stepper utilities for the transaction state.
+     */
+    stepper: IUseStepperReturn<ITransactionDialogStepMeta, TCustomStepId>;
+    /**
+     * Information about the stepper in the current transaction dialog.
+     */
+    transactionInfo?: ITransactionInfo;
+    /**
+     * Network shown by the shared alert. Custom callers must wrap each wallet action with their
+     * own network-switch guard.
+     */
+    network?: Network;
+    /**
+     * Whether to render the step status tracker. Defaults to true.
+     */
+    showStatus?: boolean;
+    /**
+     * Children rendered above the stepper.
+     */
+    children?: ReactNode;
+    /**
+     * Explicit caller-owned terminal state.
+     */
+    isComplete: boolean;
+    /**
+     * Action shown when the caller marks the flow complete.
+     */
+    completion?: ITransactionDialogCompletion;
+    /**
+     * Disables the primary action while caller-owned gates are unresolved.
+     */
+    primaryActionDisabled?: boolean;
+    /**
+     * Disables dismissal while caller-owned work is pending.
+     */
+    disableCancel?: boolean;
+    /**
+     * Scoped dismissal handler supplied by the owning dialog. It must close only that dialog
+     * location rather than clearing the entire dialog stack.
+     */
+    onDismiss: () => void;
 }

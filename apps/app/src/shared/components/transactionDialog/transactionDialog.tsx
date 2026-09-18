@@ -5,7 +5,14 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    type ReactNode,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
@@ -22,13 +29,16 @@ import {
 } from '@/shared/utils/plausibleAnalyticsUtils';
 import { NetworkSwitchAlert } from '../networkSwitchAlert';
 import {
+    type ITransactionInfo,
     type ITransactionStatusStepMetaAddon,
     TransactionStatus,
     type TransactionStatusState,
 } from '../transactionStatus';
 import { useTranslations } from '../translationsProvider';
 import {
+    type ITransactionDialogCustomProps,
     type ITransactionDialogProps,
+    type ITransactionDialogStep,
     TransactionDialogStep,
 } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
@@ -44,7 +54,7 @@ const indexingStepInterval = 1000;
 // only shows guidance early, it is never failed or interrupted.
 const confirmStepTimeout = 90_000;
 
-export const TransactionDialog = <TCustomStepId extends string>(
+const ManagedTransactionController = <TCustomStepId extends string>(
     props: ITransactionDialogProps<TCustomStepId>,
 ) => {
     const {
@@ -599,15 +609,87 @@ export const TransactionDialog = <TCustomStepId extends string>(
     }, [hash, activeStep, nextStep]);
 
     return (
+        <TransactionDialogShell
+            description={description}
+            footer={
+                <TransactionDialogFooter
+                    activeStep={activeStepInfo}
+                    disableCancel={disableCancel}
+                    indexingFallbackUrl={indexingFallbackUrl}
+                    onCancelClick={onCancelClick}
+                    onError={handleTransactionError(activeStepInfo?.id)}
+                    proposalSlug={transactionStatus?.slug}
+                    submitLabel={submitLabel}
+                    successLink={successLink}
+                    transactionType={transactionType}
+                    txReceipt={txReceipt}
+                />
+            }
+            isCrossNetworkTransaction={isCrossNetworkTransaction}
+            networkName={transactionNetworkName}
+            showConfirmWarning={confirmStepStatus === 'warning'}
+            steps={steps}
+            title={title}
+            transactionInfo={transactionInfo}
+        >
+            {children}
+        </TransactionDialogShell>
+    );
+};
+
+interface ITransactionDialogShellProps<TStepId extends string = string> {
+    title: string;
+    description: string;
+    isCrossNetworkTransaction: boolean;
+    networkName: string;
+    showConfirmWarning?: boolean;
+    showStatus?: boolean;
+    children?: ReactNode;
+    steps: ITransactionDialogStep<TStepId>[];
+    transactionInfo?: ITransactionInfo;
+    footer: ReactNode;
+    statusBeforeChildren?: boolean;
+}
+
+const TransactionDialogShell = <TStepId extends string>(
+    props: ITransactionDialogShellProps<TStepId>,
+) => {
+    const {
+        title,
+        description,
+        isCrossNetworkTransaction,
+        networkName,
+        showConfirmWarning = false,
+        showStatus = true,
+        statusBeforeChildren = false,
+        children,
+        steps,
+        transactionInfo,
+        footer,
+    } = props;
+    const { t } = useTranslations();
+    const status =
+        steps.length === 0 ? null : (
+            <TransactionStatus.Container
+                steps={steps}
+                transactionInfo={transactionInfo}
+            >
+                {steps.map((step) => (
+                    <TransactionStatus.Step key={step.id} {...step} />
+                ))}
+            </TransactionStatus.Container>
+        );
+
+    return (
         <>
             <Dialog.Header description={description} title={title} />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     <NetworkSwitchAlert
                         isCrossNetworkTransaction={isCrossNetworkTransaction}
-                        networkName={transactionNetworkName}
+                        networkName={networkName}
                     />
-                    {confirmStepStatus === 'warning' && (
+                    {showConfirmWarning && (
                         <AlertCard
                             message={t(
                                 'app.shared.transactionDialog.confirmWarning.title',
@@ -619,29 +701,197 @@ export const TransactionDialog = <TCustomStepId extends string>(
                             )}
                         </AlertCard>
                     )}
+                    {showStatus && statusBeforeChildren && status}
                     {children}
-                    <TransactionStatus.Container
-                        steps={steps}
-                        transactionInfo={transactionInfo}
-                    >
-                        {steps.map((step) => (
-                            <TransactionStatus.Step key={step.id} {...step} />
-                        ))}
-                    </TransactionStatus.Container>
+                    {showStatus && !statusBeforeChildren && status}
                 </div>
             </Dialog.Content>
-            <TransactionDialogFooter
-                activeStep={activeStepInfo}
-                disableCancel={disableCancel}
-                indexingFallbackUrl={indexingFallbackUrl}
-                onCancelClick={onCancelClick}
-                onError={handleTransactionError(activeStepInfo?.id)}
-                proposalSlug={transactionStatus?.slug}
-                submitLabel={submitLabel}
-                successLink={successLink}
-                transactionType={transactionType}
-                txReceipt={txReceipt}
-            />
+            {footer}
         </>
     );
+};
+
+const areCustomStepsEqual = <TCustomStepId extends string>(
+    currentSteps: ITransactionDialogStep<TCustomStepId>[],
+    nextSteps: ITransactionDialogStep<TCustomStepId>[],
+) => {
+    if (currentSteps.length !== nextSteps.length) {
+        return false;
+    }
+
+    return nextSteps.every((nextStep, index) => {
+        const currentStep = currentSteps[index];
+
+        return (
+            currentStep?.id === nextStep.id &&
+            currentStep.order === nextStep.order &&
+            currentStep.meta.label === nextStep.meta.label &&
+            currentStep.meta.state === nextStep.meta.state &&
+            currentStep.meta.errorLabel === nextStep.meta.errorLabel &&
+            currentStep.meta.warningLabel === nextStep.meta.warningLabel &&
+            currentStep.meta.auto === nextStep.meta.auto &&
+            currentStep.meta.addon?.label === nextStep.meta.addon?.label &&
+            currentStep.meta.addon?.href === nextStep.meta.addon?.href &&
+            currentStep.meta.addon?.icon === nextStep.meta.addon?.icon
+        );
+    });
+};
+
+const CustomTransactionController = <TCustomStepId extends string>(
+    props: ITransactionDialogCustomProps<TCustomStepId>,
+) => {
+    const {
+        title,
+        description,
+        submitLabel,
+        customSteps,
+        stepper,
+        transactionInfo,
+        network = Network.ETHEREUM_MAINNET,
+        showStatus = true,
+        children,
+        isComplete,
+        completion,
+        primaryActionDisabled,
+        disableCancel,
+        onDismiss,
+    } = props;
+    const { activeStep, steps, updateSteps } = stepper;
+    const activeStepInfo = customSteps.find((step) => step.id === activeStep);
+    const { address } = useWalletAccount();
+    const { updateOptions } = useDialogContext();
+    const { isCrossNetworkTransaction, networkName } = useNetworkSwitch({
+        network,
+    });
+    const onDismissRef = useRef(onDismiss);
+    const disableCancelRef = useRef(disableCancel);
+
+    onDismissRef.current = onDismiss;
+    disableCancelRef.current = disableCancel;
+
+    const autoActionRef = useRef<
+        | {
+              key: string;
+              fired: boolean;
+          }
+        | undefined
+    >(undefined);
+
+    const handleTransactionError = useCallback(
+        (error: unknown) => {
+            transactionDialogUtils.monitorTransactionError(error, {
+                stepId: activeStepInfo?.id,
+                from: address,
+            });
+        },
+        [activeStepInfo?.id, address],
+    );
+
+    useEffect(
+        () =>
+            updateOptions({
+                disableOutsideClick: true,
+                onClose: () => {
+                    if (!disableCancelRef.current) {
+                        onDismissRef.current();
+                    }
+                },
+            }),
+        [updateOptions],
+    );
+
+    // Keep the shared stepper in sync with caller-owned steps without competing for state:
+    // compare structurally (ignoring action identity, which callers recreate each render) so a
+    // fresh render never triggers a redundant updateSteps loop.
+    useEffect(() => {
+        if (!areCustomStepsEqual(steps, customSteps)) {
+            updateSteps(customSteps);
+        }
+    }, [customSteps, steps, updateSteps]);
+
+    useEffect(() => {
+        const { action, auto, state } = activeStepInfo?.meta ?? {};
+        const stepId = activeStepInfo?.id;
+
+        if (isComplete || stepId == null) {
+            autoActionRef.current = undefined;
+            return;
+        }
+
+        const key = String(stepId);
+        if (autoActionRef.current?.key !== key) {
+            autoActionRef.current = undefined;
+        }
+
+        if (action == null || state !== 'idle' || !auto) {
+            return;
+        }
+
+        const previousAction = autoActionRef.current;
+        if (previousAction?.key === key && previousAction.fired) {
+            return;
+        }
+
+        const currentAction = { key, fired: false };
+        autoActionRef.current = currentAction;
+        const timeout = setTimeout(() => {
+            if (autoActionRef.current !== currentAction) {
+                return;
+            }
+
+            currentAction.fired = true;
+            action({ onError: handleTransactionError });
+        }, 100);
+
+        return () => {
+            clearTimeout(timeout);
+            if (
+                autoActionRef.current === currentAction &&
+                !currentAction.fired
+            ) {
+                autoActionRef.current = undefined;
+            }
+        };
+    }, [activeStepInfo, handleTransactionError, isComplete]);
+
+    return (
+        <TransactionDialogShell
+            description={description}
+            footer={
+                <TransactionDialogFooter
+                    activeStep={activeStepInfo}
+                    completion={completion}
+                    disableCancel={disableCancel}
+                    isComplete={isComplete}
+                    mode="custom"
+                    onDismiss={onDismiss}
+                    onError={handleTransactionError}
+                    primaryActionDisabled={primaryActionDisabled}
+                    submitLabel={submitLabel}
+                    successLink={undefined}
+                />
+            }
+            isCrossNetworkTransaction={isCrossNetworkTransaction}
+            networkName={networkName}
+            showStatus={showStatus}
+            statusBeforeChildren
+            steps={customSteps}
+            title={title}
+            transactionInfo={transactionInfo}
+        >
+            {children}
+        </TransactionDialogShell>
+    );
+};
+
+export const TransactionDialog = <TCustomStepId extends string>(
+    props:
+        | ITransactionDialogProps<TCustomStepId>
+        | ITransactionDialogCustomProps<TCustomStepId>,
+) => {
+    if (props.mode === 'custom') {
+        return <CustomTransactionController {...props} />;
+    }
+
+    return <ManagedTransactionController {...props} />;
 };

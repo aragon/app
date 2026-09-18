@@ -53,13 +53,27 @@ class SppProposalUtils {
             ProposalStatus.EXPIRED,
         );
 
-        // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
-        const endDate =
-            hasUnreachedStages || !lastStage
-                ? 0
+        /**
+         * The other half of nonce-map defect #2. `getStageStatus` already keeps a stage ACTIVE
+         * after its voting window while `maxAdvance` is open, because a late result still decides
+         * it - but deriving the proposal's end from the last stage's voting window alone reported
+         * REJECTED over that same window, so the stage card offered a vote the header called
+         * rejected. A stage that can still be answered has not ended.
+         */
+        const isLastStageLive =
+            lastStage != null &&
+            sppStageUtils.getStageStatus(proposal, lastStage) ===
+                ProposalStatus.ACTIVE;
+
+        const votingEndDate =
+            lastStage == null || isLastStageLive
+                ? undefined
                 : sppStageUtils
                       .getStageEndDate(proposal, lastStage)
                       ?.toSeconds();
+
+        // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
+        const endDate = hasUnreachedStages || !lastStage ? 0 : votingEndDate;
         const executionExpiryDate = lastStage
             ? sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds()
             : undefined;

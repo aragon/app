@@ -1,15 +1,17 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { smartContractService } from '@/modules/governance/api/smartContractService';
-import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import { safeService } from '@/shared/api/safeService';
+import {
+    generateSafeInfoResponse,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { useIsSafeContract } from '.';
 
 describe('useIsSafeContract hook', () => {
-    const getAbiSpy = jest.spyOn(smartContractService, 'getAbi');
+    const getSafeInfoSpy = jest.spyOn(safeService, 'getSafeInfo');
 
     afterEach(() => {
-        getAbiSpy.mockReset();
+        getSafeInfoSpy.mockReset();
     });
 
     const validAddress = '0x1234567890123456789012345678901234567890';
@@ -18,89 +20,36 @@ describe('useIsSafeContract hook', () => {
     it('returns false immediately for invalid addresses', () => {
         const { result } = renderHook(
             () => useIsSafeContract({ address: 'invalid', network }),
-            {
-                wrapper: ReactQueryWrapper,
-            },
+            { wrapper: ReactQueryWrapper },
         );
 
         expect(result.current.data).toBe(false);
         expect(result.current.isLoading).toBe(false);
-        expect(getAbiSpy).not.toHaveBeenCalled();
+        expect(getSafeInfoSpy).not.toHaveBeenCalled();
     });
 
     it('returns false immediately when address is undefined', () => {
         const { result } = renderHook(
             () => useIsSafeContract({ address: undefined, network }),
-            {
-                wrapper: ReactQueryWrapper,
-            },
+            { wrapper: ReactQueryWrapper },
         );
 
         expect(result.current.data).toBe(false);
         expect(result.current.isLoading).toBe(false);
-        expect(getAbiSpy).not.toHaveBeenCalled();
+        expect(getSafeInfoSpy).not.toHaveBeenCalled();
     });
 
-    it('returns true when contract name contains Safe indicators', async () => {
-        const testCases = ['SafeProxy', 'GnosisSafe', 'Safe', 'Gnosis Safe'];
-
-        for (const contractName of testCases) {
-            getAbiSpy.mockResolvedValue(
-                generateSmartContractAbi({
-                    name: contractName,
-                    address: validAddress,
-                    network,
-                }),
-            );
-
-            const { result } = renderHook(
-                () => useIsSafeContract({ address: validAddress, network }),
-                {
-                    wrapper: ReactQueryWrapper,
-                },
-            );
-
-            await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-            expect(result.current.data).toBe(true);
-        }
-    });
-
-    it('returns false when contract name does not contain Safe indicators', async () => {
-        getAbiSpy.mockResolvedValue(
-            generateSmartContractAbi({
-                name: 'SomeOtherContract',
-                address: validAddress,
-                network,
+    it('accepts an address whose Safe state can be read', async () => {
+        getSafeInfoSpy.mockResolvedValue(
+            generateSafeInfoResponse({
+                owners: [validAddress],
+                threshold: 1,
             }),
         );
 
         const { result } = renderHook(
             () => useIsSafeContract({ address: validAddress, network }),
-            {
-                wrapper: ReactQueryWrapper,
-            },
-        );
-
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-        expect(result.current.data).toBe(false);
-    });
-
-    it('returns true for case-insensitive Safe indicators', async () => {
-        getAbiSpy.mockResolvedValue(
-            generateSmartContractAbi({
-                name: 'safeproxy',
-                address: validAddress,
-                network,
-            }),
-        );
-
-        const { result } = renderHook(
-            () => useIsSafeContract({ address: validAddress, network }),
-            {
-                wrapper: ReactQueryWrapper,
-            },
+            { wrapper: ReactQueryWrapper },
         );
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -108,20 +57,58 @@ describe('useIsSafeContract hook', () => {
         expect(result.current.data).toBe(true);
     });
 
-    it('respects enabled option when set to false', () => {
+    /**
+     * The defect this replaced: the check read the contract's ABI and substring-matched its name,
+     * so `SafeMath` - or anything else merely containing "Safe" - could be attached as a governance
+     * body. Owners and a threshold are an interface; a name is not.
+     */
+    it('rejects a contract that is not a Safe however it is named', async () => {
+        getSafeInfoSpy.mockRejectedValue(new Error('not found'));
+
+        const { result } = renderHook(
+            () =>
+                useIsSafeContract({
+                    address: validAddress,
+                    network,
+                }),
+            { wrapper: ReactQueryWrapper },
+        );
+
+        await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+        expect(result.current.data).toBe(false);
+        expect(result.current.isError).toBe(true);
+    });
+
+    it('rejects a response that carries no owners', async () => {
+        // A shape that answers without an owner set cannot authorise anything, so treating it as a
+        // Safe would attach a body that can never act.
+        getSafeInfoSpy.mockResolvedValue(
+            generateSafeInfoResponse({ owners: [], threshold: 0 }),
+        );
+
+        const { result } = renderHook(
+            () => useIsSafeContract({ address: validAddress, network }),
+            { wrapper: ReactQueryWrapper },
+        );
+
+        await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+        expect(result.current.data).toBe(false);
+    });
+
+    it('does not read anything when disabled', () => {
         const { result } = renderHook(
             () =>
                 useIsSafeContract(
                     { address: validAddress, network },
                     { enabled: false },
                 ),
-            {
-                wrapper: ReactQueryWrapper,
-            },
+            { wrapper: ReactQueryWrapper },
         );
 
         expect(result.current.isLoading).toBe(false);
         expect(result.current.data).toBeFalsy();
-        expect(getAbiSpy).not.toHaveBeenCalled();
+        expect(getSafeInfoSpy).not.toHaveBeenCalled();
     });
 });
