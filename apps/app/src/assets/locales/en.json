@@ -4319,6 +4319,7 @@
         },
         "unavailable": {
           "description": "{{count}} of the accounts in this workspace could not be read, so their assets are missing from the totals below.",
+          "descriptionSingle": "This account could not be read, so its assets are missing from the totals below.",
           "title": "Some assets are missing"
         }
       },

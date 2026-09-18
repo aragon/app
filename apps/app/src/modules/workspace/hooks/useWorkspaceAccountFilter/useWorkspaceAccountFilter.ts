@@ -51,6 +51,15 @@ export interface IUseWorkspaceAccountFilterParams {
      * Label of the option aggregating every account.
      */
     allAccountsLabel: string;
+    /**
+     * Gives a tab to every account instead of only to the DAO ones.
+     *
+     * Set it on the pages served by the workspace query API, which answers for any account. Leave it off for the
+     * pages that fall back to the single DAO endpoints, or for data a Safe simply does not have, such as indexed
+     * proposals.
+     * @default false
+     */
+    includeNonDaoAccounts?: boolean;
 }
 
 export interface IUseWorkspaceAccountFilterReturn {
@@ -72,17 +81,23 @@ export interface IUseWorkspaceAccountFilterReturn {
  * Builds the account tabs of a workspace page and keeps the selected one on the URL, the way the DAO pages keep
  * their linked-account filter.
  *
- * Only DAO accounts get a tab of their own: a per-account view is served by the single DAO endpoints, which cannot
- * answer for a Safe. Safe accounts still contribute to the aggregated option.
+ * By default only DAO accounts get a tab of their own, for the pages whose per-account view is served by the
+ * single DAO endpoints, which cannot answer for a Safe. Pages reading the workspace query API throughout can give
+ * every account a tab with `includeNonDaoAccounts`. Either way every account contributes to the aggregated option.
  */
 export const useWorkspaceAccountFilter = (
     params: IUseWorkspaceAccountFilterParams,
 ): IUseWorkspaceAccountFilterReturn => {
-    const { accounts, accountInfos, allAccountsLabel } = params;
+    const { accounts, accountInfos, allAccountsLabel, includeNonDaoAccounts } =
+        params;
 
     const options = useMemo<IWorkspaceAccountFilterOption[]>(() => {
         const accountOptions = (accounts ?? [])
-            .filter((account) => account.type === WorkspaceAccountType.DAO)
+            .filter(
+                (account) =>
+                    includeNonDaoAccounts ||
+                    account.type === WorkspaceAccountType.DAO,
+            )
             .map((account) => {
                 const accountInfo = workspaceUtils.findAccountInfo(
                     accountInfos,
@@ -106,7 +121,7 @@ export const useWorkspaceAccountFilter = (
             },
             ...accountOptions,
         ];
-    }, [accounts, accountInfos, allAccountsLabel]);
+    }, [accounts, accountInfos, allAccountsLabel, includeNonDaoAccounts]);
 
     const [activeFilter, setActiveFilter] = useFilterUrlParam({
         name: workspaceAccountFilterParam,
