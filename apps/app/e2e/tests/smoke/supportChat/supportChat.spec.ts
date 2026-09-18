@@ -258,6 +258,14 @@ test.describe('Support chat', () => {
         );
         expect(horizontalOverflow).toBeLessThanOrEqual(1);
 
+        // The body is the fallback `app` query container, and containment on the body stops its
+        // background from propagating to the canvas: the page background has to be painted by the
+        // root element, or the canvas turns white below the first viewport once the page scrolls.
+        const rootBackground = await page.evaluate(
+            () => getComputedStyle(document.documentElement).backgroundColor,
+        );
+        expect(rootBackground).not.toBe('rgba(0, 0, 0, 0)');
+
         // Narrower window, panel still docked (a window decision): the app keeps 600px, below its
         // `md` breakpoint, so the gov-ui-kit definition list in the details card follows the column
         // too and stacks each term over its value instead of laying them out as a row. 1100px

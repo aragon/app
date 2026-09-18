@@ -59,9 +59,13 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     ]);
     const dehydratedState = dehydrate(queryClient);
 
+    // The page background lives on the root element, not the body: `body` is the fallback `app`
+    // query container (see breakpoints.css), and containment on the body switches off the
+    // propagation of its background to the canvas (css-contain-2 §3), which would leave the canvas
+    // white below the first viewport once the page scrolls.
     return (
-        <html className="h-full" lang="en">
-            <body className="flex h-full flex-col bg-neutral-50">
+        <html className="h-full bg-neutral-50" lang="en">
+            <body className="flex h-full flex-col">
                 <NextTopLoader
                     color="var(--color-primary-400)"
                     easing="ease-in-out"

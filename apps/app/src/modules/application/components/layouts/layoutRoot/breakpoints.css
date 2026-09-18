@@ -59,7 +59,10 @@
 @layer base {
     /* Fallback `app` container: surfaces outside the application column measure the window. Note that
        `body` cannot query itself — a breakpoint variant on the body element never matches; use
-       `screen-*` there. */
+       `screen-*` there. Containment on the body also switches off the propagation of its properties
+       to the canvas and the viewport (css-contain-2 §3), so the page background is declared on the
+       root element in layoutRoot.tsx: on the body it would only paint the body's own box and the
+       canvas would turn white below the first viewport once the page scrolls. */
     body {
         container: app / inline-size;
     }
