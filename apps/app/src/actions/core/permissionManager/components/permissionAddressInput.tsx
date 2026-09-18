@@ -2,6 +2,7 @@
 
 import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { zeroAddress } from 'viem';
 import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface IPermissionAddressInputProps {
@@ -25,6 +26,10 @@ export interface IPermissionAddressInputProps {
      * Chain the address is resolved against.
      */
     chainId?: number;
+    /**
+     * Condition contracts must not use the unconditional zero-address sentinel.
+     */
+    isCondition?: boolean;
 }
 
 /**
@@ -35,7 +40,7 @@ export interface IPermissionAddressInputProps {
 export const PermissionAddressInput: React.FC<IPermissionAddressInputProps> = (
     props,
 ) => {
-    const { name, fieldPrefix, label, helpText, chainId } = props;
+    const { name, fieldPrefix, label, helpText, chainId, isCondition } = props;
 
     const { onChange, value, ...addressField } = useFormField<
         Record<string, string>,
@@ -47,7 +52,12 @@ export const PermissionAddressInput: React.FC<IPermissionAddressInputProps> = (
         rules: {
             required: true,
             validate: (fieldValue) =>
-                addressUtils.isAddress(fieldValue as string, { strict: true }),
+                addressUtils.isAddress(fieldValue as string, {
+                    strict: true,
+                }) &&
+                (!isCondition ||
+                    fieldValue !== zeroAddress ||
+                    'app.actions.core.permissionActionCreate.conditionRequired'),
         },
         sanitizeOnBlur: false,
     });

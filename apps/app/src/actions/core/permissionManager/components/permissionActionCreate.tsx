@@ -75,6 +75,7 @@ export const PermissionActionCreate: React.FC<IPermissionActionCreateProps> = (
                     helpText={t(
                         'app.actions.core.permissionActionCreate.conditionHelpText',
                     )}
+                    isCondition={true}
                     label={t(
                         'app.actions.core.permissionActionDetails.conditionTerm',
                     )}

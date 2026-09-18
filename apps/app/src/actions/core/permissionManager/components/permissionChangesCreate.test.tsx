@@ -1,5 +1,5 @@
 import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
 import { encodeFunctionData, zeroAddress } from 'viem';
@@ -97,6 +97,7 @@ describe('<PermissionChangesCreate /> component', () => {
     };
 
     const revokeRow = ['1', whereAddress, whoAddress, zeroAddress, executeId];
+    const conditionPath = 'actions.0.inputData.parameters.0.value.0.3';
 
     const createTestComponent = (rows: string[][]) => (
         <TestForm action={createTestAction(rows)} />
@@ -125,6 +126,52 @@ describe('<PermissionChangesCreate /> component', () => {
 
         await waitFor(() => expect(getRows()[0][0]).toEqual('0'));
     });
+
+    it('requires a condition after switching to a conditional grant', async () => {
+        const user = userEvent.setup();
+        render(createTestComponent([revokeRow]));
+
+        // The row carries the zero-address sentinel until the operation asks for a
+        // real condition; leaving it there would encode a conditional grant with no
+        // condition, which the details view then renders as unconditional.
+        await user.click(
+            screen.getByRole('radio', { name: /operation.grantWithCondition/ }),
+        );
+
+        expect(getRows()[0][3]).toEqual('');
+
+        await act(async () => {
+            await formMethods?.trigger(conditionPath);
+        });
+
+        expect(formMethods?.getFieldState(conditionPath).error).toBeDefined();
+    });
+
+    it.each([
+        {
+            condition: zeroAddress,
+            message:
+                'app.actions.core.permissionActionCreate.conditionRequired',
+        },
+        { condition: whoAddress, message: undefined },
+    ])(
+        'validates the condition $condition of an imported conditional grant',
+        async ({ condition, message }) => {
+            render(
+                createTestComponent([
+                    ['2', whereAddress, whoAddress, condition, executeId],
+                ]),
+            );
+
+            await act(async () => {
+                await formMethods?.trigger(conditionPath);
+            });
+
+            expect(
+                formMethods?.getFieldState(conditionPath).error?.message,
+            ).toEqual(message);
+        },
+    );
 
     it('appends a new row serialised by ABI component name, not position', async () => {
         const user = userEvent.setup();

@@ -1,6 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render } from '@testing-library/react';
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
+import { zeroAddress } from 'viem';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { PermissionAddressInput } from './permissionAddressInput';
 
@@ -12,7 +13,10 @@ describe('<PermissionAddressInput /> component', () => {
 
     let formMethods: UseFormReturn | undefined;
 
-    const TestForm = (props: { initialValue?: string }) => {
+    const TestForm = (props: {
+        initialValue?: string;
+        isCondition?: boolean;
+    }) => {
         const methods = useForm({
             defaultValues: {
                 actions: [
@@ -36,6 +40,7 @@ describe('<PermissionAddressInput /> component', () => {
                         <PermissionAddressInput
                             fieldPrefix={fieldPrefix}
                             helpText="The actor"
+                            isCondition={props.isCondition}
                             label="Who"
                             name={name}
                         />
@@ -77,5 +82,33 @@ describe('<PermissionAddressInput /> component', () => {
         await formMethods?.trigger(fieldPath);
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeDefined();
+    });
+
+    it('accepts the zero address when the field is not a condition', async () => {
+        render(<TestForm initialValue={zeroAddress} />);
+
+        await formMethods?.trigger(fieldPath);
+
+        expect(formMethods?.getFieldState(fieldPath).error).toBeUndefined();
+    });
+
+    it('rejects the zero address on a condition field', async () => {
+        // The zero address is OSx's "no condition" sentinel, so it is a valid address
+        // but a meaningless condition.
+        render(<TestForm initialValue={zeroAddress} isCondition={true} />);
+
+        await formMethods?.trigger(fieldPath);
+
+        expect(formMethods?.getFieldState(fieldPath).error?.message).toEqual(
+            'app.actions.core.permissionActionCreate.conditionRequired',
+        );
+    });
+
+    it('accepts a real contract on a condition field', async () => {
+        render(<TestForm initialValue={validAddress} isCondition={true} />);
+
+        await formMethods?.trigger(fieldPath);
+
+        expect(formMethods?.getFieldState(fieldPath).error).toBeUndefined();
     });
 });

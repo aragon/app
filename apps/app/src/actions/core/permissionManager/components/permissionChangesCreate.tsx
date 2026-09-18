@@ -110,13 +110,12 @@ export const PermissionChangesCreate: React.FC<
             nextOperation.toString(),
         );
 
-        if (
-            hasConditionColumn &&
-            nextOperation !== PermissionOperation.GRANT_WITH_CONDITION
-        ) {
+        if (hasConditionColumn) {
             setValue(
                 `${fieldPrefix}.${cellFieldName(rowIndex, 'condition')}`,
-                zeroAddress,
+                nextOperation === PermissionOperation.GRANT_WITH_CONDITION
+                    ? ''
+                    : zeroAddress,
             );
         }
     };
@@ -265,6 +264,7 @@ export const PermissionChangesCreate: React.FC<
                                     helpText={t(
                                         'app.actions.core.permissionActionCreate.conditionHelpText',
                                     )}
+                                    isCondition={true}
                                     label={t(
                                         'app.actions.core.permissionActionDetails.conditionTerm',
                                     )}
