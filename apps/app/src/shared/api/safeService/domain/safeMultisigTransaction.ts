@@ -19,9 +19,10 @@ export interface IAragonProposalReport {
      */
     proposalId: number;
     /**
-     * Stage the report addresses, as encoded in the calldata.
+     * Stage the report addresses, as encoded in the calldata. The backend sends the on-chain
+     * `uint16` stage index as a number, not a string.
      */
-    stageId: string;
+    stageId: number;
     /**
      * Result the call would write if executed. Never a governance outcome: the transaction may
      * never execute, or land after the stage advanced.
@@ -37,7 +38,8 @@ export const isAragonProposalReport = (
     typeof value.bodyId === 'string' &&
     typeof value.proposalId === 'number' &&
     Number.isInteger(value.proposalId) &&
-    typeof value.stageId === 'string' &&
+    typeof value.stageId === 'number' &&
+    Number.isInteger(value.stageId) &&
     typeof value.resultType === 'number';
 
 export interface ISafeMultisigTransaction {

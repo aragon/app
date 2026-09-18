@@ -1,7 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import {
     concatHex,
     encodeFunctionData,
@@ -16,72 +15,21 @@ import * as Wagmi from 'wagmi';
 import locales from '@/assets/locales/en.json';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import { Network } from '@/shared/api/daoService';
-import * as dialogProvider from '@/shared/components/dialogProvider';
-import {
-    generateDialogContext,
-    generateSafeTransaction,
-} from '@/shared/testUtils';
+import { generateSafeTransaction } from '@/shared/testUtils';
 import {
     safeMultiSendAbi,
     safeTransactionEnvelopeUtils,
 } from '../../utils/safeTransactionEnvelopeUtils';
 import {
-    type ISafeTransactionReviewDialogParams,
-    SafeTransactionReviewDialog,
-} from './safeTransactionReviewDialog';
+    type ISafeTransactionReviewContentProps,
+    SafeTransactionReviewContent,
+} from './safeTransactionReviewContent';
 
-jest.mock('@aragon/gov-ui-kit', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const actual = jest.requireActual('@aragon/gov-ui-kit');
-    const Dialog = {
-        Header: (props: { title: string }) => <h2>{props.title}</h2>,
-        Content: (props: {
-            description?: string;
-            children?: React.ReactNode;
-        }) => (
-            <div>
-                <p>{props.description}</p>
-                {props.children}
-            </div>
-        ),
-        Footer: (props: {
-            primaryAction: {
-                label: string;
-                disabled?: boolean;
-                onClick?: () => void;
-            };
-            secondaryAction?: { label: string; onClick?: () => void };
-        }) => (
-            <div>
-                {props.secondaryAction != null && (
-                    <button
-                        onClick={props.secondaryAction.onClick}
-                        type="button"
-                    >
-                        {props.secondaryAction.label}
-                    </button>
-                )}
-                <button
-                    disabled={props.primaryAction.disabled}
-                    onClick={props.primaryAction.onClick}
-                    type="button"
-                >
-                    {props.primaryAction.label}
-                </button>
-            </div>
-        ),
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return { ...actual, Dialog };
-});
-
-describe('<SafeTransactionReviewDialog /> component', () => {
-    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+describe('<SafeTransactionReviewContent /> component', () => {
     const usePublicClientSpy = jest.spyOn(Wagmi, 'usePublicClient');
 
     /**
-     * The dialog reads code for every delegate target through the public client, so a test states
+     * The review reads code for every delegate target through the public client, so a test states
      * what the chain answers: a resolved value, a read that never answers, or a failed one.
      */
     const mockDelegateCode = (
@@ -111,15 +59,13 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     );
 
     beforeEach(() => {
-        useDialogContextSpy.mockReturnValue(generateDialogContext());
         // Default to an unresolved read: an unanswered node must not accuse a valid batch.
         mockDelegateCode(undefined, 'pending');
-        // The dialog hashes under the version it reads from the Safe, never the reported one.
+        // The content hashes under the version it reads from the Safe, never the reported one.
         useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
     });
 
     afterEach(() => {
-        useDialogContextSpy.mockReset();
         usePublicClientSpy.mockReset();
         useReadContractSpy.mockReset();
     });
@@ -196,15 +142,13 @@ describe('<SafeTransactionReviewDialog /> component', () => {
     };
 
     const createTestComponent = (
-        params?: Partial<ISafeTransactionReviewDialogParams>,
+        params?: Partial<ISafeTransactionReviewContentProps>,
     ) => {
-        const completeParams: ISafeTransactionReviewDialogParams = {
+        const completeParams: ISafeTransactionReviewContentProps = {
             transaction: generateSignedTransaction(),
             safeAddress,
             network: Network.ETHEREUM_MAINNET,
             safeVersion: '1.4.1',
-            confirmLabel: 'Confirm',
-            onConfirm: jest.fn(),
             ...params,
         };
 
@@ -215,20 +159,38 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         return (
             <QueryClientProvider client={queryClient}>
                 <GukModulesProvider queryClient={queryClient}>
-                    <SafeTransactionReviewDialog
-                        location={{
-                            id: 'safe-transaction-review',
-                            params: completeParams,
-                        }}
-                    />
+                    <SafeTransactionReviewContent {...completeParams} />
                 </GukModulesProvider>
             </QueryClientProvider>
         );
     };
 
-    it('shows the signed envelope fields and the raw calldata that will execute', () => {
-        render(createTestComponent());
+    it('shows the compact action summary and technical details for the transaction', () => {
+        render(
+            createTestComponent({
+                costNote: 'Signing is free.',
+                intent: 'Submit the proposal result.',
+            }),
+        );
 
+        expect(
+            screen.getByText('Submit the proposal result.'),
+        ).toBeInTheDocument();
+        expect(screen.getByText('Signing is free.')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.safe.safeTransactionReviewDialog.fields.safe',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /0x5afe/i })).toHaveAttribute(
+            'href',
+            `https://app.safe.global/home?safe=eth:${safeAddress}`,
+        );
+        expect(
+            screen.getByText(
+                'app.safe.safeTransactionReviewDialog.fields.network',
+            ),
+        ).toBeInTheDocument();
         expect(screen.getByText('7')).toBeInTheDocument();
         expect(screen.getByText('0xdeadbeef')).toBeInTheDocument();
         expect(
@@ -236,6 +198,26 @@ describe('<SafeTransactionReviewDialog /> component', () => {
                 'app.safe.safeTransactionReviewDialog.operation.call',
             ),
         ).toBeInTheDocument();
+    });
+
+    it('keeps security warnings visible while verification details stay collapsed', async () => {
+        mockDelegateCode(undefined);
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({ operation: 1 }),
+            }),
+        );
+
+        const details = screen.getByTestId('collapsible-content');
+        expect(details).toHaveStyle({
+            maxHeight: 0,
+        });
+        expect(
+            await screen.findByText(
+                'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+            ),
+        ).toBeVisible();
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
     });
 
     it('names a delegate call rather than showing it as an ordinary call', () => {
@@ -280,11 +262,11 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         },
     );
 
-    it('refuses a batch whose inner delegate call targets an address holding no code', async () => {
+    it('reports a blocked gate when an inner delegate call targets an address holding no code', async () => {
         // MultiSend's inner delegatecall to a codeless address also returns success, so the batch
         // continues and its siblings run: the constraining call of a batch can be neutered while
         // the value-moving ones execute, and the surface then reports success.
-        const onConfirm = jest.fn();
+        const onGateChange = jest.fn();
         mockDelegateCode(undefined);
         const data = encodeFunctionData({
             abi: safeMultiSendAbi,
@@ -317,7 +299,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         render(
             createTestComponent({
                 transaction: generateSignedTransaction({ data }),
-                onConfirm,
+                onGateChange,
             }),
         );
 
@@ -326,9 +308,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
                 'app.safe.safeTransactionReviewDialog.callRunsNothing',
             ),
         ).toBeInTheDocument();
-
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
 
     it('does not warn when the delegate call target holds code', () => {
@@ -530,8 +510,8 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('refuses to confirm a truncated batch, because the listed calls understate it', async () => {
-        const onConfirm = jest.fn();
+    it('reports a blocked gate for a truncated batch, because the listed calls understate it', () => {
+        const onGateChange = jest.fn();
         const data = encodeFunctionData({
             abi: safeMultiSendAbi,
             functionName: 'multiSend',
@@ -548,78 +528,87 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         render(
             createTestComponent({
                 transaction: generateSignedTransaction({ data }),
-                onConfirm,
+                onGateChange,
             }),
         );
 
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(
+            screen.getByText(
+                'app.safe.safeTransactionReviewDialog.incompleteBatch',
+            ),
+        ).toBeInTheDocument();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
-
-    it('refuses to confirm a delegate call to a codeless target, which would run none of the calls', async () => {
-        const onConfirm = jest.fn();
+    it('reports a blocked gate for a delegate call to a codeless target, which would run none of the calls', async () => {
+        const onGateChange = jest.fn();
         mockDelegateCode(undefined);
 
         render(
             createTestComponent({
                 transaction: generateSignedTransaction({ operation: 1 }),
-                onConfirm,
+                onGateChange,
             }),
         );
 
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(
+            await screen.findByText(
+                'app.safe.safeTransactionReviewDialog.codelessDelegateCall',
+            ),
+        ).toBeInTheDocument();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
 
-    it('still allows confirming when the hash merely could not be recomputed', async () => {
+    it('leaves the gate unblocked when the hash merely could not be recomputed', () => {
         // Honest about itself: the fields are shown either way, so refusing here would lock owners
         // out of a legitimate payload without making anything safer.
-        const onConfirm = jest.fn();
+        const onGateChange = jest.fn();
         useReadContractSpy.mockReturnValue({ data: undefined } as never);
-        render(createTestComponent({ onConfirm }));
+        render(createTestComponent({ onGateChange }));
 
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).toHaveBeenCalled();
+        expect(onGateChange).toHaveBeenLastCalledWith(false);
     });
 
-    it('refuses to confirm a delegate call while the target bytecode read is unresolved', async () => {
+    it('reports a blocked gate for a delegate call while the target bytecode read is unresolved', async () => {
         // The codeless check cannot answer yet, so the gate would otherwise be a race an owner wins
         // by clicking before the node replies. `beforeEach` already leaves the read unresolved.
-        const onConfirm = jest.fn();
+        const onGateChange = jest.fn();
 
         render(
             createTestComponent({
                 transaction: generateSignedTransaction({ operation: 1 }),
-                onConfirm,
+                onGateChange,
             }),
         );
 
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(
+            await screen.findByText(
+                'app.safe.safeTransactionReviewDialog.delegateTargetUnresolved',
+            ),
+        ).toBeInTheDocument();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
 
-    it('refuses to confirm a delegate call whose target bytecode read failed', async () => {
-        const onConfirm = jest.fn();
+    it('reports a blocked gate for a delegate call whose target bytecode read failed', async () => {
+        const onGateChange = jest.fn();
         mockDelegateCode(undefined, 'failed');
 
         render(
             createTestComponent({
                 transaction: generateSignedTransaction({ operation: 1 }),
-                onConfirm,
+                onGateChange,
             }),
         );
 
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(
+            await screen.findByText(
+                'app.safe.safeTransactionReviewDialog.delegateTargetUnresolved',
+            ),
+        ).toBeInTheDocument();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
 
-    it('refuses to confirm a transaction whose fields do not match its hash', async () => {
-        const onConfirm = jest.fn();
+    it('reports a blocked gate when transaction fields do not match its hash', () => {
+        const onGateChange = jest.fn();
         const transaction = generateSafeTransaction({
             to: target,
             value: '0',
@@ -628,28 +617,15 @@ describe('<SafeTransactionReviewDialog /> component', () => {
             safeTxHash: '0xnotthehashofthesefields',
         });
 
-        render(createTestComponent({ transaction, onConfirm }));
+        render(createTestComponent({ transaction, onGateChange }));
 
         expect(
             screen.getByText(
                 'app.safe.safeTransactionReviewDialog.hashMismatch',
             ),
         ).toBeInTheDocument();
-
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
-
-    it('authorises the reviewed payload when the owner confirms', async () => {
-        const onConfirm = jest.fn();
-        render(createTestComponent({ onConfirm }));
-
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-
-        expect(onConfirm).toHaveBeenCalled();
-    });
-
     it('says the hash could not be checked rather than claiming a mismatch', () => {
         // Unknown now means the chain read has not answered: the reported version is never a
         // fallback for it.
@@ -663,25 +639,23 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('does not claim the hash is unverifiable while the version read is still in flight', async () => {
+    it('leaves the gate unblocked while the version read is still in flight', () => {
         // The alert would appear and retract a moment later, which is the worst thing to do to a
-        // warning signers are being taught to act on. Confirm stays available: an unchecked hash
+        // warning signers are being taught to act on. The gate stays available: an unchecked hash
         // is not a misdescribed payload.
-        const onConfirm = jest.fn();
+        const onGateChange = jest.fn();
         useReadContractSpy.mockReturnValue({
             data: undefined,
             isPending: true,
         } as never);
-        render(createTestComponent({ onConfirm }));
+        render(createTestComponent({ onGateChange }));
 
         expect(
             screen.queryByText(
                 'app.safe.safeTransactionReviewDialog.hashUnverifiable',
             ),
         ).not.toBeInTheDocument();
-
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-        expect(onConfirm).toHaveBeenCalled();
+        expect(onGateChange).toHaveBeenLastCalledWith(false);
     });
 
     it('labels the transaction hash as service-reported when it could not be recomputed', () => {
@@ -707,10 +681,10 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('refuses to confirm when the local and remote decoders disagree about a call', async () => {
+    it('reports a blocked gate when the local and remote decoders disagree about a call', async () => {
         // The remote decode arrives from the same backend as the envelope, so a benign label on a
         // hostile call is exactly the case the local set exists to catch.
-        const onConfirm = jest.fn();
+        const onGateChange = jest.fn();
         const data = encodeFunctionData({
             abi: erc20Abi,
             functionName: 'transfer',
@@ -724,7 +698,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
         render(
             createTestComponent({
                 transaction: generateSignedTransaction({ data }),
-                onConfirm,
+                onGateChange,
             }),
         );
 
@@ -733,9 +707,7 @@ describe('<SafeTransactionReviewDialog /> component', () => {
                 'app.safe.safeTransactionReviewDialog.decoderDisagreement',
             ),
         ).toBeInTheDocument();
-
-        await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-        expect(onConfirm).not.toHaveBeenCalled();
+        expect(onGateChange).toHaveBeenLastCalledWith(true);
     });
 
     it('labels a governance call from the local decode, so a backend label cannot rename it', async () => {
@@ -893,34 +865,35 @@ describe('<SafeTransactionReviewDialog /> component', () => {
             expect(screen.getByText(domainHash as string)).toBeInTheDocument();
         });
 
-        it('refuses to confirm when the chain and the service disagree about the version', async () => {
-            const onConfirm = jest.fn();
+        it('reports a blocked gate when the chain and service disagree about the version', () => {
+            const onGateChange = jest.fn();
             useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
-            render(createTestComponent({ safeVersion: '1.3.0', onConfirm }));
+            render(
+                createTestComponent({
+                    safeVersion: '1.3.0',
+                    onGateChange,
+                }),
+            );
 
             expect(screen.getByText(/versionMismatch/)).toBeInTheDocument();
-
-            await userEvent.click(
-                screen.getByRole('button', { name: 'Confirm' }),
-            );
-            expect(onConfirm).not.toHaveBeenCalled();
+            expect(onGateChange).toHaveBeenLastCalledWith(true);
         });
-
-        it('treats an L2 build tag as the same version, because the service suffixes what the contract does not', async () => {
+        it('leaves the gate unblocked for an L2 build tag matching the onchain version', () => {
             // `1.4.1+L2` from the service against `1.4.1` onchain is every L2 Safe; a strict
             // comparison would refuse signing on all of them.
-            const onConfirm = jest.fn();
+            const onGateChange = jest.fn();
             useReadContractSpy.mockReturnValue({ data: '1.4.1' } as never);
-            render(createTestComponent({ safeVersion: '1.4.1+L2', onConfirm }));
+            render(
+                createTestComponent({
+                    safeVersion: '1.4.1+L2',
+                    onGateChange,
+                }),
+            );
 
             expect(
                 screen.queryByText(/versionMismatch/),
             ).not.toBeInTheDocument();
-
-            await userEvent.click(
-                screen.getByRole('button', { name: 'Confirm' }),
-            );
-            expect(onConfirm).toHaveBeenCalled();
+            expect(onGateChange).toHaveBeenLastCalledWith(false);
         });
 
         it('never affirms a payload as verified or safe, because every hash shown is derived from an envelope this app received over the wire', () => {

@@ -2,7 +2,6 @@
 
 import {
     AlertCard,
-    addressUtils,
     Button,
     DateFormat,
     Dropdown,
@@ -12,36 +11,19 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { type Hex, numberToHex, pad, toEventSelector } from 'viem';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import type { Hex } from 'viem';
 import { useBytecode } from 'wagmi';
-import { getBytecode, getConnection } from 'wagmi/actions';
-import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { SafeDialogId } from '@/modules/safe/constants';
-import {
-    SafeExecutionResult,
-    useSafeTransactionExecution,
-} from '@/modules/safe/hooks/useSafeTransactionExecution';
-import { SafeExecutionOutcome } from '@/modules/safe/utils/safeExecutionOutcomeUtils';
-import {
-    SafeBatchStatus,
-    safeTransactionEnvelopeUtils,
-} from '@/modules/safe/utils/safeTransactionEnvelopeUtils';
+import type { ISafeProposalTransactionDialogParams } from '@/modules/safe/dialogs/safeProposalTransactionDialog';
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
-import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import {
-    type ISafeMultisigTransaction,
-    safeService,
-    safeServiceKeys,
-    useConfirmSafeTransaction,
-    useProposeSafeTransaction,
-} from '@/shared/api/safeService';
+import { safeServiceKeys } from '@/shared/api/safeService';
 import {
     TransactionType,
     useTransactionStatus,
@@ -49,87 +31,20 @@ import {
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
 import {
     safeBodyPluginId,
     safeIndexingPollInterval,
     safeIndexingTimeout,
-    safeQueueReadLimit,
 } from '../../constants';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
-import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
 
 export interface ISafeMultisigSubmitVoteProps
     extends ISppVotingTerminalBodyVoteDefaultProps {}
 
-interface IEip1193Provider {
-    request: (args: {
-        method: string;
-        params?: readonly unknown[] | object;
-    }) => Promise<unknown>;
-}
-
-const isEip1193Provider = (value: unknown): value is IEip1193Provider =>
-    value != null &&
-    typeof value === 'object' &&
-    'request' in value &&
-    typeof value.request === 'function';
-
-const toSafeNonce = (nonce: string): number => {
-    const parsedNonce = Number(nonce);
-
-    if (!Number.isSafeInteger(parsedNonce) || parsedNonce < 0) {
-        throw new Error('Safe nonce cannot be represented safely');
-    }
-
-    return parsedNonce;
-};
-
-interface IPreparedReport {
-    /**
-     * Exact transaction the owner reviewed. For a new report this is the envelope about to be
-     * proposed; for a queued one it is the record the service holds.
-     */
-    transaction: ISafeMultisigTransaction;
-    /**
-     * Whether the transaction still has to be proposed, as opposed to confirmed.
-     */
-    isNew: boolean;
-    /**
-     * Whether the transaction sits on the nonce the Safe will execute next, read at prepare time.
-     */
-    landsOnCurrentNonce: boolean;
-    /**
-     * Whether execution should follow the signature in the same flow.
-     */
-    bundleExecution: boolean;
-}
-
 const translationKey = 'app.plugins.safeMultisig.safeMultisigSubmitVote';
-
-/**
- * The event the SPP plugin emits when a body result is actually stored. Its presence in the
- * receipt is the only proof the report inside the Safe transaction ran: a Safe emits
- * `ExecutionSuccess` for a payload that did nothing at all - a `DELEGATECALL` to an address with
- * no code returns success, consumes the nonce and records no result. Observed live on sepolia
- * (`0x4c8e665d…`, nonce 6): reviewed, signed and executed correctly, two logs, no report.
- */
-const proposalResultReportedTopic = toEventSelector(
-    'ProposalResultReported(uint256,uint16,address)',
-);
-
-/**
- * What to tell the owner when the Safe ran but the report did not land. Each outcome is a
- * different situation: the nonce survives an outer revert and is gone in the other two, and only
- * one of them leaves anything to wait for.
- */
-const executionOutcomeKeys = {
-    [SafeExecutionOutcome.OUTER_REVERT]: 'executionReverted',
-    [SafeExecutionOutcome.EXECUTION_FAILURE]: 'executionInnerFailed',
-    [SafeExecutionOutcome.UNMATCHED]: 'executionUnconfirmed',
-} as const;
 
 export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     props,
@@ -139,7 +54,6 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const { open } = useDialogContext();
     const queryClient = useQueryClient();
     const { address: connectedAddress } = useWalletAccount();
-    const latestConnectedAddress = useRef(connectedAddress);
     /**
      * The Safe body is an external plugin, so it has no `interfaceType` of its own: the registry
      * addresses its slots by `safeBodyPluginId`, the same id `sppStageUtils.getBodyPluginId`
@@ -165,19 +79,21 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             daoId,
             proposal,
         });
-    const { requiredChainId, withNetworkSwitch } = useNetworkSwitch({
+    const { requiredChainId } = useNetworkSwitch({
         network: proposal.network,
     });
     const [actionError, setActionError] = useState<string>();
-    const [isExecuting, setIsExecuting] = useState(false);
-    const [isPreparing, setIsPreparing] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [executedHash, setExecutedHash] = useState<Hex>();
     const [hasIndexingTimedOut, setHasIndexingTimedOut] = useState(false);
-
-    useEffect(() => {
-        latestConnectedAddress.current = connectedAddress;
-    }, [connectedAddress]);
+    const intentId = `safe-proposal:${proposal.network}:${externalAddress.toLowerCase()}:${proposal.id}:${stage.stageIndex}:${isVeto ? 'veto' : 'vote'}`;
+    const pendingExecution = useSyncExternalStore(
+        pendingTransactionManager.subscribe,
+        () => pendingTransactionManager.get(intentId),
+        () => undefined,
+    );
+    const hasExecutionRecovery =
+        pendingExecution?.hash != null || pendingExecution?.recovery != null;
 
     const bodyState = useSafeMultisigBodyState({
         network: proposal.network,
@@ -200,10 +116,6 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         isStageCurrent,
     } = bodyState;
 
-    const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
-    const { mutateAsync: confirmTransaction } = useConfirmSafeTransaction();
-    const { execute: executeSafeTransaction } = useSafeTransactionExecution();
-
     const liveReport =
         pendingReport?.state === SafeTransactionState.LIVE
             ? pendingReport
@@ -217,7 +129,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
      * in the same flow and the wallet opens twice: once to sign for free, once to pay gas.
      *
      * Covers the first confirmation too: on a 1-of-n Safe, proposing already satisfies the
-     * threshold, so the very first click executes.
+     * threshold, so execution can be offered as the next explicit step.
      */
     const willCompleteThreshold =
         !thresholdReached &&
@@ -302,7 +214,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     }, [isReportIndexed, queryClient]);
 
     useEffect(() => {
-        if (executedHash == null || isReportIndexed) {
+        if (executedHash == null || hasSettled) {
             return;
         }
 
@@ -312,7 +224,17 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         );
 
         return () => clearTimeout(timeout);
-    }, [executedHash, isReportIndexed]);
+    }, [executedHash, hasSettled]);
+
+    useEffect(() => {
+        if (
+            hasSettled &&
+            executedHash != null &&
+            pendingExecution?.hash === executedHash
+        ) {
+            pendingTransactionManager.clear(intentId);
+        }
+    }, [executedHash, hasSettled, intentId, pendingExecution?.hash]);
 
     const invalidateSafeState = async () => {
         if (safeInfo == null) {
@@ -348,586 +270,25 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         ]);
     };
 
-    const initProtocolKit = async (ownerAddress: string) => {
-        const connection = getConnection(wagmiConfig);
-        const provider = await connection.connector?.getProvider({
-            chainId: requiredChainId,
-        });
-
-        if (!isEip1193Provider(provider)) {
-            throw new Error('Connected wallet does not expose a provider');
-        }
-
-        // Dynamic: the Protocol Kit is only needed once an owner acts, and importing it statically
-        // pulls the whole SDK into the proposal page bundle.
-        const { default: Safe } = await import('@safe-global/protocol-kit');
-
-        return Safe.init({
-            provider,
-            signer: ownerAddress,
-            safeAddress: externalAddress,
-        });
-    };
-
-    /**
-     * Gas is only charged if execution actually follows: the nonce must be live, the owner must
-     * have asked to bundle, and the threshold must be met or about to be. Which note applies then
-     * depends on whether a signature is still owed - that is what decides if the wallet opens once
-     * or twice.
-     */
-    const resolveCostNote = (prepared: IPreparedReport) => {
-        const { transaction } = prepared;
-        const executes =
-            prepared.bundleExecution &&
-            prepared.landsOnCurrentNonce &&
-            (thresholdReached || willCompleteThreshold);
-
-        if (!executes) {
-            return 'gasless';
-        }
-
-        const signatureStillOwed =
-            transaction.confirmations.length <
-                transaction.confirmationsRequired &&
-            !safeMultisigProposalUtils.hasAddressConfirmed({
-                transaction,
-                address: latestConnectedAddress.current,
-            });
-
-        return signatureStillOwed ? 'bundledExecution' : 'executionOnly';
-    };
-
-    /**
-     * Opens the account-level review. The narrow approve/veto wording is only claimed when the
-     * transaction reports the expected result and nothing else: an extra call, an opposite effect
-     * or a stage advance makes the transaction more than this body's verdict, and the owner is sent
-     * to the payload instead of a one-line promise.
-     *
-     * The button carries that too. A payload the app has just described as doing more than
-     * reporting the result cannot also be offered as "Approve proposal" - the label is the
-     * narrowest authority claim on the screen, and it is the part an owner reads instead of the
-     * paragraph above it. Ledger #13: correlation establishes relevance, never authority.
-     *
-     * Each way of failing that gets its own sentence. "Does more than report this body's result" is
-     * true of an extra call in the batch, but it is simply wrong about a report carrying the
-     * opposite verdict - which does less than claimed, in the other direction - and it does not
-     * name the stage advance a `tryAdvance` report performs. At a consent surface the disclosure
-     * has to say which one it is.
-     */
-    const resolveReviewIntent = (transaction: ISafeMultisigTransaction) => {
-        const report = safeMultisigTransactionUtils.findProposalResultReport({
-            transaction,
-            pluginAddress: proposal.pluginAddress,
-            proposalId: proposal.proposalIndex,
-            stageId: stage.stageIndex,
-        });
-        const expectedResult = isVeto
-            ? SppProposalType.VETO
-            : SppProposalType.APPROVAL;
-
-        if (report == null) {
-            return 'unrecognised';
-        }
-
-        // Ordered by how badly each one misdescribes the button: an opposite verdict is the wrong
-        // vote, an advance is an extra irreversible effect, extra calls are extra effects.
-        if (report.resultType !== expectedResult) {
-            return 'oppositeResult';
-        }
-
-        if (report.tryAdvance) {
-            return 'advancesStage';
-        }
-
-        // A delegate call carrying report calldata reports nothing: it runs that code in the
-        // Safe's own storage context, where it can rewrite owners, threshold and the singleton.
-        // The envelope on this path comes from the queue, so `operation` is attacker-chosen input
-        // and the narrow label must not survive it (logic map §7.1 - establish the operation, not
-        // just the target and effect).
-        if (transaction.operation !== 0) {
-            return 'delegateCall';
-        }
-
-        // Value on a report is an ETH transfer the label does not mention. The queue's `value` is
-        // only shape-checked as a string, so anything that is not a plain zero - including a
-        // string `BigInt` would throw on - refuses the narrow label rather than parsing it.
-        if (transaction.value !== '0') {
-            return 'carriesValue';
-        }
-
-        if (
-            safeTransactionEnvelopeUtils.inspectBatch(transaction.data)
-                .status !== SafeBatchStatus.NOT_A_BATCH
-        ) {
-            return 'batched';
-        }
-
-        return 'reportOnly';
-    };
-
-    const openReportReview = (prepared: IPreparedReport) => {
-        const { transaction } = prepared;
-        const intentKey = resolveReviewIntent(transaction);
-        const isReportOnly = intentKey === 'reportOnly';
-
-        open(SafeDialogId.TRANSACTION_REVIEW, {
+    const openTransactionDialog = (bundleExecution: boolean) => {
+        setActionError(undefined);
+        open(SafeDialogId.PROPOSAL_TRANSACTION, {
             params: {
-                transaction,
-                safeAddress: externalAddress,
-                network: proposal.network,
-                safeVersion: safeInfo?.version ?? null,
-                confirmLabel: isReportOnly
-                    ? t(`${translationKey}.${isVeto ? 'veto' : 'approve'}`)
-                    : t(`${translationKey}.review.mixedConfirm`),
-                intent: t(`${translationKey}.review.${intentKey}`, {
-                    proposal: proposal.title,
-                }),
-                /**
-                 * The note promises a number of wallet prompts, so it has to be derived from the
-                 * same condition the submit path branches on. A transaction that already carries
-                 * its signatures is executed with one prompt - telling the owner their confirmation
-                 * completes the threshold would describe a step that never happens.
-                 */
-                costNote: t(
-                    `${translationKey}.review.${resolveCostNote(prepared)}`,
-                ),
-                onConfirm: () =>
-                    withNetworkSwitch(
-                        () => void submitPreparedReport(prepared),
-                    ),
-            },
-        });
-    };
-
-    /**
-     * Builds the exact transaction the owner will be asked to authorise, before any consent is
-     * given. A new report allocates its nonce here; an existing one is already an envelope.
-     *
-     * Allocation is an observation, not a reservation: the nonce can be taken while the payload is
-     * under review, which `submitPreparedReport` re-checks before spending a signature.
-     */
-    const prepareReport = async (bundleExecution: boolean) => {
-        const ownerAddress = latestConnectedAddress.current;
-
-        if (safeInfo == null || ownerAddress == null) {
-            return;
-        }
-
-        setActionError(undefined);
-        setIsPreparing(true);
-
-        try {
-            if (!supportsEip1271Signatures) {
-                const ownerBytecode = await getBytecode(wagmiConfig, {
-                    address: ownerAddress,
-                    chainId: requiredChainId,
-                });
-
-                if (ownerBytecode != null) {
-                    setActionError(
-                        t(`${translationKey}.versionUnsupported`, {
-                            version:
-                                safeInfo.version ??
-                                t(`${translationKey}.unknownVersion`),
-                        }),
-                    );
-                    return;
-                }
-            }
-
-            if (liveReport != null) {
-                /**
-                 * An existing report gets the same fresh read a new one does. The polled body
-                 * state behind `isExecutableNow` is up to a poll interval old, and the queue it
-                 * came from is older still: another owner may have signed, the Safe may have moved
-                 * past this nonce, or the transaction may already be gone. Offering execution off
-                 * that state spends gas on a guaranteed revert.
-                 */
-                const [nextNonce, queue] = await Promise.all([
-                    safeService.getSafeNextNonce({
-                        urlParams: {
-                            network: proposal.network,
-                            address: externalAddress,
-                        },
-                    }),
-                    safeService.getSafePendingTransactions({
-                        urlParams: {
-                            network: proposal.network,
-                            address: externalAddress,
-                        },
-                        // One page deep enough to hold any real queue, so absence is normally a
-                        // fact rather than a page boundary. `next` still decides whether it is.
-                        queryParams: { limit: safeQueueReadLimit },
-                    }),
-                ]);
-
-                const queuedReport = queue.results.find(
-                    (queued: ISafeMultisigTransaction) =>
-                        queued.safeTxHash.toLowerCase() ===
-                        liveReport.transaction.safeTxHash.toLowerCase(),
-                );
-
-                if (queuedReport == null) {
-                    /**
-                     * Not on the pages read. That is only evidence of absence when the whole queue
-                     * was walked - the endpoint takes limit/offset and cannot filter by nonce, so
-                     * an unread page is a gap in the read, not a missing transaction. Claiming it
-                     * is gone from a partial read is the mistake the history scan already makes
-                     * once and does not need repeating here.
-                     */
-                    setActionError(
-                        t(
-                            `${translationKey}.${queue.next == null ? 'reportGone' : 'error'}`,
-                        ),
-                    );
-                    // Fired, not awaited: a refetch that fails must not unwind into the catch
-                    // below and replace the classified reason with the generic one.
-                    void invalidateSafeState();
-
-                    return;
-                }
-
-                /**
-                 * The Safe consumed this nonce, so no number of signatures can execute it. The
-                 * card is still offering execution off the polled state that said otherwise, so
-                 * the read that just disproved it is pushed into the cache: the body re-derives
-                 * to superseded and offers a re-queue now rather than at the next poll.
-                 */
-                if (
-                    BigInt(nextNonce.currentNonce) > BigInt(queuedReport.nonce)
-                ) {
-                    setActionError(t(`${translationKey}.replaced`));
-                    void invalidateSafeState();
-
-                    return;
-                }
-
-                openReportReview({
-                    transaction: queuedReport,
-                    isNew: false,
-                    landsOnCurrentNonce:
-                        BigInt(queuedReport.nonce) ===
-                        BigInt(nextNonce.currentNonce),
-                    bundleExecution,
-                });
-                return;
-            }
-
-            const protocolKit = await initProtocolKit(ownerAddress);
-
-            // Both the live nonce and the queue are read fresh inside the service, uncached: the
-            // polled `safeInfo` here may lag, and a stale floor allocates a nonce the Safe has
-            // already consumed while a stale queue allocates one another transaction holds.
-            const nextNonce = await safeService.getSafeNextNonce({
-                urlParams: {
-                    network: proposal.network,
-                    address: externalAddress,
-                },
-            });
-            const reportData =
-                safeMultisigTransactionUtils.buildReportProposalResultData({
-                    proposalId: proposal.proposalIndex,
-                    stageId: stage.stageIndex,
-                    resultType: isVeto
-                        ? SppProposalType.VETO
-                        : SppProposalType.APPROVAL,
-                });
-            const safeTransaction = await protocolKit.createTransaction({
-                transactions: [
-                    {
-                        to: proposal.pluginAddress,
-                        value: '0',
-                        data: reportData,
-                    },
-                ],
-                onlyCalls: true,
-                options: { nonce: toSafeNonce(nextNonce.nextNonce) },
-            });
-            const safeTxHash =
-                await protocolKit.getTransactionHash(safeTransaction);
-
-            openReportReview({
-                transaction: {
-                    ...safeTransaction.data,
-                    nonce: safeTransaction.data.nonce.toString(),
-                    safeTxHash,
-                    from: ownerAddress,
-                    confirmations: [],
-                    confirmationsRequired: safeInfo.threshold,
-                    signatures: null,
-                    isExecuted: false,
-                    isSuccessful: null,
-                    submissionDate: new Date().toISOString(),
-                },
-                isNew: true,
-                /**
-                 * The read that allocates also reports the live nonce, so this is the authoritative
-                 * answer to whether the new transaction can execute immediately. The polled state
-                 * behind `canBundleExecution` may lag it, and paying gas for a guaranteed revert is
-                 * worse than deferring execution.
-                 */
-                landsOnCurrentNonce:
-                    BigInt(nextNonce.nextNonce) ===
-                    BigInt(nextNonce.currentNonce),
+                intentId,
+                daoId,
+                proposal,
+                externalAddress,
+                stage,
+                isVeto,
                 bundleExecution,
-            });
-        } catch (error) {
-            monitoringUtils.logError(error, {
-                context: {
-                    safeAddress: externalAddress,
-                    proposalId: proposal.id,
-                    operation: 'safe_prepare_proposal_result',
+                pendingTransaction: liveReport?.transaction,
+                onExecuted: (hash) => {
+                    setHasIndexingTimedOut(false);
+                    setExecutedHash(hash);
                 },
-            });
-            setActionError(t(`${translationKey}.error`));
-        } finally {
-            setIsPreparing(false);
-        }
-    };
-
-    /**
-     * Signs and submits the payload the owner reviewed — never a rebuilt one. The envelope is
-     * reconstructed from the reviewed record and its hash recomputed, so a signature can only ever
-     * apply to what was on screen.
-     */
-    const submitPreparedReport = async (prepared: IPreparedReport) => {
-        const ownerAddress = latestConnectedAddress.current;
-
-        if (safeInfo == null || ownerAddress == null) {
-            return;
-        }
-
-        const { transaction, isNew, bundleExecution } = prepared;
-
-        setActionError(undefined);
-        setIsExecuting(true);
-
-        try {
-            // Review takes as long as a person takes, on either path. The nonce read is repeated
-            // because nothing reserved the reviewed slot in the meantime.
-            const nextNonce = await safeService.getSafeNextNonce({
-                urlParams: {
-                    network: proposal.network,
-                    address: externalAddress,
-                },
-            });
-
-            if (BigInt(nextNonce.currentNonce) > BigInt(transaction.nonce)) {
-                // The Safe moved past this nonce: the reviewed transaction can never execute and
-                // re-noncing it silently would sign something nobody reviewed.
-                setActionError(
-                    t(
-                        `${translationKey}.${isNew ? 'nonceConsumed' : 'replaced'}`,
-                    ),
-                );
-                return;
-            }
-
-            if (
-                isNew &&
-                BigInt(nextNonce.nextNonce) !== BigInt(transaction.nonce)
-            ) {
-                // Another transaction now occupies the reviewed nonce. Signing anyway is a
-                // deliberate replacement, not something to do on the owner's behalf.
-                setActionError(t(`${translationKey}.nonceContested`));
-                return;
-            }
-
-            /**
-             * Recomputed from this read, never carried over from review. An existing report sits
-             * at its own nonce rather than at the next free one, so its readiness is whether the
-             * Safe has reached that nonce - and that answer can change while the dialog is open.
-             */
-            const landsOnCurrentNonce =
-                BigInt(transaction.nonce) === BigInt(nextNonce.currentNonce);
-
-            const { EthSafeSignature, EthSafeTransaction } = await import(
-                '@safe-global/protocol-kit'
-            );
-            const protocolKit = await initProtocolKit(ownerAddress);
-
-            const envelope =
-                safeTransactionEnvelopeUtils.getEnvelope(transaction);
-            const safeTransaction = new EthSafeTransaction({
-                ...envelope,
-                nonce: toSafeNonce(envelope.nonce),
-            });
-            const safeTxHash =
-                await protocolKit.getTransactionHash(safeTransaction);
-
-            if (
-                safeTxHash.toLowerCase() !==
-                transaction.safeTxHash.toLowerCase()
-            ) {
-                throw new Error(
-                    'Reviewed Safe transaction hash does not match its transaction data',
-                );
-            }
-
-            const collectedSignatures = transaction.confirmations.map(
-                ({ owner, signature, signatureType }) =>
-                    new EthSafeSignature(
-                        owner,
-                        signature,
-                        signatureType === 'CONTRACT_SIGNATURE',
-                    ),
-            );
-            let signatures = collectedSignatures;
-
-            const hasEnoughCollectedSignatures =
-                collectedSignatures.length >= transaction.confirmationsRequired;
-            /**
-             * Read from the transaction being submitted, not from the body's pending record. On a
-             * re-queue those are different transactions: the owner signed the superseded one, and
-             * taking that as having signed this one would build a replacement, ask for consent, and
-             * then submit nothing.
-             */
-            const hasSignedThisTransaction =
-                safeMultisigProposalUtils.hasAddressConfirmed({
-                    transaction,
-                    address: ownerAddress,
-                });
-
-            if (!hasEnoughCollectedSignatures && !hasSignedThisTransaction) {
-                /**
-                 * Sign the EIP-712 `SafeTx` struct, not the bare hash. Both produce a signature the
-                 * Safe accepts, but hashing offchain asks the owner to approve an opaque 32-byte
-                 * blob, which wallets flag as blind signing. Typed data shows them the target,
-                 * value and nonce they are actually authorising.
-                 */
-                const signature =
-                    await protocolKit.signTypedData(safeTransaction);
-
-                if (isNew) {
-                    await proposeTransaction({
-                        urlParams: {
-                            network: proposal.network,
-                            address: externalAddress,
-                        },
-                        body: {
-                            safeTransactionData: safeTransaction.data,
-                            safeTxHash,
-                            senderAddress: ownerAddress,
-                            senderSignature: signature.data,
-                            origin: 'Aragon',
-                        },
-                    });
-                } else {
-                    await confirmTransaction({
-                        urlParams: { network: proposal.network, safeTxHash },
-                        body: { signature: signature.data },
-                    });
-                }
-
-                signatures = [...collectedSignatures, signature];
-            }
-
-            /**
-             * Entered only when the collected set is complete by the service's count. Below that
-             * there is nothing wrong - the remaining owners simply have not signed - so the
-             * confirmation stands and execution waits, without an error.
-             */
-            if (
-                bundleExecution &&
-                landsOnCurrentNonce &&
-                signatures.length >= transaction.confirmationsRequired
-            ) {
-                const report = await executeSafeTransaction({
-                    protocolKit,
-                    safeTransaction,
-                    safeTxHash,
-                    safeAddress: externalAddress,
-                    chainId: requiredChainId,
-                    signatures,
-                    /**
-                     * The Safe's own event is not enough. It says the Safe ran the payload, not
-                     * that the payload did anything, so the report's own event has to be in the
-                     * same receipt - emitted by this plugin, for this proposal and this stage.
-                     * Without it there is nothing to index, and waiting would spend the whole
-                     * timeout to arrive at "the indexer is slow" for a result never recorded.
-                     *
-                     * This is the governance-specific half of execution and stays here: the shared
-                     * hook knows nothing of proposals or stages, and asks the caller instead.
-                     */
-                    verifyEffect: (receipt) =>
-                        receipt.logs.some(
-                            (log) =>
-                                addressUtils.isAddressEqual(
-                                    log.address,
-                                    proposal.pluginAddress,
-                                ) &&
-                                log.topics[0] === proposalResultReportedTopic &&
-                                log.topics[1] ===
-                                    pad(
-                                        numberToHex(
-                                            BigInt(proposal.proposalIndex),
-                                        ),
-                                    ) &&
-                                log.topics[2] ===
-                                    pad(numberToHex(stage.stageIndex)),
-                        ),
-                });
-
-                if (report.result === SafeExecutionResult.AUTHORITY_CHANGED) {
-                    setActionError(t(`${translationKey}.authorityChanged`));
-                    return;
-                }
-
-                if (report.result === SafeExecutionResult.REJECTED) {
-                    setActionError(t(`${translationKey}.executionRejected`));
-                    return;
-                }
-
-                if (report.result === SafeExecutionResult.FAILED) {
-                    setActionError(
-                        t(
-                            `${translationKey}.${executionOutcomeKeys[report.outcome]}`,
-                        ),
-                    );
-                } else if (report.result === SafeExecutionResult.EXECUTED) {
-                    setExecutedHash(report.hash);
-                } else {
-                    setActionError(
-                        t(`${translationKey}.executionRecordedNothing`),
-                    );
-                }
-            }
-        } catch (error) {
-            monitoringUtils.logError(error, {
-                context: {
-                    safeAddress: externalAddress,
-                    proposalId: proposal.id,
-                    operation: 'safe_report_proposal_result',
-                },
-            });
-            setActionError(t(`${translationKey}.error`));
-        } finally {
-            /**
-             * Refreshed on every exit, not only the successful one. A propose or confirm that the
-             * service already accepted is completed work even when the execution after it is
-             * rejected or reverts, and leaving the queue showing the pre-signature state makes
-             * that work look lost - which invites signing it a second time.
-             */
-            await invalidateSafeState();
-            setIsExecuting(false);
-        }
-    };
-
-    const prepareIfSupported = (bundleExecution: boolean) => {
-        if (hasUnsupportedContractOwner) {
-            setActionError(
-                t(`${translationKey}.versionUnsupported`, {
-                    version:
-                        safeInfo?.version ??
-                        t(`${translationKey}.unknownVersion`),
-                }),
-            );
-            return;
-        }
-
-        // Every path goes through review, including the one whose only remaining act is execution:
-        // an owner paying gas for a transaction still gets to see what it does first.
-        withNetworkSwitch(() => void prepareReport(bundleExecution));
+                onSafeStateChange: invalidateSafeState,
+            } satisfies ISafeProposalTransactionDialogParams,
+        });
     };
 
     /**
@@ -940,10 +301,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
      * beside the button.
      */
     const handleVoteClick = (bundleExecution = true) =>
-        canSubmitVote
-            ? prepareIfSupported(bundleExecution)
+        hasExecutionRecovery || canSubmitVote
+            ? openTransactionDialog(bundleExecution)
             : submitVoteGuard({
-                  onSuccess: () => prepareIfSupported(bundleExecution),
+                  onSuccess: () => openTransactionDialog(bundleExecution),
               });
 
     const isSuperseded =
@@ -965,7 +326,9 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         buttonKey = isVeto ? 'vetoAndExecute' : 'approveAndExecute';
     }
 
-    if (hasSettled) {
+    if (hasExecutionRecovery) {
+        buttonKey = 'resumeExecution';
+    } else if (hasSettled) {
         buttonKey = isVeto ? 'vetoed' : 'approved';
     } else if (isAwaitingIndexing) {
         buttonKey = 'finalizing';
@@ -1139,13 +502,14 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             : `/safe/${proposal.network}/${externalAddress}`;
 
     const isActionDisabled =
-        hasSettled ||
-        isAwaitingIndexing ||
-        isWaitingForOwners ||
-        isQueuedBehindNonce ||
-        hasUnsupportedContractOwner ||
-        isContractOwnerCheckLoading ||
-        safeInfo == null;
+        !hasExecutionRecovery &&
+        (hasSettled ||
+            executedHash != null ||
+            isWaitingForOwners ||
+            isQueuedBehindNonce ||
+            hasUnsupportedContractOwner ||
+            isContractOwnerCheckLoading ||
+            safeInfo == null);
     return (
         <div className="flex w-full flex-col gap-3">
             {alerts.map((alert) => (
@@ -1170,11 +534,14 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
 
                 A settled body keeps the slot: the verdict reads as the action that was taken, and
                 the card does not reflow the moment a body reports. */}
-            {(hasSettled ||
+            {(hasExecutionRecovery ||
+                hasSettled ||
                 canStillAffectOutcome ||
                 queuedReportHref != null) && (
                 <div className="flex flex-col items-start gap-3 md:flex-row md:items-center">
-                    {(hasSettled || canStillAffectOutcome) && (
+                    {(hasExecutionRecovery ||
+                        hasSettled ||
+                        canStillAffectOutcome) && (
                         <>
                             {/* Signing and executing are separate acts, so the two routes are peers inside
                         one button rather than a primary with an opt-out: an owner who only wants to
@@ -1183,8 +550,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         choose between. */}
                             {canBundleExecution &&
                             !hasSettled &&
-                            !isPreparing &&
-                            !isExecuting &&
+                            !hasExecutionRecovery &&
                             !isAwaitingIndexing ? (
                                 <Dropdown.Container
                                     align="end"
@@ -1221,12 +587,11 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                             : undefined
                                     }
                                     isLoading={
-                                        isPreparing ||
-                                        isExecuting ||
-                                        isAwaitingIndexing
+                                        isAwaitingIndexing &&
+                                        !hasExecutionRecovery
                                     }
                                     onClick={
-                                        hasSettled
+                                        hasSettled && !hasExecutionRecovery
                                             ? undefined
                                             : () => handleVoteClick(true)
                                     }
@@ -1241,15 +606,37 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                             {/* Only when a re-read can actually change the answer, and named for
                                 what it re-reads: beside a vote button, "Retry" reads as retrying
                                 the vote. */}
-                            {isStale && !isRateLimited && (
+                            {((isStale && !isRateLimited) ||
+                                (hasIndexingTimedOut && !hasSettled)) && (
                                 <Button
                                     className="w-full md:w-fit"
                                     isLoading={isRefreshing}
                                     onClick={() => {
+                                        setActionError(undefined);
                                         setIsRefreshing(true);
-                                        void invalidateSafeState().finally(() =>
-                                            setIsRefreshing(false),
-                                        );
+                                        void Promise.all([
+                                            invalidateSafeState(),
+                                            queryClient.invalidateQueries({
+                                                queryKey: [
+                                                    GovernanceServiceKey.PROPOSAL_BY_SLUG,
+                                                ],
+                                            }),
+                                            queryClient.invalidateQueries({
+                                                queryKey: [
+                                                    GovernanceServiceKey.PROPOSAL_LIST,
+                                                ],
+                                            }),
+                                        ])
+                                            .catch(() => {
+                                                setActionError(
+                                                    t(
+                                                        `${translationKey}.error`,
+                                                    ),
+                                                );
+                                            })
+                                            .finally(() =>
+                                                setIsRefreshing(false),
+                                            );
                                     }}
                                     size="md"
                                     variant="tertiary"

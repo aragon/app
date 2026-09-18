@@ -1,6 +1,13 @@
 import { Dialog, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import * as ReactQuery from '@tanstack/react-query';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+    act,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from '@testing-library/react';
+import { useCallback, useMemo, useState } from 'react';
 import type { WaitForTransactionReceiptErrorType } from 'viem';
 import * as Wagmi from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
@@ -11,6 +18,7 @@ import * as DialogProviderModule from '@/shared/components/dialogProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { usePendingTransaction } from '@/shared/hooks/usePendingTransaction';
+import { useStepper } from '@/shared/hooks/useStepper';
 import {
     generateDialogContext,
     generateReactQueryResultError,
@@ -26,6 +34,7 @@ import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils'
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { TransactionDialog } from './transactionDialog';
 import {
+    type ITransactionDialogCustomProps,
     type ITransactionDialogProps,
     type ITransactionDialogStepMeta,
     TransactionDialogStep,
@@ -33,7 +42,30 @@ import {
 import { transactionDialogUtils } from './transactionDialogUtils';
 
 jest.mock('./transactionDialogFooter', () => ({
-    TransactionDialogFooter: () => <div data-testid="footer-mock" />,
+    TransactionDialogFooter: ({
+        activeStep,
+    }: {
+        activeStep?: ITransactionDialogCustomProps['customSteps'][number];
+    }) => {
+        const action = activeStep?.meta.action;
+        const label = activeStep?.meta.label;
+        return (
+            <div data-testid="footer-mock">
+                <span data-testid="footer-active-step">
+                    {activeStep?.id ?? ''}
+                </span>
+                {action != null && (
+                    <button
+                        data-testid="footer-primary-action"
+                        onClick={() => action({ onError: jest.fn() })}
+                        type="button"
+                    >
+                        {label}
+                    </button>
+                )}
+            </div>
+        );
+    },
 }));
 
 jest.mock('next/navigation', () => ({
@@ -48,6 +80,110 @@ jest.mock('@tanstack/react-query', () => ({
 jest.mock('@/shared/hooks/usePendingTransaction', () => ({
     usePendingTransaction: jest.fn(),
 }));
+
+type CustomFlowStepId = 'PREPARE_REVIEW' | 'REVIEW' | 'SIGN';
+
+interface ICustomFlowHarnessProps {
+    includeSign: boolean;
+    onPrepare: () => void;
+    onReview: () => void;
+    onSign: () => void;
+}
+
+const CustomFlowHarness = ({
+    includeSign,
+    onPrepare,
+    onReview,
+    onSign,
+}: ICustomFlowHarnessProps) => {
+    const [prepared, setPrepared] = useState(false);
+    const stepper = useStepper<ITransactionDialogStepMeta, CustomFlowStepId>({
+        initialActiveStep: 'PREPARE_REVIEW',
+    });
+    const prepareAction = useCallback(() => {
+        onPrepare();
+        setPrepared(true);
+    }, [onPrepare]);
+    const reviewAction = useCallback(() => {
+        onReview();
+    }, [onReview]);
+    const signAction = useCallback(() => {
+        onSign();
+    }, [onSign]);
+    const customSteps = useMemo<
+        ITransactionDialogCustomProps<CustomFlowStepId>['customSteps']
+    >(
+        () => [
+            {
+                id: 'PREPARE_REVIEW',
+                order: 0,
+                meta: {
+                    label: 'prepare',
+                    action: prepareAction,
+                    auto: !prepared,
+                    state: prepared ? 'success' : 'idle',
+                },
+            },
+            {
+                id: 'REVIEW',
+                order: 1,
+                meta: {
+                    label: 'review',
+                    action: reviewAction,
+                    state: 'idle',
+                },
+            },
+            ...(includeSign
+                ? [
+                      {
+                          id: 'SIGN' as const,
+                          order: 2,
+                          meta: {
+                              label: 'sign',
+                              action: signAction,
+                              state: 'idle' as const,
+                          },
+                      },
+                  ]
+                : []),
+        ],
+        [includeSign, prepared, prepareAction, reviewAction, signAction],
+    );
+
+    return (
+        <>
+            <output data-testid="custom-step-index">
+                {stepper.activeStepIndex}
+            </output>
+            <output data-testid="custom-step-count">
+                {stepper.steps.length}
+            </output>
+            <button
+                data-testid="custom-next-step"
+                onClick={stepper.nextStep}
+                type="button"
+            >
+                next
+            </button>
+            <GukModulesProvider>
+                <DialogProvider>
+                    <Dialog.Root open={true}>
+                        <TransactionDialog<CustomFlowStepId>
+                            customSteps={customSteps}
+                            description="description"
+                            isComplete={false}
+                            mode="custom"
+                            onDismiss={jest.fn()}
+                            stepper={stepper}
+                            submitLabel="submit"
+                            title="title"
+                        />
+                    </Dialog.Root>
+                </DialogProvider>
+            </GukModulesProvider>
+        </>
+    );
+};
 
 describe('<TransactionDialog /> component', () => {
     const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
@@ -267,6 +403,259 @@ describe('<TransactionDialog /> component', () => {
         } finally {
             jest.useRealTimers();
         }
+    });
+
+    it('does not replay a completed custom automatic action after rerender', () => {
+        jest.useFakeTimers();
+
+        const stepAction = jest.fn();
+        const customSteps = [
+            {
+                id: 'PREPARE_REVIEW',
+                order: 0,
+                meta: {
+                    label: 'prepare',
+                    action: stepAction,
+                    auto: true,
+                    state: 'idle',
+                },
+            },
+        ] as unknown as ITransactionDialogCustomProps['customSteps'];
+        const stepper = generateStepperResult({
+            steps: customSteps,
+            activeStep: 'PREPARE_REVIEW',
+            activeStepIndex: 0,
+        });
+        const props: ITransactionDialogCustomProps = {
+            mode: 'custom',
+            title: 'title',
+            description: 'description',
+            submitLabel: 'submit',
+            customSteps,
+            stepper,
+            isComplete: false,
+            onDismiss: jest.fn(),
+        };
+
+        try {
+            const { rerender } = render(
+                <GukModulesProvider>
+                    <DialogProvider>
+                        <Dialog.Root open={true}>
+                            <TransactionDialog {...props} />
+                        </Dialog.Root>
+                    </DialogProvider>
+                </GukModulesProvider>,
+            );
+
+            act(() => jest.advanceTimersByTime(100));
+            expect(stepAction).toHaveBeenCalledTimes(1);
+
+            const erroredSteps = [
+                {
+                    ...customSteps[0],
+                    meta: { ...customSteps[0].meta, state: 'error' as const },
+                },
+            ];
+            rerender(
+                <GukModulesProvider>
+                    <DialogProvider>
+                        <Dialog.Root open={true}>
+                            <TransactionDialog
+                                {...props}
+                                customSteps={erroredSteps}
+                            />
+                        </Dialog.Root>
+                    </DialogProvider>
+                </GukModulesProvider>,
+            );
+            stepAction({ onError: jest.fn() });
+
+            const retriedSteps = [
+                {
+                    ...erroredSteps[0],
+                    meta: { ...erroredSteps[0].meta, state: 'idle' as const },
+                },
+            ];
+            rerender(
+                <GukModulesProvider>
+                    <DialogProvider>
+                        <Dialog.Root open={true}>
+                            <TransactionDialog
+                                {...props}
+                                customSteps={retriedSteps}
+                            />
+                        </Dialog.Root>
+                    </DialogProvider>
+                </GukModulesProvider>,
+            );
+            act(() => jest.advanceTimersByTime(100));
+            expect(stepAction).toHaveBeenCalledTimes(2);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('synchronizes custom steps into a real stepper across automatic and dynamic steps', () => {
+        jest.useFakeTimers();
+
+        const onPrepare = jest.fn();
+        const onReview = jest.fn();
+        const onSign = jest.fn();
+
+        try {
+            const { rerender } = render(
+                <CustomFlowHarness
+                    includeSign={false}
+                    onPrepare={onPrepare}
+                    onReview={onReview}
+                    onSign={onSign}
+                />,
+            );
+
+            act(() => jest.advanceTimersByTime(100));
+            expect(onPrepare).toHaveBeenCalledTimes(1);
+            expect(screen.getByTestId('custom-step-count')).toHaveTextContent(
+                '2',
+            );
+
+            act(() => fireEvent.click(screen.getByTestId('custom-next-step')));
+            expect(screen.getByTestId('custom-step-index')).toHaveTextContent(
+                '1',
+            );
+            expect(screen.getByTestId('footer-active-step')).toHaveTextContent(
+                'REVIEW',
+            );
+
+            fireEvent.click(screen.getByTestId('footer-primary-action'));
+            expect(onReview).toHaveBeenCalledTimes(1);
+
+            rerender(
+                <CustomFlowHarness
+                    includeSign={true}
+                    onPrepare={onPrepare}
+                    onReview={onReview}
+                    onSign={onSign}
+                />,
+            );
+
+            expect(screen.getByTestId('custom-step-count')).toHaveTextContent(
+                '3',
+            );
+            act(() => fireEvent.click(screen.getByTestId('custom-next-step')));
+            expect(screen.getByTestId('custom-step-index')).toHaveTextContent(
+                '2',
+            );
+            expect(screen.getByTestId('footer-active-step')).toHaveTextContent(
+                'SIGN',
+            );
+
+            fireEvent.click(screen.getByTestId('footer-primary-action'));
+            expect(onSign).toHaveBeenCalledTimes(1);
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('does not auto-run a custom step after explicit completion', () => {
+        jest.useFakeTimers();
+
+        const stepAction = jest.fn();
+        const customSteps = [
+            {
+                id: 'REVIEW',
+                order: 0,
+                meta: {
+                    label: 'review',
+                    action: stepAction,
+                    auto: true,
+                    state: 'idle',
+                },
+            },
+        ] as unknown as ITransactionDialogCustomProps['customSteps'];
+        const stepper = generateStepperResult({
+            steps: customSteps,
+            activeStep: 'REVIEW',
+            activeStepIndex: 0,
+        });
+
+        try {
+            render(
+                <GukModulesProvider>
+                    <DialogProvider>
+                        <Dialog.Root open={true}>
+                            <TransactionDialog
+                                customSteps={customSteps}
+                                description="description"
+                                isComplete={true}
+                                mode="custom"
+                                onDismiss={jest.fn()}
+                                stepper={stepper}
+                                submitLabel="submit"
+                                title="title"
+                            />
+                        </Dialog.Root>
+                    </DialogProvider>
+                </GukModulesProvider>,
+            );
+            act(() => jest.advanceTimersByTime(100));
+            expect(stepAction).not.toHaveBeenCalled();
+        } finally {
+            jest.useRealTimers();
+        }
+    });
+
+    it('routes custom root dismissal through onDismiss and honors disableCancel', () => {
+        const updateOptions = jest.fn();
+        const onDismiss = jest.fn();
+        const useDialogContextSpy = jest
+            .spyOn(DialogProviderModule, 'useDialogContext')
+            .mockReturnValue(generateDialogContext({ updateOptions }));
+        const customSteps = [
+            {
+                id: 'REVIEW',
+                order: 0,
+                meta: { label: 'review', state: 'idle' },
+            },
+        ] as unknown as ITransactionDialogCustomProps['customSteps'];
+        const stepper = generateStepperResult({
+            steps: customSteps,
+            activeStep: 'REVIEW',
+            activeStepIndex: 0,
+        });
+
+        const renderDialog = (disableCancel: boolean) => (
+            <GukModulesProvider>
+                <DialogProvider>
+                    <Dialog.Root open={true}>
+                        <TransactionDialog
+                            customSteps={customSteps}
+                            description="description"
+                            disableCancel={disableCancel}
+                            isComplete={false}
+                            mode="custom"
+                            onDismiss={onDismiss}
+                            stepper={stepper}
+                            submitLabel="submit"
+                            title="title"
+                        />
+                    </Dialog.Root>
+                </DialogProvider>
+            </GukModulesProvider>
+        );
+
+        const { rerender } = render(renderDialog(true));
+        const onClose = (
+            updateOptions.mock.calls[0]?.[0] as
+                | { onClose?: () => void }
+                | undefined
+        )?.onClose;
+        expect(onDismiss).not.toHaveBeenCalled();
+
+        rerender(renderDialog(false));
+        onClose?.();
+        expect(onDismiss).toHaveBeenCalledTimes(1);
+        useDialogContextSpy.mockRestore();
     });
 
     it('does not trigger the step action when its auto property is set to false', async () => {

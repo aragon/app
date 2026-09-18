@@ -109,19 +109,31 @@ describe('Safe domain guards', () => {
                 daoId: 'ethereum-sepolia-0xDaoOne',
                 bodyId: '0xPluginOne',
                 proposalId: 4,
-                stageId: '0',
+                stageId: 0,
                 resultType: 2,
             },
             {
                 daoId: 'ethereum-sepolia-0xDaoTwo',
                 bodyId: '0xPluginTwo',
                 proposalId: 7,
-                stageId: '1',
+                stageId: 1,
                 resultType: 1,
             },
         ];
 
         expect(reports.every(isAragonProposalReport)).toBe(true);
+    });
+
+    it('rejects the legacy string stage id shape', () => {
+        expect(
+            isAragonProposalReport({
+                daoId: 'ethereum-sepolia-0xDao',
+                bodyId: '0xPlugin',
+                proposalId: 4,
+                stageId: '0',
+                resultType: 2,
+            }),
+        ).toBe(false);
     });
 
     it('rejects a report whose proposal id is the contract id rather than the backend incremental id', () => {
@@ -132,7 +144,7 @@ describe('Safe domain guards', () => {
                 // The contract's uint256 proposal id arrives as a string and would build a URL
                 // that resolves to nothing.
                 proposalId: '89751198517555286281858792404674662298',
-                stageId: '0',
+                stageId: 0,
                 resultType: 2,
             }),
         ).toBe(false);

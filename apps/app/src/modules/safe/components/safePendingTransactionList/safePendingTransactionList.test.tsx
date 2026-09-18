@@ -2,6 +2,9 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { IProposal } from '@/modules/governance/api/governanceService';
+import * as governanceServiceApi from '@/modules/governance/api/governanceService';
+import { generateProposal } from '@/modules/governance/testUtils';
 import * as daoServiceApi from '@/shared/api/daoService';
 import {
     type IDao,
@@ -37,6 +40,10 @@ describe('<SafePendingTransactionList /> component', () => {
     );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useDaoSpy = jest.spyOn(daoServiceApi, 'useDao');
+    const useProposalBySlugSpy = jest.spyOn(
+        governanceServiceApi,
+        'useProposalBySlug',
+    );
     const openDialog = jest.fn();
 
     const generateResponse = (results: ISafeMultisigTransaction[]) =>
@@ -52,11 +59,17 @@ describe('<SafePendingTransactionList /> component', () => {
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ open: openDialog }),
         );
+        useProposalBySlugSpy.mockReturnValue(
+            generateReactQueryResultSuccess<IProposal, Error>({
+                data: generateProposal({ title: 'Mettydatty' }),
+            }),
+        );
     });
 
     afterEach(() => {
         useSafePendingTransactionsSpy.mockReset();
         useDialogContextSpy.mockReset();
+        useProposalBySlugSpy.mockReset();
         openDialog.mockReset();
     });
 
@@ -81,7 +94,7 @@ describe('<SafePendingTransactionList /> component', () => {
         );
     };
 
-    it('renders the title placeholder, confirmations and nonce of every queued transaction', () => {
+    it('renders the Safe transaction heading, confirmation count and queued date', () => {
         useSafePendingTransactionsSpy.mockReturnValue(
             generateResponse([
                 generateSafeTransaction({
@@ -95,13 +108,18 @@ describe('<SafePendingTransactionList /> component', () => {
         render(createTestComponent());
 
         expect(
-            screen.getByText(
+            screen.getByLabelText(
                 'app.safe.safePendingTransactionList.item.confirmations (count=1,required=2)',
             ),
         ).toBeInTheDocument();
         expect(
             screen.getByText(
-                'app.safe.safePendingTransactionList.item.proposalTitle',
+                'app.safe.safePendingTransactionList.item.confirmationCount (count=1,required=2)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.safe.safePendingTransactionList.item.transaction',
             ),
         ).toBeInTheDocument();
         expect(screen.getAllByText(/item.queuedOn/).length).toBeGreaterThan(0);
@@ -122,8 +140,13 @@ describe('<SafePendingTransactionList /> component', () => {
         render(createTestComponent({ threshold: 3 }));
 
         expect(
-            screen.getByText(
+            screen.getByLabelText(
                 'app.safe.safePendingTransactionList.item.confirmations (count=1,required=3)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.safe.safePendingTransactionList.item.confirmationCount (count=1,required=3)',
             ),
         ).toBeInTheDocument();
     });
@@ -195,7 +218,7 @@ describe('<SafePendingTransactionList /> component', () => {
             daoId: 'ethereum-sepolia-0xDaoOne',
             bodyId: '0xPluginOne',
             proposalId: 4,
-            stageId: '0',
+            stageId: 0,
             resultType: 2,
         };
 
@@ -216,7 +239,7 @@ describe('<SafePendingTransactionList /> component', () => {
                 }) as ReturnType<typeof daoServiceApi.useDao>,
             );
 
-        it('links every proposal a batch reports to, so a multi-report payload is not reduced to one', () => {
+        it('renders each distinct associated proposal as an identifier and title link', () => {
             mockDao([
                 { address: '0xPluginOne', slug: 'sat' },
                 { address: '0xPluginTwo', slug: 'crt' },
@@ -236,9 +259,63 @@ describe('<SafePendingTransactionList /> component', () => {
 
             expect(screen.getByText('SAT-4')).toBeInTheDocument();
             expect(screen.getByText('CRT-7')).toBeInTheDocument();
+            expect(screen.getAllByText('Mettydatty')).toHaveLength(2);
+            expect(
+                screen.getAllByRole('link', { name: /Mettydatty/ }),
+            ).toHaveLength(2);
         });
 
-        it('keeps the Safe app link when a report names a plugin the DAO does not have, rather than rendering a dead link', () => {
+        it('links the proposal title and keeps Review independently actionable', () => {
+            mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
+            useSafePendingTransactionsSpy.mockReturnValue(
+                generateResponse([
+                    generateSafeTransaction({
+                        nonce: '11',
+                        safeTxHash: '0xTxHash',
+                        aragonReports: [report],
+                    }),
+                ]),
+            );
+            render(createTestComponent());
+
+            const proposalLink = screen.getByRole('link', {
+                name: 'SAT-4: Mettydatty',
+            });
+            expect(proposalLink).toHaveAttribute(
+                'href',
+                expect.stringContaining('proposals/SAT-4'),
+            );
+            expect(screen.getByText('SAT-4')).toBeInTheDocument();
+            expect(
+                within(proposalLink).queryByRole('button'),
+            ).not.toBeInTheDocument();
+            const queuedLink = screen.getByRole('link', {
+                name: /item.queuedOn/,
+            });
+            expect(queuedLink).toHaveAttribute(
+                'href',
+                expect.stringContaining('app.safe.global'),
+            );
+            expect(queuedLink).toHaveAttribute(
+                'href',
+                expect.stringContaining('0xTxHash'),
+            );
+            expect(queuedLink).toHaveAttribute('target', '_blank');
+            expect(queuedLink).toHaveAttribute(
+                'rel',
+                expect.stringContaining('noopener'),
+            );
+            expect(
+                within(proposalLink).queryByRole('link'),
+            ).not.toBeInTheDocument();
+            expect(
+                screen.getByRole('button', {
+                    name: 'app.safe.safePendingTransactionList.item.review',
+                }),
+            ).toBeInTheDocument();
+        });
+
+        it('uses the Safe transaction link when an association cannot resolve', () => {
             mockDao([{ address: '0xOtherPlugin', slug: 'oth' }]);
             useSafePendingTransactionsSpy.mockReturnValue(
                 generateResponse([
@@ -252,95 +329,16 @@ describe('<SafePendingTransactionList /> component', () => {
             render(createTestComponent());
 
             expect(screen.queryByText(/^SAT-/)).not.toBeInTheDocument();
-            // The date line still routes the row out externally on a network the Safe app covers.
-            expect(screen.getByRole('link')).toBeInTheDocument();
-        });
-
-        it('drops a malformed report without costing the row, because the queue guard deliberately ignores the field', () => {
-            mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateResponse([
-                    generateSafeTransaction({
-                        nonce: '11',
-                        aragonReports: [
-                            { daoId: 'ethereum-sepolia-0xDaoOne' },
-                        ] as never,
-                    }),
-                ]),
+            const safeLink = screen.getByRole('link', {
+                name: 'app.safe.safePendingTransactionList.item.transaction',
+            });
+            expect(safeLink).toHaveAttribute(
+                'href',
+                expect.stringContaining('app.safe.global'),
             );
-            render(createTestComponent());
-
-            expect(screen.queryByText(/^SAT-/)).not.toBeInTheDocument();
-            // A malformed entry costs only itself: it renders as an unidentified report.
-            expect(
-                screen.getByText(
-                    'app.safe.safePendingTransactionList.item.reportUnidentified',
-                ),
-            ).toBeInTheDocument();
         });
 
-        it('renders no report links when the backend sent none', () => {
-            mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateResponse([generateSafeTransaction({ nonce: '11' })]),
-            );
-            render(createTestComponent());
-
-            expect(
-                screen.queryByText(
-                    'app.safe.safePendingTransactionList.item.reportsTo',
-                ),
-            ).not.toBeInTheDocument();
-        });
-
-        it('says which verdict a report carries, so an approval and a veto do not render alike', () => {
-            mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateResponse([
-                    generateSafeTransaction({
-                        nonce: '11',
-                        aragonReports: [{ ...report, resultType: 2 }],
-                    }),
-                ]),
-            );
-            render(createTestComponent());
-
-            expect(screen.getByText('SAT-4')).toBeInTheDocument();
-            expect(
-                screen.getByText(
-                    'app.safe.safePendingTransactionList.item.reportVetoes',
-                ),
-            ).toBeInTheDocument();
-        });
-
-        it('says a transaction is an unidentified report when the backend decoded one but resolved none', () => {
-            // `[]` is information, not silence (app-backend#1574): the calldata is a governance
-            // report whose target is not yet indexed, was refused by the body check, or whose
-            // correlation read failed.
-            mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
-            useSafePendingTransactionsSpy.mockReturnValue(
-                generateResponse([
-                    generateSafeTransaction({
-                        nonce: '11',
-                        aragonReports: [],
-                    }),
-                ]),
-            );
-            render(createTestComponent());
-
-            expect(
-                screen.getByText(
-                    'app.safe.safePendingTransactionList.item.reportsToUnresolved',
-                ),
-            ).toBeInTheDocument();
-            expect(
-                screen.queryByText(
-                    'app.safe.safePendingTransactionList.item.reportsTo',
-                ),
-            ).not.toBeInTheDocument();
-        });
-
-        it('keeps a duplicated report visible, because two conflicting results must not read as agreement', () => {
+        it('deduplicates repeated correlations to the same proposal', () => {
             mockDao([{ address: '0xPluginOne', slug: 'sat' }]);
             useSafePendingTransactionsSpy.mockReturnValue(
                 generateResponse([
@@ -352,7 +350,11 @@ describe('<SafePendingTransactionList /> component', () => {
             );
             render(createTestComponent());
 
-            expect(screen.getAllByText('SAT-4')).toHaveLength(2);
+            expect(screen.getAllByText('SAT-4')).toHaveLength(1);
+            expect(screen.getByText('Mettydatty')).toBeInTheDocument();
+            expect(
+                screen.getAllByRole('link', { name: /SAT-4: Mettydatty/ }),
+            ).toHaveLength(1);
         });
     });
 
@@ -454,14 +456,24 @@ describe('<SafePendingTransactionList /> component', () => {
         try {
             await act(() => jest.advanceTimersByTimeAsync(100));
             expect(
-                screen.getByText(
+                screen.getByLabelText(
                     'app.safe.safePendingTransactionList.item.confirmations (count=1,required=2)',
+                ),
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(
+                    'app.safe.safePendingTransactionList.item.confirmationCount (count=1,required=2)',
                 ),
             ).toBeInTheDocument();
             await act(() => jest.advanceTimersByTimeAsync(30_000));
             expect(
-                screen.getByText(
+                screen.getByLabelText(
                     'app.safe.safePendingTransactionList.item.confirmations (count=2,required=2)',
+                ),
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(
+                    'app.safe.safePendingTransactionList.item.confirmationCount (count=2,required=2)',
                 ),
             ).toBeInTheDocument();
         } finally {
@@ -470,6 +482,42 @@ describe('<SafePendingTransactionList /> component', () => {
             getQueue.mockRestore();
             jest.useRealTimers();
         }
+    });
+
+    it('routes the whole unassociated card out to the Safe app transaction', () => {
+        const safeTxHash = `0x${'ab'.repeat(32)}`;
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateResponse([
+                generateSafeTransaction({ nonce: '11', safeTxHash }),
+            ]),
+        );
+
+        render(
+            createTestComponent({
+                network: Network.ETHEREUM_SEPOLIA,
+                address: '0x8442c05d620e11009bdaEDdefDA3b5303725c39A',
+            }),
+        );
+
+        const link = screen.getByRole('link', {
+            name: 'app.safe.safePendingTransactionList.item.transaction',
+        });
+
+        expect(link).toHaveAttribute(
+            'href',
+            expect.stringContaining('app.safe.global'),
+        );
+        expect(link).toHaveAttribute(
+            'href',
+            expect.stringContaining(safeTxHash),
+        );
+        expect(screen.getByText(/item.queuedOn/)).toBeInTheDocument();
+        expect(
+            within(link).queryByText(/item.queuedOn/),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(addressUtils.truncateHash(safeTxHash)),
+        ).not.toBeInTheDocument();
     });
 
     it('sends the exact queued transaction to a review-only dialog, with no confirmation action', async () => {
@@ -501,40 +549,6 @@ describe('<SafePendingTransactionList /> component', () => {
                 },
             },
         );
-    });
-
-    it('routes the submitted line out to the Safe app transaction', () => {
-        // This surface has only the network and the Safe, so the Safe app is the destination for
-        // co-signer state.
-        const safeTxHash = `0x${'ab'.repeat(32)}`;
-        useSafePendingTransactionsSpy.mockReturnValue(
-            generateResponse([
-                generateSafeTransaction({ nonce: '11', safeTxHash }),
-            ]),
-        );
-
-        render(
-            createTestComponent({
-                network: Network.ETHEREUM_SEPOLIA,
-                address: '0x8442c05d620e11009bdaEDdefDA3b5303725c39A',
-            }),
-        );
-
-        const link = screen.getByRole('link');
-
-        expect(link).toHaveAttribute(
-            'href',
-            expect.stringContaining('app.safe.global'),
-        );
-        expect(link).toHaveAttribute(
-            'href',
-            expect.stringContaining(safeTxHash),
-        );
-        // The submitted text is the link, not the hash itself.
-        expect(within(link).getByText(/item.queuedOn/)).toBeInTheDocument();
-        expect(
-            screen.queryByText(addressUtils.truncateHash(safeTxHash)),
-        ).not.toBeInTheDocument();
     });
 
     it('renders the submitted line as plain text on a network the Safe app does not cover', () => {

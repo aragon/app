@@ -1,13 +1,37 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type Safe from '@safe-global/protocol-kit';
-import type { Hex } from 'viem';
-import { sendTransaction, waitForTransactionReceipt } from 'wagmi/actions';
+import {
+    type Hex,
+    InsufficientFundsError,
+    isHex,
+    MethodNotFoundRpcError,
+    MethodNotSupportedRpcError,
+    TransactionRejectedRpcError,
+    UnauthorizedProviderError,
+    UnsupportedProviderMethodError,
+    UserRejectedRequestError,
+} from 'viem';
+import {
+    ConnectorAccountNotFoundError,
+    ConnectorChainMismatchError,
+} from 'wagmi';
+import {
+    getTransactionReceipt,
+    sendTransaction,
+    waitForTransactionReceipt,
+} from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
+import {
+    isRecord,
+    isUnsignedIntegerString,
+} from '@/shared/api/safeService/domain/safeDomainUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import {
     type ISafeExecutionReceipt,
     SafeExecutionOutcome,
     safeExecutionOutcomeUtils,
 } from '../../utils/safeExecutionOutcomeUtils';
+import type { ISafeTransactionEnvelope } from '../../utils/safeTransactionEnvelopeUtils';
 
 /**
  * Taken from protocol-kit's own surface rather than `@safe-global/types-kit`, which this workspace
@@ -16,6 +40,99 @@ import {
  */
 type SafeTransaction = Awaited<ReturnType<Safe['createTransaction']>>;
 type SafeSignature = Parameters<SafeTransaction['addSignature']>[0];
+
+/**
+ * Serializable identity needed to recover a Safe execution after its receipt read or the dialog
+ * itself is gone. Signatures are intentionally excluded: they are wallet-authorisation material,
+ * not reload state.
+ */
+export interface ISafeRecoveryContext {
+    safeAddress: Hex;
+    chainId: number;
+    safeTxHash: string;
+    reviewedTx: ISafeTransactionEnvelope;
+    proposal: {
+        proposalId: string;
+        pluginAddress: Hex;
+        stageIndex: number;
+    };
+}
+
+const isSafeTransactionEnvelope = (
+    value: unknown,
+): value is ISafeTransactionEnvelope => {
+    if (!isRecord(value)) {
+        return false;
+    }
+
+    return (
+        typeof value.to === 'string' &&
+        addressUtils.isAddress(value.to) &&
+        isUnsignedIntegerString(value.value) &&
+        typeof value.data === 'string' &&
+        isHex(value.data) &&
+        (value.operation === 0 || value.operation === 1) &&
+        isUnsignedIntegerString(value.safeTxGas) &&
+        isUnsignedIntegerString(value.baseGas) &&
+        isUnsignedIntegerString(value.gasPrice) &&
+        typeof value.gasToken === 'string' &&
+        addressUtils.isAddress(value.gasToken) &&
+        typeof value.refundReceiver === 'string' &&
+        addressUtils.isAddress(value.refundReceiver) &&
+        isUnsignedIntegerString(value.nonce)
+    );
+};
+
+/**
+ * Validates persisted recovery data before any hash, address, or envelope value reaches a Safe
+ * client or receipt verifier.
+ */
+export const parseSafeRecoveryContext = (
+    value: unknown,
+): ISafeRecoveryContext | undefined => {
+    if (!isRecord(value) || !isSafeTransactionEnvelope(value.reviewedTx)) {
+        return undefined;
+    }
+
+    const proposal = value.proposal;
+    if (
+        !isRecord(proposal) ||
+        typeof proposal.proposalId !== 'string' ||
+        proposal.proposalId.length === 0 ||
+        typeof proposal.pluginAddress !== 'string' ||
+        !addressUtils.isAddress(proposal.pluginAddress) ||
+        typeof proposal.stageIndex !== 'number' ||
+        !Number.isInteger(proposal.stageIndex) ||
+        proposal.stageIndex < 0
+    ) {
+        return undefined;
+    }
+
+    if (
+        typeof value.safeAddress !== 'string' ||
+        !addressUtils.isAddress(value.safeAddress) ||
+        typeof value.chainId !== 'number' ||
+        !Number.isInteger(value.chainId) ||
+        value.chainId <= 0 ||
+        typeof value.safeTxHash !== 'string' ||
+        !isHex(value.safeTxHash) ||
+        value.safeTxHash.length !== 66
+    ) {
+        return undefined;
+    }
+
+    return {
+        safeAddress: value.safeAddress as Hex,
+        chainId: value.chainId,
+        safeTxHash: value.safeTxHash,
+        reviewedTx: value.reviewedTx,
+        proposal: {
+            proposalId: proposal.proposalId,
+            pluginAddress: proposal.pluginAddress as Hex,
+            stageIndex: proposal.stageIndex,
+        },
+    };
+};
 
 /**
  * Why an execution failed before any gas was spent, or what it produced after.
@@ -32,6 +149,87 @@ export enum SafeExecutionResult {
     EFFECT_MISSING = 'EFFECT_MISSING',
     FAILED = 'FAILED',
 }
+
+/**
+ * The outer transaction is known, but its receipt or effect could not be reconciled yet. The hash
+ * is carried deliberately so a caller can persist it instead of offering a second send.
+ */
+export class SafeExecutionPendingError extends Error {
+    readonly hash: Hex;
+
+    constructor(hash: Hex, options?: ErrorOptions) {
+        super(
+            'Safe execution was broadcast, but its outcome could not be reconciled',
+            options,
+        );
+        this.name = 'SafeExecutionPendingError';
+        this.hash = hash;
+    }
+}
+
+/**
+ * `sendTransaction` failed for a reason that is not a wallet rejection, so it cannot be known
+ * whether the transaction reached the mempool. Distinct from `SafeExecutionPendingError`: there is
+ * no hash to persist, so a caller must record the uncertainty (and never offer a blind resend)
+ * rather than treat the failure as a clean retry.
+ */
+export class SafeExecutionSubmissionError extends Error {
+    name = 'SafeExecutionSubmissionError';
+}
+
+const walkErrorCauseChain = (
+    error: unknown,
+    predicate: (cause: unknown) => boolean,
+): boolean => {
+    const seen = new Set<object>();
+    let current = error;
+
+    while (isRecord(current) && !seen.has(current)) {
+        if (predicate(current)) {
+            return true;
+        }
+        seen.add(current);
+        current = current.cause;
+    }
+
+    return false;
+};
+
+/**
+ * A wallet rejection means the transaction was never broadcast, so the collected signatures are
+ * intact and the action is cleanly retryable. Viem normalizes provider rejections to typed errors,
+ * which may be wrapped in a `TransactionExecutionError`; inspect the full cause chain instead of
+ * guessing from message text. The raw EIP-1193 code remains supported for connectors that surface
+ * `4001` without Viem's class.
+ */
+const isUserRejectionError = (error: unknown): boolean =>
+    walkErrorCauseChain(
+        error,
+        (cause) =>
+            cause instanceof UserRejectedRequestError ||
+            (isRecord(cause) && cause.code === 4001),
+    );
+
+/**
+ * These Viem/Wagmi errors are definitive pre-broadcast refusals. Unknown transport/RPC failures
+ * stay uncertain: without a returned hash, a caller must reconcile them before offering a resend.
+ * `ConnectorNotConnectedError` is a core error that the public React `wagmi` entry point does not
+ * export, so its exact class name is the only available discriminant.
+ */
+const isKnownPreBroadcastError = (error: unknown): boolean =>
+    walkErrorCauseChain(
+        error,
+        (cause) =>
+            cause instanceof InsufficientFundsError ||
+            cause instanceof MethodNotFoundRpcError ||
+            cause instanceof MethodNotSupportedRpcError ||
+            cause instanceof TransactionRejectedRpcError ||
+            cause instanceof UnauthorizedProviderError ||
+            cause instanceof UnsupportedProviderMethodError ||
+            cause instanceof ConnectorAccountNotFoundError ||
+            cause instanceof ConnectorChainMismatchError ||
+            (isRecord(cause) && cause.name === 'ConnectorNotConnectedError'),
+    );
 
 export interface IExecuteSafeTransactionParams {
     /**
@@ -68,6 +266,28 @@ export interface IExecuteSafeTransactionParams {
      * effect and omits it.
      */
     verifyEffect?: (receipt: ISafeExecutionReceipt) => boolean;
+    /**
+     * Called synchronously immediately before the initial wallet send, after authority and simulation
+     * checks have completed. A failure is an ordinary pre-broadcast error, not submission uncertainty.
+     */
+    beforeSubmit?: () => void;
+    /**
+     * Called after the outer transaction is broadcast and its hash is known, before receipt polling
+     * starts, and again if the wallet replaces that transaction. A callback failure must not make a
+     * known broadcast hash disappear.
+     */
+    onSubmitted?: (hash: Hex) => void;
+}
+
+export interface IResumeSafeExecutionParams {
+    /**
+     * Known outer execution hash. Resume only reads this transaction; it never sends another one.
+     */
+    hash: Hex;
+    safeTxHash: string;
+    safeAddress: string;
+    chainId: number;
+    verifyEffect?: (receipt: ISafeExecutionReceipt) => boolean;
 }
 
 /**
@@ -97,6 +317,57 @@ export type ISafeExecutionOutcomeReport =
           outcome: SafeExecutionOutcome.EXECUTION_SUCCESS;
       };
 
+interface IClassifySafeExecutionReceiptParams {
+    hash: Hex;
+    receipt: ISafeExecutionReceipt;
+    safeTxHash: string;
+    safeAddress: string;
+    verifyEffect?: (receipt: ISafeExecutionReceipt) => boolean;
+}
+
+const classifySafeExecutionReceipt = ({
+    hash,
+    receipt,
+    safeTxHash,
+    safeAddress,
+    verifyEffect,
+}: IClassifySafeExecutionReceiptParams): ISafeExecutionOutcomeReport => {
+    const outcome = safeExecutionOutcomeUtils.classify({
+        receipt,
+        safeTxHash,
+        safeAddress,
+    });
+
+    if (outcome !== SafeExecutionOutcome.EXECUTION_SUCCESS) {
+        return { result: SafeExecutionResult.FAILED, hash, outcome };
+    }
+
+    if (verifyEffect?.(receipt) === false) {
+        return {
+            result: SafeExecutionResult.EFFECT_MISSING,
+            hash,
+            outcome,
+        };
+    }
+
+    return { result: SafeExecutionResult.EXECUTED, hash, outcome };
+};
+
+type ISafeExecutionReceiptWithHash = ISafeExecutionReceipt & {
+    transactionHash?: unknown;
+};
+
+const getReceiptHash = (
+    receipt: ISafeExecutionReceiptWithHash,
+    fallback: Hex,
+): Hex => {
+    const { transactionHash } = receipt;
+
+    return isHex(transactionHash) && transactionHash.length === 66
+        ? transactionHash
+        : fallback;
+};
+
 /**
  * Executes a Safe transaction that already carries its signatures, and reports what happened.
  *
@@ -122,6 +393,8 @@ export const useSafeTransactionExecution = () => {
             chainId,
             signatures,
             verifyEffect,
+            beforeSubmit,
+            onSubmitted,
         } = params;
 
         /**
@@ -173,38 +446,119 @@ export const useSafeTransactionExecution = () => {
         }
 
         const data = await protocolKit.getEncodedTransaction(safeTransaction);
-        const hash = await sendTransaction(wagmiConfig, {
-            chainId,
-            to: safeAddress as Hex,
-            data: data as Hex,
-            value: BigInt(0),
-        });
-        const receipt = await waitForTransactionReceipt(wagmiConfig, { hash });
+        beforeSubmit?.();
 
-        /**
-         * A mined transaction is not a successful one, and a successful outer transaction is not a
-         * successful Safe transaction.
-         */
-        const outcome = safeExecutionOutcomeUtils.classify({
-            receipt,
-            safeTxHash,
-            safeAddress,
-        });
-
-        if (outcome !== SafeExecutionOutcome.EXECUTION_SUCCESS) {
-            return { result: SafeExecutionResult.FAILED, hash, outcome };
+        let hash: Hex;
+        try {
+            hash = await sendTransaction(wagmiConfig, {
+                chainId,
+                to: safeAddress as Hex,
+                data: data as Hex,
+                value: BigInt(0),
+            });
+        } catch (error) {
+            if (
+                isUserRejectionError(error) ||
+                isKnownPreBroadcastError(error)
+            ) {
+                throw error;
+            }
+            throw new SafeExecutionSubmissionError(
+                'Safe execution could not be confirmed as broadcast',
+                { cause: error },
+            );
         }
+        let latestHash = hash;
+        const notifySubmitted = (nextHash: Hex): void => {
+            latestHash = nextHash;
+            try {
+                onSubmitted?.(nextHash);
+            } catch (error) {
+                monitoringUtils.logError(error, {
+                    context: {
+                        safeAddress,
+                        chainId,
+                        safeTxHash,
+                        hash: nextHash,
+                    },
+                });
+            }
+        };
 
-        if (verifyEffect?.(receipt) === false) {
-            return {
-                result: SafeExecutionResult.EFFECT_MISSING,
-                hash,
-                outcome,
-            };
+        try {
+            notifySubmitted(hash);
+
+            let receipt: ISafeExecutionReceiptWithHash;
+            try {
+                receipt = await waitForTransactionReceipt(wagmiConfig, {
+                    hash,
+                    chainId,
+                    onReplaced: ({ transactionReceipt }) => {
+                        notifySubmitted(
+                            getReceiptHash(transactionReceipt, latestHash),
+                        );
+                    },
+                });
+            } catch {
+                try {
+                    receipt = await getTransactionReceipt(wagmiConfig, {
+                        hash: latestHash,
+                        chainId,
+                    });
+                } catch (receiptError) {
+                    throw new SafeExecutionPendingError(latestHash, {
+                        cause: receiptError,
+                    });
+                }
+            }
+
+            const receiptHash = getReceiptHash(receipt, latestHash);
+            if (receiptHash !== latestHash) {
+                notifySubmitted(receiptHash);
+            }
+
+            return classifySafeExecutionReceipt({
+                hash: receiptHash,
+                receipt,
+                safeTxHash,
+                safeAddress,
+                verifyEffect,
+            });
+        } catch (cause) {
+            if (cause instanceof SafeExecutionPendingError) {
+                throw cause;
+            }
+            throw new SafeExecutionPendingError(latestHash, { cause });
         }
-
-        return { result: SafeExecutionResult.EXECUTED, hash, outcome };
     };
 
-    return { execute };
+    const resume = async ({
+        hash,
+        safeTxHash,
+        safeAddress,
+        chainId,
+        verifyEffect,
+    }: IResumeSafeExecutionParams): Promise<ISafeExecutionOutcomeReport> => {
+        try {
+            const receipt = await getTransactionReceipt(wagmiConfig, {
+                hash,
+                chainId,
+            });
+
+            return classifySafeExecutionReceipt({
+                hash: getReceiptHash(receipt, hash),
+                receipt,
+                safeTxHash,
+                safeAddress,
+                verifyEffect,
+            });
+        } catch (cause) {
+            if (cause instanceof SafeExecutionPendingError) {
+                throw cause;
+            }
+            throw new SafeExecutionPendingError(hash, { cause });
+        }
+    };
+
+    return { execute, resume };
 };
