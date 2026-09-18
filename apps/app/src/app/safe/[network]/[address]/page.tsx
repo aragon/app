@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation-original';
 import { SafeAccountPage } from '@/modules/safe/pages/safeAccountPage';
 import type { ISafeAccountPageParams } from '@/modules/safe/types';
+import { featureFlags } from '@/shared/featureFlags';
 import { networkUtils } from '@/shared/utils/networkUtils';
 
 interface ISafePageProps {
@@ -13,6 +14,9 @@ interface ISafePageProps {
 // `next/navigation` is aliased to the app's client-side wrapper, so the server helpers are
 // imported from `next/navigation-original`.
 const SafePage = async (props: ISafePageProps) => {
+    if (!(await featureFlags.isEnabled('safeAccountPage'))) {
+        notFound();
+    }
     const { network, address } = await props.params;
 
     // A malformed network is a missing page, never a server error. The address is normalised to

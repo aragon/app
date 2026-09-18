@@ -158,4 +158,15 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
+    {
+        key: 'safeAccountPage',
+        name: 'Safe account page',
+        description:
+            'Enables the Safe account page and links to queued Safe transactions.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            preview: true,
+        },
+    },
 ];

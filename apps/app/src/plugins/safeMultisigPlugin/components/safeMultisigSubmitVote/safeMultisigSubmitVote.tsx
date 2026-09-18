@@ -29,6 +29,7 @@ import {
     useTransactionStatus,
 } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
@@ -50,6 +51,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     props,
 ) => {
     const { daoId, proposal, externalAddress, stage, isVeto } = props;
+    const { isEnabled } = useFeatureFlags();
+    const isSafeAccountPageEnabled = isEnabled('safeAccountPage');
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const queryClient = useQueryClient();
@@ -651,7 +654,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         route out of the card. The account queue shows it regardless of whether the
                         stage can still advance - the transaction is lost to the proposal, not to
                         the queue. Absent when there is no transaction to see. */}
-                    {queuedReportHref != null && (
+                    {isSafeAccountPageEnabled && queuedReportHref != null && (
                         <Link
                             href={queuedReportHref}
                             isExternal={true}

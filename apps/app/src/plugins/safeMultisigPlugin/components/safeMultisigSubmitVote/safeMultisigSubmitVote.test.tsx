@@ -15,6 +15,7 @@ import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as transactionServiceApi from '@/shared/api/transactionService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
 import { generateDialogContext } from '@/shared/testUtils';
 import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
@@ -58,6 +59,10 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     );
     const dialogOpen = jest.fn();
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
     const useBytecodeSpy = jest.spyOn(Wagmi, 'useBytecode');
 
     const safeInfo = generateSafeInfo({
@@ -160,6 +165,11 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             data: undefined,
             isLoading: false,
         } as ReturnType<typeof Wagmi.useBytecode>);
+        useFeatureFlagsSpy.mockReturnValue({
+            isEnabled: () => true,
+        } as unknown as ReturnType<
+            typeof featureFlagsProvider.useFeatureFlags
+        >);
         useTransactionStatusSpy.mockReturnValue({ data: undefined } as never);
         dialogOpen.mockReset();
         pendingTransactionManager.clearActive();
@@ -446,6 +456,37 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
             }),
         ).toHaveAttribute('href', `/safe/${proposal.network}/${safeAddress}`);
+    });
+    it('hides the account queue link when the Safe account page is disabled', () => {
+        useFeatureFlagsSpy.mockReturnValue({
+            isEnabled: () => false,
+        } as unknown as ReturnType<
+            typeof featureFlagsProvider.useFeatureFlags
+        >);
+
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({ nonce: '4' }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+        });
+
+        renderCard();
+
+        expect(
+            screen.queryByRole('link', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('warns while another queued transaction still holds the same nonce', () => {
