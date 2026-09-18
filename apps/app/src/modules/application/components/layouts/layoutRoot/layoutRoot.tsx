@@ -59,9 +59,13 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     ]);
     const dehydratedState = dehydrate(queryClient);
 
+    // The page background lives on the root element, not the body: `body` is the fallback `app`
+    // query container (see breakpoints.css), and containment on the body switches off the
+    // propagation of its background to the canvas (css-contain-2 §3), which would leave the canvas
+    // white below the first viewport once the page scrolls.
     return (
-        <html className="h-full" lang="en">
-            <body className="flex h-full flex-col bg-neutral-50">
+        <html className="h-full bg-neutral-50" lang="en">
+            <body className="flex h-full flex-col">
                 <NextTopLoader
                     color="var(--color-primary-400)"
                     easing="ease-in-out"
@@ -76,10 +80,14 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     wagmiInitialState={wagmiInitialState}
                 >
                     {/* App column + chat panel: the panel is an in-flow sibling so the whole
-                        app (header, content and footer) resizes to fit when the chat is open. */}
+                        app (header, content and footer) resizes to fit when the chat is open.
+                        The app column is the `app` query container the breakpoint variants
+                        measure (see breakpoints.css), so opening the chat downgrades the app to
+                        a narrower layout instead of leaving desktop rules to collide. The chat
+                        panel measures the browser window through `screen-*` variants. */}
                     <SupportChatContextProvider>
                         <div className="flex grow flex-row">
-                            <div className="flex min-w-0 grow flex-col">
+                            <div className="@container/app flex min-w-0 grow flex-col">
                                 <ErrorBoundary>
                                     <div className="flex grow flex-col">
                                         {children}
