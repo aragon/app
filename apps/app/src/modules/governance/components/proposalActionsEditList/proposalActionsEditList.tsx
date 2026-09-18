@@ -3,6 +3,7 @@ import {
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import type { IProposalActionData } from '../createProposalForm';
 
@@ -53,22 +54,30 @@ export const ProposalActionsEditList: React.FC<
             onExpandedActionsChange={noOpActionsChange}
         >
             <ProposalActions.Container emptyStateDescription="">
-                {actionsMerged.map((action, index) => (
-                    <ProposalActions.Item<IProposalActionData>
-                        action={action}
-                        actionCount={actionsMerged.length}
-                        actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
-                            action,
-                        )}
-                        arrayControls={getArrayControls(index)}
-                        CustomComponent={customActionComponents[action.type]}
-                        chainId={chainId}
-                        editMode={true}
-                        formPrefix={`actions.${index.toString()}`}
-                        key={action.fieldId}
-                        value={action.fieldId}
-                    />
-                ))}
+                {actionsMerged.map((action, index) => {
+                    const functionSelector =
+                        proposalActionUtils.actionToFunctionSelector(action);
+
+                    return (
+                        <ProposalActions.Item<IProposalActionData>
+                            action={action}
+                            actionCount={actionsMerged.length}
+                            actionFunctionSelector={functionSelector}
+                            arrayControls={getArrayControls(index)}
+                            CustomComponent={
+                                customActionComponents[action.type] ??
+                                actionViewRegistry.getViewBySelector(
+                                    functionSelector,
+                                )?.componentCreate
+                            }
+                            chainId={chainId}
+                            editMode={true}
+                            formPrefix={`actions.${index.toString()}`}
+                            key={action.fieldId}
+                            value={action.fieldId}
+                        />
+                    );
+                })}
             </ProposalActions.Container>
         </ProposalActions.Root>
     );
