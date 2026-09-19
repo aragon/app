@@ -22,6 +22,7 @@
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
         "test:hooks": "pnpm test:guardrails",
         "test:release-summary": "node --test '.github/workflows/scripts/*.test.js'",
+        "tokens:validate": "node .design-sync/tokens/validate.mjs",
         "type-check": "turbo run type-check",
         "validate:changesets": "node .github/workflows/scripts/validateChangesets.js"
     },

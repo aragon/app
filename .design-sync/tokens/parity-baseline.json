@@ -1,0 +1,1123 @@
+{
+    "baselineVersion": "app-token-parity/1",
+    "dtcgSchema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "source": {
+        "repository": "https://github.com/aragon/gov-ui-kit",
+        "package": "@aragon/gov-ui-kit",
+        "version": "2.11.4",
+        "revision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+        "tokenPath": "src/theme/tokens/primitives",
+        "appRevision": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5"
+    },
+    "mappings": [
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-50",
+            "token": "color.primary.50",
+            "sourceValue": "#f5f8ff",
+            "status": "represented",
+            "valueSha256": "95262135d3f70439b46a6d2a5b1bbd81d3f7e17a53836fc7bef18558462176c2"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-100",
+            "token": "color.primary.100",
+            "sourceValue": "#c4d7ff",
+            "status": "represented",
+            "valueSha256": "f3fa5a4f51e1667ddea3f3cfcfc5e6cd1b360295ab978f214ffe61ed7773d949"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-200",
+            "token": "color.primary.200",
+            "sourceValue": "#93b2ff",
+            "status": "represented",
+            "valueSha256": "b4b5e6a3bcc6529beecfe7297e1040831be177a00e08e3b64ad5dc7edfe128b4"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-300",
+            "token": "color.primary.300",
+            "sourceValue": "#628cfe",
+            "status": "represented",
+            "valueSha256": "ae4579729aefb7e4ab05768c26d8898d2f0ed5886a98b38cd97419433d8866d7"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-400",
+            "token": "color.primary.400",
+            "sourceValue": "#3164fa",
+            "status": "represented",
+            "valueSha256": "471826d56b32e7b95ccdfc324166dbe7220fd17f84f256f20ed2bf2a5a17f06e"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-500",
+            "token": "color.primary.500",
+            "sourceValue": "#003bf5",
+            "status": "represented",
+            "valueSha256": "486b8fb1b19c7ce562364c81a1854a5be3d9865fed35b974bd20bb56a78e46ba"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-600",
+            "token": "color.primary.600",
+            "sourceValue": "#0037d2",
+            "status": "represented",
+            "valueSha256": "2f3591a6d2b202112bb7dac389a3e7f94e6d2c1455ff17a1faed23e29e784da8"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-700",
+            "token": "color.primary.700",
+            "sourceValue": "#0031ad",
+            "status": "represented",
+            "valueSha256": "abb6e5644fa899f0dfc5ac2ce5f18890398a61c846745f965614ef83e3c41a89"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-800",
+            "token": "color.primary.800",
+            "sourceValue": "#002985",
+            "status": "represented",
+            "valueSha256": "c1805aaf5e68a736da32081d43132106cd1f7be1d322bacd9ecd4a8ce49924a9"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-900",
+            "token": "color.primary.900",
+            "sourceValue": "#001f5c",
+            "status": "represented",
+            "valueSha256": "6a557acee819be7b8fd11e7fbbb610a11e02dfcf62179281f08dfe9592ebb646"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-0",
+            "token": "color.neutral.0",
+            "sourceValue": "#ffffff",
+            "status": "represented",
+            "valueSha256": "71a0f830dd17c67af6b662c054660d9d84c39ee2731e343e9f9dace8a8400999"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-50",
+            "token": "color.neutral.50",
+            "sourceValue": "#f5f7fa",
+            "status": "represented",
+            "valueSha256": "ad721b6d408eb6c4beb8861b814a10063e79371f9f99f39f9ae0b922608ecd31"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-100",
+            "token": "color.neutral.100",
+            "sourceValue": "#e4e7eb",
+            "status": "represented",
+            "valueSha256": "075b760c2eee80053fecb68152430198a0e9bc4835d64d8af3c72cd2716f2e78"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-200",
+            "token": "color.neutral.200",
+            "sourceValue": "#cbd2d9",
+            "status": "represented",
+            "valueSha256": "5f7e238583961f80083801797e047155efe2e623c272236b95d6831fb8a8d9ee"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-300",
+            "token": "color.neutral.300",
+            "sourceValue": "#9aa5b1",
+            "status": "represented",
+            "valueSha256": "9b0ce472b2facfce31a5b4eb46573b3ea13197818770e396370ee78c76bd2c61"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-400",
+            "token": "color.neutral.400",
+            "sourceValue": "#7b8794",
+            "status": "represented",
+            "valueSha256": "b99167e8a9e7c9f0cbbed3455f2871a4a57db9091abc4554cec8c0f33d2a0fed"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-500",
+            "token": "color.neutral.500",
+            "sourceValue": "#616e7c",
+            "status": "represented",
+            "valueSha256": "a3cc2c1618bc91495534718ec4fffb550725014c7c1d0e2f1d80a6d971caf39a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-600",
+            "token": "color.neutral.600",
+            "sourceValue": "#52606d",
+            "status": "represented",
+            "valueSha256": "fa7f3591605d7de3dca8a71297edf2a6153127d29216769eef592926dc3bbb70"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-700",
+            "token": "color.neutral.700",
+            "sourceValue": "#3e4c59",
+            "status": "represented",
+            "valueSha256": "cbec44ada16d29be589063e48edf1b45a832322a5dd47fb2daeeb564886efec0"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-800",
+            "token": "color.neutral.800",
+            "sourceValue": "#323f4b",
+            "status": "represented",
+            "valueSha256": "818c076698ab931a28a77492de97d40d8359031ff331cc000c3902ec83b5841e"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-900",
+            "token": "color.neutral.900",
+            "sourceValue": "#1f2933",
+            "status": "represented",
+            "valueSha256": "0693f8d8af430b0e09b5b2ba5c2fd9d9f24990864ff4b031a05bbbd49275ecb5"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-100",
+            "token": "color.info.100",
+            "sourceValue": "#d1fdfa",
+            "status": "represented",
+            "valueSha256": "7b435caf42e78ced54eb8089190a5d652a5588e1059e588b0dfbdea652bfd7de"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-200",
+            "token": "color.info.200",
+            "sourceValue": "#a4f9fb",
+            "status": "represented",
+            "valueSha256": "6b7d43f8b6a23778bde741b538cba0b5daf2ac0e6a09a5db18c537d22303c6fc"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-300",
+            "token": "color.info.300",
+            "sourceValue": "#75e8f3",
+            "status": "represented",
+            "valueSha256": "10b8eb6f6d8861ff1c7834d95daafe4d161170543ae984034d4530aa25f17144"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-400",
+            "token": "color.info.400",
+            "sourceValue": "#52cfe7",
+            "status": "represented",
+            "valueSha256": "8c3bad0a06f4c7d4b823cf3bb42286b798eaa9436643f1a9fd997aafa3c35a70"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-500",
+            "token": "color.info.500",
+            "sourceValue": "#1eadd8",
+            "status": "represented",
+            "valueSha256": "fbefbeb5603f608afcc922798a561940d13501630cae71e2c48b835d7b884e46"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-600",
+            "token": "color.info.600",
+            "sourceValue": "#1588b9",
+            "status": "represented",
+            "valueSha256": "c9b77cabb9f24f0e4ac5bcd24d70ea896ea34864edf9c97f370cba341b07b0e0"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-700",
+            "token": "color.info.700",
+            "sourceValue": "#0f669b",
+            "status": "represented",
+            "valueSha256": "fd2a24ff15a20e9b85ffc4dbd36b98f71db632b799f7ef851fef3ab063a1cb19"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-800",
+            "token": "color.info.800",
+            "sourceValue": "#09497d",
+            "status": "represented",
+            "valueSha256": "99695354610b6597094f3f274d27432bf3a0f7ca59dec1d5287d8c13511d5091"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-900",
+            "token": "color.info.900",
+            "sourceValue": "#053467",
+            "status": "represented",
+            "valueSha256": "5e3b3444c9e44c8c3e521c15b901528e9b6784ef6902ecc4c0b67cb669391bce"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-100",
+            "token": "color.success.100",
+            "sourceValue": "#f3fccc",
+            "status": "represented",
+            "valueSha256": "c7cfb9ae78dc19051874d8b211fc3ef76c334b5fbb70bde1113cd35c77e4b6a2"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-200",
+            "token": "color.success.200",
+            "sourceValue": "#e4f99a",
+            "status": "represented",
+            "valueSha256": "6a681365236150d1ca3746773514836152cf92899021b2ff7f0247adc8c7a992"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-300",
+            "token": "color.success.300",
+            "sourceValue": "#ccef66",
+            "status": "represented",
+            "valueSha256": "8db779dedce2b2e3e04c5a40aff3c1200f249cf678f477ea4490d040a4741607"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-400",
+            "token": "color.success.400",
+            "sourceValue": "#b2e040",
+            "status": "represented",
+            "valueSha256": "ea435ab15b53a00f81932869ac6a7dcb26de0a5fbf9028a0ae75fca96f7635df"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-500",
+            "token": "color.success.500",
+            "sourceValue": "#8ecc0a",
+            "status": "represented",
+            "valueSha256": "9b2f9451b2d05db482131bb7411ca78bb26206ce244f5b81b6c70a031fd7e549"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-600",
+            "token": "color.success.600",
+            "sourceValue": "#74af07",
+            "status": "represented",
+            "valueSha256": "99d28426e4ad54854e26091f37fdfcf3b3e5191a1998c7f72f2d5f89eb52b26d"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-700",
+            "token": "color.success.700",
+            "sourceValue": "#5c9205",
+            "status": "represented",
+            "valueSha256": "d3757d4a30619374d4291ebafbe1fa7a1375f02fe02c4a119223dc8ba76926d9"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-800",
+            "token": "color.success.800",
+            "sourceValue": "#467603",
+            "status": "represented",
+            "valueSha256": "e852c15d0a96435fc61c126b9cc1a0079cff173a19403113ecefcc522c71cb56"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-900",
+            "token": "color.success.900",
+            "sourceValue": "#366101",
+            "status": "represented",
+            "valueSha256": "d92bd679e9e114be87adf5a21e2ddf645770ea721a067a6dc151e1105d3c63fe"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-100",
+            "token": "color.warning.100",
+            "sourceValue": "#fff3d6",
+            "status": "represented",
+            "valueSha256": "fe854f330bf363f2fd9fafad37ba6a94cb1d6f32f7b572fd6178ee2e37a50b10"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-200",
+            "token": "color.warning.200",
+            "sourceValue": "#ffe4ad",
+            "status": "represented",
+            "valueSha256": "7bfe6b46902527fca8de9be10c844bf778d0a1e92d8883ec510c8ce9dfa82fb1"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-300",
+            "token": "color.warning.300",
+            "sourceValue": "#ffd083",
+            "status": "represented",
+            "valueSha256": "628f0157f5d55e2271b51dcdc01c3a5e0522d69157bab452e128d7416376cffd"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-400",
+            "token": "color.warning.400",
+            "sourceValue": "#ffbe65",
+            "status": "represented",
+            "valueSha256": "6660c8ce4fead94ea8fb2f4d2f86d0fcec25000958bb9316e4741985fd9a1a9a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-500",
+            "token": "color.warning.500",
+            "sourceValue": "#ff9f32",
+            "status": "represented",
+            "valueSha256": "17a462ac7a5bfc71d287fe04394518bd44dd4c920fde95354958062a4deb3a64"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-600",
+            "token": "color.warning.600",
+            "sourceValue": "#db7d24",
+            "status": "represented",
+            "valueSha256": "78a0f0d4ab9432573e9ad3ae5888333e0e11b48d961bb8566e3f8e2820a119a4"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-700",
+            "token": "color.warning.700",
+            "sourceValue": "#b75e19",
+            "status": "represented",
+            "valueSha256": "7f8ef5b0b50f90bd81654e248f4b52d7bc3fdb07ed2dada0ae5cebcfebaa1fea"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-800",
+            "token": "color.warning.800",
+            "sourceValue": "#93430f",
+            "status": "represented",
+            "valueSha256": "dcd3352a92726041f99423cde99d90c0643c9e9be99e98b134b95bb51b83b5c2"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-900",
+            "token": "color.warning.900",
+            "sourceValue": "#7a3009",
+            "status": "represented",
+            "valueSha256": "ded9f5f1cf16f8dc79b5b8933036b0e6f76b6114f4cb0757b777c53ece75d390"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-100",
+            "token": "color.critical.100",
+            "sourceValue": "#fee4d6",
+            "status": "represented",
+            "valueSha256": "6137bd324248717199ea82e43a5752dea92e1d3a85ff27917eb5fb0ab480476e"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-200",
+            "token": "color.critical.200",
+            "sourceValue": "#fec3ae",
+            "status": "represented",
+            "valueSha256": "0bfc92a56c4deb43bb3e6a39a43145ea5dc2d4ea1569226d91715ec905139b8b"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-300",
+            "token": "color.critical.300",
+            "sourceValue": "#fd9a86",
+            "status": "represented",
+            "valueSha256": "76ea4b5eec7a91844f5b59350bdd6e4ad26c50b535dfb6961e3621011a8e188c"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-400",
+            "token": "color.critical.400",
+            "sourceValue": "#fb7467",
+            "status": "represented",
+            "valueSha256": "5374350555300271419c77c138d9827a0a244baaa4cba41092598c675351505e"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-500",
+            "token": "color.critical.500",
+            "sourceValue": "#f93636",
+            "status": "represented",
+            "valueSha256": "712b5fda2e2c576b54caa11f84cbbe22bac4823605906b1d463c040a7e3b5307"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-600",
+            "token": "color.critical.600",
+            "sourceValue": "#d62736",
+            "status": "represented",
+            "valueSha256": "8b98b9014a06401c157025e5610d9a656b967eb54246c4d593aecc91c13e21c0"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-700",
+            "token": "color.critical.700",
+            "sourceValue": "#b31b35",
+            "status": "represented",
+            "valueSha256": "f1785e59407c3bf41b12333f62346e8c0f80c232bbfabfb00d259cf88bbf33ce"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-800",
+            "token": "color.critical.800",
+            "sourceValue": "#901132",
+            "status": "represented",
+            "valueSha256": "9156f2ece53e76c3a2c9ba4152c32d05e3dd6f1e5bc11d173dd76bf1a8d27045"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-900",
+            "token": "color.critical.900",
+            "sourceValue": "#770a30",
+            "status": "represented",
+            "valueSha256": "831a586ee358b1a4dd3f3d3f933be86d03f98a33653312232ee252b3f26bc142"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-transparent",
+            "token": "color.transparent",
+            "sourceValue": "transparent",
+            "status": "represented",
+            "valueSha256": "b5ceb7f168b377edf47c5e1a0107496baac2e23e99a269faee6bd30d08bc1401"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-md",
+            "token": "radius.md",
+            "sourceValue": "4px",
+            "status": "represented",
+            "valueSha256": "58153b19e0169dbe628881265b87a89fcc9798fb52336094599c91da92829752"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-lg",
+            "token": "radius.lg",
+            "sourceValue": "8px",
+            "status": "represented",
+            "valueSha256": "a8fa33b6f5d541639c94b8d7c1f1f375373515bf330e4f74ab4c53727f4b8731"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-xl",
+            "token": "radius.xl",
+            "sourceValue": "12px",
+            "status": "represented",
+            "valueSha256": "9b301dde171ba780d0bbf22213d936dedb31d2d8964adbe53b0a83da6fc88c9a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-2xl",
+            "token": "radius.2xl",
+            "sourceValue": "16px",
+            "status": "represented",
+            "valueSha256": "ec8c7ab1a0f7c67803a86530c0e92eca024f19e7f792e4ea9245058d293fdc73"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-3xl",
+            "token": "radius.3xl",
+            "sourceValue": "24px",
+            "status": "represented",
+            "valueSha256": "84a100633c9fd91486ce376171a407d524305d75462d990d6c7a676d339bc3dc"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-full",
+            "token": "radius.full",
+            "sourceValue": "9999px",
+            "status": "represented",
+            "valueSha256": "b6dec174502820dbbd6559590bb142974f2b990888621a55e16449191d25ea2c"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-sm-px",
+            "token": "breakpoint.px.sm",
+            "sourceValue": "640",
+            "status": "represented",
+            "valueSha256": "3f1bb7c0da3c01e685edd592f3a3ca0b149a399d25b97c0da47118c24a39f59a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-md-px",
+            "token": "breakpoint.px.md",
+            "sourceValue": "768",
+            "status": "represented",
+            "valueSha256": "f7b856c054de7ccced087ad4f9413380ec494e40abc818b840aaad990ca3c5bc"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-lg-px",
+            "token": "breakpoint.px.lg",
+            "sourceValue": "1024",
+            "status": "represented",
+            "valueSha256": "e39eef82f61b21e2e7f762fcc4307358f165757f2e77ec855d6992f7e0191932"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-xl-px",
+            "token": "breakpoint.px.xl",
+            "sourceValue": "1280",
+            "status": "represented",
+            "valueSha256": "6f13d39f5c4665967f7df9f2f7311187fda905292da1a5a7cef66dd8cb6e9dd8"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-2xl-px",
+            "token": "breakpoint.px.2xl",
+            "sourceValue": "1536",
+            "status": "represented",
+            "valueSha256": "b51e45a12fbae3d0ee2bf77f1a4f80cbf642e2b4d1c237d2c0f7053a54f6b388"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-sm",
+            "token": "breakpoint.css.sm",
+            "sourceValue": "40rem",
+            "status": "represented",
+            "valueSha256": "d6b4374102798021bb573e71e95cd9201c96600c7447d6afd3838f64dfa41f51"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-md",
+            "token": "breakpoint.css.md",
+            "sourceValue": "48rem",
+            "status": "represented",
+            "valueSha256": "fd42ec0486a8e21ebcf61f9fc40d1a4dea9db60a63fca5f46d218cb2b1eb25d6"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-lg",
+            "token": "breakpoint.css.lg",
+            "sourceValue": "64rem",
+            "status": "represented",
+            "valueSha256": "172648b43ef2122d69cf2f65a02534b9177a8166cf05b5b2fbdc74e9622d17d9"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-xl",
+            "token": "breakpoint.css.xl",
+            "sourceValue": "80rem",
+            "status": "represented",
+            "valueSha256": "5e34a2f876c09feb5314037a743bed78d71169fbab065ab608e9dc6a58119bfe"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-2xl",
+            "token": "breakpoint.css.2xl",
+            "sourceValue": "96rem",
+            "status": "represented",
+            "valueSha256": "ed3af007f259754dd8867044c6b779ddf185594cccd4828e180bae560fc0f3a9"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/spacing.css",
+            "sourceVariable": "--spacing",
+            "token": "spacing.base",
+            "sourceValue": "4px",
+            "status": "represented",
+            "valueSha256": "58153b19e0169dbe628881265b87a89fcc9798fb52336094599c91da92829752"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--font-sans",
+            "token": "font.family.sans",
+            "sourceValue": "\"Manrope\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+            "status": "represented",
+            "valueSha256": "4f471f31f5b08e13254cfa1d788b257d004c9705976bf416ed08365d9928daae"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--font-weight-normal",
+            "token": "font.weight.normal",
+            "sourceValue": "400",
+            "status": "represented",
+            "valueSha256": "26d228663f13a88592a12d16cf9587caab0388b262d6d9f126ed62f9333aca94"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--font-weight-semibold",
+            "token": "font.weight.semibold",
+            "sourceValue": "600",
+            "status": "represented",
+            "valueSha256": "284b7e6d788f363f910f7beb1910473e23ce9d6c871f1ce0f31f22a982d48ad4"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-xs",
+            "token": "font.size.xs",
+            "sourceValue": "0.75rem",
+            "status": "represented",
+            "valueSha256": "e7ebd13f834293fdd963066b90ef1a4d5c663993086c3359b279ba6454bf4e21"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-sm",
+            "token": "font.size.sm",
+            "sourceValue": "0.875rem",
+            "status": "represented",
+            "valueSha256": "c626e0b8fc6d34b6c1b183a353b04eb876d424921bc7f9f39a6e1f4ee5086a8a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-base",
+            "token": "font.size.base",
+            "sourceValue": "1rem",
+            "status": "represented",
+            "valueSha256": "63d7c49db93c6ed6e2eec4f34b07e88e7756aa6dfe9c338ab0a43889266a7a95"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-lg",
+            "token": "font.size.lg",
+            "sourceValue": "1.125rem",
+            "status": "represented",
+            "valueSha256": "bd9d735f8e7731f7e29414b7237a43f6cdb12ab653f8a64d5b114d61d39a3f9a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-xl",
+            "token": "font.size.xl",
+            "sourceValue": "1.25rem",
+            "status": "represented",
+            "valueSha256": "2e2f54e478a5cfb40b5c61a739cdf6d9c8193d1d3ba4e93c8ca43693a9d08079"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-2xl",
+            "token": "font.size.2xl",
+            "sourceValue": "1.5rem",
+            "status": "represented",
+            "valueSha256": "627c9ea29f92d5c1dbe3f6134a1c22a931cc82942b619a6955b73f162645bb13"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-3xl",
+            "token": "font.size.3xl",
+            "sourceValue": "1.875rem",
+            "status": "represented",
+            "valueSha256": "80188ba8be63db8ea553e52db85600f1793fa69254934ffb4642b976adbfcd4a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-4xl",
+            "token": "font.size.4xl",
+            "sourceValue": "2.25rem",
+            "status": "represented",
+            "valueSha256": "0ddd6ef1d396d641cfe0b500ab08b5b468297bb979deff21e3790015a94fad64"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-5xl",
+            "token": "font.size.5xl",
+            "sourceValue": "3rem",
+            "status": "represented",
+            "valueSha256": "f2af8719588cc1b4540809391dc19b625fd78bdef572776f34c9ac5ef5356250"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--leading-tight",
+            "token": "font.leading.tight",
+            "sourceValue": "1.25",
+            "status": "represented",
+            "valueSha256": "004a9e0878ff83e6b91f50d50dad439d2065c6cbb0d20f1f328b2fd75e085d6a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--leading-normal",
+            "token": "font.leading.normal",
+            "sourceValue": "1.5",
+            "status": "represented",
+            "valueSha256": "9f29a130438b81170b92a42650f9a94291ecad60bd47af2a3886e75f7f728725"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--leading-relaxed",
+            "token": "font.leading.relaxed",
+            "sourceValue": "1.65",
+            "status": "represented",
+            "valueSha256": "b7e2620d0beba2d24e4638073e3fb22b4a2b4fda900c0108b5de57bd08412ea5"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-sm",
+            "token": "shadow.neutral-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(97, 110, 124, 0.05)",
+            "status": "represented",
+            "valueSha256": "5bffaf8b7397a1fec5a43493facd015ae3505e4c3cad8ac362a566c8713a0699"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral",
+            "token": "shadow.neutral",
+            "sourceValue": "0px 1px 3px 0px rgba(97, 110, 124, 0.1), 0px 1px 2px -1px rgba(97, 110, 124, 0.1)",
+            "status": "represented",
+            "valueSha256": "778dedcadc8e61e9aea429c968e755e0c1f209890a9325729f4b6da377430f3f"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-md",
+            "token": "shadow.neutral-md",
+            "sourceValue": "0px 4px 6px -1px rgba(97, 110, 124, 0.1), 0px 2px 4px -2px rgba(97, 110, 124, 0.1)",
+            "status": "represented",
+            "valueSha256": "26d4c35363ff01662deb2308a843c683d12535b34f77b1cc976ff7cecd667c6d"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-lg",
+            "token": "shadow.neutral-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(97, 110, 124, 0.1), 0px 4px 6px -4px rgba(97, 110, 124, 0.1)",
+            "status": "represented",
+            "valueSha256": "bdbf51ec065224d878fa952e8ca853f7c894e3dcc99a72628518634a4ef8d032"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-xl",
+            "token": "shadow.neutral-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(97, 110, 124, 0.1), 0px 8px 10px -6px rgba(97, 110, 124, 0.1)",
+            "status": "represented",
+            "valueSha256": "bb2dae9bbd6dae3815eae5b713f942505984dac84555f2a1f374d90852323104"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-2xl",
+            "token": "shadow.neutral-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(97, 110, 124, 0.24)",
+            "status": "represented",
+            "valueSha256": "964053d47e8acc3b47496e2ea26672c37e4bc9fd5a618e11f018bdd89e322c17"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-sm",
+            "token": "shadow.primary-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(0, 59, 245, 0.05)",
+            "status": "represented",
+            "valueSha256": "095874d6a627f7aa61b75271119f1e9abf6da3defb40f6ac0c2993c8b9a06f76"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary",
+            "token": "shadow.primary",
+            "sourceValue": "0px 1px 3px 0px rgba(0, 59, 245, 0.1), 0px 1px 2px -1px rgba(0, 59, 245, 0.1)",
+            "status": "represented",
+            "valueSha256": "98bac957d704175e1203679d53e355e22b5ed8af828f82cbda09779cc80c2346"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-md",
+            "token": "shadow.primary-md",
+            "sourceValue": "0px 4px 6px -1px rgba(0, 59, 245, 0.1), 0px 2px 4px -2px rgba(0, 59, 245, 0.1)",
+            "status": "represented",
+            "valueSha256": "be397b9723648915f4740cc79c5cecaacefb77a42b142cdd7e7ccd308ab50315"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-lg",
+            "token": "shadow.primary-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(0, 59, 245, 0.1), 0px 4px 6px -4px rgba(0, 59, 245, 0.1)",
+            "status": "represented",
+            "valueSha256": "fd0864706e21b4482da6886ac903497e328a5e4753b152555306aca7a7f173d2"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-xl",
+            "token": "shadow.primary-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(0, 59, 245, 0.1), 0px 8px 10px -6px rgba(0, 59, 245, 0.1)",
+            "status": "represented",
+            "valueSha256": "ad4bb8fc34995fb9e10c485362a3e16ec9d20e6851010f2b92d18481b299dd01"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-2xl",
+            "token": "shadow.primary-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(0, 59, 245, 0.24)",
+            "status": "represented",
+            "valueSha256": "3d7a3f22173714b6659eac522910967efeca67f982e7ea0e846e64dac83ddd79"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-sm",
+            "token": "shadow.success-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(116, 175, 7, 0.05)",
+            "status": "represented",
+            "valueSha256": "8616bcb9494dfc932da06cb9e13bfaf47afd02bfa99c15b8b9179aa9abadff22"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success",
+            "token": "shadow.success",
+            "sourceValue": "0px 1px 3px 0px rgba(116, 175, 7, 0.1), 0px 1px 2px -1px rgba(116, 175, 7, 0.1)",
+            "status": "represented",
+            "valueSha256": "a146cd980efc0af0a7727481a07575092588c0ceb7a31539156bbd53e3ed39da"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-md",
+            "token": "shadow.success-md",
+            "sourceValue": "0px 4px 6px -1px rgba(116, 175, 7, 0.1), 0px 2px 4px -2px rgba(116, 175, 7, 0.1)",
+            "status": "represented",
+            "valueSha256": "11f9a475990fec2c4f64bdb1c10b68311f45d5c95bda98c2e780ee3e42a5b055"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-lg",
+            "token": "shadow.success-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(116, 175, 7, 0.1), 0px 4px 6px -4px rgba(116, 175, 7, 0.1)",
+            "status": "represented",
+            "valueSha256": "039010efa5af89ceb0a57539b2cfb44e833a5421e7e2a5465ca60191c1c0eb58"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-xl",
+            "token": "shadow.success-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(116, 175, 7, 0.1), 0px 8px 10px -6px rgba(116, 175, 7, 0.1)",
+            "status": "represented",
+            "valueSha256": "ff6fb627ae1f75ffc0c49d2f77540eb5fac7f9b0ecdc5b0345f7ecd5207f5b3f"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-2xl",
+            "token": "shadow.success-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(116, 175, 7, 0.24)",
+            "status": "represented",
+            "valueSha256": "13220776d1f659436c2e72122d3a2ab26b6c59807a87af65ff3dbd602506157f"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-sm",
+            "token": "shadow.warning-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(219, 125, 36, 0.05)",
+            "status": "represented",
+            "valueSha256": "e7ee21221394d2ac35440be7f11cb83baac445247c658a65830da470812d3707"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning",
+            "token": "shadow.warning",
+            "sourceValue": "0px 1px 3px 0px rgba(219, 125, 36, 0.1), 0px 1px 2px -1px rgba(219, 125, 36, 0.1)",
+            "status": "represented",
+            "valueSha256": "2d76f2f7d7313b5c8fc8eae144c161c76db259f602c60d238ffd6243319961c2"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-md",
+            "token": "shadow.warning-md",
+            "sourceValue": "0px 4px 6px -1px rgba(219, 125, 36, 0.1), 0px 2px 4px -2px rgba(219, 125, 36, 0.1)",
+            "status": "represented",
+            "valueSha256": "1820b157f2b072959cde5d3874a311e27065013ff2159d971f93a7a15001e8bf"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-lg",
+            "token": "shadow.warning-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(219, 125, 36, 0.1), 0px 4px 6px -4px rgba(219, 125, 36, 0.1)",
+            "status": "represented",
+            "valueSha256": "2efa1ea19fe7b5eaa0a841c76e6b943f09b125f3bcb82116e7d787ab7d800ead"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-xl",
+            "token": "shadow.warning-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(219, 125, 36, 0.1), 0px 8px 10px -6px rgba(219, 125, 36, 0.1)",
+            "status": "represented",
+            "valueSha256": "788d95d21911d68b332ad906c566324638389483814d86380825aa529987b36b"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-2xl",
+            "token": "shadow.warning-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(219, 125, 36, 0.24)",
+            "status": "represented",
+            "valueSha256": "f4ff758cc0b78ccd42756645289a2792774665171ff14f89dca488a55f347ec1"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-sm",
+            "token": "shadow.critical-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(214, 39, 54, 0.05)",
+            "status": "represented",
+            "valueSha256": "7ab77d323cc3dbe7f57fe26bf6796f67f1148a4d7b3e1331511b9c9a69b039cb"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical",
+            "token": "shadow.critical",
+            "sourceValue": "0px 1px 3px 0px rgba(214, 39, 54, 0.1), 0px 1px 2px -1px rgba(214, 39, 54, 0.1)",
+            "status": "represented",
+            "valueSha256": "6192e7ad2e4b8119c5dfc066199958ceb188bc382e23c40b7d5d88804891be1b"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-md",
+            "token": "shadow.critical-md",
+            "sourceValue": "0px 4px 6px -1px rgba(214, 39, 54, 0.1), 0px 2px 4px -2px rgba(214, 39, 54, 0.1)",
+            "status": "represented",
+            "valueSha256": "aca07b1b770b49e507db50591eee6edab74b4e5994b5a3a7b23093c971f24709"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-lg",
+            "token": "shadow.critical-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(214, 39, 54, 0.1), 0px 4px 6px -4px rgba(214, 39, 54, 0.1)",
+            "status": "represented",
+            "valueSha256": "ef2447145a15c543a8f40b5ce3c9a7877ac2eeb242397c4da0ef9e4825d327d1"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-xl",
+            "token": "shadow.critical-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(214, 39, 54, 0.1), 0px 8px 10px -6px rgba(214, 39, 54, 0.1)",
+            "status": "represented",
+            "valueSha256": "9d4d21e189923d98e103c3facace53416808e51335d479f88eb2ee1e08ab14d2"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-2xl",
+            "token": "shadow.critical-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(214, 39, 54, 0.24)",
+            "status": "represented",
+            "valueSha256": "126b342a25c85d606742aca19024d07f5943fcf7471c2c5eb277a69bde9bc222"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-sm",
+            "token": "shadow.info-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(21, 136, 185, 0.05)",
+            "status": "represented",
+            "valueSha256": "ef040b7aeb80eece578845988f09921a5b9338bcd8e84e6ad43c724a27407e63"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info",
+            "token": "shadow.info",
+            "sourceValue": "0px 1px 3px 0px rgba(21, 136, 185, 0.1), 0px 1px 2px -1px rgba(21, 136, 185, 0.1)",
+            "status": "represented",
+            "valueSha256": "44c2cbace0075f86ffc0bf116afa4196eea27b80c0a5ca52b936b54c3568c9c9"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-md",
+            "token": "shadow.info-md",
+            "sourceValue": "0px 4px 6px -1px rgba(21, 136, 185, 0.1), 0px 2px 4px -2px rgba(21, 136, 185, 0.1)",
+            "status": "represented",
+            "valueSha256": "bfb86a9c197d13ed88f3f79248de1f7f87be3136a29f73d2b360000b3073e465"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-lg",
+            "token": "shadow.info-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(21, 136, 185, 0.1), 0px 4px 6px -4px rgba(21, 136, 185, 0.1)",
+            "status": "represented",
+            "valueSha256": "e51584691d2128811b7879badd104210b49c2409b350ea7e94b1229d7ff647c9"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-xl",
+            "token": "shadow.info-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(21, 136, 185, 0.1), 0px 8px 10px -6px rgba(21, 136, 185, 0.1)",
+            "status": "represented",
+            "valueSha256": "4b4e9801f319bbdf06fbe1919432256563edb30eea9b7645323e909f47fdc871"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-2xl",
+            "token": "shadow.info-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(21, 136, 185, 0.24)",
+            "status": "represented",
+            "valueSha256": "d1d34ba546b3820eb10a6874e46427c7dbd7e99726b14450036c8190f617632a"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-none",
+            "token": "shadow.none",
+            "sourceValue": "0px 0px #0000",
+            "status": "represented",
+            "valueSha256": "507a5f45576b97a65e8edd56b80481c2bb5222f20480ec5443fcc61762bdd8a0"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-primary",
+            "token": "ring.color.primary",
+            "sourceValue": "var(--color-primary-200)",
+            "status": "represented",
+            "aliasTarget": "color.primary.200",
+            "valueSha256": "3a28d25b5ed714e63981921cfa4b39bf69d312e9f985fc53fdb1756fbe72be2d"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-success",
+            "token": "ring.color.success",
+            "sourceValue": "var(--color-success-200)",
+            "status": "represented",
+            "aliasTarget": "color.success.200",
+            "valueSha256": "1a2fd1b70c55124c278968c596e57f1cef8acf355e80e8e057fdd38d7d76bd44"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-warning",
+            "token": "ring.color.warning",
+            "sourceValue": "var(--color-warning-200)",
+            "status": "represented",
+            "aliasTarget": "color.warning.200",
+            "valueSha256": "07ae5f612fb04bccb74235fd05cb480fcea5053350d6205c8ecbd686b61a257d"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-critical",
+            "token": "ring.color.critical",
+            "sourceValue": "var(--color-critical-200)",
+            "status": "represented",
+            "aliasTarget": "color.critical.200",
+            "valueSha256": "a463ee2518527748f59bed3f7dbb13f0e80b3901a9a4d74a8a48720da04b02b9"
+        }
+    ],
+    "unsupported": [
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-none",
+            "sourceValue": "none",
+            "reason": "DTCG dimension values require a numeric value and unit; retained as an explicit unsupported CSS primitive."
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceConstruct": ".gradient-neutral-50-transparent-to-b/.gradient-neutral-50-transparent-to-t",
+            "sourceValue": "Tailwind @utility definitions",
+            "reason": "Behavioral utility definitions are not token values; no gradient token invented."
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceConstruct": ".focus-ring/.focus-ring-*",
+            "sourceValue": "Tailwind @utility definitions",
+            "reason": "Focus behavior and ring width/offset are CSS utilities, while ring colors are represented as aliases."
+        }
+    ],
+    "runtimeOverrides": [
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-avatar-container-position",
+            "sourceValue": "relative"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-overlay-z-index",
+            "sourceValue": "20"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-alert-overlay-z-index",
+            "sourceValue": "20"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-content-z-index",
+            "sourceValue": "30"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-alert-content-z-index",
+            "sourceValue": "30"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-text-area-rich-text-expanded-z-index",
+            "sourceValue": "35"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dropdown-container-content-z-index",
+            "sourceValue": "40"
+        }
+    ]
+}
