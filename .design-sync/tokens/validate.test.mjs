@@ -109,6 +109,22 @@ const overlay = '--guk-dialog-overlay-z-index: 20;';
 
 for (const [name, area, file, search, replacement, expected] of [
     [
+        'additional scoped GovKit override',
+        'app',
+        appCssPath,
+        /$/,
+        '\nhtml.dark { --guk-dialog-overlay-z-index: 99; }\n',
+        /Unsupported.*scope/,
+    ],
+    [
+        'additional scoped color override',
+        'app',
+        appCssPath,
+        /$/,
+        '\n:root, .dark { --color-primary-500: #000000; }\n',
+        /Unsupported.*scope/,
+    ],
+    [
         'conditional App root',
         'app',
         appCssPath,

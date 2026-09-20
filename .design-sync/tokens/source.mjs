@@ -405,26 +405,29 @@ function processPrimitiveFile(absPath, sourceFile, out) {
 
 function processRuntimeOverrides(absPath, sourceFile, out) {
     const root = postcss.parse(readFileSync(absPath, 'utf8'));
-    root.walkRules(':root', (rule) => {
-        rule.walkDecls((decl) => {
-            if (!decl.prop.startsWith('--')) {
-                return;
-            }
-            if (rule.parent !== root || decl.parent !== rule) {
-                throw new Error(
-                    `Unsupported nested or conditional scope for "${decl.prop}" in ${sourceFile}; expected a direct declaration in a top-level :root rule`,
-                );
-            }
-            if (decl.important) {
-                throw new Error(
-                    `Unsupported !important on "${decl.prop}" in ${sourceFile}`,
-                );
-            }
-            out.runtimeOverrides.push({
-                sourceFile,
-                sourceVariable: decl.prop,
-                sourceValue: collapse(decl.value),
-            });
+    root.walkDecls((decl) => {
+        if (!decl.prop.startsWith('--')) {
+            return;
+        }
+        const rule = decl.parent;
+        if (
+            rule.type !== 'rule' ||
+            rule.selector !== ':root' ||
+            rule.parent !== root
+        ) {
+            throw new Error(
+                `Unsupported nested or conditional scope for "${decl.prop}" in ${sourceFile}; expected a direct declaration in a top-level :root rule`,
+            );
+        }
+        if (decl.important) {
+            throw new Error(
+                `Unsupported !important on "${decl.prop}" in ${sourceFile}`,
+            );
+        }
+        out.runtimeOverrides.push({
+            sourceFile,
+            sourceVariable: decl.prop,
+            sourceValue: collapse(decl.value),
         });
     });
 }
