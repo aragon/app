@@ -331,6 +331,11 @@ function walkThemeOrRoot(container, sourceFile, out) {
                 `Unexpected node in ${sourceFile}: "${node.toString().trim()}"`,
             );
         }
+        if (node.important) {
+            throw new Error(
+                `Unsupported !important on "${node.prop}" in ${sourceFile}`,
+            );
+        }
         const prop = node.prop;
         const sourceValue = collapse(node.value);
         const result = mapDecl(prop, sourceValue);
@@ -370,6 +375,11 @@ function processPrimitiveFile(absPath, sourceFile, out) {
             return;
         }
         if (node.type === 'atrule' && node.name === 'theme') {
+            if (node.params.trim()) {
+                throw new Error(
+                    `Unsupported @theme ${node.params} in ${sourceFile}`,
+                );
+            }
             walkThemeOrRoot(node, sourceFile, out);
             return;
         }
@@ -399,6 +409,16 @@ function processRuntimeOverrides(absPath, sourceFile, out) {
         rule.walkDecls((decl) => {
             if (!decl.prop.startsWith('--')) {
                 return;
+            }
+            if (rule.parent !== root || decl.parent !== rule) {
+                throw new Error(
+                    `Unsupported nested or conditional scope for "${decl.prop}" in ${sourceFile}; expected a direct declaration in a top-level :root rule`,
+                );
+            }
+            if (decl.important) {
+                throw new Error(
+                    `Unsupported !important on "${decl.prop}" in ${sourceFile}`,
+                );
             }
             out.runtimeOverrides.push({
                 sourceFile,

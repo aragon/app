@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import {
     cpSync,
+    mkdirSync,
     mkdtempSync,
     readFileSync,
     rmSync,
     writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { validateTokens } from './validate.mjs';
@@ -99,3 +100,126 @@ test('CSS namespace resets cannot drift unnoticed', (context) => {
         /Retained CSS/,
     );
 });
+
+const appCssPath =
+    'src/modules/application/components/layouts/layoutRoot/layoutRoot.css';
+const spacingCssPath = 'src/theme/tokens/primitives/spacing.css';
+const colorsCssPath = 'src/theme/tokens/primitives/colors.css';
+const overlay = '--guk-dialog-overlay-z-index: 20;';
+
+for (const [name, area, file, search, replacement, expected] of [
+    [
+        'conditional App root',
+        'app',
+        appCssPath,
+        /(:root \{[\s\S]*\})/,
+        '@media (min-width: 99999px) { $1 }',
+        /Unsupported.*scope/,
+    ],
+    [
+        'conditional declaration inside App root',
+        'app',
+        appCssPath,
+        overlay,
+        `@media (min-width: 99999px) { ${overlay} }`,
+        /Unsupported.*scope/,
+    ],
+    [
+        'nested selector inside App root',
+        'app',
+        appCssPath,
+        overlay,
+        `&:hover { ${overlay} }`,
+        /Unsupported.*scope/,
+    ],
+    [
+        'important App override',
+        'app',
+        appCssPath,
+        overlay,
+        '--guk-dialog-overlay-z-index: 20 !important;',
+        /Unsupported.*!important/,
+    ],
+    [
+        'important theme primitive',
+        'kit',
+        spacingCssPath,
+        '--spacing: 4px;',
+        '--spacing: 4px !important;',
+        /Unsupported.*!important/,
+    ],
+    [
+        'important root primitive',
+        'kit',
+        'src/theme/tokens/primitives/breakpoints.css',
+        '--breakpoint-sm-px: 640;',
+        '--breakpoint-sm-px: 640 !important;',
+        /Unsupported.*!important/,
+    ],
+    [
+        'important namespace reset',
+        'kit',
+        colorsCssPath,
+        '--color-*: initial;',
+        '--color-*: initial !important;',
+        /Unsupported.*!important/,
+    ],
+    [
+        'reference theme mode',
+        'kit',
+        spacingCssPath,
+        '@theme {',
+        '@theme reference {',
+        /Unsupported.*@theme reference/,
+    ],
+    [
+        'retained utility importance still reaches baseline comparison',
+        'kit',
+        'src/theme/tokens/primitives/focusRing.css',
+        'outline: none;',
+        'outline: none !important;',
+        /Retained CSS/,
+    ],
+]) {
+    test(`source context: ${name}`, (context) => {
+        const root = mkdtempSync(join(tmpdir(), 'govkit-parity-'));
+        context.after(() => rmSync(root, { recursive: true, force: true }));
+        const fixtureKit = join(root, 'kit');
+        const fixtureApp = join(root, 'app');
+        mkdirSync(fixtureKit);
+        cpSync(join(kitRoot, 'package.json'), join(fixtureKit, 'package.json'));
+        cpSync(
+            join(kitRoot, 'src/theme/tokens/primitives'),
+            join(fixtureKit, 'src/theme/tokens/primitives'),
+            { recursive: true },
+        );
+        mkdirSync(dirname(join(fixtureApp, appCssPath)), { recursive: true });
+        cpSync(join(appRoot, appCssPath), join(fixtureApp, appCssPath));
+        const path = join(area === 'app' ? fixtureApp : fixtureKit, file);
+        const original = readFileSync(path, 'utf8');
+        const changed = original.replace(search, replacement);
+        assert.notEqual(
+            changed,
+            original,
+            'Fixture mutation must change the CSS',
+        );
+        writeFileSync(path, changed);
+        assert.throws(
+            () =>
+                validateTokens(tokens, baseline, {
+                    kitRoot: fixtureKit,
+                    appRoot: fixtureApp,
+                }),
+            (error) => {
+                assert.match(error.message, expected);
+                if (expected.source.startsWith('Unsupported')) {
+                    assert(
+                        error.message.includes(file),
+                        'Error must identify the source file',
+                    );
+                }
+                return true;
+            },
+        );
+    });
+}

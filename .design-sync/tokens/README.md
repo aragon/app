@@ -30,6 +30,8 @@ GOVKIT_KIT_ROOT=/path/to/gov-ui-kit pnpm tokens:validate
 
 `source.mjs` follows the primitive CSS imports, parses them with the app's PostCSS dependency, and converts the supported values for comparison. Validation checks the package version, full token inventory, types, values, alias targets and cycles, retained CSS, and app overrides. It rejects unsupported new value syntax instead of silently skipping it. Editing both JSON snapshots cannot conceal a difference from CSS.
 
+Captured App overrides must be direct declarations in a top-level `:root` rule; conditional or nested scopes are rejected. Primitive `@theme` blocks must have no parameters. Declarations extracted as primitive values, namespace resets, or App overrides cannot use `!important`, because those records do not preserve importance. Utilities and font faces retain their full CSS, including nested rules and importance, and remain subject to baseline comparison.
+
 Schema validation runs offline through the root `ajv` dependency. `schema/format.2025.10.json` is the unmodified [published bundled schema](https://www.designtokens.org/schemas/2025.10/format.json), retrieved 2026-09-19 (SHA-256 `32e93b780e4e4bca778d0780cb797a560deedc470c608af16576223f7e42915f`). It declares JSON Schema draft-07. The document schema cannot tell which type a value was declared as, so each token's resolved value is validated again against its inherited type. The regression suite runs in the root `test` and `test:coverage` commands.
 
 ## Representation boundaries
