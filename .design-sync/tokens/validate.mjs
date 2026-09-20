@@ -1,224 +1,164 @@
 #!/usr/bin/env node
-import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import Ajv from 'ajv';
+import { readSources } from './source.mjs';
 
-const tokenPath = new URL('./govkit-primitives.tokens.json', import.meta.url);
-const baselinePath = new URL('./parity-baseline.json', import.meta.url);
-const schema = 'https://www.designtokens.org/schemas/2025.10/format.json';
-const types = new Set([
-    'color',
-    'dimension',
-    'fontFamily',
-    'fontWeight',
-    'number',
-    'shadow',
-]);
+const schema = JSON.parse(
+    readFileSync(
+        new URL('./schema/format.2025.10.json', import.meta.url),
+        'utf8',
+    ),
+);
+// The published schema uses conditional properties that do not satisfy Ajv's strict lint rules.
+// Its only `format` keywords describe schema URIs, which this file asserts directly.
+const ajv = new Ajv({ strict: false, allErrors: true, validateFormats: false });
+const validateFormat = ajv.compile(schema);
+const tokenFileUrl = new URL(
+    './govkit-primitives.tokens.json',
+    import.meta.url,
+);
+const baselineFileUrl = new URL('./parity-baseline.json', import.meta.url);
 
-const [tokens, baseline] = await Promise.all([
-    readFile(tokenPath, 'utf8').then(JSON.parse),
-    readFile(baselinePath, 'utf8').then(JSON.parse),
-]);
-const errors = [];
-const tokenMap = new Map();
-
-const fail = (message) => errors.push(message);
-const isAlias = (value) =>
-    typeof value === 'string' && /^\{[^{}]+\}$/.test(value);
-const aliasPath = (value) => value.slice(1, -1);
-const stable = (value) => {
-    if (Array.isArray(value)) {
-        return `[${value.map(stable).join(',')}]`;
-    }
-    if (value && typeof value === 'object') {
-        return `{${Object.keys(value)
-            .sort()
-            .map((key) => `${JSON.stringify(key)}:${stable(value[key])}`)
-            .join(',')}}`;
-    }
-    return JSON.stringify(value);
-};
-const digest = (value) =>
-    createHash('sha256').update(stable(value)).digest('hex');
-const isDimension = (value) =>
-    value &&
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    Number.isFinite(value.value) &&
-    ['px', 'rem'].includes(value.unit);
-const isColor = (value) =>
-    value &&
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    value.colorSpace === 'srgb' &&
-    Array.isArray(value.components) &&
-    value.components.length === 3 &&
-    value.components.every(
-        (component) =>
-            component === 'none' ||
-            (Number.isFinite(component) && component >= 0 && component <= 1),
-    ) &&
-    (value.alpha === undefined ||
-        (Number.isFinite(value.alpha) && value.alpha >= 0 && value.alpha <= 1));
-const isShadow = (value) =>
-    Array.isArray(value) &&
-    value.length > 0 &&
-    value.every(
-        (layer) =>
-            layer &&
-            typeof layer === 'object' &&
-            isColor(layer.color) &&
-            isDimension(layer.offsetX) &&
-            isDimension(layer.offsetY) &&
-            isDimension(layer.blur) &&
-            isDimension(layer.spread),
+export function validateTokens(tokens, baseline, options = {}) {
+    assert.equal(tokens.$schema, schema.$id, 'DTCG schema version changed');
+    assert.equal(
+        baseline.dtcgSchema,
+        schema.$id,
+        'Baseline schema version changed',
     );
-const valueMatchesType = (value, type) => {
-    if (isAlias(value)) {
-        return true;
+    assert(
+        validateFormat(tokens),
+        `DTCG document: ${ajv.errorsText(validateFormat.errors)}`,
+    );
+    const entries = new Map();
+    function collect(group, prefix = '', inheritedType = undefined) {
+        const type = group.$type ?? inheritedType;
+        if (Object.hasOwn(group, '$value')) {
+            assert(type, `Missing type: ${prefix}`);
+            entries.set(prefix, { type, value: group.$value });
+            return;
+        }
+        for (const [key, child] of Object.entries(group)) {
+            if (!key.startsWith('$')) {
+                collect(child, prefix ? `${prefix}.${key}` : key, type);
+            }
+        }
     }
-    switch (type) {
-        case 'color':
-            return isColor(value);
-        case 'dimension':
-            return isDimension(value);
-        case 'fontFamily':
-            return (
-                Array.isArray(value) &&
-                value.length > 0 &&
-                value.every((item) => typeof item === 'string')
-            );
-        case 'fontWeight':
-            return Number.isFinite(value);
-        case 'number':
-            return Number.isFinite(value);
-        case 'shadow':
-            return isShadow(value);
-        default:
-            return false;
+    collect(tokens);
+    function resolve(id, chain = []) {
+        assert(
+            !chain.includes(id),
+            `Alias cycle: ${[...chain, id].join(' -> ')}`,
+        );
+        const entry = entries.get(id);
+        assert(entry, `Missing alias target: ${id}`);
+        if (typeof entry.value === 'string' && entry.value.startsWith('{')) {
+            const targetId = entry.value.slice(1, -1);
+            const target = entries.get(targetId);
+            assert(target, `Missing alias target: ${targetId}`);
+            assert.equal(target.type, entry.type, `Alias type mismatch: ${id}`);
+            return resolve(targetId, [...chain, id]);
+        }
+        return entry.value;
     }
-};
+    // JSON Schema cannot inherit a group's $type; validate each effective value as well.
+    for (const [id, entry] of entries) {
+        const validateValue = ajv.getSchema(
+            `${schema.$id.replace(/format\.json$/, 'format/values/')}${entry.type}.json`,
+        );
+        assert(validateValue, `Unsupported token type: ${entry.type}`);
+        assert(
+            validateValue(resolve(id)),
+            `DTCG value ${id}: ${ajv.errorsText(validateValue.errors)}`,
+        );
+    }
 
-if (tokens.$schema !== schema) {
-    fail(`token source must use ${schema}`);
-}
-if (baseline.dtcgSchema !== schema) {
-    fail(`baseline must use ${schema}`);
-}
-
-function collect(node, path, inheritedType) {
-    if (!node || typeof node !== 'object' || Array.isArray(node)) {
-        fail(`group ${path.join('.') || '<root>'} is not an object`);
-        return;
+    const source = readSources(options);
+    assert.equal(
+        source.package.name,
+        baseline.source.package,
+        'GovKit package name changed',
+    );
+    assert.equal(
+        source.package.version,
+        baseline.source.version,
+        'GovKit version changed; review the baseline',
+    );
+    const provenance = tokens.$extensions['org.aragon.tokenParity'];
+    for (const [tokenKey, baselineKey] of [
+        ['sourceRepository', 'repository'],
+        ['sourcePackage', 'package'],
+        ['sourceVersion', 'version'],
+        ['sourceRevision', 'revision'],
+        ['sourcePath', 'tokenPath'],
+        ['appRevision', 'appRevision'],
+    ]) {
+        assert.equal(
+            provenance[tokenKey],
+            baseline.source[baselineKey],
+            `Provenance mismatch: ${tokenKey}`,
+        );
     }
-    const type = node.$type ?? inheritedType;
-    if (node.$type !== undefined && !types.has(node.$type)) {
-        fail(`unsupported $type at ${path.join('.')}: ${node.$type}`);
+    const mappings = source.mappings.map(
+        ({ type, value, ...mapping }) => mapping,
+    );
+    assert.deepEqual(
+        baseline.mappings,
+        mappings,
+        'CSS mappings drifted from GovKit source',
+    );
+    assert.deepEqual(
+        baseline.unsupported,
+        source.unsupported,
+        'Unsupported CSS primitives changed',
+    );
+    assert.deepEqual(
+        baseline.retainedCss,
+        source.retainedCss,
+        'Retained CSS directives or utilities changed',
+    );
+    assert.deepEqual(
+        baseline.runtimeOverrides,
+        source.runtimeOverrides,
+        'App runtime overrides changed',
+    );
+    assert.equal(
+        entries.size,
+        source.mappings.length,
+        'Token inventory differs from GovKit source',
+    );
+    for (const mapping of source.mappings) {
+        const entry = entries.get(mapping.token);
+        assert(
+            entry,
+            `Missing token for ${mapping.sourceVariable}: ${mapping.token}`,
+        );
+        assert.equal(entry.type, mapping.type, `Type drift: ${mapping.token}`);
+        assert.deepEqual(
+            entry.value,
+            mapping.value,
+            `Value drift: ${mapping.sourceVariable} -> ${mapping.token}`,
+        );
     }
-    if (node.$value !== undefined) {
-        if (!path.length) {
-            fail('root cannot be a token');
-        }
-        const tokenPath = path.join('.');
-        tokenMap.set(tokenPath, { node, type });
-        if (!type) {
-            fail(`token ${tokenPath} has no $type`);
-        } else if (!valueMatchesType(node.$value, type)) {
-            fail(`token ${tokenPath} does not match ${type}`);
-        }
-        return;
-    }
-    for (const [key, child] of Object.entries(node)) {
-        if (key.startsWith('$')) {
-            continue;
-        }
-        if (key.includes('.')) {
-            fail(
-                `token/group name contains a dot: ${[...path, key].join('.')}`,
-            );
-        }
-        collect(child, [...path, key], type);
-    }
-}
-collect(tokens, [], undefined);
-
-function resolve(path, stack = []) {
-    const entry = tokenMap.get(path);
-    if (!entry) {
-        fail(`alias target does not exist: ${path}`);
-        return undefined;
-    }
-    if (stack.includes(path)) {
-        fail(`alias cycle: ${[...stack, path].join(' -> ')}`);
-        return undefined;
-    }
-    const value = entry.node.$value;
-    return isAlias(value) ? resolve(aliasPath(value), [...stack, path]) : value;
-}
-for (const [path, entry] of tokenMap) {
-    if (isAlias(entry.node.$value)) {
-        const target = tokenMap.get(aliasPath(entry.node.$value));
-        if (!target) {
-            continue;
-        }
-        if (target.type !== entry.type) {
-            fail(
-                `alias ${path} changes type from ${entry.type} to ${target.type}`,
-            );
-        }
-        resolve(path);
-    }
-}
-
-const mappedPaths = new Set();
-for (const mapping of baseline.mappings ?? []) {
-    if (mapping.status !== 'represented') {
-        fail(`mapping ${mapping.sourceVariable} is not represented`);
-    }
-    if (mappedPaths.has(mapping.token)) {
-        fail(`duplicate mapping for ${mapping.token}`);
-    }
-    mappedPaths.add(mapping.token);
-    const entry = tokenMap.get(mapping.token);
-    if (!entry) {
-        fail(`mapping target does not exist: ${mapping.token}`);
-        continue;
-    }
-    if (mapping.valueSha256 !== digest(entry.node.$value)) {
-        fail(`value drift for ${mapping.sourceVariable} -> ${mapping.token}`);
-    }
-    if (
-        mapping.aliasTarget &&
-        entry.node.$value !== `{${mapping.aliasTarget}}`
-    ) {
-        fail(`alias drift for ${mapping.sourceVariable}`);
-    }
-}
-for (const path of tokenMap.keys()) {
-    if (!mappedPaths.has(path)) {
-        fail(`token has no source mapping: ${path}`);
-    }
-}
-if (!baseline.unsupported?.length) {
-    fail('baseline must record unsupported CSS constructs');
-}
-if (!baseline.runtimeOverrides?.length) {
-    fail('baseline must record app runtime overrides');
-}
-if (
-    baseline.source?.revision !==
-    tokens.$extensions?.['org.aragon.tokenParity']?.sourceRevision
-) {
-    fail('source revision metadata disagrees');
+    return {
+        tokens: entries.size,
+        retainedCss: source.retainedCss.length,
+        unsupported: source.unsupported.length,
+        overrides: source.runtimeOverrides.length,
+    };
 }
 
-if (errors.length) {
-    process.stderr.write(`${errors.map((error) => `- ${error}`).join('\n')}\n`);
-    process.exit(1);
+if (import.meta.main) {
+    try {
+        const tokens = JSON.parse(readFileSync(tokenFileUrl, 'utf8'));
+        const baseline = JSON.parse(readFileSync(baselineFileUrl, 'utf8'));
+        const result = validateTokens(tokens, baseline);
+        process.stdout.write(
+            `DTCG 2025.10 and live CSS parity valid: ${result.tokens} tokens, ${result.retainedCss} retained CSS constructs, ${result.unsupported} unsupported primitive, ${result.overrides} app overrides\n`,
+        );
+    } catch (error) {
+        process.stderr.write(`${error.message}\n`);
+        process.exitCode = 1;
+    }
 }
-
-process.stdout.write(
-    `DTCG 2025.10 token source valid: ${tokenMap.size} tokens, ${baseline.mappings.length} CSS mappings\n`,
-);
-process.stdout.write(
-    `Parity baseline valid: ${baseline.unsupported.length} unsupported constructs, ${baseline.runtimeOverrides.length} app overrides\n`,
-);
