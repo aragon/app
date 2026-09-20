@@ -6,11 +6,11 @@ tests and App examples. It is not a second component catalog.
 
 ## Find the right source
 
-- Start component selection with APP-726's generated GovKit selection view when
-  that dependency is present. It is derived from the APP-726 registry; use
-  that registry for curated intent, provenance and authoritative source
-  references. This guide does not duplicate the catalog while APP-726 is under
-  review. Do not infer support from a preview or component name alone.
+- APP-726's artifact under review is stored under `.design-sync/component-registry/`
+  in the App repository at the revision below: `selection-guide.json` is the
+  generated selection view; `registry.json` owns intent and source references.
+  These files are not on the APP-728 base branch or bundled by this change.
+  Until integrated, use the audited source and existing bundle contracts below.
 - The APP-726 artifact used here is revision
   `03b3beda1518f6dd94973c2e6759268c22257dcc`. Its audited baseline is App
   `3c9bb798f3679fb2eb8052a192847ab2274ed1d5` plus GovKit
@@ -20,6 +20,10 @@ tests and App examples. It is not a second component catalog.
   semantics. The App owns product composition, provider wiring, form policy,
   translations and application/domain side effects. The registry records these
   source references; it does not invent named team ownership.
+- For kit behavior, use the [audited GovKit source](https://github.com/aragon/gov-ui-kit/tree/64b517f5b90052797ecaced5f15ab616b5733f30/src)
+  and its co-located APIs, stories and tests, rather than assuming the published
+  Storybook matches the App's installed version. App behavior checks follow
+  [the App testing guidance](../apps/app/docs/projectDocs/testing.md).
 
 Two layers are exposed in one bundle: **`@aragon/gov-ui-kit`** (groups `general`,
 all kit components) and **the Aragon App's shared components** (groups `shared`,
@@ -35,13 +39,13 @@ Banner and App form inputs). Font: **Manrope** (bundled).
   `Accordion.Container/Item/ItemHeader/ItemContent` and
   `Tabs.Root/List/Trigger/Content` rather than treating every member as a
   standalone alternative.
-- Kit core components need no provider — Button, Card, DataList, Dialog and
-  core forms work bare.
-- Module components (`ProposalDataListItem`, `ProposalVoting`, `ProposalActions`,
-  `VoteDataListItem`, `DaoDataListItem`, `MemberDataListItem`,
-  `AssetDataListItem`, `TransactionDataListItem`, `Wallet`, `AddressInput` and
-  `ActionSimulation`) read web3 context. Wrap them in
-  `<GukModulesProvider>`; without it they throw at render.
+- Core components use default kit context, but compound children can still
+  require their parent's context; follow the component's story.
+- For web3 consumers such as `AddressInput` and `Wallet`, use
+  `<GukModulesProvider>` to supply wagmi and query context. Module membership
+  alone does not imply that a component throws without this wrapper:
+  copy-only consumers use default module copy. Check the component's hooks
+  and story before choosing a provider stack.
 - App components that show text need
   `<DebugContextProvider><TranslationsProvider translations={enTranslations}>…`.
   Wizards additionally need `<BlockNavigationContextProvider>`.
@@ -50,14 +54,19 @@ Banner and App form inputs). Font: **Manrope** (bundled).
   context. Wrap them in the exported `<FormWrapper defaultValues={{…}}>`;
   array-backed lists hydrate only from `FormWrapper.defaultValues`.
 - Dialogs open through the controlled `open` prop on `Dialog.Root` or
-  `DialogAlert.Root`; `defaultOpen` is not a substitute in this bundle. Nested
-  App dialogs close their own location when returning to a parent flow.
+  `DialogAlert.Root`; `defaultOpen` is not a substitute in this bundle. In the
+  [App dialog provider](../apps/app/src/shared/components/dialogProvider/dialogProvider.tsx),
+  call `close(dialogId)` to return from a child without closing its parent;
+  bare `close()` dismisses the entire stack.
 
 ## Interaction and domain contracts
 
-- `AddressInput.onChange` is the raw text channel. `onAccept` is the resolved
-  `{ address, name }` channel and reports `undefined` until the value is valid.
-  The default enforces EIP-55 checksums; ENS resolution is on mainnet, while
+- `AddressInput.onChange` is the editable string channel, not a guarantee of
+  untouched input: typing can checksum addresses, blur trims whitespace, and
+  controls can replace or clear the string. `onAccept` reports the resolved
+  `{ address, name }` or `undefined` after validation; it does not emit while ENS
+  requests are loading. Do not treat the last accepted value as current while
+  an edit is unresolved. The default enforces EIP-55 checksums; ENS resolution is on mainnet, while
   `chainId` controls explorer links. The App's `AddressesInput` owns required,
   duplicate and form-level validation — do not replace that policy with a
   single-input callback.
@@ -72,33 +81,18 @@ Banner and App form inputs). Font: **Manrope** (bundled).
   `ACCEPTED` and `EXECUTED` are success states; `FAILED`, `EXPIRED`,
   `REJECTED` and `VETOED` are critical states; `DRAFT`, `PENDING` and
   `UNREACHED` are neutral. Do not collapse these into a generic “complete”.
-- Full-page flows use `WizardPage.Container` and `WizardPage.Step`; short
-  in-context flows use `WizardDialog.Container` and `WizardDialog.Step` inside
-  the kit dialog/provider stack. Page scaffolding uses `Page.Main` and
-  `Page.Aside`; `Page.Container` requires the App query client and is not a
-  standalone bundle primitive.
 
-## Styling, accessibility and copy
+## Accessibility and copy
 
-- Tailwind v4 utilities are backed by the kit tokens. Read `styles.css` and the
-  source token files before adding a value. Use token utilities, not raw hex/rgb,
-  custom CSS files, arbitrary spacing or invented class names. The emitted
-  utility set is source-scan dependent; a token existing in CSS does not prove
-  that an unreferenced utility is available.
-- Current emitted families include colors
-  (`primary`, `neutral`, `info`, `success`, `warning`, `critical`), the standard
-  spacing scale, `rounded-none/sm/md/lg/xl/full`, and the documented shadow
-  families. `rounded-2xl`, `rounded-3xl` and `shadow-neutral-lg` are not emitted
-  in this baseline. Recheck the emitted set after a kit or token change; APP-1208
-  must reconcile these references with APP-727's accepted token baseline.
 - Preserve Radix labeling, focus order, keyboard interaction and visible focus
   rings when composing. Do not nest interactive controls: set
   `AddressOutput.hasInteractiveAncestor` for clickable rows/links so it becomes
   passive and does not add a competing tab stop. Test through roles, labels and
   visible text, not classes or internal DOM structure.
-- App copy comes from `TranslationsProvider`/`useTranslations`; GovKit shared
-  copy lives in `src/core/assets/copy` and `src/modules/assets/copy`. Reuse
-  translation keys and existing domain terms for labels, loading, empty, error
+- App copy comes from [the English locale](../apps/app/src/assets/locales/en.json)
+  through `TranslationsProvider`/`useTranslations`; GovKit shared copy lives in
+  `src/core/assets/copy/coreCopy.ts` and `src/modules/assets/copy/modulesCopy.ts`.
+  Reuse translation keys and existing domain terms for labels, loading, empty, error
   and transaction states. Keep protocol facts and action consequences explicit;
   do not turn a discussion question or a preview example into product policy.
 
@@ -117,7 +111,16 @@ Banner and App form inputs). Font: **Manrope** (bundled).
 
 ## Styling idiom
 
-| Family | Real values |
+Use token-backed layout utilities and component variants rather than inventing
+visual values. A CSS token does not prove its utility was emitted by the bundle's
+source scan. The table below is historical bundle guidance, last verified with
+GovKit **2.10.0 on 2026-08-24**, not verified for the audited 2.11.4 package.
+[Verification notes](./NOTES.md#conventionsmd-drift-found-and-corrected-2026-08-24)
+record `rounded-2xl`, `rounded-3xl` and `shadow-neutral-lg` as absent then.
+APP-1208 must recheck the emitted CSS and App overrides against APP-727's accepted
+token baseline; this guide makes no token taxonomy or artifact-layout decision.
+
+| Family | Historical bundle utilities — recheck before use |
 |---|---|
 | Colors | `primary-{50…900}`, `neutral-{0,50,100,200,300,400,500,600,800,900}`, `info/success/warning/critical-{100…900}` as `bg-*`, `text-*` or `border-*` |
 | Radius | `rounded-none/sm/md/lg/xl/full` plus side/corner variants; `rounded-xl` is the 12px card radius |
