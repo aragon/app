@@ -1,6 +1,6 @@
 # GovKit token parity
 
-`govkit-primitives.tokens.json` records the current GovKit primitive values and focus-ring color aliases in [DTCG 2025.10 format](https://www.designtokens.org/tr/2025.10/format/). Existing CSS remains the runtime source; this directory does not emit or load consumer styles.
+`govkit-primitives.tokens.json` records the current GovKit primitive values and focus-ring color aliases in [DTCG 2025.10 format](https://www.designtokens.org/tr/2025.10/format/). The JSON snapshot and parity baseline are APP-727 inputs; APP-735 generates the runtime artifact described below.
 
 ## Source
 
@@ -33,6 +33,21 @@ GOVKIT_KIT_ROOT=/path/to/gov-ui-kit pnpm tokens:validate
 Captured App overrides must be direct declarations in a top-level `:root` rule; conditional or nested scopes are rejected. Primitive `@theme` blocks must have no parameters. Declarations extracted as primitive values, namespace resets, or App overrides cannot use `!important`, because those records do not preserve importance. Utilities and font faces retain their full CSS, including nested rules and importance, and remain subject to baseline comparison.
 
 Schema validation runs offline through the root `ajv` dependency. `schema/format.2025.10.json` is the unmodified [published bundled schema](https://www.designtokens.org/schemas/2025.10/format.json), retrieved 2026-09-19 (SHA-256 `32e93b780e4e4bca778d0780cb797a560deedc470c608af16576223f7e42915f`). It declares JSON Schema draft-07. The document schema cannot tell which type a value was declared as, so each token's resolved value is validated again against its inherited type. The regression suite runs in the root `test` and `test:coverage` commands.
+
+## Generated runtime artifact
+
+From the repository root, run:
+
+```sh
+pnpm tokens:generate
+```
+
+This validates the DTCG snapshot against the installed GovKit CSS and App overrides, then writes `.design-sync/generated/govkit-primitives.css`. The artifact is App-owned generated input for APP-736: it replaces only the primitive token CSS layer, while GovKit core component CSS and Tailwind remain separate consumer imports.
+
+The generator materializes the primitive import barrel in source order, preserving token names, units, aliases, namespace resets, utilities, focus-ring behavior, font faces, CSS-only `--radius-none: none`, and the seven App overrides. Primitive imports are flattened because the artifact is a single CSS entry; the header records this intentional difference from the source barrel. Font-face URLs are rewritten relative to this checked-in artifact's location, using the installed GovKit font directory under `apps/app/node_modules`. APP-736 must consume this file from its checked-in location or rebase the URLs when copying compiled CSS; moving the CSS without rebasing breaks font resolution. Re-run the command after changing the DTCG snapshot, parity baseline, GovKit dependency, or App root CSS. Never edit the emitted CSS.
+Block placement comes from the live GovKit CSS structure: declarations are replaced inside their existing parent rule, so pixel breakpoint variables remain in plain `:root` while rem breakpoint variables remain in `@theme`.
+
+Ownership is explicit: APP-727 owns the validated DTCG snapshot and parity baseline, APP-735 owns the generator and emitted artifact, and APP-736 owns replacing consumer imports and removing superseded hard-coded token sources.
 
 ## Representation boundaries
 
