@@ -95,6 +95,29 @@ const getBoundingBox = async (locator: Locator) => {
     return box;
 };
 
+// The colour painted at a viewport point. The canvas has no element to read a style from, only a
+// screenshot tells what it shows.
+const readPixel = async (page: Page, x: number, y: number) => {
+    const shot = await page.screenshot({ clip: { x, y, width: 1, height: 1 } });
+
+    return page.evaluate(
+        async (dataUrl) => {
+            const image = new Image();
+            image.src = dataUrl;
+            await image.decode();
+            const canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 1;
+            const context = canvas.getContext('2d')!;
+            context.drawImage(image, 0, 0);
+            const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+
+            return `rgb(${r}, ${g}, ${b})`;
+        },
+        `data:image/png;base64,${shot.toString('base64')}`,
+    );
+};
+
 test.describe('Support chat', () => {
     test('opens the chat, drafts the ticket and creates it on approval', async ({
         baseURL,
@@ -217,9 +240,16 @@ test.describe('Support chat', () => {
             .getByRole('complementary')
             .filter({ has: page.getByRole('heading', { name: 'Contract' }) });
         const panel = getChatPanel(page);
+        // The navigation bar shows its links inline from `lg` up and drops them below; the DAO
+        // navigation dialog lists them at every width.
+        const inlineLink = page
+            .getByRole('navigation')
+            .filter({ has: page.getByRole('button', { name: dao.name }) })
+            .getByRole('link', { name: 'Proposals', exact: true });
 
         await expect(main).toBeVisible();
         await expect(aside).toBeVisible();
+        await expect(inlineLink).toBeVisible();
 
         // Panel closed: the desktop layout, the aside beside the main column.
         const closedMain = await getBoundingBox(main);
@@ -228,12 +258,18 @@ test.describe('Support chat', () => {
             closedMain.x + closedMain.width,
         );
 
-        await getChatTrigger(page).click();
-        await expect(panel).toBeVisible();
+        // The click is retried because the page may still be hydrating.
+        await expect(async () => {
+            await getChatTrigger(page).click();
+            await expect(panel).toBeVisible({ timeout: 2000 });
+        }).toPass();
 
         // The panel animates its width in, so poll until the layout has settled. The app keeps
-        // 780px, below its `lg` breakpoint: the aside stacks under the main column at the same
-        // width, and nothing reaches under the panel or overflows the window.
+        // 780px, below its `lg` breakpoint: the navigation goes compact, the aside stacks under
+        // the main column at the same width, and nothing reaches under the panel or overflows the
+        // window.
+        await expect(inlineLink).toBeHidden();
+        await expect(aside).toBeVisible();
         await expect(async () => {
             const [openMain, openAside, openPanel] = await Promise.all(
                 [main, aside, panel].map(getBoundingBox),
@@ -278,5 +314,97 @@ test.describe('Support chat', () => {
                 termBox.y + termBox.height,
             );
         }).toPass();
+    });
+
+    // A container declaration on `body` would stop body-level scroll locks (the gov-ui-kit dialogs
+    // lock through react-remove-scroll) from reaching the viewport and clamp the page to the top.
+    test('keeps the page in place behind a dialog opened from a scrolled position', async ({
+        page,
+    }) => {
+        const [dao] = getDaosWithFeature('multisig');
+        await new DaoDashboardPage({
+            page,
+            network: dao.network,
+            address: dao.address,
+        }).navigate();
+
+        const readScrollY = () => page.evaluate(() => window.scrollY);
+        await page.evaluate(() => window.scrollTo(0, 400));
+        await expect.poll(readScrollY).toBe(400);
+
+        // Late-loading content may nudge the offset by a few pixels; the regression clamps it to 0.
+        const expectPageInPlace = async () =>
+            expect(await readScrollY()).toBeGreaterThan(380);
+
+        // The DAO home button of the navigation bar opens the DAO navigation dialog; the click is
+        // retried because the page may still be hydrating.
+        const dialog = page.getByRole('dialog', {
+            name: 'DAO navigation menu',
+        });
+        await expect(async () => {
+            await page
+                .getByRole('navigation')
+                .getByRole('button', { name: dao.name })
+                .click();
+            await expect(dialog).toBeVisible({ timeout: 2000 });
+        }).toPass();
+        await expectPageInPlace();
+
+        await page.keyboard.press('Escape');
+        await expect(dialog).toBeHidden();
+        await expectPageInPlace();
+    });
+
+    // The body paints the page background and the canvas takes it over. A container on `body` or
+    // `html` stops that, and past the body's one viewport of height the canvas turns white: the
+    // regression #1395 reverted #1374 for.
+    test('paints the page background below the first viewport', async ({
+        page,
+    }) => {
+        const [dao] = getDaosWithFeature('multisig');
+        await new DaoDashboardPage({
+            page,
+            network: dao.network,
+            address: dao.address,
+        }).navigate();
+
+        await page.evaluate(() => window.scrollTo(0, window.innerHeight));
+        // A point in the page gutter where every element up to the body is transparent, so the
+        // pixel is the canvas itself.
+        const point = await page.evaluate(() => {
+            const isTransparent = (element: Element | null) => {
+                for (
+                    let node = element;
+                    node != null && node !== document.body;
+                    node = node.parentElement
+                ) {
+                    const style = getComputedStyle(node);
+                    if (
+                        style.backgroundColor !== 'rgba(0, 0, 0, 0)' ||
+                        style.backgroundImage !== 'none'
+                    ) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+            const x = 2;
+            for (const factor of [0.5, 0.25, 0.75]) {
+                const y = Math.round(window.innerHeight * factor);
+                if (isTransparent(document.elementFromPoint(x, y))) {
+                    return { x, y };
+                }
+            }
+
+            return null;
+        });
+        expect(point).not.toBeNull();
+
+        const bodyBackground = await page.evaluate(
+            () => getComputedStyle(document.body).backgroundColor,
+        );
+        expect(bodyBackground).not.toBe('rgba(0, 0, 0, 0)');
+        expect(await readPixel(page, point!.x, point!.y)).toBe(bodyBackground);
     });
 });

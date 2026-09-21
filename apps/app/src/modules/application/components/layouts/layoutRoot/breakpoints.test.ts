@@ -5,14 +5,9 @@ import path from 'node:path';
 import tailwindcss from '@tailwindcss/postcss';
 import postcss, { type AtRule, type Root, type Rule } from 'postcss';
 
-// breakpoints.css redefines the breakpoint variants as container queries on the `app` container.
-// Tailwind lets `@custom-variant` replace a built-in variant, but nothing fails loudly if that
-// stops holding after an upgrade: `lg:` would silently fall back to a viewport media query and the
-// layout would collide with the docked assistant again (APP-1143). These tests compile the
-// variants the way layoutRoot.css does and pin what each of them means.
+// Compiles breakpoints.css the way layoutRoot.css does and pins what each variant means, so a
+// Tailwind upgrade that stops honouring the overrides fails here instead of in the layout.
 describe('breakpoints.css', () => {
-    // Directory of this test file, so the CSS is compiled from the folder of breakpoints.css and
-    // `@import "tailwindcss"` resolves the way it does for layoutRoot.css.
     const getTestDirectory = () => path.dirname(expect.getState().testPath!);
 
     const compile = async (classNames: string[]): Promise<Root> => {
@@ -31,17 +26,21 @@ describe('breakpoints.css', () => {
         return result.root;
     };
 
-    // Tailwind escapes the special characters of a class name in the selector it generates, and a
-    // leading digit becomes a code-point escape (`2xl:flex` → `.\32 xl\:flex`). Rather than
-    // re-implementing those rules to build a selector, compare the generated selectors with their
-    // escapes stripped.
-    const readClassName = (selector: string) =>
+    // Strips Tailwind's selector escapes (`.\32 xl\:flex` → `.2xl:flex`).
+    const readSelector = (selector: string) =>
         selector.replace(/\\3(\d) /g, '$1').replaceAll('\\', '');
+
+    // The media half of a variant only applies outside the application column.
+    const outsideColumn = ':where(:not(.@container/app *))';
 
     const findRules = (root: Root, className: string): Rule[] => {
         const rules: Rule[] = [];
         root.walkRules((rule) => {
-            if (readClassName(rule.selector) === `.${className}`) {
+            const selector = readSelector(rule.selector);
+            if (
+                selector === `.${className}` ||
+                selector.startsWith(`.${className}:where(`)
+            ) {
                 rules.push(rule);
             }
         });
@@ -49,11 +48,10 @@ describe('breakpoints.css', () => {
         return rules;
     };
 
-    // The at-rules wrapping the rule of a class, outermost first, e.g. ['@container app (width >= 64rem)'].
-    const getWrappers = (root: Root, className: string): string[] => {
-        const wrappers: string[] = [];
-
-        for (const rule of findRules(root, className)) {
+    // Selector and wrapping at-rules (outermost first) of every rule generated for a class.
+    const describeRules = (root: Root, className: string) =>
+        findRules(root, className).map((rule) => {
+            const wrappers: string[] = [];
             let parent = rule.parent;
             while (parent && parent.type === 'atrule') {
                 const atRule = parent as AtRule;
@@ -62,10 +60,9 @@ describe('breakpoints.css', () => {
                 }
                 parent = atRule.parent;
             }
-        }
 
-        return wrappers;
-    };
+            return { selector: readSelector(rule.selector), wrappers };
+        });
 
     const getPosition = (root: Root, className: string): number =>
         findRules(root, className).at(-1)?.source?.start?.offset ?? -1;
@@ -79,35 +76,53 @@ describe('breakpoints.css', () => {
         '2xl': '96rem',
     };
 
-    it('turns the breakpoint variants into container queries on the app container', async () => {
+    it('measures the column inside it and the window outside it', async () => {
         const root = await compile(sizes.map((size) => `${size}:flex`));
 
         for (const size of sizes) {
-            expect(getWrappers(root, `${size}:flex`)).toEqual([
-                `@container app (width >= ${thresholds[size]})`,
+            const className = `${size}:flex`;
+            expect(describeRules(root, className)).toEqual([
+                {
+                    selector: `.${className}`,
+                    wrappers: [`@container app (width >= ${thresholds[size]})`],
+                },
+                {
+                    selector: `.${className}${outsideColumn}`,
+                    wrappers: [`@media (width >= ${thresholds[size]})`],
+                },
             ]);
         }
     });
 
-    it('turns the max breakpoint variants into container queries on the app container', async () => {
+    it('does the same for the max variants', async () => {
         const root = await compile(sizes.map((size) => `max-${size}:hidden`));
 
         for (const size of sizes) {
-            expect(getWrappers(root, `max-${size}:hidden`)).toEqual([
-                `@container app (width < ${thresholds[size]})`,
+            const className = `max-${size}:hidden`;
+            expect(describeRules(root, className)).toEqual([
+                {
+                    selector: `.${className}`,
+                    wrappers: [`@container app (width < ${thresholds[size]})`],
+                },
+                {
+                    selector: `.${className}${outsideColumn}`,
+                    wrappers: [`@media (width < ${thresholds[size]})`],
+                },
             ]);
         }
     });
 
-    // The thresholds are literal in breakpoints.css because a container query cannot read a custom
-    // property. Tailwind's `min-*` variant still derives its media query from the theme, so it
-    // tells whether the literals drifted from `--breakpoint-*`.
+    // Tailwind's `min-*` still derives its query from the theme, so it tells whether the literals
+    // in breakpoints.css drifted from `--breakpoint-*`.
     it('uses the breakpoint thresholds of the theme', async () => {
         const root = await compile(sizes.map((size) => `min-${size}:flex`));
 
         for (const size of sizes) {
-            expect(getWrappers(root, `min-${size}:flex`)).toEqual([
-                `@media (width >= ${thresholds[size]})`,
+            expect(describeRules(root, `min-${size}:flex`)).toEqual([
+                {
+                    selector: `.min-${size}:flex`,
+                    wrappers: [`@media (width >= ${thresholds[size]})`],
+                },
             ]);
         }
     });
@@ -122,7 +137,6 @@ describe('breakpoints.css', () => {
         const minPositions = sizes.map((size) =>
             getPosition(root, `${size}:flex`),
         );
-        // A class that generated nothing would order vacuously.
         expect(minPositions).not.toContain(-1);
         expect(minPositions).toEqual([...minPositions].sort((a, b) => a - b));
 
@@ -134,46 +148,63 @@ describe('breakpoints.css', () => {
         expect(maxPositions).toEqual([...maxPositions].sort((a, b) => b - a));
     });
 
+    // Stacking nests both halves in both halves; the mixed pairs never match and are harmless.
     it('supports stacking a min and a max breakpoint variant', async () => {
         const root = await compile(['md:max-lg:block']);
 
-        expect(getWrappers(root, 'md:max-lg:block')).toEqual([
-            '@container app (width >= 48rem)',
-            '@container app (width < 64rem)',
-        ]);
+        expect(
+            describeRules(root, 'md:max-lg:block').map((rule) => rule.wrappers),
+        ).toEqual(
+            expect.arrayContaining([
+                [
+                    '@container app (width >= 48rem)',
+                    '@container app (width < 64rem)',
+                ],
+                ['@media (width >= 48rem)', '@media (width < 64rem)'],
+            ]),
+        );
     });
 
-    it('keeps the screen variants on the viewport', async () => {
+    it('keeps the screen variants on the viewport everywhere', async () => {
         const root = await compile([
             'screen-lg:sticky',
             'screen-max-lg:overflow-hidden',
         ]);
 
-        expect(getWrappers(root, 'screen-lg:sticky')).toEqual([
-            '@media (width >= 64rem)',
+        expect(describeRules(root, 'screen-lg:sticky')).toEqual([
+            {
+                selector: '.screen-lg:sticky',
+                wrappers: ['@media (width >= 64rem)'],
+            },
         ]);
-        expect(getWrappers(root, 'screen-max-lg:overflow-hidden')).toEqual([
-            '@media (width < 64rem)',
+        expect(describeRules(root, 'screen-max-lg:overflow-hidden')).toEqual([
+            {
+                selector: '.screen-max-lg:overflow-hidden',
+                wrappers: ['@media (width < 64rem)'],
+            },
         ]);
     });
 
-    it('declares the app container on the application column utility and as a fallback on the body', async () => {
+    // A container on `body` or `html` would cut the propagation of the body's background and
+    // overflow to the canvas and the viewport (css-contain-2 §3).
+    it('declares the app container on the column utility only', async () => {
         const root = await compile(['@container/app']);
 
         const declarations: Record<string, string[]> = {};
         root.walkDecls(/^container/, (decl) => {
             const selector = (decl.parent as { selector?: string }).selector;
             if (selector != null) {
-                const className = readClassName(selector);
-                declarations[className] ??= [];
-                declarations[className].push(`${decl.prop}: ${decl.value}`);
+                const key = readSelector(selector);
+                declarations[key] ??= [];
+                declarations[key].push(`${decl.prop}: ${decl.value}`);
             }
         });
 
-        expect(declarations['.@container/app']).toEqual([
-            'container-type: inline-size',
-            'container-name: app',
-        ]);
-        expect(declarations.body).toEqual(['container: app / inline-size']);
+        expect(declarations).toEqual({
+            '.@container/app': [
+                'container-type: inline-size',
+                'container-name: app',
+            ],
+        });
     });
 });
