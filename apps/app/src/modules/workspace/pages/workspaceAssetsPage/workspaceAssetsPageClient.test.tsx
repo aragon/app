@@ -123,7 +123,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         );
     };
 
-    it('gives an option to the aggregated view and to every account, Safes included', async () => {
+    it('gives an option to the aggregated view and to the DAO accounts only', async () => {
         const { component, daoAddress, safeAddress } = createTestComponent();
         render(component);
 
@@ -133,8 +133,8 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
             await screen.findByText(addressUtils.truncateAddress(daoAddress)),
         ).toBeInTheDocument();
         expect(
-            screen.getByText(addressUtils.truncateAddress(safeAddress)),
-        ).toBeInTheDocument();
+            screen.queryByText(addressUtils.truncateAddress(safeAddress)),
+        ).not.toBeInTheDocument();
     });
 
     it('reads the workspace assets API for the aggregated tab, with every account', async () => {
@@ -183,38 +183,16 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         );
     });
 
-    it('serves a Safe account its own tab, which the single DAO endpoints cannot answer for', async () => {
-        const { component, safeAddress } = createTestComponent();
-        render(component);
-
-        await selectAccount(safeAddress);
-
-        await waitFor(() =>
-            expect(getWorkspaceAssetsSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    body: expect.objectContaining({
-                        accounts: [
-                            {
-                                network: Network.ETHEREUM_SEPOLIA,
-                                address: safeAddress,
-                            },
-                        ],
-                    }),
-                }),
-            ),
-        );
-    });
-
     it('displays the totals of the selected tab on the aside', async () => {
-        const { component, safeAddress } = createTestComponent();
+        const { component, daoAddress } = createTestComponent();
         render(component);
 
         expect(
             await screen.findByText(/workspaceAssetsAsideCard\.totalValue$/),
         ).toBeInTheDocument();
 
-        // The same card serves an account tab, so a Safe gets the totals a DAO does.
-        await selectAccount(safeAddress);
+        // The same card serves an account tab.
+        await selectAccount(daoAddress);
 
         expect(
             await screen.findByText(/workspaceAssetsAsideCard\.totalValue$/),

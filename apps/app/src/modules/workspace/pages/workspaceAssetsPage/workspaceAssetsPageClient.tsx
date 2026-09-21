@@ -22,12 +22,12 @@ export interface IWorkspaceAssetsPageClientProps {
 }
 
 /**
- * Assets of a workspace, laid out like the DAO assets page: one tab per account plus an aggregated one.
+ * Assets of a workspace, laid out like the DAO assets page: one tab per DAO account plus an aggregated one.
  *
  * Every tab reads the workspace query API, the aggregated one over all accounts and an account tab over just that
- * one. Going through the same endpoint throughout is what lets a Safe have a tab of its own — the single DAO
- * endpoints cannot answer for one — and it keeps the account tabs summing to the aggregated tab, since both come
- * out of the same aggregation.
+ * one. Going through the same endpoint throughout keeps the account tabs summing to the aggregated tab, since both
+ * come out of the same aggregation. Safe accounts get no tab of their own, so their balances show up only inside
+ * the aggregated one.
  */
 export const WorkspaceAssetsPageClient: React.FC<
     IWorkspaceAssetsPageClientProps

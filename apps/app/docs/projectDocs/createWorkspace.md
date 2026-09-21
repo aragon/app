@@ -307,14 +307,12 @@ accounts, an account tab over just that one. The page only decides which account
 const selectedAccountRefs = selectedAccount != null ? [selectedRef] : accountRefs;
 ```
 
-Going through one endpoint throughout is what lets **every account get a tab, Safes included**
-(`useWorkspaceAccountFilter({ includeNonDaoAccounts: true })`): the single DAO endpoints cannot answer for a Safe,
-so a Safe's balances used to be visible only inside the aggregate. It also keeps the account tabs summing to the
-aggregated tab, since both come out of the same aggregation. Tab labels use the same precedence as the overview
-rows — `metadata.name ?? accounts-API name ?? truncated address` — so a tab and its row never disagree.
+Going through one endpoint throughout keeps the account tabs summing to the aggregated tab, since both come out of
+the same aggregation. Tab labels use the same precedence as the overview rows — `metadata.name ?? accounts-API
+name ?? truncated address` — so a tab and its row never disagree.
 
-`useWorkspaceAccountFilter` still defaults to DAO-only, because the proposals page needs that (a Safe has no
-indexed proposals); the assets page opts in.
+**Only DAO accounts get a tab.** `useWorkspaceAccountFilter` is DAO-only for every page: the aggregated tab still
+covers every account, so a Safe's balances are visible there, but a Safe has no tab of its own.
 
 The aside is `WorkspaceAssetsAsideCard` on every tab, fed `totalAmountUsd`, `totalRecords` and `spamCount` from the
 response for the selected accounts. It shares its query key with the list, so reading the totals costs no extra
@@ -335,8 +333,8 @@ rendered the DAO page's `DaoFilterAsideCard`. What that traded away:
   quantities, so the two pages can legitimately differ.
 
 The rows **reuse `AssetListItem` unchanged**: the backend projects the same nested `token` (network and address
-included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused — with a tab per account,
-"which account holds this" is already answered by the tab.
+included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused — on a DAO
+account tab "which account holds this" is already answered by the tab.
 
 Two details that do not transfer from the DAO page:
 
