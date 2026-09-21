@@ -1,6 +1,7 @@
 import type { LanguageModel } from 'ai';
 import { createDocsSearch, type IDocsSearch } from '../docs/docsSearch';
 import type { IBlobInfo, IBlobStore } from '../files/blobStore';
+import type { IMalwareScanner, IScanVerdict } from '../files/malwareScanner';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { createSessionStore, type ISessionStore } from '../lib/sessionStore';
 import type { ILinearGateway } from '../linear/linearGateway';
@@ -97,12 +98,42 @@ export const createTestBlobStore = (): ITestBlobStore => {
     return store;
 };
 
+export interface ITestMalwareScanner extends IMalwareScanner {
+    scanCalls: Array<{ filename: string; size: number }>;
+    // Verdict returned by the next scan; defaults to clean.
+    nextVerdict: IScanVerdict;
+    // Makes the next scan reject, standing in for an unexpected failure inside the scanner.
+    failNextScan: boolean;
+}
+
+export const createTestMalwareScanner = (): ITestMalwareScanner => {
+    const scanner: ITestMalwareScanner = {
+        scanCalls: [],
+        nextVerdict: { status: 'clean' },
+        failNextScan: false,
+        scan: ({ data, filename }) => {
+            scanner.scanCalls.push({ filename, size: data.byteLength });
+
+            if (scanner.failNextScan) {
+                scanner.failNextScan = false;
+
+                return Promise.reject(new Error('Scanner exploded'));
+            }
+
+            return Promise.resolve(scanner.nextVerdict);
+        },
+    };
+
+    return scanner;
+};
+
 export interface ITestDependencies extends IAppDependencies {
     redis: IMockRedis;
     sessionStore: ISessionStore;
     linear: ITestLinearGateway;
     blobStore: ITestBlobStore;
     docsSearch: IDocsSearch;
+    malwareScanner: ITestMalwareScanner;
 }
 
 export const createTestDependencies = (
@@ -114,6 +145,7 @@ export const createTestDependencies = (
     const blobStore = createTestBlobStore();
     // Full-text only over the fixture index: no gateway call is ever made from a test.
     const docsSearch = createDocsSearch(docsIndexArtifact);
+    const malwareScanner = createTestMalwareScanner();
 
     return {
         redis,
@@ -121,11 +153,13 @@ export const createTestDependencies = (
         linear,
         blobStore,
         docsSearch,
+        malwareScanner,
         getRedis: () => asRedis(redis),
         getSessionStore: () => sessionStore,
         getLinear: () => linear,
         getChatModel: () => chatModel,
         getBlobStore: () => blobStore,
         getDocsSearch: () => docsSearch,
+        getMalwareScanner: () => malwareScanner,
     };
 };
