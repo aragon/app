@@ -405,29 +405,54 @@ function processPrimitiveFile(absPath, sourceFile, out) {
 
 function processRuntimeOverrides(absPath, sourceFile, out) {
     const root = postcss.parse(readFileSync(absPath, 'utf8'));
-    root.walkDecls((decl) => {
-        if (!decl.prop.startsWith('--')) {
+    root.each((node) => {
+        if (node.type === 'comment') {
             return;
         }
-        const rule = decl.parent;
+        // Tailwind entry directives are allowed without parsing.
         if (
-            rule.type !== 'rule' ||
-            rule.selector !== ':root' ||
-            rule.parent !== root
+            node.type === 'atrule' &&
+            (node.name === 'import' || node.name === 'source')
         ) {
+            return;
+        }
+        if (node.type !== 'rule' || node.selector !== ':root') {
             throw new Error(
-                `Unsupported nested or conditional scope for "${decl.prop}" in ${sourceFile}; expected a direct declaration in a top-level :root rule`,
+                `Unsupported scoped or conditional construct in ${sourceFile}: "${node
+                    .toString()
+                    .trim()
+                    .slice(0, 80)}"`,
             );
         }
-        if (decl.important) {
-            throw new Error(
-                `Unsupported !important on "${decl.prop}" in ${sourceFile}`,
-            );
-        }
-        out.runtimeOverrides.push({
-            sourceFile,
-            sourceVariable: decl.prop,
-            sourceValue: collapse(decl.value),
+        node.each((child) => {
+            if (child.type === 'comment') {
+                return;
+            }
+            if (child.type !== 'decl') {
+                throw new Error(
+                    `Unsupported nested or conditional scope in ${sourceFile}: "${child
+                        .toString()
+                        .trim()
+                        .slice(0, 80)}"`,
+                );
+            }
+            if (!child.prop.startsWith('--')) {
+                throw new Error(
+                    `Unsupported non-custom property declaration "${child
+                        .toString()
+                        .trim()}" in ${sourceFile}; runtime overrides may only set CSS custom properties`,
+                );
+            }
+            if (child.important) {
+                throw new Error(
+                    `Unsupported !important on "${child.prop}" in ${sourceFile}`,
+                );
+            }
+            out.runtimeOverrides.push({
+                sourceFile,
+                sourceVariable: child.prop,
+                sourceValue: collapse(child.value),
+            });
         });
     });
 }
