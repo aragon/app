@@ -1,5 +1,11 @@
 # @aragon/app
 
+## 1.40.0
+
+### Minor Changes
+
+- [#1128](https://github.com/aragon/app/pull/1128) [`3c9bb79`](https://github.com/aragon/app/commit/3c9bb798f3679fb2eb8052a192847ab2274ed1d5) Thanks [@asciiman](https://github.com/asciiman)! - Add the aragon-domain (Envio) source for mainnet ERC-20 token-voting member lists behind the `domainMemberList` feature flag (off by default): a chain-scoped BFF route, per-plugin source routing that falls back to the legacy backend, the library DTO as the member list contract, and SSR hydration of the members page
+
 ## 1.39.1
 
 ### Patch Changes
