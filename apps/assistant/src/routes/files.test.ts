@@ -284,4 +284,105 @@ describe('files routes', () => {
         expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
         expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
     });
+    it('deletes the blob and never queues a file the scanner flagged as malicious', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.malwareScanner.nextVerdict = {
+            status: 'malicious',
+            reason: 'Embedded script detected.',
+        };
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(422);
+        const body = (await response.json()) as IAssistantError;
+        expect(body.error.code).toEqual('malicious_file');
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+    });
+
+    it('blocks retriably when a mandatory scan engine has no verdict', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.malwareScanner.nextVerdict = {
+            status: 'unavailable',
+            reason: 'The scanner is unreachable.',
+        };
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(503);
+        const body = (await response.json()) as IAssistantError;
+        expect(body.error.code).toEqual('scan_unavailable');
+        // The slot is freed and the blob removed, so a retry starts from a clean state.
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+    });
+
+    it('scans the file before queueing it and passes the sanitized filename', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(201);
+        expect(deps.malwareScanner.scanCalls).toEqual([
+            { filename: 'screenshot.png', size: pngBytes.byteLength },
+        ]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
+
+    it('does not scan files rejected by the format gate', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl({ filename: 'renamed.png' });
+        deps.blobStore.blobs.set(
+            blobUrl,
+            new Uint8Array([0x4d, 0x5a, 0x90, 0, 3, 0, 0, 0]),
+        );
+
+        await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(deps.malwareScanner.scanCalls).toEqual([]);
+    });
+
+    it('skips the scan entirely when it is disabled', async () => {
+        process.env.ASSISTANT_MALWARE_SCAN_ENABLED = 'false';
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.malwareScanner.nextVerdict = {
+            status: 'malicious',
+            reason: 'Embedded script detected.',
+        };
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(201);
+        expect(deps.malwareScanner.scanCalls).toEqual([]);
+        process.env.ASSISTANT_MALWARE_SCAN_ENABLED = undefined;
+    });
+    it('releases the claim when the scan throws, so the upload can be retried', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.malwareScanner.failNextScan = true;
+        const app = buildApp(deps);
+
+        const failed = await confirmUpload(app, { blobUrl });
+
+        expect(failed.status).toEqual(503);
+        const body = (await failed.json()) as IAssistantError;
+        expect(body.error.code).toEqual('scan_unavailable');
+
+        // The claim must not stay taken: a retry of the same blob has to reach the scanner
+        // again rather than bouncing off "already being confirmed" forever.
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        const retry = await confirmUpload(app, { blobUrl });
+
+        expect(retry.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
 });
