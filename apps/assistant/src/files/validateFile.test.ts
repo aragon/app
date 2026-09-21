@@ -118,6 +118,24 @@ describe('validateFile', () => {
         });
     });
 
+    it('rejects text that is not valid utf-8', async () => {
+        // No NUL byte, so this reaches the strict decode: 0xFF never starts a UTF-8 sequence.
+        const loneHighByte = new Uint8Array([
+            ...new TextEncoder().encode('error: '),
+            0xff,
+            ...new TextEncoder().encode(' failed'),
+        ]);
+        expect(await validateFile(loneHighByte, 'app.log')).toEqual({
+            error: 'unsupported_file',
+        });
+
+        // A truncated multi-byte sequence: the lead byte promises two more that never arrive.
+        const truncatedSequence = new Uint8Array([0x68, 0x69, 0xe2, 0x82]);
+        expect(await validateFile(truncatedSequence, 'notes.txt')).toEqual({
+            error: 'unsupported_file',
+        });
+    });
+
     it('rejects unknown text extensions', async () => {
         const textBytes = new TextEncoder().encode('#!/bin/sh\nrm -rf /');
 

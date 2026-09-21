@@ -1,7 +1,7 @@
 import type { Redis } from '@upstash/redis';
 import type { LanguageModel } from 'ai';
 import type { IBlobStore } from '../files/blobStore';
-import type { IMalwareScanner } from '../files/malwareScanner';
+import type { IFileSanitizer } from '../files/sanitizeFile';
 import type { ILinearGateway } from '../linear/linearGateway';
 import type { ISessionStore } from './sessionStore';
 
@@ -17,7 +17,7 @@ export interface IAppDependencies {
     // omitting it resolves the configured agent model.
     getChatModel: (model?: string) => LanguageModel;
     getBlobStore: () => IBlobStore;
-    getMalwareScanner: () => IMalwareScanner;
+    getFileSanitizer: () => IFileSanitizer;
 }
 
 export const lazy = <TValue>(factory: () => TValue): (() => TValue) => {

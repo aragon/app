@@ -1,6 +1,11 @@
 import type { LanguageModel } from 'ai';
 import type { IBlobInfo, IBlobStore } from '../files/blobStore';
-import type { IMalwareScanner, IScanVerdict } from '../files/malwareScanner';
+import type {
+    IFileSanitizeRejection,
+    IFileSanitizeResult,
+    IFileSanitizer,
+} from '../files/sanitizeFile';
+import type { IValidatedFile } from '../files/validateFile';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { createSessionStore, type ISessionStore } from '../lib/sessionStore';
 import type { ILinearGateway } from '../linear/linearGateway';
@@ -55,6 +60,10 @@ export interface ITestBlobStore extends IBlobStore {
     // Optional metadata used by list(); entries without metadata fall back to uploadedAt=now.
     blobInfo: Map<string, IBlobInfo>;
     deletedUrls: string[];
+    // URLs handed out by put(), in call order.
+    putUrls: string[];
+    // Makes the next put reject, standing in for a blob store outage.
+    failNextPut: boolean;
 }
 
 export const createTestBlobStore = (): ITestBlobStore => {
@@ -62,12 +71,27 @@ export const createTestBlobStore = (): ITestBlobStore => {
         blobs: new Map(),
         blobInfo: new Map(),
         deletedUrls: [],
+        putUrls: [],
+        failNextPut: false,
         fetchBytes: (url) => {
             const data = store.blobs.get(url);
 
             return data == null
                 ? Promise.reject(new Error(`Blob not found: ${url}`))
                 : Promise.resolve(data);
+        },
+        put: ({ pathname, data }) => {
+            if (store.failNextPut) {
+                store.failNextPut = false;
+
+                return Promise.reject(new Error('Blob store is down'));
+            }
+
+            const url = `https://store.test/${pathname}-${String(store.putUrls.length + 1)}`;
+            store.blobs.set(url, data);
+            store.putUrls.push(url);
+
+            return Promise.resolve({ url });
         },
         delete: (urls) => {
             for (const url of urls) {
@@ -96,33 +120,27 @@ export const createTestBlobStore = (): ITestBlobStore => {
     return store;
 };
 
-export interface ITestMalwareScanner extends IMalwareScanner {
-    scanCalls: Array<{ filename: string; size: number }>;
-    // Verdict returned by the next scan; defaults to clean.
-    nextVerdict: IScanVerdict;
-    // Makes the next scan reject, standing in for an unexpected failure inside the scanner.
-    failNextScan: boolean;
+export interface ITestFileSanitizer extends IFileSanitizer {
+    // Filenames passed to sanitize, in call order.
+    sanitizeCalls: string[];
+    // Outcome of every sanitize call; defaults to passing the file through untouched.
+    result: (
+        file: IValidatedFile,
+    ) => IFileSanitizeResult | IFileSanitizeRejection;
 }
 
-export const createTestMalwareScanner = (): ITestMalwareScanner => {
-    const scanner: ITestMalwareScanner = {
-        scanCalls: [],
-        nextVerdict: { status: 'clean' },
-        failNextScan: false,
-        scan: ({ data, filename }) => {
-            scanner.scanCalls.push({ filename, size: data.byteLength });
+export const createTestFileSanitizer = (): ITestFileSanitizer => {
+    const sanitizer: ITestFileSanitizer = {
+        sanitizeCalls: [],
+        result: (file) => ({ file, rebuilt: false }),
+        sanitize: (file) => {
+            sanitizer.sanitizeCalls.push(file.filename);
 
-            if (scanner.failNextScan) {
-                scanner.failNextScan = false;
-
-                return Promise.reject(new Error('Scanner exploded'));
-            }
-
-            return Promise.resolve(scanner.nextVerdict);
+            return Promise.resolve(sanitizer.result(file));
         },
     };
 
-    return scanner;
+    return sanitizer;
 };
 
 export interface ITestDependencies extends IAppDependencies {
@@ -130,7 +148,7 @@ export interface ITestDependencies extends IAppDependencies {
     sessionStore: ISessionStore;
     linear: ITestLinearGateway;
     blobStore: ITestBlobStore;
-    malwareScanner: ITestMalwareScanner;
+    fileSanitizer: ITestFileSanitizer;
 }
 
 export const createTestDependencies = (
@@ -140,19 +158,19 @@ export const createTestDependencies = (
     const sessionStore = createSessionStore(asRedis(redis));
     const linear = createTestLinearGateway();
     const blobStore = createTestBlobStore();
-    const malwareScanner = createTestMalwareScanner();
+    const fileSanitizer = createTestFileSanitizer();
 
     return {
         redis,
         sessionStore,
         linear,
         blobStore,
-        malwareScanner,
+        fileSanitizer,
         getRedis: () => asRedis(redis),
         getSessionStore: () => sessionStore,
         getLinear: () => linear,
         getChatModel: () => chatModel,
         getBlobStore: () => blobStore,
-        getMalwareScanner: () => malwareScanner,
+        getFileSanitizer: () => fileSanitizer,
     };
 };

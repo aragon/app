@@ -284,44 +284,55 @@ describe('files routes', () => {
         expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
         expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
     });
-    it('deletes the blob and never queues a file the scanner flagged as malicious', async () => {
+
+    it('stores the rebuilt bytes under a fresh blob and deletes the upload', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         const blobUrl = buildBlobUrl();
         deps.blobStore.blobs.set(blobUrl, pngBytes);
-        deps.malwareScanner.nextVerdict = {
-            status: 'malicious',
-            reason: 'Embedded script detected.',
-        };
+        const rebuilt = new Uint8Array([...pngBytes, 0, 0, 0, 0]);
+        deps.fileSanitizer.result = (file) => ({
+            file: { ...file, data: rebuilt, size: rebuilt.byteLength },
+            rebuilt: true,
+        });
 
         const response = await confirmUpload(buildApp(deps), { blobUrl });
 
-        expect(response.status).toEqual(422);
+        expect(response.status).toEqual(201);
+        expect(await response.json()).toMatchObject({
+            size: rebuilt.byteLength,
+        });
+        expect(deps.fileSanitizer.sanitizeCalls).toEqual(['screenshot.png']);
+        const [queued] = await deps.sessionStore.listFiles(sessionId);
+        expect(queued?.blobUrl).toEqual(deps.blobStore.putUrls[0]);
+        expect(queued?.blobUrl).not.toEqual(blobUrl);
+        expect(deps.blobStore.blobs.get(queued?.blobUrl ?? '')).toEqual(
+            rebuilt,
+        );
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+    });
+
+    it('rejects a rebuild that grew past the size cap without storing it', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        // A re-encode that turned an indexed screenshot into a full-colour one.
+        const grown = new Uint8Array(assistantLimits.maxFileSizeBytes + 1);
+        deps.fileSanitizer.result = (file) => ({
+            file: { ...file, data: grown, size: grown.byteLength },
+            rebuilt: true,
+        });
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(413);
         const body = (await response.json()) as IAssistantError;
-        expect(body.error.code).toEqual('malicious_file');
+        expect(body.error.code).toEqual('file_too_large');
+        expect(deps.blobStore.putUrls).toEqual([]);
         expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
         expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
     });
 
-    it('blocks retriably when a mandatory scan engine has no verdict', async () => {
-        const deps = createTestDependencies(createMockChatModel({}));
-        const blobUrl = buildBlobUrl();
-        deps.blobStore.blobs.set(blobUrl, pngBytes);
-        deps.malwareScanner.nextVerdict = {
-            status: 'unavailable',
-            reason: 'The scanner is unreachable.',
-        };
-
-        const response = await confirmUpload(buildApp(deps), { blobUrl });
-
-        expect(response.status).toEqual(503);
-        const body = (await response.json()) as IAssistantError;
-        expect(body.error.code).toEqual('scan_unavailable');
-        // The slot is freed and the blob removed, so a retry starts from a clean state.
-        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
-        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
-    });
-
-    it('scans the file before queueing it and passes the sanitized filename', async () => {
+    it('keeps the uploaded blob when the sanitizer passes the file through', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         const blobUrl = buildBlobUrl();
         deps.blobStore.blobs.set(blobUrl, pngBytes);
@@ -329,13 +340,29 @@ describe('files routes', () => {
         const response = await confirmUpload(buildApp(deps), { blobUrl });
 
         expect(response.status).toEqual(201);
-        expect(deps.malwareScanner.scanCalls).toEqual([
-            { filename: 'screenshot.png', size: pngBytes.byteLength },
-        ]);
-        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+        expect(deps.blobStore.putUrls).toEqual([]);
+        expect(deps.blobStore.deletedUrls).toEqual([]);
+        const [queued] = await deps.sessionStore.listFiles(sessionId);
+        expect(queued?.blobUrl).toEqual(blobUrl);
     });
 
-    it('does not scan files rejected by the format gate', async () => {
+    it('rejects a file the sanitizer refuses and deletes its blob', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl({ filename: 'form.pdf' });
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.fileSanitizer.result = () => ({ error: 'active_content' });
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(415);
+        const body = (await response.json()) as IAssistantError;
+        expect(body.error.code).toEqual('unsupported_file');
+        expect(body.error.message).toContain('flat PDF');
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+    });
+
+    it('does not sanitize files rejected by the format gate', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         const blobUrl = buildBlobUrl({ filename: 'renamed.png' });
         deps.blobStore.blobs.set(
@@ -345,44 +372,50 @@ describe('files routes', () => {
 
         await confirmUpload(buildApp(deps), { blobUrl });
 
-        expect(deps.malwareScanner.scanCalls).toEqual([]);
+        expect(deps.fileSanitizer.sanitizeCalls).toEqual([]);
     });
 
-    it('skips the scan entirely when it is disabled', async () => {
-        process.env.ASSISTANT_MALWARE_SCAN_ENABLED = 'false';
+    it('releases the claim and keeps the upload when storing the rebuilt file fails', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         const blobUrl = buildBlobUrl();
         deps.blobStore.blobs.set(blobUrl, pngBytes);
-        deps.malwareScanner.nextVerdict = {
-            status: 'malicious',
-            reason: 'Embedded script detected.',
-        };
-
-        const response = await confirmUpload(buildApp(deps), { blobUrl });
-
-        expect(response.status).toEqual(201);
-        expect(deps.malwareScanner.scanCalls).toEqual([]);
-        process.env.ASSISTANT_MALWARE_SCAN_ENABLED = undefined;
-    });
-    it('releases the claim when the scan throws, so the upload can be retried', async () => {
-        const deps = createTestDependencies(createMockChatModel({}));
-        const blobUrl = buildBlobUrl();
-        deps.blobStore.blobs.set(blobUrl, pngBytes);
-        deps.malwareScanner.failNextScan = true;
+        // Same object back, `rebuilt` set: the route follows the flag, not the reference.
+        deps.fileSanitizer.result = (file) => ({ file, rebuilt: true });
+        deps.blobStore.failNextPut = true;
         const app = buildApp(deps);
 
         const failed = await confirmUpload(app, { blobUrl });
 
-        expect(failed.status).toEqual(503);
-        const body = (await failed.json()) as IAssistantError;
-        expect(body.error.code).toEqual('scan_unavailable');
+        expect(failed.status).toEqual(500);
+        expect(deps.blobStore.deletedUrls).toEqual([]);
 
-        // The claim must not stay taken: a retry of the same blob has to reach the scanner
-        // again rather than bouncing off "already being confirmed" forever.
-        deps.blobStore.blobs.set(blobUrl, pngBytes);
         const retry = await confirmUpload(app, { blobUrl });
 
         expect(retry.status).toEqual(201);
         expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
+
+    it('releases the claim and keeps the upload when queueing the file fails', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.fileSanitizer.result = (file) => ({ file, rebuilt: true });
+        jest.spyOn(deps.sessionStore, 'addFile').mockRejectedValueOnce(
+            new Error('Redis is down'),
+        );
+        const app = buildApp(deps);
+
+        const failed = await confirmUpload(app, { blobUrl });
+
+        expect(failed.status).toEqual(500);
+        // The fresh blob goes, the upload stays for the retry.
+        expect(deps.blobStore.deletedUrls).toEqual([deps.blobStore.putUrls[0]]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+
+        const retry = await confirmUpload(app, { blobUrl });
+
+        expect(retry.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+        expect(deps.blobStore.deletedUrls).toContain(blobUrl);
     });
 });

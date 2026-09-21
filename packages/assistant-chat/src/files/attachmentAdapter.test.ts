@@ -1,5 +1,4 @@
 import type { PendingAttachment } from '@assistant-ui/react';
-import { chatCopy } from '../copy';
 import { createAttachmentAdapter } from './attachmentAdapter';
 
 // The blob client uploads straight to storage; the adapter's behaviour under test starts at the
@@ -47,7 +46,10 @@ const runAdd = async (
     }
 };
 
-// The service rejects the upload at /files/confirm (422 malicious_file): the blob is deleted
+const rejectionMessage =
+    'The PDF contains scripts, attachments or forms. Export it as an image or a flat PDF.';
+
+// The service rejects the upload at /files/confirm (415 unsupported_file): the blob is deleted
 // server-side and nothing is queued for the ticket.
 const mockConfirmRejection = () => {
     global.fetch = jest.fn(() =>
@@ -55,12 +57,12 @@ const mockConfirmRejection = () => {
             new Response(
                 JSON.stringify({
                     error: {
-                        code: 'malicious_file',
-                        message: 'Malicious content detected.',
+                        code: 'unsupported_file',
+                        message: rejectionMessage,
                     },
                 }),
                 {
-                    status: 422,
+                    status: 415,
                     headers: { 'content-type': 'application/json' },
                 },
             ),
@@ -105,8 +107,8 @@ describe('createAttachmentAdapter', () => {
 
         const { attachment, error } = await runAdd(adapter, pngFile());
 
-        // The tile reports the rejection with our own wording…
-        expect(error?.message).toEqual(chatCopy.fileAlerts.maliciousFile);
+        // The tile reports the service's rejection…
+        expect(error?.message).toEqual(rejectionMessage);
 
         // …and the message cannot carry the file: the server holds no bytes for it, so sending
         // it would show the user an attachment the support team never receives.
@@ -126,8 +128,9 @@ describe('createAttachmentAdapter', () => {
         const { error } = await runAdd(adapter, pngFile());
 
         // Still the upload rejection, never the "too many files" alert.
-        expect(error?.message).toEqual(chatCopy.fileAlerts.maliciousFile);
+        expect(error?.message).toEqual(rejectionMessage);
     });
+
     it('stays sendable when another attachment of the same message failed', async () => {
         // The composer sends every attachment concurrently and, when one throws, restores them
         // all and re-sends. A file that already went must survive that second round: otherwise

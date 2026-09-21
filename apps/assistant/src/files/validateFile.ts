@@ -82,8 +82,8 @@ export const validateFile = async (
         const contentType = allowedMagicTypes[magicType.ext];
 
         // Everything sniffable but not allowlisted (svg/xml included) is rejected here. Accepted
-        // files then go through the malware scan in /files/confirm (see files.ts); NSFW/illegal
-        // content moderation stays deterrence + reactive review — see README.md.
+        // files are rebuilt by the sanitizer before they are queued (see sanitizeFile.ts);
+        // NSFW/illegal content moderation stays deterrence + reactive review — see README.md.
         return contentType == null
             ? { error: 'unsupported_file' }
             : { data, filename, contentType, size: data.byteLength };

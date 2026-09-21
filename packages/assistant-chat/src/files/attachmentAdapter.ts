@@ -47,7 +47,7 @@ interface IAdapterEntry {
      */
     serverId?: string;
     /**
-     * Set when the upload was rejected (validation, malware scan) or failed. The entry is kept
+     * Set when the upload was rejected (validation, sanitization) or failed. The entry is kept
      * so `send` can refuse to attach a file the server does not hold, but it no longer occupies
      * a composer slot.
      */
@@ -71,28 +71,14 @@ const toFileDataUrl = (file: File): Promise<string> =>
         reader.readAsDataURL(file);
     });
 
-const toUploadErrorText = (error: unknown): string => {
-    if (!(error instanceof UploadFileError)) {
-        return chatCopy.fileAlerts.uploadFailed;
-    }
-
-    // Scan outcomes get our own wording: the service message describes what was detected, which
-    // is neither actionable for the user nor safe to echo verbatim into the chat.
-    if (error.code === 'malicious_file') {
-        return chatCopy.fileAlerts.maliciousFile;
-    }
-
-    if (error.code === 'scan_unavailable') {
-        return chatCopy.fileAlerts.scanUnavailable;
-    }
-
-    // Other service rejections (magic-byte validation, session limits) carry a human-readable
-    // message; anything else (network failures, unexpected shapes) falls back to the generic
-    // wording.
-    return error.code === 'network' || error.code === 'internal'
-        ? chatCopy.fileAlerts.uploadFailed
-        : error.message;
-};
+const toUploadErrorText = (error: unknown): string =>
+    // Service rejections (magic-byte validation, session limits) carry a human-readable message;
+    // anything else (network failures, unexpected shapes) falls back to the generic wording.
+    error instanceof UploadFileError &&
+    error.code !== 'network' &&
+    error.code !== 'internal'
+        ? error.message
+        : chatCopy.fileAlerts.uploadFailed;
 
 /**
  * assistant-ui attachment adapter over the widget's file endpoints. Files travel out-of-band: the
@@ -223,7 +209,7 @@ export const createAttachmentAdapter = (
             const entry = entries.get(attachment.id);
 
             // The server holds bytes only for uploads it accepted. A rejected one (unsupported
-            // type, session limit, malware scan) must never ride along with the message: the
+            // type, session limit, active content) must never ride along with the message: the
             // send fails so the user removes the tile first, instead of the transcript showing
             // an attachment the support team will never receive.
             if (entry == null) {
@@ -235,7 +221,7 @@ export const createAttachmentAdapter = (
             try {
                 await entry.uploadPromise;
             } catch (error) {
-                throw new Error(toUploadErrorText(error));
+                throw new Error(toUploadErrorText(error), { cause: error });
             }
 
             // The message takes the file with it, so the entry stops occupying a composer slot —
