@@ -68,6 +68,11 @@ catalog:
   viem: ^2.56.5
   wagmi: ^3.7.7
   yaml: ^2.9.1
+  # zod: packages/gov-ui-kit deliberately does NOT take this range — it pins 3.25.76 outright.
+  # The kit never imports zod; the pin only fixes the optional-peer key that viem/wagmi resolve
+  # under, so the kit and apps/app share one instance (dedupePeerDependents). Drop it and the kit
+  # flips to the zod@4 flavour of viem/wagmi — the app's WagmiProvider goes invisible to the kit's
+  # hooks (WagmiProviderNotFoundError). Bumping this range must keep the kit's pin in step.
   zod: ^4.6.5
 
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)

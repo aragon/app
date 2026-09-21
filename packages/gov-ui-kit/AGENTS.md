@@ -54,6 +54,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `rollup.config.mjs` reads it via `require('./tsconfig.json')` as raw JSON and does not follow
   `extends`. That also means the file can never contain comments. `incremental: false` is set
   deliberately: the base enables it, which makes the rollup TS plugin emit a stray `.rollup.cache/`.
+  `target: ES2020` overrides the base's `ES2022` on purpose — it is the browser floor of the
+  published bundle, and `jest.config.js` passes the same target to the shared ts-jest transform.
 - **One public JS entry.** `src/index.ts` re-exports `./core` and `./modules`, which re-export
   their `assets`, `components`, `hooks`, `types`, and `utils` barrels. Every public symbol
   must ride this chain into `dist/index.es.js`.

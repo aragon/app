@@ -74,6 +74,8 @@ jobs:
   snapshot:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    # Added the same gate as for the `release` job, since now in monorepo write access is a lot broader than in the ui-kit's own repo.
+    environment: npm-publish
     steps:
       - name: Load secrets
         id: load-secrets
