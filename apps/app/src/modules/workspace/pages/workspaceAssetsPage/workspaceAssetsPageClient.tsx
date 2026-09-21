@@ -62,23 +62,18 @@ export const WorkspaceAssetsPageClient: React.FC<
             ),
         });
 
-    const selectedAccount = activeOption?.account;
-
     // Accounts the selected tab covers: the one it names, or all of them on the aggregated tab.
-    const selectedAccountRefs =
-        selectedAccount != null
-            ? [
-                  {
-                      network: selectedAccount.network,
-                      address: selectedAccount.address,
-                  },
-              ]
-            : accountRefs;
+    const accountsToDisplay =
+        activeOption?.account != null ? [activeOption.account] : accounts;
+
+    const accountRefsToDisplay = accountsToDisplay.map(
+        ({ network, address }) => ({ network, address }),
+    );
 
     // Totals of the selected tab. Shares its key with the list's own query, so this adds no extra request.
     const { metadata } = useWorkspaceAssetListData(
-        { body: { accounts: selectedAccountRefs, pagination: { pageSize } } },
-        { enabled: selectedAccountRefs.length > 0 },
+        { body: { accounts: accountRefsToDisplay, pagination: { pageSize } } },
+        { enabled: accountRefsToDisplay.length > 0 },
     );
 
     return (
@@ -93,7 +88,7 @@ export const WorkspaceAssetsPageClient: React.FC<
                         value={activeOption}
                     />
                     <WorkspaceAssetList
-                        accounts={selectedAccountRefs}
+                        accounts={accountRefsToDisplay}
                         pageSize={pageSize}
                     />
                 </div>
