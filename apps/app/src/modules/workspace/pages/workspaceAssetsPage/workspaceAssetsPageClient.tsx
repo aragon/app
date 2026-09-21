@@ -60,8 +60,6 @@ export const WorkspaceAssetsPageClient: React.FC<
             allAccountsLabel: t(
                 'app.workspace.workspaceAssetsPage.filter.allAccounts',
             ),
-            // Every account holds assets, and the endpoint answers for all of them.
-            includeNonDaoAccounts: true,
         });
 
     const selectedAccount = activeOption?.account;

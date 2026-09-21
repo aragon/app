@@ -26,7 +26,7 @@ export const workspaceAssetsCount = 20;
 export const WorkspaceAssetsPage: React.FC<IWorkspaceAssetsPageProps> = async (
     props,
 ) => {
-    const { params } = props;
+    const { params } = props; //
 
     if (!(await featureFlags.isEnabled('workspaces'))) {
         notFound();
