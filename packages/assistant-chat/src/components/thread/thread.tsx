@@ -1,4 +1,7 @@
-import { createTicketToolName } from '@aragon/assistant-contracts';
+import {
+    createTicketToolName,
+    docsToolNames,
+} from '@aragon/assistant-contracts';
 import { Heading, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
 import {
     ActionBarPrimitive,
@@ -9,6 +12,7 @@ import {
     ErrorPrimitive,
     MessagePrimitive,
     ThreadPrimitive,
+    type ToolCallMessagePartComponent,
     useAuiState,
 } from '@assistant-ui/react';
 import classNames from 'classnames';
@@ -415,6 +419,26 @@ const AssistantTyping: EmptyMessagePartComponent = ({ status }) => {
     );
 };
 
+// The documentation tools run silently (the service drops the text a model writes before calling
+// them), so while one runs the reply would be a blank bubble: the same spinner as the first
+// token gets, labelled for what is happening. A finished tool renders nothing; the answer follows
+// as text.
+const DocsToolStatus: ToolCallMessagePartComponent = ({ status }) => {
+    if (status.type !== 'running') {
+        return null;
+    }
+
+    return (
+        <div
+            aria-label={chatCopy.thread.searchingDocs}
+            className="flex items-center py-1"
+            role="status"
+        >
+            <Spinner size="md" variant="neutral" />
+        </div>
+    );
+};
+
 // The registry assistant action bar reduced to its Copy action (with the check feedback) — the
 // reload / more / export actions stay cut along with the branch picker. Always visible (no
 // hover autohide): appearing on hover makes the layout feel jumpy.
@@ -442,14 +466,19 @@ const AssistantMessage: React.FC = () => (
         data-role="assistant"
     >
         <div className="wrap-break-word px-2 text-neutral-800 text-sm leading-relaxed">
-            {/* Tools without a registered component (flagOffTopic, the future searchDocs)
-                deliberately render nothing — the model narrates around them. */}
+            {/* A tool without a registered component (flagOffTopic) deliberately renders
+                nothing — the model narrates around it. */}
             <MessagePrimitive.Parts
                 components={{
                     Text: MarkdownText,
                     Empty: AssistantTyping,
                     tools: {
-                        by_name: { [createTicketToolName]: CreateTicketCard },
+                        by_name: {
+                            [createTicketToolName]: CreateTicketCard,
+                            [docsToolNames.searchDocs]: DocsToolStatus,
+                            [docsToolNames.readDoc]: DocsToolStatus,
+                            [docsToolNames.listDocs]: DocsToolStatus,
+                        },
                     },
                 }}
             />

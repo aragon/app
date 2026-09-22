@@ -12,7 +12,9 @@
             "!.next",
             "!coverage",
             "!.turbo",
-            "!**/*.svg"
+            "!**/*.svg",
+            "!apps/assistant/src/docs/generated/*.js",
+            "!apps/assistant/.docs-corpus"
         ]
     },
     "formatter": {

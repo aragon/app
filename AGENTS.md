@@ -8,6 +8,7 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 
 - `apps/*` — deployable applications, one Vercel project each. Every app owns its source, configs, docs and CHANGELOG; workspace specifics live in the workspace's README, not here.
 - `packages/*` — version-only workspace libraries that ship inside their consumers. Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
+- The product knowledge base (`aragon/platform-doc`, branch `development`) is not vendored here: the assistant fetches it while building its documentation index (`apps/assistant/README.md`, "Documentation answering").
 - Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). The root `package.json` has no version.
 - CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`) plus reusable `shared-*.yml`. Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
 
