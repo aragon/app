@@ -4323,7 +4323,8 @@
           "title": "Some assets are missing"
         }
       },
-      "workspaceAssetsAsideCard": {
+      "workspaceAllAssetsAsideCard": {
+        "allAssets": "All assets",
         "hiddenSpam": "Hidden spam",
         "tokens": "Unique tokens",
         "totalValue": "Total value (USD)"

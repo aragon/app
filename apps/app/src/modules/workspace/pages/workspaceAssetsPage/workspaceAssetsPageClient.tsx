@@ -95,15 +95,8 @@ export const WorkspaceAssetsPageClient: React.FC<
             </Page.Main>
             <Page.Aside>
                 <WorkspaceAssetsAsideCard
-                    assetsCount={metadata?.totalRecords}
-                    spamCount={metadata?.spamCount}
-                    title={
-                        activeOption?.label ??
-                        t(
-                            'app.workspace.workspaceAssetsPage.filter.allAccounts',
-                        )
-                    }
-                    totalAmountUsd={metadata?.totalAmountUsd}
+                    activeOption={activeOption}
+                    metadata={metadata}
                 />
             </Page.Aside>
         </Page.Content>

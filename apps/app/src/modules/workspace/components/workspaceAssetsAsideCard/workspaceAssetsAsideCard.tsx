@@ -1,83 +1,52 @@
 'use client';
 
-import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { Page } from '@/shared/components/page';
-import { StatCard } from '@/shared/components/statCard';
-import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IWorkspaceAssetListMetadata } from '../../api/workspaceQueryService';
+import { WorkspaceAccountType } from '../../api/workspaceService';
+import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
+import { WorkspaceAllAssetsAsideCard } from './workspaceAllAssetsAsideCard';
+import { WorkspaceDaoAssetsAsideCard } from './workspaceDaoAssetsAsideCard';
 
 export interface IWorkspaceAssetsAsideCardProps {
     /**
-     * Title of the card, i.e. the label of the selected tab.
+     * Account option selected on the page. The whole workspace is described when unset or set to the aggregated
+     * option.
      */
-    title: string;
+    activeOption?: IWorkspaceAccountFilterOption;
     /**
-     * Number of assets of the selection.
+     * Totals of the selected option, as reported by the workspace asset list endpoint.
      */
-    assetsCount?: number;
-    /**
-     * Value in USD of the whole selection, not just of the loaded page. Only the aggregated view reports it.
-     */
-    totalAmountUsd?: string;
-    /**
-     * Number of spam-flagged tokens hidden from the selection. Only the aggregated view reports it.
-     */
-    spamCount?: number;
+    metadata?: IWorkspaceAssetListMetadata;
 }
 
 /**
- * Stats of the aggregated asset view, displayed on the aside of the workspace assets page.
+ * Aside card of the workspace assets page, picking the card matching the selected account.
  *
- * Uses the same `StatCard` grid as the DAO aside cards (`AllAssetsStats`, `DaoInfoAside`), so the two pages read
- * alike. The account tabs render the DAO's own aside card instead.
+ * Each account type describes itself differently, so the card of a type is its own component: a DAO account shows
+ * the same card as the DAO assets page, the aggregated option shows the workspace totals. A new account type is
+ * added by branching on it here.
  */
 export const WorkspaceAssetsAsideCard: React.FC<
     IWorkspaceAssetsAsideCardProps
 > = (props) => {
-    const { title, assetsCount, totalAmountUsd, spamCount } = props;
+    const { activeOption, metadata } = props;
 
-    const { t } = useTranslations();
+    const account = activeOption?.account;
 
-    const formatCount = (value?: number) =>
-        value != null
-            ? (formatterUtils.formatNumber(value, {
-                  format: NumberFormat.GENERIC_SHORT,
-              }) ?? '-')
-            : '-';
-
-    const stats = [
-        {
-            label: t('app.workspace.workspaceAssetsAsideCard.totalValue'),
-            value:
-                totalAmountUsd != null
-                    ? (formatterUtils.formatNumber(totalAmountUsd, {
-                          format: NumberFormat.FIAT_TOTAL_SHORT,
-                      }) ?? '-')
-                    : '-',
-        },
-        {
-            label: t('app.workspace.workspaceAssetsAsideCard.tokens'),
-            value: formatCount(assetsCount),
-        },
-    ];
-
-    if (spamCount != null && spamCount > 0) {
-        stats.push({
-            label: t('app.workspace.workspaceAssetsAsideCard.hiddenSpam'),
-            value: formatCount(spamCount),
-        });
+    if (activeOption != null && account?.type === WorkspaceAccountType.DAO) {
+        return (
+            <WorkspaceDaoAssetsAsideCard
+                account={account}
+                label={activeOption.label}
+                metadata={metadata}
+            />
+        );
     }
 
+    // Safe accounts have no card of their own yet, so they fall back to the plain totals of the selection.
     return (
-        <Page.AsideCard title={title}>
-            <div className="grid w-full grid-cols-2 gap-3">
-                {stats.map((stat) => (
-                    <StatCard
-                        key={stat.label}
-                        label={stat.label}
-                        value={stat.value}
-                    />
-                ))}
-            </div>
-        </Page.AsideCard>
+        <WorkspaceAllAssetsAsideCard
+            metadata={metadata}
+            title={activeOption?.label}
+        />
     );
 };

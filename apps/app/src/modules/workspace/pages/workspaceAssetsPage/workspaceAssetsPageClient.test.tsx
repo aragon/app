@@ -2,8 +2,9 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import { daoService, Network } from '@/shared/api/daoService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
@@ -22,6 +23,8 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         workspaceQueryService,
         'getAssetList',
     );
+    // Read by the aside card of a DAO account, which renders the DAO's own card.
+    const getDaoSpy = jest.spyOn(daoService, 'getDao');
 
     // React Query dedupes by key and the asset key is built from the accounts, so each test gets its own addresses:
     // otherwise a result cached by an earlier test satisfies the render and this test's own mock never runs.
@@ -65,6 +68,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
 
     beforeEach(() => {
         getAccountsSpy.mockResolvedValue([]);
+        getDaoSpy.mockResolvedValue(generateDao());
         getWorkspaceAssetsSpy.mockResolvedValue({
             data: [],
             metadata: {
@@ -83,6 +87,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         getWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
         getWorkspaceAssetsSpy.mockReset();
+        getDaoSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -99,9 +104,11 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
 
         const component = (
             <ReactQueryWrapper client={new QueryClient()}>
-                <GukModulesProvider>
-                    <WorkspaceAssetsPageClient {...completeProps} />
-                </GukModulesProvider>
+                <FeatureFlagsProvider>
+                    <GukModulesProvider>
+                        <WorkspaceAssetsPageClient {...completeProps} />
+                    </GukModulesProvider>
+                </FeatureFlagsProvider>
             </ReactQueryWrapper>
         );
 
@@ -183,19 +190,28 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         );
     });
 
-    it('displays the totals of the selected tab on the aside', async () => {
-        const { component, daoAddress } = createTestComponent();
+    it('displays the totals of the aggregated tab on the aside', async () => {
+        const { component } = createTestComponent();
         render(component);
 
         expect(
-            await screen.findByText(/workspaceAssetsAsideCard\.totalValue$/),
+            await screen.findByText(/workspaceAllAssetsAsideCard\.totalValue$/),
         ).toBeInTheDocument();
+    });
 
-        // The same card serves an account tab.
+    it('swaps the aside for the DAO card when a DAO account is selected', async () => {
+        const { component, daoAddress } = createTestComponent();
+        render(component);
+
         await selectAccount(daoAddress);
 
+        await waitFor(() =>
+            expect(getDaoSpy).toHaveBeenCalledWith({
+                urlParams: { id: `ethereum-sepolia-${daoAddress}` },
+            }),
+        );
         expect(
-            await screen.findByText(/workspaceAssetsAsideCard\.totalValue$/),
-        ).toBeInTheDocument();
+            screen.queryByText(/workspaceAllAssetsAsideCard\.totalValue$/),
+        ).not.toBeInTheDocument();
     });
 });
