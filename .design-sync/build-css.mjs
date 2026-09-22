@@ -129,13 +129,16 @@ execFileSync('node', [cli, '-i', entry, '-o', tmp], {
     stdio: 'inherit',
 });
 
-// Tailwind rebases @font-face urls to paths that don't resolve from the output
-// location; point them at the kit's font directory relative to the package
-// root (where the converter reads this file from).
-const css = readFileSync(tmp, 'utf8').replaceAll(
-    'url("../../fonts/',
-    'url("./src/theme/fonts/',
-);
+// Tailwind rebases font URLs relative to the compiled output. The generated
+// artifact already points at the checked-in GovKit package font directory;
+// normalize both source forms to the package-local path expected by the
+// converter output.
+const css = readFileSync(tmp, 'utf8')
+    .replaceAll('url("../../fonts/', 'url("./src/theme/fonts/')
+    .replaceAll(
+        'url("../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/',
+        'url("./src/theme/fonts/',
+    );
 writeFileSync(out, css);
 console.log(
     `kit css compiled → ${out} (${Math.round(css.length / 1024)} KB), font urls repointed`,

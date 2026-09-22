@@ -7,24 +7,14 @@
  * Compiled by cfg.buildCmd on every sync; output: .design-sync/.cache/kit-styles.css
  */
 @import "../apps/app/node_modules/tailwindcss/index.css";
-@import "../apps/app/node_modules/@aragon/gov-ui-kit/index.css";
+@import "../apps/app/node_modules/@aragon/gov-ui-kit/src/core/index.css";
+@import "./generated/govkit-primitives.css";
+@import "../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/utils/index.css";
+/* biome-ignore lint/suspicious/noDuplicateAtImportRules: Preserve GovKit's original Tailwind layer boundary. */
+@import "../apps/app/node_modules/tailwindcss/index.css";
 
 @source "../apps/app/node_modules/@aragon/gov-ui-kit";
 /* slice 3: app shared components' utility classes must compile in too */
 @source "../apps/app/src/shared";
 
-/* App-level kit variable overrides, copied from layoutRoot.css — the design
- * system being synced is the app's, so designs should match app rendering. */
-:root {
-    --guk-avatar-container-position: relative;
-
-    --guk-dialog-overlay-z-index: 20;
-    --guk-dialog-alert-overlay-z-index: 20;
-
-    --guk-dialog-content-z-index: 30;
-    --guk-dialog-alert-content-z-index: 30;
-
-    --guk-text-area-rich-text-expanded-z-index: 35;
-
-    --guk-dropdown-container-content-z-index: 40;
-}
+/* App runtime overrides are included by the generated primitive artifact. */
