@@ -102,7 +102,7 @@ test('CSS namespace resets cannot drift unnoticed', (context) => {
 });
 
 const appCssPath =
-    'src/modules/application/components/layouts/layoutRoot/layoutRoot.css';
+    'src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css';
 const spacingCssPath = 'src/theme/tokens/primitives/spacing.css';
 const colorsCssPath = 'src/theme/tokens/primitives/colors.css';
 const overlay = '--guk-dialog-overlay-z-index: 20;';

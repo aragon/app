@@ -312,7 +312,7 @@
     src: url("../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/Manrope-SemiBold.ttf") format("truetype");
 }
 
-/* App runtime overrides from src/modules/application/components/layouts/layoutRoot/layoutRoot.css */
+/* App runtime overrides from src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css */
 
 :root {
     --guk-avatar-container-position: relative;

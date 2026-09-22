@@ -7,7 +7,7 @@
 - Package: `@aragon/gov-ui-kit@2.11.4`
 - GovKit source revision: `64b517f5b90052797ecaced5f15ab616b5733f30`
 - Primitive import barrel: `src/theme/tokens/primitives/index.css`
-- App CSS: `apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css`
+- App override source: `apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css`
 
 `parity-baseline.json` maps every represented CSS variable to its DTCG path and original CSS value. It also records namespace resets, utility rules, font faces, imports, the unsupported `--radius-none: none` value, and app runtime overrides. These CSS constructs must survive any later output conversion.
 
