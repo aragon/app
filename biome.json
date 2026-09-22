@@ -23,6 +23,7 @@
             "**",
             "!.changeset/**",
             "!.zed/**",
+            "!.design-sync/tokens/schema/**",
             "!apps/app/src/app/manifest.json",
             "!apps/app/src/assets/locales/**"
         ]

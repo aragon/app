@@ -38,6 +38,7 @@ catalog:
   "@upstash/ratelimit": ^2.0.8
   "@upstash/redis": ^1.38.2
   "@vercel/blob": ^2.8.0
+  ajv: ^8.20.0
   ai: ^7.0.79
   classnames: ^2.5.1
   cross-env: ^10.1.0
