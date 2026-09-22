@@ -37,6 +37,8 @@ export const chatCopy = {
     },
     thread: {
         typing: 'Assistant is typing',
+        // Spinner label while a documentation tool (search, page read) runs inside a reply.
+        searchingDocs: 'Looking through the documentation',
         copyMessage: 'Copy',
         // Prefix of the time divider of messages sent today, e.g. "Today 14:26".
         today: 'Today',

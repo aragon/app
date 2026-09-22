@@ -102,6 +102,53 @@ const createChatResponse = (chunks: unknown[]): Response => {
     } as unknown as Response;
 };
 
+// A response whose stream arrives in stages, so the widget can be observed mid-reply — a tool
+// still running — before `advance()` delivers the rest. The first stage is available at once.
+const createStagedChatResponse = (stages: unknown[][]) => {
+    const encoder = new TextEncoder();
+    const pending = [...stages];
+    let controller: ReadableStreamDefaultController<Uint8Array> | undefined;
+    const body = new ReadableStream<Uint8Array>({
+        start: (streamController) => {
+            controller = streamController;
+        },
+    });
+    const advance = () => {
+        const stage = pending.shift();
+
+        if (stage == null || controller == null) {
+            return;
+        }
+
+        controller.enqueue(
+            encoder.encode(
+                stage
+                    .map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`)
+                    .join(''),
+            ),
+        );
+
+        if (pending.length === 0) {
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            controller.close();
+        }
+    };
+    advance();
+
+    const response = {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        headers: createHeaders({
+            'content-type': 'text/event-stream',
+            'x-vercel-ai-ui-message-stream': 'v1',
+        }),
+        body,
+    } as unknown as Response;
+
+    return { response, advance };
+};
+
 // A distinctive marker in the user's message: no monitoring call may ever carry it.
 const userSecret = 'secret-token-xyz';
 
@@ -231,6 +278,69 @@ describe('<AssistantChat /> integration', () => {
                 localStorage.getItem('aragon-assistant:requests') ?? '[]',
             ),
         ).toEqual([expect.objectContaining({ identifier: 'SUP-123' })]);
+    });
+
+    it('shows a spinner while the documentation is searched and the answer once it arrives', async () => {
+        const { response, advance } = createStagedChatResponse([
+            [
+                { type: 'start' },
+                { type: 'start-step' },
+                {
+                    type: 'tool-input-start',
+                    toolCallId: 'tc-docs',
+                    toolName: 'searchDocs',
+                },
+                {
+                    type: 'tool-input-available',
+                    toolCallId: 'tc-docs',
+                    toolName: 'searchDocs',
+                    input: { query: 'linked account control' },
+                },
+            ],
+            [
+                {
+                    type: 'tool-output-available',
+                    toolCallId: 'tc-docs',
+                    output: { results: [] },
+                },
+                { type: 'finish-step' },
+                { type: 'start-step' },
+                { type: 'text-start', id: 'txt-1' },
+                {
+                    type: 'text-delta',
+                    id: 'txt-1',
+                    delta: 'Linking is display only.',
+                },
+                { type: 'text-end', id: 'txt-1' },
+                { type: 'finish-step' },
+                { type: 'finish' },
+            ],
+        ]);
+        chatResponses = [response];
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(composer, 'Does linking give control?{Enter}');
+
+        // The search runs with no text around it: the running tool part is what fills the bubble.
+        expect(
+            await screen.findByRole('status', {
+                name: 'Looking through the documentation',
+            }),
+        ).toBeInTheDocument();
+
+        advance();
+
+        expect(
+            await screen.findByText('Linking is display only.'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('status', {
+                name: 'Looking through the documentation',
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('shows a retryable failure when creation fails and recovers on retry', async () => {
