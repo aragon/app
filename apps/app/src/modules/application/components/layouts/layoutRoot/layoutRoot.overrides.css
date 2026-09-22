@@ -1,0 +1,14 @@
+/* Generator input only; runtime consumers use the generated GovKit artifact. */
+:root {
+    --guk-avatar-container-position: relative;
+
+    --guk-dialog-overlay-z-index: 20;
+    --guk-dialog-alert-overlay-z-index: 20;
+
+    --guk-dialog-content-z-index: 30;
+    --guk-dialog-alert-content-z-index: 30;
+
+    --guk-text-area-rich-text-expanded-z-index: 35;
+
+    --guk-dropdown-container-content-z-index: 40;
+}

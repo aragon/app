@@ -129,14 +129,36 @@ execFileSync('node', [cli, '-i', entry, '-o', tmp], {
     stdio: 'inherit',
 });
 
-// Tailwind rebases @font-face urls to paths that don't resolve from the output
-// location; point them at the kit's font directory relative to the package
-// root (where the converter reads this file from).
-const css = readFileSync(tmp, 'utf8').replaceAll(
-    'url("../../fonts/',
+// Tailwind rebases font URLs relative to the compiled output. The generated
+// artifact already points at the checked-in GovKit package font directory;
+// normalize it to the package-local path expected by the converter output.
+const css = readFileSync(tmp, 'utf8');
+const generatedFontUrl =
+    'url("../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/';
+const generatedFontUrlCount = css.split(generatedFontUrl).length - 1;
+if (generatedFontUrlCount === 0) {
+    throw new Error(
+        `Generated GovKit font URLs not found in ${tmp}; refusing to hide broken generation.`,
+    );
+}
+const rewrittenCss = css.replaceAll(
+    generatedFontUrl,
     'url("./src/theme/fonts/',
 );
-writeFileSync(out, css);
+const fontCss = [...rewrittenCss.matchAll(/@font-face\s*\{([\s\S]*?)\}/g)]
+    .map((match) => match[1])
+    .join('\n');
+const unresolvedRelativeFontUrls = [
+    ...fontCss.matchAll(/url\((['"]?)(\.\.?\/[^'")]+)\1\)/g),
+]
+    .map((match) => match[2])
+    .filter((url) => !url.startsWith('./src/theme/fonts/'));
+if (unresolvedRelativeFontUrls.length > 0) {
+    throw new Error(
+        `Unresolved relative font URLs in ${tmp}: ${unresolvedRelativeFontUrls.join(', ')}`,
+    );
+}
+writeFileSync(out, rewrittenCss);
 console.log(
-    `kit css compiled → ${out} (${Math.round(css.length / 1024)} KB), font urls repointed`,
+    `kit css compiled → ${out} (${Math.round(rewrittenCss.length / 1024)} KB), ${generatedFontUrlCount} font urls repointed`,
 );

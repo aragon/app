@@ -22,7 +22,7 @@
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
         "test:hooks": "pnpm test:guardrails",
         "test:release-summary": "node --test '.github/workflows/scripts/*.test.js'",
-        "test:tokens": "node --test .design-sync/tokens/validate.test.mjs .design-sync/tokens/generate.test.mjs",
+        "test:tokens": "node --test .design-sync/tokens/validate.test.mjs .design-sync/tokens/generate.test.mjs .design-sync/consumer-parity.test.mjs",
         "tokens:generate": "node .design-sync/tokens/generate.mjs",
         "tokens:validate": "node .design-sync/tokens/validate.mjs",
         "type-check": "turbo run type-check",
