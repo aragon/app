@@ -50,6 +50,13 @@
           "unknownOperationWarning": "This operation is not one the app recognises. Verify the action against the target contract before approving."
         },
         "permissionManager": {
+          "composer": {
+            "applyMultiTargetActionName": "Apply permissions (multi target)",
+            "applySingleTargetActionName": "Apply permissions (single target)",
+            "grantActionName": "Grant permission",
+            "grantWithConditionActionName": "Grant permission with condition",
+            "revokeActionName": "Revoke permission"
+          },
           "conditionTerm": "Condition",
           "operation": {
             "grant": "Grant",
