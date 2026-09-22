@@ -79,8 +79,9 @@ class MonitoringUtils {
     /**
      * Noise injected by the user's environment rather than our code or their actions:
      * in-app-browser scripts, conflicting wallet extensions, private-mode storage,
-     * aborted streaming responses and deploy skew. Routed exactly like expected user
-     * behaviour: kept for investigation, tagged `expected`, demoted to info, out of alerts.
+     * aborted streaming responses, deploy skew and malformed RSC request headers. Routed
+     * exactly like expected user behaviour: kept for investigation, tagged `expected`,
+     * demoted to info, out of alerts.
      */
     private environmentNoisePatterns = [
         // WKWebView in-app-browser scripts JSON.stringify-ing cyclic host objects. The Chrome
@@ -89,9 +90,13 @@ class MonitoringUtils {
         'cannot serialize cyclic structures',
         "'get' on proxy: property 'removeListener'", // Two wallet extensions fighting over window.ethereum
         "Failed to execute 'removeChild'", // Extensions/Google Translate mutating the DOM behind React
+        "Failed to execute 'insertBefore'", // Same extension DOM mutation, surfacing on insert instead of removal
         "Can't find variable: indexedDB", // Private mode / restricted WebView storage
         'Failed to find Server Action', // Deploy skew: the client bundle is older/newer than the server
         'The destination stream closed early', // Client aborted the streaming response mid-render
+        // Next rejects the request itself when the `Next-Router-State-Tree` header of an RSC
+        // request is not valid JSON: scanners fuzzing headers or proxies truncating them.
+        'The router state header was sent but could not be parsed',
     ];
 
     /**

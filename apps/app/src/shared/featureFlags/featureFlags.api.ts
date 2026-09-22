@@ -20,7 +20,8 @@ export type FeatureFlagKey =
     | 'aragonProfiles'
     | 'supportChat'
     | 'telegramSubscription'
-    | 'safeAccountPage';
+    | 'safeAccountPage'
+    | 'domainMemberList';
 
 /**
  * Feature flag definition structure.

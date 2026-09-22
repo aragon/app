@@ -25,9 +25,14 @@ const config = {
         // under src/. Pin next imports to the app's real package so tests are
         // unaffected by the shims' presence.
         '^next$': '<rootDir>/node_modules/next',
-        // Mirror the tsconfig `next/navigation-original` alias (the real next/navigation
-        // behind the client-hooks wrapper) for Jest's resolver.
+        // Mirror the tsconfig `next/navigation-original` alias (the client build of
+        // next/navigation behind the client-hooks wrapper) for Jest's resolver.
         '^next/navigation-original$': '<rootDir>/node_modules/next/navigation',
+        // Mirror the tsconfig `next/navigation-server` alias (the react-server entry of
+        // next/navigation used by server-only code). Points at the CJS build because Jest does
+        // not transform the ESM re-export under dist/api.
+        '^next/navigation-server$':
+            '<rootDir>/node_modules/next/dist/client/components/navigation.react-server',
         '^next/(.*)$': '<rootDir>/node_modules/next/$1',
         // Package only exposes a `module` field (no `main`/`exports`), which Jest's
         // Node-style resolver doesn't understand unlike bundlers (webpack/Next.js).

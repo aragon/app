@@ -46,6 +46,10 @@ export interface IRequestOptions
      * Additional headers for the request.
      */
     headers?: Record<string, string>;
+    /**
+     * Overrides the service-level cache configuration for this request only.
+     */
+    fetchCacheConfig?: FetchCacheConfig;
 }
 
 export type HttpServiceErrorHandler = (response: Response) => Promise<Error>;

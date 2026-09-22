@@ -6,7 +6,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
@@ -25,6 +25,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 
 export interface ITokenWrapFormProps {
     /**
@@ -107,7 +108,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         control,
         name: 'amount',
     });
-    const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
+    const wrapAmountWei = bigIntUtils.parseUnits(wrapAmount, token.decimals);
 
     const needsApproval =
         isConnected && (allowance == null || allowance < wrapAmountWei);

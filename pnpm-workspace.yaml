@@ -42,7 +42,7 @@ catalog:
   classnames: ^2.5.1
   cross-env: ^10.1.0
   file-type: ^22.0.2
-  hono: ^4.13.4
+  hono: ^4.13.5
   husky: ^9.1.7
   jest: ^30.4.2
   jest-environment-jsdom: ^30.4.1
