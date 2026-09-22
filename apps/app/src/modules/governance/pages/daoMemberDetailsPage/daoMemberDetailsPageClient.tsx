@@ -26,7 +26,6 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -35,6 +34,7 @@ import { type IMember, useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { DelegationSection } from '../../components/delegationSection';
 import { VoteList } from '../../components/voteList';
+import { daoMemberSourceUtils } from '../../utils/daoMemberSourceUtils';
 
 export interface IDaoMemberDetailsPageClientProps {
     /**
@@ -45,6 +45,14 @@ export interface IDaoMemberDetailsPageClientProps {
      * Address of the DAO member.
      */
     address: string;
+    /**
+     * DAO ID owning the selected member source.
+     */
+    memberDaoId?: string;
+    /**
+     * Selected member source to preserve in member navigation.
+     */
+    memberSourceId?: string;
     /**
      * Address of the body plugin resolved by the server component.
      */
@@ -66,7 +74,15 @@ const memberDaosCount = 3;
 export const DaoMemberDetailsPageClient: React.FC<
     IDaoMemberDetailsPageClientProps
 > = (props) => {
-    const { address, daoId, network, pluginAddress, tokenAddress } = props;
+    const {
+        address,
+        daoId,
+        memberDaoId = daoId,
+        memberSourceId,
+        network,
+        pluginAddress,
+        tokenAddress,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -76,16 +92,13 @@ export const DaoMemberDetailsPageClient: React.FC<
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const bodyPlugins = useDaoPlugins({
-        daoId,
-        pluginAddress,
-        includeLinkedAccounts: true,
-        includeSubPlugins: true,
-    });
-    const bodyPlugin = bodyPlugins?.[0]?.meta;
-
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress, tokenAddress, network };
+    const memberQueryParams = {
+        daoId: memberDaoId,
+        pluginAddress,
+        tokenAddress,
+        network,
+    };
     const memberParams = {
         urlParams: memberUrlParams,
         queryParams: memberQueryParams,
@@ -161,7 +174,7 @@ export const DaoMemberDetailsPageClient: React.FC<
         discord: ensRecords?.[ensRecordKeys.discord],
     };
 
-    if (dao == null || bodyPlugin == null) {
+    if (dao == null) {
         return null;
     }
 
@@ -188,7 +201,10 @@ export const DaoMemberDetailsPageClient: React.FC<
 
     const pageBreadcrumbs = [
         {
-            href: daoUtils.getDaoUrl(dao, 'members'),
+            href:
+                memberSourceId != null
+                    ? daoMemberSourceUtils.getMemberListUrl(dao, memberSourceId)
+                    : daoUtils.getDaoUrl(dao, 'members'),
             label: t(
                 'app.governance.daoMemberDetailsPage.header.breadcrumb.members',
             ),

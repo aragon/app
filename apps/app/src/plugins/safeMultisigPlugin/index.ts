@@ -1,6 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { SafeMemberPanel } from './components/safeMemberPanel';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
@@ -11,6 +12,11 @@ import { useSafeMultisigVotePermissionCheck } from './hooks/useSafeMultisigVoteP
 
 export const initialiseSafeMultisigPlugin = () => {
     pluginRegistryUtils
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
+            pluginId: safeBodyPluginId,
+            component: SafeMemberPanel,
+        })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
             pluginId: safeBodyPluginId,

@@ -2,21 +2,19 @@
 
 import {
     addressUtils,
-    ChainEntityType,
     DataListContainer,
     DataListPagination,
     DataListRoot,
     IconType,
-    useBlockExplorer,
     VoteDataListItem,
     type VoteIndicator,
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { safeAppHistoryUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
+import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { safeDataListUtils } from '@/modules/safe/utils/safeDataListUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeSettledReportOutcome } from '../../hooks/useSafeSettledReport';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
@@ -72,11 +70,11 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
         ? safeAppHistoryUrl({ network, address: body })
         : undefined;
 
-    // The owner rows only need a chain link, so resolve the explorer from the body's own network
-    // rather than fetching the DAO to rediscover it.
-    const { buildEntityUrl } = useBlockExplorer({
-        chainId: networkDefinitions[network].id,
-    });
+    const safeDaoId = `${network}-${proposal.daoAddress}`;
+    const memberSourceId = daoMemberSourceUtils.getSafeSourceId(
+        safeDaoId,
+        body,
+    );
 
     // A Safe confirmation is only ever agreement: an owner signs or does not, so there is no
     // against-indicator to render here.
@@ -126,10 +124,11 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
             >
                 {orderedSigners.map((signer) => (
                     <SafeMultisigVoteListItem
-                        href={buildEntityUrl({
-                            type: ChainEntityType.ADDRESS,
-                            id: signer,
-                        })}
+                        href={daoMemberSourceUtils.getMemberUrlFromDaoId(
+                            safeDaoId,
+                            signer,
+                            memberSourceId,
+                        )}
                         key={signer}
                         signer={signer}
                         voteIndicator={voteIndicator}
@@ -148,8 +147,7 @@ interface ISafeMultisigVoteListItemProps {
 }
 
 /**
- * Wrapper for a single confirmation that resolves the owner's ENS name. Safe owners are not DAO
- * members, so the row links to the block explorer rather than a member profile.
+ * Wrapper for a single confirmation that resolves the owner's ENS name.
  */
 const SafeMultisigVoteListItem: React.FC<ISafeMultisigVoteListItemProps> = (
     props,
@@ -162,8 +160,6 @@ const SafeMultisigVoteListItem: React.FC<ISafeMultisigVoteListItemProps> = (
     return (
         <VoteDataListItem.Structure
             href={href}
-            rel="noopener"
-            target="_blank"
             voteIndicator={voteIndicator}
             voter={{
                 address: signer,

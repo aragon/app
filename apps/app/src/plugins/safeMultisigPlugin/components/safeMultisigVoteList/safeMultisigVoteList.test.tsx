@@ -102,6 +102,26 @@ describe('<SafeMultisigVoteList /> component', () => {
         expect(rendered[1]).toContain(otherOwner);
     });
 
+    it('links a Safe signer to their DAO member profile', () => {
+        const daoAddress = '0x1111111111111111111111111111111111111111';
+        const body = '0x2222222222222222222222222222222222222222';
+
+        render(
+            createTestComponent({
+                proposal: generateSppProposal({
+                    network: Network.ETHEREUM_MAINNET,
+                    daoAddress,
+                }),
+                body,
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `/dao/ethereum-mainnet/${daoAddress}/members/${viewer}?members=safe%3Aethereum-mainnet-${daoAddress}%3A${body}`,
+        );
+    });
+
     it('states no signatures rather than an empty list when nothing is collected', () => {
         useSafeBodyStateSpy.mockReturnValue({ ...bodyState, signers: [] });
 

@@ -4,6 +4,7 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
+import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { FeaturedDelegatesList } from '@/plugins/tokenPlugin/components/featuredDelegatesList';
 import { useFeaturedDelegatesPlugin } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
@@ -18,6 +19,7 @@ import {
     featuredDelegatesTabId,
 } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { safeMemberSourceIdPrefix } from '../../utils/daoMemberSourceUtils';
 
 export interface IDaoMembersPageClientProps {
     /**
@@ -87,9 +89,26 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         includeLinkedAccounts: true,
         visibleOnly: true,
     });
+    const activeSafeSource = useMemo(() => {
+        if (!activeTabParam?.startsWith(safeMemberSourceIdPrefix)) {
+            return undefined;
+        }
+
+        const source = activeTabParam.slice(safeMemberSourceIdPrefix.length);
+        const separatorIndex = source.lastIndexOf(':');
+        const safeDaoId = source.slice(0, separatorIndex);
+        const safeAddress = source.slice(separatorIndex + 1);
+
+        return separatorIndex > 0 && addressUtils.isAddress(safeAddress)
+            ? { daoId: safeDaoId, address: safeAddress }
+            : undefined;
+    }, [activeTabParam]);
 
     const activeAsidePlugin = useMemo(() => {
         if (allBodyPlugins == null) {
+            return undefined;
+        }
+        if (activeSafeSource != null) {
             return undefined;
         }
 
@@ -117,6 +136,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         activeTabParam,
         isFeaturedTabActive,
         featuredDelegatesInfo,
+        activeSafeSource,
     ]);
 
     return (
@@ -128,6 +148,14 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
                 />
             </Page.Main>
             <Page.Aside>
+                {activeSafeSource != null && (
+                    <PluginSingleComponent
+                        daoId={activeSafeSource.daoId}
+                        pluginAddress={activeSafeSource.address}
+                        pluginId={safeBodyPluginId}
+                        slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
+                    />
+                )}
                 {activeAsidePlugin != null && (
                     <Page.AsideCard title={activeAsidePlugin.label}>
                         <DaoPluginInfo

@@ -5,6 +5,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { generateSppStagePlugin } from '../sppPlugin/testUtils';
 import { VotingBodyBrandIdentity } from '../sppPlugin/types';
 import { sppStageUtils } from '../sppPlugin/utils/sppStageUtils';
+import { SafeMemberPanel } from './components/safeMemberPanel';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
@@ -25,6 +26,10 @@ describe('safeMultisigPlugin registrations', () => {
     // A slot registered under an id the resolver never produces fails silently: the body simply
     // renders through the generic external fallback. Pair the two rather than trusting either.
     it.each([
+        {
+            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
+            component: SafeMemberPanel,
+        },
         {
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
             component: SafeMultisigProposalVotingBreakdown,

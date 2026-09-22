@@ -2,6 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import {
     daoService,
     Network,
@@ -108,6 +109,58 @@ describe('<DaoMemberDetailsPage /> component', () => {
         render(await createTestComponent({ params: Promise.resolve(params) }));
         expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
             memberOptions(memberParams).queryKey,
+        );
+    });
+
+    it('prefetches a Safe owner from the selected Safe member source', async () => {
+        const expectedDaoId = 'test-dao-id';
+        const safeAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        const sppPlugin = generateDaoPlugin<ISppPluginSettings>({
+            interfaceType: PluginInterfaceType.SPP,
+            isBody: false,
+            isProcess: true,
+            settings: {
+                pluginAddress: '0xspp',
+                stages: [
+                    {
+                        stageIndex: 0,
+                        plugins: [
+                            {
+                                address: safeAddress,
+                                interfaceType: undefined,
+                                brandId: 'safe',
+                                proposalType: 1,
+                            },
+                        ],
+                        voteDuration: 1,
+                        maxAdvance: 1,
+                        minAdvance: 0,
+                        approvalThreshold: 1,
+                        vetoThreshold: 0,
+                    },
+                ],
+            },
+        });
+        const dao = generateDao({ plugins: [sppPlugin] });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        getDaoSpy.mockResolvedValue(dao);
+
+        render(
+            await createTestComponent({
+                searchParams: Promise.resolve({
+                    members: `safe:${expectedDaoId}:${safeAddress}`,
+                }),
+            }),
+        );
+
+        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
+            memberOptions({
+                urlParams: { address: validAddress },
+                queryParams: {
+                    daoId: expectedDaoId,
+                    pluginAddress: safeAddress,
+                },
+            }).queryKey,
         );
     });
 
