@@ -45,7 +45,7 @@ export const PermissionChangeCard: React.FC<IPermissionChangeCardProps> = (
             <Heading size="h4">
                 {isKnownOperation
                     ? t(
-                          `app.actions.core.permissionChangesDetails.operation.${permissionOperationLabelKeys[operation]}`,
+                          `app.actions.core.permissionManager.operation.${permissionOperationLabelKeys[operation]}`,
                       )
                     : t(
                           'app.actions.core.permissionChangesDetails.unknownOperation',
@@ -62,20 +62,18 @@ export const PermissionChangeCard: React.FC<IPermissionChangeCardProps> = (
             )}
             <DefinitionList.Container>
                 {renderEntity(
-                    t('app.actions.core.permissionActionDetails.whoTerm'),
+                    t('app.actions.core.permissionManager.whoTerm'),
                     change.who,
                 )}
                 {showWhere &&
                     renderEntity(
-                        t('app.actions.core.permissionActionDetails.whereTerm'),
+                        t('app.actions.core.permissionManager.whereTerm'),
                         change.where,
                     )}
                 <PermissionIdItem permissionId={change.permissionId} />
                 {change.condition != null &&
                     renderEntity(
-                        t(
-                            'app.actions.core.permissionActionDetails.conditionTerm',
-                        ),
+                        t('app.actions.core.permissionManager.conditionTerm'),
                         change.condition,
                     )}
             </DefinitionList.Container>

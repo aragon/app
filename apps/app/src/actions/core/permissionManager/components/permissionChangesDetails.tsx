@@ -60,15 +60,13 @@ export const PermissionChangesDetails: React.FC<
     return (
         <div className="flex w-full flex-col gap-6">
             <AlertInline
-                message={t(
-                    'app.actions.core.permissionActionDetails.riskWarning',
-                )}
+                message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"
             />
             {hoistedWhere != null && (
                 <DefinitionList.Container>
                     {renderEntity(
-                        t('app.actions.core.permissionActionDetails.whereTerm'),
+                        t('app.actions.core.permissionManager.whereTerm'),
                         hoistedWhere,
                     )}
                 </DefinitionList.Container>

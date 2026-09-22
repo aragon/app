@@ -154,9 +154,7 @@ export const PermissionChangesCreate: React.FC<
     return (
         <div className="flex w-full flex-col gap-6">
             <AlertInline
-                message={t(
-                    'app.actions.core.permissionActionDetails.riskWarning',
-                )}
+                message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"
             />
             {hasHoistedWhere && (
@@ -166,9 +164,7 @@ export const PermissionChangesCreate: React.FC<
                     helpText={t(
                         'app.actions.core.permissionActionCreate.whereHelpText',
                     )}
-                    label={t(
-                        'app.actions.core.permissionActionDetails.whereTerm',
-                    )}
+                    label={t('app.actions.core.permissionManager.whereTerm')}
                     name={`inputData.parameters.${(tupleIndex - 1).toString()}.value`}
                 />
             )}
@@ -211,7 +207,7 @@ export const PermissionChangesCreate: React.FC<
                                                 <Toggle
                                                     key={candidate}
                                                     label={t(
-                                                        `app.actions.core.permissionChangesDetails.operation.${permissionOperationLabelKeys[candidate]}`,
+                                                        `app.actions.core.permissionManager.operation.${permissionOperationLabelKeys[candidate]}`,
                                                     )}
                                                     value={candidate.toString()}
                                                 />
@@ -235,7 +231,7 @@ export const PermissionChangesCreate: React.FC<
                                     `app.actions.core.permissionActionCreate.${isRevoke ? 'whoRevokeHelpText' : 'whoGrantHelpText'}`,
                                 )}
                                 label={t(
-                                    'app.actions.core.permissionActionDetails.whoTerm',
+                                    'app.actions.core.permissionManager.whoTerm',
                                 )}
                                 name={cellFieldName(rowIndex, 'who')}
                             />
@@ -247,7 +243,7 @@ export const PermissionChangesCreate: React.FC<
                                         'app.actions.core.permissionActionCreate.whereHelpText',
                                     )}
                                     label={t(
-                                        'app.actions.core.permissionActionDetails.whereTerm',
+                                        'app.actions.core.permissionManager.whereTerm',
                                     )}
                                     name={cellFieldName(rowIndex, 'where')}
                                 />
@@ -266,7 +262,7 @@ export const PermissionChangesCreate: React.FC<
                                     )}
                                     isCondition={true}
                                     label={t(
-                                        'app.actions.core.permissionActionDetails.conditionTerm',
+                                        'app.actions.core.permissionManager.conditionTerm',
                                     )}
                                     name={cellFieldName(rowIndex, 'condition')}
                                 />

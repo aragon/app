@@ -100,7 +100,7 @@ describe('<PermissionAddressInput /> component', () => {
         await formMethods?.trigger(fieldPath);
 
         expect(formMethods?.getFieldState(fieldPath).error?.message).toEqual(
-            'app.actions.core.permissionActionCreate.conditionRequired',
+            'app.actions.core.permissionAddressInput.conditionRequired',
         );
     });
 

@@ -35,9 +35,7 @@ export const PermissionIdItem: React.FC<IPermissionIdItemProps> = (props) => {
             <DefinitionList.Item
                 copyValue={permissionId}
                 description={permissionName}
-                term={t(
-                    'app.actions.core.permissionActionDetails.permissionTerm',
-                )}
+                term={t('app.actions.core.permissionManager.permissionTerm')}
             >
                 <Tooltip content={permissionId} triggerAsChild={true}>
                     <span>{addressUtils.truncateHash(permissionId)}</span>

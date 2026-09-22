@@ -65,7 +65,7 @@ describe('<PermissionActionDetails /> component', () => {
 
         expect(screen.getByText('EXECUTE_PERMISSION')).toBeInTheDocument();
         expect(
-            screen.getByText(/permissionActionDetails.permissionTerm/),
+            screen.getByText(/permissionManager.permissionTerm/),
         ).toBeInTheDocument();
         expect(
             screen.queryByText(/permissionActionDetails.unknownPermission/),
@@ -92,7 +92,7 @@ describe('<PermissionActionDetails /> component', () => {
 
         expect(screen.getByText('EXECUTE_PERMISSION')).toBeInTheDocument();
         expect(
-            screen.getByText(/permissionActionDetails.whoTerm/),
+            screen.getByText(/permissionManager.whoTerm/),
         ).toBeInTheDocument();
     });
 
@@ -102,10 +102,10 @@ describe('<PermissionActionDetails /> component', () => {
         render(createTestComponent(createTestAction(permissionId)));
 
         expect(
-            screen.getByText(/permissionActionDetails.whoTerm/),
+            screen.getByText(/permissionManager.whoTerm/),
         ).toBeInTheDocument();
         expect(
-            screen.getByText(/permissionActionDetails.whereTerm/),
+            screen.getByText(/permissionManager.whereTerm/),
         ).toBeInTheDocument();
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
     });

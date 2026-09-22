@@ -41,9 +41,7 @@ export const PermissionActionCreate: React.FC<IPermissionActionCreateProps> = (
     return (
         <div className="flex w-full flex-col gap-6">
             <AlertInline
-                message={t(
-                    'app.actions.core.permissionActionDetails.riskWarning',
-                )}
+                message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"
             />
             <PermissionAddressInput
@@ -52,7 +50,7 @@ export const PermissionActionCreate: React.FC<IPermissionActionCreateProps> = (
                 helpText={t(
                     `app.actions.core.permissionActionCreate.${isRevoke ? 'whoRevokeHelpText' : 'whoGrantHelpText'}`,
                 )}
-                label={t('app.actions.core.permissionActionDetails.whoTerm')}
+                label={t('app.actions.core.permissionManager.whoTerm')}
                 name={parameterField(1)}
             />
             <PermissionAddressInput
@@ -61,7 +59,7 @@ export const PermissionActionCreate: React.FC<IPermissionActionCreateProps> = (
                 helpText={t(
                     'app.actions.core.permissionActionCreate.whereHelpText',
                 )}
-                label={t('app.actions.core.permissionActionDetails.whereTerm')}
+                label={t('app.actions.core.permissionManager.whereTerm')}
                 name={parameterField(0)}
             />
             <PermissionIdInput
@@ -77,7 +75,7 @@ export const PermissionActionCreate: React.FC<IPermissionActionCreateProps> = (
                     )}
                     isCondition={true}
                     label={t(
-                        'app.actions.core.permissionActionDetails.conditionTerm',
+                        'app.actions.core.permissionManager.conditionTerm',
                     )}
                     name={parameterField(3)}
                 />

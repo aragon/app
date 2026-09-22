@@ -100,10 +100,10 @@ describe('<PermissionChangesDetails /> component', () => {
         const headings = screen.getAllByRole('heading', { level: 4 });
         expect(headings).toHaveLength(2);
         expect(headings[0]).toHaveTextContent(
-            'permissionChangesDetails.operation.revoke',
+            'permissionManager.operation.revoke',
         );
         expect(headings[1]).toHaveTextContent(
-            'permissionChangesDetails.operation.grant',
+            'permissionManager.operation.grant',
         );
     });
 
@@ -135,7 +135,7 @@ describe('<PermissionChangesDetails /> component', () => {
         render(createTestComponent(action));
 
         expect(
-            screen.getByText(/permissionActionDetails.conditionTerm/),
+            screen.getByText(/permissionManager.conditionTerm/),
         ).toBeInTheDocument();
     });
 
@@ -143,8 +143,8 @@ describe('<PermissionChangesDetails /> component', () => {
         render(createTestComponent(createSingleTargetAction()));
 
         // Rendered once above the cards, not repeated on each card.
-        expect(
-            screen.getAllByText(/permissionActionDetails.whereTerm/),
-        ).toHaveLength(1);
+        expect(screen.getAllByText(/permissionManager.whereTerm/)).toHaveLength(
+            1,
+        );
     });
 });

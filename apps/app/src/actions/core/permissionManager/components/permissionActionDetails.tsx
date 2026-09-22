@@ -46,26 +46,22 @@ export const PermissionActionDetails: React.FC<
     return (
         <div className="flex w-full flex-col gap-4">
             <AlertInline
-                message={t(
-                    'app.actions.core.permissionActionDetails.riskWarning',
-                )}
+                message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"
             />
             <DefinitionList.Container>
                 {renderEntity(
-                    t('app.actions.core.permissionActionDetails.whoTerm'),
+                    t('app.actions.core.permissionManager.whoTerm'),
                     who,
                 )}
                 {renderEntity(
-                    t('app.actions.core.permissionActionDetails.whereTerm'),
+                    t('app.actions.core.permissionManager.whereTerm'),
                     where,
                 )}
                 <PermissionIdItem permissionId={permissionId} />
                 {condition != null &&
                     renderEntity(
-                        t(
-                            'app.actions.core.permissionActionDetails.conditionTerm',
-                        ),
+                        t('app.actions.core.permissionManager.conditionTerm'),
                         condition,
                     )}
             </DefinitionList.Container>

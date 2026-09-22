@@ -151,7 +151,7 @@ describe('<PermissionChangesCreate /> component', () => {
         {
             condition: zeroAddress,
             message:
-                'app.actions.core.permissionActionCreate.conditionRequired',
+                'app.actions.core.permissionAddressInput.conditionRequired',
         },
         { condition: whoAddress, message: undefined },
     ])(
@@ -246,12 +246,12 @@ describe('<PermissionChangesCreate /> component', () => {
         );
 
         // One Where for the action, none inside the row.
-        expect(
-            screen.getAllByText(/permissionActionDetails.whereTerm/),
-        ).toHaveLength(1);
-        expect(
-            screen.getAllByText(/permissionActionDetails.whoTerm/),
-        ).toHaveLength(1);
+        expect(screen.getAllByText(/permissionManager.whereTerm/)).toHaveLength(
+            1,
+        );
+        expect(screen.getAllByText(/permissionManager.whoTerm/)).toHaveLength(
+            1,
+        );
     });
 
     it("does not hand the removed row's errors to the row that slides into its place", async () => {

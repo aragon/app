@@ -57,7 +57,7 @@ export const PermissionAddressInput: React.FC<IPermissionAddressInputProps> = (
                 }) &&
                 (!isCondition ||
                     fieldValue !== zeroAddress ||
-                    'app.actions.core.permissionActionCreate.conditionRequired'),
+                    'app.actions.core.permissionAddressInput.conditionRequired'),
         },
         sanitizeOnBlur: false,
     });
