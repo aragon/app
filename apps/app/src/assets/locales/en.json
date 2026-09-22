@@ -40,9 +40,9 @@
           "conditionRequired": "Enter a nonzero condition contract address."
         },
         "permissionChangesCreate": {
-          "addChange": "Add permission change",
+          "addChange": "Permission change",
           "changeLabel": "Change",
-          "emptyList": "No permission changes yet. Add one to start.",
+          "emptyList": "No permission changes yet.",
           "removeChange": "Remove permission change"
         },
         "permissionChangesDetails": {
