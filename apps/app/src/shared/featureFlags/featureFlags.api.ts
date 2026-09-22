@@ -20,6 +20,7 @@ export type FeatureFlagKey =
     | 'aragonProfiles'
     | 'supportChat'
     | 'telegramSubscription'
+    | 'safeAccountPage'
     | 'domainMemberList';
 
 /**

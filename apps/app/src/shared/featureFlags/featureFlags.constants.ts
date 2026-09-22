@@ -159,6 +159,17 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
+        key: 'safeAccountPage',
+        name: 'Safe account page',
+        description:
+            'Enables the Safe account page and links to queued Safe transactions.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            preview: true,
+        },
+    },
+    {
         key: 'domainMemberList',
         name: 'Aragon domain member list',
         description:
