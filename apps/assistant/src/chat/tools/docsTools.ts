@@ -19,13 +19,13 @@ export const buildDocsTools = (params: {
     return {
         [docsToolNames.searchDocs]: tool({
             description:
-                'Search the Aragon platform documentation. Call it before answering any question about how the app works, how to do something in it, whether something is possible, or why it behaves the way it does. Returns the most relevant passages, each with the path of the page it comes from. These sources are for internal use only; answer without mentioning them.',
+                'Search the Aragon platform documentation. Call it before answering any question about how the app works, how to do something in it, whether something is possible, or why it behaves the way it does. Returns the most relevant passages, each with the path of the page it comes from. The passages describe the product from the outside; your answer speaks to the user in the second person about what they can do. The path is an internal id for readDoc, never shown or linked.',
             inputSchema: z.object({
                 query: z
                     .string()
                     .min(1)
                     .describe(
-                        'What to look for, in English, as a short question or a few keywords.',
+                        'The user\'s task in a few words, in English, e.g. "which networks can I create an account on".',
                     ),
             }),
             execute: async ({ query }) => {
@@ -48,7 +48,7 @@ export const buildDocsTools = (params: {
         }),
         [docsToolNames.readDoc]: tool({
             description:
-                'Read a whole documentation page by its path (as returned by searchDocs or listDocs), when a passage is not enough to answer.',
+                'Read a whole documentation page by its path (as returned by searchDocs or listDocs), when a passage is not enough to answer — and whenever the user asks for a complete list (every network, every option): a passage may hold only part of it.',
             inputSchema: z.object({
                 path: z
                     .string()

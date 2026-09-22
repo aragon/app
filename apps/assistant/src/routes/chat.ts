@@ -279,7 +279,6 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                                 // draft, the tool and the post-approval summary.
                                 stopWhen: stepCountIs(8),
                                 system: buildAgentSystemPrompt({
-                                    appContext,
                                     hasAttachments: hasAttachments(messages),
                                     docsSearchEnabled,
                                 }),

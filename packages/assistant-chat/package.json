@@ -32,6 +32,7 @@
         "@vercel/blob": "catalog:",
         "ai": "catalog:",
         "classnames": "catalog:",
+        "remark-gfm": "catalog:",
         "zod": "catalog:"
     },
     "devDependencies": {

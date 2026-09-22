@@ -55,6 +55,7 @@ catalog:
   react-dom: ^19.3.0
   react-dropzone: ^15.0.0
   react-hook-form: ^7.88.0
+  remark-gfm: ^4.0.1
   tailwindcss: ^4.3.3
   ts-jest: ^29.4.12
   tsup: ^8.5.1

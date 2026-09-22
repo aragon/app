@@ -16,19 +16,20 @@ export const ticketIntentSchema = z
 
 export type ITicketIntent = z.infer<typeof ticketIntentSchema>;
 
-// Fields the model must assemble before calling the tool. Deliberately lenient on lengths: a thin
-// ticket is fine (the team follows up), while a strict floor turned short-but-valid drafts into
-// tool errors the model then narrated verbatim to the user. Fields are English (enforced by the
-// system prompt) while the chat stays in the user's language.
+// Fields the model must assemble before calling the tool. Lenient floors: a thin ticket is fine
+// (the team follows up), while a strict floor turned short-but-valid drafts into tool errors the
+// model then narrated verbatim to the user. The ceilings are far above anything a model drafts
+// from a chat — they bound what a hand-made tool call can push into Linear. Fields are English
+// (enforced by the system prompt) while the chat stays in the user's language.
 export const createTicketToolInputSchema = z.object({
     intent: ticketIntentSchema,
     title: z.string().min(1).max(160),
-    description: z.string().min(1),
+    description: z.string().min(1).max(8000),
     // Optional free-form contact channel (email, Telegram, anything the user offers): used by the
     // team to follow up when provided, never blocks creation.
-    contact: z.string().optional(),
+    contact: z.string().max(200).optional(),
     // One step per item, unnumbered — the natural shape models produce; rendering owns numbering.
-    stepsToReproduce: z.array(z.string()).optional(),
+    stepsToReproduce: z.array(z.string().max(500)).max(30).optional(),
 });
 
 export type ICreateTicketToolInput = z.infer<

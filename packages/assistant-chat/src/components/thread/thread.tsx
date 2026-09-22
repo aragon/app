@@ -1,6 +1,7 @@
 import {
+    assistantLimits,
     createTicketToolName,
-    docsToolNames,
+    docsToolNameSet,
 } from '@aragon/assistant-contracts';
 import { Heading, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
 import {
@@ -12,7 +13,6 @@ import {
     ErrorPrimitive,
     MessagePrimitive,
     ThreadPrimitive,
-    type ToolCallMessagePartComponent,
     useAuiState,
 } from '@assistant-ui/react';
 import classNames from 'classnames';
@@ -300,10 +300,15 @@ const Composer: React.FC<IComposerProps> = (props) => {
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
+                    {/* The limit the service enforces per message, applied where the text is
+                        typed: the textarea stops at it (a longer paste is clipped) and the count
+                        below says so, instead of the message travelling to the service and
+                        coming back as a failed reply. */}
                     <ComposerPrimitive.Input
                         aria-label={chatCopy.composer.inputLabel}
                         className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-neutral-800 text-sm caret-primary-400 outline-none placeholder:text-neutral-300"
                         enterKeyHint="send"
+                        maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
                         ref={inputRef}
                         rows={1}
@@ -333,11 +338,41 @@ const SendArrowIcon: React.FC = () => (
     </svg>
 );
 
+// The count appears once the message is this far towards the limit: a short message never
+// shows it, a long paste that the textarea clipped at the limit is noticed.
+const characterCountThreshold = 0.8;
+
+const characterCountFormatter = new Intl.NumberFormat('en-US');
+
+const ComposerCharacterCount: React.FC = () => {
+    const length = useAuiState((state) => state.composer.text.length);
+    const limit = assistantLimits.maxMessageLength;
+
+    if (length < limit * characterCountThreshold) {
+        return null;
+    }
+
+    return (
+        <p
+            className={classNames(
+                'text-xs tabular-nums',
+                length >= limit ? 'text-critical-600' : 'text-neutral-400',
+            )}
+        >
+            {chatCopy.composer.characterCount(
+                characterCountFormatter.format(length),
+                characterCountFormatter.format(limit),
+            )}
+        </p>
+    );
+};
+
 const ComposerAction: React.FC = () => {
     return (
         <div className="relative flex items-center justify-between">
             <ComposerAddAttachment />
             <div className="flex items-center gap-1.5">
+                <ComposerCharacterCount />
                 <AuiIf condition={(state) => !state.thread.isRunning}>
                     <ComposerPrimitive.Send asChild={true}>
                         <TooltipIconButton
@@ -402,35 +437,55 @@ const MessageError: React.FC = () => (
     </MessagePrimitive.Error>
 );
 
-// Waiting for the first token: a plain spinner, the familiar chat loader.
-const AssistantTyping: EmptyMessagePartComponent = ({ status }) => {
-    if (status.type !== 'running') {
-        return null;
+// assistant-ui renders the Empty part not only for a message without parts but also, while the
+// message runs, next to a trailing part that is not text (a tool call); a spinner there sat
+// under the spinner of the running documentation tool and made two, three with a second tool.
+// The Empty part is silenced and the indicator below is the one place a spinner comes from.
+const SilentEmptyPart: EmptyMessagePartComponent = () => null;
+
+// What the reply is waiting on with nothing to show for it yet, or undefined once there is
+// something to show. Before any part: the first token. After a tool call that renders nothing
+// (the documentation tools run silently — the service drops the text a model writes before
+// calling one — and so does flagOffTopic): the text that follows it; the ticket tool draws its
+// own card and needs no indicator. The message state decides, so the same element stays up from
+// the send until the answer streams, through every tool call in between, however many and in
+// whatever order.
+const selectWorkingLabel = (state: AssistantState): string | undefined => {
+    const { status, parts } = state.message;
+
+    if (status?.type !== 'running') {
+        return undefined;
     }
 
-    return (
-        <div
-            aria-label={chatCopy.thread.typing}
-            className="flex items-center py-1"
-            role="status"
-        >
-            <Spinner size="md" variant="neutral" />
-        </div>
-    );
+    const lastPart = parts.at(-1);
+
+    if (lastPart == null || lastPart.type === 'reasoning') {
+        return chatCopy.thread.typing;
+    }
+
+    if (
+        lastPart.type === 'tool-call' &&
+        lastPart.toolName !== createTicketToolName
+    ) {
+        return docsToolNameSet.has(lastPart.toolName)
+            ? chatCopy.thread.lookingUp
+            : chatCopy.thread.typing;
+    }
+
+    return undefined;
 };
 
-// The documentation tools run silently (the service drops the text a model writes before calling
-// them), so while one runs the reply would be a blank bubble: the same spinner as the first
-// token gets, labelled for what is happening. A finished tool renders nothing; the answer follows
-// as text.
-const DocsToolStatus: ToolCallMessagePartComponent = ({ status }) => {
-    if (status.type !== 'running') {
+// A plain spinner, the familiar chat loader, labelled for what is happening.
+const AssistantWorking: React.FC = () => {
+    const label = useAuiState(selectWorkingLabel);
+
+    if (label == null) {
         return null;
     }
 
     return (
         <div
-            aria-label={chatCopy.thread.searchingDocs}
+            aria-label={label}
             className="flex items-center py-1"
             role="status"
         >
@@ -466,22 +521,21 @@ const AssistantMessage: React.FC = () => (
         data-role="assistant"
     >
         <div className="wrap-break-word px-2 text-neutral-800 text-sm leading-relaxed">
-            {/* A tool without a registered component (flagOffTopic) deliberately renders
-                nothing — the model narrates around it. */}
+            {/* A tool without a registered component deliberately renders nothing: the model
+                narrates around flagOffTopic, and the documentation tools are covered by the
+                single indicator below. */}
             <MessagePrimitive.Parts
                 components={{
                     Text: MarkdownText,
-                    Empty: AssistantTyping,
+                    Empty: SilentEmptyPart,
                     tools: {
                         by_name: {
                             [createTicketToolName]: CreateTicketCard,
-                            [docsToolNames.searchDocs]: DocsToolStatus,
-                            [docsToolNames.readDoc]: DocsToolStatus,
-                            [docsToolNames.listDocs]: DocsToolStatus,
                         },
                     },
                 }}
             />
+            <AssistantWorking />
             <MessageError />
         </div>
 

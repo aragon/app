@@ -15,8 +15,10 @@ export const docsToolNameSet: ReadonlySet<string> = new Set(
 // One documentation search hit as the model receives it from the searchDocs tool. `path` is the
 // page's corpus-relative path (accounts/account.md) — the identity the readDoc tool takes — and
 // deliberately not a public URL: where the knowledge base gets published, and therefore what a
-// citation would link to, is still undecided, so answers carry no sources yet. The excerpt is the
-// matching passage, the breadcrumb its place in the documentation (area › page › section).
+// citation would link to, is still undecided, so answers cite no pages of it. The only links an
+// answer may carry are the absolute ones inside the passages themselves (the protocol
+// documentation on GitHub, aragon.org). The excerpt is the matching passage, the breadcrumb its
+// place in the documentation (area › page › section).
 export const docSearchResultSchema = z.object({
     path: z.string(),
     title: z.string(),
