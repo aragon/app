@@ -51,7 +51,18 @@ Write a short decision card before choosing a task:
 5. Why static inspection or existing evidence cannot settle it.
 6. Smallest output that exposes the decision: usually a component/contract choice with citations and minimal composition, not a rendered application.
 7. The stop rule and interpretation for both correct, candidate-only correct, old-only correct, both wrong, or incomparable runs.
-8. Which question this run answers, declared before it runs: **no-regression** or **delta**. The candidate context is a superset of the old — it adds material and removes none — so a task the old arm already satisfies cannot separate them. Both arms passing is then the expected and correct result, and it is evidence of no regression, not an absence of value. A delta run instead requires a need whose correct answer depends on material only the candidate carries (registry usage/ownership evidence, App-owned compound contracts, source references), with the old arm expected to fail or answer less precisely. Naming the expectation up front is what keeps a delta probe from being a puzzle built to reward new wording: the answer key still comes from revision-matched source, and a delta task that the old arm passes is a real null result to record, not a task to replace.
+8. Which question this run answers, declared before it runs: **no-regression** or **delta**. The candidate context is a superset of the old — it adds material and removes none — so a task the old arm already satisfies cannot separate them. Both arms passing is then the expected and correct result: evidence of no regression, not an absence of value.
+
+   A delta run is designed in this order, and the order is what keeps it honest:
+
+   1. Choose an arbitrary realistic feature a team would actually ask for. Do not inspect the added context first and reverse-engineer a task around it.
+   2. Build the answer key from revision-matched source, independent of either bundle.
+   3. Run the candidate arm and observe whether the feature is composed or reasoned about more effectively — correct component and contract, fewer dead ends, citations that resolve.
+   4. Then check the baseline recursively: could the old bundle have reached the same answer at all? Not "did it score worse" but "was the material it would need even present in it?"
+
+   Step 4 is a finding, not a design target. That is the distinction from the caution in the outcomes table below: that rule forbids reacting to a null by escalating difficulty until the old arm breaks. Here difficulty is fixed by a realistic need before either arm runs, and the baseline's reach is measured afterwards. A delta task the old arm also satisfies is a real null result to record, not a task to replace.
+
+   Prefer a probe whose signal is structural rather than qualitative — the old arm cannot cite a source path or contract its bundle does not contain — because the consumer is probabilistic while the bundle is deterministic, and a single pair cannot separate model variance from context effect on a matter of degree.
 
 Do not put component names, source paths, the new guide's name, the expected contract, or baseline output into the user task unless that information is naturally part of the real user request. Both arms get the same instruction to ground their answer. Keep the answer key separate.
 
@@ -82,7 +93,7 @@ Use the existing observation labels with direct evidence. Keep task outcome, def
 
 | Result | Decision |
 | --- | --- |
-| Both correct with comparable observed discovery | No demonstrated advantage for this task; keep correctness-critical material, consider simplifying redundant context. Do not seek a harder task merely to manufacture a win. |
+| Both correct with comparable observed discovery | On a no-regression run this is the expected pass, and the superset bundle is confirmed to have broken nothing. On a delta run it is a genuine null: keep correctness-critical material, consider simplifying redundant context. Do not seek a harder task merely to manufacture a win — a fresh delta probe is designed from a new realistic need under item 8, never by escalating difficulty against a known baseline answer. |
 | Candidate reaches a correct decision or avoids a documented dead end | Evidence consistent with the declared mechanism; useful case evidence, not proof of a general effect or per-file credit. |
 | Old correct, candidate wrong | Inspect conflict, distraction or accidental arm differences before blaming content. Retain the failure. |
 | Both wrong | Check missing authority/access and task feasibility before adding instructions or rerunning. |
