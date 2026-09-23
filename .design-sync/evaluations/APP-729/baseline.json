@@ -110,6 +110,8 @@
             ],
             "runtimeEvidence": "runs/candidate/",
             "separateDisposableProject": false,
+            "baselineOverwritten": false,
+            "isolationAchieved": "The candidate was uploaded as its own Claude Design project (e6b58c10), so the configured design system was never overwritten and the old run stayed measurable against it. What 'false' above records is narrower: the candidate project exposed no New design action, so generation ran inside that supplied candidate project and wrote its output files there, rather than in a throwaway session forked from it.",
             "comparabilityLimitation": "The unpublished candidate exposed no New design action; generation ran in the supplied candidate project and created output files there."
         },
         "comparison": "comparison.json",

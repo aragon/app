@@ -240,8 +240,10 @@
         },
         "currentCandidate": {
             "branchHead": "8a3ea8c8ed7040bf609fced7f3c5c2cfdfd5c486",
-            "commitsSinceEvaluation": [
-                "67cb6c34d integrate unmerged source-ticket branches into the candidate",
+            "alreadyPresentInTheEvaluatedCandidate": [
+                "67cb6c34d integrate unmerged source-ticket branches into the candidate — this commits the six-PR content the evaluated artifact was already assembled from (registry.mjs, registry.json, selection-guide.*). It is the evaluated state being recorded, not a change after it. Note the routed defect: that content existed in the source tree but registry.json and selection-guide.json were absent from the delivered payload."
+            ],
+            "genuinelyNewSinceEvaluation": [
                 "633f6b1a8 deliver context and source-derived contracts in the bundle",
                 "29d9a8a66 stop claiming the registry exists at the recorded base revision",
                 "777bef591 type GovKit compound members and restore degraded prop types",
