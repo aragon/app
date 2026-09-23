@@ -192,6 +192,41 @@ WizardPage({});
     }
 });
 
+test('no emitted declaration uses a React type it never imports', () => {
+    // The base renderer strips import() qualifiers, so a React type can land
+    // bare in a file that only imports the React namespace. Those declarations
+    // do not resolve for a consumer, and kit files are not covered by the
+    // consumer compile above.
+    const names = [
+        'CSSProperties',
+        'ReactNode',
+        'ReactElement',
+        'ComponentType',
+        'AnchorHTMLAttributes',
+        'RefObject',
+    ];
+    const offenders = [];
+    for (const file of filesUnder(join(OUT, 'components')).filter((f) =>
+        f.endsWith('.d.ts'),
+    )) {
+        const text = readFileSync(file, 'utf8');
+        const imported = new Set(
+            [...text.matchAll(/^import type \{([^}]*)\} from 'react';$/gm)]
+                .flatMap((match) => match[1].split(','))
+                .map((name) => name.trim()),
+        );
+        for (const name of names) {
+            if (imported.has(name)) {
+                continue;
+            }
+            if (new RegExp(`(^|[^\\w$.'"])${name}(?![\\w$])`, 'm').test(text)) {
+                offenders.push(`${basename(file)}: ${name}`);
+            }
+        }
+    }
+    assert.deepEqual(offenders, []);
+});
+
 test('manifest validation rejects missing and stale payload files', () => {
     const out = mkdtempSync(join(tmpdir(), 'app-1208-refresh-'));
     const file = join(out, 'payload.txt');

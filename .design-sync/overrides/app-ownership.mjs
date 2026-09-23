@@ -210,9 +210,87 @@ function contractForValue(value, fallbackName) {
         props = basePropsBodyFor(fallbackName, ctx);
     }
     const contract = props
-        ? { value, signature, parameter, propsType, declaration, props }
+        ? restoreNamedTypes({
+              value,
+              signature,
+              parameter,
+              propsType,
+              declaration,
+              props,
+          })
         : null;
     contractCache.set(value, contract);
+    return contract;
+}
+
+// The base renderer falls back to `unknown` for any type whose text exceeds its
+// length cap, which silently erases wide enums: `icon?: IconType` (600+ members)
+// becomes `icon?: unknown`. The alias symbol still knows the real name, so the
+// name is restored here. The import is emitted by the existing prelude pass,
+// which keys off the identifiers actually present in the body.
+function restoreNamedTypes(contract) {
+    const body = contract?.props?.body;
+    if (!body?.includes(': unknown')) {
+        return contract;
+    }
+    const at = contract.declaration ?? contract.value;
+    const named = new Map();
+    for (const property of contract.propsType
+        ?.getApparentType?.()
+        .getProperties?.() ?? []) {
+        const type = property.getTypeAtLocation?.(at);
+        // The whole type first: a wide enum IS a union, and only the union
+        // itself carries the alias symbol its members lack.
+        const candidates = [
+            type,
+            ...(type?.isUnion?.() ? type.getUnionTypes() : []),
+        ];
+        for (const candidate of candidates) {
+            const alias =
+                candidate?.getAliasSymbol?.() ?? candidate?.getSymbol?.();
+            const name = alias?.getName?.();
+            const declaration = symbolDeclarations(alias).types[0];
+            if (!name || name === '__type' || !declaration) {
+                continue;
+            }
+            // Only a name a consumer can actually resolve: a declared package
+            // export, or an App type the prelude will emit alongside.
+            const packageName = packageFor(declaration);
+            if (
+                packageName
+                    ? appOwnership().dependencies.has(packageName)
+                    : appDeclaration(declaration)
+            ) {
+                named.set(property.getName(), name);
+                break;
+            }
+        }
+    }
+    // `unknown | X` already REDUCES to `unknown` in TypeScript, so listing the
+    // surviving members only suggests a precision the contract does not have.
+    // Say `unknown` once. Dropping the `unknown` member instead would be the
+    // lie: it would claim X is the whole accepted type.
+    const collapsed = body.replace(
+        /^(\s*)("?[\w$]+"?)(\??): unknown \|.*;$/gm,
+        '$1$2$3: unknown;',
+    );
+    if (!named.size) {
+        contract.props =
+            collapsed === body
+                ? contract.props
+                : { ...contract.props, body: collapsed };
+        return contract;
+    }
+    contract.props = {
+        ...contract.props,
+        body: collapsed.replace(
+            /^(\s*)("?[\w$]+"?)(\??): unknown;$/gm,
+            (line, indent, key, optional) => {
+                const name = named.get(key.replace(/"/g, ''));
+                return name ? `${indent}${key}${optional}: ${name};` : line;
+            },
+        ),
+    };
     return contract;
 }
 

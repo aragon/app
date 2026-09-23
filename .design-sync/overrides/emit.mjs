@@ -17,10 +17,17 @@ import {
     srcRefFor,
 } from './app-ownership.mjs';
 
-// The official emitter owns every template and calls the component list once;
-// this adapter changes only App-owned metadata and source-derived declarations.
-// Kit files therefore remain byte-for-byte base output, while hashes are still
-// computed by the official package-build after this hook returns.
+// The official emitter owns every template and calls the component list once.
+// This adapter then refines its output in three narrow ways: App-owned metadata
+// and source-derived declarations, typed members for kit compounds (the base
+// template hardcodes `React.ComponentType<any>` for every member), and
+// qualifying React type names the base renderer leaves bare.
+//
+// Kit .d.ts files are therefore NO LONGER byte-for-byte base output - an
+// earlier version of this header claimed they were, and that stopped being
+// true when compound member typing landed. Kit .jsx, .prompt.md, previews and
+// every runtime artifact are still untouched base output, and all hashes are
+// still computed by the official package-build after this hook returns.
 export * from '../../.ds-sync/lib/emit.mjs';
 
 function childDeclarations(name, members) {
@@ -164,9 +171,129 @@ function refineAppFiles({ components, OUT, GLOBAL }) {
     }
 }
 
+// The base template hardcodes `React.ComponentType<any>` for every compound
+// member, so kit compounds ship propless children (Dialog.Header, Tabs.Trigger
+// and 59 more). The member's own props ARE in the shipped types - the component
+// was extracted and then grouped under its parent - so they are recovered here
+// through the same bound extractor the base emitter uses. A member that cannot
+// be resolved keeps `any` rather than getting an invented contract.
+function refineKitCompounds({ components, OUT, compoundsFor, propsBodyFor }) {
+    for (const c of components) {
+        const members = compoundsFor?.(c.name) ?? [];
+        if (owns(c.name) || !members.length) {
+            continue;
+        }
+        const file = join(OUT, 'components', c.group, c.name, `${c.name}.d.ts`);
+        if (!existsSync(file)) {
+            throw new Error(`[kit-emit] missing generated ${file}`);
+        }
+        const interfaces = [];
+        const properties = [];
+        for (const member of members) {
+            const candidates = [`${c.name}${member}`, member].filter(
+                (candidate) => !owns(candidate),
+            );
+            let resolved = null;
+            for (const candidate of candidates) {
+                const props = propsBodyFor(candidate);
+                if (props) {
+                    resolved = { candidate, props };
+                    break;
+                }
+            }
+            if (!resolved) {
+                properties.push(`  ${member}: React.ComponentType<any>;`);
+                continue;
+            }
+            const interfaceName = `${resolved.candidate}Props`;
+            const body = String(resolved.props.body ?? '')
+                .replace(/ \/\* @(?:fn|arr) \*\//g, '')
+                .trimEnd();
+            interfaces.push(
+                `export interface ${interfaceName}${resolved.props.generics ?? ''}${resolved.props.extendsClause ?? ''} {\n${body ? `${body}\n` : ''}}\n\n`,
+            );
+            properties.push(
+                `  ${member}: React.ComponentType<${interfaceName}>;`,
+            );
+        }
+        if (!interfaces.length) {
+            continue;
+        }
+        const text = readFileSync(file, 'utf8');
+        const callable = text.includes(
+            `export declare const ${c.name}: React.ComponentType<${c.name}Props>`,
+        );
+        const declaration =
+            `${interfaces.join('')}export declare const ${c.name}: ` +
+            (callable ? `React.ComponentType<${c.name}Props> & ` : '') +
+            `{\n${properties.join('\n')}\n};\n`;
+        writeFileSync(
+            file,
+            replaceVariableStatement(text, c.name, declaration),
+        );
+    }
+}
+
+// The base renderer strips `import(...)` qualifiers, so React types land bare
+// (`style?: CSSProperties`) in kit files that only ever import the React
+// namespace. That predates the typed members below - `Button.d.ts` has no
+// members and still carries it - and it makes those declarations unresolvable.
+// Every emitted file imports `* as React`, so qualifying the React-owned names
+// fixes them without inventing an import. Names a file imports explicitly are
+// left alone, which is what keeps App files (they import from 'react') intact.
+const REACT_TYPES = [
+    'CSSProperties',
+    'ReactNode',
+    'ReactElement',
+    'ComponentType',
+    'FunctionComponent',
+    'ComponentPropsWithRef',
+    'ComponentPropsWithoutRef',
+    'AnchorHTMLAttributes',
+    'ButtonHTMLAttributes',
+    'InputHTMLAttributes',
+    'HTMLAttributes',
+    'RefObject',
+    // Deliberately NOT the *Event names. MouseEvent/KeyboardEvent/ChangeEvent/
+    // FormEvent are lib.dom globals that already resolve, and React's synthetic
+    // equivalents are DIFFERENT types. Radix calls onEscapeKeyDown with a native
+    // KeyboardEvent, so qualifying it would turn a correct contract into a wrong
+    // one rather than fixing an unresolved name.
+];
+
+function qualifyReactTypes({ components, OUT }) {
+    for (const c of components) {
+        const file = join(OUT, 'components', c.group, c.name, `${c.name}.d.ts`);
+        if (!existsSync(file)) {
+            continue;
+        }
+        const text = readFileSync(file, 'utf8');
+        const imported = new Set(
+            [...text.matchAll(/^import type \{([^}]*)\} from 'react';$/gm)]
+                .flatMap((match) => match[1].split(','))
+                .map((name) => name.trim()),
+        );
+        let next = text;
+        for (const name of REACT_TYPES) {
+            if (imported.has(name)) {
+                continue;
+            }
+            next = next.replace(
+                new RegExp(`(^|[^\\w$.'"])${name}(?![\\w$])`, 'g'),
+                `$1React.${name}`,
+            );
+        }
+        if (next !== text) {
+            writeFileSync(file, next);
+        }
+    }
+}
+
 export function emitPerComponent(args) {
     base.emitPerComponent(args);
     refineAppFiles(args);
+    refineKitCompounds(args);
+    qualifyReactTypes(args);
 }
 
 export function emitReadme(args) {
