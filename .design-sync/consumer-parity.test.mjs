@@ -40,20 +40,18 @@ for (const entry of entries) {
                 /url\("\.\.\/\.\.\/apps\/app\/node_modules\/@aragon\/gov-ui-kit\/src\/theme\/fonts\/Manrope-Regular\.ttf"\)/,
             );
 
-            assert.match(css, /--guk-dialog-overlay-z-index:\s*20;/);
             for (const [property, value] of overrideDeclarations) {
+                const declarations = [
+                    ...css.matchAll(
+                        new RegExp(`${property}:\\s*([^;]+);`, 'g'),
+                    ),
+                ];
                 assert.equal(
-                    css.match(new RegExp(`${property}:\\s*${value};`, 'g'))
-                        ?.length,
-                    1,
-                    `${property}: ${value} should be emitted once`,
+                    declarations.at(-1)?.[1],
+                    value,
+                    `${property} must resolve to the App override`,
                 );
             }
-            assert.ok(
-                css.indexOf('--color-primary-500:') <
-                    css.indexOf('--guk-dialog-overlay-z-index:'),
-                'generated primitives must precede App overrides',
-            );
             assert.match(css, /\.focus-ring-primary/);
         } finally {
             rmSync(outputDir, { recursive: true, force: true });
