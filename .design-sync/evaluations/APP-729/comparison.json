@@ -1,0 +1,262 @@
+{
+    "issue": "APP-729",
+    "status": "exploratory-observation; context-causality-unresolved",
+    "evaluatedAt": "2026-09-22T17:23:37.085Z",
+    "protocolVersion": "v1",
+    "promptSha256": "7058f78728fbf22218f7cee6928afb4509f17a92230d522cf8f062dd4d78d36c",
+    "protocolSha256": "47351bca8d75aa7de96bdc405e8a047ad59bd9e2570dcf7ca295228284d09222",
+    "submittedMessageSha256": "68a6bee9c13d5e0aa7983927ff7563a6ed054b0118b500ea725b1a7360d87867",
+    "auditRecord": "audit/record.json",
+    "prospectiveProtocol": "PROTOCOL-v2.md",
+    "correctionCountingRule": "Observed generated-prototype correction events after first completion, not all construction-time model edits or first-pass quality.",
+    "verdict": {
+        "overall": "The candidate output contained a more detailed handoff; no causal effect of the added context pieces was established by the confounded historical comparison.",
+        "candidateAdvantages": [
+            "Its project readme exposed producer-asserted unmerged-candidate provenance and registry/selection-guide references; actual registry consultation during generation is not established.",
+            "Produced a separate implementation handoff with more exact source paths, field shape, prop contracts, provider distinctions, and validation ordering.",
+            "Exercised ENS reverse resolution in the preview; vitalik.eth rendered from the example address.",
+            "The retained terminal prototype rendered every requested state; no generated-artifact correction was observed in its retained transcript."
+        ],
+        "oldAdvantages": [
+            "Used WizardPage.Container and WizardPage.Step directly, giving the standalone prototype closer fidelity to the real create-flow composition.",
+            "Ran in a separate fresh design project rather than writing output files into the supplied design-system project.",
+            "Included an explicit 390px prototype viewport switcher and an inline handoff in the generated artifact."
+        ],
+        "decision": "Retain both runs as exploratory usability evidence. Audit actual context reachability and unique information before further generation. Use PROTOCOL-v2.md for any separately authorized same-runtime context comparison; do not infer per-piece value from runtime or session differences."
+    },
+    "runs": {
+        "old": {
+            "sourceProject": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+            "session": "https://claude.ai/design/p/464ba599-10d1-4704-98b2-e15349ee45e4",
+            "label": "preserved old baseline",
+            "visibleKitVersion": "2.10.0",
+            "model": "Opus 5",
+            "effort": "Medium",
+            "submittedMessages": 1,
+            "humanCorrections": 0,
+            "automaticGeneratedArtifactCorrections": 1,
+            "automaticEvents": [
+                "The automatic design check found duplicate-error persistence failure and edited the validation primer; the transcript reports the error then persisted for five seconds."
+            ],
+            "discardedSetupAttempt": "dc4442c2-4685-447b-9066-d6712b728834; excluded because multiline input was submitted as multiple turns",
+            "evidence": "runs/old/"
+        },
+        "candidate": {
+            "sourceProject": "https://claude.ai/design/p/e6b58c10-ca85-42b9-beab-dfe1886bfe81",
+            "session": "https://claude.ai/design/p/e6b58c10-ca85-42b9-beab-dfe1886bfe81",
+            "label": "candidate from unmerged PRs",
+            "visibleKitVersion": "2.11.4",
+            "appBase": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+            "govKitSource": "8d70bdf0c7fc32e994894d47067f518253b04f80",
+            "model": "Opus 5",
+            "effort": "Medium",
+            "submittedMessages": 1,
+            "humanCorrections": 0,
+            "automaticGeneratedArtifactCorrections": 0,
+            "evidence": "runs/candidate/"
+        }
+    },
+    "criteria": {
+        "componentSelectionAndReuse": {
+            "old": {
+                "status": "observed",
+                "evidence": [
+                    "runs/old/served-source.html:64-91",
+                    "runs/old/rendered-body.txt:25-29"
+                ],
+                "finding": "Correctly composed App-owned AddressesInput.Container/.Item over kit AddressInput and reused WizardPage.Container/Step."
+            },
+            "candidate": {
+                "status": "observed",
+                "evidence": [
+                    "runs/candidate/served-source.html:77-100",
+                    "runs/candidate/handoff.md:51"
+                ],
+                "finding": "Correctly selected AddressesInput.Container/.Item. The standalone prototype used FormWrapper and kit primitives for its shell; the handoff explicitly prescribed WizardPage and BlockNavigationContextProvider for real create-flow integration."
+            }
+        },
+        "sourceAndPropsDiscovery": {
+            "old": {
+                "status": "observed",
+                "evidence": [
+                    "runs/old/rendered-body.txt:44-51"
+                ],
+                "finding": "Found prompt references, examples, translations, and compiled implementation props; explicitly reported the generic AddressesInput declaration and unknown live ENS capability."
+            },
+            "candidate": {
+                "status": "observed",
+                "evidence": [
+                    "runs/candidate/handoff.md:5-38",
+                    "access/candidate-project-readme.txt:5-15"
+                ],
+                "finding": "More precise source paths, field shape, registry context, and provenance. Remaining bundle gap: AddressesInput.d.ts is still generic, so the run recovered App wrapper props from compiled code rather than an authoritative declaration."
+            }
+        },
+        "examplesAndMeaningfulStates": {
+            "old": {
+                "status": "observed",
+                "evidence": [
+                    "runs/old/desktop-filled.webp",
+                    "runs/old/desktop-invalid.webp",
+                    "runs/old/desktop-duplicate.webp",
+                    "runs/old/mobile-empty.webp",
+                    "runs/old/transcript.txt:46-53"
+                ],
+                "finding": "Empty, populated, invalid, duplicate, desktop, and mobile modes rendered. Duplicate persistence needed one automatic correction before the final state held."
+            },
+            "candidate": {
+                "status": "observed",
+                "evidence": [
+                    "runs/candidate/desktop-filled.webp",
+                    "runs/candidate/desktop-invalid.webp",
+                    "runs/candidate/desktop-duplicate.webp",
+                    "runs/candidate/mobile-empty.webp",
+                    "runs/candidate/state-observations.json"
+                ],
+                "finding": "All requested states rendered, invalid and duplicate messages came from component output, the 390x844 viewport had no horizontal overflow, and ENS reverse resolution visibly produced vitalik.eth."
+            }
+        },
+        "compositionAndContracts": {
+            "old": {
+                "status": "observed",
+                "evidence": [
+                    "runs/old/served-source.html:64-107",
+                    "runs/old/interaction-observations.json"
+                ],
+                "finding": "WizardPage owned react-hook-form; required providers were present; add/remove retained one row."
+            },
+            "candidate": {
+                "status": "observed",
+                "evidence": [
+                    "runs/candidate/served-source.html:77-128",
+                    "runs/candidate/handoff.md:40-53",
+                    "runs/candidate/state-observations.json"
+                ],
+                "finding": "FormWrapper and providers were valid for the standalone prototype, add/remove worked, and the handoff correctly distinguished that real create-flow integration should use the existing WizardPage-owned form and BlockNavigationContextProvider."
+            }
+        },
+        "validationResponsibilities": {
+            "old": {
+                "status": "observed",
+                "evidence": [
+                    "runs/old/rendered-body.txt:35-43",
+                    "runs/old/transcript.txt:38-53"
+                ],
+                "finding": "Assigned invalid/duplicate rules to AddressesInput.Item and ENS/checksum handling to AddressInput; final-row removal stayed disabled."
+            },
+            "candidate": {
+                "status": "observed",
+                "evidence": [
+                    "runs/candidate/handoff.md:55-74",
+                    "runs/candidate/state-observations.json"
+                ],
+                "finding": "Documented validation order and custom-validator boundary; demonstrated invalid, duplicate, add/remove, final-row floor, and ENS resolution without claiming wallet or transaction behavior."
+            }
+        },
+        "unnecessaryReimplementation": {
+            "old": {
+                "status": "not observed",
+                "evidence": [
+                    "runs/old/served-source.html:56-107"
+                ],
+                "finding": "Only field-array child mapping and prototype validation/state scaffolding were custom."
+            },
+            "candidate": {
+                "status": "not observed",
+                "evidence": [
+                    "runs/candidate/served-source.html:65-100"
+                ],
+                "finding": "AddressesInput and kit primitives were reused. The standalone shell was a documented prototype departure, not a bundle defect. MemberCount nevertheless adds its own /^0x[0-9a-fA-F]{40}$/ readiness heuristic (served-source.html:73), separate from the authoritative validator. This is a model-authored simplification/risk; no incorrect readiness transition was exercised, and no causal attribution to added context is established."
+            }
+        },
+        "humanCorrections": {
+            "old": {
+                "status": "not observed",
+                "evidence": [
+                    "runs/old/transcript.txt",
+                    "runs/old/run.json"
+                ],
+                "finding": "No human correction was sent in the valid run. One automatic design-check correction is listed separately."
+            },
+            "candidate": {
+                "status": "not observed",
+                "evidence": [
+                    "runs/candidate/transcript.txt",
+                    "runs/candidate/run.json"
+                ],
+                "finding": "No human correction was sent. The design-system checker inspected generated CSS warnings but did not edit the prototype or synced source."
+            }
+        },
+        "designContextAndHandoff": {
+            "old": {
+                "status": "observed",
+                "evidence": [
+                    "runs/old/rendered-body.txt:25-51",
+                    "runs/old/mobile-empty.webp"
+                ],
+                "finding": "Inline implementation handoff, explicit limitations, source references, and desktop/mobile modes were retained. Exact old archive/converter identity remains unknown."
+            },
+            "candidate": {
+                "status": "observed",
+                "evidence": [
+                    "runs/candidate/handoff.md",
+                    "access/candidate-project-readme.txt",
+                    "runs/candidate/mobile-empty.webp"
+                ],
+                "finding": "Separate handoff and stronger identity guidance were retained. Comparability is limited because the unpublished candidate had no New design action: generation wrote two files into the supplied candidate project instead of a separate disposable session, contrary to the fixed run instruction."
+            }
+        }
+    },
+    "routedDefects": [
+        {
+            "owner": "APP-1208",
+            "commentId": "1c119189-5ee8-46a3-a640-f87aca286c0f",
+            "issues": [
+                "Verified retained candidate AddressesInput declaration is a generic fallback: App runtime inclusion is not matched by the converter's package-only type resolution.",
+                "Verified retained local payload and its 702-file manifest omit registry.json and selection-guide.json, though source copies exist and the imported readme names them.",
+                "Model-reported generated-CSS checker findings require raw report/CSS classification before prescribing an exporter change; they are not a verified token-parity failure."
+            ],
+            "modelRunObservation": "The old prototype used WizardPage directly while the candidate used a standalone FormWrapper shell; the candidate handoff correctly prescribed WizardPage for real integration, so this was not routed as a bundle defect."
+        }
+    ],
+    "limitations": [
+        "The old archive bytes, converter revision, registry identity, and remote freshness were not supplied; the user-designated remote project and its visible 2.10.0 readme are the baseline evidence.",
+        "Candidate source-to-published-package equivalence is explicitly unknown.",
+        "The evaluator proceeded in the supplied candidate project when no New design action was found, violating the frozen stop/isolation instruction.",
+        "The old run's initial pre-automatic-fix source was not captured; the transcript and initial screenshot preserve the observed correction boundary.",
+        "Backend model ID, hidden instructions, temperature, and seed were not exposed.",
+        "The candidate transcript shows construction-time edits; no first-pass artifact comparison is available.",
+        "The later local manifest verification covers 702 files, not independent agreement with the producer-reported 566-file remote upload.",
+        "The task was already solvable from the old context, so it was not strongly discriminating for the incremental value of the candidate registry, selection guidance, or source-reference context."
+    ],
+    "mustRecheckAgainstAcceptedCode": {
+        "recordedAt": "2026-09-23T08:20:00Z",
+        "why": "This comparison evaluated a candidate that no longer exists in that form. Every commit on the APP-1208 branch postdates the evaluation, so none of the converter work below was present in, or exercised by, the evaluated bundle.",
+        "evaluatedCandidate": {
+            "appBase": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+            "govKitVersion": "2.11.4",
+            "correspondsToCommit": null,
+            "note": "The evaluated bundle was produced from an uncommitted working state on 2026-09-22; it does not correspond to any committed revision, so it cannot be rebuilt exactly."
+        },
+        "currentCandidate": {
+            "branchHead": "8a3ea8c8ed7040bf609fced7f3c5c2cfdfd5c486",
+            "commitsSinceEvaluation": [
+                "67cb6c34d integrate unmerged source-ticket branches into the candidate",
+                "633f6b1a8 deliver context and source-derived contracts in the bundle",
+                "29d9a8a66 stop claiming the registry exists at the recorded base revision",
+                "777bef591 type GovKit compound members and restore degraded prop types",
+                "bd5c066c5 correct the dangling-name record",
+                "8a3ea8c8e drop Network/PluginInterfaceType from the dangling list"
+            ]
+        },
+        "recheckWhenTheseLandAsAcceptedCode": [
+            "Compound-member contracts: 61 kit members shipped as React.ComponentType<any> in the evaluated bundle; 78 are now typed. The evaluated run could not have consulted a real Dialog.Header or Tabs.Trigger contract.",
+            "Delivered context: the evaluated payload omitted registry.json and selection-guide.json (routed defect above). The current bundle ships the selection guide plus a hash-checked reference to the registry, so the 'could the agent reach the registry' question has not been answered against a bundle that actually contains it.",
+            "AddressesInput generic fallback (routed defect above): the App type closure added afterwards is the intended fix; unverified in a run.",
+            "Restored prop types: icon/objectType/illustration emitted as bare unknown in the evaluated bundle.",
+            "Kit-owned dangling type names remain open as APP-1223 and are present in both bundles."
+        ],
+        "doNotConclude": "No result in this file may be attributed to the current converter output. A run against the current bundle is a new artifact under a new record, not a rerun of this comparison.",
+        "alsoOutstanding": "The evaluated task was not strongly discriminating (see limitations). PROTOCOL-v2.md exists to address that; a rerun that reuses the same task would inherit the same inconclusiveness."
+    }
+}
