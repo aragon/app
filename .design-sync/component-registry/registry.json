@@ -9,7 +9,12 @@
         "app": {
             "root": "app",
             "commit": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
-            "dirty": [],
+            "dirty": [
+                ".design-sync/config.json",
+                "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+                "pnpm-lock.yaml",
+                "pnpm-workspace.yaml"
+            ],
             "kitReexportBoundary": {
                 "path": "src/shared/lib/@aragon/gov-ui-kit.ts",
                 "sha256": "cb3ec27a4c7b8f7f605cec99ec5eb63d5ad485307c7daad4f31abdfce6e7da7c",
@@ -18,7 +23,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "64b517f5b90052797ecaced5f15ab616b5733f30",
+            "commit": "8d70bdf0c7fc32e994894d47067f518253b04f80",
             "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
@@ -46,7 +51,7 @@
                 "index.css": "22c94650fd16431a5e8b606a44f9201ba79eb9e121c2ccc4f49c8c6c99b1071a",
                 "build.css": "15e7b4327eab8ea1cca44f847930c31353178ddaaf5e00371cfcb83e5c675812"
             },
-            "sourceEquivalence": "verified"
+            "sourceEquivalence": "unknown"
         }
     },
     "components": [
@@ -79326,22 +79331,10 @@
             "tests": [],
             "docs": [],
             "usage": {
-                "found": true,
+                "found": false,
                 "reachableViaReexport": false,
                 "scope": "Static JS/TS stylesheet imports and quoted CSS @import statements within <app>/src.",
-                "refs": [
-                    {
-                        "repository": "app",
-                        "path": "src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
-                        "line": 2,
-                        "sha256": "32dc7d8595eb95f3d6b87bb0ed7abc653d913ce170d050aadd7549e1d486b490",
-                        "kind": "value",
-                        "usageType": "production",
-                        "localName": "index.css",
-                        "module": "../../../../../../node_modules/@aragon/gov-ui-kit/index.css",
-                        "via": null
-                    }
-                ]
+                "refs": []
             },
             "intent": {
                 "description": null,
@@ -103042,12 +103035,6 @@
                     "props": [
                         {
                             "repository": "kit",
-                            "path": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
-                            "line": 1423,
-                            "sha256": "814d5c7384f3ca276e9dc4bcfde5545801a3ea0bfae09916b3336774e662fd1b"
-                        },
-                        {
-                            "repository": "kit",
                             "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodySummary/proposalVotingBodySummary.tsx",
                             "line": 5,
                             "sha256": "7d7e1d2a2c8da0734d23376278ba30dc7e91db46bc48f844da5afc077bb611e0"
@@ -104610,12 +104597,6 @@
                 "sha256": "7d7e1d2a2c8da0734d23376278ba30dc7e91db46bc48f844da5afc077bb611e0"
             },
             "props": [
-                {
-                    "repository": "kit",
-                    "path": "node_modules/.pnpm/@types+react@19.2.18/node_modules/@types/react/index.d.ts",
-                    "line": 1423,
-                    "sha256": "814d5c7384f3ca276e9dc4bcfde5545801a3ea0bfae09916b3336774e662fd1b"
-                },
                 {
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodySummary/proposalVotingBodySummary.tsx",

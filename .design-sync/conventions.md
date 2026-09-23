@@ -6,16 +6,25 @@ tests and App examples. It is not a second component catalog.
 
 ## Find the right source
 
-- APP-726's artifact under review is stored under `.design-sync/component-registry/`
-  in the App repository at the revision below: `selection-guide.json` is the
-  generated selection view; `registry.json` owns intent and source references.
-  These files are not on the APP-728 base branch or bundled by this change.
-  Until integrated, use the audited source and existing bundle contracts below.
-- The APP-726 artifact used here is revision
-  `03b3beda1518f6dd94973c2e6759268c22257dcc`. Its audited baseline is App
-  `3c9bb798f3679fb2eb8052a192847ab2274ed1d5` plus GovKit
-  `64b517f5b90052797ecaced5f15ab616b5733f30` (`@aragon/gov-ui-kit` 2.11.4).
-  APP-1208 must refresh this identity before consuming the guide in a bundle.
+- This candidate consumes APP-726's generated selection view from
+  `.design-sync/component-registry/selection-guide.json`; the matching
+  `registry.json` remains authoritative for intent, evidence and source
+  references. Both were refreshed together: 143 UI entries, 7 utility entries
+  and 418 registry records.
+- This is a candidate assembled from unmerged PRs, not an accepted baseline:
+  App PRs
+  [#1400](https://github.com/aragon/app/pull/1400),
+  [#1412](https://github.com/aragon/app/pull/1412),
+  [#1411](https://github.com/aragon/app/pull/1411),
+  [#1410](https://github.com/aragon/app/pull/1410) and
+  [#1413](https://github.com/aragon/app/pull/1413), plus GovKit PR
+  [#793](https://github.com/aragon/gov-ui-kit/pull/793).
+- The refreshed registry identifies the App base
+  `3c9bb798f3679fb2eb8052a192847ab2274ed1d5`; its `dirty` list covers only the
+  changed files under the scanned source paths, not the whole candidate, and
+  GovKit source `8d70bdf0c7fc32e994894d47067f518253b04f80`
+  (`@aragon/gov-ui-kit` 2.11.4). Source-to-published-package equivalence remains
+  `unknown`; do not present this candidate as accepted code.
 - The kit owns public component props, stories, tests and reusable governance
   semantics. The App owns product composition, provider wiring, form policy,
   translations and application/domain side effects. The registry records these
@@ -51,8 +60,15 @@ Banner and App form inputs). Font: **Manrope** (bundled).
   Wizards additionally need `<BlockNavigationContextProvider>`.
 - App form inputs (`AddressesInput`, `ResourcesInput`, `AdvancedDateInput`,
   `AvatarInput`, `NumberProgressInput`, `AutocompleteInput`) read react-hook-form
-  context. Wrap them in the exported `<FormWrapper defaultValues={{…}}>`;
+  context. Standalone, wrap them in the exported `<FormWrapper defaultValues={{…}}>`;
   array-backed lists hydrate only from `FormWrapper.defaultValues`.
+- Inside a wizard, do not add `FormWrapper`: the wizard already owns the form
+  context. `Wizard.Root` calls `useForm` and renders `FormProvider`, and
+  `WizardPage.Container` / `WizardDialog.Container` compose `Wizard.Root` with
+  `Wizard.Form`. A nested `FormWrapper` creates a second, separate form: the
+  inputs then write to a context the wizard never reads, so its validation gates
+  and submit payload silently lose those fields. Seed values through the wizard
+  container's own `defaultValues` instead.
 - Dialogs open through the controlled `open` prop on `Dialog.Root` or
   `DialogAlert.Root`; `defaultOpen` is not a substitute in this bundle. In the
   [App dialog provider](../apps/app/src/shared/components/dialogProvider/dialogProvider.tsx),
@@ -112,21 +128,20 @@ Banner and App form inputs). Font: **Manrope** (bundled).
 ## Styling idiom
 
 Use token-backed layout utilities and component variants rather than inventing
-visual values. A CSS token does not prove its utility was emitted by the bundle's
-source scan. The table below is historical bundle guidance, last verified with
-GovKit **2.10.0 on 2026-08-24**, not verified for the audited 2.11.4 package.
-[Verification notes](./NOTES.md#conventionsmd-drift-found-and-corrected-2026-08-24)
-record `rounded-2xl`, `rounded-3xl` and `shadow-neutral-lg` as absent then.
-APP-1208 must recheck the emitted CSS and App overrides against APP-727's accepted
-token baseline; this guide makes no token taxonomy or artifact-layout decision.
+visual values. A CSS token does not prove its utility was emitted by the
+bundle's source scan. The table below was verified against the candidate's
+Tailwind 4.3.3 output after consuming APP-727's token baseline and APP-736's
+generated-token integration. `rounded-2xl`, `rounded-3xl` and
+`shadow-neutral-lg`, which were absent from the historical 2.10.0 bundle, are
+emitted by this candidate.
 
-| Family | Historical bundle utilities — recheck before use |
+| Family | Candidate utilities |
 |---|---|
 | Colors | `primary-{50…900}`, `neutral-{0,50,100,200,300,400,500,600,800,900}`, `info/success/warning/critical-{100…900}` as `bg-*`, `text-*` or `border-*` |
-| Radius | `rounded-none/sm/md/lg/xl/full` plus side/corner variants; `rounded-xl` is the 12px card radius |
+| Radius | `rounded-none/sm/md/lg/xl/2xl/3xl/full` plus side/corner variants; `rounded-xl` is the 12px card radius |
 | Spacing | Standard Tailwind scale (`p-4`, `gap-3`, `space-y-2`…) |
 | Type | `text-xs/sm/base/lg/xl/2xl/3xl`, `font-normal/semibold`; headings via `Heading` |
-| Shadows | `shadow-none`, `shadow-sm`, `shadow-neutral{,-sm,-md}`, `shadow-primary{,-sm,-lg,-xl}`, `shadow-info{,-md}`, `shadow-success{,-sm,-md}`, `shadow-warning{,-sm,-md}`, `shadow-critical{,-sm,-md}` |
+| Shadows | `shadow-none`, `shadow-sm`, `shadow-neutral{,-sm,-md,-lg}`, `shadow-primary{,-sm,-lg,-xl}`, `shadow-info{,-md}`, `shadow-success{,-sm,-md}`, `shadow-warning{,-sm,-md}`, `shadow-critical{,-sm,-md}` |
 
 Component look is controlled by props, not classes: `variant` (for example
 Button `primary|secondary|tertiary|ghost|success|warning|critical`; alerts

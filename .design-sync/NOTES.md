@@ -1,5 +1,10 @@
 # design-sync notes
 
+For the current candidate workflow, see [APP-1208 repeatable refresh](#app-1208-repeatable-refresh).
+The dated run notes below preserve historical observations, not current package,
+source-equivalence, grading, or upload claims. Use the fresh payload manifest and
+converter verdict for the candidate being evaluated.
+
 ## Isolation rule (read first)
 
 Sync sessions MUST NOT run in the developer's main checkout — the bundle build
@@ -20,13 +25,14 @@ line of defense the app tooling is also shielded from the shims (jest pins
 
 ## Re-sync risks (watch-list for the next run)
 
-- **Kit is on 2.10.0 and the anchor now matches it.** Previews and grades were fully re-verified against `@aragon/gov-ui-kit@2.10.0` on 2026-08-24 and uploaded, so APP-1084's "pending write access" blocker is closed. The three upstream kit bugs noted below are fixed in 2.10.0 and confirmed visually.
+- **Kit moved to 2.11.4 and the uploaded anchor has NOT been re-verified against it.** The APP-1208 candidate builds against `@aragon/gov-ui-kit@2.11.4`; the last full re-verification (previews, grades, upload) was against 2.10.0 on 2026-08-24, which closed APP-1084's "pending write access" blocker and confirmed the three upstream kit fixes. Treat every 2.10.0 grade as carried, not re-verified: the 2.10.0→2.11.4 anchor diff still has to scope a re-verification pass, and the two checks in the next bullet (emitted-utility names in `conventions.md`, the app's radix ranges) are outstanding for this bump.
 - **Kit version drift:** on the next bump the anchor diff scopes re-verification. There is no Storybook ground truth any more — the old claim rested on a local `gov-ui-kit` checkout at `c:\dev\gov-ui-kit`, which does not exist on this machine; grading is on the absolute rubric. Also re-check `conventions.md`'s emitted-utility names and the app's radix ranges on every bump (both sections below).
 - **CSS is compiled at sync time** by `cfg.buildCmd` from `.design-sync/tailwind-entry.css` — it inlines the app's `--guk-*` overrides copied from `layoutRoot.css`; if the app changes those overrides, re-copy them into the entry file (they do NOT sync automatically).
 - **Tailwind CLI version:** `@tailwindcss/cli` is an `apps/app` devDependency managed by the repo's pnpm lockfile and shared catalog; `build-css.mjs` verifies it matches the app's installed `tailwindcss` version, so update both catalog entries in the same PR as any Tailwind bump.
 - **Dialog/DialogAlert previews** depend on the force-open workaround (frozen-clock + framer-motion); a kit animation refactor may break them silently — check their sheets on any kit bump.
 - **Transient validate flake:** Accordion occasionally reports `[RENDER] root empty` in driver runs (animation timing); a re-run clears it. Don't chase unless it repeats.
 - The module components (25) and 5 infrastructure primitives ship floor cards by design — the standing offer for incremental authoring on any later re-sync (slice 2: modules with `GukModulesProvider` wrapping).
+- **Four `.design-sync/overrides/*.mjs` forks now wrap converter internals** (`emit.mjs`, `dts.mjs`, `docs.mjs` + the shared `app-ownership.mjs`), declared in `cfg.libOverrides`. They call into bundled internals — `base.emitPerComponent`, `base.emitReadme`, `propsBodyFor(name, ctx)`, `base.loadDts` — and assert on exact generated text (the `— from …` d.ts header, the `// Re-export of …` JSX line, the prompt header, the README's "For a specific component," anchor). §3.11 re-copies `.ds-sync/` from the skill dir on every re-sync, so a converter update can invalidate them silently. After any converter update run `node --test .design-sync/refresh.test.mjs`, which compiles every App-owned `.d.ts` as a consumer contract, and diff the GovKit output for unintended change. Their bytes also enter the grade key via `configSlicesFor`, so touching them re-grades everything.
 
 - Sync source is THIS repo (`apps/app`), not gov-ui-kit. Decision 2026-07-16: the design system is the app's design layer; gov-ui-kit is a component library it inherits. One project ("Aragon App Design System") holds kit re-exports + app shared components across slices.
 - Slice plan (run-to-completion slices so verified work banks in the anchor): 1) gov-ui-kit core components ✓, 2) gov-ui-kit modules components ✓, 3) app shared components (wizards, dialogs, etc.) — FINAL slice. A design wiki (semantic layer / interaction patterns) is planned by the user but DOES NOT EXIST yet — do not attempt to read or distill it; when it exists, its distilled rules can join conventions.md via a re-sync.
@@ -159,3 +165,44 @@ bundle text, the colour/spacing/type families, Manrope in `fonts/`, and `--color
   read those sheets and write their grade files. After that every later run reports `pendingGrade: 0`.
   Grade files are gitignored (`.design-sync/.cache/`), so a fresh clone re-does this; the durable
   carry-forward is the uploaded `_ds_sync.json`.
+
+## APP-1208 repeatable refresh
+
+Run these commands from the worktree root. The kit checkout is an input only;
+the refresh never uploads or changes that checkout:
+
+```sh
+export GOVKIT_KIT_ROOT=/path/to/gov-ui-kit
+node .design-sync/refresh.mjs
+node .design-sync/refresh.mjs --check
+node --test .design-sync/refresh.test.mjs
+```
+
+The entrypoint first rejects a stale component registry or selection guide,
+then invokes the existing local `resync.mjs`/`package-build.mjs` path. It
+delivers the authoritative registry and selection guide under
+`ds-bundle/guidelines/context/`, alongside a generated commit-addressed source
+index and registry report. `README.md` links those shipped context files rather
+than source-only worktree paths.
+
+`ds-bundle/.payload-manifest.json` separates candidate upload files from
+capture/local evidence and records byte lengths, SHA-256 hashes, source/kit
+revisions, consumed package hashes and source-equivalence status, converter
+identity and guidance identity. An unavailable converter version remains `null`;
+the converter scripts, adapters, configuration and dependency lockfile are hashed.
+Upload is `candidate`; accepted and deployed remain `unknown`. The manifest is
+local evidence, not a remote receipt. A prior bundle is copied to
+`.design-sync/.cache/previous-ds-bundle/` before rebuilding so failed refreshes
+can restore the previous evidence.
+
+The upload list includes `_ds_sync.json`, which must be sent **last** after the
+converter's sentinel/content/deletion/re-arm sequence. Neither this command nor
+the manifest performs an upload. Do not update the original Design baseline.
+
+The App adapters delegate the official component emitter once over the full
+component list, then refine only App provenance and source-derived compound
+declarations. This deliberately departs from the upstream instruction not to
+fork `emit.mjs`: it uses the override loader but is not an upstream-endorsed
+emitter extension. GovKit templates and runtime output remain delegated to the
+official emitter. Re-run the contract checks and compare retained GovKit output
+when the converter changes; these adapters depend on its emitted structure.

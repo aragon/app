@@ -8,6 +8,12 @@
     "extraEntries": [
         "../../../../../.design-sync/app-entry.ts"
     ],
+    "libOverrides": {
+        "app-ownership.mjs": "Shared ts-morph App ownership, source refs and child props used by the adapters.",
+        "dts.mjs": "Resolve App exports from app-entry.ts; GovKit names delegate to the official dts extractor.",
+        "emit.mjs": "Delegate the official emitter once, then refine only App provenance and source-derived compound declarations.",
+        "docs.mjs": "Deliver generated registry, selection guide and immutable source-reference context inside guidelines/."
+    },
     "cssEntry": ".design-sync-kit-styles.css",
     "overrides": {
         "Button": {
@@ -116,6 +122,7 @@
         "SafeDocumentParser": "../../../src/shared/components/SafeDocumentParser.tsx",
         "SafeHtml": "../../../src/shared/components/SafeHtml.tsx",
         "AppTransactionStatus": "../../../../../.design-sync/app-entry.ts",
+        "FormWrapper": "../../../../../.design-sync/app-entry.ts",
         "AddressesInput": "../../../src/shared/components/forms/addressesInput/index.ts",
         "AdvancedDateInput": "../../../src/shared/components/forms/advancedDateInput/index.ts",
         "AutocompleteInput": "../../../src/shared/components/forms/autocompleteInput/index.ts",
