@@ -238,7 +238,7 @@ function writeContext(OUT) {
         '',
         'These files are the delivered context for this candidate bundle. They are generated from the checked-in source registry/configuration and are not a second catalog.',
         '',
-        `- Authoritative registry — \`.design-sync/component-registry/registry.json\` in the App repository at the recorded revision below; SHA-256 \`${fileSha256(REGISTRY)}\`, ${registryRecordCount(registry)} records. Not copied into this bundle.`,
+        `- Authoritative registry — \`.design-sync/component-registry/registry.json\` on the App branch that produced this candidate; SHA-256 \`${fileSha256(REGISTRY)}\`, ${registryRecordCount(registry)} records. Match that hash to confirm you are reading the registry this bundle was generated from. Not copied into this bundle, and NOT present at the recorded base revision below, which is the revision the sources were extracted from.`,
         '- [Selection guide](./selection-guide.json) — generated selection view whose fingerprint points at the registry above.',
         '- [Recorded source references](./source-index.md) — commit-addressed App/GovKit links and dirty-input caveats.',
         ...(existsSync(REPORT)
