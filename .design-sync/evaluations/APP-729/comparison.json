@@ -231,7 +231,7 @@
     ],
     "mustRecheckAgainstAcceptedCode": {
         "recordedAt": "2026-09-23T08:20:00Z",
-        "why": "This comparison evaluated a candidate that no longer exists in that form. Every commit on the APP-1208 branch postdates the evaluation, so none of the converter work below was present in, or exercised by, the evaluated bundle.",
+        "why": "This comparison evaluated a candidate that no longer exists in that form. Every commit on the APP-1208 branch carries a date after the run, but commit dates are not the delta: 67cb6c34d records content the evaluated artifact already had. The converter work listed under genuinelyNewSinceEvaluation is what was neither present in nor exercised by the evaluated bundle.",
         "evaluatedCandidate": {
             "appBase": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
             "govKitVersion": "2.11.4",
