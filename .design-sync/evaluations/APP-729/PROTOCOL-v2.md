@@ -51,6 +51,7 @@ Write a short decision card before choosing a task:
 5. Why static inspection or existing evidence cannot settle it.
 6. Smallest output that exposes the decision: usually a component/contract choice with citations and minimal composition, not a rendered application.
 7. The stop rule and interpretation for both correct, candidate-only correct, old-only correct, both wrong, or incomparable runs.
+8. Which question this run answers, declared before it runs: **no-regression** or **delta**. The candidate context is a superset of the old — it adds material and removes none — so a task the old arm already satisfies cannot separate them. Both arms passing is then the expected and correct result, and it is evidence of no regression, not an absence of value. A delta run instead requires a need whose correct answer depends on material only the candidate carries (registry usage/ownership evidence, App-owned compound contracts, source references), with the old arm expected to fail or answer less precisely. Naming the expectation up front is what keeps a delta probe from being a puzzle built to reward new wording: the answer key still comes from revision-matched source, and a delta task that the old arm passes is a real null result to record, not a task to replace.
 
 Do not put component names, source paths, the new guide's name, the expected contract, or baseline output into the user task unless that information is naturally part of the real user request. Both arms get the same instruction to ground their answer. Keep the answer key separate.
 

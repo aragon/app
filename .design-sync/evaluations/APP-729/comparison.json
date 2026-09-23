@@ -231,6 +231,8 @@
     ],
     "mustRecheckAgainstAcceptedCode": {
         "recordedAt": "2026-09-23T08:20:00Z",
+        "whatThisRunActuallyEstablished": "Read as a no-regression check rather than a failed delta measurement. The candidate context is a superset of the old one, so a task the old bundle already satisfied could not separate the arms; both arms succeeding is the expected result and is the evidence this run legitimately provides. The 'not strongly discriminating' limitation describes the wrong question being asked of a sound run, not an unsound run. A delta claim needs a second instrument, specified as decision-card item 8 in PROTOCOL-v2.md.",
+        "confoundSpecificToThisRun": "Separate from the superset point: the evaluated payload omitted registry.json and selection-guide.json (see routedDefects), so registry-dependent discovery was not testable in either arm regardless of task choice.",
         "why": "This comparison evaluated a candidate that no longer exists in that form. Every commit on the APP-1208 branch carries a date after the run, but commit dates are not the delta: 67cb6c34d records content the evaluated artifact already had. The converter work listed under genuinelyNewSinceEvaluation is what was neither present in nor exercised by the evaluated bundle.",
         "evaluatedCandidate": {
             "appBase": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
