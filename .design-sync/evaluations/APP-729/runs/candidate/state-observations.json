@@ -1,0 +1,184 @@
+{
+    "states": {
+        "initial": {
+            "alerts": [
+                "Prototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step."
+            ],
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n0 of 1 ready\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nPaste\nAdd\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "inputs": [],
+            "removeButtons": [
+                {
+                    "disabled": true,
+                    "text": ""
+                },
+                {
+                    "disabled": true,
+                    "text": "Remove"
+                }
+            ]
+        },
+        "members": {
+            "alerts": [
+                "Prototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step."
+            ],
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n3 of 3 ready\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\n0x…\nAdd\nMore\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "inputs": [],
+            "removeButtons": [
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                },
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                },
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                }
+            ]
+        },
+        "invalid": {
+            "alerts": [
+                "Address is not valid.",
+                "Prototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step."
+            ],
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n1 to fix\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nAddress is not valid.\n\nAdd\nMore\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "inputs": [],
+            "removeButtons": [
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                },
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                }
+            ]
+        },
+        "duplicate": {
+            "alerts": [
+                "Address has already been added.",
+                "Prototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step."
+            ],
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n1 to fix\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nAddress has already been added.\n\nAdd\nMore\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "inputs": [],
+            "removeButtons": [
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                },
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                },
+                {
+                    "disabled": false,
+                    "text": ""
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove"
+                }
+            ]
+        }
+    },
+    "addRemove": {
+        "afterAdd": {
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n0 of 2 ready\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nPaste\nPaste\nAdd\nMore\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "remove": [
+                {
+                    "disabled": false,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove",
+                    "visible": false
+                },
+                {
+                    "disabled": false,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove",
+                    "visible": false
+                }
+            ]
+        },
+        "afterRemove": {
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n0 of 1 ready\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nPaste\nAdd\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "remove": [
+                {
+                    "disabled": true,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": true,
+                    "text": "Remove",
+                    "visible": false
+                }
+            ]
+        },
+        "before": {
+            "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n0 of 1 ready\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nPaste\nAdd\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+            "remove": [
+                {
+                    "disabled": true,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": true,
+                    "text": "Remove",
+                    "visible": false
+                }
+            ]
+        }
+    },
+    "mobile": {
+        "viewport": {
+            "width": 390,
+            "height": 844,
+            "deviceScaleFactor": 1
+        },
+        "body": "New governance body · Multisig · Step 2 of 4\nInitial (1 empty row)\nMembers added\nInvalid address\nDuplicate member\nAdd the members\n\n0 of 1 ready\n\nThese wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.\n\nMembers\n\nAdd at least one member. Each address must be unique.\n\nPaste\nRemove\nAdd\nBack\nNext\n\nPrototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.",
+        "scroll": {
+            "cw": 390,
+            "h": 800,
+            "w": 390
+        }
+    }
+}

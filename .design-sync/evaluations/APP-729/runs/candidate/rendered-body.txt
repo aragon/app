@@ -1,0 +1,21 @@
+New governance body · Multisig · Step 2 of 4
+Initial (1 empty row)
+Members added
+Invalid address
+Duplicate member
+Add the members
+
+0 of 1 ready
+
+These wallets can create and approve proposals for this multisig. Enter a wallet address or an ENS name. You can change members later through a proposal.
+
+Members
+
+Add at least one member. Each address must be unique.
+
+Paste
+Add
+Back
+Next
+
+Prototype: example addresses, no wallet connection and no transaction. The state buttons above are not part of the step.

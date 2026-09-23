@@ -1,0 +1,11 @@
+Use the supplied design-system bundle as the primary design context. Read its guidance and linked source/API/examples when available. Treat missing access or revision identity as unknown. Do not edit the design-system project, install or refresh a bundle, publish changes, or use another evaluation conversation. Report unavailable capabilities explicitly.
+
+Design the member-entry step for setting up a new multisig governance body in the Aragon App, using the supplied Aragon App design-system bundle.
+
+A person needs to enter the wallets that will be members. Support a wallet address or ENS name, adding another member, and removing a member while retaining at least one row. Show the initial single empty row, multiple populated members, invalid-address feedback, and duplicate-member feedback. Keep the layout usable on desktop and a narrow mobile viewport. Use example addresses for demonstration; do not connect a wallet or submit a transaction.
+
+Choose and compose existing components before writing replacements. Explain the choices and distinguish reusable kit components from App-owned composition. Identify the maintained source, prop contracts, usage examples, and meaningful states you actually found, with paths or links. If the bundle lacks a needed reference or capability, say so instead of inventing it. Keep authoritative source/API references available alongside any selection guidance you use.
+
+Produce a viewable design prototype and a short implementation handoff describing composition, necessary providers and form state, validation responsibilities, state transitions, and any missing dependencies or deliberate departures. Do not claim that ENS resolution or live validation worked unless you exercised it; distinguish demonstrated behavior from illustrative states.
+
+This task covers member entry, not approval thresholds, an entire DAO-creation flow, existing on-chain membership checks, deployment, or transactions. Preserve the established design language. Use a separate design canvas only if it resolves a concrete uncertainty; otherwise the code-grounded prototype and handoff are enough.

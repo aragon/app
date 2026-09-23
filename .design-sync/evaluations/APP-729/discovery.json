@@ -1,0 +1,158 @@
+{
+    "checkedAt": "2026-09-22T11:40:52.844736+00:00",
+    "purpose": "Read-only source discovery evidence, not a bundle and not a replacement catalog",
+    "registry": {
+        "pr": "https://github.com/aragon/app/pull/1400",
+        "prState": "open/unmerged at inspection",
+        "revision": "03b3beda1518f6dd94973c2e6759268c22257dcc",
+        "path": ".design-sync/component-registry/registry.json",
+        "sha256": "a7954bb3d0c9f6849c907c83c8321e670a69b6b0232e6f76117397f44d6d1750",
+        "schemaVersion": "1.1.0",
+        "sourceProvenance": {
+            "sourceRoots": {
+                "app": "GOVKIT_APP_ROOT",
+                "kit": "GOVKIT_KIT_ROOT",
+                "consumed": "GOVKIT_CONSUMED_ROOT"
+            },
+            "app": {
+                "root": "app",
+                "commit": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+                "dirty": [],
+                "kitReexportBoundary": {
+                    "path": "src/shared/lib/@aragon/gov-ui-kit.ts",
+                    "sha256": "cb3ec27a4c7b8f7f605cec99ec5eb63d5ad485307c7daad4f31abdfce6e7da7c",
+                    "note": "The public app alias re-exports the original package; export-star is not counted as direct component usage."
+                }
+            },
+            "kit": {
+                "root": "kit",
+                "commit": "64b517f5b90052797ecaced5f15ab616b5733f30",
+                "dirty": [],
+                "sourceVersion": "2.11.4",
+                "entrypoints": {
+                    "js": [
+                        "."
+                    ],
+                    "css": [
+                        "./build.css",
+                        "./index.css"
+                    ]
+                }
+            },
+            "consumed": {
+                "specifier": "@aragon/gov-ui-kit",
+                "declaredSpecifier": "catalog:",
+                "lock": {
+                    "specifier": "catalog:",
+                    "version": "2.11.4"
+                },
+                "version": "2.11.4",
+                "root": "consumed",
+                "dist": {
+                    "dist/types/src/index.d.ts": "d5b4cd419b877a922830d6d4d4d2eba59e9e4dcf213ca70588e7b41e0901f09d",
+                    "dist/index.es.js": "a4659934c120f72e44536de13c5e1985577ccfd6f722d015aa79f9e1119bd0a9",
+                    "index.css": "22c94650fd16431a5e8b606a44f9201ba79eb9e121c2ccc4f49c8c6c99b1071a",
+                    "build.css": "15e7b4327eab8ea1cca44f847930c31353178ddaaf5e00371cfcb83e5c675812"
+                },
+                "sourceEquivalence": "verified"
+            }
+        }
+    },
+    "selectionGuide": {
+        "path": ".design-sync/component-registry/selection-guide.json",
+        "sha256": "e5c81b7ca69c9d27a25890ee2cb2eb49f88a25736f75c7cb943001f59118c3e1",
+        "sourceRegistry": {
+            "path": "registry.json",
+            "schemaVersion": "1.1.0",
+            "sha256": "a7954bb3d0c9f6849c907c83c8321e670a69b6b0232e6f76117397f44d6d1750",
+            "totalRecords": 418,
+            "entryCount": 150,
+            "uiEntryCount": 143,
+            "utilityEntryCount": 7,
+            "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
+        },
+        "registryHashMatches": true
+    },
+    "referenceChecks": [
+        {
+            "repository": "aragon/gov-ui-kit",
+            "revision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+            "path": "src/modules/components/addressInput/addressInput.tsx",
+            "sha256": "2bc8bc057cc8b3be0c414defb778265cbcfb87ee59205e156408d6c790300d3b",
+            "expectedRegistrySha256": "2bc8bc057cc8b3be0c414defb778265cbcfb87ee59205e156408d6c790300d3b",
+            "matches": true
+        },
+        {
+            "repository": "aragon/gov-ui-kit",
+            "revision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+            "path": "src/modules/components/addressInput/addressInput.stories.tsx",
+            "sha256": "b7cfec25c960361f9854376af650e3015ba5268611f22b03da0a2fd40bcb06b1",
+            "expectedRegistrySha256": "b7cfec25c960361f9854376af650e3015ba5268611f22b03da0a2fd40bcb06b1",
+            "matches": true
+        },
+        {
+            "repository": "aragon/gov-ui-kit",
+            "revision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+            "path": "src/core/components/forms/inputSearch/inputSearch.stories.tsx",
+            "sha256": "2daee6dfeb154d7f3fb40038d7b2b5aafaef1f1f40def576142eb944ddddaf21",
+            "expectedRegistrySha256": "2daee6dfeb154d7f3fb40038d7b2b5aafaef1f1f40def576142eb944ddddaf21",
+            "matches": true
+        },
+        {
+            "repository": "aragon/gov-ui-kit",
+            "revision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+            "path": "src/core/components/dialogs/dialog/index.ts",
+            "sha256": "285b6517f01d9cd56c710f8b495a6e16b2847945a670f88fb381fe2435112329",
+            "expectedRegistrySha256": "285b6517f01d9cd56c710f8b495a6e16b2847945a670f88fb381fe2435112329",
+            "matches": true
+        },
+        {
+            "repository": "aragon/app",
+            "revision": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+            "path": "apps/app/src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx",
+            "sha256": "1f25e41dc5adf4fe0d3f0e225d585674c0039d4259fe9c785dd3d4ad142182ca",
+            "expectedRegistrySha256": "1f25e41dc5adf4fe0d3f0e225d585674c0039d4259fe9c785dd3d4ad142182ca",
+            "matches": true
+        },
+        {
+            "repository": "aragon/app",
+            "revision": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+            "path": "apps/app/src/shared/components/navigation/navigationDialog/navigationDialog.tsx",
+            "sha256": "f331f4c1df8951b33083861b0e7ded5ce0aa158aaa97ebcad9c321a1f1f87fa4",
+            "expectedRegistrySha256": "f331f4c1df8951b33083861b0e7ded5ce0aa158aaa97ebcad9c321a1f1f87fa4",
+            "matches": true
+        }
+    ],
+    "exercisedLookups": [
+        "govkit:AddressInput -> source/props/Default story -> App AddressesInput.Item",
+        "govkit:Dialog -> Dialog.Root -> govkit:DialogRoot -> App NavigationDialog",
+        "govkit:InputSearch -> source/story -> scoped no App usage, not global absence"
+    ],
+    "noUseScope": {
+        "found": false,
+        "reachableViaReexport": true,
+        "scope": "Static references in <app>/src TS/JS files, including import aliases, transparent re-exports and compound members. Bare unused imports, Markdown/MDX prose, kit-internal usage and runtime reachability are excluded.",
+        "refs": []
+    },
+    "storyEvidence": {
+        "addressInput": {
+            "title": "Modules/Components/AddressInput",
+            "exports": [
+                "Default"
+            ],
+            "behaviorRead": "Separate value/onChange input text and onAccept resolved object; render shows accepted address value",
+            "liveRendered": false
+        },
+        "inputSearch": {
+            "title": "Core/Components/Forms/InputSearch",
+            "exports": [
+                "Default",
+                "Controlled"
+            ],
+            "liveRendered": false
+        }
+    },
+    "registryRegenerated": false,
+    "installedPackageSourceEquivalenceRebuilt": false,
+    "scopeLimit": "Fingerprint checks cover listed references only, not all records or all upstream guidance/styling."
+}

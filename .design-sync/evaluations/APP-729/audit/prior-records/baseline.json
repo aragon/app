@@ -1,0 +1,150 @@
+{
+    "issue": "APP-729",
+    "state": "comparison-complete-with-limitations",
+    "scope": "Compare the user-designated unmerged candidate against the user-designated preserved old baseline",
+    "evaluator": {
+        "environment": "OMP",
+        "model": "openai-codex/gpt-5.6-sol",
+        "worktree": "/Users/kd-m2air/.herdr/worktrees/app-next/app-729",
+        "branch": "APP-729",
+        "appRevision": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+        "initialWorkingTree": "clean"
+    },
+    "freeze": {
+        "at": "2026-09-22T11:38:59.706375+00:00",
+        "version": "v1",
+        "files": {
+            "PROMPT.md": "7058f78728fbf22218f7cee6928afb4509f17a92230d522cf8f062dd4d78d36c",
+            "PROTOCOL.md": "47351bca8d75aa7de96bdc405e8a047ad59bd9e2570dcf7ca295228284d09222"
+        },
+        "submittedMessageSha256": "68a6bee9c13d5e0aa7983927ff7563a6ed054b0118b500ea725b1a7360d87867",
+        "oldGenerationStarted": true,
+        "candidateGenerationStarted": true
+    },
+    "coordination": {
+        "owner": "APP-1208",
+        "issueUrl": "https://linear.app/aragon/issue/APP-1208",
+        "preservationRequestCommentId": "df7f1402-0d3b-4306-a1cb-c10facb58eca",
+        "comparisonFindingsCommentId": "1c119189-5ee8-46a3-a640-f87aca286c0f",
+        "preservationAcknowledged": false,
+        "archiveHandoffReceived": false,
+        "remoteProjectsDesignatedByUser": true
+    },
+    "oldArtifact": {
+        "path": null,
+        "sha256": null,
+        "manifest": null,
+        "appRevision": null,
+        "kitVersion": "2.10.0",
+        "kitVersionEvidence": "Visible remote-project readme; archive identity remains unknown",
+        "converterIdentity": null,
+        "registryIdentity": null,
+        "selectionGuideIdentity": null,
+        "guidanceIdentity": "Visible remote-project readme retained at access/old-project-readme.txt",
+        "stylingIdentity": null,
+        "remoteFreshness": "unknown",
+        "configuredProjectId": "2f22a679-7abb-4283-9f39-e28a63dba83b",
+        "remoteProjectUrl": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+        "remoteProjectDesignatedByUser": true
+    },
+    "oldRun": {
+        "status": "complete",
+        "generationSubmitted": true,
+        "model": "Opus 5",
+        "modelVersion": "unknown/not exposed",
+        "effort": "Medium",
+        "hiddenSystemInstructions": "unknown/not exposed",
+        "editableInstructions": "Exact fixed instruction in PROTOCOL.md submitted with PROMPT.md as one message",
+        "taskPrompt": "PROMPT.md",
+        "toolsActuallyAvailableInRun": [
+            "bundle file listing/read/search",
+            "HTML write/edit",
+            "rendered screenshots",
+            "rendered DOM/log inspection"
+        ],
+        "bundleSupplied": "User-designated Aragon App Design System remote project; visible GovUiKit 2.10.0",
+        "sourceProjectUrl": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+        "sessionUrl": "https://claude.ai/design/p/464ba599-10d1-4704-98b2-e15349ee45e4",
+        "output": "Multisig Members Step.html",
+        "runtimeEvidence": "runs/old/",
+        "humanCorrections": 0,
+        "automaticCorrections": 1,
+        "discardedSetupAttempt": "runs/old/invalid-session.json"
+    },
+    "candidate": {
+        "status": "complete; candidate from unmerged PRs",
+        "artifact": {
+            "projectUrl": "https://claude.ai/design/p/e6b58c10-ca85-42b9-beab-dfe1886bfe81",
+            "label": "candidate from unmerged PRs",
+            "appBase": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
+            "govKitVersion": "2.11.4",
+            "govKitSource": "8d70bdf0c7fc32e994894d47067f518253b04f80",
+            "sourceToPublishedPackageEquivalence": "unknown",
+            "assembledFrom": [
+                "App PR #1400",
+                "App PR #1412",
+                "App PR #1411",
+                "App PR #1410",
+                "App PR #1413",
+                "GovKit PR #793"
+            ]
+        },
+        "run": {
+            "status": "complete",
+            "model": "Opus 5",
+            "modelVersion": "unknown/not exposed",
+            "effort": "Medium",
+            "submittedMessages": 1,
+            "humanCorrections": 0,
+            "automaticGeneratedArtifactCorrections": 0,
+            "sessionUrl": "https://claude.ai/design/p/e6b58c10-ca85-42b9-beab-dfe1886bfe81?file=Multisig+Members+Step.html",
+            "generatedFiles": [
+                "Multisig Members Step.html",
+                "Handoff — Member entry.md"
+            ],
+            "runtimeEvidence": "runs/candidate/",
+            "separateDisposableProject": false,
+            "comparabilityLimitation": "The unpublished candidate exposed no New design action; generation ran in the supplied candidate project and created output files there."
+        },
+        "comparison": "comparison.json",
+        "requiredLabel": "candidate from unmerged PRs"
+    },
+    "findings": {
+        "overall": "Candidate context pieces improved discovery and handoff; this task demonstrated no meaningful implementation delta.",
+        "oldStrength": "Its standalone prototype used WizardPage.Container/Step directly, giving closer real-flow fidelity.",
+        "candidateStrength": "Stronger provenance/source handoff, explicit real-flow WizardPage guidance, and exercised ENS reverse resolution.",
+        "modelRunDifference": "The candidate used FormWrapper and kit primitives for a documented standalone shell; this is a prototype choice, not a candidate bundle defect.",
+        "sharedGap": "AddressesInput.d.ts remains generic; both runs recovered App wrapper props from compiled bundle code.",
+        "routedDefects": "APP-1208 comment 1c119189-5ee8-46a3-a640-f87aca286c0f"
+    },
+    "interventions": [
+        {
+            "actor": "user",
+            "action": "Designated remote projects 2f22a679-7abb-4283-9f39-e28a63dba83b as the preserved old baseline and e6b58c10-ca85-42b9-beab-dfe1886bfe81 as the candidate from unmerged PRs."
+        },
+        {
+            "actor": "evaluator",
+            "action": "Installed and enabled authenticated browser relay after direct project reads returned HTTP 403; no credentials were entered or retained."
+        },
+        {
+            "actor": "evaluator",
+            "action": "Discarded one old setup attempt because multiline input was split across messages; preserved it under runs/old/invalid-session.* and excluded it from comparison."
+        },
+        {
+            "actor": "evaluator",
+            "action": "Submitted the frozen message once in each valid run with visible Opus 5 / Medium; sent no human corrections."
+        },
+        {
+            "actor": "claude-design-automatic-check",
+            "action": "Edited the old generated file once to fix duplicate-error persistence; transcript and final result retained."
+        },
+        {
+            "actor": "evaluator",
+            "action": "Exercised state switches, add/remove, final-row floor, desktop rendering, and 390x844 mobile rendering without sending design corrections."
+        },
+        {
+            "actor": "evaluator",
+            "action": "Posted candidate bundle/export findings to APP-1208 comment 1c119189-5ee8-46a3-a640-f87aca286c0f; retained prototype composition separately as a model-run observation."
+        }
+    ]
+}

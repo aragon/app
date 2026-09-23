@@ -1,0 +1,48 @@
+{
+    "checkedAt": "2026-09-22T11:33:53.319Z",
+    "requested": "https://aragon.github.io/gov-ui-kit/",
+    "observation": {
+        "url": "https://aragon.github.io/gov-ui-kit/",
+        "title": "Site not found · GitHub Pages",
+        "viewport": {
+            "width": 1365,
+            "height": 768,
+            "deviceScaleFactor": 1.25
+        },
+        "scroll": {
+            "x": 0,
+            "y": 0,
+            "width": 1365,
+            "height": 768,
+            "scrollWidth": 1365,
+            "scrollHeight": 768
+        },
+        "elements": [
+            {
+                "id": 1,
+                "role": "link",
+                "name": "read the full documentation",
+                "states": []
+            },
+            {
+                "id": 2,
+                "role": "link",
+                "name": "GitHub Status",
+                "states": []
+            },
+            {
+                "id": 3,
+                "role": "link",
+                "name": "@githubstatus",
+                "states": []
+            },
+            {
+                "id": 4,
+                "role": "link",
+                "name": "",
+                "states": []
+            }
+        ]
+    },
+    "indexResult": "HTTP 404 for https://aragon.github.io/gov-ui-kit/index.json"
+}

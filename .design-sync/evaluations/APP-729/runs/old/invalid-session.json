@@ -1,0 +1,8 @@
+{
+    "status": "discarded before evaluation",
+    "reason": "Automation entered multiline content as Enter-separated submissions, contaminating the fresh-session contract; never compare or grade this output",
+    "sessionUrl": "https://claude.ai/design/p/dc4442c2-4685-447b-9066-d6712b728834",
+    "capturedAt": "2026-09-22T16:45:28.591Z",
+    "sendBehaviorObserved": "Instruction and prompt paragraphs were submitted separately; final paragraph remained in composer",
+    "candidateTouched": false
+}

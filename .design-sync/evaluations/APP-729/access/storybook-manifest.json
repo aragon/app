@@ -1,0 +1,44 @@
+{
+    "checkedAt": "2026-09-23T08:15:00Z",
+    "question": "Can a static Storybook build emit a machine-readable component manifest, without running a dev server or adding Vitest — i.e. the cheap alternative to MCP-over-Storybook?",
+    "method": {
+        "worktree": "/Users/kd-m2air/.herdr/worktrees/gov-ui-kit/app-731",
+        "storybookVersion": "10.5.7",
+        "change": "features: { componentsManifest: true } added to .storybook/main.ts, TEMPORARILY; reverted after the build, worktree verified clean (git status --porcelain = 0)",
+        "command": "pnpm build:storybook -o /tmp/sb-manifest",
+        "codePath": "storybook/dist/core-server/index.js — shouldWriteManifests = !options.ignorePreview && features?.componentsManifest, then writeManifests(options.outputDir, presets) in the BUILD path; the /mcp middleware registration (registerManifests({app,...})) is a separate, dev-only call site"
+    },
+    "result": {
+        "emitted": true,
+        "buildSucceeded": true,
+        "buildSeconds": 9.83,
+        "files": {
+            "manifests/components.json": 705621,
+            "manifests/components.html": 860375,
+            "manifests/docs.json": 38420
+        },
+        "components": 112,
+        "cleanComponents": 67,
+        "componentsWithErrors": 45,
+        "errorKinds": {
+            "react-docgen-typescript could not match component docs": 45
+        },
+        "stories": 320,
+        "storyErrors": 21,
+        "payloadShape": "per component: id, name, path, jsDocTags, reactDocgenTypescript { props { name, description, required, defaultValue, type, parent, declarations } }, stories[], import",
+        "sample": "AlertCard — message (string, required, described), variant (default 'info')"
+    },
+    "findings": [
+        "A static Storybook build DOES emit manifests/components.json. No dev server, no Vitest, no MCP endpoint, no addon install. It ships from the same CDN as index.json.",
+        "The payload is richer than the .d.ts for simple components: it carries defaultValue and prop-level descriptions, which the design bundle's declarations do not.",
+        "Coverage is the catch. 45 of 112 components fail extraction, and 45 of those 46 are the COMPOUND components (Dialog.Content, Tabs.Trigger, …) — react-docgen-typescript cannot match the story's component import through the compound namespace.",
+        "That is exactly the surface the APP-1208 bundle now covers: 78 typed compound members across 114 emitted .d.ts. The two sources are complementary, not redundant — the manifest is stronger on defaults/descriptions for plain components, the bundle is stronger on compounds.",
+        "21 of 320 stories also fail, on `render: DialogStoryComponent('content')` — the extractor requires render to be an arrow function or function expression."
+    ],
+    "conclusion": "The static-manifest route works and costs one config line plus a rebuild, confirming the earlier judgement that MCP's discovery half needs no server. It does NOT replace the bundle's compound coverage today. A decision to adopt it should be scoped with the compound-extraction failure, not on the headline 'it emits'.",
+    "notPerformed": [
+        "Not committed. The feature flag was reverted; no change was proposed to the GovKit repository in this session.",
+        "Not published — uikit.aragon.org still serves no manifest; this was a local build only."
+    ],
+    "supersedes": "Refines access/storybook-mcp.json, which recorded MCP-over-Storybook as blocked on the Vitest peer. That remains true; this records the static alternative that is not blocked."
+}

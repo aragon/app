@@ -1,0 +1,59 @@
+{
+    "addRemove": {
+        "afterAdd": {
+            "body": "Step 1\nof 1\nNext:\nDeploy your DAO\nAdd multisig members\n\nAdd the wallets that can create and approve proposals. You can paste an address or an ENS name, and change members later through a proposal.\n\nMembers\n\nThe multisig executes an action once enough members approve.\n\nPaste\nPaste\nAdd\nMore\nContinue\n\nNothing is deployed in this prototype — the step is for member entry only.",
+            "remove": [
+                {
+                    "disabled": false,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove",
+                    "visible": false
+                },
+                {
+                    "disabled": false,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": false,
+                    "text": "Remove",
+                    "visible": false
+                }
+            ]
+        },
+        "afterRemove": {
+            "body": "Step 1\nof 1\nNext:\nDeploy your DAO\nAdd multisig members\n\nAdd the wallets that can create and approve proposals. You can paste an address or an ENS name, and change members later through a proposal.\n\nMembers\n\nThe multisig executes an action once enough members approve.\n\nPaste\nAdd\nContinue\n\nNothing is deployed in this prototype — the step is for member entry only.",
+            "remove": [
+                {
+                    "disabled": true,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": true,
+                    "text": "Remove",
+                    "visible": false
+                }
+            ]
+        },
+        "before": {
+            "body": "Step 1\nof 1\nNext:\nDeploy your DAO\nAdd multisig members\n\nAdd the wallets that can create and approve proposals. You can paste an address or an ENS name, and change members later through a proposal.\n\nMembers\n\nThe multisig executes an action once enough members approve.\n\nPaste\nAdd\nContinue\n\nNothing is deployed in this prototype — the step is for member entry only.",
+            "remove": [
+                {
+                    "disabled": true,
+                    "text": "",
+                    "visible": true
+                },
+                {
+                    "disabled": true,
+                    "text": "Remove",
+                    "visible": false
+                }
+            ]
+        }
+    }
+}

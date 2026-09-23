@@ -1,0 +1,670 @@
+{
+    "checkedAt": "2026-09-22T11:33:53.223Z",
+    "requested": "https://claude.ai/artifacts",
+    "observation": {
+        "url": "https://claude.ai/login?from=logout&reauth=1&returnTo=%2Fartifacts%3F",
+        "title": "Sign in - Claude",
+        "viewport": {
+            "width": 1365,
+            "height": 768,
+            "deviceScaleFactor": 1.25
+        },
+        "scroll": {
+            "x": 0,
+            "y": 0,
+            "width": 1365,
+            "height": 768,
+            "scrollWidth": 1365,
+            "scrollHeight": 3248
+        },
+        "elements": [
+            {
+                "id": 1,
+                "role": "link",
+                "name": "Claude",
+                "states": []
+            },
+            {
+                "id": 2,
+                "role": "button",
+                "name": "Continue with Google",
+                "states": []
+            },
+            {
+                "id": 3,
+                "role": "button",
+                "name": "Continue with Apple",
+                "states": []
+            },
+            {
+                "id": 4,
+                "role": "textbox",
+                "name": "Email",
+                "states": [
+                    "required"
+                ]
+            },
+            {
+                "id": 5,
+                "role": "button",
+                "name": "Continue with email",
+                "states": []
+            },
+            {
+                "id": 6,
+                "role": "link",
+                "name": "Privacy Policy (opens in a new tab)",
+                "states": []
+            },
+            {
+                "id": 7,
+                "role": "button",
+                "name": "Download desktop app",
+                "states": []
+            },
+            {
+                "id": 8,
+                "role": "radio",
+                "name": "Individual",
+                "states": [
+                    "checked=true"
+                ]
+            },
+            {
+                "id": 9,
+                "role": "radio",
+                "name": "Team and Enterprise",
+                "states": [
+                    "checked=false"
+                ]
+            },
+            {
+                "id": 10,
+                "role": "button",
+                "name": "Try Claude",
+                "states": []
+            },
+            {
+                "id": 11,
+                "role": "button",
+                "name": "Try Claude",
+                "states": []
+            },
+            {
+                "id": 12,
+                "role": "button",
+                "name": "Try Claude",
+                "states": []
+            },
+            {
+                "id": 13,
+                "role": "link",
+                "name": "Usage limits apply.",
+                "states": []
+            },
+            {
+                "id": 14,
+                "role": "button",
+                "name": "What is Claude and how does it work?",
+                "states": [
+                    "expanded=false"
+                ]
+            },
+            {
+                "id": 15,
+                "role": "button",
+                "name": "What should I use Claude for?",
+                "states": [
+                    "expanded=false"
+                ]
+            },
+            {
+                "id": 16,
+                "role": "button",
+                "name": "How much does it cost to use?",
+                "states": [
+                    "expanded=false"
+                ]
+            },
+            {
+                "id": 17,
+                "role": "link",
+                "name": "X (Twitter)",
+                "states": []
+            },
+            {
+                "id": 18,
+                "role": "link",
+                "name": "Threads",
+                "states": []
+            },
+            {
+                "id": 19,
+                "role": "link",
+                "name": "LinkedIn",
+                "states": []
+            },
+            {
+                "id": 20,
+                "role": "link",
+                "name": "YouTube",
+                "states": []
+            },
+            {
+                "id": 21,
+                "role": "link",
+                "name": "Instagram",
+                "states": []
+            },
+            {
+                "id": 22,
+                "role": "link",
+                "name": "Claude",
+                "states": []
+            },
+            {
+                "id": 23,
+                "role": "link",
+                "name": "Claude Code",
+                "states": []
+            },
+            {
+                "id": 24,
+                "role": "link",
+                "name": "Claude Code for Enterprise",
+                "states": []
+            },
+            {
+                "id": 25,
+                "role": "link",
+                "name": "@Claude",
+                "states": []
+            },
+            {
+                "id": 26,
+                "role": "link",
+                "name": "Claude Design",
+                "states": []
+            },
+            {
+                "id": 27,
+                "role": "link",
+                "name": "Claude Science",
+                "states": []
+            },
+            {
+                "id": 28,
+                "role": "link",
+                "name": "Claude Security",
+                "states": []
+            },
+            {
+                "id": 29,
+                "role": "link",
+                "name": "Download app",
+                "states": []
+            },
+            {
+                "id": 30,
+                "role": "link",
+                "name": "Pricing",
+                "states": []
+            },
+            {
+                "id": 31,
+                "role": "link",
+                "name": "Log in",
+                "states": []
+            },
+            {
+                "id": 32,
+                "role": "link",
+                "name": "Claude in Chrome",
+                "states": []
+            },
+            {
+                "id": 33,
+                "role": "link",
+                "name": "Claude for Slack",
+                "states": []
+            },
+            {
+                "id": 34,
+                "role": "link",
+                "name": "Claude for Microsoft 365",
+                "states": []
+            },
+            {
+                "id": 35,
+                "role": "link",
+                "name": "Skills",
+                "states": []
+            },
+            {
+                "id": 36,
+                "role": "link",
+                "name": "Mythos",
+                "states": []
+            },
+            {
+                "id": 37,
+                "role": "link",
+                "name": "Fable",
+                "states": []
+            },
+            {
+                "id": 38,
+                "role": "link",
+                "name": "Opus",
+                "states": []
+            },
+            {
+                "id": 39,
+                "role": "link",
+                "name": "Sonnet",
+                "states": []
+            },
+            {
+                "id": 40,
+                "role": "link",
+                "name": "Haiku",
+                "states": []
+            },
+            {
+                "id": 41,
+                "role": "link",
+                "name": "AI agents",
+                "states": []
+            },
+            {
+                "id": 42,
+                "role": "link",
+                "name": "Code modernization",
+                "states": []
+            },
+            {
+                "id": 43,
+                "role": "link",
+                "name": "Coding",
+                "states": []
+            },
+            {
+                "id": 44,
+                "role": "link",
+                "name": "Commerce",
+                "states": []
+            },
+            {
+                "id": 45,
+                "role": "link",
+                "name": "Customer support",
+                "states": []
+            },
+            {
+                "id": 46,
+                "role": "link",
+                "name": "Cybersecurity",
+                "states": []
+            },
+            {
+                "id": 47,
+                "role": "link",
+                "name": "Enterprise",
+                "states": []
+            },
+            {
+                "id": 48,
+                "role": "link",
+                "name": "Financial services",
+                "states": []
+            },
+            {
+                "id": 49,
+                "role": "link",
+                "name": "Government",
+                "states": []
+            },
+            {
+                "id": 50,
+                "role": "link",
+                "name": "Healthcare",
+                "states": []
+            },
+            {
+                "id": 51,
+                "role": "link",
+                "name": "Higher education",
+                "states": []
+            },
+            {
+                "id": 52,
+                "role": "link",
+                "name": "K-12 teachers",
+                "states": []
+            },
+            {
+                "id": 53,
+                "role": "link",
+                "name": "Legal",
+                "states": []
+            },
+            {
+                "id": 54,
+                "role": "link",
+                "name": "Life sciences",
+                "states": []
+            },
+            {
+                "id": 55,
+                "role": "link",
+                "name": "Nonprofits",
+                "states": []
+            },
+            {
+                "id": 56,
+                "role": "link",
+                "name": "Small business",
+                "states": []
+            },
+            {
+                "id": 57,
+                "role": "link",
+                "name": "Overview",
+                "states": []
+            },
+            {
+                "id": 58,
+                "role": "link",
+                "name": "Developer docs",
+                "states": []
+            },
+            {
+                "id": 59,
+                "role": "link",
+                "name": "Pricing",
+                "states": []
+            },
+            {
+                "id": 60,
+                "role": "link",
+                "name": "Ecosystem",
+                "states": []
+            },
+            {
+                "id": 61,
+                "role": "link",
+                "name": "Marketplace",
+                "states": []
+            },
+            {
+                "id": 62,
+                "role": "link",
+                "name": "Claude on AWS",
+                "states": []
+            },
+            {
+                "id": 63,
+                "role": "link",
+                "name": "Google Cloud’s Vertex AI",
+                "states": []
+            },
+            {
+                "id": 64,
+                "role": "link",
+                "name": "Microsoft Foundry",
+                "states": []
+            },
+            {
+                "id": 65,
+                "role": "link",
+                "name": "Regional compliance",
+                "states": []
+            },
+            {
+                "id": 66,
+                "role": "link",
+                "name": "Console login",
+                "states": []
+            },
+            {
+                "id": 67,
+                "role": "link",
+                "name": "Blog",
+                "states": []
+            },
+            {
+                "id": 68,
+                "role": "link",
+                "name": "Claude partner network",
+                "states": []
+            },
+            {
+                "id": 69,
+                "role": "link",
+                "name": "Community",
+                "states": []
+            },
+            {
+                "id": 70,
+                "role": "link",
+                "name": "Connectors",
+                "states": []
+            },
+            {
+                "id": 71,
+                "role": "link",
+                "name": "Courses",
+                "states": []
+            },
+            {
+                "id": 72,
+                "role": "link",
+                "name": "Customer stories",
+                "states": []
+            },
+            {
+                "id": 73,
+                "role": "link",
+                "name": "Engineering at Anthropic",
+                "states": []
+            },
+            {
+                "id": 74,
+                "role": "link",
+                "name": "Events",
+                "states": []
+            },
+            {
+                "id": 75,
+                "role": "link",
+                "name": "Plugins",
+                "states": []
+            },
+            {
+                "id": 76,
+                "role": "link",
+                "name": "Powered by Claude",
+                "states": []
+            },
+            {
+                "id": 77,
+                "role": "link",
+                "name": "Service partners",
+                "states": []
+            },
+            {
+                "id": 78,
+                "role": "link",
+                "name": "Tutorials",
+                "states": []
+            },
+            {
+                "id": 79,
+                "role": "link",
+                "name": "Use cases",
+                "states": []
+            },
+            {
+                "id": 80,
+                "role": "link",
+                "name": "Anthropic",
+                "states": []
+            },
+            {
+                "id": 81,
+                "role": "link",
+                "name": "Careers",
+                "states": []
+            },
+            {
+                "id": 82,
+                "role": "link",
+                "name": "Economic Futures",
+                "states": []
+            },
+            {
+                "id": 83,
+                "role": "link",
+                "name": "Research",
+                "states": []
+            },
+            {
+                "id": 84,
+                "role": "link",
+                "name": "Anthropic news",
+                "states": []
+            },
+            {
+                "id": 85,
+                "role": "link",
+                "name": "Responsible Scaling Policy",
+                "states": []
+            },
+            {
+                "id": 86,
+                "role": "link",
+                "name": "Security and compliance",
+                "states": []
+            },
+            {
+                "id": 87,
+                "role": "link",
+                "name": "Transparency",
+                "states": []
+            },
+            {
+                "id": 88,
+                "role": "link",
+                "name": "Startups",
+                "states": []
+            },
+            {
+                "id": 89,
+                "role": "link",
+                "name": "Scientists",
+                "states": []
+            },
+            {
+                "id": 90,
+                "role": "link",
+                "name": "Availability",
+                "states": []
+            },
+            {
+                "id": 91,
+                "role": "link",
+                "name": "Check files",
+                "states": []
+            },
+            {
+                "id": 92,
+                "role": "link",
+                "name": "Status",
+                "states": []
+            },
+            {
+                "id": 93,
+                "role": "link",
+                "name": "Support center",
+                "states": []
+            },
+            {
+                "id": 94,
+                "role": "button",
+                "name": "Privacy choices",
+                "states": []
+            },
+            {
+                "id": 95,
+                "role": "link",
+                "name": "Privacy policy",
+                "states": []
+            },
+            {
+                "id": 96,
+                "role": "link",
+                "name": "Responsible disclosure policy",
+                "states": []
+            },
+            {
+                "id": 97,
+                "role": "link",
+                "name": "Terms of service: Commercial",
+                "states": []
+            },
+            {
+                "id": 98,
+                "role": "link",
+                "name": "Terms of service: Consumer",
+                "states": []
+            },
+            {
+                "id": 99,
+                "role": "link",
+                "name": "Terms of service: US K-12",
+                "states": []
+            },
+            {
+                "id": 100,
+                "role": "link",
+                "name": "Data processing agreement: US K-12",
+                "states": []
+            },
+            {
+                "id": 101,
+                "role": "link",
+                "name": "Usage policy",
+                "states": []
+            },
+            {
+                "id": 102,
+                "role": "link",
+                "name": "here",
+                "states": []
+            },
+            {
+                "id": 103,
+                "role": "button",
+                "name": "Customize Cookie Settings",
+                "states": []
+            },
+            {
+                "id": 104,
+                "role": "button",
+                "name": "Reject All Cookies",
+                "states": []
+            },
+            {
+                "id": 105,
+                "role": "button",
+                "name": "Accept All Cookies",
+                "states": []
+            }
+        ]
+    },
+    "relayAttempt": {
+        "target": "claude.ai",
+        "result": "Browser open timed out after 30000ms"
+    },
+    "generationSubmitted": false
+}

@@ -1,0 +1,46 @@
+{
+    "checkedAt": "2026-09-23T00:00:00Z",
+    "purpose": "Whether GovKit's Storybook can expose an MCP endpoint for design-tool discovery, checked against the registry and the repository rather than release notes",
+    "question": "Can @storybook/addon-mcp be connected to GovKit's Storybook without an infrastructure change?",
+    "answer": "No. Not because of the Storybook version, which was the earlier assumption, but because every published version of the addon takes @storybook/addon-vitest as a hard peer and GovKit tests with jest.",
+    "govkit": {
+        "source": "package.json of the gov-ui-kit worktree at 8d70bdf0c7fc32e994894d47067f518253b04f80",
+        "storybook": "^10.5.7",
+        "storybookPackages": [
+            "storybook@^10.5.7",
+            "@storybook/react-vite@^10.5.7",
+            "@storybook/addon-docs@^10.5.7"
+        ],
+        "testRunner": "jest@^30.4.2",
+        "vitest": "absent",
+        "addonVitest": "absent"
+    },
+    "addonMcp": {
+        "registry": "https://registry.npmjs.org/@storybook/addon-mcp",
+        "latest": "10.6.0",
+        "latestPeerDependencies": {
+            "storybook": "^10.6.0",
+            "@storybook/addon-vitest": "^10.6.0"
+        },
+        "lastPreReleaseLine": {
+            "version": "0.7.0",
+            "published": "2026-07-10T14:02:27.369Z",
+            "peerDependencies": {
+                "storybook": "^0.0.0-0 || ^9.1.16 || ^10.0.0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0 || ^10.4.0-0 || ^10.5.0-0",
+                "@storybook/addon-vitest": "^0.0.0-0 || ^9.1.16 || ^10.0.0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0 || ^10.4.0-0 || ^10.5.0-0"
+            }
+        }
+    },
+    "corrections": [
+        "An earlier working note recorded that connecting the addon requires a Storybook 10.6 bump because the first stable release is 10.6.0. That is wrong: 0.7.0 accepts storybook ^10.5.0-0, which GovKit's ^10.5.7 satisfies, so the Storybook minor is not the blocker.",
+        "The blocker is @storybook/addon-vitest, a hard peer in every published version including 0.7.0. GovKit runs jest and has neither vitest nor addon-vitest, so connecting the addon means introducing a second test runner into the kit."
+    ],
+    "relatedEvidence": {
+        "publicStorybook": "SUPERSEDED by access/storybook-hosted.json. The earlier note here cited access/storybook.json to claim there is no hosted Storybook. That check probed https://aragon.github.io/gov-ui-kit/, which does 404, but is not the hosted site. GovKit's Storybook is live at https://uikit.aragon.org/, serving index.json (v5, 441 entries) and project.json (storybook 10.5.7, @storybook/react-vite) as static files."
+    },
+    "conclusion": "A public MCP endpoint is not reachable without adding Vitest to GovKit AND permanently running `storybook dev`, because /mcp is dev-server middleware (experimental_devServer with app.get/app.post in the addon's preset) and cannot exist in a static build. It is also not needed for discovery: the hosted index.json already enumerates every story statically, and the registry plus selection guide carry App usage and evidence-backed intent that a manifest does not. If a machine-readable manifest is still wanted, componentsManifest is a build artifact and would ship from the same static host without a server or Vitest.",
+    "notPerformed": [
+        "No Storybook upgrade, addon install or config change was made in the GovKit repository",
+        "No MCP endpoint was started, connected or exercised, so no tool names are claimed"
+    ]
+}

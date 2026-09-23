@@ -1,0 +1,48 @@
+{
+    "checkedAt": "2026-09-23T07:02:28.379Z",
+    "purpose": "Correction: the hosted GovKit Storybook does exist; an earlier check probed the wrong host",
+    "supersedes": {
+        "file": "access/storybook.json",
+        "claim": "https://aragon.github.io/gov-ui-kit/ returns GitHub Pages Site not found and index.json is HTTP 404",
+        "status": "true for that URL, but it is not the hosted Storybook, so the inference of no hosted Storybook was wrong"
+    },
+    "hosted": {
+        "url": "https://uikit.aragon.org/",
+        "endpoints": {
+            "/": {
+                "status": 200,
+                "contentType": "text/html; charset=utf-8"
+            },
+            "index.json": {
+                "status": 200,
+                "contentType": "application/json; charset=utf-8"
+            },
+            "iframe.html": {
+                "status": 200,
+                "contentType": "text/html; charset=utf-8"
+            },
+            "project.json": {
+                "status": 200,
+                "contentType": "application/json; charset=utf-8"
+            },
+            "components.json": {
+                "status": 404,
+                "contentType": "text/plain; charset=utf-8"
+            },
+            "mcp": {
+                "status": 404,
+                "contentType": "text/plain; charset=utf-8"
+            }
+        },
+        "indexJson": {
+            "version": 5,
+            "entryCount": 441
+        },
+        "projectJson": {
+            "storybookVersion": "10.5.7",
+            "framework": "@storybook/react-vite",
+            "features": null
+        }
+    },
+    "conclusion": "Machine-readable discovery already exists statically today: index.json enumerates every story with id, title and importPath, served from a CDN with no running process. MCP is not required for discovery; it would add live tool calls and require a permanently running storybook dev server."
+}

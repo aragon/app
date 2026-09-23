@@ -1,0 +1,70 @@
+# Multisig Members Step
+Use the supplied design-system bundle as the primary design context. Read its guidance and linked source/API/examples when available. Treat missing access or revision identity as unknown. Do not edit the design-system project, install or refresh a bundle, publish changes, or use another evaluation conversation. Report unavailable capabilities explicitly.
+
+Design the member-entry step for setting up a new multisig governance body in the Aragon App, using the supplied Aragon App design-system bundle.
+
+A person needs to enter the wallets that will be members. Support a wallet address or ENS name, adding another member, and removing a member while retaining at least one row. Show the initial single empty row, multiple populated members, invalid-address feedback, and duplicate-member feedback. Keep the layout usable on desktop and a narrow mobile viewport. Use example addresses for demonstration; do not connect a wallet or submit a transaction.
+
+Choose and compose existing components before writing replacements. Explain the choices and distinguish reusable kit components from App-owned composition. Identify the maintained source, prop contracts, usage examples, and meaningful states you actually found, with paths or links. If the bundle lacks a needed reference or capability, say so instead of inventing it. Keep authoritative source/API references available alongside any selection guidance you use.
+
+Produce a viewable design prototype and a short implementation handoff describing composition, necessary providers and form state, validation responsibilities, state transitions, and any missing dependencies or deliberate departures. Do not claim that ENS resolution or live validation worked unless you exercised it; distinguish demonstrated behavior from illustrative states.
+
+This task covers member entry, not approval thresholds, an entire DAO-creation flow, existing on-chain membership checks, deployment, or transactions. Preserve the established design language. Use a separate design canvas only if it resolves a concrete uncertainty; otherwise the code-grounded prototype and handoff are enough.
+Aragon App Design System (design system)
+
+I'll start by exploring the design system bundle for the relevant components.
+
+Listing files ×3, Reading ×11, Searching ×5, Writing
+Multisig Members Step.html
+Screenshot
+Multisig Members Step.html
+Multisig Members Step.html?frame=1&state=duplicate
+Screenshot, Editing ×2
+Multisig Members Step.html?frame=1&state=duplicate
+Checking validation messages, Testing blur validation ×2, Inspecting rendered markup, Inspecting a member row, Testing invalid input feedback, Reading logs, Editing
+Multisig Members Step.html?frame=1&state=duplicate
+Probing form validation state, Inspecting registered fields, Checking the validator, Probing single-field validation, Screenshot, Editing
+Multisig Members Step.html?frame=1&state=invalid
+Reading ×2, Editing
+Multisig Members Step.html
+Checking the handoff section rendered, Deleting, Finishing up
+
+Multisig Members Step.html — the step in a frame with a state switcher (empty / 3 members / invalid / duplicate) and a desktop/mobile-390 viewport toggle, plus a handoff section underneath.
+
+Composition: the App-owned AddressesInput.Container/.Item (field array, add/remove, min-one-row, More menu, member error copy) over the kit's AddressInput, inside WizardPage. The only code I wrote is a wrapper that renders one .Item per field-array entry, plus prototype scaffolding.
+
+Two honest caveats, also in the handoff:
+
+The invalid and duplicate messages are the real validators' output (addressesListUtils.validateAddress), primed on load so they're visible without typing. ENS resolution and the on-accept path were not exercised — no wallet, no RPC, so the row avatar stays in its loading state.
+AddressesInput.d.ts in the design system is a generic stub; I read the actual prop contract from the compiled bundle and listed it in the handoff.
+Created Multisig Members Step.html
+Found issues — fixing…
+Editing
+Multisig Members Step.html?frame=1&state=duplicate
+Re-checking duplicate feedback, Finishing up
+
+Fixed: the primer now marks each row touched/dirty before triggering and re-runs after onAccept settles, so the duplicate error survives. Verified persisting at 5s (3 critical nodes, "Address has already been added." present).
+
+Edited Multisig Members Step.html
+Check didn’t complete
+Multisig Members Step.html
+Checking all four states in the shell, Checking duplicate state in the shell, Checking duplicate state via the toggle, Checking remaining states, Checking invalid state, Checking populated state
+
+All four states check out through the shell toggle: empty 1 row, 3 members clean, invalid shows "Address is not valid.", duplicate shows "Address has already been added." and holds. No further changes needed.
+
+How did this design turn out?
+Aragon App Design System
+
+
+
+
+Opus 5
+Medium
+Send
+Multisig Members Step
+100%
+Comment
+Edit
+Present
+Share
+K

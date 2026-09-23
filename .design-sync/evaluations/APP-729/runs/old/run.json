@@ -1,0 +1,35 @@
+{
+    "status": "complete",
+    "sourceProjectUrl": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+    "sessionUrl": "https://claude.ai/design/p/464ba599-10d1-4704-98b2-e15349ee45e4?file=Multisig+Members+Step.html",
+    "model": "Opus 5",
+    "effort": "Medium",
+    "messageSha256": "68a6bee9c13d5e0aa7983927ff7563a6ed054b0118b500ea725b1a7360d87867",
+    "submittedMessages": 1,
+    "humanCorrections": 0,
+    "automaticGeneratedArtifactCorrections": 1,
+    "correctionCountingRule": "Observed generated-prototype correction events after the first completion response; not a count of all edits during generation. Initial pre-correction source was not retained.",
+    "automaticEvents": [
+        {
+            "event": "Design check found duplicate-feedback persistence issue and edited the generated file",
+            "result": "primer marks rows touched/dirty and retriggers after onAccept settles"
+        },
+        {
+            "event": "Second check did not complete automatically; model continued checking all four shell states",
+            "result": "reported all four states held; no further change"
+        }
+    ],
+    "viewport": {
+        "outer": {
+            "width": 1365,
+            "height": 768,
+            "deviceScaleFactor": 1.25
+        },
+        "prototypeModes": [
+            "Desktop",
+            "Mobile 390"
+        ]
+    },
+    "generatedFile": "Multisig Members Step.html",
+    "renderUrl": "https://464ba599-10d1-4704-98b2-e15349ee45e4.claudeusercontent.com/v1/design/projects/464ba599-10d1-4704-98b2-e15349ee45e4/serve/Multisig%20Members%20Step.html?srcmap=1&_omeo=https%3A%2F%2Fclaude.ai"
+}

@@ -1,0 +1,37 @@
+{
+    "status": "complete",
+    "sourceProjectUrl": "https://claude.ai/design/p/e6b58c10-ca85-42b9-beab-dfe1886bfe81",
+    "sessionUrl": "https://claude.ai/design/p/e6b58c10-ca85-42b9-beab-dfe1886bfe81?file=Multisig+Members+Step.html",
+    "model": "Opus 5",
+    "effort": "Medium",
+    "messageSha256": "68a6bee9c13d5e0aa7983927ff7563a6ed054b0118b500ea725b1a7360d87867",
+    "submittedMessages": 1,
+    "humanCorrections": 0,
+    "automaticGeneratedArtifactCorrections": 0,
+    "correctionCountingRule": "Observed generated-prototype correction events after the first completion response; not a count of all edits during generation. Transcript lines 24-27 include construction-time edits, whose individual patches were not retained.",
+    "automaticEvents": [
+        {
+            "event": "Design-system checker reported generated CSS findings",
+            "result": "The model declined to edit synced read-only source; no correction to the generated prototype was observed in the retained transcript."
+        }
+    ],
+    "generatedFiles": [
+        "Multisig Members Step.html",
+        "Handoff — Member entry.md"
+    ],
+    "separateDisposableProject": false,
+    "comparabilityLimitation": "The unpublished candidate exposed no New design action; generation ran in the supplied candidate project, unlike the old run created in a separate design project.",
+    "viewport": {
+        "desktop": {
+            "width": 1365,
+            "height": 768,
+            "deviceScaleFactor": 1.25
+        },
+        "mobile": {
+            "width": 390,
+            "height": 844,
+            "deviceScaleFactor": 1
+        }
+    },
+    "renderUrl": "https://e6b58c10-ca85-42b9-beab-dfe1886bfe81.claudeusercontent.com/v1/design/projects/e6b58c10-ca85-42b9-beab-dfe1886bfe81/serve/Multisig%20Members%20Step.html?srcmap=1&_omeo=https%3A%2F%2Fclaude.ai"
+}

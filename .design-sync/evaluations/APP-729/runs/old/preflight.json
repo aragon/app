@@ -1,0 +1,14 @@
+{
+    "capturedAt": "2026-09-22T16:42:41.111Z",
+    "sourceProjectUrl": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+    "sessionUrl": "https://claude.ai/design/p/dc4442c2-4685-447b-9066-d6712b728834",
+    "sessionTitle": null,
+    "sessionUrlCorrected": "https://claude.ai/design/p/464ba599-10d1-4704-98b2-e15349ee45e4",
+    "correctionNote": "This capture belongs to the subsequently discarded setup attempt, corroborated by invalid-session.json. A later evaluator edit replaced its URL and title without changing capturedAt. Restore the setup URL; the original observed title is not recoverable from retained records, so it is null. sessionUrlCorrected identifies the replacement run, not a session observed at capturedAt. The pre-overhaul version is retained under audit/prior-records/runs/old/preflight.json.",
+    "sourceProject": "Aragon App Design System",
+    "kitVersion": "2.10.0",
+    "modelVisible": "Opus 5",
+    "effortVisible": "Medium",
+    "contextVisible": true,
+    "messageSha256": "68a6bee9c13d5e0aa7983927ff7563a6ed054b0118b500ea725b1a7360d87867"
+}

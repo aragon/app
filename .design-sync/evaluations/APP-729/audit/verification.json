@@ -1,0 +1,15 @@
+{
+    "result": "PASS",
+    "scope": "Evaluation documents, evidence records and retained local candidate payload; not sibling build/test acceptance or remote upload verification.",
+    "jsonRecordsParsed": 6,
+    "frozenInputHashesMatched": 3,
+    "priorRecordSnapshotsMatched": 6,
+    "armsWithExactTranscriptPrompt": 2,
+    "correctionCountsConsistent": true,
+    "localReportLinksResolved": 14,
+    "candidateManifestFilesMatched": 702,
+    "candidateManifestMismatches": 0,
+    "candidateTreeSha256": "5a4b779ac2c6b73f318c238f920064fd81d052b5ae6352f75bef061b0f23c96e",
+    "siblingProjectTests": "not run; audit only",
+    "newClaudeDesignRuns": 0
+}

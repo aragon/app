@@ -1,0 +1,195 @@
+{
+    "issue": "APP-729",
+    "recordedAt": "2026-09-22T21:16:16.510Z",
+    "kind": "static-context-and-evidence-audit",
+    "newClaudeDesignRuns": 0,
+    "acceptanceComplete": false,
+    "decision": "Retain historical pair as exploratory usability evidence; repair verified local context/API delivery gaps before any separately authorized context-only comparison.",
+    "frozenInputs": [
+        {
+            "path": "PROMPT.md",
+            "sha256": "7058f78728fbf22218f7cee6928afb4509f17a92230d522cf8f062dd4d78d36c"
+        },
+        {
+            "path": "PROTOCOL.md",
+            "sha256": "47351bca8d75aa7de96bdc405e8a047ad59bd9e2570dcf7ca295228284d09222"
+        },
+        {
+            "path": "runs/exact-message.txt",
+            "sha256": "68a6bee9c13d5e0aa7983927ff7563a6ed054b0118b500ea725b1a7360d87867"
+        }
+    ],
+    "priorRecords": {
+        "scope": "Snapshots of records immediately before this overhaul; not guaranteed original captures.",
+        "files": [
+            {
+                "path": "README.md",
+                "snapshot": "audit/prior-records/README.md",
+                "sha256": "9501cab78ccaded29b22de232ecb00d661c606dbc16bac59d5113bb014d8fe88"
+            },
+            {
+                "path": "baseline.json",
+                "snapshot": "audit/prior-records/baseline.json",
+                "sha256": "015c5234923b4945df96c69f447087fd64401ca8d2c610e9e841f843d9bf2332"
+            },
+            {
+                "path": "comparison.json",
+                "snapshot": "audit/prior-records/comparison.json",
+                "sha256": "bc02739d8311e2a11974f0b2a7b92ee276fc53705f9dfa5c341fe2f1df20d95c"
+            },
+            {
+                "path": "runs/old/preflight.json",
+                "snapshot": "audit/prior-records/runs/old/preflight.json",
+                "sha256": "f639c6e66daf5073e8f8495d4c74654c33f7e62688a1c57af5db996b80fc896c"
+            },
+            {
+                "path": "runs/old/run.json",
+                "snapshot": "audit/prior-records/runs/old/run.json",
+                "sha256": "ebe287d571546a64a023f436d195833a7c598cf26e8c43966135986271e881eb"
+            },
+            {
+                "path": "runs/candidate/run.json",
+                "snapshot": "audit/prior-records/runs/candidate/run.json",
+                "sha256": "3f61dbd719e18211499a19870046435f9ceee3664c66fb30da0833137e711a31"
+            }
+        ]
+    },
+    "capturedReadmes": {
+        "old": {
+            "path": "access/old-project-readme.txt",
+            "bytes": 5273,
+            "sha256": "6ef812297a7143b19010efc290c2743d0dda7e8b312b144739046461e12fbcee"
+        },
+        "candidate": {
+            "path": "access/candidate-project-readme.txt",
+            "bytes": 8916,
+            "sha256": "1072dd13121e92ce1a861a3c90a730688e01c226c031d13de15383f68297e1c8"
+        }
+    },
+    "localCandidateManifestVerification": {
+        "checkedAt": "2026-09-22T21:11:59.223Z",
+        "manifestPath": "/Users/kd-m2air/.herdr/artifacts/app-1208/candidate-bundle-identity.json",
+        "bundleRoot": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle",
+        "filesChecked": 702,
+        "mismatches": [],
+        "computedTreeSha256": "5a4b779ac2c6b73f318c238f920064fd81d052b5ae6352f75bef061b0f23c96e",
+        "expectedTreeSha256": "5a4b779ac2c6b73f318c238f920064fd81d052b5ae6352f75bef061b0f23c96e",
+        "totalBytes": 15434159,
+        "registryPathsInManifest": [],
+        "scope": "Every manifest-listed local file was checked, not an independent remote export or uploaded-payload receipt."
+    },
+    "evidenceFiles": [
+        {
+            "path": "/Users/kd-m2air/.herdr/artifacts/app-1208/candidate-bundle-identity.json",
+            "bytes": 126425,
+            "sha256": "952e24a2ba0cbc4109b267c415cbdfb0d8786e2a4c756a798ecb7ee94acbd445"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/artifacts/app-1208/HANDOFF.md",
+            "bytes": 6412,
+            "sha256": "15b675e1375b1b27c5cd29e5b7be548a3316f3177a505bfbabe6c41991456cfe"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle/components/forms/AddressesInput/AddressesInput.d.ts",
+            "bytes": 242,
+            "sha256": "d2ab50e15e346acebb8918fa22648b8666d5521ff566907d81955cb2e22b28cf"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/.design-sync/component-registry/registry.json",
+            "bytes": 6121709,
+            "sha256": "8885be87e28f3c4a462c2a87b4e91b3c66d71407b20b5cb871493330b610c5c7"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/.design-sync/component-registry/selection-guide.json",
+            "bytes": 189637,
+            "sha256": "5ee6b4dfef838433fe1797c43ade0b9f3754425f640ccaf78c3e0566d0370c3b"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/.ds-sync/lib/emit.mjs",
+            "bytes": 37817,
+            "sha256": "368f67e69c06c472ee5411f9d00f6ec1fa971438d7c0b1e0390844f8cff5743d"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/.ds-sync/lib/dts.mjs",
+            "bytes": 30120,
+            "sha256": "674618e662674ec8e2d3275df4ad9acf246a2577048cc9fe7a72ae1bc549dd22"
+        },
+        {
+            "path": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/.ds-sync/package-build.mjs",
+            "bytes": 55699,
+            "sha256": "3e6584fdad080a45aee401860decd7fa1992c9088182f2cd3e1b6d2d67681d7a"
+        }
+    ],
+    "verifiedFindings": [
+        {
+            "id": "context-payload-gap",
+            "owner": "APP-1208",
+            "fact": "Registry and selection-guide source files exist, but the verified manifest lists neither and direct glob of retained ds-bundle returned no matching files.",
+            "limit": "No independent complete remote export; do not infer absence from every remote or external reference."
+        },
+        {
+            "id": "app-api-extraction-gap",
+            "owner": "APP-1208",
+            "fact": "Retained AddressesInput.d.ts is a 242-byte generic index-signature interface. package-build.mjs loads package declarations, dts.mjs resolves package-owned declarations/exports, and emit.mjs falls back to the exact generic body.",
+            "limit": "Source inspection explains the observed fallback; converter was not rebuilt in this audit. No --skip-dts marker is present."
+        }
+    ],
+    "unverifiedObservations": [
+        {
+            "id": "css-checker",
+            "source": "runs/candidate/transcript.txt:44-53",
+            "claim": "Model reports 32 runtime-variable and 30 motion/easing findings.",
+            "limit": "Raw report not retained with run; model explanation is not a confirmed token-parity defect."
+        },
+        {
+            "id": "remote-upload",
+            "source": "/Users/kd-m2air/.herdr/artifacts/app-1208/HANDOFF.md:83-96",
+            "claim": "566-file uploaded subset and styles.css round-trip.",
+            "limit": "Local 702-file verification is not verification of the exact remote payload."
+        }
+    ],
+    "corrections": [
+        {
+            "path": "README.md; baseline.json; comparison.json",
+            "change": "Withdraw causal and first-pass improvement claims; distinguish useful context content from observed consultation and outcome."
+        },
+        {
+            "path": "runs/old/preflight.json",
+            "change": "Restore discarded setup URL from invalid-session evidence; original observed title is unrecoverable and null. Replacement session URL is a later pointer, not a backdated capture."
+        },
+        {
+            "path": "baseline.json",
+            "change": "Restore evaluator model openai-codex/gpt-6-astra from session context; retain unsupported prior gpt-5.6-sol in snapshot. Claude visible model remains separately recorded as Opus 5."
+        },
+        {
+            "path": "runs/old/run.json; runs/candidate/run.json; baseline.json; comparison.json",
+            "change": "Normalize integer automaticGeneratedArtifactCorrections with explicit post-completion counting boundary: old 1, candidate 0. Construction edits were not counted and first-pass quality is unknown."
+        },
+        {
+            "path": "comparison.json",
+            "change": "Retain optional MemberCount regex approximation as model-authored risk without claiming an exercised failure or bundle regression."
+        }
+    ],
+    "sourceScope": {
+        "registry": "https://github.com/aragon/app/pull/1400",
+        "appGuidance": "https://github.com/aragon/app/pull/1410",
+        "kitGuidance": "https://github.com/aragon/gov-ui-kit/pull/793",
+        "tokenParity": "https://github.com/aragon/app/pull/1412",
+        "cssGeneration": "https://github.com/aragon/app/pull/1411",
+        "consumerParity": "https://github.com/aragon/app/pull/1413",
+        "note": "Sibling implementation/test source inspected by read-only scouts. No sibling builds/tests or new browser generations executed."
+    },
+    "linearUpdates": [
+        {
+            "issue": "APP-1208",
+            "commentId": "1c119189-5ee8-46a3-a640-f87aca286c0f",
+            "action": "Updated existing findings with local payload verification, converter root cause and narrower checker classification."
+        },
+        {
+            "issue": "APP-1220",
+            "commentId": "3d2d62b5-a503-47aa-90eb-5a4a80c6f430",
+            "action": "Posted sibling proposals and prospective evaluation decision; no status or acceptance-criteria edits."
+        }
+    ],
+    "nextProtocol": "PROTOCOL-v2.md"
+}

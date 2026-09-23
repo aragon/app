@@ -1,0 +1,75 @@
+{
+    "checkedAt": "2026-09-22T11:39:43.373Z",
+    "requested": "https://www.figma.com/file/P0GeJKqILL7UXvaqu5Jj7V/v1.1.0?type=design&node-id=8192-18146&mode=design",
+    "readResult": "HTTP 403",
+    "observation": {
+        "url": "https://www.figma.com/file/P0GeJKqILL7UXvaqu5Jj7V/v1.1.0?type=design&node-id=8192-18146&mode=design",
+        "title": "Figma",
+        "viewport": {
+            "width": 1365,
+            "height": 768,
+            "deviceScaleFactor": 1.25
+        },
+        "scroll": {
+            "x": 0,
+            "y": 0,
+            "width": 1365,
+            "height": 768,
+            "scrollWidth": 1365,
+            "scrollHeight": 768
+        },
+        "elements": [
+            {
+                "id": 1,
+                "role": "heading",
+                "name": "Want to check out this file? Sign up or Log in",
+                "states": [
+                    "focused"
+                ]
+            },
+            {
+                "id": 2,
+                "role": "button",
+                "name": "Continue with Google",
+                "states": []
+            },
+            {
+                "id": 3,
+                "role": "textbox",
+                "name": "EMAIL",
+                "states": []
+            },
+            {
+                "id": 4,
+                "role": "button",
+                "name": "Continue with email",
+                "states": []
+            },
+            {
+                "id": 5,
+                "role": "link",
+                "name": "Cookies settings",
+                "states": []
+            },
+            {
+                "id": 6,
+                "role": "button",
+                "name": "Do not allow cookies",
+                "states": []
+            },
+            {
+                "id": 7,
+                "role": "button",
+                "name": "Allow all cookies",
+                "states": []
+            },
+            {
+                "id": 8,
+                "role": "button",
+                "name": "Dismiss",
+                "states": []
+            }
+        ]
+    },
+    "canvasModified": false
+}

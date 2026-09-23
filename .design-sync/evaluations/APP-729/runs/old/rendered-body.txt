@@ -1,0 +1,51 @@
+Multisig setup · member entry
+
+Prototype
+
+Built on AddressesInput (App-owned) over the kit’s AddressInput, inside WizardPage.
+
+State
+
+Empty row
+
+3 members
+
+Invalid address
+
+Duplicate member
+
+Viewport
+
+Desktop
+
+Mobile 390
+
+Initial state. One row, no value. The remove control is disabled because the list must keep at least one row.
+
+Implementation handoff
+Composition
+Kit (reusable, @aragon/gov-ui-kit): AddressInput — the row control, with ENS/address toggle, explorer link, copy, clear, paste. Card, Button, Dropdown, AlertInline, InputContainer all come from the kit too.
+App-owned: AddressesInput.Container + .Item (apps/app/src/shared/components/forms/addressesInput/…) own the list semantics — field array, add, remove, the min-one-row rule, the More menu (Reset fields / Clear all) and the member-specific error copy.
+Step chrome: WizardPage.Container + WizardPage.Step render the progress bar, title/description and the back/next footer. Nothing was rebuilt; the only new code is a wrapper that renders one .Item per field-array entry.
+Providers and form state
+DebugContextProvider → TranslationsProvider (translations={enTranslations}) → GukModulesProvider (AddressInput reads wagmi/react-query context) → BlockNavigationContextProvider → WizardPage.Container.
+WizardPage.Container owns the react-hook-form instance (Wizard.Root calls useForm({mode:"onTouched", defaultValues})), so no FormWrapper is needed here. Field shape: members: Array<{ address: string; name?: string }>, passed as defaultValues.
+Outside a wizard (e.g. a dialog), wrap in the exported FormWrapper instead — array-backed lists hydrate only from defaultValues.
+AddressesInput.Container owns the useFieldArray; child .Item count must track it. This prototype reads the array with useFormContext().watch(name) and maps one .Item per entry — in the app, source that count from the same form state.
+Validation responsibilities
+Component: .Item registers rules {required: true, validate: addressesListUtils.validateAddress} → returns app.shared.addressesInput.item.input.error.invalid for a non-address and .alreadyInList when an earlier row holds the same address (isAddressEqual, so case-insensitive). AddressInput itself handles EIP-55 checksum feedback and ENS resolution.
+Caller: pass customValidator (member) => …, chainId, and disabled per row for anything product-specific (e.g. excluded addresses). Threshold and body-level rules are out of scope for this step.
+Field values only update on AddressInput onAccept, i.e. once a value resolves — a half-typed address leaves the previous form value in place.
+State transitions
+Empty → typed: one row on entry; remove is disabled while length === 1 (allowEmptyList is not set).
+Add: appends { address: "" } unless onAddClick is supplied. Remove: drops the row and keeps at least one.
+Errors surface per row under the input and clear when the value becomes valid — .Item re-triggers validation whenever a row holds a valid address and is dirty or touched, so fixing row 3 also clears a stale duplicate error.
+More menu appears only with 2+ rows; Reset fields shows only when rows are dirty and non-empty or an error exists.
+Source references
+AddressesInput: components/forms/AddressesInput/AddressesInput.prompt.md (Default / Filled / ChecksumError examples). The .d.ts there is a generic stub — the real prop contract was read from the bundle: _ds_bundle.js (addressesInputContainer.tsx: children, name, fieldPrefix, label, helpText, allowEmptyList, onAddClick, showResetAllAction; addressesInputItem.tsx: index, disabled, customValidator, chainId).
+AddressInput props and states: components/general/AddressInput/AddressInput.prompt.md. Error copy: enTranslations → app.shared.addressesInput.*. WizardPage: components/wizards/WizardPage/WizardPage.prompt.md.
+Limits and departures
+Demonstrated live in this prototype: add/remove with the min-one-row rule, invalid-address and duplicate-member messages (produced by the real validators, primed on load so the states are visible without typing), and the responsive row layout.
+Not exercised: ENS resolution and the on-accept path. The prototype has no wallet and no RPC, so the row avatar sits in its loading state and typed values do not resolve — treat ENS and checksum feedback as illustrative until run against a provider.
+Deliberate departures: the wizard is a single step with a stubbed onSubmit, and the state/viewport bar above the frame is prototype scaffolding, not part of the design.
+Missing from the bundle: no member-entry step component exists above AddressesInput, and AddressesInput has no variant-grid states for invalid/duplicate — only Default, Filled and ChecksumError.
