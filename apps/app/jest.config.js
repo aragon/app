@@ -51,8 +51,9 @@ const config = {
     // Allow transforming specific ESM deps even under pnpm's nested layout
     // e.g. node_modules/.pnpm/<pkg>@<ver>/node_modules/<pkg>/...
     transformIgnorePatterns: [
-        // Transform wagmi-related ESM and gov-ui-kit; avoid downleveling viem/abitype unless needed
-        'node_modules/(?!(?:\\.pnpm/[^/]+/node_modules/)?(@aragon/gov-ui-kit|wagmi|@wagmi|use-sync-external-store|react-merge-refs|@plausible-analytics/tracker)(/|$))',
+        // Transform wagmi-related ESM and gov-ui-kit; avoid downleveling viem/abitype unless needed.
+        // htmlparser2 and its dom* / entities helpers are ESM-only deps of gov-ui-kit's sanitize-html.
+        'node_modules/(?!(?:\\.pnpm/[^/]+/node_modules/)?(@aragon/gov-ui-kit|wagmi|@wagmi|use-sync-external-store|react-merge-refs|@plausible-analytics/tracker|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|entities)(/|$))',
     ],
 };
 
