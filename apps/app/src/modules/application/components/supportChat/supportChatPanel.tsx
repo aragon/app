@@ -13,9 +13,13 @@ import { useSupportChatContext } from './supportChatContext';
 // column is made inert so the fullscreen drawer is modal for keyboard and screen readers. While
 // closed the panel is inert and aria-hidden so its kept-mounted content is unreachable and it
 // stops being a `complementary` landmark.
-const panelWidthClassName = 'lg:w-[clamp(500px,30vw,640px)]';
+//
+// The shell measures the browser window (`screen-lg`), not the `app` container the regular
+// breakpoint variants query (see layoutRoot/breakpoints.css): docking is a window decision, and
+// the CSS has to agree with the `matchMedia` query below, which only ever sees the window.
+const panelWidthClassName = 'screen-lg:w-[clamp(500px,30vw,640px)]';
 
-// Tailwind `lg` breakpoint: above it the panel is an in-flow column, below it a fullscreen drawer.
+// Viewport `lg` breakpoint: above it the panel is an in-flow column, below it a fullscreen drawer.
 const desktopMediaQuery = '(min-width: 64rem)';
 
 export const SupportChatPanel: React.FC = () => {
@@ -33,7 +37,7 @@ export const SupportChatPanel: React.FC = () => {
             return undefined;
         }
 
-        document.body.classList.add('max-lg:overflow-hidden');
+        document.body.classList.add('screen-max-lg:overflow-hidden');
 
         const appColumn = panelRef.current?.previousElementSibling;
         const desktopMedia = window.matchMedia?.(desktopMediaQuery);
@@ -47,7 +51,7 @@ export const SupportChatPanel: React.FC = () => {
         desktopMedia?.addEventListener('change', updateAppColumnInert);
 
         return () => {
-            document.body.classList.remove('max-lg:overflow-hidden');
+            document.body.classList.remove('screen-max-lg:overflow-hidden');
             desktopMedia?.removeEventListener('change', updateAppColumnInert);
             appColumn?.removeAttribute('inert');
         };
@@ -59,15 +63,15 @@ export const SupportChatPanel: React.FC = () => {
 
     const panelClassNames = classNames(
         'justify-end overflow-hidden bg-neutral-0',
-        'lg:sticky lg:top-0 lg:h-dvh lg:shrink-0 lg:self-start',
-        'lg:transition-[width] lg:duration-300 lg:ease-in-out',
+        'screen-lg:sticky screen-lg:top-0 screen-lg:h-dvh screen-lg:shrink-0 screen-lg:self-start',
+        'screen-lg:transition-[width] screen-lg:duration-300 screen-lg:ease-in-out',
         isOpen
             ? classNames(
                   'fixed inset-0 z-[var(--guk-dialog-content-z-index)] flex',
-                  'lg:inset-auto lg:z-auto lg:flex lg:border-neutral-100 lg:border-l lg:shadow-neutral-lg',
+                  'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-neutral-100 screen-lg:border-l screen-lg:shadow-neutral-lg',
                   panelWidthClassName,
               )
-            : 'hidden lg:flex lg:w-0',
+            : 'hidden screen-lg:flex screen-lg:w-0',
     );
 
     return (
@@ -82,7 +86,7 @@ export const SupportChatPanel: React.FC = () => {
                 animates, so the chat appears to slide in from the right instead of reflowing. */}
             <div
                 className={classNames(
-                    'h-full w-full lg:shrink-0',
+                    'h-full w-full screen-lg:shrink-0',
                     panelWidthClassName,
                 )}
             >
