@@ -1,5 +1,5 @@
 import type { IProposalActionsArrayControls } from '@aragon/gov-ui-kit';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
@@ -43,7 +43,7 @@ const resolveActionCategory = (action: IProposalActionData) => {
 export const useProposalActionsField = () => {
     const { t } = useTranslations();
 
-    const { control } = useFormContext<ICreateProposalFormData>();
+    const { control, subscribe } = useFormContext<ICreateProposalFormData>();
 
     const {
         fields: actions,
@@ -51,6 +51,24 @@ export const useProposalActionsField = () => {
         remove,
         swap,
     } = useFieldArray({ control, name: 'actions' });
+
+    // RHF carries `errors` along when an action is removed or reordered, but it only does the same
+    // for `touchedFields` while something is subscribed to them (see `_setFieldArray`), and no
+    // action view reads them. Without this subscription the touched state of a removed action stays
+    // on its index and the next action to land there inherits it: in the `onTouched` mode of the
+    // wizard that action then validates on its very first change, which for the address input,
+    // reporting its empty value on mount, is the moment it is added (a re-added action showed the
+    // error of the one removed before it). The callback is a no-op, the subscription itself is the
+    // point.
+    useEffect(
+        () =>
+            subscribe({
+                name: 'actions',
+                formState: { touchedFields: true },
+                callback: () => undefined,
+            }),
+        [subscribe],
+    );
 
     // We need to watch because action views can update data, and it's not reflected otherwise!
     // We merge it with `actions` because of `id` and other internal props which are missing in watched action.
@@ -74,10 +92,11 @@ export const useProposalActionsField = () => {
     // Reorder through the field array, never `setValue('actions', ...)`: setValue rewrites only the
     // values, stranding `errors`/`touchedFields` on the index they were recorded at, where they then
     // render against whichever action took that slot (APP-1161). `swap` permutes the registered
-    // fields and both of those trees along with the values. The field-array reorder crashes that
-    // pushed this code onto `setValue` in the first place (APP-247, against `move()`) no longer
-    // reproduce on current RHF — stress-tested against deeply nested action data, sparse `_fields`
-    // and repeated reorders — so the field array is safe to reorder through again.
+    // fields and both of those trees along with the values (`touchedFields` only thanks to the
+    // subscription above). The field-array reorder crashes that pushed this code onto `setValue` in
+    // the first place (APP-247, against `move()`) no longer reproduce on current RHF — stress-tested
+    // against deeply nested action data, sparse `_fields` and repeated reorders — so the field array
+    // is safe to reorder through again.
     const handleMoveAction = useCallback(
         (index: number, newIndex: number) => {
             if (newIndex < 0 || newIndex >= actions.length) {

@@ -10,6 +10,7 @@ import { type ReactNode, useState } from 'react';
 import {
     FormProvider,
     type UseFormReturn,
+    useController,
     useFieldArray,
     useForm,
     useFormContext,
@@ -325,6 +326,181 @@ describe('useProposalActionsField hook', () => {
                     addresses: [{ address: '0xREMOVE' }],
                 }),
             ]);
+        });
+    });
+
+    describe('touched state', () => {
+        const receiverAction = (type: string) =>
+            ({
+                fieldId: `field-${type}`,
+                type,
+                daoId: 'test',
+                meta: undefined,
+                receiver: '',
+            }) as unknown as IProposalActionData;
+
+        // Stands in for an action view: a controlled field carrying the action-form validation
+        // rules and rendering its error the way `useFormField` does.
+        const ActionItem: React.FC<{ index: number; type: string }> = (
+            props,
+        ) => {
+            const { index, type } = props;
+            const { field, fieldState } = useController<Record<string, string>>(
+                {
+                    name: `actions.${index.toString()}.receiver`,
+                    rules: {
+                        validate: (value) =>
+                            value === '' || value.startsWith('0x') || 'INVALID',
+                    },
+                },
+            );
+
+            return (
+                <fieldset aria-label={type}>
+                    {fieldState.error && (
+                        <p role="alert">{fieldState.error.message}</p>
+                    )}
+                    <label>
+                        receiver
+                        <input {...field} value={field.value ?? ''} />
+                    </label>
+                </fieldset>
+            );
+        };
+
+        const ActionList: React.FC = () => {
+            const { actionsMerged, handleAddAction, getArrayControls } =
+                useProposalActionsField();
+
+            return (
+                <div>
+                    {actionsMerged.map((item, index) => (
+                        <ActionItem
+                            index={index}
+                            key={item.fieldId}
+                            type={item.type}
+                        />
+                    ))}
+                    <button
+                        onClick={() =>
+                            handleAddAction([receiverAction('transfer')])
+                        }
+                        type="button"
+                    >
+                        add transfer action
+                    </button>
+                    <button
+                        onClick={() => getArrayControls(0).remove?.onClick?.(0)}
+                        type="button"
+                    >
+                        remove first action
+                    </button>
+                    <button
+                        onClick={() => getArrayControls(1).moveUp?.onClick?.(1)}
+                        type="button"
+                    >
+                        move second action up
+                    </button>
+                </div>
+            );
+        };
+
+        const TestWrapper: React.FC<{
+            actions?: IProposalActionData[];
+            children?: ReactNode;
+        }> = (props) => {
+            const { actions = [], children } = props;
+            // The wizard validates in `onTouched` mode: a field validates on its first blur and on
+            // every change after that.
+            const formMethods = useForm({
+                mode: 'onTouched',
+                defaultValues: { actions },
+            });
+
+            return <FormProvider {...formMethods}>{children}</FormProvider>;
+        };
+
+        const renderActionBuilder = (actions?: IProposalActionData[]) =>
+            render(
+                <TestWrapper actions={actions}>
+                    <ActionList />
+                </TestWrapper>,
+            );
+
+        const actionItem = (type: string) =>
+            within(screen.getByRole('group', { name: type }));
+
+        it('does not hand the touched state of a removed action to the action added in its place', async () => {
+            const user = userEvent.setup();
+            renderActionBuilder();
+            const addButton = screen.getByRole('button', {
+                name: 'add transfer action',
+            });
+
+            await user.click(addButton);
+            await user.type(
+                actionItem('transfer').getByLabelText('receiver'),
+                'ASDF',
+            );
+            await user.tab();
+            expect(actionItem('transfer').getByRole('alert')).toHaveTextContent(
+                'INVALID',
+            );
+
+            await user.click(
+                screen.getByRole('button', { name: 'remove first action' }),
+            );
+            expect(screen.queryByRole('group')).toBeNull();
+
+            await user.click(addButton);
+            expect(actionItem('transfer').queryByRole('alert')).toBeNull();
+
+            // An untouched field validates on its first blur, not while it is being typed into.
+            await user.type(
+                actionItem('transfer').getByLabelText('receiver'),
+                'A',
+            );
+            expect(actionItem('transfer').queryByRole('alert')).toBeNull();
+
+            await user.tab();
+            expect(actionItem('transfer').getByRole('alert')).toHaveTextContent(
+                'INVALID',
+            );
+        });
+
+        it('keeps the touched state with the action that owns it after a move', async () => {
+            const user = userEvent.setup();
+            renderActionBuilder([
+                receiverAction('first'),
+                receiverAction('second'),
+            ]);
+
+            await user.type(
+                actionItem('second').getByLabelText('receiver'),
+                'ASDF',
+            );
+            await user.tab();
+            expect(actionItem('second').getByRole('alert')).toHaveTextContent(
+                'INVALID',
+            );
+
+            await user.click(
+                screen.getByRole('button', { name: 'move second action up' }),
+            );
+
+            // `first` now sits on the index `second` was touched at and must still count as untouched.
+            await user.type(
+                actionItem('first').getByLabelText('receiver'),
+                'A',
+            );
+            expect(actionItem('first').queryByRole('alert')).toBeNull();
+
+            // `second` stays touched: fixing its value clears the error without another blur.
+            const secondReceiver =
+                actionItem('second').getByLabelText('receiver');
+            await user.clear(secondReceiver);
+            await user.type(secondReceiver, '0xBEEF');
+            expect(actionItem('second').queryByRole('alert')).toBeNull();
         });
     });
 });
