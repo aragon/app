@@ -1,5 +1,9 @@
 @import "tailwindcss";
-@import "../../../../../../node_modules/@aragon/gov-ui-kit/index.css";
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/core/index.css";
+@import "../../../../../../../../.design-sync/generated/govkit-primitives.css";
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/utils/index.css";
+/* biome-ignore lint/suspicious/noDuplicateAtImportRules: Preserve GovKit's original Tailwind layer boundary. */
+@import "tailwindcss";
 
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";
