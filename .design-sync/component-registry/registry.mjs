@@ -87,6 +87,12 @@ function repositoryRef(repository, root, filePath, line = 1) {
     if (relative.startsWith('../') || path.isAbsolute(relative)) {
         return null;
     }
+    // A type that resolves into a dependency is not a repository source. Its
+    // path also pins an exact pnpm version directory, so recording it produces
+    // a reference that no commit contains and that breaks on any bump.
+    if (relative.split('/').includes('node_modules')) {
+        return null;
+    }
     return {
         repository,
         path: relative,
@@ -1852,9 +1858,43 @@ function main(argv = process.argv.slice(2)) {
         const current = readJson(REGISTRY_PATH);
         validateRegistry(current);
         const regenerated = buildRegistry({ preserveCurated: true });
-        if (!isDeepStrictEqual(current, regenerated)) {
+        // Staleness is a property of the recorded SOURCES, not of HEAD. The
+        // commit and dirty list are provenance, and they move whenever
+        // anything is committed - including committing the registry itself -
+        // so comparing them would make `check` fail on every commit. Component
+        // records carry a sha256 per referenced file, so real source drift
+        // still fails below.
+        const sources = (registry) => ({
+            ...registry,
+            provenance: Object.fromEntries(
+                Object.entries(registry.provenance ?? {}).map(([key, value]) =>
+                    key === 'app' || key === 'kit'
+                        ? [
+                              key,
+                              { ...value, commit: undefined, dirty: undefined },
+                          ]
+                        : [key, value],
+                ),
+            ),
+        });
+        if (!isDeepStrictEqual(sources(current), sources(regenerated))) {
             throw new Error(
                 `Registry is stale; run node ${relativePath(process.cwd(), SCRIPT_PATH)} extract`,
+            );
+        }
+        const drift = ['app', 'kit']
+            .filter(
+                (root) =>
+                    current.provenance?.[root]?.commit !==
+                    regenerated.provenance?.[root]?.commit,
+            )
+            .map(
+                (root) =>
+                    `${root} ${current.provenance?.[root]?.commit ?? 'none'} -> ${regenerated.provenance?.[root]?.commit ?? 'none'}`,
+            );
+        if (drift.length) {
+            process.stdout.write(
+                `Recorded revision moved with unchanged sources: ${drift.join('; ')}\n`,
             );
         }
         process.stdout.write(
