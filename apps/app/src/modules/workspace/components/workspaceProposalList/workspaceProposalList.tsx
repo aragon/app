@@ -11,11 +11,33 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IWorkspaceAccountRef } from '../../api/workspaceQueryService';
+import type { IGetWorkspaceProposalListParams } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+
+/**
+ * Builds the parameters of the aggregated proposal list request.
+ *
+ * Shared with the aside card, which reads the totals out of the same response: the two only stay on a single
+ * request as long as they build the very same body, since that is what the query key is made of.
+ * @param accounts - DAO accounts to aggregate the proposals of.
+ * @param pageSize - Number of proposals to read per page.
+ * @returns The parameters of the workspace proposal list request.
+ */
+export const buildWorkspaceProposalListParams = (
+    accounts: IWorkspaceAccount[],
+    pageSize: number,
+): IGetWorkspaceProposalListParams => ({
+    body: {
+        accounts: accounts.map(({ network, address }) => ({
+            network,
+            address,
+        })),
+        pagination: { pageSize },
+    },
+});
 
 export interface IWorkspaceProposalListProps {
     /**
@@ -44,10 +66,6 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
 
     const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
 
-    const accountRefs: IWorkspaceAccountRef[] = accounts.map(
-        ({ network, address }) => ({ network, address }),
-    );
-
     const {
         onLoadMore,
         proposalList,
@@ -56,7 +74,7 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
         emptyState,
         errorState,
     } = useWorkspaceProposalListData({
-        params: { body: { accounts: accountRefs, pagination: { pageSize } } },
+        params: buildWorkspaceProposalListParams(accounts, pageSize),
         isDaosPending,
         enabled: accounts.length > 0,
     });

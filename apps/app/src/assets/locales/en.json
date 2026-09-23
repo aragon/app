@@ -4407,7 +4407,8 @@
           "heading": "Unable to load proposals"
         }
       },
-      "workspaceProposalsAsideCard": {
+      "workspaceAllProposalsAsideCard": {
+        "allProposals": "All proposals",
         "daos": "DAOs",
         "mostRecent": "Most recent",
         "recentUnit": "{{unit}} ago",

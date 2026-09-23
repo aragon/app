@@ -314,23 +314,23 @@ name ?? truncated address` — so a tab and its row never disagree.
 **Only DAO accounts get a tab.** `useWorkspaceAccountFilter` is DAO-only for every page: the aggregated tab still
 covers every account, so a Safe's balances are visible there, but a Safe has no tab of its own.
 
-The aside is `WorkspaceAssetsAsideCard` on every tab, fed `totalAmountUsd`, `totalRecords` and `spamCount` from the
-response for the selected accounts. It shares its query key with the list, so reading the totals costs no extra
-request.
+The aside is `WorkspaceAssetsAsideCard`, a router over one card per account type: `WorkspaceDaoAssetsAsideCard` for
+a DAO account and `WorkspaceAllAssetsAsideCard` for the aggregated option (and, until it has a card of its own, for
+anything else). A Safe card slots in as one more branch.
 
-This replaced an earlier split where an account tab read the single DAO endpoints via `AssetList.Default` and
-rendered the DAO page's `DaoFilterAsideCard`. What that traded away:
+`WorkspaceAllAssetsAsideCard` is fed `totalAmountUsd`, `totalRecords` and `spamCount` from the response for the
+selected accounts; it shares its query key with the list, so the totals cost no extra request.
+`WorkspaceDaoAssetsAsideCard` reads the DAO (an account ID *is* the DAO ID, so the query is the DAO pages' own) and
+hands it to `DaoFilterAsideCard` with a synthesised `isParent: true` option, i.e. a DAO tab shows the DAO assets
+page's card. Two consequences to keep in mind:
 
-- the DAO card's identity block — chain, vault address, ENS, resource links, Octav — which the workspace card does
-  not show. Adding it needs no `IDao`: network and address come from the account, name and avatar from the accounts
-  API, which is exactly why it would work for a Safe too.
-- **nothing in the deployed stats**, because `DaoInfoAside` only renders the stats it is handed when the
-  `linkedAccount` flag is on (`defaultValue: false`, `local: true`) and otherwise falls back to
-  `FinanceDetailsList`, which drops them. So outside local dev an account tab showed *no* asset stats; it now shows
-  total value, token count and hidden spam.
-- exact agreement with that DAO's own assets page. The DAO card's total value came from `dao.metrics.tvlUSD`, an
-  indexed DAO metric, while the workspace card computes `totalAmountUsd` over the returned selection — different
-  quantities, so the two pages can legitimately differ.
+- its content is **gated by the `linkedAccount` flag** (`defaultValue: false`, `local: true`), exactly as on the
+  DAO page: enabled it shows the description, the stats it is handed, the chain/address list and the Octav link;
+  disabled `DaoInfoAside` falls back to `FinanceDetailsList` and drops the stats. Inherited behaviour, not
+  introduced here.
+- its total value comes from `dao.metrics.tvlUSD`, an indexed DAO metric, while the aggregated card sums
+  `totalAmountUsd` over the returned selection. Different quantities, so a DAO tab and the aggregated tab can
+  legitimately disagree; only the token count comes from the same aggregation on both.
 
 The rows **reuse `AssetListItem` unchanged**: the backend projects the same nested `token` (network and address
 included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused — on a DAO
@@ -362,9 +362,18 @@ Nothing is prefetched: the asset queries need the account list, which only exist
 `/workspace/{workspaceId}/proposals` follows the same shape as the assets page: `WorkspaceAccountFilter` tabs over
 `Page.Main`, plus an aside. **Only DAO accounts take part** — Safes have no indexed proposals.
 
-Per-account tabs reuse `DaoProposalList` unchanged, so a DAO tab is the DAO page: plugin sub-tabs when the DAO runs
-several processes, plugin-specific rows, working links. The aggregated tab calls
+Per-account tabs reuse `DaoProposalList` unchanged, so a DAO tab is the DAO page: process sub-tabs when the DAO
+runs several, plugin-specific rows, working links. The aggregated tab calls
 `POST /v2/workspaces/query/proposals` through `workspaceQueryService.getProposalList`.
+
+Unlike the assets page, this one is **not** migrated to read the workspace endpoint on every tab. Not because the
+endpoint cannot do it — `IWorkspaceProposal extends IProposal`, so `WorkspaceProposalList` renders a single account
+as-is, and `filters.pluginAddress` exists — but because `DaoProposalList` is what renders the process strip
+(`useDaoPluginFilterUrlParam` → `PluginFilterComponent`, on the `?proposals=` URL param). Rebuilding the strip on
+the workspace endpoint is a modest piece of work, since the DAO is already read by `useWorkspaceDaos`, with two
+gaps left on the "All" group tab: `onlyActive` (which means *only currently installed plugins*, not *active
+proposals*) and `includeLinkedAccounts` have no equivalent there — the account scope is explicit and never expands
+a DAO into its linked accounts.
 
 Three decisions worth keeping:
 
@@ -381,14 +390,17 @@ Three decisions worth keeping:
   displayed. Warning on `partial` would flag data the user cannot see. `metadata.totalRecords` counts `data` only,
   so pagination stays correct without them.
 
-The aside shows `ProposalListStats` on a DAO tab (always the DAO-level stats; the page does not lift the plugin
-filter to swap in `DaoPluginInfo`) and `WorkspaceProposalsAsideCard` on the aggregated tab — total, DAO count and
-most recent, all free from the response. "Executed" is omitted: it needs a second full request, which also
+The aside is `WorkspaceProposalsAsideCard`, a router over one card per account type, the same shape as the assets
+aside: `WorkspaceDaoProposalsAsideCard` for a DAO account — it reads the DAO (an account ID *is* the DAO ID) and
+renders the DAO page's `ProposalListStats`, so the card and the list beside it come from the same endpoint — and
+`WorkspaceAllProposalsAsideCard` for the aggregated option, with total, DAO count and most recent, all free from
+the response it shares with the list. "Executed" is omitted there: it needs a second full request, which also
 re-triggers the backend's Safe-queue reads.
 
-There is no "New proposal" action: creating a proposal is a single-DAO act with a per-DAO permission check, and a
-button that appeared and vanished per tab would read as a bug. Each DAO tab links to its DAO, where the real create
-flow lives.
+The "New proposal" action asks for the account first (`WorkspaceSelectAccountDialog`) and then for the process
+(`SelectPluginDialog`), skipping the account step when a tab has already named one. Creating a proposal stays a
+single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
+called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
 
 ### Overview page
 
