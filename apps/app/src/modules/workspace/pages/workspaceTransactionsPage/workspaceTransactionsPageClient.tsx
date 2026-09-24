@@ -3,12 +3,11 @@
 import { Card, EmptyState } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
+import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
-import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 
 export interface IWorkspaceTransactionsPageClientProps {
     /**
@@ -35,27 +34,9 @@ export const WorkspaceTransactionsPageClient: React.FC<
     } = useWorkspace({ urlParams: { id: workspaceId } }, { retry: false });
 
     const accounts = workspace?.accounts ?? [];
-    const accountRefs = accounts.map(({ network, address }) => ({
-        network,
-        address,
-    }));
-
-    // Resolved once to label the tabs with the indexed DAO names, shared with the overview page's cache.
-    const { data: accountInfos } = useWorkspaceAccounts(
-        {
-            body: { accounts: accountRefs },
-        },
-        { enabled: accounts.length > 0 },
-    );
 
     const { activeOption, setActiveOption, options } =
-        useWorkspaceAccountFilter({
-            accounts,
-            accountInfos,
-            allAccountsLabel: t(
-                'app.workspace.workspaceTransactionsPage.filter.allAccounts',
-            ),
-        });
+        useWorkspaceAccountSelectorContext();
 
     const accountsToDisplay =
         activeOption?.account != null ? [activeOption.account] : accounts;

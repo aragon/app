@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { WorkspaceAccountSelectorProvider } from '@/modules/workspace/components/workspaceAccountSelectorProvider/workspaceAccountSelectorProvider';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationWorkspace } from '../../navigations/navigationWorkspace';
@@ -29,9 +30,12 @@ export const LayoutWorkspace: React.FC<ILayoutWorkspaceProps> = async (
     const { workspaceId } = await params;
 
     return (
-        <>
+        <WorkspaceAccountSelectorProvider
+            key={workspaceId}
+            workspaceId={workspaceId}
+        >
             <NavigationWorkspace workspaceId={workspaceId} />
             <ErrorBoundary>{children}</ErrorBoundary>
-        </>
+        </WorkspaceAccountSelectorProvider>
     );
 };
