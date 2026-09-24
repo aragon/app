@@ -43,21 +43,13 @@ export default [
             nodeResolve(),
             commonjs(),
             typescript({
+                tsconfig: './tsconfig.build.json',
                 compilerOptions: {
                     noEmit: false,
                     declaration: true,
                     declarationDir: `${outDir}/types`,
                     outDir,
                 },
-                exclude: [
-                    'node_modules/**',
-                    '**/*.spec.tsx',
-                    '**/*.spec.ts',
-                    '**/*.test.tsx',
-                    '**/*.test.ts',
-                    '**/*.stories.tsx',
-                    '*.config.mjs',
-                ],
             }),
             images({ include: ['**/*.png', '**/*.jpg'] }),
             svgr({ svgoConfig }),
