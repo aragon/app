@@ -7,64 +7,66 @@ packages:
 # (run `pnpm up` from the root afterwards). Remember: a catalog bump changes all workspaces, so run
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
-  "@ai-sdk/react": ^4.0.82
+  "@ai-sdk/react": ^4.0.105
   "@aragon/gov-ui-kit": 2.11.4
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
-  "@assistant-ui/react": 0.14.27
-  "@assistant-ui/react-ai-sdk": 1.3.41
-  "@assistant-ui/react-markdown": 0.14.6
-  "@biomejs/biome": ^2.5.10
-  "@changesets/changelog-github": ^0.7.0
-  "@changesets/cli": ^2.31.1
-  "@hono/node-server": ^1.19.17
-  "@linear/sdk": ^89.0.0
+  "@assistant-ui/react": 0.15.20
+  "@assistant-ui/react-ai-sdk": 1.4.11
+  "@assistant-ui/react-markdown": 0.14.15
+  "@biomejs/biome": ^2.5.14
+  "@changesets/changelog-github": ^1.0.1
+  "@changesets/cli": ^3.0.3
+  "@hono/node-server": ^2.1.1
+  "@linear/sdk": ^95.0.0
   "@radix-ui/react-dialog": ^1.1.23
-  "@sentry/cli": ^3.6.2
-  "@sentry/hono": ^10.71.0
-  "@sentry/node": ^10.71.0
-  "@sentry/profiling-node": ^10.71.0
-  "@tailwindcss/cli": 4.3.2
+  "@sentry/cli": ^3.7.0
+  "@sentry/hono": ^10.74.0
+  "@sentry/node": ^10.74.0
+  "@sentry/profiling-node": ^10.74.0
+  "@tailwindcss/cli": 4.3.3
   "@tailwindcss/typography": ^0.5.20
-  "@tanstack/react-query": ^5.102.3
-  "@testing-library/dom": ^10.4.1
-  "@testing-library/jest-dom": ^6.9.1
-  "@testing-library/react": ^16.3.2
-  "@testing-library/user-event": ^14.6.6
+  "@tanstack/react-query": ^5.103.0
+  "@testing-library/dom": ^10.4.2
+  "@testing-library/jest-dom": ^7.0.1
+  "@testing-library/react": ^16.3.3
+  "@testing-library/user-event": ^14.6.7
   "@types/jest": ^30.0.0
-  "@types/node": ^24.13.3
-  "@types/react": ^19.2.18
-  "@types/react-dom": ^19.2.5
-  "@upstash/ratelimit": ^2.0.8
-  "@upstash/redis": ^1.38.2
+  "@types/node": ^24.13.5
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  "@upstash/ratelimit": ^2.1.0
+  "@upstash/redis": ^1.38.4
   "@vercel/blob": ^2.8.0
-  ai: ^7.0.79
+  ai: ^7.0.102
   classnames: ^2.5.1
   cross-env: ^10.1.0
-  file-type: ^22.0.2
-  hono: ^4.13.5
+  file-type: ^22.1.0
+  hono: ^4.13.8
   husky: ^9.1.7
-  jest: ^30.4.2
-  jest-environment-jsdom: ^30.4.1
-  lint-staged: ^17.3.0
-  react: ^19.2.8
-  react-dom: ^19.2.8
+  # jest: held on 30.4 — 30.5 replaces module.register/registerHooks with a throwing stub, and
+  # @tailwindcss/node calls one on import, so breakpoints.test.ts cannot load Tailwind.
+  jest: ~30.4.2
+  jest-environment-jsdom: ~30.4.1
+  lint-staged: ^17.5.1
+  react: ^19.3.0
+  react-dom: ^19.3.0
   react-dropzone: ^15.0.0
-  react-hook-form: ^7.86.0
+  react-hook-form: ^7.88.0
   tailwindcss: ^4.3.3
   ts-jest: ^29.4.12
   tsup: ^8.5.1
-  tsx: ^4.23.12
-  turbo: ^2.10.11
+  tsx: ^4.23.13
+  turbo: ^2.10.13
   typescript: ^5.9.3
-  ultracite: ^7.10.6
+  ultracite: ^7.12.0
   # vercel: pinned EXACT — releases after 58.4.4 ship without SLSA provenance and trip the
   # trustPolicy; move by hand once provenance returns (a range would resolve to an untrusted one).
   vercel: 58.4.4
-  viem: ^2.55.19
-  wagmi: ^3.7.6
-  yaml: ^2.9.0
-  zod: ^4.4.3
+  viem: ^2.56.5
+  wagmi: ^3.7.7
+  yaml: ^2.9.1
+  zod: ^4.6.5
 
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude:
@@ -74,12 +76,6 @@ minimumReleaseAgeExclude:
 strictDepBuilds: true
 blockExoticSubdeps: true
 trustPolicy: no-downgrade
-trustPolicyExclude:
-  # False positive: @assistant-ui/react@0.14.27 pins @assistant-ui/store@^0.2.20, and 0.2.20 is a
-  # provenance-backed compat release published by the maintainer under the `store-0.2-compat`
-  # dist-tag. Because `latest` (0.2.19) is newer by publish date, the no-downgrade heuristic flags
-  # it. Scoped to the exact version so every other package stays under the policy.
-  - "@assistant-ui/store@0.2.20"
 trustPolicyIgnoreAfter: 131400 # skip trust checks for packages published >3 months ago
 
 #npm settings
@@ -108,10 +104,11 @@ peerDependencyRules:
 
 # pnpm overrides
 overrides:
-  # Hold @assistant-ui/tap (transitive of the exact-pinned @assistant-ui/react 0.14.27) at 0.9.12:
-  # 0.9.13+ loops forever in its useSyncExternalStore shim ("Maximum update depth exceeded") and
-  # crashes the chat widget suites. Re-check when the @assistant-ui/react pins move.
-  '@assistant-ui/tap@>0.9.12': 0.9.12
+  # Hold nwsapi (jsdom's selector engine) at 2.2.24: 2.2.25+ rewrote pseudo-class matching and
+  # hangs user-event on portal-rendered elements (dperini/nwsapi#214), timing out every dropdown and
+  # combobox test; 2.2.28 fixes that but regresses media pseudo-classes (#218). Re-check on the
+  # next release.
+  nwsapi@>2.2.24: 2.2.24
   # Hold @vercel/oidc at 3.8.1: later releases ship without SLSA provenance and trip the
   # trustPolicy (no-downgrade). Drop this once provenance returns.
   '@vercel/oidc@>3.8.1': 3.8.1
@@ -125,22 +122,21 @@ overrides:
   # the sanitizer. Lift together with transformIgnorePatterns work for jsdom's ESM dependencies.
   isomorphic-dompurify>jsdom: 26.1.0
   axios@<1.18.0: '>=1.18.0'
-  undici@<6.27.0: ^6.27.0
-  next>postcss: ^8.5.12
+  undici@<6.28.0: ^6.28.0
   '@hookform/devtools>uuid': ^14.0.0
   esbuild@<0.28.1: '>=0.28.1'
   tsup@<8.3.5: ^8.5.1
   '@vercel/fun>@tootallnate/once': ^3.0.1
-  tar@<7.5.11: ^7.5.11
+  tar@<7.5.21: ^7.5.21
   ajv@<8.18.0: ^8.18.0
   minimatch@>=10.0.0 <10.2.4: ^10.2.4
   ws@>=8.0.0 <8.21.0: '>=8.21.0'
   glob@>=10.2.0 <10.5.0: '>=10.5.0'
-  smol-toml@<1.6.1: '>=1.6.1'
-  srvx@<0.11.13: '>=0.11.13'
+  smol-toml@<1.7.1: '>=1.7.1'
   path-to-regexp@>=4.0.0 <6.3.0: '>=6.3.0'
   path-to-regexp@>=8.0.0 <8.4.0: '>=8.4.0'
-  lodash@<=4.17.23: '>=4.18.0'
-  dompurify@<=3.4.10: '>=3.4.11'
-  js-yaml@>=4.0.0 <4.1.2: '>=4.2.0'
-  brace-expansion@<1.1.18: ^1.1.18
+  # gov-ui-kit pins sanitize-html EXACT 2.17.5 (its DocumentParser sanitizes proposal bodies); the
+  # XSS fixes (GHSA-jxwj-j7wr-gfrw, GHSA-g8qq-57p8-ggw5) are in 2.17.7, whose htmlparser2@12 chain is
+  # ESM-only and therefore listed in the jest transformIgnorePatterns. Drop once the kit unpins.
+  sanitize-html@<2.17.7: ^2.17.7
+  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
