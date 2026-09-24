@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
 import { zeroAddress } from 'viem';
 import { ReactQueryWrapper } from '@/shared/testUtils';
@@ -110,5 +111,19 @@ describe('<PermissionAddressInput /> component', () => {
         await formMethods?.trigger(fieldPath);
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeUndefined();
+    });
+    it('keeps typed text in the form so the message matches the field', async () => {
+        const user = userEvent.setup();
+        render(<TestForm />);
+
+        await user.type(screen.getByRole('textbox'), '0231');
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
+
+        expect(formMethods?.getValues(fieldPath)).toEqual('0231');
+        expect(formMethods?.getFieldState(fieldPath).error?.message).toEqual(
+            'app.actions.core.permissionAddressInput.invalidAddress',
+        );
     });
 });

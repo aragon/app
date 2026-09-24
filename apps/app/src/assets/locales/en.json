@@ -38,7 +38,8 @@
           "unknownPermission": "Not a known OSx permission. Verify this ID against the target contract."
         },
         "permissionAddressInput": {
-          "conditionRequired": "Enter a nonzero condition contract address."
+          "conditionRequired": "Enter a nonzero condition contract address.",
+          "invalidAddress": "Enter a valid contract or wallet address."
         },
         "permissionChangesCreate": {
           "addChange": "Permission change",

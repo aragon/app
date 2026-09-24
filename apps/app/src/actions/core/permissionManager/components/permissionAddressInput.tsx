@@ -1,6 +1,10 @@
 'use client';
 
-import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    type IAddressInputResolvedValue,
+} from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { zeroAddress } from 'viem';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -51,25 +55,45 @@ export const PermissionAddressInput: React.FC<IPermissionAddressInputProps> = (
         fieldPrefix,
         rules: {
             required: true,
-            validate: (fieldValue) =>
-                addressUtils.isAddress(fieldValue as string, {
-                    strict: true,
-                }) &&
-                (!isCondition ||
-                    fieldValue !== zeroAddress ||
-                    'app.actions.core.permissionAddressInput.conditionRequired'),
+            validate: (fieldValue) => {
+                if (
+                    !addressUtils.isAddress(fieldValue as string, {
+                        strict: true,
+                    })
+                ) {
+                    return 'app.actions.core.permissionAddressInput.invalidAddress';
+                }
+
+                if (isCondition && fieldValue === zeroAddress) {
+                    return 'app.actions.core.permissionAddressInput.conditionRequired';
+                }
+
+                return true;
+            },
         },
         sanitizeOnBlur: false,
     });
 
     const [inputValue, setInputValue] = useState<string | undefined>(value);
 
+    // The form holds what is on screen, so a half-typed address reads as invalid, not empty.
+    const handleChange = (newValue?: string) => {
+        setInputValue(newValue);
+        onChange(newValue ?? '');
+    };
+
+    const handleAccept = (resolved?: IAddressInputResolvedValue) => {
+        if (resolved?.address != null) {
+            onChange(resolved.address);
+        }
+    };
+
     return (
         <AddressInput
             chainId={chainId}
             helpText={helpText}
-            onAccept={(resolved) => onChange(resolved?.address ?? '')}
-            onChange={setInputValue}
+            onAccept={handleAccept}
+            onChange={handleChange}
             value={inputValue}
             {...addressField}
         />
