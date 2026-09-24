@@ -1,0 +1,51 @@
+name: Storybook Shared Deploy
+
+on:
+  workflow_call:
+    inputs:
+      domain:
+        description: "Assign the new deployment URL to the speficied input when set"
+        required: false
+        type: string
+    outputs:
+      deploymentUrl:
+        description: "The URL of the Vercel deployment"
+        value: ${{ jobs.deploy.outputs.deploymentUrl }}
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_SCOPE: aragon-app
+  VERCEL_ARGS: ${{ (inputs.domain != '' && '--prod') || '' }}
+  ENABLE_EXPERIMENTAL_COREPACK: "1"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Download credentials
+        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4
+        with:
+          op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
+          op-vault: "kv_gov-ui-kit_infra"
+      - name: Bundle Vercel application
+        run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+      - name: Vercel deployment
+        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.domain != '' && '--skip-domain' || '' }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+      - name: Set output
+        id: set-deployment-url
+        run: echo "deploymentUrl=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+      - name: Set deployment alias
+        if: ${{ inputs.domain != '' }}
+        run: pnpm vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
