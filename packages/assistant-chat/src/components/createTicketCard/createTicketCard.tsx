@@ -101,7 +101,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
     // Terminal failure: creation was attempted and threw. The server released its claim, so the
     // same conversation can retry — regenerating the turn re-drafts and re-attempts.
     if (isError) {
-        const retry = () => aui.message().reload();
+        const retry = () => aui.message.reload();
         return (
             <div className={cardClassName}>
                 <div className="flex items-center gap-2">
