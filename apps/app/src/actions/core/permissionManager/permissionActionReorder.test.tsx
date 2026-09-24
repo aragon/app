@@ -1,5 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect, useState } from 'react';
 import {
@@ -14,6 +14,8 @@ import { ReactQueryWrapper } from '@/shared/testUtils';
 import { PermissionActionCreate } from './components/permissionActionCreate';
 import { permissionActionAbis } from './constants/permissionActionSelectors';
 
+// Calldata-level repro of the reorder fix in `useProposalActionsField`; its own
+// `reordering` tests cover the rest, so run both when changing that hook.
 describe('permission action reordering', () => {
     const daoAddress = '0x9332000000000000000000000000000000000A62';
     const mintReceiver = '0xAAAA000000000000000000000000000000000001';
@@ -140,33 +142,29 @@ describe('permission action reordering', () => {
     const dataAt = (actionIndex: number) =>
         formMethods?.getValues(`actions.${actionIndex.toString()}.data`);
 
-    const flushEffects = async () => {
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 0));
-        });
-    };
-
     it('keeps every action with its own values and calldata after a reorder', async () => {
         const user = userEvent.setup();
         render(<TestForm />);
-        await flushEffects();
 
-        expect(dataAt(0)).toEqual(mintData);
-        expect(valueAt(0, 0)).toEqual(mintReceiver);
-        expect(dataAt(1)).toEqual(expectedGrantData);
+        await waitFor(() => {
+            expect(dataAt(0)).toEqual(mintData);
+            expect(valueAt(0, 0)).toEqual(mintReceiver);
+            expect(dataAt(1)).toEqual(expectedGrantData);
+        });
 
         await act(async () => {
             await formMethods?.trigger('actions');
         });
 
         await user.click(screen.getByRole('button', { name: 'move up' }));
-        await flushEffects();
 
-        expect(valueAt(0, 0)).toEqual(grantValues.where);
-        expect(valueAt(0, 1)).toEqual(grantValues.who);
-        expect(valueAt(0, 2)).toEqual(grantValues.permissionId);
-        expect(dataAt(0)).toEqual(expectedGrantData);
-        expect(valueAt(1, 0)).toEqual(mintReceiver);
-        expect(dataAt(1)).toEqual(mintData);
-    }, 30_000);
+        await waitFor(() => {
+            expect(valueAt(0, 0)).toEqual(grantValues.where);
+            expect(valueAt(0, 1)).toEqual(grantValues.who);
+            expect(valueAt(0, 2)).toEqual(grantValues.permissionId);
+            expect(dataAt(0)).toEqual(expectedGrantData);
+            expect(valueAt(1, 0)).toEqual(mintReceiver);
+            expect(dataAt(1)).toEqual(mintData);
+        });
+    });
 });
