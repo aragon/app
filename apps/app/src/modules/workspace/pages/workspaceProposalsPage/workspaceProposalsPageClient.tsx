@@ -2,12 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
-import { ProposalListStats } from '@/modules/governance/components/proposalListStats';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -25,7 +24,6 @@ import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
-import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
 
 export interface IWorkspaceProposalsPageClientProps {
     /**
@@ -85,24 +83,9 @@ export const WorkspaceProposalsPageClient: React.FC<
 
     const isAllAccountsSelected = activeOption?.isAllAccounts ?? true;
 
-    const { daos, isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
-
-    // Totals of the aggregated view. Shares its key with the list's own query, so this adds no extra request.
-    const { metadata, proposalList } = useWorkspaceProposalListData({
-        params: {
-            body: { accounts: daoAccountRefs, pagination: { pageSize } },
-        },
-        isDaosPending,
-        enabled: isAllAccountsSelected && daoAccounts.length > 0,
-    });
+    const { daos } = useWorkspaceDaos(daoAccounts);
 
     const selectedAccount = activeOption?.account;
-
-    // The account tabs show the DAO's own stats, the same ones the DAO proposals page shows.
-    const { data: selectedDao } = useDao(
-        { urlParams: { id: selectedAccount?.id ?? '' } },
-        { enabled: selectedAccount != null },
-    );
 
     const selectedDaoParams = {
         queryParams: {
@@ -212,28 +195,11 @@ export const WorkspaceProposalsPageClient: React.FC<
                 </div>
             </Page.Main>
             <Page.Aside>
-                {isAllAccountsSelected ? (
-                    <WorkspaceProposalsAsideCard
-                        daosCount={daoAccounts.length}
-                        mostRecentTimestamp={proposalList[0]?.blockTimestamp}
-                        proposalsCount={metadata?.totalRecords}
-                        title={
-                            activeOption?.label ??
-                            t(
-                                'app.workspace.workspaceProposalsPage.filter.allAccounts',
-                            )
-                        }
-                    />
-                ) : (
-                    selectedDao != null && (
-                        <Page.AsideCard title={activeOption?.label ?? ''}>
-                            <ProposalListStats
-                                dao={selectedDao}
-                                initialParams={selectedDaoParams}
-                            />
-                        </Page.AsideCard>
-                    )
-                )}
+                <WorkspaceProposalsAsideCard
+                    accounts={daoAccounts}
+                    activeOption={activeOption}
+                    pageSize={pageSize}
+                />
             </Page.Aside>
         </Page.Content>
     );
