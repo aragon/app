@@ -1,6 +1,6 @@
 'use client';
 
-import { addressUtils, DefinitionList, Tooltip } from '@aragon/gov-ui-kit';
+import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
 
 export interface IPermissionEntityItemProps {
@@ -43,14 +43,11 @@ export const PermissionEntityItem: React.FC<IPermissionEntityItemProps> = (
 
     return (
         <DefinitionList.Item
-            copyValue={address}
             description={resolvedLabel ?? ensName ?? helpText}
-            link={href != null ? { href, isOnchainEntity: true } : undefined}
+            link={{ href, isOnchainEntity: true }}
             term={term}
         >
-            <Tooltip content={address} triggerAsChild={true}>
-                <span>{truncatedAddress}</span>
-            </Tooltip>
+            {address}
         </DefinitionList.Item>
     );
 };
