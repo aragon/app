@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
@@ -8,7 +8,11 @@ describe('<PermissionIdInput /> component', () => {
     let form: UseFormReturn<{ action: { permissionId: string } }>;
     const path = 'action.permissionId';
     const TestForm = () => {
-        form = useForm({ defaultValues: { action: { permissionId: '' } } });
+        // Same validation mode as the proposal wizard.
+        form = useForm({
+            mode: 'onTouched',
+            defaultValues: { action: { permissionId: '' } },
+        });
         return (
             <FormProvider {...form}>
                 <PermissionIdInput fieldPrefix="action" name="permissionId" />
@@ -69,4 +73,20 @@ describe('<PermissionIdInput /> component', () => {
             expect(screen.getByRole('combobox')).toBeInTheDocument();
         },
     );
+    it('clears a shown error once a permission is picked', async () => {
+        const user = userEvent.setup();
+        render(<TestForm />);
+
+        await act(async () => {
+            await form.trigger(path);
+        });
+        expect(form.getFieldState(path).error).toBeDefined();
+
+        await user.type(screen.getByRole('combobox'), 'EXECUTE_PERMISSION');
+        await user.click(screen.getByText('EXECUTE_PERMISSION'));
+
+        await waitFor(() => {
+            expect(form.getFieldState(path).error).toBeUndefined();
+        });
+    });
 });

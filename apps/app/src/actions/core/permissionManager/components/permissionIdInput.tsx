@@ -80,12 +80,14 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
         [t],
     );
 
+    // Picking swaps the input for the name box without a blur, so mark the field as left here.
     const handleChange = (itemId: string, inputValue: string) => {
         setIsInvalidName(false);
 
         if (itemId !== customItemId) {
             setCustomName(undefined);
             onChange(itemId);
+            permissionField.onBlur();
 
             return;
         }
@@ -95,6 +97,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
         if (permissionIdRegex.test(text)) {
             setCustomName(undefined);
             onChange(text);
+            permissionField.onBlur();
 
             return;
         }
@@ -103,6 +106,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
             // A name is not storable on its own, so hash it and keep the name as a label.
             setCustomName(text);
             onChange(permissionNameUtils.getPermissionId(text));
+            permissionField.onBlur();
 
             return;
         }
