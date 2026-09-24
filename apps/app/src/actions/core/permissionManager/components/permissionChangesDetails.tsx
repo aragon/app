@@ -32,11 +32,6 @@ export const PermissionChangesDetails: React.FC<
 
     // Outside a DAO context (e.g. actions forwarded to another chain) there is no
     // daoId; addresses then render as themselves while permission names still resolve.
-    const renderEntity = usePermissionEntityRenderer({
-        daoId: action.daoId,
-        chainId,
-    });
-
     const parameters = action.inputData?.parameters ?? [];
     const tupleIndex = parameters.findIndex(
         (parameter) => parameter.components != null,
@@ -56,6 +51,12 @@ export const PermissionChangesDetails: React.FC<
                   tupleParameter,
                   hoistedWhere,
               );
+
+    const renderEntity = usePermissionEntityRenderer({
+        daoId: action.daoId,
+        chainId,
+        hasCondition: changes.some((change) => change.condition != null),
+    });
 
     return (
         <div className="flex w-full flex-col gap-6">

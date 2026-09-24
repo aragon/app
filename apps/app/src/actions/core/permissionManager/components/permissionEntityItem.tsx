@@ -2,6 +2,8 @@
 
 import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
+import { useSmartContractAbi } from '@/modules/governance/api/smartContractService';
+import type { Network } from '@/shared/api/daoService';
 
 export interface IPermissionEntityItemProps {
     /**
@@ -22,32 +24,41 @@ export interface IPermissionEntityItemProps {
      */
     href?: string;
     /**
-     * Explains what the address is for, shown when nothing more specific resolves.
+     * Network the address lives on, used to look up its contract name.
      */
-    helpText?: string;
+    network?: Network;
 }
 
 /**
- * Renders one address of a permission action. The address stays the value so it can be
- * read and copied as it will execute; the resolved name is supporting detail, never a
- * replacement for it.
+ * Renders one address of a permission action: the ENS name or the address as the link,
+ * and the resolved name or the contract name underneath. The address stays the copied
+ * value so it can be checked as it will execute.
  */
 export const PermissionEntityItem: React.FC<IPermissionEntityItemProps> = (
     props,
 ) => {
-    const { term, address, label, href, helpText } = props;
+    const { term, address, label, href, network } = props;
 
     const { data: ensName } = useEnsName(address);
     const truncatedAddress = addressUtils.truncateAddress(address);
     const resolvedLabel = label !== truncatedAddress ? label : undefined;
 
+    const { data: contractAbi } = useSmartContractAbi(
+        { urlParams: { network: network as Network, address } },
+        {
+            enabled: resolvedLabel == null && network != null,
+            retry: false,
+        },
+    );
+
     return (
         <DefinitionList.Item
-            description={resolvedLabel ?? ensName ?? helpText}
-            link={{ href, isOnchainEntity: true }}
+            copyValue={address}
+            description={resolvedLabel ?? contractAbi?.name}
+            link={{ href, isExternal: true, isOnchainEntity: true }}
             term={term}
         >
-            {address}
+            {ensName ?? address}
         </DefinitionList.Item>
     );
 };

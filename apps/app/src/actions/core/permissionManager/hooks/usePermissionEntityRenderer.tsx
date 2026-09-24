@@ -2,7 +2,9 @@
 
 import { ChainEntityType } from '@aragon/gov-ui-kit';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import { PermissionEntityItem } from '../components/permissionEntityItem';
+import { usePermissionConditionResolver } from './usePermissionConditionResolver';
 import { usePermissionEntityResolver } from './usePermissionEntityResolver';
 
 export interface IUsePermissionEntityRendererParams {
@@ -15,12 +17,16 @@ export interface IUsePermissionEntityRendererParams {
      * Chain the explorer links point at.
      */
     chainId?: number;
+    /**
+     * Whether the action renders a condition, which needs the DAO permissions to resolve.
+     */
+    hasCondition?: boolean;
 }
 
 export type PermissionEntityRenderer = (
     term: string,
     address: string,
-    helpText?: string,
+    isCondition?: boolean,
 ) => React.ReactNode;
 
 /**
@@ -30,20 +36,29 @@ export type PermissionEntityRenderer = (
 export const usePermissionEntityRenderer = (
     params: IUsePermissionEntityRendererParams,
 ): PermissionEntityRenderer => {
-    const { daoId, chainId } = params;
+    const { daoId, chainId, hasCondition = false } = params;
 
     const { buildEntityUrl } = useDaoChain({ chainId });
     const resolveEntity = usePermissionEntityResolver({ daoId });
+    const resolveCondition = usePermissionConditionResolver({
+        daoId,
+        enabled: hasCondition,
+    });
+    const network =
+        chainId != null ? networkUtils.getNetworkByChainId(chainId) : undefined;
 
-    return (term, address, helpText) => (
+    return (term, address, isCondition = false) => (
         <PermissionEntityItem
             address={address}
-            helpText={helpText}
             href={buildEntityUrl({
                 type: ChainEntityType.ADDRESS,
                 id: address,
             })}
-            label={resolveEntity(address).label}
+            label={
+                (isCondition ? resolveCondition(address) : undefined) ??
+                resolveEntity(address).label
+            }
+            network={network}
             term={term}
         />
     );

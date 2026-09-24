@@ -1,7 +1,9 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
+import * as smartContractService from '@/modules/governance/api/smartContractService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { generateReactQueryResultError } from '@/shared/testUtils';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { PermissionActionDetails } from './permissionActionDetails';
 
@@ -22,6 +24,13 @@ jest.mock('@/shared/hooks/useDaoChain', () => ({
     }),
 }));
 
+jest.mock('../hooks/usePermissionConditionResolver', () => ({
+    usePermissionConditionResolver: () => (address: string) =>
+        address === '0x80CB2f4f9B403C4C418C597d96c95FE14FD344a6'
+            ? 'VotingPower'
+            : undefined,
+}));
+
 jest.mock('../hooks/usePermissionEntityResolver', () => ({
     usePermissionEntityResolver: () => (address: string) => ({
         label:
@@ -36,16 +45,24 @@ jest.mock('../hooks/usePermissionEntityResolver', () => ({
 
 describe('<PermissionActionDetails /> component', () => {
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useSmartContractAbiSpy = jest.spyOn(
+        smartContractService,
+        'useSmartContractAbi',
+    );
 
     beforeEach(() => {
         useEnsNameSpy.mockReturnValue({
             data: null,
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
+        useSmartContractAbiSpy.mockReturnValue(
+            generateReactQueryResultError({ error: new Error() }),
+        );
     });
 
     afterEach(() => {
         useEnsNameSpy.mockReset();
+        useSmartContractAbiSpy.mockReset();
     });
 
     const pluginAddress = '0x0150627b84a0C8257AB28cD0E1F71E81c7aafe3d';

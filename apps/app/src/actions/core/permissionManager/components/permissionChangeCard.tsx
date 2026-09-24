@@ -76,9 +76,7 @@ export const PermissionChangeCard: React.FC<IPermissionChangeCardProps> = (
                     renderEntity(
                         t('app.actions.core.permissionManager.conditionTerm'),
                         change.condition,
-                        t(
-                            'app.actions.core.permissionActionCreate.conditionHelpText',
-                        ),
+                        true,
                     )}
             </DefinitionList.Container>
         </li>

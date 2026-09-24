@@ -32,16 +32,17 @@ export const PermissionActionDetails: React.FC<
 
     // Outside a DAO context (e.g. actions forwarded to another chain) there is no
     // daoId; addresses then render as themselves while permission names still resolve.
-    const renderEntity = usePermissionEntityRenderer({
-        daoId: action.daoId,
-        chainId,
-    });
-
     const parameters = action.inputData?.parameters ?? [];
     // grantWithCondition appends the condition contract after the permission id.
     const [where, who, permissionId, condition] = parameters.map((parameter) =>
         String(parameter.value ?? ''),
     );
+
+    const renderEntity = usePermissionEntityRenderer({
+        daoId: action.daoId,
+        chainId,
+        hasCondition: condition != null,
+    });
 
     return (
         <div className="flex w-full flex-col gap-4">
@@ -63,9 +64,7 @@ export const PermissionActionDetails: React.FC<
                     renderEntity(
                         t('app.actions.core.permissionManager.conditionTerm'),
                         condition,
-                        t(
-                            'app.actions.core.permissionActionCreate.conditionHelpText',
-                        ),
+                        true,
                     )}
             </DefinitionList.Container>
         </div>

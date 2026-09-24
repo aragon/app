@@ -1,6 +1,13 @@
 import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
+import * as smartContractService from '@/modules/governance/api/smartContractService';
+import { generateSmartContractAbi } from '@/modules/governance/testUtils';
+import { Network } from '@/shared/api/daoService';
+import {
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import {
     type IPermissionEntityItemProps,
     PermissionEntityItem,
@@ -8,16 +15,24 @@ import {
 
 describe('<PermissionEntityItem /> component', () => {
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useSmartContractAbiSpy = jest.spyOn(
+        smartContractService,
+        'useSmartContractAbi',
+    );
 
     beforeEach(() => {
         useEnsNameSpy.mockReturnValue({
             data: null,
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
+        useSmartContractAbiSpy.mockReturnValue(
+            generateReactQueryResultError({ error: new Error() }),
+        );
     });
 
     afterEach(() => {
         useEnsNameSpy.mockReset();
+        useSmartContractAbiSpy.mockReset();
     });
 
     const address = '0xC8da4C1d9BB59DD32ac39A925933188b7c66c311';
@@ -38,7 +53,7 @@ describe('<PermissionEntityItem /> component', () => {
         );
     };
 
-    it('renders the term and the address as the value', () => {
+    it('renders the term and the truncated address as the link text', () => {
         render(createTestComponent());
 
         expect(screen.getByText('Who')).toBeInTheDocument();
@@ -47,7 +62,18 @@ describe('<PermissionEntityItem /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('shows a resolved name as supporting detail, never in place of the address', () => {
+    it('uses the ENS name as the link text instead of the address', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'vitalik.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        render(createTestComponent({ label: 'Token Voting' }));
+
+        expect(screen.getByText('vitalik.eth')).toBeInTheDocument();
+        expect(screen.getByText('Token Voting')).toBeInTheDocument();
+    });
+
+    it('shows a resolved name as help text', () => {
         render(createTestComponent({ label: 'Token Voting' }));
 
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
@@ -56,7 +82,7 @@ describe('<PermissionEntityItem /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('omits the detail when the label is only the address again', () => {
+    it('omits the help text when the label is only the address again', () => {
         render(
             createTestComponent({
                 label: addressUtils.truncateAddress(address),
@@ -68,6 +94,36 @@ describe('<PermissionEntityItem /> component', () => {
         ).toHaveLength(1);
     });
 
+    it('falls back to the contract name when no name resolves', () => {
+        useSmartContractAbiSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSmartContractAbi({ name: 'ExecuteSelector' }),
+            }),
+        );
+        render(createTestComponent({ network: Network.ETHEREUM_MAINNET }));
+
+        expect(screen.getByText('ExecuteSelector')).toBeInTheDocument();
+    });
+
+    it('only looks up the contract name when no name resolves and the network is known', () => {
+        render(
+            createTestComponent({
+                label: 'Token Voting',
+                network: Network.ETHEREUM_MAINNET,
+            }),
+        );
+        expect(useSmartContractAbiSpy).toHaveBeenLastCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: false }),
+        );
+
+        render(createTestComponent());
+        expect(useSmartContractAbiSpy).toHaveBeenLastCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: false }),
+        );
+    });
+
     it('links to the explorer when a url is given', () => {
         render(createTestComponent({ href: 'https://explorer.test/address' }));
 
@@ -75,43 +131,5 @@ describe('<PermissionEntityItem /> component', () => {
             'href',
             'https://explorer.test/address',
         );
-    });
-    it('shows the ENS name when nothing more specific resolves', () => {
-        useEnsNameSpy.mockReturnValue({
-            data: 'vitalik.eth',
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
-        render(createTestComponent());
-
-        expect(screen.getByText('vitalik.eth')).toBeInTheDocument();
-    });
-
-    it('prefers a DAO or plugin name over the ENS name', () => {
-        useEnsNameSpy.mockReturnValue({
-            data: 'vitalik.eth',
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
-        render(createTestComponent({ label: 'Token Voting' }));
-
-        expect(screen.getByText('Token Voting')).toBeInTheDocument();
-        expect(screen.queryByText('vitalik.eth')).not.toBeInTheDocument();
-    });
-    it('shows the help text when nothing more specific resolves', () => {
-        render(createTestComponent({ helpText: 'The condition contract.' }));
-
-        expect(screen.getByText('The condition contract.')).toBeInTheDocument();
-    });
-
-    it('prefers the ENS name over the help text', () => {
-        useEnsNameSpy.mockReturnValue({
-            data: 'vitalik.eth',
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
-        render(createTestComponent({ helpText: 'The condition contract.' }));
-
-        expect(screen.getByText('vitalik.eth')).toBeInTheDocument();
-        expect(
-            screen.queryByText('The condition contract.'),
-        ).not.toBeInTheDocument();
     });
 });

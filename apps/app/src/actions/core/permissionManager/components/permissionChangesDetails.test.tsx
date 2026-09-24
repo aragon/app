@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { zeroAddress } from 'viem';
 import * as ensModule from '@/modules/ens';
+import * as smartContractService from '@/modules/governance/api/smartContractService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { generateReactQueryResultError } from '@/shared/testUtils';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { PermissionChangesDetails } from './permissionChangesDetails';
 
@@ -22,6 +24,13 @@ jest.mock('@/shared/hooks/useDaoChain', () => ({
     }),
 }));
 
+jest.mock('../hooks/usePermissionConditionResolver', () => ({
+    usePermissionConditionResolver: () => (address: string) =>
+        address === '0x80CB2f4f9B403C4C418C597d96c95FE14FD344a6'
+            ? 'VotingPower'
+            : undefined,
+}));
+
 jest.mock('../hooks/usePermissionEntityResolver', () => ({
     usePermissionEntityResolver: () => (address: string) => ({
         label: address,
@@ -33,16 +42,24 @@ jest.mock('../hooks/usePermissionEntityResolver', () => ({
 
 describe('<PermissionChangesDetails /> component', () => {
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useSmartContractAbiSpy = jest.spyOn(
+        smartContractService,
+        'useSmartContractAbi',
+    );
 
     beforeEach(() => {
         useEnsNameSpy.mockReturnValue({
             data: null,
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
+        useSmartContractAbiSpy.mockReturnValue(
+            generateReactQueryResultError({ error: new Error() }),
+        );
     });
 
     afterEach(() => {
         useEnsNameSpy.mockReset();
+        useSmartContractAbiSpy.mockReset();
     });
 
     const daoAddress = '0xC8da4C1d9BB59DD32ac39A925933188b7c66c311';
@@ -152,6 +169,7 @@ describe('<PermissionChangesDetails /> component', () => {
         expect(
             screen.getByText(/permissionManager.conditionTerm/),
         ).toBeInTheDocument();
+        expect(screen.getByText('VotingPower')).toBeInTheDocument();
     });
 
     it('hoists the shared target of a single-target action above the list', () => {
