@@ -36,8 +36,9 @@ export interface IPermissionIdInputProps {
  * A permission is a keccak256 hash of a name, and a hash cannot be inverted, so the
  * picker offers the known dictionary and an escape hatch that accepts either a pasted
  * 32-byte id or a permission name it hashes for you. Whatever is stored is always the
- * id — the name is only ever a label. An empty value shows the picker; a set value
- * shows what was chosen, with a control to clear it.
+ * id — the name is only ever a label. Anything but a valid id shows the picker, with
+ * rejected text kept in the form so its error matches what is typed; a valid id shows
+ * what was chosen, with a control to clear it.
  */
 export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
     const { name, fieldPrefix } = props;
@@ -52,7 +53,8 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
             rules: {
                 required: true,
                 validate: (fieldValue) =>
-                    permissionIdRegex.test((fieldValue as string) ?? ''),
+                    permissionIdRegex.test((fieldValue as string) ?? '') ||
+                    'app.actions.core.permissionActionCreate.invalidPermissionName',
             },
             sanitizeOnBlur: false,
         });
@@ -60,7 +62,6 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
     // Name typed for a permission outside the dictionary, so the field can still show
     // it next to the id it hashed to.
     const [customName, setCustomName] = useState<string>();
-    const [isInvalidName, setIsInvalidName] = useState(false);
 
     const items = useMemo(
         () => [
@@ -82,8 +83,6 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
 
     // Picking swaps the input for the name box without a blur, so mark the field as left here.
     const handleChange = (itemId: string, inputValue: string) => {
-        setIsInvalidName(false);
-
         if (itemId !== customItemId) {
             setCustomName(undefined);
             onChange(itemId);
@@ -111,33 +110,27 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
             return;
         }
 
-        setIsInvalidName(true);
-        onChange('');
+        // Kept as typed so the validation error sits next to the text it rejects.
+        setCustomName(undefined);
+        onChange(text);
+        permissionField.onBlur();
     };
 
     const handleClear = () => {
         setCustomName(undefined);
-        setIsInvalidName(false);
         onChange('');
     };
 
-    const pickerAlert = isInvalidName
-        ? {
-              message: t(
-                  'app.actions.core.permissionActionCreate.invalidPermissionName',
-              ),
-              variant: 'critical' as const,
-          }
-        : alert;
-
-    if (!value) {
+    if (!permissionIdRegex.test(value ?? '')) {
         return (
             <AutocompleteInput
-                alert={pickerAlert}
+                alert={alert}
+                defaultInputValue={value}
                 helpText={t(
                     'app.actions.core.permissionActionCreate.permissionHelpText',
                 )}
                 items={items}
+                keepInputOnSelect={true}
                 label={t(
                     'app.actions.core.permissionActionCreate.permissionLabel',
                 )}
@@ -148,7 +141,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
                 selectItemLabel={t(
                     'app.actions.core.permissionActionCreate.selectItem',
                 )}
-                variant={pickerAlert?.variant ?? variant}
+                variant={variant}
                 {...permissionField}
             />
         );
