@@ -48,9 +48,10 @@ export interface IUseWorkspaceAccountFilterParams {
      */
     accountInfos?: IWorkspaceAccountInfo[];
     /**
-     * Label of the option aggregating every account.
+     * Label of the option aggregating every account. Omit it on a page that has no aggregated view, e.g. the
+     * members page: its endpoints answer for one account at a time, so the first account is selected instead.
      */
-    allAccountsLabel: string;
+    allAccountsLabel?: string;
 }
 
 export interface IUseWorkspaceAccountFilterReturn {
@@ -63,7 +64,7 @@ export interface IUseWorkspaceAccountFilterReturn {
      */
     setActiveOption: (option: IWorkspaceAccountFilterOption) => void;
     /**
-     * Every available option, the aggregated one first.
+     * Every available option, the aggregated one first when there is one.
      */
     options: IWorkspaceAccountFilterOption[];
 }
@@ -73,7 +74,7 @@ export interface IUseWorkspaceAccountFilterReturn {
  * their linked-account filter.
  *
  * Only DAO accounts get a tab of their own: a per-account view is served by the single DAO endpoints, which cannot
- * answer for a Safe. Safe accounts still contribute to the aggregated option.
+ * answer for a Safe. Safe accounts still contribute to the aggregated option where a page offers one.
  */
 export const useWorkspaceAccountFilter = (
     params: IUseWorkspaceAccountFilterParams,
@@ -98,6 +99,10 @@ export const useWorkspaceAccountFilter = (
                 };
             });
 
+        if (allAccountsLabel == null) {
+            return accountOptions;
+        }
+
         return [
             {
                 id: workspaceAllAccountsOption,
@@ -108,9 +113,11 @@ export const useWorkspaceAccountFilter = (
         ];
     }, [accounts, accountInfos, allAccountsLabel]);
 
+    // Without an aggregated option there is nothing to fall back to, so the hook settles on the first account.
     const [activeFilter, setActiveFilter] = useFilterUrlParam({
         name: workspaceAccountFilterParam,
-        fallbackValue: workspaceAllAccountsOption,
+        fallbackValue:
+            allAccountsLabel != null ? workspaceAllAccountsOption : undefined,
         validValues: options.map((option) => option.id),
     });
 
