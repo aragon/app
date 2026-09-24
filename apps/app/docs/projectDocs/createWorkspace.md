@@ -293,33 +293,48 @@ pages land.
 
 ### Assets page
 
-`/workspace/{workspaceId}/assets` mirrors `daoAssetsPage`: `Page.Main` with a tab strip over the list, plus an
-aside. Tabs come from `useWorkspaceAccountFilter` (on the shared `useFilterUrlParam`, so the selection is a URL
-param like the DAO page's `?linkedaccount=`) and render through `WorkspaceAccountFilter` (`ToggleGroup`), skipping
-the plugin-slot indirection of `DaoFilterComponent`, which a workspace has no use for.
+`/workspace/{workspaceId}/assets` mirrors `daoAssetsPage`: `Page.Main` with an account selector over the list, plus
+an aside. The options come from `useWorkspaceAccountFilter` (on the shared `useFilterUrlParam`, so the selection is
+a URL param like the DAO page's `?linkedaccount=`), skipping the plugin-slot indirection of `DaoFilterComponent`,
+which a workspace has no use for. They render through `WorkspaceAccountDropdown`, the dropdown counterpart of the
+`WorkspaceAccountFilter` tab strip, because a workspace's account list does not fit on a strip — the proposals and
+transactions pages use the same dropdown.
 
-| Tab | Reads |
-| --- | --- |
-| an account | the **single DAO endpoints** via `AssetList.Default` — identical to the DAO page, so the numbers agree |
-| All assets | **`POST /v2/workspaces/query/assets`** via `WorkspaceAssetList`, the only view that spans networks |
+**Every tab reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — the aggregated tab over all
+accounts, an account tab over just that one. The page only decides which accounts to send:
 
-**Only DAO accounts get a tab.** A per-account view is served by the single DAO endpoints, which cannot answer for
-a Safe; Safe accounts still contribute to the aggregated tab. Tab labels use the same precedence as the overview
-rows — `metadata.name ?? accounts-API name ?? truncated address` — so a tab and its row never disagree.
+```ts
+const selectedAccountRefs = selectedAccount != null ? [selectedRef] : accountRefs;
+```
 
-The aside follows the same split: an account tab renders the DAO page's own `DaoFilterAsideCard` (fed the fetched
-`IDao`, a synthesised `IDaoFilterOption` with `isParent: true` so the card reads the account's own stats rather
-than looking for a linked account, and the DAO list's first-page metadata), while the aggregated tab renders
-`WorkspaceAssetsAsideCard` with `totalAmountUsd`, `totalRecords` and `spamCount` from the workspace response.
+Going through one endpoint throughout keeps the account tabs summing to the aggregated tab, since both come out of
+the same aggregation. Tab labels use the same precedence as the overview rows — `metadata.name ?? accounts-API
+name ?? truncated address` — so a tab and its row never disagree.
 
-Reusing the DAO card means its content is **gated by the `linkedAccount` flag**, exactly as on the DAO page:
-enabled (local only) it shows the description, the stats it is handed, the chain/address list and the Octav link;
-disabled it falls back to `FinanceDetailsList`, ignoring those stats. That is the DAO page's existing behaviour,
-inherited rather than introduced — the workspace page now matches it in both states.
+**Only DAO accounts get a tab.** `useWorkspaceAccountFilter` is DAO-only for every page: the aggregated tab still
+covers every account, so a Safe's balances are visible there, but a Safe has no tab of its own.
 
-The aggregated row **reuses `AssetListItem` unchanged**: the backend projects the same nested `token` (network and
-address included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused in v1 — the
-per-account tabs already answer "which account holds this".
+The aside is `WorkspaceAssetsAsideCard` on every tab, fed `totalAmountUsd`, `totalRecords` and `spamCount` from the
+response for the selected accounts. It shares its query key with the list, so reading the totals costs no extra
+request.
+
+This replaced an earlier split where an account tab read the single DAO endpoints via `AssetList.Default` and
+rendered the DAO page's `DaoFilterAsideCard`. What that traded away:
+
+- the DAO card's identity block — chain, vault address, ENS, resource links, Octav — which the workspace card does
+  not show. Adding it needs no `IDao`: network and address come from the account, name and avatar from the accounts
+  API, which is exactly why it would work for a Safe too.
+- **nothing in the deployed stats**, because `DaoInfoAside` only renders the stats it is handed when the
+  `linkedAccount` flag is on (`defaultValue: false`, `local: true`) and otherwise falls back to
+  `FinanceDetailsList`, which drops them. So outside local dev an account tab showed *no* asset stats; it now shows
+  total value, token count and hidden spam.
+- exact agreement with that DAO's own assets page. The DAO card's total value came from `dao.metrics.tvlUSD`, an
+  indexed DAO metric, while the workspace card computes `totalAmountUsd` over the returned selection — different
+  quantities, so the two pages can legitimately differ.
+
+The rows **reuse `AssetListItem` unchanged**: the backend projects the same nested `token` (network and address
+included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused — on a DAO
+account tab "which account holds this" is already answered by the tab.
 
 Two details that do not transfer from the DAO page:
 
@@ -336,6 +351,9 @@ Two details that do not transfer from the DAO page:
 list, and the empty state then says the assets could not be loaded rather than that there are none. `unverified`
 is the permanent state of every non-indexed account (so every Safe) and is deliberately **not** warned about;
 otherwise the banner would always be on and would stop being read.
+
+A single-account tab gets its own copy (`unavailable.descriptionSingle`): the tab *is* the account, so counting
+"1 of the accounts could not be read" would only raise the question of which one.
 
 Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry.
 

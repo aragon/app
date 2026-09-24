@@ -2,15 +2,9 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { financeService } from '@/modules/finance/api/financeService';
 import { daoService, Network } from '@/shared/api/daoService';
-import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
-import {
-    generateDao,
-    generateDaoMetrics,
-    generatePaginatedResponse,
-    ReactQueryWrapper,
-} from '@/shared/testUtils';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
@@ -29,13 +23,8 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         workspaceQueryService,
         'getAssetList',
     );
-    const getDaoAssetsSpy = jest.spyOn(financeService, 'getAssetList');
+    // Read by the aside card of a DAO account, which renders the DAO's own card.
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
-    // The DAO aside card pulls in DAO components that read feature flags.
-    const useFeatureFlagsSpy = jest.spyOn(
-        featureFlagsProvider,
-        'useFeatureFlags',
-    );
 
     // React Query dedupes by key and the asset key is built from the accounts, so each test gets its own addresses:
     // otherwise a result cached by an earlier test satisfies the render and this test's own mock never runs.
@@ -79,6 +68,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
 
     beforeEach(() => {
         getAccountsSpy.mockResolvedValue([]);
+        getDaoSpy.mockResolvedValue(generateDao());
         getWorkspaceAssetsSpy.mockResolvedValue({
             data: [],
             metadata: {
@@ -91,27 +81,13 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
             coverage: [],
             partial: false,
         });
-        getDaoAssetsSpy.mockResolvedValue(
-            generatePaginatedResponse({ data: [] }),
-        );
-        // The account tabs display the DAO's own aside card, which reads the DAO metrics.
-        getDaoSpy.mockResolvedValue(
-            generateDao({ metrics: generateDaoMetrics({ tvlUSD: '4200' }) }),
-        );
-        useFeatureFlagsSpy.mockReturnValue({
-            snapshot: [],
-            isEnabled: () => false,
-            setOverride: jest.fn(),
-        });
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
         getWorkspaceAssetsSpy.mockReset();
-        getDaoAssetsSpy.mockReset();
         getDaoSpy.mockReset();
-        useFeatureFlagsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -128,9 +104,11 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
 
         const component = (
             <ReactQueryWrapper client={new QueryClient()}>
-                <GukModulesProvider>
-                    <WorkspaceAssetsPageClient {...completeProps} />
-                </GukModulesProvider>
+                <FeatureFlagsProvider>
+                    <GukModulesProvider>
+                        <WorkspaceAssetsPageClient {...completeProps} />
+                    </GukModulesProvider>
+                </FeatureFlagsProvider>
             </ReactQueryWrapper>
         );
 
@@ -145,7 +123,14 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
             }),
         );
 
-    it('gives an option to the aggregated view and to DAO accounts only', async () => {
+    const selectAccount = async (address: string) => {
+        await openAccountDropdown();
+        await userEvent.click(
+            await screen.findByText(addressUtils.truncateAddress(address)),
+        );
+    };
+
+    it('gives an option to the aggregated view and to the DAO accounts only', async () => {
         const { component, daoAddress, safeAddress } = createTestComponent();
         render(component);
 
@@ -154,7 +139,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         expect(
             await screen.findByText(addressUtils.truncateAddress(daoAddress)),
         ).toBeInTheDocument();
-        // The Safe has no option: the single DAO endpoints cannot answer for it.
         expect(
             screen.queryByText(addressUtils.truncateAddress(safeAddress)),
         ).not.toBeInTheDocument();
@@ -182,67 +166,52 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
                 }),
             ),
         );
-        expect(getDaoAssetsSpy).not.toHaveBeenCalled();
     });
 
-    it('reads the single DAO assets API when an account is selected', async () => {
+    it('narrows the same API to the selected account instead of the single DAO endpoint', async () => {
         const { component, daoAddress } = createTestComponent();
         render(component);
 
-        await openAccountDropdown();
-        await userEvent.click(
-            await screen.findByText(addressUtils.truncateAddress(daoAddress)),
-        );
+        await selectAccount(daoAddress);
 
         await waitFor(() =>
-            expect(getDaoAssetsSpy).toHaveBeenCalledWith(
+            expect(getWorkspaceAssetsSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    queryParams: expect.objectContaining({
-                        daoId: `ethereum-sepolia-${daoAddress}`,
+                    body: expect.objectContaining({
+                        accounts: [
+                            {
+                                network: Network.ETHEREUM_SEPOLIA,
+                                address: daoAddress,
+                            },
+                        ],
                     }),
                 }),
             ),
         );
     });
 
-    it('displays the DAO aside card of the account when it is selected', async () => {
-        // `DaoInfoAside` only renders the stats it is given when `linkedAccount` is enabled, exactly as on the DAO
-        // assets page; with the flag off it falls back to `FinanceDetailsList`.
-        useFeatureFlagsSpy.mockReturnValue({
-            snapshot: [],
-            isEnabled: (key) => key === 'linkedAccount',
-            setOverride: jest.fn(),
-        });
-        const { component, daoAddress } = createTestComponent();
-        render(component);
-
-        await openAccountDropdown();
-        await userEvent.click(
-            await screen.findByText(addressUtils.truncateAddress(daoAddress)),
-        );
-
-        await waitFor(() =>
-            expect(getDaoSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    urlParams: { id: `ethereum-sepolia-${daoAddress}` },
-                }),
-            ),
-        );
-        // The DAO card's own stats, the same ones the DAO assets page shows.
-        expect(
-            await screen.findByText(/assetListStats\.totalValueUsd$/),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByText(/workspaceAssetsAsideCard\.totalValue$/),
-        ).not.toBeInTheDocument();
-    });
-
-    it('displays the totals of the whole selection on the aside', async () => {
+    it('displays the totals of the aggregated tab on the aside', async () => {
         const { component } = createTestComponent();
         render(component);
 
         expect(
-            await screen.findByText(/workspaceAssetsAsideCard\.totalValue$/),
+            await screen.findByText(/workspaceAllAssetsAsideCard\.totalValue$/),
         ).toBeInTheDocument();
+    });
+
+    it('swaps the aside for the DAO card when a DAO account is selected', async () => {
+        const { component, daoAddress } = createTestComponent();
+        render(component);
+
+        await selectAccount(daoAddress);
+
+        await waitFor(() =>
+            expect(getDaoSpy).toHaveBeenCalledWith({
+                urlParams: { id: `ethereum-sepolia-${daoAddress}` },
+            }),
+        );
+        expect(
+            screen.queryByText(/workspaceAllAssetsAsideCard\.totalValue$/),
+        ).not.toBeInTheDocument();
     });
 });

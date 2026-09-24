@@ -1,9 +1,5 @@
 'use client';
 
-import { useAssetList } from '@/modules/finance/api/financeService';
-import { AssetList } from '@/modules/finance/components/assetList';
-import { DaoFilterAsideCard } from '@/modules/finance/components/daoFilterAsideCard';
-import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
@@ -26,10 +22,12 @@ export interface IWorkspaceAssetsPageClientProps {
 }
 
 /**
- * Assets of a workspace, laid out like the DAO assets page: one tab per account plus an aggregated one.
+ * Assets of a workspace, laid out like the DAO assets page: one tab per DAO account plus an aggregated one.
  *
- * The per-account tabs read the single DAO endpoints, so their numbers match the DAO page exactly. The aggregated
- * tab is the only one that needs the workspace query API, because it is the only view that spans networks.
+ * Every tab reads the workspace query API, the aggregated one over all accounts and an account tab over just that
+ * one. Going through the same endpoint throughout keeps the account tabs summing to the aggregated tab, since both
+ * come out of the same aggregation. Safe accounts get no tab of their own, so their balances show up only inside
+ * the aggregated one.
  */
 export const WorkspaceAssetsPageClient: React.FC<
     IWorkspaceAssetsPageClientProps
@@ -49,7 +47,7 @@ export const WorkspaceAssetsPageClient: React.FC<
         address,
     }));
 
-    // Resolved once to label the tabs with the indexed DAO names, shared with the overview page's cache.
+    // Resolved once to label the tabs, shared with the overview page's cache.
     const { data: accountInfos } = useWorkspaceAccounts(
         { body: { accounts: accountRefs } },
         { enabled: accounts.length > 0 },
@@ -64,28 +62,18 @@ export const WorkspaceAssetsPageClient: React.FC<
             ),
         });
 
-    const isAllAccounts = activeOption?.isAllAccounts ?? true;
+    // Accounts the selected tab covers: the one it names, or all of them on the aggregated tab.
+    const accountsToDisplay =
+        activeOption?.account != null ? [activeOption.account] : accounts;
 
-    // Totals of the aggregated view. Shares its key with the list's own query, so this adds no extra request.
-    const { metadata: allAccountsMetadata } = useWorkspaceAssetListData(
-        { body: { accounts: accountRefs, pagination: { pageSize } } },
-        { enabled: isAllAccounts && accounts.length > 0 },
+    const accountRefsToDisplay = accountsToDisplay.map(
+        ({ network, address }) => ({ network, address }),
     );
 
-    const selectedAccount = activeOption?.account;
-
-    // First page of the selected account, read for the asset count of its aside card.
-    const { data: selectedAssets } = useAssetList(
-        {
-            queryParams: { daoId: selectedAccount?.id ?? '', pageSize },
-        },
-        { enabled: selectedAccount != null },
-    );
-
-    // The account tabs show the DAO's own aside card, the same one the DAO assets page shows.
-    const { data: selectedDao } = useDao(
-        { urlParams: { id: selectedAccount?.id ?? '' } },
-        { enabled: selectedAccount != null },
+    // Totals of the selected tab. Shares its key with the list's own query, so this adds no extra request.
+    const { metadata } = useWorkspaceAssetListData(
+        { body: { accounts: accountRefsToDisplay, pagination: { pageSize } } },
+        { enabled: accountRefsToDisplay.length > 0 },
     );
 
     return (
@@ -99,54 +87,17 @@ export const WorkspaceAssetsPageClient: React.FC<
                         options={options}
                         value={activeOption}
                     />
-                    {selectedAccount == null ? (
-                        <WorkspaceAssetList
-                            accounts={accountRefs}
-                            pageSize={pageSize}
-                        />
-                    ) : (
-                        <AssetList.Default
-                            initialParams={{
-                                queryParams: {
-                                    daoId: selectedAccount.id,
-                                    pageSize,
-                                },
-                            }}
-                        />
-                    )}
+                    <WorkspaceAssetList
+                        accounts={accountRefsToDisplay}
+                        pageSize={pageSize}
+                    />
                 </div>
             </Page.Main>
             <Page.Aside>
-                {selectedAccount == null ? (
-                    <WorkspaceAssetsAsideCard
-                        assetsCount={allAccountsMetadata?.totalRecords}
-                        spamCount={allAccountsMetadata?.spamCount}
-                        title={
-                            activeOption?.label ??
-                            t(
-                                'app.workspace.workspaceAssetsPage.filter.allAccounts',
-                            )
-                        }
-                        totalAmountUsd={allAccountsMetadata?.totalAmountUsd}
-                    />
-                ) : (
-                    selectedDao != null && (
-                        <DaoFilterAsideCard
-                            activeOption={{
-                                id: selectedAccount.id,
-                                label: activeOption?.label ?? '',
-                                daoId: selectedAccount.id,
-                                isAll: false,
-                                // The account is a DAO in its own right, not a linked account of another one, so
-                                // the card reads its stats from the DAO itself.
-                                isParent: true,
-                            }}
-                            dao={selectedDao}
-                            selectedMetadata={selectedAssets?.pages[0]}
-                            statsType="assets"
-                        />
-                    )
-                )}
+                <WorkspaceAssetsAsideCard
+                    activeOption={activeOption}
+                    metadata={metadata}
+                />
             </Page.Aside>
         </Page.Content>
     );

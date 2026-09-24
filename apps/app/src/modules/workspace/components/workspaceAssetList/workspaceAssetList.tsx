@@ -47,6 +47,8 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
         { enabled: accounts.length > 0 },
     );
 
+    const isSingleAccount = accounts.length === 1;
+
     return (
         <div className="flex flex-col gap-4 md:gap-6">
             {unavailableAccounts.length > 0 && (
@@ -56,12 +58,16 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
                     )}
                     variant="warning"
                 >
-                    {t(
-                        'app.workspace.workspaceAssetList.unavailable.description',
-                        {
-                            count: unavailableAccounts.length,
-                        },
-                    )}
+                    {/* A single-account view is the account, so counting "1 of the accounts" would only raise
+                        the question of which one. */}
+                    {isSingleAccount
+                        ? t(
+                              'app.workspace.workspaceAssetList.unavailable.descriptionSingle',
+                          )
+                        : t(
+                              'app.workspace.workspaceAssetList.unavailable.description',
+                              { count: unavailableAccounts.length },
+                          )}
                 </AlertCard>
             )}
             <DataListRoot
