@@ -77,7 +77,7 @@ line of defense the app tooling is also shielded from the shims (jest pins
 ## Preview-authoring learnings (wave 4 — app components, 2026-07-16)
 
 - Provider stack for app components: `DebugContextProvider > TranslationsProvider(enTranslations)`; add `BlockNavigationContextProvider` only for wizards. Wrap in TranslationsProvider even when a component looks presentational — subcomponents may call `useTranslations` (AutocompleteInput's menu).
-- `FormWrapper defaultValues` is the ONLY way to hydrate `useFieldArray`-backed lists (ResourcesInput/AddressesInput) — component-level `defaultValue` props don't.
+- `useFieldArray`-backed lists (ResourcesInput/AddressesInput) hydrate only from the enclosing react-hook-form provider's `defaultValues` — `FormWrapper` standalone, or the wizard container's own `defaultValues` inside a wizard. Component-level `defaultValue` props don't.
 - `Page.Container` needs the app's QueryClientProvider (react-query HydrationBoundary) — not in the bundle; previews use a plain div; the design agent should use Page.Main/Content/Aside/Header directly.
 - `Page.AsideCard` icon prop uses next/image (shimmed to <img> in the bundle).
 - App and kit share one radix copy in the bundle, so the DialogProvider + open Dialog.Root + force-open-style pattern works for app dialogs too.
