@@ -100,13 +100,12 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **Do not add ESLint or Prettier.** Lint/format is Biome via Ultracite.
 - **Shared tooling comes from the root catalog** — declare it as `"catalog:"`, never as a local
   version. Git hooks, changesets and the Turbo binary are root-owned and must not reappear here.
-  Two deliberate exceptions, both of which regress something if catalogued:
-  - `zod` is pinned to `3.25.76` (catalog: `^4.4.3`). The kit never imports zod; it exists only to
-    satisfy viem's optional peer, and it must match what `apps/app` resolves. Otherwise pnpm gives
-    the two workspaces different peer sets, installs two `viem`/`wagmi` copies, and the app's
-    `WagmiProvider` becomes invisible to the kit's hooks (`WagmiProviderNotFoundError`).
-  - `@testing-library/jest-dom` is pinned to `7.0.1` (catalog: `^6.9.1`). The kit is on 7.x;
-    the root override holds the 6.x line at 6.9.1 for everyone else.
+  One deliberate exception, which regresses if catalogued: `zod` is pinned to an exact 3.x version,
+  not the catalog's 4.x range. The kit never imports zod; it exists only to satisfy viem's optional
+  peer, and it must match what `apps/app` resolves. Otherwise pnpm gives the two workspaces
+  different peer sets, installs two `viem`/`wagmi` copies, and the app's `WagmiProvider` becomes
+  invisible to the kit's hooks (`WagmiProviderNotFoundError`). The catalog's `zod` comment in the
+  root `pnpm-workspace.yaml` has the same warning.
 - **Do not move peer deps into `dependencies`:** react, react-dom, react-hook-form,
   @tanstack/react-query, viem, wagmi, tailwindcss, @tailwindcss/typography.
 - **Do not break public API casually.** Removing/renaming an exported symbol or prop is a

@@ -54,11 +54,12 @@ attestation.
 
 For trying a change in a downstream project before releasing it: Actions → **Gov UI Kit Publish** →
 Run workflow. This publishes `0.0.0-<timestamp>` under the dist-tag `snapshot-<run-id>`, leaving
-`latest` untouched. It needs at least one pending changeset (`changeset status --since origin/main`).
+`latest` untouched. It needs a pending changeset for `@aragon/gov-ui-kit` — changesets for other
+packages alone don't count, since they would leave the kit version unchanged.
 
-Snapshots skip the `npm-publish` approval gate. They deliberately run `changeset version --snapshot`
-unscoped — the bumps live only in the runner's working tree and nothing is committed, and only the
-kit is published.
+Snapshots wait on the same `npm-publish` approval as stable releases. They deliberately run
+`changeset version --snapshot` unscoped — the bumps live only in the runner's working tree and
+nothing is committed, and only the kit is published.
 
 ## How publishing is authenticated
 
