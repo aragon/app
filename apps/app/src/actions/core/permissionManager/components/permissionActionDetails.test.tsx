@@ -1,10 +1,12 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
+import * as ensModule from '@/modules/ens';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { PermissionActionDetails } from './permissionActionDetails';
 
 jest.mock('@/shared/api/daoService', () => ({
+    ...jest.requireActual('@/shared/api/daoService'),
     useDao: () => ({
         data: {
             address: '0xdao',
@@ -33,6 +35,19 @@ jest.mock('../hooks/usePermissionEntityResolver', () => ({
 }));
 
 describe('<PermissionActionDetails /> component', () => {
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+
+    beforeEach(() => {
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+    });
+
+    afterEach(() => {
+        useEnsNameSpy.mockReset();
+    });
+
     const pluginAddress = '0x0150627b84a0C8257AB28cD0E1F71E81c7aafe3d';
     const daoAddress = '0xC8da4C1d9BB59DD32ac39A925933188b7c66c311';
 
@@ -110,7 +125,6 @@ describe('<PermissionActionDetails /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
     });
-
     it('renders the unknown-permission warning inside the permission row', () => {
         const permissionId = `0x${'ab'.repeat(32)}`;
         render(createTestComponent(createTestAction(permissionId)));

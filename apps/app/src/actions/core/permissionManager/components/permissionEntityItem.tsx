@@ -1,6 +1,7 @@
 'use client';
 
 import { addressUtils, DefinitionList, Tooltip } from '@aragon/gov-ui-kit';
+import { useEnsName } from '@/modules/ens';
 
 export interface IPermissionEntityItemProps {
     /**
@@ -32,12 +33,14 @@ export const PermissionEntityItem: React.FC<IPermissionEntityItemProps> = (
 ) => {
     const { term, address, label, href } = props;
 
+    const { data: ensName } = useEnsName(address);
     const truncatedAddress = addressUtils.truncateAddress(address);
+    const resolvedLabel = label !== truncatedAddress ? label : undefined;
 
     return (
         <DefinitionList.Item
             copyValue={address}
-            description={label !== truncatedAddress ? label : undefined}
+            description={resolvedLabel ?? ensName ?? undefined}
             link={href != null ? { href, isOnchainEntity: true } : undefined}
             term={term}
         >

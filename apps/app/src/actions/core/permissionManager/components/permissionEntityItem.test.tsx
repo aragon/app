@@ -1,11 +1,25 @@
 import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as ensModule from '@/modules/ens';
 import {
     type IPermissionEntityItemProps,
     PermissionEntityItem,
 } from './permissionEntityItem';
 
 describe('<PermissionEntityItem /> component', () => {
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+
+    beforeEach(() => {
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+    });
+
+    afterEach(() => {
+        useEnsNameSpy.mockReset();
+    });
+
     const address = '0xC8da4C1d9BB59DD32ac39A925933188b7c66c311';
 
     const createTestComponent = (
@@ -61,5 +75,25 @@ describe('<PermissionEntityItem /> component', () => {
             'href',
             'https://explorer.test/address',
         );
+    });
+    it('shows the ENS name when nothing more specific resolves', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'vitalik.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        render(createTestComponent());
+
+        expect(screen.getByText('vitalik.eth')).toBeInTheDocument();
+    });
+
+    it('prefers a DAO or plugin name over the ENS name', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'vitalik.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        render(createTestComponent({ label: 'Token Voting' }));
+
+        expect(screen.getByText('Token Voting')).toBeInTheDocument();
+        expect(screen.queryByText('vitalik.eth')).not.toBeInTheDocument();
     });
 });
