@@ -1,0 +1,4059 @@
+{
+    "schemaVersion": "1.1.0",
+    "metadata": {
+        "package": "@aragon/gov-ui-kit",
+        "sourceRegistry": {
+            "path": "registry.json",
+            "schemaVersion": "1.1.0",
+            "sha256": "ee07f9ecde3e6f8e8e3ca819d5ee184bdaed628c37cdccd1816181c64850903b",
+            "totalRecords": 418,
+            "entryCount": 150,
+            "uiEntryCount": 143,
+            "utilityEntryCount": 7,
+            "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
+        },
+        "generation": {
+            "tool": "selection-guide.mjs",
+            "deterministic": true,
+            "enrichment": "Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields; registry intent remains authoritative."
+        }
+    },
+    "entries": [
+        {
+            "id": "govkit:Accordion",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Accordion"
+            },
+            "description": "Compound accordion (Accordion.Container/Item/ItemHeader/ItemContent) for expand/collapse titled sections.",
+            "useWhen": [
+                "Grouping content into collapsible titled sections"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "isMulti switches between single and multiple open sections"
+            ],
+            "composition": [
+                "Compound export with members: Accordion.Container, Accordion.Item, Accordion.ItemContent, Accordion.ItemHeader."
+            ],
+            "references": {
+                "source": "kit:src/core/components/accordion/index.ts:6",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118",
+                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161",
+                    "app:src/modules/settings/components/permissionsList/permissionsList.tsx:78"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AccordionContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AccordionContainer"
+            },
+            "description": "AccordionContainer: layout container for child items of the Accordion compound (Compound accordion).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/accordion/accordionContainer/accordionContainer.tsx:31",
+                "stories": [
+                    "kit:src/core/components/accordion/accordionContainer/accordionContainer.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:176",
+                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161",
+                    "app:src/modules/settings/components/permissionsList/permissionsList.tsx:78"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AccordionItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AccordionItem"
+            },
+            "description": "AccordionItem: individual item element of the Accordion compound (Compound accordion).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/accordion/accordionItem/accordionItem.tsx:16",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:175",
+                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:162",
+                    "app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:116"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AccordionItemContent",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AccordionItemContent"
+            },
+            "description": "AccordionItemContent: expandable item content region of the Accordion compound (Compound accordion).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/accordion/accordionItemContent/accordionItemContent.tsx:12",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:119",
+                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:178",
+                    "app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:135"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AccordionItemHeader",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AccordionItemHeader"
+            },
+            "description": "AccordionItemHeader: clickable item header/trigger of the Accordion compound (Compound accordion).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx:13",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118",
+                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:163",
+                    "app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:117"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ActionSimulation",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ActionSimulation"
+            },
+            "description": "Renders a proposal-action simulation summary (status, total actions, last-simulation timestamp) as a DataList.Item with a simulate trigger.",
+            "useWhen": [
+                "Showing simulation results for proposal actions",
+                "Prompting/refreshing a simulation before execution"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Displays caller-supplied results and invokes onSimulate; it does not execute the simulation itself."
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/action/actionSimulation/actionSimulation.tsx:16",
+                "stories": [
+                    "kit:src/modules/components/action/actionSimulation/actionSimulation.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/dialogs/simulateActionsDialog/simulateActionsDialog.tsx:133",
+                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:331"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AddressInput",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AddressInput"
+            },
+            "description": "Text input that resolves wallet or contract addresses and ENS names.",
+            "useWhen": [
+                "Capturing a wallet/contract address or ENS name in a form",
+                "Flows needing checksummed address + normalized ENS output"
+            ],
+            "alternatives": [
+                {
+                    "id": "govkit:AddressOutput",
+                    "useWhen": "Use AddressOutput for read-only address display."
+                },
+                {
+                    "id": "govkit:InputText",
+                    "useWhen": "Use InputText for plain text without address/ENS resolution."
+                }
+            ],
+            "keyProps": [
+                {
+                    "name": "value",
+                    "contract": "Controlled current input text for an address or ENS name; defaults to an empty string."
+                },
+                {
+                    "name": "onChange",
+                    "contract": "Receives edited input text; with enforceChecksum enabled, valid or all-uppercase addresses are normalized to checksum form, and surrounding whitespace is trimmed on blur. Clearing emits undefined."
+                },
+                {
+                    "name": "onAccept",
+                    "contract": "After debounce and ENS/address resolution, receives { address, name } with a checksum address and normalized ENS name, or undefined when input is invalid or fails checksum enforcement."
+                },
+                {
+                    "name": "chainId",
+                    "contract": "Selects the block-explorer network; ENS resolution remains on mainnet."
+                },
+                {
+                    "name": "enforceChecksum",
+                    "contract": "Defaults true; rejects mixed-case addresses that fail strict EIP-55 validation while accepted output remains checksum formatted."
+                },
+                {
+                    "name": "hideControls",
+                    "contract": "Hides ENS/address toggle, block-explorer link, copy, clear and paste controls."
+                }
+            ],
+            "constraints": [
+                "Uses wagmi hooks and useQueryClient, so it must render under Wagmi and React-Query providers (GukModulesProvider supplies these)",
+                "onChange represents edited input state and may normalize a valid address to checksum form or trim surrounding whitespace on blur; it is separate from accepted output",
+                "onAccept is debounced by 300ms and emits a resolved checksum address plus normalized ENS name, or undefined for invalid input/checksum errors",
+                "chainId selects the explorer network while ENS resolution always uses mainnet"
+            ],
+            "composition": [
+                "Wraps InputContainer and renders MemberAvatar plus optional ENS/address toggle, explorer, copy, clear and paste controls.",
+                "App AddressesInputItem keeps local raw text state and writes accepted {address,name} into form state for duplicate/custom validation."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/addressInput/addressInput.tsx:67",
+                "stories": [
+                    "kit:src/modules/components/addressInput/addressInput.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/components/transferAssetForm/transferAssetForm.tsx:83",
+                    "app:src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx:60",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:191"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AddressOutput",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AddressOutput"
+            },
+            "description": "Displays an address or hash with an optional caller-supplied label or link, copy control and reveal tooltip. Valid addresses are checksummed for copy/reveal; other values are preserved.",
+            "useWhen": [
+                "Rendering a wallet/contract address read-only",
+                "Showing an address inside cards, rows or the Wallet component"
+            ],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "address",
+                    "contract": "Display address value; pair with AddressInput when the value is read-only."
+                },
+                {
+                    "name": "chainId",
+                    "contract": "Builds the explorer link for the displayed address."
+                }
+            ],
+            "constraints": [
+                "showCompleteAddress is ignored when label is set",
+                "A truthy href makes the component link-like (a tap navigates and the copy control turns primary); the URL is whatever the caller supplies",
+                "Under an interactive ancestor (hasInteractiveAncestor set or inherited via InteractiveAncestorContext) copy defaults off and the reveal trigger becomes passive; callers can still force copy on"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/addressOutput/addressOutput.tsx:61",
+                "stories": [
+                    "kit:src/core/components/addressOutput/addressOutput.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:35",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:58",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItem.tsx:58"
+                ]
+            }
+        },
+        {
+            "id": "govkit:addressUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "addressUtils"
+            },
+            "description": "Ethereum address and hash validation, truncation, checksum and equality helpers.",
+            "useWhen": [
+                "Validating or displaying wallet and contract addresses",
+                "Comparing or shortening transaction, block or Merkle hashes"
+            ],
+            "methods": [
+                {
+                    "name": "isAddress",
+                    "contract": "Returns viem address validation with optional options forwarded; the default options use strict:false."
+                },
+                {
+                    "name": "truncateAddress",
+                    "contract": "Returns a shortened valid address or the original input when invalid."
+                },
+                {
+                    "name": "truncateHash",
+                    "contract": "Returns a shortened valid 32-byte hash or the original input when invalid."
+                },
+                {
+                    "name": "getChecksum",
+                    "contract": "Returns an address in checksum format."
+                },
+                {
+                    "name": "isAddressEqual",
+                    "contract": "Returns true only when both valid addresses match case-insensitively."
+                }
+            ],
+            "constraints": [
+                "isAddress defaults to strict:false and forwards supplied options to viem",
+                "truncateAddress shows the first 6 and last 4 characters; truncateHash shows the first 10 and last 8 characters"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/utils/addressUtils/addressUtils.ts:56",
+                "stories": [],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:83",
+                    "app:src/actions/capitalDistributor/index.ts:30",
+                    "app:src/actions/capitalDistributor/utils/capitalDistributorActionParser/capitalDistributorActionParser.ts:34"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AlertCard",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AlertCard"
+            },
+            "description": "Card-style alert with message and variant (info/success/warning/critical).",
+            "useWhen": [
+                "Standalone, high-emphasis message needing a container"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/alerts/alertCard/alertCard.tsx:43",
+                "stories": [
+                    "kit:src/core/components/alerts/alertCard/alertCard.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarActiveVotingAlert/gaugeRegistrarActiveVotingAlert.tsx:17",
+                    "app:src/modules/application/dialogs/aragonProfileDialog/aragonProfileDialog.tsx:352",
+                    "app:src/modules/application/dialogs/aragonProfileRenameDialog/aragonProfileRenameDialog.tsx:152"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AlertInline",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AlertInline"
+            },
+            "description": "Compact inline alert with message and variant.",
+            "useWhen": [
+                "Inline/field-level status or validation messages"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/alerts/alertInline/alertInline.tsx:33",
+                "stories": [
+                    "kit:src/core/components/alerts/alertInline/alertInline.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:152",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:152",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:152"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AssetDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AssetDataListItem"
+            },
+            "description": "DataList item structure for an asset/token holding (name, symbol, amount, fiat value).",
+            "useWhen": [
+                "Rows in a token/asset holdings list"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: AssetDataListItem.Skeleton, AssetDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/asset/assetDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AssetDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AssetDataListItemSkeleton"
+            },
+            "description": "AssetDataListItemSkeleton: loading placeholder for one item of the AssetDataListItem compound (DataList item structure for an asset/token holding).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.tsx:9",
+                "stories": [
+                    "kit:src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117",
+                    "app:src/modules/finance/components/assetList/assetListDefault.tsx:97"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AssetDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AssetDataListItemStructure"
+            },
+            "description": "AssetDataListItemStructure: presentational item structure driven by props of the AssetDataListItem compound (DataList item structure for an asset/token holding).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx:33",
+                "stories": [
+                    "kit:src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39",
+                    "app:src/modules/finance/components/assetList/assetListItem.tsx:37",
+                    "app:src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterLockUnlockDialog/gaugeVoterLockUnlockDialog.tsx:197"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AssetTransfer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AssetTransfer"
+            },
+            "description": "Displays an asset transfer (sender, recipient, amount, symbol, fiat value).",
+            "useWhen": [
+                "Rendering a token transfer summary"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:44",
+                "stories": [
+                    "kit:src/modules/components/asset/assetTransfer/assetTransfer.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:Avatar",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Avatar"
+            },
+            "description": "Generic image avatar with size variants and a fallback.",
+            "useWhen": [
+                "Displaying a user/entity image where no domain avatar applies"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:78",
+                "stories": [
+                    "kit:src/core/components/avatars/avatar/avatar.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:166",
+                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:121",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:50"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AvatarBase",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AvatarBase"
+            },
+            "description": "Low-level ref-forwarding avatar image primitive used to build higher-level avatars.",
+            "useWhen": [
+                "Building a custom avatar variant"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/avatars/avatarBase/avatarBase.tsx:6",
+                "stories": [
+                    "kit:src/core/components/avatars/avatarBase/avatarBase.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:AvatarIcon",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AvatarIcon"
+            },
+            "description": "Avatar-shaped frame rendering an Icon with variant styling.",
+            "useWhen": [
+                "Representing an entity/state as an icon in avatar form"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:83",
+                "stories": [
+                    "kit:src/core/components/avatars/avatarIcon/avatarIcon.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx:118",
+                    "app:src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx:67",
+                    "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:148"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Breadcrumbs",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Breadcrumbs"
+            },
+            "description": "Breadcrumb navigation trail built from a list of links.",
+            "useWhen": [
+                "Showing hierarchical page location/navigation"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/breadcrumbs/breadcrumbs.tsx:30",
+                "stories": [
+                    "kit:src/core/components/breadcrumbs/breadcrumbs.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/shared/components/page/pageHeader/pageHeader.tsx:67"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Button",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Button"
+            },
+            "description": "Polymorphic button that renders as a native <button> or, when given href, as an <a>, with variant/size/icon/loading states.",
+            "useWhen": [
+                "Primary interactive action trigger",
+                "Icon-only actions (omit children)",
+                "A link styled as a button (pass href)"
+            ],
+            "alternatives": [
+                {
+                    "id": "govkit:Link",
+                    "useWhen": "Use Link for text-styled navigation; Button is an emphasized action affordance."
+                }
+            ],
+            "keyProps": [
+                {
+                    "name": "href",
+                    "contract": "Renders LinkBase/<a> when present; otherwise renders a native <button> with type defaulting to button."
+                },
+                {
+                    "name": "variant",
+                    "contract": "Visual intent: primary, secondary, tertiary, ghost, success, warning or critical; defaults to primary."
+                },
+                {
+                    "name": "size/responsiveSize",
+                    "contract": "Size is lg/md/sm (default lg); responsiveSize maps breakpoint-specific sizes."
+                },
+                {
+                    "name": "iconLeft/iconRight",
+                    "contract": "Left/right IconType adornments; iconRight is hidden for icon-only buttons."
+                },
+                {
+                    "name": "isLoading/disabled",
+                    "contract": "Either state disables interaction; loading swaps icons/content emphasis for a spinner."
+                }
+            ],
+            "constraints": [
+                "href renders the anchor form; the button-typed branch forbids link-only attrs (target/rel/download/hrefLang/media/ping/referrerPolicy)",
+                "with no children it renders as an only-icon button using iconLeft"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/button/button.tsx:179",
+                "stories": [
+                    "kit:src/core/components/button/button.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:52",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:306",
+                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:169"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Card",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Card"
+            },
+            "description": "Basic surface container (border/padding) for grouping content.",
+            "useWhen": [
+                "Grouping related content on a surface"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/cards/card/card.tsx:6",
+                "stories": [
+                    "kit:src/core/components/cards/card/card.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:272",
+                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:331",
+                    "app:src/daos/alchemix/components/alchemixSubmitVote/components/alchemixObjectionVote.tsx:173"
+                ]
+            }
+        },
+        {
+            "id": "govkit:CardCollapsible",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "CardCollapsible"
+            },
+            "description": "Card whose body collapses/expands, with an optional exact collapsed pixel height.",
+            "useWhen": [
+                "Long card content that should be collapsible"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19",
+                "stories": [
+                    "kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:294"
+                ]
+            }
+        },
+        {
+            "id": "govkit:CardEmptyState",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "CardEmptyState"
+            },
+            "description": "Card wrapper around EmptyState for empty/zero-data surfaces (props mirror EmptyState).",
+            "useWhen": [
+                "Empty list/section presented on a card surface"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:5",
+                "stories": [
+                    "kit:src/core/components/cards/cardEmptyState/cardEmptyState.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:133",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:133",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:133"
+                ]
+            }
+        },
+        {
+            "id": "govkit:CardSummary",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "CardSummary"
+            },
+            "description": "Card presenting a labelled value/description with an optional action and icon.",
+            "useWhen": [
+                "Dashboard/summary stat tiles"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/cards/cardSummary/cardSummary.tsx:8",
+                "stories": [
+                    "kit:src/core/components/cards/cardSummary/cardSummary.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:Checkbox",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Checkbox"
+            },
+            "description": "Single checkbox control with label, position and checked/onCheckedChange state.",
+            "useWhen": [
+                "Boolean opt-in within a form"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/checkbox/checkbox.tsx:37",
+                "stories": [
+                    "kit:src/core/components/forms/checkbox/checkbox.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimDialog/capitalDistributorClaimDialogDetails/capitalDistributorClaimDialogDetails.tsx:153"
+                ]
+            }
+        },
+        {
+            "id": "govkit:CheckboxCard",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "CheckboxCard"
+            },
+            "description": "Card-styled selectable checkbox with avatar/label/description/tag.",
+            "useWhen": [
+                "Selectable option cards (multi-select)"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:49",
+                "stories": [
+                    "kit:src/core/components/forms/checkboxCard/checkboxCard.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/proposalCreationSettingsDefault.tsx:47",
+                    "app:src/plugins/multisigPlugin/components/multisigProposalCreationSettings/multisigProposalCreationSettings.tsx:60",
+                    "app:src/plugins/tokenPlugin/components/tokenProposalCreationSettings/tokenProposalCreationSettings.tsx:102"
+                ]
+            }
+        },
+        {
+            "id": "govkit:CheckboxGroup",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "CheckboxGroup"
+            },
+            "description": "Presentational wrapper adding shared label/helpText/alert chrome around independent Checkbox children; it holds no selection state (each Checkbox owns its own checked/onCheckedChange).",
+            "useWhen": [
+                "Multi-select groups of options"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/checkboxGroup/checkboxGroup.tsx:18",
+                "stories": [
+                    "kit:src/core/components/forms/checkboxGroup/checkboxGroup.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:Clipboard",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Clipboard"
+            },
+            "description": "Copy-to-clipboard affordance wrapping content, copying copyValue.",
+            "useWhen": [
+                "Adding copy behavior to text/values"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/clipboard/clipboard.tsx:36",
+                "stories": [
+                    "kit:src/core/components/clipboard/clipboard.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:clipboardUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "clipboardUtils"
+            },
+            "description": "Async browser clipboard copy and paste helpers with optional error callbacks.",
+            "useWhen": [
+                "Copying user-visible values to the clipboard",
+                "Reading pasted text into an input flow"
+            ],
+            "methods": [
+                {
+                    "name": "copy",
+                    "contract": "Writes a string to the clipboard and resolves void; optional onError receives failures."
+                },
+                {
+                    "name": "paste",
+                    "contract": "Reads clipboard text and returns an empty string after a handled read failure; optional onError receives failures."
+                }
+            ],
+            "constraints": [
+                "Uses navigator.clipboard and reports browser permission/read/write failures through onError"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/utils/clipboardUtils/clipboardUtils.ts:33",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:Collapsible",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Collapsible"
+            },
+            "description": "Wraps arbitrary content and visually collapses it with a gradient overlay and toggle; controlled or uncontrolled.",
+            "useWhen": [
+                "Truncating long text/description blocks with show-more/less"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "collapsedPixels overrides collapsedLines",
+                "controlled via isOpen or uncontrolled via defaultOpen"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/collapsible/collapsible.tsx:33",
+                "stories": [
+                    "kit:src/core/components/collapsible/collapsible.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:102",
+                    "app:src/modules/finance/components/daoInfoAside/daoInfoAside.tsx:48",
+                    "app:src/modules/governance/components/delegationStatementCard/delegationStatementCard.tsx:101"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DaoAvatar",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DaoAvatar"
+            },
+            "description": "Avatar specialized for a DAO (name + image with fallback).",
+            "useWhen": [
+                "Displaying a DAO identity image"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:74",
+                "stories": [
+                    "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:126",
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36",
+                    "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:138"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DaoDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DaoDataListItem"
+            },
+            "description": "DataList item structure for a DAO (name, logo, description, address/ens, network).",
+            "useWhen": [
+                "Rows in a DAO directory/list"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: DaoDataListItem.Skeleton, DaoDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/dao/daoDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190",
+                    "app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25",
+                    "app:src/modules/explore/components/daoList/daoList.tsx:131"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DaoDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DaoDataListItemSkeleton"
+            },
+            "description": "DaoDataListItemSkeleton: loading placeholder for one item of the DaoDataListItem compound (DataList item structure for a DAO).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.tsx:7",
+                "stories": [
+                    "kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/explore/components/daoList/daoList.tsx:131"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DaoDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DaoDataListItemStructure"
+            },
+            "description": "DaoDataListItemStructure: presentational item structure driven by props of the DaoDataListItem compound (DataList item structure for a DAO).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx:45",
+                "stories": [
+                    "kit:src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190",
+                    "app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25",
+                    "app:src/modules/explore/components/daoList/daoList.tsx:134"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataList",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataList"
+            },
+            "description": "Compound list presentation with filter controls and pagination; the caller supplies items and loading/error/filter state.",
+            "useWhen": [
+                "Rendering paginated lists of entities (proposals, members, assets, transactions)",
+                "Hosting domain *DataListItem structures"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Root shares pagination/state context and calls onLoadMore; it does not fetch or filter data."
+            ],
+            "composition": [
+                "Compound export with members: DataList.ActionItem, DataList.Container, DataList.Filter, DataList.Item, DataList.Pagination, DataList.Root."
+            ],
+            "references": {
+                "source": "kit:src/core/components/dataList/index.ts:8",
+                "stories": [],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17",
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataListActionItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataListActionItem"
+            },
+            "description": "DataListActionItem: clickable action row of the DataList compound (Compound list UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dataList/dataListActionItem/dataListActionItem.tsx:38",
+                "stories": [
+                    "kit:src/core/components/dataList/dataListActionItem/dataListActionItem.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddButton.tsx:14",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectBackButton.tsx:14"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataListContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataListContainer"
+            },
+            "description": "DataListContainer: layout container for child items of the DataList compound (Compound list UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dataList/dataListContainer/dataListContainer.tsx:38",
+                "stories": [
+                    "kit:src/core/components/dataList/dataListContainer/dataListContainer.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/explore/components/daoList/daoList.tsx:125",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:156",
+                    "app:src/modules/finance/components/assetList/assetListDefault.tsx:106"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataListFilter",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataListFilter"
+            },
+            "description": "DataListFilter: filter/search bar of the DataList compound (Compound list UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dataList/dataListFilter/dataListFilter.tsx:62",
+                "stories": [
+                    "kit:src/core/components/dataList/dataListFilter/dataListFilter.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/explore/components/daoList/daoList.tsx:119",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:145",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:109"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataListItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataListItem"
+            },
+            "description": "DataListItem: individual item element of the DataList compound (Compound list UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dataList/dataListItem/dataListItem.tsx:22",
+                "stories": [
+                    "kit:src/core/components/dataList/dataListItem/dataListItem.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:41"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataListPagination",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataListPagination"
+            },
+            "description": "DataListPagination: load-more / pagination control of the DataList compound (Compound list UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dataList/dataListPagination/dataListPagination.tsx:11",
+                "stories": [
+                    "kit:src/core/components/dataList/dataListPagination/dataListPagination.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/explore/components/daoList/daoList.tsx:146",
+                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:169",
+                    "app:src/modules/finance/components/assetList/assetListDefault.tsx:107"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DataListRoot",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DataListRoot"
+            },
+            "description": "DataListRoot: compound root owning shared state/config of the DataList compound (Compound list UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dataList/dataListRoot/dataListRoot.tsx:41",
+                "stories": [
+                    "kit:src/core/components/dataList/dataListRoot/dataListRoot.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107",
+                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:101",
+                    "app:src/actions/gaugeVoter/dialogs/gaugeVoterSelectGaugeDialog/gaugeVoterSelectGaugeDialog.tsx:100"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DefinitionList",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DefinitionList"
+            },
+            "description": "Compound term/description list (DefinitionList.Container/Item).",
+            "useWhen": [
+                "Showing key-value metadata (settings, proposal/transaction details)"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Compose DefinitionList.Container > DefinitionList.Item"
+            ],
+            "composition": [
+                "Compound export with members: DefinitionList.Container, DefinitionList.Item."
+            ],
+            "references": {
+                "source": "kit:src/core/components/definitionList/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122",
+                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:103"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DefinitionListContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DefinitionListContainer"
+            },
+            "description": "DefinitionListContainer: layout container for child items of the DefinitionList compound (Compound term/description list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/definitionList/definitionListContainer/definitionListContainer.tsx:6",
+                "stories": [
+                    "kit:src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122",
+                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:140"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DefinitionListItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DefinitionListItem"
+            },
+            "description": "DefinitionListItem: individual item element of the DefinitionList compound (Compound term/description list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/definitionList/definitionListItem/definitionListItem.tsx:25",
+                "stories": [
+                    "kit:src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:274",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:124",
+                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:103"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Dialog",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Dialog"
+            },
+            "description": "Compound modal dialog (Dialog.Root/Header/Content/Footer) built on Radix.",
+            "useWhen": [
+                "Modal flows: forms, confirmations, multi-step wizards",
+                "Overlays needing header/scrollable-content/footer layout"
+            ],
+            "alternatives": [
+                {
+                    "id": "govkit:DialogAlert",
+                    "useWhen": "Use DialogAlert for a simpler alert or confirmation modal."
+                }
+            ],
+            "keyProps": [
+                {
+                    "name": "Dialog.Root open/onOpenChange",
+                    "contract": "Controls Radix dialog open state and renders the portal only while open."
+                },
+                {
+                    "name": "Dialog.Root size",
+                    "contract": "Constrains modal width with sm/md/lg/xl; defaults to md."
+                },
+                {
+                    "name": "Dialog.Root hiddenTitle/hiddenDescription",
+                    "contract": "Provide accessible hidden labels when omitting visible header/content description."
+                },
+                {
+                    "name": "Dialog.Root useFocusTrap",
+                    "contract": "Defaults true and traps focus inside the dialog content."
+                }
+            ],
+            "constraints": [
+                "Caller supplies controlled open; Root renders the modal portal when open"
+            ],
+            "composition": [
+                "Compose Dialog.Root with Dialog.Header, Dialog.Content and Dialog.Footer.",
+                "Dialog.Root provides Radix portal/overlay/content and focus scope; Header/Content/Footer provide the visible regions.",
+                "Compound export with members: Dialog.Content, Dialog.Footer, Dialog.Header, Dialog.Root."
+            ],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialog/index.ts:6",
+                "stories": [],
+                "appExamples": [
+                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:98",
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195",
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogAlert",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogAlert"
+            },
+            "description": "Compound alert/confirmation modal (DialogAlert.Root/Header/Content/Footer) with a variant.",
+            "useWhen": [
+                "Confirm/cancel destructive or blocking decisions"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Caller supplies controlled open; Root renders the modal portal when open"
+            ],
+            "composition": [
+                "Compound export with members: DialogAlert.Content, DialogAlert.Footer, DialogAlert.Header, DialogAlert.Root."
+            ],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialogAlert/index.ts:6",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40",
+                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29",
+                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogAlertContent",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogAlertContent"
+            },
+            "description": "DialogAlertContent: scrollable content region of the DialogAlert compound (Compound alert/confirmation modal).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.tsx:13",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:45",
+                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:30",
+                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:42"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogAlertFooter",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogAlertFooter"
+            },
+            "description": "DialogAlertFooter: footer/actions region of the DialogAlert compound (Compound alert/confirmation modal).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.tsx:25",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:53",
+                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:36",
+                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:48"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogAlertHeader",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogAlertHeader"
+            },
+            "description": "DialogAlertHeader: header region of the DialogAlert compound (Compound alert/confirmation modal).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx:30",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40",
+                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29",
+                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogAlertRoot",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogAlertRoot"
+            },
+            "description": "DialogAlertRoot: compound root owning shared state/config of the DialogAlert compound (Compound alert/confirmation modal).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx:18",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:99"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogContent",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogContent"
+            },
+            "description": "DialogContent: scrollable content region of the Dialog compound (Compound modal dialog).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx:19",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialog/dialogContent/dialogContent.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:203",
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138",
+                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:127"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogFooter",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogFooter"
+            },
+            "description": "DialogFooter: footer/actions region of the Dialog compound (Compound modal dialog).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialog/dialogFooter/dialogFooter.tsx:32",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialog/dialogFooter/dialogFooter.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:212",
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:139",
+                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:128"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogHeader",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogHeader"
+            },
+            "description": "DialogHeader: header region of the Dialog compound (Compound modal dialog).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx:23",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialog/dialogHeader/dialogHeader.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195",
+                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:86",
+                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:77"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DialogRoot",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DialogRoot"
+            },
+            "description": "DialogRoot: compound root owning shared state/config of the Dialog compound (Compound modal dialog).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "open/onOpenChange",
+                    "contract": "Controlled Radix root state; content portal is mounted only when open is true."
+                },
+                {
+                    "name": "hiddenTitle/hiddenDescription",
+                    "contract": "Accessible fallback labels for dialogs without visible title or description."
+                },
+                {
+                    "name": "useFocusTrap",
+                    "contract": "Defaults true; disable only when the caller owns focus management."
+                }
+            ],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.tsx:16",
+                "stories": [
+                    "kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:98",
+                    "app:src/shared/components/navigation/navigationDialog/navigationDialog.tsx:20"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DocumentParser",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DocumentParser"
+            },
+            "description": "Renders parsed document/rich content from a document prop.",
+            "useWhen": [
+                "Displaying rich parsed document content read-only"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/documentParser/documentParser.tsx:32",
+                "stories": [
+                    "kit:src/core/components/documentParser/documentParser.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/shared/components/SafeDocumentParser.tsx:13"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Dropdown",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Dropdown"
+            },
+            "description": "Compound dropdown menu (Dropdown.Container/Item) with a trigger and menu.",
+            "useWhen": [
+                "Contextual action menus / overflow menus"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: Dropdown.Container, Dropdown.Item."
+            ],
+            "references": {
+                "source": "kit:src/core/components/dropdown/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213",
+                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211",
+                    "app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DropdownContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DropdownContainer"
+            },
+            "description": "DropdownContainer: layout container for child items of the Dropdown compound (Compound dropdown menu).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
+                "stories": [
+                    "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213",
+                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211",
+                    "app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DropdownItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "DropdownItem"
+            },
+            "description": "DropdownItem: individual item element of the Dropdown compound (Compound dropdown menu).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:47",
+                "stories": [
+                    "kit:src/core/components/dropdown/dropdownItem/dropdownItem.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:220",
+                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:218",
+                    "app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:182"
+                ]
+            }
+        },
+        {
+            "id": "govkit:EmptyState",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "EmptyState"
+            },
+            "description": "Empty/zero-data state with an illustration, heading, description and up to two action buttons.",
+            "useWhen": [
+                "Communicating no-data / empty-list / error states"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Illustration is either humanIllustration or objectIllustration"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/states/emptyState/emptyState.tsx:6",
+                "stories": [
+                    "kit:src/core/components/states/emptyState/emptyState.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarUnregisterGaugeActionDetails/gaugeRegistrarUnregisterGaugeActionDetails.tsx:115",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterActivateGaugeActionDetails/gaugeVoterActivateGaugeActionDetails.tsx:68",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterDeactivateGaugeActionDetails/gaugeVoterDeactivateGaugeActionDetails.tsx:68"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ensUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ensUtils"
+            },
+            "description": "ENS name validation and compact display helpers.",
+            "useWhen": [
+                "Checking whether text is an ENS .eth name",
+                "Displaying long ENS names in a compact form"
+            ],
+            "methods": [
+                {
+                    "name": "isEnsName",
+                    "contract": "Returns true for a valid .eth name and false for nullish, short or malformed values."
+                },
+                {
+                    "name": "truncateEns",
+                    "contract": "Shortens valid ENS names longer than 9 characters to a five-character prefix plus the suffix."
+                }
+            ],
+            "constraints": [
+                "Names must match the utility .eth pattern; invalid values are returned unchanged by truncateEns"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/utils/ensUtils/ensUtils.ts:24",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:formatterUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "formatterUtils"
+            },
+            "description": "Shared number and date formatting utility with configurable locales and predefined governance formats.",
+            "useWhen": [
+                "Formatting token, currency and percentage values consistently",
+                "Formatting timestamps, relative dates and durations"
+            ],
+            "methods": [
+                {
+                    "name": "formatNumber",
+                    "contract": "Accepts number, numeric string or nullish input; applies NumberFormat presets or INumberFormat overrides, including base symbols, currency, ratio percentages, signs and fallback/displayFallback handling."
+                },
+                {
+                    "name": "formatDate",
+                    "contract": "Accepts Luxon DateTime, millisecond timestamp, ISO string or undefined; applies DateFormat presets for absolute, relative-calendar, relative-date or duration output and returns null for nullish input."
+                }
+            ],
+            "constraints": [
+                "formatNumber parses numeric strings; percentage formatting multiplies the ratio by 100 and appends a percent sign",
+                "formatNumber returns the configured fallback (null by default) for NaN or when the displayFallback predicate returns true for the parsed value",
+                "formatDate converts numeric input with DateTime.fromMillis and string input with DateTime.fromISO",
+                "formatDate DURATION reports an absolute humanized difference from now; RELATIVE preserves signed relative wording"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/utils/formatterUtils/formatterUtils.ts:196",
+                "stories": [],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:104",
+                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:51",
+                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:94"
+                ]
+            }
+        },
+        {
+            "id": "govkit:GukCoreProvider",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "GukCoreProvider"
+            },
+            "description": "Context provider supplying core config: Img/Link component overrides and copy, via values.",
+            "useWhen": [
+                "Root-level setup for kit core components (custom Img/Link, copy)"
+            ],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "values.Img",
+                    "contract": "Overrides the image primitive used by core components; defaults to 'img'."
+                },
+                {
+                    "name": "values.Link",
+                    "contract": "Overrides the link primitive used by core components; defaults to 'a'."
+                },
+                {
+                    "name": "values.copy",
+                    "contract": "Overrides core component copy; unspecified values use coreCopy defaults."
+                }
+            ],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/gukCoreProvider/gukCoreProvider.tsx:40",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:GukModulesProvider",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "GukModulesProvider"
+            },
+            "description": "Bundles WagmiProvider + QueryClientProvider (default chains/query client) and GukCoreProvider, and supplies module copy defaults.",
+            "useWhen": [
+                "Root-level setup for kit modules (web3) components"
+            ],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "wagmiConfig/wagmiInitialState",
+                    "contract": "Forwarded to WagmiProvider; defaults include Ethereum, Base, Polygon, Arbitrum and testnets over HTTP transports."
+                },
+                {
+                    "name": "queryClient",
+                    "contract": "Forwarded to QueryClientProvider; default client uses 2 minute staleTime and 5 minute gcTime."
+                },
+                {
+                    "name": "coreProviderValues",
+                    "contract": "Forwarded to GukCoreProvider values."
+                },
+                {
+                    "name": "values.copy",
+                    "contract": "Overrides modules component copy; unspecified values use modulesCopy defaults."
+                }
+            ],
+            "constraints": [
+                "Module copy has defaults, so copy-only consumers work without this provider",
+                "Bundles Wagmi and React-Query providers (default chains) plus GukCoreProvider"
+            ],
+            "composition": [
+                "Wrap module components needing wagmi, TanStack Query, module copy or core Img/Link overrides.",
+                "Nests WagmiProvider, QueryClientProvider and GukCoreProvider under the modules context."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/gukModulesProvider/gukModulesProvider.tsx:68",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/application/components/providers/providers.tsx:114"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Heading",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Heading"
+            },
+            "description": "Semantic heading with size and rendered element (as h1..h5).",
+            "useWhen": [
+                "Section/page titles"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/heading/heading.tsx:28",
+                "stories": [
+                    "kit:src/core/components/heading/heading.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/components/debugPanel/debugPanel.tsx:106",
+                    "app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26",
+                    "app:src/modules/dashboard/components/dashboardOnboarding/nonAdminOnboarding.tsx:30"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Icon",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Icon"
+            },
+            "description": "Renders a kit glyph selected by IconType with size variants.",
+            "useWhen": [
+                "Inline iconography"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/icon/icon.tsx:53",
+                "stories": [
+                    "kit:src/core/components/icon/icon.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx:22",
+                    "app:src/daos/cryptex/components/cryptexPageHeader/cryptexAvatarIcon.tsx:38",
+                    "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:124"
+                ]
+            }
+        },
+        {
+            "id": "govkit:IllustrationHuman",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "IllustrationHuman"
+            },
+            "description": "Composable human illustration (body/expression/hairs/accessory/object parts).",
+            "useWhen": [
+                "Human-themed empty-state/marketing illustrations"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.tsx:52",
+                "stories": [
+                    "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:IllustrationObject",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "IllustrationObject"
+            },
+            "description": "Object illustration selected by object type.",
+            "useWhen": [
+                "Empty-state/decorative object illustrations"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:12",
+                "stories": [
+                    "kit:src/core/components/illustrations/illustrationObject/illustrationObject.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx:73",
+                    "app:src/shared/components/ctaCard/ctaCard.tsx:108",
+                    "app:src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx:57"
+                ]
+            }
+        },
+        {
+            "id": "govkit:InputContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputContainer"
+            },
+            "description": "Shared label/helpText/alert/length chrome for input components; wraps a custom or built-in control.",
+            "useWhen": [
+                "Building a custom input matching kit input chrome"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputContainer/inputContainer.tsx:35",
+                "stories": [
+                    "kit:src/core/components/forms/inputContainer/inputContainer.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:117",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:223",
+                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:141"
+                ]
+            }
+        },
+        {
+            "id": "govkit:InputDate",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputDate"
+            },
+            "description": "Date input field.",
+            "useWhen": [
+                "Capturing a calendar date"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputDate/inputDate.tsx:11",
+                "stories": [
+                    "kit:src/core/components/forms/inputDate/inputDate.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:119",
+                    "app:src/shared/components/forms/advancedDateInput/advancedDateInputFixed.tsx:81"
+                ]
+            }
+        },
+        {
+            "id": "govkit:InputFileAvatar",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputFileAvatar"
+            },
+            "description": "Avatar image file input with preview, accepted types, size and dimension validation.",
+            "useWhen": [
+                "Uploading/selecting an avatar image"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Validates the selected file against acceptedFileTypes, maxFileSize, min/maxDimension and onlySquare"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx:42",
+                "stories": [
+                    "kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/shared/components/forms/avatarInput/avatarInput.tsx:59"
+                ]
+            }
+        },
+        {
+            "id": "govkit:InputNumber",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputNumber"
+            },
+            "description": "Numeric input with min/max/step and optional prefix/suffix.",
+            "useWhen": [
+                "Capturing a numeric amount"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputNumber/inputNumber.tsx:43",
+                "stories": [
+                    "kit:src/core/components/forms/inputNumber/inputNumber.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:129",
+                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:236",
+                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:234"
+                ]
+            }
+        },
+        {
+            "id": "govkit:InputNumberMax",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputNumberMax"
+            },
+            "description": "Numeric input variant exposing a max-value affordance.",
+            "useWhen": [
+                "Amount fields offering a max button (e.g. token amounts)"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputNumberMax/inputNumberMax.tsx:19",
+                "stories": [
+                    "kit:src/core/components/forms/inputNumberMax/inputNumberMax.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:InputSearch",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputSearch"
+            },
+            "description": "Search input with a search affordance and loading state.",
+            "useWhen": [
+                "Filtering/searching a list or dataset"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputSearch/inputSearch.tsx:16",
+                "stories": [
+                    "kit:src/core/components/forms/inputSearch/inputSearch.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:InputText",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputText"
+            },
+            "description": "Single-line text input built on InputContainer, with optional addon and icons.",
+            "useWhen": [
+                "Capturing free-form single-line text"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputText/inputText.tsx:22",
+                "stories": [
+                    "kit:src/core/components/forms/inputText/inputText.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:199",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:167",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate/gaugeVoterCreateGaugeActionCreateForm.tsx:124"
+                ]
+            }
+        },
+        {
+            "id": "govkit:InputTime",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "InputTime"
+            },
+            "description": "Time-of-day input field.",
+            "useWhen": [
+                "Capturing a time value"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/inputTime/inputTime.tsx:11",
+                "stories": [
+                    "kit:src/core/components/forms/inputTime/inputTime.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/shared/components/forms/advancedDateInput/advancedDateInputFixed.tsx:89"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Link",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Link"
+            },
+            "description": "Text link with variant styling built on LinkBase; can show the URL and mark external.",
+            "useWhen": [
+                "Inline navigation to another page/resource"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/link/link/link.tsx:22",
+                "stories": [
+                    "kit:src/core/components/link/link/link.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/aragonProfileDialog/aragonProfileDialog.tsx:364",
+                    "app:src/modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx:147",
+                    "app:src/modules/governance/components/memberLinksCard/memberLinksCard.tsx:171"
+                ]
+            }
+        },
+        {
+            "id": "govkit:LinkBase",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "LinkBase"
+            },
+            "description": "Low-level ref-forwarding anchor primitive underlying Link.",
+            "useWhen": [
+                "Building a custom link variant"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/link/linkBase/linkBase.tsx:6",
+                "stories": [
+                    "kit:src/core/components/link/linkBase/linkBase.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:MemberAvatar",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "MemberAvatar"
+            },
+            "description": "Avatar for a member/address that resolves the ENS avatar via web3.",
+            "useWhen": [
+                "Displaying a member/wallet identity image"
+            ],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "address/ensName",
+                    "contract": "Resolves address, ENS name and ENS avatar through wagmi when avatarSrc is not supplied."
+                },
+                {
+                    "name": "avatarSrc",
+                    "contract": "Direct image URL override; skips ENS lookup for avatar source."
+                },
+                {
+                    "name": "chainId/wagmiConfig",
+                    "contract": "Forwarded to wagmi ENS hooks; chainId defaults to mainnet."
+                }
+            ],
+            "constraints": [
+                "avatarSrc suppresses ENS queries; otherwise the supplied ensName/address is resolved using chainId (default mainnet)."
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:26",
+                "stories": [
+                    "kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:288",
+                    "app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:29",
+                    "app:src/modules/application/dialogs/userDialog/userDialog.tsx:98"
+                ]
+            }
+        },
+        {
+            "id": "govkit:MemberDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "MemberDataListItem"
+            },
+            "description": "DataList item structure for a member (avatar, address/ENS, delegate/token-voting stats).",
+            "useWhen": [
+                "Rows in a member/voter/delegate list"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: MemberDataListItem.Skeleton, MemberDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/member/memberDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163"
+                ]
+            }
+        },
+        {
+            "id": "govkit:MemberDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "MemberDataListItemSkeleton"
+            },
+            "description": "MemberDataListItemSkeleton: loading placeholder for one item of the MemberDataListItem compound (DataList item structure for a member).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.tsx:6",
+                "stories": [
+                    "kit:src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163"
+                ]
+            }
+        },
+        {
+            "id": "govkit:MemberDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "MemberDataListItemStructure"
+            },
+            "description": "MemberDataListItemStructure: presentational item structure driven by props of the MemberDataListItem compound (DataList item structure for a member).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:52",
+                "stories": [
+                    "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:216",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47",
+                    "app:src/plugins/tokenPlugin/dialogs/tokenDelegationDialog/tokenDelegationDialog.tsx:105"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Progress",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Progress"
+            },
+            "description": "Linear progress bar with value, size/variant and an optional threshold indicator.",
+            "useWhen": [
+                "Showing measured completion/threshold progress (e.g. voting)"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/progress/progress.tsx:52",
+                "stories": [
+                    "kit:src/core/components/progress/progress.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingSummary/lockToVoteProposalVotingSummary.tsx:134",
+                    "app:src/plugins/multisigPlugin/components/multisigProposalVotingSummary/multisigProposalVotingSummary.tsx:113",
+                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingSummary/tokenProposalVotingSummary.tsx:130"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalActionChangeMembers",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionChangeMembers"
+            },
+            "description": "ProposalActionChangeMembers: change-members action view of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.tsx:8",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalActionChangeSettings",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionChangeSettings"
+            },
+            "description": "ProposalActionChangeSettings: change-settings action view of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.tsx:6",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalActions",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActions"
+            },
+            "description": "Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionWithdrawToken/TokenMint/ChangeMembers/ChangeSettings/UpdateMetadata) are standalone exports.",
+            "useWhen": [
+                "Reviewing decoded proposal actions",
+                "Composing/editing proposal action sets in create flows"
+            ],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "Root.actionsCount",
+                    "contract": "Server-side count hint; Container also calculates and sets the number of actions at runtime."
+                },
+                {
+                    "name": "Root.expandedActions/onExpandedActionsChange",
+                    "contract": "Controls expanded action ids; omit callback for internal state."
+                },
+                {
+                    "name": "Root.editMode",
+                    "contract": "Shows index badges, movement controls and remove buttons; expand all actions separately when needed."
+                },
+                {
+                    "name": "Root.isLoading",
+                    "contract": "Propagates loading state through ProposalActions context."
+                }
+            ],
+            "constraints": [
+                "Root controls expanded state (expandedActions/onExpandedActionsChange) and editMode"
+            ],
+            "composition": [
+                "Compose ProposalActions.Root with Container, Item/ItemSkeleton and Footer.",
+                "Root owns expanded action ids, loading state and edit-mode context for descendants.",
+                "Compound export with members: ProposalActions.Container, ProposalActions.Footer, ProposalActions.Item, ProposalActions.ItemSkeleton, ProposalActions.Root."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/index.ts:7",
+                "stories": [],
+                "appExamples": [
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:45",
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
+                    "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalActionsContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionsContainer"
+            },
+            "description": "ProposalActionsContainer: layout container for child items of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.tsx:15",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:46",
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:161",
+                    "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:65"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalActionsFooter",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionsFooter"
+            },
+            "description": "ProposalActionsFooter: footer/actions region of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsFooter/proposalActionsFooter.tsx:39",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsFooter/proposalActionsFooter.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:171",
+                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:360"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalActionsItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionsItem"
+            },
+            "description": "ProposalActionsItem: individual item element of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx:46",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:48",
+                    "app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:57",
+                    "app:src/modules/governance/components/proposalActionsItem/proposalActionsItem.tsx:43"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalActionsItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionsItemSkeleton"
+            },
+            "description": "ProposalActionsItemSkeleton: loading placeholder for one item of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsItemSkeleton/proposalActionsItemSkeleton.tsx:4",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsItemSkeleton/proposalActionsItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalActionsRoot",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionsRoot"
+            },
+            "description": "ProposalActionsRoot: compound root owning shared state/config of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.tsx:36",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:45",
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
+                    "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalActionTokenMint",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionTokenMint"
+            },
+            "description": "ProposalActionTokenMint: token-mint action view of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx:5",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalActionUpdateMetadata",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionUpdateMetadata"
+            },
+            "description": "ProposalActionUpdateMetadata: update-metadata action view of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx:7",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalActionWithdrawToken",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalActionWithdrawToken"
+            },
+            "description": "ProposalActionWithdrawToken: withdraw-token action view of the ProposalActions compound (Compound decoded proposal-actions list).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionWithdrawToken/proposalActionWithdrawToken.tsx:4",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionWithdrawToken/proposalActionWithdrawToken.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalDataListItem"
+            },
+            "description": "DataList item structure for a proposal, linking to the proposal via link.",
+            "useWhen": [
+                "Rows in a proposal list"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: ProposalDataListItem.Skeleton, ProposalDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97",
+                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64",
+                    "app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalDataListItemSkeleton"
+            },
+            "description": "ProposalDataListItemSkeleton: loading placeholder for one item of the ProposalDataListItem compound (DataList item structure for a proposal, linking to the proposal via link).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.tsx:7",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97",
+                    "app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockList.tsx:100"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalDataListItemStructure"
+            },
+            "description": "ProposalDataListItemStructure: presentational item structure driven by props of the ProposalDataListItem compound (DataList item structure for a proposal, linking to the proposal via link).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:26",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64",
+                    "app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109",
+                    "app:src/modules/governance/dialogs/publishProposalDialog/publishProposalDialog.tsx:209"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVoting",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVoting"
+            },
+            "description": "Compound proposal voting UI (ProposalVoting.Container/Stage/StageContainer/Details/Votes/BreakdownToken/BreakdownMultisig/BodySummary/BodySummaryList/BodySummaryListItem/BodyContent/Progress) for displaying multi-stage voting with token or multisig breakdowns.",
+            "useWhen": [
+                "Rendering a proposal voting section with stages and breakdowns",
+                "Showing token or multisig vote breakdowns"
+            ],
+            "alternatives": [],
+            "keyProps": [
+                {
+                    "name": "Container.status",
+                    "contract": "Required proposal status shown by ProposalVotingStatus."
+                },
+                {
+                    "name": "Container.endDate",
+                    "contract": "Optional timestamp or ISO date forwarded to ProposalVotingStatus."
+                },
+                {
+                    "name": "Container.bodyList",
+                    "contract": "Provides voting body context to body summary/content descendants."
+                }
+            ],
+            "constraints": [],
+            "composition": [
+                "Compose ProposalVoting.Container with status/detail, breakdown, votes, stages, body summary/content and progress members.",
+                "Container provides bodyList context and renders ProposalVotingStatus before children.",
+                "Compound export with members: ProposalVoting.BodyContent, ProposalVoting.BodySummary, ProposalVoting.BodySummaryList, ProposalVoting.BodySummaryListItem, ProposalVoting.BreakdownMultisig, ProposalVoting.BreakdownToken, ProposalVoting.Container, ProposalVoting.Details, ProposalVoting.Progress, ProposalVoting.Stage, ProposalVoting.StageContainer, ProposalVoting.Votes."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/index.ts:14",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100",
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
+                    "app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingBodyContent",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingBodyContent"
+            },
+            "description": "ProposalVotingBodyContent: body content block of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx:31",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:108",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStageBodyContent.tsx:52"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingBodySummary",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingBodySummary"
+            },
+            "description": "ProposalVotingBodySummary: body-summary block of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummary/proposalVotingBodySummary.tsx:7",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:134"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingBodySummaryList",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingBodySummaryList"
+            },
+            "description": "ProposalVotingBodySummaryList: body-summary list of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryList/proposalVotingBodySummaryList.tsx:6",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:122"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingBodySummaryListItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingBodySummaryListItem"
+            },
+            "description": "ProposalVotingBodySummaryListItem: body-summary list item of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryListItem/proposalVotingBodySummaryListItem.tsx:22",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:120"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingBreakdownMultisig",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingBreakdownMultisig"
+            },
+            "description": "ProposalVotingBreakdownMultisig: multisig vote breakdown of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.tsx:26",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingBreakdownToken",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingBreakdownToken"
+            },
+            "description": "ProposalVotingBreakdownToken: token vote breakdown of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.tsx:43",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
+                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown.tsx:50"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingContainer"
+            },
+            "description": "ProposalVotingContainer: layout container for child items of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingContainer/proposalVotingContainer.tsx:21",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:109"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingDetails",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingDetails"
+            },
+            "description": "ProposalVotingDetails: voting details block of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingDetails/proposalVotingDetails.tsx:12",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVotingDetails/proposalVotingDetails.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:107",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:175"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingProgress",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingProgress"
+            },
+            "description": "ProposalVotingProgress: progress-indicator sub-compound (ProposalVotingProgress.Container/Item) of the ProposalVoting compound, namespaced as ProposalVoting.Progress.",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: ProposalVotingProgress.Container, ProposalVotingProgress.Item."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts:4",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgress.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingProgressContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingProgressContainer"
+            },
+            "description": "ProposalVotingProgressContainer: progress indicator container of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx:13",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingProgressItem",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingProgressItem"
+            },
+            "description": "ProposalVotingProgressItem: progress indicator item of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx:60",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingStage",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingStage"
+            },
+            "description": "ProposalVotingStage: single voting stage of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx:41",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:145"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingStageContainer",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingStageContainer"
+            },
+            "description": "ProposalVotingStageContainer: container sequencing voting stages of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingStageContainer/proposalVotingStageContainer.tsx:16",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/sppVotingTerminal.tsx:33"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ProposalVotingVotes",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ProposalVotingVotes"
+            },
+            "description": "ProposalVotingVotes: votes list block of the ProposalVoting compound (Compound proposal voting UI).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingVotes/proposalVotingVotes.tsx:6",
+                "stories": [
+                    "kit:src/modules/components/proposal/proposalVoting/proposalVotingVotes/proposalVotingVotes.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:164"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Radio",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Radio"
+            },
+            "description": "Single radio control with label/value.",
+            "useWhen": [
+                "One option within a single-select group"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Documented to be used inside a RadioGroup, which supplies selection state"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/radio/radio.tsx:27",
+                "stories": [
+                    "kit:src/core/components/forms/radio/radio.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:RadioCard",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "RadioCard"
+            },
+            "description": "Card-styled radio option with avatar/label/description/tag.",
+            "useWhen": [
+                "Single-select option cards"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/radioCard/radioCard.tsx:40",
+                "stories": [
+                    "kit:src/core/components/forms/radioCard/radioCard.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:107",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:89",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:215"
+                ]
+            }
+        },
+        {
+            "id": "govkit:RadioGroup",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "RadioGroup"
+            },
+            "description": "Coordinates a group of radios enforcing single selection (controlled via value/onValueChange).",
+            "useWhen": [
+                "Single-select groups of options"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/radioGroup/radioGroup.tsx:43",
+                "stories": [
+                    "kit:src/core/components/forms/radioGroup/radioGroup.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:116",
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:107",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:204"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Rerender",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Rerender"
+            },
+            "description": "Re-renders its child function on an interval, passing the current time.",
+            "useWhen": [
+                "Live-updating time-sensitive content (countdowns, relative times)"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Re-renders its child on an interval set by intervalDuration"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/rerender/rerender.tsx:22",
+                "stories": [
+                    "kit:src/core/components/rerender/rerender.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockListItem.tsx:321"
+                ]
+            }
+        },
+        {
+            "id": "govkit:responsiveUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "responsiveUtils"
+            },
+            "description": "Responsive class-name helper for size maps and breakpoint-specific overrides.",
+            "useWhen": [
+                "Building class names for responsive component sizes",
+                "Applying default plus sm/md/lg/xl/2xl breakpoint classes"
+            ],
+            "methods": [
+                {
+                    "name": "generateClassNames",
+                    "contract": "Combines the selected default size class with classes for configured sm, md, lg, xl and 2xl responsive sizes."
+                }
+            ],
+            "constraints": [
+                "The classes map must contain the selected size and responsive variants; responsive overrides are optional"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/utils/responsiveUtils/responsiveUtils.ts:24",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:SmartContractFunctionDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "SmartContractFunctionDataListItem"
+            },
+            "description": "DataList item structure for a smart-contract function call (name, contract, selector, params).",
+            "useWhen": [
+                "Rows listing decoded/available contract functions"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: SmartContractFunctionDataListItem.Skeleton, SmartContractFunctionDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165",
+                    "app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80"
+                ]
+            }
+        },
+        {
+            "id": "govkit:SmartContractFunctionDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "SmartContractFunctionDataListItemSkeleton"
+            },
+            "description": "SmartContractFunctionDataListItemSkeleton: loading placeholder for one item of the SmartContractFunctionDataListItem compound (DataList item structure for a smart-contract function call).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.tsx:11",
+                "stories": [
+                    "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80"
+                ]
+            }
+        },
+        {
+            "id": "govkit:SmartContractFunctionDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "SmartContractFunctionDataListItemStructure"
+            },
+            "description": "SmartContractFunctionDataListItemStructure: presentational item structure driven by props of the SmartContractFunctionDataListItem compound (DataList item structure for a smart-contract function call).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx:53",
+                "stories": [
+                    "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165",
+                    "app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:83"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Spinner",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Spinner"
+            },
+            "description": "Indeterminate loading spinner with size/variant.",
+            "useWhen": [
+                "Indicating in-flight/loading state"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/spinner/spinner.tsx:87",
+                "stories": [
+                    "kit:src/core/components/spinner/spinner.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/dialogs/aragonProfileRenameDialog/aragonProfileRenameDialog.tsx:149",
+                    "app:src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx:164",
+                    "app:src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx:135"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ssrUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ssrUtils"
+            },
+            "description": "Server-rendering environment detection helper.",
+            "useWhen": [
+                "Guarding browser-only work during server rendering",
+                "Choosing a deterministic fallback before window exists"
+            ],
+            "methods": [
+                {
+                    "name": "isServer",
+                    "contract": "Returns true when window is undefined."
+                }
+            ],
+            "constraints": [
+                "isServer is based solely on whether global window is undefined"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/utils/ssrUtils/ssrUtils.ts:8",
+                "stories": [],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:StatePingAnimation",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "StatePingAnimation"
+            },
+            "description": "Animated ping/pulse indicator with a variant.",
+            "useWhen": [
+                "Signaling a live or active status"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/states/statePingAnimation/statePingAnimation.tsx:23",
+                "stories": [
+                    "kit:src/core/components/states/statePingAnimation/statePingAnimations.stories.tsx:1"
+                ],
+                "appExamples": []
+            }
+        },
+        {
+            "id": "govkit:StateSkeletonBar",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "StateSkeletonBar"
+            },
+            "description": "Rectangular skeleton placeholder (ref-forwarding) with configurable width/size.",
+            "useWhen": [
+                "Loading placeholder for text/bar content"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:40",
+                "stories": [
+                    "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:13",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:16",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:18"
+                ]
+            }
+        },
+        {
+            "id": "govkit:StateSkeletonCircular",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "StateSkeletonCircular"
+            },
+            "description": "Circular skeleton placeholder for avatar/icon loading.",
+            "useWhen": [
+                "Loading placeholder for avatars/circular media"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:63",
+                "stories": [
+                    "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:14",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:16",
+                    "app:src/modules/settings/components/permissionsList/permissionsListSkeleton.tsx:28"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Switch",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Switch"
+            },
+            "description": "Toggle switch for on/off state with optional inline label.",
+            "useWhen": [
+                "Instant boolean settings/preferences"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/switch/switch.tsx:44",
+                "stories": [
+                    "kit:src/core/components/forms/switch/switch.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:437",
+                    "app:src/modules/application/components/debugPanel/debugPanelControl/debugPanelControl.tsx:28",
+                    "app:src/modules/createDao/dialogs/setupStageSettingsDialog/fields/setupStageEarlyAdvanceField/setupStageEarlyAdvanceField.tsx:29"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Tabs",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Tabs"
+            },
+            "description": "Compound tabs (Tabs.Root/List/Trigger/Content) built on Radix.",
+            "useWhen": [
+                "Switching between sibling views/panels"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: Tabs.Content, Tabs.List, Tabs.Root, Tabs.Trigger."
+            ],
+            "references": {
+                "source": "kit:src/core/components/tabs/index.ts:6",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:101"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TabsContent",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TabsContent"
+            },
+            "description": "TabsContent: scrollable content region of the Tabs compound (Compound tabs).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/tabs/tabsContent/tabsContent.tsx:15",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:382",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:101"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TabsList",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TabsList"
+            },
+            "description": "TabsList: list region of the Tabs compound (Compound tabs).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/tabs/tabsList/tabsList.tsx:8",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:371",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:84"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TabsRoot",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TabsRoot"
+            },
+            "description": "TabsRoot: compound root owning shared state/config of the Tabs compound (Compound tabs).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/tabs/tabsRoot/tabsRoot.tsx:32",
+                "stories": [
+                    "kit:src/core/components/tabs/tabsRoot/tabsRoot.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:117"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TabsTrigger",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TabsTrigger"
+            },
+            "description": "TabsTrigger: tab trigger of the Tabs compound (Compound tabs).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/tabs/tabsTrigger/tabsTrigger.tsx:22",
+                "stories": [
+                    "kit:src/core/components/tabs/tabsTrigger/tabsTrigger.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:373",
+                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:86"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Tag",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Tag"
+            },
+            "description": "Small labelled tag/badge with a variant.",
+            "useWhen": [
+                "Status/category labels and chips"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/tag/tag.tsx:30",
+                "stories": [
+                    "kit:src/core/components/tag/tag.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:304",
+                    "app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:36",
+                    "app:src/modules/application/components/footer/footer.tsx:54"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TextArea",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TextArea"
+            },
+            "description": "Multi-line text input (ref-forwarding).",
+            "useWhen": [
+                "Capturing free-form multi-line text"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/textArea/textArea.tsx:8",
+                "stories": [
+                    "kit:src/core/components/forms/textArea/textArea.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:205",
+                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:176",
+                    "app:src/actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate/gaugeVoterCreateGaugeActionCreateForm.tsx:133"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TextAreaRichText",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TextAreaRichText"
+            },
+            "description": "Rich-text editor textarea emitting formatted output (valueFormat).",
+            "useWhen": [
+                "Composing formatted content (e.g. proposal descriptions)"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/forms/textAreaRichText/textAreaRichText.tsx:53",
+                "stories": [
+                    "kit:src/core/components/forms/textAreaRichText/textAreaRichText.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/createProposalForm/createProposalFormMetadata/createProposalFormMetadata.tsx:64",
+                    "app:src/modules/governance/dialogs/delegateStatementDialog/delegateStatementDialog.tsx:101"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Toggle",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Toggle"
+            },
+            "description": "Button representing a value within a ToggleGroup.",
+            "useWhen": [
+                "A segment in a segmented toggle control"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Documented to require rendering inside a ToggleGroup to function"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/toggles/toggle/toggle.tsx:21",
+                "stories": [
+                    "kit:src/core/components/toggles/toggle/toggle.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:100",
+                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69",
+                    "app:src/modules/finance/components/assetInput/assetInput.tsx:303"
+                ]
+            }
+        },
+        {
+            "id": "govkit:ToggleGroup",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "ToggleGroup"
+            },
+            "description": "Coordinates a group of Toggle buttons (single or multi-select, orientation).",
+            "useWhen": [
+                "Segmented controls / filter toggles"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "isMultiSelect allows multiple selected toggles"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:39",
+                "stories": [
+                    "kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:112",
+                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63",
+                    "app:src/modules/finance/components/assetInput/assetInput.tsx:296"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Tooltip",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Tooltip"
+            },
+            "description": "Hover/focus tooltip (Radix) with content and variant.",
+            "useWhen": [
+                "Supplemental hint on hover/focus"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/tooltip/tooltip.tsx:70",
+                "stories": [
+                    "kit:src/core/components/tooltip/tooltip.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx:29"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TransactionDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TransactionDataListItem"
+            },
+            "description": "DataList item structure for a transaction (type, status, chain, amount, date, hash).",
+            "useWhen": [
+                "Rows in a transaction history list"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: TransactionDataListItem.Skeleton, TransactionDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/transaction/transactionDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280",
+                    "app:src/modules/finance/components/transactionList/transactionListItem.tsx:121"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TransactionDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TransactionDataListItemSkeleton"
+            },
+            "description": "TransactionDataListItemSkeleton: loading placeholder for one item of the TransactionDataListItem compound (DataList item structure for a transaction).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.tsx:6",
+                "stories": [
+                    "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TransactionDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TransactionDataListItemStructure"
+            },
+            "description": "TransactionDataListItemStructure: presentational item structure driven by props of the TransactionDataListItem compound (DataList item structure for a transaction).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx:36",
+                "stories": [
+                    "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/components/transactionList/transactionListItem.tsx:121"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TransactionDetail",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TransactionDetail"
+            },
+            "description": "Compound execution-detail view (TransactionDetail.Root) rendering a dialog header + scrollable shell for an execution detail dialog.",
+            "useWhen": [
+                "Detailed execution/transaction dialog content"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "Documented to render inside a Dialog.Root, composed with TransactionDetailSummary and an action-list component"
+            ],
+            "composition": [
+                "Compound export with members: TransactionDetail.Root."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/transaction/transactionDetail/index.ts:3",
+                "stories": [
+                    "kit:src/modules/components/transaction/transactionDetail/transactionDetail.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:136"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TransactionDetailRoot",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TransactionDetailRoot"
+            },
+            "description": "TransactionDetailRoot: compound root owning shared state/config of the TransactionDetail compound (Compound execution-detail view).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/transaction/transactionDetail/transactionDetailRoot/transactionDetailRoot.tsx:22",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:136"
+                ]
+            }
+        },
+        {
+            "id": "govkit:TransactionDetailSummary",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "TransactionDetailSummary"
+            },
+            "description": "Renders the executed-by/summary rows of an execution detail; label/address/href/helptext combinations map to the design states.",
+            "useWhen": [
+                "Summary block inside a TransactionDetail"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "label/address/href/executedBy combinations map to the distinct executed-by states"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.tsx:7",
+                "stories": [
+                    "kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:137"
+                ]
+            }
+        },
+        {
+            "id": "govkit:urlUtils",
+            "kind": "utility",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "urlUtils"
+            },
+            "description": "External URL normalization helper that adds a safe default protocol for host-like values.",
+            "useWhen": [
+                "Normalizing external links before rendering or navigation",
+                "Handling protocol-relative and host-only user input"
+            ],
+            "methods": [
+                {
+                    "name": "normalizeExternalHref",
+                    "contract": "Trims a URL, returns undefined for empty input, prefixes protocol-relative values with https and host-like values with https://."
+                }
+            ],
+            "constraints": [
+                "Nullish or empty input returns undefined; existing protocols are preserved; protocol-relative values use https"
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/utils/urlUtils/urlUtils.ts:46",
+                "stories": [],
+                "appExamples": [
+                    "app:src/shared/security/sanitizeExternalUrl.ts:8"
+                ]
+            }
+        },
+        {
+            "id": "govkit:VoteDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "VoteDataListItem"
+            },
+            "description": "DataList item structure for a single vote (voter, choice indicator, power).",
+            "useWhen": [
+                "Rows in a votes-cast list"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: VoteDataListItem.Skeleton, VoteDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/vote/voteDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101",
+                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125"
+                ]
+            }
+        },
+        {
+            "id": "govkit:VoteDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "VoteDataListItemSkeleton"
+            },
+            "description": "VoteDataListItemSkeleton: loading placeholder for one item of the VoteDataListItem compound (DataList item structure for a single vote).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.tsx:5",
+                "stories": [
+                    "kit:src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:60",
+                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:65"
+                ]
+            }
+        },
+        {
+            "id": "govkit:VoteDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "VoteDataListItemStructure"
+            },
+            "description": "VoteDataListItemStructure: presentational item structure driven by props of the VoteDataListItem compound (DataList item structure for a single vote).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx:50",
+                "stories": [
+                    "kit:src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101",
+                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125"
+                ]
+            }
+        },
+        {
+            "id": "govkit:VoteProposalDataListItem",
+            "kind": "compound",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "VoteProposalDataListItem"
+            },
+            "description": "DataList item structure showing a proposal with the viewing member's vote.",
+            "useWhen": [
+                "Member profile / voting-history proposal rows"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [
+                "Compound export with members: VoteProposalDataListItem.Skeleton, VoteProposalDataListItem.Structure."
+            ],
+            "references": {
+                "source": "kit:src/modules/components/vote/voteProposalDataListItem/index.ts:4",
+                "stories": [],
+                "appExamples": [
+                    "app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40",
+                    "app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161",
+                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59"
+                ]
+            }
+        },
+        {
+            "id": "govkit:VoteProposalDataListItemSkeleton",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "VoteProposalDataListItemSkeleton"
+            },
+            "description": "VoteProposalDataListItemSkeleton: loading placeholder for one item of the VoteProposalDataListItem compound (DataList item structure showing a proposal with the viewing member's vote).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.tsx:5",
+                "stories": [
+                    "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59",
+                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:64"
+                ]
+            }
+        },
+        {
+            "id": "govkit:VoteProposalDataListItemStructure",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "VoteProposalDataListItemStructure"
+            },
+            "description": "VoteProposalDataListItemStructure: presentational item structure driven by props of the VoteProposalDataListItem compound (DataList item structure showing a proposal with the viewing member's vote).",
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx:33",
+                "stories": [
+                    "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40",
+                    "app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161",
+                    "app:src/plugins/sppPlugin/dialogs/sppReportProposalResultDialog/sppReportProposalResultDialog.tsx:111"
+                ]
+            }
+        },
+        {
+            "id": "govkit:Wallet",
+            "kind": "component",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Wallet"
+            },
+            "description": "Wallet connect/identity button: shows connect copy when disconnected, or MemberAvatar + resolved handle (name/ENS/truncated address) when connected.",
+            "useWhen": [
+                "Header wallet connect/identity control"
+            ],
+            "alternatives": [],
+            "keyProps": [],
+            "constraints": [
+                "ENS name resolved via wagmi useEnsName on the chain from the chainId prop (default mainnet), and skipped when user.name is provided",
+                "Displays caller-supplied user state; wallet connection behavior must be supplied through button handlers."
+            ],
+            "composition": [],
+            "references": {
+                "source": "kit:src/modules/components/wallet/wallet.tsx:17",
+                "stories": [
+                    "kit:src/modules/components/wallet/wallet.stories.tsx:1"
+                ],
+                "appExamples": [
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:105",
+                    "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:147",
+                    "app:src/modules/explore/components/exploreNav/exploreNav.tsx:85"
+                ]
+            }
+        }
+    ]
+}
