@@ -44,6 +44,7 @@
           "addChange": "Permission change",
           "changeLabel": "Change",
           "emptyList": "No permission changes yet.",
+          "emptyRowsRequired": "Add at least one permission change.",
           "removeChange": "Remove permission change"
         },
         "permissionChangesDetails": {

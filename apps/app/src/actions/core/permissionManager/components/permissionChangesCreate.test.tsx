@@ -307,4 +307,41 @@ describe('<PermissionChangesCreate /> component', () => {
             expect(actions[0].data).toEqual(expectedData);
         });
     });
+    it('rejects an action with no permission changes', async () => {
+        render(createTestComponent([]));
+        const rowsPath = 'actions.0.inputData.parameters.0.value';
+
+        await act(async () => {
+            await formMethods?.trigger(rowsPath);
+        });
+
+        expect(formMethods?.getFieldState(rowsPath).error?.message).toEqual(
+            'app.actions.core.permissionChangesCreate.emptyRowsRequired',
+        );
+    });
+
+    it('accepts the rows once a permission change is added', async () => {
+        render(createTestComponent([revokeRow]));
+        const rowsPath = 'actions.0.inputData.parameters.0.value';
+
+        await act(async () => {
+            await formMethods?.trigger(rowsPath);
+        });
+
+        expect(formMethods?.getFieldState(rowsPath).error).toBeUndefined();
+    });
+    it('clears the empty-rows message once a change is added', async () => {
+        const user = userEvent.setup();
+        render(createTestComponent([]));
+
+        // The publish button validates with trigger(), not a form submit.
+        await act(async () => {
+            await formMethods?.trigger();
+        });
+        expect(screen.getByText(/emptyRowsRequired/)).toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: /addChange/ }));
+
+        expect(screen.queryByText(/emptyRowsRequired/)).not.toBeInTheDocument();
+    });
 });

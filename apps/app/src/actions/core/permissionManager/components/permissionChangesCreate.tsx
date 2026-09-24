@@ -15,6 +15,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { zeroAddress } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { usePermissionActionEncoder } from '../hooks/usePermissionActionEncoder';
 import {
     PermissionOperation,
@@ -77,8 +78,24 @@ export const PermissionChangesCreate: React.FC<
     const hasHoistedWhere = tupleIndex > 0;
     const hasConditionColumn = componentNames.includes('condition');
 
-    const rowsFieldName = `${fieldPrefix}.inputData.parameters.${tupleIndex.toString()}.value`;
+    const rowsFieldRelativeName = `inputData.parameters.${tupleIndex.toString()}.value`;
+    const rowsFieldName = `${fieldPrefix}.${rowsFieldRelativeName}`;
     const rows = (useWatch({ name: rowsFieldName }) ?? []) as string[][];
+
+    // With no rows there is no field left to fail, so the rows themselves must be required.
+    const { alert: rowsAlert } = useFormField<
+        Record<string, string[][]>,
+        string
+    >(rowsFieldRelativeName, {
+        label: t('app.actions.core.permissionChangesCreate.changeLabel'),
+        fieldPrefix,
+        rules: {
+            validate: (fieldValue) =>
+                (fieldValue as string[][] | undefined)?.length
+                    ? true
+                    : 'app.actions.core.permissionChangesCreate.emptyRowsRequired',
+        },
+    });
 
     // Rows are positional in the form, but React must not key them by position: the
     // address inputs keep local state, so removing a row would hand its inputs to the
@@ -132,6 +149,10 @@ export const PermissionChangesCreate: React.FC<
         );
 
         rowIds.current.push(`row-${(nextRowId.current++).toString()}`);
+        // With no rows the only possible error is the empty-rows one, so clearing drops nothing else.
+        if (rows.length === 0) {
+            clearErrors(rowsFieldName);
+        }
         setValue(rowsFieldName, [...rows, newRow]);
     };
 
@@ -286,6 +307,12 @@ export const PermissionChangesCreate: React.FC<
                 >
                     {t('app.actions.core.permissionChangesCreate.addChange')}
                 </Button>
+                {rowsAlert != null && (
+                    <AlertInline
+                        message={rowsAlert.message}
+                        variant={rowsAlert.variant}
+                    />
+                )}
             </div>
         </div>
     );
