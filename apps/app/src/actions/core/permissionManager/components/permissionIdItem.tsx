@@ -31,24 +31,24 @@ export const PermissionIdItem: React.FC<IPermissionIdItemProps> = (props) => {
         permissionNameUtils.getKnownPermissionName(permissionId);
 
     return (
-        <>
-            <DefinitionList.Item
-                copyValue={permissionId}
-                description={permissionName}
-                term={t('app.actions.core.permissionManager.permissionTerm')}
-            >
+        <DefinitionList.Item
+            copyValue={permissionId}
+            description={permissionName}
+            term={t('app.actions.core.permissionManager.permissionTerm')}
+        >
+            <div className="flex min-w-0 flex-col items-start gap-1">
                 <Tooltip content={permissionId} triggerAsChild={true}>
                     <span>{addressUtils.truncateHash(permissionId)}</span>
                 </Tooltip>
-            </DefinitionList.Item>
-            {permissionName == null && (
-                <AlertInline
-                    message={t(
-                        'app.actions.core.permissionActionDetails.unknownPermission',
-                    )}
-                    variant="warning"
-                />
-            )}
-        </>
+                {permissionName == null && (
+                    <AlertInline
+                        message={t(
+                            'app.actions.core.permissionActionDetails.unknownPermission',
+                        )}
+                        variant="warning"
+                    />
+                )}
+            </div>
+        </DefinitionList.Item>
     );
 };

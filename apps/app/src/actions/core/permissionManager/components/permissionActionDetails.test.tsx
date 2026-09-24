@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { addressUtils } from '@aragon/gov-ui-kit';
+import { render, screen, within } from '@testing-library/react';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { PermissionActionDetails } from './permissionActionDetails';
@@ -108,5 +109,24 @@ describe('<PermissionActionDetails /> component', () => {
             screen.getByText(/permissionManager.whereTerm/),
         ).toBeInTheDocument();
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
+    });
+
+    it('renders the unknown-permission warning inside the permission row', () => {
+        const permissionId = `0x${'ab'.repeat(32)}`;
+        render(createTestComponent(createTestAction(permissionId)));
+
+        const permissionRow = screen
+            .getAllByRole('definition')
+            .find(
+                (row) =>
+                    within(row).queryByText(
+                        addressUtils.truncateHash(permissionId),
+                    ) != null,
+            );
+
+        expect(permissionRow).toBeDefined();
+        expect(
+            within(permissionRow as HTMLElement).getByText(/unknownPermission/),
+        ).toBeInTheDocument();
     });
 });
