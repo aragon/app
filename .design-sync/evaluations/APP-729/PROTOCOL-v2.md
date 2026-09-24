@@ -53,14 +53,14 @@ Write a short decision card before choosing a task:
 7. The stop rule and interpretation for both correct, candidate-only correct, old-only correct, both wrong, or incomparable runs.
 8. Which question this run answers, declared before it runs: **no-regression** or **delta**. The candidate context is a superset of the old — it adds material and removes none — so a task the old arm already satisfies cannot separate them. Both arms passing is then the expected and correct result: evidence of no regression, not an absence of value.
 
-   A delta run is designed in this order, and the order is what keeps it honest:
+   A delta run is constrained logically, not by execution order. Arm order stays randomized and recorded:
 
    1. Choose an arbitrary realistic feature a team would actually ask for. Do not inspect the added context first and reverse-engineer a task around it.
-   2. Build the answer key from revision-matched source, independent of either bundle.
-   3. Run the candidate arm and observe whether the feature is composed or reasoned about more effectively — correct component and contract, fewer dead ends, citations that resolve.
-   4. Then check the baseline recursively: could the old bundle have reached the same answer at all? Not "did it score worse" but "was the material it would need even present in it?"
+   2. Fix the answer key from revision-matched source before either arm runs, independent of both bundles.
+   3. Declare the old arm's expected outcome up front, with the reason.
+   4. Verify the claim statically: inspect the OLD bundle's payload and confirm whether the facts the key requires — a source path, a contract, usage evidence — are present in it at all. This is a file check on the artifact, not a second run, and it is what makes "the baseline could not have reached this" a verifiable statement rather than an inference from a score.
 
-   Step 4 is a finding, not a design target. That is the distinction from the caution in the outcomes table below: that rule forbids reacting to a null by escalating difficulty until the old arm breaks. Here difficulty is fixed by a realistic need before either arm runs, and the baseline's reach is measured afterwards. A delta task the old arm also satisfies is a real null result to record, not a task to replace.
+   The static check may be run at any time, including before both arms, and it does not license inspecting arm outputs to build the key. That is the distinction from the caution in the outcomes table below: that rule forbids reacting to a null by escalating difficulty until the old arm breaks. Here difficulty is fixed by a realistic need and the key is fixed from source, both before any arm runs. A delta task the old arm also satisfies is a real null result to record, not a task to replace.
 
    Prefer a probe whose signal is structural rather than qualitative — the old arm cannot cite a source path or contract its bundle does not contain — because the consumer is probabilistic while the bundle is deterministic, and a single pair cannot separate model variance from context effect on a matter of degree.
 
