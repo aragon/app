@@ -52,13 +52,16 @@ describe('<PermissionIdInput /> component', () => {
     );
 
     it.each(['lowercase_permission', '0x1234', 'INVALID NAME'])(
-        'rejects invalid custom input %s',
+        'explains why %s is not a valid permission',
         async (input) => {
             const user = userEvent.setup();
             render(<TestForm />);
             await user.type(screen.getByRole('combobox'), input);
             await user.click(screen.getByText(/customItem/));
             expect(form.getValues(path)).toBe('');
+            expect(
+                screen.getByText(/invalidPermissionName/),
+            ).toBeInTheDocument();
             await act(async () => {
                 await form.trigger(path);
             });

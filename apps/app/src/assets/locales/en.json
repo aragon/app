@@ -24,6 +24,7 @@
           "changePermission": "Change permission",
           "conditionHelpText": "The condition contract that must pass for the permission to be granted.",
           "customItem": "Add new permission",
+          "invalidPermissionName": "Not a valid permission. Use screaming snake case. e.g. ACTION_PERMISSION",
           "permissionHelpText": "The permission the actor holds on the target contract. Choose a known permission, paste a 32-byte ID, or type a permission name to add one.",
           "permissionLabel": "Permission",
           "permissionPlaceholder": "Search a permission, paste an ID, or type a name to add one",
