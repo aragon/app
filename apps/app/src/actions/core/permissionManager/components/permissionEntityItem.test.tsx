@@ -96,4 +96,22 @@ describe('<PermissionEntityItem /> component', () => {
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
         expect(screen.queryByText('vitalik.eth')).not.toBeInTheDocument();
     });
+    it('shows the help text when nothing more specific resolves', () => {
+        render(createTestComponent({ helpText: 'The condition contract.' }));
+
+        expect(screen.getByText('The condition contract.')).toBeInTheDocument();
+    });
+
+    it('prefers the ENS name over the help text', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'vitalik.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        render(createTestComponent({ helpText: 'The condition contract.' }));
+
+        expect(screen.getByText('vitalik.eth')).toBeInTheDocument();
+        expect(
+            screen.queryByText('The condition contract.'),
+        ).not.toBeInTheDocument();
+    });
 });

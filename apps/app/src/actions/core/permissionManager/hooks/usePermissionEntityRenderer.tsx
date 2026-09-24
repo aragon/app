@@ -20,6 +20,7 @@ export interface IUsePermissionEntityRendererParams {
 export type PermissionEntityRenderer = (
     term: string,
     address: string,
+    helpText?: string,
 ) => React.ReactNode;
 
 /**
@@ -34,9 +35,10 @@ export const usePermissionEntityRenderer = (
     const { buildEntityUrl } = useDaoChain({ chainId });
     const resolveEntity = usePermissionEntityResolver({ daoId });
 
-    return (term, address) => (
+    return (term, address, helpText) => (
         <PermissionEntityItem
             address={address}
+            helpText={helpText}
             href={buildEntityUrl({
                 type: ChainEntityType.ADDRESS,
                 id: address,

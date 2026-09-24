@@ -2,6 +2,7 @@
 
 import { AlertInline, DefinitionList, Heading } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { PermissionEntityRenderer } from '../hooks/usePermissionEntityRenderer';
 import {
     type IPermissionChange,
     isKnownPermissionOperation,
@@ -22,7 +23,7 @@ export interface IPermissionChangeCardProps {
     /**
      * Renders an address as a resolved entity.
      */
-    renderEntity: (term: string, address: string) => React.ReactNode;
+    renderEntity: PermissionEntityRenderer;
 }
 
 /**
@@ -75,6 +76,9 @@ export const PermissionChangeCard: React.FC<IPermissionChangeCardProps> = (
                     renderEntity(
                         t('app.actions.core.permissionManager.conditionTerm'),
                         change.condition,
+                        t(
+                            'app.actions.core.permissionActionCreate.conditionHelpText',
+                        ),
                     )}
             </DefinitionList.Container>
         </li>

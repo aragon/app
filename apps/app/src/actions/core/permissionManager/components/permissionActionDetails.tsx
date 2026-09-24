@@ -63,6 +63,9 @@ export const PermissionActionDetails: React.FC<
                     renderEntity(
                         t('app.actions.core.permissionManager.conditionTerm'),
                         condition,
+                        t(
+                            'app.actions.core.permissionActionCreate.conditionHelpText',
+                        ),
                     )}
             </DefinitionList.Container>
         </div>

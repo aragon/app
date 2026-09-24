@@ -21,6 +21,10 @@ export interface IPermissionEntityItemProps {
      * Block-explorer link for the address.
      */
     href?: string;
+    /**
+     * Explains what the address is for, shown when nothing more specific resolves.
+     */
+    helpText?: string;
 }
 
 /**
@@ -31,7 +35,7 @@ export interface IPermissionEntityItemProps {
 export const PermissionEntityItem: React.FC<IPermissionEntityItemProps> = (
     props,
 ) => {
-    const { term, address, label, href } = props;
+    const { term, address, label, href, helpText } = props;
 
     const { data: ensName } = useEnsName(address);
     const truncatedAddress = addressUtils.truncateAddress(address);
@@ -40,7 +44,7 @@ export const PermissionEntityItem: React.FC<IPermissionEntityItemProps> = (
     return (
         <DefinitionList.Item
             copyValue={address}
-            description={resolvedLabel ?? ensName ?? undefined}
+            description={resolvedLabel ?? ensName ?? helpText}
             link={href != null ? { href, isOnchainEntity: true } : undefined}
             term={term}
         >
