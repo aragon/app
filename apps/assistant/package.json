@@ -35,6 +35,8 @@
         "ai": "catalog:",
         "file-type": "catalog:",
         "hono": "catalog:",
+        "pdf-lib": "catalog:",
+        "sharp": "catalog:",
         "zod": "catalog:"
     },
     "devDependencies": {

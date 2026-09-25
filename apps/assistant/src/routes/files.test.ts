@@ -284,4 +284,138 @@ describe('files routes', () => {
         expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
         expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
     });
+
+    it('stores the rebuilt bytes under a fresh blob and deletes the upload', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        const rebuilt = new Uint8Array([...pngBytes, 0, 0, 0, 0]);
+        deps.fileSanitizer.result = (file) => ({
+            file: { ...file, data: rebuilt, size: rebuilt.byteLength },
+            rebuilt: true,
+        });
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(201);
+        expect(await response.json()).toMatchObject({
+            size: rebuilt.byteLength,
+        });
+        expect(deps.fileSanitizer.sanitizeCalls).toEqual(['screenshot.png']);
+        const [queued] = await deps.sessionStore.listFiles(sessionId);
+        expect(queued?.blobUrl).toEqual(deps.blobStore.putUrls[0]);
+        expect(queued?.blobUrl).not.toEqual(blobUrl);
+        expect(deps.blobStore.blobs.get(queued?.blobUrl ?? '')).toEqual(
+            rebuilt,
+        );
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+    });
+
+    it('rejects a rebuild that grew past the size cap without storing it', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        // A re-encode that turned an indexed screenshot into a full-colour one.
+        const grown = new Uint8Array(assistantLimits.maxFileSizeBytes + 1);
+        deps.fileSanitizer.result = (file) => ({
+            file: { ...file, data: grown, size: grown.byteLength },
+            rebuilt: true,
+        });
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(413);
+        const body = (await response.json()) as IAssistantError;
+        expect(body.error.code).toEqual('file_too_large');
+        expect(deps.blobStore.putUrls).toEqual([]);
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+    });
+
+    it('keeps the uploaded blob when the sanitizer passes the file through', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(201);
+        expect(deps.blobStore.putUrls).toEqual([]);
+        expect(deps.blobStore.deletedUrls).toEqual([]);
+        const [queued] = await deps.sessionStore.listFiles(sessionId);
+        expect(queued?.blobUrl).toEqual(blobUrl);
+    });
+
+    it('rejects a file the sanitizer refuses and deletes its blob', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl({ filename: 'form.pdf' });
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.fileSanitizer.result = () => ({ error: 'active_content' });
+
+        const response = await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(response.status).toEqual(415);
+        const body = (await response.json()) as IAssistantError;
+        expect(body.error.code).toEqual('unsupported_file');
+        expect(body.error.message).toContain('flat PDF');
+        expect(deps.blobStore.deletedUrls).toEqual([blobUrl]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+    });
+
+    it('does not sanitize files rejected by the format gate', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl({ filename: 'renamed.png' });
+        deps.blobStore.blobs.set(
+            blobUrl,
+            new Uint8Array([0x4d, 0x5a, 0x90, 0, 3, 0, 0, 0]),
+        );
+
+        await confirmUpload(buildApp(deps), { blobUrl });
+
+        expect(deps.fileSanitizer.sanitizeCalls).toEqual([]);
+    });
+
+    it('releases the claim and keeps the upload when storing the rebuilt file fails', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        // Same object back, `rebuilt` set: the route follows the flag, not the reference.
+        deps.fileSanitizer.result = (file) => ({ file, rebuilt: true });
+        deps.blobStore.failNextPut = true;
+        const app = buildApp(deps);
+
+        const failed = await confirmUpload(app, { blobUrl });
+
+        expect(failed.status).toEqual(500);
+        expect(deps.blobStore.deletedUrls).toEqual([]);
+
+        const retry = await confirmUpload(app, { blobUrl });
+
+        expect(retry.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
+
+    it('releases the claim and keeps the upload when queueing the file fails', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.fileSanitizer.result = (file) => ({ file, rebuilt: true });
+        jest.spyOn(deps.sessionStore, 'addFile').mockRejectedValueOnce(
+            new Error('Redis is down'),
+        );
+        const app = buildApp(deps);
+
+        const failed = await confirmUpload(app, { blobUrl });
+
+        expect(failed.status).toEqual(500);
+        // The fresh blob goes, the upload stays for the retry.
+        expect(deps.blobStore.deletedUrls).toEqual([deps.blobStore.putUrls[0]]);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+
+        const retry = await confirmUpload(app, { blobUrl });
+
+        expect(retry.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+        expect(deps.blobStore.deletedUrls).toContain(blobUrl);
+    });
 });

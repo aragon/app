@@ -27,6 +27,12 @@ export interface IParsedBlobPath {
 export const buildBlobPathPrefix = (sessionId: string) =>
     `assistant/${sessionId}/`;
 
+export const buildBlobPath = ({
+    sessionId,
+    fileId,
+    filename,
+}: IParsedBlobPath) => `${buildBlobPathPrefix(sessionId)}${fileId}/${filename}`;
+
 export const parseBlobPath = (pathname: string): IParsedBlobPath | null => {
     const match = blobPathPattern.exec(pathname);
 

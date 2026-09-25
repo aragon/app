@@ -11,10 +11,12 @@ import { Hono } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import { z } from 'zod';
 import {
+    buildBlobPath,
     getStoreIdFromToken,
     parseBlobPath,
     parseSessionBlobUrl,
 } from '../files/blobPath';
+import type { IFileSanitizeError } from '../files/sanitizeFile';
 import { validateFile } from '../files/validateFile';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { env } from '../lib/env';
@@ -34,6 +36,15 @@ const buildError = (code: IAssistantErrorCode, message: string) => {
     const body: IAssistantError = { error: { code, message } };
 
     return { body, status: errorStatusByCode[code] ?? 400 };
+};
+
+// Wording of the rejection for each reason the sanitizer refuses a file.
+const sanitizeErrorMessages: Record<IFileSanitizeError, string> = {
+    active_content:
+        'The PDF contains scripts, forms, attachments, media or links to other files. Export it as an image or a flat PDF.',
+    encrypted:
+        'Encrypted PDFs are not supported. Export it as an image or a flat PDF.',
+    unreadable: 'The file is damaged or not supported.',
 };
 
 // Content types the upload token allows. This is a coarse first gate — the authoritative check
@@ -263,21 +274,28 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 return context.json(body, status);
             }
 
-            const validated = await validateFile(data, parsedPath.filename);
-
-            if ('error' in validated) {
-                await sessionStore.releaseFileClaim(sessionId, fileId);
-                // The rejected blob is deleted right away (best effort — the cleanup cron
-                // sweeps leftovers).
-                await deps
+            // Best effort on blob deletion: the cleanup cron sweeps leftovers.
+            const deleteBlobs = (urls: string[]) =>
+                deps
                     .getBlobStore()
-                    .delete([blobUrl])
+                    .delete(urls)
                     .catch((error: unknown) =>
                         observability.logError(error, {
                             sessionId,
                             step: 'confirmFile',
                         }),
                     );
+
+            // Releases the slot and deletes the blob of a file we are not going to queue.
+            const rejectFile = async () => {
+                await sessionStore.releaseFileClaim(sessionId, fileId);
+                await deleteBlobs([blobUrl]);
+            };
+
+            const validated = await validateFile(data, parsedPath.filename);
+
+            if ('error' in validated) {
+                await rejectFile();
                 const { body, status } = buildError(
                     validated.error,
                     validated.error === 'file_too_large'
@@ -288,30 +306,125 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 return context.json(body, status);
             }
 
+            // Rebuild before queueing: an image or PDF reaches the ticket as bytes the service
+            // wrote, text as uploaded after its strict decode. A file the sanitizer refuses is
+            // dropped like a failed format check.
+            const result = await deps.getFileSanitizer().sanitize(validated);
+
+            if ('error' in result) {
+                if (result.cause != null) {
+                    observability.logError(result.cause, {
+                        sessionId,
+                        step: 'confirmFile',
+                    });
+                }
+                await rejectFile();
+                const { body, status } = buildError(
+                    'unsupported_file',
+                    sanitizeErrorMessages[result.error],
+                );
+
+                return context.json(body, status);
+            }
+
+            const { file: sanitized, rebuilt } = result;
+
+            // The size cap applies to what we store, not only to what was uploaded: a re-encode
+            // can grow a file (sharp writes PNGs full-colour, so an indexed screenshot comes
+            // back larger). Checked before the store, so an oversized rebuild neither leaves a
+            // fresh blob behind nor reaches the ticket transfer, which re-validates and would
+            // drop the attachment with nothing but a log line.
+            if (sanitized.size > assistantLimits.maxFileSizeBytes) {
+                await rejectFile();
+                const { body, status } = buildError(
+                    'file_too_large',
+                    'The file exceeds the maximum allowed size once converted. Save it at a smaller size and attach it again.',
+                );
+
+                return context.json(body, status);
+            }
+
+            // Rebuilt bytes go under a fresh blob; bytes passed through untouched (text) keep
+            // the uploaded blob. The upload is deleted only once the file is queued: every
+            // failure before that releases the claim and leaves the upload in place, so the
+            // confirm can be retried.
+            let storedBlobUrl = blobUrl;
+            if (rebuilt) {
+                try {
+                    const stored = await deps.getBlobStore().put({
+                        pathname: buildBlobPath({
+                            sessionId,
+                            fileId,
+                            filename: sanitized.filename,
+                        }),
+                        data: sanitized.data,
+                        contentType: sanitized.contentType,
+                    });
+                    storedBlobUrl = stored.url;
+                } catch (error) {
+                    await sessionStore.releaseFileClaim(sessionId, fileId);
+                    observability.logError(error, {
+                        sessionId,
+                        step: 'confirmFile',
+                    });
+                    const { body, status } = buildError(
+                        'internal',
+                        'The file could not be stored.',
+                    );
+
+                    return context.json(body, status);
+                }
+            }
+
             // Re-attached identical bytes (e.g. the same screenshot uploaded twice) queue as
             // their own entry: every composer tile owns its fileId and blob, so removing one
             // never orphans another. The ticket still carries the content once — the transfer
             // to Linear deduplicates by this hash at creation time.
-            const contentHash = await computeContentHash(data);
+            const contentHash = await computeContentHash(sanitized.data);
 
             const file: ISessionFile = {
                 id: fileId,
-                blobUrl,
-                filename: validated.filename,
-                contentType: validated.contentType,
-                size: validated.size,
+                blobUrl: storedBlobUrl,
+                filename: sanitized.filename,
+                contentType: sanitized.contentType,
+                size: sanitized.size,
                 contentHash,
             };
 
             // The RPUSH length is atomic, so concurrent confirms of different files get
             // distinct lengths and the cap holds exactly; an over-cap add removes itself
-            // (removeFile also drops the claim). The blob is swept by the cleanup cron.
-            const queueLength = await sessionStore.addFile(sessionId, file);
+            // (removeFile also drops the claim). A failed write drops the fresh blob too.
+            let queueLength: number;
+            try {
+                queueLength = await sessionStore.addFile(sessionId, file);
+            } catch (error) {
+                await sessionStore.releaseFileClaim(sessionId, fileId);
+                if (rebuilt) {
+                    await deleteBlobs([storedBlobUrl]);
+                }
+                observability.logError(error, {
+                    sessionId,
+                    step: 'confirmFile',
+                });
+                const { body, status } = buildError(
+                    'internal',
+                    'The file could not be queued.',
+                );
+
+                return context.json(body, status);
+            }
             if (queueLength > assistantLimits.maxFilesPerSession) {
                 await sessionStore.removeFile(sessionId, fileId);
+                await deleteBlobs(
+                    rebuilt ? [blobUrl, storedBlobUrl] : [blobUrl],
+                );
                 const { body, status } = buildFileLimitError();
 
                 return context.json(body, status);
+            }
+
+            if (rebuilt) {
+                await deleteBlobs([blobUrl]);
             }
 
             observability.logStep({
