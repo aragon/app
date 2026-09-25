@@ -202,6 +202,21 @@ describe('<AutocompleteInput /> component', () => {
         expect(input).toHaveDisplayValue('');
     });
 
+    it('starts with the defaultInputValue text', () => {
+        render(createTestComponent({ defaultInputValue: 'kept text' }));
+        expect(screen.getByRole('combobox')).toHaveDisplayValue('kept text');
+    });
+
+    it('keeps the input value on item selected when keepInputOnSelect is set', async () => {
+        const searchValue = 'item';
+        const items = [{ id: '0', name: 'item-0', icon: IconType.APP_ASSETS }];
+        render(createTestComponent({ items, keepInputOnSelect: true }));
+        const input = screen.getByRole('combobox');
+        await userEvent.type(input, searchValue);
+        await userEvent.click(screen.getByRole('option'));
+        expect(input).toHaveDisplayValue(searchValue);
+    });
+
     it('triggers the onFocus callback on input focus', async () => {
         const onFocus = jest.fn();
         render(createTestComponent({ onFocus }));

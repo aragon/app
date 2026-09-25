@@ -67,6 +67,13 @@ export interface IUseDaoPluginsParams {
      * @default false
      */
     includeUnsupported?: boolean;
+    /**
+     * Skips the DAO request when set to false, for callers that may not have a DAO in
+     * context. The hook then returns an empty list instead of firing a lookup for an
+     * empty id.
+     * @default true
+     */
+    enabled?: boolean;
 }
 
 export const pluginGroupFilter: IFilterComponentPlugin<IDaoPlugin> = {
@@ -158,10 +165,11 @@ export const useDaoPlugins = (
         hasExecute,
         visibleOnly,
         includeUnsupported,
+        enabled = true,
     } = params;
 
     const { isEnabled } = useFeatureFlags();
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { data: dao } = useDao({ urlParams: { id: daoId } }, { enabled });
     const { data: daoOverrides } = useDaoOverrides();
 
     const allPlugins = daoUtils.getDaoPlugins(dao, {
