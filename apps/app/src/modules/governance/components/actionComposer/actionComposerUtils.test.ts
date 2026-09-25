@@ -5,7 +5,10 @@ import {
     type IProposalAction,
     ProposalActionType,
 } from '../../api/governanceService';
-import { generateSmartContractAbi } from '../../testUtils';
+import {
+    generateAllowedAction,
+    generateSmartContractAbi,
+} from '../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
 import { actionComposerUtils } from './actionComposerUtils';
 import { ActionItemId } from './actionComposerUtils.api';
@@ -285,6 +288,41 @@ describe('actionComposerUtils', () => {
                         item.defaultValue?.type === ActionItemId.RAW_CALLDATA,
                 ),
             ).toBeUndefined();
+        });
+    });
+
+    describe('getAllowedActionItems', () => {
+        const getStateMutability = (stateMutability?: string) => {
+            const [item] = actionComposerUtils.getAllowedActionItems({
+                t: mockTranslations.tMock,
+                nativeItems: [],
+                allowedActions: [
+                    generateAllowedAction({
+                        selector: '0xd0e30db0',
+                        target: '0x4200000000000000000000000000000000000006',
+                        decoded: {
+                            contractName: 'WETH9',
+                            functionName: 'deposit',
+                            inputs: [],
+                            stateMutability,
+                        },
+                    }),
+                ],
+            });
+
+            return item.defaultValue?.inputData?.stateMutability;
+        };
+
+        it('forwards payable so the value field is shown', () => {
+            expect(getStateMutability('payable')).toEqual('payable');
+        });
+
+        it('forwards nonpayable', () => {
+            expect(getStateMutability('nonpayable')).toEqual('nonpayable');
+        });
+
+        it('leaves it undefined when the backend does not return it', () => {
+            expect(getStateMutability()).toBeUndefined();
         });
     });
 
