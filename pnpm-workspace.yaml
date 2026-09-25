@@ -17,9 +17,9 @@ catalog:
   "@changesets/changelog-github": ^1.0.1
   "@changesets/cli": ^3.0.3
   "@hono/node-server": ^2.1.1
-  "@linear/sdk": ^95.0.0
+  "@linear/sdk": ^95.1.0
   "@radix-ui/react-dialog": ^1.1.23
-  "@sentry/cli": ^3.7.0
+  "@sentry/cli": ^3.8.0
   "@sentry/hono": ^10.74.0
   "@sentry/node": ^10.74.0
   "@sentry/profiling-node": ^10.74.0
@@ -40,7 +40,7 @@ catalog:
   ai: ^7.0.102
   classnames: ^2.5.1
   cross-env: ^10.1.0
-  file-type: ^22.1.0
+  file-type: ^22.1.1
   hono: ^4.13.8
   husky: ^9.1.7
   # jest: held on 30.4 — 30.5 replaces module.register/registerHooks with a throwing stub, and
@@ -65,7 +65,7 @@ catalog:
   # vercel: pinned EXACT — releases after 58.4.4 ship without SLSA provenance and trip the
   # trustPolicy; move by hand once provenance returns (a range would resolve to an untrusted one).
   vercel: 58.4.4
-  viem: ^2.56.5
+  viem: ^2.56.8
   wagmi: ^3.7.7
   yaml: ^2.9.1
   # zod: packages/gov-ui-kit deliberately does NOT take this range — it pins 3.25.76 outright.
