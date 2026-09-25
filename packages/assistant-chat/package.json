@@ -35,7 +35,7 @@
         "zod": "catalog:"
     },
     "devDependencies": {
-        "@aragon/gov-ui-kit": "catalog:",
+        "@aragon/gov-ui-kit": "workspace:*",
         "@biomejs/biome": "catalog:",
         "@tailwindcss/typography": "catalog:",
         "@tanstack/react-query": "catalog:",

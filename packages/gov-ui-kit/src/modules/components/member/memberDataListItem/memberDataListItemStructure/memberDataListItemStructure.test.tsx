@@ -1,0 +1,127 @@
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import * as wagmi from 'wagmi';
+import { type IMemberDataListItemProps, MemberDataListItemStructure } from './memberDataListItemStructure';
+
+jest.mock('../../memberAvatar', () => ({ MemberAvatar: () => <div data-testid="member-avatar-mock" /> }));
+
+describe('<MemberDataListItem /> component', () => {
+    const useConnectionMock = jest.spyOn(wagmi, 'useConnection');
+
+    beforeEach(() => {
+        useConnectionMock.mockReturnValue({} as wagmi.UseConnectionReturnType);
+    });
+
+    afterEach(() => {
+        useConnectionMock.mockReset();
+    });
+
+    const createTestComponent = (props?: Partial<IMemberDataListItemProps>) => {
+        const completeProps: IMemberDataListItemProps = {
+            address: '0x1234567890123456789012345678901234567890',
+            ...props,
+        };
+
+        return <MemberDataListItemStructure {...completeProps} />;
+    };
+
+    it('renders the member avatar', () => {
+        render(createTestComponent());
+        const avatar = screen.getByTestId('member-avatar-mock');
+        expect(avatar).toBeInTheDocument();
+    });
+
+    it('renders a delegate tag when isDelegate property is set to true', () => {
+        const address = '0x0987654321098765432109876543210987654321';
+        render(createTestComponent({ isDelegate: true, address }));
+        expect(screen.getByText('Your Delegate')).toBeInTheDocument();
+    });
+
+    it('renders the member ENS user handle instead of address if provided', () => {
+        const ensName = 'testUserHandle';
+        const address = '0x000000633b68f5D8D3a86593ebB815b4663BCBe0';
+        render(createTestComponent({ ensName }));
+        expect(screen.getByRole('heading', { name: ensName })).toBeInTheDocument();
+        expect(screen.queryByRole('heading', { name: address })).not.toBeInTheDocument();
+    });
+
+    it('keeps full address controls outside the row link', async () => {
+        const user = userEvent.setup();
+        const address = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        render(
+            createTestComponent({
+                address,
+                ensName: 'vitalik.eth',
+                href: '/members/vitalik.eth',
+                onClick: jest.fn(),
+            }),
+        );
+
+        const row = screen.getByRole('link');
+        const revealButton = screen.getByRole('button', { name: 'vitalik.eth' });
+        const copyButton = screen.getByRole('button', { name: 'Copy' });
+        expect(row).not.toContainElement(revealButton);
+        expect(row).not.toContainElement(copyButton);
+
+        await user.hover(screen.getByText('vitalik.eth'));
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent(address);
+    });
+
+    it('keeps the copy control available for a long ENS name', () => {
+        render(
+            createTestComponent({
+                ensName: 'michiganblockchain.eth',
+                href: '/members/michiganblockchain.eth',
+            }),
+        );
+
+        expect(screen.getByText('michiganblockchain.eth')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
+    });
+
+    it('renders and formats the delegation count of the member when defined', () => {
+        const { rerender } = render(createTestComponent({ delegationCount: 340 }));
+        expect(screen.getByRole('heading', { level: 3, name: '340 Delegations' })).toBeInTheDocument();
+
+        rerender(createTestComponent({ delegationCount: 2959 }));
+        expect(screen.getByRole('heading', { level: 3, name: '2.96K Delegations' })).toBeInTheDocument();
+
+        rerender(createTestComponent({ delegationCount: 1 }));
+        expect(screen.getByRole('heading', { level: 3, name: '1 Delegation' })).toBeInTheDocument();
+    });
+
+    it('renders the token amount of the member when not null', () => {
+        const tokenAmount = 0;
+        const tokenSymbol = 'PDC';
+        render(createTestComponent({ tokenAmount, tokenSymbol }));
+        expect(screen.getByRole('heading', { level: 3, name: '0 PDC Voting Power' })).toBeInTheDocument();
+    });
+
+    it('renders and formats the voting power of the member', () => {
+        const tokenAmount = 420_689;
+        const tokenSymbol = 'ETH';
+        render(createTestComponent({ tokenAmount, tokenSymbol }));
+        expect(screen.getByRole('heading', { level: 3, name: '420.69K ETH Voting Power' })).toBeInTheDocument();
+    });
+
+    it('renders a you tag when the user is the current connected account', async () => {
+        const address = '0x50ce432B38eE98dE5Fa375D5125aA6d0d054E662';
+        useConnectionMock.mockReturnValue({ isConnected: true, address } as unknown as wagmi.UseConnectionReturnType);
+        render(createTestComponent({ address }));
+        expect(await screen.findByText('You')).toBeInTheDocument();
+    });
+
+    it('hides the voting power label when hideLabelTokenVoting is true', () => {
+        render(createTestComponent({ hideLabelTokenVoting: true }));
+        expect(screen.queryByText('Voting Power')).not.toBeInTheDocument();
+    });
+
+    it('displays the correct token symbol', () => {
+        const tokenAmount = 1000;
+        const tokenSymbol = 'XYZ';
+        render(createTestComponent({ tokenAmount, tokenSymbol }));
+        expect(screen.getByRole('heading', { level: 3, name: '1K XYZ Voting Power' })).toBeInTheDocument();
+    });
+});

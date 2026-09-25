@@ -56,8 +56,8 @@ const cliPackageJson = join(
 const entry = join(root, '.design-sync/tailwind-entry.css');
 const tmp = cacheCss;
 // cfg.cssEntry is security-bounded to the package dir, so the compiled file
-// must live inside it. node_modules is disposable — this runs (via
-// cfg.buildCmd) before every converter build, so the file is always fresh.
+// must live inside it. the package dir is now the workspace source folder
+// (packages/gov-ui-kit), so the output is gitignored instead of being disposable.
 const out = kitCssOut;
 
 // The Tailwind CLI is a regular app devDependency so the repo's single pnpm

@@ -1,5 +1,19 @@
 # @aragon/app
 
+## 1.39.1
+
+### Patch Changes
+
+- [#1390](https://github.com/aragon/app/pull/1390) [`9716499`](https://github.com/aragon/app/commit/9716499328b3ea202368cae1024b5bd1dcbbc58d) Thanks [@milosh86](https://github.com/milosh86)! - Show multisig member removals as remove actions instead of add actions in the proposal UI
+
+- [#1391](https://github.com/aragon/app/pull/1391) [`b685284`](https://github.com/aragon/app/commit/b6852844c9856abd7ae5a6b7c53b70df21b961b2) Thanks [@milosh86](https://github.com/milosh86)! - Keep proposal action validation errors attached to their own action when actions are reordered
+
+- [#1377](https://github.com/aragon/app/pull/1377) [`c0d9963`](https://github.com/aragon/app/commit/c0d9963d8a9d4e2a09aea0f10874b7137084ec24) Thanks [@evanaronson](https://github.com/evanaronson)! - Remove incidental clipboard controls from token amount fields, voting summaries, gauge action rows and contract-upgrade reviews. Keep copying on dedicated address rows and remove duplicate copy controls from external-body name details.
+
+- [#1366](https://github.com/aragon/app/pull/1366) [`4b325ce`](https://github.com/aragon/app/commit/4b325ce495bf8bfd58f194300e09b68d4fe28791) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Follow up on the Sentry audit: serve the 404 page for every DAO route whose network or address segment is malformed (validated once in `resolveDaoId`, so bot-probed URLs no longer fail the member details, process details and other pages as server errors), stop the members page from crashing on governance tokens whose backend metadata is null, keep amount fields from throwing on empty or scientific-notation input, render a not-found state instead of crashing when the gauge voter or proposals page has no plugin to show, and classify malformed RSC router-state headers and `insertBefore` DOM mutations by browser extensions as environment noise.
+
+- [#1379](https://github.com/aragon/app/pull/1379) [`73cfe6f`](https://github.com/aragon/app/commit/73cfe6f1af97994ff0b910c4e6cc4092e138874e) Thanks [@evanaronson](https://github.com/evanaronson)! - Show metadata warnings on staged proposal cards and avoid repeating proposal identifiers when titles are empty.
+
 ## 1.39.0
 
 ### Minor Changes
