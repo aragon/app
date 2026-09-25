@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { IChatMonitoring } from '../../monitoring';
 import { AssistantChat } from './assistantChat';
@@ -100,6 +100,53 @@ const createChatResponse = (chunks: unknown[]): Response => {
         }),
         body,
     } as unknown as Response;
+};
+
+// A response whose stream arrives in stages, so the widget can be observed mid-reply — a tool
+// still running — before `advance()` delivers the rest. The first stage is available at once.
+const createStagedChatResponse = (stages: unknown[][]) => {
+    const encoder = new TextEncoder();
+    const pending = [...stages];
+    let controller: ReadableStreamDefaultController<Uint8Array> | undefined;
+    const body = new ReadableStream<Uint8Array>({
+        start: (streamController) => {
+            controller = streamController;
+        },
+    });
+    const advance = () => {
+        const stage = pending.shift();
+
+        if (stage == null || controller == null) {
+            return;
+        }
+
+        controller.enqueue(
+            encoder.encode(
+                stage
+                    .map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`)
+                    .join(''),
+            ),
+        );
+
+        if (pending.length === 0) {
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            controller.close();
+        }
+    };
+    advance();
+
+    const response = {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        headers: createHeaders({
+            'content-type': 'text/event-stream',
+            'x-vercel-ai-ui-message-stream': 'v1',
+        }),
+        body,
+    } as unknown as Response;
+
+    return { response, advance };
 };
 
 // A distinctive marker in the user's message: no monitoring call may ever carry it.
@@ -233,6 +280,118 @@ describe('<AssistantChat /> integration', () => {
         ).toEqual([expect.objectContaining({ identifier: 'SUP-123' })]);
     });
 
+    it('shows exactly one spinner from the send until the answer streams, through every lookup', async () => {
+        // The shape of a real documentation answer: a search, its result, a page read (a second
+        // step), its result, a pause while the model reads, then the answer.
+        const toolChunks = (
+            toolCallId: string,
+            toolName: string,
+            input: Record<string, string>,
+        ) => [
+            { type: 'start-step' },
+            { type: 'tool-input-start', toolCallId, toolName },
+            { type: 'tool-input-available', toolCallId, toolName, input },
+        ];
+        const toolResult = (toolCallId: string, output: unknown) => [
+            { type: 'tool-output-available', toolCallId, output },
+            { type: 'finish-step' },
+        ];
+        const { response, advance } = createStagedChatResponse([
+            [{ type: 'start' }],
+            toolChunks('tc-docs-1', 'searchDocs', {
+                query: 'linked account control',
+            }),
+            toolResult('tc-docs-1', { results: [] }),
+            toolChunks('tc-docs-2', 'readDoc', {
+                path: 'accounts/linked-account.md',
+            }),
+            toolResult('tc-docs-2', { found: false }),
+            [{ type: 'start-step' }],
+            [
+                { type: 'text-start', id: 'txt-1' },
+                {
+                    type: 'text-delta',
+                    id: 'txt-1',
+                    delta: 'Linking is display only.',
+                },
+                { type: 'text-end', id: 'txt-1' },
+                { type: 'finish-step' },
+                { type: 'finish' },
+            ],
+        ]);
+        chatResponses = [response];
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(composer, 'Does linking give control?{Enter}');
+
+        // A stage lands as one chunk whose events are applied one by one, so the screen is
+        // checked once the stage has settled — a macrotask later, all microtasks drained. The
+        // spinners are counted whatever their label: gov-ui-kit's Spinner is the progressbar.
+        const settle = () =>
+            act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+        const spinnerLabels = () =>
+            screen
+                .queryAllByRole('status')
+                .map((element) => element.getAttribute('aria-label'));
+        const spinnerCount = () =>
+            document.querySelectorAll('[role="progressbar"]').length;
+
+        // Nothing has arrived: the typing spinner, and only it.
+        await screen.findByRole('status', { name: 'Assistant is typing' });
+        await settle();
+        expect(spinnerCount()).toEqual(1);
+
+        // The search runs with no text around it: the same single spinner, relabelled. Before
+        // the fix the empty-message spinner stayed next to the tool's own and made two.
+        advance();
+        await settle();
+        expect(spinnerLabels()).toEqual(['Looking that up']);
+        expect(spinnerCount()).toEqual(1);
+
+        // Its result is in, the page read starts and ends, the model reads: still one, never
+        // none.
+        for (let stage = 0; stage < 4; stage += 1) {
+            advance();
+            await settle();
+            expect(spinnerLabels()).toEqual(['Looking that up']);
+            expect(spinnerCount()).toEqual(1);
+        }
+        expect(
+            screen.queryByText('Linking is display only.'),
+        ).not.toBeInTheDocument();
+
+        // The answer takes over.
+        advance();
+        expect(
+            await screen.findByText('Linking is display only.'),
+        ).toBeInTheDocument();
+        expect(spinnerCount()).toEqual(0);
+    });
+
+    it('stops a message at the length limit and shows the count as it gets close', async () => {
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        // The service limit, applied by the textarea itself so an over-long message never
+        // leaves as a request that comes back as a failure.
+        expect(composer).toHaveAttribute('maxlength', '8000');
+        expect(screen.queryByText(/\/ 8,000$/)).not.toBeInTheDocument();
+
+        await userEvent.click(composer);
+        await userEvent.paste('x'.repeat(6500));
+        expect(screen.getByText('6,500 / 8,000')).toBeInTheDocument();
+
+        // A paste past the limit is clipped, and the count says so.
+        await userEvent.paste('y'.repeat(2000));
+        expect(composer).toHaveValue(`${'x'.repeat(6500)}${'y'.repeat(1500)}`);
+        expect(screen.getByText('8,000 / 8,000')).toBeInTheDocument();
+    });
+
     it('shows a retryable failure when creation fails and recovers on retry', async () => {
         // Retry regenerates the turn: the model re-drafts (a fresh approval gate) rather than
         // silently re-firing, so the sequence is draft → error → fresh draft → success.
@@ -275,6 +434,41 @@ describe('<AssistantChat /> integration', () => {
         for (const call of monitoringCalls) {
             expect(JSON.stringify(call)).not.toContain(userSecret);
         }
+    });
+
+    it('renders the links of a reply as links, labelled or bare, opening in a new tab, and no images', async () => {
+        const formUrl = 'https://www.aragon.org/get-assistance-form';
+        const protocolUrl =
+            'https://github.com/aragon/protocol-doc/blob/main/plugins/spp-plugin.md';
+        chatResponses = [
+            createChatResponse(
+                textChunks(
+                    `You can reach the team through [get in touch](${formUrl}); the protocol pages are at ${protocolUrl}\n\n![tracker](https://tracker.example/pixel.png)`,
+                ),
+            ),
+        ];
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(composer, 'How do I contact the team?{Enter}');
+
+        // A markdown link keeps its label; a bare URL is a link on its own (GFM autolink), so
+        // nothing the model writes has to be copied out by hand.
+        const labelled = await screen.findByRole('link', {
+            name: 'get in touch',
+        });
+        const bare = screen.getByRole('link', { name: protocolUrl });
+        expect(labelled).toHaveAttribute('href', formUrl);
+        expect(bare).toHaveAttribute('href', protocolUrl);
+        for (const link of [labelled, bare]) {
+            expect(link).toHaveAttribute('target', '_blank');
+            expect(link).toHaveAttribute('rel', 'noreferrer');
+        }
+        // An image in a reply would make the reader's browser call a host of the model's choosing.
+        expect(screen.queryByRole('img')).not.toBeInTheDocument();
+        expect(screen.queryByAltText('tracker')).not.toBeInTheDocument();
     });
 
     it('keeps a sent attachment visible in the transcript without sending its bytes to the chat', async () => {

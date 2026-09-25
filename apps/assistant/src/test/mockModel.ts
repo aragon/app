@@ -48,20 +48,38 @@ const toStreamResult = (
     }),
 });
 
-// Mock chat agent: streams `streamedText`, optionally proposing a `toolCall` (the route gates it
-// behind approval), or throws `streamError` to simulate an upstream failure.
+// Mock chat agent: streams `streamedText`, optionally proposing a `toolCall` (the route gates a
+// ticket draft behind approval and runs the other tools inline), or throws `streamError` to
+// simulate an upstream failure. With `followUpText` the second model call — the step after an
+// inline tool result — streams that text instead of proposing the tool call again.
 export const createMockChatModel = (params: {
     streamedText?: string;
     streamError?: Error;
     toolCall?: { toolName: string; input: unknown };
+    followUpText?: string;
 }) => {
-    const { streamedText = 'Mock reply.', streamError, toolCall } = params;
+    const {
+        streamedText = 'Mock reply.',
+        streamError,
+        toolCall,
+        followUpText,
+    } = params;
+
+    if (streamError) {
+        return new MockLanguageModelV4({
+            doStream: () => {
+                throw streamError;
+            },
+        });
+    }
 
     return new MockLanguageModelV4({
-        doStream: streamError
-            ? () => {
-                  throw streamError;
-              }
-            : toStreamResult(streamedText, toolCall),
+        doStream:
+            followUpText == null
+                ? toStreamResult(streamedText, toolCall)
+                : [
+                      toStreamResult(streamedText, toolCall),
+                      toStreamResult(followUpText),
+                  ],
     });
 };

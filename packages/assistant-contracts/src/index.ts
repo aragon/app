@@ -10,6 +10,8 @@ export {
 } from './chat';
 export {
     docSearchResultSchema,
+    docsToolNameSet,
+    docsToolNames,
     type IDocSearchResult,
 } from './docs';
 export {

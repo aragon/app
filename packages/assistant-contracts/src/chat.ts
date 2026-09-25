@@ -1,12 +1,20 @@
 import { z } from 'zod';
 import { assistantLimits } from './limits';
 
+// Every context value is one bounded line: the context is client-supplied and is rendered into
+// the ticket as data, so it never carries enough room, or a line break, to pose as anything else.
+const contextString = (max: number) =>
+    z
+        .string()
+        .max(max)
+        .regex(/^[^\r\n]*$/);
+
 // A recent on-chain action captured for debugging; surfaced only in the Linear ticket, never shown
 // back to the user in chat.
 export const debugTransactionSchema = z.object({
-    hash: z.string().optional(),
-    status: z.string(),
-    type: z.string().optional(),
+    hash: contextString(128).optional(),
+    status: contextString(64),
+    type: contextString(64).optional(),
 });
 
 export type IDebugTransaction = z.infer<typeof debugTransactionSchema>;
@@ -15,12 +23,12 @@ export type IDebugTransaction = z.infer<typeof debugTransactionSchema>;
 // (as of the p4 polish) never shown to the user — it is attached automatically to the ticket for the
 // support team to debug with. walletAddress doubles as the Sentry `user.id` for replay lookup.
 export const appContextSchema = z.object({
-    daoAddress: z.string().optional(),
-    network: z.string().optional(),
-    route: z.string(),
-    appVersion: z.string(),
-    walletAddress: z.string().optional(),
-    chainId: z.number().optional(),
+    daoAddress: contextString(128).optional(),
+    network: contextString(64).optional(),
+    route: contextString(512),
+    appVersion: contextString(40),
+    walletAddress: contextString(64).optional(),
+    chainId: z.number().int().nonnegative().optional(),
     // Capped client-side; only the most recent few actions are useful for debugging.
     recentTransactions: z.array(debugTransactionSchema).max(10).optional(),
 });

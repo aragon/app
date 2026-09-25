@@ -37,6 +37,10 @@ export const chatCopy = {
     },
     thread: {
         typing: 'Assistant is typing',
+        // Spinner label while the assistant looks a question up inside a reply. Deliberately
+        // silent about the documentation behind it: the knowledge base is not something the
+        // assistant talks about.
+        lookingUp: 'Looking that up',
         copyMessage: 'Copy',
         // Prefix of the time divider of messages sent today, e.g. "Today 14:26".
         today: 'Today',
@@ -51,6 +55,8 @@ export const chatCopy = {
         send: 'Send message',
         stop: 'Stop generating',
         addAttachment: 'Add attachment',
+        // Shown once a message approaches the length limit, e.g. "7,650 / 8,000".
+        characterCount: (used: string, limit: string) => `${used} / ${limit}`,
         attachmentsShared: 'Attachments are shared with the support team.',
         escalationPrompt: 'Prefer a human?',
         escalationLink: 'Email support',
