@@ -13,4 +13,8 @@ export interface IAllowedActionDecoded {
      * Parameters of the function.
      */
     inputs?: ISmartContractAbiFunctionParameter[];
+    /**
+     * State mutability of the function, e.g. `payable`.
+     */
+    stateMutability?: string;
 }
