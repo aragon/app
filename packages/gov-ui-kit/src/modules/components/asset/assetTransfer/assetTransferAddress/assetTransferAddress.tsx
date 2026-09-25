@@ -1,0 +1,94 @@
+import classNames from 'classnames';
+import { useId } from 'react';
+import { AddressOutput, addressUtils, Icon, IconType, LinkBase } from '../../../../../core';
+import type { ICompositeAddress } from '../../../../types';
+import { MemberAvatar } from '../../../member';
+
+export type TxRole = 'sender' | 'recipient';
+
+export interface IAssetTransferAddressProps {
+    /**
+     * Role of the transaction participant.
+     */
+    txRole: TxRole;
+    /**
+     * Participant of the transfer to display the details for.
+     */
+    participant: ICompositeAddress;
+    /**
+     * URL of the block explorer.
+     */
+    addressUrl?: string;
+}
+
+export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props) => {
+    const { participant, addressUrl, txRole } = props;
+
+    const resolvedUserHandle =
+        participant.name != null && participant.name.length > 0
+            ? participant.name
+            : addressUtils.truncateAddress(participant.address);
+    const contentId = useId();
+
+    return (
+        <div
+            className={classNames(
+                'group relative h-20 border-neutral-100', // default
+                'hover:border-neutral-200 hover:shadow-neutral-md', // hover
+                'active:border-neutral-300 active:shadow-none', // active
+                'md:w-1/2', // responsive
+                {
+                    'rounded-t-xl md:rounded-r-none md:rounded-l-xl': txRole === 'sender', // sender base
+                    'rounded-b-xl md:rounded-r-xl md:rounded-l-none': txRole === 'recipient', // recipient base
+                },
+                {
+                    'border-x border-t md:border-y md:border-r-0 md:border-l': txRole === 'sender', // sender borders
+                    'border-x border-b md:border-y md:border-r md:border-l-0': txRole === 'recipient', // recipient borders
+                },
+                {
+                    'focus-visible:rounded-t-xl md:focus-visible:rounded-r-none md:focus-visible:rounded-l-xl':
+                        txRole === 'sender', // sender focus
+                    'focus-visible:rounded-b-xl md:focus-visible:rounded-r-xl md:focus-visible:rounded-l-none':
+                        txRole === 'recipient', // recipient focus
+                },
+            )}
+        >
+            <LinkBase
+                aria-labelledby={contentId}
+                className="absolute inset-0 z-0 cursor-pointer"
+                href={addressUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+            />
+            <div
+                className="pointer-events-none relative z-10 flex h-full w-full items-center space-x-4 px-4 md:p-6 [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
+                id={contentId}
+            >
+                <MemberAvatar
+                    address={participant.address}
+                    avatarSrc={participant.avatarSrc}
+                    className="group-hover:shadow-neutral-md group-active:shadow-none"
+                    ensName={participant.name}
+                    responsiveSize={{ md: 'md' }}
+                />
+                <div className="flex min-w-0 flex-col">
+                    <span className="font-normal text-neutral-500 text-xs leading-tight md:text-sm">
+                        {txRole === 'sender' ? 'From' : 'To'}
+                    </span>
+                    <div className="flex items-center space-x-1">
+                        <AddressOutput
+                            address={participant.address}
+                            className="truncate font-normal text-neutral-800 text-sm leading-tight md:text-base"
+                            label={resolvedUserHandle}
+                        />
+                        <Icon
+                            className="float-right text-neutral-300 group-hover:text-primary-300 group-active:text-primary-400"
+                            icon={IconType.LINK_EXTERNAL}
+                            size="sm"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};

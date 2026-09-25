@@ -39,28 +39,24 @@ class NavigationWorkspaceUtils {
             label: 'app.application.navigationWorkspace.link.proposals',
             link: this.getWorkspaceUrl(workspace, 'proposals'),
             icon: IconType.APP_PROPOSALS,
-            lgHidden: context === 'dialog',
             order: 200,
         },
         {
             label: 'app.application.navigationWorkspace.link.members',
             link: this.getWorkspaceUrl(workspace, 'members'),
             icon: IconType.APP_MEMBERS,
-            lgHidden: context === 'dialog',
             order: 300,
         },
         {
             label: 'app.application.navigationWorkspace.link.assets',
             link: this.getWorkspaceUrl(workspace, 'assets'),
             icon: IconType.APP_ASSETS,
-            lgHidden: context === 'dialog',
             order: 400,
         },
         {
             label: 'app.application.navigationWorkspace.link.transactions',
             link: this.getWorkspaceUrl(workspace, 'transactions'),
             icon: IconType.APP_TRANSACTIONS,
-            lgHidden: context === 'dialog',
             order: 500,
         },
     ];

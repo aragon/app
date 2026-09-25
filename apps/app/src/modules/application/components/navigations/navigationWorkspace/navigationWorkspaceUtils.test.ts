@@ -72,7 +72,7 @@ describe('navigationWorkspace utils', () => {
             expect(dialogLink?.hidden).toBeFalsy();
         });
 
-        it('hides the page links on large screens when rendered in the navigation dialog', () => {
+        it('lists every page link in both the navigation bar and the navigation dialog', () => {
             const isPageLink = (link: { link: string }) =>
                 link.link !== '/workspace/demo/overview';
 
@@ -83,8 +83,8 @@ describe('navigationWorkspace utils', () => {
                 .buildLinks(buildWorkspace(), 'dialog')
                 .filter(isPageLink);
 
-            expect(pageLinks.every((link) => link.lgHidden)).toBeFalsy();
-            expect(dialogLinks.every((link) => link.lgHidden)).toBeTruthy();
+            expect(pageLinks.some((link) => link.hidden)).toBeFalsy();
+            expect(dialogLinks.some((link) => link.hidden)).toBeFalsy();
         });
     });
 });
