@@ -78,9 +78,17 @@ export const useProposalActionsField = () => {
     // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
     const stableWatchActions =
         watchActions?.length === actions.length ? watchActions : undefined;
+    // Match each field to its own watched values by `fieldId`, not by index. Right after a
+    // reorder the watch lags one render, so pairing by index hands an action another action's
+    // values, and an effect can write them into the wrong slot.
+    const watchedActionsByFieldId = new Map(
+        watchActions?.map((action) => [action.fieldId, action]),
+    );
     const actionsMerged = actions.map((field, index) => ({
         ...field,
-        ...stableWatchActions?.[index],
+        ...(field.fieldId != null
+            ? watchedActionsByFieldId.get(field.fieldId)
+            : stableWatchActions?.[index]),
         // `fieldId` is our own stable id (assigned in handleAddAction) and is the React key for the
         // item. It lives in the form values, so it survives RHF regenerating the field array `id`
         // when the decoder re-encodes calldata on each keystroke. Every action enters the array via

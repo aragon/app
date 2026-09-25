@@ -1,0 +1,159 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
+import * as Hooks from '../../hooks';
+import { Dialog } from '../dialogs';
+import { IconType } from '../icon';
+import { Clipboard, type IClipboardProps } from './clipboard';
+
+describe('<Clipboard /> component', () => {
+    const useCopySpy = jest.spyOn(Hooks, 'useCopy');
+    const handleCopySpy = jest.fn();
+
+    beforeEach(() => {
+        useCopySpy.mockReturnValue({
+            isCopied: false,
+            handleCopy: handleCopySpy,
+        });
+    });
+
+    afterEach(() => {
+        useCopySpy.mockReset();
+        handleCopySpy.mockReset();
+    });
+
+    const createTestComponent = (props?: Partial<IClipboardProps>) => {
+        const completeProps: IClipboardProps = { copyValue: 'Text to copy', ...props };
+
+        return <Clipboard {...completeProps} />;
+    };
+
+    it('renders button variant', () => {
+        const icon = IconType.COPY;
+        render(createTestComponent());
+        expect(screen.getByRole('button')).toBeInTheDocument();
+        expect(screen.getByTestId(icon)).toBeInTheDocument();
+    });
+
+    it('renders avatar variant', () => {
+        const icon = IconType.COPY;
+        render(createTestComponent({ variant: 'avatar' }));
+        expect(screen.getByRole('button')).toBeInTheDocument();
+        expect(screen.getByTestId(icon)).toBeInTheDocument();
+    });
+
+    it('renders avatar-neutral variant', () => {
+        const icon = IconType.COPY;
+        render(createTestComponent({ variant: 'avatar-neutral' }));
+        expect(screen.getByRole('button')).toBeInTheDocument(); // Tooltip wrapper button
+        expect(screen.getByTestId(icon)).toBeInTheDocument();
+    });
+
+    it('correctly handles the copy action', async () => {
+        const textToCopy = 'Text to copy';
+        render(createTestComponent({ copyValue: textToCopy }));
+
+        await userEvent.click(screen.getByRole('button'));
+
+        expect(handleCopySpy).toHaveBeenCalledWith(textToCopy);
+    });
+
+    it('does not trigger form submission when clicked', async () => {
+        const handleSubmit = jest.fn();
+
+        const variants: IClipboardProps['variant'][] = ['avatar', 'avatar-neutral', 'button'];
+
+        for (const variant of variants) {
+            handleSubmit.mockReset();
+            const { unmount } = render(<form onSubmit={handleSubmit}>{createTestComponent({ variant })}</form>);
+
+            await userEvent.click(screen.getByRole('button'));
+
+            expect(handleSubmit).not.toHaveBeenCalled();
+            unmount();
+        }
+    });
+
+    it('does not trigger parent click handler when clicked', async () => {
+        const handleParentClick = jest.fn();
+
+        const variants: IClipboardProps['variant'][] = ['avatar', 'avatar-neutral', 'button'];
+
+        for (const variant of variants) {
+            handleParentClick.mockReset();
+            const { unmount } = render(
+                // biome-ignore lint/a11y/useKeyWithClickEvents lint/a11y/useSemanticElements: test-only wrapper simulating a clickable parent
+                <div onClick={handleParentClick} role="button" tabIndex={0}>
+                    {createTestComponent({ variant })}
+                </div>,
+            );
+
+            await userEvent.click(screen.getAllByRole('button').at(-1)!);
+
+            expect(handleParentClick).not.toHaveBeenCalled();
+            unmount();
+        }
+    });
+
+    it('does not trigger anchor navigation when clicked inside a link', async () => {
+        const handleAnchorClick = jest.fn();
+
+        const variants: IClipboardProps['variant'][] = ['avatar', 'avatar-neutral', 'button'];
+
+        for (const variant of variants) {
+            handleAnchorClick.mockReset();
+            const { unmount } = render(
+                <a
+                    href="https://example.com"
+                    onClick={(e) => {
+                        handleAnchorClick(e.defaultPrevented);
+                    }}
+                >
+                    {createTestComponent({ variant })}
+                </a>,
+            );
+
+            await userEvent.click(screen.getAllByRole('button').at(-1)!);
+
+            // Either the click never bubbled to the anchor (stopPropagation), or it did but
+            // default was prevented. Both outcomes prevent navigation.
+            if (handleAnchorClick.mock.calls.length > 0) {
+                expect(handleAnchorClick).toHaveBeenCalledWith(true);
+            }
+            unmount();
+        }
+    });
+
+    it('optionally renders children besides the clipboard', () => {
+        const childText = 'Child text';
+        const icon = IconType.COPY;
+        render(createTestComponent({ copyValue: 'Text to copy', children: <p>{childText}</p> }));
+
+        expect(screen.getByText(childText)).toBeInTheDocument();
+        expect(screen.getByTestId(icon)).toBeInTheDocument();
+    });
+
+    it('keeps the copy tooltip closed when a dialog autofocuses the control', async () => {
+        const TestDialog = () => {
+            const [open, setOpen] = useState(false);
+
+            return (
+                <>
+                    <button onClick={() => setOpen(true)} type="button">
+                        Open
+                    </button>
+                    <Dialog.Root onOpenChange={setOpen} open={open}>
+                        <Dialog.Header title="Clipboard details" />
+                        <Dialog.Content>{createTestComponent()}</Dialog.Content>
+                    </Dialog.Root>
+                </>
+            );
+        };
+
+        render(<TestDialog />);
+        await userEvent.click(screen.getByRole('button', { name: 'Open' }));
+
+        expect(screen.getByRole('button', { name: 'Copy' })).toHaveFocus();
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+});

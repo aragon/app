@@ -1,0 +1,128 @@
+# The "Gov UI Kit Release Start" workflow prepares the kit's release pull request ON DEMAND
+# (merging to main never starts a release by itself). Dispatching it applies `changeset version`
+# scoped to the gov-ui-kit release scope, pushes the bump to a timestamped release/gov-ui-kit/*
+# branch and opens a "Release @aragon/gov-ui-kit@x.y.z" PR. Merging that PR is the release act —
+# the finalize workflow (gov-ui-kit-release-pr-finalize.yml) tags the merge commit and creates the
+# GitHub Release, and publishing that release triggers the npm publish (gov-ui-kit-publish.yml).
+#
+# Deliberately dispatch-only, with no schedule: unlike the app, a component library releases when
+# someone decides it should, not on a weekly train.
+
+name: Gov UI Kit Release Start
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: 'Commit SHA to start release from (default: main HEAD)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          fetch-depth: 0
+          ref: ${{ inputs.base_commit || 'main' }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
+        with:
+          gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
+          passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      # This flow owns the "gov-ui-kit" release scope (see .github/release-scopes.yml). The kit
+      # needs a scope and a flow of its own even though only the app bundles it: publishing is
+      # triggered by a GitHub Release on a kit tag, and the app flow only ever tags @aragon/app.
+      - name: Update version and changelog
+        uses: ./.github/actions/changeset-version
+        with:
+          scope: gov-ui-kit
+          prettier_changelog: "true"
+          github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      # Versioning runs before the release branch exists so a dispatch without pending
+      # changesets exits here without leaving an empty branch or PR behind.
+      - name: Detect version changes
+        id: changes
+        run: echo "dirty=$([ -n "$(git status --porcelain)" ] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - name: Get package version
+        if: steps.changes.outputs.dirty == 'true'
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: packages/gov-ui-kit
+
+      # Per-package tag in the changesets-native format: @aragon/gov-ui-kit@2.12.0. Note this
+      # replaces the standalone repo's `v2.11.4` scheme — the old tags stay in the archived repo.
+      - name: Compute release tag
+        if: steps.changes.outputs.dirty == 'true'
+        id: release-tag
+        run: echo "name=@aragon/gov-ui-kit@${{ steps.package-version.outputs.current-version }}" >> $GITHUB_OUTPUT
+
+      - name: Generate version summary
+        if: steps.changes.outputs.dirty == 'true'
+        id: version-summary
+        uses: ./.github/actions/generate-version-summary
+        with:
+          scope: gov-ui-kit
+
+      - name: Generate release branch name
+        if: steps.changes.outputs.dirty == 'true'
+        id: branch-name
+        run: echo "name=release/gov-ui-kit/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Commit and push release branch
+        if: steps.changes.outputs.dirty == 'true'
+        run: |
+          git checkout -b ${{ steps.branch-name.outputs.name }}
+          git add --all
+          git commit -m "Release ${{ steps.release-tag.outputs.name }}"
+          git push origin ${{ steps.branch-name.outputs.name }}
+
+      - name: Ensure Pull Request
+        if: steps.changes.outputs.dirty == 'true'
+        uses: ./.github/actions/gh-ensure-pr
+        with:
+          base: main
+          head: ${{ steps.branch-name.outputs.name }}
+          title: Release ${{ steps.release-tag.outputs.name }}
+          body: |
+            Merging this PR releases `${{ steps.release-tag.outputs.name }}`: the merge commit is
+            tagged, a GitHub Release is created, and publishing that release publishes the package
+            to npm. The app already builds against the workspace copy, so app deploys do not wait
+            on this — the publish exists for external consumers.
+
+            The npm publish runs behind the `npm-publish` environment and needs an approval.
+
+            ${{ steps.version-summary.outputs.summary }}
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
