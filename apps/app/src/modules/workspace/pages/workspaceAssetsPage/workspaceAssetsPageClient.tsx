@@ -2,12 +2,11 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
+import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
-import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 import { useWorkspaceAssetListData } from '../../hooks/useWorkspaceAssetListData';
 
 export interface IWorkspaceAssetsPageClientProps {
@@ -42,25 +41,9 @@ export const WorkspaceAssetsPageClient: React.FC<
     );
 
     const accounts = workspace?.accounts ?? [];
-    const accountRefs = accounts.map(({ network, address }) => ({
-        network,
-        address,
-    }));
-
-    // Resolved once to label the tabs, shared with the overview page's cache.
-    const { data: accountInfos } = useWorkspaceAccounts(
-        { body: { accounts: accountRefs } },
-        { enabled: accounts.length > 0 },
-    );
 
     const { activeOption, setActiveOption, options } =
-        useWorkspaceAccountFilter({
-            accounts,
-            accountInfos,
-            allAccountsLabel: t(
-                'app.workspace.workspaceAssetsPage.filter.allAccounts',
-            ),
-        });
+        useWorkspaceAccountSelectorContext();
 
     // Accounts the selected tab covers: the one it names, or all of them on the aggregated tab.
     const accountsToDisplay =
