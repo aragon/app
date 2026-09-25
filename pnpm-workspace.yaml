@@ -8,7 +8,6 @@ packages:
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
   "@ai-sdk/react": ^4.0.105
-  "@aragon/gov-ui-kit": 2.11.4
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
   "@assistant-ui/react": 0.15.20
@@ -59,19 +58,26 @@ catalog:
   tsx: ^4.23.13
   turbo: ^2.10.13
   typescript: ^5.9.3
-  ultracite: ^7.12.0
+  # ultracite: pinned EXACT — minor releases add lint rules, which breaks CI for every workspace
+  # at once (7.8.3 -> 7.10.6 surfaced ~1400 findings in gov-ui-kit alone). Bump by hand together
+  # with the resulting fixes, and keep it in step with @biomejs/biome.
+  ultracite: 7.12.0
   # vercel: pinned EXACT — releases after 58.4.4 ship without SLSA provenance and trip the
   # trustPolicy; move by hand once provenance returns (a range would resolve to an untrusted one).
   vercel: 58.4.4
   viem: ^2.56.5
   wagmi: ^3.7.7
   yaml: ^2.9.1
+  # zod: packages/gov-ui-kit deliberately does NOT take this range — it pins 3.25.76 outright.
+  # The kit never imports zod; the pin only fixes the optional-peer key that viem/wagmi resolve
+  # under, so the kit and apps/app share one instance (dedupePeerDependents). Drop it and the kit
+  # flips to the zod@4 flavour of viem/wagmi — the app's WagmiProvider goes invisible to the kit's
+  # hooks (WagmiProviderNotFoundError). Bumping this range must keep the kit's pin in step.
   zod: ^4.6.5
 
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude:
   # https://pnpm.io/settings#minimumreleaseageexclude
-  - "@aragon/gov-ui-kit"
   - "@aragon/aragon-domain"
 strictDepBuilds: true
 blockExoticSubdeps: true
@@ -135,8 +141,13 @@ overrides:
   smol-toml@<1.7.1: '>=1.7.1'
   path-to-regexp@>=4.0.0 <6.3.0: '>=6.3.0'
   path-to-regexp@>=8.0.0 <8.4.0: '>=8.4.0'
-  # gov-ui-kit pins sanitize-html EXACT 2.17.5 (its DocumentParser sanitizes proposal bodies); the
-  # XSS fixes (GHSA-jxwj-j7wr-gfrw, GHSA-g8qq-57p8-ggw5) are in 2.17.7, whose htmlparser2@12 chain is
-  # ESM-only and therefore listed in the jest transformIgnorePatterns. Drop once the kit unpins.
+  # packages/gov-ui-kit pins sanitize-html EXACT 2.17.5 (its DocumentParser sanitizes proposal
+  # bodies); the XSS fixes (GHSA-jxwj-j7wr-gfrw, GHSA-g8qq-57p8-ggw5) are in 2.17.7, whose
+  # htmlparser2@12 chain is ESM-only and therefore listed in the jest transformIgnorePatterns.
+  # Drop once the kit unpins.
   sanitize-html@<2.17.7: ^2.17.7
   js-yaml@>=4.0.0 <4.3.2: ^4.3.2
+  # Carried over from the gov-ui-kit repo at the monorepo merge; they now apply repo-wide.
+  nanoid@<3.3.18: ^3.3.18
+  'linkify-it@>=5.0.0 <5.0.2': '>=5.0.2'
+  serialize-javascript@<7.0.3: ^7.0.3

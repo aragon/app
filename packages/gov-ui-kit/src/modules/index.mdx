@@ -1,0 +1,46 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Modules/Documentation" />
+
+# Modules
+
+The `Modules` package of the Aragon Governance UI Kit library includes all the components and utilties that are web3
+specific and / or handle DAO business logic.
+
+Check the documentation and usage of the modules components and utilities under the `/components` and `/utilities`
+sub-folders.
+
+## Usage
+
+In order to use the GovKit Modules components, make sure to:
+
+- Install the required packages:
+
+    ```shell
+    pnpm add viem wagmi @tanstack/react-query
+    ```
+
+    or
+
+    ```shell
+    yarn add viem wagmi @tanstack/react-query
+    ```
+
+    or
+
+    ```shell
+    npm install viem wagmi @tanstack/react-query
+    ```
+
+- Wrap your application using the `<GukModulesProvider />` React Context Provider:
+
+    ```tsx
+    import { GukModulesProvider } from '@aragon/gov-ui-kit';
+
+    function App() {
+        return <GukModulesProvider>{/** ... */}</GukModulesProvider>;
+    }
+    ```
+
+    Refer to the [GukModulesProvider doc](/docs/modules-components-gukmodulesprovider--docs) for further details about
+    the provider.
