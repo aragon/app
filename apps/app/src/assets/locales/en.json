@@ -4306,6 +4306,12 @@
           "safe": "Safe"
         }
       },
+      "workspaceAccountSelectorProvider": {
+        "error": {
+          "description": "Something went wrong while loading the workspace. Please try again later.",
+          "title": "Workspace failed to load"
+        }
+      },
       "workspaceAssetList": {
         "emptyState": {
           "description": "The accounts of this workspace hold no assets yet.",

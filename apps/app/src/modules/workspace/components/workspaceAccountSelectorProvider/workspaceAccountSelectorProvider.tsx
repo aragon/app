@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@aragon/gov-ui-kit';
 import { useSearchParams } from 'next/navigation';
 import {
     createContext,
@@ -9,6 +10,7 @@ import {
     useMemo,
     useState,
 } from 'react';
+import { Page } from '@/shared/components/page';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -97,9 +99,11 @@ export const WorkspaceAccountSelectorProvider: React.FC<
     // Last selection, kept while navigating to tabs whose links carry no param.
     const [savedOptionId, setSavedOptionId] = useState(urlOptionId);
 
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
+    const {
+        data: workspace,
+        isPending: isWorkspacePending,
+        error: workspaceError,
+    } = useWorkspace({ urlParams: { id: workspaceId } }, { retry: false });
 
     const accounts = workspace?.accounts ?? [];
     const accountRefs = accounts.map(({ network, address }) => ({
@@ -112,7 +116,7 @@ export const WorkspaceAccountSelectorProvider: React.FC<
     );
 
     const options = useMemo<IWorkspaceAccountFilterOption[]>(() => {
-        const accountOptions = (accounts ?? [])
+        const accountOptions = accounts
             .filter((account) => account.type === WorkspaceAccountType.DAO)
             .map((account) => {
                 const accountInfo = workspaceUtils.findAccountInfo(
@@ -166,6 +170,28 @@ export const WorkspaceAccountSelectorProvider: React.FC<
             setAccountUrlParam(savedOptionId);
         }
     }, [urlOptionId, savedOptionId]);
+
+    if (isWorkspacePending) {
+        return (
+            <div className="flex grow items-center justify-center py-20">
+                <Spinner size="lg" variant="neutral" />
+            </div>
+        );
+    }
+
+    // TODO: remove loading/error logic from individual pages + maybe this goes to a separate wrapper?
+    if (workspaceError != null) {
+        return (
+            <Page.Error
+                descriptionKey="app.workspace.workspaceAccountSelectorProvider.error.description"
+                titleKey="app.workspace.workspaceAccountSelectorProvider.error.title"
+            />
+        );
+    }
+
+    if (!workspace) {
+        throw new Error('No workspace - redirect');
+    }
 
     return (
         <WorkspaceAccountSelectorContext

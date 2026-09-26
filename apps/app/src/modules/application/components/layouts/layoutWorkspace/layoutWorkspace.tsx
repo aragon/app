@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { WorkspaceAccountSelectorProvider } from '@/modules/workspace/components/workspaceAccountSelectorProvider/workspaceAccountSelectorProvider';
+import { WorkspaceAccountSelectorProvider } from '@/modules/workspace/components/workspaceAccountSelectorProvider';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationWorkspace } from '../../navigations/navigationWorkspace';
