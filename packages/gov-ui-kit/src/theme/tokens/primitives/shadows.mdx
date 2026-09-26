@@ -1,0 +1,92 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import classNames from 'classnames';
+
+<Meta title="Theme/Tokens/Primitive/Shadows" />
+
+export const shadows = {
+    neutral: [
+        'shadow-neutral-sm',
+        'shadow-neutral',
+        'shadow-neutral-md',
+        'shadow-neutral-lg',
+        'shadow-neutral-xl',
+        'shadow-neutral-2xl',
+    ],
+    primary: [
+        'shadow-primary-sm',
+        'shadow-primary',
+        'shadow-primary-md',
+        'shadow-primary-lg',
+        'shadow-primary-xl',
+        'shadow-primary-2xl',
+    ],
+    success: [
+        'shadow-success-sm',
+        'shadow-success',
+        'shadow-success-md',
+        'shadow-success-lg',
+        'shadow-success-xl',
+        'shadow-success-2xl',
+    ],
+    warning: [
+        'shadow-warning-sm',
+        'shadow-warning',
+        'shadow-warning-md',
+        'shadow-warning-lg',
+        'shadow-warning-xl',
+        'shadow-warning-2xl',
+    ],
+    critical: [
+        'shadow-critical-sm',
+        'shadow-critical',
+        'shadow-critical-md',
+        'shadow-critical-lg',
+        'shadow-critical-xl',
+        'shadow-critical-2xl',
+    ],
+    info: ['shadow-info-sm', 'shadow-info', 'shadow-info-md', 'shadow-info-lg', 'shadow-info-xl', 'shadow-info-2xl'],
+};
+
+export const DisplayComponent = ({ shadow, style }) => (
+    <div
+        style={style}
+        className={`flex h-28 flex-1 items-center justify-center rounded-xl p-2 text-center text-sm ${shadow}`}
+    >
+        {shadow}
+    </div>
+);
+
+# Shadows
+
+<div className="flex flex-col border bg-neutral-0 text-neutral-800">
+    {Object.keys(shadows).map((variant) => {
+        let backgroundColor = `var(--color-${variant}-100)`;
+        let color = `var(--color-${variant}-800)`;
+
+        if (variant === 'primary') {
+            backgroundColor = 'var(--color-primary-400)';
+            color = 'var(--color-primary-50)';
+        } else if (variant === 'neutral') {
+            backgroundColor = `var(--color-neutral-0)`;
+        }
+
+        return (
+            <div key={variant} className={`px-5 py-10 pt-5 ${variant === 'neutral' ? 'bg-neutral-50' : 'bg-neutral-0'}`}>
+                <div>
+                    <p className="text-5xl/tight font-semibold capitalize">{variant}</p>
+                    <p>
+                        <span className="text-lg">Based on</span>
+                        <span className="text-lg font-semibold">{` color-${variant}-600`}</span>
+                    </p>
+                    <div className="flex gap-x-6">
+                        <DisplayComponent style={{ backgroundColor: `var(--color-${variant}-600)` }} />
+                        {shadows[variant].map((shadow) => (
+                            <DisplayComponent key={shadow} shadow={shadow} style={{ backgroundColor, color }} />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    })}
+
+</div>

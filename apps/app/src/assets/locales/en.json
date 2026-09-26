@@ -19,6 +19,50 @@
         "executeActionDetails": {
           "actionsLabel": "Actions",
           "actionsHelpText": "The actions that will be executed."
+        },
+        "permissionActionCreate": {
+          "changePermission": "Change permission",
+          "conditionHelpText": "The condition contract that must pass for the permission to be granted.",
+          "customItem": "Add new permission",
+          "invalidPermissionName": "Not a valid permission. Use screaming snake case. e.g. ACTION_PERMISSION",
+          "permissionHelpText": "The permission the actor holds on the target contract. Choose a known permission, paste a 32-byte ID, or type a permission name to add one.",
+          "permissionLabel": "Permission",
+          "permissionPlaceholder": "Search a permission, paste an ID, or type a name to add one",
+          "selectItem": "Select permission",
+          "unknownPermission": "Not a known OSx permission. It will be stored exactly as entered.",
+          "whereHelpText": "The contract where the permission applies.",
+          "whoGrantHelpText": "The actor that receives the permission and can call the target contract.",
+          "whoRevokeHelpText": "The actor that loses the permission and can no longer call the target contract."
+        },
+        "permissionActionDetails": {
+          "unknownPermission": "Not a known OSx permission. Verify this ID against the target contract."
+        },
+        "permissionAddressInput": {
+          "conditionRequired": "Enter a nonzero condition contract address.",
+          "invalidAddress": "Enter a valid contract or wallet address."
+        },
+        "permissionChangesCreate": {
+          "addChange": "Permission change",
+          "changeLabel": "Change",
+          "emptyList": "No permission changes yet.",
+          "emptyRowsRequired": "Add at least one permission change.",
+          "removeChange": "Remove permission change"
+        },
+        "permissionChangesDetails": {
+          "unknownOperation": "Unknown operation {{operation}}",
+          "unknownOperationWarning": "This operation is not one the app recognises. Verify the action against the target contract before approving."
+        },
+        "permissionManager": {
+          "conditionTerm": "Condition",
+          "operation": {
+            "grant": "Grant",
+            "grantWithCondition": "Grant with condition",
+            "revoke": "Revoke"
+          },
+          "permissionTerm": "Permission",
+          "riskWarning": "Permission changes are high risk and should be evaluated with a knowledge of the contracts involved.",
+          "whereTerm": "Where",
+          "whoTerm": "Who"
         }
       },
       "crossChainController": {
