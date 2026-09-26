@@ -1,7 +1,36 @@
-# APP-729 delta rerun — prep pack
+# APP-1220 merge gate — bundle acceptance test
 
-Status: prep only. No arm has been run under a valid setup. The
-2026-09-25/26 attempt is **incomparable** (see `runs/20260925T133856Z/`).
+Status: prep. Supersedes the delta framing. The 2026-09-25/26 attempt is
+**void** (see `runs/20260925T133856Z/`).
+
+## 0. What this test is, and what gates the PRs
+
+`PROTOCOL-v2` names two separate questions. Only the first can gate a
+merge:
+
+1. **Acceptance** — is the delivered bundle usable, revision-identifiable
+   and complete enough for the workflow? Pass/fail. **This is the gate.**
+2. **Incremental value** — do the added context pieces beat the old
+   bundle? Comparative, needs many probes, and a null is the expected
+   result even when everything works. **This cannot gate anything.**
+
+The earlier prep specified question 2 (two arms, randomized order, delta
+scoring) and called it the gate. That was the framing error: it made a
+research instrument into a release blocker, and a null result would have
+read as failure when it means nothing of the sort.
+
+**Run one arm.** Push the rebuilt bundle to a fresh project, ask the
+frozen probe, and check whether an agent can actually reach and use the
+delivered context. No baseline arm, no randomization, no delta.
+
+Gate verdict:
+
+- **Pass** → APP-726/727/728/735/736/1208/1223 are clear to merge.
+- **Fail** → the named reachability/coverage defect is the blocker; fix
+  and re-run the single arm.
+
+Keep the comparative question for a separately scheduled study. It is
+not a merge prerequisite and must never be reported as one.
 
 ## 1. Why the last attempt does not count
 
@@ -39,88 +68,105 @@ push of the current payload is a prerequisite, not an optimisation.
 `remote-diff.mjs:43` ships `guidelines/**` + `README.md` as the `aux`
 partition, so a normal push delivers them once they exist locally.
 
-## 3. Artifacts — STALE, rebuild before use
+## 3. Artifacts — rebuilt and verified 2026-09-26
 
-**Identity gate. The recorded payload no longer matches the tree.**
-`ds-bundle/.payload-manifest.json` records `source.commit 8a3ea8c8…`
-with `source.dirty: []`, but the worktree is on `APP-1223-closure` with
-uncommitted edits to `.design-sync/overrides/emit.mjs`,
-`overrides/app-ownership.mjs`, `refresh.test.mjs`,
-`component-registry/registry.json` and `selection-guide.json`.
-`emit.mjs` generates the declarations, so the emitted bytes have moved.
-Pushing `57f59808…` would ship an artifact whose manifest lies about its
-own provenance — the exact failure `PROTOCOL-v2` names when it says to
-distinguish producer-asserted from locally verified identity.
-
-Before any push:
+The payload has been rebuilt from the committed tree. The worktree is
+clean; the artifact is reproducible from a ref.
 
 ```sh
-cd /Users/kd-m2air/.herdr/worktrees/app-next/app-1208
-git add -A && git commit -m "feat(APP-1223): <summary>"   # or stash
-node .design-sync/refresh.mjs                              # rebuild payload
-node --test .design-sync/refresh.test.mjs                  # must be 3/3
-sha256sum ds-bundle/.payload-manifest.json ds-bundle/.ds-build-meta.json
+cd /Users/kd-m2air/.herdr/worktrees/app-next/app-1208   # APP-1223-closure @ 2b512b90d
+GOVKIT_KIT_ROOT=/private/tmp/app-594-govkit-source/packages/gov-ui-kit \
+  node .design-sync/refresh.mjs
+# → Refresh candidate built: 575 upload files, 670 capture/local files
+node --test .design-sync/refresh.test.mjs   # 3/3 pass
 ```
 
-Record the **new** hashes and the new `source.commit` in the run dir and
-in `probe.json` before the first arm runs. Confirm `source.dirty` is `[]`
-and that it is true this time.
+`GOVKIT_KIT_ROOT` must be the kit checkout at the manifest's kit commit
+`e06fbb8d`. `/private/tmp/app-594-govkit-source` itself is an app-next
+worktree, not the kit — the kit lives at its `packages/gov-ui-kit`.
+`~/Local/gov-ui-kit` is `64b517f5…`, the mismatched snapshot the audit
+already flagged; do not use it.
 
-- Candidate payload: `/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle`
-  - superseded hashes (do not cite): manifest `57f598081d01a152e1309c8a0b7be15ee12d8e868be7fea48de5ab205fa49e77`, build-meta `c4a11a165c53cc50785eceec83fb7e054c061aa76c11bd1cfbb29242b4173ac3`
-  - `payload.upload.files`: 575 entries, includes `guidelines/index.md` and `guidelines/context/index.md`
-  - kit `@aragon/gov-ui-kit@2.11.4`, kit commit `e06fbb8d…`
+- Payload: `/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle`
+  - `.payload-manifest.json` sha256 `ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f`
+  - `.ds-build-meta.json` sha256 `c4a11a165c53cc50785eceec83fb7e054c061aa76c11bd1cfbb29242b4173ac3`
+  - `source.commit 8a3ea8c8`, `dirty: []`; kit `2.11.4` @ `e06fbb8d`
+  - `payload.upload.files`: 575
+  - superseded, do not cite: manifest `57f59808…`
+
+  `source.commit` tracks the last commit touching *scanned app source*
+  paths, so it stays at `8a3ea8c8` even though HEAD is `2b512b90d` — the
+  APP-1223 commit only touched `.design-sync/`. Converter and guidance
+  identity are fingerprinted separately (`converter.sourceSha256`,
+  `guidance.*Sha256`). Not a defect; record HEAD alongside it.
+
+**The delivery gap is closed.** `guidelines/` now ships 5 files in the
+upload partition:
+
+```
+guidelines/index.md
+guidelines/context/index.md
+guidelines/context/registry-report.md
+guidelines/context/selection-guide.json
+guidelines/context/source-index.md
+```
+
+This is the material the audit recorded as missing from every previous
+project — the registry report and selection guide are now delivered
+bytes, not README references.
+
 - Scope: APP-726, 727, 728, 735, 736, 1208, 1223. **Not** APP-1224, APP-1225.
   APP-1225 (prop defaults) is the sub-issue closest to the probe's
   `required[6]`; its absence bounds what this run can show.
 - Frozen probe: `runs/20260925T133856Z/probe.json`
-  - model `Opus 5`, effort `Medium`, arm order **candidate first** (`randomByteHex: ba`)
+  - model `Opus 5`, effort `Medium`
   - `prompt` is the exact 829-char submitted message — reuse verbatim
+  - the frozen `randomByteHex: ba` / "candidate first" order was drawn
+    for a two-arm comparison and does not apply to a single-arm gate
 - Answer key: `runs/20260925T133856Z/answer-key.json` (7 required, 4 incorrect)
 
-## 4. Arms to build
+## 4. The gate run — one arm
 
-All arms are **fresh disposable projects** (`PROTOCOL-v2` §"Integrity and
+A **fresh disposable project** (`PROTOCOL-v2` §"Integrity and
 accepted-code gate"). Never run in, or push to, `2f22a679…`.
 
-Declare the question before running (`PROTOCOL-v2` item 8).
+- New empty Claude Design project.
+- Push the rebuilt `ds-bundle` complete, including `guidelines/**`.
+- One chat, zero prior turns, Opus 5 / Medium, the frozen prompt verbatim.
 
-### Delta run — does the added context help? (default)
+No second arm. Nothing is being compared: the question is whether an
+agent handed this bundle can reach and correctly use the delivered
+context.
 
-- **Arm A — candidate, full context.** New empty project; push the
-  rebuilt `ds-bundle` complete, including `guidelines/**`.
-- **Arm B — candidate, context withheld.** Second new empty project;
-  push the **same** rebuilt payload with the `aux` `guidelines/**` paths
-  **excluded from upload scope**.
+### Pass conditions
 
-  Withhold at push time only. Do **not** delete the files from
-  `ds-bundle/` — `refresh.mjs` validation throws on unlisted/stale files,
-  and the emitted `README.md` cites `guidelines/context/index.md`, so
-  deleting would recreate `e6b58c10`'s "README names bytes that aren't
-  there" defect inside the control arm. `remote-diff.mjs:43` defines
-  `aux` as `guidelines/**` + `README.md`; ship `README.md`, skip
-  `guidelines/**`.
+Grade the produced handoff against `answer-key.json`:
 
-  Retain a file/hash diff proving the delta is exactly those paths.
+- all 7 `required` criteria satisfied
+- none of the 4 `incorrect` choices committed
+- every cited source path or reference resolves in the delivered payload
+- the agent reaches `guidelines/context/selection-guide.json` or
+  `registry-report.md` when choosing between components — this is the
+  material that has never before been delivered, and reachability is the
+  acceptance question
 
-Identical runtime, components, styling, declarations on both sides. This
-is a synthetic ablation, not the historical baseline — keep its result
-separate from the v1 record.
+Spot-check every cited path/line against the bundle before scoring the
+"invented APIs" criterion; a probability from a grader is not evidence.
 
-### No-regression run — is the APP-1220 stack safe to ship?
+### Verdict
 
-- **Arm A** as above (full candidate).
-- **Arm C — production baseline.** `2f22a679…` → project menu →
-  **Duplicate project**. Preserves the full tree and per-component
-  "Usage notes for Claude" without touching the original.
+- **Pass** → APP-726/727/728/735/736/1208/1223 are clear to merge.
+- **Fail** → record the specific reachability or coverage defect. That
+  defect is the blocker; fix it and re-run the single arm. A failure
+  names a bug, it does not condemn the bundle wholesale.
 
-This varies runtime *and* context together (2.10.0 → 2.11.4), so it
-cannot attribute anything to the context pieces. Both arms passing is the
-expected, correct result — evidence of no regression, not absence of
-value.
+### Not part of this gate
 
-Every arm: one chat, zero prior turns, Opus 5 / Medium, the frozen prompt
-verbatim, candidate arm first, order recorded.
+A comparative arm (old bundle, or this payload with `guidelines/**`
+withheld) answers the incremental-value question. It is a separate,
+separately-authorized study, it needs many probes to mean anything, and
+a null result there is expected even when the bundle is perfect. Do not
+make it a merge prerequisite.
 
 ## 5. Invocation
 
