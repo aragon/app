@@ -132,14 +132,24 @@ WizardPage({});
             strict: true,
             target: ts.ScriptTarget.ES2022,
         };
-        // Every App-owned declaration ships to the design consumer, so all of
-        // them are checked - not only the four the fixture imports.
+        // Every emitted declaration ships to the design consumer - App-owned
+        // and kit-owned alike. The kit-owned half is the one that used to slip
+        // through: the base prelude is empty for kit files, so a kit-owned
+        // name referenced in a Props body had nothing to resolve it. The
+        // closure pass must leave a file that compiles here.
         const appOwned = filesUnder(join(OUT, 'components')).filter(
             (file) =>
                 file.endsWith('.d.ts') &&
                 readFileSync(file, 'utf8').includes('from @aragon/app@'),
         );
+        const allEmitted = filesUnder(join(OUT, 'components')).filter((file) =>
+            file.endsWith('.d.ts'),
+        );
         assert.ok(appOwned.length >= 30, 'expected App-owned declarations');
+        assert.ok(
+            allEmitted.length >= 100,
+            `expected 100+ emitted declarations, found ${allEmitted.length}`,
+        );
         // The prelude inlines the App types a contract reaches. A closure that
         // starts dragging in the whole App API model shows up here first.
         const oversized = appOwned
@@ -170,7 +180,7 @@ WizardPage({});
                 );
             });
         const program = ts.createProgram(
-            [consumer, ...appOwned],
+            [consumer, ...appOwned, ...allEmitted],
             options,
             host,
         );
