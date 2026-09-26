@@ -8,13 +8,8 @@
         },
         "app": {
             "root": "app",
-            "commit": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
-            "dirty": [
-                ".design-sync/config.json",
-                "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
-                "pnpm-lock.yaml",
-                "pnpm-workspace.yaml"
-            ],
+            "commit": "8a3ea8c8ed7040bf609fced7f3c5c2cfdfd5c486",
+            "dirty": [],
             "kitReexportBoundary": {
                 "path": "src/shared/lib/@aragon/gov-ui-kit.ts",
                 "sha256": "cb3ec27a4c7b8f7f605cec99ec5eb63d5ad485307c7daad4f31abdfce6e7da7c",
@@ -23,7 +18,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "8d70bdf0c7fc32e994894d47067f518253b04f80",
+            "commit": "e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0",
             "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
@@ -78325,7 +78320,7 @@
                     "repository": "kit",
                     "path": "src/core/components/link/linkBase/linkBase.test.tsx",
                     "line": 1,
-                    "sha256": "6ed89f4cd07ba24eb61a537bf5b7971840a213fc391e844c771b4be90954534e"
+                    "sha256": "82915ab950fcdf1132e6c65a85de31ce1689fad27f12c91bb97665c51d533389"
                 }
             ],
             "docs": [],
@@ -82729,7 +82724,7 @@
                 "repository": "kit",
                 "path": "src/core/utils/invariant/invariant.ts",
                 "line": 3,
-                "sha256": "864872ba0a6901b9213906dc64df1ebe4e57ee91d165c0e8fded66f9492cea48"
+                "sha256": "fb129f4efe947637894fe6129ec72c4d13741b17ba493425b9a48e6b527b43ca"
             },
             "props": [],
             "stories": [],
@@ -85941,7 +85936,7 @@
                 "repository": "kit",
                 "path": "src/core/utils/invariant/invariant.ts",
                 "line": 1,
-                "sha256": "864872ba0a6901b9213906dc64df1ebe4e57ee91d165c0e8fded66f9492cea48"
+                "sha256": "fb129f4efe947637894fe6129ec72c4d13741b17ba493425b9a48e6b527b43ca"
             },
             "props": [],
             "stories": [],
@@ -93245,7 +93240,7 @@
                     "repository": "kit",
                     "path": "src/core/components/link/linkBase/linkBase.test.tsx",
                     "line": 1,
-                    "sha256": "6ed89f4cd07ba24eb61a537bf5b7971840a213fc391e844c771b4be90954534e"
+                    "sha256": "82915ab950fcdf1132e6c65a85de31ce1689fad27f12c91bb97665c51d533389"
                 }
             ],
             "docs": [],

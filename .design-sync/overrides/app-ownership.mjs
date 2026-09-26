@@ -20,7 +20,7 @@ import { propsBodyFor as basePropsBodyFor } from '../../.ds-sync/lib/dts.mjs';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESIGN_SYNC = dirname(HERE);
 const REPO_ROOT = dirname(DESIGN_SYNC);
-const APP_ROOT = join(REPO_ROOT, 'apps/app');
+export const APP_ROOT = join(REPO_ROOT, 'apps/app');
 const APP_SRC = join(APP_ROOT, 'src');
 const KIT_SRC = join(APP_SRC, 'shared/lib/@aragon/gov-ui-kit');
 const TSCONFIG = join(APP_ROOT, 'tsconfig.json');
@@ -188,8 +188,19 @@ function contractForValue(value, fallbackName) {
     if (contractCache.has(value)) {
         return contractCache.get(value);
     }
-    const signature = value.getType?.().getCallSignatures?.()[0];
-    const parameter = signature?.getParameters?.()[0];
+    const valueType = value.getType?.();
+    let signature = valueType?.getCallSignatures?.()[0];
+    let parameter = signature?.getParameters?.()[0];
+    if (!signature) {
+        // React-typed component wrappers reach here with no call signature:
+        // `React.FC<IXProps>` (type node) and `forwardRef<El, IXProps>(...)`
+        // (initializer call type args) both carry the props AS SYNTAX. Reading
+        // it from the AST keeps the contract path independent of the checker
+        // resolving React's named exports (react-hook-form@7.86's package
+        // exports resist the ts-morph 5.9 checker, so the checker-typed path
+        // degrades these to any).
+        return contractForSyntax({ value, fallbackName, contractCache });
+    }
     const propsType = parameter?.getTypeAtLocation?.(value);
     if (!propsType) {
         contractCache.set(value, null);
@@ -199,6 +210,146 @@ function contractForValue(value, fallbackName) {
     const sourceFile = declaration?.getSourceFile?.() ?? value.getSourceFile();
     const candidate =
         declaration?.getName?.()?.replace(/Props$/, '') || fallbackName;
+    return contractForProps({
+        value,
+        candidate,
+        sourceFile,
+        propsType,
+        decl: declaration,
+        contractCache,
+        signature,
+        parameter,
+        fallbackName,
+    });
+}
+
+// `export const X: React.FC<IXProps>` / `forwardRef<El, IXProps>(...)` both
+// carry the props contract as syntax. See contractForValue's doc for why the
+// checker cannot be trusted on this path.
+//
+// A synthetic alias (`type DocumentParserProps = ComponentProps<typeof
+// DocumentParser>`) has no own members: its contract is the WRAPPED
+// component's own props. peelSyntheticProps follows alias -> ComponentProps
+// -> typeof X -> the X import binding -> X's declaration, entirely in syntax.
+function contractForSyntax({ value, fallbackName, contractCache }) {
+    const fwdRef = value.getInitializer?.();
+    const fwdArgs =
+        fwdRef && Node.isCallExpression(fwdRef)
+            ? fwdRef.getTypeArguments?.()
+            : [];
+    const explicitType = value.getTypeNode?.();
+    const propsCandidate =
+        (fwdArgs.length >= 2 ? fwdArgs[1] : null) ??
+        explicitType?.getTypeArguments?.()?.[0];
+    const propsType = propsCandidate?.getType?.();
+    if (!(propsType && propsCandidate)) {
+        contractCache.set(value, null);
+        return null;
+    }
+
+    let declaration = propsDeclaration(propsType);
+    let candidateSourceFile;
+    if (!declaration) {
+        // The props type is a name in the COMPONENT'S OWN FILE
+        // (`export const X: React.FC<IXProps>` declares the interface
+        // alongside, `type DocumentParserProps = ...` as a sibling alias).
+        const componentFile = value.getSourceFile();
+        const rawName = propsCandidate.getText();
+        declaration =
+            componentFile.getInterface?.(rawName) ??
+            componentFile.getTypeAlias?.(rawName);
+        candidateSourceFile = componentFile;
+    }
+    if (declaration) {
+        const wrapped = peelSyntheticProps(declaration, contractCache);
+        if (wrapped) {
+            const [underlyingDecl, underlyingFile] = wrapped;
+            declaration = underlyingDecl;
+            candidateSourceFile = underlyingFile;
+        }
+    }
+    const sourceFile =
+        candidateSourceFile ??
+        declaration?.getSourceFile?.() ??
+        value.getSourceFile();
+    const candidate =
+        declaration?.getName?.()?.replace(/Props$/, '') ?? fallbackName;
+    return contractForProps({
+        value,
+        candidate,
+        sourceFile,
+        propsType,
+        decl: declaration,
+        contractCache,
+        signature: null,
+        parameter: null,
+        fallbackName,
+    });
+}
+
+// `type XProps = ComponentProps<typeof Wrapped>` - the alias is a pure
+// pass-through and the interface we need lives on the wrapped component.
+function peelSyntheticProps(aliasDecl, contractCache) {
+    if (!Node.isTypeAliasDeclaration(aliasDecl)) {
+        return null;
+    }
+    const typeNode = aliasDecl.getTypeNode?.();
+    const wrapped = typeNode?.getTypeArguments?.()?.[0];
+    const typeQuery = wrapped && wrapped.getKindName() === 'TypeQuery'
+        ? wrapped
+        : null;
+    if (!typeQuery) {
+        return null;
+    }
+    const id = typeQuery.getChildren?.().find(
+        (child) => child.getKindName() === 'Identifier',
+    );
+    if (!id) {
+        return null;
+    }
+    // The identifier is a local binding: find its import and resolve the
+    // imported name's declaration (the wrapped component) via its symbol.
+    const sourceFile = aliasDecl.getSourceFile();
+    const binding = findBinding(sourceFile, id.getText());
+    if (!binding) {
+        return null;
+    }
+    const decl = binding.getDeclarations?.()[0];
+    if (!decl || !Node.isVariableDeclaration(decl)) {
+        return null;
+    }
+    // The wrapped component's props contract, read from ITS FC/forwardRef
+    // syntax.
+    const wrappedContract = contractForSyntax({
+        value: decl,
+        fallbackName: decl.getName?.(),
+        contractCache,
+    });
+    return wrappedContract
+        ? [wrappedContract.declaration, wrappedContract.declaration?.getSourceFile?.()]
+        : null;
+}
+
+function findBinding(sourceFile, name) {
+    for (const imp of sourceFile.getImportDeclarations?.() ?? []) {
+        const bound = imp
+            .getNamedImports?.()
+            .find?.((n) => n.getName?.() === name);
+        if (bound) {
+            return bound.getSymbol?.()?.getAliasedSymbol?.() ?? bound.getSymbol?.();
+        }
+        const std = imp.getDefaultImport?.();
+        if (std?.getName?.() === name) {
+            return std.getSymbol?.()?.getAliasedSymbol?.() ?? std.getSymbol?.();
+        }
+        if (imp.getModuleSpecifierValue?.() === name) {
+            return null;
+        }
+    }
+    return null;
+}
+
+function contractForProps({ value, candidate, sourceFile, propsType, decl, contractCache, signature = null, parameter = null, fallbackName = '' }) {
     const o = appOwnership();
     const ctx = {
         project: scopedProject(o.project, sourceFile),
@@ -209,16 +360,36 @@ function contractForValue(value, fallbackName) {
     if (!props && candidate !== fallbackName) {
         props = basePropsBodyFor(fallbackName, ctx);
     }
-    const contract = props
-        ? restoreNamedTypes({
-              value,
-              signature,
-              parameter,
-              propsType,
-              declaration,
-              props,
-          })
-        : null;
+    let contract;
+    if (props) {
+        contract = restoreNamedTypes({
+            value,
+            signature,
+            parameter,
+            propsType,
+            declaration: decl,
+            props,
+        });
+    } else if (decl) {
+        // A Props interface EXISTS but emits zero own properties
+        // (`IContainerProps extends ComponentProps<'div'> {}`). emitBody
+        // returns null for an empty body, which the fallback above would
+        // otherwise misread as "no source contract". An empty contract is
+        // still a contract - the component takes only inherited props.
+        contract = {
+            value,
+            signature,
+            parameter,
+            propsType,
+            declaration: decl,
+            props: {
+                body: '',
+                generics: '',
+                extendsClause: '',
+                prelude: '',
+            },
+        };
+    }
     contractCache.set(value, contract);
     return contract;
 }
@@ -325,9 +496,6 @@ export function compoundMembers(name) {
             continue;
         }
         const pt = p.getTypeAtLocation(d);
-        if (!pt.getCallSignatures().length) {
-            continue;
-        }
         const pd = p
             .getDeclarations()
             .find((x) => Node.isPropertyAssignment(x));
@@ -335,15 +503,31 @@ export function compoundMembers(name) {
         const symbol = init?.getSymbol?.();
         const target = symbol?.getAliasedSymbol?.() ?? symbol;
         const md = target?.getDeclarations?.()[0] ?? pd;
+        const underlyingNameResolved = target?.getName?.();
+        const fileResolved =
+            md ? fwd(md.getSourceFile().getFilePath()) : null;
+        // Resolve the member BEFORE the call-signature filter: a member whose
+        // props contract exists is a real compound member even when ts-morph
+        // reports no call signature on the aliased type (React.FC members).
         const signature =
             md?.getType?.().getCallSignatures?.()[0] ??
             pt.getCallSignatures()[0];
+        if (!signature) {
+            const child = {
+                member: pn,
+                underlyingName: underlyingNameResolved ?? pn,
+                file: fileResolved,
+            };
+            if (!contractForChild(child)) {
+                continue;
+            }
+        }
         const generics =
             signature
                 ?.getTypeParameters?.()
                 .map((parameter) => parameter.getText()) ?? [];
-        let underlyingName = target?.getName?.() ?? pn;
-        let file = null;
+        let underlyingName = underlyingNameResolved ?? pn;
+        let file = fileResolved;
         if (md) {
             file = fwd(md.getSourceFile().getFilePath());
             if (!/^[A-Z]/.test(underlyingName)) {
@@ -764,6 +948,10 @@ function identifierUsed(text, name) {
 }
 
 const REACT_NAMESPACE_TYPES = new Set([
+    // These resolve as BARE imported types in the prelude ('react' import
+    // emitted below), not as React.namespace members: the emitted body should
+    // keep them bare. The qualify pass then only needs to skip names that
+    // 'react' already contributes via this import.
     'ReactNode',
     'ReactElement',
     'Key',
