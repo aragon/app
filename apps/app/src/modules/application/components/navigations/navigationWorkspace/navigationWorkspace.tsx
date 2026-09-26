@@ -50,10 +50,9 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     const effectiveIsConnected = isMounted && isConnected && address != null;
     const { open } = useDialogContext();
 
-    const { data: workspace } = useWorkspace(
-        { urlParams: { id: workspaceId } },
-        { retry: false },
-    );
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
 
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected

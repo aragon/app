@@ -101,6 +101,8 @@ export const WorkspaceAccountSelectorProvider: React.FC<
     // Last selection, kept while navigating to tabs whose links carry no param.
     const [savedOptionId, setSavedOptionId] = useState(urlOptionId);
 
+    // Retrying is pointless as the registry is read from local storage and fails the same way every time. Set here
+    // and not on the other useWorkspace calls, as this is the fetch that loads the workspace for the whole layout.
     const {
         data: workspace,
         isPending: isWorkspacePending,

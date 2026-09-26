@@ -1,6 +1,5 @@
 'use client';
 
-import { Card, EmptyState } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspace } from '../../api/workspaceService';
@@ -27,11 +26,9 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const { t } = useTranslations();
 
-    const {
-        data: workspace,
-        isPending: isWorkspacePending,
-        isError: isWorkspaceError,
-    } = useWorkspace({ urlParams: { id: workspaceId } }, { retry: false });
+    const { data: workspace, isPending: isWorkspacePending } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
 
     const accounts = workspace?.accounts ?? [];
 
@@ -40,25 +37,6 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const accountsToDisplay =
         activeOption?.account != null ? [activeOption.account] : accounts;
-
-    if (isWorkspaceError) {
-        return (
-            <Page.Main>
-                <Card className="border border-neutral-100 py-10">
-                    <EmptyState
-                        description={t(
-                            'app.workspace.workspaceTransactionsPage.notFound.description',
-                            { id: workspaceId },
-                        )}
-                        heading={t(
-                            'app.workspace.workspaceTransactionsPage.notFound.title',
-                        )}
-                        objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
-                    />
-                </Card>
-            </Page.Main>
-        );
-    }
 
     return (
         <Page.Content>

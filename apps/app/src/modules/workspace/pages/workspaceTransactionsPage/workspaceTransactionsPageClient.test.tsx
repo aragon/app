@@ -217,15 +217,4 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             screen.queryByRole('button', { name: allAccountsOption.label }),
         ).toBeNull();
     });
-
-    it('displays an empty state when the workspace does not exist', async () => {
-        getWorkspaceSpy.mockRejectedValue(new Error('not found'));
-        render(createTestComponent());
-
-        expect(
-            await screen.findByText(
-                /workspaceTransactionsPage\.notFound\.title$/,
-            ),
-        ).toBeInTheDocument();
-    });
 });

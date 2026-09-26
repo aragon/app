@@ -2,6 +2,7 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import {
     DaoMembersPageClient,
     type IDaoMembersPageClientProps,
@@ -144,7 +145,7 @@ describe('<WorkspaceMembersPageClient /> component', () => {
 
         return (
             <GukModulesProvider>
-                <ReactQueryWrapper client={new QueryClient()}>
+                <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
                     <WorkspaceMembersPageClient {...completeProps} />
                 </ReactQueryWrapper>
             </GukModulesProvider>

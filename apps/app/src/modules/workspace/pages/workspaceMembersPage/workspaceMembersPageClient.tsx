@@ -43,7 +43,7 @@ export const WorkspaceMembersPageClient: React.FC<
         data: workspace,
         isPending: isWorkspacePending,
         isError: isWorkspaceError,
-    } = useWorkspace({ urlParams: { id: workspaceId } }, { retry: false });
+    } = useWorkspace({ urlParams: { id: workspaceId } });
 
     const accounts = workspace?.accounts ?? [];
     const accountRefs = accounts.map(({ network, address }) => ({

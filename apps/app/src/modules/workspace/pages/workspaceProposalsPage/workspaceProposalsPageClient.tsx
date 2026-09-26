@@ -51,10 +51,9 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { open, close } = useDialogContext();
     const router = useRouter();
 
-    const { data: workspace } = useWorkspace(
-        { urlParams: { id: workspaceId } },
-        { retry: false },
-    );
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
 
     const accounts = workspace?.accounts ?? [];
     const daoAccounts = accounts.filter(

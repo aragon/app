@@ -4405,10 +4405,6 @@
       "workspaceTransactionsPage": {
         "main": {
           "title": "Transactions"
-        },
-        "notFound": {
-          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
-          "title": "Workspace not found"
         }
       },
       "workspaceProposalList": {

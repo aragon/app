@@ -35,10 +35,9 @@ export const WorkspaceAssetsPageClient: React.FC<
 
     const { t } = useTranslations();
 
-    const { data: workspace } = useWorkspace(
-        { urlParams: { id: workspaceId } },
-        { retry: false },
-    );
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
 
     const accounts = workspace?.accounts ?? [];
 

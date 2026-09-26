@@ -1,6 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -75,12 +76,14 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             ...props,
         };
 
+        // The query client must sit inside the gov-ui-kit provider, which carries a query client of its own that
+        // would otherwise shadow this one.
         return (
-            <ReactQueryWrapper client={new QueryClient()}>
-                <GukModulesProvider>
+            <GukModulesProvider>
+                <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
                     <WorkspaceDetailsPageClient {...completeProps} />
-                </GukModulesProvider>
-            </ReactQueryWrapper>
+                </ReactQueryWrapper>
+            </GukModulesProvider>
         );
     };
 
