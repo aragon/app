@@ -1,0 +1,55 @@
+{
+  "note": "Raw per-criterion scores from the INCOMPARABLE run. Not a comparison.",
+  "grader": "judge (bool per criterion)",
+  "thresholds": {
+    "requiredPass": ">=0.7",
+    "incorrectPass": "<0.5"
+  },
+  "candidate": {
+    "requiredScores": {
+      "0": 0.98,
+      "1": 0.97,
+      "2": 0.97,
+      "3": 0.97,
+      "4": 0.9,
+      "5": 0.92,
+      "6": 0.74
+    },
+    "incorrectScores": {
+      "0": 0.03,
+      "1": 0.05,
+      "2": 0.05,
+      "3": 0.4
+    },
+    "pass": true
+  },
+  "production": {
+    "requiredScores": {
+      "0": 0.98,
+      "1": 0.98,
+      "2": 0.98,
+      "3": 0.97,
+      "4": 0.93,
+      "5": 0.95,
+      "6": 0.91
+    },
+    "incorrectScores": {
+      "0": 0.02,
+      "1": 0.04,
+      "2": 0.03,
+      "3": 0.29
+    },
+    "pass": true
+  },
+  "citationSpotChecks": {
+    "candidateBundleOffsets": {
+      "102784": "WizardPageContainer",
+      "108205": "AddressesInputContainer",
+      "110330": "AddressesInputItem",
+      "102240": "WizardForm",
+      "result": "all resolve in ds-bundle/_ds_bundle.js (114622 lines)"
+    },
+    "candidateItemProps": "index, disabled, customValidator, chainId \u2014 match the bundle destructure at 110330; no invention",
+    "productionSourcePaths": "apps/app/src/shared/components/forms/addressesInput/index.ts and addressesListUtils.ts both exist"
+  }
+}

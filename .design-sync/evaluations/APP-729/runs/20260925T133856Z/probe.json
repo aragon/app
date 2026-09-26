@@ -1,0 +1,25 @@
+{
+  "protocol": "PROTOCOL-v2.md",
+  "question": "delta",
+  "frozenAt": "2026-09-25T13:38:56Z",
+  "model": "Opus 5",
+  "effort": "Medium",
+  "randomByteHex": "ba",
+  "armOrder": [
+    "candidate",
+    "production"
+  ],
+  "productionProject": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+  "candidateProject": "https://claude.ai/design/p/c33d6b53-7057-4dd6-b5fb-9ea0a8d647ae",
+  "prompt": "An existing full-page DAO creation wizard needs a prefilled member-management step. Produce a compile-oriented implementation handoff, not a standalone prototype. Identify the supported design-system composition and exact contracts needed to: initialize existing member addresses, let users add/edit/remove rows, distinguish editable input from accepted/resolved addresses, report invalid and duplicate entries through the owning form, and preserve the wizard's existing form ownership and navigation. Include required provider assumptions, relevant address-resolution/checksum/network semantics, and revision-matched source or example references available in this project. Call out any tempting but incorrect nesting or state-ownership choices. Do not invent APIs; explicitly mark anything the supplied project cannot establish.",
+  "candidateProjectUrl": "https://claude.ai/design/p/c33d6b53-7057-4dd6-b5fb-9ea0a8d647ae",
+  "actualModel": "Opus 5",
+  "actualEffort": "Medium",
+  "candidateSubmittedAt": "2026-09-25T13:47:08.123Z",
+  "candidateStatus": "completed",
+  "productionStatus": "completed",
+  "candidateRunAt": "2026-09-26",
+  "candidateArtifact": "handoffs/dao-wizard-member-step.md",
+  "productionArtifact": "handoff/members-step-handoff.md",
+  "note": "Earlier spend-limit-blocked attempt discarded; candidate rerun in a fresh chat after design-system generation completed."
+}

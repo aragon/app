@@ -1,0 +1,25 @@
+Design System
+An existing full-page DAO creation wizard needs a prefilled member-management step. Produce a compile-oriented implementation handoff, not a standalone prototype. Identify the supported design-system composition and exact contracts needed to: initialize existing member addresses, let users add/edit/remove rows, distinguish editable input from accepted/resolved addresses, report invalid and duplicate entries through the owning form, and preserve the wizard's existing form ownership and navigation. Include required provider assumptions, relevant address-resolution/checksum/network semantics, and revision-matched source or example references available in this project. Call out any tempting but incorrect nesting or state-ownership choices. Do not invent APIs; explicitly mark anything the supplied project cannot establish.
+Listing files ×2, Reading
+dao-wizard-member-step.md
+
+The handoff is in handoffs/dao-wizard-member-step.md, written against the revision bundled here (@aragon/app@1.39.1 + @aragon/gov-ui-kit@2.11.4 in uploads/_ds_bundle.js).
+
+It covers: the supported composition (WizardPage.Container owning the form → WizardPage.Step → AddressesInput.Container name="members" + one AddressesInput.Item per live field-array entry); prop-by-prop contracts with bundle line spans; prefill only via the wizard's defaultValues; the onChange (raw text) vs onAccept (resolved) split; viem isAddress → duplicate → customValidator order with first-wins duplicate semantics; EIP-55 on by default; ENS always resolving on mainnet with chainId affecting explorer links only; error surfacing through useFormField translation keys and the footer's top-level-key classification; provider requirements and their failure modes; eleven tempting-but-wrong nesting/ownership choices; and a final section marking what this project cannot establish (the real wizard route file, IAddressesInputMember, react-hook-form/viem versions, enTranslations coverage, and that the registry report calls this an unmerged candidate).
+
+
+
+
+Opus 5
+Medium
+Send
+Design System
+No file open
+Share
+K
+Design System
+
+Publish this design system to make it available for your team's new projects. You can keep editing it in the chat.
+
+Published
+No cards yet — add <!-- @dsCard group="…" --> as the first line of any .html file.

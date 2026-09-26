@@ -1,0 +1,867 @@
+Aragon App Design System
+An existing full-page DAO creation wizard needs a prefilled member-management step. Produce a compile-oriented implementation handoff, not a standalone prototype. Identify the supported design-system composition and exact contracts needed to: initialize existing member addresses, let users add/edit/remove rows, distinguish editable input from accepted/resolved addresses, report invalid and duplicate entries through the owning form, and preserve the wizard's existing form ownership and navigation. Include required provider assumptions, relevant address-resolution/checksum/network semantics, and revision-matched source or example references available in this project. Call out any tempting but incorrect nesting or state-ownership choices. Do not invent APIs; explicitly mark anything the supplied project cannot establish.
+Reading ×17, Searching ×10, Listing files, Writing
+members-step-handoff.md
+
+handoff/members-step-handoff.md — a compile-oriented handoff, all contracts read out of _ds_bundle.js (line ranges cited) rather than from the shipped .d.ts, which are [key: string]: unknown stubs.
+
+Highlights worth your attention:
+
+The only supported composition is WizardPage.Container → Step → AddressesInput.Container → one Item per field-array row; the Container renders no rows itself and drops children past fields.length.
+Prefill only works through WizardPage.Container defaultValues (→ Wizard.Root useForm), never via props.
+Item reads only index, disabled, customValidator, chainId — no pass-through to AddressInput, so checksum enforcement can't be relaxed per row.
+Two behaviors of this revision you may not want: duplicate detection flags only the later row, and blank rows classify as invalid (not required) in the step footer.
+ENS always resolves on mainnet; chainId only affects the explorer link.
+
+§11 lists the eight things this project can't establish (field prefix, prefill source, chainId derivation, checksum persistence requirements, member-count rules, copy).
+
+Created members-step-handoff.md
+Fixing design-system issues
+Searching, Reading, Check design system
+
+I can't fix these — both issues are inside _ds_bundle.css, a synced, read-only design-system source file (styles.css is just two @import lines).
+
+What's flagged is compiled Tailwind v4 output, not authored theme tokens:
+
+The 27 properties under &::before / &::after / :where(& > :not(:last-child)) are Tailwind's internal --tw-* locals (space-x reverse, ring, shadow composition). They are correctly not tokens; moving them to :root would break the utilities.
+The 15 unclassified names (--ease-out, --animate-spin, --default-transition-duration, --tw-translate-x, --animate-shake, …) are Tailwind theme values for easing/animation/transform. They'd need /* @kind other */ annotations in the source.
+
+Both need to happen in the original code repo and come back through /design-sync — worth telling that agent on the next run, since a compiled Tailwind stylesheet will re-trigger these every sync unless the checker's expectations or the emitted CSS change.
+
+
+
+
+Opus 5
+Medium
+Send
+Design System
+No file open
+Share
+K
+Readme
+blocknavigationcontext
+BlockNavigationContextProvider
+debugprovider
+DebugContextProvider
+design-sync
+AppTransactionStatus
+Page
+forms
+AddressesInput
+AdvancedDateInput
+AutocompleteInput
+AvatarInput
+NumberProgressInput
+ResourcesInput
+general
+Accordion
+ActionSimulation
+AddressInput
+AddressOutput
+AlertCard
+AlertInline
+AssetDataListItem
+AssetTransfer
+Avatar
+AvatarBase
+AvatarIcon
+Breadcrumbs
+Button
+Card
+CardCollapsible
+CardEmptyState
+CardSummary
+Checkbox
+CheckboxCard
+CheckboxGroup
+Clipboard
+Collapsible
+DaoAvatar
+DaoDataListItem
+DataList
+DefinitionList
+Dialog
+DialogAlert
+DocumentParser
+Dropdown
+EmptyState
+GukCoreProvider
+GukModulesProvider
+Heading
+Icon
+IllustrationHuman
+IllustrationObject
+InputContainer
+InputDate
+InputFileAvatar
+InputNumber
+InputNumberMax
+InputSearch
+InputText
+InputTime
+Link
+LinkBase
+MemberAvatar
+MemberDataListItem
+Progress
+ProposalActionChangeMembers
+ProposalActionChangeSettings
+ProposalActions
+ProposalActionTokenMint
+ProposalActionUpdateMetadata
+ProposalActionWithdrawToken
+ProposalDataListItem
+ProposalVoting
+ProposalVotingProgress
+Radio
+RadioCard
+RadioGroup
+Rerender
+SmartContractFunctionDataListItem
+Spinner
+StatePingAnimation
+StateSkeletonBar
+StateSkeletonCircular
+Switch
+Tabs
+Tag
+TextArea
+TextAreaRichText
+Toggle
+ToggleGroup
+Tooltip
+TransactionDataListItem
+TransactionDetail
+TransactionDetailSummary
+VoteDataListItem
+VoteProposalDataListItem
+Wallet
+shared
+AragonLogo
+Banner
+Carousel
+Container
+CtaCard
+DaoTargetIndicator
+DaoTypeTag
+DialogProvider
+ErrorFeedback
+FooterInfo
+KeyboardShortcut
+NetworkSwitchAlert
+ResourceLink
+SafeDocumentParser
+SafeHtml
+StatCard
+TranslationsProvider
+WizardDetailsDialog
+wizards
+Wizard
+WizardDialog
+WizardPage
+Aragon App Design System
+This design system was imported from code using the /design-sync Claude Code skill. To make changes to the design system, edit your code and re-run /design-sync. The skill can take feedback and commit notes for future runs.
+
+This design system is available for your team's new projects. You can keep editing it with the /design-sync Claude Code skill.
+
+Published
+Set as org default
+Use this system
+New design
+Readme
+Aragon App Design System — usage conventions
+
+Two layers in one bundle: @aragon/gov-ui-kit (Aragon's Governance UI Kit — groups general, all kit components) and the Aragon App's own shared components (groups shared, wizards, forms — Wizard, WizardPage, WizardDialog, Page, StatCard, CtaCard, Banner, app form inputs…). Font: Manrope (bundled).
+
+Setup & wrapping
+
+Kit core components need no provider — Button, Card, DataList, Dialog, forms, etc. work bare.
+
+Module components (ProposalDataListItem, ProposalVoting, ProposalActions, VoteDataListItem, DaoDataListItem, MemberDataListItem, AssetDataListItem, TransactionDataListItem, Wallet, AddressInput, ActionSimulation) read web3 context: wrap them in <GukModulesProvider> (bundles its own react-query + wagmi defaults; no props required). Without it they throw at render.
+
+Dialogs open via controlled open prop on Dialog.Root / DialogAlert.Root (defaultOpen renders nothing).
+
+App components (groups shared/wizards/forms) that show text need the app provider stack: <DebugContextProvider><TranslationsProvider translations={enTranslations}>… — enTranslations (the app's real strings) is exported from the bundle. Wizards additionally need <BlockNavigationContextProvider>.
+
+App form inputs (AddressesInput, ResourcesInput, AdvancedDateInput, AvatarInput, NumberProgressInput, AutocompleteInput) read react-hook-form context: wrap them in the exported <FormWrapper defaultValues={{…}}>. Array-backed lists (addresses, resources) hydrate ONLY from FormWrapper defaultValues.
+
+Building screens & flows (the app's own patterns)
+
+Full-page wizard (create-DAO-style flows): WizardPage.Container (props initialSteps=[{id, order, meta:{name}}…], submitLabel, finalStep, onSubmit) containing WizardPage.Step (props id, order, meta, title, description) — renders progress bar, step chrome, and footer automatically. Form fields inside steps get their form context from the wizard.
+
+Dialog wizard (short in-context flows): WizardDialog.Container/WizardDialog.Step inside the kit Dialog.Root + DialogProvider.
+
+Page scaffolding: Page.Main + Page.Aside with Page.Header, Page.Content, Page.MainSection, Page.AsideCard. Do NOT use Page.Container (needs the app's QueryClient — not in this bundle) — use a plain wrapper div.
+
+Stat/CTA surfaces: StatCard, CtaCard, Banner, Carousel; transaction step progress via AppTransactionStatus.Container/.Step.
+
+Styling idiom
+
+Tailwind v4 utilities backed by the kit's design tokens. Style layout glue with utility classes; never write custom CSS files or invent class names outside these families:
+
+Family	Real values
+Colors	primary-{50…900}, neutral-{0,50,100,200,300,400,500,600,800,900}, info/success/warning/critical-{100…900} — used as bg-*, text-*, border-* (e.g. bg-neutral-0, text-neutral-500, border-primary-400)
+Radius	rounded-none/sm/md/lg/xl/full plus side/corner variants (rounded-t, rounded-b, rounded-tl, rounded-br). 12px = rounded-xl is the kit's card radius. rounded-2xl/rounded-3xl are not emitted — for those two use style={{ borderRadius: 'var(--radius-2xl)' }}.
+Spacing	standard Tailwind scale (p-4, gap-3, space-y-2…)
+Type	text-xs/sm/base/lg/xl/2xl/3xl, font-normal/semibold; headings via the Heading component, not raw classes
+Shadows	shadow-none, shadow-sm, shadow-neutral{,-sm,-md}, shadow-primary{,-sm,-lg,-xl}, shadow-info{,-md}, shadow-success{,-sm,-md}, shadow-warning{,-sm,-md}, shadow-critical{,-sm,-md}. There is no shadow-neutral-lg — the large shadows are shadow-primary-lg/shadow-primary-xl.
+
+Component look is controlled by props, not classes: variant (e.g. Button primary|secondary|tertiary|ghost|success|warning|critical; alerts info|success|warning|critical; Tag adds neutral|primary), size (sm|md|lg), state props (disabled, isLoading). Selection state flows through group parents (RadioGroup/ToggleGroup defaultValue), not per-item checked.
+
+Where the truth lives
+
+styles.css → imports _ds_bundle.css: all tokens as CSS custom properties (--color-*, --radius-*, --guk-*) — read it before styling.
+
+Per component: components/general/<Name>/<Name>.d.ts (the exact props contract) and <Name>.prompt.md (usage guidance). Compound components are namespaces: Dialog.Root/Header/Content/Footer, DataList.Root/Container/Filter/Pagination, Accordion.Container/Item/ItemHeader/ItemContent, Tabs.Root/List/Trigger/Content.
+
+Icons: <Icon icon={IconType.PLUS} /> — IconType enum is exported; icons inherit currentColor.
+
+Idiomatic example
+import { Button, Card, Heading, IconType, Progress, Tag } from '@aragon/gov-ui-kit';
+
+const ProposalCard = () => (
+    <Card className="flex w-full flex-col gap-4 p-6">
+        <div className="flex items-center justify-between">
+            <Heading size="h3">Increase treasury allocation</Heading>
+            <Tag label="Active" variant="info" />
+        </div>
+        <p className="text-neutral-500">Allocate 50,000 USDC to the grants program for Q3.</p>
+        <Progress value={64} variant="primary" />
+        <div className="flex gap-3">
+            <Button variant="primary" size="md">Vote now</Button>
+            <Button variant="tertiary" size="md" iconRight={IconType.LINK_EXTERNAL}>View details</Button>
+        </div>
+    </Card>
+);
+GovUiKit (@aragon/gov-ui-kit@2.10.0)
+
+This design system is the published @aragon/gov-ui-kit React library, bundled as a single browser global. All 113 components are the real upstream code.
+
+Where things are
+
+_ds_bundle.js — the whole-DS bundle at the project root; loads every component to window.GovUiKit. First line is a /* @ds-bundle: … */ metadata header.
+
+styles.css — the single stylesheet entry: it @imports the tokens, fonts, and component styles (_ds_bundle.css). Link this one file.
+
+components/<group>/<Name>/<Name>.prompt.md (example JSX + variants), <Name>.d.ts (types), <Name>.html (variant grid).
+
+tokens/*.css — CSS custom properties, names verbatim from upstream.
+
+fonts/ — @font-face files + fonts.css (when the package ships fonts).
+
+For a specific component, read_file("components/<group>/<Name>/<Name>.prompt.md").
+
+Loading
+
+Add these two lines to your page once (React must be on the page first):
+
+<link rel="stylesheet" href="styles.css">
+<script src="_ds_bundle.js"></script>
+
+Components are then available at window.GovUiKit.*. Mount into a dedicated child node (e.g. <div id="ds-root">), not the host page's own React root, so the two trees don't collide:
+
+const { Accordion } = window.GovUiKit;
+ReactDOM.createRoot(document.getElementById('ds-root')).render(<Accordion />);
+Tokens
+
+239 CSS custom properties from @aragon/gov-ui-kit. Names are preserved verbatim from upstream. They are declared inside _ds_bundle.css (this DS ships one compiled stylesheet rather than separate token files).
+
+color (91): --text-xs, --text-xs--line-height, --text-sm, …
+
+spacing (6): --tw-space-y-reverse, --tw-space-x-reverse, --tw-inset-shadow, …
+
+typography (10): --font-weight-normal, --font-weight-medium, --font-weight-semibold, …
+
+radius (8): --radius-md, --radius-lg, --radius-xl, …
+
+shadow (10): --drop-shadow-2xl, --tw-prose-kbd-shadows, --tw-prose-invert-kbd-shadows, …
+
+other (114): --spacing, --container-xs, --container-md, …
+
+Components
+general
+
+Accordion (compound: Accordion.Container, Accordion.Item, Accordion.ItemHeader, Accordion.ItemContent)
+
+ActionSimulation
+
+AddressInput
+
+AddressOutput
+
+AlertCard
+
+AlertInline
+
+AssetDataListItem (compound: AssetDataListItem.Structure, AssetDataListItem.Skeleton)
+
+AssetTransfer
+
+Avatar
+
+AvatarBase
+
+AvatarIcon
+
+Breadcrumbs
+
+Button
+
+Card
+
+CardCollapsible
+
+CardEmptyState
+
+CardSummary
+
+Checkbox
+
+CheckboxCard
+
+CheckboxGroup
+
+Clipboard
+
+Collapsible — Collapsible component that can wrap any content and visually collapse it for space-saving purposes.
+
+DaoAvatar
+
+DaoDataListItem (compound: DaoDataListItem.Structure, DaoDataListItem.Skeleton)
+
+DataList (compound: DataList.Root, DataList.Filter, DataList.Container, DataList.Item, DataList.ActionItem, DataList.Pagination)
+
+DefinitionList (compound: DefinitionList.Container, DefinitionList.Item)
+
+Dialog (compound: Dialog.Content, Dialog.Footer, Dialog.Header, Dialog.Root)
+
+DialogAlert (compound: DialogAlert.Content, DialogAlert.Footer, DialogAlert.Header, DialogAlert.Root)
+
+DocumentParser
+
+Dropdown (compound: Dropdown.Container, Dropdown.Item)
+
+EmptyState
+
+GukCoreProvider
+
+GukModulesProvider
+
+Heading
+
+Icon
+
+IllustrationHuman
+
+IllustrationObject
+
+InputContainer — The InputContainer component provides a consistent and shared styling foundation for various input components, such
+
+InputDate
+
+InputFileAvatar
+
+InputNumber
+
+InputNumberMax
+
+InputSearch
+
+InputText
+
+InputTime
+
+Link
+
+LinkBase
+
+MemberAvatar
+
+MemberDataListItem (compound: MemberDataListItem.Structure, MemberDataListItem.Skeleton)
+
+Progress
+
+ProposalActionChangeMembers
+
+ProposalActionChangeSettings
+
+ProposalActions (compound: ProposalActions.Root, ProposalActions.Container, ProposalActions.Item, ProposalActions.ItemSkeleton, ProposalActions.Footer)
+
+ProposalActionTokenMint
+
+ProposalActionUpdateMetadata
+
+ProposalActionWithdrawToken
+
+ProposalDataListItem (compound: ProposalDataListItem.Skeleton, ProposalDataListItem.Structure)
+
+ProposalVoting (compound: ProposalVoting.BreakdownMultisig, ProposalVoting.BreakdownToken, ProposalVoting.Container, ProposalVoting.Details, ProposalVoting.StageContainer, ProposalVoting.Stage, …)
+
+ProposalVotingProgress (compound: ProposalVotingProgress.Item, ProposalVotingProgress.Container)
+
+Radio
+
+RadioCard
+
+RadioGroup
+
+Rerender — Rerender component
+
+SmartContractFunctionDataListItem (compound: SmartContractFunctionDataListItem.Skeleton, SmartContractFunctionDataListItem.Structure)
+
+Spinner — Spinner UI component
+
+StatePingAnimation
+
+StateSkeletonBar
+
+StateSkeletonCircular
+
+Switch
+
+Tabs (compound: Tabs.Root, Tabs.List, Tabs.Trigger, Tabs.Content)
+
+Tag
+
+TextArea
+
+TextAreaRichText
+
+Toggle — The Toggle component is a button that handles the on and off states.
+
+ToggleGroup
+
+Tooltip
+
+TransactionDataListItem (compound: TransactionDataListItem.Structure, TransactionDataListItem.Skeleton)
+
+TransactionDetail (compound: TransactionDetail.Root)
+
+TransactionDetailSummary
+
+VoteDataListItem (compound: VoteDataListItem.Structure, VoteDataListItem.Skeleton)
+
+VoteProposalDataListItem (compound: VoteProposalDataListItem.Structure, VoteProposalDataListItem.Skeleton)
+
+Wallet
+
+forms
+
+AddressesInput
+
+AdvancedDateInput
+
+AutocompleteInput
+
+AvatarInput
+
+NumberProgressInput
+
+ResourcesInput
+
+design-sync
+
+AppTransactionStatus
+
+Page
+
+shared
+
+AragonLogo
+
+Banner
+
+Carousel
+
+Container
+
+CtaCard
+
+DaoTargetIndicator
+
+DaoTypeTag
+
+DialogProvider
+
+ErrorFeedback
+
+FooterInfo
+
+KeyboardShortcut
+
+NetworkSwitchAlert
+
+ResourceLink
+
+SafeDocumentParser
+
+SafeHtml
+
+StatCard
+
+TranslationsProvider
+
+WizardDetailsDialog
+
+blocknavigationcontext
+
+BlockNavigationContextProvider
+
+debugprovider
+
+DebugContextProvider
+
+wizards
+
+Wizard
+
+WizardDialog
+
+WizardPage
+
+blocknavigationcontext
+BlockNavigationContextProvider
+Edit
+Usage notes for Claude
+debugprovider
+DebugContextProvider
+Edit
+Usage notes for Claude
+design-sync
+AppTransactionStatus
+Edit
+Usage notes for Claude
+Page
+Edit
+Usage notes for Claude
+forms
+AddressesInput
+Edit
+Usage notes for Claude
+AdvancedDateInput
+Edit
+Usage notes for Claude
+AutocompleteInput
+Edit
+Usage notes for Claude
+AvatarInput
+Edit
+Usage notes for Claude
+NumberProgressInput
+Edit
+Usage notes for Claude
+ResourcesInput
+Edit
+Usage notes for Claude
+general
+Accordion
+Edit
+Usage notes for Claude
+ActionSimulation
+Edit
+Usage notes for Claude
+AddressInput
+Edit
+Usage notes for Claude
+AddressOutput
+Edit
+Usage notes for Claude
+AlertCard
+Edit
+Usage notes for Claude
+AlertInline
+Edit
+Usage notes for Claude
+AssetDataListItem
+Edit
+Usage notes for Claude
+AssetTransfer
+Edit
+Usage notes for Claude
+Avatar
+Edit
+Usage notes for Claude
+AvatarBase
+Edit
+Usage notes for Claude
+AvatarIcon
+Edit
+Usage notes for Claude
+Breadcrumbs
+Edit
+Usage notes for Claude
+Button
+Edit
+Usage notes for Claude
+Card
+Edit
+Usage notes for Claude
+CardCollapsible
+Edit
+Usage notes for Claude
+CardEmptyState
+Edit
+Usage notes for Claude
+CardSummary
+Edit
+Usage notes for Claude
+Checkbox
+Edit
+Usage notes for Claude
+CheckboxCard
+Edit
+Usage notes for Claude
+CheckboxGroup
+Edit
+Usage notes for Claude
+Clipboard
+Edit
+Usage notes for Claude
+Collapsible
+Edit
+Usage notes for Claude
+DaoAvatar
+Edit
+Usage notes for Claude
+DaoDataListItem
+Edit
+Usage notes for Claude
+DataList
+Edit
+Usage notes for Claude
+DefinitionList
+Edit
+Usage notes for Claude
+Dialog
+Edit
+Usage notes for Claude
+DialogAlert
+Edit
+Usage notes for Claude
+DocumentParser
+Edit
+Usage notes for Claude
+Dropdown
+Edit
+Usage notes for Claude
+EmptyState
+Edit
+Usage notes for Claude
+GukCoreProvider
+Edit
+Usage notes for Claude
+GukModulesProvider
+Edit
+Usage notes for Claude
+Heading
+Edit
+Usage notes for Claude
+Icon
+Edit
+Usage notes for Claude
+IllustrationHuman
+Edit
+Usage notes for Claude
+IllustrationObject
+Edit
+Usage notes for Claude
+InputContainer
+Edit
+Usage notes for Claude
+InputDate
+Edit
+Usage notes for Claude
+InputFileAvatar
+Edit
+Usage notes for Claude
+InputNumber
+Edit
+Usage notes for Claude
+InputNumberMax
+Edit
+Usage notes for Claude
+InputSearch
+Edit
+Usage notes for Claude
+InputText
+Edit
+Usage notes for Claude
+InputTime
+Edit
+Usage notes for Claude
+Link
+Edit
+Usage notes for Claude
+LinkBase
+Edit
+Usage notes for Claude
+MemberAvatar
+Edit
+Usage notes for Claude
+MemberDataListItem
+Edit
+Usage notes for Claude
+Progress
+Edit
+Usage notes for Claude
+ProposalActionChangeMembers
+Edit
+Usage notes for Claude
+ProposalActionChangeSettings
+Edit
+Usage notes for Claude
+ProposalActions
+Edit
+Usage notes for Claude
+ProposalActionTokenMint
+Edit
+Usage notes for Claude
+ProposalActionUpdateMetadata
+Edit
+Usage notes for Claude
+ProposalActionWithdrawToken
+Edit
+Usage notes for Claude
+ProposalDataListItem
+Edit
+Usage notes for Claude
+ProposalVoting
+Edit
+Usage notes for Claude
+ProposalVotingProgress
+Edit
+Usage notes for Claude
+Radio
+Edit
+Usage notes for Claude
+RadioCard
+Edit
+Usage notes for Claude
+RadioGroup
+Edit
+Usage notes for Claude
+Rerender
+Edit
+Usage notes for Claude
+SmartContractFunctionDataListItem
+Edit
+Usage notes for Claude
+Spinner
+Edit
+Usage notes for Claude
+StatePingAnimation
+Edit
+Usage notes for Claude
+StateSkeletonBar
+Edit
+Usage notes for Claude
+StateSkeletonCircular
+Edit
+Usage notes for Claude
+Switch
+Edit
+Usage notes for Claude
+Tabs
+Edit
+Usage notes for Claude
+Tag
+Edit
+Usage notes for Claude
+TextArea
+Edit
+Usage notes for Claude
+TextAreaRichText
+Edit
+Usage notes for Claude
+Toggle
+Edit
+Usage notes for Claude
+ToggleGroup
+Edit
+Usage notes for Claude
+Tooltip
+Edit
+Usage notes for Claude
+TransactionDataListItem
+Edit
+Usage notes for Claude
+TransactionDetail
+Edit
+Usage notes for Claude
+TransactionDetailSummary
+Edit
+Usage notes for Claude
+VoteDataListItem
+Edit
+Usage notes for Claude
+VoteProposalDataListItem
+Edit
+Usage notes for Claude
+Wallet
+Edit
+Usage notes for Claude
+shared
+AragonLogo
+Edit
+Usage notes for Claude
+Banner
+Edit
+Usage notes for Claude
+Carousel
+Edit
+Usage notes for Claude
+Container
+Edit
+Usage notes for Claude
+CtaCard
+Edit
+Usage notes for Claude
+DaoTargetIndicator
+Edit
+Usage notes for Claude
+DaoTypeTag
+Edit
+Usage notes for Claude
+DialogProvider
+Edit
+Usage notes for Claude
+ErrorFeedback
+Edit
+Usage notes for Claude
+FooterInfo
+Edit
+Usage notes for Claude
+KeyboardShortcut
+Edit
+Usage notes for Claude
+NetworkSwitchAlert
+Edit
+Usage notes for Claude
+ResourceLink
+Edit
+Usage notes for Claude
+SafeDocumentParser
+Edit
+Usage notes for Claude
+SafeHtml
+Edit
+Usage notes for Claude
+StatCard
+Edit
+Usage notes for Claude
+TranslationsProvider
+Edit
+Usage notes for Claude
+WizardDetailsDialog
+Edit
+Usage notes for Claude
+wizards
+Wizard
+Edit
+Usage notes for Claude
+WizardDialog
+Edit
+Usage notes for Claude
+WizardPage
+Edit
+Usage notes for Claude

@@ -1,0 +1,65 @@
+{
+  "status": "incomparable",
+  "model": "Opus 5",
+  "effort": "Medium",
+  "armOrder": [
+    "candidate",
+    "production"
+  ],
+  "candidateProject": "https://claude.ai/design/p/c33d6b53-7057-4dd6-b5fb-9ea0a8d647ae",
+  "productionProject": "https://claude.ai/design/p/2f22a679-7abb-4283-9f39-e28a63dba83b",
+  "candidateBundleSha256": "57f598081d01a152e1309c8a0b7be15ee12d8e868be7fea48de5ab205fa49e77",
+  "candidate": {
+    "requiredScores": {
+      "0": 0.98,
+      "1": 0.97,
+      "2": 0.97,
+      "3": 0.97,
+      "4": 0.9,
+      "5": 0.92,
+      "6": 0.74
+    },
+    "incorrectScores": {
+      "0": 0.03,
+      "1": 0.05,
+      "2": 0.05,
+      "3": 0.4
+    },
+    "pass": true
+  },
+  "production": {
+    "requiredScores": {
+      "0": 0.98,
+      "1": 0.98,
+      "2": 0.98,
+      "3": 0.97,
+      "4": 0.93,
+      "5": 0.95,
+      "6": 0.91
+    },
+    "incorrectScores": {
+      "0": 0.02,
+      "1": 0.04,
+      "2": 0.03,
+      "3": 0.29
+    },
+    "pass": true
+  },
+  "delta": "not measurable",
+  "interpretation": "Preserve outputs and report setup mismatch; no causal claim.",
+  "observations": [
+    "Candidate cited bundle line ranges; spot-checked 102784, 108205, 110330, 102240 in ds-bundle/_ds_bundle.js and all resolve to the named symbols.",
+    "Production cited repo source paths; apps/app/src/shared/components/forms/addressesInput/index.ts and addressesListUtils.ts both exist.",
+    "Candidate scored lower on required[6] (0.74 vs 0.91) \u2014 exact props plus reachable revision-matched paths \u2014 because it cites bundle offsets rather than repo paths.",
+    "Arms saw different revisions (candidate gov-ui-kit 2.11.4, production 2.10.0), an inherent property of comparing the candidate bundle against the live production project."
+  ],
+  "verdict": "Arms differed outside the allowed context delta. No causal or comparative claim follows. Per-arm scores retained as raw observation only.",
+  "setupDefects": [
+    "Candidate project c33d6b53 was created via the UI setup wizard, which compiled the 575-file payload into uploads/_ds_bundle.js and discarded 574 source files. Verified twice from the project file tree.",
+    "Candidate arm was warm-started: an aborted run had already written handoffs/dao-wizard-member-step.md at the same path the graded run overwrote.",
+    "Baseline project 2f22a679 was mutated by the production arm (handoff/members-step-handoff.md), against NOTES.md:202.",
+    "Neither arm contained guidelines/ or the registry/selection-guide bytes, so the incremental-context question was not exercised at all."
+  ],
+  "withdrawn": "Earlier contamination reasoning from collapsed tool labels (Listing files x2 vs Reading x17) is withdrawn; PROTOCOL-v2 bars estimating tool effort from those labels. The verdict rests on the missing payload tree and the pre-existing artifact.",
+  "prerequisite": "See ../../RERUN-PREP.md \u2014 fresh disposable arms, candidate pushed from the current ds-bundle (which does ship guidelines/)."
+}

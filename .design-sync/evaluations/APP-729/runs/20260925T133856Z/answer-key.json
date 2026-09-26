@@ -1,0 +1,26 @@
+{
+  "frozenAt": "2026-09-25T13:38:56Z",
+  "expectedProductionOutcome": "The production arm may recover the composition from existing declarations/guidance, but its retained historical bundle lacked the delivered registry/selection context and exposed generic App declaration stubs. A correct production answer remains possible; this is a delta probe, so both passing is a genuine null.",
+  "required": [
+    "Choose the App-owned compound address-list input: Container plus Item.",
+    "Compose it inside the full-page wizard Container and Step rather than wrapping the step in a second form provider.",
+    "Initialize values through the wizard-owned form/default values.",
+    "Keep onChange editable input distinct from onAccept resolved/accepted address state.",
+    "Assign required, duplicate, invalid, and custom validation policy to the App/form layer.",
+    "State the module-provider boundary and ENS/checksum/chainId semantics supported by the supplied references.",
+    "Give exact required props and reachable revision-matched source or example paths; mark unavailable facts unknown."
+  ],
+  "incorrect": [
+    "Standalone form wrapper nested inside the wizard step.",
+    "Treating accepted/resolved state as the current editable value.",
+    "Delegating App duplicate or required-member policy to the reusable primitive.",
+    "Inventing component props, provider requirements, or source paths."
+  ],
+  "interpretation": {
+    "bothPass": "Null delta and no regression for this task.",
+    "candidateOnly": "Directional evidence consistent with improved delivered context/contract reachability.",
+    "productionOnly": "Potential candidate conflict or distraction; preserve as negative delta.",
+    "bothFail": "Probe feasibility or authority delivery failure; no rerun without separate authorization.",
+    "incomparable": "Preserve outputs and report setup mismatch; no causal claim."
+  }
+}
