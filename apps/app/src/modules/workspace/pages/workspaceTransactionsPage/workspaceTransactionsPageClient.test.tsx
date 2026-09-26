@@ -1,20 +1,16 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
-    WorkspaceAccountInfoStatus,
-    WorkspaceAccountInfoType,
-    workspaceQueryService,
-} from '../../api/workspaceQueryService';
-import {
     type IWorkspace,
     type IWorkspaceAccount,
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import * as workspaceAccountSelectorProvider from '../../components/workspaceAccountSelectorProvider';
 import type * as workspaceTransactionList from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import type * as workspaceTransactionsAsideCard from '../../components/workspaceTransactionsAsideCard';
@@ -39,7 +35,11 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     const safeAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
-    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+    const useWorkspaceAccountSelectorContextSpy = jest.spyOn(
+        workspaceAccountSelectorProvider,
+        'useWorkspaceAccountSelectorContext',
+    );
+    const setActiveOptionMock = jest.fn();
 
     const listMock = WorkspaceTransactionList as jest.Mock;
     const asideCardMock = WorkspaceTransactionsAsideCard as jest.Mock;
@@ -59,6 +59,17 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         metadata: { name: 'Grants Safe' },
     };
 
+    const allAccountsOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
+        { id: 'all', label: 'All accounts', isAllAccounts: true };
+
+    const daoOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
+        {
+            id: daoAccount.id,
+            label: 'Demo DAO',
+            account: daoAccount,
+            isAllAccounts: false,
+        };
+
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
         id: 'test-workspace',
         name: 'Test Workspace',
@@ -70,6 +81,19 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         targets: [],
         ...workspace,
     });
+
+    /**
+     * Mocks the account selector context, the aggregated option being active unless set otherwise.
+     */
+    const mockAccountSelector = (
+        context?: Partial<workspaceAccountSelectorProvider.IWorkspaceAccountSelectorContext>,
+    ) =>
+        useWorkspaceAccountSelectorContextSpy.mockReturnValue({
+            activeOption: allAccountsOption,
+            setActiveOption: setActiveOptionMock,
+            options: [allAccountsOption, daoOption],
+            ...context,
+        });
 
     /**
      * Props of the last render of the transaction list.
@@ -87,42 +111,17 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             | workspaceTransactionsAsideCard.IWorkspaceTransactionsAsideCardProps
             | undefined;
 
-    const allAccountsLabel =
-        'app.workspace.workspaceTransactionsPage.filter.allAccounts';
-
-    /**
-     * Opens the account dropdown, whose trigger is labelled by the option currently selected.
-     */
-    const openAccountFilter = async (activeLabel: string) =>
-        await userEvent.click(
-            await screen.findByRole('button', { name: activeLabel }),
-        );
-
-    const selectAccount = async (activeLabel: string, label: string) => {
-        await openAccountFilter(activeLabel);
-        await userEvent.click(await screen.findByText(label));
-    };
-
     beforeEach(() => {
         getWorkspaceSpy.mockResolvedValue(buildWorkspace());
-        getAccountsSpy.mockResolvedValue([
-            {
-                network: Network.ETHEREUM_SEPOLIA,
-                address: daoAddress,
-                type: WorkspaceAccountInfoType.DAO,
-                status: WorkspaceAccountInfoStatus.AVAILABLE,
-                indexed: true,
-                name: 'Demo DAO',
-            },
-        ]);
+        mockAccountSelector();
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
-        getAccountsSpy.mockReset();
+        useWorkspaceAccountSelectorContextSpy.mockReset();
+        setActiveOptionMock.mockReset();
         asideCardMock.mockClear();
         listMock.mockClear();
-        localStorage.clear();
     });
 
     let testIndex = 0;
@@ -148,17 +147,17 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         );
     };
 
-    it('offers the aggregated option and the DAO accounts only', async () => {
+    it('selects the account picked on the account dropdown', async () => {
         render(createTestComponent());
 
-        await openAccountFilter(allAccountsLabel);
+        await userEvent.click(
+            await screen.findByRole('button', {
+                name: allAccountsOption.label,
+            }),
+        );
+        await userEvent.click(await screen.findByText(daoOption.label));
 
-        expect(await screen.findByText('Demo DAO')).toBeInTheDocument();
-        // The Safe has no option: the single DAO endpoints cannot answer for it.
-        expect(screen.queryByText('Grants Safe')).not.toBeInTheDocument();
-        expect(
-            screen.queryByText(addressUtils.truncateAddress(safeAddress)),
-        ).not.toBeInTheDocument();
+        expect(setActiveOptionMock).toHaveBeenCalledWith(daoOption);
     });
 
     it('renders the aggregated list with every account of the workspace by default', async () => {
@@ -174,32 +173,13 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     });
 
     it('narrows the list to the selected account', async () => {
+        mockAccountSelector({ activeOption: daoOption });
         render(createTestComponent());
-
-        await selectAccount(allAccountsLabel, 'Demo DAO');
 
         await waitFor(() =>
             expect(lastListProps()?.accounts).toEqual([daoAccount]),
         );
         expect(screen.getByTestId('list-mock')).toBeInTheDocument();
-    });
-
-    it('lists every account again when the all-accounts option is selected back', async () => {
-        render(createTestComponent());
-
-        await selectAccount(allAccountsLabel, 'Demo DAO');
-        await waitFor(() =>
-            expect(lastListProps()?.accounts).toEqual([daoAccount]),
-        );
-
-        await selectAccount('Demo DAO', allAccountsLabel);
-
-        await waitFor(() =>
-            expect(lastListProps()?.accounts).toEqual([
-                daoAccount,
-                safeAccount,
-            ]),
-        );
     });
 
     it('passes the workspace and the aggregated option to the aside card by default', async () => {
@@ -209,23 +189,17 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             expect(lastAsideCardProps()).toEqual({
                 workspace: buildWorkspace(),
                 pageSize: 20,
-                activeOption: expect.objectContaining({ isAllAccounts: true }),
+                activeOption: allAccountsOption,
             }),
         );
     });
 
     it('passes the selected account option to the aside card', async () => {
+        mockAccountSelector({ activeOption: daoOption });
         render(createTestComponent());
 
-        await selectAccount(allAccountsLabel, 'Demo DAO');
-
         await waitFor(() =>
-            expect(lastAsideCardProps()?.activeOption).toEqual(
-                expect.objectContaining({
-                    label: 'Demo DAO',
-                    account: daoAccount,
-                }),
-            ),
+            expect(lastAsideCardProps()?.activeOption).toEqual(daoOption),
         );
     });
 
@@ -233,13 +207,14 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         getWorkspaceSpy.mockResolvedValue(
             buildWorkspace({ accounts: [safeAccount] }),
         );
+        mockAccountSelector({ options: [allAccountsOption] });
         render(createTestComponent());
 
         await waitFor(() =>
             expect(lastListProps()?.accounts).toEqual([safeAccount]),
         );
         expect(
-            screen.queryByRole('button', { name: allAccountsLabel }),
+            screen.queryByRole('button', { name: allAccountsOption.label }),
         ).toBeNull();
     });
 
@@ -252,13 +227,5 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
                 /workspaceTransactionsPage\.notFound\.title$/,
             ),
         ).toBeInTheDocument();
-    });
-
-    it('does not resolve account names for a workspace that has none', async () => {
-        getWorkspaceSpy.mockResolvedValue(buildWorkspace({ accounts: [] }));
-        render(createTestComponent());
-
-        await waitFor(() => expect(lastListProps()?.accounts).toEqual([]));
-        expect(getAccountsSpy).not.toHaveBeenCalled();
     });
 });

@@ -4307,6 +4307,7 @@
         }
       },
       "workspaceAccountSelectorProvider": {
+        "allAccounts": "All accounts",
         "error": {
           "description": "Something went wrong while loading the workspace. Please try again later.",
           "title": "Workspace failed to load"
@@ -4337,9 +4338,6 @@
         "totalValue": "Total value (USD)"
       },
       "workspaceAssetsPage": {
-        "filter": {
-          "allAccounts": "All accounts"
-        },
         "main": {
           "title": "Assets"
         }
@@ -4405,9 +4403,6 @@
         "allTransactions": "All transactions"
       },
       "workspaceTransactionsPage": {
-        "filter": {
-          "allAccounts": "All accounts"
-        },
         "main": {
           "title": "Transactions"
         },

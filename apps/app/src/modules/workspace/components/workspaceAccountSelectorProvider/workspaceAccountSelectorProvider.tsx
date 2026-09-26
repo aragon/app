@@ -11,6 +11,7 @@ import {
     useState,
 } from 'react';
 import { Page } from '@/shared/components/page';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -93,6 +94,7 @@ export const WorkspaceAccountSelectorProvider: React.FC<
 > = (props) => {
     const { children, workspaceId } = props;
 
+    const { t } = useTranslations();
     const searchParams = useSearchParams();
     const urlOptionId = searchParams.get(workspaceAccountFilterParam);
 
@@ -136,12 +138,14 @@ export const WorkspaceAccountSelectorProvider: React.FC<
         return [
             {
                 id: workspaceAllAccountsOption,
-                label: 'All accounts', // TODO: add to en.json + clean up other "all account" labels
+                label: t(
+                    'app.workspace.workspaceAccountSelectorProvider.allAccounts',
+                ),
                 isAllAccounts: true,
             },
             ...accountOptions,
         ];
-    }, [accounts, accountInfos]);
+    }, [accounts, accountInfos, t]);
 
     // URL wins when present, memory otherwise.
     const activeOptionId = urlOptionId ?? savedOptionId;

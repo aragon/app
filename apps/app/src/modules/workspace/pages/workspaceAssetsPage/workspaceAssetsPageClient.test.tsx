@@ -1,4 +1,4 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -8,9 +8,11 @@ import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
+    type IWorkspaceAccount,
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import * as workspaceAccountSelectorProvider from '../../components/workspaceAccountSelectorProvider';
 import {
     type IWorkspaceAssetsPageClientProps,
     WorkspaceAssetsPageClient,
@@ -25,6 +27,11 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
     );
     // Read by the aside card of a DAO account, which renders the DAO's own card.
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
+    const useWorkspaceAccountSelectorContextSpy = jest.spyOn(
+        workspaceAccountSelectorProvider,
+        'useWorkspaceAccountSelectorContext',
+    );
+    const setActiveOptionMock = jest.fn();
 
     // React Query dedupes by key and the asset key is built from the accounts, so each test gets its own addresses:
     // otherwise a result cached by an earlier test satisfies the render and this test's own mock never runs.
@@ -39,6 +46,13 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         };
     };
 
+    const buildDaoAccount = (daoAddress: string): IWorkspaceAccount => ({
+        id: `ethereum-sepolia-${daoAddress}`,
+        type: WorkspaceAccountType.DAO,
+        address: daoAddress,
+        network: Network.ETHEREUM_SEPOLIA,
+    });
+
     const buildWorkspace = (params: {
         daoAddress: string;
         safeAddress: string;
@@ -50,12 +64,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         links: [],
         owner: params.safeAddress,
         accounts: [
-            {
-                id: `ethereum-sepolia-${params.daoAddress}`,
-                type: WorkspaceAccountType.DAO,
-                address: params.daoAddress,
-                network: Network.ETHEREUM_SEPOLIA,
-            },
+            buildDaoAccount(params.daoAddress),
             {
                 id: `ethereum-sepolia-${params.safeAddress}`,
                 type: WorkspaceAccountType.SAFE,
@@ -65,6 +74,34 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         ],
         targets: [],
     });
+
+    const allAccountsOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
+        { id: 'all', label: 'All accounts', isAllAccounts: true };
+
+    const buildDaoOption = (
+        daoAddress: string,
+    ): workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption => ({
+        id: `ethereum-sepolia-${daoAddress}`,
+        label: 'Demo DAO',
+        account: buildDaoAccount(daoAddress),
+        isAllAccounts: false,
+    });
+
+    /**
+     * Mocks the account selector context with the aggregated and the DAO options, the given one being active.
+     */
+    const mockAccountSelector = (params: {
+        daoAddress: string;
+        isDaoActive?: boolean;
+    }) => {
+        const daoOption = buildDaoOption(params.daoAddress);
+
+        useWorkspaceAccountSelectorContextSpy.mockReturnValue({
+            activeOption: params.isDaoActive ? daoOption : allAccountsOption,
+            setActiveOption: setActiveOptionMock,
+            options: [allAccountsOption, daoOption],
+        });
+    };
 
     beforeEach(() => {
         getAccountsSpy.mockResolvedValue([]);
@@ -88,13 +125,17 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         getAccountsSpy.mockReset();
         getWorkspaceAssetsSpy.mockReset();
         getDaoSpy.mockReset();
+        useWorkspaceAccountSelectorContextSpy.mockReset();
+        setActiveOptionMock.mockReset();
     });
 
     const createTestComponent = (
         props?: Partial<IWorkspaceAssetsPageClientProps>,
+        isDaoActive?: boolean,
     ) => {
         const addresses = nextAddresses();
         getWorkspaceSpy.mockResolvedValue(buildWorkspace(addresses));
+        mockAccountSelector({ daoAddress: addresses.daoAddress, isDaoActive });
 
         const completeProps: IWorkspaceAssetsPageClientProps = {
             workspaceId: `test-workspace-${testIndex.toString()}`,
@@ -115,33 +156,20 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         return { component, ...addresses };
     };
 
-    // The accounts are behind the account dropdown, labelled with the currently selected option.
-    const openAccountDropdown = async () =>
-        userEvent.click(
-            await screen.findByRole('button', {
-                name: 'app.workspace.workspaceAssetsPage.filter.allAccounts',
-            }),
-        );
-
-    const selectAccount = async (address: string) => {
-        await openAccountDropdown();
-        await userEvent.click(
-            await screen.findByText(addressUtils.truncateAddress(address)),
-        );
-    };
-
-    it('gives an option to the aggregated view and to the DAO accounts only', async () => {
-        const { component, daoAddress, safeAddress } = createTestComponent();
+    it('selects the account picked on the account dropdown', async () => {
+        const { component, daoAddress } = createTestComponent();
         render(component);
 
-        await openAccountDropdown();
+        await userEvent.click(
+            await screen.findByRole('button', {
+                name: allAccountsOption.label,
+            }),
+        );
+        await userEvent.click(await screen.findByText('Demo DAO'));
 
-        expect(
-            await screen.findByText(addressUtils.truncateAddress(daoAddress)),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByText(addressUtils.truncateAddress(safeAddress)),
-        ).not.toBeInTheDocument();
+        expect(setActiveOptionMock).toHaveBeenCalledWith(
+            buildDaoOption(daoAddress),
+        );
     });
 
     it('reads the workspace assets API for the aggregated tab, with every account', async () => {
@@ -169,10 +197,8 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
     });
 
     it('narrows the same API to the selected account instead of the single DAO endpoint', async () => {
-        const { component, daoAddress } = createTestComponent();
+        const { component, daoAddress } = createTestComponent({}, true);
         render(component);
-
-        await selectAccount(daoAddress);
 
         await waitFor(() =>
             expect(getWorkspaceAssetsSpy).toHaveBeenCalledWith(
@@ -200,10 +226,8 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
     });
 
     it('swaps the aside for the DAO card when a DAO account is selected', async () => {
-        const { component, daoAddress } = createTestComponent();
+        const { component, daoAddress } = createTestComponent({}, true);
         render(component);
-
-        await selectAccount(daoAddress);
 
         await waitFor(() =>
             expect(getDaoSpy).toHaveBeenCalledWith({

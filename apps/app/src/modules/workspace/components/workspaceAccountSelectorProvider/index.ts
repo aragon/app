@@ -1,4 +1,5 @@
 export {
+    type IWorkspaceAccountFilterOption,
     type IWorkspaceAccountSelectorContext,
     type IWorkspaceAccountSelectorProviderProps,
     useWorkspaceAccountSelectorContext,
