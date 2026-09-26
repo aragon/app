@@ -7,6 +7,7 @@ import { ApplicationDialogId } from '@/modules/application/constants/application
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
 import { useWorkspace } from '@/modules/workspace/api/workspaceService';
+import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
     type INavigationContainerProps,
@@ -86,20 +87,23 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             {...otherProps}
         >
             <div className="flex items-center justify-between gap-1">
-                <button
-                    className="focus-ring-primary flex max-w-56 cursor-pointer items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 p-1 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 md:pr-4 xl:max-w-68"
-                    onClick={() => setIsDialogOpen(true)}
-                    type="button"
-                >
-                    <DaoAvatar
-                        name={workspace?.name}
-                        size="lg"
-                        src={workspaceAvatar}
-                    />
-                    <p className="hidden truncate font-normal text-base text-neutral-800 leading-tight md:block">
-                        {workspace?.name}
-                    </p>
-                </button>
+                <div className="flex min-w-0 items-center gap-2">
+                    <button
+                        className="focus-ring-primary flex max-w-56 cursor-pointer items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 p-1 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 md:pr-4 xl:max-w-68"
+                        onClick={() => setIsDialogOpen(true)}
+                        type="button"
+                    >
+                        <DaoAvatar
+                            name={workspace?.name}
+                            size="lg"
+                            src={workspaceAvatar}
+                        />
+                        <p className="hidden truncate font-normal text-base text-neutral-800 leading-tight md:block">
+                            {workspace?.name}
+                        </p>
+                    </button>
+                    <WorkspaceAccountSelector workspaceId={workspaceId} />
+                </div>
                 <Navigation.Links className="hidden lg:flex" links={links} />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Wallet onClick={handleWalletClick} user={walletUser} />
