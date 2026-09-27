@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-09-26",
+  "purpose": "Payload identity for the APP-1220 single-arm merge gate.",
+  "worktree": {
+    "path": "~/.herdr/worktrees/app-next/app-1208",
+    "branch": "APP-1223-closure",
+    "head": "2b512b90d3093f1170a14f2ccf7eab41dcc7f036",
+    "clean": true
+  },
+  "manifest": {
+    "payloadManifestSha256": "ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f",
+    "dsBuildMetaSha256": "c4a11a165c53cc50785eceec83fb7e054c061aa76c11bd1cfbb29242b4173ac3",
+    "sourceCommit": "8a3ea8c8ed7040bf609fced7f3c5c2cfdfd5c486",
+    "sourceDirty": [],
+    "uploadFiles": 575,
+    "captureLocalFiles": 670
+  },
+  "sourceCommitNote": "registry.mjs:1680-1684 carries previous.provenance forward; :1861-1864 excludes commit/dirty from staleness because they churn on every commit. Per-file sha256 is the real drift check. HEAD recorded above so the artifact is recreatable.",
+  "kit": {
+    "version": "2.11.4",
+    "commit": "e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0",
+    "vendoredIn": "aragon/app at packages/gov-ui-kit",
+    "reachableFrom": "origin/app-594-migrate-ui-kit-to-monorepo",
+    "recreate": "git worktree add <durable> e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0 && export GOVKIT_KIT_ROOT=<durable>/packages/gov-ui-kit"
+  },
+  "deliveredContext": [
+    "guidelines/index.md",
+    "guidelines/context/index.md",
+    "guidelines/context/registry-report.md",
+    "guidelines/context/selection-guide.json",
+    "guidelines/context/source-index.md"
+  ],
+  "verification": {
+    "refreshTest": "3/3 pass",
+    "emittedPrompts": 114,
+    "docsUnmapped": "110 of 114 \u2014 expected: config.docsMap has 4 entries; prompt count matches prior bundle"
+  },
+  "scope": {
+    "included": [
+      "APP-726",
+      "APP-727",
+      "APP-728",
+      "APP-735",
+      "APP-736",
+      "APP-1208",
+      "APP-1223"
+    ],
+    "excluded": [
+      "APP-1224",
+      "APP-1225"
+    ],
+    "bound": "APP-1225 (prop defaults: 79 upstream, 2 in bundle) bounds required[6]."
+  }
+}

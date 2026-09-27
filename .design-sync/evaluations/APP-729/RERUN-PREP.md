@@ -81,11 +81,35 @@ GOVKIT_KIT_ROOT=/private/tmp/app-594-govkit-source/packages/gov-ui-kit \
 node --test .design-sync/refresh.test.mjs   # 3/3 pass
 ```
 
-`GOVKIT_KIT_ROOT` must be the kit checkout at the manifest's kit commit
-`e06fbb8d`. `/private/tmp/app-594-govkit-source` itself is an app-next
-worktree, not the kit — the kit lives at its `packages/gov-ui-kit`.
-`~/Local/gov-ui-kit` is `64b517f5…`, the mismatched snapshot the audit
-already flagged; do not use it.
+### `GOVKIT_KIT_ROOT` — recreatable, do not rely on /private/tmp
+
+The kit source for this revision is **vendored in `aragon/app`** at
+`packages/gov-ui-kit`, not a separate kit clone. Commit `e06fbb8d` is on
+`origin/app-594-migrate-ui-kit-to-monorepo`, so any machine can recreate
+it:
+
+```sh
+cd <any app-next worktree>
+git fetch origin app-594-migrate-ui-kit-to-monorepo
+git worktree add /durable/path/app-594-govkit e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0
+export GOVKIT_KIT_ROOT=/durable/path/app-594-govkit/packages/gov-ui-kit
+```
+
+Verify before building:
+
+```sh
+git -C "$GOVKIT_KIT_ROOT" rev-parse HEAD   # e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0
+test -f "$GOVKIT_KIT_ROOT/src/core/components/accordion/accordionContainer/accordionContainer.tsx"
+```
+
+Traps, both hit during this session:
+
+- The path currently on disk is `/private/tmp/app-594-govkit-source/packages/gov-ui-kit`.
+  `/private/tmp` is volatile — relocate before relying on it.
+- Pointing at the worktree **root** instead of `packages/gov-ui-kit`
+  fails ~80s in with `Missing kit reference: src/core/components/…`.
+- `~/Local/gov-ui-kit` is `64b517f5…`, the mismatched snapshot the audit
+  already flagged. Do not use it.
 
 - Payload: `/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle`
   - `.payload-manifest.json` sha256 `ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f`
@@ -138,20 +162,44 @@ No second arm. Nothing is being compared: the question is whether an
 agent handed this bundle can reach and correctly use the delivered
 context.
 
-### Pass conditions
+### Pass conditions — frozen 2026-09-26, before the run
 
-Grade the produced handoff against `answer-key.json`:
+These thresholds are fixed now, ahead of any output. In the void run the
+≥0.7 / <0.5 cutoffs were picked *after* seeing scores, which makes a
+"gate" post-hoc judgement. Do not renegotiate these once a result
+exists; if they prove wrong, record that and re-freeze for a later run.
 
-- all 7 `required` criteria satisfied
-- none of the 4 `incorrect` choices committed
-- every cited source path or reference resolves in the delivered payload
-- the agent reaches `guidelines/context/selection-guide.json` or
-  `registry-report.md` when choosing between components — this is the
-  material that has never before been delivered, and reachability is the
-  acceptance question
+**Who grades, and blind.** The grader is a session that has not seen
+this prep, the bundle's provenance, or which revision produced the
+output. It receives exactly: the produced handoff, `answer-key.json`,
+and read access to the delivered payload for citation checking. It is
+not told the bundle is a candidate, nor that PRs depend on the verdict.
 
-Spot-check every cited path/line against the bundle before scoring the
-"invented APIs" criterion; a probability from a grader is not evidence.
+**Per-criterion scoring.** For each of the 7 `required` and 4
+`incorrect` entries, the grader returns satisfied / not satisfied with a
+quoted span from the handoff as evidence. A criterion with no quotable
+evidence is **not satisfied** — absence is not a pass.
+
+**Thresholds.**
+
+| Condition | Requirement |
+| --- | --- |
+| `required` 0–6 | all 7 satisfied |
+| `incorrect` 0–3 | none committed |
+| Cited paths | every source path or reference resolves in the delivered payload |
+| Context reachability | the handoff demonstrably uses `guidelines/context/selection-guide.json` or `registry-report.md` for a component choice |
+
+All four must hold. This is pass/fail, not a score.
+
+**Citations are checked mechanically, not judged.** Resolve every cited
+path and line range against the payload; a grader probability is not
+evidence. In the void run `cand_bad3` came back 0.40 — meaningless until
+the citations were resolved by hand, which showed no invention at all.
+
+**Context reachability is the criterion that matters most here.** The
+registry report and selection guide have never previously been delivered
+to any project. If the handoff never consults them, the acceptance
+question is answered "no" regardless of how good the prose is.
 
 ### Verdict
 
