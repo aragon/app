@@ -68,48 +68,48 @@ push of the current payload is a prerequisite, not an optimisation.
 `remote-diff.mjs:43` ships `guidelines/**` + `README.md` as the `aux`
 partition, so a normal push delivers them once they exist locally.
 
-## 3. Artifacts — rebuilt and verified 2026-09-26
+## 3. Artifacts — run 1 payload, superseded by APP-1235
 
-The payload has been rebuilt from the committed tree. The worktree is
-clean; the artifact is reproducible from a ref.
+**Do not rebuild with the kit root recorded here for run 1.** It is the
+cause of the run 1 failure. See the corrected value below.
 
 ```sh
 cd /Users/kd-m2air/.herdr/worktrees/app-next/app-1208   # APP-1223-closure @ 2b512b90d
-GOVKIT_KIT_ROOT=/private/tmp/app-594-govkit-source/packages/gov-ui-kit \
-  node .design-sync/refresh.mjs
-# → Refresh candidate built: 575 upload files, 670 capture/local files
+GOVKIT_KIT_ROOT=/Users/kd-m2air/Local/gov-ui-kit node .design-sync/refresh.mjs
 node --test .design-sync/refresh.test.mjs   # 3/3 pass
 ```
 
-### `GOVKIT_KIT_ROOT` — recreatable, do not rely on /private/tmp
+### `GOVKIT_KIT_ROOT` must be the standalone kit repo
 
-The kit source for this revision is **vendored in `aragon/app`** at
-`packages/gov-ui-kit`, not a separate kit clone. Commit `e06fbb8d` is on
-`origin/app-594-migrate-ui-kit-to-monorepo`, so any machine can recreate
-it:
+`apps/app` consumes published `@aragon/gov-ui-kit@2.11.4` through the
+catalog, and that package's metadata names `aragon/gov-ui-kit`. Source
+references have to describe the revision that package was cut from, and
+`REPOSITORIES.kit` in `overrides/docs.mjs` already names that repo.
 
-```sh
-cd <any app-next worktree>
-git fetch origin app-594-migrate-ui-kit-to-monorepo
-git worktree add /durable/path/app-594-govkit e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0
-export GOVKIT_KIT_ROOT=/durable/path/app-594-govkit/packages/gov-ui-kit
-```
-
-Verify before building:
+Use `/Users/kd-m2air/Local/gov-ui-kit` at `64b517f5`, the *Publish
+v2.11.4* commit. Its `package.json` reads `2.11.4`.
 
 ```sh
-git -C "$GOVKIT_KIT_ROOT" rev-parse HEAD   # e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0
-test -f "$GOVKIT_KIT_ROOT/src/core/components/accordion/accordionContainer/accordionContainer.tsx"
+git -C "$GOVKIT_KIT_ROOT" rev-parse HEAD    # 64b517f5b90052797ecaced5f15ab616b5733f30
+git -C "$GOVKIT_KIT_ROOT" show HEAD:package.json | grep '"version"'   # 2.11.4
 ```
 
-Traps, both hit during this session:
+Neither the installed package nor the npm registry records a `gitHead`
+for 2.11.4, and the `v2.11.4` tag (`427794cf`) carries `package.json`
+`2.11.3`, so the publish commit is the best-evidenced coordinate. If a
+`gitHead` ever appears, prefer it.
 
-- The path currently on disk is `/private/tmp/app-594-govkit-source/packages/gov-ui-kit`.
-  `/private/tmp` is volatile — relocate before relying on it.
-- Pointing at the worktree **root** instead of `packages/gov-ui-kit`
-  fails ~80s in with `Missing kit reference: src/core/components/…`.
-- `~/Local/gov-ui-kit` is `64b517f5…`, the mismatched snapshot the audit
-  already flagged. Do not use it.
+**What went wrong in run 1.** The rebuild used
+`/private/tmp/app-594-govkit-source/packages/gov-ui-kit`, a worktree of
+`aragon/app`. That recorded kit commit `e06fbb8d`, which does not exist
+in `aragon/gov-ui-kit` — `git cat-file -t` fails there. Combined with the
+correct repository constant it emitted links to a sha that repo has never
+had, and the gate failed on exactly that. The constant was never wrong.
+
+`packages/gov-ui-kit` on `main` also reads `2.11.4`, so the canonical
+coordinate flips to `aragon/app` + `packages/gov-ui-kit` once releases
+cut from the monorepo. Until then the monorepo path produces dead links.
+APP-1235 carries the guard that makes that transition fail loudly.
 
 - Payload: `/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle`
   - `.payload-manifest.json` sha256 `ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f`
