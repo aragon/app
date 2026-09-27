@@ -474,3 +474,13 @@ grep -c 'github.com/aragon/gov-ui-kit' ds-bundle/guidelines/context/source-index
 
 Prompt, answer key, thresholds, blind-grading rule and the APP-1225
 exception are unchanged. Draw nothing new; run 2 is the same single arm.
+
+### Run 2 uses a new project
+
+`cf7d7d99…` now holds run 1's handoff. Reusing it, or its chat, gives run 2
+the warm start that voided the 2026-09-25 attempt: the model would find a
+prior answer at the path it writes to. Create a new empty project, push
+the rebuilt payload, run one fresh chat.
+
+Keep `cf7d7d99…` as run 1 evidence. Delete `c33d6b53…`, the invalid
+2026-09-25 project, whenever convenient.
