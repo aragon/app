@@ -219,8 +219,19 @@ Decided now, before any result:
   unreachable paths, unresolvable references, invented contracts → a
   genuine gate failure.
 
-The grader reports which of the two it is, with the quoted span. No
-other criterion has an exception.
+**This exception is never shown to the grader.** Telling it the rule
+leaks that a bundle with a known defaults gap is under test, which
+breaks the blindness the gate depends on. The split:
+
+- **Grader** reports `required[6]` factually — which sub-claims hold,
+  which fail, each with a quoted span. It is given no exception, no
+  ticket numbers, and no hint that any deficiency is expected.
+- **Evaluator** (not the grader) reads that factual report and applies
+  the exception when computing the verdict.
+
+If the grader's `required[6]` failure spans reference only missing
+default values, the exception applies. If they reference anything else,
+it does not. No other criterion has an exception.
 
 ### Verdict
 
@@ -294,3 +305,44 @@ verdict rests on the missing tree and the pre-existing artifact.
 Delete `c33d6b53-7057-4dd6-b5fb-9ea0a8d647ae` — wrong ingestion,
 contaminated, no tree. Keep `e6b58c10…` as historical v1 evidence; do not
 reuse it as an arm.
+
+## 8. Execution split (2026-09-27)
+
+No single session has both capabilities. Divide it:
+
+| Step | Who | Why |
+| --- | --- | --- |
+| Push payload to the gate project | session with **DesignSync MCP** | only it has write auth (`remote-diff.mjs:18`) |
+| Run the probe chat, capture handoff bytes | session with **browser/relay** | the artifact lives behind `claudeusercontent`, not in the chat text |
+| Grade (blind) | fresh subagent | must not have seen this prep |
+| Apply the exception, compute verdict | evaluator | see §4 — the grader never sees the rule |
+
+### Write set — precomputed, no manifest read needed
+
+`gate-upload-files.txt` — 575 paths, one per line, in write order with
+`_ds_sync.json` **last**. `gate-upload-files.json` carries the same list
+with per-file bytes and sha256, plus the manifest hash it derives from
+(`ff2d3043…c257f`).
+
+Use these instead of parsing `.payload-manifest.json` at push time, and
+instead of `resync.mjs` — the latter runs `package-build` first, which
+rebuilds `ds-bundle` and would move the frozen manifest sha.
+
+Expected tree after push:
+
+```
+components/  guidelines/  _preview/  _vendor/  fonts/
+README.md  styles.css  _ds_bundle.css  _ds_bundle.js
+_ds_needs_recompile  _ds_sync.json
+```
+
+`guidelines/` must contain all five files. If it does not, stop — that is
+the gate failing at delivery, before the probe is worth running.
+
+### config.json hazard
+
+The gate project id is written into `.design-sync/config.json`, replacing
+the production `2f22a679…`. **Leave that edit uncommitted, and revert it
+when the run finishes.** Committing it would point the repo's design-sync
+config at a disposable evaluation project, and the next routine sync
+would push production content there instead of to the baseline.
