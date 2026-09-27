@@ -9,11 +9,14 @@ import {
     StateSkeletonBar,
 } from '@aragon/gov-ui-kit';
 import type Safe from '@safe-global/protocol-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type Hex, isHex, numberToHex, pad, toEventSelector } from 'viem';
 import { getBytecode, getConnection, watchConnection } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import {
     type ISafeExecutionOutcomeReport,
     type ISafeRecoveryContext,
@@ -34,6 +37,7 @@ import { safeMultisigTransactionUtils } from '@/plugins/safeMultisigPlugin/utils
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import type { Network } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import {
     SafeServiceError,
@@ -41,6 +45,7 @@ import {
     useConfirmSafeTransaction,
     useProposeSafeTransaction,
 } from '@/shared/api/safeService';
+import { TransactionType } from '@/shared/api/transactionService';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -48,6 +53,7 @@ import {
 import {
     type ITransactionDialogStep,
     TransactionDialog,
+    TransactionDialogStep,
 } from '@/shared/components/transactionDialog';
 import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import type { ITransactionStatusStepMeta } from '@/shared/components/transactionStatus';
@@ -69,7 +75,7 @@ export interface ISafeProposalTransactionDialogParams {
     bundleExecution: boolean;
     intentId: string;
     pendingTransaction?: ISafeMultisigTransaction;
-    /** Called only after both the Safe execution and the proposal report effect are verified. */
+    /** Called only after execution is verified and the backend has indexed the report. */
     onExecuted?: (hash: Hex) => void;
     onSafeStateChange?: () => void | Promise<void>;
 }
@@ -366,9 +372,11 @@ export const SafeProposalTransactionDialog: React.FC<
         onExecuted,
         onSafeStateChange,
     } = location.params;
+    const network = proposal.network;
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const network = proposal.network;
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const queryClient = useQueryClient();
     const { id: requiredChainId } = networkDefinitions[network];
     const { withNetworkSwitch } = useNetworkSwitch({ network });
     const { isConnecting, isReconnecting } = useWalletAccount();
@@ -376,7 +384,10 @@ export const SafeProposalTransactionDialog: React.FC<
     const { mutateAsync: proposeTransaction } = useProposeSafeTransaction();
     const { mutateAsync: confirmTransaction } = useConfirmSafeTransaction();
     const { execute, resume } = useSafeTransactionExecution();
-    const stepper = useStepper<ITransactionStatusStepMeta, SafeStep>({
+    const stepper = useStepper<
+        ITransactionStatusStepMeta,
+        SafeStep | TransactionDialogStep
+    >({
         initialActiveStep: 'SIGN_SUBMIT',
     });
     const [prepared, setPrepared] = useState<IPreparedReport>();
@@ -398,12 +409,16 @@ export const SafeProposalTransactionDialog: React.FC<
     const [planDiverged, setPlanDiverged] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
     const [executionSucceeded, setExecutionSucceeded] = useState(false);
+    const [executedHash, setExecutedHash] = useState<Hex>();
+    const [indexingComplete, setIndexingComplete] = useState(false);
     const [terminalFailure, setTerminalFailure] = useState(false);
     const [recoveryPending, setRecoveryPending] = useState(false);
     const [submittedHash, setSubmittedHash] = useState<Hex>();
     const [executionPhase, setExecutionPhase] =
         useState<ExecutionPhase>('wallet');
     const submittedHashRef = useRef<Hex | undefined>(undefined);
+    const executedHashRef = useRef<Hex | undefined>(undefined);
+    const indexedHandoffRef = useRef(false);
     const serviceAcceptedHashRef = useRef<string | undefined>(undefined);
     const serviceWriteUncertainRef = useRef(false);
     const walletRevisionRef = useRef(0);
@@ -507,6 +522,7 @@ export const SafeProposalTransactionDialog: React.FC<
                   )}`,
               );
 
+    const proposalUrl = proposalUtils.getProposalUrl(proposal, dao);
     const track = useCallback(
         (
             event:
@@ -1136,18 +1152,56 @@ export const SafeProposalTransactionDialog: React.FC<
             ),
         [proposal.pluginAddress, proposal.proposalIndex, stage.stageIndex],
     );
+    const handleIndexed = useCallback(() => {
+        if (indexedHandoffRef.current) {
+            return;
+        }
+
+        indexedHandoffRef.current = true;
+        setIndexingComplete(true);
+        track('transaction_end', 'indexed');
+
+        void Promise.allSettled([
+            queryClient.invalidateQueries({
+                queryKey: [GovernanceServiceKey.PROPOSAL_BY_SLUG],
+            }),
+            queryClient.invalidateQueries({
+                queryKey: [GovernanceServiceKey.PROPOSAL_LIST],
+            }),
+        ]).then(() => {
+            const hash = executedHashRef.current;
+            const pending = pendingTransactionManager.get(intentId);
+            const hashMatches =
+                hash == null ||
+                pending?.hash == null ||
+                String(pending.hash).toLowerCase() === hash.toLowerCase();
+
+            if (hashMatches) {
+                pendingTransactionManager.clear(intentId);
+            }
+
+            if (hash != null) {
+                try {
+                    onExecuted?.(hash);
+                } catch {
+                    // Callback failures must not strand the indexed recovery record.
+                }
+            }
+        });
+    }, [intentId, onExecuted, queryClient, track]);
     const finishExecution = useCallback(
         (result: ISafeExecutionOutcomeReport) => {
             if (result.result === SafeExecutionResult.EXECUTED) {
+                indexedHandoffRef.current = false;
+                executedHashRef.current = result.hash;
                 submittedHashRef.current = undefined;
+                setExecutedHash(result.hash);
+                setIndexingComplete(false);
                 setRecoveryPending(false);
                 setSubmittedHash(undefined);
                 setExecutionSucceeded(true);
                 setIsComplete(true);
-                track('transaction_end', 'executed');
-                void Promise.resolve()
-                    .then(() => onExecuted?.(result.hash))
-                    .catch(() => undefined);
+                track('transaction_stage', 'executed');
                 return;
             }
             if (result.result === SafeExecutionResult.EFFECT_MISSING) {
@@ -1203,7 +1257,7 @@ export const SafeProposalTransactionDialog: React.FC<
                 ),
             );
         },
-        [fail, intentId, onExecuted, recoveryState.status, t, track],
+        [fail, intentId, recoveryState.status, t, track],
     );
     const handleExecute = useCallback(async () => {
         if (prepared == null || (!recoveryPending && reviewGateBlocked)) {
@@ -1474,6 +1528,10 @@ export const SafeProposalTransactionDialog: React.FC<
         setPlanDiverged(false);
         setIsComplete(false);
         setExecutionSucceeded(false);
+        executedHashRef.current = undefined;
+        indexedHandoffRef.current = false;
+        setExecutedHash(undefined);
+        setIndexingComplete(false);
         setTerminalFailure(false);
         setWalletChanged(false);
         setFlowStep(undefined);
@@ -1644,7 +1702,11 @@ export const SafeProposalTransactionDialog: React.FC<
             gateBlocksAction ||
             terminalFailure);
     const currentStepIndex =
-        flowStep == null ? -1 : numberedSteps.indexOf(flowStep);
+        activeStep === TransactionDialogStep.INDEXING
+            ? numberedSteps.length
+            : flowStep == null
+              ? -1
+              : numberedSteps.indexOf(flowStep);
 
     const retryPreparation = useCallback(() => {
         preparationStartedRef.current = true;
@@ -1713,22 +1775,30 @@ export const SafeProposalTransactionDialog: React.FC<
                 'app.safe.safeProposalTransactionDialog.description',
             )}
             disableCancel={workingStep != null && !recoveryPending}
+            indexingFallbackUrl={proposalUrl}
             isComplete={isComplete}
             mode="custom"
             network={network}
             onDismiss={() => close(location.id)}
+            onIndexed={handleIndexed}
             primaryActionDisabled={primaryDisabled}
             showStatus={actionStarted || isComplete}
             stepper={stepper}
             submitLabel={primaryStepLabel}
             title={t('app.safe.safeProposalTransactionDialog.title')}
+            transactionHash={executedHash}
             transactionInfo={{
                 title: t(
                     'app.safe.safeProposalTransactionDialog.transactionInfo',
                 ),
                 current: currentStepIndex < 0 ? 1 : currentStepIndex + 1,
-                total: numberedSteps.length,
+                total: numberedSteps.length + (executionSucceeded ? 1 : 0),
             }}
+            transactionType={
+                executionSucceeded
+                    ? TransactionType.PROPOSAL_REPORT_RESULTS
+                    : undefined
+            }
         >
             <div className="flex flex-col gap-3">
                 <SafeTransactionReviewContent
@@ -1740,7 +1810,7 @@ export const SafeProposalTransactionDialog: React.FC<
                     safeVersion={prepared.safeVersion}
                     transaction={prepared.transaction}
                 />
-                {isComplete && (
+                {isComplete && (!executionSucceeded || indexingComplete) && (
                     <div className="text-neutral-700 text-sm">
                         {t(
                             `${dialogTranslationKey}.${

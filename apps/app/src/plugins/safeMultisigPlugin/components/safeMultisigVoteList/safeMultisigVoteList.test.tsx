@@ -7,10 +7,8 @@ import {
     generateSppProposal,
     generateSppStage,
 } from '@/plugins/sppPlugin/testUtils';
-import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
-import { SafeSettledReportOutcome } from '../../hooks/useSafeSettledReport';
 import { generateSafeBodyState, generateSafeInfo } from '../../testUtils';
 import { SafeMultisigVoteList } from './safeMultisigVoteList';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
@@ -122,7 +120,7 @@ describe('<SafeMultisigVoteList /> component', () => {
         );
     });
 
-    it('states no signatures rather than an empty list when nothing is collected', () => {
+    it('states no signatures rather than an empty list when a successful read is empty', () => {
         useSafeBodyStateSpy.mockReturnValue({ ...bodyState, signers: [] });
 
         render(createTestComponent());
@@ -134,77 +132,35 @@ describe('<SafeMultisigVoteList /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('offers the Safe history when the scan ran out of pages', () => {
-        // The scan gives up at its page cap. Claiming "none yet" would be false: a full set was
-        // collected to execute at all, and there is more history to look through.
+    it('keeps the list loading when Safe info is unavailable', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...bodyState,
+            safeInfo: undefined,
             signers: [],
-            settledResultType: SppProposalType.APPROVAL,
-            settledReport: undefined,
-            settledReportOutcome: SafeSettledReportOutcome.SCAN_EXHAUSTED,
+            isError: true,
+            isLoading: false,
         });
 
         render(createTestComponent());
 
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigVoteList.settledScanExhausted.heading',
-            ),
-        ).toBeInTheDocument();
         expect(
             screen.queryByText(
                 'app.plugins.safeMultisig.safeMultisigVoteList.empty.heading',
             ),
         ).not.toBeInTheDocument();
-        expect(
-            screen.getByRole('link', {
-                name: 'app.plugins.safeMultisig.safeMultisigVoteList.settledScanExhausted.action',
-            }),
-        ).toHaveAttribute(
-            'href',
-            'https://app.safe.global/transactions/history?safe=eth:0x0000000000000000000000000000000000000001',
-        );
-    });
-
-    it('offers no history link when the whole history was already walked', () => {
-        // Nothing further back to find, so sending the owner to Safe's history would be a dead end.
-        useSafeBodyStateSpy.mockReturnValue({
-            ...bodyState,
-            signers: [],
-            settledResultType: SppProposalType.APPROVAL,
-            settledReport: undefined,
-            settledReportOutcome: SafeSettledReportOutcome.NOT_REPORTED,
-        });
-
-        render(createTestComponent());
-
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigVoteList.settledNotReported.heading',
-            ),
-        ).toBeInTheDocument();
         expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 
-    it('separates an unreadable Safe from a body nobody has signed', () => {
+    it('keeps cached confirmations visible when the Safe read later errors', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...bodyState,
-            signers: [],
+            signers: [otherOwner],
             isError: true,
+            isLoading: false,
         });
 
         render(createTestComponent());
 
-        expect(
-            screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigVoteList.error.heading',
-            ),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByText(
-                'app.plugins.safeMultisig.safeMultisigVoteList.empty.heading',
-            ),
-        ).not.toBeInTheDocument();
+        expect(screen.getAllByRole('link')).toHaveLength(1);
     });
 });

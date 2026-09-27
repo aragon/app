@@ -357,8 +357,7 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.signers).toEqual([signer, body]);
     });
 
-    it('states no member count for a settled body, whose owner set is unrecoverable', () => {
-        // "1 of 3" against today's owners is the same substitution the threshold refuses to make.
+    it('uses the current owner count alongside a settled report', () => {
         useSafeSettledReportSpy.mockReturnValue({
             settledReport: {
                 transaction: generateSafeMultisigTransaction({
@@ -389,7 +388,9 @@ describe('useSafeMultisigBodyState hook', () => {
             ],
         });
 
-        expect(result.current.membersCount).toBeUndefined();
+        expect(result.current.membersCount).toBe(
+            generateSafeInfo({}).owners.length,
+        );
     });
 
     it('states the live member count while the body is still deciding', () => {

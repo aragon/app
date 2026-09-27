@@ -43,10 +43,7 @@ describe('safeSettings utils', () => {
         });
 
         expect(threshold.term).toEqual('Required confirmations');
-        // The requirement alone: Safe keeps no historical owner set, so a denominator would
-        // describe today's Safe rather than this decision - and the account page header already
-        // states threshold alongside the owner count.
-        expect(threshold.definition).toEqual('2');
+        expect(threshold.definition).toEqual('2 of 3');
         expect(nonce.term).toEqual('Current Safe nonce');
         expect(nonce.definition).toEqual('9');
     });

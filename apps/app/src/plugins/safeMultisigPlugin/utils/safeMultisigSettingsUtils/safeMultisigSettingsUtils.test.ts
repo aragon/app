@@ -54,9 +54,10 @@ describe('safeMultisigSettings utils', () => {
         );
         const key = 'app.safe.safeSettings';
 
-        // The requirement alone, live or settled: Safe keeps no historical owner set, so a
-        // denominator here would describe today's Safe rather than this decision.
-        expect(byTerm[`${key}.threshold`]).toEqual('3');
+        // The current owner count makes the denominator explicit; it is not historical ownership.
+        expect(byTerm[`${key}.threshold`]).toEqual(
+            `${key}.thresholdOfOwners:{"threshold":3,"total":4}`,
+        );
         // Named "current" because it is live account state: it advances with every transaction the
         // Safe executes, so it is not the nonce this proposal's transaction used.
         expect(byTerm[`${key}.currentNonce`]).toEqual('42');
@@ -85,7 +86,9 @@ describe('safeMultisigSettings utils', () => {
         );
         const key = 'app.safe.safeSettings';
 
-        expect(byTerm[`${key}.threshold`]).toEqual('1');
+        expect(byTerm[`${key}.threshold`]).toEqual(
+            `${key}.thresholdOfOwners:{"threshold":1,"total":2}`,
+        );
         expect(byTerm[`${key}.nonce`]).toEqual('5');
         expect(byTerm[`${key}.currentNonce`]).toBeUndefined();
         // Safe serves only the current version, and a contract can be upgraded after a decision
@@ -115,30 +118,6 @@ describe('safeMultisigSettings utils', () => {
         expect(terms).not.toContain(`${key}.version`);
         // The Safe itself is still worth stating: identity is not configuration.
         expect(terms).toContain(`${key}.safe`);
-    });
-
-    it('says the threshold was not recovered when the scan ran out of pages', () => {
-        // An incomplete read is not the same claim as "there is nothing to recover": the number
-        // exists in the Safe's history, past where this view looked. Silence would read as the
-        // permanent case, and the live threshold would be today's configuration mislabelled.
-        const settings = parse(
-            generateSafeInfo({ threshold: 3, nonce: '42' }),
-            {
-                isDecided: true,
-                isScanExhausted: true,
-            },
-        );
-
-        const key = 'app.safe.safeSettings';
-        const threshold = settings.find(
-            (setting) => setting.term === `${key}.threshold`,
-        );
-
-        expect(threshold?.definition).toBe(`${key}.notRecovered`);
-        // Still never today's numbers: no live nonce, no live version.
-        expect(settings.map((setting) => setting.term)).not.toContain(
-            `${key}.currentNonce`,
-        );
     });
 
     const safeRowOf = (settings: ReturnType<typeof parse>) =>

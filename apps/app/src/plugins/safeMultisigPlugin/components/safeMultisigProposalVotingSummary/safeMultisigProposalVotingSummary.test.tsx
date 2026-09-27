@@ -114,6 +114,20 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
         expect(screen.getByText('1')).toBeInTheDocument();
     });
 
+    it('keeps a live threshold neutral once the required count is met', () => {
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            approvalsAmount: 2,
+            minApprovals: 2,
+        });
+
+        render(createTestComponent());
+
+        expect(screen.getByRole('progressbar').firstElementChild).toHaveClass(
+            'bg-neutral-400',
+        );
+    });
+
     it('reads the indexed result once the body has reported, not the Safe queue', () => {
         getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
         useSafeMultisigBodyStateSpy.mockReturnValue({

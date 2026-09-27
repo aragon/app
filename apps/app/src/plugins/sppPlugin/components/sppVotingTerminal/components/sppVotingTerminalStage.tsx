@@ -1,13 +1,10 @@
 import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
+import { SppVotingTerminalBodySummary } from './sppVotingTerminalBodySummary';
 import { SppVotingTerminalBodySummaryFooter } from './sppVotingTerminalBodySummaryFooter';
-import { SppVotingTerminalMultiBodySummaryDefault } from './sppVotingTerminalMultiBodySummaryDefault';
 import { SppVotingTerminalStageBodyContent } from './sppVotingTerminalStageBodyContent';
 import { SppVotingTerminalStageTimelock } from './sppVotingTerminalStageTimelock';
 
@@ -80,55 +77,12 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
                     {stage.plugins.map((plugin) => (
-                        <ProposalVoting.BodySummaryListItem
-                            bodyBrand={
-                                plugin.interfaceType === undefined
-                                    ? brandedExternals[plugin.brandId]
-                                    : undefined
-                            }
-                            id={plugin.address}
+                        <SppVotingTerminalBodySummary
                             key={plugin.address}
-                        >
-                            <PluginSingleComponent
-                                body={
-                                    plugin.interfaceType === undefined
-                                        ? plugin.address
-                                        : undefined
-                                }
-                                canVote={sppStageUtils.canBodyVote(
-                                    proposal,
-                                    stage,
-                                    plugin,
-                                )}
-                                Fallback={
-                                    SppVotingTerminalMultiBodySummaryDefault
-                                }
-                                isExecuted={proposal.executed.status}
-                                isVeto={sppStageUtils.isVetoBody(plugin)}
-                                name={
-                                    plugin.interfaceType === undefined
-                                        ? undefined
-                                        : plugin.name
-                                }
-                                pluginId={sppStageUtils.getBodyPluginId(
-                                    plugin,
-                                    proposal.network,
-                                )}
-                                proposal={
-                                    plugin.interfaceType === undefined
-                                        ? proposal
-                                        : sppStageUtils.getBodySubProposal(
-                                              proposal,
-                                              plugin.address,
-                                              stage.stageIndex,
-                                          )
-                                }
-                                slotId={
-                                    GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
-                                }
-                                stage={stage}
-                            />
-                        </ProposalVoting.BodySummaryListItem>
+                            plugin={plugin}
+                            proposal={proposal}
+                            stage={stage}
+                        />
                     ))}
                 </ProposalVoting.BodySummaryList>
                 {isTimelockStage && (

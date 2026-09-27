@@ -50,19 +50,6 @@ export const settledHistoryMaxPages = 10;
 export const safeQueueReadLimit = 100;
 
 /**
- * Poll cadence of the indexer while waiting for an executed report to be attributed.
- */
-export const safeIndexingPollInterval = 1000;
-
-/**
- * How long the action stays held waiting for an executed report to be indexed. The status endpoint
- * answers `{ isProcessed: false }` for any hash it cannot attribute, so a stalled indexer is
- * indistinguishable from one that is merely slow and would otherwise hold the card forever. On
- * expiry the hold is released with an explanation rather than leaving a permanent spinner.
- */
-export const safeIndexingTimeout = 60_000;
-
-/**
  * Plugin id a generic (non-Safe) external body resolves to. Kept beside `safeBodyPluginId` because
  * both live in the same string namespace and the resolver switches between them; a plain constant
  * living in a client component would drag react-hook-form into server code.

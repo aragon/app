@@ -8,7 +8,7 @@ import {
     waitFor,
 } from '@testing-library/react';
 import { useCallback, useMemo, useState } from 'react';
-import type { WaitForTransactionReceiptErrorType } from 'viem';
+import type { Hex, WaitForTransactionReceiptErrorType } from 'viem';
 import * as Wagmi from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { Network } from '@/shared/api/daoService';
@@ -36,6 +36,7 @@ import { TransactionDialog } from './transactionDialog';
 import {
     type ITransactionDialogCustomProps,
     type ITransactionDialogProps,
+    type ITransactionDialogStep,
     type ITransactionDialogStepMeta,
     TransactionDialogStep,
 } from './transactionDialog.api';
@@ -45,7 +46,7 @@ jest.mock('./transactionDialogFooter', () => ({
     TransactionDialogFooter: ({
         activeStep,
     }: {
-        activeStep?: ITransactionDialogCustomProps['customSteps'][number];
+        activeStep?: ITransactionDialogStep<string>;
     }) => {
         const action = activeStep?.meta.action;
         const label = activeStep?.meta.label;
@@ -97,7 +98,10 @@ const CustomFlowHarness = ({
     onSign,
 }: ICustomFlowHarnessProps) => {
     const [prepared, setPrepared] = useState(false);
-    const stepper = useStepper<ITransactionDialogStepMeta, CustomFlowStepId>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        CustomFlowStepId | TransactionDialogStep
+    >({
         initialActiveStep: 'PREPARE_REVIEW',
     });
     const prepareAction = useCallback(() => {
@@ -1485,7 +1489,76 @@ describe('<TransactionDialog /> onIndexed callback', () => {
         expect(onIndexed).toHaveBeenCalledTimes(1);
         expect(onIndexedNext).not.toHaveBeenCalled();
     });
+    it('adds the shared indexing step to custom completed flows', () => {
+        const onIndexed = jest.fn();
+        const updateSteps = jest.fn();
+        const customSteps: ITransactionDialogCustomProps<'DONE'>['customSteps'] =
+            [
+                {
+                    id: 'DONE',
+                    order: 0,
+                    meta: {
+                        label: 'done',
+                        state: 'success',
+                        action: () => undefined,
+                    },
+                },
+            ];
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            'DONE' | TransactionDialogStep
+        >({
+            steps: customSteps,
+            activeStep: TransactionDialogStep.INDEXING,
+            activeStepIndex: 1,
+            updateSteps,
+        });
+        const transactionHash = '0xabc' as Hex;
+        const props: ITransactionDialogCustomProps<'DONE'> = {
+            customSteps,
+            description: 'description',
+            isComplete: true,
+            mode: 'custom',
+            network: Network.ETHEREUM_MAINNET,
+            onDismiss: jest.fn(),
+            onIndexed,
+            stepper,
+            submitLabel: 'submit',
+            title: 'title',
+            transactionHash,
+            transactionType: TransactionType.PROPOSAL_CREATE,
+        };
 
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+        const renderCustom = () => (
+            <GukModulesProvider>
+                <DialogProvider>
+                    <Dialog.Root open={true}>
+                        <TransactionDialog<'DONE'> {...props} />
+                    </Dialog.Root>
+                </DialogProvider>
+            </GukModulesProvider>
+        );
+        const { rerender } = render(renderCustom());
+
+        expect(onIndexed).not.toHaveBeenCalled();
+        expect(updateSteps).toHaveBeenCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({ id: TransactionDialogStep.INDEXING }),
+            ]),
+        );
+
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'done' },
+            }),
+        );
+        act(() => rerender(renderCustom()));
+
+        expect(onIndexed).toHaveBeenCalledWith({ slug: 'done' });
+    });
     it('does not throw when indexing completes and onIndexed is omitted', () => {
         // Start before indexing completes.
         useTransactionStatusSpy.mockReturnValue(

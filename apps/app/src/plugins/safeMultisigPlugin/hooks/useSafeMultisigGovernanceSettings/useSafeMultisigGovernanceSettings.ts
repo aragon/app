@@ -13,10 +13,7 @@ import { useSafeInfo } from '@/shared/api/safeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { safeMultisigSettingsUtils } from '../../utils/safeMultisigSettingsUtils';
-import {
-    SafeSettledReportOutcome,
-    useSafeSettledReport,
-} from '../useSafeSettledReport';
+import { useSafeSettledReport } from '../useSafeSettledReport';
 
 export const useSafeMultisigGovernanceSettings = (
     params: IUseGovernanceSettingsParams,
@@ -58,17 +55,16 @@ export const useSafeMultisigGovernanceSettings = (
             stage.stageIndex < proposal.stageIndex ||
             proposal.executed.status);
 
-    const { settledReport, outcome: settledReportOutcome } =
-        useSafeSettledReport({
-            network,
-            address: pluginAddress,
-            // Unused while the scan is off, and the gate below is the only thing that turns it on.
-            pluginAddress: proposal?.pluginAddress ?? pluginAddress,
-            proposalId: BigInt(proposal?.proposalIndex ?? 0),
-            stageId: stage?.stageIndex ?? 0,
-            resultType: bodyResult?.resultType ?? SppProposalType.NONE,
-            enabled: isSettled && safeShortNameFromNetwork(network) != null,
-        });
+    const { settledReport } = useSafeSettledReport({
+        network,
+        address: pluginAddress,
+        // Unused while the scan is off, and the gate below is the only thing that turns it on.
+        pluginAddress: proposal?.pluginAddress ?? pluginAddress,
+        proposalId: BigInt(proposal?.proposalIndex ?? 0),
+        stageId: stage?.stageIndex ?? 0,
+        resultType: bodyResult?.resultType ?? SppProposalType.NONE,
+        enabled: isSettled && safeShortNameFromNetwork(network) != null,
+    });
 
     if (safeInfo == null) {
         return [];
@@ -82,8 +78,6 @@ export const useSafeMultisigGovernanceSettings = (
         safeHref: safeAppAccountUrl({ network, address: pluginAddress }),
         isDecided,
         settledTransaction: settledReport?.transaction,
-        isScanExhausted:
-            settledReportOutcome === SafeSettledReportOutcome.SCAN_EXHAUSTED,
         t,
     });
 };

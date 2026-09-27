@@ -6,6 +6,7 @@ import {
 import { useEnsName } from '@/modules/ens';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
+import { useSppVotingTerminalBodyMode } from '@/plugins/sppPlugin/hooks/useSppVotingTerminalBodyMode';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppProposal, ISppStage, ISppStagePlugin } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
@@ -43,6 +44,11 @@ export const SppVotingTerminalStageBodyContent: React.FC<
     const { plugin, stage, proposal, daoId, displayStatus } = props;
 
     const { data: pluginEns } = useEnsName(plugin.address);
+    const { pluginId, isHistoryMissing } = useSppVotingTerminalBodyMode({
+        plugin,
+        proposal,
+        stage,
+    });
 
     const status = sppStageUtils.getStageStatus(proposal, stage);
 
@@ -56,7 +62,7 @@ export const SppVotingTerminalStageBodyContent: React.FC<
         ProposalVotingTab[]
     >({
         slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
-        pluginId: sppStageUtils.getBodyPluginId(plugin, proposal.network),
+        pluginId,
     });
     const hideTabs =
         getHiddenTabs?.(undefined) ??
@@ -73,12 +79,14 @@ export const SppVotingTerminalStageBodyContent: React.FC<
             }
             bodyId={plugin.address}
             hideTabs={hideTabs}
-            key={plugin.address}
+            key={`${plugin.address}:${pluginId}`}
             name={pluginName}
             status={status}
         >
             <SppVotingTerminalBodyContent
+                bodyPluginId={pluginId}
                 daoId={daoId}
+                isHistoryMissing={isHistoryMissing}
                 plugin={plugin}
                 proposal={proposal}
                 stage={stage}

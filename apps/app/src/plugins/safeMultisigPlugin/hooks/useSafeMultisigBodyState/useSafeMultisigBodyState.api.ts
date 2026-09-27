@@ -170,8 +170,7 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     minApprovals: number;
     /**
-     * Number of current Safe owners, or undefined once the body has settled: the owner set that
-     * applied to the decision is not recoverable, and today's is not a substitute for it.
+     * Number of current Safe owners, including when displaying a settled report.
      */
     membersCount?: number;
 }

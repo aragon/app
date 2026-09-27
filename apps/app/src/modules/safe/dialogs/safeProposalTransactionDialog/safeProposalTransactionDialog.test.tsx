@@ -24,6 +24,7 @@ import {
     generateSppProposal,
     generateSppStage,
 } from '@/plugins/sppPlugin/testUtils/generators';
+import * as daoServiceApi from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import type {
     ISafeInfoResponse,
@@ -31,10 +32,14 @@ import type {
 } from '@/shared/api/safeService';
 import * as safeServiceApi from '@/shared/api/safeService';
 import * as safeInfoApi from '@/shared/api/safeService/queries/useSafeInfo';
+import * as transactionServiceApi from '@/shared/api/transactionService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
-import { generateSafeNextNonceResponse } from '@/shared/testUtils';
+import {
+    generateReactQueryResultSuccess,
+    generateSafeNextNonceResponse,
+} from '@/shared/testUtils';
 import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
 import type { ISafeProposalTransactionDialogParams } from './safeProposalTransactionDialog';
 import { SafeProposalTransactionDialog } from './safeProposalTransactionDialog';
@@ -77,13 +82,18 @@ const protocolKitModule = jest.requireMock('@safe-global/protocol-kit') as {
     EthSafeSignature: jest.Mock;
     EthSafeTransaction: jest.Mock;
 };
-
 const useWalletAccountSpy = jest.spyOn(walletAccountApi, 'useWalletAccount');
 const useNetworkSwitchSpy = jest.spyOn(networkSwitchApi, 'useNetworkSwitch');
-const useSafeInfoSpy = jest.spyOn(safeInfoApi, 'useSafeInfo');
 const useProposeSpy = jest.spyOn(safeServiceApi, 'useProposeSafeTransaction');
 const useConfirmSpy = jest.spyOn(safeServiceApi, 'useConfirmSafeTransaction');
 const getSafeInfoSpy = jest.spyOn(safeServiceApi.safeService, 'getSafeInfo');
+
+const useDaoSpy = jest.spyOn(daoServiceApi, 'useDao');
+const useTransactionStatusSpy = jest.spyOn(
+    transactionServiceApi,
+    'useTransactionStatus',
+);
+const useSafeInfoSpy = jest.spyOn(safeInfoApi, 'useSafeInfo');
 const getSafeNextNonceSpy = jest.spyOn(
     safeServiceApi.safeService,
     'getSafeNextNonce',
@@ -276,7 +286,11 @@ const renderDialog = (
         </GukModulesProvider>
     );
     const result = render(content());
-    return { ...result, rerenderDialog: () => result.rerender(content()) };
+    return {
+        ...result,
+        queryClient,
+        rerenderDialog: () => result.rerender(content()),
+    };
 };
 
 const actionLabels = {
@@ -473,6 +487,10 @@ beforeEach(() => {
         isError: false,
         error: null,
     } as never);
+    useDaoSpy.mockReturnValue({ data: undefined } as never);
+    useTransactionStatusSpy.mockReturnValue(
+        generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+    );
     useProposeSpy.mockReturnValue({ mutateAsync: proposeMutateAsync } as never);
     useConfirmSpy.mockReturnValue({ mutateAsync: confirmMutateAsync } as never);
     getSafeNextNonceSpy.mockResolvedValue(
@@ -829,7 +847,7 @@ describe('SafeProposalTransactionDialog', () => {
             ]),
         );
 
-        renderDialog({
+        const view = renderDialog({
             pendingTransaction: serviceTransaction,
             onExecuted,
             onSafeStateChange,
@@ -837,14 +855,28 @@ describe('SafeProposalTransactionDialog', () => {
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
         await waitFor(() => {
+            expect(WagmiActions.waitForTransactionReceipt).toHaveBeenCalled();
+        });
+        expect(onExecuted).not.toHaveBeenCalled();
+
+        jest.spyOn(view.queryClient, 'invalidateQueries').mockRejectedValue(
+            new Error('cache refresh failed'),
+        );
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'safe-proposal' },
+            }),
+        );
+        act(() => view.rerenderDialog());
+
+        await waitFor(() => {
             expect(onExecuted).toHaveBeenCalledWith(submittedHash);
         });
-
+        expect(pendingTransactionManager.get(intentId)).toBeUndefined();
         expect(
             screen.queryByText('invalidation failed'),
         ).not.toBeInTheDocument();
     });
-
     it('refuses to sign when the reviewed envelope hash changes', async () => {
         const mismatch = `0x${'9'.repeat(64)}` as Hex;
         protocolKit.getTransactionHash.mockResolvedValue(safeTxHash);

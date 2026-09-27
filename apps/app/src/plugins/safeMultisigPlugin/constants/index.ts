@@ -3,8 +3,6 @@ export {
     safeBodyHiddenTabs,
     safeBodyPluginId,
     safeBodyPollInterval,
-    safeIndexingPollInterval,
-    safeIndexingTimeout,
     safeQueueReadLimit,
     settledHistoryMaxPages,
     settledHistoryPageSize,

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { TransactionReceipt } from 'viem';
+import type { Hex, TransactionReceipt } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
@@ -228,7 +228,10 @@ export interface ITransactionDialogCustomProps<
     /**
      * Stepper utilities for the transaction state.
      */
-    stepper: IUseStepperReturn<ITransactionDialogStepMeta, TCustomStepId>;
+    stepper: IUseStepperReturn<
+        ITransactionDialogStepMeta,
+        TCustomStepId | TransactionDialogStep
+    >;
     /**
      * Information about the stepper in the current transaction dialog.
      */
@@ -254,6 +257,22 @@ export interface ITransactionDialogCustomProps<
      * Action shown when the caller marks the flow complete.
      */
     completion?: ITransactionDialogCompletion;
+    /**
+     * Type of the transaction to opt custom flows into the shared indexing step.
+     */
+    transactionType?: TransactionType;
+    /**
+     * Verified transaction hash that should be tracked by the shared indexing step.
+     */
+    transactionHash?: Hex;
+    /**
+     * Fallback URL shown when the indexing step takes too long.
+     */
+    indexingFallbackUrl?: string;
+    /**
+     * Callback fired exactly once when the backend reports the transaction as indexed.
+     */
+    onIndexed?: (result: { slug?: string }) => void;
     /**
      * Disables the primary action while caller-owned gates are unresolved.
      */

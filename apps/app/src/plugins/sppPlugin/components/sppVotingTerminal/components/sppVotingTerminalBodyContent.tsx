@@ -1,9 +1,14 @@
-import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    type IDefinitionSetting,
+    ProposalVoting,
+} from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { useSppGovernanceSettingsDefault } from '@/plugins/sppPlugin/hooks/useSppGovernanceSettingsDefault';
 import type {
     ISppProposal,
@@ -13,10 +18,14 @@ import type {
 } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import {
+    type PluginId,
+    pluginRegistryUtils,
+} from '@/shared/utils/pluginRegistryUtils';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
@@ -25,6 +34,10 @@ export interface ISppVotingTerminalBodyContentProps {
      * The plugin that the stage belongs to.
      */
     plugin: ISppStagePlugin;
+    /** Runtime-resolved identity shared by all slots in this body. */
+    bodyPluginId: PluginId;
+    /** The settled Safe report was not found after a successful history scan. */
+    isHistoryMissing: boolean;
     /**
      * ID of the related DAO.
      */
@@ -52,10 +65,19 @@ const votesPerPage = 6;
 export const SppVotingTerminalBodyContent: React.FC<
     ISppVotingTerminalBodyContentProps
 > = (props) => {
-    const { plugin, daoId, subProposal, stage, proposal, children } = props;
+    const {
+        plugin,
+        bodyPluginId,
+        isHistoryMissing,
+        daoId,
+        subProposal,
+        stage,
+        proposal,
+        children,
+    } = props;
+    const { t } = useTranslations();
 
     const { network } = daoUtils.parseDaoId(daoId);
-    const bodyPluginId = sppStageUtils.getBodyPluginId(plugin, network);
 
     /**
      * Whether this body type can still be asked to act after its voting window closed. Asked of the
@@ -79,6 +101,15 @@ export const SppVotingTerminalBodyContent: React.FC<
 
     const canVote =
         sppStageUtils.canBodyVote(proposal, stage, plugin) || canActLate;
+    const showAction =
+        !isHistoryMissing &&
+        (canVote ||
+            (bodyPluginId === safeBodyPluginId &&
+                sppStageUtils.getBodyResult(
+                    proposal,
+                    plugin.address,
+                    stage.stageIndex,
+                ) != null));
 
     const isExternalBody = plugin.interfaceType == null;
     // Approve/veto is a per-body property: a single stage can mix approving and
@@ -152,7 +183,15 @@ export const SppVotingTerminalBodyContent: React.FC<
                         stage={stage}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
-                            {canVote && (
+                            {isHistoryMissing && (
+                                <AlertInline
+                                    message={t(
+                                        'app.plugins.spp.sppVotingTerminalBodyContent.historyMissing',
+                                    )}
+                                    variant="info"
+                                />
+                            )}
+                            {showAction && (
                                 <PluginSingleComponent
                                     daoId={daoId}
                                     externalAddress={

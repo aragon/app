@@ -154,7 +154,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        if (!isCustom && isIndexing && state === 'pending') {
+        if (isIndexing && state === 'pending') {
             timer = setTimeout(
                 () => setShowProceedAnyway(true),
                 indexingStepTimeout,
@@ -164,7 +164,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         return () => {
             clearTimeout(timer);
         };
-    }, [isCustom, isIndexing, state]);
+    }, [isIndexing, state]);
 
     const isErrorState = state === 'error';
     const isSuccessState = state === 'success';
@@ -231,20 +231,23 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     };
 
     const handleCancelClick = () => {
-        if (isCustom) {
+        if (isCustom && !showProceedAnyway) {
             onDismiss?.();
             return;
         }
 
-        // The cancel button becomes a "Proceed anyway" navigation action during indexing after a timeout.
-        // Only unblock navigation in that specific flow.
+        // The cancel button becomes "Proceed anyway" during indexing after a timeout.
         if (showProceedAnyway) {
             setIsBlocked(false);
         }
-        close();
-        if (!showProceedAnyway) {
-            onCancelClick?.();
+        if (!isCustom) {
+            close();
+            if (!showProceedAnyway) {
+                onCancelClick?.();
+            }
+            return;
         }
+        onDismiss?.();
     };
 
     const processedSuccessLink =
@@ -281,7 +284,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             secondaryAction={{
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
-                href: !isCustom && showProceedAnyway ? fallbackUrl : undefined,
+                href: showProceedAnyway ? fallbackUrl : undefined,
                 disabled: isCustom
                     ? isCancelDisabled
                     : showProceedAnyway

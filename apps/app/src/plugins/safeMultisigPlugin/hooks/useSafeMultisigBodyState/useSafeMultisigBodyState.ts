@@ -336,11 +336,6 @@ export const useSafeMultisigBodyState = (
         minApprovals:
             reportTransaction?.confirmationsRequired ??
             (isSettled ? 0 : (safeInfo?.threshold ?? 0)),
-        /**
-         * The owner set that applied is not recoverable from the transaction, so a settled body has
-         * no denominator rather than today's count: "1 of 3" against an owner set that has since
-         * grown is the same substitution the threshold above refuses to make.
-         */
-        membersCount: isSettled ? undefined : safeInfo?.owners.length,
+        membersCount: safeInfo?.owners.length,
     };
 };

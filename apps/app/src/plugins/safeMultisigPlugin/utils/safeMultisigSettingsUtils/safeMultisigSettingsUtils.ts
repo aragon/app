@@ -22,12 +22,6 @@ export interface ISafeMultisigSettingsParseParams
      * carries the configuration the decision actually ran under, which the live Safe no longer does.
      */
     settledTransaction?: ISafeMultisigTransaction;
-    /**
-     * Whether the scan ran out of pages rather than out of history. "Not recovered yet" and "there
-     * is nothing to recover" are different claims about a decided body, and only the first should
-     * read as incomplete.
-     */
-    isScanExhausted?: boolean;
 }
 
 class SafeMultisigSettingsUtils {
@@ -38,9 +32,8 @@ class SafeMultisigSettingsUtils {
      *
      * Once the body has reported, these become the decision's configuration rather than the Safe's:
      * a native body's Settings tab reads the sub-proposal's snapshot, and this is the same promise
-     * kept for a body whose configuration is only readable live. Anything the transaction does not
-     * carry - the owner set, the contract version - is omitted rather than backfilled from today's
-     * Safe, which is a different subject wearing the same label.
+     * kept for a body whose configuration is only readable live. The current owner count is used
+     * only as the visible denominator because the historical owner set is not recoverable.
      */
     parseSettings = (
         params: ISafeMultisigSettingsParseParams,
@@ -51,49 +44,33 @@ class SafeMultisigSettingsUtils {
 
     /**
      * The rows whose subject changes with the body's standing: while the decision is open they
-     * describe the live account, and once it is over they describe the decision - or say why they
-     * cannot. Four named cases, so they read as returns rather than nested conditions.
+     * describe the live account, and once it is over they describe the decision or omit unavailable
+     * configuration.
      */
     private configurationRows = (
         params: ISafeMultisigSettingsParseParams,
     ): IDefinitionSetting[] => {
-        const {
-            isDecided = false,
-            isScanExhausted = false,
-            settledTransaction,
-            t,
-        } = params;
+        const { isDecided = false, settledTransaction, safeInfo, t } = params;
 
-        // The transaction carries the configuration the decision actually ran under. A Safe binds
-        // `confirmationsRequired` into each one, so the number this decision had to meet is
-        // recoverable; the owner set it was drawn from is not, so the row carries no denominator.
         if (settledTransaction != null) {
             return [
                 {
                     term: t(`${safeSettingsTranslationKey}.threshold`),
-                    definition:
-                        settledTransaction.confirmationsRequired.toString(),
+                    definition: t(
+                        `${safeSettingsTranslationKey}.thresholdOfOwners`,
+                        {
+                            threshold: settledTransaction.confirmationsRequired,
+                            total: safeInfo.owners.length,
+                        },
+                    ),
                 },
                 {
-                    // The slot this decision occupied, which is a fact about the decision.
                     term: t(`${safeSettingsTranslationKey}.nonce`),
                     definition: settledTransaction.nonce,
                 },
             ];
         }
 
-        // The number exists, past where this read looked. Silence would read as the permanent case
-        // below, and the live threshold would be today's configuration wearing this decision's label.
-        if (isScanExhausted) {
-            return [
-                {
-                    term: t(`${safeSettingsTranslationKey}.threshold`),
-                    definition: t(`${safeSettingsTranslationKey}.notRecovered`),
-                },
-            ];
-        }
-
-        // Nothing to recover: a veto body that never vetoed leaves no transaction at all.
         if (isDecided) {
             return [];
         }

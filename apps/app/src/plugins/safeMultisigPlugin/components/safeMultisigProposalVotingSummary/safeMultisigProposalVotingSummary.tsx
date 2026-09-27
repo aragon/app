@@ -101,7 +101,6 @@ export const SafeMultisigProposalVotingSummary: React.FC<
         liveMembersCount > 0 ? (approvalsAmount / liveMembersCount) * 100 : 0;
     const thresholdPercentage =
         liveMembersCount > 0 ? (minApprovals / liveMembersCount) * 100 : 0;
-    const isThresholdReached = approvalsAmount >= minApprovals;
 
     return (
         <div className="flex w-full flex-col gap-3">
@@ -113,10 +112,13 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                     )}
                 </span>
             </p>
+            {/* Neutral while live: for a Safe body a met threshold only means the transaction can
+                be executed, not that anything is recorded. The bar goes primary only once settled,
+                which renders as text above rather than a bar. */}
             <Progress
                 thresholdIndicator={thresholdPercentage}
                 value={approvalsPercentage}
-                variant={isThresholdReached ? 'primary' : 'neutral'}
+                variant="neutral"
             />
             <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
                 {formatterUtils.formatNumber(approvalsAmount, {

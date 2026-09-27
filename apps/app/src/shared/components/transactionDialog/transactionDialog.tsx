@@ -755,14 +755,128 @@ const CustomTransactionController = <TCustomStepId extends string>(
         primaryActionDisabled,
         disableCancel,
         onDismiss,
+        transactionType,
+        transactionHash,
+        indexingFallbackUrl,
+        onIndexed,
     } = props;
-    const { activeStep, steps, updateSteps } = stepper;
-    const activeStepInfo = customSteps.find((step) => step.id === activeStep);
+    const { activeStep, steps, updateSteps, updateActiveStep } = stepper;
+    const { t } = useTranslations();
     const { address } = useWalletAccount();
     const { updateOptions } = useDialogContext();
     const { isCrossNetworkTransaction, networkName } = useNetworkSwitch({
         network,
     });
+    const isIndexing = activeStep === TransactionDialogStep.INDEXING;
+    const { data: transactionStatus } = useTransactionStatus(
+        {
+            urlParams: {
+                network,
+                transactionHash: transactionHash ?? '',
+            },
+            queryParams: { type: transactionType! },
+        },
+        {
+            enabled:
+                transactionType != null &&
+                transactionHash != null &&
+                isIndexing,
+            refetchInterval: ({ state }) =>
+                state.data?.isProcessed ? false : indexingStepInterval,
+        },
+    );
+    const isTransactionIndexed = transactionStatus?.isProcessed === true;
+    const indexedHashRef = useRef<string | undefined>(undefined);
+    const onIndexedFiredRef = useRef(false);
+    const [hasIndexed, setHasIndexed] = useState(false);
+
+    useEffect(() => {
+        if (indexedHashRef.current === transactionHash) {
+            return;
+        }
+
+        indexedHashRef.current = transactionHash;
+        onIndexedFiredRef.current = false;
+        setHasIndexed(false);
+    }, [transactionHash]);
+
+    useEffect(() => {
+        if (
+            transactionType == null ||
+            transactionHash == null ||
+            !isComplete ||
+            hasIndexed ||
+            activeStep === TransactionDialogStep.INDEXING
+        ) {
+            return;
+        }
+
+        updateActiveStep(TransactionDialogStep.INDEXING);
+    }, [
+        activeStep,
+        hasIndexed,
+        isComplete,
+        transactionHash,
+        transactionType,
+        updateActiveStep,
+    ]);
+
+    useEffect(() => {
+        if (
+            !isTransactionIndexed ||
+            onIndexedFiredRef.current ||
+            transactionType == null ||
+            transactionHash == null
+        ) {
+            return;
+        }
+
+        onIndexedFiredRef.current = true;
+        setHasIndexed(true);
+        onIndexed?.({ slug: transactionStatus?.slug });
+    }, [
+        isTransactionIndexed,
+        onIndexed,
+        transactionHash,
+        transactionStatus?.slug,
+        transactionType,
+    ]);
+
+    const indexingStep = useMemo<
+        ITransactionDialogStep<TCustomStepId | TransactionDialogStep>
+    >(
+        () => ({
+            id: TransactionDialogStep.INDEXING,
+            order: customSteps.length,
+            meta: {
+                label: t(
+                    `app.shared.transactionDialog.step.${TransactionDialogStep.INDEXING}.label`,
+                ),
+                errorLabel: t(
+                    `app.shared.transactionDialog.step.${TransactionDialogStep.INDEXING}.errorLabel`,
+                ),
+                state: hasIndexed
+                    ? 'success'
+                    : isComplete && transactionHash != null
+                      ? 'pending'
+                      : 'idle',
+                action: () => undefined,
+            },
+        }),
+        [customSteps.length, hasIndexed, isComplete, t, transactionHash],
+    );
+    const composedSteps = useMemo<
+        ITransactionDialogStep<TCustomStepId | TransactionDialogStep>[]
+    >(
+        () =>
+            transactionType == null
+                ? customSteps
+                : [...customSteps, indexingStep],
+        [customSteps, indexingStep, transactionType],
+    );
+    const activeStepInfo = composedSteps.find((step) => step.id === activeStep);
+    const isCompleteWithIndexing =
+        isComplete && (transactionType == null || hasIndexed);
     const onDismissRef = useRef(onDismiss);
     const disableCancelRef = useRef(disableCancel);
 
@@ -800,20 +914,17 @@ const CustomTransactionController = <TCustomStepId extends string>(
         [updateOptions],
     );
 
-    // Keep the shared stepper in sync with caller-owned steps without competing for state:
-    // compare structurally (ignoring action identity, which callers recreate each render) so a
-    // fresh render never triggers a redundant updateSteps loop.
     useEffect(() => {
-        if (!areCustomStepsEqual(steps, customSteps)) {
-            updateSteps(customSteps);
+        if (!areCustomStepsEqual(steps, composedSteps)) {
+            updateSteps(composedSteps);
         }
-    }, [customSteps, steps, updateSteps]);
+    }, [composedSteps, steps, updateSteps]);
 
     useEffect(() => {
         const { action, auto, state } = activeStepInfo?.meta ?? {};
         const stepId = activeStepInfo?.id;
 
-        if (isComplete || stepId == null) {
+        if (isCompleteWithIndexing || stepId == null) {
             autoActionRef.current = undefined;
             return;
         }
@@ -852,7 +963,7 @@ const CustomTransactionController = <TCustomStepId extends string>(
                 autoActionRef.current = undefined;
             }
         };
-    }, [activeStepInfo, handleTransactionError, isComplete]);
+    }, [activeStepInfo, handleTransactionError, isCompleteWithIndexing]);
 
     return (
         <TransactionDialogShell
@@ -862,20 +973,22 @@ const CustomTransactionController = <TCustomStepId extends string>(
                     activeStep={activeStepInfo}
                     completion={completion}
                     disableCancel={disableCancel}
-                    isComplete={isComplete}
+                    indexingFallbackUrl={indexingFallbackUrl}
+                    isComplete={isCompleteWithIndexing}
                     mode="custom"
                     onDismiss={onDismiss}
                     onError={handleTransactionError}
                     primaryActionDisabled={primaryActionDisabled}
                     submitLabel={submitLabel}
                     successLink={undefined}
+                    transactionType={transactionType}
                 />
             }
             isCrossNetworkTransaction={isCrossNetworkTransaction}
             networkName={networkName}
             showStatus={showStatus}
             statusBeforeChildren
-            steps={customSteps}
+            steps={composedSteps}
             title={title}
             transactionInfo={transactionInfo}
         >

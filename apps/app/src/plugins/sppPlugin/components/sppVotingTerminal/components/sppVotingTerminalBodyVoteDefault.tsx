@@ -1,4 +1,9 @@
-import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    addressUtils,
+    Button,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
@@ -89,7 +94,15 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<
         checkWalletConnection({ onSuccess: checkPermissions });
 
     return (
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-6">
+            {!voted && (
+                <AlertInline
+                    message={t(
+                        'app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText',
+                    )}
+                    variant="info"
+                />
+            )}
             <Button
                 className="w-full md:w-fit"
                 iconLeft={voted ? IconType.CHECKMARK : undefined}
@@ -101,13 +114,6 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<
                     `app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`,
                 )}
             </Button>
-            {!voted && (
-                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
-                    {t(
-                        'app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText',
-                    )}
-                </p>
-            )}
         </div>
     );
 };

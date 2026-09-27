@@ -88,11 +88,15 @@ class SafeSettingsUtils {
         const { safeInfo, t } = params;
 
         return [
-            // The requirement alone, live or settled: Safe keeps no historical owner set, so a
-            // denominator here would describe today's Safe rather than this decision.
             {
                 term: t(`${safeSettingsTranslationKey}.threshold`),
-                definition: safeInfo.threshold.toString(),
+                definition: t(
+                    `${safeSettingsTranslationKey}.thresholdOfOwners`,
+                    {
+                        threshold: safeInfo.threshold,
+                        total: safeInfo.owners.length,
+                    },
+                ),
             },
             {
                 term: t(`${safeSettingsTranslationKey}.currentNonce`),
