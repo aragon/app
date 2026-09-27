@@ -201,6 +201,27 @@ registry report and selection guide have never previously been delivered
 to any project. If the handoff never consults them, the acceptance
 question is answered "no" regardless of how good the prose is.
 
+### The one pre-adjudicated exception
+
+`required[6]` asks for exact required props and reachable
+revision-matched references. APP-1225 records that the bundle carries 2
+of 79 upstream prop `defaultValue`s. That deficiency is known, is
+explicitly **not** gating, and is filed separately — so it must not be
+able to fail this gate by the back door.
+
+Decided now, before any result:
+
+- `required[6]` failing **solely** because default values are absent →
+  recorded as a bounded limitation against APP-1225. **Does not block
+  the merge.** The other 6 required criteria and all 4 incorrect
+  criteria still apply in full.
+- `required[6]` failing for **any other reason** — wrong prop names,
+  unreachable paths, unresolvable references, invented contracts → a
+  genuine gate failure.
+
+The grader reports which of the two it is, with the quoted span. No
+other criterion has an exception.
+
 ### Verdict
 
 - **Pass** → APP-726/727/728/735/736/1208/1223 are clear to merge.

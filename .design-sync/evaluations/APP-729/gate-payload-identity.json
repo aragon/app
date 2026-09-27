@@ -21,7 +21,17 @@
     "commit": "e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0",
     "vendoredIn": "aragon/app at packages/gov-ui-kit",
     "reachableFrom": "origin/app-594-migrate-ui-kit-to-monorepo",
-    "recreate": "git worktree add <durable> e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0 && export GOVKIT_KIT_ROOT=<durable>/packages/gov-ui-kit"
+    "recreate": "git worktree add <durable> e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0 && export GOVKIT_KIT_ROOT=<durable>/packages/gov-ui-kit",
+    "manifestDefect": {
+      "field": "kit.repository",
+      "recorded": "https://github.com/aragon/gov-ui-kit",
+      "actual": "https://github.com/aragon/app, subdirectory packages/gov-ui-kit",
+      "why": "Commit e06fbb8d is reachable only from origin/app-594-migrate-ui-kit-to-monorepo in aragon/app (verified: git cat-file -t resolves, git branch -r --contains names that branch). The monorepo migration rewrote paths, so this sha is not expected to exist in the gov-ui-kit repo at all.",
+      "impact": "Anyone following kit.repository + kit.commit to recreate the kit source fails. Directly contradicts APP-1208's acceptance criterion 'records exact app/kit, converter and guidance identity'.",
+      "owner": "APP-1208",
+      "gating": false,
+      "note": "Does not block this gate run - the correct coordinates are recorded here and in RERUN-PREP. Fix the emitted field before APP-1208 closes."
+    }
   },
   "deliveredContext": [
     "guidelines/index.md",
