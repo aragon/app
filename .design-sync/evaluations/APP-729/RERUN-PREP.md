@@ -387,3 +387,40 @@ the production `2f22a679…`. **Leave that edit uncommitted, and revert it
 when the run finishes.** Committing it would point the repo's design-sync
 config at a disposable evaluation project, and the next routine sync
 would push production content there instead of to the baseline.
+
+## 9. Phase-2 chunk payloads (2026-09-27)
+
+The pushing session's classifier denies enumerating paths under
+`ds-bundle/`. The `write_files` arrays are therefore precomputed as prep
+artifacts — ready-to-paste `[{path, localPath}]`, all paths relative to
+`localDir: "./ds-bundle"`.
+
+Currency (`SKILL.md:297`): the pushing session verified the live
+`ds-bundle/` against `gate-upload-files.json` immediately before upload —
+575 paths, every byte count and sha256 agreeing, manifest sha still
+`ff2d3043…c257f`. The list is current, not carried over stale.
+
+Send in this order, same `planId`, after the sentinel is already written:
+
+| # | File | Files | MB |
+| --- | --- | --- | --- |
+| 1 | `gate-chunk-01-bundle-js.json` | 1 | 5.18 |
+| 2 | `gate-chunk-02-vendor.json` | 2 | 1.11 |
+| 3 | `gate-chunk-03-css-docs-fonts-guidelines.json` | 11 | 0.93 |
+| 4 | `gate-chunk-04-preview.json` | 103 | 0.63 |
+| 5 | `gate-chunk-05-components-a.json` | 228 | 0.39 |
+| 6 | `gate-chunk-06-components-b.json` | 228 | 0.40 |
+| 7 | `gate-chunk-sentinel.json` — **re-arm** | 1 | — |
+| 8 | `gate-chunk-anchor.json` — `_ds_sync.json`, own call | 1 | — |
+
+573 content + sentinel + anchor = 575. Every chunk is <=256 files; the
+5.18 MB bundle ships alone because the server bounds bytes as well as
+count. On a 500, halve the chunk and retry.
+
+Chunk 3 carries all five `guidelines/` files — the material the gate
+exists to verify.
+
+Deletes: none, the project was empty. Phase 3 is a no-op.
+
+STOP rule unchanged: any write failure retries do not clear means no
+sentinel re-arm and no `_ds_sync.json`.

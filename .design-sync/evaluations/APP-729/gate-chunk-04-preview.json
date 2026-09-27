@@ -1,0 +1,414 @@
+[
+  {
+    "path": "_preview/Accordion.js",
+    "localPath": "_preview/Accordion.js"
+  },
+  {
+    "path": "_preview/ActionSimulation.js",
+    "localPath": "_preview/ActionSimulation.js"
+  },
+  {
+    "path": "_preview/AddressInput.js",
+    "localPath": "_preview/AddressInput.js"
+  },
+  {
+    "path": "_preview/AddressesInput.js",
+    "localPath": "_preview/AddressesInput.js"
+  },
+  {
+    "path": "_preview/AdvancedDateInput.js",
+    "localPath": "_preview/AdvancedDateInput.js"
+  },
+  {
+    "path": "_preview/AlertCard.js",
+    "localPath": "_preview/AlertCard.js"
+  },
+  {
+    "path": "_preview/AlertInline.js",
+    "localPath": "_preview/AlertInline.js"
+  },
+  {
+    "path": "_preview/AppTransactionStatus.js",
+    "localPath": "_preview/AppTransactionStatus.js"
+  },
+  {
+    "path": "_preview/AragonLogo.js",
+    "localPath": "_preview/AragonLogo.js"
+  },
+  {
+    "path": "_preview/AssetDataListItem.js",
+    "localPath": "_preview/AssetDataListItem.js"
+  },
+  {
+    "path": "_preview/AssetTransfer.js",
+    "localPath": "_preview/AssetTransfer.js"
+  },
+  {
+    "path": "_preview/AutocompleteInput.js",
+    "localPath": "_preview/AutocompleteInput.js"
+  },
+  {
+    "path": "_preview/Avatar.js",
+    "localPath": "_preview/Avatar.js"
+  },
+  {
+    "path": "_preview/AvatarIcon.js",
+    "localPath": "_preview/AvatarIcon.js"
+  },
+  {
+    "path": "_preview/AvatarInput.js",
+    "localPath": "_preview/AvatarInput.js"
+  },
+  {
+    "path": "_preview/Banner.js",
+    "localPath": "_preview/Banner.js"
+  },
+  {
+    "path": "_preview/BlockNavigationContextProvider.js",
+    "localPath": "_preview/BlockNavigationContextProvider.js"
+  },
+  {
+    "path": "_preview/Breadcrumbs.js",
+    "localPath": "_preview/Breadcrumbs.js"
+  },
+  {
+    "path": "_preview/Button.js",
+    "localPath": "_preview/Button.js"
+  },
+  {
+    "path": "_preview/Card.js",
+    "localPath": "_preview/Card.js"
+  },
+  {
+    "path": "_preview/CardCollapsible.js",
+    "localPath": "_preview/CardCollapsible.js"
+  },
+  {
+    "path": "_preview/CardEmptyState.js",
+    "localPath": "_preview/CardEmptyState.js"
+  },
+  {
+    "path": "_preview/CardSummary.js",
+    "localPath": "_preview/CardSummary.js"
+  },
+  {
+    "path": "_preview/Carousel.js",
+    "localPath": "_preview/Carousel.js"
+  },
+  {
+    "path": "_preview/Checkbox.js",
+    "localPath": "_preview/Checkbox.js"
+  },
+  {
+    "path": "_preview/CheckboxCard.js",
+    "localPath": "_preview/CheckboxCard.js"
+  },
+  {
+    "path": "_preview/CheckboxGroup.js",
+    "localPath": "_preview/CheckboxGroup.js"
+  },
+  {
+    "path": "_preview/Clipboard.js",
+    "localPath": "_preview/Clipboard.js"
+  },
+  {
+    "path": "_preview/Collapsible.js",
+    "localPath": "_preview/Collapsible.js"
+  },
+  {
+    "path": "_preview/Container.js",
+    "localPath": "_preview/Container.js"
+  },
+  {
+    "path": "_preview/CtaCard.js",
+    "localPath": "_preview/CtaCard.js"
+  },
+  {
+    "path": "_preview/DaoAvatar.js",
+    "localPath": "_preview/DaoAvatar.js"
+  },
+  {
+    "path": "_preview/DaoDataListItem.js",
+    "localPath": "_preview/DaoDataListItem.js"
+  },
+  {
+    "path": "_preview/DaoTargetIndicator.js",
+    "localPath": "_preview/DaoTargetIndicator.js"
+  },
+  {
+    "path": "_preview/DaoTypeTag.js",
+    "localPath": "_preview/DaoTypeTag.js"
+  },
+  {
+    "path": "_preview/DataList.js",
+    "localPath": "_preview/DataList.js"
+  },
+  {
+    "path": "_preview/DefinitionList.js",
+    "localPath": "_preview/DefinitionList.js"
+  },
+  {
+    "path": "_preview/Dialog.js",
+    "localPath": "_preview/Dialog.js"
+  },
+  {
+    "path": "_preview/DialogAlert.js",
+    "localPath": "_preview/DialogAlert.js"
+  },
+  {
+    "path": "_preview/DocumentParser.js",
+    "localPath": "_preview/DocumentParser.js"
+  },
+  {
+    "path": "_preview/Dropdown.js",
+    "localPath": "_preview/Dropdown.js"
+  },
+  {
+    "path": "_preview/EmptyState.js",
+    "localPath": "_preview/EmptyState.js"
+  },
+  {
+    "path": "_preview/ErrorFeedback.js",
+    "localPath": "_preview/ErrorFeedback.js"
+  },
+  {
+    "path": "_preview/FooterInfo.js",
+    "localPath": "_preview/FooterInfo.js"
+  },
+  {
+    "path": "_preview/Heading.js",
+    "localPath": "_preview/Heading.js"
+  },
+  {
+    "path": "_preview/Icon.js",
+    "localPath": "_preview/Icon.js"
+  },
+  {
+    "path": "_preview/IllustrationHuman.js",
+    "localPath": "_preview/IllustrationHuman.js"
+  },
+  {
+    "path": "_preview/IllustrationObject.js",
+    "localPath": "_preview/IllustrationObject.js"
+  },
+  {
+    "path": "_preview/InputDate.js",
+    "localPath": "_preview/InputDate.js"
+  },
+  {
+    "path": "_preview/InputFileAvatar.js",
+    "localPath": "_preview/InputFileAvatar.js"
+  },
+  {
+    "path": "_preview/InputNumber.js",
+    "localPath": "_preview/InputNumber.js"
+  },
+  {
+    "path": "_preview/InputNumberMax.js",
+    "localPath": "_preview/InputNumberMax.js"
+  },
+  {
+    "path": "_preview/InputSearch.js",
+    "localPath": "_preview/InputSearch.js"
+  },
+  {
+    "path": "_preview/InputText.js",
+    "localPath": "_preview/InputText.js"
+  },
+  {
+    "path": "_preview/InputTime.js",
+    "localPath": "_preview/InputTime.js"
+  },
+  {
+    "path": "_preview/KeyboardShortcut.js",
+    "localPath": "_preview/KeyboardShortcut.js"
+  },
+  {
+    "path": "_preview/Link.js",
+    "localPath": "_preview/Link.js"
+  },
+  {
+    "path": "_preview/MemberAvatar.js",
+    "localPath": "_preview/MemberAvatar.js"
+  },
+  {
+    "path": "_preview/MemberDataListItem.js",
+    "localPath": "_preview/MemberDataListItem.js"
+  },
+  {
+    "path": "_preview/NetworkSwitchAlert.js",
+    "localPath": "_preview/NetworkSwitchAlert.js"
+  },
+  {
+    "path": "_preview/NumberProgressInput.js",
+    "localPath": "_preview/NumberProgressInput.js"
+  },
+  {
+    "path": "_preview/Page.js",
+    "localPath": "_preview/Page.js"
+  },
+  {
+    "path": "_preview/Progress.js",
+    "localPath": "_preview/Progress.js"
+  },
+  {
+    "path": "_preview/ProposalActionChangeMembers.js",
+    "localPath": "_preview/ProposalActionChangeMembers.js"
+  },
+  {
+    "path": "_preview/ProposalActionChangeSettings.js",
+    "localPath": "_preview/ProposalActionChangeSettings.js"
+  },
+  {
+    "path": "_preview/ProposalActionTokenMint.js",
+    "localPath": "_preview/ProposalActionTokenMint.js"
+  },
+  {
+    "path": "_preview/ProposalActionUpdateMetadata.js",
+    "localPath": "_preview/ProposalActionUpdateMetadata.js"
+  },
+  {
+    "path": "_preview/ProposalActionWithdrawToken.js",
+    "localPath": "_preview/ProposalActionWithdrawToken.js"
+  },
+  {
+    "path": "_preview/ProposalActions.js",
+    "localPath": "_preview/ProposalActions.js"
+  },
+  {
+    "path": "_preview/ProposalDataListItem.js",
+    "localPath": "_preview/ProposalDataListItem.js"
+  },
+  {
+    "path": "_preview/ProposalVoting.js",
+    "localPath": "_preview/ProposalVoting.js"
+  },
+  {
+    "path": "_preview/ProposalVotingProgress.js",
+    "localPath": "_preview/ProposalVotingProgress.js"
+  },
+  {
+    "path": "_preview/Radio.js",
+    "localPath": "_preview/Radio.js"
+  },
+  {
+    "path": "_preview/RadioCard.js",
+    "localPath": "_preview/RadioCard.js"
+  },
+  {
+    "path": "_preview/RadioGroup.js",
+    "localPath": "_preview/RadioGroup.js"
+  },
+  {
+    "path": "_preview/ResourceLink.js",
+    "localPath": "_preview/ResourceLink.js"
+  },
+  {
+    "path": "_preview/ResourcesInput.js",
+    "localPath": "_preview/ResourcesInput.js"
+  },
+  {
+    "path": "_preview/SafeDocumentParser.js",
+    "localPath": "_preview/SafeDocumentParser.js"
+  },
+  {
+    "path": "_preview/SafeHtml.js",
+    "localPath": "_preview/SafeHtml.js"
+  },
+  {
+    "path": "_preview/SmartContractFunctionDataListItem.js",
+    "localPath": "_preview/SmartContractFunctionDataListItem.js"
+  },
+  {
+    "path": "_preview/Spinner.js",
+    "localPath": "_preview/Spinner.js"
+  },
+  {
+    "path": "_preview/StatCard.js",
+    "localPath": "_preview/StatCard.js"
+  },
+  {
+    "path": "_preview/StatePingAnimation.js",
+    "localPath": "_preview/StatePingAnimation.js"
+  },
+  {
+    "path": "_preview/StateSkeletonBar.js",
+    "localPath": "_preview/StateSkeletonBar.js"
+  },
+  {
+    "path": "_preview/StateSkeletonCircular.js",
+    "localPath": "_preview/StateSkeletonCircular.js"
+  },
+  {
+    "path": "_preview/Switch.js",
+    "localPath": "_preview/Switch.js"
+  },
+  {
+    "path": "_preview/Tabs.js",
+    "localPath": "_preview/Tabs.js"
+  },
+  {
+    "path": "_preview/Tag.js",
+    "localPath": "_preview/Tag.js"
+  },
+  {
+    "path": "_preview/TextArea.js",
+    "localPath": "_preview/TextArea.js"
+  },
+  {
+    "path": "_preview/TextAreaRichText.js",
+    "localPath": "_preview/TextAreaRichText.js"
+  },
+  {
+    "path": "_preview/Toggle.js",
+    "localPath": "_preview/Toggle.js"
+  },
+  {
+    "path": "_preview/ToggleGroup.js",
+    "localPath": "_preview/ToggleGroup.js"
+  },
+  {
+    "path": "_preview/Tooltip.js",
+    "localPath": "_preview/Tooltip.js"
+  },
+  {
+    "path": "_preview/TransactionDataListItem.js",
+    "localPath": "_preview/TransactionDataListItem.js"
+  },
+  {
+    "path": "_preview/TransactionDetail.js",
+    "localPath": "_preview/TransactionDetail.js"
+  },
+  {
+    "path": "_preview/TransactionDetailSummary.js",
+    "localPath": "_preview/TransactionDetailSummary.js"
+  },
+  {
+    "path": "_preview/VoteDataListItem.js",
+    "localPath": "_preview/VoteDataListItem.js"
+  },
+  {
+    "path": "_preview/VoteProposalDataListItem.js",
+    "localPath": "_preview/VoteProposalDataListItem.js"
+  },
+  {
+    "path": "_preview/Wallet.js",
+    "localPath": "_preview/Wallet.js"
+  },
+  {
+    "path": "_preview/Wizard.js",
+    "localPath": "_preview/Wizard.js"
+  },
+  {
+    "path": "_preview/WizardDetailsDialog.js",
+    "localPath": "_preview/WizardDetailsDialog.js"
+  },
+  {
+    "path": "_preview/WizardDialog.js",
+    "localPath": "_preview/WizardDialog.js"
+  },
+  {
+    "path": "_preview/WizardPage.js",
+    "localPath": "_preview/WizardPage.js"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "path": "_vendor/react-dom.js",
+    "localPath": "_vendor/react-dom.js"
+  },
+  {
+    "path": "_vendor/react.js",
+    "localPath": "_vendor/react.js"
+  }
+]

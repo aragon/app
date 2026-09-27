@@ -1,0 +1,914 @@
+[
+  {
+    "path": "components/general/LinkBase/LinkBase.d.ts",
+    "localPath": "components/general/LinkBase/LinkBase.d.ts"
+  },
+  {
+    "path": "components/general/LinkBase/LinkBase.html",
+    "localPath": "components/general/LinkBase/LinkBase.html"
+  },
+  {
+    "path": "components/general/LinkBase/LinkBase.jsx",
+    "localPath": "components/general/LinkBase/LinkBase.jsx"
+  },
+  {
+    "path": "components/general/LinkBase/LinkBase.prompt.md",
+    "localPath": "components/general/LinkBase/LinkBase.prompt.md"
+  },
+  {
+    "path": "components/general/MemberAvatar/MemberAvatar.d.ts",
+    "localPath": "components/general/MemberAvatar/MemberAvatar.d.ts"
+  },
+  {
+    "path": "components/general/MemberAvatar/MemberAvatar.html",
+    "localPath": "components/general/MemberAvatar/MemberAvatar.html"
+  },
+  {
+    "path": "components/general/MemberAvatar/MemberAvatar.jsx",
+    "localPath": "components/general/MemberAvatar/MemberAvatar.jsx"
+  },
+  {
+    "path": "components/general/MemberAvatar/MemberAvatar.prompt.md",
+    "localPath": "components/general/MemberAvatar/MemberAvatar.prompt.md"
+  },
+  {
+    "path": "components/general/MemberDataListItem/MemberDataListItem.d.ts",
+    "localPath": "components/general/MemberDataListItem/MemberDataListItem.d.ts"
+  },
+  {
+    "path": "components/general/MemberDataListItem/MemberDataListItem.html",
+    "localPath": "components/general/MemberDataListItem/MemberDataListItem.html"
+  },
+  {
+    "path": "components/general/MemberDataListItem/MemberDataListItem.jsx",
+    "localPath": "components/general/MemberDataListItem/MemberDataListItem.jsx"
+  },
+  {
+    "path": "components/general/MemberDataListItem/MemberDataListItem.prompt.md",
+    "localPath": "components/general/MemberDataListItem/MemberDataListItem.prompt.md"
+  },
+  {
+    "path": "components/general/Progress/Progress.d.ts",
+    "localPath": "components/general/Progress/Progress.d.ts"
+  },
+  {
+    "path": "components/general/Progress/Progress.html",
+    "localPath": "components/general/Progress/Progress.html"
+  },
+  {
+    "path": "components/general/Progress/Progress.jsx",
+    "localPath": "components/general/Progress/Progress.jsx"
+  },
+  {
+    "path": "components/general/Progress/Progress.prompt.md",
+    "localPath": "components/general/Progress/Progress.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.d.ts",
+    "localPath": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.d.ts"
+  },
+  {
+    "path": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.html",
+    "localPath": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.html"
+  },
+  {
+    "path": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.jsx",
+    "localPath": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.jsx"
+  },
+  {
+    "path": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.prompt.md",
+    "localPath": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.d.ts",
+    "localPath": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.d.ts"
+  },
+  {
+    "path": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.html",
+    "localPath": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.html"
+  },
+  {
+    "path": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.jsx",
+    "localPath": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.jsx"
+  },
+  {
+    "path": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.prompt.md",
+    "localPath": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.d.ts",
+    "localPath": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.d.ts"
+  },
+  {
+    "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.html",
+    "localPath": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.html"
+  },
+  {
+    "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.jsx",
+    "localPath": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.jsx"
+  },
+  {
+    "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.prompt.md",
+    "localPath": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.d.ts",
+    "localPath": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.d.ts"
+  },
+  {
+    "path": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.html",
+    "localPath": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.html"
+  },
+  {
+    "path": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.jsx",
+    "localPath": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.jsx"
+  },
+  {
+    "path": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.prompt.md",
+    "localPath": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.d.ts",
+    "localPath": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.d.ts"
+  },
+  {
+    "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.html",
+    "localPath": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.html"
+  },
+  {
+    "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.jsx",
+    "localPath": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.jsx"
+  },
+  {
+    "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.prompt.md",
+    "localPath": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalActions/ProposalActions.d.ts",
+    "localPath": "components/general/ProposalActions/ProposalActions.d.ts"
+  },
+  {
+    "path": "components/general/ProposalActions/ProposalActions.html",
+    "localPath": "components/general/ProposalActions/ProposalActions.html"
+  },
+  {
+    "path": "components/general/ProposalActions/ProposalActions.jsx",
+    "localPath": "components/general/ProposalActions/ProposalActions.jsx"
+  },
+  {
+    "path": "components/general/ProposalActions/ProposalActions.prompt.md",
+    "localPath": "components/general/ProposalActions/ProposalActions.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalDataListItem/ProposalDataListItem.d.ts",
+    "localPath": "components/general/ProposalDataListItem/ProposalDataListItem.d.ts"
+  },
+  {
+    "path": "components/general/ProposalDataListItem/ProposalDataListItem.html",
+    "localPath": "components/general/ProposalDataListItem/ProposalDataListItem.html"
+  },
+  {
+    "path": "components/general/ProposalDataListItem/ProposalDataListItem.jsx",
+    "localPath": "components/general/ProposalDataListItem/ProposalDataListItem.jsx"
+  },
+  {
+    "path": "components/general/ProposalDataListItem/ProposalDataListItem.prompt.md",
+    "localPath": "components/general/ProposalDataListItem/ProposalDataListItem.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalVoting/ProposalVoting.d.ts",
+    "localPath": "components/general/ProposalVoting/ProposalVoting.d.ts"
+  },
+  {
+    "path": "components/general/ProposalVoting/ProposalVoting.html",
+    "localPath": "components/general/ProposalVoting/ProposalVoting.html"
+  },
+  {
+    "path": "components/general/ProposalVoting/ProposalVoting.jsx",
+    "localPath": "components/general/ProposalVoting/ProposalVoting.jsx"
+  },
+  {
+    "path": "components/general/ProposalVoting/ProposalVoting.prompt.md",
+    "localPath": "components/general/ProposalVoting/ProposalVoting.prompt.md"
+  },
+  {
+    "path": "components/general/ProposalVotingProgress/ProposalVotingProgress.d.ts",
+    "localPath": "components/general/ProposalVotingProgress/ProposalVotingProgress.d.ts"
+  },
+  {
+    "path": "components/general/ProposalVotingProgress/ProposalVotingProgress.html",
+    "localPath": "components/general/ProposalVotingProgress/ProposalVotingProgress.html"
+  },
+  {
+    "path": "components/general/ProposalVotingProgress/ProposalVotingProgress.jsx",
+    "localPath": "components/general/ProposalVotingProgress/ProposalVotingProgress.jsx"
+  },
+  {
+    "path": "components/general/ProposalVotingProgress/ProposalVotingProgress.prompt.md",
+    "localPath": "components/general/ProposalVotingProgress/ProposalVotingProgress.prompt.md"
+  },
+  {
+    "path": "components/general/Radio/Radio.d.ts",
+    "localPath": "components/general/Radio/Radio.d.ts"
+  },
+  {
+    "path": "components/general/Radio/Radio.html",
+    "localPath": "components/general/Radio/Radio.html"
+  },
+  {
+    "path": "components/general/Radio/Radio.jsx",
+    "localPath": "components/general/Radio/Radio.jsx"
+  },
+  {
+    "path": "components/general/Radio/Radio.prompt.md",
+    "localPath": "components/general/Radio/Radio.prompt.md"
+  },
+  {
+    "path": "components/general/RadioCard/RadioCard.d.ts",
+    "localPath": "components/general/RadioCard/RadioCard.d.ts"
+  },
+  {
+    "path": "components/general/RadioCard/RadioCard.html",
+    "localPath": "components/general/RadioCard/RadioCard.html"
+  },
+  {
+    "path": "components/general/RadioCard/RadioCard.jsx",
+    "localPath": "components/general/RadioCard/RadioCard.jsx"
+  },
+  {
+    "path": "components/general/RadioCard/RadioCard.prompt.md",
+    "localPath": "components/general/RadioCard/RadioCard.prompt.md"
+  },
+  {
+    "path": "components/general/RadioGroup/RadioGroup.d.ts",
+    "localPath": "components/general/RadioGroup/RadioGroup.d.ts"
+  },
+  {
+    "path": "components/general/RadioGroup/RadioGroup.html",
+    "localPath": "components/general/RadioGroup/RadioGroup.html"
+  },
+  {
+    "path": "components/general/RadioGroup/RadioGroup.jsx",
+    "localPath": "components/general/RadioGroup/RadioGroup.jsx"
+  },
+  {
+    "path": "components/general/RadioGroup/RadioGroup.prompt.md",
+    "localPath": "components/general/RadioGroup/RadioGroup.prompt.md"
+  },
+  {
+    "path": "components/general/Rerender/Rerender.d.ts",
+    "localPath": "components/general/Rerender/Rerender.d.ts"
+  },
+  {
+    "path": "components/general/Rerender/Rerender.html",
+    "localPath": "components/general/Rerender/Rerender.html"
+  },
+  {
+    "path": "components/general/Rerender/Rerender.jsx",
+    "localPath": "components/general/Rerender/Rerender.jsx"
+  },
+  {
+    "path": "components/general/Rerender/Rerender.prompt.md",
+    "localPath": "components/general/Rerender/Rerender.prompt.md"
+  },
+  {
+    "path": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.d.ts",
+    "localPath": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.d.ts"
+  },
+  {
+    "path": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.html",
+    "localPath": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.html"
+  },
+  {
+    "path": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.jsx",
+    "localPath": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.jsx"
+  },
+  {
+    "path": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.prompt.md",
+    "localPath": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.prompt.md"
+  },
+  {
+    "path": "components/general/Spinner/Spinner.d.ts",
+    "localPath": "components/general/Spinner/Spinner.d.ts"
+  },
+  {
+    "path": "components/general/Spinner/Spinner.html",
+    "localPath": "components/general/Spinner/Spinner.html"
+  },
+  {
+    "path": "components/general/Spinner/Spinner.jsx",
+    "localPath": "components/general/Spinner/Spinner.jsx"
+  },
+  {
+    "path": "components/general/Spinner/Spinner.prompt.md",
+    "localPath": "components/general/Spinner/Spinner.prompt.md"
+  },
+  {
+    "path": "components/general/StatePingAnimation/StatePingAnimation.d.ts",
+    "localPath": "components/general/StatePingAnimation/StatePingAnimation.d.ts"
+  },
+  {
+    "path": "components/general/StatePingAnimation/StatePingAnimation.html",
+    "localPath": "components/general/StatePingAnimation/StatePingAnimation.html"
+  },
+  {
+    "path": "components/general/StatePingAnimation/StatePingAnimation.jsx",
+    "localPath": "components/general/StatePingAnimation/StatePingAnimation.jsx"
+  },
+  {
+    "path": "components/general/StatePingAnimation/StatePingAnimation.prompt.md",
+    "localPath": "components/general/StatePingAnimation/StatePingAnimation.prompt.md"
+  },
+  {
+    "path": "components/general/StateSkeletonBar/StateSkeletonBar.d.ts",
+    "localPath": "components/general/StateSkeletonBar/StateSkeletonBar.d.ts"
+  },
+  {
+    "path": "components/general/StateSkeletonBar/StateSkeletonBar.html",
+    "localPath": "components/general/StateSkeletonBar/StateSkeletonBar.html"
+  },
+  {
+    "path": "components/general/StateSkeletonBar/StateSkeletonBar.jsx",
+    "localPath": "components/general/StateSkeletonBar/StateSkeletonBar.jsx"
+  },
+  {
+    "path": "components/general/StateSkeletonBar/StateSkeletonBar.prompt.md",
+    "localPath": "components/general/StateSkeletonBar/StateSkeletonBar.prompt.md"
+  },
+  {
+    "path": "components/general/StateSkeletonCircular/StateSkeletonCircular.d.ts",
+    "localPath": "components/general/StateSkeletonCircular/StateSkeletonCircular.d.ts"
+  },
+  {
+    "path": "components/general/StateSkeletonCircular/StateSkeletonCircular.html",
+    "localPath": "components/general/StateSkeletonCircular/StateSkeletonCircular.html"
+  },
+  {
+    "path": "components/general/StateSkeletonCircular/StateSkeletonCircular.jsx",
+    "localPath": "components/general/StateSkeletonCircular/StateSkeletonCircular.jsx"
+  },
+  {
+    "path": "components/general/StateSkeletonCircular/StateSkeletonCircular.prompt.md",
+    "localPath": "components/general/StateSkeletonCircular/StateSkeletonCircular.prompt.md"
+  },
+  {
+    "path": "components/general/Switch/Switch.d.ts",
+    "localPath": "components/general/Switch/Switch.d.ts"
+  },
+  {
+    "path": "components/general/Switch/Switch.html",
+    "localPath": "components/general/Switch/Switch.html"
+  },
+  {
+    "path": "components/general/Switch/Switch.jsx",
+    "localPath": "components/general/Switch/Switch.jsx"
+  },
+  {
+    "path": "components/general/Switch/Switch.prompt.md",
+    "localPath": "components/general/Switch/Switch.prompt.md"
+  },
+  {
+    "path": "components/general/Tabs/Tabs.d.ts",
+    "localPath": "components/general/Tabs/Tabs.d.ts"
+  },
+  {
+    "path": "components/general/Tabs/Tabs.html",
+    "localPath": "components/general/Tabs/Tabs.html"
+  },
+  {
+    "path": "components/general/Tabs/Tabs.jsx",
+    "localPath": "components/general/Tabs/Tabs.jsx"
+  },
+  {
+    "path": "components/general/Tabs/Tabs.prompt.md",
+    "localPath": "components/general/Tabs/Tabs.prompt.md"
+  },
+  {
+    "path": "components/general/Tag/Tag.d.ts",
+    "localPath": "components/general/Tag/Tag.d.ts"
+  },
+  {
+    "path": "components/general/Tag/Tag.html",
+    "localPath": "components/general/Tag/Tag.html"
+  },
+  {
+    "path": "components/general/Tag/Tag.jsx",
+    "localPath": "components/general/Tag/Tag.jsx"
+  },
+  {
+    "path": "components/general/Tag/Tag.prompt.md",
+    "localPath": "components/general/Tag/Tag.prompt.md"
+  },
+  {
+    "path": "components/general/TextArea/TextArea.d.ts",
+    "localPath": "components/general/TextArea/TextArea.d.ts"
+  },
+  {
+    "path": "components/general/TextArea/TextArea.html",
+    "localPath": "components/general/TextArea/TextArea.html"
+  },
+  {
+    "path": "components/general/TextArea/TextArea.jsx",
+    "localPath": "components/general/TextArea/TextArea.jsx"
+  },
+  {
+    "path": "components/general/TextArea/TextArea.prompt.md",
+    "localPath": "components/general/TextArea/TextArea.prompt.md"
+  },
+  {
+    "path": "components/general/TextAreaRichText/TextAreaRichText.d.ts",
+    "localPath": "components/general/TextAreaRichText/TextAreaRichText.d.ts"
+  },
+  {
+    "path": "components/general/TextAreaRichText/TextAreaRichText.html",
+    "localPath": "components/general/TextAreaRichText/TextAreaRichText.html"
+  },
+  {
+    "path": "components/general/TextAreaRichText/TextAreaRichText.jsx",
+    "localPath": "components/general/TextAreaRichText/TextAreaRichText.jsx"
+  },
+  {
+    "path": "components/general/TextAreaRichText/TextAreaRichText.prompt.md",
+    "localPath": "components/general/TextAreaRichText/TextAreaRichText.prompt.md"
+  },
+  {
+    "path": "components/general/Toggle/Toggle.d.ts",
+    "localPath": "components/general/Toggle/Toggle.d.ts"
+  },
+  {
+    "path": "components/general/Toggle/Toggle.html",
+    "localPath": "components/general/Toggle/Toggle.html"
+  },
+  {
+    "path": "components/general/Toggle/Toggle.jsx",
+    "localPath": "components/general/Toggle/Toggle.jsx"
+  },
+  {
+    "path": "components/general/Toggle/Toggle.prompt.md",
+    "localPath": "components/general/Toggle/Toggle.prompt.md"
+  },
+  {
+    "path": "components/general/ToggleGroup/ToggleGroup.d.ts",
+    "localPath": "components/general/ToggleGroup/ToggleGroup.d.ts"
+  },
+  {
+    "path": "components/general/ToggleGroup/ToggleGroup.html",
+    "localPath": "components/general/ToggleGroup/ToggleGroup.html"
+  },
+  {
+    "path": "components/general/ToggleGroup/ToggleGroup.jsx",
+    "localPath": "components/general/ToggleGroup/ToggleGroup.jsx"
+  },
+  {
+    "path": "components/general/ToggleGroup/ToggleGroup.prompt.md",
+    "localPath": "components/general/ToggleGroup/ToggleGroup.prompt.md"
+  },
+  {
+    "path": "components/general/Tooltip/Tooltip.d.ts",
+    "localPath": "components/general/Tooltip/Tooltip.d.ts"
+  },
+  {
+    "path": "components/general/Tooltip/Tooltip.html",
+    "localPath": "components/general/Tooltip/Tooltip.html"
+  },
+  {
+    "path": "components/general/Tooltip/Tooltip.jsx",
+    "localPath": "components/general/Tooltip/Tooltip.jsx"
+  },
+  {
+    "path": "components/general/Tooltip/Tooltip.prompt.md",
+    "localPath": "components/general/Tooltip/Tooltip.prompt.md"
+  },
+  {
+    "path": "components/general/TransactionDataListItem/TransactionDataListItem.d.ts",
+    "localPath": "components/general/TransactionDataListItem/TransactionDataListItem.d.ts"
+  },
+  {
+    "path": "components/general/TransactionDataListItem/TransactionDataListItem.html",
+    "localPath": "components/general/TransactionDataListItem/TransactionDataListItem.html"
+  },
+  {
+    "path": "components/general/TransactionDataListItem/TransactionDataListItem.jsx",
+    "localPath": "components/general/TransactionDataListItem/TransactionDataListItem.jsx"
+  },
+  {
+    "path": "components/general/TransactionDataListItem/TransactionDataListItem.prompt.md",
+    "localPath": "components/general/TransactionDataListItem/TransactionDataListItem.prompt.md"
+  },
+  {
+    "path": "components/general/TransactionDetail/TransactionDetail.d.ts",
+    "localPath": "components/general/TransactionDetail/TransactionDetail.d.ts"
+  },
+  {
+    "path": "components/general/TransactionDetail/TransactionDetail.html",
+    "localPath": "components/general/TransactionDetail/TransactionDetail.html"
+  },
+  {
+    "path": "components/general/TransactionDetail/TransactionDetail.jsx",
+    "localPath": "components/general/TransactionDetail/TransactionDetail.jsx"
+  },
+  {
+    "path": "components/general/TransactionDetail/TransactionDetail.prompt.md",
+    "localPath": "components/general/TransactionDetail/TransactionDetail.prompt.md"
+  },
+  {
+    "path": "components/general/TransactionDetailSummary/TransactionDetailSummary.d.ts",
+    "localPath": "components/general/TransactionDetailSummary/TransactionDetailSummary.d.ts"
+  },
+  {
+    "path": "components/general/TransactionDetailSummary/TransactionDetailSummary.html",
+    "localPath": "components/general/TransactionDetailSummary/TransactionDetailSummary.html"
+  },
+  {
+    "path": "components/general/TransactionDetailSummary/TransactionDetailSummary.jsx",
+    "localPath": "components/general/TransactionDetailSummary/TransactionDetailSummary.jsx"
+  },
+  {
+    "path": "components/general/TransactionDetailSummary/TransactionDetailSummary.prompt.md",
+    "localPath": "components/general/TransactionDetailSummary/TransactionDetailSummary.prompt.md"
+  },
+  {
+    "path": "components/general/VoteDataListItem/VoteDataListItem.d.ts",
+    "localPath": "components/general/VoteDataListItem/VoteDataListItem.d.ts"
+  },
+  {
+    "path": "components/general/VoteDataListItem/VoteDataListItem.html",
+    "localPath": "components/general/VoteDataListItem/VoteDataListItem.html"
+  },
+  {
+    "path": "components/general/VoteDataListItem/VoteDataListItem.jsx",
+    "localPath": "components/general/VoteDataListItem/VoteDataListItem.jsx"
+  },
+  {
+    "path": "components/general/VoteDataListItem/VoteDataListItem.prompt.md",
+    "localPath": "components/general/VoteDataListItem/VoteDataListItem.prompt.md"
+  },
+  {
+    "path": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.d.ts",
+    "localPath": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.d.ts"
+  },
+  {
+    "path": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.html",
+    "localPath": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.html"
+  },
+  {
+    "path": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.jsx",
+    "localPath": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.jsx"
+  },
+  {
+    "path": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.prompt.md",
+    "localPath": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.prompt.md"
+  },
+  {
+    "path": "components/general/Wallet/Wallet.d.ts",
+    "localPath": "components/general/Wallet/Wallet.d.ts"
+  },
+  {
+    "path": "components/general/Wallet/Wallet.html",
+    "localPath": "components/general/Wallet/Wallet.html"
+  },
+  {
+    "path": "components/general/Wallet/Wallet.jsx",
+    "localPath": "components/general/Wallet/Wallet.jsx"
+  },
+  {
+    "path": "components/general/Wallet/Wallet.prompt.md",
+    "localPath": "components/general/Wallet/Wallet.prompt.md"
+  },
+  {
+    "path": "components/shared/AragonLogo/AragonLogo.d.ts",
+    "localPath": "components/shared/AragonLogo/AragonLogo.d.ts"
+  },
+  {
+    "path": "components/shared/AragonLogo/AragonLogo.html",
+    "localPath": "components/shared/AragonLogo/AragonLogo.html"
+  },
+  {
+    "path": "components/shared/AragonLogo/AragonLogo.jsx",
+    "localPath": "components/shared/AragonLogo/AragonLogo.jsx"
+  },
+  {
+    "path": "components/shared/AragonLogo/AragonLogo.prompt.md",
+    "localPath": "components/shared/AragonLogo/AragonLogo.prompt.md"
+  },
+  {
+    "path": "components/shared/Banner/Banner.d.ts",
+    "localPath": "components/shared/Banner/Banner.d.ts"
+  },
+  {
+    "path": "components/shared/Banner/Banner.html",
+    "localPath": "components/shared/Banner/Banner.html"
+  },
+  {
+    "path": "components/shared/Banner/Banner.jsx",
+    "localPath": "components/shared/Banner/Banner.jsx"
+  },
+  {
+    "path": "components/shared/Banner/Banner.prompt.md",
+    "localPath": "components/shared/Banner/Banner.prompt.md"
+  },
+  {
+    "path": "components/shared/Carousel/Carousel.d.ts",
+    "localPath": "components/shared/Carousel/Carousel.d.ts"
+  },
+  {
+    "path": "components/shared/Carousel/Carousel.html",
+    "localPath": "components/shared/Carousel/Carousel.html"
+  },
+  {
+    "path": "components/shared/Carousel/Carousel.jsx",
+    "localPath": "components/shared/Carousel/Carousel.jsx"
+  },
+  {
+    "path": "components/shared/Carousel/Carousel.prompt.md",
+    "localPath": "components/shared/Carousel/Carousel.prompt.md"
+  },
+  {
+    "path": "components/shared/Container/Container.d.ts",
+    "localPath": "components/shared/Container/Container.d.ts"
+  },
+  {
+    "path": "components/shared/Container/Container.html",
+    "localPath": "components/shared/Container/Container.html"
+  },
+  {
+    "path": "components/shared/Container/Container.jsx",
+    "localPath": "components/shared/Container/Container.jsx"
+  },
+  {
+    "path": "components/shared/Container/Container.prompt.md",
+    "localPath": "components/shared/Container/Container.prompt.md"
+  },
+  {
+    "path": "components/shared/CtaCard/CtaCard.d.ts",
+    "localPath": "components/shared/CtaCard/CtaCard.d.ts"
+  },
+  {
+    "path": "components/shared/CtaCard/CtaCard.html",
+    "localPath": "components/shared/CtaCard/CtaCard.html"
+  },
+  {
+    "path": "components/shared/CtaCard/CtaCard.jsx",
+    "localPath": "components/shared/CtaCard/CtaCard.jsx"
+  },
+  {
+    "path": "components/shared/CtaCard/CtaCard.prompt.md",
+    "localPath": "components/shared/CtaCard/CtaCard.prompt.md"
+  },
+  {
+    "path": "components/shared/DaoTargetIndicator/DaoTargetIndicator.d.ts",
+    "localPath": "components/shared/DaoTargetIndicator/DaoTargetIndicator.d.ts"
+  },
+  {
+    "path": "components/shared/DaoTargetIndicator/DaoTargetIndicator.html",
+    "localPath": "components/shared/DaoTargetIndicator/DaoTargetIndicator.html"
+  },
+  {
+    "path": "components/shared/DaoTargetIndicator/DaoTargetIndicator.jsx",
+    "localPath": "components/shared/DaoTargetIndicator/DaoTargetIndicator.jsx"
+  },
+  {
+    "path": "components/shared/DaoTargetIndicator/DaoTargetIndicator.prompt.md",
+    "localPath": "components/shared/DaoTargetIndicator/DaoTargetIndicator.prompt.md"
+  },
+  {
+    "path": "components/shared/DaoTypeTag/DaoTypeTag.d.ts",
+    "localPath": "components/shared/DaoTypeTag/DaoTypeTag.d.ts"
+  },
+  {
+    "path": "components/shared/DaoTypeTag/DaoTypeTag.html",
+    "localPath": "components/shared/DaoTypeTag/DaoTypeTag.html"
+  },
+  {
+    "path": "components/shared/DaoTypeTag/DaoTypeTag.jsx",
+    "localPath": "components/shared/DaoTypeTag/DaoTypeTag.jsx"
+  },
+  {
+    "path": "components/shared/DaoTypeTag/DaoTypeTag.prompt.md",
+    "localPath": "components/shared/DaoTypeTag/DaoTypeTag.prompt.md"
+  },
+  {
+    "path": "components/shared/DialogProvider/DialogProvider.d.ts",
+    "localPath": "components/shared/DialogProvider/DialogProvider.d.ts"
+  },
+  {
+    "path": "components/shared/DialogProvider/DialogProvider.html",
+    "localPath": "components/shared/DialogProvider/DialogProvider.html"
+  },
+  {
+    "path": "components/shared/DialogProvider/DialogProvider.jsx",
+    "localPath": "components/shared/DialogProvider/DialogProvider.jsx"
+  },
+  {
+    "path": "components/shared/DialogProvider/DialogProvider.prompt.md",
+    "localPath": "components/shared/DialogProvider/DialogProvider.prompt.md"
+  },
+  {
+    "path": "components/shared/ErrorFeedback/ErrorFeedback.d.ts",
+    "localPath": "components/shared/ErrorFeedback/ErrorFeedback.d.ts"
+  },
+  {
+    "path": "components/shared/ErrorFeedback/ErrorFeedback.html",
+    "localPath": "components/shared/ErrorFeedback/ErrorFeedback.html"
+  },
+  {
+    "path": "components/shared/ErrorFeedback/ErrorFeedback.jsx",
+    "localPath": "components/shared/ErrorFeedback/ErrorFeedback.jsx"
+  },
+  {
+    "path": "components/shared/ErrorFeedback/ErrorFeedback.prompt.md",
+    "localPath": "components/shared/ErrorFeedback/ErrorFeedback.prompt.md"
+  },
+  {
+    "path": "components/shared/FooterInfo/FooterInfo.d.ts",
+    "localPath": "components/shared/FooterInfo/FooterInfo.d.ts"
+  },
+  {
+    "path": "components/shared/FooterInfo/FooterInfo.html",
+    "localPath": "components/shared/FooterInfo/FooterInfo.html"
+  },
+  {
+    "path": "components/shared/FooterInfo/FooterInfo.jsx",
+    "localPath": "components/shared/FooterInfo/FooterInfo.jsx"
+  },
+  {
+    "path": "components/shared/FooterInfo/FooterInfo.prompt.md",
+    "localPath": "components/shared/FooterInfo/FooterInfo.prompt.md"
+  },
+  {
+    "path": "components/shared/KeyboardShortcut/KeyboardShortcut.d.ts",
+    "localPath": "components/shared/KeyboardShortcut/KeyboardShortcut.d.ts"
+  },
+  {
+    "path": "components/shared/KeyboardShortcut/KeyboardShortcut.html",
+    "localPath": "components/shared/KeyboardShortcut/KeyboardShortcut.html"
+  },
+  {
+    "path": "components/shared/KeyboardShortcut/KeyboardShortcut.jsx",
+    "localPath": "components/shared/KeyboardShortcut/KeyboardShortcut.jsx"
+  },
+  {
+    "path": "components/shared/KeyboardShortcut/KeyboardShortcut.prompt.md",
+    "localPath": "components/shared/KeyboardShortcut/KeyboardShortcut.prompt.md"
+  },
+  {
+    "path": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.d.ts",
+    "localPath": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.d.ts"
+  },
+  {
+    "path": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.html",
+    "localPath": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.html"
+  },
+  {
+    "path": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.jsx",
+    "localPath": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.jsx"
+  },
+  {
+    "path": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.prompt.md",
+    "localPath": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.prompt.md"
+  },
+  {
+    "path": "components/shared/ResourceLink/ResourceLink.d.ts",
+    "localPath": "components/shared/ResourceLink/ResourceLink.d.ts"
+  },
+  {
+    "path": "components/shared/ResourceLink/ResourceLink.html",
+    "localPath": "components/shared/ResourceLink/ResourceLink.html"
+  },
+  {
+    "path": "components/shared/ResourceLink/ResourceLink.jsx",
+    "localPath": "components/shared/ResourceLink/ResourceLink.jsx"
+  },
+  {
+    "path": "components/shared/ResourceLink/ResourceLink.prompt.md",
+    "localPath": "components/shared/ResourceLink/ResourceLink.prompt.md"
+  },
+  {
+    "path": "components/shared/SafeDocumentParser/SafeDocumentParser.d.ts",
+    "localPath": "components/shared/SafeDocumentParser/SafeDocumentParser.d.ts"
+  },
+  {
+    "path": "components/shared/SafeDocumentParser/SafeDocumentParser.html",
+    "localPath": "components/shared/SafeDocumentParser/SafeDocumentParser.html"
+  },
+  {
+    "path": "components/shared/SafeDocumentParser/SafeDocumentParser.jsx",
+    "localPath": "components/shared/SafeDocumentParser/SafeDocumentParser.jsx"
+  },
+  {
+    "path": "components/shared/SafeDocumentParser/SafeDocumentParser.prompt.md",
+    "localPath": "components/shared/SafeDocumentParser/SafeDocumentParser.prompt.md"
+  },
+  {
+    "path": "components/shared/SafeHtml/SafeHtml.d.ts",
+    "localPath": "components/shared/SafeHtml/SafeHtml.d.ts"
+  },
+  {
+    "path": "components/shared/SafeHtml/SafeHtml.html",
+    "localPath": "components/shared/SafeHtml/SafeHtml.html"
+  },
+  {
+    "path": "components/shared/SafeHtml/SafeHtml.jsx",
+    "localPath": "components/shared/SafeHtml/SafeHtml.jsx"
+  },
+  {
+    "path": "components/shared/SafeHtml/SafeHtml.prompt.md",
+    "localPath": "components/shared/SafeHtml/SafeHtml.prompt.md"
+  },
+  {
+    "path": "components/shared/StatCard/StatCard.d.ts",
+    "localPath": "components/shared/StatCard/StatCard.d.ts"
+  },
+  {
+    "path": "components/shared/StatCard/StatCard.html",
+    "localPath": "components/shared/StatCard/StatCard.html"
+  },
+  {
+    "path": "components/shared/StatCard/StatCard.jsx",
+    "localPath": "components/shared/StatCard/StatCard.jsx"
+  },
+  {
+    "path": "components/shared/StatCard/StatCard.prompt.md",
+    "localPath": "components/shared/StatCard/StatCard.prompt.md"
+  },
+  {
+    "path": "components/shared/TranslationsProvider/TranslationsProvider.d.ts",
+    "localPath": "components/shared/TranslationsProvider/TranslationsProvider.d.ts"
+  },
+  {
+    "path": "components/shared/TranslationsProvider/TranslationsProvider.html",
+    "localPath": "components/shared/TranslationsProvider/TranslationsProvider.html"
+  },
+  {
+    "path": "components/shared/TranslationsProvider/TranslationsProvider.jsx",
+    "localPath": "components/shared/TranslationsProvider/TranslationsProvider.jsx"
+  },
+  {
+    "path": "components/shared/TranslationsProvider/TranslationsProvider.prompt.md",
+    "localPath": "components/shared/TranslationsProvider/TranslationsProvider.prompt.md"
+  },
+  {
+    "path": "components/shared/WizardDetailsDialog/WizardDetailsDialog.d.ts",
+    "localPath": "components/shared/WizardDetailsDialog/WizardDetailsDialog.d.ts"
+  },
+  {
+    "path": "components/shared/WizardDetailsDialog/WizardDetailsDialog.html",
+    "localPath": "components/shared/WizardDetailsDialog/WizardDetailsDialog.html"
+  },
+  {
+    "path": "components/shared/WizardDetailsDialog/WizardDetailsDialog.jsx",
+    "localPath": "components/shared/WizardDetailsDialog/WizardDetailsDialog.jsx"
+  },
+  {
+    "path": "components/shared/WizardDetailsDialog/WizardDetailsDialog.prompt.md",
+    "localPath": "components/shared/WizardDetailsDialog/WizardDetailsDialog.prompt.md"
+  },
+  {
+    "path": "components/wizards/Wizard/Wizard.d.ts",
+    "localPath": "components/wizards/Wizard/Wizard.d.ts"
+  },
+  {
+    "path": "components/wizards/Wizard/Wizard.html",
+    "localPath": "components/wizards/Wizard/Wizard.html"
+  },
+  {
+    "path": "components/wizards/Wizard/Wizard.jsx",
+    "localPath": "components/wizards/Wizard/Wizard.jsx"
+  },
+  {
+    "path": "components/wizards/Wizard/Wizard.prompt.md",
+    "localPath": "components/wizards/Wizard/Wizard.prompt.md"
+  },
+  {
+    "path": "components/wizards/WizardDialog/WizardDialog.d.ts",
+    "localPath": "components/wizards/WizardDialog/WizardDialog.d.ts"
+  },
+  {
+    "path": "components/wizards/WizardDialog/WizardDialog.html",
+    "localPath": "components/wizards/WizardDialog/WizardDialog.html"
+  },
+  {
+    "path": "components/wizards/WizardDialog/WizardDialog.jsx",
+    "localPath": "components/wizards/WizardDialog/WizardDialog.jsx"
+  },
+  {
+    "path": "components/wizards/WizardDialog/WizardDialog.prompt.md",
+    "localPath": "components/wizards/WizardDialog/WizardDialog.prompt.md"
+  },
+  {
+    "path": "components/wizards/WizardPage/WizardPage.d.ts",
+    "localPath": "components/wizards/WizardPage/WizardPage.d.ts"
+  },
+  {
+    "path": "components/wizards/WizardPage/WizardPage.html",
+    "localPath": "components/wizards/WizardPage/WizardPage.html"
+  },
+  {
+    "path": "components/wizards/WizardPage/WizardPage.jsx",
+    "localPath": "components/wizards/WizardPage/WizardPage.jsx"
+  },
+  {
+    "path": "components/wizards/WizardPage/WizardPage.prompt.md",
+    "localPath": "components/wizards/WizardPage/WizardPage.prompt.md"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "path": "README.md",
+    "localPath": "README.md"
+  },
+  {
+    "path": "_ds_bundle.css",
+    "localPath": "_ds_bundle.css"
+  },
+  {
+    "path": "fonts/Manrope-Regular.ttf",
+    "localPath": "fonts/Manrope-Regular.ttf"
+  },
+  {
+    "path": "fonts/Manrope-SemiBold.ttf",
+    "localPath": "fonts/Manrope-SemiBold.ttf"
+  },
+  {
+    "path": "fonts/fonts.css",
+    "localPath": "fonts/fonts.css"
+  },
+  {
+    "path": "guidelines/context/index.md",
+    "localPath": "guidelines/context/index.md"
+  },
+  {
+    "path": "guidelines/context/registry-report.md",
+    "localPath": "guidelines/context/registry-report.md"
+  },
+  {
+    "path": "guidelines/context/selection-guide.json",
+    "localPath": "guidelines/context/selection-guide.json"
+  },
+  {
+    "path": "guidelines/context/source-index.md",
+    "localPath": "guidelines/context/source-index.md"
+  },
+  {
+    "path": "guidelines/index.md",
+    "localPath": "guidelines/index.md"
+  },
+  {
+    "path": "styles.css",
+    "localPath": "styles.css"
+  }
+]
