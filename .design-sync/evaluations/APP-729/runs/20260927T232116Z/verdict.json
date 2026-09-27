@@ -24,7 +24,8 @@
       "selection-guide.json contains no kit sha (grep e06fbb8 = 0) and no AddressesInput entry"
     ],
     "attribution": "Bundle-side delivery defect, not model error. The handoff faithfully reported what the payload told it; it copied the bad URL from source-index.md:997.",
-    "owner": "APP-1208"
+    "owner": "APP-1235 (under APP-1220); root cause predates APP-1208",
+    "ticket": "APP-1235 \u2014 https://linear.app/aragon/issue/APP-1235"
   },
   "coverageGapNoted": "selection-guide.json has no AddressesInput entry, so the Container+Item choice rested on the bundle, declarations and README. registry-report.md was not consulted at all. Non-gating; relevant to APP-726 coverage.",
   "evidenceLimits": [

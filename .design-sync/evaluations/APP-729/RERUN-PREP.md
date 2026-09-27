@@ -424,3 +424,53 @@ Deletes: none, the project was empty. Phase 3 is a no-op.
 
 STOP rule unchanged: any write failure retries do not clear means no
 sentinel re-arm and no `_ds_sync.json`.
+
+## 10. Run 1 outcome and the fix on the critical path (2026-09-28)
+
+Run `runs/20260927T232116Z/` returned **FAIL**. Six of seven required
+criteria, all four incorrect criteria and context reachability passed.
+`required[6]` failed on sub-claim `.4`, revision matching — **not** on
+default values, so the APP-1225 exception did not apply. Blocker filed as
+[APP-1235](https://linear.app/aragon/issue/APP-1235).
+
+### Frozen before run 2: emitted URLs count
+
+An unresolvable upstream URL that the **payload itself emitted** counts
+against the "every cited source path or reference resolves" condition.
+The bundle is the thing under test; handing the model a broken link is a
+bundle defect, not a model error. In run 1 the handoff copied
+`github.com/aragon/gov-ui-kit/blob/e06fbb8d/...` verbatim from
+`guidelines/context/source-index.md:997`.
+
+Decided now so it is not decided after seeing run 2's result.
+
+### Why the cheap fix was rejected
+
+A prose-only pass (revisions in `conventions.md`, `REPORT.md`,
+`tokens/README.md`, plus the manifest field) is free — none of those
+bytes are keyed. But the grader listed the unresolvable URL as a finding
+**separate** from the revision mismatch, and under the adjudication above
+it fails the same condition. A prose-only run 2 would likely fail again
+and burn a gate cycle.
+
+So both halves land together, accepting the cost:
+`.ds-sync/lib/sync-hashes.mjs:146-147` hashes every `.mjs` under
+`overrides/` into the global config slice, and `sourceKeyFor:188-189`
+folds that slice into every component source key. Editing
+`overrides/docs.mjs` therefore moves all 114 keys — `changed`, grades
+cleared, not a grades-kept spot-check. Full capture and re-grade required.
+
+No escape hatch: `configSlicesFor:142-144` keys fork behaviour off file
+bytes precisely so a config map cannot mask it.
+
+### Run 2 preconditions
+
+Beyond the identity gate in §3, assert before pushing:
+
+```sh
+grep -rlE '3c9bb798|8d70bdf0|64b517f5' ds-bundle/                            # empty
+grep -c 'github.com/aragon/gov-ui-kit' ds-bundle/guidelines/context/source-index.md   # 0
+```
+
+Prompt, answer key, thresholds, blind-grading rule and the APP-1225
+exception are unchanged. Draw nothing new; run 2 is the same single arm.

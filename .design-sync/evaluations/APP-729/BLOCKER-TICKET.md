@@ -4,7 +4,8 @@ Team Platform `76564c5d-7fcb-42d3-93b6-3bfbeaf3e50c`,
 parent APP-1220 `2f7cff0b-18ac-45e5-be57-0984838cc9ca`,
 labels `FE Tech`, `agents`, `docs`.
 
-Not filed yet: the `linear-aragon` MCP server disconnected mid-session.
+Filed as APP-1235: https://linear.app/aragon/issue/APP-1235
+Retained as the drafting record.
 
 ---
 
