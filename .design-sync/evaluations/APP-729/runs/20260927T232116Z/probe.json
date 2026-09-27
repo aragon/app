@@ -1,0 +1,67 @@
+{
+  "protocol": "PROTOCOL-v2.md",
+  "question": "acceptance",
+  "gate": "RERUN-PREP.md §4 single-arm merge gate",
+  "capturedAt": "2026-09-27T23:21:16Z",
+  "project": {
+    "id": "cf7d7d99-5d85-4de4-a8b4-cfa899c26b3b",
+    "url": "https://claude.ai/design/p/cf7d7d99-5d85-4de4-a8b4-cfa899c26b3b",
+    "type": "PROJECT_TYPE_DESIGN_SYSTEM",
+    "freshAtPush": true
+  },
+  "chat": {
+    "id": "abb63134-878b-437d-af4d-10bd20db316a",
+    "title": "DAO Member Management Integration",
+    "promptSubmittedAt": "2026-09-27T23:02:31.320346068Z",
+    "priorTurns": 0
+  },
+  "model": "Opus 5",
+  "effort": "Medium",
+  "modelEffortSource": "operator-reported (relay browser); not recorded in the stored transcript",
+  "prompt": {
+    "source": "runs/20260925T133856Z/probe.json#prompt",
+    "chars": 829,
+    "verbatim": true,
+    "verification": "transcript.json messages[0].content === frozen prompt (string equality)"
+  },
+  "delivery": {
+    "payloadManifestSha256": "ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f",
+    "planId": "plan_cf7d7d995d854de4_5ee5d285c3ed",
+    "uploadFiles": 575,
+    "listFilesCount": 575,
+    "guidelinesFiles": 5,
+    "guidelines": [
+      "guidelines/index.md",
+      "guidelines/context/index.md",
+      "guidelines/context/registry-report.md",
+      "guidelines/context/selection-guide.json",
+      "guidelines/context/source-index.md"
+    ],
+    "anchorLast": true,
+    "failures": 0
+  },
+  "artifact": {
+    "remotePath": "Member step - implementation handoff.html",
+    "remoteEtag": "1790550403724331",
+    "savedAs": "handoff.html",
+    "bytes": 24857,
+    "sha256": "7d1e401a573f5edf4a55062cd6eb9b30ad44b070971c1e40898cac349a35b538",
+    "capture": "claude-design read_file (entity-escaped wrapper) decoded &lt; &gt; &amp;; decoded byte length equals remote list_files size"
+  },
+  "postRunRemoteState": {
+    "sentinelConsumed": true,
+    "appCompiled": ["_ds_manifest.json", "_adherence.oxlintrc.json"]
+  },
+  "observations": {
+    "transcriptGap": "Stored transcript has 4 messages: the probe, the 'Check design system' pill (stored twice, same id fea764cf…), and the assistant reply to that check. The assistant turn that produced the handoff file is absent from get_conversation output.",
+    "automaticCorrectionEvent": {
+      "kind": "platform-initiated 'Check design system' pass (hidden attachment, pill: true), not solicited by the probe",
+      "at": "2026-09-27T23:06:52Z",
+      "outcome": "Model declined to edit _ds_bundle.css as synced read-only output and routed findings to the repo: 32 unregistered custom properties are Tailwind per-utility internals (--tw-translate-x, .prose vars, space-y flags); 15 unclassified tokens are motion tokens (--ease-out, --animate-spin, --default-transition-duration) wanting /* @kind other */ in the token source.",
+      "gating": false,
+      "followUp": "ticket candidate"
+    },
+    "blindingLeak": "The handoff itself states 'Candidate bundle' (header meta) and 'a candidate assembled from unmerged PRs, not an accepted baseline' (footer), derived from payload content. The grader receives the artifact verbatim, so it learns the bundle is a candidate from the artifact, not from the grading brief."
+  },
+  "humanInterventions": "none reported"
+}
