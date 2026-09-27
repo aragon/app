@@ -317,18 +317,59 @@ No single session has both capabilities. Divide it:
 | Grade (blind) | fresh subagent | must not have seen this prep |
 | Apply the exception, compute verdict | evaluator | see §4 — the grader never sees the rule |
 
-### Write set — precomputed, no manifest read needed
+### Write set — verification aid, NOT the plan
 
-`gate-upload-files.txt` — 575 paths, one per line, in write order with
-`_ds_sync.json` **last**. `gate-upload-files.json` carries the same list
-with per-file bytes and sha256, plus the manifest hash it derives from
-(`ff2d3043…c257f`).
+`gate-upload-files.txt` / `.json` list the 575 payload paths with hashes.
+Use them to **verify** the push landed, and to confirm the frozen
+manifest sha. Do **not** pass them as the plan's `writes`.
 
-Use these instead of parsing `.payload-manifest.json` at push time, and
-instead of `resync.mjs` — the latter runs `package-build` first, which
-rebuilds `ds-bundle` and would move the frozen manifest sha.
+`finalize_plan` takes glob patterns, verbatim from
+`.ds-sync/storybook/SKILL.md:279`:
 
-Expected tree after push:
+```
+writes: ["components/**", "tokens/**", "fonts/**", "_vendor/**",
+         "_preview/**", "guidelines/**", "_ds_bundle.js",
+         "_ds_bundle.css", "styles.css", "README.md",
+         "_ds_sync.json", "_ds_needs_recompile"]
+deletes: []          # empty project, nothing to reconcile
+localDir: "./ds-bundle"
+```
+
+An under-scoped `writes` list silently and permanently desyncs the
+project; full writes are the safe default and are idempotent.
+
+Do not use `resync.mjs` to compute scope — it runs `package-build`
+first, which rebuilds `ds-bundle` and moves the frozen manifest sha.
+
+### Push order — four phases, not one flat write
+
+`_ds_needs_recompile` is a **sentinel**, not an ordinary payload file. It
+fences the app's manifest/copy machinery against a half-uploaded state.
+Per `SKILL.md:290-295`:
+
+1. **Sentinel first** — `write_files` with only `_ds_needs_recompile`.
+2. **All content writes** — chunked to <=256 files per `write_files`
+   call under the same `planId`. The server also bounds payload *bytes*:
+   batch `fonts/` and other binary-heavy dirs smaller; on a 500, halve
+   the chunk and retry.
+3. **Deletes** — none here (empty project).
+4. **Sentinel re-arm, then `_ds_sync.json` last**, in its own
+   `write_files` call.
+
+`_ds_sync.json` is the absolute final write. Uploaded early, a mid-plan
+failure leaves the anchor vouching for files the project does not have,
+and deterministic rebuilds mean no later sync repairs them.
+
+**Any write/delete failure that retries do not clear means STOP** — no
+sentinel re-arm, no `_ds_sync.json`. An un-anchored project merely
+re-verifies next sync; a fresh anchor over a half-applied upload is
+permanent.
+
+If `finalize_plan` is denied, stop and report it (`SKILL.md:286`).
+Denial means the session cannot approve, not that the arguments were
+wrong.
+
+Finish with `list_files` and confirm the count and tree:
 
 ```
 components/  guidelines/  _preview/  _vendor/  fonts/
