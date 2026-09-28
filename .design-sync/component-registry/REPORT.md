@@ -4,7 +4,7 @@ The registry is accepted for use without changing entry review states. Review is
 
 ## Baseline and scope
 
-- App source: `3c9bb798f3679fb2eb8052a192847ab2274ed1d5`, audited in the APP-726 worktree. The requested `/Users/kd-m2air/Local/app-next` checkout has the same revision; its unrelated untracked `.teacher/` directory is outside this audit. The worktree was clean before these artifacts were created.
+- App source **at audit time**: `3c9bb798f3679fb2eb8052a192847ab2274ed1d5`, audited in the APP-726 worktree. This is the revision this audit was performed against, not the revision of the bundle carrying this report — for that, see `guidelines/context/index.md`. The requested `/Users/kd-m2air/Local/app-next` checkout has the same revision; its unrelated untracked `.teacher/` directory is outside this audit. The worktree was clean before these artifacts were created.
 - Kit source: `/Users/kd-m2air/Local/gov-ui-kit`, revision `64b517f5b90052797ecaced5f15ab616b5733f30`, version `2.11.4`, clean at audit start.
 - Consumption: `apps/app/package.json` uses `catalog:`; `pnpm-workspace.yaml:11` pins `2.11.4`; the App importer in `pnpm-lock.yaml` resolves `2.11.4`. The installed package in the named App checkout also resolves to `2.11.4`.
 - App has moved under `apps/app`, but GovKit has **not** moved into this checkout. [APP-594](https://linear.app/aragon/issue/APP-594) is In Review, not a completed migration.

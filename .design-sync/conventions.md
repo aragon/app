@@ -19,19 +19,24 @@ tests and App examples. It is not a second component catalog.
   [#1410](https://github.com/aragon/app/pull/1410) and
   [#1413](https://github.com/aragon/app/pull/1413), plus GovKit PR
   [#793](https://github.com/aragon/gov-ui-kit/pull/793).
-- The refreshed registry identifies the App base
-  `3c9bb798f3679fb2eb8052a192847ab2274ed1d5`; its `dirty` list covers only the
-  changed files under the scanned source paths, not the whole candidate, and
-  GovKit source `8d70bdf0c7fc32e994894d47067f518253b04f80`
-  (`@aragon/gov-ui-kit` 2.11.4). Source-to-published-package equivalence remains
-  `unknown`; do not present this candidate as accepted code.
+- The App base and GovKit source revisions this bundle was generated from are
+  recorded in `guidelines/context/index.md`, which is generated from the same
+  provenance the registry uses. Read them there rather than from this header;
+  a revision written here by hand goes stale on the next refresh. The App
+  `dirty` list covers only changed files under the scanned source paths, not
+  the whole candidate. Source-to-published-package equivalence is recorded in
+  the registry; do not present this candidate as accepted code.
 - The kit owns public component props, stories, tests and reusable governance
   semantics. The App owns product composition, provider wiring, form policy,
   translations and application/domain side effects. The registry records these
   source references; it does not invent named team ownership.
-- For kit behavior, use the [audited GovKit source](https://github.com/aragon/gov-ui-kit/tree/64b517f5b90052797ecaced5f15ab616b5733f30/src)
-  and its co-located APIs, stories and tests, rather than assuming the published
-  Storybook matches the App's installed version. App behavior checks follow
+- For kit behavior, use the GovKit source at the revision recorded in
+  `guidelines/context/index.md`, and its co-located APIs, stories and tests,
+  rather than assuming the published Storybook matches the App's installed
+  version. At the time of writing that is
+  [`64b517f5`](https://github.com/aragon/gov-ui-kit/tree/64b517f5b90052797ecaced5f15ab616b5733f30/src),
+  the commit `@aragon/gov-ui-kit` 2.11.4 was published from; on a kit bump this
+  link goes stale and the generated context does not. App behavior checks follow
   [the App testing guidance](../apps/app/docs/projectDocs/testing.md).
 
 Two layers are exposed in one bundle: **`@aragon/gov-ui-kit`** (groups `general`,
