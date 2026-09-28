@@ -42,10 +42,7 @@ describe('createSessionTicket', () => {
 
         const result = await run(deps, 'call-1');
 
-        expect(result).toEqual({
-            identifier: 'SUP-1',
-            url: 'https://linear.app/aragon/issue/SUP-1',
-        });
+        expect(result).toEqual({ identifier: 'SUP-1' });
         expect(deps.linear.createIssueCalls).toHaveLength(1);
         expect(deps.linear.createIssueCalls[0]?.labelName).toEqual('bug');
         expect(await deps.sessionStore.getTicketCount(sessionId)).toEqual(1);

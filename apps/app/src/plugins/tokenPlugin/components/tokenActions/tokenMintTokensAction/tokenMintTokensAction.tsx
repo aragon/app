@@ -7,13 +7,14 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
+import { encodeFunctionData, zeroAddress } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 
 export interface ITokenMintTokensActionProps
     extends IProposalActionComponentProps<
@@ -88,7 +89,10 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (
 
     const { symbol: tokenSymbol, decimals: tokenDecimals } =
         action.meta.settings.token;
-    const parsedAmount = parseUnits(amountField.value ?? '0', tokenDecimals);
+    const parsedAmount = bigIntUtils.parseUnits(
+        amountField.value,
+        tokenDecimals,
+    );
 
     useEffect(() => {
         const receiverAddress = addressUtils.isAddress(receiver?.address)

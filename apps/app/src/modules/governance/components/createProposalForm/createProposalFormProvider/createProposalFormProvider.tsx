@@ -4,6 +4,7 @@ import type {
     PrepareProposalActionFunction,
     PrepareProposalActionMap,
 } from '@/modules/governance/dialogs/publishProposalDialog';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 
 type AddPrepareActionFunction<
     TAction extends IProposalCreateAction = IProposalCreateAction,
@@ -24,6 +25,12 @@ export interface ICreateProposalFormContext<
      * Callback to update the prepare-action maps for the given proposal action type.
      */
     addPrepareAction: AddPrepareActionFunction<TAction>;
+    /**
+     * Plugin creating the proposal, used by the action components needing the context of the process
+     * they are composed for. Undefined when the actions are composed outside of the create-proposal
+     * flow, e.g. by the execute-actions form or by the nested actions dialog.
+     */
+    processPlugin?: IDaoPlugin;
 }
 
 const createProposalFormContext =
@@ -47,5 +54,6 @@ export const useCreateProposalFormContext = <
             values.prepareActions as PrepareProposalActionMap<TAction>,
         addPrepareAction:
             values.addPrepareAction as AddPrepareActionFunction<TAction>,
+        processPlugin: values.processPlugin,
     };
 };

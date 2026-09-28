@@ -20,6 +20,14 @@ timeUtils.setup();
 // Globally setup TextEncoder/TextDecoder needed by viem
 Object.assign(global, { TextDecoder, TextEncoder });
 
+// jsdom does not implement structuredClone, which @dagrejs/dagre relies on when
+// laying out the permissions graph.
+if (globalThis.structuredClone == null) {
+    Object.defineProperty(globalThis, 'structuredClone', {
+        value: <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T,
+    });
+}
+
 // Mock ResizeObserver functionality
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { IChatMonitoring } from '../../monitoring';
 import { AssistantChat } from './assistantChat';
@@ -48,10 +48,7 @@ const successChunks = (toolCallId: string) => [
     {
         type: 'tool-output-available',
         toolCallId,
-        output: {
-            identifier: 'SUP-123',
-            url: 'https://linear.app/aragon/issue/SUP-123',
-        },
+        output: { identifier: 'SUP-123' },
     },
     { type: 'finish' },
 ];
@@ -103,6 +100,53 @@ const createChatResponse = (chunks: unknown[]): Response => {
         }),
         body,
     } as unknown as Response;
+};
+
+// A response whose stream arrives in stages, so the widget can be observed mid-reply — a tool
+// still running — before `advance()` delivers the rest. The first stage is available at once.
+const createStagedChatResponse = (stages: unknown[][]) => {
+    const encoder = new TextEncoder();
+    const pending = [...stages];
+    let controller: ReadableStreamDefaultController<Uint8Array> | undefined;
+    const body = new ReadableStream<Uint8Array>({
+        start: (streamController) => {
+            controller = streamController;
+        },
+    });
+    const advance = () => {
+        const stage = pending.shift();
+
+        if (stage == null || controller == null) {
+            return;
+        }
+
+        controller.enqueue(
+            encoder.encode(
+                stage
+                    .map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`)
+                    .join(''),
+            ),
+        );
+
+        if (pending.length === 0) {
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            controller.close();
+        }
+    };
+    advance();
+
+    const response = {
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        headers: createHeaders({
+            'content-type': 'text/event-stream',
+            'x-vercel-ai-ui-message-stream': 'v1',
+        }),
+        body,
+    } as unknown as Response;
+
+    return { response, advance };
 };
 
 // A distinctive marker in the user's message: no monitoring call may ever carry it.
@@ -168,16 +212,18 @@ describe('<AssistantChat /> integration', () => {
         global.fetch = originalFetch;
     });
 
+    const widget = (isOpen = true, monitoring?: IChatMonitoring) => (
+        <AssistantChat
+            appContext={{ route: '/dashboard', appVersion: '1.0.0' }}
+            assistantUrl={assistantUrl}
+            isOpen={isOpen}
+            monitoring={monitoring}
+            onClose={jest.fn()}
+        />
+    );
+
     const renderWidget = (monitoring?: IChatMonitoring) =>
-        render(
-            <AssistantChat
-                appContext={{ route: '/dashboard', appVersion: '1.0.0' }}
-                assistantUrl={assistantUrl}
-                isOpen={true}
-                monitoring={monitoring}
-                onClose={jest.fn()}
-            />,
-        );
+        render(widget(true, monitoring));
 
     const sendMessageAndReviewDraft = async () => {
         const composer = await screen.findByRole('textbox', {
@@ -193,10 +239,10 @@ describe('<AssistantChat /> integration', () => {
             await screen.findByText('Proposal page crashes on load'),
         ).toBeInTheDocument();
 
-        return screen.getByRole('button', { name: 'Create' });
+        return screen.getByRole('button', { name: 'Create ticket' });
     };
 
-    it('drafts the ticket, creates it on approval and links to it', async () => {
+    it('drafts the ticket and creates it on approval', async () => {
         chatResponses = [
             createChatResponse(draftChunks('tc-1')),
             createChatResponse(successChunks('tc-1')),
@@ -208,6 +254,12 @@ describe('<AssistantChat /> integration', () => {
             screen.getByRole('button', { name: 'Dismiss' }),
         ).toBeInTheDocument();
 
+        // The transcript opens with the time it started, the header names the draft in progress.
+        expect(screen.getByText(/^Today \d{2}:\d{2}$/)).toBeInTheDocument();
+        expect(
+            screen.getByText('Draft: Proposal page crashes on load'),
+        ).toBeInTheDocument();
+
         await userEvent.click(createButton);
 
         // Approval resumes the stream (a second /chat call) and the tool output renders as success.
@@ -215,12 +267,129 @@ describe('<AssistantChat /> integration', () => {
         expect(screen.getByText('SUP-123')).toBeInTheDocument();
         expect(chatCalls()).toHaveLength(2);
 
+        // The header follows the ticket from draft to created.
+        expect(
+            screen.getByText('SUP-123: Proposal page crashes on load'),
+        ).toBeInTheDocument();
+
         // The created ticket is remembered in the device-local history.
         expect(
             JSON.parse(
                 localStorage.getItem('aragon-assistant:requests') ?? '[]',
             ),
         ).toEqual([expect.objectContaining({ identifier: 'SUP-123' })]);
+    });
+
+    it('shows exactly one spinner from the send until the answer streams, through every lookup', async () => {
+        // The shape of a real documentation answer: a search, its result, a page read (a second
+        // step), its result, a pause while the model reads, then the answer.
+        const toolChunks = (
+            toolCallId: string,
+            toolName: string,
+            input: Record<string, string>,
+        ) => [
+            { type: 'start-step' },
+            { type: 'tool-input-start', toolCallId, toolName },
+            { type: 'tool-input-available', toolCallId, toolName, input },
+        ];
+        const toolResult = (toolCallId: string, output: unknown) => [
+            { type: 'tool-output-available', toolCallId, output },
+            { type: 'finish-step' },
+        ];
+        const { response, advance } = createStagedChatResponse([
+            [{ type: 'start' }],
+            toolChunks('tc-docs-1', 'searchDocs', {
+                query: 'linked account control',
+            }),
+            toolResult('tc-docs-1', { results: [] }),
+            toolChunks('tc-docs-2', 'readDoc', {
+                path: 'accounts/linked-account.md',
+            }),
+            toolResult('tc-docs-2', { found: false }),
+            [{ type: 'start-step' }],
+            [
+                { type: 'text-start', id: 'txt-1' },
+                {
+                    type: 'text-delta',
+                    id: 'txt-1',
+                    delta: 'Linking is display only.',
+                },
+                { type: 'text-end', id: 'txt-1' },
+                { type: 'finish-step' },
+                { type: 'finish' },
+            ],
+        ]);
+        chatResponses = [response];
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(composer, 'Does linking give control?{Enter}');
+
+        // A stage lands as one chunk whose events are applied one by one, so the screen is
+        // checked once the stage has settled — a macrotask later, all microtasks drained. The
+        // spinners are counted whatever their label: gov-ui-kit's Spinner is the progressbar.
+        const settle = () =>
+            act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+        const spinnerLabels = () =>
+            screen
+                .queryAllByRole('status')
+                .map((element) => element.getAttribute('aria-label'));
+        const spinnerCount = () =>
+            document.querySelectorAll('[role="progressbar"]').length;
+
+        // Nothing has arrived: the typing spinner, and only it.
+        await screen.findByRole('status', { name: 'Assistant is typing' });
+        await settle();
+        expect(spinnerCount()).toEqual(1);
+
+        // The search runs with no text around it: the same single spinner, relabelled. Before
+        // the fix the empty-message spinner stayed next to the tool's own and made two.
+        advance();
+        await settle();
+        expect(spinnerLabels()).toEqual(['Looking that up']);
+        expect(spinnerCount()).toEqual(1);
+
+        // Its result is in, the page read starts and ends, the model reads: still one, never
+        // none.
+        for (let stage = 0; stage < 4; stage += 1) {
+            advance();
+            await settle();
+            expect(spinnerLabels()).toEqual(['Looking that up']);
+            expect(spinnerCount()).toEqual(1);
+        }
+        expect(
+            screen.queryByText('Linking is display only.'),
+        ).not.toBeInTheDocument();
+
+        // The answer takes over.
+        advance();
+        expect(
+            await screen.findByText('Linking is display only.'),
+        ).toBeInTheDocument();
+        expect(spinnerCount()).toEqual(0);
+    });
+
+    it('stops a message at the length limit and shows the count as it gets close', async () => {
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        // The service limit, applied by the textarea itself so an over-long message never
+        // leaves as a request that comes back as a failure.
+        expect(composer).toHaveAttribute('maxlength', '8000');
+        expect(screen.queryByText(/\/ 8,000$/)).not.toBeInTheDocument();
+
+        await userEvent.click(composer);
+        await userEvent.paste('x'.repeat(6500));
+        expect(screen.getByText('6,500 / 8,000')).toBeInTheDocument();
+
+        // A paste past the limit is clipped, and the count says so.
+        await userEvent.paste('y'.repeat(2000));
+        expect(composer).toHaveValue(`${'x'.repeat(6500)}${'y'.repeat(1500)}`);
+        expect(screen.getByText('8,000 / 8,000')).toBeInTheDocument();
     });
 
     it('shows a retryable failure when creation fails and recovers on retry', async () => {
@@ -249,7 +418,7 @@ describe('<AssistantChat /> integration', () => {
         // Retry re-drafts; approving the fresh draft creates the ticket.
         await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
         await userEvent.click(
-            await screen.findByRole('button', { name: 'Create' }),
+            await screen.findByRole('button', { name: 'Create ticket' }),
         );
 
         expect(await screen.findByText('Request created')).toBeInTheDocument();
@@ -265,6 +434,41 @@ describe('<AssistantChat /> integration', () => {
         for (const call of monitoringCalls) {
             expect(JSON.stringify(call)).not.toContain(userSecret);
         }
+    });
+
+    it('renders the links of a reply as links, labelled or bare, opening in a new tab, and no images', async () => {
+        const formUrl = 'https://www.aragon.org/get-assistance-form';
+        const protocolUrl =
+            'https://github.com/aragon/protocol-doc/blob/main/plugins/spp-plugin.md';
+        chatResponses = [
+            createChatResponse(
+                textChunks(
+                    `You can reach the team through [get in touch](${formUrl}); the protocol pages are at ${protocolUrl}\n\n![tracker](https://tracker.example/pixel.png)`,
+                ),
+            ),
+        ];
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(composer, 'How do I contact the team?{Enter}');
+
+        // A markdown link keeps its label; a bare URL is a link on its own (GFM autolink), so
+        // nothing the model writes has to be copied out by hand.
+        const labelled = await screen.findByRole('link', {
+            name: 'get in touch',
+        });
+        const bare = screen.getByRole('link', { name: protocolUrl });
+        expect(labelled).toHaveAttribute('href', formUrl);
+        expect(bare).toHaveAttribute('href', protocolUrl);
+        for (const link of [labelled, bare]) {
+            expect(link).toHaveAttribute('target', '_blank');
+            expect(link).toHaveAttribute('rel', 'noreferrer');
+        }
+        // An image in a reply would make the reader's browser call a host of the model's choosing.
+        expect(screen.queryByRole('img')).not.toBeInTheDocument();
+        expect(screen.queryByAltText('tracker')).not.toBeInTheDocument();
     });
 
     it('keeps a sent attachment visible in the transcript without sending its bytes to the chat', async () => {
@@ -305,16 +509,112 @@ describe('<AssistantChat /> integration', () => {
             screen.queryByRole('button', { name: 'Remove file' }),
         ).not.toBeInTheDocument();
 
-        // The preview stays local: the chat request carries no file parts.
+        // The bytes stay local: the request names the attachment (so the service can show the
+        // model where it arrived) and carries nothing else of it.
         const [, chatRequest] = chatCalls()[0];
         const requestBody = JSON.parse(chatRequest?.body as string) as {
-            messages: { parts: { type: string }[] }[];
+            messages: { parts: Record<string, unknown>[] }[];
         };
         const requestParts = requestBody.messages.flatMap(
             (message) => message.parts,
         );
-        expect(requestParts.length).toBeGreaterThan(0);
-        expect(requestParts.every((part) => part.type !== 'file')).toBe(true);
+        expect(requestParts).toContainEqual({
+            type: 'data-attachment',
+            data: { filename: 'screenshot.png' },
+        });
+        expect(chatRequest?.body).not.toContain('data:image/png;base64');
+    });
+
+    it('opens the requests filed from this device from the link under the composer', async () => {
+        // The stored entry carries the Linear URL of the era when entries deep-linked out: it
+        // still parses (unknown keys are stripped) but must no longer render as a link — the
+        // user has no access to the Linear workspace.
+        localStorage.setItem(
+            'aragon-assistant:requests',
+            JSON.stringify([
+                {
+                    identifier: 'SUP-1',
+                    url: 'https://linear.app/aragon/issue/SUP-1',
+                    summary: 'Treasury shows a stale balance',
+                    createdAt: '2026-07-24T10:00:00.000Z',
+                },
+            ]),
+        );
+        renderWidget();
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: 'Past requests (1)' }),
+        );
+
+        // The requests take over the panel: the entry quotes the ticket reference (no link out),
+        // the composer is gone until the user comes back to the conversation.
+        expect(
+            screen.getByText('Treasury shows a stale balance'),
+        ).toBeInTheDocument();
+        expect(screen.getByText('SUP-1')).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('textbox', { name: 'Message' }),
+        ).not.toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', { name: 'Back to chat' }),
+        );
+        expect(
+            await screen.findByRole('textbox', { name: 'Message' }),
+        ).toBeInTheDocument();
+    });
+
+    it('leaves the requests behind when the panel is closed while showing them', async () => {
+        localStorage.setItem(
+            'aragon-assistant:requests',
+            JSON.stringify([
+                {
+                    identifier: 'SUP-1',
+                    summary: 'Treasury shows a stale balance',
+                    createdAt: '2026-07-24T10:00:00.000Z',
+                },
+            ]),
+        );
+        const { rerender } = renderWidget();
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: 'Past requests (1)' }),
+        );
+        expect(
+            screen.queryByRole('textbox', { name: 'Message' }),
+        ).not.toBeInTheDocument();
+
+        // Reopening lands on the conversation, not on the detour the panel was closed from.
+        rerender(widget(false));
+        rerender(widget(true));
+
+        expect(
+            await screen.findByRole('textbox', { name: 'Message' }),
+        ).toBeInTheDocument();
+    });
+
+    it('stops naming a draft in the header once the user dismisses it', async () => {
+        chatResponses = [
+            createChatResponse(draftChunks('tc-1')),
+            createChatResponse(textChunks('No problem, the draft is gone.')),
+        ];
+        renderWidget();
+
+        await sendMessageAndReviewDraft();
+        await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+
+        // The card says the draft was dismissed, so nothing is being worked on: the header drops
+        // back to naming a fresh conversation.
+        expect(
+            await screen.findByText(
+                'Draft dismissed. Keep chatting to prepare a new one.',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText('Draft: Proposal page crashes on load'),
+        ).not.toBeInTheDocument();
+        expect(screen.getByText('New conversation')).toBeInTheDocument();
     });
 
     it('marks an unapproved draft as superseded when the user keeps typing', async () => {
@@ -335,7 +635,7 @@ describe('<AssistantChat /> integration', () => {
         // The undecided draft is spent quietly — no error wording, no lingering Create button.
         expect(
             screen.getByText(
-                'This draft was set aside after your newer messages.',
+                'Earlier draft set aside — your newer messages replaced it.',
             ),
         ).toBeInTheDocument();
         expect(
@@ -344,8 +644,9 @@ describe('<AssistantChat /> integration', () => {
             ),
         ).not.toBeInTheDocument();
         expect(
-            screen.queryByRole('button', { name: 'Create' }),
+            screen.queryByRole('button', { name: 'Create ticket' }),
         ).not.toBeInTheDocument();
+        expect(screen.getByText('New conversation')).toBeInTheDocument();
 
         // The pending approval travels to the server untouched, where it resolves as superseded —
         // the client must not rewrite it into a tool error.

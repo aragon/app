@@ -7,38 +7,28 @@
 
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import {
+    existsSync,
+    mkdtempSync,
+    readdirSync,
+    readFileSync,
+    rmSync,
+    writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import {
+    GENERATED_ROOTS,
+    MANIFEST_PATH,
+    parseFrontmatter,
+    repoRoot,
+} from './sync-skills.mjs';
 
-const repoRoot = join(new URL('.', import.meta.url).pathname, '..');
 const skillsRoot = join(repoRoot, 'skills');
 const sharedDir = join(skillsRoot, 'shared');
 const localDir = join(skillsRoot, 'local');
 const rulesDir = join(sharedDir, 'rules');
-const GENERATED_ROOTS = [
-    join(repoRoot, '.agents', 'skills'),
-    join(repoRoot, '.claude', 'skills'),
-];
-
-/**
- * Parse YAML frontmatter from a SKILL.md file.
- * Returns { name, description } or null if no frontmatter.
- */
-function parseFrontmatter(skillMdPath) {
-    const content = readFileSync(skillMdPath, 'utf-8');
-    const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!match) {
-        return null;
-    }
-    const yaml = match[1];
-    const nameMatch = yaml.match(/^name:\s*(.+)$/m);
-    const descMatch = yaml.match(/^description:\s*(.+)$/m);
-    return {
-        name: nameMatch?.[1]?.trim().replace(/^['"]|['"]$/g, '') || null,
-        description: descMatch?.[1]?.trim() || null,
-    };
-}
 
 /**
  * Enumerate skill directories under a catalog dir.
@@ -57,6 +47,9 @@ const sharedSkills = discoverSkills(sharedDir);
 const rulesSkills = discoverSkills(rulesDir);
 const localSkills = discoverSkills(localDir);
 const allSkills = [...sharedSkills, ...rulesSkills, ...localSkills];
+// Rule-skills are hook-only guardrails and are never installed to the
+// generated discovery roots; everything else is.
+const installedSkills = [...sharedSkills, ...localSkills];
 
 // --- directory structure ---
 
@@ -140,6 +133,33 @@ test('frontmatter name matches containing directory', () => {
     }
 });
 
+test('block-scalar descriptions are rejected', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'skill-spec-'));
+    const md = join(dir, 'SKILL.md');
+    try {
+        for (const indicator of [
+            '>',
+            '|',
+            '>-',
+            '|-',
+            '>+',
+            '|+',
+            '>2',
+            '|2',
+        ]) {
+            writeFileSync(md, `---\nname: x\ndescription: ${indicator}\n---\n`);
+            const parsed = parseFrontmatter(md);
+            assert.ok(
+                parsed?.error,
+                `description: ${indicator} must be rejected (single-line descriptions only)`,
+            );
+            assert.match(parsed.error, /block scalar/);
+        }
+    } finally {
+        rmSync(dir, { recursive: true, force: true });
+    }
+});
+
 // --- name uniqueness ---
 
 test('skill names are unique across shared, rules, and local', () => {
@@ -171,14 +191,14 @@ test('generated roots are flattened (no shared/ or local/ subdir)', {
     }
 });
 
-test('every canonical skill exists in each generated root', {
+test('every installed skill exists in each generated root', {
     skip: !GENERATED_ROOTS.some(existsSync) ? 'sync has not run' : undefined,
 }, () => {
     for (const root of GENERATED_ROOTS) {
         if (!existsSync(root)) {
             continue;
         }
-        for (const skill of allSkills) {
+        for (const skill of installedSkills) {
             const generatedDir = join(root, skill.name);
             const generatedSkillMd = join(generatedDir, 'SKILL.md');
             assert.ok(
@@ -193,20 +213,60 @@ test('every canonical skill exists in each generated root', {
     }
 });
 
+test('rule-skills are NOT installed into generated roots (hook-only)', {
+    skip: !GENERATED_ROOTS.some(existsSync) ? 'sync has not run' : undefined,
+}, () => {
+    for (const root of GENERATED_ROOTS) {
+        if (!existsSync(root)) {
+            continue;
+        }
+        for (const skill of rulesSkills) {
+            assert.ok(
+                !existsSync(join(root, skill.name)),
+                `rule-skill ${skill.name} must not be installed to ${root} (rules are hook-only)`,
+            );
+        }
+    }
+});
+
+// --- manifest (only if sync has run) ---
+
+test('manifest tracks exactly the installed skills', {
+    skip: !existsSync(MANIFEST_PATH) ? 'sync has not run' : undefined,
+}, () => {
+    const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf-8'));
+    assert.equal(manifest.version, 1);
+    const installedNames = installedSkills.map((s) => s.name).sort();
+    for (const root of GENERATED_ROOTS.map((r) =>
+        r.replace(`${repoRoot}/`, ''),
+    )) {
+        assert.ok(
+            Object.hasOwn(manifest.roots, root),
+            `manifest must record ${root}`,
+        );
+        assert.deepEqual(
+            [...manifest.roots[root]].sort(),
+            installedNames,
+            `manifest entries for ${root} must match the installed skill set`,
+        );
+    }
+});
+
 // --- git-ignore contract ---
 
-test('generated skill roots are gitignored', () => {
-    for (const root of ['.agents/skills', '.claude/skills']) {
-        const result = execFileSync(
-            'git',
-            ['check-ignore', '-v', `${root}/test`],
-            {
-                cwd: repoRoot,
-                encoding: 'utf-8',
-                stdio: ['pipe', 'pipe', 'pipe'],
-            },
-        ).toString();
-        assert.ok(result.includes(root), `${root} must be gitignored`);
+test('generated skill roots and sync manifest are gitignored', () => {
+    for (const path of [
+        '.agents/skills/test',
+        '.claude/skills/test',
+        '.skills-sync-manifest.json',
+        'skills-lock.json',
+    ]) {
+        const result = execFileSync('git', ['check-ignore', '-v', path], {
+            cwd: repoRoot,
+            encoding: 'utf-8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+        }).toString();
+        assert.ok(result.includes(path), `${path} must be gitignored`);
     }
 });
 

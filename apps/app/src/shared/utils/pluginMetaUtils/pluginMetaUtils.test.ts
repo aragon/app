@@ -35,17 +35,16 @@ describe('pluginMetaUtils', () => {
                 expected: false,
                 description: 'plugin version is less (lower release)',
             },
-        ])('returns $expected when $description', ({
-            plugin,
-            targetVersion,
-            expected,
-        }) => {
-            const result = pluginMetaUtils.isVersionGreaterOrEqualTo(
-                plugin,
-                targetVersion,
-            );
+        ])(
+            'returns $expected when $description',
+            ({ plugin, targetVersion, expected }) => {
+                const result = pluginMetaUtils.isVersionGreaterOrEqualTo(
+                    plugin,
+                    targetVersion,
+                );
 
-            expect(result).toBe(expected);
-        });
+                expect(result).toBe(expected);
+            },
+        );
     });
 });

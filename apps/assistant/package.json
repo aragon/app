@@ -1,27 +1,33 @@
 {
     "name": "@aragon/assistant",
     "version": "0.2.0",
-    "description": "Aragon assistant service: support-chat intake API",
-    "author": "Aragon Association",
-    "homepage": "https://github.com/aragon/app#readme",
     "private": true,
+    "description": "Aragon assistant service: support-chat intake API",
+    "homepage": "https://github.com/aragon/app#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
     "license": "GPL-3.0",
+    "author": "Aragon Association",
     "type": "module",
     "scripts": {
-        "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
-        "build": "tsup",
-        "test": "jest",
-        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
-        "test:watch": "jest --watch",
-        "test:coverage": "jest --coverage",
+        "build": "pnpm run build:docs-index && tsup",
+        "build:docs-index": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local src/docs/buildDocsIndex.ts",
+        "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && pnpm run build:docs-index && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
-        "type-check": "tsc --noEmit",
-        "setup": "./scripts/setupEnv.sh"
+        "setup": "./scripts/setupEnv.sh",
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=origin/main",
+        "test:coverage": "jest --coverage",
+        "test:watch": "jest --watch",
+        "type-check": "tsc --noEmit"
     },
     "dependencies": {
         "@aragon/assistant-contracts": "workspace:*",
         "@linear/sdk": "catalog:",
+        "@orama/orama": "catalog:",
         "@sentry/hono": "catalog:",
         "@sentry/node": "catalog:",
         "@sentry/profiling-node": "catalog:",
@@ -38,16 +44,15 @@
         "@hono/node-server": "catalog:",
         "@sentry/cli": "catalog:",
         "@types/jest": "catalog:",
+        "@types/mdast": "catalog:",
         "@types/node": "catalog:",
         "jest": "catalog:",
+        "mdast-util-from-markdown": "catalog:",
         "ts-jest": "catalog:",
         "tsup": "catalog:",
         "tsx": "catalog:",
-        "typescript": "catalog:"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/aragon/app.git"
+        "typescript": "catalog:",
+        "yaml": "catalog:"
     },
     "engines": {
         "node": ">=24.16.0"

@@ -10,7 +10,6 @@ import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
-import { whitelistedAddressesOptions } from '@/shared/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
 import { DebugPanelLazy } from '../../debugPanel/lazyDebugPanel';
@@ -57,7 +56,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const queryClient = new QueryClient();
     await Promise.all([
         queryClient.prefetchQuery(sanctionedAddressesOptions()),
-        queryClient.prefetchQuery(whitelistedAddressesOptions()),
     ]);
     const dehydratedState = dehydrate(queryClient);
 
@@ -78,10 +76,14 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     wagmiInitialState={wagmiInitialState}
                 >
                     {/* App column + chat panel: the panel is an in-flow sibling so the whole
-                        app (header, content and footer) resizes to fit when the chat is open. */}
+                        app (header, content and footer) resizes to fit when the chat is open.
+                        The app column is the `app` query container the breakpoint variants
+                        measure (see breakpoints.css), so opening the chat downgrades the app to
+                        a narrower layout instead of leaving desktop rules to collide. The chat
+                        panel measures the browser window through `screen-*` variants. */}
                     <SupportChatContextProvider>
                         <div className="flex grow flex-row">
-                            <div className="flex min-w-0 grow flex-col">
+                            <div className="@container/app flex min-w-0 grow flex-col">
                                 <ErrorBoundary>
                                     <div className="flex grow flex-col">
                                         {children}

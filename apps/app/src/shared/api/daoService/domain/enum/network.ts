@@ -7,10 +7,10 @@ export enum Network {
     CITREA_MAINNET = 'citrea-mainnet',
     HEMI_MAINNET = 'hemi-mainnet',
     ZKSYNC_MAINNET = 'zksync-mainnet',
-    PEAQ_MAINNET = 'peaq-mainnet',
     OPTIMISM_MAINNET = 'optimism-mainnet',
     CHILIZ_MAINNET = 'chiliz-mainnet',
     AVAX_MAINNET = 'avax-mainnet',
     KATANA_MAINNET = 'katana-mainnet',
     MONAD_MAINNET = 'monad-mainnet',
+    ROBINHOOD_MAINNET = 'robinhood-mainnet',
 }

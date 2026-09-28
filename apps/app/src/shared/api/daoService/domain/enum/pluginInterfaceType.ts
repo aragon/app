@@ -6,5 +6,6 @@ export enum PluginInterfaceType {
     GAUGE_VOTER = 'gauge',
     CAPITAL_DISTRIBUTOR = 'capitalDistributor',
     LOCK_TO_VOTE = 'lockToVote',
+    CROSS_CHAIN_CONTROLLER = 'crossChainController',
     UNKNOWN = 'unknown',
 }

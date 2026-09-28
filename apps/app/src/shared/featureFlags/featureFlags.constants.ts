@@ -109,18 +109,6 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'enableAllPlugins',
-        name: 'Enable all plugins',
-        description:
-            'Enables all plugins for DAO creation flows, bypassing whitelist validation',
-        defaultValue: false,
-        environments: {
-            local: true,
-            development: true,
-            preview: true,
-        },
-    },
-    {
         key: 'existingProposalCreationCondition',
         name: 'Existing proposal creation condition',
         description:
@@ -159,15 +147,22 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'permissionsPage',
-        name: 'Permissions page',
+        key: 'telegramSubscription',
+        name: 'Telegram subscription',
         description:
-            'Enables the DAO settings permissions subpage and its entry points. Kept off in staging/production until the APP-953 backend is available.',
+            'Enables the Telegram subscription card on the DAO dashboard aside, linking to the notification bot.',
         defaultValue: false,
         environments: {
             local: true,
             development: true,
             preview: true,
         },
+    },
+    {
+        key: 'domainMemberList',
+        name: 'Aragon domain member list',
+        description:
+            'Lets the membership BFF serve token-voting member lists from the aragon-domain (Envio indexer) instead of the legacy backend on indexed networks. Resolved server-side only. Off everywhere by default; enable per environment through the CMS override or the local override cookie.',
+        defaultValue: false,
     },
 ];

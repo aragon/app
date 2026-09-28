@@ -1,4 +1,10 @@
-import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import {
+    Accordion,
+    Button,
+    Dropdown,
+    IconType,
+    InteractiveAncestorContext,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import safeWallet from '@/assets/images/safeWallet.png';
@@ -83,30 +89,32 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
         >
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
-                    <GovernanceBodyInfo
-                        address={isNew ? undefined : body.address}
-                        build={
-                            isNew
-                                ? plugin?.installVersion.build.toString()
-                                : isExternal
-                                  ? undefined
-                                  : body.build
-                        }
-                        logoSrc={
-                            createProcessFormUtils.isBodySafe(body)
-                                ? safeWallet.src
-                                : undefined
-                        }
-                        name={isExternal ? undefined : body.name}
-                        release={
-                            isNew
-                                ? plugin?.installVersion.release.toString()
-                                : isExternal
-                                  ? undefined
-                                  : body.release
-                        }
-                        subdomain={isNew ? plugin?.id : body.plugin}
-                    />
+                    <InteractiveAncestorContext.Provider value={true}>
+                        <GovernanceBodyInfo
+                            address={isNew ? undefined : body.address}
+                            build={
+                                isNew
+                                    ? plugin?.installVersion.build.toString()
+                                    : isExternal
+                                      ? undefined
+                                      : body.build
+                            }
+                            logoSrc={
+                                createProcessFormUtils.isBodySafe(body)
+                                    ? safeWallet.src
+                                    : undefined
+                            }
+                            name={isExternal ? undefined : body.name}
+                            release={
+                                isNew
+                                    ? plugin?.installVersion.release.toString()
+                                    : isExternal
+                                      ? undefined
+                                      : body.release
+                            }
+                            subdomain={isNew ? plugin?.id : body.plugin}
+                        />
+                    </InteractiveAncestorContext.Provider>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
                     <PluginSingleComponent

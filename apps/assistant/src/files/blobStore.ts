@@ -14,11 +14,11 @@ export interface IBlobInfo {
 // reads them back for validation and the final transfer to Linear.
 export interface IBlobStore {
     // Downloads the blob bytes; throws when the blob does not exist or the fetch fails.
-    fetchBytes(url: string): Promise<Uint8Array>;
+    fetchBytes: (url: string) => Promise<Uint8Array>;
     // Best-effort bulk deletion (idempotent on the blob store side).
-    delete(urls: string[]): Promise<void>;
+    delete: (urls: string[]) => Promise<void>;
     // Lists ALL blobs under the prefix (follows pagination).
-    list(prefix: string): Promise<IBlobInfo[]>;
+    list: (prefix: string) => Promise<IBlobInfo[]>;
 }
 
 export const createVercelBlobStore = (): IBlobStore => {

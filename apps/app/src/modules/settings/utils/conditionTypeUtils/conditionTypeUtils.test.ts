@@ -56,14 +56,19 @@ describe('conditionType Utils', () => {
                 expected: 'ExecuteSelector',
             },
             {
+                description: 'maps spp-rule to SPP rule',
+                conditionType: 'spp-rule',
+                expected: 'SPP rule',
+            },
+            {
                 description: 'maps "none" to the empty placeholder',
                 conditionType: 'none',
                 expected: '-',
             },
             {
-                description: 'maps "unknown" to the empty placeholder',
+                description: 'maps "unknown" to the unresolved placeholder',
                 conditionType: 'unknown',
-                expected: '-',
+                expected: 'Unrecognized condition',
             },
             {
                 description: 'maps an empty string to the empty placeholder',

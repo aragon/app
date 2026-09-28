@@ -1,5 +1,145 @@
 # @aragon/app
 
+## 1.39.1
+
+### Patch Changes
+
+- [#1390](https://github.com/aragon/app/pull/1390) [`9716499`](https://github.com/aragon/app/commit/9716499328b3ea202368cae1024b5bd1dcbbc58d) Thanks [@milosh86](https://github.com/milosh86)! - Show multisig member removals as remove actions instead of add actions in the proposal UI
+
+- [#1391](https://github.com/aragon/app/pull/1391) [`b685284`](https://github.com/aragon/app/commit/b6852844c9856abd7ae5a6b7c53b70df21b961b2) Thanks [@milosh86](https://github.com/milosh86)! - Keep proposal action validation errors attached to their own action when actions are reordered
+
+- [#1377](https://github.com/aragon/app/pull/1377) [`c0d9963`](https://github.com/aragon/app/commit/c0d9963d8a9d4e2a09aea0f10874b7137084ec24) Thanks [@evanaronson](https://github.com/evanaronson)! - Remove incidental clipboard controls from token amount fields, voting summaries, gauge action rows and contract-upgrade reviews. Keep copying on dedicated address rows and remove duplicate copy controls from external-body name details.
+
+- [#1366](https://github.com/aragon/app/pull/1366) [`4b325ce`](https://github.com/aragon/app/commit/4b325ce495bf8bfd58f194300e09b68d4fe28791) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Follow up on the Sentry audit: serve the 404 page for every DAO route whose network or address segment is malformed (validated once in `resolveDaoId`, so bot-probed URLs no longer fail the member details, process details and other pages as server errors), stop the members page from crashing on governance tokens whose backend metadata is null, keep amount fields from throwing on empty or scientific-notation input, render a not-found state instead of crashing when the gauge voter or proposals page has no plugin to show, and classify malformed RSC router-state headers and `insertBefore` DOM mutations by browser extensions as environment noise.
+
+- [#1379](https://github.com/aragon/app/pull/1379) [`73cfe6f`](https://github.com/aragon/app/commit/73cfe6f1af97994ff0b910c4e6cc4092e138874e) Thanks [@evanaronson](https://github.com/evanaronson)! - Show metadata warnings on staged proposal cards and avoid repeating proposal identifiers when titles are empty.
+
+## 1.39.0
+
+### Minor Changes
+
+- [#1365](https://github.com/aragon/app/pull/1365) [`ad72589`](https://github.com/aragon/app/commit/ad72589616c94e45a91cc3f97c7c9a3cc736c38c) Thanks [@evanaronson](https://github.com/evanaronson)! - Add support for Robinhood Chain.
+
+### Patch Changes
+
+- [#1350](https://github.com/aragon/app/pull/1350) [`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Iterate the support assistant on the second round of design feedback: the header and composer controls (new chat, collapse, back, add attachment) become gov-ui-kit buttons and drop their tooltips, the "Email support" escape hatch follows the app's plain link style — no underline, an external-link icon, opening in a new tab — and typing in a fresh chat no longer bounces the layout: the suggestion chips retire through visibility instead of unmounting. The ticket card gains a bottom margin so text following it in the same message no longer sits against its edge, and nothing links to Linear anymore — the success card and the past-requests view quote the ticket reference instead of linking out to a workspace the user has no access to.
+
+- [#1358](https://github.com/aragon/app/pull/1358) [`c1cdcf9`](https://github.com/aragon/app/commit/c1cdcf91c64c156311576acf7c67f13eecc8a9d1) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (gov-ui-kit 2.11.2, next 16.3.2, Sentry 10.71, react-query 5.102, deepmerge-ts 8 closing its stack-exhaustion advisory), bump pnpm to 11.24, and hold the @assistant-ui/tap transitive at 0.9.12 — 0.9.13+ loops forever under the exact-pinned @assistant-ui/react 0.14.27.
+
+- [#1349](https://github.com/aragon/app/pull/1349) [`11b6722`](https://github.com/aragon/app/commit/11b6722a912185427e3fef9ed8d87b70b038012d) Thanks [@milosh86](https://github.com/milosh86)! - Filter out plugins flagged by the backend as unsupported.
+
+- [#1357](https://github.com/aragon/app/pull/1357) [`7c717cf`](https://github.com/aragon/app/commit/7c717cf3e0d6aa16dac20027afbaf52cdeafb498) Thanks [@harryburger](https://github.com/harryburger)! - Show the missing proposal metadata warning only when both title and description are missing. Before, the warning was shown whenever the title was not set, even when the description resolved fine and was rendered right below it.
+
+- [#1364](https://github.com/aragon/app/pull/1364) [`e89d38d`](https://github.com/aragon/app/commit/e89d38d8a1de15892a52bd8669495d2a1ab466bd) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix the explore smoke tests' DAO card locator: gov-ui-kit 2.11.1 renders a DataListItem link as an empty overlay named via aria-labelledby, so the card content is no longer inside the link and the tests matched nothing.
+
+- [#1361](https://github.com/aragon/app/pull/1361) [`c70fb6a`](https://github.com/aragon/app/commit/c70fb6a3eadddfbe0793d87cae4b26da7200d24f) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Make Lock to vote available to everyone and clarify its token-locking requirement.
+
+- [#1345](https://github.com/aragon/app/pull/1345) [`aefdffc`](https://github.com/aragon/app/commit/aefdffca9eb61d6d63e21e134eab344645673fe2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Adopt `AddressOutput` for visible address values.
+
+- [#1351](https://github.com/aragon/app/pull/1351) [`660bb6a`](https://github.com/aragon/app/commit/660bb6a63cbab569f9a6268be8f20be83d5382ba) Thanks [@evanaronson](https://github.com/evanaronson)! - Move Permissions below Transactions and above Settings in the DAO navigation
+
+- [#1360](https://github.com/aragon/app/pull/1360) [`16a47ca`](https://github.com/aragon/app/commit/16a47ca63673d4d17b283f234993a19ba1b0bfa7) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix the Sentry-audit crash and noise findings: enrich SPP sub-proposals routed to lock-to-vote by their stage body so the proposals page no longer crashes on inconsistent backend data, render a not-found state on the create proposal/process routes for unknown plugin addresses, serve the 404 page (instead of a reported server error) for bot-probed DAO and proposal URLs, format dates after mount to stop SSR hydration mismatches on the members/proposals/proposal-details/dashboard pages, compare plugin daoAddress case-insensitively in useDaoPlugins, and classify environment noise (in-app browsers, wallet-extension conflicts, private-mode storage, deploy skew) as expected in the monitoring taxonomy.
+
+- Updated dependencies [[`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23), [`c1cdcf9`](https://github.com/aragon/app/commit/c1cdcf91c64c156311576acf7c67f13eecc8a9d1), [`242489f`](https://github.com/aragon/app/commit/242489f2143c8d530f18d57dde73345509e07e23)]:
+    - @aragon/assistant-chat@0.5.0
+
+## 1.38.0
+
+### Minor Changes
+
+- [#1343](https://github.com/aragon/app/pull/1343) [`87d7109`](https://github.com/aragon/app/commit/87d7109cacfa4fc57ead7a321acc50490669693e) Thanks [@milosh86](https://github.com/milosh86)! - Add a Telegram notifications card to the DAO dashboard and proposals asides
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Implement details view for decoded cross-chain execute actions
+
+- [#1340](https://github.com/aragon/app/pull/1340) [`183306d`](https://github.com/aragon/app/commit/183306d4a66f7d315fc8d46f31ec735d43dfac12) Thanks [@harryburger](https://github.com/harryburger)! - Show non-standard metadata strings for proposals: warning on the proposal list item and alert card with the raw onchain string on the proposal details page
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Implement CrossChainControllerForwardMessageAction basic action
+
+### Patch Changes
+
+- [#1335](https://github.com/aragon/app/pull/1335) [`4369f1b`](https://github.com/aragon/app/commit/4369f1b46433d4f54af6c07054f02285b4c1a355) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Upgrade `@aragon/gov-ui-kit` to 2.10.0. Number inputs now clamp an out-of-range value to `max` instead of dropping the digit that breached it, `prefix` and `suffix` render literally rather than mangling token characters, and the stray borders on `AlertCard` and `Accordion` are gone. Also fixes the create-DAO, create-process and create-policy detail dialogs, which crashed with "`DialogTitle` must be used within `Dialog`" whenever the app and the kit resolved separate radix instances.
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Handle allowed actions without decoded data by falling back to unverified contract and unknown function labels
+
+- [#1325](https://github.com/aragon/app/pull/1325) [`97a7874`](https://github.com/aragon/app/commit/97a78741d723549324a9c1a1670048ec70f417a4) Thanks [@evanaronson](https://github.com/evanaronson)! - Keep XMAQUINA DAO header content below the navigation bar
+
+- [#1338](https://github.com/aragon/app/pull/1338) [`9cfec44`](https://github.com/aragon/app/commit/9cfec44a2cada763b9b260d7e1a1e63dcd95ebaf) Thanks [@evanaronson](https://github.com/evanaronson)! - Restore the standard card padding around duration controls in Token Voting and Lock-to-Vote governance setup
+
+- [#1327](https://github.com/aragon/app/pull/1327) [`28ddbc6`](https://github.com/aragon/app/commit/28ddbc6e427d84c47f7c73168a5b8634d8f63783) Thanks [@milosh86](https://github.com/milosh86)! - Polish forwarded-action composition and gas-estimation UX for cross-chain proposals
+
+- [#1324](https://github.com/aragon/app/pull/1324) [`c92a3c9`](https://github.com/aragon/app/commit/c92a3c912d24c50f57cf97b2f75acf156c2da7c0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (React 19.2.8, Sentry 10.70, viem 2.55.13, wagmi 3.7.6, Reown AppKit 1.8.23, Next.js 16.3) and fix the transfer-asset proposal action crashing when the amount field is cleared — viem now rejects empty strings in parseUnits
+
+- [#1342](https://github.com/aragon/app/pull/1342) [`ea94f1a`](https://github.com/aragon/app/commit/ea94f1a0f5d681e0dc83076c0a8925f48868c288) Thanks [@milosh86](https://github.com/milosh86)! - Keep unverified allowed-action fallback labels in the composer dropdown so action items show their own unverified warning
+
+- [#1341](https://github.com/aragon/app/pull/1341) [`069777f`](https://github.com/aragon/app/commit/069777fb78ac617cf3930f2ceaf510215f23a146) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Move DAO Permissions to its own top-level route and expose it from the DAO navigation menu, the dashboard contract card and the settings account card. Removes the `permissionsPage` feature flag, so the page and its entry points are now enabled in every environment. Upgrades `@aragon/gov-ui-kit` to 2.11.0 for the Permissions navigation icon.
+
+- [#1327](https://github.com/aragon/app/pull/1327) [`28ddbc6`](https://github.com/aragon/app/commit/28ddbc6e427d84c47f7c73168a5b8634d8f63783) Thanks [@milosh86](https://github.com/milosh86)! - Keep contracts imported in the action composer available after the nested actions dialog is closed
+
+- [#1321](https://github.com/aragon/app/pull/1321) [`0ed50ed`](https://github.com/aragon/app/commit/0ed50ed4dc81b4addf9ef3f23624ee1eb6febec4) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Render normalized SPP rule conditions in permission details and preserve backend-enriched DAO actors as DAO nodes in the permissions graph.
+
+- Updated dependencies [[`c92a3c9`](https://github.com/aragon/app/commit/c92a3c912d24c50f57cf97b2f75acf156c2da7c0)]:
+    - @aragon/assistant-chat@0.4.1
+
+## 1.37.1
+
+### Patch Changes
+
+- [#1303](https://github.com/aragon/app/pull/1303) [`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Iterate the support assistant on design feedback: the panel header carries the Aragon mark and names the request being drafted or created, the ticket card leads with the ticket title instead of a "Review your request" label, spent drafts collapse into a quiet line, past requests move from the greeting into their own view reached from under the composer, and the mail escape hatch becomes a footnote there. The transcript opens with a time divider, and the navigation trigger withdraws while the panel is open — the panel collapses through its own chevron.
+
+- [#1312](https://github.com/aragon/app/pull/1312) [`a718058`](https://github.com/aragon/app/commit/a71805829ce8c79367c51d2b08673b18824aa922) Thanks [@harryburger](https://github.com/harryburger)! - Handle plugins with an unresolved interface type consistently: they are now dropped from the plugin list everywhere instead of only from process lookups, so they no longer surface as unselectable entries. The permissions view and contract versions keep showing them, since those describe what is installed on-chain. Contract updates also no longer offer plugins whose interface type cannot be matched to a known repository, which previously crashed the update dialog
+
+- [#1322](https://github.com/aragon/app/pull/1322) [`4399ebc`](https://github.com/aragon/app/commit/4399ebcea692d9ce3c3fbded3539deb88eb204c3) Thanks [@evanaronson](https://github.com/evanaronson)! - Polish Alchemix objection voting and refresh its recorded state after vote indexing.
+
+- Updated dependencies [[`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20), [`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20)]:
+    - @aragon/assistant-chat@0.4.0
+
+## 1.37.0
+
+### Minor Changes
+
+- [#1296](https://github.com/aragon/app/pull/1296) [`e8cfb4b`](https://github.com/aragon/app/commit/e8cfb4bfd98007b370cb295af7737438ddf88965) Thanks [@harryburger](https://github.com/harryburger)! - Show objection voting controls for Alchemix Token Voting: during the objection stage the voting terminal offers the "Object" option only, and the objection status is read on-chain to keep the terminal in sync
+
+- [#1287](https://github.com/aragon/app/pull/1287) [`25b05b5`](https://github.com/aragon/app/commit/25b05b55f5c837902e742ad53828741c7e322acf) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add the DAO settings permissions page with list and graph views of the DAO's on-chain permissions, filterable by the hide-DAO-grants and hide-governing-body toggles.
+
+- [#1269](https://github.com/aragon/app/pull/1269) [`e0f442f`](https://github.com/aragon/app/commit/e0f442f83751bc823aa6b073810a037866ae82f2) Thanks [@milosh86](https://github.com/milosh86)! - Add a nested actions dialog for composing the action list of actions taking an `Action[]` parameter
+
+- [#1273](https://github.com/aragon/app/pull/1273) [`5d90cc3`](https://github.com/aragon/app/commit/5d90cc3c649e18d51d0db50bc36c262ad405cea1) Thanks [@milosh86](https://github.com/milosh86)! - Enable ActionComposer to work outside of a DAO context by accepting a network prop
+
+- [#1289](https://github.com/aragon/app/pull/1289) [`d67d000`](https://github.com/aragon/app/commit/d67d000d81f467fdfecba87f0b2e6e13e8781b36) Thanks [@evanaronson](https://github.com/evanaronson)! - Remove support for the Peaq network.
+
+### Patch Changes
+
+- [#1301](https://github.com/aragon/app/pull/1301) [`8d75f1c`](https://github.com/aragon/app/commit/8d75f1cade97ec45ad00565a2f20e4c800f3d19b) Thanks [@harryburger](https://github.com/harryburger)! - Fix uploaded transfer actions losing their amount and calldata when the token details are already cached
+
+- [#1304](https://github.com/aragon/app/pull/1304) [`b9e2715`](https://github.com/aragon/app/commit/b9e271572ff65b61c0e9ca237e02e3df2502152a) Thanks [@harryburger](https://github.com/harryburger)! - Show the token logo for uploaded transfer actions and assets added by address
+
+## 1.36.0
+
+### Minor Changes
+
+- [#1266](https://github.com/aragon/app/pull/1266) [`8091efb`](https://github.com/aragon/app/commit/8091efb8bf88dfeb9001589f23ed7c7789963edd) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support delegate vote overrides for Alchemix Token Voting: eligible delegators can override their delegate's vote (or vote and override atomically) from the voting terminal, and overridden votes are reflected in the votes list
+
+- [#1256](https://github.com/aragon/app/pull/1256) [`4119b3c`](https://github.com/aragon/app/commit/4119b3cb25d5260ad6899d5f9d2e993a99262c55) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support mixed approving and vetoing bodies within a single SPP stage
+
+- [#1258](https://github.com/aragon/app/pull/1258) [`93154db`](https://github.com/aragon/app/commit/93154db76fd714caef1a2cb01a6c350fa0935bcf) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Instrument privacy-safe Plausible custom events across the wizard, transaction and proposal-action flows, sent through the shared analytics pipeline
+
+- [#1259](https://github.com/aragon/app/pull/1259) [`c4f3a60`](https://github.com/aragon/app/commit/c4f3a609eeb53b7b1b6107b15d5182f4ffd2c1c7) Thanks [@harryburger](https://github.com/harryburger)! - Restrict voting to an "Object" option on objection-stage proposals
+
+### Patch Changes
+
+- [#1253](https://github.com/aragon/app/pull/1253) [`ae5dd8f`](https://github.com/aragon/app/commit/ae5dd8ffa3a0bc8df73f561e6fef3770d9f6da10) Thanks [@milosh86](https://github.com/milosh86)! - Filter OSx-related actions from the action builder when the DAO lacks the required permission
+
+- [#1262](https://github.com/aragon/app/pull/1262) [`3e2b8c5`](https://github.com/aragon/app/commit/3e2b8c54213fafbf50ce493e871a6d5d0b821a19) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Surface a warning with an explicitly confirmed retry when a transaction stays unconfirmed past 90 seconds, expire stale persisted pending-transaction records, pin receipt polling to the transaction chain, and show an actionable error for underpriced replacement transactions
+
+- [#1267](https://github.com/aragon/app/pull/1267) [`fef1057`](https://github.com/aragon/app/commit/fef10573f2d153eb76bd5f0fee3a6927a5f5eeb5) Thanks [@milosh86](https://github.com/milosh86)! - Add link to block explorer for external Safe address in proposal creation eligibility
+
+- [#1268](https://github.com/aragon/app/pull/1268) [`302cdda`](https://github.com/aragon/app/commit/302cdda59317a1e5647b4ee26a3b8e1de16f75a1) Thanks [@evanaronson](https://github.com/evanaronson)! - Revise mixed-body UI: remove approve/veto decision tags, move the governance-type field to its own setup-body wizard step, display stage thresholds in the stage settings list and update governance copy
+
+- [#1243](https://github.com/aragon/app/pull/1243) [`cc1a6a2`](https://github.com/aragon/app/commit/cc1a6a2ccf1df0c4d4ffc7304a6648d2fd150d02) Thanks [@evanaronson](https://github.com/evanaronson)! - Add design-sync setup for the "Aragon App Design System" Claude Design project to enable future re-syncs.
+
+- Updated dependencies [[`3e7c9fd`](https://github.com/aragon/app/commit/3e7c9fd62afdfd79616e98e319b1baf2b303a037)]:
+    - @aragon/assistant-chat@0.3.0
+
 ## 1.35.0
 
 ### Minor Changes

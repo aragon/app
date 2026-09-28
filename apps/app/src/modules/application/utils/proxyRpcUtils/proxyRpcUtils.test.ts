@@ -25,7 +25,6 @@ describe('proxyRpc utils', () => {
         process.env.NEXT_SECRET_RPC_KEY = 'test-alchemy-key';
         process.env.NEXT_SECRET_ANKR_RPC_KEY = 'test-ankr-key';
         process.env.NEXT_SECRET_DRPC_RPC_KEY = 'test-drpc-key';
-        process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY = 'test-peaq-key';
         process.env.CI = 'false';
     });
 
@@ -39,7 +38,6 @@ describe('proxyRpc utils', () => {
         alchemyKey?: string;
         ankrKey?: string;
         drpcKey?: string;
-        peaqKey?: string;
     }) => {
         if (options?.alchemyKey !== undefined) {
             process.env.NEXT_SECRET_RPC_KEY = options.alchemyKey;
@@ -49,9 +47,6 @@ describe('proxyRpc utils', () => {
         }
         if (options?.drpcKey !== undefined) {
             process.env.NEXT_SECRET_DRPC_RPC_KEY = options.drpcKey;
-        }
-        if (options?.peaqKey !== undefined) {
-            process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY = options.peaqKey;
         }
         return new ProxyRpcUtils();
     };
@@ -86,15 +81,6 @@ describe('proxyRpc utils', () => {
             );
         });
 
-        it('throws error when peaq rpc key is not defined on non CI context', () => {
-            testLogger.suppressErrors();
-            delete process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY;
-            process.env.CI = 'false';
-            expect(() => new ProxyRpcUtils()).toThrow(
-                /NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY/,
-            );
-        });
-
         it('throws error when multiple rpc keys are not defined on non CI context', () => {
             testLogger.suppressErrors();
             delete process.env.NEXT_SECRET_RPC_KEY;
@@ -108,7 +94,6 @@ describe('proxyRpc utils', () => {
             delete process.env.NEXT_SECRET_RPC_KEY;
             delete process.env.NEXT_SECRET_ANKR_RPC_KEY;
             delete process.env.NEXT_SECRET_DRPC_RPC_KEY;
-            delete process.env.NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY;
             process.env.CI = 'true';
             expect(() => new ProxyRpcUtils()).not.toThrow();
         });
@@ -182,19 +167,6 @@ describe('proxyRpc utils', () => {
 
             const katanaChainId = String(katanaMainnet.id);
             expect(testClass['chainIdToRpcEndpoint'](katanaChainId)).toEqual(
-                expectedUrl,
-            );
-        });
-
-        it('returns the private rpc endpoint with peaq rpc key when configured', () => {
-            const peaqKey = 'test-peaq-key';
-            const testClass = createTestClass({ peaqKey });
-
-            const peaqMainnet = networkDefinitions[Network.PEAQ_MAINNET];
-            const expectedUrl = `${peaqMainnet.privateRpcConfig!.rpcUrl}${peaqKey}`;
-
-            const peaqChainId = String(peaqMainnet.id);
-            expect(testClass['chainIdToRpcEndpoint'](peaqChainId)).toEqual(
                 expectedUrl,
             );
         });

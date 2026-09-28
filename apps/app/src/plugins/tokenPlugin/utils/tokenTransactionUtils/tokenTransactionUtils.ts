@@ -2,7 +2,6 @@ import {
     encodeAbiParameters,
     encodeFunctionData,
     type Hex,
-    parseUnits,
     zeroHash,
 } from 'viem';
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
@@ -19,6 +18,7 @@ import type {
     IBuildPreparePluginUpdateDataParams,
     IGetUninstallHelpersParams,
 } from '@/modules/settings/types';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -186,8 +186,8 @@ class TokenTransactionUtils {
             (current, { address, tokenAmount }) => ({
                 receivers: current.receivers.concat(address as Hex),
                 amounts: current.amounts.concat(
-                    parseUnits(
-                        tokenAmount?.toString() ?? '0',
+                    bigIntUtils.parseUnits(
+                        tokenAmount?.toString(),
                         governanceTokenDecimals,
                     ),
                 ),
@@ -220,7 +220,7 @@ class TokenTransactionUtils {
             : undefined;
 
         const processedVotingPeriod = stageVotingPeriodSeconds ?? minDuration;
-        const parsedProposerVotingPower = parseUnits(
+        const parsedProposerVotingPower = bigIntUtils.parseUnits(
             minProposerVotingPower,
             decimals,
         );

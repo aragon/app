@@ -24,8 +24,6 @@ const getEnvironmentValue = (
 
         return typeof envValue === 'boolean' ? envValue : undefined;
     }
-
-    return;
 };
 
 const loadCmsOverrides = async (

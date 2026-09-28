@@ -3,6 +3,8 @@
 # If a custom domain is specified, it assigns the deployment URL to that domain.
 # The workflow is workspace-agnostic: `workspace` selects the directory to deploy and `vault-prefix` selects the
 # 1Password vaults (`<vault-prefix>_infra` for Vercel credentials, `<vault-prefix>_<env>` for app secrets).
+# The assistant build also reads the private aragon/platform-doc repository (its knowledge base); the token for
+# that comes from the shared infrastructure vault and exists at build time only.
 
 name: Shared Deploy
 
@@ -74,7 +76,7 @@ jobs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@a36dc232323f483a457ae3ef46028f3a4ef9f2e6 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
+        uses: aragon/github-templates/steps/credential-retrieval@4992848afd79e5feb5fa4a688674d13e9ed47c22 # https://github.com/aragon/github-templates/commit/4992848afd79e5feb5fa4a688674d13e9ed47c22
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_infra"
@@ -95,7 +97,7 @@ jobs:
         working-directory: ${{ inputs.workspace }}
 
       - name: Setup env file secrets
-        uses: aragon/github-templates/steps/credential-retrieval@a36dc232323f483a457ae3ef46028f3a4ef9f2e6 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
+        uses: aragon/github-templates/steps/credential-retrieval@4992848afd79e5feb5fa4a688674d13e9ed47c22 # https://github.com/aragon/github-templates/commit/4992848afd79e5feb5fa4a688674d13e9ed47c22
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_${{ inputs.env }}"
@@ -141,7 +143,22 @@ jobs:
           jq '.settings.rootDirectory = "${{ inputs.workspace }}"' .vercel/project.json > .vercel/project.json.tmp
           mv .vercel/project.json.tmp .vercel/project.json
 
+      # The assistant fetches aragon/platform-doc (private) while building its documentation index;
+      # the bot's PAT from the infrastructure vault reaches that build as DOCS_REPO_TOKEN. Build-time
+      # only: it is never lifted into the deployment's runtime env vars.
+      - name: Load docs repository token
+        id: docs-token
+        if: inputs.workspace == 'apps/assistant'
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          DOCS_REPO_TOKEN: op://kv_app_infra/ARABOT_PAT/credential
+
       - name: Bundle Vercel application
+        env:
+          DOCS_REPO_TOKEN: ${{ steps.docs-token.outputs.DOCS_REPO_TOKEN }}
         run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
 
       - name: Upload source maps to Sentry
@@ -187,10 +204,36 @@ jobs:
           done
           pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} "${runtime_args[@]}" --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
 
+      # `vercel deploy` writes progress to stderr and the URL to stdout — take the last line so an
+      # extra line can never turn the output into a malformed multi-line entry, and stop here if
+      # there is no URL at all rather than aliasing an empty one below.
       - name: Set output
         id: set-deployment-url
-        run: echo "deploymentUrl=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+        run: |
+          url=$(tail -n 1 deployment-url.txt)
+          if [ -z "$url" ]; then
+            echo "::error::vercel deploy printed no deployment URL" >&2
+            exit 1
+          fi
+          echo "deploymentUrl=$url" >> "$GITHUB_OUTPUT"
 
       - name: Set deployment alias
         if: inputs.domain != ''
         run: pnpm vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+
+  # The runner drops a job output whose value contains a masked substring ("Skip output ... since it
+  # may contain secret"), so a successful deploy can still hand callers an empty URL — a broken PR
+  # comment and an E2E run against nothing, both under a green check. Fail the deploy instead.
+  verify-output:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the deployment URL reached the workflow output
+        env:
+          DEPLOYMENT_URL: ${{ needs.deploy.outputs.deploymentUrl }}
+        run: |
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::The deployment succeeded but its URL did not survive into the workflow output. Check the deploy log for mask warnings: a value from the 1Password vault that also appears in the URL scrubs it away." >&2
+            exit 1
+          fi
+          echo "Deployment URL: $DEPLOYMENT_URL"

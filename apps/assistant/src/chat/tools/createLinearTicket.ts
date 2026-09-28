@@ -150,7 +150,6 @@ export const createSessionTicket = async (
 
         const ticket: ICreateTicketToolOutput = {
             identifier: issue.identifier,
-            url: issue.url,
         };
         await sessionStore.storeTicket(sessionId, toolCallId, ticket);
         await cleanupSessionFiles(deps, sessionId, files);
@@ -169,7 +168,9 @@ export const createSessionTicket = async (
         await sessionStore.releaseTicketSlot(sessionId);
         observability.logError(error, { sessionId, step: 'createTicket' });
 
-        throw new Error('Creating the ticket failed. Please try again.');
+        throw new Error('Creating the ticket failed. Please try again.', {
+            cause: error,
+        });
     }
 };
 

@@ -66,3 +66,17 @@ export interface IGetTransactionActionsUrlParams {
 
 export interface IGetTransactionActionsParams
     extends IRequestUrlParams<IGetTransactionActionsUrlParams> {}
+
+export interface IGetTokenInfoUrlParams {
+    /**
+     * Network of the token.
+     */
+    network: Network;
+    /**
+     * Address of the token.
+     */
+    address: string;
+}
+
+export interface IGetTokenInfoParams
+    extends IRequestUrlParams<IGetTokenInfoUrlParams> {}

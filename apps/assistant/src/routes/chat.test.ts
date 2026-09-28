@@ -250,6 +250,55 @@ describe('POST /chat guardrails', () => {
         expect(streamCalls).not.toContain('tc-2');
     });
 
+    it('shows the model where an attachment arrived in the conversation', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const app = buildApp(deps);
+
+        // The bytes travel out-of-band (the widget sends the name only), so the conversation
+        // itself must say that a file came with this message — otherwise the model keeps asking
+        // for a screenshot the user just sent.
+        const body = buildRequestBody();
+        body.messages = [
+            {
+                id: 'message-1',
+                role: 'user',
+                parts: [
+                    { type: 'text', text: 'Here is what I see.' },
+                    {
+                        type: 'data-attachment',
+                        data: { filename: 'screenshot.png' },
+                    },
+                ],
+            } as never,
+        ];
+
+        const response = await app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const streamCalls = JSON.stringify(model.doStreamCalls);
+        expect(streamCalls).toContain('[attached: screenshot.png]');
+        // The system prompt explains the marker only when the conversation carries one.
+        expect(streamCalls).toContain('it travels with the ticket');
+    });
+
+    it('leaves the attachment guidance out of a conversation without files', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        await response.text();
+
+        expect(JSON.stringify(model.doStreamCalls)).not.toContain(
+            'it travels with the ticket',
+        );
+    });
+
     it('strips replayed reasoning parts from the history before the model call', async () => {
         const model = createMockChatModel({});
         const deps = createTestDependencies(model);
@@ -349,6 +398,18 @@ describe('POST /chat guardrails', () => {
             body: JSON.stringify(buildResumeBody(toolCallId)),
         });
 
+    it('continues the assistant message on a resume instead of opening a second one', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+
+        const response = await postResume(buildApp(deps));
+        const streamed = await response.text();
+
+        // The response is stamped with the id of the message the draft lives in, so the widget
+        // continues it. A fresh id makes the widget append a copy of that message — the sentence
+        // written before the tool call would then appear a second time under the created ticket.
+        expect(streamed).toContain('"type":"start","messageId":"message-2"');
+    });
+
     it('does not count an approval resume against the turn budget', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
 
@@ -381,5 +442,58 @@ describe('POST /chat guardrails', () => {
         expect(streamed).toContain('reached its size limit');
         expect(model.doStreamCalls).toHaveLength(0);
         expect(deps.linear.createIssueCalls).toHaveLength(0);
+    });
+
+    it('gives the agent the documentation tools and guidance when docs search is enabled', async () => {
+        // The tests run as the local environment, where docsSearchEnabled is on.
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        await response.text();
+
+        const call = model.doStreamCalls[0];
+        const toolNames = (call?.tools ?? []).map((tool) => tool.name);
+        expect(toolNames).toEqual(
+            expect.arrayContaining([
+                'createLinearTicket',
+                'flagOffTopic',
+                'searchDocs',
+                'readDoc',
+                'listDocs',
+            ]),
+        );
+        const systemPrompt = JSON.stringify(call?.prompt[0]);
+        expect(systemPrompt).toContain(
+            'Call searchDocs before you write a word',
+        );
+        expect(systemPrompt).toContain('drafted only after they say yes');
+        expect(systemPrompt).not.toContain(
+            'cannot answer product questions here',
+        );
+    });
+
+    it('runs a documentation search inline and hands the passages back to the model', async () => {
+        const model = createMockChatModel({
+            streamedText: 'Let me check.',
+            toolCall: {
+                toolName: 'searchDocs',
+                input: { query: 'linking control permissions' },
+            },
+            followUpText: 'Linking is a signal, not control.',
+        });
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        const body = await response.text();
+
+        expect(response.status).toEqual(200);
+        // No approval gate on a read-only tool: the result streams in the same turn and the
+        // model answers on top of it.
+        expect(body).toContain('tool-output-available');
+        expect(body).toContain('accounts/linked-account.md');
+        expect(body).toContain('Linking is a signal, not control.');
+        expect(body).not.toContain('tool-approval-request');
+        expect(model.doStreamCalls).toHaveLength(2);
     });
 });

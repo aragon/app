@@ -1,11 +1,12 @@
 'use client';
 
 import {
-    addressUtils,
+    Button,
     ChainEntityType,
     DateFormat,
     DefinitionList,
     formatterUtils,
+    IconType,
 } from '@aragon/gov-ui-kit';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import {
@@ -20,11 +21,13 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
 import { DashboardOnboarded } from '../../components/dashboardOnboarded';
 import { DashboardOnboarding } from '../../components/dashboardOnboarding';
+import { TelegramSubscriptionCard } from '../../components/telegramSubscriptionCard';
 import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
 
 export interface IDaoDashboardPageClientProps {
@@ -63,6 +66,10 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         useDaoPlugins({ daoId, type: PluginType.PROCESS, visibleOnly: true }) ??
         [];
 
+    // Dates are formatted in the viewer's timezone while the server renders in UTC —
+    // render them only after mount to avoid a hydration mismatch.
+    const isMounted = useIsMounted();
+
     if (dao == null) {
         return null;
     }
@@ -75,11 +82,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         adminPlugin != null && nonAdminProcessPlugins.length === 0;
 
     const daoEns = daoUtils.getDaoEns(dao);
-    const truncatedAddress = addressUtils.truncateAddress(dao.address);
 
-    const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
-        format: DateFormat.YEAR_MONTH,
-    });
+    const daoLaunchedAt = isMounted
+        ? formatterUtils.formatDate(dao.blockTimestamp * 1000, {
+              format: DateFormat.YEAR_MONTH,
+          })
+        : '-';
 
     const daoAddressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
@@ -128,18 +136,23 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                copyValue={dao.address}
-                                link={{ href: daoAddressLink }}
+                                link={{
+                                    href: daoAddressLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.dashboard.daoDashboardPage.aside.details.address',
                                 )}
                             >
-                                {truncatedAddress}
+                                {dao.address}
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item
-                                    copyValue={daoEns}
-                                    link={{ href: daoAddressLink }}
+                                    copyValue={dao.address}
+                                    link={{
+                                        href: daoAddressLink,
+                                        isOnchainEntity: true,
+                                    }}
                                     term={t(
                                         'app.dashboard.daoDashboardPage.aside.details.ens',
                                     )}
@@ -156,6 +169,17 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 {daoLaunchedAt}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
+                        <Button
+                            className="w-full"
+                            href={daoUtils.getDaoUrl(dao, 'permissions')}
+                            iconRight={IconType.CHEVRON_RIGHT}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(
+                                'app.dashboard.daoDashboardPage.aside.details.permissions',
+                            )}
+                        </Button>
                     </Page.AsideCard>
                     {dao.links.length > 0 && (
                         <Page.AsideCard
@@ -174,6 +198,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                             ))}
                         </Page.AsideCard>
                     )}
+                    <TelegramSubscriptionCard daoId={dao.id} />
                 </Page.Aside>
             </Page.Content>
         </>

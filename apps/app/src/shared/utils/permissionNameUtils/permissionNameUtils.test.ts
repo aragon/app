@@ -43,14 +43,14 @@ describe('permissionNameUtils', () => {
                     '0x9c81fc3cf68d43a5ff1c09ddb652dc0e85041298a2c6bb91eec4ba1dabf138bb',
                 expected: 'BURN_PERMISSION',
             },
-        ])('maps the known hash $permissionId to "$expected"', ({
-            permissionId,
-            expected,
-        }) => {
-            expect(permissionNameUtils.getPermissionName(permissionId)).toEqual(
-                expected,
-            );
-        });
+        ])(
+            'maps the known hash $permissionId to "$expected"',
+            ({ permissionId, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionName(permissionId),
+                ).toEqual(expected);
+            },
+        );
 
         it.each([
             {
@@ -63,14 +63,14 @@ describe('permissionNameUtils', () => {
                     '0xdeadbeef00000000000000000000000000000000000000000000000000001234',
                 expected: '0xdeadbeef…00001234',
             },
-        ])('returns the truncated fallback $expected for the unmapped hash $permissionId', ({
-            permissionId,
-            expected,
-        }) => {
-            expect(permissionNameUtils.getPermissionName(permissionId)).toEqual(
-                expected,
-            );
-        });
+        ])(
+            'returns the truncated fallback $expected for the unmapped hash $permissionId',
+            ({ permissionId, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionName(permissionId),
+                ).toEqual(expected);
+            },
+        );
 
         it.each([
             {
@@ -83,12 +83,92 @@ describe('permissionNameUtils', () => {
                     '0xBF04B4486C9663D805744005C3DA000EDA93DE6E3308A4A7A812EB565327B78D',
                 expected: 'EXECUTE_PERMISSION',
             },
-        ])('resolves known hashes case-insensitively for $permissionId', ({
-            permissionId,
-            expected,
-        }) => {
-            expect(permissionNameUtils.getPermissionName(permissionId)).toEqual(
-                expected,
+        ])(
+            'resolves known hashes case-insensitively for $permissionId',
+            ({ permissionId, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionName(permissionId),
+                ).toEqual(expected);
+            },
+        );
+    });
+
+    describe('getPermissionDisplayName', () => {
+        it.each([
+            {
+                permissionName: 'SET_METADATA_PERMISSION',
+                expected: 'Set metadata',
+            },
+            {
+                permissionName: 'EXECUTE_PERMISSION',
+                expected: 'Execute',
+            },
+            {
+                permissionName: 'SWEEPER_ROLE',
+                expected: 'Sweeper',
+            },
+        ])(
+            'formats $permissionName for graph display',
+            ({ permissionName, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionDisplayName(
+                        permissionNameUtils.getPermissionId(permissionName),
+                    ),
+                ).toEqual(expected);
+            },
+        );
+
+        it('keeps unknown permission hashes unchanged', () => {
+            const permissionId =
+                '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+
+            expect(
+                permissionNameUtils.getPermissionDisplayName(permissionId),
+            ).toEqual('0x01234567…89abcdef');
+        });
+    });
+
+    describe('getKnownPermissions', () => {
+        it('returns names paired with the hashes used by the permission lookup', () => {
+            const permissions = permissionNameUtils.getKnownPermissions();
+            const executePermission = permissions.find(
+                ({ name }) => name === 'EXECUTE_PERMISSION',
+            );
+
+            expect(executePermission).toEqual({
+                id: '0xbf04b4486c9663d805744005c3da000eda93de6e3308a4a7a812eb565327b78d',
+                name: 'EXECUTE_PERMISSION',
+            });
+            expect(
+                permissionNameUtils.getPermissionName(executePermission!.id),
+            ).toBe(executePermission!.name);
+        });
+    });
+
+    describe('getKnownPermissions', () => {
+        it('does not offer OSx test fixtures by default', () => {
+            const names = permissionNameUtils
+                .getKnownPermissions()
+                .map((permission) => permission.name);
+
+            expect(names).toContain('ROOT_PERMISSION');
+            expect(names).not.toContain('MOCK_PERMISSION');
+            expect(names).not.toContain('TEST_PERMISSION_1');
+        });
+
+        it('returns the fixtures when asked to', () => {
+            const names = permissionNameUtils
+                .getKnownPermissions({ includeFixtures: true })
+                .map((permission) => permission.name);
+
+            expect(names).toContain('MOCK_PERMISSION');
+        });
+
+        it('still resolves a fixture id when reading an existing proposal', () => {
+            const id = permissionNameUtils.getPermissionId('MOCK_PERMISSION');
+
+            expect(permissionNameUtils.getKnownPermissionName(id)).toBe(
+                'MOCK_PERMISSION',
             );
         });
     });

@@ -1,9 +1,56 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { IProposal } from '../../api/governanceService';
 
+export enum ProposalMetadataStatus {
+    /**
+     * The proposal metadata has been resolved correctly.
+     */
+    STANDARD = 'standard',
+    /**
+     * The onchain metadata is a non-standard string (e.g. plain text instead of an IPFS URI).
+     */
+    NON_STANDARD = 'nonStandard',
+    /**
+     * The proposal has no metadata set or its metadata cannot be fetched.
+     */
+    MISSING = 'missing',
+}
+
 class ProposalUtils {
+    getMetadataStatus = (
+        proposal: Pick<IProposal, 'title' | 'description' | 'metadataUri'>,
+    ): ProposalMetadataStatus => {
+        const { title, description, metadataUri } = proposal;
+
+        // The backend leaves both fields unset when the proposal metadata cannot be resolved.
+        if (title || description) {
+            return ProposalMetadataStatus.STANDARD;
+        }
+
+        const processedUri = metadataUri?.trim();
+
+        // A valid IPFS URI that could not be resolved is treated as missing metadata: only a
+        // string written directly onchain instead of an IPFS URI is a non-standard metadata.
+        return processedUri && !ipfsUtils.isUri(processedUri)
+            ? ProposalMetadataStatus.NON_STANDARD
+            : ProposalMetadataStatus.MISSING;
+    };
+
+    /**
+     * Returns the proposal title, falling back to the proposal slug when the metadata
+     * cannot be resolved so the proposal always stays identifiable in the UI.
+     * The slug is optional because `getProposalSlug` cannot build one when the
+     * proposal's plugin does not resolve (uninstalled or unsupported plugin): an
+     * untitled proposal then renders without a title instead of crashing.
+     */
+    getDisplayTitle = (
+        proposal: Pick<IProposal, 'title'>,
+        proposalSlug?: string,
+    ): string => proposal.title || (proposalSlug?.toUpperCase() ?? '');
+
     getProposalSlug = (
         proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>,
         dao?: IDao,

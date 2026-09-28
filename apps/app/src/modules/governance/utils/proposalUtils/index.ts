@@ -1,1 +1,1 @@
-export { proposalUtils } from './proposalUtils';
+export { ProposalMetadataStatus, proposalUtils } from './proposalUtils';

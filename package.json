@@ -1,28 +1,33 @@
 {
     "name": "aragon-monorepo",
-    "description": "Aragon App monorepo",
     "private": true,
+    "description": "Aragon App monorepo",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
     "license": "GPL-3.0",
     "scripts": {
-        "dev": "turbo run dev",
         "build": "turbo run build",
+        "css:check": "turbo run css:check",
         "design-sync:build-css": "node .design-sync/build-css.mjs",
+        "dev": "turbo run dev",
+        "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
+        "guardrails:stats": "node .agents/shared/hooks/stats-metrics.mjs",
+        "postinstall": "node scripts/sync-skills.mjs",
+        "lint": "turbo run lint",
+        "lint:check": "turbo run lint:check",
+        "prepare": "husky",
+        "skills:sync": "node scripts/sync-skills.mjs",
         "test": "pnpm validate:changesets && pnpm test:release-summary && turbo run test",
         "test:changed": "turbo run test:changed",
         "test:coverage": "pnpm validate:changesets && pnpm test:release-summary && turbo run test:coverage",
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
-        "test:skills": "node --test scripts/sync-skills.test.mjs",
         "test:hooks": "pnpm test:guardrails && pnpm test:skills",
         "test:release-summary": "node --test '.github/workflows/scripts/*.test.js'",
-        "validate:changesets": "node .github/workflows/scripts/validateChangesets.js",
-        "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
-        "guardrails:stats": "node .agents/shared/hooks/stats-metrics.mjs",
-        "lint": "turbo run lint",
-        "lint:check": "turbo run lint:check",
+        "test:skills": "node --test scripts/sync-skills.test.mjs",
         "type-check": "turbo run type-check",
-        "skills:sync": "node scripts/sync-skills.mjs",
-        "postinstall": "pnpm run skills:sync",
-        "prepare": "husky"
+        "validate:changesets": "node .github/workflows/scripts/validateChangesets.js"
     },
     "devDependencies": {
         "@biomejs/biome": "catalog:",
@@ -36,12 +41,8 @@
         "vercel": "catalog:",
         "yaml": "catalog:"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/aragon/app.git"
-    },
+    "packageManager": "pnpm@11.27.1+sha512.a81d4c21b9b09a4b0aebf90ef5e527d4262bdda322d26082978cb549023ac6d9cafc98b19fffaa5c71db438a65f70224edb78d7311187861ff96480d1cdca23c",
     "engines": {
         "node": ">=24.16.0"
-    },
-    "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065"
+    }
 }

@@ -1,4 +1,10 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+// Server navigation functions come from the react-server entry (see notFoundUtils): this module is
+// also bundled into route handlers such as the sitemap, where the client build of next/navigation
+// cannot load.
+import { notFound } from 'next/navigation-server';
+// biome-ignore lint/style/noRestrictedImports: resolveDaoId and isLinkedAccountPlugin run in Server Components, where the `@aragon/gov-ui-kit` alias is a 'use client' shim and `addressUtils.isAddress` is not callable; { strict: false } is passed explicitly below.
+import { isAddress } from 'viem';
 import {
     daoService,
     type IDao,
@@ -13,6 +19,8 @@ import {
     type IPluginInfo,
     PluginType,
 } from '@/shared/types';
+import { networkUtils } from '../networkUtils';
+import { notFoundUtils } from '../notFoundUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import { versionComparatorUtils } from '../versionComparatorUtils';
 
@@ -47,6 +55,17 @@ export interface IGetDaoPluginsParams {
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
+    /**
+     * Keeps plugins the app cannot govern with: those whose interface type could
+     * not be resolved, and those the backend flags as unsupported (`isSupported:
+     * false`, e.g. installed outside the standard OSx flow). They are dropped by
+     * default because the app has no UI to render them with. Set this to `true`
+     * ONLY for surfaces describing what is installed on-chain (permissions,
+     * contract versions), where omitting a contract would give a wrong picture
+     * of the DAO.
+     * @default false
+     */
+    includeUnsupported?: boolean;
 }
 
 export interface IDaoAvailableUpdates {
@@ -62,14 +81,37 @@ export interface IDaoAvailableUpdates {
 
 class DaoUtils {
     hasPluginBody = (dao?: IDao): boolean =>
-        dao?.plugins?.some((p) => p.isBody) ?? false;
+        dao?.plugins?.some((p) => p.isBody && this.isSupportedPlugin(p)) ??
+        false;
 
+    /**
+     * Checks if the DAO has at least one plugin the app can render. Plugins the
+     * backend cannot resolve or flags as unsupported are dropped first, so this
+     * stays in sync with what `getDaoPlugins` returns — otherwise sections and
+     * navigation items would be rendered for a DAO with no usable plugin.
+     * Client-side only: the plugin registry is populated on demand.
+     */
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds =
-            dao?.plugins?.map(({ interfaceType }) => interfaceType) ?? [];
+            dao?.plugins
+                ?.filter((plugin) => this.isSupportedPlugin(plugin))
+                .map(({ interfaceType }) => interfaceType) ?? [];
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
+
+    /**
+     * Checks if the backend could resolve the interface type of the plugin and
+     * did not flag it as unsupported (e.g. installed outside the standard OSx
+     * flow). Deliberately based on those backend fields and not on the plugin
+     * registry: the registry is populated on demand, so a registry lookup here
+     * would report every plugin as unsupported during server rendering.
+     */
+    isSupportedPlugin = (
+        plugin: Pick<IDaoPlugin, 'interfaceType' | 'isSupported'>,
+    ): boolean =>
+        plugin.interfaceType !== PluginInterfaceType.UNKNOWN &&
+        plugin.isSupported !== false;
 
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.ens != null && dao.ens !== '' ? dao.ens : undefined;
@@ -106,6 +148,7 @@ class DaoUtils {
             interfaceType,
             hasExecute,
             slug,
+            includeUnsupported = false,
         } = params ?? {};
 
         return dao?.plugins?.filter(
@@ -120,7 +163,8 @@ class DaoUtils {
                 ) &&
                 this.filterByInterfaceType(plugin, interfaceType) &&
                 this.filterByHasExecute(plugin, hasExecute) &&
-                this.filterBySlug(plugin, slug),
+                this.filterBySlug(plugin, slug) &&
+                this.filterBySupported(plugin, includeUnsupported),
         );
     };
 
@@ -185,28 +229,60 @@ class DaoUtils {
                     registeredPlugin.subdomain === plugin.subdomain,
             );
 
+            // Skip plugins that do not pin down to a single registered entry.
+            // Preparing the update looks the plugin info up by interfaceType, so
+            // both lookups have to agree, otherwise we would prepare the update
+            // against the wrong repository.
+            if (target == null || target.id !== plugin.interfaceType) {
+                return false;
+            }
+
             return versionComparatorUtils.isLessThan(
                 plugin,
-                target?.installVersion,
+                target.installVersion,
             );
         });
 
         return availablePluginUpdates ?? [];
     };
 
+    /**
+     * Resolves the DAO id from the URL parameters of a DAO route, looking ENS names up on the
+     * backend. Both segments come straight from the URL, so a value that is not a supported
+     * network plus an address or ENS name (bots probing injection payloads, mangled links)
+     * renders the 404 page: sending it to the backend only yields a "Bad parameters" rejection
+     * that every page would otherwise report as a server error. Server-only: `notFound` is
+     * meaningless outside a render, and the DAO pages and their metadata are its only callers.
+     */
     resolveDaoId = async (params: IDaoPageParams) => {
         const { addressOrEns, network } = params;
 
+        if (
+            !networkUtils.isValidNetwork(network) ||
+            !this.isDaoAddressOrEns(addressOrEns)
+        ) {
+            notFound();
+        }
+
         if (addressOrEns.endsWith('.eth')) {
-            const dao = await daoService.getDaoByEns({
-                urlParams: { network, ens: addressOrEns },
-            });
+            const dao = await notFoundUtils.fetchOrNotFound(() =>
+                daoService.getDaoByEns({
+                    urlParams: { network, ens: addressOrEns },
+                }),
+            );
 
             return `${network}-${dao.address}`;
         }
 
         return `${network}-${addressOrEns}`;
     };
+
+    /**
+     * Not strict about the checksum: the backend accepts any casing of a well-formed address,
+     * so a lowercase or mis-cased link must keep working.
+     */
+    private isDaoAddressOrEns = (value: string) =>
+        isAddress(value, { strict: false }) || value.endsWith('.eth');
 
     parseDaoId = (daoId: string) => {
         const lastDash = daoId.lastIndexOf('-');
@@ -218,6 +294,7 @@ class DaoUtils {
 
     /**
      * Checks whether a plugin belongs to a linked account relative to the given DAO context.
+     * Server safe.
      */
     isLinkedAccountPlugin = (
         plugin: Pick<IDaoPlugin, 'daoAddress'>,
@@ -225,7 +302,15 @@ class DaoUtils {
     ): boolean =>
         plugin.daoAddress != null &&
         dao != null &&
-        !addressUtils.isAddressEqual(plugin.daoAddress, dao.address);
+        !this.isSameAddress(plugin.daoAddress, dao.address);
+
+    /**
+     * Server-safe, case-insensitive address equality.
+     */
+    private isSameAddress = (addressOne: string, addressTwo: string): boolean =>
+        isAddress(addressOne, { strict: false }) &&
+        isAddress(addressTwo, { strict: false }) &&
+        addressOne.toLowerCase() === addressTwo.toLowerCase();
 
     /**
      * Returns the `daoId` that should be used for API calls targeting this plugin.
@@ -267,10 +352,7 @@ class DaoUtils {
     private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
         type == null ||
         (type === PluginType.BODY && plugin.isBody) ||
-        (type === PluginType.PROCESS &&
-            plugin.isProcess &&
-            // TODO (APP-1012): just a temp solution to fix regression in SelectPluginDialog. Implement a consistent way to handle unknowns across the app!
-            plugin.interfaceType !== PluginInterfaceType.UNKNOWN);
+        (type === PluginType.PROCESS && plugin.isProcess);
 
     private filterBySubPlugin = (
         plugin: IDaoPlugin,
@@ -299,6 +381,11 @@ class DaoUtils {
 
     private filterByHasExecute = (plugin: IDaoPlugin, hasExecute?: boolean) =>
         !hasExecute || plugin.conditionAddress == null;
+
+    private filterBySupported = (
+        plugin: IDaoPlugin,
+        includeUnsupported: boolean,
+    ) => includeUnsupported || this.isSupportedPlugin(plugin);
 }
 
 export const daoUtils = new DaoUtils();

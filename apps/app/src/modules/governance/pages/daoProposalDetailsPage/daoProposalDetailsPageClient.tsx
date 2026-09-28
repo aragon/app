@@ -2,7 +2,7 @@
 
 import {
     ActionSimulation,
-    addressUtils,
+    AlertCard,
     CardCollapsible,
     ChainEntityType,
     DateFormat,
@@ -28,6 +28,7 @@ import { ResourceLink } from '@/shared/components/resourceLink';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -45,6 +46,10 @@ import { ProposalActionsItem } from '../../components/proposalActionsItem';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
+import {
+    ProposalMetadataStatus,
+    proposalUtils,
+} from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -130,6 +135,10 @@ export const DaoProposalDetailsPageClient: React.FC<
 
     const { data: creatorEnsName } = useEnsName(proposal?.creator.address);
 
+    // Dates are formatted in the viewer's timezone while the server renders in UTC —
+    // render them only after mount to avoid a hydration mismatch.
+    const isMounted = useIsMounted();
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -164,7 +173,6 @@ export const DaoProposalDetailsPageClient: React.FC<
         creator,
         transactionHash,
         summary,
-        title,
         description,
         resources,
     } = proposal;
@@ -190,15 +198,11 @@ export const DaoProposalDetailsPageClient: React.FC<
         proposalActions,
         dao,
     );
-    const formattedCreationDate = formatterUtils.formatDate(
-        blockTimestamp * 1000,
-        {
-            format: DateFormat.YEAR_MONTH_DAY,
-        },
-    );
-
-    const creatorName =
-        creatorEnsName ?? addressUtils.truncateAddress(creator.address);
+    const formattedCreationDate = isMounted
+        ? formatterUtils.formatDate(blockTimestamp * 1000, {
+              format: DateFormat.YEAR_MONTH_DAY,
+          })
+        : '-';
 
     const creatorLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
@@ -213,6 +217,10 @@ export const DaoProposalDetailsPageClient: React.FC<
         label: copy.proposalDataListItemStatus.statusLabel[proposalStatus],
         variant: proposalStatusToTagVariant[proposalStatus],
     };
+
+    const metadataStatus = proposalUtils.getMetadataStatus(proposal);
+    const hasStandardMetadata =
+        metadataStatus === ProposalMetadataStatus.STANDARD;
 
     const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
     const pageBreadcrumbs = [
@@ -257,11 +265,26 @@ export const DaoProposalDetailsPageClient: React.FC<
             <Page.Header
                 breadcrumbs={pageBreadcrumbs}
                 breadcrumbsTag={statusTag}
-                description={summary}
-                title={title}
+                description={summary || undefined}
+                title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
             />
             <Page.Content>
                 <Page.Main>
+                    {!hasStandardMetadata && (
+                        <AlertCard
+                            message={t(
+                                `app.governance.daoProposalDetailsPage.main.metadataAlert.${metadataStatus}`,
+                            )}
+                            variant="warning"
+                        >
+                            {metadataStatus ===
+                                ProposalMetadataStatus.NON_STANDARD && (
+                                <code className="mt-2 block break-all rounded-lg bg-neutral-50 px-4 py-3 font-mono text-neutral-800 text-sm">
+                                    {proposal.metadataUri}
+                                </code>
+                            )}
+                        </AlertCard>
+                    )}
                     {description && (
                         <Page.MainSection
                             title={t(
@@ -379,13 +402,20 @@ export const DaoProposalDetailsPageClient: React.FC<
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                copyValue={creatorEnsName ?? creator.address}
-                                link={{ href: creatorLink }}
+                                copyValue={
+                                    creatorEnsName != null
+                                        ? creator.address
+                                        : undefined
+                                }
+                                link={{
+                                    href: creatorLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.governance.daoProposalDetailsPage.aside.details.creator',
                                 )}
                             >
-                                {creatorName}
+                                {creatorEnsName ?? creator.address}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 link={{

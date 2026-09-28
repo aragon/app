@@ -39,5 +39,17 @@ describe('tokenPluginUtils', () => {
             const result = tokenPluginUtils.getUnderlyingToken(token);
             expect(result.decimals).toBe(18);
         });
+
+        it('keeps the symbol and name untouched when the backend returns no metadata for the governance token', () => {
+            const token = generateTokenPluginSettingsToken({
+                underlying: '0xUnderlyingAddress',
+                symbol: null as unknown as string,
+                name: null as unknown as string,
+            });
+            const result = tokenPluginUtils.getUnderlyingToken(token);
+            expect(result.address).toBe('0xUnderlyingAddress');
+            expect(result.symbol).toBeNull();
+            expect(result.name).toBeNull();
+        });
     });
 });

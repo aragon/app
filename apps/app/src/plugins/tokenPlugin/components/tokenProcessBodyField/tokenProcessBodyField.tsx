@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    addressUtils,
     ChainEntityType,
     DefinitionList,
     formatterUtils,
@@ -15,7 +14,7 @@ import type {
     ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
-import { useMemberList } from '@/modules/governance/api/governanceService';
+import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -66,12 +65,16 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const isExisting = body.type === BodyType.EXISTING;
     const { membership, governance } = body;
 
-    const initialParams = {
-        queryParams: { daoId, pluginAddress: isExisting ? body.address : '' },
+    const membershipParams = {
+        queryParams: {
+            daoId,
+            pluginAddress: isExisting ? body.address : '',
+        },
     };
-    const { data: memberList } = useMemberList(initialParams, {
-        enabled: isExisting,
-    });
+    const { itemsCount: memberCount } = useTokenVotingMembershipData(
+        membershipParams,
+        { enabled: isExisting },
+    );
 
     const {
         address: tokenAddress,
@@ -114,10 +117,14 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     );
 
     const numberOfMembers = isExisting
-        ? memberList?.pages[0].metadata.totalRecords
+        ? memberCount
         : membership.members.length;
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const tokenLink = buildEntityUrl({
+        type: ChainEntityType.TOKEN,
+        id: tokenAddress,
+    });
     const tokenDescription =
         tokenName && tokenSymbol
             ? t('app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol', {
@@ -127,13 +134,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             : undefined;
 
     const tokenProps = {
-        link: {
-            href: buildEntityUrl({
-                type: ChainEntityType.TOKEN,
-                id: tokenAddress,
-            }),
-        },
-        copyValue: tokenAddress,
+        link: { href: tokenLink, isOnchainEntity: true },
         description: tokenDescription,
     };
 
@@ -166,7 +167,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
                 {...tokenProps}
             >
-                {addressUtils.truncateAddress(tokenAddress)}
+                {tokenAddress}
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item

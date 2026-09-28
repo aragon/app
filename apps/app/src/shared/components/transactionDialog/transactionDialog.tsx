@@ -107,11 +107,10 @@ export const TransactionDialog = <TCustomStepId extends string>(
     const getTransactionAnalyticsProps = useCallback(
         () => ({
             ...analyticsRef.current,
-            transactionType,
             network,
             chainId: requiredChainId,
         }),
-        [transactionType, network, requiredChainId],
+        [network, requiredChainId],
     );
 
     const trackTransactionAnalytics = useCallback(

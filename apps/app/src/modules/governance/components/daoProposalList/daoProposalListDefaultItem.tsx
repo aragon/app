@@ -7,6 +7,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { useUserVote } from '../../hooks/useUserVote';
 import { proposalUtils } from '../../utils/proposalUtils';
+import { ProposalMetadataAlert } from '../proposalMetadataAlert';
 
 export interface IDaoProposalListDefaultItemProps<
     TProposal extends IProposal = IProposal,
@@ -20,9 +21,11 @@ export interface IDaoProposalListDefaultItemProps<
      */
     proposal: TProposal;
     /**
-     * Slug of the proposal.
+     * Slug of the proposal. Undefined when the proposal's plugin cannot be
+     * resolved on the DAO (uninstalled or unsupported plugin), in which case the
+     * item renders without a link.
      */
-    proposalSlug: string;
+    proposalSlug?: string;
 }
 
 export const DaoProposalListDefaultItem: React.FC<
@@ -32,7 +35,6 @@ export const DaoProposalListDefaultItem: React.FC<
 
     const {
         id,
-        title,
         summary,
         executed,
         endDate,
@@ -72,8 +74,10 @@ export const DaoProposalListDefaultItem: React.FC<
             }}
             status={proposalStatus}
             summary={summary}
-            title={title}
+            title={proposal.title}
             voted={userVote != null}
-        />
+        >
+            <ProposalMetadataAlert proposal={proposal} />
+        </ProposalDataListItem.Structure>
     );
 };

@@ -1,4 +1,5 @@
 import type { IProcessedSimulation } from '@/modules/capitalFlow/utils/simulationTypes';
+import type { IRequestOptions } from '@/shared/api/httpService';
 import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import {
@@ -105,10 +106,14 @@ class DaoService extends AragonBackendService {
         }
     };
 
-    getDao = async (params: IGetDaoParams): Promise<IDao> => {
+    getDao = async (
+        params: IGetDaoParams,
+        options?: IRequestOptions,
+    ): Promise<IDao> => {
         const result = await this.request<IDaoApiResponse>(
             this.urls.dao,
             params,
+            options,
         );
 
         return this.withPlugins(result);

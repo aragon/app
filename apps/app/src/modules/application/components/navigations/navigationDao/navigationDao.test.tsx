@@ -1,10 +1,11 @@
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import type * as Navigation from '@/shared/components/navigation';
 import {
@@ -26,6 +27,9 @@ jest.mock('@aragon/gov-ui-kit', () => ({
         <button onClick={props.onClick} type="button">
             {props.user ? props.user.address : 'connect-mock'}
         </button>
+    ),
+    Icon: (props: { icon: string }) => (
+        <span data-testid={`icon-${props.icon}`} />
     ),
 }));
 
@@ -50,6 +54,16 @@ jest.mock('@/shared/components/navigation', () => ({
 }));
 
 describe('<NavigationDao /> component', () => {
+    // Reports a new width of the inline links, the only element the component observes.
+    const resizeNavigationLinks = (width: number) => {
+        const [callback] = jest.mocked(ResizeObserver).mock.lastCall!;
+        act(() =>
+            callback(
+                [{ contentRect: { width } } as ResizeObserverEntry],
+                {} as ResizeObserver,
+            ),
+        );
+    };
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -105,6 +119,7 @@ describe('<NavigationDao /> component', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
 
         const plugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({ id: 'test', plugins: [plugin] });
@@ -148,13 +163,95 @@ describe('<NavigationDao /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('renders a button to open the navigation dialog on mobile devices', async () => {
+    it('renders a button to open the navigation dialog on narrow application panes', async () => {
         render(createTestComponent());
         const triggerButton = screen.getByTestId('nav-trigger-mock');
         expect(triggerButton).toBeInTheDocument();
         expect(triggerButton.className).toContain('md:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('shows the permissions link in the dao dialog menu', async () => {
+        render(createTestComponent());
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        expect(
+            screen.getByRole('link', {
+                name: /navigationDao.link.permissions/,
+            }),
+        ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
+        expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
+    });
+
+    it.each([
+        { bar: 'collapsed', width: 0, dialogCount: 1 },
+        { bar: 'expanded', width: 600, dialogCount: 0 },
+    ])(
+        'lists each inline link in the dialog $dialogCount time(s) while the navbar is $bar',
+        async ({ width, dialogCount }) => {
+            hasSupportedPluginsSpy.mockReturnValue(true);
+            const dao = generateDao({
+                name: 'Navigation test DAO',
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                        isBody: true,
+                    }),
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.GAUGE_VOTER,
+                    }),
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+                    }),
+                ],
+            });
+            render(createTestComponent({ dao }));
+            resizeNavigationLinks(width);
+            await userEvent.click(
+                screen.getByRole('button', { name: 'Navigation test DAO' }),
+            );
+
+            const dialog = within(screen.getByRole('dialog'));
+            for (const name of [
+                /navigationDao.link.proposals/,
+                /navigationDao.link.members/,
+                /navigationDao.link.assets/,
+                /navigationDao.link.transactions/,
+                /gaugeVoter.meta.link.gauges/,
+                /capitalDistributor.meta.link.rewards/,
+            ]) {
+                expect(dialog.queryAllByRole('link', { name })).toHaveLength(
+                    dialogCount,
+                );
+            }
+            for (const link of ['dashboard', 'permissions', 'settings']) {
+                expect(
+                    dialog.getByRole('link', {
+                        name: new RegExp(`navigationDao.link.${link}`),
+                    }),
+                ).toBeInTheDocument();
+            }
+        },
+    );
+
+    it('updates the open dialog when the navbar collapses and expands', async () => {
+        const dao = generateDao({ name: 'Navigation test DAO' });
+        render(createTestComponent({ dao }));
+        resizeNavigationLinks(600);
+        await userEvent.click(
+            screen.getByRole('button', { name: 'Navigation test DAO' }),
+        );
+
+        const dialog = within(screen.getByRole('dialog'));
+        const assets = { name: /navigationDao.link.assets/ };
+        expect(dialog.queryByRole('link', assets)).not.toBeInTheDocument();
+
+        resizeNavigationLinks(0);
+        expect(dialog.getByRole('link', assets)).toBeInTheDocument();
+
+        resizeNavigationLinks(600);
+        expect(dialog.queryByRole('link', assets)).not.toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

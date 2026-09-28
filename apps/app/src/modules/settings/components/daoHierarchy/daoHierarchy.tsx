@@ -1,18 +1,14 @@
 import {
     Accordion,
-    addressUtils,
     Card,
     ChainEntityType,
-    Clipboard,
     Collapsible,
     DaoAvatar,
     DefinitionList,
-    Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { DaoTypeTag } from '@/shared/components/daoTypeTag';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -65,45 +61,38 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
             </DefinitionList.Item>
             {hasEns ? (
                 <DefinitionList.Item
+                    copyValue={dao.address}
+                    description={t(
+                        'app.settings.daoSettingsInfo.notChangeable',
+                    )}
+                    link={{
+                        href: buildEntityUrl({
+                            type: ChainEntityType.ADDRESS,
+                            id: dao.address,
+                        }),
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t('app.settings.daoSettingsInfo.ens')}
                 >
-                    <div className="flex flex-col gap-1">
-                        <Clipboard copyValue={dao.address}>
-                            <Link
-                                href={buildEntityUrl({
-                                    type: ChainEntityType.ADDRESS,
-                                    id: dao.address,
-                                })}
-                                isExternal={true}
-                            >
-                                {dao.ens}
-                            </Link>
-                        </Clipboard>
-                        <p className="font-normal text-neutral-400 text-sm leading-tight">
-                            {t('app.settings.daoSettingsInfo.notChangeable')}
-                        </p>
-                    </div>
+                    {dao.ens}
                 </DefinitionList.Item>
             ) : (
                 <DefinitionList.Item
+                    description={t(
+                        'app.settings.daoSettingsInfo.notChangeable',
+                    )}
+                    link={{
+                        href: buildEntityUrl({
+                            type: ChainEntityType.ADDRESS,
+                            id: dao.address,
+                        }),
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t('app.settings.daoSettingsInfo.address')}
                 >
-                    <div className="flex flex-col gap-1">
-                        <Clipboard copyValue={dao.address}>
-                            <Link
-                                href={buildEntityUrl({
-                                    type: ChainEntityType.ADDRESS,
-                                    id: dao.address,
-                                })}
-                                isExternal={true}
-                            >
-                                {addressUtils.truncateAddress(dao.address)}
-                            </Link>
-                        </Clipboard>
-                        <p className="font-normal text-neutral-400 text-sm leading-tight">
-                            {t('app.settings.daoSettingsInfo.notChangeable')}
-                        </p>
-                    </div>
+                    {dao.address}
                 </DefinitionList.Item>
             )}
             {dao.description && (
@@ -157,8 +146,6 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
 export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const { dao, currentDaoId } = props;
 
-    const { isEnabled } = useFeatureFlags();
-
     const isViewingMainDao = dao.id === currentDaoId;
     const hasLinkedAccounts =
         dao.linkedAccounts != null && dao.linkedAccounts.length > 0;
@@ -166,9 +153,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const getDaoAvatar = (d: IDao | ILinkedAccountSummary) =>
         ipfsUtils.cidToSrc(d.avatar);
 
-    const permissionsHref = isEnabled('permissionsPage')
-        ? daoUtils.getDaoUrl(dao, 'settings/permissions')
-        : undefined;
+    const permissionsHref = daoUtils.getDaoUrl(dao, 'permissions');
 
     // If viewing main DAO with linked accounts, show accordion structure
     if (isViewingMainDao && hasLinkedAccounts) {

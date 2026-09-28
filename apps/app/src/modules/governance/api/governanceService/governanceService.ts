@@ -99,7 +99,10 @@ class GovernanceService extends AragonBackendService {
         return {
             ...result,
             data: result.data.map((proposal) =>
-                this.attachTotalSupply(proposal, tokensTotalSupply),
+                this.attachTotalSupply(
+                    this.normalizeMetadata(proposal),
+                    tokensTotalSupply,
+                ),
             ),
         };
     };
@@ -118,7 +121,33 @@ class GovernanceService extends AragonBackendService {
                 ? {}
                 : await fetchTokensTotalSupply(proposal.network, addresses);
 
-        return this.attachTotalSupply(proposal, tokensTotalSupply);
+        return this.attachTotalSupply(
+            this.normalizeMetadata(proposal),
+            tokensTotalSupply,
+        );
+    };
+
+    // The backend leaves title and summary unset when the proposal metadata cannot be resolved,
+    // normalize them here so the rest of the app can rely on them being strings.
+    private normalizeMetadata = <TProposal extends IProposal>(
+        proposal: TProposal,
+    ): TProposal => {
+        const normalized = {
+            ...proposal,
+            title: proposal.title ?? '',
+            summary: proposal.summary ?? '',
+        };
+
+        if (sppProposalUtils.isSppProposal(normalized)) {
+            return {
+                ...normalized,
+                subProposals: normalized.subProposals.map((subProposal) =>
+                    this.normalizeMetadata(subProposal),
+                ),
+            };
+        }
+
+        return normalized;
     };
 
     private attachTotalSupply = <TProposal extends IProposal>(
@@ -130,10 +159,23 @@ class GovernanceService extends AragonBackendService {
         }
 
         if (sppProposalUtils.isSppProposal(proposal)) {
+            // SPP evaluates a body through the STAGE plugin's interface type (see
+            // sppStageUtils.isBodySucceeded), so a sub-proposal needs the supply enrichment
+            // when either itself or its stage body is lock-to-vote — the backend does not
+            // guarantee the two interface types agree.
+            const lockToVoteBodies = new Set(
+                proposal.settings.stages.flatMap((stage) =>
+                    stage.plugins
+                        .filter(lockToVoteProposalUtils.isLockToVoteStagePlugin)
+                        .map((plugin) => plugin.address.toLowerCase()),
+                ),
+            );
+
             return {
                 ...proposal,
                 subProposals: proposal.subProposals.map((sub) =>
-                    lockToVoteProposalUtils.isLockToVoteProposal(sub)
+                    lockToVoteProposalUtils.isLockToVoteProposal(sub) ||
+                    lockToVoteBodies.has(sub.pluginAddress.toLowerCase())
                         ? { ...sub, tokensTotalSupply }
                         : sub,
                 ),
@@ -175,7 +217,21 @@ class GovernanceService extends AragonBackendService {
             params,
         );
 
-        return result;
+        return {
+            ...result,
+            data: result.data.map((vote) => ({
+                ...vote,
+                proposal: vote.proposal
+                    ? this.normalizeMetadata(vote.proposal)
+                    : undefined,
+                parentProposal: vote.parentProposal
+                    ? {
+                          ...vote.parentProposal,
+                          title: vote.parentProposal.title ?? '',
+                      }
+                    : undefined,
+            })),
+        };
     };
 }
 

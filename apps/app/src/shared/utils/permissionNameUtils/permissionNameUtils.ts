@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { keccak256, toBytes } from 'viem';
+import { type Hex, keccak256, toBytes } from 'viem';
 
 /**
  * Canonical list of Aragon OSx, plugin, and AccessControl permission names.
@@ -87,6 +87,22 @@ const permissionNames: string[] = [
     'MINT_PERMISSION',
     'BURN_PERMISSION',
 
+    // VeGovernance
+    'PAUSER',
+    'ESCROW_ADMIN',
+    'SWEEPER',
+    'QUEUE_ADMIN',
+    'CLOCK_ADMIN_ROLE',
+    'WITHDRAW_ROLE',
+    'DELEGATION_TOKEN_ROLE',
+    'CURVE_ADMIN_ROLE',
+    'LOCK_ADMIN',
+    'GAUGE_ADMIN',
+
+    // Linked accounts
+    'PARENT_TO_SUB_DAO_ACKNOWLEDGEMENT_PERMISSION_ID',
+    'SUB_DAO_TO_PARENT_ACKNOWLEDGEMENT_PERMISSION_ID',
+
     // Misc
     'MANAGER_PERMISSION',
     'REGISTER_PERMISSION',
@@ -110,6 +126,33 @@ const permissionNames: string[] = [
     // Legacy aragonOS ACL roles
     'CREATE_PERMISSIONS_ROLE',
 ];
+
+/**
+ * Names that exist only in OSx test suites and example contracts. They stay in the
+ * dictionary so a proposal that carries one still reads as a name, but nothing should
+ * offer them when composing a new action.
+ */
+const permissionFixtureNames = new Set<string>([
+    'MOCK_PERMISSION',
+    'TEST_PERMISSION',
+    'TEST_PERMISSION_1',
+    'TEST_PERMISSION_2',
+    'GREET_PERMISSION',
+    'MULTIPLY_PERMISSION',
+    'DO_SOMETHING_PERMISSION',
+    'STORE_PERMISSION',
+    'STORE_ACCOUNT_PERMISSION',
+    'STORE_NUMBER_PERMISSION',
+]);
+
+export interface IGetKnownPermissionsOptions {
+    /**
+     * Also returns the OSx test-fixture names. Off by default so composers only offer
+     * permissions that exist on shipped contracts.
+     * @default false
+     */
+    includeFixtures?: boolean;
+}
 
 class PermissionNameUtils {
     private permissionNamesByHash: Record<string, string> = Object.fromEntries(
@@ -139,12 +182,59 @@ class PermissionNameUtils {
     };
 
     /**
+     * Resolves a permission id to its name, or undefined when the id is outside the known
+     * set. Use this where an unknown permission must be handled explicitly; {@link
+     * getPermissionName} falls back to a truncated hash instead.
+     */
+    getKnownPermissionName = (permissionId: string): string | undefined =>
+        this.permissionNamesByHash[this.normaliseHash(permissionId)];
+
+    /**
+     * Converts a resolved raw permission name to compact title case for dense UI
+     * surfaces. Unknown hashes are returned unchanged.
+     */
+    getPermissionDisplayName = (permissionId: string): string => {
+        const permissionName = this.getPermissionName(permissionId);
+
+        if (!permissionName.includes('_')) {
+            return permissionName;
+        }
+
+        const displayName = permissionName
+            .replace(/_(PERMISSION|ROLE)$/u, '')
+            .split('_')
+            .filter(Boolean)
+            .map((word) => word.toLowerCase())
+            .join(' ');
+
+        return displayName.length > 0
+            ? displayName.charAt(0).toUpperCase() + displayName.slice(1)
+            : permissionName;
+    };
+
+    /**
      * Returns the keccak256 permission-id hash for a raw permission name. Inverse
      * of {@link getPermissionName}; the {@link permissionNames} list is the single
      * source of truth for both directions.
      */
-    getPermissionId = (permissionName: string): string =>
+    getPermissionId = (permissionName: string): Hex =>
         keccak256(toBytes(permissionName));
+
+    /**
+     * Returns the known permission names together with their keccak256 IDs.
+     * The permission viewer and permission-management action builder use this
+     * same dictionary so labels and encoded values cannot drift apart.
+     */
+    getKnownPermissions = (
+        options: IGetKnownPermissionsOptions = {},
+    ): Array<{ id: Hex; name: string }> =>
+        permissionNames
+            .filter(
+                (name) =>
+                    options.includeFixtures ||
+                    !permissionFixtureNames.has(name),
+            )
+            .map((name) => ({ id: this.getPermissionId(name), name }));
 
     private normaliseHash = (hash: string): string => {
         const lowerCased = hash.toLowerCase();

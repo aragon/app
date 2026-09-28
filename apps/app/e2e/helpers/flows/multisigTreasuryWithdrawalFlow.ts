@@ -17,6 +17,7 @@ import {
 import { DaoProposalDetailPage } from '../pages/daoProposalDetailPage/daoProposalDetailPage';
 import { DaoProposalsPage } from '../pages/daoProposalsPage/daoProposalsPage';
 import { WalletConnectionPage } from '../shared/walletConnectionPage/walletConnectionPage';
+import { clickDataListItem } from '../utils/dataListUtils';
 import {
     approveOptionalMetaMaskNotifications,
     getConnectedWalletAddress,
@@ -141,7 +142,13 @@ export async function openMultisigProposalWizard(page: Page): Promise<void> {
 
     const dialog = page.getByRole('dialog');
     if (await dialog.isVisible().catch(() => false)) {
-        await dialog.getByText('Multisig', { exact: true }).click();
+        // The dialog keeps the process list hidden until the proposal-creation simulation of every
+        // process resolves, so allow more than the default action timeout for the item to show up.
+        await clickDataListItem(
+            dialog,
+            page.getByText('Multisig', { exact: true }),
+            { timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT },
+        );
         await dialog.getByRole('button', { name: 'Create proposal' }).click();
     }
 
@@ -206,10 +213,10 @@ export async function fillMultisigNativeWithdrawProposal(
     await expect(
         assetDialog.getByText(/ETH|Ether|Ethereum/i).first(),
     ).toBeVisible({ timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT });
-    await assetDialog
-        .getByText(/^(Ether|Ethereum|ETH)$/)
-        .first()
-        .click();
+    await clickDataListItem(
+        assetDialog,
+        page.getByText(/^(Ether|Ethereum|ETH)$/),
+    );
     await expect(assetDialog).toBeHidden({ timeout: UI_STEP_TIMEOUT });
 
     // AssetInput labels the button "Max {balance}" (e.g. "Max 0.51"), not "Max" alone.

@@ -3,7 +3,6 @@
 import {
     Button,
     Card,
-    Clipboard,
     DefinitionList,
     IconType,
     InputContainer,
@@ -293,15 +292,12 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                                     )}
                                 </DefinitionList.Item>
                                 <DefinitionList.Item
+                                    link={{ isOnchainEntity: true }}
                                     term={t(
                                         'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.merkleRootTerm',
                                     )}
                                 >
-                                    <Clipboard
-                                        copyValue={merkleTreeInfo.merkleRoot}
-                                    >
-                                        {`${merkleTreeInfo.merkleRoot.slice(0, 10)}...${merkleTreeInfo.merkleRoot.slice(-8)}`}
-                                    </Clipboard>
+                                    {merkleTreeInfo.merkleRoot}
                                 </DefinitionList.Item>
                             </DefinitionList.Container>
                         </Card>

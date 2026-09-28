@@ -10,8 +10,8 @@ import {
     YAxis,
 } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
-import { parseUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import type { IGaugeVoterPluginSettings } from '../../types/gaugeVoterPlugin';
 import { gaugeVoterLockUtils } from '../../utils/gaugeVoterLockUtils';
 
@@ -62,7 +62,9 @@ export const GaugeVoterLockFormChart: React.FC<
 
     const processedAmount =
         Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
-    const processedAmountWei = parseUnits(processedAmount, 18).toString();
+    const processedAmountWei = bigIntUtils
+        .parseUnits(processedAmount, 18)
+        .toString();
 
     const oneYearInSeconds = 365 * 24 * 60 * 60;
     const chartTimeframe = Math.min(maxTime, oneYearInSeconds);

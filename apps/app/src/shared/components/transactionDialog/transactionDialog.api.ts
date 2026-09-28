@@ -76,9 +76,11 @@ export interface ITransactionDialogAnalytics {
      */
     flow?: string;
     /**
-     * Low-cardinality transaction kind within the product flow.
+     * Low-cardinality analytics classification of the transaction within the product flow. Emitted
+     * on `transaction_*` events as `transactionTypeEvent`. Distinct from the backend
+     * `transactionType` enum prop, which is intentionally not sent to analytics.
      */
-    transactionKind?: string;
+    transactionTypeEvent?: string;
 }
 
 export interface ITransactionDialogProps<

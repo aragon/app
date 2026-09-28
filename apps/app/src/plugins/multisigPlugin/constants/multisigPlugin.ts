@@ -25,13 +25,14 @@ export const multisigPlugin: IPluginInfo = {
             '0x9e7956C8758470dE159481e5DD0d08F8B59217A2',
         [Network.POLYGON_MAINNET]: '0x5A5035E7E8aeff220540F383a9cf8c35929bcF31',
         [Network.ZKSYNC_MAINNET]: '0x83f88d380073c8F929fAB649F3d016649c101D3A',
-        [Network.PEAQ_MAINNET]: '0x83a977d564349586936f17D9536b2c5702B4Fe20',
         [Network.OPTIMISM_MAINNET]:
             '0xe903df20cD497F0CC12E870d784aCAd53CC5c9d6',
         [Network.CHILIZ_MAINNET]: '0x60C2b0B6CB2EB83349eB770f76a1C6dF611E5f03',
         [Network.AVAX_MAINNET]: '0xeD2cDfDa7A2a423C395666bc271710D4a13CfbdF',
         [Network.KATANA_MAINNET]: '0x5596451d7eDeA4cba96a181c5B8A31B93A62F7dF',
         [Network.MONAD_MAINNET]: '0x8B20406bC399c1B5c9439D9BbE2B685d27CE35Bc',
+        [Network.ROBINHOOD_MAINNET]:
+            '0x360c1e84963afD63893C92945345331EBf5D08bb',
     },
     setup: {
         nameKey: 'app.plugins.multisig.meta.setup.name',

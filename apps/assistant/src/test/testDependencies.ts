@@ -1,8 +1,10 @@
 import type { LanguageModel } from 'ai';
+import { createDocsSearch, type IDocsSearch } from '../docs/docsSearch';
 import type { IBlobInfo, IBlobStore } from '../files/blobStore';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { createSessionStore, type ISessionStore } from '../lib/sessionStore';
 import type { ILinearGateway } from '../linear/linearGateway';
+import { docsIndexArtifact } from './fixtures/docsIndexFixture';
 import { asRedis, createMockRedis, type IMockRedis } from './mockRedis';
 
 export interface ITestLinearGateway extends ILinearGateway {
@@ -31,7 +33,6 @@ export const createTestLinearGateway = (): ITestLinearGateway => {
             return Promise.resolve({
                 issueId: `issue-${gateway.createIssueCalls.length}`,
                 identifier: `SUP-${gateway.createIssueCalls.length}`,
-                url: `https://linear.app/aragon/issue/SUP-${gateway.createIssueCalls.length}`,
             });
         },
         uploadFile: (input) => {
@@ -101,6 +102,7 @@ export interface ITestDependencies extends IAppDependencies {
     sessionStore: ISessionStore;
     linear: ITestLinearGateway;
     blobStore: ITestBlobStore;
+    docsSearch: IDocsSearch;
 }
 
 export const createTestDependencies = (
@@ -110,16 +112,20 @@ export const createTestDependencies = (
     const sessionStore = createSessionStore(asRedis(redis));
     const linear = createTestLinearGateway();
     const blobStore = createTestBlobStore();
+    // Full-text only over the fixture index: no gateway call is ever made from a test.
+    const docsSearch = createDocsSearch(docsIndexArtifact);
 
     return {
         redis,
         sessionStore,
         linear,
         blobStore,
+        docsSearch,
         getRedis: () => asRedis(redis),
         getSessionStore: () => sessionStore,
         getLinear: () => linear,
         getChatModel: () => chatModel,
         getBlobStore: () => blobStore,
+        getDocsSearch: () => docsSearch,
     };
 };

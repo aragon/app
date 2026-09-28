@@ -15,6 +15,7 @@ import { ensRecordKeys } from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
@@ -25,7 +26,7 @@ import {
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { timeUtils } from '@/test/utils';
 import * as governanceService from '../../api/governanceService';
-import { generateMember, generateMemberMetrics } from '../../testUtils';
+import { generateMember } from '../../testUtils';
 import {
     DaoMemberDetailsPageClient,
     type IDaoMemberDetailsPageClientProps,
@@ -63,7 +64,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         'useEnsProfileRecords',
     );
 
-    const defaultPlugin = generateDaoPlugin({ isBody: true });
+    const defaultPlugin = generateDaoPlugin({
+        interfaceType: PluginInterfaceType.MULTISIG,
+        isBody: true,
+    });
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
@@ -128,6 +132,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('fetches and renders the member ens and avatar', () => {
         const plugin = generateDaoPlugin({
             address: 'plugin-address',
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({
@@ -184,7 +189,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('supports member address and ens copy', async () => {
+    it('copies the member address from address and ENS rows', async () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ address });
@@ -201,7 +206,8 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         await userEvent.click(clipboards[0]);
         expect(clipboardCopySpy).toHaveBeenCalledWith(address);
         await userEvent.click(clipboards[1]);
-        expect(clipboardCopySpy).toHaveBeenCalledWith(ens);
+        expect(clipboardCopySpy).toHaveBeenCalledTimes(2);
+        expect(clipboardCopySpy).toHaveBeenLastCalledWith(address);
     });
 
     it('renders the member information', () => {
@@ -351,6 +357,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('passes the correct params to the DaoList component', () => {
         const plugin = generateDaoPlugin({
             address: 'plugin-address',
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({
@@ -396,7 +403,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders fallback of `-` when lastActive is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
         useBlockSpy
             .mockReturnValueOnce({
                 data: { timestamp: 3_204_230_420 },
@@ -406,7 +412,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateMember({ metrics, lastActive: null }),
+                data: generateMember({
+                    firstActive: 1_723_472_877,
+                    lastActive: null,
+                }),
             }),
         );
 
@@ -435,7 +444,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders fallback of `-` when firstActivity is null', () => {
+    it('renders fallback of `-` when firstActive is null', () => {
         const lastActive = 1_723_472_877;
         useBlockSpy
             .mockReturnValueOnce({
@@ -455,20 +464,20 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders the correct first activity date', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
+        const firstActive = 1_723_472_877;
         useBlockSpy.mockReturnValue({
-            data: { timestamp: metrics.firstActivity },
+            data: { timestamp: firstActive },
         } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateMember({ metrics }),
+                data: generateMember({ firstActive }),
             }),
         );
 
         render(createTestComponent());
 
         const firstActivityDate = formatterUtils.formatDate(
-            metrics.firstActivity! * 1000,
+            firstActive * 1000,
             {
                 format: DateFormat.YEAR_MONTH_DAY,
             },

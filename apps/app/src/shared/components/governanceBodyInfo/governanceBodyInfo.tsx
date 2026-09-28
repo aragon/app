@@ -1,4 +1,4 @@
-import { Avatar, addressUtils, invariant } from '@aragon/gov-ui-kit';
+import { AddressOutput, Avatar, invariant } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
@@ -41,9 +41,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
 
     const { t } = useTranslations();
 
-    const truncatedAddress = addressUtils.truncateAddress(address);
-
-    const bodyName = name != null && name !== '' ? name : truncatedAddress;
+    const bodyName = name != null && name !== '' ? name : undefined;
 
     const isPlugin = !!subdomain && !!release && !!build;
 
@@ -55,12 +53,16 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between">
                 <p className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
-                    {bodyName}
+                    {address != null ? (
+                        <AddressOutput address={address} label={bodyName} />
+                    ) : (
+                        bodyName
+                    )}
                     {logoSrc && <Avatar size="sm" src={logoSrc} />}
                 </p>
                 {address && name != null && name !== '' && (
                     <p className="text-base text-neutral-500 leading-tight md:text-lg">
-                        {truncatedAddress}
+                        <AddressOutput address={address} />
                     </p>
                 )}
             </div>

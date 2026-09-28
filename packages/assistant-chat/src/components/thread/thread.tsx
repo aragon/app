@@ -1,4 +1,9 @@
-import { Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
+import {
+    assistantLimits,
+    createTicketToolName,
+    docsToolNameSet,
+} from '@aragon/assistant-contracts';
+import { Heading, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
 import {
     ActionBarPrimitive,
     type AssistantState,
@@ -10,15 +15,16 @@ import {
     ThreadPrimitive,
     useAuiState,
 } from '@assistant-ui/react';
+import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { chatCopy, supportEmailHref } from '../../copy';
+import { useRequestHistory } from '../../requests';
 import { getAssistantErrorText, parseAssistantError } from '../../transport';
 import {
     ComposerAddAttachment,
     ComposerAttachments,
     UserMessageAttachments,
 } from '../attachment';
-import { ChatRequestHistory } from '../chatRequestHistory';
 import { CreateTicketCard } from '../createTicketCard';
 import { MarkdownText } from '../markdownText';
 import { TooltipIconButton } from '../tooltipIconButton';
@@ -35,6 +41,10 @@ export interface IThreadProps {
      * Whether the chat is currently visible; the composer grabs focus when it becomes true.
      */
     isOpen: boolean;
+    /**
+     * Opens the requests filed from this device.
+     */
+    onViewRequests: () => void;
 }
 
 // Startup exposes a loading placeholder thread; treat it as a new chat so the welcome screen
@@ -44,7 +54,7 @@ const isNewChatView = (state: AssistantState) =>
     (!state.thread.isLoading || state.threads.isLoading);
 
 export const Thread: React.FC<IThreadProps> = (props) => {
-    const { isOpen } = props;
+    const { isOpen, onViewRequests } = props;
 
     return (
         <ThreadPrimitive.Root
@@ -52,8 +62,6 @@ export const Thread: React.FC<IThreadProps> = (props) => {
             style={
                 {
                     '--thread-max-width': '100%',
-                    '--composer-bg':
-                        'color-mix(in oklab, var(--color-neutral-50) 30%, var(--color-neutral-0))',
                     '--composer-radius': '1rem',
                     '--composer-padding': '8px',
                 } as React.CSSProperties
@@ -81,15 +89,19 @@ export const Thread: React.FC<IThreadProps> = (props) => {
                         </ThreadPrimitive.Messages>
                     </div>
 
-                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-4 overflow-visible rounded-t-(--composer-radius) bg-neutral-0 pb-4 md:pb-6">
-                        <AuiIf
-                            condition={(state) =>
-                                isNewChatView(state) && state.composer.isEmpty
-                            }
-                        >
+                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-3 overflow-visible rounded-t-(--composer-radius) bg-neutral-0 pb-4 md:pb-6">
+                        <AuiIf condition={isNewChatView}>
                             <ThreadSuggestions />
                         </AuiIf>
                         <Composer isOpen={isOpen} />
+                        {/* One quiet line under the composer: the way back to a filed request on a
+                            fresh chat, the way to a human once the conversation is under way. */}
+                        <AuiIf condition={isNewChatView}>
+                            <PastRequestsLink onViewRequests={onViewRequests} />
+                        </AuiIf>
+                        <AuiIf condition={(state) => !isNewChatView(state)}>
+                            <EmailEscalation />
+                        </AuiIf>
                     </ThreadPrimitive.ViewportFooter>
                 </div>
             </ThreadPrimitive.Viewport>
@@ -97,42 +109,155 @@ export const Thread: React.FC<IThreadProps> = (props) => {
     );
 };
 
-const ThreadMessage: React.FC = () => {
-    const role = useAuiState((state) => state.message.role);
+// Messages sent within the same sitting need no divider; a longer pause means the user comes back
+// to the conversation, and then the transcript says when it was left.
+const conversationGapMs = 30 * 60 * 1000;
 
-    return role === 'user' ? <UserMessage /> : <AssistantMessage />;
+const timeFormatter = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+});
+
+const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'long' });
+
+const formatDividerLabel = (date: Date): string => {
+    const day =
+        date.toDateString() === new Date().toDateString()
+            ? chatCopy.thread.today
+            : weekdayFormatter.format(date);
+
+    return `${day} ${timeFormatter.format(date)}`;
 };
 
-// Fills the space between header and composer on a fresh chat: the greeting sits centered in it,
-// the request history (when any) right below.
+const selectDividerLabel = (state: AssistantState): string | undefined => {
+    const { createdAt, index } = state.message;
+    const previous = state.thread.messages[index - 1];
+
+    if (
+        previous != null &&
+        createdAt.getTime() - previous.createdAt.getTime() < conversationGapMs
+    ) {
+        return undefined;
+    }
+
+    return formatDividerLabel(createdAt);
+};
+
+interface IThreadTimeDividerProps {
+    /**
+     * Time the messages below the divider start at.
+     */
+    label: string;
+}
+
+const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
+    const { label } = props;
+
+    return (
+        <div className="flex items-center gap-3">
+            <span className="h-px flex-1 bg-neutral-100" />
+            <p className="flex-none text-neutral-400 text-xs">{label}</p>
+            <span className="h-px flex-1 bg-neutral-100" />
+        </div>
+    );
+};
+
+const ThreadMessage: React.FC = () => {
+    const role = useAuiState((state) => state.message.role);
+    const dividerLabel = useAuiState(selectDividerLabel);
+
+    return (
+        <>
+            {dividerLabel != null && <ThreadTimeDivider label={dividerLabel} />}
+            {role === 'user' ? <UserMessage /> : <AssistantMessage />}
+        </>
+    );
+};
+
+// Fills the space between header and composer on a fresh chat.
 const ThreadWelcome: React.FC = () => (
-    <div className="flex flex-1 flex-col items-center justify-center px-4 py-6 text-center">
-        <h2 className="max-w-md font-semibold text-2xl text-neutral-800">
+    <div className="flex flex-1 flex-col items-center justify-center px-8 py-6 text-center">
+        <Heading as="h2" className="text-balance" size="h3">
             {chatCopy.welcome.greeting}
-        </h2>
-        <ChatRequestHistory />
+        </Heading>
     </div>
 );
 
-const ThreadSuggestions: React.FC = () => (
-    <div className="flex w-full flex-wrap items-center justify-center gap-2 px-4">
-        {chatCopy.welcome.suggestions.map((suggestion) => (
-            <ThreadPrimitive.Suggestion
-                asChild={true}
-                key={suggestion.label}
-                prompt={suggestion.message}
-                send={true}
-            >
-                <button
-                    className="focus-ring-primary whitespace-nowrap rounded-full border border-neutral-100 px-3.5 py-1.5 text-neutral-800 text-sm transition-colors hover:bg-neutral-50"
-                    type="button"
-                >
-                    {suggestion.label}
-                </button>
-            </ThreadPrimitive.Suggestion>
-        ))}
-    </div>
+interface IPastRequestsLinkProps {
+    /**
+     * Opens the requests filed from this device.
+     */
+    onViewRequests: () => void;
+}
+
+const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
+    const { onViewRequests } = props;
+
+    const requestHistory = useRequestHistory();
+
+    if (requestHistory.length === 0) {
+        return null;
+    }
+
+    return (
+        <button
+            className="focus-ring-primary mx-auto cursor-pointer rounded-sm text-neutral-500 text-xs underline underline-offset-2"
+            onClick={onViewRequests}
+            type="button"
+        >
+            {`${chatCopy.requestHistory.heading} (${requestHistory.length})`}
+        </button>
+    );
+};
+
+const EmailEscalation: React.FC = () => (
+    <p className="flex items-center justify-center gap-1 text-center text-neutral-400 text-xs">
+        {chatCopy.composer.escalationPrompt}
+        {/* Styled after the gov-ui-kit Link (its own type scale is too large for this caption
+            line): the app's plain link look, opening in a new tab so the chat stays put. */}
+        <a
+            className="focus-ring-primary inline-flex items-center gap-1.5 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700"
+            href={supportEmailHref}
+            rel="noopener noreferrer"
+            target="_blank"
+        >
+            {chatCopy.composer.escalationLink}
+            <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
+        </a>
+    </p>
 );
+
+const ThreadSuggestions: React.FC = () => {
+    // Typing retires the suggestions, but through visibility only: unmounting them would change
+    // the footer height and bounce the welcome text around on every first/last character.
+    const isComposerEmpty = useAuiState((state) => state.composer.isEmpty);
+
+    return (
+        <div
+            className={classNames(
+                'flex w-full flex-wrap items-center justify-center gap-2 px-4',
+                !isComposerEmpty && 'invisible',
+            )}
+        >
+            {chatCopy.welcome.suggestions.map((suggestion) => (
+                <ThreadPrimitive.Suggestion
+                    asChild={true}
+                    key={suggestion.label}
+                    prompt={suggestion.message}
+                    send={true}
+                >
+                    <button
+                        className="focus-ring-primary cursor-pointer whitespace-nowrap rounded-full border border-neutral-100 px-3.5 py-1.5 text-neutral-800 text-sm transition-colors hover:bg-neutral-50"
+                        type="button"
+                    >
+                        {suggestion.label}
+                    </button>
+                </ThreadPrimitive.Suggestion>
+            ))}
+        </div>
+    );
+};
 
 interface IComposerProps {
     /**
@@ -146,6 +271,13 @@ const Composer: React.FC<IComposerProps> = (props) => {
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
+    // A fresh chat asks for the issue, an ongoing one for the next reply.
+    const placeholder = useAuiState((state) =>
+        isNewChatView(state)
+            ? chatCopy.composer.placeholder
+            : chatCopy.composer.placeholderReply,
+    );
+
     // The host panel is non-modal (no focus trap), so the composer takes focus itself whenever
     // the chat becomes visible — including the very first lazy mount.
     useEffect(() => {
@@ -157,7 +289,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
     return (
         <ComposerPrimitive.Root className="relative flex w-full flex-col">
             <ComposerPrimitive.AttachmentDropzone asChild={true}>
-                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-100 bg-(--composer-bg) p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-primary-400 focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-primary-400 data-[dragging=true]:border-dashed data-[dragging=true]:bg-primary-50">
+                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-200 bg-neutral-0 p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-primary-400 focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-primary-400 data-[dragging=true]:border-dashed data-[dragging=true]:bg-primary-50">
                     <ComposerAttachments />
                     <AuiIf
                         condition={(state) =>
@@ -168,11 +300,16 @@ const Composer: React.FC<IComposerProps> = (props) => {
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
+                    {/* The limit the service enforces per message, applied where the text is
+                        typed: the textarea stops at it (a longer paste is clipped) and the count
+                        below says so, instead of the message travelling to the service and
+                        coming back as a failed reply. */}
                     <ComposerPrimitive.Input
                         aria-label={chatCopy.composer.inputLabel}
                         className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-neutral-800 text-sm caret-primary-400 outline-none placeholder:text-neutral-300"
                         enterKeyHint="send"
-                        placeholder={chatCopy.composer.placeholder}
+                        maxLength={assistantLimits.maxMessageLength}
+                        placeholder={placeholder}
                         ref={inputRef}
                         rows={1}
                     />
@@ -201,11 +338,41 @@ const SendArrowIcon: React.FC = () => (
     </svg>
 );
 
+// The count appears once the message is this far towards the limit: a short message never
+// shows it, a long paste that the textarea clipped at the limit is noticed.
+const characterCountThreshold = 0.8;
+
+const characterCountFormatter = new Intl.NumberFormat('en-US');
+
+const ComposerCharacterCount: React.FC = () => {
+    const length = useAuiState((state) => state.composer.text.length);
+    const limit = assistantLimits.maxMessageLength;
+
+    if (length < limit * characterCountThreshold) {
+        return null;
+    }
+
+    return (
+        <p
+            className={classNames(
+                'text-xs tabular-nums',
+                length >= limit ? 'text-critical-600' : 'text-neutral-400',
+            )}
+        >
+            {chatCopy.composer.characterCount(
+                characterCountFormatter.format(length),
+                characterCountFormatter.format(limit),
+            )}
+        </p>
+    );
+};
+
 const ComposerAction: React.FC = () => {
     return (
         <div className="relative flex items-center justify-between">
             <ComposerAddAttachment />
             <div className="flex items-center gap-1.5">
+                <ComposerCharacterCount />
                 <AuiIf condition={(state) => !state.thread.isRunning}>
                     <ComposerPrimitive.Send asChild={true}>
                         <TooltipIconButton
@@ -270,15 +437,55 @@ const MessageError: React.FC = () => (
     </MessagePrimitive.Error>
 );
 
-// Waiting for the first token: a plain spinner, the familiar chat loader.
-const AssistantTyping: EmptyMessagePartComponent = ({ status }) => {
-    if (status.type !== 'running') {
+// assistant-ui renders the Empty part not only for a message without parts but also, while the
+// message runs, next to a trailing part that is not text (a tool call); a spinner there sat
+// under the spinner of the running documentation tool and made two, three with a second tool.
+// The Empty part is silenced and the indicator below is the one place a spinner comes from.
+const SilentEmptyPart: EmptyMessagePartComponent = () => null;
+
+// What the reply is waiting on with nothing to show for it yet, or undefined once there is
+// something to show. Before any part: the first token. After a tool call that renders nothing
+// (the documentation tools run silently — the service drops the text a model writes before
+// calling one — and so does flagOffTopic): the text that follows it; the ticket tool draws its
+// own card and needs no indicator. The message state decides, so the same element stays up from
+// the send until the answer streams, through every tool call in between, however many and in
+// whatever order.
+const selectWorkingLabel = (state: AssistantState): string | undefined => {
+    const { status, parts } = state.message;
+
+    if (status?.type !== 'running') {
+        return undefined;
+    }
+
+    const lastPart = parts.at(-1);
+
+    if (lastPart == null || lastPart.type === 'reasoning') {
+        return chatCopy.thread.typing;
+    }
+
+    if (
+        lastPart.type === 'tool-call' &&
+        lastPart.toolName !== createTicketToolName
+    ) {
+        return docsToolNameSet.has(lastPart.toolName)
+            ? chatCopy.thread.lookingUp
+            : chatCopy.thread.typing;
+    }
+
+    return undefined;
+};
+
+// A plain spinner, the familiar chat loader, labelled for what is happening.
+const AssistantWorking: React.FC = () => {
+    const label = useAuiState(selectWorkingLabel);
+
+    if (label == null) {
         return null;
     }
 
     return (
         <div
-            aria-label={chatCopy.thread.typing}
+            aria-label={label}
             className="flex items-center py-1"
             role="status"
         >
@@ -314,17 +521,21 @@ const AssistantMessage: React.FC = () => (
         data-role="assistant"
     >
         <div className="wrap-break-word px-2 text-neutral-800 text-sm leading-relaxed">
-            {/* Tools without a registered component (flagOffTopic, the future searchDocs)
-                deliberately render nothing — the model narrates around them. */}
+            {/* A tool without a registered component deliberately renders nothing: the model
+                narrates around flagOffTopic, and the documentation tools are covered by the
+                single indicator below. */}
             <MessagePrimitive.Parts
                 components={{
                     Text: MarkdownText,
-                    Empty: AssistantTyping,
+                    Empty: SilentEmptyPart,
                     tools: {
-                        by_name: { createLinearTicket: CreateTicketCard },
+                        by_name: {
+                            [createTicketToolName]: CreateTicketCard,
+                        },
                     },
                 }}
             />
+            <AssistantWorking />
             <MessageError />
         </div>
 
@@ -344,7 +555,7 @@ const UserMessage: React.FC = () => (
         <UserMessageAttachments />
 
         <div className="relative col-start-2 min-w-0">
-            <div className="wrap-break-word whitespace-pre-wrap rounded-xl bg-neutral-100 px-4 py-2 text-neutral-800 text-sm empty:hidden">
+            <div className="wrap-break-word whitespace-pre-wrap rounded-xl rounded-br-sm bg-neutral-100 px-4 py-2 text-neutral-800 text-sm empty:hidden">
                 <MessagePrimitive.Parts />
             </div>
         </div>

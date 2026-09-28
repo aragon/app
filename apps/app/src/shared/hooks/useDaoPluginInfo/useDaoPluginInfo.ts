@@ -1,5 +1,4 @@
 import {
-    addressUtils,
     ChainEntityType,
     DateFormat,
     formatterUtils,
@@ -10,6 +9,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useDaoChain } from '../useDaoChain';
 import { useDaoPlugins } from '../useDaoPlugins';
+import { useIsMounted } from '../useIsMounted';
 
 export interface IUseDaoPluginInfoParams {
     /**
@@ -43,14 +43,20 @@ export const useDaoPluginInfo = (
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
+    // Dates are formatted in the viewer's timezone while the server renders in UTC —
+    // render them only after mount to avoid a hydration mismatch.
+    const isMounted = useIsMounted();
+
     if (dao == null || plugin == null) {
         return settings;
     }
 
     const { blockTimestamp, transactionHash, release, build } = plugin.meta;
-    const pluginLaunchedAt = formatterUtils.formatDate(blockTimestamp * 1000, {
-        format: DateFormat.YEAR_MONTH,
-    })!;
+    const pluginLaunchedAt = isMounted
+        ? formatterUtils.formatDate(blockTimestamp * 1000, {
+              format: DateFormat.YEAR_MONTH,
+          })!
+        : '-';
 
     const pluginCreationLink = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
@@ -71,9 +77,12 @@ export const useDaoPluginInfo = (
                 release,
                 build,
             }),
-            link: { href: pluginLink, isExternal: true },
-            copyValue: address,
-            definition: addressUtils.truncateAddress(address),
+            link: {
+                href: pluginLink,
+                isExternal: true,
+                isOnchainEntity: true,
+            },
+            definition: address,
         },
         {
             term: t('app.shared.daoPluginInfo.launchedAt'),

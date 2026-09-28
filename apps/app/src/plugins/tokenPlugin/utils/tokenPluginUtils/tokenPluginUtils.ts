@@ -19,9 +19,11 @@ class TokenPluginUtils {
         return {
             ...token,
             address: token.underlying,
-            // Remove the "g" and "Governance" prefixes from the token symbol / name
-            symbol: token.symbol.slice(1),
-            name: token.name.slice(11),
+            // Remove the "g" and "Governance" prefixes from the token symbol / name. The backend
+            // returns null metadata for governance tokens without ERC20 metadata (e.g. Hats
+            // adapters), in which case there is no prefix to strip and the values stay as they are.
+            symbol: token.symbol?.slice(1) ?? token.symbol,
+            name: token.name?.slice(11) ?? token.name,
         };
     };
 

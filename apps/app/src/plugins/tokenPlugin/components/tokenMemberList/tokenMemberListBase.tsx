@@ -1,5 +1,6 @@
 'use client';
 
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import {
     addressUtils,
     DataListContainer,
@@ -9,12 +10,15 @@ import {
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
 import type { IToken } from '@/modules/finance/api/financeService';
+import {
+    buildTokenVotingMembershipParams,
+    mapBackendMemberToTokenVotingDTO,
+} from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
-import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { useTokenPinnedMembers } from '../../hooks/useTokenPinnedMembers';
 import type { ITokenMember } from '../../types';
 import { TokenMemberListItem } from './components/tokenMemberListItem';
@@ -64,20 +68,12 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     // The parent DAO is server-side prefetched → always a cache hit.
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // For linked account plugins the API call must target the linked account's own daoId so the
-    // backend queries the correct DAO.
-    const apiParams = useMemo(() => {
-        const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
-
-        if (resolvedDaoId === daoId) {
-            return initialParams;
-        }
-
-        return {
-            ...initialParams,
-            queryParams: { ...initialParams.queryParams, daoId: resolvedDaoId },
-        };
-    }, [initialParams, plugin, dao, daoId]);
+    // Shared with the members-page RSC prefetch. Both sides must build
+    // identical params so the dehydrated cache resolves this query.
+    const apiParams = useMemo(
+        () => buildTokenVotingMembershipParams(initialParams, plugin, dao),
+        [initialParams, plugin, dao],
+    );
 
     const {
         onLoadMore,
@@ -87,7 +83,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         errorState,
         emptyState,
         memberList,
-    } = useMemberListData<ITokenMember>(apiParams);
+    } = useTokenVotingMembershipData(apiParams);
 
     const { connectedUserMember, delegateMember, hasValidDelegate } =
         useTokenPinnedMembers({
@@ -103,7 +99,10 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         }
 
         const pinnedAddresses = new Set<string>();
-        const merged: ITokenMember[] = [];
+        // Pinned single-members arrive as legacy `ITokenMember` and are
+        // normalized through the same anti-corruption mapper as the legacy
+        // list branch.
+        const merged: TokenVotingMemberDTO[] = [];
 
         const appendPinnedMember = (member?: ITokenMember) => {
             if (member?.address == null) {
@@ -116,7 +115,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
             }
 
             pinnedAddresses.add(memberAddress);
-            merged.push(member);
+            merged.push(mapBackendMemberToTokenVotingDTO(member));
         };
 
         appendPinnedMember(connectedUserMember);

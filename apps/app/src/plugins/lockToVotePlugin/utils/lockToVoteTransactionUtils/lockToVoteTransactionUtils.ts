@@ -2,7 +2,6 @@ import {
     encodeAbiParameters,
     encodeFunctionData,
     type Hex,
-    parseUnits,
     zeroHash,
 } from 'viem';
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
@@ -20,6 +19,7 @@ import type { IGetUninstallHelpersParams } from '@/modules/settings/types';
 import type { ITokenSetupGovernanceForm } from '@/plugins/tokenPlugin/components/tokenSetupGovernance';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type {
@@ -165,7 +165,7 @@ class LockToVoteTransactionUtils {
             : undefined;
 
         const processedVotingPeriod = stageVotingPeriodSeconds ?? minDuration;
-        const parsedProposerVotingPower = parseUnits(
+        const parsedProposerVotingPower = bigIntUtils.parseUnits(
             minProposerVotingPower,
             decimals,
         );

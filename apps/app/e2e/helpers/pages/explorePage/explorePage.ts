@@ -33,8 +33,5 @@ export class ExplorePage extends BasePage {
     readonly daoCards = () =>
         this.page
             .getByRole('main')
-            .getByRole('link')
-            .filter({
-                has: this.page.getByRole('heading'),
-            });
+            .locator('div:has(> a[aria-labelledby]):has(h2)');
 }

@@ -1,4 +1,8 @@
-import type { IAppContext, IChatRequest } from '@aragon/assistant-contracts';
+import {
+    attachmentPartType,
+    type IAppContext,
+    type IChatRequest,
+} from '@aragon/assistant-contracts';
 import { DefaultChatTransport } from 'ai';
 import type { AssistantUIMessage } from './chatTransport.api';
 
@@ -17,10 +21,17 @@ export interface ICreateChatTransportParams {
     getAppContext: () => IAppContext;
 }
 
+// A file part carries the whole file inline as a data URL (the local transcript renders its
+// preview from it) and the service already holds the bytes for the ticket, so only the name
+// travels with the conversation — enough for the service to tell the model where an attachment
+// arrived, without pushing megabytes through every turn.
+const toRequestPart = (part: AssistantUIMessage['parts'][number]) =>
+    part.type === 'file'
+        ? { type: attachmentPartType, data: { filename: part.filename } }
+        : part;
+
 // The server re-validates against chatRequestSchema; only the fields of the contract are sent
-// (the default AI SDK body would leak chat id / trigger metadata). File parts exist only for the
-// local transcript preview — the server reads queued files from its own session store, so they
-// never travel with the conversation.
+// (the default AI SDK body would leak chat id / trigger metadata).
 const buildRequestBody = (
     params: ICreateChatTransportParams,
     messages: AssistantUIMessage[],
@@ -29,7 +40,7 @@ const buildRequestBody = (
     messages: messages.map((message) => ({
         id: message.id,
         role: message.role === 'user' ? 'user' : 'assistant',
-        parts: message.parts.filter((part) => part.type !== 'file'),
+        parts: message.parts.map(toRequestPart),
     })),
     appContext: params.getAppContext(),
 });

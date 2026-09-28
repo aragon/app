@@ -1,11 +1,11 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import type { IConditionData } from '@/modules/settings/types';
+import type { IDaoPermissionCondition } from '@/shared/api/daoService';
 import { MembershipConditionSlot } from './membershipConditionSlot';
 
 describe('<MembershipConditionSlot /> component', () => {
-    const createTestComponent = (props?: Partial<IConditionData>) => {
-        const completeProps: IConditionData = {
+    const createTestComponent = (props?: Partial<IDaoPermissionCondition>) => {
+        const completeProps: IDaoPermissionCondition = {
             conditionType: 'membership',
             ...props,
         };

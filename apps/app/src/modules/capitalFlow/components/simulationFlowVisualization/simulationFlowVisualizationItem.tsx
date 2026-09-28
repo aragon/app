@@ -1,9 +1,8 @@
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DaoAvatar,
     Icon,
-    Link,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -93,34 +92,29 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
     item,
     addressHref,
     showFallbackAddress,
-}) => {
-    const linkText = item.ens ?? addressUtils.truncateAddress(item.address);
+}) => (
+    <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <p className="min-w-full overflow-hidden text-ellipsis whitespace-nowrap text-base text-neutral-800 leading-tight">
+            {item.label}
+        </p>
 
-    return (
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="min-w-full overflow-hidden text-ellipsis whitespace-nowrap text-base text-neutral-800 leading-tight">
-                {item.label}
+        {addressHref && (
+            <AddressOutput
+                address={item.address}
+                className="w-fit"
+                href={addressHref}
+                isExternal={true}
+                label={item.ens ?? undefined}
+            />
+        )}
+
+        {showFallbackAddress && (
+            <p className="text-neutral-500 text-sm leading-tight">
+                <AddressOutput address={item.address} />
             </p>
-
-            {addressHref && (
-                <Link
-                    className="w-fit"
-                    href={addressHref}
-                    isExternal
-                    variant="primary"
-                >
-                    {linkText}
-                </Link>
-            )}
-
-            {showFallbackAddress && (
-                <p className="text-neutral-500 text-sm leading-tight">
-                    {addressUtils.truncateAddress(item.address)}
-                </p>
-            )}
-        </div>
-    );
-};
+        )}
+    </div>
+);
 
 interface IItemTokenDeltasProps {
     /**

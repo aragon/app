@@ -1,8 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as proposalPermissionGuard from '@/modules/governance/hooks/useProposalPermissionCheckGuard';
+import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils';
+import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import {
+    generateDao,
+    generateDialogContext,
+    generateFilterComponentPlugin,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import {
     GovernanceType,
@@ -82,17 +89,25 @@ describe('<CreateProcessPageClient /> component', () => {
         proposalPermissionGuard,
         'useProposalPermissionCheckGuard',
     );
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useProposalPermissionCheckGuardSpy.mockImplementation(() => undefined);
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
         trackAnalyticsSpy.mockImplementation(() => undefined);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         useProposalPermissionCheckGuardSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
+        useDaoSpy.mockReset();
         trackAnalyticsSpy.mockReset();
     });
 
@@ -130,5 +145,18 @@ describe('<CreateProcessPageClient /> component', () => {
                 values: processFormValues,
             },
         });
+    });
+
+    it('renders a not-found state instead of the wizard when the plugin address matches no DAO plugin', () => {
+        useDaoPluginsSpy.mockReturnValue([]);
+
+        renderPage();
+
+        expect(
+            screen.getByText(
+                'app.createDao.createProcessPage.error.notFound.title',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.queryByTestId('submit')).not.toBeInTheDocument();
     });
 });

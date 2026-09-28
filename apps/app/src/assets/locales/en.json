@@ -19,6 +19,61 @@
         "executeActionDetails": {
           "actionsLabel": "Actions",
           "actionsHelpText": "The actions that will be executed."
+        },
+        "permissionActionCreate": {
+          "changePermission": "Change permission",
+          "conditionHelpText": "The condition contract that must pass for the permission to be granted.",
+          "customItem": "Add new permission",
+          "invalidPermissionName": "Not a valid permission. Use screaming snake case. e.g. ACTION_PERMISSION",
+          "permissionHelpText": "The permission the actor holds on the target contract. Choose a known permission, paste a 32-byte ID, or type a permission name to add one.",
+          "permissionLabel": "Permission",
+          "permissionPlaceholder": "Search a permission, paste an ID, or type a name to add one",
+          "selectItem": "Select permission",
+          "unknownPermission": "Not a known OSx permission. It will be stored exactly as entered.",
+          "whereHelpText": "The contract where the permission applies.",
+          "whoGrantHelpText": "The actor that receives the permission and can call the target contract.",
+          "whoRevokeHelpText": "The actor that loses the permission and can no longer call the target contract."
+        },
+        "permissionActionDetails": {
+          "unknownPermission": "Not a known OSx permission. Verify this ID against the target contract."
+        },
+        "permissionAddressInput": {
+          "conditionRequired": "Enter a nonzero condition contract address.",
+          "invalidAddress": "Enter a valid contract or wallet address."
+        },
+        "permissionChangesCreate": {
+          "addChange": "Permission change",
+          "changeLabel": "Change",
+          "emptyList": "No permission changes yet.",
+          "emptyRowsRequired": "Add at least one permission change.",
+          "removeChange": "Remove permission change"
+        },
+        "permissionChangesDetails": {
+          "unknownOperation": "Unknown operation {{operation}}",
+          "unknownOperationWarning": "This operation is not one the app recognises. Verify the action against the target contract before approving."
+        },
+        "permissionManager": {
+          "conditionTerm": "Condition",
+          "operation": {
+            "grant": "Grant",
+            "grantWithCondition": "Grant with condition",
+            "revoke": "Revoke"
+          },
+          "permissionTerm": "Permission",
+          "riskWarning": "Permission changes are high risk and should be evaluated with a knowledge of the contracts involved.",
+          "whereTerm": "Where",
+          "whoTerm": "Who"
+        }
+      },
+      "crossChainController": {
+        "crossChainControllerForwardMessageDetails": {
+          "chainTerm": "Destination chain",
+          "chainUnknown": "Chain {{chainId}}",
+          "gasLimitTerm": "Gas limit",
+          "actionsLabel": "Actions",
+          "actionsHelpText": "The actions that will be executed as a single batch on the destination chain once the message is delivered.",
+          "actionsDecodeError": "The forwarded message could not be decoded into actions. Check the raw calldata of this action before approving it.",
+          "downloadActions": "Download actions"
         }
       },
       "gaugeRegistrar": {
@@ -404,6 +459,7 @@
           "assets": "Assets",
           "dashboard": "Dashboard",
           "members": "Members",
+          "permissions": "Permissions",
           "proposals": "Proposals",
           "settings": "Settings",
           "transactions": "Transactions"
@@ -424,7 +480,6 @@
           "label": "Support chat"
         },
         "trigger": {
-          "close": "Close support chat",
           "open": "Open support chat"
         }
       },
@@ -1257,6 +1312,13 @@
         }
       },
       "createProcessPage": {
+        "error": {
+          "action": "View settings",
+          "notFound": {
+            "description": "We couldn't find the governance process you're looking for.",
+            "title": "Process not found"
+          }
+        },
         "finalStep": "Publish process",
         "steps": {
           "METADATA": {
@@ -1373,9 +1435,6 @@
           }
         },
         "select": {
-          "disabled": {
-            "label": "By request"
-          },
           "external": {
             "description": "Add any address as a body, such as a Safe or Governor",
             "label": "Any address"
@@ -1448,7 +1507,8 @@
           "delegateVotedOverridden": "Voted without your {{amount}} {{symbol}}",
           "options": {
             "alreadyCounted": "Your tokens already count toward {{option}}",
-            "currentVote": "Your current vote"
+            "currentVote": "Your current vote",
+            "objectionOnly": "You can only vote No during the objection phase"
           },
           "position": {
             "overrode": "Voting with {{amount}} {{symbol}} · overrode {{delegate}}",
@@ -1608,6 +1668,7 @@
             "chain": "Chain",
             "ens": "ENS",
             "launched": "Launched",
+            "permissions": "View permissions",
             "title": "Contract"
           },
           "links": "Resources"
@@ -1660,6 +1721,11 @@
           "viewAdmins": "View admins",
           "welcome": "Welcome"
         }
+      },
+      "telegramSubscriptionCard": {
+        "action": "Subscribe",
+        "description": "Get notified on Telegram about new proposals and other activity.",
+        "title": "Notifications"
       }
     },
     "explore": {
@@ -1889,7 +1955,9 @@
           "Transfer": "Transfer"
         },
         "rawCalldataFunction": "Unknown",
-        "removeAllActions": "Remove all actions"
+        "removeAllActions": "Remove all actions",
+        "unknownFunction": "Unknown",
+        "unverifiedContract": "Unverified contract"
       },
       "createExecuteActionsPage": {
         "steps": {
@@ -1956,6 +2024,13 @@
         }
       },
       "createProposalPage": {
+        "error": {
+          "action": "Explore proposals",
+          "notFound": {
+            "description": "We couldn't find the governance process you're looking for.",
+            "title": "Process not found"
+          }
+        },
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -2085,6 +2160,10 @@
             "readLess": "Read less",
             "readMore": "Read more"
           },
+          "metadataAlert": {
+            "missing": "Proposal metadata is missing",
+            "nonStandard": "Unexpected proposal metadata format"
+          },
           "voting": "Voting"
         }
       },
@@ -2103,6 +2182,13 @@
       "daoProposalsPage": {
         "aside": {
           "stats": "All proposals"
+        },
+        "error": {
+          "action": "Go to dashboard",
+          "notFound": {
+            "description": "This DAO has no governance process the app can show proposals for.",
+            "title": "No governance process"
+          }
         },
         "main": {
           "action": "Proposal",
@@ -2230,13 +2316,13 @@
         "namePlugin": "{{plugin}}: Create proposal"
       },
       "nestedActionsDialog": {
-        "cancel": "Cancel",
         "decodeError": "We couldn't decode some of the actions. Please review them before saving.",
         "decoding": "Decoding actions",
-        "description": "These actions are executed as a batch by the action you are composing.",
+        "description": "These forwarded actions are executed as a batch on the destination chain.",
+        "loadingAllowedActions": "Loading the allowed actions",
         "prepareError": "We couldn't prepare the actions. Please try again.",
-        "save": "Save actions",
-        "title": "Add actions"
+        "save": "Save forwarded actions",
+        "title": "Forwarded actions"
       },
       "permissionCheckDialog": {
         "a11y": {
@@ -2277,6 +2363,10 @@
         "recentUnit": " {{unit}} ago",
         "total": "Total",
         "types": "Types"
+      },
+      "proposalMetadataAlert": {
+        "missing": "Proposal metadata is missing",
+        "nonStandard": "Unexpected proposal metadata format"
       },
       "publishProposalDialog": {
         "button": {
@@ -2513,6 +2603,50 @@
           }
         }
       },
+      "crossChainController": {
+        "crossChainControllerActions": {
+          "CrossChainControllerForwardMessage": "Forward message"
+        },
+        "crossChainControllerForwardMessageAction": {
+          "actions": {
+            "add": "Forwarded actions",
+            "edit": "Edit forwarded actions",
+            "emptyHeading": "No forwarded actions added",
+            "helpText": "These actions are executed as a single batch on the destination chain. If any of them fail then none will be executed.",
+            "label": "Forwarded actions",
+            "mandatory": "Forwarded actions are mandatory.",
+            "selected": "{{count}} forwarded action added",
+            "selectedPlural": "{{count}} forwarded actions added"
+          },
+          "chain": {
+            "empty": "This cross-chain controller has no other chain configured, so there is no destination to forward a message to.",
+            "helpText": "This is the chain the actions will be forwarded to and executed on. Only chains configured on the controller contract can be selected.",
+            "label": "Destination chain",
+            "unknown": "Chain {{chainId}}"
+          },
+          "fee": {
+            "defaultToken": "native assets",
+            "description": "pays the fee to send the message. For this proposal execution to succeed, it will need to have enough {{token}}.",
+            "descriptionStart": "The controller contract",
+            "title": "Cross-chain fees are paid by the controller"
+          },
+          "gas": {
+            "calculate": "Estimate gas",
+            "error": "The gas limit could not be calculated. Try again, or enter a value manually if the problem persists.",
+            "exceedsMax": "The actions need more gas than a single cross-chain message allows ({{maxGasLimit}}). Split them across several forward actions.",
+            "helpText": "Set the amount of gas the destination chain will be able to spend to execute the forwarded actions on this proposal. You can estimate it by simulating the actions or entering it manually.",
+            "label": "Destination gas limit",
+            "marginReduced": "Simulated successfully. The delivery needs {{requiredGas}} gas, but the lane does not allow the usual safety margin on top, so the limit was set to the maximum the lane accepts.",
+            "minimumApplied": "The simulated transaction cost {{requiredGas}} gas, but the minimum gas accepted by the controller is {{minGasLimit}}.",
+            "notWholeNumber": "Gas is counted in whole units, so the gas limit cannot have decimals.",
+            "placeholder": "Enter a gas limit",
+            "reverted": "The actions failed when simulated on the destination chain, so no gas limit could be measured: {{reason}}",
+            "simulated": "The simulated transaction cost {{requiredGas}} gas, so we recommend an additional {{bufferPercent}}% margin at a total of {{totalGas}} to ensure it is successful.",
+            "unknownReason": "no reason given",
+            "viewSimulation": "View simulation"
+          }
+        }
+      },
       "gaugeVoter": {
         "gaugeVoterGaugeDetailsDialog": {
           "a11y": {
@@ -2566,6 +2700,13 @@
             "tabs": {
               "delegate": "Delegate",
               "lock": "Lock"
+            }
+          },
+          "error": {
+            "action": "Go to dashboard",
+            "notFound": {
+              "description": "We couldn't find a gauge voting plugin for this DAO.",
+              "title": "Gauges not available"
             }
           },
           "main": {
@@ -2962,7 +3103,7 @@
         },
         "meta": {
           "setup": {
-            "description": "Majority voting with locked ERC20 tokens",
+            "description": "Voting requires locking non-governance ERC20 tokens",
             "name": "Lock to vote"
           }
         },
@@ -3494,10 +3635,6 @@
             "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
-            "object": "Object",
-            "objectionDescription": ", I object",
-            "objectionHelpText": "During the objection phase you can only vote \"No\" to object to the proposal.",
-            "objectionLabel": "object to",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
@@ -3505,7 +3642,6 @@
           },
           "voteDescription": {
             "approve": "to approve",
-            "objection": "to object",
             "veto": "to veto"
           }
         },
@@ -3602,12 +3738,56 @@
         "view": {
           "list": "List",
           "graph": "Graph"
+        },
+        "filters": {
+          "hideDaoPermissions": "Hide permissions granted to DAO",
+          "hideDaoPermissionsTooltip": "Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.",
+          "hideDaoPermissionsTooltipLabel": "About permissions granted to DAO",
+          "hideGoverningBodyPermissions": "Hide subplugin permissions",
+          "hideGoverningBodyPermissionsTooltip": "Hides permissions whose target (Where) is identified as a subplugin.",
+          "hideGoverningBodyPermissionsTooltipLabel": "About subplugin permissions"
+        },
+        "graphView": {
+          "node": {
+            "dao": "Primary DAO",
+            "linkedDao": "Linked DAO",
+            "plugin": "Aragon OSx Plugin",
+            "historicalPlugin": "Historical plugin",
+            "uninstalledPlugin": "Uninstalled plugin",
+            "actor": "Address",
+            "who": "Who",
+            "where": "Where"
+          },
+          "edge": {
+            "condition": "if {{condition}}"
+          },
+          "detail": {
+            "address": "Address",
+            "close": "Close",
+            "type": "Type",
+            "anyone": {
+              "title": "Open to anyone",
+              "description": "Any wallet or contract can act here — these permission flows have no on-chain requirement for who calls them."
+            }
+          },
+          "empty": {
+            "heading": "No permissions",
+            "description": "This view has no indexed permissions to visualize."
+          },
+          "fullscreen": {
+            "open": "Expand graph",
+            "close": "Exit full screen"
+          }
         }
       },
       "permissionsList": {
         "header": {
           "who": "Who",
           "where": "Where",
+          "whoTooltip": "The actor that receives the permission and can call the target contract.",
+          "whoTooltipLabel": "About Who",
+          "whereTooltip": "The contract where the permission applies.",
+          "whereTooltipLabel": "About Where",
           "permission": "Permission",
           "condition": "Condition"
         },
@@ -3616,11 +3796,10 @@
           "who": "Who",
           "where": "Where",
           "permission": "Permission",
-          "condition": "Condition",
-          "noCondition": "No condition"
+          "condition": "Condition"
         },
         "condition": {
-          "heading": "Condition detail"
+          "heading": "Condition"
         },
         "expandAll": "Expand all",
         "collapseAll": "Collapse all",
@@ -3629,10 +3808,6 @@
           "description": "This account has no indexed permissions."
         }
       },
-      "noConditionSlot": {
-        "heading": "No condition",
-        "description": "Functions guarded by this permission can be called by the granted address directly."
-      },
       "votingPowerConditionSlot": {
         "token": "Token",
         "minVotingPower": "Minimum voting power"
@@ -3640,12 +3815,25 @@
       "executeSelectorConditionSlot": {
         "description": "The ExecuteSelectorCondition authorizes the caller to execute actions only on explicitly authorized contract functions.",
         "allowedActions": "Allowed actions",
+        "anySelector": "Any selector",
         "noActions": "No allowed actions"
       },
       "membershipConditionSlot": {
         "memberOfMultisig": "Member of multisig",
+        "minApprovals": "Minimum approvals",
         "true": "True",
         "false": "False"
+      },
+      "sppRuleConditionSlot": {
+        "description": "The SPP rule condition combines these rules to determine whether the permission is granted.",
+        "rule": "Rule",
+        "type": "Type",
+        "operation": "Operation",
+        "value": "Value",
+        "permissionId": "Permission ID",
+        "ruleIndexes": "Rule references",
+        "conditionAddress": "Condition address",
+        "noRules": "No rules returned"
       },
       "daoPolicyDetailsPage": {
         "error": {

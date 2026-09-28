@@ -1,24 +1,14 @@
 import { addressUtils, type ProposalActionComponent } from '@aragon/gov-ui-kit';
-import { useCallback, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { useAllAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { useAllDaoPermissions, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import type { IProposalCreateAction } from '../../../dialogs/publishProposalDialog';
+import { useDownloadProposalActions } from '../../../hooks/useDownloadProposalActions';
 import { useProposalActionsField } from '../../../hooks/useProposalActionsField';
-import { proposalActionPreparationUtils } from '../../../utils/proposalActionPreparationUtils';
-import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import { ProposalActionsEditList } from '../../proposalActionsEditList';
-import type {
-    ICreateProposalFormData,
-    IProposalActionData,
-} from '../createProposalFormDefinitions';
-import { useCreateProposalFormContext } from '../createProposalFormProvider';
+import type { IProposalActionData } from '../createProposalFormDefinitions';
 import { coreCustomActionComponents } from './coreCustomActionComponents';
 
 export interface ICreateProposalFormActionsProps {
@@ -64,10 +54,6 @@ export const CreateProposalFormActions: React.FC<
     const { t } = useTranslations();
     const { chainId } = useDaoChain({ daoId });
 
-    const { getValues } = useFormContext<ICreateProposalFormData>();
-
-    const { prepareActions } = useCreateProposalFormContext();
-
     const {
         actionsMerged,
         handleAddAction,
@@ -75,55 +61,16 @@ export const CreateProposalFormActions: React.FC<
         getArrayControls,
     } = useProposalActionsField();
 
-    const { data: allowedActionsData } = useAllowedActions(
-        {
-            urlParams: { network: dao!.network, pluginAddress },
-            queryParams: { pageSize: 50 },
-        },
+    const { data: allowedActions } = useAllAllowedActions(
+        { urlParams: { network: dao!.network, pluginAddress }, chainId },
         { enabled: hasConditionalPermissions },
     );
     const { data: daoPermissions } = useAllDaoPermissions({
         urlParams: { network: dao!.network, daoAddress: targetDaoAddress },
     });
 
-    const allowedActions = allowedActionsData?.pages.flatMap(
-        (page) => page.data,
-    );
-
-    const [isDownloadPinning, setIsDownloadPinning] = useState(false);
-    const [hasDownloadPinErrors, setHasDownloadPinErrors] = useState(false);
-
-    const handleDownloadActions = useCallback(async () => {
-        setIsDownloadPinning(true);
-        setHasDownloadPinErrors(false);
-
-        try {
-            const currentActions = getValues('actions') ?? [];
-
-            // Prepare actions using registered prepare functions
-            const preparedActions =
-                await proposalActionPreparationUtils.prepareActions({
-                    actions: currentActions as IProposalCreateAction[],
-                    prepareActions,
-                });
-
-            proposalActionsImportExportUtils.downloadActionsAsJSON(
-                preparedActions as unknown as IProposalAction[],
-                `dao-${daoId}-actions.json`,
-            );
-        } catch (error) {
-            monitoringUtils.logError(error, {
-                context: {
-                    daoId,
-                    message:
-                        'Failed to pin or download proposal actions for DAO',
-                },
-            });
-            setHasDownloadPinErrors(true);
-        } finally {
-            setIsDownloadPinning(false);
-        }
-    }, [daoId, getValues, prepareActions]);
+    const { isPinning, hasPinErrors, handleDownloadActions } =
+        useDownloadProposalActions({ daoId });
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
     const { components: permissionActionComponents } =
@@ -160,8 +107,8 @@ export const CreateProposalFormActions: React.FC<
                     daoId={targetDaoId}
                     daoPermissions={daoPermissions}
                     hasActions={hasActions}
-                    hasPinErrors={hasDownloadPinErrors}
-                    isPinning={isDownloadPinning}
+                    hasPinErrors={hasPinErrors}
+                    isPinning={isPinning}
                     onAddAction={handleAddAction}
                     onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}

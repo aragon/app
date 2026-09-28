@@ -1,13 +1,14 @@
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, parseUnits } from 'viem';
+import { encodeFunctionData } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import {
     type ITokenSetupGovernanceForm,
     TokenSetupGovernance,
@@ -115,7 +116,10 @@ export const TokenUpdateSettingsAction: React.FC<
             minParticipation:
                 tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: BigInt(minDuration),
-            minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
+            minProposerVotingPower: bigIntUtils.parseUnits(
+                minVotingPowerValue,
+                decimals,
+            ),
         };
 
         const newData = encodeFunctionData({

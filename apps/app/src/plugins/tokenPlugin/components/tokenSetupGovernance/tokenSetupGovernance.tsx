@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
+import { InputContainer, Switch } from '@aragon/gov-ui-kit';
 import { AdvancedDateInputDuration } from '@/shared/components/forms/advancedDateInput/advancedDateInputDuration';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -69,22 +69,19 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (
                     )}
                     useCustomWrapper={true}
                 >
-                    <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
-                        <AdvancedDateInputDuration
-                            className="!p-0"
-                            defaultValue={voteDurationDefault}
-                            field={`${formPrefix}.minDuration`}
-                            infoText={t(
-                                'app.plugins.token.tokenSetupGovernance.minDuration.alertInfo',
-                            )}
-                            label={t(
-                                'app.plugins.token.tokenSetupGovernance.minDuration.label',
-                            )}
-                            minDuration={voteDurationMin}
-                            useSecondsFormat={true}
-                            validateMinDuration={true}
-                        />
-                    </Card>
+                    <AdvancedDateInputDuration
+                        defaultValue={voteDurationDefault}
+                        field={`${formPrefix}.minDuration`}
+                        infoText={t(
+                            'app.plugins.token.tokenSetupGovernance.minDuration.alertInfo',
+                        )}
+                        label={t(
+                            'app.plugins.token.tokenSetupGovernance.minDuration.label',
+                        )}
+                        minDuration={voteDurationMin}
+                        useSecondsFormat={true}
+                        validateMinDuration={true}
+                    />
                 </InputContainer>
             )}
             {!isSubPlugin && (

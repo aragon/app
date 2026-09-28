@@ -1,4 +1,4 @@
-import { Icon, IconType, Spinner, Tooltip } from '@aragon/gov-ui-kit';
+import { Button, Icon, IconType, Spinner, Tooltip } from '@aragon/gov-ui-kit';
 import {
     AttachmentPrimitive,
     ComposerPrimitive,
@@ -101,7 +101,7 @@ const AttachmentPreviewDialog: React.FC<PropsWithChildren> = (props) => {
                     <Dialog.Close asChild={true}>
                         <TooltipIconButton
                             className="absolute top-4 right-4 bg-neutral-0/80 text-neutral-800 hover:bg-neutral-0"
-                            tooltip={chatCopy.header.close}
+                            tooltip={chatCopy.attachments.closePreview}
                             variant="unstyled"
                         >
                             <Icon icon={IconType.CLOSE} size="sm" />
@@ -258,11 +258,11 @@ export const ComposerAttachments: React.FC = () => (
 
 export const ComposerAddAttachment: React.FC = () => (
     <ComposerPrimitive.AddAttachment asChild={true}>
-        <TooltipIconButton
-            side="bottom"
-            tooltip={chatCopy.composer.addAttachment}
-        >
-            <Icon icon={IconType.PLUS} size="sm" />
-        </TooltipIconButton>
+        <Button
+            aria-label={chatCopy.composer.addAttachment}
+            iconLeft={IconType.PLUS}
+            size="sm"
+            variant="tertiary"
+        />
     </ComposerPrimitive.AddAttachment>
 );

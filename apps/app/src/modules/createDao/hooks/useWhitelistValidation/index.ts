@@ -1,1 +1,0 @@
-export { useWhitelistValidation } from './useWhitelistValidation';

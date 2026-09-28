@@ -1,34 +1,43 @@
 'use client';
 
 import { Button, IconType } from '@aragon/gov-ui-kit';
+import { useEffect, useRef } from 'react';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSupportChatContext } from './supportChatContext';
 
-// Header entry point of the support chat: the feedback icon opens the side panel, the chevron
-// (pointing at the panel edge) tucks it away again. Rendered at the trailing edge of the
-// navigation bar (outside the centered container) so it always sits right next to the panel.
+// Header entry point of the support chat. Rendered at the trailing edge of the navigation bar
+// (outside the centered container) so it always sits right next to the panel, and withdrawn while
+// the panel is open — the panel then owns its own collapse control.
 export const SupportChatTrigger: React.FC = () => {
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
-    const { isOpen, toggle } = useSupportChatContext();
+    const { isOpen, open } = useSupportChatContext();
 
-    if (!isEnabled('supportChat')) {
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const wasOpen = useRef(false);
+
+    // The trigger withdraws while the panel is open, so collapsing the chat would leave the
+    // keyboard on the document body: focus returns to the trigger that comes back in its place.
+    useEffect(() => {
+        if (!isOpen && wasOpen.current) {
+            buttonRef.current?.focus();
+        }
+
+        wasOpen.current = isOpen;
+    }, [isOpen]);
+
+    if (!isEnabled('supportChat') || isOpen) {
         return null;
     }
-
-    const label = t(
-        isOpen
-            ? 'app.application.supportChat.trigger.close'
-            : 'app.application.supportChat.trigger.open',
-    );
 
     return (
         <div className="flex items-center pr-3 pl-2 lg:pr-4">
             <Button
-                aria-label={label}
-                iconLeft={isOpen ? IconType.CHEVRON_RIGHT : IconType.FEEDBACK}
-                onClick={toggle}
+                aria-label={t('app.application.supportChat.trigger.open')}
+                iconLeft={IconType.FEEDBACK}
+                onClick={open}
+                ref={buttonRef}
                 size="md"
                 variant="tertiary"
             />

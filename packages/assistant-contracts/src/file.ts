@@ -5,6 +5,13 @@ import { z } from 'zod';
 // bodies — Vercel functions cap request bodies at 4.5 MB), then confirms the upload so the
 // service can validate the content and queue the file for the ticket.
 
+// The bytes of a queued file never travel with the conversation, but the model must see WHERE an
+// attachment arrived, so the message that carried it keeps a part naming the file. It rides as a
+// data part on purpose: an AI SDK service that does not know this part drops it, so the widget can
+// ship ahead of the service without breaking a turn that carries an attachment.
+// Shape: `{ type: 'data-attachment', data: { filename } }`.
+export const attachmentPartType = 'data-attachment';
+
 export const confirmFileRequestSchema = z.object({
     sessionId: z.uuid(),
     // URL returned by the blob client upload; the server only accepts URLs of its own store

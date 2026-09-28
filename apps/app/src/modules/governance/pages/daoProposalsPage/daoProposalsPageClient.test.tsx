@@ -25,6 +25,12 @@ jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
     DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
 }));
 
+jest.mock('@/modules/dashboard/components/telegramSubscriptionCard', () => ({
+    TelegramSubscriptionCard: () => (
+        <div data-testid="telegram-subscription-mock" />
+    ),
+}));
+
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
     useSearchParams: jest.fn(() => new URLSearchParams()),
@@ -89,6 +95,9 @@ describe('<DaoProposalsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByTestId('proposal-list-mock')).toBeInTheDocument();
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('telegram-subscription-mock'),
+        ).toBeInTheDocument();
     });
 
     it('renders the create proposal button with the correct link and label', () => {
@@ -123,5 +132,23 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(
             `create/${pluginAddress}/proposal`,
         );
+    });
+
+    it('renders the not-found state linking to the dashboard when the DAO has no process plugin to display', () => {
+        const dashboardUrl = '/dao/ethereum-sepolia/test-dao/dashboard';
+        useDaoPluginsSpy.mockReturnValue([]);
+        getDaoUrlSpy.mockReturnValue(dashboardUrl);
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/daoProposalsPage.error.notFound.title/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /daoProposalsPage.error.action/ }),
+        ).toHaveAttribute('href', dashboardUrl);
+        expect(
+            screen.queryByTestId('proposal-list-mock'),
+        ).not.toBeInTheDocument();
     });
 });

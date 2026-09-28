@@ -10,6 +10,8 @@ export {
 } from './chat';
 export {
     docSearchResultSchema,
+    docsToolNameSet,
+    docsToolNames,
     type IDocSearchResult,
 } from './docs';
 export {
@@ -19,6 +21,7 @@ export {
     type IAssistantErrorCode,
 } from './error';
 export {
+    attachmentPartType,
     confirmFileRequestSchema,
     deleteFileRequestSchema,
     type IConfirmFileRequest,

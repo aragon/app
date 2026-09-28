@@ -145,7 +145,7 @@ export const createAttachmentAdapter = (
                     return;
                 }
 
-                throw new Error(toUploadErrorText(error));
+                throw new Error(toUploadErrorText(error), { cause: error });
             }
 
             yield {
@@ -178,7 +178,9 @@ export const createAttachmentAdapter = (
                     logError(error, {
                         context: { step: 'assistantChat.removeFile' },
                     });
-                    throw new Error(chatCopy.fileAlerts.removeFailed);
+                    throw new Error(chatCopy.fileAlerts.removeFailed, {
+                        cause: error,
+                    });
                 }
             }
 

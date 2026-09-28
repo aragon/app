@@ -25,13 +25,14 @@ export const tokenPlugin: IPluginInfo = {
             '0x424F4cA6FA9c24C03f2396DF0E96057eD11CF7dF',
         [Network.POLYGON_MAINNET]: '0xae67aea0B830ed4504B36670B5Fa70c5C386Bb58',
         [Network.ZKSYNC_MAINNET]: '0xE8F4C59f83CeE31A867E61c9959533A6e95ebCB3',
-        [Network.PEAQ_MAINNET]: '0xFBFbE98845B4E2751a8A004B5A1759e3A278FC68',
         [Network.OPTIMISM_MAINNET]:
             '0x666bFa1c64c40faEE8582496B040AAE35E25c19d',
         [Network.CHILIZ_MAINNET]: '0x62c82a443692A1bE4D0421b1E4678F0dff8F3c1B',
         [Network.AVAX_MAINNET]: '0xf56e330a183cABaC0b082b1a318F2c7ba66fe4d6',
         [Network.KATANA_MAINNET]: '0xBAFF9A7c3Bf3e791B3E601fFe5A05C7759f30E5b',
         [Network.MONAD_MAINNET]: '0xD8a3aF1060DabE74F041B1f4042d137e4C71DfaE',
+        [Network.ROBINHOOD_MAINNET]:
+            '0x47Be4F36D9dc1450Eddf0d995768b6CC0C938348',
     },
     setup: {
         nameKey: 'app.plugins.token.meta.setup.name',

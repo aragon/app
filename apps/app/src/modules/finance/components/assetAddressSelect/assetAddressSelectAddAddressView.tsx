@@ -9,7 +9,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';
-import type { IAsset } from '@/modules/finance/api/financeService';
+import {
+    type IAsset,
+    useTokenInfo,
+} from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useToken } from '@/shared/hooks/useToken';
@@ -70,6 +73,11 @@ export const AssetAddressSelectAddAddressView: React.FC<
         chainId,
     });
 
+    const { data: tokenInfo } = useTokenInfo(
+        { urlParams: { network, address: resolvedAddress ?? '' } },
+        { enabled: resolvedAddress != null },
+    );
+
     const asset: IAsset | undefined =
         resolvedAddress != null && tokenData != null
             ? {
@@ -80,7 +88,7 @@ export const AssetAddressSelectAddAddressView: React.FC<
                       name: tokenData.name || 'Unknown',
                       symbol: tokenData.symbol || 'UNKNOWN',
                       decimals: tokenData.decimals,
-                      logo: '',
+                      logo: tokenInfo?.logo ?? '',
                       priceUsd: '0',
                       totalSupply: tokenData.totalSupply,
                   },

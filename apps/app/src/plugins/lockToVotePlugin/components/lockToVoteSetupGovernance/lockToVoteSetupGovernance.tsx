@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, InputContainer, Switch } from '@aragon/gov-ui-kit';
+import { InputContainer, Switch } from '@aragon/gov-ui-kit';
 import { MinParticipationField } from '@/plugins/tokenPlugin/components/tokenSetupGovernance/fields/minParticipationField';
 import { ProposalCreationEligibilityField } from '@/plugins/tokenPlugin/components/tokenSetupGovernance/fields/proposalCreationEligibilityField';
 import { SupportThresholdField } from '@/plugins/tokenPlugin/components/tokenSetupGovernance/fields/supportThresholdField';
@@ -62,22 +62,19 @@ export const LockToVoteSetupGovernance: React.FC<
                     )}
                     useCustomWrapper={true}
                 >
-                    <Card className="flex flex-col gap-6 border border-neutral-100 p-6 shadow-neutral-sm">
-                        <AdvancedDateInputDuration
-                            className="!p-0"
-                            defaultValue={voteDurationDefault}
-                            field={`${formPrefix}.minDuration`}
-                            infoText={t(
-                                'app.plugins.lockToVote.lockToVoteSetupGovernance.proposalDuration.alertInfo',
-                            )}
-                            label={t(
-                                'app.plugins.lockToVote.lockToVoteSetupGovernance.proposalDuration.label',
-                            )}
-                            minDuration={voteDurationMin}
-                            useSecondsFormat={true}
-                            validateMinDuration={true}
-                        />
-                    </Card>
+                    <AdvancedDateInputDuration
+                        defaultValue={voteDurationDefault}
+                        field={`${formPrefix}.minDuration`}
+                        infoText={t(
+                            'app.plugins.lockToVote.lockToVoteSetupGovernance.proposalDuration.alertInfo',
+                        )}
+                        label={t(
+                            'app.plugins.lockToVote.lockToVoteSetupGovernance.proposalDuration.label',
+                        )}
+                        minDuration={voteDurationMin}
+                        useSecondsFormat={true}
+                        validateMinDuration={true}
+                    />
                 </InputContainer>
             )}
             <Switch

@@ -1,2 +1,10 @@
+# Bulk mechanical commits hidden from git blame (one full hash per line).
+# GitHub picks this file up automatically; locally, run once:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# chore(APP-315): Implement Biome toolchain (#920)
 3b3d17d0e45057fb2451a7ccad01193c5a69105e
+# chore: move app into apps/app (pure rename, no content changes)
 2b2cfe1ff84efb2f3f99bb6d46d708ea5f298adf
+# style(APP-1014): apply the ultracite 7.10 formatter
+bb9dbdd9b177af4995c76adbed8a7b4a7e236481

@@ -26,9 +26,9 @@ describe('network utils', () => {
             expect(result).toContain(Network.HEMI_MAINNET);
             expect(result).toContain(Network.OPTIMISM_MAINNET);
             expect(result).toContain(Network.ZKSYNC_MAINNET);
-            expect(result).toContain(Network.PEAQ_MAINNET);
             expect(result).toContain(Network.KATANA_MAINNET);
             expect(result).toContain(Network.MONAD_MAINNET);
+            expect(result).toContain(Network.ROBINHOOD_MAINNET);
 
             // Should not include testnet networks
             expect(result).not.toContain(Network.ETHEREUM_SEPOLIA);

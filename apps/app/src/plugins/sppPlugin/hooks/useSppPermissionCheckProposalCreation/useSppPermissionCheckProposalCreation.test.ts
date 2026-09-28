@@ -108,12 +108,21 @@ describe('useSppPermissionCheckProposalCreation', () => {
         ...result,
     });
 
+    const renderGuard = (params: ReturnType<typeof createTestParams>) =>
+        renderHook(() =>
+            useSppPermissionCheckProposalCreation(
+                params as Parameters<
+                    typeof useSppPermissionCheckProposalCreation
+                >[0],
+            ),
+        );
+
     const mockSimulation = (result: {
+        isError: boolean;
         isLoading: boolean;
-        isSuccess: boolean;
+        result?: 'success' | 'failure';
     }) =>
         useSimulateProposalCreationSpy.mockReturnValue({
-            isError: false,
             ...result,
         } as ReturnType<
             typeof useSimulateProposalModule.useSimulateProposalCreation
@@ -127,15 +136,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
             hasPermission: true,
         });
         const params = createTestParams([guardResult]);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual(settings);
@@ -146,15 +149,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
             generateGuardResult({ isRestricted: false }),
             generateGuardResult({ isRestricted: false }),
         ]);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeFalsy();
     });
@@ -170,15 +167,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
                 settings: restrictedSettings,
             }),
         ]);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual(restrictedSettings);
@@ -188,15 +179,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createTestParams([
             generateGuardResult({ isRestricted: true }),
         ]);
-        mockSimulation({ isLoading: false, isSuccess: false });
+        mockSimulation({ isError: false, isLoading: false, result: 'failure' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.hasPermission).toBeFalsy();
         expect(result.current.isRestricted).toBeTruthy();
@@ -204,15 +189,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
 
     it('returns isLoading true while the simulation is loading', () => {
         const params = createTestParams([generateGuardResult()]);
-        mockSimulation({ isLoading: true, isSuccess: false });
+        mockSimulation({ isError: false, isLoading: true });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isLoading).toBeTruthy();
     });
@@ -252,38 +231,73 @@ describe('useSppPermissionCheckProposalCreation', () => {
         return { daoId: 'dao-test', plugin: sppPlugin };
     };
 
-    it('surfaces a Safe body settings group when it can create proposals', () => {
-        const safeAddress = `0x${'b'.repeat(40)}`;
-        const params = createSafeTestParams({
-            proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
-        });
-        mockSimulation({ isLoading: false, isSuccess: true });
+    // The expected settings group for a Safe body that can create proposals: the same shape
+    // regardless of whether the Safe comes from a stage body or from externalProposers.
+    const buildExpectedSafeGroup = (address: string) => [
+        {
+            term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
+            definition: addressUtils.truncateAddress(address),
+            link: {
+                href: `https://etherscan.io/address/${address}`,
+                isExternal: true,
+            },
+        },
+        {
+            term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
+            definition:
+                'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
+        },
+    ];
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
+    const createStageBodySafeFixture = () => ({
+        address: `0x${'b'.repeat(40)}`,
+        params: createSafeTestParams({
+            proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+        }),
+    });
+
+    const createExternalProposerSafeFixture = () => {
+        const address = `0x${'e'.repeat(40)}`;
+        const sppPlugin = generateDaoPlugin({
+            address: `0x${'a'.repeat(40)}`,
+            settings: generateSppPluginSettings({
+                stages: [],
+                externalProposers: [
+                    {
+                        address,
+                        proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+                    },
+                ],
+            }),
+        });
+
+        // External proposers are not DAO plugins, so no meta matches by address.
+        useDaoPluginsSpy.mockReturnValue([]);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
         );
+
+        return { address, params: { daoId: 'dao-test', plugin: sppPlugin } };
+    };
+
+    it.each([
+        {
+            name: 'surfaces a Safe body settings group when it can create proposals',
+            createFixture: createStageBodySafeFixture,
+        },
+        {
+            name: 'surfaces an external proposer Safe in the eligibility settings',
+            createFixture: createExternalProposerSafeFixture,
+        },
+    ])('$name', ({ createFixture }) => {
+        const { address, params } = createFixture();
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
+
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([
-            [
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
-                    definition: addressUtils.truncateAddress(safeAddress),
-                    link: {
-                        href: `https://etherscan.io/address/${safeAddress}`,
-                        isExternal: true,
-                    },
-                },
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
-                    definition:
-                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
-                },
-            ],
+            buildExpectedSafeGroup(address),
         ]);
     });
 
@@ -291,15 +305,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createSafeTestParams({
             proposalCreationConditionAddress: undefined,
         });
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeFalsy();
         expect(result.current.settings).toEqual([]);
@@ -310,34 +318,19 @@ describe('useSppPermissionCheckProposalCreation', () => {
             brandId: VotingBodyBrandIdentity.EOA,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
         });
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeFalsy();
         expect(result.current.settings).toEqual([]);
     });
 
-    it('combines an installed internal body with an external Safe body in the same process', () => {
-        const internalAddress = `0x${'1'.repeat(40)}`;
-        const safeAddress = `0x${'2'.repeat(40)}`;
-
-        const internalMeta = generateDaoPlugin({ address: internalAddress });
-        const internalSettings = [
-            [{ term: 'Members', definition: 'Listed only' }],
-        ];
-        const internalGuardResult = generateGuardResult({
-            isRestricted: true,
-            settings: internalSettings,
-        });
-
-        const sppPlugin = generateDaoPlugin({
+    const buildStageBodySafeSppPlugin = (
+        internalAddress: string,
+        safeAddress: string,
+    ) =>
+        generateDaoPlugin({
             address: `0x${'a'.repeat(40)}`,
             settings: generateSppPluginSettings({
                 stages: [
@@ -358,120 +351,11 @@ describe('useSppPermissionCheckProposalCreation', () => {
             }),
         });
 
-        useDaoPluginsSpy.mockReturnValue([
-            generateFilterComponentPlugin({ meta: internalMeta }),
-        ]);
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao() }),
-        );
-
-        // Only the internal body resolves to a slot function; the external Safe body
-        // (pluginId 'external') falls through to the fallback hook.
-        getSlotFunctionSpy.mockImplementation(((slotParams: {
-            pluginId: string;
-        }) =>
-            slotParams.pluginId === internalMeta.interfaceType
-                ? () => internalGuardResult
-                : undefined) as never);
-        mockSimulation({ isLoading: false, isSuccess: true });
-
-        const params = { daoId: 'dao-test', plugin: sppPlugin };
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
-
-        expect(result.current.isRestricted).toBeTruthy();
-        expect(result.current.settings).toEqual([
-            ...internalSettings,
-            [
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
-                    definition: addressUtils.truncateAddress(safeAddress),
-                    link: {
-                        href: `https://etherscan.io/address/${safeAddress}`,
-                        isExternal: true,
-                    },
-                },
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
-                    definition:
-                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
-                },
-            ],
-        ]);
-    });
-
-    it('surfaces an external proposer Safe in the eligibility settings', () => {
-        const externalProposerAddress = `0x${'e'.repeat(40)}`;
-        const sppPlugin = generateDaoPlugin({
-            address: `0x${'a'.repeat(40)}`,
-            settings: generateSppPluginSettings({
-                stages: [],
-                externalProposers: [
-                    {
-                        address: externalProposerAddress,
-                        proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
-                    },
-                ],
-            }),
-        });
-
-        // External proposers are not DAO plugins, so no meta matches by address.
-        useDaoPluginsSpy.mockReturnValue([]);
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao() }),
-        );
-        mockSimulation({ isLoading: false, isSuccess: true });
-
-        const params = { daoId: 'dao-test', plugin: sppPlugin };
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
-
-        expect(result.current.isRestricted).toBeTruthy();
-        expect(result.current.settings).toEqual([
-            [
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
-                    definition: addressUtils.truncateAddress(
-                        externalProposerAddress,
-                    ),
-                    link: {
-                        href: `https://etherscan.io/address/${externalProposerAddress}`,
-                        isExternal: true,
-                    },
-                },
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
-                    definition:
-                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
-                },
-            ],
-        ]);
-    });
-
-    it('appends external proposer Safe groups after stage-body groups', () => {
-        const internalAddress = `0x${'1'.repeat(40)}`;
-        const externalProposerAddress = `0x${'e'.repeat(40)}`;
-
-        const internalMeta = generateDaoPlugin({ address: internalAddress });
-        const internalSettings = [
-            [{ term: 'Members', definition: 'Listed only' }],
-        ];
-        const internalGuardResult = generateGuardResult({
-            isRestricted: true,
-            settings: internalSettings,
-        });
-
-        const sppPlugin = generateDaoPlugin({
+    const buildExternalProposerSafeSppPlugin = (
+        internalAddress: string,
+        safeAddress: string,
+    ) =>
+        generateDaoPlugin({
             address: `0x${'a'.repeat(40)}`,
             settings: generateSppPluginSettings({
                 stages: [
@@ -485,12 +369,37 @@ describe('useSppPermissionCheckProposalCreation', () => {
                 ],
                 externalProposers: [
                     {
-                        address: externalProposerAddress,
+                        address: safeAddress,
                         proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
                     },
                 ],
             }),
         });
+
+    it.each([
+        {
+            name: 'combines an installed internal body with an external Safe body in the same process',
+            safeAddress: `0x${'2'.repeat(40)}`,
+            buildSppPlugin: buildStageBodySafeSppPlugin,
+        },
+        {
+            name: 'appends external proposer Safe groups after stage-body groups',
+            safeAddress: `0x${'e'.repeat(40)}`,
+            buildSppPlugin: buildExternalProposerSafeSppPlugin,
+        },
+    ])('$name', ({ safeAddress, buildSppPlugin }) => {
+        const internalAddress = `0x${'1'.repeat(40)}`;
+
+        const internalMeta = generateDaoPlugin({ address: internalAddress });
+        const internalSettings = [
+            [{ term: 'Members', definition: 'Listed only' }],
+        ];
+        const internalGuardResult = generateGuardResult({
+            isRestricted: true,
+            settings: internalSettings,
+        });
+
+        const sppPlugin = buildSppPlugin(internalAddress, safeAddress);
 
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin({ meta: internalMeta }),
@@ -498,45 +407,25 @@ describe('useSppPermissionCheckProposalCreation', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
-        // Only the internal body resolves to a slot function; the external proposer Safe
-        // (pluginId 'external') falls through to the fallback hook.
+
+        // Only the internal body resolves to a slot function; the external Safe
+        // (stage body or external proposer) falls through to the fallback hook
+        // (pluginId 'external').
         getSlotFunctionSpy.mockImplementation(((slotParams: {
             pluginId: string;
         }) =>
             slotParams.pluginId === internalMeta.interfaceType
                 ? () => internalGuardResult
                 : undefined) as never);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const params = { daoId: 'dao-test', plugin: sppPlugin };
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([
             ...internalSettings,
-            [
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
-                    definition: addressUtils.truncateAddress(
-                        externalProposerAddress,
-                    ),
-                    link: {
-                        href: `https://etherscan.io/address/${externalProposerAddress}`,
-                        isExternal: true,
-                    },
-                },
-                {
-                    term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
-                    definition:
-                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
-                },
-            ],
+            buildExpectedSafeGroup(safeAddress),
         ]);
     });
 });

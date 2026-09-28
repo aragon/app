@@ -23,20 +23,20 @@ export const gaugeVoterPlugin: IPluginInfo = {
             '0x0000000000000000000000000000000000000000',
         [Network.POLYGON_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.ZKSYNC_MAINNET]: '0x0000000000000000000000000000000000000000',
-        [Network.PEAQ_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.OPTIMISM_MAINNET]:
             '0x0000000000000000000000000000000000000000',
         [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.AVAX_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.ROBINHOOD_MAINNET]:
+            '0x0000000000000000000000000000000000000000',
     },
-    pageLinks: (baseUrl, context) => [
+    pageLinks: (baseUrl) => [
         {
             label: 'app.plugins.gaugeVoter.meta.link.gauges',
             link: `${baseUrl}/${GaugeVoterPluginPages.GAUGES}`,
             icon: IconType.APP_GAUGE,
-            lgHidden: context === 'dialog',
             order: 250,
         },
     ],

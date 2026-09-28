@@ -6,7 +6,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import {
     AssetInput,
@@ -14,6 +14,7 @@ import {
 } from '@/modules/finance/components/assetInput';
 import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
 
@@ -67,7 +68,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
         control,
         name: 'amount',
     });
-    const lockAmountWei = parseUnits(lockAmount ?? '0', decimals);
+    const lockAmountWei = bigIntUtils.parseUnits(lockAmount, decimals);
 
     const needsApprovalForAmount = isConnected && lockAmountWei > allowance;
 

@@ -22,7 +22,8 @@ export interface IProposal<
      */
     incrementalId: number;
     /**
-     * Title of the proposal.
+     * Title of the proposal. The backend leaves it unset when the proposal metadata cannot be
+     * resolved, the service normalizes it to an empty string.
      */
     title: string;
     /**
@@ -34,9 +35,15 @@ export interface IProposal<
      */
     blockTimestamp: number;
     /**
-     * Short summary of the proposal.
+     * Short summary of the proposal. The backend leaves it unset when the proposal metadata
+     * cannot be resolved, the service normalizes it to an empty string.
      */
     summary: string;
+    /**
+     * Raw onchain metadata string. Contains an IPFS URI for standard proposals but can hold any
+     * string when the metadata is written directly onchain (e.g. by AI agents).
+     */
+    metadataUri: string | null;
     /**
      * Description of the proposal in HTML format.
      */

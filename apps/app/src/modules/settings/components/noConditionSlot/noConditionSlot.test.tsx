@@ -1,20 +1,13 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { NoConditionSlot } from './noConditionSlot';
 
 describe('<NoConditionSlot /> component', () => {
-    const createTestComponent = () => (
-        <GukModulesProvider>
-            <NoConditionSlot />
-        </GukModulesProvider>
-    );
+    it('renders only a compact dash placeholder', () => {
+        render(<NoConditionSlot />);
 
-    it('renders the no condition heading and description copy', () => {
-        render(createTestComponent());
-
-        expect(screen.getByText(/noConditionSlot.heading/)).toBeInTheDocument();
         expect(
-            screen.getByText(/noConditionSlot.description/),
-        ).toBeInTheDocument();
+            screen.getByTestId('no-condition-placeholder'),
+        ).toHaveTextContent('-');
+        expect(screen.queryByText(/noConditionSlot/)).not.toBeInTheDocument();
     });
 });

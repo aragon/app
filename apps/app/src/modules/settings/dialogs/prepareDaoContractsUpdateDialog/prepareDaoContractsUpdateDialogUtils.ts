@@ -66,7 +66,13 @@ class PrepareDaoContractsUpdateDialogUtils {
     ) => {
         const pluginInfo = pluginRegistryUtils.getPlugin(
             plugin.interfaceType,
-        ) as IPluginInfo;
+        ) as IPluginInfo | undefined;
+
+        // Never encode an update transaction against a plugin we cannot identify.
+        invariant(
+            pluginInfo != null,
+            `PrepareDaoContractsUpdateDialogUtils: no plugin info registered for interface type "${plugin.interfaceType}".`,
+        );
 
         const currentVersionTag =
             versionComparatorUtils.normaliseComparatorInput(plugin)!;
@@ -236,6 +242,8 @@ class PrepareDaoContractsUpdateDialogUtils {
             release: currentRelease,
             build: currentBuild,
         } = plugin;
+        // getAvailablePluginUpdates only returns plugins whose interfaceType
+        // resolves, so this lookup cannot miss.
         const { release, build, description, releaseNotes } = (
             pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo
         ).installVersion;

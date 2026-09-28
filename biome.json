@@ -12,7 +12,10 @@
             "!.next",
             "!coverage",
             "!.turbo",
-            "!**/*.svg"
+            "!**/*.svg",
+            "!apps/app/src/modules/application/components/layouts/layoutRoot/breakpoints.css",
+            "!apps/assistant/src/docs/generated/*.js",
+            "!apps/assistant/.docs-corpus"
         ]
     },
     "formatter": {
@@ -142,7 +145,9 @@
                 "noNamespaceImport": "off",
                 "useTopLevelRegex": "off",
                 "noAccumulatingSpread": "off",
-                "noDelete": "off"
+                "noDelete": "off",
+                "noAwaitInLoops": "off",
+                "noJsxPropsBind": "off"
             },
             "security": {
                 "noDangerouslySetInnerHtmlWithChildren": "error",
@@ -165,6 +170,8 @@
                 "useUnifiedTypeSignatures": "error",
                 "noNegationElse": "off",
                 "noNestedTernary": "off",
+                "noIncrementDecrement": "off",
+                "useDestructuring": "off",
                 "noEnum": "off",
                 "noExportedImports": "off",
                 "useFilenamingConvention": "off",
@@ -251,7 +258,8 @@
                 "noUnusedExpressions": "off",
                 "noShadow": "off",
                 "noEqualsToNull": "off",
-                "noLeakedRender": "off"
+                "noLeakedRender": "off",
+                "noUnnecessaryConditions": "off"
             }
         },
         "includes": [
@@ -384,7 +392,8 @@
                 "organizeImports": "on",
                 "useSortedAttributes": "on",
                 "useSortedInterfaceMembers": "off",
-                "useSortedProperties": "off"
+                "useSortedProperties": "off",
+                "useSortedKeys": "off"
             }
         }
     },

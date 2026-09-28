@@ -37,10 +37,7 @@ describe('createSessionStore', () => {
         await store.releaseTicketClaim(sessionId, 'call-1');
         expect(await store.claimTicket(sessionId, 'call-1')).toBeTruthy();
 
-        const ticket = {
-            identifier: 'SUP-1',
-            url: 'https://linear.app/aragon/issue/SUP-1',
-        };
+        const ticket = { identifier: 'SUP-1' };
         await store.storeTicket(sessionId, 'call-1', ticket);
 
         // A replay of the same call reads the stored result instead of creating again.

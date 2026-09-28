@@ -8,6 +8,7 @@ const errorTextByCode: Partial<Record<IAssistantErrorCode, string>> = {
     rate_limited: chatCopy.serviceErrors.rateLimited,
     session_limit: chatCopy.serviceErrors.sessionLimit,
     upstream_rate_limited: chatCopy.serviceErrors.upstreamRateLimited,
+    timeout: chatCopy.serviceErrors.timeout,
 };
 
 /**

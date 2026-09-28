@@ -23,20 +23,20 @@ export const capitalDistributorPlugin: IPluginInfo = {
             '0x0000000000000000000000000000000000000000',
         [Network.POLYGON_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.ZKSYNC_MAINNET]: '0x0000000000000000000000000000000000000000',
-        [Network.PEAQ_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.OPTIMISM_MAINNET]:
             '0x0000000000000000000000000000000000000000',
         [Network.CHILIZ_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.AVAX_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.ROBINHOOD_MAINNET]:
+            '0x0000000000000000000000000000000000000000',
     },
-    pageLinks: (baseUrl, context) => [
+    pageLinks: (baseUrl) => [
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
             link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
             icon: IconType.REWARDS,
-            lgHidden: context === 'dialog',
             order: 700,
         },
     ],

@@ -31,7 +31,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
     return (
         <header
             className={classNames(
-                'relative flex flex-col justify-between overflow-hidden md:h-114',
+                'relative isolate flex flex-col justify-between overflow-hidden md:h-114',
                 twkEverett.className,
                 className,
             )}

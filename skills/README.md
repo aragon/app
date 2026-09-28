@@ -42,7 +42,7 @@ Invocable capabilities — the agent selects them based on the task (model-invok
 
 ### Rule-skills
 
-Path-scoped guardrails — *constraints* on the agent's work, not invocable capabilities. Discriminated by `kind: rule` in frontmatter. Injected lazily by the PreToolUse hook when the edited file matches the rule's `globs` field. The hook loader reads them directly from `skills/shared/rules/<name>/SKILL.md`; the CLI sync also installs them to the generated roots so agents that discover `SKILL.md` files can enumerate them.
+Path-scoped guardrails — *constraints* on the agent's work, not invocable capabilities. Discriminated by `kind: rule` in frontmatter. Injected lazily by the PreToolUse hook when the edited file matches the rule's `globs` field. The hook loader reads them directly from `skills/shared/rules/<name>/SKILL.md`. Rules are validated by the sync (frontmatter, name/directory match, uniqueness) but never installed to the agent discovery roots: they are hook-only, and installing them would let agents load them as global skills with no path gating.
 
 Spec: `skills/shared/rules/README.md`.
 
@@ -96,7 +96,7 @@ Two classes:
 
 ## Synchronization
 
-`pnpm install` triggers `postinstall` → `pnpm skills:sync`, which discovers all workflow skills under `skills/shared/*/SKILL.md`, rule-skills under `skills/shared/rules/*/SKILL.md`, and local skills under `skills/local/*/SKILL.md`, then installs them (copy mode, non-interactive) into the agent discovery roots.
+`pnpm install` triggers `postinstall` → `node scripts/sync-skills.mjs`, which validates all catalogs (`skills/shared/*/SKILL.md`, `skills/shared/rules/*/SKILL.md`, `skills/local/*/SKILL.md`), installs the workflow skills (copy mode, non-interactive) into the agent discovery roots, and reconciles stale installs via the sync manifest. Rule-skills are hook-only and are never installed to the roots. A CLI failure during install only warns and exits cleanly — run `pnpm skills:sync` manually to see the error.
 
 ```bash
 pnpm install          # installs deps + syncs skills
@@ -132,10 +132,10 @@ All generated roots are gitignored — do not commit generated skill copies and 
 1. Discovers workflow skills under `skills/shared/*/SKILL.md`, rule-skills under `skills/shared/rules/*/SKILL.md`, and local skills under `skills/local/*/SKILL.md`.
 2. Rejects duplicate skill names across all catalogs.
 3. Rejects category-level `SKILL.md` files.
-4. Validates frontmatter `name` matches the directory and `description` is present.
-5. Reconciles stale generated skills (removes generated dirs with no canonical source).
-6. Installs all skills via the pinned CLI (`skills add … --copy --yes --full-depth`) to the two generated roots — the universal store (`.agents/skills`, read by Codex, Cursor, Gemini CLI, and others) and Claude Code (`.claude/skills`). It passes `-a universal -a claude-code`: the `universal` target writes `.agents/skills` exactly once, rather than once per universal agent.
-7. Validates the generated filesystem: every canonical skill exists at each root, `SKILL.md` present, supporting files preserved, categories flattened, executable bits retained.
+4. Validates frontmatter — `name` matches the directory, `description` is present and single-line (block scalars are rejected).
+5. Reconciles the generated roots against `.skills-sync-manifest.json` (gitignored, rewritten on every run): only skill directories a previous sync installed are removed when they leave the canonical tree. Anything else — personal skills kept in `.claude/skills/` or `.agents/skills/` — is left alone. Reconciliation runs even when there is nothing to install.
+6. Installs the workflow skills via the pinned CLI (`skills add … --copy --yes --full-depth`, with `--skill` enumerating the installed names — never `'*'`, which would also pull `rules/` into the roots) to the two generated roots — the universal store (`.agents/skills`, read by Codex, Cursor, Gemini CLI, and others) and Claude Code (`.claude/skills`). It passes `-a universal -a claude-code`: the `universal` target writes `.agents/skills` exactly once, rather than once per universal agent. Rule-skills are validated but never installed — they are hook-only. A CLI failure (e.g. broken devDependency install) warns and exits cleanly instead of failing `pnpm install`; validation failures remain hard errors.
+7. Validates the generated filesystem: every installed skill exists at each root, `SKILL.md` present, supporting files preserved, categories flattened, executable bits retained.
 8. Fails on any inconsistency even if the CLI reported success.
 
 ## Adding a new skill

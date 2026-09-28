@@ -202,6 +202,9 @@ export class DaoProcessDetailsClientUtils {
             transactionHash: plugin?.transactionHash ?? '',
             proposalCreationConditionAddress:
                 plugin?.proposalCreationConditionAddress,
+            // Carried over so a body flagged as unsupported by the backend does
+            // not read as supported once rebuilt from the SPP stage settings.
+            isSupported: plugin?.isSupported,
         };
     }
 }

@@ -92,6 +92,8 @@ export const DaoMemberDetailsPageClient: React.FC<
     };
     const { data: member } = useMember(memberParams);
 
+    // The single-member endpoint is still served by the legacy backend, which
+    // reports activity as block numbers. This resolves them to dates on-chain.
     const { firstActive, lastActive } = member ?? {};
 
     const { chainId, buildEntityUrl } = useDaoChain({ daoId });
@@ -236,7 +238,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                 }
                 breadcrumbs={pageBreadcrumbs}
                 description={ensRecords?.description ?? undefined}
-                title={memberName}
+                title={displayName ?? address}
             />
             <Page.Content>
                 <Page.Main>
@@ -286,18 +288,23 @@ export const DaoMemberDetailsPageClient: React.FC<
                     >
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                copyValue={address}
-                                link={{ href: addressUrl }}
+                                link={{
+                                    href: addressUrl,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.governance.daoMemberDetailsPage.aside.details.address',
                                 )}
                             >
-                                {truncatedAddress}
+                                {address}
                             </DefinitionList.Item>
                             {ensName && addressUrl && (
                                 <DefinitionList.Item
-                                    copyValue={ensName}
-                                    link={{ href: addressUrl }}
+                                    copyValue={address}
+                                    link={{
+                                        href: addressUrl,
+                                        isOnchainEntity: true,
+                                    }}
                                     term={t(
                                         'app.governance.daoMemberDetailsPage.aside.details.ens',
                                     )}

@@ -1,9 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type {
     InfiniteQueryOptions,
     SharedInfiniteQueryOptions,
 } from '@/shared/types';
-import type { IPaginatedResponse } from '../../../../../../shared/api/aragonBackendService';
 import type { IAllowedAction } from '../../domain';
 import { executeSelectorsService } from '../../executeSelectorsService';
 import type { IGetAllowedActionsParams } from '../../executeSelectorsService.api';
@@ -21,7 +21,8 @@ export const allowedActionsOptions = (
 > => ({
     queryKey: executeSelectorsServiceKeys.allowedActions(params),
     initialPageParam: params,
-    queryFn: () => executeSelectorsService.getAllowedActions(params),
+    queryFn: ({ pageParam }) =>
+        executeSelectorsService.getAllowedActions(pageParam),
     getNextPageParam: executeSelectorsService.getNextPageParams,
     ...options,
 });

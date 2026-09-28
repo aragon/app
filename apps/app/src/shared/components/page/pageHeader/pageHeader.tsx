@@ -1,4 +1,6 @@
 import {
+    AddressOutput,
+    addressUtils,
     Breadcrumbs,
     Collapsible,
     Heading,
@@ -67,7 +69,17 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col gap-6">
                         <div className="flex flex-col gap-y-2 md:gap-y-3">
-                            <Heading size="h1">{title}</Heading>
+                            <Heading size="h1">
+                                {title != null &&
+                                addressUtils.isAddress(title) ? (
+                                    <AddressOutput
+                                        address={title}
+                                        copy={false}
+                                    />
+                                ) : (
+                                    title
+                                )}
+                            </Heading>
                             {description && (
                                 <Collapsible
                                     buttonLabelClosed={t(

@@ -1,7 +1,9 @@
 import {
     assistantLimits,
+    attachmentPartType,
     chatRequestSchema,
     createTicketToolName,
+    docsToolNameSet,
     type IAssistantError,
     type IChatMessage,
 } from '@aragon/assistant-contracts';
@@ -16,15 +18,26 @@ import {
     type UIMessageStreamWriter,
 } from 'ai';
 import { Hono } from 'hono';
-import { chatTimeoutMs, getChatProviderOptions } from '../chat/models';
+import { buildDocsNarrationFilter } from '../chat/docsNarrationFilter';
+import {
+    isModelContentChunk,
+    streamFirstRespondingModel,
+} from '../chat/modelFailover';
+import {
+    chatTimeoutMs,
+    firstContentTimeoutMs,
+    getChatModels,
+    getChatProviderOptions,
+} from '../chat/models';
 import { buildAgentSystemPrompt } from '../chat/prompts/agentPrompt';
 import {
     tokenBudgetMessage,
     turnLimitMessage,
 } from '../chat/prompts/fixedMessages';
+import { buildTimeoutErrorTransform } from '../chat/timeoutErrorStream';
 import { buildCreateLinearTicketTool } from '../chat/tools/createLinearTicket';
+import { buildDocsTools } from '../chat/tools/docsTools';
 import { buildFlagOffTopicTool } from '../chat/tools/flagOffTopic';
-import { searchDocsTool } from '../chat/tools/searchDocs';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { getConfig } from '../lib/config';
 import { type IRefusalReason, observability } from '../lib/observability';
@@ -61,9 +74,16 @@ const buildFixedMessageResponse = (params: {
     sessionId: string;
     text: string;
     refusalReason: IRefusalReason;
+    originalMessages: UIMessage[];
     failedToolCallIds?: string[];
 }) => {
-    const { sessionId, text, refusalReason, failedToolCallIds } = params;
+    const {
+        sessionId,
+        text,
+        refusalReason,
+        originalMessages,
+        failedToolCallIds,
+    } = params;
 
     observability.logStep({
         sessionId,
@@ -73,6 +93,7 @@ const buildFixedMessageResponse = (params: {
     });
 
     const stream = createUIMessageStream({
+        originalMessages,
         execute: ({ writer }) => {
             writeFixedMessage(writer, text, failedToolCallIds);
         },
@@ -98,6 +119,13 @@ export const buildChatRoute = (deps: IAppDependencies) => {
 
         const { sessionId, messages, appContext } = parsed.data;
         const sessionStore = deps.getSessionStore();
+
+        // Every stream below is opened against the incoming history: when it ends on an assistant
+        // message (an approval resume), the AI SDK stamps the response with THAT message's id and
+        // the widget continues it. Without it the SDK stamps a fresh id, and the widget — whose
+        // response state is seeded from the last message — appends a copy of it, so the text
+        // written before the tool call is shown a second time under the created ticket.
+        const uiMessages = toUiMessages(messages);
 
         // A session's first turn consumes the per-IP new-session budget. The gate runs BEFORE
         // the turn is counted: a refused session never increments, so retries and concurrent
@@ -137,6 +165,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 sessionId,
                 text: turnLimitMessage,
                 refusalReason: 'turn_limit',
+                originalMessages: uiMessages,
                 failedToolCallIds: pendingApprovedToolCallIds,
             });
         }
@@ -147,6 +176,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 sessionId,
                 text: tokenBudgetMessage,
                 refusalReason: 'token_budget',
+                originalMessages: uiMessages,
                 failedToolCallIds: pendingApprovedToolCallIds,
             });
         }
@@ -157,97 +187,185 @@ export const buildChatRoute = (deps: IAppDependencies) => {
         // only receives an anonymized wrapper and reuses the classified payload so both emitted
         // error parts agree.
         let respondErrorPayload: string | undefined;
+        let turnRefunded = false;
+
+        // A failed turn produced no reply, so a retry must not count double against the turn
+        // budget — refund it (fire and forget, refusal paths never reach here). Resumes were never
+        // counted, so there is nothing to refund. Every failure path funnels through the guard:
+        // model-stream errors surface only in the nested handler (the AI SDK converts them to
+        // error parts before they reach the outer onError), execute-level failures only in the
+        // outer one, and the wall-clock cap only in the timeout transform.
+        const refundTurn = () => {
+            if (!isResume && !turnRefunded) {
+                turnRefunded = true;
+                void sessionStore.decrementTurns(sessionId);
+            }
+        };
 
         const stream = createUIMessageStream({
+            originalMessages: uiMessages,
             execute: async ({ writer }) => {
-                // File metadata only (never contents): the model must know what is already
-                // attached so it can acknowledge files instead of claiming it "can't see" them.
-                const files = await sessionStore.listFiles(sessionId);
-
                 // Open the message once here; the merged model stream reuses it (sendStart: false)
                 // so the two producers never emit a duplicate start chunk.
                 writer.write({ type: 'start' });
 
                 const startTime = Date.now();
-                const result = streamText({
-                    model: deps.getChatModel(),
-                    providerOptions: getChatProviderOptions(),
-                    abortSignal: AbortSignal.timeout(chatTimeoutMs),
-                    maxOutputTokens: assistantLimits.maxOutputTokens,
-                    // Draft → tool → post-approval summary all happen within a bounded step count.
-                    stopWhen: stepCountIs(5),
-                    system: buildAgentSystemPrompt({
-                        appContext,
-                        files,
-                        docsSearchEnabled,
-                    }),
+                // Held rather than inlined: the abort chunk the cancellation produces is
+                // indistinguishable from the one a client-side Stop produces, and only this
+                // signal firing makes it a failure worth reporting.
+                const timeoutSignal = AbortSignal.timeout(chatTimeoutMs);
+                const modelMessages = await convertToModelMessages(uiMessages, {
                     // ignoreIncompleteToolCalls drops tool parts the composer's Stop left in
                     // `input-streaming`/`input-available`: replayed as-is they would convert
                     // to a tool call without a response and fail every following model call.
-                    messages: await convertToModelMessages(
-                        toUiMessages(messages),
-                        { ignoreIncompleteToolCalls: true },
-                    ),
-                    tools: {
-                        [createTicketToolName]: buildCreateLinearTicketTool({
-                            deps,
-                            sessionId,
-                            appContext,
-                            messages,
-                        }),
-                        // Auto-approved (absent from toolApproval): records off-topic attempts
-                        // for analytics; the model calls it before declining.
-                        flagOffTopic: buildFlagOffTopicTool(sessionId),
-                        ...(docsSearchEnabled
-                            ? { searchDocs: searchDocsTool }
-                            : {}),
-                    },
-                    // Ticket creation is gated behind an explicit user approval of the draft; the
-                    // widget resumes the stream once the user presses Create.
-                    toolApproval: {
-                        [createTicketToolName]: () => 'user-approval',
-                    },
-                    onFinish: async ({ usage, finalStep }) => {
-                        await sessionStore.addTokens(
-                            sessionId,
-                            usage.totalTokens ?? 0,
-                        );
+                    ignoreIncompleteToolCalls: true,
+                });
+
+                // The turn runs on the first model that actually starts answering: the Gateway
+                // only fails a call over when it errors, and the stall we see never does.
+                const modelStream = await streamFirstRespondingModel({
+                    models: getChatModels(),
+                    firstContentTimeoutMs,
+                    signal: timeoutSignal,
+                    isContent: isModelContentChunk,
+                    onFailover: ({ from, to }) => {
+                        // The abandoned attempt may have classified an error on its way out;
+                        // it says nothing about the model now serving the turn.
+                        respondErrorPayload = undefined;
                         observability.logStep({
                             sessionId,
                             step: 'respond',
-                            // The model that actually answered: under a Gateway fallback this
-                            // differs from the requested model, keeping degradation visible.
-                            model: finalStep.response.modelId,
+                            model: from,
                             latencyMs: Date.now() - startTime,
-                            tokensIn: usage.inputTokens,
-                            tokensOut: usage.outputTokens,
-                            finishReason: finalStep.finishReason,
+                            failoverTo: to,
                         });
                     },
+                    start: ({ model, abortSignal, remainingModels }) =>
+                        toUIMessageStream({
+                            sendStart: false,
+                            onError: (error) => {
+                                // An attempt the failover abandoned may still error on its way
+                                // out; that verdict never reaches the user and the next model
+                                // serves the turn, so it is neither reported nor refunded. Only
+                                // the attempt's own signal aborts it — the overall cap ends the
+                                // stream on an abort chunk, handled by the transform below.
+                                const isAbandoned =
+                                    abortSignal.aborted &&
+                                    !timeoutSignal.aborted;
+
+                                if (!isAbandoned) {
+                                    observability.logError(error, {
+                                        sessionId,
+                                        step: 'respond',
+                                    });
+                                    refundTurn();
+                                }
+
+                                respondErrorPayload = JSON.stringify(
+                                    buildStreamError(error),
+                                );
+
+                                return respondErrorPayload;
+                            },
+                            stream: streamText({
+                                model: deps.getChatModel(model),
+                                providerOptions:
+                                    getChatProviderOptions(remainingModels),
+                                abortSignal,
+                                maxOutputTokens:
+                                    assistantLimits.maxOutputTokens,
+                                // Bounded step count: a documentation answer is a search, at
+                                // most a couple of page reads and the reply; a report is the
+                                // draft, the tool and the post-approval summary.
+                                stopWhen: stepCountIs(8),
+                                system: buildAgentSystemPrompt({
+                                    hasAttachments: hasAttachments(messages),
+                                    docsSearchEnabled,
+                                }),
+                                messages: modelMessages,
+                                tools: {
+                                    [createTicketToolName]:
+                                        buildCreateLinearTicketTool({
+                                            deps,
+                                            sessionId,
+                                            appContext,
+                                            messages,
+                                        }),
+                                    // Auto-approved (absent from toolApproval): records off-topic attempts
+                                    // for analytics; the model calls it before declining.
+                                    flagOffTopic: buildFlagOffTopicTool(
+                                        sessionId,
+                                        { docsSearchEnabled },
+                                    ),
+                                    // Auto-approved as well: they only read the index built
+                                    // into the bundle.
+                                    ...(docsSearchEnabled
+                                        ? buildDocsTools({
+                                              docsSearch: deps.getDocsSearch(),
+                                              sessionId,
+                                          })
+                                        : {}),
+                                },
+                                // Ticket creation is gated behind an explicit user approval of the draft; the
+                                // widget resumes the stream once the user presses Create.
+                                toolApproval: {
+                                    [createTicketToolName]: () =>
+                                        'user-approval',
+                                },
+                                onFinish: async ({ usage, finalStep }) => {
+                                    await sessionStore.addTokens(
+                                        sessionId,
+                                        usage.totalTokens ?? 0,
+                                    );
+                                    observability.logStep({
+                                        sessionId,
+                                        step: 'respond',
+                                        // The model that actually answered: under a Gateway fallback this
+                                        // differs from the requested model, keeping degradation visible.
+                                        model: finalStep.response.modelId,
+                                        latencyMs: Date.now() - startTime,
+                                        tokensIn: usage.inputTokens,
+                                        tokensOut: usage.outputTokens,
+                                        finishReason: finalStep.finishReason,
+                                    });
+                                },
+                            }).stream,
+                        }),
                 });
 
-                writer.merge(
-                    toUIMessageStream({
-                        stream: result.stream,
-                        sendStart: false,
-                        onError: (error) => {
-                            respondErrorPayload = JSON.stringify(
-                                buildStreamError(error),
-                            );
+                // The sentence a model writes before a documentation tool call never reaches
+                // the widget (see the filter); the failover above already read the raw stream.
+                const answerStream = docsSearchEnabled
+                    ? modelStream.pipeThrough(
+                          buildDocsNarrationFilter({
+                              toolNames: docsToolNameSet,
+                          }),
+                      )
+                    : modelStream;
 
-                            return respondErrorPayload;
-                        },
-                    }),
+                writer.merge(
+                    answerStream.pipeThrough(
+                        buildTimeoutErrorTransform({
+                            sessionId,
+                            timeoutSignal,
+                            // The cap ends the stream on an abort chunk, not an error, so neither
+                            // error handler sees it: the turn produced no reply and is refunded
+                            // here.
+                            onTimeout: refundTurn,
+                        }),
+                    ),
                 );
             },
             onError: (error) => {
-                observability.logError(error, { sessionId, step: 'respond' });
-                // The turn produced no reply, so the retry must not count double against the
-                // turn budget — refund it (fire and forget, refusal paths never reach here).
-                // Resumes were never counted, so there is nothing to refund.
-                if (!isResume) {
-                    void sessionStore.decrementTurns(sessionId);
+                // A recorded payload means the nested handler already logged the original error;
+                // log here only for failures that happened outside the model stream.
+                if (respondErrorPayload == null) {
+                    observability.logError(error, {
+                        sessionId,
+                        step: 'respond',
+                    });
                 }
+                refundTurn();
 
                 return (
                     respondErrorPayload ??
@@ -344,7 +462,41 @@ const getPendingApprovedToolCallIds = (messages: IChatMessage[]): string[] => {
 const toUiMessages = (messages: IChatMessage[]): UIMessage[] =>
     messages
         .map(dropReasoningParts)
+        .map(markAttachments)
         .map(resolveDanglingApprovals) as unknown as UIMessage[];
+
+// Whether the conversation carries any attachment, which is what the attachment guidance in the
+// system prompt is about. Read off the messages, not the session queue: a created ticket empties
+// the queue, and the conversation still remembers the file it took with it.
+const hasAttachments = (messages: IChatMessage[]): boolean =>
+    messages.some((message) =>
+        message.parts.some((part) => part.type === attachmentPartType),
+    );
+
+// Attachments reach the model as a plain line inside the message that carried them: the bytes
+// travel out-of-band, and a positionless "N files are attached" note in the system prompt left the
+// model guessing WHEN a file arrived — it kept asking for screenshots the user had just sent. The
+// line names the file and nothing more. File parts (bytes inline) are never expected here and are
+// reduced to the same line rather than pushed at the model.
+const markAttachments = (message: IChatMessage): IChatMessage => ({
+    ...message,
+    parts: message.parts.map((part) => {
+        if (part.type !== attachmentPartType && part.type !== 'file') {
+            return part;
+        }
+
+        const { data, filename } = part as {
+            data?: { filename?: unknown };
+            filename?: unknown;
+        };
+        const name = data?.filename ?? filename;
+
+        return {
+            type: 'text' as const,
+            text: `[attached: ${typeof name === 'string' ? name : 'a file'}]`,
+        };
+    }),
+});
 
 // Replayed reasoning is dead weight: it feeds no next turn, burns input tokens and makes the
 // gateway log a warning per part on providers that reject non-OpenAI reasoning in history.

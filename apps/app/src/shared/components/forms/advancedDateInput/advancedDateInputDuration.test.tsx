@@ -1,97 +1,113 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { FormWrapper } from '@/shared/testUtils';
+import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
 import {
     AdvancedDateInputDuration,
     type IAdvancedDateInputDurationProps,
 } from './advancedDateInputDuration';
 
+const testField = 'startTime';
+
+const getDurationInputs = () => ({
+    minutesInput: screen.getByLabelText(
+        /shared.advancedDateInput.duration.minutes/,
+    ),
+    hoursInput: screen.getByLabelText(
+        /shared.advancedDateInput.duration.hours/,
+    ),
+    daysInput: screen.getByLabelText(/shared.advancedDateInput.duration.days/),
+});
+
 describe('<AdvancedDateInputDuration /> component', () => {
+    // The assertions read the value this component writes onto the form, which is its own output.
+    // Asserting the rendered input value instead would assert how the kit masks keystrokes.
+    let form: UseFormReturn | undefined;
+
     const createTestComponent = (
         props?: Partial<IAdvancedDateInputDurationProps>,
     ) => {
         const completeProps: IAdvancedDateInputDurationProps = {
-            field: 'startTime',
+            field: testField,
             label: 'Test Label',
             ...props,
         };
 
-        return (
-            <FormWrapper>
-                <AdvancedDateInputDuration {...completeProps} />
-            </FormWrapper>
-        );
+        const TestHarness = () => {
+            form = useForm();
+
+            return (
+                <FormProvider {...form}>
+                    <AdvancedDateInputDuration {...completeProps} />
+                </FormProvider>
+            );
+        };
+
+        return <TestHarness />;
     };
 
-    it('validates duration input with minimum 1 hour', async () => {
-        const label = 'Duration';
-        const infoText = 'Minimum duration is 1 hour';
-        const minDuration = { days: 0, hours: 1, minutes: 0 };
-        const validateMinDuration = true;
+    afterEach(() => {
+        form = undefined;
+    });
 
+    it('sets the parsed minutes, hours and days on the form field', async () => {
+        render(createTestComponent());
+        const { minutesInput, hoursInput, daysInput } = getDurationInputs();
+
+        await userEvent.type(minutesInput, '30');
+        await userEvent.type(hoursInput, '2');
+        await userEvent.type(daysInput, '5');
+
+        expect(form?.getValues(testField)).toEqual({
+            days: 5,
+            hours: 2,
+            minutes: 30,
+        });
+    });
+
+    it('sets zero on the form field when an input is emptied', async () => {
+        render(createTestComponent());
+        const { minutesInput } = getDurationInputs();
+
+        await userEvent.type(minutesInput, '30');
+        await userEvent.clear(minutesInput);
+
+        expect(form?.getValues(testField)).toEqual({
+            days: 0,
+            hours: 0,
+            minutes: 0,
+        });
+    });
+
+    it('sets the duration as seconds on the form field when useSecondsFormat is set', async () => {
+        render(createTestComponent({ useSecondsFormat: true }));
+        const { hoursInput } = getDurationInputs();
+
+        await userEvent.type(hoursInput, '2');
+
+        expect(form?.getValues(testField)).toBe(7200);
+    });
+
+    it('sets a min-duration error on the form field and clears it once the duration is valid', async () => {
         render(
             createTestComponent({
-                label,
-                infoText,
-                minDuration,
-                validateMinDuration,
+                minDuration: { days: 0, hours: 1, minutes: 0 },
+                validateMinDuration: true,
             }),
         );
+        const { minutesInput, hoursInput } = getDurationInputs();
 
-        const minutesInput = screen.getByLabelText(
-            /shared.advancedDateInput.duration.minutes/,
-        );
-        const hoursInput = screen.getByLabelText(
-            /shared.advancedDateInput.duration.hours/,
-        );
-        const daysInput = screen.getByLabelText(
-            /shared.advancedDateInput.duration.days/,
-        );
-        const alert = screen.getByRole('alert');
-
-        expect(alert).toHaveTextContent(infoText);
-
-        // Set a duration less than minDuration
-        await userEvent.clear(minutesInput);
         await userEvent.clear(hoursInput);
-        await userEvent.clear(daysInput);
         await userEvent.type(minutesInput, '30');
         await userEvent.tab();
 
-        await waitFor(() =>
-            expect(alert).toHaveTextContent(
-                /advancedDateInput.duration.error.minDuration \(value=1 hour\)/,
-            ),
+        expect(form?.getFieldState(testField).error?.message).toBe(
+            'app.shared.advancedDateInput.duration.error.minDuration',
         );
 
-        // Set a valid duration
         await userEvent.clear(hoursInput);
         await userEvent.type(hoursInput, '2');
         await userEvent.tab();
 
-        await waitFor(() => expect(alert).toHaveTextContent(infoText));
-    });
-
-    it('does not allow invalid values on inputs', async () => {
-        render(createTestComponent());
-
-        const minutesInput = screen.getByLabelText(
-            /shared.advancedDateInput.duration.minutes/,
-        );
-        const hoursInput = screen.getByLabelText(
-            /shared.advancedDateInput.duration.hours/,
-        );
-
-        // Try to set minutes to 60. Only the 6 should be accepted
-        await userEvent.clear(minutesInput);
-        await userEvent.type(minutesInput, '60');
-
-        expect(minutesInput).toHaveValue('6 min');
-
-        // Try to set hours to 24. Only 2 should be accepted
-        await userEvent.clear(hoursInput);
-        await userEvent.type(hoursInput, '24');
-
-        expect(hoursInput).toHaveValue('2 h');
+        expect(form?.getFieldState(testField).error).toBeUndefined();
     });
 });

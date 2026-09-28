@@ -87,7 +87,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const analyticsProps = useMemo(
         () => ({
             flow: 'direct_execute_actions',
-            transactionKind: 'admin_instant_execute',
+            transactionTypeEvent: 'admin_instant_execute',
             network,
             chainId: requiredChainId,
             actionCount: actions.length,

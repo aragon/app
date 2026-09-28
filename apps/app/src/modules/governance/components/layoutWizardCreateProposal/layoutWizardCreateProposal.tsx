@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
+import { unstable_rethrow } from 'next/navigation-server';
 import {
     type ILayoutWizardProps,
     LayoutWizard,
@@ -68,6 +69,9 @@ export const LayoutWizardCreateProposal: React.FC<
         );
         wizardConfig = getWizardConfig(dao, pluginAddress);
     } catch (error: unknown) {
+        // A malformed DAO URL ends in notFound() inside resolveDaoId; let Next render the 404
+        // page instead of turning it into the generic error state.
+        unstable_rethrow(error);
         const parsedError = errorUtils.serialize(error);
         const errorNamespace =
             'app.governance.layoutWizardCreateProposal.error';
