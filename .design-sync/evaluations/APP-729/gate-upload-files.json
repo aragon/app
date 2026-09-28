@@ -1,9 +1,14 @@
 {
   "derivedFrom": "ds-bundle/.payload-manifest.json",
-  "payloadManifestSha256": "ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f",
+  "payloadManifestSha256": "f1219a8b93b9b809759de37ffc26fd75f512539a59ca20a3fcf3bcc360f3f11b",
   "count": 575,
   "anchorLast": "_ds_sync.json",
   "files": [
+    {
+      "path": "README.md",
+      "bytes": 17786,
+      "sha256": "80848f90b1b60526fdac4bc09036b35ae6fc3d98ffbdd940fb47b00d88ba6358"
+    },
     {
       "path": "_ds_bundle.css",
       "bytes": 202498,
@@ -22,7 +27,7 @@
     {
       "path": "_ds_sync.json",
       "bytes": 35799,
-      "sha256": "0b59efbd462e134f937eb8953ebb65b94affda3a4970976e45b1d2872f59938d"
+      "sha256": "54a5008c7fede7b14039318e962629cbde7254abb47cb74687ecf388e70b9b30"
     },
     {
       "path": "_preview/Accordion.js",
@@ -35,14 +40,14 @@
       "sha256": "4b2d3613209e785bff74949770d78331ecce5b450a46991b95d9f4333769e228"
     },
     {
-      "path": "_preview/AddressesInput.js",
-      "bytes": 6237,
-      "sha256": "1c5db9f776a9d5b77bd93b4b2135a1900a78b71fdad2bf5ee77af9208daaae64"
-    },
-    {
       "path": "_preview/AddressInput.js",
       "bytes": 5399,
       "sha256": "26cf8106c83fa6b8878c79d871ff0ef9a3368eef15188694b389f9a8b0e5cee9"
+    },
+    {
+      "path": "_preview/AddressesInput.js",
+      "bytes": 6237,
+      "sha256": "1c5db9f776a9d5b77bd93b4b2135a1900a78b71fdad2bf5ee77af9208daaae64"
     },
     {
       "path": "_preview/AdvancedDateInput.js",
@@ -350,11 +355,6 @@
       "sha256": "338ba2423d20eda97dc871a6869181e0d6340cb91a42ada47577ccb806279d9b"
     },
     {
-      "path": "_preview/ProposalActions.js",
-      "bytes": 11395,
-      "sha256": "84d67962b277596dc51ceecddc7a74d7fa3bec2d9c2a34bcd7ad5d9347e752d6"
-    },
-    {
       "path": "_preview/ProposalActionTokenMint.js",
       "bytes": 5242,
       "sha256": "6f186ce8afe388e10db32f4cd1c71aecf655f1e5504b4fdcf0a3cf6e7a818dc8"
@@ -368,6 +368,11 @@
       "path": "_preview/ProposalActionWithdrawToken.js",
       "bytes": 6461,
       "sha256": "d339ccf502c6e82d693f0c5e98b8507dc8491c40ebcecfa26f4a68c18d6e7cbb"
+    },
+    {
+      "path": "_preview/ProposalActions.js",
+      "bytes": 11395,
+      "sha256": "84d67962b277596dc51ceecddc7a74d7fa3bec2d9c2a34bcd7ad5d9347e752d6"
     },
     {
       "path": "_preview/ProposalDataListItem.js",
@@ -1810,26 +1815,6 @@
       "sha256": "d4ec12f34c7230b4b44b61cfbd3cae9a2f34d9e9dabf7d5cd744723e94893e69"
     },
     {
-      "path": "components/general/ProposalActions/ProposalActions.d.ts",
-      "bytes": 4162,
-      "sha256": "b0c1072be9cf90f1667f345d0b6775e0741c762682fd760d24e0c9969a55e2c7"
-    },
-    {
-      "path": "components/general/ProposalActions/ProposalActions.html",
-      "bytes": 3285,
-      "sha256": "396e5c797760bec47fe5c13da864971d1b4afff2748ceb3c2db2d511808d3fb5"
-    },
-    {
-      "path": "components/general/ProposalActions/ProposalActions.jsx",
-      "bytes": 199,
-      "sha256": "48e2a019888a65a7ee47e7ff673a5907edccda4e1ac1f00a652589b00b2b2624"
-    },
-    {
-      "path": "components/general/ProposalActions/ProposalActions.prompt.md",
-      "bytes": 8899,
-      "sha256": "1625944c089d519a6d39f0503430fab8a639d86d20256e9fb441fc65b975d6a4"
-    },
-    {
       "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.d.ts",
       "bytes": 640,
       "sha256": "81db4c9e17c84054e28cf14cca75e4ded90a13ae9de662307400b3ac45d1d7c1"
@@ -1888,6 +1873,26 @@
       "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.prompt.md",
       "bytes": 2381,
       "sha256": "24e4607b801a3ab7012dda40b9c9d756630a09039ea19f4632f3af094a6dc78c"
+    },
+    {
+      "path": "components/general/ProposalActions/ProposalActions.d.ts",
+      "bytes": 4162,
+      "sha256": "b0c1072be9cf90f1667f345d0b6775e0741c762682fd760d24e0c9969a55e2c7"
+    },
+    {
+      "path": "components/general/ProposalActions/ProposalActions.html",
+      "bytes": 3285,
+      "sha256": "396e5c797760bec47fe5c13da864971d1b4afff2748ceb3c2db2d511808d3fb5"
+    },
+    {
+      "path": "components/general/ProposalActions/ProposalActions.jsx",
+      "bytes": 199,
+      "sha256": "48e2a019888a65a7ee47e7ff673a5907edccda4e1ac1f00a652589b00b2b2624"
+    },
+    {
+      "path": "components/general/ProposalActions/ProposalActions.prompt.md",
+      "bytes": 8899,
+      "sha256": "1625944c089d519a6d39f0503430fab8a639d86d20256e9fb441fc65b975d6a4"
     },
     {
       "path": "components/general/ProposalDataListItem/ProposalDataListItem.d.ts",
@@ -2830,11 +2835,6 @@
       "sha256": "8a8f18c8ea03d1265e4d4fc47ae636b0eb7e00628cf49c4238300f7f5dfb4253"
     },
     {
-      "path": "fonts/fonts.css",
-      "bytes": 321,
-      "sha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9"
-    },
-    {
       "path": "fonts/Manrope-Regular.ttf",
       "bytes": 96832,
       "sha256": "2960175e094cf559435dd6ad7b67391689a95e866e7989b70560937dccaaea87"
@@ -2845,34 +2845,34 @@
       "sha256": "9cb6bdf00c2c6b64d4bc77087aadf88207a577f32dae410745e4d55582355d3c"
     },
     {
+      "path": "fonts/fonts.css",
+      "bytes": 321,
+      "sha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9"
+    },
+    {
       "path": "guidelines/context/index.md",
       "bytes": 1220,
-      "sha256": "1483e0591debaa64e9ced859f75cfb2828096c4cde71418d4c942432aea228f5"
+      "sha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd"
     },
     {
       "path": "guidelines/context/registry-report.md",
-      "bytes": 24986,
-      "sha256": "b1bb77aaf65febdc227472571ce72e4b8773c5bb3b38b564fcbb1d337401ee40"
+      "bytes": 25160,
+      "sha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0"
     },
     {
       "path": "guidelines/context/selection-guide.json",
       "bytes": 189637,
-      "sha256": "df368d838c3233d740e6627ca698b398a71f52d73226e1b4cbd23992cf1b1d8e"
+      "sha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e"
     },
     {
       "path": "guidelines/context/source-index.md",
       "bytes": 295296,
-      "sha256": "ded87715a778c95f3721f4cd51cbf8972ea248c5c5c22c6c9052b98a47c3dee2"
+      "sha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03"
     },
     {
       "path": "guidelines/index.md",
       "bytes": 93,
       "sha256": "89f9a7aa6ffdbcbd39c2c80c65e3f201fedf02aa3cd3fc3da94f9e405c5deae1"
-    },
-    {
-      "path": "README.md",
-      "bytes": 17542,
-      "sha256": "2c57e683cc852278f49734ed6d15701036fb5d43112b0491bcf15b2842761879"
     },
     {
       "path": "styles.css",

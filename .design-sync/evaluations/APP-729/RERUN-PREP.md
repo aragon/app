@@ -187,7 +187,7 @@ evidence is **not satisfied** — absence is not a pass.
 | `required` 0–6 | all 7 satisfied |
 | `incorrect` 0–3 | none committed |
 | Cited paths | every source path or reference resolves in the delivered payload |
-| Context reachability | the handoff demonstrably uses `guidelines/context/selection-guide.json` or `registry-report.md` for a component choice |
+| Context reachability | the handoff attributes a **composition or contract** fact — component choice, prop semantics, or the App/kit layer split — to `guidelines/context/selection-guide.json` or `registry-report.md`. A provenance citation (revision, SHA, dirty list) does **not** count, from any file. |
 
 All four must hold. This is pass/fail, not a score.
 
@@ -200,6 +200,20 @@ the citations were resolved by hand, which showed no invention at all.
 registry report and selection guide have never previously been delivered
 to any project. If the handoff never consults them, the acceptance
 question is answered "no" regardless of how good the prose is.
+
+**Re-frozen 2026-09-28, before run 3, after run 2 failed this criterion.**
+Run 1 satisfied it; run 2 did not, on byte-identical guide content. Two
+facts forced the rewording. First, the original wording was satisfiable by
+`guidelines/context/index.md`'s registry SHA — provenance boilerplate every
+handoff cites — so it risked auto-passing and measuring nothing. It now
+requires a composition or contract fact and explicitly excludes provenance.
+Second, the registry is a **GovKit registry with App usage evidence**: all
+418 records carry `govkit:` ids, and `repository: "app"` appears only at
+usage sites. An App-owned compound such as `AddressesInput.Container/Item`
+therefore has no guide entry of its own and can only be reached through the
+kit primitive it composes (`govkit:AddressInput`, guide entry 175). Citing
+that primitive's contract satisfies this criterion. Indexing App components
+as first-class records is APP-726 scope and does not gate this bundle.
 
 ### The one pre-adjudicated exception
 

@@ -4,18 +4,19 @@
   "worktree": {
     "path": "~/.herdr/worktrees/app-next/app-1208",
     "branch": "APP-1235",
-    "head": "see APP-1235 tip",
+    "head": "65661ab7a",
     "clean": true
   },
   "manifest": {
-    "payloadManifestSha256": "f1219a8b93b9b809759de37ffc26fd75f512539a59ca20a3fcf3bcc360f3f11b",
+    "payloadManifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
     "sourceCommit": "2b512b90d3093f1170a14f2ccf7eab41dcc7f036",
     "sourceDirty": [],
     "uploadFiles": 575,
     "supersedes": [
-      "2c8f7e82\u2026 \u2014 VOID, hashed a doubled _ds_bundle.css produced by two concurrent refreshes sharing --out",
-      "ff2d3043\u2026 \u2014 run 1, dead kit links",
-      "57f59808\u2026"
+      "d627dfc3 \u2014 router present but link-only, superseded before upload",
+      "2c8f7e82 \u2014 VOID, doubled CSS from concurrent refreshes",
+      "f1219a8b \u2014 run 2 payload",
+      "ff2d3043 \u2014 run 1, dead kit links"
     ]
   },
   "sourceCommitNote": "registry.mjs:1680-1684 carries previous.provenance forward; :1861-1864 excludes commit/dirty from staleness because they churn on every commit. Per-file sha256 is the real drift check. HEAD recorded above so the artifact is recreatable.",
@@ -37,13 +38,11 @@
   "verification": {
     "refreshTest": "3/3 pass",
     "refreshExit": 0,
-    "driftScope": "114 verified-by-upload, 0 changed, 0 new, 0 removed, keyed on sourceKeys",
+    "css": "202498 bytes, one tailwind banner, styleSha matches the run-1 anchor",
+    "revisions": "e06fbb8d absent, 8d70bdf0 absent, 3c9bb798 only in the labelled audit report",
+    "routerPresentInOutput": true,
     "gradingRequired": false,
-    "pushScopeWarning": "That diff reports upload: 0 components, styling, docs. It is computed against an anchor the new run-2 project will not have. Do NOT scope the push by it. Uploads are always full writes (SKILL.md:279); use the RERUN-PREP glob list. The diff justifies skipping capture/grade, nothing else.",
-    "cleanBuild": "rm -rf ds-bundle, single process, no concurrent refresh",
-    "css": "202498 bytes, one tailwind banner, no appended-entry marker; styleSha dd20a36ae9cb matches the run-1 anchor",
-    "determinism": "styleSha returned to the anchor value on a clean single build, so the kit-root swap did not move CSS. No APP-735 finding.",
-    "anchorVerified": "cf7d7d99 _ds_sync.json read via DesignSync get_file: bundleSha12 48449ece0c87, styleSha dd20a36ae9cb, keyRecipe 7, etag unchanged since the run-1 write. Matches .cache/previous-ds-bundle, so the drift scope is trustworthy."
+    "pushScopeWarning": "Use the RERUN-PREP glob list. Uploads are always full writes; never scope by .sync-diff.json."
   },
   "scope": {
     "included": [
@@ -61,7 +60,7 @@
     ],
     "bound": "APP-1225 (prop defaults: 79 upstream, 2 in bundle) bounds required[6]."
   },
-  "status": "CURRENT \u2014 APP-1235 fix applied; use this payload for run 2.",
+  "status": "CURRENT \u2014 run-3 payload. APP-1235 prose audit + guidelines router applied.",
   "revisionCoherence": {
     "e06fbb8d": "absent",
     "8d70bdf0": "absent",
@@ -69,5 +68,14 @@
     "64b517f5": "manifest, README, all generated context",
     "2b512b90": "manifest, generated context"
   },
-  "concurrencyHazard": "refresh.mjs wipes and rebuilds --out. Two overlapping runs interleave: it produced a doubled stylesheet, an ENOENT on a review screenshot, and a phantom 82-component grading demand. Run one refresh at a time."
+  "concurrencyHazard": "refresh.mjs wipes and rebuilds --out. Two overlapping runs interleave: it produced a doubled stylesheet, an ENOENT on a review screenshot, and a phantom 82-component grading demand. Run one refresh at a time.",
+  "fixedForRun3": {
+    "incorrect[3] + required[6].3": "README.md asserted wizards need BlockNavigationContextProvider. The context has a no-op default and useConfirmWizardExit calls setIsBlocked, so omitting it silently disables the dirty-exit guard rather than throwing. Reworded; marked not required by AddressesInput.",
+    "prose audit": "AutocompleteInput removed from the react-hook-form list (controlled, local useState, no name prop). Array-backed hydration narrowed to AddressesInput; ResourcesInput takes its own defaultValue. All other claim-bearing lines verified against the bundle.",
+    "context reachability": "guidelines/index.md was a five-line stub. Now names each context file and its purpose, states the kit-only scope of the guide inline, records an authority order, and requires path-plus-symbol citations."
+  },
+  "knownLimits": {
+    "guideCoverage": "The registry is a GovKit registry with App usage evidence: all 418 records carry govkit: ids; repository 'app' appears only at usage sites. App-owned compounds have no guide entry. Indexing them is APP-726 scope and does not gate this bundle.",
+    "routerIsABet": "Whether an inline-facts router changes retrieval behaviour is unmeasured. No controlled study of this bundle exists. If run 3 fails reachability again, the answer is repeat runs on one payload, not another prose rewrite."
+  }
 }
