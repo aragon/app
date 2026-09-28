@@ -1,9 +1,8 @@
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
-import useMeasure from 'react-use-measure';
 import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
 import { PluginInterfaceType } from '@/shared/api/daoService';
@@ -18,8 +17,6 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
 import { type INavigationDaoProps, NavigationDao } from './navigationDao';
-
-jest.mock('react-use-measure');
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
@@ -57,21 +54,16 @@ jest.mock('@/shared/components/navigation', () => ({
 }));
 
 describe('<NavigationDao /> component', () => {
-    const mockNavigationWidth = (width: number) =>
-        jest.mocked(useMeasure).mockReturnValue([
-            jest.fn(),
-            {
-                width,
-                height: 48,
-                top: 0,
-                left: 0,
-                right: width,
-                bottom: 48,
-                x: 0,
-                y: 0,
-            },
-            jest.fn(),
-        ]);
+    // Reports a new width of the inline links, the only element the component observes.
+    const resizeNavigationLinks = (width: number) => {
+        const [callback] = jest.mocked(ResizeObserver).mock.lastCall!;
+        act(() =>
+            callback(
+                [{ contentRect: { width } } as ResizeObserverEntry],
+                {} as ResizeObserver,
+            ),
+        );
+    };
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -86,7 +78,6 @@ describe('<NavigationDao /> component', () => {
     );
 
     beforeEach(() => {
-        mockNavigationWidth(0);
         usePathnameSpy.mockReturnValue('');
         useConnectionSpy.mockReturnValue({} as wagmi.UseConnectionReturnType);
         useWalletConnectedSpy.mockReturnValue(false);
@@ -194,12 +185,11 @@ describe('<NavigationDao /> component', () => {
     });
 
     it.each([
-        { mode: 'collapsed', width: 0, duplicates: 1 },
-        { mode: 'expanded', width: 600, duplicates: 0 },
+        { bar: 'collapsed', width: 0, dialogCount: 1 },
+        { bar: 'expanded', width: 600, dialogCount: 0 },
     ])(
-        'shows the correct dialog links when the navbar is $mode',
-        async ({ width, duplicates }) => {
-            mockNavigationWidth(width);
+        'lists each inline link in the dialog $dialogCount time(s) while the navbar is $bar',
+        async ({ width, dialogCount }) => {
             hasSupportedPluginsSpy.mockReturnValue(true);
             const dao = generateDao({
                 name: 'Navigation test DAO',
@@ -217,6 +207,7 @@ describe('<NavigationDao /> component', () => {
                 ],
             });
             render(createTestComponent({ dao }));
+            resizeNavigationLinks(width);
             await userEvent.click(
                 screen.getByRole('button', { name: 'Navigation test DAO' }),
             );
@@ -231,7 +222,7 @@ describe('<NavigationDao /> component', () => {
                 /capitalDistributor.meta.link.rewards/,
             ]) {
                 expect(dialog.queryAllByRole('link', { name })).toHaveLength(
-                    duplicates,
+                    dialogCount,
                 );
             }
             for (const link of ['dashboard', 'permissions', 'settings']) {
@@ -245,9 +236,9 @@ describe('<NavigationDao /> component', () => {
     );
 
     it('updates the open dialog when the navbar collapses and expands', async () => {
-        mockNavigationWidth(600);
         const dao = generateDao({ name: 'Navigation test DAO' });
-        const { rerender } = render(createTestComponent({ dao }));
+        render(createTestComponent({ dao }));
+        resizeNavigationLinks(600);
         await userEvent.click(
             screen.getByRole('button', { name: 'Navigation test DAO' }),
         );
@@ -256,12 +247,10 @@ describe('<NavigationDao /> component', () => {
         const assets = { name: /navigationDao.link.assets/ };
         expect(dialog.queryByRole('link', assets)).not.toBeInTheDocument();
 
-        mockNavigationWidth(0);
-        rerender(createTestComponent({ dao }));
+        resizeNavigationLinks(0);
         expect(dialog.getByRole('link', assets)).toBeInTheDocument();
 
-        mockNavigationWidth(600);
-        rerender(createTestComponent({ dao }));
+        resizeNavigationLinks(600);
         expect(dialog.queryByRole('link', assets)).not.toBeInTheDocument();
     });
 

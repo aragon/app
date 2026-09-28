@@ -7,8 +7,7 @@ import {
     Wallet,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useState } from 'react';
-import useMeasure from 'react-use-measure';
+import { useEffect, useRef, useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
@@ -42,7 +41,26 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [linksRef, { width: linksWidth }] = useMeasure();
+
+    // Zero width = the bar is collapsed (`hidden lg:flex`). The dialog renders outside the app
+    // column and can't use that breakpoint, so it follows the measured links.
+    const linksRef = useRef<HTMLDivElement>(null);
+    const [isBarCollapsed, setIsBarCollapsed] = useState(true);
+
+    useEffect(() => {
+        const links = linksRef.current;
+
+        if (links == null) {
+            return;
+        }
+
+        const observer = new ResizeObserver(([entry]) =>
+            setIsBarCollapsed(entry.contentRect.width === 0),
+        );
+        observer.observe(links);
+
+        return () => observer.disconnect();
+    }, []);
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
@@ -72,20 +90,11 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         'page',
         daoOverride?.navLinksToHide,
     );
-    // The portalled dialog follows the bar's actual visibility, including when the assistant docks.
-    const dialogLinks = navigationDaoUtils
-        .buildLinks(
-            daoWithVisiblePlugins,
-            'dialog',
-            daoOverride?.navLinksToHide,
-        )
-        .filter(
-            ({ link }) =>
-                linksWidth === 0 ||
-                !pageLinks.some(
-                    (pageLink) => !pageLink.hidden && pageLink.link === link,
-                ),
-        );
+    const dialogLinks = navigationDaoUtils.buildDialogLinks(
+        daoWithVisiblePlugins,
+        isBarCollapsed,
+        daoOverride?.navLinksToHide,
+    );
 
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected

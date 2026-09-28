@@ -240,8 +240,7 @@ test.describe('Support chat', () => {
             .getByRole('complementary')
             .filter({ has: page.getByRole('heading', { name: 'Contract' }) });
         const panel = getChatPanel(page);
-        // The navigation bar shows its links inline from `lg` up and drops them below; the DAO
-        // navigation dialog lists them only while the inline links are hidden.
+        // The navigation bar shows its links inline from `lg` up and drops them below.
         const inlineLink = page
             .getByRole('navigation')
             .filter({ has: page.getByRole('button', { name: dao.name }) })

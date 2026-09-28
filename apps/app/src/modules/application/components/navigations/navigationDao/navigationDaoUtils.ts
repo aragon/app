@@ -52,6 +52,30 @@ class NavigationDaoUtils {
         });
     };
 
+    /**
+     * Links of the navigation dialog. While the bar is expanded, the dialog skips the links the bar
+     * already shows.
+     */
+    buildDialogLinks = (
+        dao: IDao,
+        isBarCollapsed: boolean,
+        navLinksToHide?: string[],
+    ): INavigationLink[] => {
+        const dialogLinks = this.buildLinks(dao, 'dialog', navLinksToHide);
+
+        if (isBarCollapsed) {
+            return dialogLinks;
+        }
+
+        const inlineLinks = new Set(
+            this.buildLinks(dao, 'page', navLinksToHide)
+                .filter((link) => !link.hidden)
+                .map((link) => link.link),
+        );
+
+        return dialogLinks.filter((link) => !inlineLinks.has(link.link));
+    };
+
     private getDefaultLinks = (
         dao: IDao,
         baseUrl: string,
