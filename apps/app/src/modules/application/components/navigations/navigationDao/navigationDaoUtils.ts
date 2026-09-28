@@ -52,6 +52,30 @@ class NavigationDaoUtils {
         });
     };
 
+    /**
+     * Links of the navigation dialog. While the bar is expanded, the dialog skips the links the bar
+     * already shows.
+     */
+    buildDialogLinks = (
+        dao: IDao,
+        isBarCollapsed: boolean,
+        navLinksToHide?: string[],
+    ): INavigationLink[] => {
+        const dialogLinks = this.buildLinks(dao, 'dialog', navLinksToHide);
+
+        if (isBarCollapsed) {
+            return dialogLinks;
+        }
+
+        const inlineLinks = new Set(
+            this.buildLinks(dao, 'page', navLinksToHide)
+                .filter((link) => !link.hidden)
+                .map((link) => link.link),
+        );
+
+        return dialogLinks.filter((link) => !inlineLinks.has(link.link));
+    };
+
     private getDefaultLinks = (
         dao: IDao,
         baseUrl: string,
@@ -62,12 +86,6 @@ class NavigationDaoUtils {
 
         const isPageContext = context === 'page';
 
-        // The dialog lists every destination, including the ones the navigation bar shows inline.
-        // The bar switches to its compact mode on the width of the application column (the
-        // breakpoint variants are container queries, see layoutRoot/breakpoints.css), while the
-        // dialog is portalled to the document body and measures the browser window — so it cannot
-        // mirror that decision in CSS. Listing everything keeps the destinations reachable whenever
-        // the bar is compact, e.g. while the AI assistant is docked.
         return [
             {
                 label: 'app.application.navigationDao.link.dashboard',

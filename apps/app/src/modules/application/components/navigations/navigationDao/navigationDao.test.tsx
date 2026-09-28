@@ -1,6 +1,6 @@
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
@@ -54,6 +54,16 @@ jest.mock('@/shared/components/navigation', () => ({
 }));
 
 describe('<NavigationDao /> component', () => {
+    // Reports a new width of the inline links, the only element the component observes.
+    const resizeNavigationLinks = (width: number) => {
+        const [callback] = jest.mocked(ResizeObserver).mock.lastCall!;
+        act(() =>
+            callback(
+                [{ contentRect: { width } } as ResizeObserverEntry],
+                {} as ResizeObserver,
+            ),
+        );
+    };
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -174,27 +184,74 @@ describe('<NavigationDao /> component', () => {
         expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
     });
 
-    // The bar drops its inline links on the width of the application pane, which the portalled
-    // dialog cannot observe, so the dialog has to list every destination unconditionally.
-    it('lists the links of the navigation bar in the dao dialog menu as well', async () => {
-        hasSupportedPluginsSpy.mockReturnValue(true);
-        const plugin = generateDaoPlugin({
-            interfaceType: PluginInterfaceType.MULTISIG,
-            isBody: true,
-        });
-        render(
-            createTestComponent({ dao: generateDao({ plugins: [plugin] }) }),
+    it.each([
+        { bar: 'collapsed', width: 0, dialogCount: 1 },
+        { bar: 'expanded', width: 600, dialogCount: 0 },
+    ])(
+        'lists each inline link in the dialog $dialogCount time(s) while the navbar is $bar',
+        async ({ width, dialogCount }) => {
+            hasSupportedPluginsSpy.mockReturnValue(true);
+            const dao = generateDao({
+                name: 'Navigation test DAO',
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                        isBody: true,
+                    }),
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.GAUGE_VOTER,
+                    }),
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+                    }),
+                ],
+            });
+            render(createTestComponent({ dao }));
+            resizeNavigationLinks(width);
+            await userEvent.click(
+                screen.getByRole('button', { name: 'Navigation test DAO' }),
+            );
+
+            const dialog = within(screen.getByRole('dialog'));
+            for (const name of [
+                /navigationDao.link.proposals/,
+                /navigationDao.link.members/,
+                /navigationDao.link.assets/,
+                /navigationDao.link.transactions/,
+                /gaugeVoter.meta.link.gauges/,
+                /capitalDistributor.meta.link.rewards/,
+            ]) {
+                expect(dialog.queryAllByRole('link', { name })).toHaveLength(
+                    dialogCount,
+                );
+            }
+            for (const link of ['dashboard', 'permissions', 'settings']) {
+                expect(
+                    dialog.getByRole('link', {
+                        name: new RegExp(`navigationDao.link.${link}`),
+                    }),
+                ).toBeInTheDocument();
+            }
+        },
+    );
+
+    it('updates the open dialog when the navbar collapses and expands', async () => {
+        const dao = generateDao({ name: 'Navigation test DAO' });
+        render(createTestComponent({ dao }));
+        resizeNavigationLinks(600);
+        await userEvent.click(
+            screen.getByRole('button', { name: 'Navigation test DAO' }),
         );
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
 
         const dialog = within(screen.getByRole('dialog'));
-        for (const link of ['proposals', 'members', 'assets', 'transactions']) {
-            expect(
-                dialog.getByRole('link', {
-                    name: new RegExp(`navigationDao.link.${link}`),
-                }),
-            ).toBeInTheDocument();
-        }
+        const assets = { name: /navigationDao.link.assets/ };
+        expect(dialog.queryByRole('link', assets)).not.toBeInTheDocument();
+
+        resizeNavigationLinks(0);
+        expect(dialog.getByRole('link', assets)).toBeInTheDocument();
+
+        resizeNavigationLinks(600);
+        expect(dialog.queryByRole('link', assets)).not.toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {
