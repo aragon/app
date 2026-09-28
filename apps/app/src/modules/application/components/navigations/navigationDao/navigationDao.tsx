@@ -8,6 +8,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
+import useMeasure from 'react-use-measure';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
@@ -41,6 +42,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [linksRef, { width: linksWidth }] = useMeasure();
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
@@ -65,6 +67,25 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         daoOverride,
     );
     const daoWithVisiblePlugins = { ...dao, plugins: visiblePlugins };
+    const pageLinks = navigationDaoUtils.buildLinks(
+        daoWithVisiblePlugins,
+        'page',
+        daoOverride?.navLinksToHide,
+    );
+    // The portalled dialog follows the bar's actual visibility, including when the assistant docks.
+    const dialogLinks = navigationDaoUtils
+        .buildLinks(
+            daoWithVisiblePlugins,
+            'dialog',
+            daoOverride?.navLinksToHide,
+        )
+        .filter(
+            ({ link }) =>
+                linksWidth === 0 ||
+                !pageLinks.some(
+                    (pageLink) => !pageLink.hidden && pageLink.link === link,
+                ),
+        );
 
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected
@@ -95,11 +116,8 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 />
                 <Navigation.Links
                     className="hidden lg:flex"
-                    links={navigationDaoUtils.buildLinks(
-                        daoWithVisiblePlugins,
-                        'page',
-                        daoOverride?.navLinksToHide,
-                    )}
+                    links={pageLinks}
+                    ref={linksRef}
                 />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Wallet onClick={handleWalletClick} user={walletUser} />
@@ -114,11 +132,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     'app.application.navigationDao.a11y.description',
                 )}
                 hiddenTitle={t('app.application.navigationDao.a11y.title')}
-                links={navigationDaoUtils.buildLinks(
-                    daoWithVisiblePlugins,
-                    'dialog',
-                    daoOverride?.navLinksToHide,
-                )}
+                links={dialogLinks}
                 onOpenChange={setIsDialogOpen}
                 open={isDialogOpen}
             >

@@ -62,12 +62,6 @@ class NavigationDaoUtils {
 
         const isPageContext = context === 'page';
 
-        // The dialog lists every destination, including the ones the navigation bar shows inline.
-        // The bar switches to its compact mode on the width of the application column (the
-        // breakpoint variants are container queries, see layoutRoot/breakpoints.css), while the
-        // dialog is portalled to the document body and measures the browser window — so it cannot
-        // mirror that decision in CSS. Listing everything keeps the destinations reachable whenever
-        // the bar is compact, e.g. while the AI assistant is docked.
         return [
             {
                 label: 'app.application.navigationDao.link.dashboard',

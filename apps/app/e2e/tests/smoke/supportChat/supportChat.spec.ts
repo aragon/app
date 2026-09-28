@@ -241,7 +241,7 @@ test.describe('Support chat', () => {
             .filter({ has: page.getByRole('heading', { name: 'Contract' }) });
         const panel = getChatPanel(page);
         // The navigation bar shows its links inline from `lg` up and drops them below; the DAO
-        // navigation dialog lists them at every width.
+        // navigation dialog lists them only while the inline links are hidden.
         const inlineLink = page
             .getByRole('navigation')
             .filter({ has: page.getByRole('button', { name: dao.name }) })
@@ -314,6 +314,73 @@ test.describe('Support chat', () => {
                 termBox.y + termBox.height,
             );
         }).toPass();
+    });
+
+    test('shows inline destinations in the DAO dialog only while the navbar is collapsed', async ({
+        baseURL,
+        context,
+        page,
+    }) => {
+        await setSupportChatFlag(context, baseURL!, true);
+        await page.setViewportSize({ width: 1280, height: 720 });
+        const [dao] = getDaosWithFeature('multisig');
+        await new DaoDashboardPage({
+            page,
+            network: dao.network,
+            address: dao.address,
+        }).navigate();
+
+        const navigation = page.getByRole('navigation').filter({
+            has: page.getByRole('button', { name: dao.name }),
+        });
+        const dialog = page.getByRole('dialog', {
+            name: 'DAO navigation menu',
+        });
+        const inlineAssets = navigation.getByRole('link', {
+            name: 'Assets',
+            exact: true,
+        });
+        const dialogAssets = dialog.getByRole('link', {
+            name: 'Assets',
+            exact: true,
+        });
+        const openDialog = async () => {
+            await expect(async () => {
+                await navigation
+                    .getByRole('button', { name: dao.name })
+                    .click();
+                await expect(dialog).toBeVisible({ timeout: 2000 });
+            }).toPass();
+        };
+
+        await expect(inlineAssets).toBeVisible();
+        await openDialog();
+        await expect(dialogAssets).toHaveCount(0);
+        await expect(
+            dialog.getByRole('link', { name: 'Dashboard', exact: true }),
+        ).toBeVisible();
+        await expect(
+            dialog.getByRole('link', { name: 'Settings', exact: true }),
+        ).toBeVisible();
+
+        // The open dialog follows CSS visibility as the viewport changes in either direction.
+        await page.setViewportSize({ width: 390, height: 844 });
+        await expect(dialogAssets).toBeVisible();
+        await page.setViewportSize({ width: 1280, height: 720 });
+        await expect(dialogAssets).toHaveCount(0);
+        await page.keyboard.press('Escape');
+        await expect(dialog).toBeHidden();
+
+        // The same desktop viewport becomes compact when the assistant takes 500px.
+        await getChatTrigger(page).click();
+        await expect(getChatPanel(page)).toBeVisible();
+        await expect(inlineAssets).toBeHidden();
+        await openDialog();
+        await expect(dialogAssets).toBeVisible();
+
+        // A wider window has room for both the assistant and the full navbar.
+        await page.setViewportSize({ width: 1920, height: 1080 });
+        await expect(dialogAssets).toHaveCount(0);
     });
 
     // A container declaration on `body` would stop body-level scroll locks (the gov-ui-kit dialogs
