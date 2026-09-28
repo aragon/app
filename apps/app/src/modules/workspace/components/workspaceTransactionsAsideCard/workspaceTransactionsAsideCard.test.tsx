@@ -20,11 +20,11 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
 import {
     generateWorkspaceQueryResponse,
     generateWorkspaceTransaction,
 } from '../../testUtils';
+import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import {
     type IWorkspaceTransactionsAsideCardProps,
     WorkspaceTransactionsAsideCard,

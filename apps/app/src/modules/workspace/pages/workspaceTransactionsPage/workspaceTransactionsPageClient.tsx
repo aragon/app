@@ -3,7 +3,6 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspace } from '../../api/workspaceService';
-import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
@@ -32,8 +31,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const accounts = workspace?.accounts ?? [];
 
-    const { activeOption, setActiveOption, options } =
-        useWorkspaceAccountSelectorContext();
+    const { activeOption } = useWorkspaceAccountSelectorContext();
 
     const accountsToDisplay =
         activeOption?.account != null ? [activeOption.account] : accounts;
@@ -43,18 +41,11 @@ export const WorkspaceTransactionsPageClient: React.FC<
             <Page.Main
                 title={t('app.workspace.workspaceTransactionsPage.main.title')}
             >
-                <div className="flex flex-col gap-4 md:gap-6">
-                    <WorkspaceAccountDropdown
-                        onSelect={setActiveOption}
-                        options={options}
-                        value={activeOption}
-                    />
-                    <WorkspaceTransactionList
-                        accounts={accountsToDisplay}
-                        isPending={isWorkspacePending}
-                        pageSize={pageSize}
-                    />
-                </div>
+                <WorkspaceTransactionList
+                    accounts={accountsToDisplay}
+                    isPending={isWorkspacePending}
+                    pageSize={pageSize}
+                />
             </Page.Main>
             <Page.Aside>
                 {workspace != null && (

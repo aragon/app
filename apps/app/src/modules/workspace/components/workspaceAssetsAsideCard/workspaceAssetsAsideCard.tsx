@@ -2,7 +2,7 @@
 
 import type { IWorkspaceAssetListMetadata } from '../../api/workspaceQueryService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
+import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import { WorkspaceAllAssetsAsideCard } from './workspaceAllAssetsAsideCard';
 import { WorkspaceDaoAssetsAsideCard } from './workspaceDaoAssetsAsideCard';
 

@@ -1,7 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { daoService, Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
@@ -31,7 +30,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         workspaceAccountSelectorProvider,
         'useWorkspaceAccountSelectorContext',
     );
-    const setActiveOptionMock = jest.fn();
 
     // React Query dedupes by key and the asset key is built from the accounts, so each test gets its own addresses:
     // otherwise a result cached by an earlier test satisfies the render and this test's own mock never runs.
@@ -98,7 +96,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
 
         useWorkspaceAccountSelectorContextSpy.mockReturnValue({
             activeOption: params.isDaoActive ? daoOption : allAccountsOption,
-            setActiveOption: setActiveOptionMock,
+            setActiveOption: jest.fn(),
             options: [allAccountsOption, daoOption],
         });
     };
@@ -126,7 +124,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         getWorkspaceAssetsSpy.mockReset();
         getDaoSpy.mockReset();
         useWorkspaceAccountSelectorContextSpy.mockReset();
-        setActiveOptionMock.mockReset();
     });
 
     const createTestComponent = (
@@ -155,22 +152,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
 
         return { component, ...addresses };
     };
-
-    it('selects the account picked on the account dropdown', async () => {
-        const { component, daoAddress } = createTestComponent();
-        render(component);
-
-        await userEvent.click(
-            await screen.findByRole('button', {
-                name: allAccountsOption.label,
-            }),
-        );
-        await userEvent.click(await screen.findByText('Demo DAO'));
-
-        expect(setActiveOptionMock).toHaveBeenCalledWith(
-            buildDaoOption(daoAddress),
-        );
-    });
 
     it('reads the workspace assets API for the aggregated tab, with every account', async () => {
         const { component, daoAddress, safeAddress } = createTestComponent();

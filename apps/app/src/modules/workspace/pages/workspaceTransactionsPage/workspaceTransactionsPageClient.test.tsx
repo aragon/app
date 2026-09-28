@@ -1,7 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -39,7 +38,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         workspaceAccountSelectorProvider,
         'useWorkspaceAccountSelectorContext',
     );
-    const setActiveOptionMock = jest.fn();
 
     const listMock = WorkspaceTransactionList as jest.Mock;
     const asideCardMock = WorkspaceTransactionsAsideCard as jest.Mock;
@@ -90,7 +88,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     ) =>
         useWorkspaceAccountSelectorContextSpy.mockReturnValue({
             activeOption: allAccountsOption,
-            setActiveOption: setActiveOptionMock,
+            setActiveOption: jest.fn(),
             options: [allAccountsOption, daoOption],
             ...context,
         });
@@ -119,7 +117,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         useWorkspaceAccountSelectorContextSpy.mockReset();
-        setActiveOptionMock.mockReset();
         asideCardMock.mockClear();
         listMock.mockClear();
     });
@@ -146,19 +143,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             </GukModulesProvider>
         );
     };
-
-    it('selects the account picked on the account dropdown', async () => {
-        render(createTestComponent());
-
-        await userEvent.click(
-            await screen.findByRole('button', {
-                name: allAccountsOption.label,
-            }),
-        );
-        await userEvent.click(await screen.findByText(daoOption.label));
-
-        expect(setActiveOptionMock).toHaveBeenCalledWith(daoOption);
-    });
 
     it('renders the aggregated list with every account of the workspace by default', async () => {
         render(createTestComponent());
@@ -203,7 +187,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         );
     });
 
-    it('does not offer the account filter for a workspace without DAO accounts', async () => {
+    it('lists the Safe accounts of a workspace without DAO accounts', async () => {
         getWorkspaceSpy.mockResolvedValue(
             buildWorkspace({ accounts: [safeAccount] }),
         );
@@ -213,8 +197,5 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         await waitFor(() =>
             expect(lastListProps()?.accounts).toEqual([safeAccount]),
         );
-        expect(
-            screen.queryByRole('button', { name: allAccountsOption.label }),
-        ).toBeNull();
     });
 });

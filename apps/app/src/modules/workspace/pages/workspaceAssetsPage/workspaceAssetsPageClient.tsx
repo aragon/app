@@ -3,7 +3,6 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspace } from '../../api/workspaceService';
-import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
 import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
@@ -21,12 +20,12 @@ export interface IWorkspaceAssetsPageClientProps {
 }
 
 /**
- * Assets of a workspace, laid out like the DAO assets page: one tab per DAO account plus an aggregated one.
+ * Assets of a workspace, filtered by the account picked on the workspace navigation.
  *
- * Every tab reads the workspace query API, the aggregated one over all accounts and an account tab over just that
- * one. Going through the same endpoint throughout keeps the account tabs summing to the aggregated tab, since both
- * come out of the same aggregation. Safe accounts get no tab of their own, so their balances show up only inside
- * the aggregated one.
+ * Every selection reads the workspace query API, "All accounts" over all accounts and a single account over just
+ * that one. Going through the same endpoint throughout keeps the accounts summing to the aggregated view, since both
+ * come out of the same aggregation. Safe accounts cannot be selected, so their balances show up only inside the
+ * aggregated view.
  */
 export const WorkspaceAssetsPageClient: React.FC<
     IWorkspaceAssetsPageClientProps
@@ -41,10 +40,9 @@ export const WorkspaceAssetsPageClient: React.FC<
 
     const accounts = workspace?.accounts ?? [];
 
-    const { activeOption, setActiveOption, options } =
-        useWorkspaceAccountSelectorContext();
+    const { activeOption } = useWorkspaceAccountSelectorContext();
 
-    // Accounts the selected tab covers: the one it names, or all of them on the aggregated tab.
+    // Accounts the selection covers: the one it names, or all of them on the aggregated option.
     const accountsToDisplay =
         activeOption?.account != null ? [activeOption.account] : accounts;
 
@@ -52,7 +50,7 @@ export const WorkspaceAssetsPageClient: React.FC<
         ({ network, address }) => ({ network, address }),
     );
 
-    // Totals of the selected tab. Shares its key with the list's own query, so this adds no extra request.
+    // Totals of the selection. Shares its key with the list's own query, so this adds no extra request.
     const { metadata } = useWorkspaceAssetListData(
         { body: { accounts: accountRefsToDisplay, pagination: { pageSize } } },
         { enabled: accountRefsToDisplay.length > 0 },
@@ -63,17 +61,10 @@ export const WorkspaceAssetsPageClient: React.FC<
             <Page.Main
                 title={t('app.workspace.workspaceAssetsPage.main.title')}
             >
-                <div className="flex flex-col gap-4 md:gap-6">
-                    <WorkspaceAccountDropdown
-                        onSelect={setActiveOption}
-                        options={options}
-                        value={activeOption}
-                    />
-                    <WorkspaceAssetList
-                        accounts={accountRefsToDisplay}
-                        pageSize={pageSize}
-                    />
-                </div>
+                <WorkspaceAssetList
+                    accounts={accountRefsToDisplay}
+                    pageSize={pageSize}
+                />
             </Page.Main>
             <Page.Aside>
                 <WorkspaceAssetsAsideCard

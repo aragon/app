@@ -11,18 +11,16 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     useWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { WorkspaceAccountDropdown } from '../../components/workspaceAccountFilter';
+import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
 import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposalsAsideCard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
-import { useWorkspaceAccountFilter } from '../../hooks/useWorkspaceAccountFilter';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 
 export interface IWorkspaceProposalsPageClientProps {
@@ -37,7 +35,7 @@ export interface IWorkspaceProposalsPageClientProps {
 }
 
 /**
- * Proposals of a workspace, laid out like the DAO proposals page: one tab per DAO account plus an aggregated one.
+ * Proposals of a workspace, laid out like the DAO proposals page: filtered by the account picked on the workspace navigation.
  *
  * Only DAO accounts take part. Safe accounts have no indexed proposals — they only contribute queued transactions,
  * which the endpoint returns in a separate `pending` block that this page does not render.
@@ -60,25 +58,8 @@ export const WorkspaceProposalsPageClient: React.FC<
         (account: IWorkspaceAccount) =>
             account.type === WorkspaceAccountType.DAO,
     );
-    const daoAccountRefs = daoAccounts.map(({ network, address }) => ({
-        network,
-        address,
-    }));
 
-    // Resolved once to label the tabs with the indexed DAO names, shared with the other workspace pages' cache.
-    const { data: accountInfos } = useWorkspaceAccounts(
-        { body: { accounts: daoAccountRefs } },
-        { enabled: accounts.length > 0 },
-    );
-
-    const { activeOption, setActiveOption, options } =
-        useWorkspaceAccountFilter({
-            accounts,
-            accountInfos,
-            allAccountsLabel: t(
-                'app.workspace.workspaceProposalsPage.filter.allAccounts',
-            ),
-        });
+    const { activeOption } = useWorkspaceAccountSelectorContext();
 
     const isAllAccountsSelected = activeOption?.isAllAccounts ?? true;
 
@@ -177,21 +158,14 @@ export const WorkspaceProposalsPageClient: React.FC<
                 }
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
-                <div className="flex flex-col gap-4 md:gap-6">
-                    <WorkspaceAccountDropdown
-                        onSelect={setActiveOption}
-                        options={options}
-                        value={activeOption}
+                {isAllAccountsSelected ? (
+                    <WorkspaceProposalList
+                        accounts={daoAccounts}
+                        pageSize={pageSize}
                     />
-                    {isAllAccountsSelected ? (
-                        <WorkspaceProposalList
-                            accounts={daoAccounts}
-                            pageSize={pageSize}
-                        />
-                    ) : (
-                        <DaoProposalList initialParams={selectedDaoParams} />
-                    )}
-                </div>
+                ) : (
+                    <DaoProposalList initialParams={selectedDaoParams} />
+                )}
             </Page.Main>
             <Page.Aside>
                 <WorkspaceProposalsAsideCard

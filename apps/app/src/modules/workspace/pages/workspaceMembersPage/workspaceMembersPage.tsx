@@ -30,14 +30,10 @@ export interface IWorkspaceMembersPageProps {
  */
 export const WorkspaceMembersPage: React.FC<
     IWorkspaceMembersPageProps
-> = async (props) => {
-    const { params } = props;
-
+> = async () => {
     if (!(await featureFlags.isEnabled('workspaces'))) {
         notFound();
     }
-
-    const { workspaceId } = await params;
 
     const queryClient = new QueryClient();
     const [featuredDelegates] = await Promise.all([
@@ -50,7 +46,6 @@ export const WorkspaceMembersPage: React.FC<
             <WorkspaceMembersPageClient
                 featuredDelegates={featuredDelegates}
                 pageSize={workspaceMembersCount}
-                workspaceId={workspaceId}
             />
         </Page.Container>
     );

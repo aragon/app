@@ -4374,9 +4374,9 @@
         "main": {
           "title": "Members"
         },
-        "notFound": {
-          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
-          "title": "Workspace not found"
+        "selectAccount": {
+          "description": "Members are listed one DAO at a time. Select a DAO account in the account selector to see its members.",
+          "heading": "Select an account"
         }
       },
       "workspaceTransactionList": {
@@ -4426,9 +4426,6 @@
         "total": "Total proposals"
       },
       "workspaceProposalsPage": {
-        "filter": {
-          "allAccounts": "All accounts"
-        },
         "main": {
           "action": "New proposal",
           "title": "Proposals"

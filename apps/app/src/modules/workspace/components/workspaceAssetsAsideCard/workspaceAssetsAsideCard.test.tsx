@@ -6,7 +6,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
+import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import * as workspaceAllAssetsAsideCard from './workspaceAllAssetsAsideCard';
 import {
     type IWorkspaceAssetsAsideCardProps,
