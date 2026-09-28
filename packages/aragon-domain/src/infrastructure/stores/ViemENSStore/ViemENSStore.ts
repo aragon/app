@@ -43,68 +43,71 @@ const LEGACY_MAINNET_COIN_TYPE = 60n;
  * enrichment, not core membership data.
  */
 export class ViemENSStore implements ENSStore {
-  constructor(private readonly client: PublicClient) {}
+    constructor(private readonly client: PublicClient) {}
 
-  /**
-   * Builds a store backed by a mainnet viem client constructed from the
-   * mainnet entry (chain id 1) of the RPC URL map, with multicall batching
-   * enabled. Throws when the map has no mainnet entry: viem would otherwise
-   * fall back to its public endpoint, and once that throttles every member
-   * silently resolves to "no name" because per-address failures degrade by
-   * design.
-   */
-  static fromRpcUrls(rpcUrls: RpcUrls): ViemENSStore {
-    const mainnetRpcUrl = rpcUrls[mainnet.id];
-    if (mainnetRpcUrl == null) {
-      throw new Error(
-        `ENS resolution requires an RPC URL for Ethereum mainnet (chain id ${mainnet.id})`,
-      );
+    /**
+     * Builds a store backed by a mainnet viem client constructed from the
+     * mainnet entry (chain id 1) of the RPC URL map, with multicall batching
+     * enabled. Throws when the map has no mainnet entry: viem would otherwise
+     * fall back to its public endpoint, and once that throttles every member
+     * silently resolves to "no name" because per-address failures degrade by
+     * design.
+     */
+    static fromRpcUrls(rpcUrls: RpcUrls): ViemENSStore {
+        const mainnetRpcUrl = rpcUrls[mainnet.id];
+        if (mainnetRpcUrl == null) {
+            throw new Error(
+                `ENS resolution requires an RPC URL for Ethereum mainnet (chain id ${mainnet.id})`,
+            );
+        }
+
+        const client = createPublicClient({
+            chain: mainnet,
+            transport: http(mainnetRpcUrl),
+            batch: { multicall: true },
+        });
+        return new ViemENSStore(client);
     }
 
-    const client = createPublicClient({
-      chain: mainnet,
-      transport: http(mainnetRpcUrl),
-      batch: { multicall: true },
-    });
-    return new ViemENSStore(client);
-  }
+    async lookUpPrimaryNames(
+        addresses: Address[],
+    ): Promise<Map<HexString, ENSName>> {
+        const names = new Map<HexString, ENSName>();
+        if (addresses.length === 0) {
+            return names;
+        }
 
-  public async lookUpPrimaryNames(
-    addresses: Address[],
-  ): Promise<Map<HexString, ENSName>> {
-    const names = new Map<HexString, ENSName>();
-    if (addresses.length === 0) {
-      return names;
+        const resolved = await Promise.all(
+            addresses.map((address) =>
+                this.resolvePrimaryName(address, LEGACY_MAINNET_COIN_TYPE),
+            ),
+        );
+
+        for (const entry of resolved) {
+            if (entry != null) {
+                names.set(entry.key, entry.name);
+            }
+        }
+
+        return names;
     }
 
-    const resolved = await Promise.all(
-      addresses.map((address) =>
-        this.resolvePrimaryName(address, LEGACY_MAINNET_COIN_TYPE),
-      ),
-    );
-
-    for (const entry of resolved) {
-      if (entry != null) {
-        names.set(entry.key, entry.name);
-      }
+    private async resolvePrimaryName(
+        address: Address,
+        coinType: bigint,
+    ): Promise<{ key: HexString; name: ENSName } | null> {
+        const key = address.toHexString();
+        try {
+            const name = await this.client.getEnsName({
+                address: key,
+                coinType,
+            });
+            if (name == null) {
+                return null;
+            }
+            return { key, name: ENSName.fromString(name) };
+        } catch {
+            return null;
+        }
     }
-
-    return names;
-  }
-
-  private async resolvePrimaryName(
-    address: Address,
-    coinType: bigint,
-  ): Promise<{ key: HexString; name: ENSName } | null> {
-    const key = address.toHexString();
-    try {
-      const name = await this.client.getEnsName({ address: key, coinType });
-      if (name == null) {
-        return null;
-      }
-      return { key, name: ENSName.fromString(name) };
-    } catch {
-      return null;
-    }
-  }
 }

@@ -1,8 +1,8 @@
 import type { MemberGovernanceActivity } from '@/domain/member/MemberGovernanceActivity';
 import type {
-  FindTokenVotingMembersQuery,
-  MemberStore,
-  TokenVotingMemberData,
+    FindTokenVotingMembersQuery,
+    MemberStore,
+    TokenVotingMemberData,
 } from '@/domain/member/MemberStore';
 import type { TokenVotingMemberRecord } from '@/domain/member/TokenVotingMemberRecord';
 import type { Address } from '@/domain/primitives';
@@ -139,110 +139,119 @@ const FIND_MEMBER_GOVERNANCE_METRICS_QUERY = `
  * lowercase hex so filters and lookups match its rows.
  */
 const toIndexerAddress = (address: Address): string =>
-  address.toHexString().toLowerCase();
+    address.toHexString().toLowerCase();
 
 export class EnvioMemberStore implements MemberStore {
-  constructor(private readonly envio: EnvioClient) {}
+    constructor(private readonly envio: EnvioClient) {}
 
-  public async findTokenVotingMembers(
-    query: FindTokenVotingMembersQuery,
-  ): Promise<Page<TokenVotingMemberData>> {
-    try {
-      const chainId = query.chainId.toNumber();
-      const pluginAddress = toIndexerAddress(query.pluginAddress);
-      const tokenContractAddress = toIndexerAddress(query.tokenContractAddress);
+    async findTokenVotingMembers(
+        query: FindTokenVotingMembersQuery,
+    ): Promise<Page<TokenVotingMemberData>> {
+        try {
+            const chainId = query.chainId.toNumber();
+            const pluginAddress = toIndexerAddress(query.pluginAddress);
+            const tokenContractAddress = toIndexerAddress(
+                query.tokenContractAddress,
+            );
 
-      const rawDelegates = await this.envio.query(FIND_DELEGATES_QUERY, {
-        chainId,
-        tokenContractAddress,
-        limit: query.page.pageSize,
-        offset: query.page.offset,
-        countLimit: COUNT_BATCH_SIZE,
-      });
-      const { records, countedRecords } =
-        TokenVotingMemberRecordMap.mapDTOToDomain(rawDelegates);
+            const rawDelegates = await this.envio.query(FIND_DELEGATES_QUERY, {
+                chainId,
+                tokenContractAddress,
+                limit: query.page.pageSize,
+                offset: query.page.offset,
+                countLimit: COUNT_BATCH_SIZE,
+            });
+            const { records, countedRecords } =
+                TokenVotingMemberRecordMap.mapDTOToDomain(rawDelegates);
 
-      const totalRecords = await this.countRemainingMembers(
-        chainId,
-        tokenContractAddress,
-        countedRecords,
-      );
-      const activityByMember = await this.findActivityByMember(
-        chainId,
-        pluginAddress,
-        records,
-      );
+            const totalRecords = await this.countRemainingMembers(
+                chainId,
+                tokenContractAddress,
+                countedRecords,
+            );
+            const activityByMember = await this.findActivityByMember(
+                chainId,
+                pluginAddress,
+                records,
+            );
 
-      // Pair each on-chain record with its governance activity; ENS is
-      // resolved in the use case.
-      const data = records.map<TokenVotingMemberData>((record) => ({
-        record,
-        activity:
-          activityByMember.get(toIndexerAddress(record.address)) ?? null,
-      }));
+            // Pair each on-chain record with its governance activity; ENS is
+            // resolved in the use case.
+            const data = records.map<TokenVotingMemberData>((record) => ({
+                record,
+                activity:
+                    activityByMember.get(toIndexerAddress(record.address)) ??
+                    null,
+            }));
 
-      return createPage(
-        data,
-        query.page.page,
-        query.page.pageSize,
-        totalRecords,
-      );
-    } catch (cause) {
-      throw new Error('Error querying members from Envio', { cause });
-    }
-  }
-
-  /**
-   * Completes the member count started by the first batch bundled into
-   * `FindDelegates`: keeps fetching id batches while each one comes back
-   * full, and returns the total once a batch comes back short.
-   */
-  private async countRemainingMembers(
-    chainId: number,
-    tokenContractAddress: string,
-    counted: number,
-  ): Promise<number> {
-    let total = counted;
-    let lastBatch = counted;
-
-    while (lastBatch === COUNT_BATCH_SIZE) {
-      const raw = await this.envio.query(COUNT_DELEGATES_QUERY, {
-        chainId,
-        tokenContractAddress,
-        limit: COUNT_BATCH_SIZE,
-        offset: total,
-      });
-      lastBatch = TokenVotingMemberRecordMap.mapCountDTOToDomain(raw);
-      total += lastBatch;
+            return createPage(
+                data,
+                query.page.page,
+                query.page.pageSize,
+                totalRecords,
+            );
+        } catch (cause) {
+            throw new Error('Error querying members from Envio', { cause });
+        }
     }
 
-    return total;
-  }
+    /**
+     * Completes the member count started by the first batch bundled into
+     * `FindDelegates`: keeps fetching id batches while each one comes back
+     * full, and returns the total once a batch comes back short.
+     */
+    private async countRemainingMembers(
+        chainId: number,
+        tokenContractAddress: string,
+        counted: number,
+    ): Promise<number> {
+        let total = counted;
+        let lastBatch = counted;
 
-  /**
-   * Looks up the governance activity of the page's members, keyed by
-   * lowercase address. Skips the round-trip for an empty page.
-   */
-  private async findActivityByMember(
-    chainId: number,
-    pluginAddress: string,
-    records: TokenVotingMemberRecord[],
-  ): Promise<Map<string, MemberGovernanceActivity>> {
-    if (records.length === 0) {
-      return new Map();
+        while (lastBatch === COUNT_BATCH_SIZE) {
+            const raw = await this.envio.query(COUNT_DELEGATES_QUERY, {
+                chainId,
+                tokenContractAddress,
+                limit: COUNT_BATCH_SIZE,
+                offset: total,
+            });
+            lastBatch = TokenVotingMemberRecordMap.mapCountDTOToDomain(raw);
+            total += lastBatch;
+        }
+
+        return total;
     }
 
-    const raw = await this.envio.query(FIND_MEMBER_GOVERNANCE_METRICS_QUERY, {
-      chainId,
-      pluginAddress,
-      memberAddresses: records.map((record) =>
-        toIndexerAddress(record.address),
-      ),
-    });
-    const activity = MemberGovernanceActivityMap.mapDTOToDomain(raw);
+    /**
+     * Looks up the governance activity of the page's members, keyed by
+     * lowercase address. Skips the round-trip for an empty page.
+     */
+    private async findActivityByMember(
+        chainId: number,
+        pluginAddress: string,
+        records: TokenVotingMemberRecord[],
+    ): Promise<Map<string, MemberGovernanceActivity>> {
+        if (records.length === 0) {
+            return new Map();
+        }
 
-    return new Map(
-      activity.map((entry) => [toIndexerAddress(entry.memberAddress), entry]),
-    );
-  }
+        const raw = await this.envio.query(
+            FIND_MEMBER_GOVERNANCE_METRICS_QUERY,
+            {
+                chainId,
+                pluginAddress,
+                memberAddresses: records.map((record) =>
+                    toIndexerAddress(record.address),
+                ),
+            },
+        );
+        const activity = MemberGovernanceActivityMap.mapDTOToDomain(raw);
+
+        return new Map(
+            activity.map((entry) => [
+                toIndexerAddress(entry.memberAddress),
+                entry,
+            ]),
+        );
+    }
 }

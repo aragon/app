@@ -6,14 +6,14 @@ import { z } from 'zod';
  * Normalizes a raw ENS name to its ENSIP-15 canonical form.
  */
 function canonicalize(input: string): string {
-  return ensNormalize(input.trim());
+    return ensNormalize(input.trim());
 }
 
 const ENSNamePropsSchema = z
-  .object({
-    value: z.string().min(1, 'name must not be empty'),
-  })
-  .transform(({ value }) => ({ value: canonicalize(value) }));
+    .object({
+        value: z.string().min(1, 'name must not be empty'),
+    })
+    .transform(({ value }) => ({ value: canonicalize(value) }));
 
 type ENSNameProps = z.output<typeof ENSNamePropsSchema>;
 type ENSNameInput = z.input<typeof ENSNamePropsSchema>;
@@ -26,16 +26,16 @@ type ENSNameInput = z.input<typeof ENSNamePropsSchema>;
  * `create` throws if the input is not a valid ENS name.
  */
 export class ENSName extends ValueObject<ENSNameProps> {
-  toString(): string {
-    return this.props.value;
-  }
+    toString(): string {
+        return this.props.value;
+    }
 
-  static create(props: ENSNameInput): ENSName {
-    const validated = ENSNamePropsSchema.parse(props);
-    return new ENSName(validated);
-  }
+    static create(props: ENSNameInput): ENSName {
+        const validated = ENSNamePropsSchema.parse(props);
+        return new ENSName(validated);
+    }
 
-  static fromString(input: string): ENSName {
-    return ENSName.create({ value: input });
-  }
+    static fromString(input: string): ENSName {
+        return ENSName.create({ value: input });
+    }
 }

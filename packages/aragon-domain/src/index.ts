@@ -10,8 +10,8 @@ export { EnvioClient } from './infrastructure/stores/EnvioClient';
 // DTOs
 export type { MemberProfileTextRecordDTO } from './infrastructure/controllers/AragonController/maps/domain/MemberProfileTextRecordMap';
 export type {
-  PageDTO,
-  PageMetadataDTO,
+    PageDTO,
+    PageMetadataDTO,
 } from './infrastructure/controllers/AragonController/maps/domain/PageMap';
 export type { TokenVotingMemberDTO } from './infrastructure/controllers/AragonController/maps/domain/TokenVotingMemberMap';
 export type { GetMemberProfileTextRecordsRequestDTO } from './infrastructure/controllers/AragonController/maps/use-cases/GetMemberProfileTextRecordsMap';

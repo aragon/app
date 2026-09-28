@@ -22,80 +22,76 @@ import type { GetTokenVotingMembershipRequestDTO } from './maps/use-cases/GetTok
 import * as GetTokenVotingMembershipMap from './maps/use-cases/GetTokenVotingMembershipMap';
 
 interface HandlersRecord {
-  getTokenVotingMembership: HandlerDefinition<
-    GetTokenVotingMembershipRequestDTO,
-    GetTokenVotingMembershipUseCaseProps,
-    Page<TokenVotingMember>,
-    PageDTO<TokenVotingMemberDTO>
-  >;
-  getMemberProfileTextRecords: HandlerDefinition<
-    GetMemberProfileTextRecordsRequestDTO,
-    GetMemberProfileTextRecordsUseCaseProps,
-    MemberProfileTextRecord[],
-    MemberProfileTextRecordDTO[]
-  >;
+    getTokenVotingMembership: HandlerDefinition<
+        GetTokenVotingMembershipRequestDTO,
+        GetTokenVotingMembershipUseCaseProps,
+        Page<TokenVotingMember>,
+        PageDTO<TokenVotingMemberDTO>
+    >;
+    getMemberProfileTextRecords: HandlerDefinition<
+        GetMemberProfileTextRecordsRequestDTO,
+        GetMemberProfileTextRecordsUseCaseProps,
+        MemberProfileTextRecord[],
+        MemberProfileTextRecordDTO[]
+    >;
 }
 
 /**
  * General domain for all Aragon-related business logic.
  */
 export class AragonController {
-  private constructor(private readonly handlers: HandlersRecord) {}
+    private constructor(private readonly handlers: HandlersRecord) {}
 
-  /**
-   * Initializes the `AragonDomain`.
-   *
-   * @param envioClient Indexer client backing the on-chain member data.
-   * @param rpcUrls RPC endpoint URLs keyed by chain id. The mainnet entry
-   * (chain id 1) is required: it backs ENS reverse resolution, and `load`
-   * throws without it rather than letting lookups fall back to viem's
-   * public endpoint.
-   */
-  static load(envioClient: EnvioClient, rpcUrls: RpcUrls): AragonController {
-    const memberStore = new EnvioMemberStore(envioClient);
-    const ensStore = ViemENSStore.fromRpcUrls(rpcUrls);
-    const getTokenVotingMembershipUseCase = new GetTokenVotingMembershipUseCase(
-      memberStore,
-      ensStore,
-    );
+    /**
+     * Initializes the `AragonDomain`.
+     *
+     * @param envioClient Indexer client backing the on-chain member data.
+     * @param rpcUrls RPC endpoint URLs keyed by chain id. The mainnet entry
+     * (chain id 1) is required: it backs ENS reverse resolution, and `load`
+     * throws without it rather than letting lookups fall back to viem's
+     * public endpoint.
+     */
+    static load(envioClient: EnvioClient, rpcUrls: RpcUrls): AragonController {
+        const memberStore = new EnvioMemberStore(envioClient);
+        const ensStore = ViemENSStore.fromRpcUrls(rpcUrls);
+        const getTokenVotingMembershipUseCase =
+            new GetTokenVotingMembershipUseCase(memberStore, ensStore);
 
-    const memberProfileStore = new EnvioMemberProfileStore(envioClient);
-    const getMemberProfileTextRecordsUseCase =
-      new GetMemberProfileTextRecordsUseCase(memberProfileStore);
+        const memberProfileStore = new EnvioMemberProfileStore(envioClient);
+        const getMemberProfileTextRecordsUseCase =
+            new GetMemberProfileTextRecordsUseCase(memberProfileStore);
 
-    const handlers: HandlersRecord = {
-      getTokenVotingMembership: {
-        requestMapper: GetTokenVotingMembershipMap,
-        responseMapper: GetTokenVotingMembershipMap,
-        useCaseExecutor: getTokenVotingMembershipUseCase,
-      },
-      getMemberProfileTextRecords: {
-        requestMapper: GetMemberProfileTextRecordsMap,
-        responseMapper: MemberProfileTextRecordMap,
-        useCaseExecutor: getMemberProfileTextRecordsUseCase,
-      },
-    };
+        const handlers: HandlersRecord = {
+            getTokenVotingMembership: {
+                requestMapper: GetTokenVotingMembershipMap,
+                responseMapper: GetTokenVotingMembershipMap,
+                useCaseExecutor: getTokenVotingMembershipUseCase,
+            },
+            getMemberProfileTextRecords: {
+                requestMapper: GetMemberProfileTextRecordsMap,
+                responseMapper: MemberProfileTextRecordMap,
+                useCaseExecutor: getMemberProfileTextRecordsUseCase,
+            },
+        };
 
-    return new AragonController(handlers);
-  }
+        return new AragonController(handlers);
+    }
 
-  /**
-   * Returns a page of members of an Aragon TokenVoting plugin, scoped
-   * to a specific chain and token contract and ordered by current voting
-   * power descending.
-   */
-  public getTokenVotingMembership(dto: GetTokenVotingMembershipRequestDTO) {
-    return handleRequest(this.handlers.getTokenVotingMembership, dto);
-  }
+    /**
+     * Returns a page of members of an Aragon TokenVoting plugin, scoped
+     * to a specific chain and token contract and ordered by current voting
+     * power descending.
+     */
+    getTokenVotingMembership(dto: GetTokenVotingMembershipRequestDTO) {
+        return handleRequest(this.handlers.getTokenVotingMembership, dto);
+    }
 
-  /**
-   * Looks up the live forward ENS text records attached to a member's `.aragon.eth`
-   * subdomain. Returns an empty list when the subdomain is unknown, has
-   * no resolver, or has no current records.
-   */
-  public getMemberProfileTextRecords(
-    dto: GetMemberProfileTextRecordsRequestDTO,
-  ) {
-    return handleRequest(this.handlers.getMemberProfileTextRecords, dto);
-  }
+    /**
+     * Looks up the live forward ENS text records attached to a member's `.aragon.eth`
+     * subdomain. Returns an empty list when the subdomain is unknown, has
+     * no resolver, or has no current records.
+     */
+    getMemberProfileTextRecords(dto: GetMemberProfileTextRecordsRequestDTO) {
+        return handleRequest(this.handlers.getMemberProfileTextRecords, dto);
+    }
 }

@@ -3,8 +3,8 @@ import type { HexString } from '@/domain/primitives';
 import { Address, ChainId, PageRequest } from '@/domain/primitives';
 import { EnvioClient } from '@/infrastructure/stores/EnvioClient';
 import {
-  COUNT_BATCH_SIZE,
-  EnvioMemberStore,
+    COUNT_BATCH_SIZE,
+    EnvioMemberStore,
 } from '@/infrastructure/stores/EnvioMemberStore/EnvioMemberStore';
 
 const ENDPOINT = process.env.ENVIO_GRAPHQL_ENDPOINT;
@@ -17,9 +17,9 @@ const API_TOKEN = process.env.ENVIO_API_TOKEN;
  */
 const MAINNET = 1;
 const POLYGON_TREASURY_PLUGIN: HexString =
-  '0xCa6f5bd946F52298a7B6154fc827bF87512a15F3';
+    '0xCa6f5bd946F52298a7B6154fc827bF87512a15F3';
 const POLYGON_TREASURY_TOKEN: HexString =
-  '0xcb8b435481dA1eD5ABC895e03535ce0Bba3b6905';
+    '0xcb8b435481dA1eD5ABC895e03535ce0Bba3b6905';
 
 /**
  * Chain-wide id-only list of mainnet delegates, the same shape the store's
@@ -40,7 +40,7 @@ const LIST_DELEGATE_IDS_QUERY = `
 `;
 
 const DelegateIdsSchema = z.object({
-  ERC20VotesDelegate: z.array(z.object({ id: z.string() })),
+    ERC20VotesDelegate: z.array(z.object({ id: z.string() })),
 });
 
 /**
@@ -65,48 +65,48 @@ const DelegateIdsSchema = z.object({
  * is set; `pnpm test:contract` runs this suite alone.
  */
 describe.skipIf(ENDPOINT == null)('aragon-indexer contract', () => {
-  const envio = new EnvioClient(ENDPOINT ?? '', API_TOKEN);
+    const envio = new EnvioClient(ENDPOINT ?? '', API_TOKEN);
 
-  it('FindDelegates and FindMemberGovernanceMetrics parse into a members page', {
-    timeout: 30_000,
-  }, async () => {
-    const store = new EnvioMemberStore(envio);
+    it('FindDelegates and FindMemberGovernanceMetrics parse into a members page', {
+        timeout: 30_000,
+    }, async () => {
+        const store = new EnvioMemberStore(envio);
 
-    const page = await store.findTokenVotingMembers({
-      chainId: ChainId.fromNumber(MAINNET),
-      pluginAddress: Address.fromHexString(POLYGON_TREASURY_PLUGIN),
-      tokenContractAddress: Address.fromHexString(POLYGON_TREASURY_TOKEN),
-      page: PageRequest.create({ page: 1, pageSize: 5 }),
+        const page = await store.findTokenVotingMembers({
+            chainId: ChainId.fromNumber(MAINNET),
+            pluginAddress: Address.fromHexString(POLYGON_TREASURY_PLUGIN),
+            tokenContractAddress: Address.fromHexString(POLYGON_TREASURY_TOKEN),
+            page: PageRequest.create({ page: 1, pageSize: 5 }),
+        });
+
+        expect(page.items.length).toBeGreaterThan(0);
+        expect(page.totalRecords).toBeGreaterThanOrEqual(page.items.length);
+        expect(page.items.some(({ activity }) => activity != null)).toBe(true);
+        for (const { record } of page.items) {
+            expect(record.votingPower.isZero).toBe(false);
+        }
     });
 
-    expect(page.items.length).toBeGreaterThan(0);
-    expect(page.totalRecords).toBeGreaterThanOrEqual(page.items.length);
-    expect(page.items.some(({ activity }) => activity != null)).toBe(true);
-    for (const { record } of page.items) {
-      expect(record.votingPower.isZero).toBe(false);
-    }
-  });
+    it('serves a full count batch, so a short batch is the last one', {
+        timeout: 30_000,
+    }, async () => {
+        const listIds = async (offset: number) => {
+            const raw = await envio.query(LIST_DELEGATE_IDS_QUERY, {
+                chainId: MAINNET,
+                limit: COUNT_BATCH_SIZE,
+                offset,
+            });
+            return DelegateIdsSchema.parse(raw).ERC20VotesDelegate;
+        };
 
-  it('serves a full count batch, so a short batch is the last one', {
-    timeout: 30_000,
-  }, async () => {
-    const listIds = async (offset: number) => {
-      const raw = await envio.query(LIST_DELEGATE_IDS_QUERY, {
-        chainId: MAINNET,
-        limit: COUNT_BATCH_SIZE,
-        offset,
-      });
-      return DelegateIdsSchema.parse(raw).ERC20VotesDelegate;
-    };
+        const batch = await listIds(0);
 
-    const batch = await listIds(0);
-
-    if (batch.length < COUNT_BATCH_SIZE) {
-      // Either the table is smaller than a batch or the endpoint clamped
-      // it below `COUNT_BATCH_SIZE`; only the former leaves nothing behind.
-      expect(await listIds(batch.length)).toHaveLength(0);
-    } else {
-      expect(batch).toHaveLength(COUNT_BATCH_SIZE);
-    }
-  });
+        if (batch.length < COUNT_BATCH_SIZE) {
+            // Either the table is smaller than a batch or the endpoint clamped
+            // it below `COUNT_BATCH_SIZE`; only the former leaves nothing behind.
+            expect(await listIds(batch.length)).toHaveLength(0);
+        } else {
+            expect(batch).toHaveLength(COUNT_BATCH_SIZE);
+        }
+    });
 });

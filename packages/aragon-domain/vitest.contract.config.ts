@@ -8,11 +8,11 @@ import baseConfig from './vitest.config';
  * endpoint, not the library.
  */
 export default defineConfig({
-  ...baseConfig,
-  test: {
-    ...baseConfig.test,
-    include: ['test/contract/**/*.test.ts'],
-    exclude: configDefaults.exclude,
-    coverage: { enabled: false },
-  },
+    ...baseConfig,
+    test: {
+        ...baseConfig.test,
+        include: ['test/contract/**/*.test.ts'],
+        exclude: configDefaults.exclude,
+        coverage: { enabled: false },
+    },
 });

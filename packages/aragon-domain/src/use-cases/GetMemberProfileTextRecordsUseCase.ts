@@ -4,7 +4,7 @@ import type { MemberProfileStore } from '@/domain/member-profile/MemberProfileSt
 import type { MemberProfileTextRecord } from '@/domain/member-profile/MemberProfileTextRecord';
 
 export interface GetMemberProfileTextRecordsUseCaseProps {
-  subdomain: MemberProfileAragonName;
+    subdomain: MemberProfileAragonName;
 }
 
 /**
@@ -13,24 +13,27 @@ export interface GetMemberProfileTextRecordsUseCaseProps {
  * no resolver, or has no current records.
  */
 export class GetMemberProfileTextRecordsUseCase
-  implements
-    UseCase<GetMemberProfileTextRecordsUseCaseProps, MemberProfileTextRecord[]>
+    implements
+        UseCase<
+            GetMemberProfileTextRecordsUseCaseProps,
+            MemberProfileTextRecord[]
+        >
 {
-  public readonly code = 'GetMemberProfileTextRecordsUseCase';
+    readonly code = 'GetMemberProfileTextRecordsUseCase';
 
-  constructor(private readonly profileStore: MemberProfileStore) {}
+    constructor(private readonly profileStore: MemberProfileStore) {}
 
-  public async execute(
-    props: GetMemberProfileTextRecordsUseCaseProps,
-  ): Promise<MemberProfileTextRecord[]> {
-    try {
-      return await this.profileStore.findTextRecordsBySubdomain(
-        props.subdomain,
-      );
-    } catch (cause) {
-      throw new Error('Error while getting member profile text records', {
-        cause,
-      });
+    async execute(
+        props: GetMemberProfileTextRecordsUseCaseProps,
+    ): Promise<MemberProfileTextRecord[]> {
+        try {
+            return await this.profileStore.findTextRecordsBySubdomain(
+                props.subdomain,
+            );
+        } catch (cause) {
+            throw new Error('Error while getting member profile text records', {
+                cause,
+            });
+        }
     }
-  }
 }
