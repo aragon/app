@@ -124,6 +124,19 @@ Per draw, in this order:
 
 Five graded draws are still required. Voided draws do not count toward N.
 
+## Final capture amendment — before any grading
+
+The document-only rule above is superseded. Every completed draw counts once
+its full output is recoverable: grade the written project/chat artifact when
+one exists; otherwise grade the assistant's complete chat response as the
+handoff. Record the output mode as `project-file`, `chat-artifact`, or
+`chat-only`. Output mode is not a reason to void or redraw.
+
+Draws 1 and 2 remain void only because their full outputs were destroyed.
+Draw 3 is unresolved, not void: investigate whether its chat response or a
+project file is recoverable before counting or replacing it. No measurement
+draw has been graded. This is the last protocol amendment.
+
 ## What counts as a hit
 
 The re-frozen criterion, verbatim, no looser:
