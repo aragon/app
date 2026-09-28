@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Prefilled member-management wizard step — implementation handoff</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{--ink:#1f2933;--ink-2:#52606d;--ink-3:#7b8794;--line:#e4e7eb;--bg:#fbfbfc;--code-bg:#f5f6f8;--warn:#b4530a;--crit:#b42318;--ok:#067647;--accent:#3164fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:56px 28px 120px}
+h1{font-size:30px;line-height:1.2;font-weight:600;margin:0 0 8px;letter-spacing:-.02em}
+h2{font-size:20px;font-weight:600;margin:52px 0 12px;letter-spacing:-.01em;padding-top:18px;border-top:1px solid var(--line)}
+h3{font-size:15px;font-weight:600;margin:26px 0 6px}
+p{margin:10px 0;text-wrap:pretty}
+ul,ol{margin:10px 0;padding-left:20px}
+li{margin:5px 0;text-wrap:pretty}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:var(--code-bg);padding:1px 5px;border-radius:4px;border:1px solid var(--line)}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;margin:14px 0}
+pre code{background:none;border:none;padding:0;font-size:12.5px;line-height:1.65}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--ink-2);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+td code{font-size:12px}
+.lede{font-size:16px;color:var(--ink-2);margin:0 0 4px}
+.meta{font-size:12.5px;color:var(--ink-3);font-family:ui-monospace,Menlo,monospace;margin-top:14px}
+.flag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:5px;border:1px solid currentColor;vertical-align:1px}
+.flag.unk{color:var(--warn)}.flag.no{color:var(--crit)}.flag.yes{color:var(--ok)}
+.box{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0;background:#fff}
+.box.unknown{border-color:#f3c79a;background:#fffaf4}
+.box.dont{border-color:#f5c2c0;background:#fff7f6}
+.box h3{margin-top:0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #c9d8ff}
+a:hover{color:#1f47c4;border-bottom-color:#1f47c4}
+.small{font-size:13px;color:var(--ink-2)}
+</style></head>
+<body><div class="wrap">
+
+<h1>Prefilled member-management step for the DAO creation wizard</h1>
+<p class="lede">Compile-oriented handoff: the supported composition, the exact contracts, and the state-ownership rules — derived from the bundled implementation in this project, not from memory.</p>
+<p class="meta">App @aragon/app 1.39.1 · rev 2b512b90d3093f1170a14f2ccf7eab41dcc7f036<br>GovKit @aragon/gov-ui-kit 2.11.4 · rev 64b517f5b90052797ecaced5f15ab616b5733f30<br>Registry SHA-256 3fba4472a73eff9e8090ca9004ab4e594663bc2341d18bb790d78f8791af0da8 (not copied into this bundle)</p>
+<p class="small">This bundle is a <strong>candidate assembled from unmerged PRs</strong> (App #1400/#1410/#1411/#1412/#1413, GovKit #793), not accepted code. Every behavior below was read out of <code>_ds_bundle.js</code> in this project and matches the revisions above; re-verify against the App branch before merge.</p>
+
+<h2>1. Supported composition</h2>
+<p>There is exactly one supported shape for a member list inside a full-page wizard. The wizard owns the form; the container owns the field array and the add/reset/clear actions; each item owns one row's input and its validation registration.</p>
+<pre><code>WizardPage.Container   // Wizard.Root (useForm + FormProvider) + Wizard.Form (&lt;form&gt;) + stepper chrome
+└─ WizardPage.Step     // registers itself with the wizard stepper; renders only when active
+   └─ AddressesInput.Container  name="members"
+      └─ AddressesInput.Item index={0..n-1}   // one per entry in the members field array</code></pre>
+
+<pre><code>const createDaoSteps = [
+    { id: 'network', order: 0, meta: { name: 'Network' } },
+    { id: 'members', order: 1, meta: { name: 'Members' } },
+];
+
+const CreateDaoWizard = ({ existingMembers }: { existingMembers: string[] }) =&gt; (
+    &lt;WizardPage.Container
+        finalStep="Deploy your DAO"
+        initialSteps={createDaoSteps}
+        submitLabel="Deploy your DAO"
+        defaultValues={{ members: existingMembers.map((address) =&gt; ({ address })) }}
+        onSubmit={handleSubmit}
+    &gt;
+        {/* …other steps… */}
+        &lt;WizardPage.Step
+            id="members"
+            order={1}
+            meta={{ name: 'Members' }}
+            title="Add members"
+            description="These wallets can create and vote on proposals."
+        &gt;
+            &lt;MembersStepContent chainId={chainId} /&gt;
+        &lt;/WizardPage.Step&gt;
+    &lt;/WizardPage.Container&gt;
+);
+
+// The container does NOT generate rows. It maps its children 1:1 onto the field
+// array, so the consumer renders one Item per field entry.
+const MembersStepContent = ({ chainId }: { chainId: number }) =&gt; {
+    const { fields } = useFieldArray({ name: 'members' }); // control comes from the wizard's FormProvider
+
+    return (
+        &lt;AddressesInput.Container
+            name="members"
+            label="Members"
+            helpText="Define the wallets that can create and vote on proposals."
+        &gt;
+            {fields.map((field, index) =&gt; (
+                &lt;AddressesInput.Item key={field.id} index={index} chainId={chainId} /&gt;
+            ))}
+        &lt;/AddressesInput.Container&gt;
+    );
+};</code></pre>
+<p class="small">Row count is driven by the field array, and the container re-keys children itself: <code>cloneElement(child, { key: fieldId, ...child.props })</code>. Children beyond <code>fields.length</code> render <code>null</code> — a hard-coded child list silently truncates or fails to grow when "Add" appends.</p>
+
+<h2>2. Provider assumptions</h2>
+<p>Inside the real App these already exist at the route/root level; assert them rather than re-adding them. Mounting order, as used by the generated preview for <code>AddressesInput</code>:</p>
+<pre><code>&lt;DebugContextProvider&gt;
+  &lt;TranslationsProvider translations={enTranslations}&gt;   // required: item copy is translation-keyed
+    &lt;GukModulesProvider&gt;                                  // required: wagmi useConfig + TanStack useQueryClient
+      &lt;BlockNavigationContextProvider&gt;                    // required: Wizard.Root calls useConfirmWizardExit(isDirty)
+        &lt;WizardPage.Container …&gt;</code></pre>
+<ul>
+<li><code>AddressInput</code> calls <code>useConfig()</code>, <code>useQueryClient()</code>, <code>useEnsAddress()</code>, <code>useEnsName()</code> unconditionally — without wagmi + query context it throws, so <code>GukModulesProvider</code> (or the App's equivalent wagmi/query stack) is not optional for this step.</li>
+<li>A per-input <code>wagmiConfig</code> override exists on <code>AddressInput</code> but is <strong>not forwarded</strong> by <code>AddressesInput.Item</code>. <span class="flag no">no escape hatch</span></li>
+<li>No <code>FormWrapper</code>. See §7.</li>
+</ul>
+
+<h2>3. Field contract and prefill</h2>
+<table>
+<tr><th>Concern</th><th>Contract</th></tr>
+<tr><td>Field shape</td><td><code>members: Array&lt;{ address: string; name?: string }&gt;</code> — objects, never bare strings. <code>name</code> is the resolved ENS name written by <code>onAccept</code>.</td></tr>
+<tr><td>Resolved field name</td><td><code>fieldPrefix ? `${fieldPrefix}.${name}` : name</code>. Use <code>fieldPrefix</code> when the members list lives under a plugin/governance sub-object.</td></tr>
+<tr><td>Item field path</td><td><code>`${fieldName}.[${index}]`</code> — the whole object is one registered field; the row's error lives there.</td></tr>
+<tr><td>Prefill</td><td>Only through <code>WizardPage.Container.defaultValues</code> (passed to <code>useForm({ mode: 'onTouched', defaultValues })</code>). The array-backed list hydrates from form defaults; later prop changes do not re-hydrate it.</td></tr>
+<tr><td>Async prefill</td><td>If existing members arrive after mount, either delay mounting the wizard until the query resolves, or call <code>reset</code>/<code>replace</code> explicitly. There is no <code>values</code>-style re-sync in <code>Wizard.Root</code>. <span class="flag no">not supported by prop</span></td></tr>
+<tr><td>Empty list</td><td><code>allowEmptyList</code> permits removing down to zero rows — but <code>Item</code> computes <code>canRemove = fields.length &gt; 1</code> and disables its own remove button at one row regardless, so the last row is only clearable via the "Clear all" menu action.</td></tr>
+<tr><td>Locked rows</td><td><code>Item.disabled</code> renders the row read-only; it stays in the array, is still validated, and still counts toward duplicate detection.</td></tr>
+</table>
+
+<h2>4. Editable input vs. accepted address</h2>
+<p><code>AddressesInput.Item</code> keeps the editable string in local component state and writes only resolved values into the form:</p>
+<ul>
+<li><code>onChange</code> → local <code>addressInput</code> state only. It is not a clean echo of typing: with <code>enforceChecksum</code> (default <code>true</code>) a complete or all-uppercase hex string is rewritten to its EIP-55 checksum on keystroke; blur trims whitespace; the clear control emits <code>undefined</code>; the ENS/0x toggle replaces the string with the other representation.</li>
+<li><code>onAccept(value?: IAddressInputResolvedValue)</code> → writes <code>{ address, name }</code> into the form field. It emits <code>undefined</code> when the value is invalid or the checksum fails, and <strong>does not emit at all while an ENS query is fetching</strong>. The last accepted value is therefore stale-by-design during an unresolved edit — never render it as "current".</li>
+<li>Consequence for the UI: a row that shows text is not a row that has a member. Derive "accepted" from the form value (<code>members[i].address</code>), not from what is on screen.</li>
+<li>To display accepted members elsewhere (summary/review step), use <code>AddressOutput</code>; inside a clickable row or link set <code>hasInteractiveAncestor</code> so it does not add a competing tab stop.</li>
+</ul>
+
+<h2>5. Address resolution, checksum, network</h2>
+<table>
+<tr><th>Semantic</th><th>Behavior in this revision</th></tr>
+<tr><td>Checksum</td><td><code>enforceChecksum</code> defaults to <code>true</code>. A valid-but-wrongly-cased address renders a <strong>critical</strong> alert (kit copy <code>addressInput.checksum</code>) and suppresses acceptance — the form field goes <code>undefined</code> and the form-level "invalid" error follows. <code>AddressesInput.Item</code> exposes no prop to relax this.</td></tr>
+<tr><td>ENS resolution chain</td><td>Pinned to <strong>mainnet</strong> (<code>chainId: mainnet.id</code> internally for both <code>useEnsAddress</code> and <code>useEnsName</code>), independent of the <code>chainId</code> prop.</td></tr>
+<tr><td>ENS availability</td><td>Queries are enabled only when the wagmi config's mainnet chain declares <code>contracts.ensUniversalResolver</code>. With a config lacking it, ENS names never resolve and no error is surfaced — they simply fail the <code>isAddress</code> check.</td></tr>
+<tr><td><code>chainId</code> prop</td><td>Explorer link target only (<code>Item.chainId</code> → <code>AddressInput.chainId</code>, default <code>1</code>). Pass the network chosen in the wizard's network step so the per-row explorer link points at the right chain.</td></tr>
+<tr><td>Reverse lookup</td><td>A typed address that reverse-resolves to an ENS name auto-switches the display to ENS once, unless the user already toggled.</td></tr>
+</table>
+
+<h2>6. Error reporting through the owning form</h2>
+<p>Validation is registered by the item on the wizard's form; do not duplicate it.</p>
+<pre><code>rules: {
+    required: true,
+    validate: (member) =&gt; addressesListUtils.validateAddress(member.address, members, index, customValidator),
+}
+
+// addressesListUtils.validateAddress returns a translation KEY on failure:
+//   'app.shared.addressesInput.item.input.error.invalid'       → "Address is not valid."
+//   'app.shared.addressesInput.item.input.error.alreadyInList' → "Address has already been added."
+// then defers to customValidator?(members[index]) → string | true</code></pre>
+<ul>
+<li><strong>Duplicates are first-wins:</strong> <code>checkIsAlreadyInList</code> compares against <code>members.slice(0, currentIndex)</code>, so only the later occurrence is flagged. Comparison is case-insensitive address equality.</li>
+<li><strong>customValidator</strong> runs last — only after the value is a valid, non-duplicate address. Return <code>true</code> or a message/translation key. Use it for product policy (e.g. excluding the DAO's own address), not for re-checking format.</li>
+<li><strong>Re-validation:</strong> the item re-<code>trigger</code>s its own field whenever its address changes and the field is dirty or touched. Removing an earlier duplicate does <em>not</em> automatically re-validate the later row; if you need that, call <code>trigger('members')</code> from the step after a removal.</li>
+<li><strong>Gate:</strong> <code>Wizard.Form</code> submits through <code>handleSubmit(hasNext ? nextStep : onSubmit, onInvalid)</code> — Next is blocked by RHF validation over all currently mounted fields, and the footer turns the button critical once <code>isSubmitted</code> and errors exist. Going Back calls <code>clearErrors()</code>. Do not re-implement a gate; <code>WizardPage.Step.disableNext</code> is only for conditions the form does not express.</li>
+<li><strong>Container-level aggregation</strong> is read-only: it walks <code>formState.errors</code> / <code>dirtyFields</code> at the field path to decide whether the "Reset fields" menu action is offered (<code>showResetAllAction</code>, default <code>true</code>). It publishes no error summary of its own — surface list-level messaging (e.g. minimum member count) as your own field/validation on the wizard form.</li>
+</ul>
+
+<h2>7. Tempting, and wrong</h2>
+<div class="box dont">
+<h3>Wrapping the step in <code>FormWrapper</code> (or any nested <code>&lt;form&gt;</code>)</h3>
+<p><code>Wizard.Root</code> already calls <code>useForm</code> and renders <code>FormProvider</code>; <code>Wizard.Form</code> already renders the <code>&lt;form&gt;</code> element. A nested <code>FormWrapper</code> creates a second form context: rows write to a context the wizard never reads, so the Next gate passes on empty data and the submit payload silently omits <code>members</code>. <code>FormWrapper</code> is for standalone/story usage only.</p>
+</div>
+<div class="box dont">
+<h3>Rendering <code>AddressInput</code> directly for rows</h3>
+<p>It is the editable-string primitive with no list policy. Required/duplicate/form-level validation lives in <code>AddressesInput.Item</code>; replacing it moves policy into the component tree and drops the translation-keyed errors.</p>
+</div>
+<div class="box dont">
+<h3>Letting the step own row state</h3>
+<p>Local <code>useState&lt;string[]&gt;</code> mirrored into the form double-owns the data and fights <code>useFieldArray</code>. The field array is the single source of truth: add via the container's own Add button (or <code>onAddClick</code> when you need a dialog-driven add), remove via the row control, reset/clear via the More menu.</p>
+</div>
+<div class="box dont">
+<h3>Other traps</h3>
+<ul>
+<li><code>AddressesInput.Item</code> outside a <code>Container</code> throws: <em>"useAddressesInputContext: the hook must be used within AddressesInputContextProvider"</em>.</li>
+<li>Wrapping items in a layout <code>&lt;div&gt;</code> inside the container breaks the 1:1 child→field mapping (one child, N fields ⇒ one row). Items must be direct children.</li>
+<li>Index-based props are positional: after a removal, indices shift. Anything keyed by index (locked rows, per-row chainId overrides) must be recomputed from the field array, not memoized by position.</li>
+<li>Passing <code>enforceChecksum</code>/<code>wagmiConfig</code>/<code>hideControls</code> to <code>Item</code> — not in its prop set; they are dropped.</li>
+<li>Treating <code>onChange</code> output as user input for analytics or diffing — it is checksum-rewritten and control-mutated.</li>
+</ul>
+</div>
+
+<h2>8. Not establishable from this project</h2>
+<div class="box unknown">
+<ul>
+<li><span class="flag unk">unknown</span> The create-DAO wizard's real step id, order, field name and <code>fieldPrefix</code> for members. This bundle ships <code>Wizard</code>/<code>WizardPage</code> and a generated <code>createDaoSteps</code> preview fixture only; the App's create-DAO route source is not included. Read it at <code>apps/app/src/modules/createDao/…</code> on the App revision above.</li>
+<li><span class="flag unk">unknown</span> Where "existing member addresses" come from (query hook, cached DAO members endpoint, wallet-derived default) and whether the first member is seeded from the connected wallet.</li>
+<li><span class="flag unk">unknown</span> Product policy for minimum/maximum members and its interaction with multisig threshold fields on the same or a later step.</li>
+<li><span class="flag unk">unknown</span> Whether the App's root wagmi config declares <code>ensUniversalResolver</code> on mainnet (determines whether ENS entry works at all in this step).</li>
+<li><span class="flag unk">unknown</span> Any new copy keys needed beyond the existing <code>app.shared.addressesInput.*</code> namespace; new labels must be added to the App locale, not hard-coded.</li>
+<li><span class="flag no">not present</span> Storybook stories and unit tests for <code>AddressesInput</code>/<code>WizardPage</code> — only generated previews are bundled here. Behavior checks must go against the App sources listed below.</li>
+</ul>
+</div>
+
+<h2>9. Revision-matched references</h2>
+<table>
+<tr><th>What</th><th>In this project</th><th>At the recorded revision</th></tr>
+<tr><td>AddressesInput contract</td><td><code>components/forms/AddressesInput/AddressesInput.d.ts</code> · <code>.prompt.md</code></td><td><a href="https://github.com/aragon/app/blob/2b512b90d3093f1170a14f2ccf7eab41dcc7f036/apps/app/src/shared/components/forms/addressesInput/index.ts">addressesInput/index.ts</a></td></tr>
+<tr><td>Container (field array, add/reset/clear)</td><td><code>_ds_bundle.js</code> L108166–108348</td><td><a href="https://github.com/aragon/app/blob/2b512b90d3093f1170a14f2ccf7eab41dcc7f036/apps/app/src/shared/components/forms/addressesInput/addressesInputContainer/addressesInputContainer.tsx">addressesInputContainer.tsx</a></td></tr>
+<tr><td>Item (registration, onAccept, remove)</td><td><code>_ds_bundle.js</code> L110328–110418</td><td><a href="https://github.com/aragon/app/blob/2b512b90d3093f1170a14f2ccf7eab41dcc7f036/apps/app/src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx">addressesInputItem.tsx</a></td></tr>
+<tr><td>Row context assertion</td><td><code>_ds_bundle.js</code> L108150–108164</td><td><a href="https://github.com/aragon/app/blob/2b512b90d3093f1170a14f2ccf7eab41dcc7f036/apps/app/src/shared/components/forms/addressesInput/addressesInputContext/addressesInputContext.ts">addressesInputContext.ts</a></td></tr>
+<tr><td>Validation + duplicate rule</td><td><code>_ds_bundle.js</code> L110305–110327</td><td><code>apps/app/src/shared/utils/addressesListUtils/addressesListUtils.ts</code></td></tr>
+<tr><td>Wizard form ownership / gate</td><td><code>_ds_bundle.js</code> L102240–102263 (Form), L102483–102560 (Root)</td><td><a href="https://github.com/aragon/app/blob/2b512b90d3093f1170a14f2ccf7eab41dcc7f036/apps/app/src/shared/components/wizards/wizard/index.ts">wizards/wizard/index.ts</a></td></tr>
+<tr><td>WizardPage contract</td><td><code>components/wizards/WizardPage/WizardPage.d.ts</code></td><td><a href="https://github.com/aragon/app/blob/2b512b90d3093f1170a14f2ccf7eab41dcc7f036/apps/app/src/shared/components/wizards/wizardPage/index.ts">wizards/wizardPage/index.ts</a></td></tr>
+<tr><td>AddressInput (kit) semantics</td><td><code>components/general/AddressInput/AddressInput.d.ts</code> · <code>_ds_bundle.js</code> L101368–101420</td><td><a href="https://github.com/aragon/gov-ui-kit/tree/64b517f5b90052797ecaced5f15ab616b5733f30/src">gov-ui-kit @ 64b517f5</a></td></tr>
+<tr><td>Provider stack example</td><td><code>_preview/AddressesInput.js</code> L110–120</td><td>generated preview (<code>.design-sync/previews/AddressesInput.tsx</code>)</td></tr>
+<tr><td>Copy keys</td><td><code>_ds_bundle.js</code> L107228–107247</td><td>App English locale</td></tr>
+</table>
+
+<h2>10. Acceptance checks</h2>
+<ol>
+<li>Prefilled addresses render one row each, checksummed, with explorer links on the selected chain; no row is in an error state on first paint.</li>
+<li>Add appends one empty row; the new row renders (proves the step's row count is array-driven).</li>
+<li>Remove is disabled at a single row; the More menu offers Clear all, and Reset fields only once the list is dirty-and-non-empty or in error.</li>
+<li>Entering a lowercase-hex address shows the checksum alert and blocks Next; entering an already-listed address flags the <em>later</em> row with "Address has already been added."</li>
+<li>Next on an invalid list does not advance and turns the footer button critical; Back clears errors.</li>
+<li>Submitting yields <code>members: [{ address, name? }]</code> with checksummed addresses on the wizard's own payload — assert on <code>onSubmit</code> data, not on DOM text.</li>
+<li>Assertions use roles, labels and visible text ("Member", placeholder "ENS or 0x…", remove control labelled "Remove member"), not class names.</li>
+</ol>
+
+</div></body></html>
