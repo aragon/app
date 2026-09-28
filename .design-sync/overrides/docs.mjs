@@ -256,15 +256,24 @@ function writeContext(OUT) {
 
     // Built unconditionally, like contextIndex above: an includes()-guarded
     // append drifts in ordering between clean and incremental builds.
+    // Run 2 of the acceptance gate opened none of these files, so the
+    // decision-critical facts are stated here too, not only linked: a
+    // pointer to JSON is not reliably followed.
     const guidelinesIndex = [
         '# Guidelines',
         '',
         '## Start here',
         '',
-        '- Choosing a component: read [the selection guide](./context/selection-guide.json) first — it records intent, alternatives and the App/kit layer split.',
-        '- Composition, provider and form-ownership constraints: the bundle `README.md`.',
-        '- Citing source at the recorded revisions: [recorded source references](./context/source-index.md).',
-        '- Coverage gaps, audit provenance and how the registry is refreshed: [the registry report](./context/registry-report.md).',
+        '- **Choosing a component** — read [the selection guide](./context/selection-guide.json). It indexes intent, alternatives and evidence. It covers the **kit layer**: every entry is a `govkit:` id. App-owned compounds (`AddressesInput`, `ResourcesInput`, `WizardPage`, `Page`, …) have no entry of their own; reach them through the kit primitive they compose and through this bundle\'s `README.md`.',
+        '- **Composing, providers, form ownership** — the bundle `README.md`. It is the only place that records which wrapper owns form state and which provider is genuinely required.',
+        '- **Citing source** — [recorded source references](./context/source-index.md), addressed at the recorded revisions.',
+        '- **Coverage gaps and audit provenance** — [the registry report](./context/registry-report.md). Read it before claiming something is absent from the design system.',
+        '',
+        '## Authority',
+        '',
+        'When these disagree, prefer in this order: the component\'s `.d.ts` and the compiled `_ds_bundle.js`, then `_preview/*.js`, then the generated context under `context/`, then hand-written prose in `README.md`. Generated files are extracted from source; prose is maintained by hand and can lag.',
+        '',
+        'Cite source as **path plus symbol**, not a bare line number: several preview files carry different components at the same line, and a line-only citation cannot be checked.',
         '',
         '## Delivered App context',
         '',
