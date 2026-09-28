@@ -11,7 +11,7 @@ import {
     type IWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
+import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
 
 export interface IWorkspaceTransactionsAsideCardProps {

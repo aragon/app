@@ -1,5 +1,4 @@
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import { workspaceMocks } from '../../constants/workspaceMocks';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import type { IWorkspace } from './domain';
 import type {
@@ -15,10 +14,9 @@ export const workspaceStorageKey = 'aragon-workspaces';
 /**
  * Workspace API.
  *
- * There is no workspace endpoint on the backend yet, so this service resolves workspaces from the {@link
- * workspaceMocks} seed merged with the workspaces persisted on local storage. It is intentionally shaped like the
- * other services (async, throws the same error type) so that swapping the mock for a real request is a
- * single-method change and no consumer needs to be touched.
+ * There is no workspace endpoint on the backend yet, so this service resolves workspaces from the ones persisted on
+ * local storage. It is intentionally shaped like the other services (async, throws the same error type) so that
+ * swapping local storage for a real request is a single-method change and no consumer needs to be touched.
  *
  * Local storage is only available on the client, therefore every method rejects when called on the server. This is
  * why the workspace pages must not prefetch workspaces (see `docs/projectDocs/createWorkspace.md`).
@@ -30,7 +28,7 @@ class WorkspaceService {
         let workspaces: Record<string, IWorkspace>;
 
         try {
-            workspaces = this.getWorkspaces();
+            workspaces = this.getStoredWorkspaces();
         } catch (error: unknown) {
             return Promise.reject(error);
         }
@@ -50,13 +48,21 @@ class WorkspaceService {
         return Promise.resolve(workspace);
     };
 
+    getWorkspaceList = (): Promise<IWorkspace[]> => {
+        try {
+            return Promise.resolve(Object.values(this.getStoredWorkspaces()));
+        } catch (error: unknown) {
+            return Promise.reject(error);
+        }
+    };
+
     createWorkspace = (params: ICreateWorkspaceParams): Promise<IWorkspace> => {
         const { body } = params;
 
         let workspaces: Record<string, IWorkspace>;
 
         try {
-            workspaces = this.getWorkspaces();
+            workspaces = this.getStoredWorkspaces();
         } catch (error: unknown) {
             return Promise.reject(error);
         }
@@ -68,7 +74,7 @@ class WorkspaceService {
         const workspace: IWorkspace = { ...body, id };
 
         try {
-            const stored = { ...this.getStoredWorkspaces(), [id]: workspace };
+            const stored = { ...workspaces, [id]: workspace };
             localStorage.setItem(workspaceStorageKey, JSON.stringify(stored));
         } catch (error: unknown) {
             return Promise.reject(
@@ -82,14 +88,6 @@ class WorkspaceService {
 
         return Promise.resolve(workspace);
     };
-
-    /**
-     * Returns the seeded workspaces merged with the workspaces persisted on local storage.
-     */
-    private getWorkspaces = (): Record<string, IWorkspace> => ({
-        ...workspaceMocks,
-        ...this.getStoredWorkspaces(),
-    });
 
     /**
      * Returns the workspaces persisted on local storage, ignoring corrupted entries.

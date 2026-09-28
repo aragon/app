@@ -75,21 +75,6 @@ describe('<DaoMembersPageClient /> component', () => {
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
     });
 
-    it('renders the children above the members list', () => {
-        render(
-            createTestComponent({
-                children: <div data-testid="children-mock" />,
-            }),
-        );
-
-        const children = screen.getByTestId('children-mock');
-        const list = screen.getByTestId('member-list-mock');
-        expect(
-            children.compareDocumentPosition(list) &
-                Node.DOCUMENT_POSITION_FOLLOWING,
-        ).toBeTruthy();
-    });
-
     it('renders the aside plugin info on the featured delegates tab for the plugin resolved by the CMS plugin address', () => {
         const pluginAddress = '0x2222222222222222222222222222222222222222';
         const daoAddress = '0x1111111111111111111111111111111111111111';

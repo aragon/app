@@ -68,7 +68,6 @@ describe('<WorkspaceMembersPage /> component', () => {
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
         expect(WorkspaceMembersPageClient).toHaveBeenCalledWith(
             expect.objectContaining({
-                workspaceId: 'demo',
                 pageSize: workspaceMembersCount,
                 featuredDelegates,
             }),

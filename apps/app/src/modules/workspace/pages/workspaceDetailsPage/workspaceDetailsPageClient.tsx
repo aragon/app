@@ -42,7 +42,7 @@ export const WorkspaceDetailsPageClient: React.FC<
         data: workspace,
         isPending,
         isError,
-    } = useWorkspace({ urlParams: { id: workspaceId } }, { retry: false });
+    } = useWorkspace({ urlParams: { id: workspaceId } });
 
     const accounts = workspace?.accounts ?? [];
 

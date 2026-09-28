@@ -2,7 +2,7 @@
 
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useSearchParams } from 'next/navigation';
-import { type ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { FeaturedDelegatesList } from '@/plugins/tokenPlugin/components/featuredDelegatesList';
 import { useFeaturedDelegatesPlugin } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
@@ -33,10 +33,6 @@ export interface IDaoMembersPageClientProps {
      * Featured delegates config from CMS.
      */
     featuredDelegates: IFeaturedDelegates[];
-    /**
-     * Content rendered above the member list, e.g. the account selector of the workspace members page.
-     */
-    children?: ReactNode;
 }
 
 export const daoMembersPageFilterParam = 'members';
@@ -44,7 +40,7 @@ export const daoMembersPageFilterParam = 'members';
 export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
     props,
 ) => {
-    const { initialParams, featuredDelegates, children } = props;
+    const { initialParams, featuredDelegates } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
@@ -131,7 +127,6 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
-                {children}
                 <DaoMemberList.Container
                     featuredDelegatesTab={featuredDelegatesTab}
                     initialParams={initialParams}

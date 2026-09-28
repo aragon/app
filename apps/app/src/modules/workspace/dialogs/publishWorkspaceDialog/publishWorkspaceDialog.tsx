@@ -18,7 +18,10 @@ import {
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { workspaceAccountsOptions } from '../../api/workspaceQueryService';
-import { useCreateWorkspace } from '../../api/workspaceService';
+import {
+    useCreateWorkspace,
+    workspaceServiceKeys,
+} from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
@@ -108,6 +111,9 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                 accountInfos,
             });
             const workspace = await createWorkspace({ body });
+            await queryClient.invalidateQueries({
+                queryKey: workspaceServiceKeys.workspaceList(),
+            });
 
             setWorkspaceId(workspace.id);
             setStatus('success');

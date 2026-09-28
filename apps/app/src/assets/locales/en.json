@@ -4306,6 +4306,13 @@
           "safe": "Safe"
         }
       },
+      "workspaceAccountSelectorProvider": {
+        "allAccounts": "All accounts",
+        "error": {
+          "description": "Something went wrong while loading the workspace. Please try again later.",
+          "title": "Workspace failed to load"
+        }
+      },
       "workspaceAssetList": {
         "emptyState": {
           "description": "The accounts of this workspace hold no assets yet.",
@@ -4331,9 +4338,6 @@
         "totalValue": "Total value (USD)"
       },
       "workspaceAssetsPage": {
-        "filter": {
-          "allAccounts": "All accounts"
-        },
         "main": {
           "title": "Assets"
         }
@@ -4363,6 +4367,10 @@
         "owner": "Owner"
       },
       "workspaceMembersPage": {
+        "daoError": {
+          "description": "The DAO of the selected account could not be loaded. Please try again later or select another account.",
+          "heading": "Members could not be loaded"
+        },
         "emptyState": {
           "description": "This will show the members of the DAOs in this workspace when available.",
           "heading": "No members found"
@@ -4370,9 +4378,9 @@
         "main": {
           "title": "Members"
         },
-        "notFound": {
-          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
-          "title": "Workspace not found"
+        "selectAccount": {
+          "description": "Members are listed one DAO at a time. Select a DAO account in the account selector to see its members.",
+          "heading": "Select an account"
         }
       },
       "workspaceTransactionList": {
@@ -4399,15 +4407,8 @@
         "allTransactions": "All transactions"
       },
       "workspaceTransactionsPage": {
-        "filter": {
-          "allAccounts": "All accounts"
-        },
         "main": {
           "title": "Transactions"
-        },
-        "notFound": {
-          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
-          "title": "Workspace not found"
         }
       },
       "workspaceProposalList": {
@@ -4425,13 +4426,10 @@
         "allProposals": "All proposals",
         "daos": "DAOs",
         "mostRecent": "Most recent",
-        "recentUnit": "{{unit}} ago",
+        "recentUnit": " {{unit}} ago",
         "total": "Total proposals"
       },
       "workspaceProposalsPage": {
-        "filter": {
-          "allAccounts": "All accounts"
-        },
         "main": {
           "action": "New proposal",
           "title": "Proposals"
@@ -4450,6 +4448,9 @@
           "dao": "DAO",
           "safe": "Safe"
         }
+      },
+      "workspaceSelector": {
+        "create": "Create workspace"
       }
     }
   }

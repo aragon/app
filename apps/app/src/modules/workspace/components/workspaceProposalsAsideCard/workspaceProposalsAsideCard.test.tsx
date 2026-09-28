@@ -5,7 +5,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
+import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import * as workspaceAllProposalsAsideCard from './workspaceAllProposalsAsideCard';
 import * as workspaceDaoProposalsAsideCard from './workspaceDaoProposalsAsideCard';
 import {

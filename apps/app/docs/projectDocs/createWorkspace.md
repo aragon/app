@@ -144,7 +144,7 @@ an "Add" button under the list, an overflow `Dropdown` per row with a remove act
 
 `AddressesInput` is intentionally **not** reused. It is typed to `ICompositeAddress[]` and its dedupe
 (`addressesListUtils.checkIsAlreadyInList`) compares addresses only, which would wrongly reject the same address
-on two different networks — a case the seed data itself contains.
+on two different networks — a legitimate case, e.g. a Safe deployed at one address on several chains.
 
 Each row has:
 
@@ -164,7 +164,7 @@ block).
   resolved against `POST /v2/workspaces/query/accounts` (see [Account resolution](#account-resolution)). Targets are
   arbitrary addresses and are never resolved.
 - Duplicates: rejected on the `(network, address)` pair **within** a list. The same pair may appear as both a
-  target and an account (the seed data does this). Same address on different networks is legal.
+  target and an account. Same address on different networks is legal.
 - Changing a row's network re-triggers validation of that row's address field (`useFormContext().trigger`),
   otherwise a duplicate created by switching networks would slip through `mode: 'onTouched'`.
 - Accounts require at least one row; Targets may be empty and start empty.
@@ -183,8 +183,8 @@ textArea/inputFileAvatar + a `Dropdown` menu), so the dropdown is composed:
 - One `Dropdown.Item` per network, `selected` on the active one.
 
 Options are `networkUtils.getSupportedNetworks()` filtered by `!networkDefinitions[network].disabled` and sorted
-by `networkDefinitions[network].order`. Testnets are included and tagged, because the seed workspace uses
-`ETHEREUM_SEPOLIA` and excluding testnets would make it unreproducible through the form. No network sets
+by `networkDefinitions[network].order`. Testnets are included and tagged, because testnet DAOs such as
+`ETHEREUM_SEPOLIA` ones must be addable through the form. No network sets
 `disabled: true` today, so the filter is currently a no-op guard.
 
 `onValueChange` is exposed so a consumer can re-trigger sibling validation.
@@ -222,19 +222,18 @@ Pinning works from the client because `usePinFile` wraps `pinFileAction`, a `'us
 ## Registry
 
 `workspaceService` is shaped like a normal service (async, rejects with `AragonBackendServiceError`) so swapping
-the mock for real requests is a single-method change:
+local storage for real requests is a single-method change:
 
-- `getWorkspace({ urlParams: { id } })` → stored workspaces merged over `workspaceMocks`; rejects with
-  `notFoundCode` / 404 when absent.
+- `getWorkspace({ urlParams: { id } })` → the stored workspace; rejects with `notFoundCode` / 404 when absent.
+- `getWorkspaceList()` → every stored workspace, read by the workspace switcher through `useWorkspaceList`. The
+  publish dialog invalidates it after creating a workspace so the new one is listed straight away.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
 
-Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Both methods reject when called
-server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
-
-`workspaceMocks` ships the `demo` workspace ported from 1096, extended with `targets` and `owner`, so there is
-something to open without filling the form.
+Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
+server-side (`typeof window === 'undefined'`) rather than silently returning nothing. There is no seed workspace:
+the registry only holds what was created through the form.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -293,26 +292,42 @@ pages land.
 
 ### Assets page
 
-`/workspace/{workspaceId}/assets` mirrors `daoAssetsPage`: `Page.Main` with an account selector over the list, plus
-an aside. The options come from `useWorkspaceAccountFilter` (on the shared `useFilterUrlParam`, so the selection is
-a URL param like the DAO page's `?linkedaccount=`), skipping the plugin-slot indirection of `DaoFilterComponent`,
-which a workspace has no use for. They render through `WorkspaceAccountDropdown`, the dropdown counterpart of the
-`WorkspaceAccountFilter` tab strip, because a workspace's account list does not fit on a strip — the proposals and
-transactions pages use the same dropdown.
+`/workspace/{workspaceId}/assets` mirrors `daoAssetsPage`: `Page.Main` with the asset list, plus an aside. The
+account to show is not picked on the page: it comes from the global account selector (see
+[Account selection](#account-selection)), read through `useWorkspaceAccountSelectorContext`.
 
-**Every tab reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — the aggregated tab over all
-accounts, an account tab over just that one. The page only decides which accounts to send:
+**Every selection reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — "All accounts" over all
+accounts, a single account over just that one. The page only decides which accounts to send:
 
 ```ts
 const selectedAccountRefs = selectedAccount != null ? [selectedRef] : accountRefs;
 ```
 
-Going through one endpoint throughout keeps the account tabs summing to the aggregated tab, since both come out of
-the same aggregation. Tab labels use the same precedence as the overview rows — `metadata.name ?? accounts-API
-name ?? truncated address` — so a tab and its row never disagree.
+Going through one endpoint throughout keeps the single accounts summing to the aggregated view, since both come out
+of the same aggregation. Option labels use the same precedence as the overview rows — `metadata.name ?? accounts-API
+name ?? truncated address` — so an option and its row never disagree.
 
-**Only DAO accounts get a tab.** `useWorkspaceAccountFilter` is DAO-only for every page: the aggregated tab still
-covers every account, so a Safe's balances are visible there, but a Safe has no tab of its own.
+**Only DAO accounts can be selected.** The selector options are DAO-only for every page: the aggregated option still
+covers every account, so a Safe's balances are visible there, but a Safe has no option of its own.
+
+### Account selection
+
+The selected account is shared by every workspace page. `WorkspaceAccountSelectorProvider`, rendered by
+`LayoutWorkspace` around the navigation and the pages, builds the options ("All accounts" first, then one per DAO
+account) and keeps the selection on the `?account=` URL param. It also remembers the last selection, so it survives
+navigating to a page whose link carries no param. The provider owns the workspace loading lifecycle as well: it
+renders a spinner while the workspace loads and a generic error when it fails, so the pages can assume a loaded
+workspace.
+
+`WorkspaceAccountSelector`, in `NavigationWorkspace`, is the only control for the selection: a dropdown showing
+the avatar and name of each option (the workspace avatar for "All accounts", the DAO avatar for a DAO account).
+Pages only read the selection. The members page reads members one DAO at a time, so with "All accounts" selected
+it asks the user to pick an account instead of showing a list.
+
+`WorkspaceSelector`, the workspace avatar pill before it, switches workspace: a dropdown of every stored workspace
+plus a "Create workspace" item. Picking one opens its overview, and `?account=` is dropped since account IDs
+belong to the previous workspace. The pill used to open the navigation dialog, so the dialog now opens from the menu
+button, placed first in the bar and visible at every width.
 
 The aside is `WorkspaceAssetsAsideCard`, a router over one card per account type: `WorkspaceDaoAssetsAsideCard` for
 a DAO account and `WorkspaceAllAssetsAsideCard` for the aggregated option (and, until it has a card of its own, for
@@ -321,7 +336,7 @@ anything else). A Safe card slots in as one more branch.
 `WorkspaceAllAssetsAsideCard` is fed `totalAmountUsd`, `totalRecords` and `spamCount` from the response for the
 selected accounts; it shares its query key with the list, so the totals cost no extra request.
 `WorkspaceDaoAssetsAsideCard` reads the DAO (an account ID *is* the DAO ID, so the query is the DAO pages' own) and
-hands it to `DaoFilterAsideCard` with a synthesised `isParent: true` option, i.e. a DAO tab shows the DAO assets
+hands it to `DaoFilterAsideCard` with a synthesised `isParent: true` option, i.e. a selected DAO shows the DAO assets
 page's card. Two consequences to keep in mind:
 
 - its content is **gated by the `linkedAccount` flag** (`defaultValue: false`, `local: true`), exactly as on the
@@ -329,12 +344,12 @@ page's card. Two consequences to keep in mind:
   disabled `DaoInfoAside` falls back to `FinanceDetailsList` and drops the stats. Inherited behaviour, not
   introduced here.
 - its total value comes from `dao.metrics.tvlUSD`, an indexed DAO metric, while the aggregated card sums
-  `totalAmountUsd` over the returned selection. Different quantities, so a DAO tab and the aggregated tab can
+  `totalAmountUsd` over the returned selection. Different quantities, so a selected DAO and the aggregated view can
   legitimately disagree; only the token count comes from the same aggregation on both.
 
 The rows **reuse `AssetListItem` unchanged**: the backend projects the same nested `token` (network and address
-included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused — on a DAO
-account tab "which account holds this" is already answered by the tab.
+included), so a workspace asset satisfies `IAsset`. `allocations` is modelled but unused — with a DAO
+account selected "which account holds this" is already answered by the selection.
 
 Two details that do not transfer from the DAO page:
 
@@ -343,7 +358,7 @@ Two details that do not transfer from the DAO page:
   response and params, so every workspace list endpoint can reuse it.
 - `useAssetListData` is DAO-specific (it hardcodes `useAssetList` and reads `queryParams.pageSize`), so the
   aggregated list has its own `useWorkspaceAssetListData`. The amount/`priceUsd` derivation both need was extracted
-  into `finance/utils/assetUtils.normalizeAsset`, so the two tabs cannot show a different price for one token.
+  into `finance/utils/assetUtils.normalizeAsset`, so the two views cannot show a different price for one token.
 
 #### Coverage
 
@@ -352,21 +367,21 @@ list, and the empty state then says the assets could not be loaded rather than t
 is the permanent state of every non-indexed account (so every Safe) and is deliberately **not** warned about;
 otherwise the banner would always be on and would stop being read.
 
-A single-account tab gets its own copy (`unavailable.descriptionSingle`): the tab *is* the account, so counting
+A single-account selection gets its own copy (`unavailable.descriptionSingle`): the selection *is* the account, so counting
 "1 of the accounts could not be read" would only raise the question of which one.
 
 Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry.
 
 ### Proposals page
 
-`/workspace/{workspaceId}/proposals` follows the same shape as the assets page: `WorkspaceAccountFilter` tabs over
-`Page.Main`, plus an aside. **Only DAO accounts take part** — Safes have no indexed proposals.
+`/workspace/{workspaceId}/proposals` follows the same shape as the assets page: `Page.Main` filtered by the global
+account selection, plus an aside. **Only DAO accounts take part** — Safes have no indexed proposals.
 
-Per-account tabs reuse `DaoProposalList` unchanged, so a DAO tab is the DAO page: process sub-tabs when the DAO
-runs several, plugin-specific rows, working links. The aggregated tab calls
+A selected DAO reuses `DaoProposalList` unchanged, so it shows the DAO page: process sub-tabs when the DAO
+runs several, plugin-specific rows, working links. The aggregated view calls
 `POST /v2/workspaces/query/proposals` through `workspaceQueryService.getProposalList`.
 
-Unlike the assets page, this one is **not** migrated to read the workspace endpoint on every tab. Not because the
+Unlike the assets page, this one is **not** migrated to read the workspace endpoint for every selection. Not because the
 endpoint cannot do it — `IWorkspaceProposal extends IProposal`, so `WorkspaceProposalList` renders a single account
 as-is, and `filters.pluginAddress` exists — but because `DaoProposalList` is what renders the process strip
 (`useDaoPluginFilterUrlParam` → `PluginFilterComponent`, on the `?proposals=` URL param). Rebuilding the strip on
@@ -541,15 +556,16 @@ src/modules/workspace/
 │   └── index.ts
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
-├── constants/{workspaceMocks.ts,workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
+├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
-├── components/workspaceAccountFilter/{workspaceAccountFilter.tsx,index.ts}
+├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
+├── components/workspaceAccountSelectorProvider/{workspaceAccountSelectorProvider.tsx,index.ts}
+├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
 ├── components/workspaceAssetList/{workspaceAssetList.tsx,index.ts}
 ├── components/workspaceAssetsAsideCard/{workspaceAssetsAsideCard.tsx,workspaceAllAssetsAsideCard.tsx,workspaceDaoAssetsAsideCard.tsx,index.ts}
 ├── components/workspaceProposalList/{workspaceProposalList.tsx,index.ts}
 ├── components/workspaceProposalsAsideCard/{workspaceProposalsAsideCard.tsx,workspaceAllProposalsAsideCard.tsx,workspaceDaoProposalsAsideCard.tsx,index.ts}
-├── hooks/useWorkspaceAccountFilter/{useWorkspaceAccountFilter.ts,index.ts}
 ├── hooks/useWorkspaceAssetListData/{useWorkspaceAssetListData.ts,index.ts}
 ├── hooks/useWorkspaceDaos/{useWorkspaceDaos.ts,index.ts}
 ├── hooks/useWorkspaceProposalListData/{useWorkspaceProposalListData.ts,index.ts}
@@ -589,7 +605,7 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
 | `api/workspaceQueryService/` vs 1096's `api/workspaceFinanceService/` | 1096 splits the query API per resource; this keeps one service for the whole `query/*` surface |
-| `constants/workspaceMocks.ts` | this branch's `demo` gains `targets` + `owner` |
+| `constants/workspaceMocks.ts` | removed on this branch: the registry has no seed workspace |
 | `index.ts` | both export from the module root — additive |
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
@@ -608,5 +624,4 @@ Keep it that way when extending this.
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show
   different numbers for one DAO; the shared normaliser only removes the client-side source of drift.
-- Nothing lists workspaces — the seed `demo` and anything created are reachable only by URL or the success link.
 - No editing, so a typo means creating a new workspace.

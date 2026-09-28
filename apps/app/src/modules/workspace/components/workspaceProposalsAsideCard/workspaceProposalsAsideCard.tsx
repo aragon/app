@@ -2,7 +2,7 @@
 
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../../hooks/useWorkspaceAccountFilter';
+import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import { WorkspaceAllProposalsAsideCard } from './workspaceAllProposalsAsideCard';
 import { WorkspaceDaoProposalsAsideCard } from './workspaceDaoProposalsAsideCard';
 
