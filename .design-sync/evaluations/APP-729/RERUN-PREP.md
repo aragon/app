@@ -337,7 +337,7 @@ Delete `c33d6b53-7057-4dd6-b5fb-9ea0a8d647ae` — wrong ingestion,
 contaminated, no tree. Keep `e6b58c10…` as historical v1 evidence; do not
 reuse it as an arm.
 
-## 8. Execution split (2026-09-27)
+## 8b. Execution split (2026-09-27)
 
 No single session has both capabilities. Divide it:
 
