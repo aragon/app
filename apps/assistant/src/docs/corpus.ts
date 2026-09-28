@@ -1,5 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import type { Nodes } from 'mdast';
+import { fromMarkdown } from 'mdast-util-from-markdown';
 import { parse as parseYaml } from 'yaml';
 
 /**
@@ -205,15 +207,16 @@ export const parseHeading = (
 
 export const isFenceLine = (line: string): boolean => fencePattern.test(line);
 
-// Strips the title heading, the maintenance sections (with everything below them until a heading
-// of the same or a higher level) and the owner checklists; collapses the blank runs that leaves.
+// Rewrites the links (see rewriteLinks), then strips the title heading, the maintenance sections
+// (with everything below them until a heading of the same or a higher level) and the owner
+// checklists; collapses the blank runs that leaves.
 export const cleanBody = (markdown: string): string => {
     const kept: string[] = [];
     let inFence = false;
     let skippingBelowLevel: number | null = null;
     let titleSeen = false;
 
-    for (const line of markdown.split(/\r?\n/)) {
+    for (const line of rewriteLinks(markdown).split(/\r?\n/)) {
         if (isFenceLine(line)) {
             inFence = !inFence;
         }
@@ -246,7 +249,7 @@ export const cleanBody = (markdown: string): string => {
             continue;
         }
 
-        kept.push(inFence ? line : rewriteLinks(line));
+        kept.push(line);
     }
 
     return kept
@@ -255,32 +258,148 @@ export const cleanBody = (markdown: string): string => {
         .trim();
 };
 
-// An inline markdown link, `[text](destination)` — the destination optionally in angle brackets,
-// as the base writes URLs with unusual characters — but never an image (`![alt](src)`).
-const inlineLinkPattern = /(?<!!)\[([^\]]*)\]\(<?([^)<>\s]+)>?\)/g;
 const absoluteLinkPattern = /^[a-z][a-z0-9+.-]*:/i;
 const protocolDocLinkPattern = /^(?:\.\.?\/)*\/?protocol-doc\/(.*)$/;
 
+// Where a destination may point once outside the wiki: an absolute one where it points, a
+// protocol page at its public address, anything else nowhere (null).
+const toPublicDestination = (url: string): string | null => {
+    if (absoluteLinkPattern.test(url)) {
+        return url;
+    }
+
+    const protocolPath = protocolDocLinkPattern.exec(url)?.[1];
+
+    return protocolPath == null
+        ? null
+        : `${protocolDocPublicBaseUrl}${protocolPath}`;
+};
+
 /**
- * Rewrites the links of one page line for a reader outside the wiki. Absolute links (aragon.org,
- * GitHub, explorers) stay. A link into the protocol documentation — relative in the base, since
- * it is a submodule there — becomes the public GitHub page of the same file, fragment included:
- * the agent may hand it to a user with a protocol question. Any other relative link points at a
- * page of this knowledge base, which has no public home yet (APP-1145), or at a section of the
- * same page: only its text is kept, so a page path or name can never leave the corpus as a link.
+ * Rewrites the links of a page for a reader outside the wiki. Absolute links (aragon.org,
+ * GitHub, explorers) stay as written. A link into the protocol documentation — relative in the
+ * base, since it is a submodule there — becomes the public GitHub page of the same file,
+ * fragment included: the agent may hand it to a user with a protocol question. Any other
+ * relative link points at a page of this knowledge base, which has no public home yet
+ * (APP-1145), or at a section of the same page: only its text is kept, so a page path or name
+ * can never leave the corpus as a link. Images and link definitions follow the same rule (an
+ * image falls back to its alt text, a definition is removed).
+ *
+ * Links are found by the markdown parser the widget renders with (micromark; the widget's GFM
+ * extension only adds bare absolute URLs), so every form the widget would draw as a link is seen
+ * here — inline with or without a title or angle brackets, reference, autolink — and code is
+ * never touched. The page is rewritten in place: only the source of a rewritten link changes.
  */
-export const rewriteLinks = (line: string): string =>
-    line.replace(inlineLinkPattern, (_match, text: string, target: string) => {
-        if (absoluteLinkPattern.test(target)) {
-            return `[${text}](${target})`;
+export const rewriteLinks = (markdown: string): string => {
+    const tree = fromMarkdown(markdown);
+    const definitions = new Map<string, string>();
+
+    const collectDefinitions = (node: Nodes) => {
+        if (node.type === 'definition') {
+            definitions.set(node.identifier, node.url);
         }
 
-        const protocolPath = protocolDocLinkPattern.exec(target)?.[1];
+        if ('children' in node) {
+            for (const child of node.children) {
+                collectDefinitions(child);
+            }
+        }
+    };
+    collectDefinitions(tree);
 
-        return protocolPath == null
-            ? text
-            : `[${text}](${protocolDocPublicBaseUrl}${protocolPath})`;
-    });
+    const offsetsOf = (node: Nodes): [number, number] => [
+        node.position?.start.offset ?? 0,
+        node.position?.end.offset ?? 0,
+    ];
+
+    // The source between two offsets, with the given nodes inside it rewritten.
+    const renderRange = (
+        start: number,
+        end: number,
+        children: Nodes[],
+    ): string => {
+        let output = '';
+        let cursor = start;
+
+        for (const child of children) {
+            const [childStart, childEnd] = offsetsOf(child);
+            output += markdown.slice(cursor, childStart) + render(child);
+            cursor = childEnd;
+        }
+
+        return output + markdown.slice(cursor, end);
+    };
+
+    // A link's text as written: its content nodes, rewritten, without the brackets.
+    const renderText = (children: Nodes[]): string => {
+        const first = children[0];
+        const last = children.at(-1);
+
+        return first == null || last == null
+            ? ''
+            : renderRange(offsetsOf(first)[0], offsetsOf(last)[1], children);
+    };
+
+    const render = (node: Nodes): string => {
+        const [start, end] = offsetsOf(node);
+        const verbatim = () =>
+            renderRange(start, end, 'children' in node ? node.children : []);
+
+        switch (node.type) {
+            case 'link': {
+                const destination = toPublicDestination(node.url);
+
+                if (destination == null) {
+                    return renderText(node.children);
+                }
+
+                return destination === node.url
+                    ? verbatim()
+                    : `[${renderText(node.children)}](${destination})`;
+            }
+            case 'image': {
+                const destination = toPublicDestination(node.url);
+
+                if (destination == null) {
+                    return node.alt ?? '';
+                }
+
+                return destination === node.url
+                    ? verbatim()
+                    : `![${node.alt ?? ''}](${destination})`;
+            }
+            case 'definition': {
+                const destination = toPublicDestination(node.url);
+
+                if (destination == null) {
+                    return '';
+                }
+
+                return destination === node.url
+                    ? verbatim()
+                    : `[${node.label ?? node.identifier}]: ${destination}`;
+            }
+            // A reference follows its definition, which is rewritten on its own: a protocol one
+            // points at the public page already, a relative one is gone.
+            case 'linkReference':
+                return toPublicDestination(
+                    definitions.get(node.identifier) ?? '',
+                ) == null
+                    ? renderText(node.children)
+                    : verbatim();
+            case 'imageReference':
+                return toPublicDestination(
+                    definitions.get(node.identifier) ?? '',
+                ) == null
+                    ? (node.alt ?? '')
+                    : verbatim();
+            default:
+                return verbatim();
+        }
+    };
+
+    return render(tree);
+};
 
 // The first level-one heading of a markdown file, frontmatter skipped — how a folder's index page
 // names the area it fronts.

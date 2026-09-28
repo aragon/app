@@ -75,6 +75,9 @@ catalogs:
     '@types/jest':
       specifier: ^30.0.0
       version: 30.0.0
+    '@types/mdast':
+      specifier: ^4.0.4
+      version: 4.0.4
     '@types/node':
       specifier: ^24.13.5
       version: 24.13.5
@@ -120,6 +123,9 @@ catalogs:
     lint-staged:
       specifier: ^17.5.1
       version: 17.5.1
+    mdast-util-from-markdown:
+      specifier: ^2.0.3
+      version: 2.0.3
     react:
       specifier: ^19.3.0
       version: 19.3.0
@@ -502,12 +508,18 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/mdast':
+        specifier: 'catalog:'
+        version: 4.0.4
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.5
       jest:
         specifier: 'catalog:'
         version: 30.4.2(@types/node@24.13.5)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)
+      mdast-util-from-markdown:
+        specifier: 'catalog:'
+        version: 2.0.3(supports-color@8.1.1)
       ts-jest:
         specifier: 'catalog:'
         version: 29.4.12(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@30.4.1(supports-color@8.1.1))(@jest/types@30.5.1)(babel-jest@30.4.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.2)(jest-util@30.5.1)(jest@30.4.2(@types/node@24.13.5)(babel-plugin-macros@3.1.0)(supports-color@8.1.1))(typescript@5.9.3)

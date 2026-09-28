@@ -36,7 +36,9 @@ export const buildDocsNarrationFilter = (
     let heldId: string | undefined;
     let heldChars = 0;
     let heldEnded = false;
-    // Text part ids dropped as narration: their late deltas and closing chunk go too.
+    // Open text parts dropped as narration: their late deltas and closing chunk go too. An id
+    // leaves the set with its closing chunk, since an id is only unique while its part is open
+    // and a later part may carry it again.
     const droppedIds = new Set<string>();
 
     const reset = () => {
@@ -65,6 +67,10 @@ export const buildDocsNarrationFilter = (
     return new TransformStream({
         transform: (chunk, controller) => {
             if (belongsToDroppedPart(chunk)) {
+                if (chunk.type === 'text-end') {
+                    droppedIds.delete(chunk.id);
+                }
+
                 return;
             }
 
@@ -82,8 +88,12 @@ export const buildDocsNarrationFilter = (
             }
 
             if (isDocsToolCall(chunk)) {
-                // The held sentence was leading into a documentation tool call: narration.
-                droppedIds.add(heldId);
+                // The held sentence was leading into a documentation tool call: narration. A part
+                // that already ended is gone with the held chunks; an open one still has chunks to
+                // come.
+                if (!heldEnded) {
+                    droppedIds.add(heldId);
+                }
                 reset();
                 controller.enqueue(chunk);
 

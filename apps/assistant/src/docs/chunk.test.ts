@@ -81,6 +81,32 @@ describe('chunkDocument', () => {
         expect(chunks[1]?.text.startsWith('### Part one')).toBe(true);
     });
 
+    it('keeps an oversized introduction whole: it has no heading line to set aside', () => {
+        const line = 'Words. '.repeat(20).trim();
+
+        expect(
+            chunkDocument(buildDocument(line), { maxChars: 50 }).map(
+                (chunk) => chunk.text,
+            ),
+        ).toEqual([line]);
+
+        const paragraph = [line, line].join('\n');
+        const fenced = ['```sh', '# install', 'pnpm install', '```'].join('\n');
+        const chunks = chunkDocument(
+            buildDocument(
+                [fenced, '', paragraph, '', '### Details', '', line].join('\n'),
+            ),
+            { maxChars: 350 },
+        );
+
+        // An introduction opening on a fence keeps the fence opaque and whole.
+        expect(chunks.map((chunk) => chunk.text)).toEqual([
+            `${fenced}\n\n${paragraph}`,
+            `### Details\n\n${line}`,
+        ]);
+        expect(chunks.map((chunk) => chunk.section)).toEqual(['', 'Details']);
+    });
+
     it('treats a heading inside a code fence as text', () => {
         const chunks = chunkDocument(
             buildDocument(

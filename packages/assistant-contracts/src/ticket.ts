@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { assistantLimits } from './limits';
 
 // Name of the agent tool that drafts and — on explicit user approval — creates a Linear support
 // ticket. Single source of truth shared by the server tool registration and the widget's tool-call
@@ -19,12 +20,16 @@ export type ITicketIntent = z.infer<typeof ticketIntentSchema>;
 // Fields the model must assemble before calling the tool. Lenient floors: a thin ticket is fine
 // (the team follows up), while a strict floor turned short-but-valid drafts into tool errors the
 // model then narrated verbatim to the user. The ceilings are far above anything a model drafts
-// from a chat — they bound what a hand-made tool call can push into Linear. Fields are English
-// (enforced by the system prompt) while the chat stays in the user's language.
+// from a chat — they bound what a hand-made tool call can push into Linear. The description's is
+// three messages long, since a draft may quote a pasted message in full next to its summary.
+// Fields are English (enforced by the system prompt) while the chat stays in the user's language.
 export const createTicketToolInputSchema = z.object({
     intent: ticketIntentSchema,
     title: z.string().min(1).max(160),
-    description: z.string().min(1).max(8000),
+    description: z
+        .string()
+        .min(1)
+        .max(3 * assistantLimits.maxMessageLength),
     // Optional free-form contact channel (email, Telegram, anything the user offers): used by the
     // team to follow up when provided, never blocks creation.
     contact: z.string().max(200).optional(),

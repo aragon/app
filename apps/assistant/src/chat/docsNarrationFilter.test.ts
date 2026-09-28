@@ -117,6 +117,37 @@ describe('buildDocsNarrationFilter', () => {
         expect(output.map((chunk) => chunk.type)).toContain('tool-input-start');
     });
 
+    it('streams the answer when it reuses the id of the dropped narration', async () => {
+        // A provider numbering text parts per call gives the next step's answer the same id.
+        const closedFirst = await runThrough([
+            { type: 'start' },
+            ...textPart('txt-0', 'Let me look that up.'),
+            ...toolCall('searchDocs'),
+            { type: 'finish-step' },
+            { type: 'start-step' },
+            ...textPart('txt-0', 'Linking is display only.'),
+            { type: 'finish' },
+        ]);
+        const closedLate = await runThrough([
+            { type: 'start' },
+            { type: 'text-start', id: 'txt-0' },
+            { type: 'text-delta', id: 'txt-0', delta: 'Let me look that up.' },
+            ...toolCall('searchDocs'),
+            { type: 'text-end', id: 'txt-0' },
+            { type: 'finish-step' },
+            { type: 'start-step' },
+            ...textPart('txt-0', 'Linking is display only.'),
+            { type: 'finish' },
+        ]);
+
+        for (const output of [closedFirst, closedLate]) {
+            expect(textOf(output)).toEqual(['Linking is display only.']);
+            expect(
+                output.filter((chunk) => chunk.type.startsWith('text-')),
+            ).toEqual(textPart('txt-0', 'Linking is display only.'));
+        }
+    });
+
     it('keeps the sentence written before a ticket draft: the prompt requires it', async () => {
         const output = await runThrough([
             { type: 'start' },

@@ -120,9 +120,13 @@ export const chunkDocument = (
 
         // The section heading line is set aside so it does not open a block of its own, and
         // rejoins the first block: the section's preamble, or its first subsection when the
-        // heading is followed directly by one.
-        const [headingLine = '', ...sectionBody] = section.lines;
-        const subsections = splitAtHeadings(sectionBody, 3);
+        // heading is followed directly by one. The introduction has no heading line.
+        const headingLines =
+            section.level === 0 ? [] : section.lines.slice(0, 1);
+        const subsections = splitAtHeadings(
+            section.lines.slice(headingLines.length),
+            3,
+        );
 
         for (const [index, subsection] of subsections.entries()) {
             const label = buildBreadcrumb([
@@ -130,8 +134,8 @@ export const chunkDocument = (
                 subsection.heading,
             ]);
             const lines =
-                index === 0
-                    ? [headingLine, '', ...subsection.lines]
+                index === 0 && headingLines.length > 0
+                    ? [...headingLines, '', ...subsection.lines]
                     : subsection.lines;
             const text = lines.join('\n').trim();
 

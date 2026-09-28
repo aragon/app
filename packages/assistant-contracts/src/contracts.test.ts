@@ -126,12 +126,20 @@ describe('assistant wire contract', () => {
                     'Submitting a vote on a proposal reverts with an unknown error.',
             }).success,
         ).toBeFalsy();
-        // Ceilings bound a hand-made tool call, not a drafted one.
+        // Ceilings bound a hand-made tool call, not a drafted one: a summary with a pasted
+        // message of the maximum length quoted in full still fits.
         expect(
             createTicketToolInputSchema.safeParse({
                 intent: 'bug',
                 title: 'bug',
-                description: 'x'.repeat(8001),
+                description: `Voting reverts. The stack trace:\n\n${'x'.repeat(8000)}`,
+            }).success,
+        ).toBeTruthy();
+        expect(
+            createTicketToolInputSchema.safeParse({
+                intent: 'bug',
+                title: 'bug',
+                description: 'x'.repeat(24_001),
             }).success,
         ).toBeFalsy();
         expect(

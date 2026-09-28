@@ -125,13 +125,14 @@ describe('loadCorpus', () => {
         expect(body).toContain('see how a stage advances and the');
         expect(body).not.toContain('accounts/account.md');
         expect(body).not.toContain('stage.md');
-        // Absolute links stay (the angle-bracket form loses its brackets), images and fenced
-        // code are left alone.
-        expect(body).toContain('[Safe docs](https://help.safe.global/en/)');
+        // Absolute links stay as written and fenced code is left alone; a relative image keeps
+        // its alt text.
+        expect(body).toContain('[Safe docs](<https://help.safe.global/en/>)');
         expect(body).toContain(
             '[assistance form](https://www.aragon.org/get-assistance-form)',
         );
-        expect(body).toContain('![Stage diagram](./stage-diagram.png)');
+        expect(body).toContain('\nStage diagram\n');
+        expect(body).not.toContain('stage-diagram.png');
         expect(body).toContain('[not a link](./kept-verbatim.md)');
     });
 
@@ -240,5 +241,37 @@ describe('rewriteLinks', () => {
         expect(rewriteLinks('Mail [us](mailto:support@aragon.org).')).toEqual(
             'Mail [us](mailto:support@aragon.org).',
         );
+    });
+
+    it('reduces a relative link to its text in every form the renderer draws as a link', () => {
+        expect(rewriteLinks('[t](<../my page.md>)')).toEqual('t');
+        expect(rewriteLinks('[t](../x.md "Title")')).toEqual('t');
+        expect(rewriteLinks('[two\nlines](../x.md)')).toEqual('two\nlines');
+        expect(rewriteLinks('[![b](img.png)](../x.md)')).toEqual('b');
+        expect(rewriteLinks('See **[the `vault`](../x.md)**.')).toEqual(
+            'See **the `vault`**.',
+        );
+        expect(
+            rewriteLinks(
+                'See [t][ref], [u][] and [u].\n\n[ref]: ../x.md "Title"\n[u]: <../y z.md>',
+            ).trim(),
+        ).toEqual('See t, u and u.');
+    });
+
+    it('points a protocol reference at the public page through its definition', () => {
+        expect(
+            rewriteLinks(
+                'The [processor][spp] and [a](../protocol-doc/core/dao.md "DAO").\n\n[spp]: ../protocol-doc/plugins/spp.md',
+            ),
+        ).toEqual(
+            'The [processor][spp] and [a](https://github.com/aragon/protocol-doc/blob/main/core/dao.md).\n\n[spp]: https://github.com/aragon/protocol-doc/blob/main/plugins/spp.md',
+        );
+    });
+
+    it('leaves code and text that is not a link alone', () => {
+        const source =
+            'Write `[t](../x.md)` for a link; <../x.md> is text (an autolink needs a scheme), <https://aragon.org> stays.';
+
+        expect(rewriteLinks(source)).toEqual(source);
     });
 });
