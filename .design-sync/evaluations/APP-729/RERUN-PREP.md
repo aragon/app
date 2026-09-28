@@ -1,7 +1,29 @@
 # APP-1220 merge gate — bundle acceptance test
 
-Status: prep. Supersedes the delta framing. The 2026-09-25/26 attempt is
-**void** (see `runs/20260925T133856Z/`).
+Status: **closed by evaluator override, 2026-09-28.** Run 3 remains a
+formal **FAIL**; it is not retroactively regraded. APP-726, APP-727,
+APP-728, APP-735, APP-736, APP-1208 and APP-1223 are clear to merge.
+
+The override retires context reachability as a release condition. Identical
+guide content produced one hit and two misses across the three completed
+acceptance runs, so the condition measures model output variance rather than
+bundle availability. The planned N=5 follow-up produced no usable rate because
+the shared project retained one handoff across draws; its invalidation is
+recorded in `runs/reachability-N5/result.json`.
+
+Run 3's other two failed thresholds remain recorded. Both count the same five
+path-only citations; every target exists, all ranged and symbol citations
+resolve, and no target contradicts the handoff. This is an output citation
+format defect, not a missing or incorrect bundle contract, so it does not block
+these PRs. **Follow-up: citation-resolution gate** — future probes must require
+`path + symbol` or `path + range`, and graders should apply that rule only to
+claim-bearing citations. No further acceptance run is required for this batch.
+
+The 2026-09-25/26 attempt remains **void** (see
+`runs/20260925T133856Z/`).
+
+The remainder preserves the protocol and evidence as they stood when run 3
+was graded; the override above is the current disposition.
 
 ## 0. What this test is, and what gates the PRs
 
