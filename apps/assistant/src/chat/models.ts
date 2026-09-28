@@ -44,10 +44,15 @@ export const getChatProviderOptions = (fallbackModels: string[]) => ({
     google: { thinkingConfig: { thinkingBudget: 0 } },
     gateway: {
         models: fallbackModels,
-        // The gateway load-balances one model across providers; the deepseek first-party host
-        // proved flaky in testing (finishReason "other", retry storms surfacing error parts in
-        // the chat) while Fireworks stayed clean — prefer it, without excluding the providers
-        // that host the fallback models.
-        order: ['fireworks'],
+        // The gateway load-balances one model across providers unless told otherwise; `order`
+        // is a preference, not a restriction, so the providers hosting the fallback models stay
+        // reachable. For v4-flash the deepseek first-party host proved flaky (finishReason
+        // "other", retry storms surfacing error parts in the chat) and Fireworks was preferred;
+        // Fireworks drops that model on 2026-09-25. On v4.1-flash the first-party host was the
+        // fastest and cleanest option in the ten-scenario sweep (4–6.5 s per answer, no errors)
+        // and the cheapest listing; Together AI, the lowest time-to-first-token among the
+        // third-party hosts, is the second preference. The stall detector in modelFailover
+        // covers a host that accepts a call and goes quiet.
+        order: ['deepseek', 'togetherai'],
     },
 });
