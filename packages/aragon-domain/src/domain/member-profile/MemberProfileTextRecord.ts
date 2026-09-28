@@ -2,12 +2,12 @@ import { ValueObject } from 'ddd-core-ts';
 import { z } from 'zod';
 
 const MemberProfileTextRecordPropsSchema = z.object({
-  key: z.string().min(1, 'key must not be empty'),
-  value: z.string(),
+    key: z.string().min(1, 'key must not be empty'),
+    value: z.string(),
 });
 
 type MemberProfileTextRecordProps = z.output<
-  typeof MemberProfileTextRecordPropsSchema
+    typeof MemberProfileTextRecordPropsSchema
 >;
 
 /**
@@ -15,16 +15,18 @@ type MemberProfileTextRecordProps = z.output<
  * `{ key: 'avatar', value: 'ipfs://…' }`.
  */
 export class MemberProfileTextRecord extends ValueObject<MemberProfileTextRecordProps> {
-  get key(): string {
-    return this.props.key;
-  }
+    get key(): string {
+        return this.props.key;
+    }
 
-  get value(): string {
-    return this.props.value;
-  }
+    get value(): string {
+        return this.props.value;
+    }
 
-  static create(props: MemberProfileTextRecordProps): MemberProfileTextRecord {
-    const validated = MemberProfileTextRecordPropsSchema.parse(props);
-    return new MemberProfileTextRecord(validated);
-  }
+    static create(
+        props: MemberProfileTextRecordProps,
+    ): MemberProfileTextRecord {
+        const validated = MemberProfileTextRecordPropsSchema.parse(props);
+        return new MemberProfileTextRecord(validated);
+    }
 }

@@ -2,10 +2,10 @@ import { AragonDomain, EnvioClient, type RpcUrls } from '../../src';
 import { CHAIN_ID } from './constants';
 
 export interface BuiltDomain {
-  /** The public facade. Every integration test drives the stack through this. */
-  domain: AragonDomain;
-  /** Spy over `EnvioClient.query` — assert call count / variables against it. */
-  query: ReturnType<typeof vi.fn>;
+    /** The public facade. Every integration test drives the stack through this. */
+    domain: AragonDomain;
+    /** Spy over `EnvioClient.query` — assert call count / variables against it. */
+    query: ReturnType<typeof vi.fn>;
 }
 
 /**
@@ -21,18 +21,20 @@ export interface BuiltDomain {
  * it, so the URL is never dialled.
  */
 export function buildDomain(
-  responses: unknown[],
-  rpcUrls: RpcUrls = { [CHAIN_ID]: 'https://unused.example.invalid' },
+    responses: unknown[],
+    rpcUrls: RpcUrls = { [CHAIN_ID]: 'https://unused.example.invalid' },
 ): BuiltDomain {
-  const envio = new EnvioClient('https://unused.example.invalid');
-  const queue = [...responses];
-  const query = vi.fn(async () => {
-    if (queue.length === 0) {
-      throw new Error('EnvioClient.query called more times than expected');
-    }
-    return queue.shift();
-  });
-  vi.spyOn(envio, 'query').mockImplementation(query as never);
+    const envio = new EnvioClient('https://unused.example.invalid');
+    const queue = [...responses];
+    const query = vi.fn(() => {
+        if (queue.length === 0) {
+            return Promise.reject(
+                new Error('EnvioClient.query called more times than expected'),
+            );
+        }
+        return Promise.resolve(queue.shift());
+    });
+    vi.spyOn(envio, 'query').mockImplementation(query as never);
 
-  return { domain: AragonDomain.load(envio, rpcUrls), query };
+    return { domain: AragonDomain.load(envio, rpcUrls), query };
 }

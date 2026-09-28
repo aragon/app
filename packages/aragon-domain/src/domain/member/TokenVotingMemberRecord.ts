@@ -4,15 +4,15 @@ import { Address } from '@/domain/primitives';
 import { VotingPower } from '@/domain/voting-power/VotingPower';
 
 const TokenVotingMemberRecordPropsSchema = z.object({
-  address: z.instanceof(Address),
-  votingPower: z.instanceof(VotingPower),
-  delegationCount: z.number().int().nonnegative(),
-  firstVotingPowerChangeTimestamp: z.date().nullable(),
-  lastVotingPowerChangeTimestamp: z.date().nullable(),
+    address: z.instanceof(Address),
+    votingPower: z.instanceof(VotingPower),
+    delegationCount: z.number().int().nonnegative(),
+    firstVotingPowerChangeTimestamp: z.date().nullable(),
+    lastVotingPowerChangeTimestamp: z.date().nullable(),
 });
 
 type TokenVotingMemberRecordProps = z.infer<
-  typeof TokenVotingMemberRecordPropsSchema
+    typeof TokenVotingMemberRecordPropsSchema
 >;
 
 /**
@@ -21,46 +21,48 @@ type TokenVotingMemberRecordProps = z.infer<
  * of their voting-power changes.
  */
 export class TokenVotingMemberRecord extends ValueObject<TokenVotingMemberRecordProps> {
-  /**
-   * The member's account address.
-   */
-  get address(): Address {
-    return this.props.address;
-  }
+    /**
+     * The member's account address.
+     */
+    get address(): Address {
+        return this.props.address;
+    }
 
-  /**
-   * The member's current voting power.
-   */
-  get votingPower(): VotingPower {
-    return this.props.votingPower;
-  }
+    /**
+     * The member's current voting power.
+     */
+    get votingPower(): VotingPower {
+        return this.props.votingPower;
+    }
 
-  /**
-   * Number of distinct accounts delegating their voting power to this
-   * member (counts self-delegation).
-   */
-  get delegationCount(): number {
-    return this.props.delegationCount;
-  }
+    /**
+     * Number of distinct accounts delegating their voting power to this
+     * member (counts self-delegation).
+     */
+    get delegationCount(): number {
+        return this.props.delegationCount;
+    }
 
-  /**
-   * Timestamp of the member's first voting-power change, or null when
-   * no such change has been observed.
-   */
-  get firstVotingPowerChangeTimestamp(): Date | null {
-    return this.props.firstVotingPowerChangeTimestamp;
-  }
+    /**
+     * Timestamp of the member's first voting-power change, or null when
+     * no such change has been observed.
+     */
+    get firstVotingPowerChangeTimestamp(): Date | null {
+        return this.props.firstVotingPowerChangeTimestamp;
+    }
 
-  /**
-   * Timestamp of the member's most recent voting-power change, or null
-   * when no such change has been observed.
-   */
-  get lastVotingPowerChangeTimestamp(): Date | null {
-    return this.props.lastVotingPowerChangeTimestamp;
-  }
+    /**
+     * Timestamp of the member's most recent voting-power change, or null
+     * when no such change has been observed.
+     */
+    get lastVotingPowerChangeTimestamp(): Date | null {
+        return this.props.lastVotingPowerChangeTimestamp;
+    }
 
-  static create(props: TokenVotingMemberRecordProps): TokenVotingMemberRecord {
-    const validated = TokenVotingMemberRecordPropsSchema.parse(props);
-    return new TokenVotingMemberRecord(validated);
-  }
+    static create(
+        props: TokenVotingMemberRecordProps,
+    ): TokenVotingMemberRecord {
+        const validated = TokenVotingMemberRecordPropsSchema.parse(props);
+        return new TokenVotingMemberRecord(validated);
+    }
 }

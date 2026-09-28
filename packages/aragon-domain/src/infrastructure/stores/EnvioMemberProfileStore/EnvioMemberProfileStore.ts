@@ -22,18 +22,20 @@ const FIND_TEXT_RECORDS_QUERY = `
 `;
 
 export class EnvioMemberProfileStore implements MemberProfileStore {
-  constructor(private readonly envio: EnvioClient) {}
+    constructor(private readonly envio: EnvioClient) {}
 
-  public async findTextRecordsBySubdomain(
-    subdomain: MemberProfileAragonName,
-  ): Promise<MemberProfileTextRecord[]> {
-    try {
-      const raw = await this.envio.query(FIND_TEXT_RECORDS_QUERY, {
-        name: subdomain.toString(),
-      });
-      return MemberProfileTextRecordMap.mapDTOToDomain(raw);
-    } catch (cause) {
-      throw new Error('Error querying member profile from Envio', { cause });
+    async findTextRecordsBySubdomain(
+        subdomain: MemberProfileAragonName,
+    ): Promise<MemberProfileTextRecord[]> {
+        try {
+            const raw = await this.envio.query(FIND_TEXT_RECORDS_QUERY, {
+                name: subdomain.toString(),
+            });
+            return MemberProfileTextRecordMap.mapDTOToDomain(raw);
+        } catch (cause) {
+            throw new Error('Error querying member profile from Envio', {
+                cause,
+            });
+        }
     }
-  }
 }

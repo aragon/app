@@ -8,25 +8,25 @@ import { createPage } from '@/domain/primitives/pagination/Page';
 import type { PageRequest } from '@/domain/primitives/pagination/PageRequest';
 
 export interface GetTokenVotingMembershipUseCaseProps {
-  /**
-   * Chain the plugin and its token are deployed on.
-   */
-  chainId: ChainId;
+    /**
+     * Chain the plugin and its token are deployed on.
+     */
+    chainId: ChainId;
 
-  /**
-   * Address of the TokenVoting plugin.
-   */
-  pluginAddress: Address;
+    /**
+     * Address of the TokenVoting plugin.
+     */
+    pluginAddress: Address;
 
-  /**
-   * Address of the plugin's ERC20Votes governance token.
-   */
-  tokenContractAddress: Address;
+    /**
+     * Address of the plugin's ERC20Votes governance token.
+     */
+    tokenContractAddress: Address;
 
-  /**
-   * The page of members to return.
-   */
-  page: PageRequest;
+    /**
+     * The page of members to return.
+     */
+    page: PageRequest;
 }
 
 /**
@@ -35,50 +35,51 @@ export interface GetTokenVotingMembershipUseCaseProps {
  * power descending.
  */
 export class GetTokenVotingMembershipUseCase
-  implements
-    UseCase<GetTokenVotingMembershipUseCaseProps, Page<TokenVotingMember>>
+    implements
+        UseCase<GetTokenVotingMembershipUseCaseProps, Page<TokenVotingMember>>
 {
-  public readonly code = 'GetTokenVotingMembershipUseCase';
+    readonly code = 'GetTokenVotingMembershipUseCase';
 
-  constructor(
-    private readonly memberStore: MemberStore,
-    private readonly ensStore: ENSStore,
-  ) {}
+    constructor(
+        private readonly memberStore: MemberStore,
+        private readonly ensStore: ENSStore,
+    ) {}
 
-  public async execute(
-    props: GetTokenVotingMembershipUseCaseProps,
-  ): Promise<Page<TokenVotingMember>> {
-    try {
-      const memberPage = await this.memberStore.findTokenVotingMembers({
-        chainId: props.chainId,
-        pluginAddress: props.pluginAddress,
-        tokenContractAddress: props.tokenContractAddress,
-        page: props.page,
-      });
+    async execute(
+        props: GetTokenVotingMembershipUseCaseProps,
+    ): Promise<Page<TokenVotingMember>> {
+        try {
+            const memberPage = await this.memberStore.findTokenVotingMembers({
+                chainId: props.chainId,
+                pluginAddress: props.pluginAddress,
+                tokenContractAddress: props.tokenContractAddress,
+                page: props.page,
+            });
 
-      const namesByAddress = await this.ensStore.lookUpPrimaryNames(
-        memberPage.items.map((data) => data.record.address),
-      );
+            const namesByAddress = await this.ensStore.lookUpPrimaryNames(
+                memberPage.items.map((data) => data.record.address),
+            );
 
-      const members = memberPage.items.map((data) =>
-        TokenVotingMember.create(
-          data.record,
-          data.activity,
-          // ENSStore keys its map by checksummed hex address.
-          namesByAddress.get(data.record.address.toHexString()) ?? null,
-        ),
-      );
+            const members = memberPage.items.map((data) =>
+                TokenVotingMember.create(
+                    data.record,
+                    data.activity,
+                    // ENSStore keys its map by checksummed hex address.
+                    namesByAddress.get(data.record.address.toHexString()) ??
+                        null,
+                ),
+            );
 
-      return createPage(
-        members,
-        memberPage.page,
-        memberPage.pageSize,
-        memberPage.totalRecords,
-      );
-    } catch (cause) {
-      throw new Error('Error while getting token-voting membership', {
-        cause,
-      });
+            return createPage(
+                members,
+                memberPage.page,
+                memberPage.pageSize,
+                memberPage.totalRecords,
+            );
+        } catch (cause) {
+            throw new Error('Error while getting token-voting membership', {
+                cause,
+            });
+        }
     }
-  }
 }
