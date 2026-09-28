@@ -53,9 +53,16 @@ jobs:
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/gh-ensure-pr-comment
+
       - name: Comment preview PR
-        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1 (https://github.com/thollander/actions-comment-pull-request/releases/tag/v3.0.1)
+        uses: ./.github/actions/gh-ensure-pr-comment
         with:
           message: "📚 **Storybook Preview:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})"
-          comment-tag: storybook-preview-url
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: storybook-preview-url
+          token: ${{ secrets.GITHUB_TOKEN }}

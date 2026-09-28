@@ -52,9 +52,9 @@ jobs:
           # tags the release PR's merge commit, which is where `changeset version` landed.
           # Same pattern as app-production.yml and assistant-production.yml.
           ref: ${{ github.event.release.tag_name }}
-          # MUST stay empty. The setup action defaults registry-url to the npm registry, which
-          # makes actions/setup-node write a user-level .npmrc containing a placeholder
-          # NODE_AUTH_TOKEN — that shadows OIDC trusted publishing and the publish fails.
+          # MUST stay empty (also the setup action's default). A registry-url makes
+          # actions/setup-node write a user-level .npmrc with `_authToken=${NODE_AUTH_TOKEN}` —
+          # that shadows OIDC trusted publishing and the publish fails.
           registry-url: ""
 
       - name: Build library

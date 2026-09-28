@@ -54,7 +54,9 @@ describe('<PermissionAddressInput /> component', () => {
     it('is required', async () => {
         render(<TestForm />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeDefined();
     });
@@ -62,7 +64,9 @@ describe('<PermissionAddressInput /> component', () => {
     it('accepts a checksummed address', async () => {
         render(<TestForm initialValue={validAddress} />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeUndefined();
     });
@@ -70,7 +74,9 @@ describe('<PermissionAddressInput /> component', () => {
     it('rejects a value that is not an address', async () => {
         render(<TestForm initialValue="not-an-address" />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeDefined();
     });
@@ -80,7 +86,9 @@ describe('<PermissionAddressInput /> component', () => {
         const badChecksum = validAddress.replace('aA96045', 'Aa96045');
         render(<TestForm initialValue={badChecksum} />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeDefined();
     });
@@ -88,7 +96,9 @@ describe('<PermissionAddressInput /> component', () => {
     it('accepts the zero address when the field is not a condition', async () => {
         render(<TestForm initialValue={zeroAddress} />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeUndefined();
     });
@@ -98,7 +108,9 @@ describe('<PermissionAddressInput /> component', () => {
         // but a meaningless condition.
         render(<TestForm initialValue={zeroAddress} isCondition={true} />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error?.message).toEqual(
             'app.actions.core.permissionAddressInput.conditionRequired',
@@ -108,7 +120,9 @@ describe('<PermissionAddressInput /> component', () => {
     it('accepts a real contract on a condition field', async () => {
         render(<TestForm initialValue={validAddress} isCondition={true} />);
 
-        await formMethods?.trigger(fieldPath);
+        await act(async () => {
+            await formMethods?.trigger(fieldPath);
+        });
 
         expect(formMethods?.getFieldState(fieldPath).error).toBeUndefined();
     });
