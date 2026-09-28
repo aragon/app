@@ -196,6 +196,23 @@ path and line range against the payload; a grader probability is not
 evidence. In the void run `cand_bad3` came back 0.40 — meaningless until
 the citations were resolved by hand, which showed no invention at all.
 
+**Symbol citations count as resolvable — frozen 2026-09-28, before run 3.**
+The run-3 payload's `guidelines/index.md` instructs the reader to cite
+**path plus symbol**, not a bare line number, because
+`_preview/AddressesInput.js` and `_preview/WizardPage.js` both carry their
+provider stack at line 110 and a line-only citation cannot be checked. A
+handoff that follows that instruction must not then fail `required[6].3`
+for omitting line numbers. Resolution rule:
+
+- `path + symbol` → resolve by locating the symbol in the named file. Found
+  and describing what the handoff says it describes → satisfied.
+- `path + line range` → resolve as before, by reading the range.
+- `path` alone, with no symbol and no range → not resolvable, not
+  satisfied.
+
+Either form is acceptable. Only an unresolvable citation, or one whose
+target contradicts the claim, counts against the criterion.
+
 **Context reachability is the criterion that matters most here.** The
 registry report and selection guide have never previously been delivered
 to any project. If the handoff never consults them, the acceptance
