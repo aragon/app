@@ -19,7 +19,27 @@ The Aragon app (`apps/app`) reads `NEXT_PUBLIC_ASSISTANT_URL` from its own env c
 
 All chat/assistant copy is centralized in two places: service-side texts live in `src/chat/prompts/` (the agent system prompt, fixed non-LLM replies `fixedMessages.ts`, Linear ticket texts `issueTexts.ts`), and every user-facing string of the widget lives in `packages/assistant-chat/src/copy.ts`.
 
-**Editing the system prompt.** `agentPrompt.ts` only assembles the sections in `src/chat/prompts/sections/` — role, the routing table (what the user says → what you do), product answers (docs environments only), the ticket flow, tone, a closing reminder — so a change to one rule is a diff of one file. Order is priority: the model follows the first and the last instructions best. A rule says what to write, once, with its reason in the same sentence and an example where the shape matters; a prohibition the model can ignore is replaced by the positive form plus a check in the sweep. Every rule has a check: a product-answer rule is measured with a scenario sweep (ten product questions, three runs each, regex checks for friction words, link shape, second person, list completeness, closing questions), an intake rule with the intake scenarios (bug, attachment, feedback: draft on the first turn, one contact question, text before the card) and `scripts/llmSmoke.mjs`. Run them against a local server before and after a change; a rule without a check is a candidate for removal.
+**Editing the system prompt.** `agentPrompt.ts` only assembles the sections in `src/chat/prompts/sections/` — role, the routing table (what the user says → what you do), product answers (docs environments only), the ticket flow, tone, a closing reminder — so a change to one rule is a diff of one file. Order is priority: the model follows the first and the last instructions best. A rule says what to write, once, with its reason in the same sentence and an example where the shape matters; a prohibition the model can ignore is replaced by the positive form plus a check in the eval (below). Run the eval before and after a change; a rule without a check is a candidate for removal.
+
+## Answer quality
+
+Quality is measured, not patched. `evals/scenarios.ts` holds one conversation per kind of request the chat gets — documentation answers, a capability the app lacks, a fact the pages do not give, problem reports, feedback, off-topic, prompt injection, another language — each with deterministic checks of the prompt's rules and a reference that a judge model grades the reply against (accuracy, helpfulness, communication, 1–5). `pnpm eval` runs them through the agent as the chat route wires it (prompt, tools, documentation index, provider options, step bound, time cap) on the given models, and prints a table plus every failure and low grade:
+
+```sh
+pnpm build:docs-index                                                    # once, for the documentation scenarios
+pnpm eval --models openai/gpt-6-sol,deepseek/deepseek-v4.1-flash --runs 2   # documentation tools on
+pnpm eval --models openai/gpt-6-sol --mode intake                        # intake only, production today
+pnpm eval --models deepseek/deepseek-v4.1-flash --reasoning medium       # a candidate reasoning level
+```
+
+It calls real models (a two-model documentation run costs a few dollars, judge included; `--judge none` skips the grading) and never creates a ticket. `evals/scenarios.test.ts` keeps the checks themselves honest in Jest; `scripts/llmSmoke.mjs` runs a few conversations against a deployed instance every night.
+
+A bad answer seen in a chat (a tester's screenshot, a ticket transcript) becomes a scenario first. The fix is the change that lifts the whole table without breaking a row, tried in this order — the order in which the eval of 2026-09-28 found the leverage:
+
+1. **Model and reasoning level.** The widest spread by far: from 13 to 39 of 44 documentation conversations passed across thirteen models on the same prompt, and from 26 to 36 for one model across reasoning levels (`--reasoning` tries one; numbers in `src/lib/config.ts` and `src/chat/models.ts`).
+2. **What the model reads.** The documentation itself (a missing page, source wording such as "self-service" that leaks into answers) and retrieval. A map of every page in the prompt was tried and dropped: it did not teach the cheaper models to tell a missing capability from an unknown, and it made their other answers worse.
+3. **What the model should not write.** Fixed copy belongs in code. The sentence the prompt makes the model write in front of every draft is the most common failure left (skipped, or kept in English in a Spanish chat), a candidate to move into the draft card.
+4. **A prompt rule**, last: general, and with a check in the eval.
 
 ## Documentation answering
 

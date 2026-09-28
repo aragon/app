@@ -1,0 +1,5 @@
+---
+"@aragon/assistant": patch
+---
+
+Route every model call through providers under a zero-data-retention agreement (AI Gateway `zeroDataRetention`), so no provider keeps or trains on chat text; the deepseek first-party host drops out of routing. The model chain and the reasoning levels are now chosen with an eval checked in under `evals/` (`pnpm eval`): every kind of conversation the chat gets — documentation answers, capabilities the app lacks, facts it does not give, problem reports, feedback, off-topic, prompt injection, another language — run through the agent as the route wires it, checked against the prompt's rules and graded by a judge model. The chain becomes `openai/gpt-6-luna` at medium reasoning, then `deepseek/deepseek-v4.1-flash` at low, then `openai/gpt-6-sol` at low; each model's level is set in the config and applied through the provider-neutral AI SDK setting (medium lifts gpt-6-luna from 29 to 38 of 44 documentation conversations). `google/gemini-2.5-flash-lite` (13 of 44) leaves the chain. The LLM smoke test gains a documentation scenario: a capability the app lacks is said plainly, with the contact link.

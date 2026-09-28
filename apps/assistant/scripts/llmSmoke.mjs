@@ -160,6 +160,9 @@ const runScenario = async (name, scenario) => {
     }
 };
 
+// The documentation tools are on in every environment but production (src/lib/config.ts).
+let docsSearchEnabled = false;
+
 await runScenario('health', async () => {
     const response = await fetch(`${baseUrl}/health`, {
         headers: bypassHeaders,
@@ -168,6 +171,7 @@ await runScenario('health', async () => {
     if (!response.ok || body.status !== 'ok') {
         throw new Error(`unexpected health response: ${JSON.stringify(body)}`);
     }
+    docsSearchEnabled = body.environment !== 'production';
     logStep(`environment: ${body.environment}`);
 });
 
@@ -220,6 +224,43 @@ await runScenario(
         logStep(`answer: ${turn.text.slice(0, 160).replace(/\s+/g, ' ')}`);
     },
 );
+
+// A capability the app does not have is said plainly and handed to the team with the contact
+// link — not answered as an unknown with an offer to file a question (evals/scenarios.ts,
+// absent-private-quadratic, has the full set of checks).
+if (docsSearchEnabled) {
+    await runScenario(
+        'a capability the app lacks is said plainly, with the contact link',
+        async () => {
+            const sessionId = randomUUID();
+            const turn = await sendChatTurn(sessionId, [
+                buildUserMessage('I want private quadratic voting'),
+            ]);
+
+            if (turn.draftInput || turn.approvalRequest) {
+                throw new Error(
+                    `expected no ticket draft, got: ${JSON.stringify(turn.draftInput?.input)}`,
+                );
+            }
+            // The link has to be a markdown link to the contact form, the only form the prompt
+            // allows: compare its target, not a substring of the text.
+            const linkTargets = [
+                ...turn.text.matchAll(/\[[^\]]*\]\(([^)\s]+)\)/g),
+            ].map((match) => match[1]);
+            if (
+                !linkTargets.some(
+                    (target) =>
+                        target === 'https://www.aragon.org/get-assistance-form',
+                )
+            ) {
+                throw new Error(
+                    `expected the contact link, got: ${turn.text.slice(0, 200)}`,
+                );
+            }
+            logStep(`answer: ${turn.text.slice(0, 160).replace(/\s+/g, ' ')}`);
+        },
+    );
+}
 
 await runScenario(
     'bug report drafts a reviewable ticket and creates it on approval',

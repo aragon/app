@@ -10,6 +10,11 @@ export const supportEmail = 'support@aragon.org';
 
 export const supportEmailHref = `mailto:${supportEmail}`;
 
+// The legal pages of aragon.org, linked from the AI notice under the composer.
+export const privacyPolicyUrl = 'https://aragon.org/privacy-policy';
+
+export const termsUrl = 'https://aragon.org/terms-and-conditions';
+
 const maxFileSizeMb = Math.round(
     assistantLimits.maxFileSizeBytes / (1024 * 1024),
 );
@@ -57,9 +62,20 @@ export const chatCopy = {
         addAttachment: 'Add attachment',
         // Shown once a message approaches the length limit, e.g. "7,650 / 8,000".
         characterCount: (used: string, limit: string) => `${used} / ${limit}`,
-        attachmentsShared: 'Attachments are shared with the support team.',
+        attachmentsShared:
+            'Files go to the Aragon support team with your request, and people there will see them.',
         escalationPrompt: 'Prefer a human?',
         escalationLink: 'Email support',
+        // Under the composer on a fresh chat: the user learns they talk to an AI, and who may
+        // process what they type, before they type it. One sentence with the two legal pages
+        // linked in it, e.g. "… read the privacy policy and terms."
+        aiNotice: {
+            text: 'The Aragon Assistant uses AI to provide you with helpful information. Sometimes it can be wrong. For more information about how third parties may process your messages, read the ',
+            privacyPolicy: 'privacy policy',
+            and: ' and ',
+            terms: 'terms',
+            end: '.',
+        },
     },
     attachments: {
         remove: 'Remove file',

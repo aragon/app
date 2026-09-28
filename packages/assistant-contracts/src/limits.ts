@@ -13,8 +13,9 @@ export const assistantLimits = {
     // The agent resends the transcript on every turn, so late turns cost the most, and a
     // documentation answer adds its search hits and the pages it read to that transcript.
     // Generous enough that a conversation hitting the turn limit is never cut off by tokens
-    // first: the turn count is the graceful limiter. At the agent model's price this caps a
-    // session at roughly $0.06.
+    // first: the turn count is the graceful limiter. At the agent model's price (gpt-6-luna,
+    // $0.10/M input) this caps a session at roughly $0.05; the AI Gateway spend budget bounds the
+    // total.
     maxTokensPerSession: 300_000,
     // The chat lives on after a ticket: the agent can file up to this many in one session.
     maxIssuesPerSession: 3,

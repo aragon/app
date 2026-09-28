@@ -12,6 +12,7 @@
         "coverage"
     ],
     "include": [
-        "src"
+        "src",
+        "evals"
     ]
 }

@@ -15,6 +15,7 @@
         "build": "pnpm run build:docs-index && tsup",
         "build:docs-index": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local src/docs/buildDocsIndex.ts",
         "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && pnpm run build:docs-index && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
+        "eval": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local evals/runEval.ts",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "setup": "./scripts/setupEnv.sh",

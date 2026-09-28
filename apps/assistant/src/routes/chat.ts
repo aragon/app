@@ -28,6 +28,8 @@ import {
     firstContentTimeoutMs,
     getChatModels,
     getChatProviderOptions,
+    getChatReasoning,
+    maxAgentSteps,
 } from '../chat/models';
 import { buildAgentSystemPrompt } from '../chat/prompts/agentPrompt';
 import {
@@ -274,10 +276,8 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                                 abortSignal,
                                 maxOutputTokens:
                                     assistantLimits.maxOutputTokens,
-                                // Bounded step count: a documentation answer is a search, at
-                                // most a couple of page reads and the reply; a report is the
-                                // draft, the tool and the post-approval summary.
-                                stopWhen: stepCountIs(8),
+                                stopWhen: stepCountIs(maxAgentSteps),
+                                reasoning: getChatReasoning(model),
                                 system: buildAgentSystemPrompt({
                                     hasAttachments: hasAttachments(messages),
                                     docsSearchEnabled,

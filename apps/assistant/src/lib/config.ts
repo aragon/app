@@ -1,3 +1,4 @@
+import type { IChatReasoning } from '../chat/models';
 import type { IDocsCorpusMode } from '../docs/corpus';
 import { type AssistantEnvironment, env } from './env';
 
@@ -45,6 +46,11 @@ export interface IAssistantConfig {
     chat: {
         agentModel: string;
         fallbackModels: string[];
+        /**
+         * Reasoning level of each model of the chain, applied to the attempts that model serves
+         * (see getChatReasoning).
+         */
+        reasoning: Record<string, IChatReasoning>;
     };
 }
 
@@ -56,25 +62,27 @@ const previewOrigins = ['http://localhost:3000', '*-aragon-app.vercel.app'];
 // and for several users behind one NAT, still a hard abuse cap. Tunable per-env without a redeploy
 // via ASSISTANT_RATE_LIMIT_* env overrides.
 const defaultRateLimit = { requestsPerMinute: 10, sessionsPerDay: 10 };
-// Model selection criteria, in priority order: tool-calling fidelity (the agent drafts the ticket
-// as a tool call and drives the documentation tools), time-to-first-token on the streamed reply,
-// multilingual chat (ticket fields are forced English, the reply follows the user), proven
-// providers, ≤ ~$0.15/M input. flash-lite is the starting agent (fast, cheap, thinking off by
-// default); the fallbacks run on different serving infrastructure (Groq/Cerebras, AWS) so a vendor
-// outage or a per-model rate limit degrades instead of failing. Fallback tool-calling fitness is
-// to be re-confirmed on the stand / llm-smoke before finalizing.
-const defaultChat = {
-    // deepseek-v4-flash won the in-budget bake-off (4/4 tool calls with a warm sentence, clean
-    // refusals); gemini-2.5-flash-lite skipped tool calls and once fabricated a ticket number,
-    // gpt-5-nano never called the tool, gpt-oss-20b leaked harmony markup into the chat (which
-    // also rules it out as a fallback). v4.1-flash replaced v4-flash after a ten-scenario sweep
-    // over the documentation prompt: it kept every rule the older model kept and dropped the
-    // ones it broke (three mentions of "the documentation" and three closing offers in ten
-    // answers, against none), answered in 4–6.5 s instead of 8–15 s, and v4-flash is being
-    // retired by its hosts anyway (Fireworks drops it on 2026-09-25; DeepSeek redirects legacy
-    // endpoints to the 4.1 family). Twice the price per token, still well under a cent a turn.
-    agentModel: 'deepseek/deepseek-v4.1-flash',
-    fallbackModels: ['google/gemini-2.5-flash-lite'],
+// The chain is chosen with the eval (evals/, `pnpm eval`): every kind of conversation the chat
+// gets, deterministic checks of the prompt's rules and a judge grading accuracy, helpfulness and
+// communication against a reference. Only models with a zero-data-retention host qualify. The
+// fallbacks run on other serving infrastructure than the agent (OpenAI and Azure against the
+// third-party DeepSeek hosts), so an outage or a per-model rate limit degrades instead of
+// failing. A fallback takes over a call that fails or stalls, not an answer that is weak.
+const defaultChat: IAssistantConfig['chat'] = {
+    // Eval of 2026-09-28, each model at its level below, two runs of each scenario — checks passed
+    // with the documentation tools on (two sweeps) and intake only, cost of a documentation
+    // answer: gpt-6-luna at medium 38 and 36 of 44, 21 of 24, a tenth of a cent;
+    // deepseek-v4.1-flash at low 34 and 35 of 44, 17 of 24, half a cent; gpt-6-sol at low 40 and 41
+    // of 44, 22 of 24, two cents. The agent is the cheapest model that answers well, gpt-6-sol the
+    // last resort. gemini-2.5-flash-lite (13 of 44) left the chain. The most common failure left
+    // is the fixed sentence the prompt asks for in front of a draft.
+    agentModel: 'openai/gpt-6-luna',
+    fallbackModels: ['deepseek/deepseek-v4.1-flash', 'openai/gpt-6-sol'],
+    reasoning: {
+        'openai/gpt-6-luna': 'medium',
+        'deepseek/deepseek-v4.1-flash': 'low',
+        'openai/gpt-6-sol': 'low',
+    },
 };
 // Retrieval models settled in the APP-1069 analysis: voyage-4 for its retrieval quality at
 // $0.06/M (embedding the whole corpus costs about a cent per build), rerank-2.5-lite because the
