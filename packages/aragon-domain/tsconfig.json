@@ -1,25 +1,14 @@
 {
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "target": "es2022",
-        "module": "preserve",
-        "moduleResolution": "bundler",
-        "lib": [
-            "es2022"
-        ],
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "sourceMap": true,
-        "noEmit": true,
+        "incremental": false,
         "types": [
             "node",
             "vitest/globals"
         ],
-        "baseUrl": ".",
         "paths": {
             "@/*": [
-                "src/*"
+                "./src/*"
             ]
         }
     },
@@ -29,6 +18,7 @@
     ],
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "coverage"
     ]
 }

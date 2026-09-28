@@ -63,6 +63,7 @@ export const CrossChainControllerNestedActionsList: React.FC<
                                 )?.componentDetails
                             }
                             chainId={chainId}
+                            // biome-ignore lint/suspicious/noArrayIndexKey: actions have no id and are never reordered
                             key={index}
                             readOnly={true}
                         />
