@@ -51,14 +51,16 @@
         "The _ds_bundle.css lint complaint recurred (Tailwind internals, --tw-* runtime vars). Withheld from the grader, absent from the evidence. The probe's suggested fix \u2014 emit /* @kind other */ annotations upstream and exclude non-token custom properties from the token scan \u2014 is worth capturing on APP-1224.",
         "Three 'outside the key' findings: an unbound chainId in a snippet, a self-closed WizardPage.Container in the prefill sample, and a caller-side useFieldArray whose keys the container overrides at L108279-108287. None map to a key entry."
     ],
-    "consequence": "Run 3 remains a formal FAIL. By explicit evaluator override recorded 2026-09-28, APP-726/727/728/735/736/1208/1223 are clear to merge.",
+    "consequence": "Run 3 remains a formal FAIL. The 2026-09-28 UNBLOCK override is suspended pending one clean isolated confirmation run; APP-726/727/728/735/736/1208/1223 are not yet cleared.",
     "evaluatorOverride": {
-        "decision": "UNBLOCK",
+        "decision": "PENDING_CONFIRMATION",
+        "priorDecision": "UNBLOCK",
         "preservesRunVerdict": "FAIL",
-        "contextReachability": "Retired as a release condition: identical guide content produced one hit and two misses across the three completed acceptance runs. The N=5 follow-up was invalidated because its shared project retained and edited one handoff across draws.",
-        "pathOnlyCitations": "The same five path-only citations caused both remaining failed thresholds. Their targets exist, every ranged and symbol citation resolves, and no target contradicts the handoff. This is an output citation-format defect rather than a bundle coverage or correctness defect.",
+        "reopenedReason": "Prior runs and the follow-up measurement suffered setup and artifact-isolation failures. One fresh-project, zero-history confirmation is required to distinguish a genuine bundle failure from evaluator error.",
+        "contextReachability": "Run 1 satisfied the criterion; runs 2 and 3 did not. The invalid N=5 follow-up cannot settle the rate because its shared project retained and edited one handoff across draws.",
+        "pathOnlyCitations": "The same five path-only citations caused both remaining failed thresholds. Their targets exist, every ranged and symbol citation resolves, and no target contradicts the handoff. The confirmation will test whether this output-format failure recurs under a valid setup.",
         "followUp": "Citation-resolution gate: future probes must require path + symbol or path + range, and graders should apply that rule only to claim-bearing citations.",
-        "furtherRunRequired": false
+        "furtherRunRequired": true
     },
     "failureWeightingAtGrading": {
         "decisive": "Context reachability. Fails on its own and is the criterion the prep names as mattering most. Third run, third outcome: run 1 cited the guide, run 2 cited nothing, run 3 cited index.md and source-index.md but neither gated file.",
