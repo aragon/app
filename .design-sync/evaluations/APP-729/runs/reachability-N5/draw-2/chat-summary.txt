@@ -1,0 +1,21 @@
+Do not invent APIs; explicitly mark anything the supplied project cannot establish.
+Reading ×13, Listing files ×2, Searching ×5, Editing, Finishing up
+
+The handoff at handoff/members-step-handoff.md already covered this ask; I re-verified every contract in it against the compiled bundle rather than rewriting, and corrected three things:
+
+Translation keys are establishable — the App English locale is compiled into _ds_bundle.js (lines 107229–107247) and contains all six app.shared.addressesInput.* keys. Only the step's own copy keys remain open. (§5 now has the key→string table; §10 updated.)
+Remove-button nuance — the item hardcodes disabled: !(membersField.length > 1) on both remove buttons, so even with allowEmptyList the last row can't be deleted from the row; only "Clear all" empties the list.
+Line-addressed source — §Revision baseline now cites exact bundle offsets (container 108205, item 110330, AddressesListUtils 110306, kit AddressInput 101368) so the quoted code is checkable, pinned to bundleSha12 48449ece0c87.
+
+Confirmed unchanged: enforceChecksum = true and chainId = mainnet.id defaults, the children-clipping cloneElement loop, the row-object field path `${fieldName}.[${index}]`, the slice(0, index) duplicate asymmetry, and the empty AddressesInputProps (no AddressesInput.Group — prompt.md boilerplate).
+
+Edited members-step-handoff.md
+Fixing design-system issues
+Check design system
+
+I can't fix these — both issues live in synced, read-only source, and the flagged properties aren't design-system tokens to begin with.
+
+The 32 "component-style selector" declarations are Tailwind-emitted internals in the compiled _ds_bundle.css (.prose blockquote, :where(.space-y-0\.5 > …), --tw-translate-*). They're implementation detail of the utility output, not theme tokens, so moving them under :root would be wrong even if the file were writable.
+The 30 unclassified tokens are upstream Tailwind/GovKit animation and transition values (--ease-out, --animate-spin, --default-transition-duration, --tw-translate-x…). /* @kind other */ is the correct annotation for all of them, but the annotation has to be added where the stylesheet is generated.
+
+Both need a change in the 

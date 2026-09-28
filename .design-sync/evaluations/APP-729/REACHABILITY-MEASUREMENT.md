@@ -83,6 +83,47 @@ recorded as such. If the rate lands near a decision boundary, the rerun is
 five fresh pushes with operator `list_files` confirmation, which removes
 all three residuals at once.
 
+## Draws 1–3 voided — 2026-09-28, before any grading
+
+The first three draws are discarded. No result from them is counted, and
+none was graded, so nothing here is a post-hoc reaction to an outcome.
+
+**Draws 1 and 2: evidence destroyed.** The procedure above says to delete
+the handoff between draws. It failed to say *capture the bytes first*, and
+the bytes were deleted. Run 2 had already established that artifact content
+is unreachable from the design UI and must come through the operator's
+`get_file`; that was known and not applied. The chats survive, the
+documents do not.
+
+**Draw 3: no handoff produced.** Its trace shows no `Writing` or `Editing`
+step and the project held zero artifacts afterwards — it answered in the
+chat instead of writing a document. Recorded as **void, not a miss**: the
+criterion grades a handoff, and there was none. A draw that produces no
+document is evidence about the probe's determinism, not about whether the
+guide is reachable, and folding it in as 0 would flatter a low rate.
+
+**Why this was nearly worse.** Each draw dir holds only `chat-summary.txt`
+and `meta.json`. Grading those against a criterion about cited files would
+have scored every draw a miss regardless of the truth, because summaries do
+not name citations. That is a silent substitution of a weaker criterion and
+would have produced a confident 0/5 that measured nothing.
+
+## Corrected capture procedure
+
+Per draw, in this order:
+
+1. Verify the project holds zero handoff artifacts.
+2. New chat, frozen probe verbatim, Opus 5 / Medium.
+3. Wait for completion. Record the tool trace.
+4. **Leave the artifact in place.** Operator fetches its bytes with
+   `get_file` and saves them to the draw directory with a sha256.
+5. Only after the bytes are saved and hashed, delete the artifact and
+   verify the tree is empty again.
+6. If a draw produces no artifact, record it void with its trace and draw a
+   replacement.
+
+Five graded draws are still required. Voided draws do not count toward N.
+
 ## What counts as a hit
 
 The re-frozen criterion, verbatim, no looser:

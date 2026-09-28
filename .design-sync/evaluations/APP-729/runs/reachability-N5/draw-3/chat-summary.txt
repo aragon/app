@@ -1,0 +1,27 @@
+Do not invent APIs; explicitly mark anything the supplied project cannot establish.
+Reading ×20, Listing files ×2, Searching ×7
+
+The existing handoff/members-step-handoff.md is the artifact; I verified every contract in it against the bundle and am adding two verified refinements (ENS enablement condition, debounce citation).
+
+Editing
+members-step-handoff.md
+
+handoff/members-step-handoff.md is the deliverable. I re-derived every contract in it directly from this project's compiled candidate (_ds_bundle.js) and generated context rather than from memory:
+
+Composition: one WizardPage.Step in the existing container, body = AddressesInput.Container + one AddressesInput.Item per row mapped from form state (the container clips children to its useFieldArray length, so hardcoded items silently break Add).
+Prefill: wizard container defaultValues, row shape { address, name }; prefilled untouched rows are not validated on mount.
+Editable vs resolved: onChange → item-local state only; onAccept (300 ms debounce, silent while ENS loads) → the row object at `${fieldName}.[${index}]`.
+Invalid/duplicate: owned by addressesListUtils.validateAddress; duplicates compare slice(0, index) with isAddressEqual, so only the later row errors. Extend via customValidator returning a translation key.
+Ownership: no FormWrapper, no nested wizard/container, no step-level <form> or submit.
+
+Two verified additions this pass: ENS resolution is pinned to mainnet and enabled only when the effective wagmi config carries chain 1 with an ensUniversalResolver (a network-scoped wagmiConfig can disable ENS entirely), and the exact checksum-failure predicate.
+
+Everything the project can't establish — real step ids/order, member field name and prefix, data source for prefill, min/max member policy, step copy namespace — is marked [UNESTABLISHED] in §10. Note the bundle is a candidate from unmerged PRs; re-verify against the recorded revisions before merge.
+
+Edited members-step-handoff.md
+Fixing design-system issues
+Reading, Check design system
+
+I can't fix these, and they aren't authoring mistakes.
+
+Both findings point at _ds_bundle.css (the only thing styles.css imports besides fonts). That file is the sync

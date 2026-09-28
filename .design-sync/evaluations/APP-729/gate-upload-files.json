@@ -1,13 +1,13 @@
 {
   "derivedFrom": "ds-bundle/.payload-manifest.json",
-  "payloadManifestSha256": "f1219a8b93b9b809759de37ffc26fd75f512539a59ca20a3fcf3bcc360f3f11b",
+  "payloadManifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
   "count": 575,
   "anchorLast": "_ds_sync.json",
   "files": [
     {
       "path": "README.md",
-      "bytes": 17786,
-      "sha256": "80848f90b1b60526fdac4bc09036b35ae6fc3d98ffbdd940fb47b00d88ba6358"
+      "bytes": 17874,
+      "sha256": "4232481aa64ad98156993eb871bdf3b6a319a81ddbc5ed41616bc456f32ccba5"
     },
     {
       "path": "_ds_bundle.css",
@@ -27,7 +27,7 @@
     {
       "path": "_ds_sync.json",
       "bytes": 35799,
-      "sha256": "54a5008c7fede7b14039318e962629cbde7254abb47cb74687ecf388e70b9b30"
+      "sha256": "9c34c73ea3f90e91f8672fcceb192ecd05b635942f1eb590021d083044650f02"
     },
     {
       "path": "_preview/Accordion.js",
@@ -2871,8 +2871,8 @@
     },
     {
       "path": "guidelines/index.md",
-      "bytes": 93,
-      "sha256": "89f9a7aa6ffdbcbd39c2c80c65e3f201fedf02aa3cd3fc3da94f9e405c5deae1"
+      "bytes": 1448,
+      "sha256": "ef9b137492f1af9453316d7d46bf5cd07bc2f77ff27358f08d7c88ba7a73317b"
     },
     {
       "path": "styles.css",
