@@ -4367,6 +4367,10 @@
         "owner": "Owner"
       },
       "workspaceMembersPage": {
+        "daoError": {
+          "description": "The DAO of the selected account could not be loaded. Please try again later or select another account.",
+          "heading": "Members could not be loaded"
+        },
         "emptyState": {
           "description": "This will show the members of the DAOs in this workspace when available.",
           "heading": "No members found"
@@ -4444,6 +4448,9 @@
           "dao": "DAO",
           "safe": "Safe"
         }
+      },
+      "workspaceSelector": {
+        "create": "Create workspace"
       }
     }
   }

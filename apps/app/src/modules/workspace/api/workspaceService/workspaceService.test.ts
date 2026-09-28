@@ -1,5 +1,4 @@
 import { Network } from '@/shared/api/daoService';
-import { workspaceMocks } from '../../constants/workspaceMocks';
 import { WorkspaceAccountType } from './domain';
 import { workspaceService, workspaceStorageKey } from './workspaceService';
 import type { ICreateWorkspaceBody } from './workspaceService.api';
@@ -30,14 +29,6 @@ describe('workspace service', () => {
     });
 
     describe('getWorkspace', () => {
-        it('resolves the seeded workspaces', async () => {
-            const workspace = await workspaceService.getWorkspace({
-                urlParams: { id: 'demo' },
-            });
-
-            expect(workspace).toEqual(workspaceMocks.demo);
-        });
-
         it('rejects with a not-found error for an unknown workspace', async () => {
             await expect(
                 workspaceService.getWorkspace({
@@ -59,6 +50,28 @@ describe('workspace service', () => {
         });
     });
 
+    describe('getWorkspaceList', () => {
+        it('resolves an empty list when no workspace is persisted', async () => {
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual(
+                [],
+            );
+        });
+
+        it('resolves the workspaces persisted on local storage', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            const second = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Second' }),
+            });
+
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
+                first,
+                second,
+            ]);
+        });
+    });
+
     describe('createWorkspace', () => {
         it('assigns the ID from the workspace name and persists the workspace', async () => {
             const body = buildBody();
@@ -71,7 +84,10 @@ describe('workspace service', () => {
             ).toEqual({ 'new-workspace': workspace });
         });
 
-        it('suffixes the ID when the slug collides with a seeded workspace', async () => {
+        it('suffixes the ID when the slug collides with a persisted workspace', async () => {
+            await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Demo' }),
+            });
             const workspace = await workspaceService.createWorkspace({
                 body: buildBody({ name: 'Demo' }),
             });

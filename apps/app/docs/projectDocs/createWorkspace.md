@@ -144,7 +144,7 @@ an "Add" button under the list, an overflow `Dropdown` per row with a remove act
 
 `AddressesInput` is intentionally **not** reused. It is typed to `ICompositeAddress[]` and its dedupe
 (`addressesListUtils.checkIsAlreadyInList`) compares addresses only, which would wrongly reject the same address
-on two different networks — a case the seed data itself contains.
+on two different networks — a legitimate case, e.g. a Safe deployed at one address on several chains.
 
 Each row has:
 
@@ -164,7 +164,7 @@ block).
   resolved against `POST /v2/workspaces/query/accounts` (see [Account resolution](#account-resolution)). Targets are
   arbitrary addresses and are never resolved.
 - Duplicates: rejected on the `(network, address)` pair **within** a list. The same pair may appear as both a
-  target and an account (the seed data does this). Same address on different networks is legal.
+  target and an account. Same address on different networks is legal.
 - Changing a row's network re-triggers validation of that row's address field (`useFormContext().trigger`),
   otherwise a duplicate created by switching networks would slip through `mode: 'onTouched'`.
 - Accounts require at least one row; Targets may be empty and start empty.
@@ -183,8 +183,8 @@ textArea/inputFileAvatar + a `Dropdown` menu), so the dropdown is composed:
 - One `Dropdown.Item` per network, `selected` on the active one.
 
 Options are `networkUtils.getSupportedNetworks()` filtered by `!networkDefinitions[network].disabled` and sorted
-by `networkDefinitions[network].order`. Testnets are included and tagged, because the seed workspace uses
-`ETHEREUM_SEPOLIA` and excluding testnets would make it unreproducible through the form. No network sets
+by `networkDefinitions[network].order`. Testnets are included and tagged, because testnet DAOs such as
+`ETHEREUM_SEPOLIA` ones must be addable through the form. No network sets
 `disabled: true` today, so the filter is currently a no-op guard.
 
 `onValueChange` is exposed so a consumer can re-trigger sibling validation.
@@ -222,19 +222,18 @@ Pinning works from the client because `usePinFile` wraps `pinFileAction`, a `'us
 ## Registry
 
 `workspaceService` is shaped like a normal service (async, rejects with `AragonBackendServiceError`) so swapping
-the mock for real requests is a single-method change:
+local storage for real requests is a single-method change:
 
-- `getWorkspace({ urlParams: { id } })` → stored workspaces merged over `workspaceMocks`; rejects with
-  `notFoundCode` / 404 when absent.
+- `getWorkspace({ urlParams: { id } })` → the stored workspace; rejects with `notFoundCode` / 404 when absent.
+- `getWorkspaceList()` → every stored workspace, read by the workspace switcher through `useWorkspaceList`. The
+  publish dialog invalidates it after creating a workspace so the new one is listed straight away.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
 
-Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Both methods reject when called
-server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
-
-`workspaceMocks` ships the `demo` workspace ported from 1096, extended with `targets` and `owner`, so there is
-something to open without filling the form.
+Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
+server-side (`typeof window === 'undefined'`) rather than silently returning nothing. There is no seed workspace:
+the registry only holds what was created through the form.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -324,6 +323,11 @@ workspace.
 the avatar and name of each option (the workspace avatar for "All accounts", the DAO avatar for a DAO account).
 Pages only read the selection. The members page reads members one DAO at a time, so with "All accounts" selected
 it asks the user to pick an account instead of showing a list.
+
+`WorkspaceSelector`, the workspace avatar pill before it, switches workspace: a dropdown of every stored workspace
+plus a "Create workspace" item. Picking one opens its overview, and `?account=` is dropped since account IDs
+belong to the previous workspace. The pill used to open the navigation dialog, so the dialog now opens from the menu
+button, placed first in the bar and visible at every width.
 
 The aside is `WorkspaceAssetsAsideCard`, a router over one card per account type: `WorkspaceDaoAssetsAsideCard` for
 a DAO account and `WorkspaceAllAssetsAsideCard` for the aggregated option (and, until it has a card of its own, for
@@ -552,11 +556,12 @@ src/modules/workspace/
 │   └── index.ts
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
-├── constants/{workspaceMocks.ts,workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
+├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
 ├── components/workspaceAccountSelectorProvider/{workspaceAccountSelectorProvider.tsx,index.ts}
+├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
 ├── components/workspaceAssetList/{workspaceAssetList.tsx,index.ts}
 ├── components/workspaceAssetsAsideCard/{workspaceAssetsAsideCard.tsx,workspaceAllAssetsAsideCard.tsx,workspaceDaoAssetsAsideCard.tsx,index.ts}
 ├── components/workspaceProposalList/{workspaceProposalList.tsx,index.ts}
@@ -600,7 +605,7 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
 | `api/workspaceQueryService/` vs 1096's `api/workspaceFinanceService/` | 1096 splits the query API per resource; this keeps one service for the whole `query/*` surface |
-| `constants/workspaceMocks.ts` | this branch's `demo` gains `targets` + `owner` |
+| `constants/workspaceMocks.ts` | removed on this branch: the registry has no seed workspace |
 | `index.ts` | both export from the module root — additive |
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
@@ -619,5 +624,4 @@ Keep it that way when extending this.
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show
   different numbers for one DAO; the shared normaliser only removes the client-side source of drift.
-- Nothing lists workspaces — the seed `demo` and anything created are reachable only by URL or the success link.
 - No editing, so a typo means creating a new workspace.

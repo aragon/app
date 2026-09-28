@@ -39,7 +39,7 @@ export const WorkspaceMembersPageClient: React.FC<
 
     // The DAO members page renders nothing until its DAO resolves, since the DAO page prefetches it on the server.
     // It is read here under the same query key, so it adds no request, and the page is handed over once it resolves.
-    const { isPending: isDaoPending } = useDao(
+    const { isPending: isDaoPending, isError: isDaoError } = useDao(
         { urlParams: { id: activeAccount?.id ?? '' } },
         { enabled: activeAccount != null },
     );
@@ -85,6 +85,30 @@ export const WorkspaceMembersPageClient: React.FC<
                                 'app.workspace.workspaceMembersPage.selectAccount.heading',
                             )}
                             objectIllustration={{ object: 'USERS' }}
+                        />
+                    </Card>
+                </Page.Main>
+            </Page.Content>
+        );
+    }
+
+    // The DAO members page must not be mounted for a DAO that failed to load: its own reads of the DAO would refetch
+    // the failed query on mount, which reads as pending again and would swap it back for the skeleton in a loop.
+    if (isDaoError) {
+        return (
+            <Page.Content>
+                <Page.Main
+                    title={t('app.workspace.workspaceMembersPage.main.title')}
+                >
+                    <Card className="border border-neutral-100 py-10">
+                        <EmptyState
+                            description={t(
+                                'app.workspace.workspaceMembersPage.daoError.description',
+                            )}
+                            heading={t(
+                                'app.workspace.workspaceMembersPage.daoError.heading',
+                            )}
+                            objectIllustration={{ object: 'WARNING' }}
                         />
                     </Card>
                 </Page.Main>

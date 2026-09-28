@@ -148,6 +148,17 @@ describe('<WorkspaceMembersPageClient /> component', () => {
         expect(daoMembersPageMock).not.toHaveBeenCalled();
     });
 
+    it('displays an error instead of the DAO members page when the DAO of the selected account fails to load', async () => {
+        getDaoSpy.mockRejectedValue(new Error('bad request'));
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(/workspaceMembersPage\.daoError\.heading$/),
+        ).toBeInTheDocument();
+        expect(daoMembersPageMock).not.toHaveBeenCalled();
+        expect(getDaoSpy).toHaveBeenCalledTimes(1);
+    });
+
     it('asks to select an account when every account is selected', () => {
         mockAccountSelector({ activeOption: allAccountsOption });
         render(createTestComponent());
