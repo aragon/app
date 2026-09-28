@@ -4422,7 +4422,7 @@
         "allProposals": "All proposals",
         "daos": "DAOs",
         "mostRecent": "Most recent",
-        "recentUnit": "{{unit}} ago",
+        "recentUnit": " {{unit}} ago",
         "total": "Total proposals"
       },
       "workspaceProposalsPage": {
