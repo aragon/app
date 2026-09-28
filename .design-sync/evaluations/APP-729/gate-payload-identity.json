@@ -3,28 +3,28 @@
   "purpose": "Payload identity for the APP-1220 single-arm merge gate.",
   "worktree": {
     "path": "~/.herdr/worktrees/app-next/app-1208",
-    "branch": "APP-1223-closure",
-    "head": "2b512b90d3093f1170a14f2ccf7eab41dcc7f036",
+    "branch": "APP-1235",
+    "head": "see APP-1235 tip",
     "clean": true
   },
   "manifest": {
-    "payloadManifestSha256": "ff2d30437993b16e811c3f17f84dba74b3752c1ccb9dd7d2453dadd0984c257f",
-    "dsBuildMetaSha256": "c4a11a165c53cc50785eceec83fb7e054c061aa76c11bd1cfbb29242b4173ac3",
-    "sourceCommit": "8a3ea8c8ed7040bf609fced7f3c5c2cfdfd5c486",
+    "payloadManifestSha256": "2c8f7e829d1103d4b440aa84b85e8b84756965d2405518f04de57778c9f2e620",
+    "sourceCommit": "2b512b90d3093f1170a14f2ccf7eab41dcc7f036",
     "sourceDirty": [],
     "uploadFiles": 575,
-    "captureLocalFiles": 670
+    "supersedes": [
+      "ff2d3043\u2026c257f (run 1, dead kit links)",
+      "57f59808\u2026a49e77"
+    ]
   },
   "sourceCommitNote": "registry.mjs:1680-1684 carries previous.provenance forward; :1861-1864 excludes commit/dirty from staleness because they churn on every commit. Per-file sha256 is the real drift check. HEAD recorded above so the artifact is recreatable.",
   "kit": {
     "version": "2.11.4",
-    "recordedCommit": "e06fbb8dfec734c5dec500c8d60fcffc3f6a8cb0",
-    "recordedCommitIsWrong": true,
-    "why": "e06fbb8d is an aragon/app commit, absent from aragon/gov-ui-kit (git cat-file -t fails). It was recorded because GOVKIT_KIT_ROOT pointed at /private/tmp/app-594-govkit-source/packages/gov-ui-kit, a worktree of aragon/app. Paired with REPOSITORIES.kit, which correctly names the standalone repo, every emitted kit link is dead. This is the run 1 gate failure.",
-    "correctRoot": "/Users/kd-m2air/Local/gov-ui-kit",
-    "correctCommit": "64b517f5b90052797ecaced5f15ab616b5733f30",
-    "correctCommitEvidence": "Publish v2.11.4; package.json at that commit reads 2.11.4. No gitHead is recorded by the installed package or the npm registry, and tag v2.11.4 (427794cf) carries package.json 2.11.3, so the publish commit is the best-evidenced coordinate.",
-    "futureCoordinate": "packages/gov-ui-kit on main also reads 2.11.4. Once releases cut from the monorepo the canonical coordinate becomes aragon/app + packages/gov-ui-kit. APP-1235 adds the guard that makes the transition fail loudly."
+    "commit": "64b517f5b90052797ecaced5f15ab616b5733f30",
+    "repository": "https://github.com/aragon/gov-ui-kit",
+    "root": "/Users/kd-m2air/Local/gov-ui-kit",
+    "whyThisRoot": "apps/app resolves @aragon/gov-ui-kit from the registry tarball (.pnpm store symlink; lockfile specifier catalog: -> version 2.11.4), not the workspace package, so source references must describe the published revision. 64b517f5 is the Publish v2.11.4 commit.",
+    "futureFlip": "packages/gov-ui-kit landed on main 2026-09-24 (APP-594). When the catalog moves to workspace:*, the coordinate becomes aragon/app + packages/gov-ui-kit. Nothing detects that today; APP-1235 asks for the guard."
   },
   "deliveredContext": [
     "guidelines/index.md",
@@ -35,8 +35,10 @@
   ],
   "verification": {
     "refreshTest": "3/3 pass",
-    "emittedPrompts": 114,
-    "docsUnmapped": "110 of 114 \u2014 expected: config.docsMap has 4 entries; prompt count matches prior bundle"
+    "refreshExit": 0,
+    "driftScope": "114 verified-by-upload, 0 changed, 0 new, 0 removed, keyed on sourceKeys, against .design-sync/.cache/previous-ds-bundle/_ds_sync.json",
+    "gradingRequired": false,
+    "pushScopeWarning": "That diff reports upload: 0 components, styling, docs. It is computed against an anchor the new run-2 project will not have. Do NOT scope the push by it. Uploads are always full writes (SKILL.md:279); use the RERUN-PREP glob list. The diff justifies skipping capture/grade, nothing else."
   },
   "scope": {
     "included": [
@@ -54,5 +56,12 @@
     ],
     "bound": "APP-1225 (prop defaults: 79 upstream, 2 in bundle) bounds required[6]."
   },
-  "status": "SUPERSEDED \u2014 this payload failed the gate. Rebuild per APP-1235 before run 2."
+  "status": "CURRENT \u2014 APP-1235 fix applied; use this payload for run 2.",
+  "revisionCoherence": {
+    "e06fbb8d": "absent",
+    "8d70bdf0": "absent",
+    "3c9bb798": "guidelines/context/registry-report.md only, labelled audit-time; pre-adjudicated as audit provenance in RERUN-PREP",
+    "64b517f5": "manifest, README, all generated context",
+    "2b512b90": "manifest, generated context"
+  }
 }
