@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-09-28T08:38:03.224Z",
+  "completedAt": "2026-09-28T08:41:54.850Z",
+  "project": "3523fe1f-f2a6-4775-9484-519da9dd27c5",
+  "projectTitle": "APP-1220 gate — run 3 (2026-09-28)",
+  "freshChat": true,
+  "priorTurnsInProject": 0,
+  "model": "Opus 5",
+  "effort": "Medium",
+  "promptChars": 829,
+  "promptVerbatim": true,
+  "promptSource": "runs/20260925T133856Z/probe.json",
+  "payloadManifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
+  "uploadFiles": 575,
+  "deliveryVerified": "8 files sha256-matched against manifest, 567 size-matched, path set identical",
+  "operator": "fresh session (standing rule from run 3)",
+  "toolActivity": "Reading ×15, Listing files ×2, Searching ×2, Writing, Finishing up\n\nHandoff written to Mem",
+  "artifact": "Members Step - Implementation Handoff.html"
+}

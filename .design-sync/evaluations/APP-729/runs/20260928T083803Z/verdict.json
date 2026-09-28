@@ -1,0 +1,61 @@
+{
+  "run": "20260928T083803Z",
+  "arm": "acceptance (single)",
+  "project": "3523fe1f-f2a6-4775-9484-519da9dd27c5",
+  "payloadManifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
+  "artifactSha256": "13b05a02fe8af199cdfb6469db26d1760b89581fe7a25ce713b2d8304c7f2a01",
+  "artifactBytes": 20900,
+  "operator": "fresh session; answer key taken from runs/20260925T133856Z/answer-key.json (sha 9b7aef62), the frozen key used in runs 1 and 2",
+  "verdict": "FAIL",
+  "thresholds": {
+    "required_0_6_all_satisfied": {
+      "result": "FAIL",
+      "detail": "required[0..5] satisfied with quoted spans. required[6] sub-claims a/b/d/e supported; (c) fails: five citations give a path with no symbol and no line range \u2014 GukModulesProvider.prompt.md, FormWrapper.d.ts, guidelines/context/index.md, guidelines/context/source-index.md, and a bare AddressesInput.d.ts. Under the rule frozen before this run, path alone does not resolve. No cited target contradicts the handoff."
+    },
+    "incorrect_0_3_none_committed": {
+      "result": "PASS",
+      "detail": "None committed. incorrect[3] explicitly avoided: the handoff states BlockNavigationContextProvider no-ops rather than throws and is not required by AddressesInput \u2014 the run-2 defect, now correct in both payload and output."
+    },
+    "cited_paths_resolve": {
+      "result": "FAIL",
+      "detail": "Same five path-only citations. All ranged and symbol citations resolve, including _ds_bundle.js L108204-108345, L110303-110325, L110327-110415. All four upstream aragon/app paths exist at 2b512b90 and gov-ui-kit src at 64b517f5."
+    },
+    "context_reachability": {
+      "result": "FAIL",
+      "detail": "None. No composition or contract fact attributed to selection-guide.json or registry-report.md; neither file named. The registry SHA line is provenance, explicitly excluded by the rule frozen before this run."
+    }
+  },
+  "exceptionsApplied": [],
+  "exceptionsConsidered": [
+    {
+      "rule": "APP-1225 defaults",
+      "applies": false,
+      "why": "required[6] does not fail on defaults. Sub-claim (b) is supported: showResetAllAction=true verified at bundle L108214 and enforceChecksum=true at L101369. The failure is (c), unresolvable citations \u2014 a genuine gate failure per RERUN-PREP:218."
+    },
+    {
+      "rule": "audit-time revisions",
+      "applies": false,
+      "why": "Not triggered. (d) holds outright; the handoff never cites 3c9bb798."
+    }
+  ],
+  "fixedSinceRun2": [
+    "incorrect[3] no longer committed \u2014 the BlockNavigation prose fix reached the output.",
+    "required[6].3 line-range citations all resolve; the AddressesInput/WizardPage L110 conflation did not recur.",
+    "Every upstream path resolves."
+  ],
+  "stillFailing": [
+    "Context reachability \u2014 third run, third different way. Run 1 satisfied it, runs 2 and 3 did not.",
+    "Five path-only citations, newly disqualifying under a rule frozen before this run. Run 2's handoff was not measured against it."
+  ],
+  "notGrading": [
+    "The _ds_bundle.css lint complaint recurred (Tailwind internals, --tw-* runtime vars). Withheld from the grader, absent from the evidence. The probe's suggested fix \u2014 emit /* @kind other */ annotations upstream and exclude non-token custom properties from the token scan \u2014 is worth capturing on APP-1224.",
+    "Three 'outside the key' findings: an unbound chainId in a snippet, a self-closed WizardPage.Container in the prefill sample, and a caller-side useFieldArray whose keys the container overrides at L108279-108287. None map to a key entry."
+  ],
+  "consequence": "APP-726/727/728/735/736/1208/1223 remain blocked.",
+  "failureWeighting": {
+    "decisive": "Context reachability. Fails on its own and is the criterion the prep names as mattering most. Third run, third outcome: run 1 cited the guide, run 2 cited nothing, run 3 cited index.md and source-index.md but neither gated file.",
+    "secondary": "required[6].c and cited-paths are the same five path-only citations counted under two conditions. Both are the grader's finding, quoted at R6c of the report, not an addition by the evaluator. The grader also states none of those targets contradicts the handoff, so this is an uncheckable-citation failure, not an invention failure \u2014 incorrect[3] is correctly not committed.",
+    "ruleProvenance": "The path-alone-does-not-resolve rule was frozen 2026-09-28 before this run, to stop a handoff being punished for citing symbols instead of line numbers. It also disqualified bare paths. Run 2's handoff was never measured against it. Not renegotiated after the result."
+  },
+  "whatThisRunSettles": "The router did not fix reachability. That was the pre-committed decision point: the next step is measurement \u2014 repeat runs on this one payload \u2014 not another prose rewrite. Three single samples cannot distinguish an undiscoverable bundle from a model that opens the guide part of the time."
+}
