@@ -28,13 +28,46 @@ came back negative, so the next step is measurement, not another rewrite.
 - **Payload:** `3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075`,
   already delivered to project `3523fe1f-f2a6-4775-9484-519da9dd27c5` and
   verified byte-exact. Not rebuilt, not re-pushed.
-- **N = 5.** Five fresh chats in that one project. Nothing else varies.
+- **N = 5.** Five fresh chats in that one project, each started from a
+  verified tree state (below). Nothing else varies.
 - **Prompt:** the frozen 829-character probe, verbatim, from
   `runs/20260925T133856Z/probe.json`.
 - **Model:** Opus 5, Medium effort.
 - Run 3's own chat is **not** counted. It was graded under the full gate and
   is reported separately; reusing it would mix a graded draw into a
   measurement sample.
+
+## Tree state before each draw — amended before draw 1
+
+The first draft of this protocol was wrong and would have measured the
+wrong thing. A completed probe writes its handoff **into the project file
+tree**, not just the chat: the run-3 artifact renders as a
+`files-switcher-row`, and the operator's run-2 listing counted it (577 =
+575 − sentinel + 2 compiled + artifact). So every draw contaminates the
+next, and draw 1 would already have started with run 3's handoff present —
+a condition none of runs 1–3 had. This is the same warm-start hazard that
+voided the 2026-09-25 attempt.
+
+Corrected procedure, fixed before any draw:
+
+1. Before each draw, delete any handoff artifact from the project tree.
+2. Verify by enumerating `files-switcher-row` entries that no handoff is
+   present.
+3. Only then open a new chat and submit the probe.
+
+**Known residual difference, recorded now.** Run 3's probe ran with the
+sentinel armed and the app uncompiled. From draw 1 onward the app has
+compiled, so `_ds_manifest.json` and `_adherence.oxlintrc.json` are in the
+tree and the sentinel is spent. Restoring that needs write auth this
+session does not have; five fresh pushes would replicate it exactly and
+were rejected as disproportionate.
+
+The judgement being accepted: a prior handoff in the tree is a plausible
+substitute source for the probe's answer, which would directly bias the
+metric. Two compiled machine files are not, and neither touches
+`guidelines/`. This is an approximation and is recorded as one. If the
+measured rate lands near a decision boundary, rerun as five fresh pushes
+rather than arguing about it afterwards.
 
 ## What counts as a hit
 
