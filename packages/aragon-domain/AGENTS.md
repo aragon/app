@@ -2,6 +2,8 @@
 
 Business logic package between the Envio indexer (`aragon-indexer/`) and the Next.js BFF. Built on [`ddd-core-ts`](https://github.com/asciiman/ddd-core-ts).
 
+The package is a workspace of the `aragon/app` monorepo: install from the repo root; git hooks, the dependency catalog, changesets and the shared lint/format rules live at the root, and the monorepo-wide conventions are in the root `AGENTS.md`. The only package-specific lint policy (the layer boundaries below) is in `biome.jsonc`. `apps/app` consumes the package as `workspace:*`; the package is also published to npm through its own release scope and flows (`RELEASING.md`), so its changesets never share a file with `@aragon/app`.
+
 ## Read `ddd-core-ts` first
 
 **Before writing any code, read the `ddd-core-ts` package README.** It defines the base classes (`ValueObject`, `Entity`, `UseCase`, `DomainError`, `DomainEvent`, `ProcessManager`), the store/repository pattern, the mapper and DTO conventions, the `handleRequest` controller wiring, Zod-at-creation validation, and `ResultOrError` / `defineError` error handling. Every domain object, use case, store, and controller in this repo must conform. Do not invent alternative patterns.
@@ -20,10 +22,10 @@ src/
 Dependencies flow inward: Infrastructure → Use Cases → Domain.
 
 - **Path alias:** `@/*` resolves to `src/*` (see `tsconfig.json`). Always import as `@/domain/...`, never relative.
-- **Public surface:** `src/index.ts` exports `AragonDomain` (the controller) and `EnvioClient`. That's the entire consumer-facing API.
-- **Scripts:** `pnpm run build | test | lint | type-check`. Lint auto-formats via biome.
+- **Public surface:** `src/index.ts` exports `AragonDomain` (the controller), `EnvioClient`, the `RpcUrls` type and the controller's request/response DTO types. That's the entire consumer-facing API.
+- **Scripts:** `pnpm --filter @aragon/aragon-domain build | test | lint | type-check` (from the repo root). Lint auto-formats via biome.
 
-Today the domain implements only `MemberProfile` (ENS text records on `.aragon.eth` subdomains). Other concepts (`Member`, `Membership`, `VotingPower`, `Delegation`, `Lock`, etc.) are planned — see `ENVIO_MIGRATION_PLAN.md`. Do not assume they exist.
+Today the domain implements TokenVoting membership (`TokenVotingMember`, `VotingPower`, primary `ENSName`) and `MemberProfile` (ENS text records on `.aragon.eth` subdomains). Other concepts (`Membership`, `Delegation`, `Lock`, etc.) are planned — see the Linear project "Migration to Envio and aragon-domain". Do not assume they exist.
 
 ## Canonical examples
 
@@ -66,8 +68,8 @@ At infrastructure boundaries where external data enters as `string` (DTOs from E
 | Use cases expose a single `execute()` and a `code` string matching the class name | `handleRequest` dispatch |
 | Store interfaces live in domain; implementations in infrastructure | |
 | Mappers co-located with the infrastructure code that uses them | Not in `domain/` |
-| Tests colocated next to source (`Member.ts` → `Member.test.ts`) | Not in a separate `test/` folder |
-| 2-space indent; multi-line JSDoc only (`/**\n * ...\n */`) | Enforced by biome |
+| Unit tests colocated next to source (`Member.ts` → `Member.test.ts`) | `test/` holds only the integration tests that drive `AragonDomain` and the contract suite |
+| 4-space indent (root `biome.json`); multi-line JSDoc only (`/**\n * ...\n */`) | Enforced by biome |
 
 ## Mappers (the trust boundary)
 
@@ -90,5 +92,5 @@ Reference: `src/infrastructure/stores/EnvioMemberProfileStore/maps/MemberProfile
 
 ## Data sources
 
-Primary: the Envio indexer (`aragon-indexer/`). See `aragon-indexer/AGNETS.md` for entity schemas — do not duplicate them here.
+Primary: the Envio indexer ([`aragon/aragon-indexer`](https://github.com/aragon/aragon-indexer)). See its `AGENTS.md` for entity schemas — do not duplicate them here.
 Secondary: ENS resolution (name, avatar), on-chain RPC reads, token price feeds.

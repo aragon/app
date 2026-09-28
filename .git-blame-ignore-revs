@@ -8,3 +8,5 @@
 2b2cfe1ff84efb2f3f99bb6d46d708ea5f298adf
 # style(APP-1014): apply the ultracite 7.10 formatter
 bb9dbdd9b177af4995c76adbed8a7b4a7e236481
+# chore(APP-1037): unify the Biome config across workspaces
+5d77dfd70c76c47c8699f562e6502aaead53b03a

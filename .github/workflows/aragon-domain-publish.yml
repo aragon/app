@@ -1,0 +1,134 @@
+name: Aragon Domain Publish
+
+# Registered as the npm Trusted Publisher for @aragon/aragon-domain. THE FILENAME IS PART OF THAT
+# REGISTRATION — renaming this file breaks publishing, and it fails as what looks like an auth
+# error. The publish steps run INLINE here (no reusable workflow) so the workflow identity in the
+# OIDC token always matches the registered publisher; npm rejects the token exchange with a 404 if
+# a reusable/called workflow runs the publish instead.
+#
+#   - release event           -> stable publish (`latest`), gated by the npm-publish approval
+#   - manual workflow_dispatch -> snapshot publish (snapshot-<run-id> tag)
+#
+# `--provenance` verifies that `repository.url` in packages/aragon-domain/package.json matches THIS
+# repository, so it must point at aragon/app with `"directory": "packages/aragon-domain"`.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  id-token: write # required for OIDC trusted publishing
+  contents: read
+
+jobs:
+  release:
+    # The repo publishes releases for several packages (@aragon/app@*, @aragon/gov-ui-kit@*, …), and
+    # they all raise `release: published`. Without this prefix guard every app release would try
+    # to publish the domain.
+    if: >
+      github.event_name == 'release' &&
+      startsWith(github.event.release.tag_name, '@aragon/aragon-domain@')
+    runs-on: ubuntu-latest
+    # Human approval gate: the `npm-publish` environment is configured in repo Settings →
+    # Environments with @aragon/app-team as required reviewers, so every stable release publish
+    # must be approved before this job runs.
+    environment: npm-publish
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          # Build from the tag, never from a branch: the job waits on the npm-publish approval, so
+          # anything merged to main in the meantime would otherwise be published under the tagged
+          # version. Same pattern as gov-ui-kit-publish.yml.
+          ref: ${{ github.event.release.tag_name }}
+          # MUST stay empty. The setup action defaults registry-url to the npm registry, which
+          # makes actions/setup-node write a user-level .npmrc containing a placeholder
+          # NODE_AUTH_TOKEN — that shadows OIDC trusted publishing and the publish fails.
+          registry-url: ""
+
+      - name: Build library
+        run: pnpm --filter @aragon/aragon-domain build
+
+      - name: Publish library
+        # Authenticated via OIDC trusted publishing (id-token). No auth token.
+        # --provenance emits a signed build-provenance attestation.
+        run: pnpm --filter @aragon/aragon-domain publish --access public --no-git-checks --provenance
+
+  snapshot:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    # Same gate as the `release` job: a snapshot is a real publish to npm.
+    environment: npm-publish
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          # Full history so `changeset status --since origin/main` can diff.
+          fetch-depth: 0
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          # See the note in the release job — required for OIDC publishing.
+          registry-url: ""
+
+      # `changeset status` alone passes on any pending changeset in the repo (e.g. an app-only one),
+      # which would leave the domain version untouched and fail the publish with "already published".
+      - name: Check changeset
+        run: |
+          pnpm changeset status --since origin/main --output changeset-status.json
+          jq -e '.releases[] | select(.name == "@aragon/aragon-domain")' changeset-status.json > /dev/null \
+            || { echo "::error::No pending changeset for @aragon/aragon-domain"; exit 1; }
+
+      - name: Build library
+        run: pnpm --filter @aragon/aragon-domain build
+
+      # Deliberately NOT scoped to the aragon-domain release scope. `--snapshot` versions every
+      # package with a pending changeset, but nothing here is committed — the bumps live only in
+      # the runner's working tree, and the publish step below only publishes the domain.
+      - name: Update version
+        run: pnpm changeset version --snapshot
+        env:
+          GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      - name: Get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: packages/aragon-domain
+
+      - name: Publish snapshot
+        # Authenticated via OIDC trusted publishing (id-token). No auth token.
+        # --provenance emits a signed build-provenance attestation.
+        run: pnpm --filter @aragon/aragon-domain publish --access public --tag snapshot-${{ github.run_id }} --no-git-checks --provenance
+
+      - name: Print snapshot version
+        run: |
+          {
+            echo "Snapshot \`${{ steps.package-version.outputs.current-version }}\` published with tag \`snapshot-${{ github.run_id }}\`:"
+            echo ""
+            echo '```bash'
+            echo "pnpm add @aragon/aragon-domain@snapshot-${{ github.run_id }}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

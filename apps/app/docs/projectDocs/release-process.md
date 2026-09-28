@@ -5,7 +5,8 @@ This document describes the release process for Aragon App.
 This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows, each following the same shape:
 
 - **Assistant** — `assistant-release-start` → merge → `assistant-release-pr-finalize`, then a production deploy.
-- **Gov UI Kit** — `gov-ui-kit-release-start` → merge → `gov-ui-kit-release-pr-finalize`, then an **npm publish** rather than a deploy. It is the only published package in the repo; see `packages/gov-ui-kit/RELEASING.md`.
+- **Gov UI Kit** — `gov-ui-kit-release-start` → merge → `gov-ui-kit-release-pr-finalize`, then an **npm publish** rather than a deploy; see `packages/gov-ui-kit/RELEASING.md`.
+- **Aragon Domain** — `aragon-domain-release-start` → merge → `aragon-domain-release-pr-finalize`, then an **npm publish**, same as the kit; see `packages/aragon-domain/RELEASING.md`.
 
 See the "Releases" section of the root `AGENTS.md` for the per-package model.
 
@@ -17,9 +18,9 @@ changesets-native format `<package-name>@<version>`:
 - App releases: tag `@aragon/app@1.17.0`, branch `release/app/YYYY-MM-DD_HH-mm`, hotfix branch `hotfix/app/<version>_<timestamp>`, hotfix tag `@aragon/app@1.17.0-hotfix.1`.
 - Assistant releases: tag `@aragon/assistant@0.2.0`, branch `release/assistant/YYYY-MM-DD_HH-mm`.
 - Gov UI Kit releases: tag `@aragon/gov-ui-kit@2.12.0`, branch `release/gov-ui-kit/YYYY-MM-DD_HH-mm`. Tags from before the monorepo migration keep the standalone repo's `vX.Y.Z` scheme and stay in the archived `aragon/gov-ui-kit`.
-- Future workspaces (e.g. the planned indexer app) follow the same pattern with their own prefix and their own `<pkg>-*.yml` workflow copies.
+- Future released workspaces follow the same pattern with their own prefix and their own `<pkg>-*.yml` workflow copies.
+- Aragon Domain releases: tag `@aragon/aragon-domain@0.5.0`, branch `release/aragon-domain/YYYY-MM-DD_HH-mm`. The standalone repo's `v0.2.0`…`v0.4.0` tags stay in the archived `aragon/aragon-domain`.
 - Every production workflow filters `release: published` by tag prefix (`startsWith(github.event.release.tag_name, '@aragon/app@')` and the equivalents), so one workspace's release never triggers another's deploy or publish. Any new workspace flow must do the same.
-- Packages that must release in lockstep (planned: `@aragon/domain` + the indexer app) go into the `fixed` group in `.changeset/config.json` once they land in the workspace — changesets then bumps them together.
 
 Tags created before the monorepo migration keep the old `vX.Y.Z` format and point at the old
 repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (see MIGRATION.md).
