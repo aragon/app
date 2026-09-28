@@ -254,15 +254,24 @@ function writeContext(OUT) {
     writeFileSync(join(contextDir, 'index.md'), contextIndex);
     copied.push('context/index.md');
 
-    const index = join(OUT, 'guidelines', 'index.md');
-    const existing = existsSync(index)
-        ? readFileSync(index, 'utf8').trimEnd()
-        : '# Guidelines';
-    const marker = '- [Authoritative design context](./context/index.md)';
-    const next = existing.includes(marker)
-        ? existing
-        : `${existing}\n\n## Delivered App context\n\n${marker}`;
-    writeFileSync(index, `${next}\n`);
+    // Built unconditionally, like contextIndex above: an includes()-guarded
+    // append drifts in ordering between clean and incremental builds.
+    const guidelinesIndex = [
+        '# Guidelines',
+        '',
+        '## Start here',
+        '',
+        '- Choosing a component: read [the selection guide](./context/selection-guide.json) first — it records intent, alternatives and the App/kit layer split.',
+        '- Composition, provider and form-ownership constraints: the bundle `README.md`.',
+        '- Citing source at the recorded revisions: [recorded source references](./context/source-index.md).',
+        '- Coverage gaps, audit provenance and how the registry is refreshed: [the registry report](./context/registry-report.md).',
+        '',
+        '## Delivered App context',
+        '',
+        '- [Authoritative design context](./context/index.md)',
+        '',
+    ].join('\n');
+    writeFileSync(join(OUT, 'guidelines', 'index.md'), guidelinesIndex);
     return copied;
 }
 

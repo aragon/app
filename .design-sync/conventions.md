@@ -62,11 +62,13 @@ Banner and App form inputs). Font: **Manrope** (bundled).
   and story before choosing a provider stack.
 - App components that show text need
   `<DebugContextProvider><TranslationsProvider translations={enTranslations}>…`.
-  Wizards additionally need `<BlockNavigationContextProvider>`.
+  Wizard exit-confirmation needs `<BlockNavigationContextProvider>`; omitting it
+  no-ops the dirty-exit guard rather than throwing, and it is not required by
+  `AddressesInput`.
 - App form inputs (`AddressesInput`, `ResourcesInput`, `AdvancedDateInput`,
-  `AvatarInput`, `NumberProgressInput`, `AutocompleteInput`) read react-hook-form
-  context. Standalone, wrap them in the exported `<FormWrapper defaultValues={{…}}>`;
-  array-backed lists hydrate only from `FormWrapper.defaultValues`.
+  `AvatarInput`, `NumberProgressInput`) read react-hook-form context.
+  Standalone, wrap them in the exported `<FormWrapper defaultValues={{…}}>`;
+  `AddressesInput` rows hydrate from the form default values.
 - Inside a wizard, do not add `FormWrapper`: the wizard already owns the form
   context. `Wizard.Root` calls `useForm` and renders `FormProvider`, and
   `WizardPage.Container` / `WizardDialog.Container` compose `Wizard.Root` with
