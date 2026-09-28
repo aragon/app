@@ -348,6 +348,50 @@ No single session has both capabilities. Divide it:
 | Grade (blind) | fresh subagent | must not have seen this prep |
 | Apply the exception, compute verdict | evaluator | see §4 — the grader never sees the rule |
 
+### The operator is a variable — decided 2026-09-28, before run 3
+
+The session that pushes the payload and briefs the grader is itself an
+inference step in front of the one being measured, and its state has
+**drifted with the run number**: naive at run 1, aware of one failure at
+run 2, aware of two failures and of what was patched by run 3. Any variance
+it contributes is therefore correlated with run order, which is the shape
+that most easily masquerades as a trend.
+
+Its inference-bearing acts: creating the project, regenerating chunk
+artifacts, choosing write scope and ordering, deciding when to retry, and
+composing the grader's instructions.
+
+Decided now, ahead of the run:
+
+- **Run 3 uses a fresh operator session.** The one that has been through
+  two failures knows which criterion is fragile and what was changed to fix
+  it, and it is the session that briefs the grader. That is a validity
+  threat, not merely a comparability one.
+- **The grader brief is a frozen file** (`GRADER-BRIEF.md`), pasted
+  verbatim. The operator does not compose, summarise or extend it. This
+  removes a paraphrase step directly in front of grading.
+- **Delivery is verified by hash, not by report.** `.payload-manifest.json`
+  carries sha256 for all 575 entries. After the push, `get_file` and hash
+  `README.md`, the five `guidelines/**` files, `_ds_bundle.css` and
+  `_ds_sync.json` against the manifest; size-check the rest. Those are the
+  files every defect so far has lived in.
+
+**Cost, recorded before the result exists:** run 3 changes two variables at
+once — the payload's router and the operator's state. A reachability result
+that differs from run 2 therefore has two candidate causes and cannot be
+attributed to the router. Run 3 is **not comparable to run 2 on
+reachability**, and no such comparison may be drawn from it afterwards.
+
+This is accepted deliberately. The gate is single-arm acceptance, not a
+comparative study; comparability was abandoned with the two-arm framing. A
+leak from a drifted operator into a blind grader invalidates a verdict
+outright, whereas lost attribution only costs an explanation. Only a clean
+verdict unblocks the PRs.
+
+Fresh operators are the standing rule from run 3 onward, which makes run 4
+onward mutually comparable.
+
+
 ### Write set — verification aid, NOT the plan
 
 `gate-upload-files.txt` / `.json` list the 575 payload paths with hashes.
