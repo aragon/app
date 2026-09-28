@@ -8,13 +8,14 @@
     "clean": true
   },
   "manifest": {
-    "payloadManifestSha256": "2c8f7e829d1103d4b440aa84b85e8b84756965d2405518f04de57778c9f2e620",
+    "payloadManifestSha256": "f1219a8b93b9b809759de37ffc26fd75f512539a59ca20a3fcf3bcc360f3f11b",
     "sourceCommit": "2b512b90d3093f1170a14f2ccf7eab41dcc7f036",
     "sourceDirty": [],
     "uploadFiles": 575,
     "supersedes": [
-      "ff2d3043\u2026c257f (run 1, dead kit links)",
-      "57f59808\u2026a49e77"
+      "2c8f7e82\u2026 \u2014 VOID, hashed a doubled _ds_bundle.css produced by two concurrent refreshes sharing --out",
+      "ff2d3043\u2026 \u2014 run 1, dead kit links",
+      "57f59808\u2026"
     ]
   },
   "sourceCommitNote": "registry.mjs:1680-1684 carries previous.provenance forward; :1861-1864 excludes commit/dirty from staleness because they churn on every commit. Per-file sha256 is the real drift check. HEAD recorded above so the artifact is recreatable.",
@@ -36,9 +37,13 @@
   "verification": {
     "refreshTest": "3/3 pass",
     "refreshExit": 0,
-    "driftScope": "114 verified-by-upload, 0 changed, 0 new, 0 removed, keyed on sourceKeys, against .design-sync/.cache/previous-ds-bundle/_ds_sync.json",
+    "driftScope": "114 verified-by-upload, 0 changed, 0 new, 0 removed, keyed on sourceKeys",
     "gradingRequired": false,
-    "pushScopeWarning": "That diff reports upload: 0 components, styling, docs. It is computed against an anchor the new run-2 project will not have. Do NOT scope the push by it. Uploads are always full writes (SKILL.md:279); use the RERUN-PREP glob list. The diff justifies skipping capture/grade, nothing else."
+    "pushScopeWarning": "That diff reports upload: 0 components, styling, docs. It is computed against an anchor the new run-2 project will not have. Do NOT scope the push by it. Uploads are always full writes (SKILL.md:279); use the RERUN-PREP glob list. The diff justifies skipping capture/grade, nothing else.",
+    "cleanBuild": "rm -rf ds-bundle, single process, no concurrent refresh",
+    "css": "202498 bytes, one tailwind banner, no appended-entry marker; styleSha dd20a36ae9cb matches the run-1 anchor",
+    "determinism": "styleSha returned to the anchor value on a clean single build, so the kit-root swap did not move CSS. No APP-735 finding.",
+    "anchorVerified": "cf7d7d99 _ds_sync.json read via DesignSync get_file: bundleSha12 48449ece0c87, styleSha dd20a36ae9cb, keyRecipe 7, etag unchanged since the run-1 write. Matches .cache/previous-ds-bundle, so the drift scope is trustworthy."
   },
   "scope": {
     "included": [
@@ -63,5 +68,6 @@
     "3c9bb798": "guidelines/context/registry-report.md only, labelled audit-time; pre-adjudicated as audit provenance in RERUN-PREP",
     "64b517f5": "manifest, README, all generated context",
     "2b512b90": "manifest, generated context"
-  }
+  },
+  "concurrencyHazard": "refresh.mjs wipes and rebuilds --out. Two overlapping runs interleave: it produced a doubled stylesheet, an ENOENT on a review screenshot, and a phantom 82-component grading demand. Run one refresh at a time."
 }
