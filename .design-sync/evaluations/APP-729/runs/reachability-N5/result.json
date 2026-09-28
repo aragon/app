@@ -1,0 +1,19 @@
+{
+    "status": "invalid",
+    "gradedDraws": 0,
+    "rate": null,
+    "project": "3523fe1f-f2a6-4775-9484-519da9dd27c5",
+    "reason": "The shared project retained handoff/members-step-handoff.md across draws. Draw 1 created it, draws 2 and 3 edited it, and draw 4 returned the same path. No captured file can be assigned to one independent draw.",
+    "evidence": {
+        "draw1": "chat-summary.txt lines 3-14: created handoff/members-step-handoff.md",
+        "draw2": "chat-summary.txt lines 4-12: re-used and edited the existing file",
+        "draw3": "chat-summary.txt lines 4-21: re-used and edited the existing file",
+        "draw4": "assistant response returned the same project path; the recovered bytes are cumulative",
+        "recoveredCumulativeSha256": "64240c375d0a7ee3f14265791f529c0633c9e837b338f9b11581438e000ba9cb"
+    },
+    "discarded": [
+        "All four draws",
+        "The blind hit classification of the cumulative file"
+    ],
+    "nextAction": "Do not run more draws in this project. Any future rate study needs one fresh payload project per draw; it is not required to assess the three completed acceptance runs."
+}
