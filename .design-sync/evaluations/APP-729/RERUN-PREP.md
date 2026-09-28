@@ -484,3 +484,26 @@ the rebuilt payload, run one fresh chat.
 
 Keep `cf7d7d99…` as run 1 evidence. Delete `c33d6b53…`, the invalid
 2026-09-25 project, whenever convenient.
+
+### Frozen before run 2: audit provenance is not a second revision family
+
+`guidelines/context/registry-report.md` carries app `3c9bb798`, labelled
+"App source **at audit time**". That is the revision the APP-726 registry
+audit was performed against, and it is a property of that audit, not of
+the bundle shipping the report. The line says so and points at
+`guidelines/context/index.md` for the bundle's own revision.
+
+It does not count against `required[6].4`. A finding only counts if two
+documents claim a *current* revision for the same artifact and disagree.
+
+Run 1 failed because `conventions.md` asserted "the refreshed registry
+identifies the App base `3c9bb798`" — a live claim, and false. That text
+is gone; the header now reads the revision from the generated context.
+
+Expected in the run 2 payload:
+
+```sh
+grep -rl 3c9bb798 ds-bundle/   # registry-report.md only, labelled audit-time
+grep -rl 8d70bdf0 ds-bundle/   # empty
+grep -rl e06fbb8d ds-bundle/   # empty
+```
