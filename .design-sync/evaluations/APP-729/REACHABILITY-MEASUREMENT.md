@@ -69,6 +69,20 @@ metric. Two compiled machine files are not, and neither touches
 measured rate lands near a decision boundary, rerun as five fresh pushes
 rather than arguing about it afterwards.
 
+**Second residual: prior chats.** Runs 2 and 3 were both verified to start
+with zero prior turns in the project. Draws 2–5 run in a project holding
+one to four completed chats, and deleting a handoff file does not remove
+them. Recorded before draw 1 so a low rate is not later attributed to a
+single cause: the candidate causes are the bundle's discoverability, the
+compile-state difference above, and chat-count drift.
+
+**Verification limit.** This session has no `list_files`; it enumerates the
+tree through the design UI, which is not authoritative for artifacts. Tree
+state before each draw is therefore checked as well as this session can and
+recorded as such. If the rate lands near a decision boundary, the rerun is
+five fresh pushes with operator `list_files` confirmation, which removes
+all three residuals at once.
+
 ## What counts as a hit
 
 The re-frozen criterion, verbatim, no looser:
