@@ -127,6 +127,18 @@ The pinned `skills` CLI installs to these project-level roots:
 
 All generated roots are gitignored — do not commit generated skill copies and do not edit them. They are reproducible from the canonical source under `skills/`.
 
+### Personal skills in the generated roots
+
+The sync **never deletes a directory it did not install.** It tracks what it installed in `.skills-sync-manifest.json` (gitignored) and removes only those names once they leave the canonical tree. A skill you placed in `.claude/skills/` or `.agents/skills/` by hand survives every sync untouched.
+
+That said, the canonical home for a private skill is `skills/local/`: it is gitignored the same way, but it is a *source*, so the sync reinstalls it into every discovery root and it survives a reset. A skill living only in a generated root reaches one agent and is lost if you clear that root.
+
+If a root ever holds stale generated copies — for example from a sync predating the manifest — reset it. Everything there is reproducible:
+
+```sh
+rm -rf .agents/skills .claude/skills && pnpm skills:sync
+```
+
 ### What the wrapper does
 
 `scripts/sync-skills.mjs`:
@@ -135,10 +147,10 @@ All generated roots are gitignored — do not commit generated skill copies and 
 2. Rejects duplicate skill names across all catalogs.
 3. Rejects category-level `SKILL.md` files.
 4. Validates frontmatter — `name` matches the directory, `description` is present and single-line (block scalars are rejected).
-5. Reconciles the generated roots against `.skills-sync-manifest.json` (gitignored, rewritten on every run): only skill directories a previous sync installed are removed when they leave the canonical tree. Anything else — personal skills kept in `.claude/skills/` or `.agents/skills/` — is left alone. Reconciliation runs even when there is nothing to install.
+5. Reconciles the generated roots against `.skills-sync-manifest.json` (gitignored, rewritten after each successful install): only skill directories a previous sync installed are removed when they leave the canonical tree. Anything else — personal skills kept in `.claude/skills/` or `.agents/skills/` — is left alone. Reconciliation runs even when there is nothing to install.
 6. Installs the workflow skills via the pinned CLI (`skills add … --copy --yes --full-depth`, with `--skill` enumerating the installed names — never `'*'`, which would also pull `rules/` into the roots) to the two generated roots — the universal store (`.agents/skills`, read by Codex, Cursor, Gemini CLI, and others) and Claude Code (`.claude/skills`). It passes `-a universal -a claude-code`: the `universal` target writes `.agents/skills` exactly once, rather than once per universal agent. Rule-skills are validated but never installed — they are hook-only.
 7. Validates the generated filesystem: every installed skill exists at each root, `SKILL.md` present, supporting files preserved, categories flattened, executable bits retained.
-8. Fails on any inconsistency even if the CLI reported success.
+8. Fails on any inconsistency even if the CLI reported success — exit 1 normally, exit 0 under `--soft`, with the error still printed either way.
 
 ## Adding a new skill
 

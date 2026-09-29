@@ -2,6 +2,8 @@
 
 Private, developer-specific skills. Intentionally untracked.
 
+Your own workflows and shortcuts belong here. The nested `.gitignore` keeps everything in this folder out of the repository and out of the commit history, while `pnpm skills:sync` still installs it into every agent discovery root — so your skills reach your agents without ever becoming company code.
+
 ## Rules
 
 - Local skills are private and intentionally untracked by Git.
@@ -20,3 +22,11 @@ pnpm skills:sync
 ```
 
 The nested `.gitignore` keeps everything here private except this README and itself.
+
+## Why here, and not directly in a generated root
+
+A skill dropped straight into `.claude/skills/` or `.agents/skills/` works, and the sync will never delete it — it only removes what it installed itself. But a generated root is a copy, not a source: the skill reaches that one agent, is lost if you ever clear the root, and has to be duplicated per agent. Keeping it here means one source, every agent, survives a reset.
+
+## Promoting a local skill to shared
+
+Local is also where a shared skill should start — dogfood it privately, then move it to `skills/shared/<skill-name>/` once it earns its keep. A committed skill must be repo-portable: no dependencies on personal tooling, paths, or infrastructure this repository doesn't have.
