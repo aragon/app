@@ -277,11 +277,13 @@ export function runSync() {
     // Reconcile runs even when there is nothing to install today: a previous
     // sync may have installed skills that have since left the canonical tree,
     // and those stale copies are removed here regardless of the current set.
-    // Only manifest-tracked names are ever removed — personal skills placed
-    // by hand in the generated roots are never touched.
+    //
+    // The manifest is the ONLY authority for deletion. A directory this script
+    // did not install is never touched, however much it looks like a generated
+    // skill — that is the whole point: `.claude/skills/` and `.agents/skills/`
+    // are gitignored, so anything deleted there is unrecoverable.
     const manifest = SyncManifest.load();
     const currentNames = new Set(installedSkills.map((s) => s.name));
-    const ruleNames = new Set(rulesSkills.map((s) => s.name));
     for (const root of GENERATED_ROOTS) {
         if (!existsSync(root)) {
             continue;
@@ -293,19 +295,6 @@ export function runSync() {
                     `[skills] Removing stale skill ${relative(repoRoot, staleDir)} (no longer in canonical tree).`,
                 );
                 rmSync(staleDir, { recursive: true, force: true });
-            }
-        }
-        // One-time alignment: releases before the rules-were-hook-only change
-        // installed rule-skills into the roots via --skill '*'. Rules are no
-        // longer installed; drop copies that a previous sync left behind. Only
-        // names matching the canonical rule catalog are touched.
-        for (const name of ruleNames) {
-            const ruleDir = join(root, name);
-            if (existsSync(ruleDir) && !currentNames.has(name)) {
-                console.log(
-                    `[skills] Removing rule-skills from generated root ${relative(repoRoot, ruleDir)} (rules are hook-only).`,
-                );
-                rmSync(ruleDir, { recursive: true, force: true });
             }
         }
     }

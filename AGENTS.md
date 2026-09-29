@@ -48,7 +48,7 @@ Full wiring conventions (dynamic imports, definitions map, params) live in the `
 Two parallel trees, each split into `shared/` (checked in) and `local/` (gitignored):
 
 - `.agents/shared/` — agent-neutral commons: guardrails loader, metrics. Rule-skills live at `skills/shared/rules/` (see below). Consumed by any runtime.
-- `.agents/local/` — IC-personal agent-neutral stuff (drafts, personal skills, metric buffer).
+- `.agents/local/` — IC-personal agent-neutral stuff (drafts, metric buffer). Personal *skills* belong in `skills/local/` instead — that catalog is gitignored the same way but is synced to your agent discovery roots, so the skills actually reach your agents.
 - `.claude/shared/` — Claude-specific shared wiring (the adapter hook). Tiny on purpose.
 - `.claude/` (root) — Claude's required fixed paths: `settings.json` (checked in), `settings.local.json` and `CLAUDE.md` (gitignored, IC-personal).
 
