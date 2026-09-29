@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prefilled member-management step — implementation handoff</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{--ink:#1F1F1F;--ink-2:#4A4A4A;--ink-3:#6F6F6F;--rule:#E4E4E7;--bg:#FBFBFA;--card:#FFFFFF;--acc:#3164FA;--crit:#C1241C;--warn:#8A5A00;--code-bg:#F4F5F7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none;border-bottom:1px solid rgba(49,100,250,.28);word-break:break-word}
+a:hover{color:#1b47c4;border-bottom-color:#1b47c4}
+.wrap{max-width:860px;margin:0 auto;padding:56px 24px 96px}
+header.doc{border-bottom:1px solid var(--rule);padding-bottom:28px;margin-bottom:40px}
+h1{font-size:30px;line-height:1.2;margin:0 0 10px;font-weight:600;letter-spacing:-.01em;text-wrap:pretty}
+.sub{color:var(--ink-3);font-size:14px;margin:0}
+h2{font-size:19px;font-weight:600;margin:48px 0 14px;letter-spacing:-.01em}
+h3{font-size:15px;font-weight:600;margin:28px 0 8px}
+p{margin:0 0 12px;color:var(--ink-2);text-wrap:pretty}
+ul,ol{margin:0 0 12px;padding-left:20px;color:var(--ink-2)}
+li{margin:0 0 6px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:4px;color:var(--ink)}
+pre{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;overflow-x:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;color:var(--ink)}
+pre code{background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:0 0 14px;font-size:13.5px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--ink);white-space:nowrap}
+td{color:var(--ink-2)}
+td code,th code{white-space:nowrap}
+.note{border:1px solid var(--rule);border-left:3px solid var(--acc);background:var(--card);border-radius:8px;padding:12px 16px;margin:0 0 14px}
+.note.warn{border-left-color:var(--warn)}
+.note.crit{border-left-color:var(--crit)}
+.note p:last-child{margin:0}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--rule);color:var(--ink-3);background:var(--card)}
+.tag.unverified{color:var(--warn);border-color:#E8D6AE;background:#FDF8EE}
+.meta{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr);gap:6px 18px;font-size:13px;margin:0}
+.meta dt{color:var(--ink-3)}
+.meta dd{margin:0;color:var(--ink-2);word-break:break-all}
+.src{font-size:12.5px;color:var(--ink-3);margin:-4px 0 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="doc">
+<h1>Prefilled member-management step in the create-DAO wizard</h1>
+<p class="sub">Compile-oriented implementation handoff · APP-729 · assembled from this bundle only</p>
+</header>
+
+<h2>1. Provenance and what this document can establish</h2>
+<dl class="meta">
+<dt>Bundle</dt><dd><code>@aragon/gov-ui-kit@2.11.4</code> + Aragon App shared components, single browser bundle</dd>
+<dt>App revision</dt><dd><code>2b512b90d3093f1170a14f2ccf7eab41dcc7f036</code> (dirty inputs: none recorded)</dd>
+<dt>GovKit revision</dt><dd><code>64b517f5b90052797ecaced5f15ab616b5733f30</code></dd>
+<dt>Status</dt><dd>Candidate assembled from unmerged PRs; not an accepted baseline</dd>
+<dt>Authority used</dt><dd><code>.d.ts</code> and compiled <code>_ds_bundle.js</code> first, then <code>_preview/*.js</code>, then generated context, then README prose</dd>
+</dl>
+<p style="margin-top:14px">Everything below marked <span class="tag">verified</span> is read out of the compiled bundle or the typed contract in this project. Everything marked <span class="tag unverified">not establishable here</span> requires the App repository at the recorded revision — this bundle does not contain the create-DAO wizard's own step files, its form definitions, or the translation JSON.</p>
+
+<h2>2. Supported composition</h2>
+<p>The member step is <code>AddressesInput.Container</code> holding one <code>AddressesInput.Item</code> per field-array entry, rendered inside the existing <code>WizardPage.Step</code>. No new form wrapper, no new field-array owner, no per-row address component.</p>
+<pre><code>// inside the existing create-DAO WizardPage.Container
+&lt;WizardPage.Step id="members" order={2} meta={{ name: 'Members' }}
+    title="Add members" description="…"&gt;
+    &lt;MembersField name="members" chainId={chainId} /&gt;
+&lt;/WizardPage.Step&gt;
+
+// MembersField — the only new component
+const MembersField = ({ name, chainId }) =&gt; {
+    // subscribe to the same array so the child count tracks the container's useFieldArray
+    const members = useWatch({ name, defaultValue: [] });
+
+    return (
+        &lt;AddressesInput.Container
+            name={name}
+            label={t('…members.label')}
+            helpText={t('…members.helpText')}
+        &gt;
+            {members.map((_, index) =&gt; (
+                &lt;AddressesInput.Item key={index} index={index} chainId={chainId} /&gt;
+            ))}
+        &lt;/AddressesInput.Container&gt;
+    );
+};</code></pre>
+<p class="src">Composition mirrors the shipped <code>Filled</code> example: <code>components/forms/AddressesInput/AddressesInput.prompt.md</code> and <code>_preview/AddressesInput.js</code> → <code>Filled</code>.</p>
+<div class="note">
+<p><strong>Why the parent must subscribe.</strong> <code>AddressesInputContainer</code> owns the <code>useFieldArray</code> and then runs <code>Children.map</code>, returning <code>null</code> for any child whose index is <code>&gt;= membersField.length</code> and re-keying the rest with the RHF field id. Children are therefore a caller-supplied list that must track array length: if the parent renders a static number of <code>Item</code>s, the container's own Add button appends a row that never renders, and Clear all leaves orphaned children that silently disappear. Watching the same field name is what keeps them in step. <span class="tag">verified</span> — <code>_ds_bundle.js</code> → <code>AddressesInputContainer</code>.</p>
+</div>
+
+<h2>3. Component contracts</h2>
+<h3>AddressesInput.Container</h3>
+<table>
+<tr><th>Prop</th><th>Type</th><th>Contract</th></tr>
+<tr><td><code>name</code></td><td><code>string</code> (required)</td><td>Field-array name. Resolved name is <code>fieldPrefix ? `${fieldPrefix}.${name}` : name</code>; drives <code>useFieldArray</code>.</td></tr>
+<tr><td><code>fieldPrefix</code></td><td><code>string</code></td><td>Path prefix for nested forms (e.g. a body inside a governance stage).</td></tr>
+<tr><td><code>allowEmptyList</code></td><td><code>boolean</code></td><td>When false/omitted, remove is refused below one row and Clear all replaces the array with <code>[{ address: '' }]</code>. When true, the array may go to <code>[]</code>.</td></tr>
+<tr><td><code>onAddClick</code></td><td><code>() =&gt; void</code></td><td>Overrides the built-in append. Default appends <code>{ address: '' }</code>. Override only if adding must open a picker/dialog; then you own appending.</td></tr>
+<tr><td><code>showResetAllAction</code></td><td><code>boolean</code> (default true)</td><td>Reset-all menu item; only rendered when the array is dirty with non-empty rows, or has errors.</td></tr>
+<tr><td><code>label</code>, <code>helpText</code></td><td><code>ReactNode</code>, <code>string</code></td><td>Passed to the shared input container.</td></tr>
+</table>
+<p>The overflow menu (Reset all / Clear all) appears only when there is more than one row. The container renders its internal input wrapper with a hardcoded <code>id="addresses"</code>; two containers on one step would produce duplicate DOM ids. <span class="tag">verified</span></p>
+
+<h3>AddressesInput.Item</h3>
+<table>
+<tr><th>Prop</th><th>Type</th><th>Contract</th></tr>
+<tr><td><code>index</code></td><td><code>number</code> (required)</td><td>Position in the array; used to build <code>`${fieldName}.[${index}]`</code> and to scope duplicate detection.</td></tr>
+<tr><td><code>disabled</code></td><td><code>boolean</code></td><td>Disables the address input only; the row's remove button stays active.</td></tr>
+<tr><td><code>customValidator</code></td><td><code>(member: IAddressInputResolvedValue) =&gt; string | true</code></td><td>Runs <em>after</em> the built-in invalid and duplicate checks, receiving the resolved row value. Return a translation key string to fail.</td></tr>
+<tr><td><code>chainId</code></td><td><code>number</code></td><td>Explorer-link network for the row's <code>AddressInput</code>. Does not change ENS resolution.</td></tr>
+</table>
+<p>The item must be a child of <code>AddressesInput.Container</code>: it reads <code>fieldName</code> and <code>onRemoveMember</code> from the container's context. There is no standalone mode. <span class="tag">verified</span></p>
+
+<h2>4. Initialization from existing members</h2>
+<p>Row values are objects, not strings. The stored shape per row is <code>{ address, name }</code>, where <code>name</code> is the resolved ENS name and may be <code>undefined</code>.</p>
+<pre><code>&lt;WizardPage.Container
+    defaultValues={{ …existing, members: existingMembers.map((address) =&gt; ({ address })) }}
+    …
+/&gt;</code></pre>
+<ul>
+<li>Seeding happens through the wizard container's <code>defaultValues</code>. <code>WizardPage.Container</code> accepts <code>defaultValues</code> and composes <code>Wizard.Root</code>, which calls <code>useForm</code> and renders <code>FormProvider</code>.</li>
+<li>Each item seeds its visible text once, via <code>useState(value.address)</code> at mount. Prefilled rows therefore display correctly on first render.</li>
+<li><strong>Consequence:</strong> a later <code>setValue('members.0', …)</code> updates form state but does <em>not</em> update the text shown in that row's input. If the step must repopulate after mount (for example when a previous step changes the chain or an import runs), remount the affected rows with a changed React key, or replace the whole array and let the keys change. <span class="tag">verified</span></li>
+<li>An empty starting state is <code>[{ address: '' }]</code>, not <code>[]</code>, unless <code>allowEmptyList</code> is set.</li>
+</ul>
+
+<h2>5. Editable input vs accepted address</h2>
+<p>Two channels, deliberately separate. Do not collapse them.</p>
+<table>
+<tr><th>Channel</th><th>Owner</th><th>Semantics</th></tr>
+<tr><td><code>AddressInput.onChange</code></td><td>Item local state (<code>addressInput</code>)</td><td>Raw editable text. Not untouched input: with <code>enforceChecksum</code> (default true) a valid or all-uppercase address is normalized to checksum form, whitespace is trimmed on blur, and the clear control emits <code>undefined</code>.</td></tr>
+<tr><td><code>AddressInput.onAccept</code></td><td>Written into RHF as the row value</td><td>Debounced, post-resolution <code>{ address, name }</code> with a checksummed address and normalized ENS name, or <code>undefined</code> when input is invalid or fails checksum enforcement. Does not emit while an ENS request is in flight.</td></tr>
+</table>
+<p>While an edit is unresolved the form still holds the previously accepted value — never treat the accepted value as "what the user is currently looking at", and never read the raw text back out of form state.</p>
+<p>For rows that are displayed rather than edited, use <code>AddressOutput</code>, and set <code>hasInteractiveAncestor</code> whenever the row itself is clickable so it does not add a competing tab stop.</p>
+
+<h2>6. Validation and error reporting</h2>
+<p>Validation is registered by the item through the App's <code>useFormField</code> on <code>`${fieldName}.[${index}]`</code>, so every error surfaces in the owning wizard form's <code>formState.errors</code> and gates the wizard's own navigation and submit. There is no separate error channel to wire up.</p>
+<table>
+<tr><th>Rule</th><th>Trigger</th><th>Message key</th></tr>
+<tr><td><code>required</code></td><td>Row value missing</td><td><code>app.shared.formField.error.required</code> (generic form-field namespace)</td></tr>
+<tr><td>invalid</td><td><code>addressUtils.isAddress(address)</code> false — including the case where a checksum-failing entry was never accepted, so <code>address</code> is <code>undefined</code></td><td><code>app.shared.addressesInput.item.input.error.invalid</code></td></tr>
+<tr><td>duplicate</td><td>Address equals an <em>earlier</em> row (<code>members.slice(0, index)</code>, case-insensitive)</td><td><code>app.shared.addressesInput.item.input.error.alreadyInList</code></td></tr>
+<tr><td>custom</td><td><code>customValidator(members[index])</code> returns a string</td><td>Caller-supplied key</td></tr>
+</table>
+<div class="note">
+<p><strong>Duplicate semantics are asymmetric by design.</strong> Only the later occurrence is flagged; the first occurrence stays clean. Do not add a second, symmetric duplicate check on top — you would double-report and fight the field-level policy the container already owns.</p>
+</div>
+<ul>
+<li>The item re-triggers validation of its own field when the address is valid and the field is dirty or touched, so reordering/removing rows re-evaluates duplicates for the rows that remain mounted.</li>
+<li>Error state must be reported <em>through</em> the owning form. Do not lift errors into local state to render your own summary; read <code>formState.errors[name]</code> if the step needs an aggregate message.</li>
+</ul>
+
+<h3>Address, checksum and network semantics</h3>
+<ul>
+<li><strong>Input layer is strict.</strong> <code>AddressInput.enforceChecksum</code> defaults to true: a mixed-case address failing EIP-55 is rejected at the input and never reaches <code>onAccept</code>.</li>
+<li><strong>Validation layer is lenient.</strong> The App's duplicate/invalid checks use GovKit <code>addressUtils.isAddress</code>, which calls viem <code>isAddress</code> with <code>{ strict: false }</code> — case-insensitive, no checksum requirement. <code>isAddressEqual</code> also lowercases and returns false for non-addresses rather than throwing. Net effect: checksum enforcement is the input's job, not the validator's. <span class="tag">verified</span> (viem 2.55.19 as bundled)</li>
+<li><strong>ENS resolution is always mainnet</strong>, regardless of the DAO's target chain. <code>chainId</code> only selects the block-explorer network for the row's controls.</li>
+<li>Accepted output is always checksum-formatted, so the submitted payload needs no further normalization.</li>
+</ul>
+
+<h2>7. Provider assumptions</h2>
+<p>Inside the create-DAO wizard, these are already in place at the app shell level; the list is here so the step is not re-wrapped, and so Storybook/test harnesses reproduce it.</p>
+<table>
+<tr><th>Provider</th><th>Required for</th><th>In the wizard</th></tr>
+<tr><td><code>FormProvider</code> (react-hook-form)</td><td><code>AddressesInput</code> field array, <code>useFormField</code></td><td>Supplied by <code>Wizard.Root</code> inside <code>WizardPage.Container</code> — do not add another</td></tr>
+<tr><td><code>GukModulesProvider</code></td><td>wagmi + react-query used by <code>AddressInput</code> (ENS, explorer)</td><td>App shell</td></tr>
+<tr><td><code>TranslationsProvider</code> + <code>DebugContextProvider</code></td><td>All App copy, including every error key above</td><td>App shell</td></tr>
+<tr><td><code>BlockNavigationContextProvider</code></td><td>Wizard dirty-exit confirmation only</td><td>Not required by <code>AddressesInput</code>; omitting it no-ops the guard rather than throwing</td></tr>
+</table>
+<p>Standalone (story/test) harness, matching the shipped preview: <code>DebugContextProvider › TranslationsProvider(enTranslations) › GukModulesProvider › FormWrapper(defaultValues)</code>. <span class="tag">verified</span> — <code>_preview/AddressesInput.js</code> → <code>AppForm</code>.</p>
+
+<h2>8. Tempting but incorrect choices</h2>
+<ol>
+<li><strong>Wrapping the step in <code>FormWrapper</code> (or a local <code>useForm</code>).</strong> The wizard already owns the form. A nested wrapper creates a second, separate context: the inputs write where the wizard never reads, so its validation gates pass and the submit payload silently drops <code>members</code>. Seed through the wizard container's <code>defaultValues</code> instead.</li>
+<li><strong>Owning the field array in the step.</strong> The container owns <code>useFieldArray</code> — append, remove, replace, and the min-one-row rule. A parallel array controller in the step competes with it. Subscribe read-only (<code>useWatch</code>) for the child count.</li>
+<li><strong>Building rows from bare <code>AddressInput</code>.</strong> That drops required/duplicate policy, the remove control, the reset/clear menu and the form field registration, and reintroduces the raw-text-vs-accepted bug the item already solves.</li>
+<li><strong>Treating the row value as a string.</strong> It is <code>{ address, name }</code>; <code>defaultValues</code>, custom validators and the submit mapper all see the object.</li>
+<li><strong>Mirroring the address into local step state.</strong> Accepted values already live in the form; a mirror desynchronizes on checksum normalization, ENS resolution and clear.</li>
+<li><strong>Rendering a fixed number of <code>Item</code>s</strong> — see §2.</li>
+<li><strong>Nesting the row inside another interactive element</strong> (clickable card, link). It breaks Radix focus order; for read-only address rows use <code>AddressOutput.hasInteractiveAncestor</code>.</li>
+<li><strong>Re-implementing add/remove copy.</strong> Reuse the existing <code>app.shared.addressesInput.*</code> keys rather than adding step-local strings.</li>
+</ol>
+
+<h2>9. Not establishable from this project</h2>
+<ul>
+<li><span class="tag unverified">unknown</span> The create-DAO wizard's current step list, its <code>defaultValues</code> shape, and whether a <code>members</code> field already exists under a body/stage prefix. The bundle ships no create-DAO module source; <code>createDaoFormDefinitions.ts</code> is only <em>linked</em> from the source index.</li>
+<li><span class="tag unverified">unknown</span> Translation strings behind every key above — only the keys are in the bundle; the locale file is external.</li>
+<li><span class="tag unverified">unknown</span> Whether an existing member step elsewhere in the App already uses <code>fieldPrefix</code>, and what that prefix is.</li>
+<li><span class="tag unverified">unknown</span> Product policy on minimum member count, self-inclusion of the connected wallet, and whether prefilled rows should be editable or locked (<code>disabled</code> exists; the policy does not).</li>
+<li><span class="tag unverified">unknown</span> Analytics <code>flow</code>/<code>props</code> values expected for this step.</li>
+<li><code>AddressesInput</code>, <code>WizardPage</code> and other App compounds have <strong>no selection-guide entry</strong> — the guide covers the kit layer (<code>govkit:</code> ids) only. Their contracts come from the <code>.d.ts</code>, the compiled bundle and this bundle's README.</li>
+</ul>
+
+<h2>10. References in this project</h2>
+<ul>
+<li><code>components/forms/AddressesInput/AddressesInput.d.ts</code> — <code>AddressesInputContainerProps</code>, <code>AddressesInputItemProps</code></li>
+<li><code>components/forms/AddressesInput/AddressesInput.prompt.md</code> — Default / Filled / ChecksumError examples</li>
+<li><code>_preview/AddressesInput.js</code> — <code>AppForm</code> provider stack, <code>Filled</code> composition</li>
+<li><code>_ds_bundle.js</code> — <code>AddressesInputContainer</code>, <code>AddressesInputItem</code>, <code>AddressesListUtils.validateAddress</code>, <code>addressUtils.isAddress</code></li>
+<li><code>components/wizards/WizardPage/WizardPage.d.ts</code> and <code>.prompt.md</code> — container/step contracts</li>
+<li><code>components/general/AddressInput/AddressInput.d.ts</code>; <code>guidelines/context/selection-guide.json</code> → <code>govkit:AddressInput</code> key props and constraints</li>
+<li><code>guidelines/context/source-index.md</code> — commit-addressed links: <code>addressesInputContainer.tsx</code>, <code>addressesInputContext.ts</code>, <code>addressesInputItem.tsx</code>, <code>wizardPage/index.ts</code>, at App <code>2b512b90</code></li>
+<li><code>README.md</code> — form-ownership and provider rules; <code>guidelines/index.md</code> — authority order and citation rule (path plus symbol, not bare line numbers)</li>
+</ul>
+
+</div>
+</body>
+</html>

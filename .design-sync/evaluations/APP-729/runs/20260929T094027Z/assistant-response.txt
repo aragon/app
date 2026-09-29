@@ -1,0 +1,14 @@
+Reading ×17, Listing files ×4, Searching ×10, Writing, Editing, Finishing up
+
+Handoff written to Members Step Handoff.html.
+
+The load-bearing findings, all read out of the compiled bundle rather than prose:
+
+AddressesInput.Container owns the useFieldArray and drops any child whose index exceeds the array length, so the step must render one Item per entry from a useWatch on the same name — a fixed child count silently breaks Add/Clear.
+Row values are { address, name }, seeded from the wizard's defaultValues; each item seeds its visible text once at mount, so post-mount setValue won't update what's displayed.
+Checksum enforcement lives in AddressInput (enforceChecksum default true); the App's invalid/duplicate validator uses addressUtils.isAddress with { strict: false } and flags only the later duplicate. ENS is always mainnet; chainId is explorer-only.
+Nesting FormWrapper inside the wizard is the main trap — it forks the form context and drops members from submit.
+
+Section 9 lists what this bundle cannot establish (create-DAO step list and field shape, locale strings, any existing fieldPrefix, min-count/self-inclusion policy, analytics values).
+
+Created Members Step Handoff.html

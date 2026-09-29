@@ -1,0 +1,296 @@
+{
+    "runId": "20260929T094027Z",
+    "kind": "APP-729 confirmation replicate",
+    "status": "GRADED — formal FAIL on generated-output citation noncompliance",
+    "operatorWorkspace": "/Users/kd-m2air/.herdr/worktrees/app-next/claude-design-1220",
+    "payload": {
+        "worktree": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208",
+        "head": "65661ab7acdec7912c4bc82a6949d45c80d6fc94",
+        "treeCleanAtStart": true,
+        "manifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
+        "uploadFiles": 575,
+        "localFilesVsManifestMismatches": 0,
+        "rebuilt": false,
+        "priorAttemptNote": "First preflight in this operator session (2026-09-29) failed on git status: app-1208 .design-sync/config.json pointed at void project 0dddded1…; user restored it; all five checks then passed."
+    },
+    "project": {
+        "id": "dadc48c7-7de8-46d9-ad31-e2f5355f1a41",
+        "url": "https://claude.ai/design/p/dadc48c7-7de8-46d9-ad31-e2f5355f1a41",
+        "name": "APP-729 confirmation 20260929 (disposable)",
+        "type": "PROJECT_TYPE_DESIGN_SYSTEM",
+        "createdVia": "DesignSync create_project",
+        "emptyAtCreation": true,
+        "ingestion": "DesignSync MCP (finalize_plan + write_files), not the UI wizard"
+    },
+    "config": {
+        "path": "/Users/kd-m2air/.herdr/worktrees/app-next/claude-design-1220/.design-sync/config.json",
+        "before": "2f22a679-7abb-4283-9f39-e28a63dba83b",
+        "after": "dadc48c7-7de8-46d9-ad31-e2f5355f1a41",
+        "readBackAsserted": true,
+        "assertedBeforeFirstWrite": true,
+        "app1208ConfigTouched": false
+    },
+    "push": {
+        "planId": "plan_dadc48c77de846d9_4dc09eb01f5b",
+        "localDir": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208/ds-bundle",
+        "writesGlobs": [
+            "components/**",
+            "tokens/**",
+            "fonts/**",
+            "_vendor/**",
+            "_preview/**",
+            "guidelines/**",
+            "_ds_bundle.js",
+            "_ds_bundle.css",
+            "styles.css",
+            "README.md",
+            "_ds_sync.json",
+            "_ds_needs_recompile"
+        ],
+        "deletes": [],
+        "chunkSource": "gate-chunk-*.json (verified before push: union 575 paths, 0 dup, 0 missing, 0 extra vs manifest)",
+        "order": [
+            {
+                "chunk": "_ds_needs_recompile",
+                "files": 1,
+                "written": 1
+            },
+            {
+                "chunk": "_ds_bundle.js",
+                "files": 1,
+                "written": 1
+            },
+            {
+                "chunk": "_vendor",
+                "files": 2,
+                "written": 2
+            },
+            {
+                "chunk": "css/docs/fonts/guidelines",
+                "files": 11,
+                "written": 11
+            },
+            {
+                "chunk": "_preview",
+                "files": 103,
+                "written": 103
+            },
+            {
+                "chunk": "components-a",
+                "files": 228,
+                "written": 228
+            },
+            {
+                "chunk": "components-b",
+                "files": 228,
+                "written": 228
+            },
+            {
+                "chunk": "_ds_needs_recompile re-arm",
+                "files": 1,
+                "written": 1
+            },
+            {
+                "chunk": "_ds_sync.json",
+                "files": 1,
+                "written": 1
+            }
+        ],
+        "failures": 0,
+        "retries": 0
+    },
+    "delivery": {
+        "listing": "delivery/list_files.json",
+        "listingCheck": "delivery/list_files-check.json",
+        "listFilesCount": 575,
+        "missing": 0,
+        "extra": 0,
+        "sizeMismatch": 0,
+        "preExistingHandoffArtifacts": 0,
+        "getFileVerification": "delivery/get_file-verification.json",
+        "getFileVerified": 8,
+        "allMatch": true,
+        "rawCaptures": "delivery/raw/ (persisted tool results copied; in-context get_file results extracted verbatim from the session transcript JSONL)"
+    },
+    "probe": {
+        "model": "Opus 5",
+        "effort": "Medium",
+        "promptSource": "runs/20260925T133856Z/probe.json#prompt",
+        "promptFile": "prompt.txt",
+        "promptChars": 829,
+        "promptBytes": 829,
+        "promptSha256": "c6ee953bb00600ae05f1b5a1188a1dadda7afa9b81eb698d4c8aa9231b99e3c3",
+        "submitted": true,
+        "chatId": "60b68c9d-e089-4f3d-a1fa-850e6002c327",
+        "priorTurns": 0,
+        "submitMethod": "single programmatic click on the sole Send button after atomic paste + readback verification",
+        "submittedAt": "2026-09-29T10:03:35.186Z",
+        "storedUserMessageTimestamp": "2026-09-29T10:03:35.710143873Z",
+        "storedUserMessageId": "38e8fb25-88fc-4b99-a963-5001f6511114",
+        "followUpsSent": 0,
+        "secondChatOpened": false,
+        "projectFilesMutatedByOperator": false
+    },
+    "timestamps": {
+        "runDirCreated": "2026-09-29T09:40:27Z",
+        "deliveredAt": "2026-09-29T09:50:54.377Z",
+        "completedAt": "2026-09-29T10:07:46Z",
+        "capturedAt": "2026-09-29T10:10:31Z"
+    },
+    "presubmit": {
+        "evidence": "browser/presubmit/presubmit.json",
+        "settledAt": "2026-09-29T09:59:30.708Z",
+        "heldUntil": "2026-09-29T10:03:06Z",
+        "chatHistory": "1 conversation ('Chat', 0 turns, default empty chat created with the project)",
+        "automaticTaskPending": false,
+        "fixingFlowVisible": false,
+        "handoffArtifacts": 0,
+        "model": "Opus 5",
+        "effort": "Medium",
+        "promptReadbackChars": 829,
+        "promptReadbackSha256Match": true
+    },
+    "generation": {
+        "pollInterval": "5s samples in ~20-40s windows",
+        "states": [
+            {
+                "t": "2026-09-29T10:03:46Z",
+                "state": "active",
+                "note": "probe rendered as item 0; tool-activity row (Reading/Listing/Searching) visible ~10:04:20"
+            },
+            {
+                "t": "2026-09-29T10:07:02.58Z",
+                "state": "active",
+                "note": "artifact 'Members Step Handoff.html' written (etag 1790676422583197)"
+            },
+            {
+                "t": "2026-09-29T10:07:12.268Z",
+                "state": "active",
+                "note": "file control showed Handoff.html; still 1 rendered item"
+            },
+            {
+                "t": "2026-09-29T10:07:16.481Z",
+                "state": "probe turn complete; automatic task started",
+                "note": "Design appended hidden 'Design-system check' pill 'Fixing design-system issues' (stored timestamp)"
+            },
+            {
+                "t": "2026-09-29T10:07:28.342Z",
+                "state": "completed",
+                "note": "automatic fix-task assistant reply stored; no file edits"
+            },
+            {
+                "t": "2026-09-29T10:07:46Z",
+                "state": "idle",
+                "note": "4 items stable, Send button restored, no Stop control, no error text"
+            }
+        ],
+        "errored": false,
+        "consoleErrors": "none reported (read_console_messages onlyErrors); tracking began at first call ~10:09Z, after generation",
+        "harnessIncident": "pre-submit settle wait: one Runtime.evaluate with an in-page 45s sleep timed out at the CDP layer (no UI action); re-issued with 25s sleep"
+    },
+    "output": {
+        "validProbeOutput": true,
+        "captureMode": "browser conversation DOM (Claude in Chrome relay) + claude-design get_conversation + DesignSync get_file for the artifact",
+        "capturedAt": "2026-09-29T10:08:16Z",
+        "completeness": "complete — probe response ends with the platform completion line 'Created Members Step Handoff.html'; artifact get_file truncated:false, ends with </html>, byte length equals remote listing size",
+        "responseFile": "assistant-response.txt",
+        "response": {
+            "path": "assistant-response.txt",
+            "bytes": 1203,
+            "sha256": "aa43b937f9f0118f0ec438e926d9a0e468d10ffce3c364b42765b309a7bef196"
+        },
+        "responseChars": 1196,
+        "responseInPageSha256Match": true,
+        "conversationFile": "browser-conversation.json",
+        "conversation": {
+            "path": "browser-conversation.json",
+            "bytes": 4537,
+            "sha256": "7d718f504041ef038758f12c0fd31e08e7a51592c72306bd68ea38f7911fd2b9"
+        },
+        "artifact": {
+            "remotePath": "Members Step Handoff.html",
+            "file": "artifact/Members Step Handoff.html",
+            "path": "artifact/Members Step Handoff.html",
+            "bytes": 20842,
+            "sha256": "615f6b5760155e4c1e75e272415ebd3bae6c17a4b591b7a4b8c08304bd1c7ce3",
+            "rawGetFile": "artifact/get_file.Members Step Handoff.html.json",
+            "mode": "DesignSync get_file",
+            "truncated": false,
+            "remoteSize": 20842,
+            "remoteEtag": "1790676422583197"
+        },
+        "storedTranscript": {
+            "path": "capture/get_conversation-postrun.txt",
+            "bytes": 7583,
+            "sha256": "3fc48162627de5997d9a8eca6eb77f81f445ba74726b95ed8af9e36a485c95c7",
+            "title": "# DAO Member Management Step",
+            "storedMessages": 4,
+            "anomaly": "stored messages = [probe user msg, 'Fixing design-system issues' pill, same pill duplicated (same id f0adcb87…, one copy without authorAccountUuid), fix-task assistant reply]. The probe assistant response rendered in the DOM as item 1 is NOT present in the stored chat; assistant-response.txt is sourced from the rendered DOM only."
+        },
+        "chatHistoryPostRun": {
+            "menuText": "New chat\nConversations\n# DAO Member Management Step\n4 turns · 29m ago",
+            "conversationCount": 1,
+            "turnCount": 4,
+            "renderedIndices": [
+                "0",
+                "1",
+                "2",
+                "3"
+            ],
+            "screenshot": "capture/chat-history-menu-postrun.jpg"
+        },
+        "renderedTurns": [
+            {
+                "index": "0",
+                "role": "user probe",
+                "chars": 829
+            },
+            {
+                "index": "1",
+                "role": "assistant probe response",
+                "chars": 1196
+            },
+            {
+                "index": "2",
+                "role": "automatic pill 'Fixing design-system issues'",
+                "chars": 27
+            },
+            {
+                "index": "3",
+                "role": "assistant reply to automatic design-system check (_ds_bundle.css tokens; no edits)",
+                "chars": 944
+            }
+        ],
+        "remoteDiff": "capture/remote-diff-delivery-vs-postrun.json",
+        "filesCreatedByModel": [
+            "Members Step Handoff.html"
+        ],
+        "filesChangedByAutomaticTask": [],
+        "designSelfCheckChangesBeforeSubmit": {
+            "added": [
+                "_ds_manifest.json",
+                "_adherence.oxlintrc.json"
+            ],
+            "removed": [
+                "_ds_needs_recompile"
+            ],
+            "etag": "1790675964912086"
+        }
+    },
+    "evaluatorFlags": [
+        "Design auto-appended a 'Fixing design-system issues' task AFTER the probe response completed (items 2-3). It did not replace or precede the probe answer and edited no files. Under the run rule (VOID only if Design answers an automatic task instead of the probe) this run is VALID; the post-response automatic turn is recorded for the evaluator.",
+        "Stored chat transcript omits the probe assistant message (see output.storedTranscript.anomaly); the handoff artifact bytes are the primary graded object per RERUN-PREP section 7."
+    ],
+    "grade": {
+        "verdict": "FAIL",
+        "classification": "generated-output noncompliance",
+        "required0Through5": "PASS",
+        "required6": "FAIL",
+        "incorrect0Through3": "PASS",
+        "citedPathsResolve": "FAIL",
+        "contextReachability": "PASS",
+        "verdictFile": "verdict.json",
+        "evidenceFile": "grading-evidence.md",
+        "detail": "README.md and guidelines/index.md are cited as bare paths without a symbol or line range. Both targets exist and support the claims; every checked substantive criterion passes."
+    }
+}

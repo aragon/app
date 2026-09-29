@@ -1,20 +1,21 @@
 # APP-1220 merge gate — bundle acceptance test
 
-Status: **pending one clean confirmation run, 2026-09-28.** Run 3 remains a
-formal **FAIL**; it is not retroactively regraded. The earlier evaluator
-override is suspended. APP-726, APP-727, APP-728, APP-735, APP-736, APP-1208
-and APP-1223 are not cleared until the confirmation is captured and graded.
+Status: **clean confirmation complete; formal FAIL, 2026-09-29.** Run
+`20260929T094027Z` used a new project, the verified 575-file payload, one
+zero-history Opus 5 / Medium probe, and an immutable captured artifact. The
+artifact satisfied required criteria 0–5, committed none of incorrect criteria
+0–3, and attributed contract facts to
+`guidelines/context/selection-guide.json`.
 
-The confirmation exists to separate genuine bundle or implementation failures
-from evaluator setup failures. It must use the fixed APP-1235 payload in a new
-empty project, verify the uploaded bytes before prompting, run one zero-history
-chat, and capture its output before any second chat or mutation.
+Required criterion 6 and the independent citation threshold failed because
+`README.md` and `guidelines/index.md` were cited as bare paths without a symbol
+or line range. Both targets exist and support the claims. The failure is
+generated-output citation noncompliance, not a bundle, provenance, delivery,
+contract, reachability, or evaluator-setup defect.
 
-Run 3's findings remain evidence. Context reachability varied across three
-completed runs. Its other two failed thresholds count the same five path-only
-citations; every target exists, all ranged and symbol citations resolve, and no
-target contradicts the handoff. The clean run will determine whether those
-failures recur under a valid setup.
+The formal gate therefore remains **FAIL** under the criteria frozen before the
+run. No further confirmation run is required. Earlier run verdicts remain
+unchanged.
 
 The 2026-09-25/26 attempt remains **void** (see
 `runs/20260925T133856Z/`).

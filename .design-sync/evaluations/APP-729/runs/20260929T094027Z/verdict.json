@@ -1,0 +1,64 @@
+{
+  "run": "20260929T094027Z",
+  "arm": "acceptance (single confirmation)",
+  "project": "dadc48c7-7de8-46d9-ad31-e2f5355f1a41",
+  "chat": "60b68c9d-e089-4f3d-a1fa-850e6002c327",
+  "payloadManifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
+  "artifactSha256": "615f6b5760155e4c1e75e272415ebd3bae6c17a4b591b7a4b8c08304bd1c7ce3",
+  "artifactBytes": 20842,
+  "verdict": "FAIL",
+  "classification": "generated-output noncompliance",
+  "thresholds": {
+    "required_0_6_all_satisfied": {
+      "result": "FAIL",
+      "detail": "required[0..5] are satisfied. required[6] props, defaults, revisions, and unknowns are satisfied, but its citation-resolution subclaim fails because README.md and guidelines/index.md are cited as bare paths without a symbol or line range. The underlying payload supports both claims."
+    },
+    "incorrect_0_3_none_committed": {
+      "result": "PASS",
+      "detail": "No incorrect criterion is committed. The handoff explicitly avoids a nested form wrapper, separates editable and accepted address state, assigns validation policy to the App/form layer, and invents no checked contract or source path."
+    },
+    "cited_paths_resolve": {
+      "result": "FAIL",
+      "detail": "All path-plus-symbol and path-plus-range citations resolve. Two claim-bearing references are mechanically unresolvable under the frozen rule: README.md and guidelines/index.md are path-only."
+    },
+    "context_reachability": {
+      "result": "PASS",
+      "detail": "The handoff attributes AddressInput key props and constraints to guidelines/context/selection-guide.json → govkit:AddressInput and correctly limits that guide to the GovKit layer. No registry-report.md attribution is needed because either gated file is sufficient."
+    }
+  },
+  "required": {
+    "0": "PASS — AddressesInput.Container plus AddressesInput.Item",
+    "1": "PASS — existing WizardPage.Container/Step; no second form provider",
+    "2": "PASS — wizard-owned defaultValues initialization",
+    "3": "PASS — onChange editable text kept distinct from onAccept resolved state",
+    "4": "PASS — required, duplicate, invalid, and custom validation owned by App/form layer",
+    "5": "PASS — provider boundary plus checksum, ENS, and chainId semantics",
+    "6": "FAIL — exact contracts and revisions are correct, but two path-only references do not resolve under the frozen citation rule"
+  },
+  "incorrect": {
+    "0": "not committed",
+    "1": "not committed",
+    "2": "not committed",
+    "3": "not committed"
+  },
+  "failures": [
+    {
+      "criterion": "required[6] citation resolution",
+      "classification": "generated-output noncompliance",
+      "evidence": "Members Step Handoff.html cites README.md and guidelines/index.md without a symbol or line range. Both files exist and support the claims."
+    },
+    {
+      "criterion": "cited_paths_resolve",
+      "classification": "generated-output noncompliance",
+      "evidence": "The same two bare-path citations fail the independently frozen citation threshold."
+    }
+  ],
+  "confirmationResult": {
+    "setup": "valid",
+    "bundleContractCoverage": "All substantive required criteria are supported and no incorrect criterion is committed.",
+    "contextReachability": "hit",
+    "interpretation": "The clean hit confirms reachability varies between runs; the earlier misses were not proof that the delivered files were absent. The formal acceptance result remains FAIL solely because generated output again violated the frozen path-plus-symbol/path-plus-range citation rule."
+  },
+  "exceptionsApplied": [],
+  "consequence": "The clean confirmation is complete and no further confirmation run is required. The formal gate remains FAIL on generated-output citation noncompliance, not on bundle correctness, provenance, delivery, contract coverage, or context reachability."
+}

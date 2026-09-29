@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-09-29T10:03:06.288Z",
+  "captureMethod": "Claude in Chrome relay, dedicated new tab group (tabId 1670393990) in the user's signed-in Chrome; user's visible tabs not touched. chrome-devtools MCP browser was tried first but had no claude.ai session (login page); that tab was closed without interaction.",
+  "projectId": "dadc48c7-7de8-46d9-ad31-e2f5355f1a41",
+  "projectUrl": "https://claude.ai/design/p/dadc48c7-7de8-46d9-ad31-e2f5355f1a41",
+  "chatId": "60b68c9d-e089-4f3d-a1fa-850e6002c327",
+  "chatIdSource": "claude-design get_conversation (get_conversation.txt): the only chat, title 'Chat', created 2026-09-29T09:40:15.632367Z, messages []",
+  "settle": {
+    "compilingFirstObserved": "2026-09-29T09:59:24.800Z",
+    "compilingClearedBy": "2026-09-29T09:59:30.708Z",
+    "heldUntil": "2026-09-29T10:03:06Z",
+    "automaticTaskRunningOrPending": false,
+    "fixingDesignSystemIssuesVisible": false,
+    "stopButtonsVisible": 0,
+    "dsManifestKeys": ["namespace","components","startingPoints","cards","templates","hasThumbnailHtml","globalCssPaths","tokens","themes","fonts","brandFonts","source"],
+    "dsManifestNote": "Design's post-compile self-check wrote _ds_manifest.json and _adherence.oxlintrc.json and removed _ds_needs_recompile; the manifest carries no issues/diagnostics field.",
+    "postCompileListing": "designsync-list_files-postcompile.json"
+  },
+  "chatHistory": {
+    "menuText": "New chat\nConversations\nChat\n0 turns · 21m ago",
+    "conversationCount": 1,
+    "conversations": [{"title": "Chat", "turns": 0, "note": "default empty chat created with the project; it is the current chat"}],
+    "conversationsWithTurns": 0,
+    "screenshot": "chat-history-menu-open.jpg"
+  },
+  "currentChatPriorTurns": 0,
+  "renderedMessageItems": 0,
+  "handoffArtifacts": [],
+  "composer": {
+    "model": "Opus 5",
+    "effort": "Medium",
+    "modelButtonText": "Opus 5\nMedium",
+    "entryMethod": "single synthetic ClipboardEvent('paste') with DataTransfer text/plain on the contenteditable composer (editor consumed it: dispatchEvent returned false); no per-character typing",
+    "prePasteText": "\"\\n\"",
+    "readbackEqualsFrozenPrompt": true,
+    "readbackInnerTextLength": 829,
+    "readbackTextContentLength": 829,
+    "readbackSha256MatchesExpected": true,
+    "expectedSha256": "c6ee953bb00600ae05f1b5a1188a1dadda7afa9b81eb698d4c8aa9231b99e3c3",
+    "readbackShaNote": "hash computed in-page with crypto.subtle over innerText and textContent and compared to expected (tool output redacts raw hex); both true",
+    "paragraphs": 1,
+    "sendEnabled": true,
+    "screenshot": "composer-filled.jpg"
+  },
+  "prompt": {"file": "../../prompt.txt", "chars": 829, "bytes": 829, "sha256": "c6ee953bb00600ae05f1b5a1188a1dadda7afa9b81eb698d4c8aa9231b99e3c3"}
+}
