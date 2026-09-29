@@ -340,14 +340,10 @@ export function runSync() {
         console.log(`[skills] Running: skills ${args.join(' ')}`);
         execFileSync(cliBin, args, { cwd: repoRoot, stdio: 'inherit' });
     } catch {
-        // Soft failure: this runs from postinstall, and a dead CLI must not
-        // break `pnpm install`. `pnpm skills:sync` intentionally stays strict
-        // for validation problems (frontmatter, duplicates) — only the CLI
-        // dependency edge is degraded here.
         console.error(
-            '[skills] WARNING: skills CLI failed. Run `pnpm skills:sync` to retry, or SKIP_SKILLS_SYNC=1 to skip.',
+            '[skills] ERROR: skills CLI failed. Run `pnpm skills:sync` to retry, or SKIP_SKILLS_SYNC=1 to skip.',
         );
-        return;
+        process.exit(FAIL_CODE);
     }
 
     // --- record the installed set ---

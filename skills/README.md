@@ -27,8 +27,10 @@ skills/
 
 ### Catalog rules
 
-- `skills/shared/` contains committed, repository-wide skills.
-- `skills/local/` contains private developer-specific skills — untracked by Git.
+Both catalogs sync into the same discovery roots, so every popular harness picks them up on boot. The split is about what enters the repository, not what the agent sees:
+
+- `skills/shared/` — committed, repository-wide. Reviewed like any other code, and every developer gets them.
+- `skills/local/` — a developer's own workflows and shortcuts. Synced to their discovery roots exactly like shared skills, but `skills/local/.gitignore` keeps the contents untracked, so they never reach the public code or the commit history.
 - Each skill has its own directory with a `SKILL.md`.
 - `SKILL.md` never sits directly under `skills/shared/` or `skills/local/` — `shared` and `local` are catalog categories, not skill names.
 - Skill names must be unique across both catalogs (and the `rules` sub-catalog).
@@ -134,7 +136,7 @@ All generated roots are gitignored — do not commit generated skill copies and 
 3. Rejects category-level `SKILL.md` files.
 4. Validates frontmatter — `name` matches the directory, `description` is present and single-line (block scalars are rejected).
 5. Reconciles the generated roots against `.skills-sync-manifest.json` (gitignored, rewritten on every run): only skill directories a previous sync installed are removed when they leave the canonical tree. Anything else — personal skills kept in `.claude/skills/` or `.agents/skills/` — is left alone. Reconciliation runs even when there is nothing to install.
-6. Installs the workflow skills via the pinned CLI (`skills add … --copy --yes --full-depth`, with `--skill` enumerating the installed names — never `'*'`, which would also pull `rules/` into the roots) to the two generated roots — the universal store (`.agents/skills`, read by Codex, Cursor, Gemini CLI, and others) and Claude Code (`.claude/skills`). It passes `-a universal -a claude-code`: the `universal` target writes `.agents/skills` exactly once, rather than once per universal agent. Rule-skills are validated but never installed — they are hook-only. A CLI failure (e.g. broken devDependency install) warns and exits cleanly instead of failing `pnpm install`; validation failures remain hard errors.
+6. Installs the workflow skills via the pinned CLI (`skills add … --copy --yes --full-depth`, with `--skill` enumerating the installed names — never `'*'`, which would also pull `rules/` into the roots) to the two generated roots — the universal store (`.agents/skills`, read by Codex, Cursor, Gemini CLI, and others) and Claude Code (`.claude/skills`). It passes `-a universal -a claude-code`: the `universal` target writes `.agents/skills` exactly once, rather than once per universal agent. Rule-skills are validated but never installed — they are hook-only.
 7. Validates the generated filesystem: every installed skill exists at each root, `SKILL.md` present, supporting files preserved, categories flattened, executable bits retained.
 8. Fails on any inconsistency even if the CLI reported success.
 
