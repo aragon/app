@@ -6,3 +6,4 @@ export type { IPluginInfo } from './pluginInfo';
 export type { IPluginInfoSetup } from './pluginInfoSetup';
 export type * from './queryOptions';
 export type { IWorkspacePageParams } from './workspacePageParams';
+export type { IWorkspaceProposalPageParams } from './workspaceProposalPageParams';

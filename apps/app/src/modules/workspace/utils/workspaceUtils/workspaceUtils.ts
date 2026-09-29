@@ -45,6 +45,19 @@ class WorkspaceUtils {
     };
 
     /**
+     * Builds the URL of a workspace from its ID. Takes the ID rather than the workspace itself so that callers
+     * holding only a route parameter can build workspace URLs.
+     * @param workspaceId - ID of the workspace.
+     * @param path - Optional path appended to the workspace base URL.
+     * @returns The workspace URL.
+     */
+    getWorkspaceUrl = (workspaceId: string, path?: string): string => {
+        const baseUrl = `/workspace/${workspaceId}`;
+
+        return path != null ? `${baseUrl}/${path}` : baseUrl;
+    };
+
+    /**
      * Slugifies the given value into a URL-safe workspace ID candidate.
      * @param value - Value to slugify, e.g. the workspace name.
      * @returns The slugified value, or a generic fallback when the value has no slug-safe character.

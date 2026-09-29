@@ -7,6 +7,7 @@ import { ProposalMetadataAlert } from '@/modules/governance/components/proposalM
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useWorkspaceBaseUrl } from '@/shared/components/workspaceBaseUrlProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -18,6 +19,9 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
     props,
 ) => {
     const { proposal, dao, proposalSlug, tag } = props;
+
+    // Undefined on the DAO pages, set to the workspace when the list is rendered inside one.
+    const baseUrl = useWorkspaceBaseUrl();
     const { id, summary, stageIndex, settings, executed, creator } = proposal;
 
     const { t } = useTranslations();
@@ -38,7 +42,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             ? (currentStage.name ?? defaultStageName)
             : undefined;
 
-    const proposalLink = proposalUtils.getProposalUrl(proposal, dao);
+    const proposalLink = proposalUtils.getProposalUrl(proposal, dao, baseUrl);
     const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const { data: publisherEnsName } = useEnsName(creator.address);
 

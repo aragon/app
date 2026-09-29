@@ -2,6 +2,7 @@ import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { IDao } from '@/shared/api/daoService';
+import { useWorkspaceBaseUrl } from '@/shared/components/workspaceBaseUrlProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -39,6 +40,9 @@ export const DaoProposalListDefaultItem: React.FC<
 > = (props) => {
     const { proposal, dao, proposalSlug, tag } = props;
 
+    // Undefined on the DAO pages, set to the workspace when the list is rendered inside one.
+    const baseUrl = useWorkspaceBaseUrl();
+
     const {
         id,
         summary,
@@ -60,7 +64,7 @@ export const DaoProposalListDefaultItem: React.FC<
     const proposalDate = (executed.blockTimestamp ?? endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
 
-    const proposalHref = proposalUtils.getProposalUrl(proposal, dao);
+    const proposalHref = proposalUtils.getProposalUrl(proposal, dao, baseUrl);
 
     const publisherHref = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const { data: publisherEnsName } = useEnsName(creator.address);

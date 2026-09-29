@@ -20,6 +20,7 @@ import {
     useWorkspaceAccountSelectorContext,
     WorkspaceAccountSelectorProvider,
     workspaceAccountFilterParam,
+    workspaceAllAccountsOption,
 } from './workspaceAccountSelectorProvider';
 
 describe('<WorkspaceAccountSelectorProvider /> component', () => {
@@ -29,6 +30,8 @@ describe('<WorkspaceAccountSelectorProvider /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
     const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
     const useSearchParamsSpy = jest.spyOn(NextNavigation, 'useSearchParams');
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
 
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
@@ -87,6 +90,12 @@ describe('<WorkspaceAccountSelectorProvider /> component', () => {
                 <button onClick={handleSelectDao} type="button">
                     select DAO
                 </button>
+                <button
+                    onClick={() => setActiveOption(options[0])}
+                    type="button"
+                >
+                    select all
+                </button>
             </div>
         );
     };
@@ -97,6 +106,7 @@ describe('<WorkspaceAccountSelectorProvider /> component', () => {
                 typeof NextNavigation.useSearchParams
             >,
         );
+        usePathnameSpy.mockReturnValue('/workspace/demo/proposals');
         getWorkspaceSpy.mockResolvedValue(buildWorkspace());
         getAccountsSpy.mockResolvedValue([
             {
@@ -112,6 +122,8 @@ describe('<WorkspaceAccountSelectorProvider /> component', () => {
 
     afterEach(() => {
         useSearchParamsSpy.mockReset();
+        usePathnameSpy.mockReset();
+        useRouterSpy.mockReset();
         getWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
         window.history.replaceState(null, '', '/');
@@ -188,7 +200,9 @@ describe('<WorkspaceAccountSelectorProvider /> component', () => {
     it('selects the given option and sets it on the URL', async () => {
         render(createTestComponent());
 
-        await userEvent.click(await screen.findByRole('button'));
+        await userEvent.click(
+            await screen.findByRole('button', { name: 'select DAO' }),
+        );
 
         await waitFor(() =>
             expect(screen.getByTestId('active')).toHaveTextContent('Demo DAO'),
@@ -226,5 +240,51 @@ describe('<WorkspaceAccountSelectorProvider /> component', () => {
         );
 
         consoleErrorSpy.mockRestore();
+    });
+    it('selects the account named by the path over the one remembered from a parameter', async () => {
+        useSearchParamsSpy.mockReturnValue(
+            new URLSearchParams({
+                [workspaceAccountFilterParam]: workspaceAllAccountsOption,
+            }) as ReturnType<typeof NextNavigation.useSearchParams>,
+        );
+        usePathnameSpy.mockReturnValue(
+            `/workspace/demo/proposals/${Network.ETHEREUM_SEPOLIA}-${daoAddress}/MULTISIG-3`,
+        );
+        render(createTestComponent());
+
+        expect(await screen.findByTestId('active')).toHaveTextContent(
+            'Demo DAO',
+        );
+    });
+
+    it('does not write the account parameter when the path already names the account', async () => {
+        usePathnameSpy.mockReturnValue(
+            `/workspace/demo/proposals/${Network.ETHEREUM_SEPOLIA}-${daoAddress}/MULTISIG-3`,
+        );
+        render(createTestComponent());
+
+        await screen.findByTestId('active');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        expect(urlParams.get(workspaceAccountFilterParam)).toBeNull();
+    });
+    it('leaves a page addressing one account when another account is selected', async () => {
+        const pushSpy = jest.fn();
+        useRouterSpy.mockReturnValue({ push: pushSpy } as unknown as ReturnType<
+            typeof NextNavigation.useRouter
+        >);
+        usePathnameSpy.mockReturnValue(
+            `/workspace/demo/proposals/${Network.ETHEREUM_SEPOLIA}-${daoAddress}/MULTISIG-3`,
+        );
+        render(createTestComponent());
+
+        await screen.findByTestId('active');
+        await userEvent.click(
+            screen.getByRole('button', { name: 'select all' }),
+        );
+
+        expect(pushSpy).toHaveBeenCalledWith(
+            `/workspace/demo/proposals?${workspaceAccountFilterParam}=${workspaceAllAccountsOption}`,
+        );
     });
 });

@@ -1,6 +1,7 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
+import { WorkspaceBaseUrlProvider } from '@/shared/components/workspaceBaseUrlProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
@@ -10,6 +11,7 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { generateProposal } from '../../testUtils';
+import { proposalUtils } from '../../utils/proposalUtils';
 import {
     DaoProposalListDefaultItem,
     type IDaoProposalListDefaultItemProps,
@@ -120,5 +122,34 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     it('displays no tag by default, the DAO pages show one proposal source at a time', () => {
         render(createTestComponent());
         expect(screen.queryByText('Demo DAO')).not.toBeInTheDocument();
+    });
+    it('builds the proposal link from the DAO by default, as on the DAO pages', () => {
+        const getProposalUrlSpy = jest.spyOn(proposalUtils, 'getProposalUrl');
+        const proposal = generateProposal();
+        render(createTestComponent({ proposal }));
+
+        expect(getProposalUrlSpy).toHaveBeenCalledWith(
+            proposal,
+            defaultDao,
+            undefined,
+        );
+        getProposalUrlSpy.mockRestore();
+    });
+
+    it('builds the proposal link under the workspace when rendered inside one', () => {
+        const getProposalUrlSpy = jest.spyOn(proposalUtils, 'getProposalUrl');
+        const proposal = generateProposal();
+        render(
+            <WorkspaceBaseUrlProvider baseUrl="/workspace/demo">
+                {createTestComponent({ proposal })}
+            </WorkspaceBaseUrlProvider>,
+        );
+
+        expect(getProposalUrlSpy).toHaveBeenCalledWith(
+            proposal,
+            defaultDao,
+            '/workspace/demo',
+        );
+        getProposalUrlSpy.mockRestore();
     });
 });

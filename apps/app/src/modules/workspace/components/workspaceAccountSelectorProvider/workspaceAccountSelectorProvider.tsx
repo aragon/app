@@ -1,7 +1,7 @@
 'use client';
 
 import { Spinner } from '@aragon/gov-ui-kit';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
     createContext,
     type ReactNode,
@@ -78,6 +78,9 @@ export interface IWorkspaceAccountSelectorProviderProps {
 const WorkspaceAccountSelectorContext =
     createContext<IWorkspaceAccountSelectorContext | null>(null);
 
+const pathSegments = (pathname?: string | null): string[] =>
+    pathname?.toLowerCase().split('/') ?? [];
+
 const setAccountUrlParam = (accountId: string) => {
     const newParams = new URLSearchParams(window.location.search);
     newParams.set(workspaceAccountFilterParam, accountId);
@@ -96,6 +99,8 @@ export const WorkspaceAccountSelectorProvider: React.FC<
 
     const { t } = useTranslations();
     const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
     const urlOptionId = searchParams.get(workspaceAccountFilterParam);
 
     // Last selection, kept while navigating to tabs whose links carry no param.
@@ -149,33 +154,62 @@ export const WorkspaceAccountSelectorProvider: React.FC<
         ];
     }, [accounts, accountInfos, t]);
 
-    // URL wins when present, memory otherwise.
-    const activeOptionId = urlOptionId ?? savedOptionId;
+    // A page addressing one account carries it in its path, e.g. the details of a proposal, whose slug only means
+    // something within one account. That is the account being looked at, so it outranks both the parameter and the
+    // memory — and needs no parameter of its own, which would be the same fact written on the URL twice.
+    const pathOptionId = options.find(
+        (option) =>
+            option.account != null &&
+            pathSegments(pathname).includes(option.account.id.toLowerCase()),
+    )?.id;
+
+    // The path wins over the parameter, which wins over memory.
+    const activeOptionId = pathOptionId ?? urlOptionId ?? savedOptionId;
     const activeOption =
         options.find((option) => option.id === activeOptionId) ?? options[0];
 
     const setActiveOption = (option: IWorkspaceAccountFilterOption) => {
         setSavedOptionId(option.id);
+
+        // The page addresses one account, so it cannot show another one: the proposal of an account does not exist
+        // under its neighbour. Selecting one leaves for the closest page that can show it, which is the section the
+        // account segment sits in — the proposals of the workspace, for the details of a proposal.
+        if (pathOptionId != null && option.id !== pathOptionId) {
+            const segments = pathSegments(pathname);
+            const accountIndex = segments.indexOf(pathOptionId.toLowerCase());
+            const sectionUrl = segments.slice(0, accountIndex).join('/');
+
+            router.push(
+                `${sectionUrl}?${workspaceAccountFilterParam}=${option.id}`,
+            );
+
+            return;
+        }
+
         setAccountUrlParam(option.id);
     };
 
-    // A link or back/forward brought a param: remember it for the next tab.
+    // A link, the path or back/forward brought an account: remember it for the next tab.
     useEffect(() => {
-        if (urlOptionId != null) {
-            setSavedOptionId(urlOptionId);
-        }
-    }, [urlOptionId]);
+        const selectedId = pathOptionId ?? urlOptionId;
 
-    // Landed on a tab whose link carried no param: put the selection back on the URL.
+        if (selectedId != null) {
+            setSavedOptionId(selectedId);
+        }
+    }, [pathOptionId, urlOptionId]);
+
+    // Landed on a tab whose link carried no param: put the selection back on the URL. Skipped when the path
+    // already names the account, as the parameter would only duplicate it.
     useEffect(() => {
         if (
+            pathOptionId == null &&
             urlOptionId == null &&
             savedOptionId != null &&
             savedOptionId !== workspaceAllAccountsOption
         ) {
             setAccountUrlParam(savedOptionId);
         }
-    }, [urlOptionId, savedOptionId]);
+    }, [pathOptionId, urlOptionId, savedOptionId]);
 
     if (isWorkspacePending) {
         return (

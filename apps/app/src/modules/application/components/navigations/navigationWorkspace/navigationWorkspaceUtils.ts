@@ -1,5 +1,6 @@
 import { IconType } from '@aragon/gov-ui-kit';
 import type { IWorkspace } from '@/modules/workspace/api/workspaceService';
+import { workspaceUtils } from '@/modules/workspace/utils/workspaceUtils';
 import type { INavigationLink } from '@/shared/components/navigation';
 
 export type NavigationWorkspaceContext = 'page' | 'dialog';
@@ -11,11 +12,8 @@ class NavigationWorkspaceUtils {
      * @param path - Optional path appended to the workspace base URL.
      * @returns The workspace URL.
      */
-    getWorkspaceUrl = (workspace: IWorkspace, path?: string): string => {
-        const baseUrl = `/workspace/${workspace.id}`;
-
-        return path != null ? `${baseUrl}/${path}` : baseUrl;
-    };
+    getWorkspaceUrl = (workspace: IWorkspace, path?: string): string =>
+        workspaceUtils.getWorkspaceUrl(workspace.id, path);
 
     /**
      * Navigation links of a workspace.

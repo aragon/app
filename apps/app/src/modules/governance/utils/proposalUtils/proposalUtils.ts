@@ -78,11 +78,18 @@ class ProposalUtils {
      *
      * `daoAddress` and `network` are optional — when missing (e.g. vote's
      * `parentProposal`) the function falls back to `getDaoUrl(dao, …)`.
+     *
+     * When `baseUrl` is set the proposal is linked under it instead, as
+     * `<baseUrl>/proposals/<accountId>/<slug>` — the workspace proposal lists pass
+     * `/workspace/<id>` so a row keeps the reader inside the workspace. The account ID
+     * is what carries the DAO context there, since a slug alone is only unique per DAO.
+     * **Omitting `baseUrl` returns exactly what the DAO pages have always returned.**
      */
     getProposalUrl = (
         proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'> &
             Partial<Pick<IProposal, 'daoAddress' | 'network'>>,
         dao?: IDao,
+        baseUrl?: string,
     ): string | undefined => {
         const slug = this.getProposalSlug(proposal, dao);
 
@@ -99,6 +106,15 @@ class ProposalUtils {
             proposal.network != null &&
             dao != null &&
             !addressUtils.isAddressEqual(proposal.daoAddress, dao.address);
+
+        if (baseUrl != null) {
+            // Past the slug guard the DAO is always set, as getProposalSlug needs it to resolve the plugin.
+            const accountId = isLinkedAccountProposal
+                ? `${proposal.network!}-${proposal.daoAddress!}`
+                : dao!.id;
+
+            return `${baseUrl}/proposals/${accountId}/${slug}`;
+        }
 
         if (isLinkedAccountProposal) {
             return `/dao/${proposal.network}/${proposal.daoAddress}/${proposalPath}`;

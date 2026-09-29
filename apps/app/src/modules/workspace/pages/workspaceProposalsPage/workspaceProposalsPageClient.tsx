@@ -164,7 +164,13 @@ export const WorkspaceProposalsPageClient: React.FC<
                         pageSize={pageSize}
                     />
                 ) : (
-                    <DaoProposalList initialParams={selectedDaoParams} />
+                    // Keyed by account so switching accounts drops the body tab of the previous one. The tabs are
+                    // the bodies of one DAO and are kept on the URL, so without this the parameter would outlive
+                    // the account it belongs to and name a body the new one does not have.
+                    <DaoProposalList
+                        initialParams={selectedDaoParams}
+                        key={selectedAccount?.id}
+                    />
                 )}
             </Page.Main>
             <Page.Aside>

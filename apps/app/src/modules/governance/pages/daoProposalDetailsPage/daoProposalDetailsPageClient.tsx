@@ -60,6 +60,11 @@ export interface IDaoProposalDetailsPageClientProps {
      * The slug of the proposal.
      */
     proposalSlug: string;
+    /**
+     * URL of the proposal list the breadcrumb goes back to. Defaults to the DAO proposals page; the workspace
+     * proposal details page points it back into the workspace.
+     */
+    proposalsUrl?: string;
 }
 
 // Proposal actions cannot be simulated if last simulation has been triggered less than 10 minutes ago
@@ -68,7 +73,7 @@ const actionSimulationLimitMillis = 10 * 60 * 1000;
 export const DaoProposalDetailsPageClient: React.FC<
     IDaoProposalDetailsPageClientProps
 > = (props) => {
-    const { daoId, proposalSlug } = props;
+    const { daoId, proposalSlug, proposalsUrl: proposalsUrlProp } = props;
 
     const { t } = useTranslations();
     const { copy } = useGukModulesContext();
@@ -222,7 +227,8 @@ export const DaoProposalDetailsPageClient: React.FC<
     const hasStandardMetadata =
         metadataStatus === ProposalMetadataStatus.STANDARD;
 
-    const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
+    const proposalsUrl =
+        proposalsUrlProp ?? daoUtils.getDaoUrl(dao, 'proposals');
     const pageBreadcrumbs = [
         {
             href: proposalsUrl,

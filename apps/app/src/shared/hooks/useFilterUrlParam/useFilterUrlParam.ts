@@ -79,16 +79,42 @@ export const useFilterUrlParam = (
         [name, enableUrlUpdate],
     );
 
-    // Update active tab on URL on fallbackValue change
-    useEffect(
-        () => updateActiveFilter(initialValue),
-        [initialValue, updateActiveFilter],
-    );
+    const processedActiveFilter = isValid ? activeFilter : validValues?.[0];
+
+    // Read as booleans because `validValues` is rebuilt on every render, which would otherwise rewrite the URL on
+    // every render too. Unknown is not the same as none: undefined means they have not loaded yet.
+    const areValidValuesKnown = validValues != null;
+    const hasValidValues = validValues != null && validValues.length > 0;
+
+    // Keep the URL on the value actually in use, which is not always the one it carries: a value that is not valid
+    // here falls back to the first one, and leaving the original behind would name a filter that is not the one
+    // being displayed. That happens whenever the valid values change under a mounted filter — a workspace
+    // switching the account of its proposal list, whose bodies belong to the DAO that was selected before.
+    //
+    // Having none at all is the other half of it: an account with no process has no body to fall back to, so the
+    // parameter is dropped rather than left naming a body of the account before it.
+
+    useEffect(() => {
+        if (!areValidValuesKnown) {
+            return;
+        }
+
+        if (hasValidValues) {
+            updateActiveFilter(processedActiveFilter);
+
+            return;
+        }
+
+        updateActiveFilter('', true);
+    }, [
+        areValidValuesKnown,
+        hasValidValues,
+        processedActiveFilter,
+        updateActiveFilter,
+    ]);
 
     // Remove tab parameter on URL when hook is unmounted
     useEffect(() => () => updateActiveFilter('', true), [updateActiveFilter]);
-
-    const processedActiveFilter = isValid ? activeFilter : validValues?.[0];
 
     return [processedActiveFilter, updateActiveFilter];
 };
