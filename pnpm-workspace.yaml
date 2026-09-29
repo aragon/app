@@ -22,7 +22,7 @@ catalog:
   # shape the runtime re-inserts into Orama, and a major/minor bump can change search behavior.
   "@orama/orama": ~3.1.18
   "@radix-ui/react-dialog": ^1.1.23
-  "@sentry/cli": ^3.7.0
+  "@sentry/cli": ^3.8.0
   "@sentry/hono": ^10.74.0
   "@sentry/node": ^10.74.0
   "@sentry/profiling-node": ^10.74.0
@@ -39,18 +39,18 @@ catalog:
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
   "@upstash/ratelimit": ^2.1.0
-  "@upstash/redis": ^1.38.4
+  "@upstash/redis": ^1.39.0
   "@vercel/blob": ^2.8.0
   ai: ^7.0.102
   classnames: ^2.5.1
   cross-env: ^10.1.0
-  file-type: ^22.1.0
+  file-type: ^22.1.1
   hono: ^4.13.8
   husky: ^9.1.7
   # jest: held on 30.4 — 30.5 replaces module.register/registerHooks with a throwing stub, and
   # @tailwindcss/node calls one on import, so breakpoints.test.ts cannot load Tailwind.
-  jest: ~30.4.2
-  jest-environment-jsdom: ~30.4.1
+  jest: ~30.5.2
+  jest-environment-jsdom: ~30.5.2
   lint-staged: ^17.5.1
   mdast-util-from-markdown: ^2.0.3
   react: ^19.3.0
@@ -61,7 +61,7 @@ catalog:
   tailwindcss: ^4.3.3
   ts-jest: ^29.4.12
   tsup: ^8.5.1
-  tsx: ^4.23.13
+  tsx: ^4.23.15
   turbo: ^2.10.13
   typescript: ^5.9.3
   # ultracite: pinned EXACT — minor releases add lint rules, which breaks CI for every workspace
