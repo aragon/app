@@ -86,13 +86,18 @@ const reasoningOverride = values.reasoning as IChatReasoning | undefined;
 const reasoningFor = (model: string): IChatReasoning =>
     reasoningOverride ?? getChatReasoning(model);
 
+const isPositiveInteger = (value: number) =>
+    Number.isInteger(value) && value > 0;
+
 if (
     models.length === 0 ||
     !['docs', 'intake'].includes(mode) ||
+    !isPositiveInteger(runs) ||
+    !isPositiveInteger(concurrency) ||
     (reasoningOverride != null && !reasoningLevels.includes(reasoningOverride))
 ) {
     process.stderr.write(
-        `Usage: pnpm eval --models <id,…> [--runs 2] [--mode docs|intake] [--reasoning ${reasoningLevels.join('|')}] [--judge <id>|none] [--only <id,…>] [--json <file>]\n`,
+        `Usage: pnpm eval --models <id,…> [--runs 2] [--concurrency 4] [--mode docs|intake] [--reasoning ${reasoningLevels.join('|')}] [--judge <id>|none] [--only <id,…>] [--json <file>]\n`,
     );
     process.exit(1);
 }
@@ -308,16 +313,56 @@ const runScenario = async (
     const turns: ITurnRun[] = [];
 
     for (const userText of scenario.turns) {
+        // A draft still waiting for approval when the user writes again is resolved as denied,
+        // as the chat route does when the user keeps typing past the card (convertToModelMessages
+        // turns that into the approval response plus an execution-denied tool result): the model
+        // sees it was superseded and folds the new message into a fresh draft.
+        const pendingApprovals = messages.flatMap((message) =>
+            message.role === 'assistant' && Array.isArray(message.content)
+                ? message.content.filter(
+                      (part) => part.type === 'tool-approval-request',
+                  )
+                : [],
+        );
+        const answeredApprovals = new Set(
+            messages.flatMap((message) =>
+                message.role === 'tool'
+                    ? message.content.flatMap((part) =>
+                          part.type === 'tool-approval-response'
+                              ? [part.approvalId]
+                              : [],
+                      )
+                    : [],
+            ),
+        );
+        const dangling = pendingApprovals.filter(
+            (request) => !answeredApprovals.has(request.approvalId),
+        );
+        if (dangling.length > 0) {
+            const reason = 'Superseded by a newer user message.';
+            messages.push({
+                role: 'tool',
+                content: dangling.flatMap((request) => [
+                    {
+                        type: 'tool-approval-response' as const,
+                        approvalId: request.approvalId,
+                        approved: false,
+                        reason,
+                    },
+                    {
+                        type: 'tool-result' as const,
+                        toolCallId: request.toolCallId,
+                        toolName: createTicketToolName,
+                        output: { type: 'execution-denied' as const, reason },
+                    },
+                ]),
+            });
+        }
         messages.push({ role: 'user', content: userText });
         const { turn, responseMessages } = await runTurn(model, messages);
         turns.push(turn);
         messages.push(...responseMessages);
-        // A draft waits for the user's approval, which the eval never gives: the conversation
-        // cannot go on past it, and the scenario's check judges the turns so far.
-        const drafted = turn.toolCalls.some(
-            (call) => call.toolName === createTicketToolName,
-        );
-        if (turn.error != null || drafted) {
+        if (turn.error != null) {
             break;
         }
     }

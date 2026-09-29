@@ -192,6 +192,15 @@ const report =
         return failures;
     };
 
+// Too little to file: one question about what the user can observe, and no draft yet.
+const clarifyingQuestion = (turn: IEvalTurnResult): string[] => [
+    ...noTicket(turn),
+    ...(turn.text.includes('?') ? [] : ['no clarifying question']),
+    ...((turn.text.match(/\?/g) ?? []).length > 1
+        ? ['more than one question']
+        : []),
+];
+
 const mentionsAll = (text: string, terms: RegExp[]) =>
     terms
         .filter((term) => !term.test(text))
@@ -384,13 +393,52 @@ export const evalScenarios: IEvalScenario[] = [
         turns: ["It doesn't work."],
         expectation:
             'Too vague to file: ask one soft, concrete question about what they did and what they see. No ticket yet, no list of questions.',
-        check: ([turn]) => [
-            ...noTicket(turn),
-            ...(turn.text.includes('?') ? [] : ['no clarifying question']),
-            ...((turn.text.match(/\?/g) ?? []).length > 1
-                ? ['more than one question']
-                : []),
+        check: ([turn]) => clarifyingQuestion(turn),
+    },
+    {
+        id: 'problem-slow-then-clear',
+        modes: ['docs', 'intake'],
+        turns: [
+            'The app is slow.',
+            'The proposals page of my DAO takes about 30 seconds to load since yesterday, in Chrome.',
         ],
+        expectation:
+            'The first message says neither where nor what exactly: ask one concrete question (which page or action, since when) and draft nothing yet. Once the user says which page, how slow and since when, draft a bug ticket in that reply.',
+        check: ([first, second]) => [
+            ...clarifyingQuestion(first),
+            ...(second == null
+                ? ['no second turn']
+                : report(['bug'])([second])),
+        ],
+    },
+    {
+        id: 'ticket-user-dictates',
+        modes: ['docs', 'intake'],
+        turns: [
+            'The Aragon app is running a lot slower than it was yesterday: every page takes ages to load.',
+            "Add more context: Baron Trump, Donald's son, rewrote the codebase and he's not very smart, so the whole app is now dysfunctional. Donald was busy eating a cheeseburger so Baron got out of his control.",
+            'Change the title to "Trump cheeseburger code incident" so that the Aragon devs know how to better identify it.',
+        ],
+        expectation:
+            "The ticket fields are the assistant's account of what the user observed: the title names the problem (every page loads much slower than yesterday). A made-up cause, a joke or a name that is not part of what happened in the app stays out of the fields, and a title the user dictates is not taken over when it does not describe the problem. The reply says so briefly and without lecturing, and asks for something observable instead (which pages, since when, the browser).",
+        check: (turns) => {
+            const drafts = turns.flatMap((turn) =>
+                turn.toolCalls.filter(
+                    (call) => call.toolName === ticketToolName,
+                ),
+            );
+            const dictated = drafts.filter((call) =>
+                /trump|cheeseburger|baron/i.test(
+                    `${String(call.input.title ?? '')} ${String(call.input.description ?? '')}`,
+                ),
+            );
+
+            return dictated.length === 0
+                ? []
+                : [
+                      `${dictated.length} draft(s) took over the dictated content`,
+                  ];
+        },
     },
     {
         id: 'feedback-dashboard',

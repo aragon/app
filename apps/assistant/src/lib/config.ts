@@ -21,8 +21,9 @@ export interface IAssistantConfig {
      * Which pages the documentation index is built from (at build time, see
      * docs/buildDocsIndex.ts): `ready` is the product-owner-validated set the public docs
      * site will publish (pages whose `status: draft` the owner removed, or marked `ready`);
-     * `drafts` adds the pages still under review, so the non-production environments have a real
-     * corpus to test against while the review is in progress.
+     * `drafts` adds the pages still under review. Every environment answers from `drafts`: the
+     * product owner considers the draft content correct and only its wording unreviewed, so the
+     * chatbot may use it while the public docs site shows the reviewed pages only.
      */
     docsCorpus: IDocsCorpusMode;
     /**
@@ -123,7 +124,7 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     production: {
         corsAllowedOrigins: appOrigins,
         docsSearchEnabled: false,
-        docsCorpus: 'ready',
+        docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
         chat: defaultChat,

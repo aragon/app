@@ -150,4 +150,65 @@ describe('eval scenarios', () => {
             ),
         ).toEqual([]);
     });
+
+    it('fails a draft that takes over a dictated title or a made-up cause', () => {
+        const { check } = scenario('ticket-user-dictates');
+        const draft = (title: string, description: string) =>
+            reply('Updated.', [
+                {
+                    toolName: 'createLinearTicket',
+                    input: { intent: 'bug', title, description },
+                },
+            ]);
+
+        // The draft of the tester's screenshot.
+        expect(
+            check(
+                [
+                    draft(
+                        'Pages load slowly',
+                        'Every page takes much longer to load than yesterday.',
+                    ),
+                    draft(
+                        'Trump cheeseburger code incident',
+                        'They speculate that Baron Trump rewrote the codebase.',
+                    ),
+                ],
+                {},
+            ),
+        ).toEqual(['1 draft(s) took over the dictated content']);
+        expect(
+            check(
+                [
+                    draft(
+                        'Pages load much slower than yesterday',
+                        'Every page takes much longer to load than yesterday.',
+                    ),
+                ],
+                {},
+            ),
+        ).toEqual([]);
+    });
+
+    it('expects a question, not a draft, for a report that says neither where nor what', () => {
+        const { check } = scenario('problem-slow-then-clear');
+
+        expect(
+            check(
+                [
+                    reply("Here's the draft for the team.", [
+                        {
+                            toolName: 'createLinearTicket',
+                            input: { intent: 'bug', title: 'App is slow' },
+                        },
+                    ]),
+                ],
+                {},
+            ),
+        ).toEqual([
+            'drafted a ticket unasked',
+            'no clarifying question',
+            'no second turn',
+        ]);
+    });
 });
