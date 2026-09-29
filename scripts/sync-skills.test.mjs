@@ -16,7 +16,7 @@ import {
     writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { test } from 'node:test';
 import {
     GENERATED_ROOTS,
@@ -237,9 +237,7 @@ test('manifest tracks exactly the installed skills', {
     const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf-8'));
     assert.equal(manifest.version, 1);
     const installedNames = installedSkills.map((s) => s.name).sort();
-    for (const root of GENERATED_ROOTS.map((r) =>
-        r.replace(`${repoRoot}/`, ''),
-    )) {
+    for (const root of GENERATED_ROOTS.map((r) => relative(repoRoot, r))) {
         assert.ok(
             Object.hasOwn(manifest.roots, root),
             `manifest must record ${root}`,

@@ -14,7 +14,7 @@
         "dev": "turbo run dev",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
         "guardrails:stats": "node .agents/shared/hooks/stats-metrics.mjs",
-        "postinstall": "node scripts/sync-skills.mjs",
+        "postinstall": "node scripts/sync-skills.mjs --soft",
         "lint": "turbo run lint",
         "lint:check": "turbo run lint:check",
         "prepare": "husky",

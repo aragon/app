@@ -96,7 +96,7 @@ Two classes:
 
 ## Synchronization
 
-`pnpm install` triggers `postinstall` → `node scripts/sync-skills.mjs`, which validates all catalogs (`skills/shared/*/SKILL.md`, `skills/shared/rules/*/SKILL.md`, `skills/local/*/SKILL.md`), installs the workflow skills (copy mode, non-interactive) into the agent discovery roots, and reconciles stale installs via the sync manifest. Rule-skills are hook-only and are never installed to the roots. A CLI failure during install only warns and exits cleanly — run `pnpm skills:sync` manually to see the error.
+`pnpm install` triggers `postinstall` → `node scripts/sync-skills.mjs --soft`, which validates all catalogs (`skills/shared/*/SKILL.md`, `skills/shared/rules/*/SKILL.md`, `skills/local/*/SKILL.md`), installs the workflow skills (copy mode, non-interactive) into the agent discovery roots, and reconciles stale installs via the sync manifest. Rule-skills are hook-only and are never installed to the roots. `--soft` reports any failure — malformed local frontmatter, duplicate names, a broken CLI — and still exits 0, so a personal skill can never break `pnpm install`. `pnpm skills:sync` runs the same checks strictly (exit 1) for CI and manual use.
 
 ```bash
 pnpm install          # installs deps + syncs skills

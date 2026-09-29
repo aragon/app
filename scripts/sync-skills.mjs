@@ -57,6 +57,11 @@ const AGENT_FLAGS = [
     'claude-code',
 ];
 
+// Exit code used for every validation/CLI failure. `postinstall` passes
+// `--soft` so a bad local SKILL.md or a broken CLI reports the error but never
+// breaks `pnpm install`; `pnpm skills:sync` stays strict (exit 1).
+const FAIL_CODE = process.argv.includes('--soft') ? 0 : 1;
+
 export function skipConditions() {
     if (
         process.env.CI &&
@@ -104,7 +109,7 @@ export function discoverCatalog(catalogDir, catalogName) {
                 console.error(
                     `[skills] ERROR: category-level SKILL.md is not allowed in skills/${catalogName}/ — skills must live in their own subdirectory.`,
                 );
-                process.exit(1);
+                process.exit(FAIL_CODE);
             }
             continue;
         }
@@ -122,23 +127,23 @@ export function discoverCatalog(catalogDir, catalogName) {
             console.error(
                 `[skills] ERROR: skills/${catalogName}/${entry.name}/SKILL.md missing YAML frontmatter.`,
             );
-            process.exit(1);
+            process.exit(FAIL_CODE);
         }
         if (frontmatter.error) {
             console.error(frontmatter.error);
-            process.exit(1);
+            process.exit(FAIL_CODE);
         }
         if (frontmatter.name !== entry.name) {
             console.error(
                 `[skills] ERROR: frontmatter name "${frontmatter.name}" does not match directory skills/${catalogName}/${entry.name}/.`,
             );
-            process.exit(1);
+            process.exit(FAIL_CODE);
         }
         if (!frontmatter.description) {
             console.error(
                 `[skills] ERROR: skills/${catalogName}/${entry.name}/SKILL.md missing required frontmatter field "description".`,
             );
-            process.exit(1);
+            process.exit(FAIL_CODE);
         }
 
         skills.push({ name: entry.name, dir: skillDir, catalog: catalogName });
@@ -244,7 +249,7 @@ export function runSync() {
             console.error(
                 `[skills] ERROR: duplicate skill name "${skill.name}" found in: ${holders.join(', ')}. Skill names must be unique across shared and local.`,
             );
-            process.exit(1);
+            process.exit(FAIL_CODE);
         }
         seenNames.add(skill.name);
     }
@@ -371,13 +376,13 @@ export function runSync() {
                 console.error(
                     `[skills] ERROR: skill "${skill.name}" missing from generated root ${relative(repoRoot, root)}.`,
                 );
-                process.exit(1);
+                process.exit(FAIL_CODE);
             }
             if (!existsSync(generatedSkillMd)) {
                 console.error(
                     `[skills] ERROR: SKILL.md missing for skill "${skill.name}" in ${relative(repoRoot, generatedDir)}.`,
                 );
-                process.exit(1);
+                process.exit(FAIL_CODE);
             }
 
             // Validate supporting files were preserved. README.md is
@@ -395,7 +400,7 @@ export function runSync() {
                     console.error(
                         `[skills] ERROR: supporting file "${entry}" for skill "${skill.name}" missing in ${relative(repoRoot, generatedDir)}.`,
                     );
-                    process.exit(1);
+                    process.exit(FAIL_CODE);
                 }
             }
         }
@@ -435,7 +440,7 @@ export function runSync() {
                         console.error(
                             `[skills] ERROR: executable bit lost on ${relative(repoRoot, generatedScript)}.`,
                         );
-                        process.exit(1);
+                        process.exit(FAIL_CODE);
                     }
                 }
             }
