@@ -1,149 +1,160 @@
 {
-  "runId": "20260929T082320Z",
-  "kind": "APP-729 confirmation replicate",
-  "status": "VOID — Design routed the submitted probe into an automatic design-system issue-fixing flow",
-  "payload": {
-    "worktree": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208",
-    "branch": "APP-1235",
-    "head": "65661ab7acdec7912c4bc82a6949d45c80d6fc94",
-    "treeCleanAtStart": true,
-    "manifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
-    "uploadFiles": 575,
-    "localFilesVsManifestMismatches": 0,
-    "rebuilt": false
-  },
-  "project": {
-    "id": "0dddded1-9580-4d29-b989-0b073099b496",
-    "url": "https://claude.ai/design/p/0dddded1-9580-4d29-b989-0b073099b496",
-    "type": "PROJECT_TYPE_DESIGN_SYSTEM",
-    "emptyAtCreation": true,
-    "ingestion": "DesignSync MCP (finalize_plan + write_files), not the UI wizard"
-  },
-  "push": {
-    "planId": "plan_0dddded195804d29_0cd3565ae336",
-    "writesGlobs": [
-      "components/**",
-      "tokens/**",
-      "fonts/**",
-      "_vendor/**",
-      "_preview/**",
-      "guidelines/**",
-      "_ds_bundle.js",
-      "_ds_bundle.css",
-      "styles.css",
-      "README.md",
-      "_ds_sync.json",
-      "_ds_needs_recompile"
-    ],
-    "deletes": [],
-    "order": [
-      "_ds_needs_recompile",
-      "_ds_bundle.js (1)",
-      "_vendor (2)",
-      "css/docs/fonts/guidelines (11)",
-      "_preview (103)",
-      "components-a (228)",
-      "components-b (228)",
-      "_ds_needs_recompile re-arm",
-      "_ds_sync.json"
-    ],
-    "failures": 0
-  },
-  "delivery": {
-    "listFilesCount": 575,
-    "missing": 0,
-    "extra": 0,
-    "sizeMismatch": 0,
-    "preExistingHandoffArtifacts": 0,
-    "listing": "delivery/list_files.json",
-    "getFileVerification": [
-      {
-        "path": "_ds_bundle.css",
-        "bytes": 202498,
-        "sha256": "913f94f4ec73706e31a1fa95d5346fb8d98cdd4346c0d2208e0e0fc5c6c5b4a3",
-        "match": true,
-        "mode": "DesignSync get_file"
-      },
-      {
-        "path": "_ds_sync.json",
-        "bytes": 35799,
-        "sha256": "9c34c73ea3f90e91f8672fcceb192ecd05b635942f1eb590021d083044650f02",
-        "match": true,
-        "mode": "DesignSync get_file"
-      },
-      {
-        "path": "guidelines/context/index.md",
-        "bytes": 1220,
-        "sha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd",
-        "match": true,
-        "mode": "DesignSync get_file"
-      },
-      {
-        "path": "guidelines/context/registry-report.md",
-        "bytes": 25160,
-        "sha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0",
-        "match": true,
-        "mode": "DesignSync get_file"
-      },
-      {
-        "path": "guidelines/context/selection-guide.json",
-        "bytes": 189637,
-        "sha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e",
-        "match": true,
-        "mode": "DesignSync get_file"
-      },
-      {
-        "path": "guidelines/context/source-index.md",
-        "bytes": 295296,
-        "sha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03",
-        "match": true,
-        "mode": "claude-design read_file, 2 windows (1-600, 601-1171), same etag; entity-decoded + concatenated (exceeds 256 KiB get_file cap)"
-      },
-      {
-        "path": "guidelines/index.md",
-        "bytes": 1448,
-        "sha256": "ef9b137492f1af9453316d7d46bf5cd07bc2f77ff27358f08d7c88ba7a73317b",
-        "match": true,
-        "mode": "DesignSync get_file"
-      },
-      {
-        "path": "README.md",
-        "bytes": 17874,
-        "sha256": "4232481aa64ad98156993eb871bdf3b6a319a81ddbc5ed41616bc456f32ccba5",
-        "match": true,
-        "mode": "DesignSync get_file"
-      }
-    ],
-    "allMatch": true,
-    "note": "guidelines/context holds 4 files; the 5 guidelines files verified are guidelines/index.md + the 4 context files"
-  },
-  "probe": {
-    "model": "Opus 5",
-    "effort": "Medium",
-    "promptSource": "runs/20260925T133856Z/probe.json#prompt",
-    "promptFile": "prompt.txt",
-    "promptChars": 829,
-    "promptSha256": "c6ee953bb00600ae05f1b5a1188a1dadda7afa9b81eb698d4c8aa9231b99e3c3",
-    "submitted": true,
-    "chatId": "ea8b26d0-06d0-44df-bd69-e5145de15273",
-    "priorTurns": 0,
-    "submittedAt": "2026-09-29T09:16:44.987Z",
-    "completionObservedAt": "2026-09-29T09:22:26.065Z"
-  },
-  "output": {
-    "validProbeOutput": false,
-    "captureMode": "browser conversation DOM",
-    "capturedAt": "2026-09-29T09:23:31.001Z",
-    "responseFile": "assistant-response.txt",
-    "responseBytes": 1151,
-    "responseSha256": "3c9e7ae449008a889f1e22e54c3a8e44f801ea73dab1b6f3e2b1ba9efafe84c8",
-    "conversationFile": "browser-conversation.json",
-    "captureMetadataFile": "browser-capture.json",
-    "artifactCreated": false
-  },
-  "voidReason": {
-    "category": "evaluator/harness failure",
-    "evidence": "The chat contains exactly the 829-character probe, then a `Fixing design-system issues` separator, then a response about `_ds_bundle.css`, Tailwind token diagnostics, and `check_design_system`. It contains no member-step handoff and cannot be graded as the probe response.",
-    "grade": false
-  }
+    "runId": "20260929T082320Z",
+    "kind": "APP-729 confirmation replicate",
+    "status": "VOID — Design routed the submitted probe into an automatic design-system issue-fixing flow",
+    "payload": {
+        "worktree": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1208",
+        "branch": "APP-1235",
+        "head": "65661ab7acdec7912c4bc82a6949d45c80d6fc94",
+        "treeCleanAtStart": true,
+        "manifestSha256": "3f513541ff886587ce0548757f3c4b04a84658818cb2a24bf974e03d5ed86075",
+        "uploadFiles": 575,
+        "localFilesVsManifestMismatches": 0,
+        "rebuilt": false
+    },
+    "project": {
+        "id": "0dddded1-9580-4d29-b989-0b073099b496",
+        "url": "https://claude.ai/design/p/0dddded1-9580-4d29-b989-0b073099b496",
+        "type": "PROJECT_TYPE_DESIGN_SYSTEM",
+        "emptyAtCreation": true,
+        "ingestion": "DesignSync MCP (finalize_plan + write_files), not the UI wizard"
+    },
+    "push": {
+        "planId": "plan_0dddded195804d29_0cd3565ae336",
+        "writesGlobs": [
+            "components/**",
+            "tokens/**",
+            "fonts/**",
+            "_vendor/**",
+            "_preview/**",
+            "guidelines/**",
+            "_ds_bundle.js",
+            "_ds_bundle.css",
+            "styles.css",
+            "README.md",
+            "_ds_sync.json",
+            "_ds_needs_recompile"
+        ],
+        "deletes": [],
+        "order": [
+            "_ds_needs_recompile",
+            "_ds_bundle.js (1)",
+            "_vendor (2)",
+            "css/docs/fonts/guidelines (11)",
+            "_preview (103)",
+            "components-a (228)",
+            "components-b (228)",
+            "_ds_needs_recompile re-arm",
+            "_ds_sync.json"
+        ],
+        "failures": 0
+    },
+    "delivery": {
+        "listFilesCount": 575,
+        "missing": 0,
+        "extra": 0,
+        "sizeMismatch": 0,
+        "preExistingHandoffArtifacts": 0,
+        "listing": "delivery/list_files.json",
+        "getFileVerification": [
+            {
+                "path": "_ds_bundle.css",
+                "bytes": 202498,
+                "sha256": "913f94f4ec73706e31a1fa95d5346fb8d98cdd4346c0d2208e0e0fc5c6c5b4a3",
+                "match": true,
+                "mode": "DesignSync get_file"
+            },
+            {
+                "path": "_ds_sync.json",
+                "bytes": 35799,
+                "sha256": "9c34c73ea3f90e91f8672fcceb192ecd05b635942f1eb590021d083044650f02",
+                "match": true,
+                "mode": "DesignSync get_file"
+            },
+            {
+                "path": "guidelines/context/index.md",
+                "bytes": 1220,
+                "sha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd",
+                "match": true,
+                "mode": "DesignSync get_file"
+            },
+            {
+                "path": "guidelines/context/registry-report.md",
+                "bytes": 25160,
+                "sha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0",
+                "match": true,
+                "mode": "DesignSync get_file"
+            },
+            {
+                "path": "guidelines/context/selection-guide.json",
+                "bytes": 189637,
+                "sha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e",
+                "match": true,
+                "mode": "DesignSync get_file"
+            },
+            {
+                "path": "guidelines/context/source-index.md",
+                "bytes": 295296,
+                "sha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03",
+                "match": true,
+                "mode": "claude-design read_file, 2 windows (1-600, 601-1171), same etag; entity-decoded + concatenated (exceeds 256 KiB get_file cap)"
+            },
+            {
+                "path": "guidelines/index.md",
+                "bytes": 1448,
+                "sha256": "ef9b137492f1af9453316d7d46bf5cd07bc2f77ff27358f08d7c88ba7a73317b",
+                "match": true,
+                "mode": "DesignSync get_file"
+            },
+            {
+                "path": "README.md",
+                "bytes": 17874,
+                "sha256": "4232481aa64ad98156993eb871bdf3b6a319a81ddbc5ed41616bc456f32ccba5",
+                "match": true,
+                "mode": "DesignSync get_file"
+            }
+        ],
+        "allMatch": true,
+        "note": "guidelines/context holds 4 files; the 5 guidelines files verified are guidelines/index.md + the 4 context files"
+    },
+    "probe": {
+        "model": "Opus 5",
+        "effort": "Medium",
+        "promptSource": "runs/20260925T133856Z/probe.json#prompt",
+        "promptFile": "prompt.txt",
+        "promptChars": 829,
+        "promptSha256": "c6ee953bb00600ae05f1b5a1188a1dadda7afa9b81eb698d4c8aa9231b99e3c3",
+        "submitted": true,
+        "chatId": "ea8b26d0-06d0-44df-bd69-e5145de15273",
+        "priorTurns": 0,
+        "submittedAt": "2026-09-29T09:16:44.987Z",
+        "completionObservedAt": "2026-09-29T09:22:26.065Z"
+    },
+    "output": {
+        "validProbeOutput": false,
+        "captureMode": "browser conversation DOM",
+        "capturedAt": "2026-09-29T09:23:31.001Z",
+        "responseFile": "assistant-response.txt",
+        "responseBytes": 1151,
+        "responseSha256": "3c9e7ae449008a889f1e22e54c3a8e44f801ea73dab1b6f3e2b1ba9efafe84c8",
+        "conversationFile": "browser-conversation.json",
+        "captureMetadataFile": "browser-capture.json",
+        "chatHistoryFile": "chat-history.json",
+        "chatHistory": {
+            "conversationCount": 1,
+            "title": "# DAO Member Management Handoff",
+            "turnCount": 3,
+            "renderedIndices": [
+                "0",
+                "1",
+                "2"
+            ]
+        },
+        "artifactCreated": false
+    },
+    "voidReason": {
+        "category": "evaluator/harness failure",
+        "evidence": "Chat history contains one conversation, `# DAO Member Management Handoff`, with exactly three turns. Its rendered indices are 0 = the exact 829-character probe, 1 = a `Fixing design-system issues` separator, and 2 = a response about `_ds_bundle.css`, Tailwind token diagnostics, and `check_design_system`. There is no second conversation, hidden handoff turn, or member-step artifact to grade.",
+        "grade": false
+    }
 }
