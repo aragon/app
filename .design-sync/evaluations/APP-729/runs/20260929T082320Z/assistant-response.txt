@@ -1,0 +1,10 @@
+Reading
+
+I can't apply these — every flagged declaration is in _ds_bundle.css, the compiled artifact from /design-sync. styles.css is only two @import lines, and this project's synced sources are read-only; editing them would be overwritten on the next sync.
+
+Two of the three items also look like false positives rather than real problems:
+
+The 32 "component-style selector" properties are Tailwind 4 internals — .prose typography variables and --tw-* transform/space registers scoped to utility classes. They are not theme tokens and must not be hoisted to :root; doing so would change rendering.
+The 30 unclassified tokens are Tailwind's animation/easing/transform defaults (--ease-out, --animate-spin, --default-transition-duration, --tw-translate-x…). They'd want /* @kind other */, but comments in a compiled bundle don't survive regeneration.
+
+To fix them for real, raise it with the /design-sync run on the App repo: either have the extractor emit @kind annotations for Tailwind-owned variables, or have it exclude --tw-* and utility-scoped custom properties from token registration. I can re-run check_design_system after the next sync.

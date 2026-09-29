@@ -1,0 +1,66 @@
+[
+  {
+    "path": "_ds_bundle.css",
+    "mode": "DesignSync get_file",
+    "bytes": 202498,
+    "sha256": "913f94f4ec73706e31a1fa95d5346fb8d98cdd4346c0d2208e0e0fc5c6c5b4a3",
+    "manifestSha256": "913f94f4ec73706e31a1fa95d5346fb8d98cdd4346c0d2208e0e0fc5c6c5b4a3",
+    "match": true
+  },
+  {
+    "path": "_ds_sync.json",
+    "mode": "DesignSync get_file",
+    "bytes": 35799,
+    "sha256": "9c34c73ea3f90e91f8672fcceb192ecd05b635942f1eb590021d083044650f02",
+    "manifestSha256": "9c34c73ea3f90e91f8672fcceb192ecd05b635942f1eb590021d083044650f02",
+    "match": true
+  },
+  {
+    "path": "guidelines/context/index.md",
+    "mode": "DesignSync get_file",
+    "bytes": 1220,
+    "sha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd",
+    "manifestSha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd",
+    "match": true
+  },
+  {
+    "path": "guidelines/context/registry-report.md",
+    "mode": "DesignSync get_file",
+    "bytes": 25160,
+    "sha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0",
+    "manifestSha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0",
+    "match": true
+  },
+  {
+    "path": "guidelines/context/selection-guide.json",
+    "mode": "DesignSync get_file",
+    "bytes": 189637,
+    "sha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e",
+    "manifestSha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e",
+    "match": true
+  },
+  {
+    "path": "guidelines/context/source-index.md",
+    "mode": "claude-design read_file, 2 windows (1-600, 601-1171), same etag; entity-decoded + concatenated (exceeds 256 KiB get_file cap)",
+    "bytes": 295296,
+    "sha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03",
+    "manifestSha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03",
+    "match": true
+  },
+  {
+    "path": "guidelines/index.md",
+    "mode": "DesignSync get_file",
+    "bytes": 1448,
+    "sha256": "ef9b137492f1af9453316d7d46bf5cd07bc2f77ff27358f08d7c88ba7a73317b",
+    "manifestSha256": "ef9b137492f1af9453316d7d46bf5cd07bc2f77ff27358f08d7c88ba7a73317b",
+    "match": true
+  },
+  {
+    "path": "README.md",
+    "mode": "DesignSync get_file",
+    "bytes": 17874,
+    "sha256": "4232481aa64ad98156993eb871bdf3b6a319a81ddbc5ed41616bc456f32ccba5",
+    "manifestSha256": "4232481aa64ad98156993eb871bdf3b6a319a81ddbc5ed41616bc456f32ccba5",
+    "match": true
+  }
+]

@@ -174,7 +174,8 @@ A **fresh disposable project** (`PROTOCOL-v2` §"Integrity and
 accepted-code gate"). Never run in, or push to, `2f22a679…`.
 
 - New empty Claude Design project.
-- Push the rebuilt `ds-bundle` complete, including `guidelines/**`.
+- Push the already-verified `ds-bundle` complete and unchanged, including
+  `guidelines/**`; do not rebuild it during the run.
 - One chat, zero prior turns, Opus 5 / Medium, the frozen prompt verbatim.
 
 No second arm. Nothing is being compared: the question is whether an
