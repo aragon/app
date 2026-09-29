@@ -14,8 +14,16 @@ generated-output citation noncompliance, not a bundle, provenance, delivery,
 contract, reachability, or evaluator-setup defect.
 
 The formal gate therefore remains **FAIL** under the criteria frozen before the
-run. No further confirmation run is required. Earlier run verdicts remain
-unchanged.
+run. APP-726, APP-727, APP-728, APP-735, APP-736, APP-1208 and APP-1223 remain
+blocked. Run 3's suspended `UNBLOCK` override is resolved as
+`CONFIRMATION_FAIL_KEEP_BLOCKED`; it is no longer pending. No further
+confirmation run is required. Earlier run verdicts remain unchanged.
+
+The context-reachability criterion **passed**: the handoff attributed
+`AddressInput` contract facts to `selection-guide.json`. This fires the
+pre-registered stochastic-reachability branch: earlier single-run misses do not
+prove deterministic bundle undiscoverability. That conclusion is recorded
+separately and does not waive the frozen citation failure.
 
 The 2026-09-25/26 attempt remains **void** (see
 `runs/20260925T133856Z/`).
