@@ -21,6 +21,7 @@ import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { initTransactionLogging } from '@/shared/components/transactionDialog/transactionLoggingSubscriber';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
+import { WorkspaceBaseUrlProvider } from '@/shared/components/workspaceBaseUrlProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { ensureAppKit, wagmiConfig } from '../../constants/wagmi';
@@ -99,16 +100,19 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                 >
                                     <DialogProvider>
                                         {/* Wraps the dialog root too, so an action composer rendered
-                                            inside a dialog shares the imported contracts. */}
-                                        <ImportedContractAbisProvider>
-                                            <DesyncWatcher />
-                                            <SentryUserSync />
-                                            {children}
-                                            <DialogRoot
-                                                dialogs={providersDialogs}
-                                            />
-                                            <ReactQueryDevtools />
-                                        </ImportedContractAbisProvider>
+                                            inside a dialog shares the imported contracts, and so a
+                                            dialog opened from a workspace keeps its links inside it. */}
+                                        <WorkspaceBaseUrlProvider>
+                                            <ImportedContractAbisProvider>
+                                                <DesyncWatcher />
+                                                <SentryUserSync />
+                                                {children}
+                                                <DialogRoot
+                                                    dialogs={providersDialogs}
+                                                />
+                                                <ReactQueryDevtools />
+                                            </ImportedContractAbisProvider>
+                                        </WorkspaceBaseUrlProvider>
                                     </DialogProvider>
                                 </FeatureFlagsProvider>
                             </GukModulesProvider>

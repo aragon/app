@@ -1,5 +1,6 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as NextNavigation from 'next/navigation';
 import * as daoService from '@/shared/api/daoService';
 import { WorkspaceBaseUrlProvider } from '@/shared/components/workspaceBaseUrlProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
@@ -39,6 +40,8 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         useDaoPluginsSpy.mockReset();
         useDaoSpy.mockReset();
     });
+
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
 
     const defaultDao = generateDao({
         address: '0x123',
@@ -124,6 +127,7 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         expect(screen.queryByText('Demo DAO')).not.toBeInTheDocument();
     });
     it('builds the proposal link from the DAO by default, as on the DAO pages', () => {
+        usePathnameSpy.mockReturnValue('/dao/ethereum-mainnet/0x123/proposals');
         const getProposalUrlSpy = jest.spyOn(proposalUtils, 'getProposalUrl');
         const proposal = generateProposal();
         render(createTestComponent({ proposal }));
@@ -137,10 +141,11 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     });
 
     it('builds the proposal link under the workspace when rendered inside one', () => {
+        usePathnameSpy.mockReturnValue('/workspace/demo/proposals');
         const getProposalUrlSpy = jest.spyOn(proposalUtils, 'getProposalUrl');
         const proposal = generateProposal();
         render(
-            <WorkspaceBaseUrlProvider baseUrl="/workspace/demo">
+            <WorkspaceBaseUrlProvider>
                 {createTestComponent({ proposal })}
             </WorkspaceBaseUrlProvider>,
         );

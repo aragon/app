@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 import { WorkspaceAccountSelectorProvider } from '@/modules/workspace/components/workspaceAccountSelectorProvider';
-import { workspaceUtils } from '@/modules/workspace/utils/workspaceUtils';
-import { WorkspaceBaseUrlProvider } from '@/shared/components/workspaceBaseUrlProvider';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationWorkspace } from '../../navigations/navigationWorkspace';
@@ -32,18 +30,12 @@ export const LayoutWorkspace: React.FC<ILayoutWorkspaceProps> = async (
     const { workspaceId } = await params;
 
     return (
-        // The workspace embeds DAO components — proposal lists on several of its pages — which link to the DAO
-        // pages by default. Rebasing them here keeps every one of them inside the workspace, whatever renders them.
-        <WorkspaceBaseUrlProvider
-            baseUrl={workspaceUtils.getWorkspaceUrl(workspaceId)}
+        <WorkspaceAccountSelectorProvider
+            key={workspaceId}
+            workspaceId={workspaceId}
         >
-            <WorkspaceAccountSelectorProvider
-                key={workspaceId}
-                workspaceId={workspaceId}
-            >
-                <NavigationWorkspace workspaceId={workspaceId} />
-                <ErrorBoundary>{children}</ErrorBoundary>
-            </WorkspaceAccountSelectorProvider>
-        </WorkspaceBaseUrlProvider>
+            <NavigationWorkspace workspaceId={workspaceId} />
+            <ErrorBoundary>{children}</ErrorBoundary>
+        </WorkspaceAccountSelectorProvider>
     );
 };
