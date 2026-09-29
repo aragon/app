@@ -75,6 +75,8 @@ export const WorkspaceDetailsPageClient: React.FC<
 
     // Keyed by account so switching accounts resets the plugin filters of the previous DAO. The dashboard brings its
     // own page header, which is why the workspace header never renders alongside it.
+    // A guard is needed here to for the different account types. TBD whether the dashboard should become the router for
+    // the DAO account type, or if the workspace should become the router for all account types.
     if (activeAccount != null) {
         return (
             <WorkspaceDetailsPageDaoDashboard
