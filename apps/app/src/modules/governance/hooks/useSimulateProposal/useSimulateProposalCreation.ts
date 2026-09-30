@@ -15,6 +15,10 @@ export interface IUseSimulateProposalCreationParams {
      * Network of the DAO.
      */
     network?: Network;
+    /**
+     * Whether proposal creation should be simulated.
+     */
+    enabled?: boolean;
 }
 
 export interface IUseSimulateProposalCreationResult {
@@ -50,13 +54,13 @@ const dummyCid = 'QmVZjGBGNmkgTsch6E8Eu1EzYJRqZZKQZoc2xRaySanWvs';
 export const useSimulateProposalCreation = (
     params: IUseSimulateProposalCreationParams,
 ): IUseSimulateProposalCreationResult => {
-    const { plugin, network } = params;
+    const { plugin, network, enabled = true } = params;
     const { address: userAddress } = useWalletAccount();
 
     const chainId =
         network != null ? networkDefinitions[network].id : undefined;
 
-    const isEnabled = userAddress != null && chainId != null;
+    const isEnabled = enabled && userAddress != null && chainId != null;
 
     // Memoized so the calldata (which embeds a now-relative end date) is built
     // once and does not change the useCall query key on every render, which

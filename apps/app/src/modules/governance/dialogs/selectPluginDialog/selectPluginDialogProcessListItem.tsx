@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import {
     type IProcessDataListItemProps,
     ProcessDataListItem,
@@ -24,8 +25,9 @@ export const SelectPluginDialogProcessListItem: React.FC<
         props;
 
     const { result, isLoading } = useSimulateProposalCreation({
-        plugin: process,
+        enabled: process.interfaceType !== PluginInterfaceType.SAFE,
         network: dao?.network,
+        plugin: process,
     });
     const simulationFailed = result === 'failure';
 

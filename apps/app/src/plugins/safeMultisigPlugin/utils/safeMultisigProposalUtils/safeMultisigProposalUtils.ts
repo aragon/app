@@ -148,6 +148,30 @@ class SafeMultisigProposalUtils {
 
     isThresholdReached = (transaction: ISafeMultisigTransaction): boolean =>
         transaction.confirmations.length >= transaction.confirmationsRequired;
+
+    /**
+     * Number of distinct current owners that have confirmed the transaction. A confirmation from an
+     * address that is no longer an owner is dropped, and a duplicate confirmation from the same
+     * owner is counted once, so a removed or double-listed signer can never inflate the approvals
+     * shown against the live threshold.
+     */
+    countCurrentOwnerApprovals = (
+        transaction: ISafeMultisigTransaction,
+        owners: string[],
+    ): number => {
+        const ownerSet = new Set(owners.map((owner) => owner.toLowerCase()));
+        const approvingOwners = new Set<string>();
+
+        for (const { owner } of transaction.confirmations) {
+            const normalizedOwner = owner.toLowerCase();
+
+            if (ownerSet.has(normalizedOwner)) {
+                approvingOwners.add(normalizedOwner);
+            }
+        }
+
+        return approvingOwners.size;
+    };
 }
 
 export const safeMultisigProposalUtils = new SafeMultisigProposalUtils();

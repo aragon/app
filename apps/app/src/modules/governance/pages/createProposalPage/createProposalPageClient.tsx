@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { SafeProcessOverview } from '@/plugins/safeMultisigPlugin/components/safeProcessOverview';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -28,6 +27,7 @@ import type {
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { proposalResumeRegistry } from '../../utils/proposalResumeRegistry';
+import { CreateExecuteActionsPageClient } from '../createExecuteActionsPage/createExecuteActionsPageClient';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import {
     createProposalWizardId,
@@ -53,18 +53,25 @@ export const CreateProposalPageClient: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    // Undefined only when the plugin address is unknown (e.g. a stale link to an uninstalled
-    // process), which is why the not-found state below needs no loading guard: the route's
-    // wizard layout fetches the DAO and dehydrates it into this tree, so `useDao` already holds
-    // it on the first render — server and client alike. Should that layout ever stop
-    // prefetching, this branch would flash a not-found on every legitimate load.
-    const plugin = useDaoPlugins({
+    const processPlugins = useDaoPlugins({
         daoId,
         pluginAddress,
         includeLinkedAccounts: true,
-    })?.[0]?.meta;
+    });
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const plugin = processPlugins?.find(({ meta }) => {
+        if (meta.interfaceType !== PluginInterfaceType.SAFE) {
+            return true;
+        }
+
+        return (
+            dao != null &&
+            (meta.daoAddress ?? dao.address).toLowerCase() ===
+                dao.address.toLowerCase()
+        );
+    })?.meta;
 
     useProposalPermissionCheckGuard({
         daoId,
@@ -116,16 +123,21 @@ export const CreateProposalPageClient: React.FC<
     }
 
     if (plugin.interfaceType === PluginInterfaceType.SAFE) {
+        if (dao == null) {
+            return null;
+        }
+
         return (
-            <Page.Main>
-                <SafeProcessOverview
-                    initialParams={{ queryParams: { daoId } }}
-                    plugin={plugin}
-                />
-            </Page.Main>
+            <CreateExecuteActionsPageClient
+                daoId={daoId}
+                safeProcess={{
+                    daoAddress: plugin.daoAddress ?? dao.address,
+                    network: dao.network,
+                    safeAddress: plugin.address,
+                }}
+            />
         );
     }
-
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
         const { actions, addActions } = values;

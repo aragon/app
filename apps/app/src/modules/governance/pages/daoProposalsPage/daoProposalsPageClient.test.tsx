@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as daoService from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
@@ -12,6 +13,7 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import {
     DaoProposalsPageClient,
     type IDaoProposalsPageClientProps,
@@ -132,6 +134,84 @@ describe('<DaoProposalsPageClient /> component', () => {
         expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(
             `create/${pluginAddress}/proposal`,
         );
+    });
+    it('routes linked-account plugin creation to the target DAO', () => {
+        const rootDaoAddress = '0x1111111111111111111111111111111111111111';
+        const targetDaoAddress = '0x2222222222222222222222222222222222222222';
+        const pluginAddress = '0x3333333333333333333333333333333333333333';
+        const plugin = generateDaoPlugin({
+            address: pluginAddress,
+            daoAddress: targetDaoAddress,
+        });
+        const initialParams = {
+            queryParams: { daoId: 'test-dao-id', pluginAddress },
+        };
+
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({
+                    address: rootDaoAddress,
+                    network: daoService.Network.ETHEREUM_SEPOLIA,
+                }),
+            }),
+        );
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: plugin }),
+        ]);
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: true,
+        });
+
+        render(createTestComponent({ initialParams }));
+
+        expect(
+            screen.getByRole<HTMLAnchorElement>('link', {
+                name: /daoProposalsPage.main.action/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            `/dao/${daoService.Network.ETHEREUM_SEPOLIA}/${targetDaoAddress}/create/${pluginAddress}/proposal`,
+        );
+    });
+
+    it('allows native Safe alongside SPP in the proposal chooser', async () => {
+        const open = jest.fn();
+        const nativeSafe = generateFilterComponentPlugin({
+            id: 'safe',
+            uniqueId: 'safe-1',
+            meta: generateDaoPlugin({
+                interfaceType: daoService.PluginInterfaceType.SAFE,
+            }),
+        });
+        const spp = generateFilterComponentPlugin({
+            id: 'spp',
+            uniqueId: 'spp-1',
+            meta: generateDaoPlugin({
+                interfaceType: daoService.PluginInterfaceType.SPP,
+            }),
+        });
+
+        useDaoPluginsSpy.mockReturnValue([nativeSafe, spp]);
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: true,
+        });
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /daoProposalsPage.main.action/,
+            }),
+        );
+
+        expect(open).toHaveBeenCalledWith(GovernanceDialogId.SELECT_PLUGIN, {
+            params: expect.objectContaining({
+                allowNativeSafe: true,
+                daoId: 'test-id',
+            }),
+        });
     });
 
     it('renders the not-found state linking to the dashboard when the DAO has no process plugin to display', () => {

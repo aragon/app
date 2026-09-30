@@ -19,11 +19,13 @@ jest.mock('@/shared/components/wizards/wizardPage', () => ({
     WizardPage: {
         Step: ({
             children,
+            description,
             id,
             nextDropdownItems,
             disableNext,
         }: IWizardPageStepProps) => (
             <div
+                data-description={description}
                 data-disable-next={disableNext}
                 data-dropdown-items={nextDropdownItems?.length ?? 0}
                 data-testid={id}
@@ -82,6 +84,27 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
             screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
         ).toBeInTheDocument();
         expect(screen.getByTestId('execute-actions')).toBeInTheDocument();
+    });
+    it('uses direct-execute copy by default', () => {
+        render(createTestComponent());
+
+        expect(
+            screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
+        ).toHaveAttribute(
+            'data-description',
+            'app.governance.createExecuteActionsPage.steps.ACTIONS.description',
+        );
+    });
+
+    it('uses proposal copy for native Safe actions', () => {
+        render(createTestComponent({ isSafeProcess: true }));
+
+        expect(
+            screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
+        ).toHaveAttribute(
+            'data-description',
+            'app.governance.createExecuteActionsPage.steps.ACTIONS.safeDescription',
+        );
     });
 
     it('disables next when there are no actions', () => {

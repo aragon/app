@@ -222,6 +222,39 @@ describe('<CreateProposalPageClient /> component', () => {
         });
     });
 
+    it('rejects a native Safe plugin owned by a different DAO', () => {
+        const pluginAddress = '0x3333333333333333333333333333333333333333';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({
+                    address: '0x1111111111111111111111111111111111111111',
+                }),
+            }),
+        );
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({
+                    address: pluginAddress,
+                    daoAddress: '0x2222222222222222222222222222222222222222',
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                }),
+            }),
+        ]);
+
+        render(
+            <CreateProposalPageClient
+                daoId="dao-id"
+                pluginAddress={pluginAddress}
+            />,
+        );
+
+        expect(
+            screen.getByText(
+                'app.governance.createProposalPage.error.notFound.title',
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('renders a not-found state instead of the wizard when the plugin address matches no DAO plugin', () => {
         useDaoPluginsSpy.mockReturnValue([]);
 

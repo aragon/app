@@ -2,4 +2,4 @@
 "@aragon/app": minor
 ---
 
-Show Safes with DAO Execute permission as governance processes, with Safe-specific details, live owners and configuration, and DAO-scoped creation eligibility. Keep a shared Safe's owner list deduplicated when it also participates in an SPP stage. Link transaction creation and signing to Safe while native transaction proposal views remain unavailable in Aragon.
+Show Safes with DAO Execute permission as governance processes. List their pending and executed DAO proposals, create action-only proposals, and approve them inside Aragon. Reuse Safe owner lists and settings for processes and SPP bodies, keeping linked DAO accounts separate.

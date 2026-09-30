@@ -18,12 +18,16 @@ export interface ICreateExecuteActionsPageClientStepsProps {
      * ID of the DAO to execute actions on.
      */
     daoId: string;
+    /**
+     * Whether the actions are being proposed through a native Safe.
+     */
+    isSafeProcess?: boolean;
 }
 
 export const CreateExecuteActionsPageClientSteps: React.FC<
     ICreateExecuteActionsPageClientStepsProps
 > = (props) => {
-    const { daoId } = props;
+    const { daoId, isSafeProcess = false } = props;
     const { t } = useTranslations();
     const { address } = useWalletAccount();
 
@@ -38,11 +42,10 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
         isDirectExecute: true,
         formId: createExecuteActionsWizardId,
     });
-
     return (
         <WizardPage.Step
             description={t(
-                `app.governance.createExecuteActionsPage.steps.${CreateExecuteActionsWizardStep.ACTIONS}.description`,
+                `app.governance.createExecuteActionsPage.steps.${CreateExecuteActionsWizardStep.ACTIONS}.${isSafeProcess ? 'safeDescription' : 'description'}`,
             )}
             disableNext={actions?.length ? undefined : true}
             nextDropdownItems={simulateDropdownItems}

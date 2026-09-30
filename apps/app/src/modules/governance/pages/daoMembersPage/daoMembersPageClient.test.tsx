@@ -129,7 +129,7 @@ describe('<DaoMembersPageClient /> component', () => {
             generateReactQueryResultSuccess({
                 data: generateSafeInfoResponse({
                     address: safeAddress,
-                    nonce: 42,
+                    nonce: '42',
                 }),
             }),
         );

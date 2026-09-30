@@ -2,6 +2,7 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { checksumSafeAddress } from './safeAddressUtils';
 import type {
     IGetSafeBalancesParams,
+    IGetSafeDaoProposalsParams,
     IGetSafeInfoParams,
     IGetSafePendingTransactionsParams,
     IGetSafeTransactionHistoryParams,
@@ -12,6 +13,7 @@ export enum SafeServiceKey {
     SAFE_PENDING_TRANSACTIONS = 'SAFE_PENDING_TRANSACTIONS',
     SAFE_TRANSACTION_HISTORY = 'SAFE_TRANSACTION_HISTORY',
     SAFE_BALANCES = 'SAFE_BALANCES',
+    SAFE_DAO_PROPOSALS = 'SAFE_DAO_PROPOSALS',
 }
 
 /**
@@ -30,6 +32,9 @@ const withChecksummedAddress = <
         address: checksumSafeAddress(params.urlParams.address),
     },
 });
+
+const checksumOptionalAddress = (address: string): string =>
+    address === '' ? address : checksumSafeAddress(address);
 
 export const safeServiceKeys = {
     safeInfo: (params: IGetSafeInfoParams) => [
@@ -51,5 +56,14 @@ export const safeServiceKeys = {
         SafeServiceKey.SAFE_BALANCES,
         apiVersionUtils.getApiVersion(),
         withChecksummedAddress(params),
+    ],
+    safeDaoProposals: (params: IGetSafeDaoProposalsParams) => [
+        SafeServiceKey.SAFE_DAO_PROPOSALS,
+        apiVersionUtils.getApiVersion(),
+        {
+            network: params.network,
+            safeAddress: checksumOptionalAddress(params.safeAddress),
+            daoAddress: checksumOptionalAddress(params.daoAddress),
+        },
     ],
 };

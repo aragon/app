@@ -60,6 +60,17 @@ export interface IGetSafeTransactionHistoryParams
 export interface IGetSafeBalancesParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 
+/**
+ * Identity of a native Safe DAO proposal feed: the Safe account whose queue/history is read and
+ * the DAO whose `execute` calls select the governance proposals out of it. Not a URL-params shape
+ * because the feed is a client-side join of two Safe reads, not one endpoint.
+ */
+export interface IGetSafeDaoProposalsParams {
+    network: Network;
+    safeAddress: string;
+    daoAddress: string;
+}
+
 export interface ISafeInfoResponse extends ISafeInfo {
     meta: ISafeMeta;
 }

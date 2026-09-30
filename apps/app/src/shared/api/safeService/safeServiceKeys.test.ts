@@ -66,6 +66,43 @@ describe('safe service keys', () => {
         );
     });
 
+    it('builds one safe DAO proposals key regardless of address casing', () => {
+        const daoAddress = '0x665928FeacC8739116A3f2eF66a9c61936348DC2';
+
+        expect(
+            safeServiceKeys.safeDaoProposals({
+                network: Network.ETHEREUM_MAINNET,
+                safeAddress: lowercased,
+                daoAddress: daoAddress.toLowerCase(),
+            }),
+        ).toEqual(
+            safeServiceKeys.safeDaoProposals({
+                network: Network.ETHEREUM_MAINNET,
+                safeAddress: checksummed,
+                daoAddress,
+            }),
+        );
+    });
+
+    it('keeps DAO proposal feeds separate for different DAOs on one Safe', () => {
+        const daoAddress = '0x665928FeacC8739116A3f2eF66a9c61936348DC2';
+        const otherDaoAddress = '0x1111111111111111111111111111111111111111';
+
+        expect(
+            safeServiceKeys.safeDaoProposals({
+                network: Network.ETHEREUM_MAINNET,
+                safeAddress: checksummed,
+                daoAddress,
+            }),
+        ).not.toEqual(
+            safeServiceKeys.safeDaoProposals({
+                network: Network.ETHEREUM_MAINNET,
+                safeAddress: checksummed,
+                daoAddress: otherDaoAddress,
+            }),
+        );
+    });
+
     it('keeps distinct Safes on distinct keys', () => {
         const other = '0x665928FeacC8739116A3f2eF66a9c61936348DC2';
 

@@ -41,6 +41,8 @@ export interface ISelectPluginDialogParams {
      * Only allow plugins with full execute permissions.
      */
     fullExecuteOnly?: boolean;
+    /** Include native Safe accounts in proposal creation only. */
+    allowNativeSafe?: boolean;
 }
 
 export interface ISelectPluginDialogProps
@@ -62,6 +64,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
         initialPlugin,
         variant = 'proposal',
         fullExecuteOnly,
+        allowNativeSafe,
     } = location.params;
 
     const { t } = useTranslations();
@@ -80,7 +83,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
 
     const processedDaoPlugins = daoPlugins.filter(
         (plugin) =>
-            plugin.meta.interfaceType !== PluginInterfaceType.SAFE &&
+            (allowNativeSafe ||
+                plugin.meta.interfaceType !== PluginInterfaceType.SAFE) &&
             !excludePluginIds?.includes(plugin.uniqueId),
     );
 
