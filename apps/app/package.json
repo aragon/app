@@ -37,7 +37,7 @@
         "setup": "./scripts/setupEnv.sh",
         "start": "next start",
         "test": "jest",
-        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=origin/main",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch",
         "type-check": "tsc --noEmit"

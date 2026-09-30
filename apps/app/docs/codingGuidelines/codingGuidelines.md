@@ -47,9 +47,8 @@ therefore measure the **application column**, not the browser — see
   express that with `min-*`, `max-[…]` or raw `@media` instead: they are viewport queries too, but
   they read like the container variants and hide the intent.
 - A decision shared between the column and a portalled surface cannot be expressed in CSS — the two
-  measure different things. Make the portalled surface unconditional instead of mirroring the query,
-  see `navigationDaoUtils.getDefaultLinks`, where the dialog lists every destination because the bar
-  drops its inline links on the column width.
+  measure different things. Measure the element inside the column and hand the result to the
+  portal: `NavigationDao` lists the bar's inline links in its dialog only while they have no width.
 - Tailwind's built-in container variants (`@sm:` … `@7xl:`, a different scale) query the nearest
   container of *any* name, which inside the app is the application column unless the component
   declares its own `@container`. Only use them together with such a declaration.

@@ -5,6 +5,7 @@ import { Redis } from '@upstash/redis';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { getChatModel } from './chat/models';
+import { createDefaultDocsSearch } from './docs/defaultDocsSearch';
 import { createVercelBlobStore } from './files/blobStore';
 import { type IAppDependencies, lazy } from './lib/appDependencies';
 import { getConfig } from './lib/config';
@@ -32,6 +33,7 @@ const buildDefaultDependencies = (): IAppDependencies => {
         getLinear: lazy(() => createLinearGateway()),
         getChatModel,
         getBlobStore: lazy(() => createVercelBlobStore()),
+        getDocsSearch: lazy(() => createDefaultDocsSearch()),
     };
 };
 
