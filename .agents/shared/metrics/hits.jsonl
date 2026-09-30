@@ -254,3 +254,6 @@
 {"ts":"2026-09-07T14:30:29.460Z","tool":"Edit","file":"apps/app/src/shared/utils/bigIntUtils/bigIntUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-09-23T04:49:03.582Z","tool":"Write","file":"apps/app/src/actions/core/permissionManager/permissionActionReorder.test.tsx","rule":"core-action-decoded-input","bytes":948,"elapsed_ms":6,"adapter":"claude"}
 {"ts":"2026-09-23T04:49:03.582Z","tool":"Write","file":"apps/app/src/actions/core/permissionManager/permissionActionReorder.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":6,"adapter":"claude"}
+{"ts":"2026-09-28T16:58:27.832Z","tool":"Edit","file":"apps/app/src/shared/api/daoService/queries/useDao.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"generic"}
+{"ts":"2026-09-28T16:59:42.383Z","tool":"Edit","file":"apps/app/src/shared/components/forms/advancedDateInput/advancedDateInputDuration.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"generic"}
+{"ts":"2026-09-28T17:09:41.935Z","tool":"Edit","file":"apps/app/src/shared/components/forms/autocompleteInput/autocompleteInput.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"generic"}

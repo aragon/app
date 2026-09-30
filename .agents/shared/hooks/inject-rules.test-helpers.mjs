@@ -24,6 +24,15 @@ export const registerTmpCleanup = () => {
     });
 };
 
+/**
+ * Write a rule-skill into a rules root as <rules>/<name>/SKILL.md.
+ */
+export const writeRule = (ruleDir, name, frontmatter, body) => {
+    const dir = join(ruleDir, name);
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, 'SKILL.md'), `---\n${frontmatter}\n---\n${body}`);
+};
+
 export const registerGuardrailsContractSuite = ({
     suiteName,
     buildResult,
@@ -37,9 +46,11 @@ export const registerGuardrailsContractSuite = ({
             tmp = mkdtempSync(join(tmpdir(), TMP_PREFIX));
             ruleDir = join(tmp, 'rules');
             mkdirSync(ruleDir);
-            writeFileSync(
-                join(ruleDir, 'q.md'),
-                '---\nname: q\nglobs: src/**/api/**\nkind: rule\n---\nquery rule body',
+            writeRule(
+                ruleDir,
+                'q',
+                'name: q\nglobs: src/**/api/**\nkind: rule',
+                'query rule body',
             );
             mkdirSync(join(tmp, 'src', 'shared', 'api'), { recursive: true });
         });
