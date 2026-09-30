@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
+import type { IWorkspaceAccountSelectorProviderProps } from '@/modules/workspace/components/workspaceAccountSelectorProvider';
 import type { INavigationWorkspaceProps } from '../../navigations/navigationWorkspace';
 import { type ILayoutWorkspaceProps, LayoutWorkspace } from './layoutWorkspace';
 
@@ -8,6 +9,22 @@ jest.mock('../../navigations/navigationWorkspace', () => ({
         <div data-testid="navigation-workspace-mock">{props.workspaceId}</div>
     ),
 }));
+
+// The provider reads the workspace registry through React Query, which is the subject of its own tests. Rendering
+// it here would need a query client and would make the registry assertion below report the provider's read
+// instead of the layout's.
+jest.mock(
+    '@/modules/workspace/components/workspaceAccountSelectorProvider',
+    () => ({
+        WorkspaceAccountSelectorProvider: (
+            props: IWorkspaceAccountSelectorProviderProps,
+        ) => (
+            <div data-testid="account-selector-provider-mock">
+                {props.children}
+            </div>
+        ),
+    }),
+);
 
 describe('<LayoutWorkspace /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');

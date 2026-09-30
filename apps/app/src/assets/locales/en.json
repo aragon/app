@@ -4348,6 +4348,10 @@
           "owner": "Owner",
           "resources": "Resources"
         },
+        "daoError": {
+          "description": "The DAO of the selected account could not be loaded. Please try again later or select another account.",
+          "heading": "Dashboard could not be loaded"
+        },
         "notFound": {
           "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
           "title": "Workspace not found"

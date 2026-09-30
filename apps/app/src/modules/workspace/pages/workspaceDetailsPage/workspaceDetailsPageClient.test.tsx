@@ -1,30 +1,80 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
+import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
-    WorkspaceAccountInfoStatus,
-    WorkspaceAccountInfoType,
-    workspaceQueryService,
-} from '../../api/workspaceQueryService';
-import {
     type IWorkspace,
+    type IWorkspaceAccount,
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import * as workspaceAccountSelectorProvider from '../../components/workspaceAccountSelectorProvider';
 import {
     type IWorkspaceDetailsPageClientProps,
     WorkspaceDetailsPageClient,
 } from './workspaceDetailsPageClient';
+import {
+    type IWorkspaceDetailsPageDaoDashboardProps,
+    WorkspaceDetailsPageDaoDashboard,
+} from './workspaceDetailsPageDaoDashboard';
+import { WorkspaceDetailsPageOverview } from './workspaceDetailsPageOverview';
+
+jest.mock('./workspaceDetailsPageDaoDashboard', () => ({
+    WorkspaceDetailsPageDaoDashboard: jest.fn(() => (
+        <div data-testid="account-dashboard-mock" />
+    )),
+}));
+
+jest.mock('./workspaceDetailsPageOverview', () => ({
+    WorkspaceDetailsPageOverview: jest.fn(() => (
+        <div data-testid="overview-mock" />
+    )),
+}));
 
 describe('<WorkspaceDetailsPageClient /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
-    const targetAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
-    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+    const useWorkspaceAccountSelectorContextSpy = jest.spyOn(
+        workspaceAccountSelectorProvider,
+        'useWorkspaceAccountSelectorContext',
+    );
+    const accountDashboardMock = WorkspaceDetailsPageDaoDashboard as jest.Mock;
+    const overviewMock = WorkspaceDetailsPageOverview as jest.Mock;
+
+    const daoAccount: IWorkspaceAccount = {
+        id: `${Network.ETHEREUM_SEPOLIA}-${address}`,
+        type: WorkspaceAccountType.DAO,
+        address,
+        network: Network.ETHEREUM_SEPOLIA,
+    };
+
+    const allAccountsOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
+        { id: 'all', label: 'All accounts', isAllAccounts: true };
+
+    const daoOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
+        {
+            id: daoAccount.id,
+            label: 'Demo DAO',
+            account: daoAccount,
+            isAllAccounts: false,
+        };
+
+    /**
+     * Mocks the account selector context, every account being aggregated unless set otherwise.
+     */
+    const mockAccountSelector = (
+        context?: Partial<workspaceAccountSelectorProvider.IWorkspaceAccountSelectorContext>,
+    ) =>
+        useWorkspaceAccountSelectorContextSpy.mockReturnValue({
+            activeOption: allAccountsOption,
+            setActiveOption: jest.fn(),
+            options: [allAccountsOption, daoOption],
+            ...context,
+        });
 
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
         id: 'test-workspace',
@@ -32,36 +82,22 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         description: 'A test workspace',
         avatar: null,
         links: [],
-        owner: targetAddress,
-        accounts: [
-            {
-                id: `ethereum-sepolia-${address}`,
-                type: WorkspaceAccountType.DAO,
-                address,
-                network: Network.ETHEREUM_SEPOLIA,
-            },
-        ],
+        owner: address,
+        accounts: [daoAccount],
         targets: [],
         ...workspace,
     });
 
     beforeEach(() => {
         getWorkspaceSpy.mockResolvedValue(buildWorkspace());
-        getAccountsSpy.mockResolvedValue([
-            {
-                network: Network.ETHEREUM_SEPOLIA,
-                address,
-                type: WorkspaceAccountInfoType.DAO,
-                status: WorkspaceAccountInfoStatus.AVAILABLE,
-                indexed: true,
-                name: 'Demo DAO',
-            },
-        ]);
+        mockAccountSelector();
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
-        getAccountsSpy.mockReset();
+        useWorkspaceAccountSelectorContextSpy.mockReset();
+        accountDashboardMock.mockClear();
+        overviewMock.mockClear();
         localStorage.clear();
     });
 
@@ -73,6 +109,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         testIndex += 1;
         const completeProps: IWorkspaceDetailsPageClientProps = {
             workspaceId: `test-workspace-${testIndex.toString()}`,
+            featuredDelegates: [],
             ...props,
         };
 
@@ -87,50 +124,13 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         );
     };
 
-    it('displays the workspace metadata on the page header', async () => {
+    it('displays a loading state while the workspace loads', async () => {
+        getWorkspaceSpy.mockReturnValue(new Promise(() => undefined));
         render(createTestComponent());
 
-        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
-        expect(screen.getByText('A test workspace')).toBeInTheDocument();
-    });
-
-    it('displays the accounts with the name resolved by the accounts API', async () => {
-        render(createTestComponent());
-
-        expect(
-            await screen.findByText(/workspaceDetailsPage\.section\.accounts$/),
-        ).toBeInTheDocument();
-        await waitFor(() =>
-            expect(screen.getByText('Demo DAO')).toBeInTheDocument(),
-        );
-    });
-
-    it('hides the targets section when the workspace has no target', async () => {
-        render(createTestComponent());
-
-        await screen.findByText('Test Workspace');
-
-        expect(
-            screen.queryByText(/workspaceDetailsPage\.section\.targets$/),
-        ).not.toBeInTheDocument();
-    });
-
-    it('displays the targets section when the workspace has targets', async () => {
-        getWorkspaceSpy.mockResolvedValue(
-            buildWorkspace({
-                targets: [
-                    {
-                        address: targetAddress,
-                        network: Network.CITREA_MAINNET,
-                    },
-                ],
-            }),
-        );
-        render(createTestComponent());
-
-        expect(
-            await screen.findByText(/workspaceDetailsPage\.section\.targets$/),
-        ).toBeInTheDocument();
+        expect(await screen.findByRole('progressbar')).toBeInTheDocument();
+        expect(overviewMock).not.toHaveBeenCalled();
+        expect(accountDashboardMock).not.toHaveBeenCalled();
     });
 
     it('displays an empty state when the workspace does not exist', async () => {
@@ -140,14 +140,42 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         expect(
             await screen.findByText(/workspaceDetailsPage\.notFound\.title$/),
         ).toBeInTheDocument();
+        expect(overviewMock).not.toHaveBeenCalled();
     });
 
-    it('does not resolve accounts for a workspace that has none', async () => {
-        getWorkspaceSpy.mockResolvedValue(buildWorkspace({ accounts: [] }));
+    it('displays the workspace overview when every account is aggregated', async () => {
+        const workspace = buildWorkspace();
+        getWorkspaceSpy.mockResolvedValue(workspace);
         render(createTestComponent());
 
-        await screen.findByText('Test Workspace');
+        expect(await screen.findByTestId('overview-mock')).toBeInTheDocument();
+        expect(overviewMock).toHaveBeenCalledWith(
+            expect.objectContaining({ workspace }),
+            undefined,
+        );
+        expect(accountDashboardMock).not.toHaveBeenCalled();
+    });
 
-        expect(getAccountsSpy).not.toHaveBeenCalled();
+    it('displays the dashboard of the selected account', async () => {
+        const featuredDelegates = [
+            { daoAddress: address } as unknown as IFeaturedDelegates,
+        ];
+        mockAccountSelector({ activeOption: daoOption });
+        render(createTestComponent({ featuredDelegates }));
+
+        expect(
+            await screen.findByTestId('account-dashboard-mock'),
+        ).toBeInTheDocument();
+        expect(
+            accountDashboardMock.mock.calls.at(-1)?.[0] as
+                | IWorkspaceDetailsPageDaoDashboardProps
+                | undefined,
+        ).toEqual(
+            expect.objectContaining({
+                account: daoAccount,
+                featuredDelegates,
+            }),
+        );
+        expect(overviewMock).not.toHaveBeenCalled();
     });
 });
