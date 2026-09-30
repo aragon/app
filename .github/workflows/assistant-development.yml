@@ -1,5 +1,7 @@
 # The "Assistant Development" workflow deploys the assistant service to dev.assistant.aragon.org on
-# every merge to main that touches the assistant or its shared contracts (see .github/filters.yml).
+# every merge to main that touches the assistant or its shared contracts (see .github/filters.yml),
+# and on manual dispatch — how a knowledge-base change reaches dev: the build fetches the current
+# aragon/platform-doc, no commit here is involved, so the paths filter is bypassed.
 # Repo-wide checks (type-check, lint, tests) run in app-development.yml via the Turbo fan-out; the
 # dev app (dev.app.aragon.org) points at dev.assistant.aragon.org, so it picks the deploy up live.
 
@@ -9,6 +11,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,6 +22,7 @@ permissions:
 
 jobs:
   changes:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       assistant: ${{ steps.filter.outputs.assistant }}
@@ -38,7 +42,7 @@ jobs:
 
   deploy:
     needs: changes
-    if: ${{ needs.changes.outputs.assistant == 'true' }}
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.assistant == 'true') }}
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:

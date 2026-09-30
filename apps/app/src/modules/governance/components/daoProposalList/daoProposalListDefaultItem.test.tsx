@@ -9,6 +9,7 @@ import {
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import * as useUserVoteHook from '../../hooks/useUserVote';
 import { generateProposal } from '../../testUtils';
 import {
     DaoProposalListDefaultItem,
@@ -22,6 +23,9 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     );
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    // The real hook subscribes to the wagmi connection, which wagmi's reconnect-on-mount updates
+    // after the test's act scope has closed.
+    const useUserVoteSpy = jest.spyOn(useUserVoteHook, 'useUserVote');
 
     beforeEach(() => {
         useDaoPluginsSpy.mockReturnValue([
@@ -30,12 +34,14 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
+        useUserVoteSpy.mockReturnValue(undefined);
     });
 
     afterEach(() => {
         useSlotSingleFunctionSpy.mockReset();
         useDaoPluginsSpy.mockReset();
         useDaoSpy.mockReset();
+        useUserVoteSpy.mockReset();
     });
 
     const defaultDao = generateDao({
