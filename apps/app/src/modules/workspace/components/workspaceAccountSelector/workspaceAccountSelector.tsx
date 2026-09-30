@@ -3,7 +3,7 @@
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname, useRouter } from 'next/navigation';
-import { type MouseEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspace } from '../../api/workspaceService';
 import {
@@ -77,16 +77,13 @@ export const WorkspaceAccountSelector: React.FC<
         [options, workspaceId, section],
     );
 
-    // `next/link` prefetches its route when it mounts, which these options do not get for free: they are anchors
-    // followed by the router rather than links. Prefetching them as the menu opens is the same moment, and the
-    // reader is about to pick one of a handful of accounts. No-op in development, where Next never prefetches.
+    // manually prefetch when the dialog is opened;
+    // this can be removed if the dropdown item can be a Link component
     useEffect(() => {
-        if (!isOpen) {
-            return;
-        }
-
-        for (const { url } of optionLinks) {
-            router.prefetch(url);
+        if (isOpen) {
+            for (const { url } of optionLinks) {
+                router.prefetch(url);
+            }
         }
     }, [isOpen, optionLinks, router]);
 
@@ -95,27 +92,7 @@ export const WorkspaceAccountSelector: React.FC<
         return null;
     }
 
-    const handleOptionClick =
-        (url: string) => (event: MouseEvent<HTMLDivElement>) => {
-            // A modified or non-primary click is the reader asking the browser for a new tab or window, which only
-            // the anchor itself can honour.
-            if (
-                event.metaKey ||
-                event.ctrlKey ||
-                event.shiftKey ||
-                event.altKey ||
-                event.button !== 0
-            ) {
-                return;
-            }
-
-            event.preventDefault();
-
-            // Radix closes the menu from its own click handler, which it skips once this one prevents the default
-            // — so the close is done here instead, before the navigation starts.
-            setIsOpen(false);
-            router.push(url);
-        };
+    const handleAccountSelect = (url: string) => router.push(url);
 
     const getOptionAvatar = (option?: IWorkspaceAccountOption) => {
         const avatar = option?.isAllAccounts
@@ -159,15 +136,13 @@ export const WorkspaceAccountSelector: React.FC<
         >
             {optionLinks.map(({ option, url }) => (
                 <Dropdown.Item
-                    href={url}
-                    // The item defaults to an external-link icon once it is a link, which these are not.
                     icon={
                         option.id === accountId
                             ? IconType.CHECKMARK
                             : IconType.CHEVRON_RIGHT
                     }
                     key={option.id}
-                    onClick={handleOptionClick(url)}
+                    onSelect={() => handleAccountSelect(url)}
                     selected={option.id === accountId}
                 >
                     {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing content is

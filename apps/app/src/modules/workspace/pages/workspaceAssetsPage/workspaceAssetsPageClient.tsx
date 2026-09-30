@@ -38,20 +38,18 @@ export const WorkspaceAssetsPageClient: React.FC<
         urlParams: { id: workspaceId },
     });
 
-    const accounts = workspace?.accounts ?? [];
-
     const { activeOption } = useWorkspaceAccountOptions();
 
-    const accountsToDisplay = accounts;
-
-    const accountRefsToDisplay = accountsToDisplay.map(
-        ({ network, address }) => ({ network, address }),
-    );
+    const accounts = workspace?.accounts ?? [];
+    const accountsToDisplay = accounts.map(({ network, address }) => ({
+        network,
+        address,
+    }));
 
     // Totals of the selection. Shares its key with the list's own query, so this adds no extra request.
     const { metadata } = useWorkspaceAssetListData(
-        { body: { accounts: accountRefsToDisplay, pagination: { pageSize } } },
-        { enabled: accountRefsToDisplay.length > 0 },
+        { body: { accounts: accountsToDisplay, pagination: { pageSize } } },
+        { enabled: accountsToDisplay.length > 0 },
     );
 
     return (
@@ -60,7 +58,7 @@ export const WorkspaceAssetsPageClient: React.FC<
                 title={t('app.workspace.workspaceAssetsPage.main.title')}
             >
                 <WorkspaceAssetList
-                    accounts={accountRefsToDisplay}
+                    accounts={accountsToDisplay}
                     pageSize={pageSize}
                 />
             </Page.Main>

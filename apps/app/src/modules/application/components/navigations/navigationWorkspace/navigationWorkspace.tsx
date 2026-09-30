@@ -74,18 +74,13 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             : undefined;
 
     const workspaceAvatar = ipfsUtils.cidToSrc(workspace?.avatar);
-    const links =
-        workspace != null
-            ? navigationWorkspaceUtils.buildLinks(workspace, 'page', accountId)
-            : [];
-    const dialogLinks =
-        workspace != null
-            ? navigationWorkspaceUtils.buildLinks(
-                  workspace,
-                  'dialog',
-                  accountId,
-              )
-            : [];
+    const workspaceExists = workspace != null;
+    const links = workspaceExists
+        ? navigationWorkspaceUtils.buildLinks(workspace, 'page', accountId)
+        : [];
+    const dialogLinks = workspaceExists
+        ? navigationWorkspaceUtils.buildLinks(workspace, 'dialog', accountId)
+        : [];
 
     return (
         <Navigation.Container

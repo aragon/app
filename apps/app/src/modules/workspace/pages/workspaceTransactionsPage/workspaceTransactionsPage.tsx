@@ -5,14 +5,14 @@ import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { WorkspaceTransactionsPageClient } from './workspaceTransactionsPageClient';
 
-export const workspaceTransactionsCount = 20;
-
 export interface IWorkspaceTransactionsPageProps {
     /**
      * URL parameters of the page.
      */
     params: Promise<IWorkspacePageParams>;
 }
+
+export const workspaceTransactionsCount = 20;
 
 /**
  * Transactions of every account of a workspace, aggregated into a single list.

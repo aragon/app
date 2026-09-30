@@ -33,15 +33,13 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const { activeOption } = useWorkspaceAccountOptions();
 
-    const accountsToDisplay = accounts;
-
     return (
         <Page.Content>
             <Page.Main
                 title={t('app.workspace.workspaceTransactionsPage.main.title')}
             >
                 <WorkspaceTransactionList
-                    accounts={accountsToDisplay}
+                    accounts={accounts}
                     isPending={isWorkspacePending}
                     pageSize={pageSize}
                 />

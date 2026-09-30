@@ -33,7 +33,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const pushMock = jest.fn();
-    const prefetchMock = jest.fn();
 
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
@@ -88,7 +87,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         );
         useRouterSpy.mockReturnValue({
             push: pushMock,
-            prefetch: prefetchMock,
         } as unknown as AppRouterInstance);
         usePathnameSpy.mockReturnValue(
             '/workspace/test-workspace/all/proposals',
@@ -104,7 +102,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         useRouterSpy.mockReset();
         usePathnameSpy.mockReset();
         pushMock.mockReset();
-        prefetchMock.mockReset();
     });
 
     const createTestComponent = (
@@ -164,10 +161,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
     });
 
     it('links to the overview when the current URL names no section', async () => {
-        useRouterSpy.mockReturnValue({
-            push: pushMock,
-            prefetch: prefetchMock,
-        } as unknown as AppRouterInstance);
         usePathnameSpy.mockReturnValue('/workspace/test-workspace');
         render(createTestComponent());
 
@@ -208,23 +201,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
 
         await waitFor(() =>
             expect(screen.queryByRole('menuitem')).not.toBeInTheDocument(),
-        );
-    });
-
-    it('prefetches the route of every option when the dropdown opens', async () => {
-        render(createTestComponent());
-
-        expect(prefetchMock).not.toHaveBeenCalled();
-
-        await userEvent.click(screen.getByRole('button'));
-
-        await waitFor(() =>
-            expect(prefetchMock).toHaveBeenCalledWith(
-                `/workspace/test-workspace/${daoAccount.id}/proposals`,
-            ),
-        );
-        expect(prefetchMock).toHaveBeenCalledWith(
-            '/workspace/test-workspace/all/proposals',
         );
     });
 
