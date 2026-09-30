@@ -1,8 +1,0 @@
-{
-  "recordedAt": "2026-09-29T15:50Z",
-  "recordedBeforeAnyProbePrompt": true,
-  "projectCreationCopyUploadVerification": "This Claude Code session (Opus 5.5), DesignSync MCP + claude-design MCP",
-  "probeOperator": "Same Claude Code session, driving the user's Chrome through the authenticated Claude-in-Chrome relay (tab group 1921660952). No move to another session.",
-  "grading": "Two separate fresh subagent sessions spawned from this session, one per arm, each given only its own artifact, the frozen task/rubric brief, and its own arm's payload files",
-  "split": "none — single operator for ingestion and probe; graders are separate fresh sessions by protocol"
-}

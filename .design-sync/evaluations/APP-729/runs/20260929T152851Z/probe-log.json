@@ -1,9 +1,0 @@
-{
-  "control": {"projectId": "e9176f67-b24b-466e-845a-13fc48239fd0", "tabId": 1670393999, "priorTurns": 0,
-    "displayedModelEffort": "Opus 5 Medium (composer zoom, pre-send)", "promptReadback": "document.activeElement.innerText of composer, 829 chars, SHA-256 computed in-page === c6ee953b... (frozen)",
-    "sentAt": "2026-09-29T16:31:11.894Z", "sendMethod": "click Send button", "followUps": 0, "retries": 0},
-  "candidate": {"projectId": "899e0f14-8113-4db2-9908-04107df18b62", "tabId": 1670393998, "priorTurns": 0,
-    "displayedModelEffort": "Opus 5 Medium (composer zoom, pre-send)", "promptReadback": "document.activeElement.innerText of composer, 829 chars, SHA-256 computed in-page === c6ee953b... (frozen)",
-    "sentAt": "2026-09-29T16:31:43.904Z", "sendMethod": "click Send button", "followUps": 0, "retries": 0},
-  "notes": ["Arms run concurrently (~32s apart) in separate projects; Design showed an '88% of weekly limit used' banner on the control tab before the candidate was sent."]
-}

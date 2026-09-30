@@ -1,9 +1,0 @@
-{
-    "capturedAt": "2026-09-29T09:29:37.315Z",
-    "menu": [
-        "New chat\nConversations\n# DAO Member Management Handoff\n3 turns · 2h ago"
-    ],
-    "menuHtml": [
-        "<div role=\"menu\" class=\"max-h-[600px] overflow-y-auto p-1\" style=\"min-width: 220px; max-width: 320px;\"><button type=\"button\" class=\"om-menu-item-btn flex w-full items-center gap-2 rounded-[4px] bg-transparent px-3 py-2 text-left text-[13px] outline-none cursor-default text-om-text-primary hover:bg-om-bg-hover focus-visible:outline-2 focus-visible:outline-transparent focus-visible:shadow-[0_0_0_2px_var(--om-text-secondary)]\"><div class=\"flex min-w-0 flex-1 flex-col gap-0.5\"><span class=\"truncate\" title=\"New chat\">New chat</span></div></button><div class=\"px-3 pb-1 pt-2 text-xs font-medium text-om-text-tertiary [&amp;:not(:first-child)]:mt-1 [&amp;:not(:first-child)]:border-t [&amp;:not(:first-child)]:border-om-border-subtle [&amp;:not(:first-child)]:pt-3\">Conversations</div><button type=\"button\" class=\"om-menu-item-btn flex w-full items-center gap-2 rounded-[4px] bg-transparent px-3 py-2 text-left text-[13px] outline-none cursor-default text-om-text-primary hover:bg-om-bg-hover focus-visible:outline-2 focus-visible:outline-transparent focus-visible:shadow-[0_0_0_2px_var(--om-text-secondary)]\"><div class=\"flex min-w-0 flex-1 flex-col gap-0.5\"><span class=\"truncate\" title=\"# DAO Member Management Handoff\"># DAO Member Management Handoff</span><span class=\"truncate text-[11px] text-om-text-tertiary\" title=\"3 turns · 2h ago\">3 turns · 2h ago</span></div><i class=\"ai-Check leading-none not-italic w-[1em] h-[1em] inline-flex items-center justify-center shrink-0\" style=\"font-size: 13px; margin-left: auto; color: var(--om-text-secondary); flex-shrink: 0;\"></i></button></div>"
-    ]
-}

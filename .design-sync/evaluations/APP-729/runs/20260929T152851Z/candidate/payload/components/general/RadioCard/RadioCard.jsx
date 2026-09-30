@@ -1,2 +1,0 @@
-// Re-export of @aragon/gov-ui-kit@2.11.4 RadioCard. Implementation is in the root _ds_bundle.js (window.GovUiKit).
-Object.assign(window, { RadioCard: window.GovUiKit.RadioCard });

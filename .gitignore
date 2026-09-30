@@ -74,5 +74,6 @@ next-env.d.ts
 ds-bundle/
 .design-sync/.cache/
 .design-sync/learnings/
+.design-sync/evaluations/
 .ds-sync/
 .design-sync/node_modules
