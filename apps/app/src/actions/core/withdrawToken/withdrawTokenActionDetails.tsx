@@ -17,7 +17,7 @@ export interface IWithdrawTokenActionDetailsProps
 export const WithdrawTokenActionDetails: React.FC<
     IWithdrawTokenActionDetailsProps
 > = (props) => {
-    const { action, chainId, wagmiConfig } = props;
+    const { action, chainId } = props;
 
     const { sender, receiver, amount, token } =
         action as unknown as IProposalActionWithdrawToken;
@@ -35,7 +35,6 @@ export const WithdrawTokenActionDetails: React.FC<
             chainId={chainId}
             recipient={receiver}
             sender={sender}
-            wagmiConfig={wagmiConfig}
         />
     );
 };
