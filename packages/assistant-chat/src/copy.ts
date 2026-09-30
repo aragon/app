@@ -66,9 +66,8 @@ export const chatCopy = {
             'Files go to the Aragon support team with your request, and people there will see them.',
         escalationPrompt: 'Prefer a human?',
         escalationLink: 'Email support',
-        // Under the composer on a fresh chat: the user learns they talk to an AI, and who may
-        // process what they type, before they type it. One sentence with the two legal pages
-        // linked in it, e.g. "… read the privacy policy and terms."
+        // Under the composer on a fresh chat, read before the first message: one sentence with
+        // the two legal pages linked in it.
         aiNotice: {
             text: 'The Aragon Assistant uses AI to provide you with helpful information. Sometimes it can be wrong. For more information about how third parties may process your messages, read the ',
             privacyPolicy: 'privacy policy',

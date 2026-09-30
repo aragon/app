@@ -47,6 +47,13 @@ describe('assistant wire contract', () => {
         expect(chatRequestSchema.safeParse(request).success).toBeTruthy();
     });
 
+    it('accepts the features the host enables, and their absence', () => {
+        const withFeatures = { ...request, features: { docsSearch: true } };
+
+        expect(chatRequestSchema.safeParse(withFeatures).success).toBeTruthy();
+        expect(chatRequestSchema.parse(request).features).toBeUndefined();
+    });
+
     it('accepts the optional debug context fields attached to the ticket', () => {
         const withDebug = {
             ...request,

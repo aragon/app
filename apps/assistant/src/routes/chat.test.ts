@@ -20,6 +20,8 @@ const buildRequestBody = (session = sessionId) => ({
         },
     ],
     appContext: { route: '/dao', appVersion: '1.33.2' },
+    // The host enables the documentation tools; the intake-only case sends no features.
+    features: { docsSearch: true },
 });
 
 const buildApp = (deps: ITestDependencies) =>
@@ -444,8 +446,7 @@ describe('POST /chat guardrails', () => {
         expect(deps.linear.createIssueCalls).toHaveLength(0);
     });
 
-    it('gives the agent the documentation tools and guidance when docs search is enabled', async () => {
-        // The tests run as the local environment, where docsSearchEnabled is on.
+    it('gives the agent the documentation tools and guidance when the request enables them', async () => {
         const model = createMockChatModel({});
         const deps = createTestDependencies(model);
 
@@ -460,17 +461,79 @@ describe('POST /chat guardrails', () => {
                 'flagOffTopic',
                 'searchDocs',
                 'readDoc',
-                'listDocs',
             ]),
         );
         const systemPrompt = JSON.stringify(call?.prompt[0]);
-        expect(systemPrompt).toContain('Search silently before you answer');
-        expect(systemPrompt).toContain(
-            'ask once whether to pass the question on',
-        );
+        expect(systemPrompt).toContain('Search before you answer');
         expect(systemPrompt).not.toContain(
             "can't answer product questions here",
         );
+    });
+
+    it('leaves the documentation tools out and collects tickets only when the request enables nothing', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const { features: _features, ...body } = buildRequestBody();
+
+        const response = await buildApp(deps).request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const call = model.doStreamCalls[0];
+        const toolNames = (call?.tools ?? []).map((tool) => tool.name);
+        expect(toolNames).toEqual(['createLinearTicket', 'flagOffTopic']);
+        expect(JSON.stringify(call?.prompt[0])).toContain(
+            "can't answer product questions here",
+        );
+    });
+
+    it('drops the documentation lookups of earlier turns from the history the model sees', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const body = {
+            ...buildRequestBody(),
+            messages: [
+                ...buildRequestBody().messages,
+                {
+                    id: 'message-2',
+                    role: 'assistant',
+                    parts: [
+                        { type: 'step-start' },
+                        {
+                            type: 'tool-searchDocs',
+                            toolCallId: 'docs-1',
+                            state: 'output-available',
+                            input: { query: 'vote button' },
+                            output: { results: [{ excerpt: 'STALE PASSAGE' }] },
+                        },
+                        { type: 'step-start' },
+                        { type: 'text', text: 'The earlier answer.' },
+                    ],
+                },
+                {
+                    id: 'message-3',
+                    role: 'user',
+                    parts: [{ type: 'text', text: 'And on mobile?' }],
+                },
+            ],
+        };
+
+        const response = await buildApp(deps).request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const streamCalls = JSON.stringify(model.doStreamCalls);
+        expect(streamCalls).toContain('The earlier answer.');
+        expect(streamCalls).toContain('And on mobile?');
+        expect(streamCalls).not.toContain('STALE PASSAGE');
     });
 
     it('runs a documentation search inline and hands the passages back to the model', async () => {

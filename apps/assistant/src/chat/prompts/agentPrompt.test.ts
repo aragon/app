@@ -1,22 +1,26 @@
 import { buildAgentSystemPrompt } from './agentPrompt';
 
 describe('buildAgentSystemPrompt', () => {
-    it('puts the product answers between the role and the tickets with the documentation tools on', () => {
+    it('reads role, answering, tickets and tone in that order with the documentation tools on', () => {
         const prompt = buildAgentSystemPrompt({ docsSearchEnabled: true });
+        const headings = [...prompt.matchAll(/^# (.+)$/gm)].map(
+            (match) => match[1],
+        );
 
-        expect(prompt.indexOf('# Role')).toBeLessThan(
-            prompt.indexOf('# Answering questions'),
-        );
-        expect(prompt.indexOf('# Answering questions')).toBeLessThan(
-            prompt.indexOf('# Tickets'),
-        );
+        expect(headings).toEqual([
+            'Role',
+            'Answering questions',
+            'Tickets',
+            'Tone',
+        ]);
     });
 
-    it('leaves the product answers out of the intake-only prompt', () => {
+    it('leaves the answering rules out of the intake-only prompt', () => {
         const prompt = buildAgentSystemPrompt({ docsSearchEnabled: false });
 
         expect(prompt).not.toContain('# Answering questions');
         expect(prompt).not.toContain('searchDocs');
+        expect(prompt).toContain("can't answer product questions here");
         expect(prompt).toContain('# Tickets');
     });
 

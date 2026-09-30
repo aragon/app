@@ -1,4 +1,4 @@
-import type { IAppContext } from '@aragon/assistant-contracts';
+import type { IAppContext, IChatFeatures } from '@aragon/assistant-contracts';
 import type { IChatMonitoring } from '../../monitoring';
 
 export interface IAssistantChatProps {
@@ -20,6 +20,12 @@ export interface IAssistantChatProps {
      * Context of the app captured at open time, sent alongside every request.
      */
     appContext: IAppContext;
+    /**
+     * What the host lets the chat do, sent alongside every request: with `docsSearch` on the
+     * assistant answers product questions from the documentation, off it only collects tickets.
+     * @default {} (everything off)
+     */
+    features?: IChatFeatures;
     /**
      * Monitoring implementation injected by the host app.
      * @default noopMonitoring

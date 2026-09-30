@@ -41,7 +41,6 @@ import { buildCreateLinearTicketTool } from '../chat/tools/createLinearTicket';
 import { buildDocsTools } from '../chat/tools/docsTools';
 import { buildFlagOffTopicTool } from '../chat/tools/flagOffTopic';
 import type { IAppDependencies } from '../lib/appDependencies';
-import { getConfig } from '../lib/config';
 import { type IRefusalReason, observability } from '../lib/observability';
 import {
     buildNewSessionLimiter,
@@ -119,7 +118,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
             return context.json(error, 400);
         }
 
-        const { sessionId, messages, appContext } = parsed.data;
+        const { sessionId, messages, appContext, features } = parsed.data;
         const sessionStore = deps.getSessionStore();
 
         // Every stream below is opened against the incoming history: when it ends on an assistant
@@ -183,7 +182,9 @@ export const buildChatRoute = (deps: IAppDependencies) => {
             });
         }
 
-        const { docsSearchEnabled } = getConfig();
+        // The host decides what this conversation may do (see chatFeaturesSchema); the limits
+        // above hold either way.
+        const docsSearchEnabled = features?.docsSearch === true;
 
         // Set by the nested stream error handler, which sees the ORIGINAL error; the outer onError
         // only receives an anonymized wrapper and reuses the classified payload so both emitted
@@ -460,6 +461,7 @@ const getPendingApprovedToolCallIds = (messages: IChatMessage[]): string[] => {
 const toUiMessages = (messages: IChatMessage[]): UIMessage[] =>
     messages
         .map(dropReasoningParts)
+        .map(dropDocsToolParts)
         .map(markAttachments)
         .map(resolveDanglingApprovals) as unknown as UIMessage[];
 
@@ -501,6 +503,17 @@ const markAttachments = (message: IChatMessage): IChatMessage => ({
 const dropReasoningParts = (message: IChatMessage): IChatMessage => ({
     ...message,
     parts: message.parts.filter((part) => part.type !== 'reasoning'),
+});
+
+// A documentation lookup belongs to the turn that made it: the reply already carries what it
+// contributed, and replayed on every later turn the passages would bury the conversation and eat
+// the session budget. Past assistant messages keep their text and ticket calls; the model searches
+// again when it needs the details. The AI SDK skips the empty step blocks left behind.
+const dropDocsToolParts = (message: IChatMessage): IChatMessage => ({
+    ...message,
+    parts: message.parts.filter(
+        (part) => !docsToolNameSet.has(part.type.replace(/^tool-/, '')),
+    ),
 });
 
 // A user may keep typing while a draft awaits approval; the history then carries a tool part

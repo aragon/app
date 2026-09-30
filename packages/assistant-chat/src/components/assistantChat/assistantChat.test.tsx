@@ -313,6 +313,38 @@ describe('<AssistantChat /> integration', () => {
         ).toEqual([expect.objectContaining({ identifier: 'SUP-123' })]);
     });
 
+    it('sends what the host lets the chat do with every request', async () => {
+        chatResponses = [
+            createChatResponse(textChunks('An account lives on one network.')),
+        ];
+        render(
+            <AssistantChat
+                appContext={{ route: '/dashboard', appVersion: '1.0.0' }}
+                assistantUrl={assistantUrl}
+                features={{ docsSearch: true }}
+                isOpen={true}
+                onClose={jest.fn()}
+            />,
+        );
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(
+            composer,
+            'What chains does Aragon support?{Enter}',
+        );
+        expect(
+            await screen.findByText('An account lives on one network.'),
+        ).toBeInTheDocument();
+
+        const [, chatRequest] = chatCalls()[0];
+        const requestBody = JSON.parse(chatRequest?.body as string) as {
+            features: unknown;
+        };
+        expect(requestBody.features).toEqual({ docsSearch: true });
+    });
+
     it('shows exactly one spinner from the send until the answer streams, through every lookup', async () => {
         // The shape of a real documentation answer: a search, its result, a page read (a second
         // step), its result, a pause while the model reads, then the answer.

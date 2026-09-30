@@ -11,13 +11,6 @@ export interface IAssistantConfig {
      */
     corsAllowedOrigins: string[];
     /**
-     * Registers the documentation tools (searchDocs, readDoc, listDocs) on the chat pipeline and
-     * switches the agent from "no product knowledge" to answering product questions from the
-     * documentation index. Production stays dark until enough pages are validated — a separate
-     * decision.
-     */
-    docsSearchEnabled: boolean;
-    /**
      * Which pages the documentation index is built from (at build time, see
      * docs/buildDocsIndex.ts): `ready` is the product-owner-validated set the public docs
      * site will publish (pages whose `status: draft` the owner removed, or marked `ready`);
@@ -63,22 +56,14 @@ const previewOrigins = ['http://localhost:3000', '*-aragon-app.vercel.app'];
 // and for several users behind one NAT, still a hard abuse cap. Tunable per-env without a redeploy
 // via ASSISTANT_RATE_LIMIT_* env overrides.
 const defaultRateLimit = { requestsPerMinute: 10, sessionsPerDay: 10 };
-// The chain is chosen with the eval (evals/, `pnpm eval`): every kind of conversation the chat
-// gets, deterministic checks of the prompt's rules and a judge grading accuracy, helpfulness and
-// communication against a reference. Only models with a zero-data-retention host qualify. The
-// fallbacks run on other serving infrastructure than the agent (OpenAI and Azure against the
-// third-party DeepSeek hosts), so an outage or a per-model rate limit degrades instead of
-// failing. A fallback takes over a call that fails or stalls, not an answer that is weak.
+// Only models with a zero-data-retention host qualify (see getChatProviderOptions). The agent is
+// the model that reads the documentation best at a low price, chosen by reading the same
+// conversations side by side on every candidate. The fallbacks run on other serving
+// infrastructure, so an outage or a per-model rate limit degrades instead of failing; they take
+// over a call that fails or stalls, never an answer that is weak.
 const defaultChat: IAssistantConfig['chat'] = {
-    // Eval of 2026-09-28, each model at its level below, two runs of each scenario — checks passed
-    // with the documentation tools on (two sweeps) and intake only, cost of a documentation
-    // answer: gpt-6-luna at medium 38 and 36 of 44, 21 of 24, a tenth of a cent;
-    // deepseek-v4.1-flash at low 34 and 35 of 44, 17 of 24, half a cent; gpt-6-sol at low 40 and 41
-    // of 44, 22 of 24, two cents. The agent is the cheapest model that answers well, gpt-6-sol the
-    // last resort. gemini-2.5-flash-lite (13 of 44) left the chain. The most common failure left
-    // is the fixed sentence the prompt asks for in front of a draft.
-    agentModel: 'openai/gpt-6-luna',
-    fallbackModels: ['deepseek/deepseek-v4.1-flash', 'openai/gpt-6-sol'],
+    agentModel: 'deepseek/deepseek-v4.1-flash',
+    fallbackModels: ['openai/gpt-6-luna', 'openai/gpt-6-sol'],
     reasoning: {
         'openai/gpt-6-luna': 'medium',
         'deepseek/deepseek-v4.1-flash': 'low',
@@ -99,7 +84,6 @@ const defaultDocsModels = {
 const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     local: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsSearchEnabled: true,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
@@ -107,7 +91,6 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     },
     development: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsSearchEnabled: true,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
@@ -115,7 +98,6 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     },
     preview: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsSearchEnabled: true,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
@@ -123,7 +105,6 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     },
     production: {
         corsAllowedOrigins: appOrigins,
-        docsSearchEnabled: false,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
