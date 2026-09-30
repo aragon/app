@@ -74,6 +74,31 @@ describe('<DialogRoot /> component', () => {
         expect(screen.getByText(dialogContent)).toBeInTheDocument();
     });
 
+    it('keeps the dialog open with an error feedback and closes it on request when the dialog component throws', async () => {
+        testLogger.suppressErrors();
+        const dialogId = 'broken';
+        const BrokenDialog = () => {
+            throw new Error('Test error');
+        };
+        const dialogs = { [dialogId]: { Component: BrokenDialog } };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+
+        render(createTestComponent({ dialogs }));
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.shared.dialogRoot.errorClose',
+            }),
+        );
+        expect(close).toHaveBeenCalledWith(dialogId);
+    });
+
     it('renders the specified dialog title and description as hidden', () => {
         const dialogId = 'connect-wallet';
         const hiddenTitle = 'test-title';
