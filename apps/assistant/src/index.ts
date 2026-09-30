@@ -7,6 +7,7 @@ import { cors } from 'hono/cors';
 import { getChatModel } from './chat/models';
 import { createDefaultDocsSearch } from './docs/defaultDocsSearch';
 import { createVercelBlobStore } from './files/blobStore';
+import { createFileSanitizer } from './files/sanitizeFile';
 import { type IAppDependencies, lazy } from './lib/appDependencies';
 import { getConfig } from './lib/config';
 import { resolveCorsOrigin } from './lib/cors';
@@ -34,6 +35,7 @@ const buildDefaultDependencies = (): IAppDependencies => {
         getChatModel,
         getBlobStore: lazy(() => createVercelBlobStore()),
         getDocsSearch: lazy(() => createDefaultDocsSearch()),
+        getFileSanitizer: lazy(() => createFileSanitizer()),
     };
 };
 
