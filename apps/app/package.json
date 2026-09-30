@@ -72,7 +72,7 @@
         "isomorphic-dompurify": "^4.2.0",
         "jsdom": "^30.0.1",
         "luxon": "^3.7.2",
-        "next": "^16.3.5",
+        "next": "^16.3.6",
         "nextjs-toploader": "^3.9.17",
         "react": "catalog:",
         "react-dom": "catalog:",
