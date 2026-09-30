@@ -94,6 +94,23 @@ describe('publishProposalDialog utils', () => {
             expect(transaction.data).toEqual(transactionData);
             expect(transaction.to).toEqual(plugin.address);
         });
+
+        it('throws when no plugin-specific function is registered for the plugin', () => {
+            getSlotFunctionSpy.mockReturnValue(undefined);
+            const plugin = generateDaoPlugin({
+                interfaceType: 'safe' as PluginInterfaceType,
+            });
+
+            expect(() =>
+                publishProposalDialogUtils.buildTransaction({
+                    proposal: generateCreateProposalFormData(),
+                    metadataCid: 'test-cid',
+                    plugin,
+                }),
+            ).toThrow(
+                /no create-proposal builder registered for plugin "safe"/,
+            );
+        });
     });
 
     describe('prepareActions', () => {
