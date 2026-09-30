@@ -2,27 +2,18 @@ import { tool } from 'ai';
 import { z } from 'zod';
 import { observability } from '../../lib/observability';
 
-// Auto-approved analytics tool (no toolApproval entry, so it runs inline). The agent refuses
-// off-topic requests in its prompt anyway — this only records the attempt so we can monitor abuse
+// Auto-approved analytics tool (no toolApproval entry, so it runs inline). The agent declines
+// unrelated requests in its prompt anyway — this only records the attempt so we can monitor abuse
 // (e.g. using the support chat as a free assistant) without burning a separate classifier call on
-// every turn. The reason is a fixed category, never user text, so the log stays PII-free.
-//
-// With the documentation tools on, product questions are in scope and answered from the
-// documentation, so the how-to reason (and the instruction to decline them) disappears.
-export const buildFlagOffTopicTool = (
-    sessionId: string,
-    params: { docsSearchEnabled?: boolean } = {},
-) => {
-    const { docsSearchEnabled = false } = params;
-
-    return tool({
-        description: docsSearchEnabled
-            ? 'Record that the latest user request is outside support for the Aragon platform (an unrelated topic). Call this right before you decline it. Never call it for a question about the Aragon application or for a genuine feedback, bug or support request — a report or question that does not name Aragon (a page crashing, a vote failing, a setup question) is still about the Aragon platform.'
-            : 'Record that the latest user request is outside support for the Aragon platform (unrelated topic, or a product how-to you cannot answer). Call this right before you decline it. Never call it for a genuine feedback, bug or support request.',
+// every turn. The reason is a fixed category, never user text, so the log stays PII-free. A product
+// question is never off-topic: it is answered, or offered to the team when the documentation tools
+// are off.
+export const buildFlagOffTopicTool = (sessionId: string) =>
+    tool({
+        description:
+            'Record that you are declining an unrelated request (a poem, code, homework, using the chat as a general assistant). Call it right before the one-sentence decline; never for anything about Aragon, even when Aragon is not named.',
         inputSchema: z.object({
-            reason: docsSearchEnabled
-                ? z.enum(['unrelated_topic', 'other'])
-                : z.enum(['unrelated_topic', 'product_how_to', 'other']),
+            reason: z.enum(['unrelated_topic', 'other']),
         }),
         execute: ({ reason }) => {
             observability.logStep({
@@ -36,4 +27,3 @@ export const buildFlagOffTopicTool = (
             return Promise.resolve({ acknowledged: true });
         },
     });
-};

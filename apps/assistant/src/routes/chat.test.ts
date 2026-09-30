@@ -284,7 +284,7 @@ describe('POST /chat guardrails', () => {
         const streamCalls = JSON.stringify(model.doStreamCalls);
         expect(streamCalls).toContain('[attached: screenshot.png]');
         // The system prompt explains the marker only when the conversation carries one.
-        expect(streamCalls).toContain('it travels with the ticket');
+        expect(streamCalls).toContain('it goes with the ticket');
     });
 
     it('leaves the attachment guidance out of a conversation without files', async () => {
@@ -295,7 +295,7 @@ describe('POST /chat guardrails', () => {
         await response.text();
 
         expect(JSON.stringify(model.doStreamCalls)).not.toContain(
-            'it travels with the ticket',
+            'it goes with the ticket',
         );
     });
 
@@ -464,12 +464,12 @@ describe('POST /chat guardrails', () => {
             ]),
         );
         const systemPrompt = JSON.stringify(call?.prompt[0]);
+        expect(systemPrompt).toContain('Search silently before you answer');
         expect(systemPrompt).toContain(
-            'Call searchDocs before you write a word',
+            'ask once whether to pass the question on',
         );
-        expect(systemPrompt).toContain('drafted only after they say yes');
         expect(systemPrompt).not.toContain(
-            'cannot answer product questions here',
+            "can't answer product questions here",
         );
     });
 

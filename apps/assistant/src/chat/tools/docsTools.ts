@@ -19,7 +19,7 @@ export const buildDocsTools = (params: {
     return {
         [docsToolNames.searchDocs]: tool({
             description:
-                'Search the Aragon platform documentation. Call it before answering any question about how the app works, how to do something in it, whether something is possible, or why it behaves the way it does. Returns the most relevant passages, each with the path of the page it comes from. The passages describe the product from the outside; your answer speaks to the user in the second person about what they can do. The path is an internal id for readDoc, never shown or linked.',
+                'Search the Aragon platform documentation. Returns the most relevant passages, each with the path of the page it comes from; the path is an internal id for readDoc, never shown or linked.',
             inputSchema: z.object({
                 query: z
                     .string()
@@ -48,7 +48,7 @@ export const buildDocsTools = (params: {
         }),
         [docsToolNames.readDoc]: tool({
             description:
-                'Read a whole documentation page by its path (as returned by searchDocs or listDocs), when a passage is not enough to answer — and whenever the user asks for a complete list (every network, every option): a passage may hold only part of it.',
+                'Read a whole documentation page by its path (as returned by searchDocs or listDocs), when a passage is not enough to answer.',
             inputSchema: z.object({
                 path: z
                     .string()
@@ -69,7 +69,7 @@ export const buildDocsTools = (params: {
         }),
         [docsToolNames.listDocs]: tool({
             description:
-                'List the documentation pages (title, path, summary), optionally only those of one area. Use it to see what the documentation covers, or to find a page by topic when a search returned nothing useful. This inventory is for internal navigation only; do not show or describe it to the user.',
+                'List the documentation pages (title, path, summary), optionally only those of one area. Use it to see what the documentation covers, or to find a page by topic when a search returned nothing useful.',
             inputSchema: z.object({
                 area: z
                     .string()

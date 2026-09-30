@@ -1,9 +1,9 @@
 // Assistant eval: runs the conversations of scenarios.ts through the agent as the chat route
 // wires it — the real system prompt, tools, documentation index, provider options (zero data
-// retention), reasoning level, step bound and time cap — on each candidate model, checks every
-// reply against the scenario's rules and has a judge model grade it against the scenario's
-// reference. It is how a model, a reasoning level, a prompt change or a documentation change is
-// chosen: run it before and after.
+// retention), reasoning level, step bound and time cap — on each candidate model, checks the
+// invariants of every conversation and has a judge model answer the scenario's criteria yes or no.
+// It is how a model, a reasoning level, a prompt change or a documentation change is chosen: run it
+// before and after.
 //
 // It calls real models through the AI Gateway (a few cents per model and run) and never creates a
 // ticket: the ticket tool stops at its approval, as in the route. The documentation scenarios need
@@ -51,6 +51,7 @@ import {
     type IEvalScenario,
     type IEvalToolCall,
     type IEvalTurnResult,
+    runChecks,
 } from './scenarios';
 
 const { values } = parseArgs({
@@ -145,7 +146,10 @@ const readChains = (): string[] | undefined => {
         .map((line) => line.split('|')[1].trim());
 };
 
-const context: IEvalContext = { chains: readChains() };
+const context: IEvalContext = {
+    chains: readChains(),
+    systemPrompt: buildAgentSystemPrompt({ docsSearchEnabled }),
+};
 
 // The ticket tool never runs here: it waits for the user's approval, as in the route, and the
 // eval never grants it. Any access to the context would mean it did.
@@ -160,7 +164,7 @@ const neverExecutedContext = new Proxy(
 
 const buildTools = (): ToolSet => ({
     [createTicketToolName]: buildCreateLinearTicketTool(neverExecutedContext),
-    flagOffTopic: buildFlagOffTopicTool('eval', { docsSearchEnabled }),
+    flagOffTopic: buildFlagOffTopicTool('eval'),
     ...(docsSearch == null
         ? {}
         : buildDocsTools({ docsSearch, sessionId: 'eval' })),
@@ -178,10 +182,21 @@ const runTurn = async (
     messages: ModelMessage[],
 ): Promise<{ turn: ITurnRun; responseMessages: ModelMessage[] }> => {
     const started = Date.now();
+    // As in the route, a file the user attached reaches the model as an "[attached: <name>]" line,
+    // and the prompt explains that line only when the conversation carries one.
+    const hasAttachments = messages.some(
+        (message) =>
+            message.role === 'user' &&
+            typeof message.content === 'string' &&
+            message.content.includes('[attached: '),
+    );
     try {
         const result = await generateText({
             model,
-            system: buildAgentSystemPrompt({ docsSearchEnabled }),
+            system: buildAgentSystemPrompt({
+                docsSearchEnabled,
+                hasAttachments,
+            }),
             messages,
             tools: buildTools(),
             toolApproval: { [createTicketToolName]: () => 'user-approval' },
@@ -236,23 +251,28 @@ const runTurn = async (
     }
 };
 
+// A yes or no per criterion rather than a score: a binary question is what a judge answers
+// consistently, and a failed criterion names the flaw on its own.
 const judgeSchema = z.object({
-    accuracy: z.number().int().min(1).max(5),
-    helpfulness: z.number().int().min(1).max(5),
-    communication: z.number().int().min(1).max(5),
-    verdict: z.string(),
+    criteria: z.array(z.object({ met: z.boolean(), reason: z.string() })),
 });
 
-type IJudgement = z.infer<typeof judgeSchema>;
+interface IJudgedCriterion {
+    criterion: string;
+    met: boolean;
+    reason: string;
+}
 
-const judgeSystem = `You grade replies of the Aragon app's support assistant. The assistant answers questions about the Aragon platform only from its documentation tools, and turns feedback, bug reports and support requests into a ticket draft the user approves (the draft is a separate card in the chat; the reply only introduces it). Where the Aragon team sets something up, or the app lacks what the user wants, the reply ends with one sentence and a contact link.
+// Criteria every conversation is held to on top of its own.
+const sharedCriteria = {
+    tone: "Every reply is friendly and matter-of-fact and in the user's language, without filler, apologies or talk about documentation, sources or tools.",
+    grounding:
+        'Every claim about what Aragon can do is backed by the retrieved documentation or by the facts in the criteria above; nothing is invented.',
+};
 
-Score each dimension from 1 to 5:
-- accuracy: every claim is backed by the documentation the assistant retrieved or by the reference; nothing invented; nothing wrong about what the app can or cannot do.
-- helpfulness: the reply gives the user what they actually need or the right next step (the answer, the contact link, the ticket draft, one clarifying question) — not a dead end, not an unasked ticket.
-- communication: plain, concise, second person, the user's language, no talk about documentation, sources or tools, friendly without filler.
+const judgeSystem = `You check a conversation of the Aragon support assistant against numbered criteria. The assistant answers questions about the Aragon platform from its documentation tools and passes problems and requests on to the Aragon team as ticket drafts. A draft appears as a createLinearTicket tool call and shows as a card the user approves, so the reply text only introduces it.
 
-The reference says what a good reply does; grade against it, without penalising correct extra facts. 5: a support lead would send it as is. 3: usable, with a clear flaw. 1: wrong or harmful. The verdict names the main flaw in one sentence, or "fine".`;
+For each criterion, in order, say whether the conversation meets it and why, in one short sentence. Judge only what the criterion says: correct extra facts are fine unless a criterion rules them out. Where a criterion names facts, check the replies against them and against the retrieved documentation.`;
 
 const truncate = (text: string, max: number) =>
     text.length > max ? `${text.slice(0, max)} …[truncated]` : text;
@@ -260,11 +280,16 @@ const truncate = (text: string, max: number) =>
 const judge = async (
     scenario: IEvalScenario,
     turns: ITurnRun[],
-): Promise<IJudgement | undefined> => {
+): Promise<IJudgedCriterion[] | undefined> => {
     if (judgeModel == null) {
         return undefined;
     }
-    const retrieved = turns.at(-1)?.docsOutputs.join('\n') ?? '';
+    const retrieved = turns.flatMap((turn) => turn.docsOutputs).join('\n');
+    const criteria = [
+        ...scenario.criteria,
+        sharedCriteria.tone,
+        ...(retrieved === '' ? [] : [sharedCriteria.grounding]),
+    ];
     const transcript = scenario.turns
         .map((userText, index) => {
             const turn = turns[index];
@@ -284,12 +309,20 @@ const judge = async (
             model: judgeModel,
             system: judgeSystem,
             output: Output.object({ schema: judgeSchema }),
-            prompt: `Reference: ${scenario.expectation}\n\nConversation:\n${transcript}\n\nDocumentation the assistant retrieved in its last turn:\n${truncate(retrieved, 12_000) || '(none)'}`,
+            prompt: `Criteria:\n${criteria.map((criterion, index) => `${index + 1}. ${criterion}`).join('\n')}\n\nConversation:\n${transcript}\n\nDocumentation the assistant retrieved:\n${truncate(retrieved, 12_000) || '(none)'}`,
             providerOptions: { gateway: { zeroDataRetention: true } },
             abortSignal: AbortSignal.timeout(90_000),
         });
 
-        return output;
+        // An answer that skips a criterion leaves the conversation ungraded rather than half-graded.
+        if (output.criteria.length !== criteria.length) {
+            return undefined;
+        }
+
+        return criteria.map((criterion, index) => ({
+            criterion,
+            ...output.criteria[index],
+        }));
     } catch {
         return undefined;
     }
@@ -300,7 +333,7 @@ interface IScenarioRun {
     scenario: string;
     run: number;
     failures: string[];
-    judgement?: IJudgement;
+    judgement?: IJudgedCriterion[];
     turns: ITurnRun[];
 }
 
@@ -370,7 +403,7 @@ const runScenario = async (
     const error = turns.find((turn) => turn.error != null)?.error;
     const failures =
         error == null
-            ? scenario.check(turns, context)
+            ? runChecks(scenario, turns, context)
             : [`error: ${truncate(error, 120)}`];
 
     return {
@@ -483,19 +516,18 @@ const mean = (numbers: number[]) =>
 
 const lines: string[] = [];
 lines.push(
-    '| Model | Checks passed | Accuracy | Helpfulness | Communication | Graded ≥ 4 | Median s | p90 s | Cost / conversation |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    '| Model | Checks passed | Criteria met | Fully passed | Median s | p90 s | Cost / conversation |',
+    '| --- | --- | --- | --- | --- | --- | --- |',
 );
+const unmet = (row: IScenarioRun) =>
+    (row.judgement ?? []).filter((criterion) => !criterion.met);
 for (const model of models) {
     const rows = all.filter((row) => row.model === model);
     const passed = rows.filter((row) => row.failures.length === 0).length;
-    const graded = rows.flatMap((row) =>
-        row.judgement == null ? [] : [row.judgement],
-    );
-    const good = graded.filter(
-        (grade) =>
-            Math.min(grade.accuracy, grade.helpfulness, grade.communication) >=
-            4,
+    const judged = rows.filter((row) => row.judgement != null);
+    const criteria = judged.flatMap((row) => row.judgement ?? []);
+    const fullyPassed = judged.filter(
+        (row) => row.failures.length === 0 && unmet(row).length === 0,
     ).length;
     const seconds = rows.flatMap((row) =>
         row.turns.map((turn) => turn.ms / 1000),
@@ -512,35 +544,25 @@ for (const model of models) {
             ),
         ),
     );
-    // Grade columns stay empty when nothing was graded (--judge none, or every call failed).
-    const meanGrade = (dimension: keyof Omit<IJudgement, 'verdict'>) =>
-        graded.length === 0
-            ? '-'
-            : mean(graded.map((grade) => grade[dimension])).toFixed(2);
+    // Judge columns stay empty when nothing was judged (--judge none, or every call failed).
+    const criteriaMet = criteria.filter((criterion) => criterion.met).length;
     lines.push(
-        `| ${model} | ${passed}/${rows.length} | ${meanGrade('accuracy')} | ${meanGrade('helpfulness')} | ${meanGrade('communication')} | ${graded.length === 0 ? '-' : `${good}/${graded.length}`} | ${median(seconds).toFixed(1)} | ${percentile(seconds, 0.9).toFixed(1)} | ${price == null ? '-' : `$${cost.toFixed(4)}`} |`,
+        `| ${model} | ${passed}/${rows.length} | ${criteria.length === 0 ? '-' : `${criteriaMet}/${criteria.length}`} | ${judged.length === 0 ? '-' : `${fullyPassed}/${judged.length}`} | ${median(seconds).toFixed(1)} | ${percentile(seconds, 0.9).toFixed(1)} | ${price == null ? '-' : `$${cost.toFixed(4)}`} |`,
     );
 }
 
-lines.push('', 'Failures and low grades:');
+lines.push('', 'Failed checks and unmet criteria:');
 for (const row of all) {
-    const low =
-        row.judgement != null &&
-        Math.min(
-            row.judgement.accuracy,
-            row.judgement.helpfulness,
-            row.judgement.communication,
-        ) < 4;
-    if (row.failures.length === 0 && !low) {
+    const missed = unmet(row);
+    if (row.failures.length === 0 && missed.length === 0) {
         continue;
     }
-    const grade =
-        row.judgement == null
-            ? ''
-            : ` [${row.judgement.accuracy}/${row.judgement.helpfulness}/${row.judgement.communication}: ${row.judgement.verdict}]`;
+    const reasons = missed
+        .map((criterion) => ` [${criterion.reason}]`)
+        .join('');
     const reply = row.turns.map((turn) => turn.text).join(' ⏎⏎ ');
     lines.push(
-        `- ${row.model} · ${row.scenario}#${row.run}: ${row.failures.join('; ') || 'checks ok'}${grade}`,
+        `- ${row.model} · ${row.scenario}#${row.run}: ${row.failures.join('; ') || 'checks ok'}${reasons}`,
         `    ${truncate(reply.replace(/\s+/g, ' '), 260)}`,
     );
 }

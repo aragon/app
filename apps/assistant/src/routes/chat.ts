@@ -293,10 +293,8 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                                         }),
                                     // Auto-approved (absent from toolApproval): records off-topic attempts
                                     // for analytics; the model calls it before declining.
-                                    flagOffTopic: buildFlagOffTopicTool(
-                                        sessionId,
-                                        { docsSearchEnabled },
-                                    ),
+                                    flagOffTopic:
+                                        buildFlagOffTopicTool(sessionId),
                                     // Auto-approved as well: they only read the index built
                                     // into the bundle.
                                     ...(docsSearchEnabled
