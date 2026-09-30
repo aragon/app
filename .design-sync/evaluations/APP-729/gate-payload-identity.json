@@ -75,24 +75,25 @@
     "context reachability": "guidelines/index.md was a five-line stub. Now names each context file and its purpose, states the kit-only scope of the guide inline, records an authority order, and requires path-plus-symbol citations."
   },
   "knownLimits": {
-    "guideCoverage": "The registry is a GovKit registry with App usage evidence: all 418 records carry govkit: ids; repository 'app' appears only at usage sites. App-owned compounds have no guide entry. Indexing them is APP-726 scope and does not gate this bundle.",
+    "guideCoverage": "Applies to the run-3 payload only, and superseded by run6Candidate. At that point the registry was a GovKit registry with App usage evidence: all 418 records carried govkit: ids, repository 'app' appeared only at usage sites, and App-owned compounds had no guide entry. APP-1243 closed this: the run-6 candidate carries 454 records with app:* entries and composition contracts.",
     "routerIsABet": "Whether an inline-facts router changes retrieval behaviour is unmeasured. No controlled study of this bundle exists. If run 3 fails reachability again, the answer is repeat runs on one payload, not another prose rewrite."
   },
   "run6Candidate": {
     "status": "READY - APP-1243 registry candidate for Run 6",
     "worktree": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1243",
     "branch": "APP-1243",
-    "head": "49eb62525",
-    "manifestSha256": "02b13dcc660788dd568a942a536168e2ebfd7f59aaf328bc3d5838743725cc32",
+    "head": "950ef4711",
+    "manifestSha256": "d23b3a415f6fd818346850b51bfc37e28b6f3633b9545b6761742a3e7598aa08",
     "uploadFiles": 575,
     "uploadBytes": 8844487,
-    "appRevision": "65661ab7acdec7912c4bc82a6949d45c80d6fc94",
+    "appRevision": "49eb62525f777956b7b4c27ee81bf23db5355113",
     "kitRevision": "64b517f5b90052797ecaced5f15ab616b5733f30",
     "kitVersion": "2.11.4",
     "registryRecords": 454,
-    "selectionGuideEntries": "176 UI + 7 utility",
+    "selectionGuideEntries": "176 UI + 7 utility (183 total)",
     "cssBytes": 202642,
-    "tests": "refresh 6/6, registry 3/3, selection-guide 12/12",
-    "changeFromRun5Candidate": "app:* registry entries with composition contracts; prompts projected from registry; CSS annotation fix ported"
+    "tests": "49 pass, 0 fail, 1 skipped (full .design-sync suite); biome clean",
+    "changeFromRun5Candidate": "app:* registry entries with composition contracts; prompts projected from registry; CSS annotation fix ported",
+    "treeClean": true
   }
 }

@@ -1,7 +1,9 @@
 # APP-729 — what the runs established
 
-Eight run directories under `runs/`. Each records its own evidence; this file
-records what each one settled so the conclusions survive the records.
+Nine graded/attempted runs under `runs/` — eight timestamped directories plus
+`reachability-N5`. (`runs/candidate/` and `runs/old/` hold pre-protocol capture
+material and are not runs.) Each records its own evidence; this file records what
+each one settled so the conclusions survive the records.
 
 Read with `PROTOCOL-v2.md` (method) and `RUN5-HANDOFF.md` (the comparison that
 closed the series).
@@ -22,9 +24,10 @@ closed the series).
 
 ## What carried across the series
 
-**The gate earned its cost.** Run 1 (acceptance) caught a consumer-visible
-defect that three passing tests and 702 matching hashes did not: emitted URLs
-pointing at commits absent from the repository named in the link. Run 5 caught a
+**The gate earned its cost.** The first acceptance run (`20260927T232116Z`)
+caught a consumer-visible defect that three passing tests and 702 matching
+hashes did not: emitted URLs pointing at commits absent from the repository
+named in the link. Run 5 (`20260929T152851Z`) caught a
 second: composition guidance inverted against the component's own shipped
 example.
 
