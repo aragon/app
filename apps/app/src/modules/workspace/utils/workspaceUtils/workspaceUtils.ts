@@ -1,6 +1,8 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
 import type { Network } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
@@ -91,6 +93,34 @@ class WorkspaceUtils {
             section != null ? `${accountId}/${section}` : accountId;
 
         return this.getWorkspaceUrl(workspaceId, accountPath);
+    };
+
+    /**
+     * Account segment to build a URL with: the given one when it names an account scope — the aggregated sentinel or
+     * a `{network}-{address}` account ID — and the aggregated sentinel otherwise.
+     *
+     * A workspace URL can carry a segment that names no account: a stale link, a typo, or a browser following a
+     * redirect the app no longer serves. The workspace not-found page renders inside the workspace layout, so the
+     * navigation is built while that segment is still on the URL — without this, it is carried into every link and
+     * one wrong URL turns the whole navigation into wrong URLs.
+     *
+     * Validates the shape only, not the workspace: an account the workspace does not hold is still a scope the app
+     * serves, and `LayoutWorkspaceAccount` owns that failure. It is the same shape check that layout applies, so a
+     * segment this accepts is one the route resolves.
+     * @param accountId - Account segment of the URL, if any.
+     * @returns The account segment, or the aggregated sentinel when it names no account scope.
+     */
+    resolveAccountScope = (accountId?: string): string => {
+        if (accountId == null || accountId === workspaceAllAccountsSegment) {
+            return workspaceAllAccountsSegment;
+        }
+
+        const { network, address } = daoUtils.parseDaoId(accountId);
+        const isAccountId =
+            networkUtils.isValidNetwork(network) &&
+            addressUtils.isAddress(address);
+
+        return isAccountId ? accountId : workspaceAllAccountsSegment;
     };
 
     /**
