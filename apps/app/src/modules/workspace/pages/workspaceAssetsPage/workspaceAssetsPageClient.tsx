@@ -3,9 +3,9 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspace } from '../../api/workspaceService';
-import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
+import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAssetListData } from '../../hooks/useWorkspaceAssetListData';
 
 export interface IWorkspaceAssetsPageClientProps {
@@ -40,11 +40,9 @@ export const WorkspaceAssetsPageClient: React.FC<
 
     const accounts = workspace?.accounts ?? [];
 
-    const { activeOption } = useWorkspaceAccountSelectorContext();
+    const { activeOption } = useWorkspaceAccountOptions();
 
-    // Accounts the selection covers: the one it names, or all of them on the aggregated option.
-    const accountsToDisplay =
-        activeOption?.account != null ? [activeOption.account] : accounts;
+    const accountsToDisplay = accounts;
 
     const accountRefsToDisplay = accountsToDisplay.map(
         ({ network, address }) => ({ network, address }),

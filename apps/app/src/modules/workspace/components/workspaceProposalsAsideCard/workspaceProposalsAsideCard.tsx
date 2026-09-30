@@ -2,7 +2,7 @@
 
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
+import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import { WorkspaceAllProposalsAsideCard } from './workspaceAllProposalsAsideCard';
 import { WorkspaceDaoProposalsAsideCard } from './workspaceDaoProposalsAsideCard';
 
@@ -11,7 +11,7 @@ export interface IWorkspaceProposalsAsideCardProps {
      * Account option selected on the page. The whole workspace is described when unset or set to the aggregated
      * option.
      */
-    activeOption?: IWorkspaceAccountFilterOption;
+    activeOption?: IWorkspaceAccountOption;
     /**
      * DAO accounts of the workspace, i.e. what the aggregated option covers.
      */

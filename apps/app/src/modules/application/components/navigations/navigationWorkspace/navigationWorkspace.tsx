@@ -9,6 +9,7 @@ import { useEnsName } from '@/modules/ens';
 import { useWorkspace } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
+import { useWorkspaceAccountOptions } from '@/modules/workspace/hooks/useWorkspaceAccountOptions';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
     type INavigationContainerProps,
@@ -56,6 +57,10 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
         urlParams: { id: workspaceId },
     });
 
+    // The links stay scoped to the account being looked at, so a tab change keeps the reader on it. The hook reads
+    // the account from the route, which is where it lives, and falls back to the aggregated segment.
+    const { accountId } = useWorkspaceAccountOptions();
+
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected
             ? ApplicationDialogId.USER
@@ -71,11 +76,15 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     const workspaceAvatar = ipfsUtils.cidToSrc(workspace?.avatar);
     const links =
         workspace != null
-            ? navigationWorkspaceUtils.buildLinks(workspace, 'page')
+            ? navigationWorkspaceUtils.buildLinks(workspace, 'page', accountId)
             : [];
     const dialogLinks =
         workspace != null
-            ? navigationWorkspaceUtils.buildLinks(workspace, 'dialog')
+            ? navigationWorkspaceUtils.buildLinks(
+                  workspace,
+                  'dialog',
+                  accountId,
+              )
             : [];
 
     return (

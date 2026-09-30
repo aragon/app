@@ -12,6 +12,7 @@ import {
 } from '../../api/workspaceService';
 import {
     type IWorkspaceNetworkAddress,
+    workspaceAllAccountsSegment,
     workspaceUtils,
 } from './workspaceUtils';
 
@@ -27,6 +28,85 @@ describe('workspace utils', () => {
             });
 
             expect(id).toEqual(`citrea-mainnet-${addressOne}`);
+        });
+    });
+
+    describe('getWorkspaceUrl', () => {
+        it('builds the workspace base url from its id', () => {
+            expect(workspaceUtils.getWorkspaceUrl('demo')).toEqual(
+                '/workspace/demo',
+            );
+        });
+
+        it('appends the given path', () => {
+            expect(workspaceUtils.getWorkspaceUrl('demo', 'assets')).toEqual(
+                '/workspace/demo/assets',
+            );
+        });
+    });
+
+    describe('getAccountScopeUrl', () => {
+        it('scopes the workspace to an account', () => {
+            expect(
+                workspaceUtils.getAccountScopeUrl(
+                    'demo',
+                    'ethereum-sepolia-0x123',
+                ),
+            ).toEqual('/workspace/demo/ethereum-sepolia-0x123');
+        });
+
+        it('places the account before the section, so everything below one account shares a scope', () => {
+            expect(
+                workspaceUtils.getAccountScopeUrl(
+                    'demo',
+                    'ethereum-sepolia-0x123',
+                    'proposals',
+                ),
+            ).toEqual('/workspace/demo/ethereum-sepolia-0x123/proposals');
+        });
+
+        it('fills the account segment with the aggregated sentinel for the whole workspace', () => {
+            expect(
+                workspaceUtils.getAccountScopeUrl(
+                    'demo',
+                    workspaceAllAccountsSegment,
+                    'proposals',
+                ),
+            ).toEqual('/workspace/demo/all/proposals');
+        });
+    });
+
+    describe('getAccountScopeSection', () => {
+        it.each([
+            {
+                pathname: '/workspace/demo/all/proposals',
+                expected: 'proposals',
+            },
+            {
+                pathname: '/workspace/demo/ethereum-sepolia-0x123/members',
+                expected: 'members',
+            },
+            { pathname: '/workspace/demo/all', expected: undefined },
+            { pathname: '/workspace/demo', expected: undefined },
+            {
+                pathname: '/dao/ethereum-mainnet/0x123/proposals',
+                expected: undefined,
+            },
+        ])(
+            'reads "$expected" as the section of "$pathname"',
+            ({ pathname, expected }) => {
+                expect(workspaceUtils.getAccountScopeSection(pathname)).toEqual(
+                    expected,
+                );
+            },
+        );
+
+        it('ignores a trailing slash', () => {
+            expect(
+                workspaceUtils.getAccountScopeSection(
+                    '/workspace/demo/all/assets/',
+                ),
+            ).toEqual('assets');
         });
     });
 
@@ -199,9 +279,11 @@ describe('workspace utils', () => {
     });
 
     describe('getAccountUrl', () => {
-        it('links a DAO account to its own page on the app', () => {
-            expect(workspaceUtils.getAccountUrl(buildAccount())).toEqual(
-                `/dao/${Network.ETHEREUM_MAINNET}/${addressOne}`,
+        it('links a DAO account to its own pages inside the workspace', () => {
+            const account = buildAccount();
+
+            expect(workspaceUtils.getAccountUrl(account, 'demo')).toEqual(
+                `/workspace/demo/${account.id}/overview`,
             );
         });
 
@@ -211,7 +293,7 @@ describe('workspace utils', () => {
                 networkDefinitions[Network.ETHEREUM_MAINNET].blockExplorers
                     ?.default.url;
 
-            expect(workspaceUtils.getAccountUrl(account)).toEqual(
+            expect(workspaceUtils.getAccountUrl(account, 'demo')).toEqual(
                 `${explorerUrl}/address/${addressOne}`,
             );
         });

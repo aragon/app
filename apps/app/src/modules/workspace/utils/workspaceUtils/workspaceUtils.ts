@@ -31,6 +31,15 @@ export interface IWorkspaceNetworkAddress {
  */
 const fallbackWorkspaceSlug = 'workspace';
 
+/**
+ * Value standing in for an account in the account segment of a workspace URL when the page aggregates every
+ * account of the workspace, `/workspace/{workspaceId}/all/{section}`.
+ *
+ * The account segment is always filled: either by an account ID or by this. It cannot collide with one, as an
+ * account ID is always `{network}-{address}`.
+ */
+export const workspaceAllAccountsSegment = 'all';
+
 class WorkspaceUtils {
     /**
      * Builds the ID of a workspace account, matching the backend `daoId` format for DAO accounts. The address is
@@ -42,6 +51,64 @@ class WorkspaceUtils {
         const { network, address } = params;
 
         return `${network}-${getAddress(address)}`;
+    };
+
+    /**
+     * URL of a workspace.
+     *
+     * Takes the ID rather than the workspace itself so that callers holding only a route parameter — which is most
+     * of them, the ID being the `workspaceId` segment — can build workspace URLs.
+     * @param workspaceId - ID of the workspace.
+     * @param path - Optional path appended to the workspace URL.
+     * @returns The workspace URL.
+     */
+    getWorkspaceUrl = (workspaceId: string, path?: string): string => {
+        const baseUrl = `/workspace/${workspaceId}`;
+
+        return path != null ? `${baseUrl}/${path}` : baseUrl;
+    };
+
+    /**
+     * URL of a section of a workspace, scoped to one account.
+     *
+     * The account sits on the path rather than on a query parameter because it decides *what* the page resolves,
+     * not how it is narrowed: only the path reaches the server, and an account ID is also a DAO ID, so on the path
+     * the account is resolvable without reading the workspace registry — which lives on local storage and cannot be
+     * read during a server render.
+     *
+     * It scopes the path *before* the section, mirroring `/dao/{network}/{addressOrEns}/{section}`, so that
+     * everything below one account shares a scope.
+     * @param workspaceId - ID of the workspace.
+     * @param accountId - ID of the account, or `workspaceAllAccountsSegment` to aggregate every account.
+     * @param section - Optional section of the workspace, e.g. `proposals`.
+     * @returns The account-scoped URL.
+     */
+    getAccountScopeUrl = (
+        workspaceId: string,
+        accountId: string,
+        section?: string,
+    ): string => {
+        const accountPath =
+            section != null ? `${accountId}/${section}` : accountId;
+
+        return this.getWorkspaceUrl(workspaceId, accountPath);
+    };
+
+    /**
+     * Section of an account-scoped workspace URL, i.e. the segment following the account.
+     *
+     * Read from the pathname rather than from a route parameter because a section is a static segment and therefore
+     * never a parameter. It is what lets an account change keep the reader on the section being looked at, the
+     * mirror of `navigationWorkspaceUtils.buildLinks` keeping the account on a section change.
+     * @param pathname - Pathname of a workspace page, `/workspace/{workspaceId}/{accountId}/{section}`.
+     * @returns The section, or undefined when the pathname names none.
+     */
+    getAccountScopeSection = (pathname: string): string | undefined => {
+        const [base, , , section] = pathname
+            .split('/')
+            .filter((segment) => segment !== '');
+
+        return base === 'workspace' ? section : undefined;
     };
 
     /**
@@ -209,16 +276,23 @@ class WorkspaceUtils {
         addressUtils.truncateAddress(account.address);
 
     /**
-     * Link pointing at an account outside of the workspace: its own page on the app for a DAO, its address on the
-     * block explorer for anything else, since only DAOs have a page here.
+     * Link pointing at an account from the workspace overview: the pages of that account inside the workspace for a
+     * DAO, its address on the block explorer for anything else, since only DAOs have pages here.
+     *
+     * A DAO stays inside the workspace rather than leaving for its own `/dao` pages, so that opening an account
+     * from the overview lands on the same account-scoped route the navigation and the account selector use.
      * @param account - Account as stored on the registry.
+     * @param workspaceId - ID of the workspace the account belongs to.
      * @returns The URL of the account, or undefined when the network publishes no block explorer.
      */
-    getAccountUrl = (account: IWorkspaceAccount): string | undefined => {
+    getAccountUrl = (
+        account: IWorkspaceAccount,
+        workspaceId: string,
+    ): string | undefined => {
         const { type, network, address } = account;
 
         if (type === WorkspaceAccountType.DAO) {
-            return `/dao/${network}/${address}`;
+            return this.getAccountScopeUrl(workspaceId, account.id, 'overview');
         }
 
         const explorerUrl =

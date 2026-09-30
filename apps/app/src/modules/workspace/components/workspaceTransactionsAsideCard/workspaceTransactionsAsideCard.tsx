@@ -11,7 +11,7 @@ import {
     type IWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
+import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
 
 export interface IWorkspaceTransactionsAsideCardProps {
@@ -23,7 +23,7 @@ export interface IWorkspaceTransactionsAsideCardProps {
      * Account option selected on the page. The whole workspace is described when unset or set to the aggregated
      * option.
      */
-    activeOption?: IWorkspaceAccountFilterOption;
+    activeOption?: IWorkspaceAccountOption;
     /**
      * Page size of the transaction list displayed next to the card. The stats are read from the list's own first
      * page, so both must match for the card to add no request.

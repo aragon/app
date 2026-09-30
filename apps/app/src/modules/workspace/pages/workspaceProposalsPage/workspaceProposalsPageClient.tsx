@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
@@ -16,11 +15,11 @@ import {
     useWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
 import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposalsAsideCard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
+import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 
 export interface IWorkspaceProposalsPageClientProps {
@@ -35,7 +34,8 @@ export interface IWorkspaceProposalsPageClientProps {
 }
 
 /**
- * Proposals of a workspace, laid out like the DAO proposals page: filtered by the account picked on the workspace navigation.
+ * Proposals of every account of a workspace, laid out like the DAO proposals page. The proposals of a single
+ * account are an account-scoped page, which — the account being on its path — reads the DAO's own endpoint.
  *
  * Only DAO accounts take part. Safe accounts have no indexed proposals — they only contribute queued transactions,
  * which the endpoint returns in a separate `pending` block that this page does not render.
@@ -59,23 +59,9 @@ export const WorkspaceProposalsPageClient: React.FC<
             account.type === WorkspaceAccountType.DAO,
     );
 
-    const { activeOption } = useWorkspaceAccountSelectorContext();
-
-    const isAllAccountsSelected = activeOption?.isAllAccounts ?? true;
+    const { activeOption } = useWorkspaceAccountOptions();
 
     const { daos } = useWorkspaceDaos(daoAccounts);
-
-    const selectedAccount = activeOption?.account;
-
-    const selectedDaoParams = {
-        queryParams: {
-            daoId: selectedAccount?.id ?? '',
-            pageSize,
-            sort: 'blockTimestamp',
-            isSubProposal: false,
-            includeLinkedAccounts: false,
-        },
-    };
 
     // A single guard instance serves every DAO: the hook freezes its own `plugin` in a ref, but `check` merges the
     // parameters it is called with, and the permission dialog resolves the check from those.
@@ -127,14 +113,8 @@ export const WorkspaceProposalsPageClient: React.FC<
         });
     };
 
+    // The page aggregates every account, so which one the proposal belongs to is always the first thing to ask.
     const handleCreateProposal = () => {
-        // The account step has nothing to ask when the page is already filtered down to a single account.
-        if (selectedAccount != null) {
-            openSelectPluginDialog(selectedAccount, false);
-
-            return;
-        }
-
         const params: IWorkspaceSelectAccountDialogParams = {
             accounts: daoAccounts,
             onAccountSelected: (account) =>
@@ -158,14 +138,10 @@ export const WorkspaceProposalsPageClient: React.FC<
                 }
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
-                {isAllAccountsSelected ? (
-                    <WorkspaceProposalList
-                        accounts={daoAccounts}
-                        pageSize={pageSize}
-                    />
-                ) : (
-                    <DaoProposalList initialParams={selectedDaoParams} />
-                )}
+                <WorkspaceProposalList
+                    accounts={daoAccounts}
+                    pageSize={pageSize}
+                />
             </Page.Main>
             <Page.Aside>
                 <WorkspaceProposalsAsideCard

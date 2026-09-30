@@ -103,7 +103,7 @@ describe('<WorkspaceSelector /> component', () => {
         await openDropdown();
         await userEvent.click(await screen.findByText('Second Workspace'));
 
-        expect(pushMock).toHaveBeenCalledWith('/workspace/second/overview');
+        expect(pushMock).toHaveBeenCalledWith('/workspace/second/all/overview');
     });
 
     it('opens the create workspace wizard', async () => {

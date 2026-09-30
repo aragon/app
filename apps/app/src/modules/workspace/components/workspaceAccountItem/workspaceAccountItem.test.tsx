@@ -45,6 +45,7 @@ describe('<WorkspaceAccountItem /> component', () => {
     ) => {
         const completeProps: IWorkspaceAccountItemProps = {
             account: buildAccount(),
+            workspaceId: 'demo',
             ...props,
         };
 
@@ -79,13 +80,20 @@ describe('<WorkspaceAccountItem /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('links a DAO account to its page on the app', () => {
-        render(createTestComponent());
+    it('links a DAO account to its pages inside the workspace', () => {
+        const account = buildAccount();
+        render(createTestComponent({ account }));
 
         expect(screen.getByRole('link')).toHaveAttribute(
             'href',
-            `/dao/${Network.ETHEREUM_SEPOLIA}/${address}`,
+            `/workspace/demo/${account.id}/overview`,
         );
+    });
+
+    it('sets no target on the link of a DAO account, an internal route being followed client-side', () => {
+        render(createTestComponent());
+
+        expect(screen.getByRole('link')).not.toHaveAttribute('target');
     });
 
     it('links any other account to the block explorer on a new tab', () => {

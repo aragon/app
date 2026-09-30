@@ -1,16 +1,9 @@
-import { QueryClient } from '@tanstack/react-query';
 // The `next/navigation` alias points to the client-hooks wrapper, which cannot re-export server functions.
 import { notFound } from 'next/navigation-original';
-import { cmsService, daoOverridesOptions } from '@/shared/api/cmsService';
 import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { WorkspaceMembersPageClient } from './workspaceMembersPageClient';
-
-/**
- * Number of members read per page, the same as the DAO members page the list is borrowed from.
- */
-export const workspaceMembersCount = 18;
 
 export interface IWorkspaceMembersPageProps {
     /**
@@ -20,13 +13,10 @@ export interface IWorkspaceMembersPageProps {
 }
 
 /**
- * Members of one DAO account of a workspace at a time, rendered by the DAO members page itself.
+ * Members of a workspace, which are always the members of one of its accounts.
  *
- * Like the other workspace pages it performs no member prefetch: the accounts to query come from the workspace
- * registry, which is backed by local storage and cannot be read during a server render, so a prefetch would always
- * miss (see `docs/projectDocs/createWorkspace.md`). The CMS reads do not depend on the registry, so they are made
- * here the way `daoMembersPage` makes them: the DAO overrides are prefetched so hidden bodies never flash in as
- * tabs, and the featured delegates are handed to the client.
+ * Nothing is prefetched, and nothing needs to be: there is no aggregated membership to read, so this page only
+ * points the reader at an account. The list belongs to the account-scoped route.
  */
 export const WorkspaceMembersPage: React.FC<
     IWorkspaceMembersPageProps
@@ -35,18 +25,9 @@ export const WorkspaceMembersPage: React.FC<
         notFound();
     }
 
-    const queryClient = new QueryClient();
-    const [featuredDelegates] = await Promise.all([
-        cmsService.getFeaturedDelegates(),
-        queryClient.fetchQuery(daoOverridesOptions()),
-    ]);
-
     return (
-        <Page.Container queryClient={queryClient}>
-            <WorkspaceMembersPageClient
-                featuredDelegates={featuredDelegates}
-                pageSize={workspaceMembersCount}
-            />
+        <Page.Container>
+            <WorkspaceMembersPageClient />
         </Page.Container>
     );
 };

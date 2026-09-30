@@ -2,7 +2,7 @@
 
 import type { IWorkspaceAssetListMetadata } from '../../api/workspaceQueryService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
+import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import { WorkspaceAllAssetsAsideCard } from './workspaceAllAssetsAsideCard';
 import { WorkspaceDaoAssetsAsideCard } from './workspaceDaoAssetsAsideCard';
 
@@ -11,7 +11,7 @@ export interface IWorkspaceAssetsAsideCardProps {
      * Account option selected on the page. The whole workspace is described when unset or set to the aggregated
      * option.
      */
-    activeOption?: IWorkspaceAccountFilterOption;
+    activeOption?: IWorkspaceAccountOption;
     /**
      * Totals of the selected option, as reported by the workspace asset list endpoint.
      */
