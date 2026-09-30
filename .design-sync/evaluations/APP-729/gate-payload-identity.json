@@ -77,5 +77,22 @@
   "knownLimits": {
     "guideCoverage": "The registry is a GovKit registry with App usage evidence: all 418 records carry govkit: ids; repository 'app' appears only at usage sites. App-owned compounds have no guide entry. Indexing them is APP-726 scope and does not gate this bundle.",
     "routerIsABet": "Whether an inline-facts router changes retrieval behaviour is unmeasured. No controlled study of this bundle exists. If run 3 fails reachability again, the answer is repeat runs on one payload, not another prose rewrite."
+  },
+  "run6Candidate": {
+    "status": "READY - APP-1243 registry candidate for Run 6",
+    "worktree": "/Users/kd-m2air/.herdr/worktrees/app-next/app-1243",
+    "branch": "APP-1243",
+    "head": "49eb62525",
+    "manifestSha256": "02b13dcc660788dd568a942a536168e2ebfd7f59aaf328bc3d5838743725cc32",
+    "uploadFiles": 575,
+    "uploadBytes": 8844487,
+    "appRevision": "65661ab7acdec7912c4bc82a6949d45c80d6fc94",
+    "kitRevision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+    "kitVersion": "2.11.4",
+    "registryRecords": 454,
+    "selectionGuideEntries": "176 UI + 7 utility",
+    "cssBytes": 202642,
+    "tests": "refresh 6/6, registry 3/3, selection-guide 12/12",
+    "changeFromRun5Candidate": "app:* registry entries with composition contracts; prompts projected from registry; CSS annotation fix ported"
   }
 }
