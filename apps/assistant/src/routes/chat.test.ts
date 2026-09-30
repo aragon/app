@@ -551,10 +551,13 @@ describe('POST /chat guardrails', () => {
         const body = await response.text();
 
         expect(response.status).toEqual(200);
-        // No approval gate on a read-only tool: the result streams in the same turn and the
-        // model answers on top of it.
+        // No approval gate on a read-only tool: the result reaches the model in the same turn
+        // and the model answers on top of it, while the passages stay on the server.
         expect(body).toContain('tool-output-available');
-        expect(body).toContain('accounts/linked-account.md');
+        expect(body).not.toContain('accounts/linked-account.md');
+        expect(JSON.stringify(model.doStreamCalls)).toContain(
+            'accounts/linked-account.md',
+        );
         expect(body).toContain('Linking is a signal, not control.');
         expect(body).not.toContain('tool-approval-request');
         expect(model.doStreamCalls).toHaveLength(2);

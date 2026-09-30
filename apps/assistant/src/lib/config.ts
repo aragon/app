@@ -66,7 +66,7 @@ const defaultChat: IAssistantConfig['chat'] = {
     fallbackModels: ['openai/gpt-6-luna', 'openai/gpt-6-sol'],
     reasoning: {
         'openai/gpt-6-luna': 'medium',
-        'deepseek/deepseek-v4.1-flash': 'low',
+        'deepseek/deepseek-v4.1-flash': 'medium',
         'openai/gpt-6-sol': 'low',
     },
 };

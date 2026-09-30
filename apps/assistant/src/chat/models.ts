@@ -19,8 +19,9 @@ export const getChatModels = (): string[] => {
 // Wall-clock cap on the agent stream, including the AI SDK's internal retries and the resume step
 // that runs the tool (blob transfer + Linear create): a stalled upstream call must fail fast so
 // the user can retry, instead of burning the function timeout (observed: a single gateway call
-// hanging for 34s).
-export const chatTimeoutMs = 60_000;
+// hanging for 34s). Sized so that a turn of several lookups and a reasoned answer fits, with
+// room over the slowest ones seen.
+export const chatTimeoutMs = 90_000;
 
 // Bounded step count of one agent turn: a documentation answer is a search, at most a couple of
 // page reads and the reply; a report is the draft, the tool and the post-approval summary.
@@ -33,8 +34,9 @@ export const defaultChatReasoning: IChatReasoning = 'low';
 
 /**
  * Reasoning effort of the attempts a model serves, as the provider-neutral AI SDK setting.
- * Thinking tokens count against maxOutputTokens and delay the answer, so each model runs at the
- * lowest level that still reasons about a case the documentation does not spell out. A Gateway
+ * Thinking tokens count against maxOutputTokens and delay the answer; each model runs at the
+ * level at which it weighs the options of a case the documentation does not spell out instead
+ * of settling on the first that fits, and still answers well inside chatTimeoutMs. A Gateway
  * fallback after a failed call resends the request unchanged, at the failed model's level.
  */
 export const getChatReasoning = (model: string): IChatReasoning =>

@@ -19,6 +19,7 @@ import {
 } from 'ai';
 import { Hono } from 'hono';
 import { buildDocsNarrationFilter } from '../chat/docsNarrationFilter';
+import { buildDocsOutputFilter } from '../chat/docsOutputFilter';
 import {
     isModelContentChunk,
     streamFirstRespondingModel,
@@ -332,14 +333,21 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                         }),
                 });
 
-                // The sentence a model writes before a documentation tool call never reaches
-                // the widget (see the filter); the failover above already read the raw stream.
+                // Neither the sentence a model writes before a documentation tool call nor what
+                // the call returned reaches the widget (see the two filters); the failover above
+                // already read the raw stream.
                 const answerStream = docsSearchEnabled
-                    ? modelStream.pipeThrough(
-                          buildDocsNarrationFilter({
-                              toolNames: docsToolNameSet,
-                          }),
-                      )
+                    ? modelStream
+                          .pipeThrough(
+                              buildDocsNarrationFilter({
+                                  toolNames: docsToolNameSet,
+                              }),
+                          )
+                          .pipeThrough(
+                              buildDocsOutputFilter({
+                                  toolNames: docsToolNameSet,
+                              }),
+                          )
                     : modelStream;
 
                 writer.merge(
