@@ -1,0 +1,234 @@
+{
+  "project_id": "e9176f67-b24b-466e-845a-13fc48239fd0",
+  "path": "_ds_bundle.js",
+  "expected_bytes": 5542197,
+  "expected_etag": "1790695983642112",
+  "windows": [
+    {
+      "range": "1-3225",
+      "etag": "1790695983642112",
+      "bytes": 247525,
+      "cap_truncated": true
+    },
+    {
+      "range": "3226-7225",
+      "etag": "1790695983642112",
+      "bytes": 175545,
+      "cap_truncated": false
+    },
+    {
+      "range": "7226-11225",
+      "etag": "1790695983642112",
+      "bytes": 149096,
+      "cap_truncated": false
+    },
+    {
+      "range": "11226-15225",
+      "etag": "1790695983642112",
+      "bytes": 153001,
+      "cap_truncated": false
+    },
+    {
+      "range": "15226-19225",
+      "etag": "1790695983642112",
+      "bytes": 166293,
+      "cap_truncated": false
+    },
+    {
+      "range": "19226-23225",
+      "etag": "1790695983642112",
+      "bytes": 160157,
+      "cap_truncated": false
+    },
+    {
+      "range": "23226-27225",
+      "etag": "1790695983642112",
+      "bytes": 167240,
+      "cap_truncated": false
+    },
+    {
+      "range": "27226-31225",
+      "etag": "1790695983642112",
+      "bytes": 144554,
+      "cap_truncated": false
+    },
+    {
+      "range": "31226-35225",
+      "etag": "1790695983642112",
+      "bytes": 161871,
+      "cap_truncated": false
+    },
+    {
+      "range": "35226-39225",
+      "etag": "1790695983642112",
+      "bytes": 166292,
+      "cap_truncated": false
+    },
+    {
+      "range": "39226-43225",
+      "etag": "1790695983642112",
+      "bytes": 150497,
+      "cap_truncated": false
+    },
+    {
+      "range": "43226-47225",
+      "etag": "1790695983642112",
+      "bytes": 164660,
+      "cap_truncated": false
+    },
+    {
+      "range": "47226-51225",
+      "etag": "1790695983642112",
+      "bytes": 144263,
+      "cap_truncated": false
+    },
+    {
+      "range": "51226-55225",
+      "etag": "1790695983642112",
+      "bytes": 149629,
+      "cap_truncated": false
+    },
+    {
+      "range": "55226-59225",
+      "etag": "1790695983642112",
+      "bytes": 157179,
+      "cap_truncated": false
+    },
+    {
+      "range": "59226-63225",
+      "etag": "1790695983642112",
+      "bytes": 143892,
+      "cap_truncated": false
+    },
+    {
+      "range": "63226-67225",
+      "etag": "1790695983642112",
+      "bytes": 137355,
+      "cap_truncated": false
+    },
+    {
+      "range": "67226-71225",
+      "etag": "1790695983642112",
+      "bytes": 143624,
+      "cap_truncated": false
+    },
+    {
+      "range": "71226-75225",
+      "etag": "1790695983642112",
+      "bytes": 136079,
+      "cap_truncated": false
+    },
+    {
+      "range": "75226-79225",
+      "etag": "1790695983642112",
+      "bytes": 207142,
+      "cap_truncated": false
+    },
+    {
+      "range": "79226-83225",
+      "etag": "1790695983642112",
+      "bytes": 134773,
+      "cap_truncated": false
+    },
+    {
+      "range": "83226-87225",
+      "etag": "1790695983642112",
+      "bytes": 146111,
+      "cap_truncated": false
+    },
+    {
+      "range": "87226-91225",
+      "etag": "1790695983642112",
+      "bytes": 152521,
+      "cap_truncated": false
+    },
+    {
+      "range": "91226-95225",
+      "etag": "1790695983642112",
+      "bytes": 151755,
+      "cap_truncated": false
+    },
+    {
+      "range": "95226-99225",
+      "etag": "1790695983642112",
+      "bytes": 170635,
+      "cap_truncated": false
+    },
+    {
+      "range": "99226-102557",
+      "etag": "1790695983642112",
+      "bytes": 260544,
+      "cap_truncated": true
+    },
+    {
+      "range": "102558-103225",
+      "etag": "1790695983642112",
+      "bytes": 67515,
+      "cap_truncated": false
+    },
+    {
+      "range": "103226-103762",
+      "etag": "1790695983642112",
+      "bytes": 260590,
+      "cap_truncated": true
+    },
+    {
+      "range": "103763-107225",
+      "etag": "1790695983642112",
+      "bytes": 216218,
+      "cap_truncated": false
+    },
+    {
+      "range": "107226-111225",
+      "etag": "1790695983642112",
+      "bytes": 155489,
+      "cap_truncated": false
+    },
+    {
+      "range": "111226-115225",
+      "etag": "1790695983642112",
+      "bytes": 147619,
+      "cap_truncated": false
+    },
+    {
+      "range": "115226-119225",
+      "etag": "1790695983642112",
+      "bytes": 168672,
+      "cap_truncated": false
+    },
+    {
+      "range": "119226-123225",
+      "etag": "1790695983642112",
+      "bytes": 165017,
+      "cap_truncated": false
+    },
+    {
+      "range": "123226-126177",
+      "etag": "1790695983642112",
+      "bytes": 118844,
+      "cap_truncated": false
+    }
+  ],
+  "window_count": 34,
+  "etag_consistent": true,
+  "final_bytes": 5542197,
+  "bytes_match": true,
+  "lines": 126177,
+  "total_lines": 126177,
+  "sha256": "40afc3f4f52b7881626faeed65e3a5b9d50bfd17e04357d6f46158e96c0dc2f4",
+  "output": "/Users/kd-m2air/.herdr/worktrees/app-next/app-729/.design-sync/evaluations/APP-729/runs/20260929T152851Z/control/payload/_ds_bundle.js",
+  "previews": {
+    "_preview/AddressesInput.js": {
+      "listed_size": 6237,
+      "listed_etag": "1790696012049256",
+      "read_etag": "1790696012049256",
+      "status": "inline — not saved"
+    },
+    "_preview/WizardPage.js": {
+      "listed_size": 9751,
+      "listed_etag": "1790696018510535",
+      "read_etag": "1790696018510535",
+      "status": "inline — not saved"
+    }
+  }
+}

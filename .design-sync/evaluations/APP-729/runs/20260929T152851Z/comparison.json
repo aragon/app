@@ -1,0 +1,15 @@
+{
+  "comparedAfter": "both verdicts frozen (control 53664adb..., candidate e0d6f27b...)",
+  "criteria": [
+    {"id":1,"control":"met","candidate":"partially met","difference":"Candidate falsely claims mapping Items into an array collapses to one child (Children.map flattens arrays; the payload's own Filled preview uses .map). Control states the child-count rule correctly and shows a map-based step."},
+    {"id":2,"control":"partially met","candidate":"met","difference":"Control misstates intermediate state: says the form keeps the last accepted value while typing and that 'required' fires on unresolved rows (source: onAccept(undefined) on each debounce clears it; error comes from validate/invalid). Candidate describes onChange/onAccept channels, mid-flight non-emission and duplicate semantics correctly."},
+    {"id":3,"control":"met","candidate":"met","difference":"none material"},
+    {"id":4,"control":"met","candidate":"met","difference":"none material (both: mainnet-pinned ENS, chainId explorer-only, enforceChecksum default)"},
+    {"id":5,"control":"partially met","candidate":"partially met","difference":"Control misstates the preview harness (it does include GukModulesProvider). Candidate states the array-collapse claim as fact and has a dangling §0 reference."},
+    {"id":6,"control":"partially met","candidate":"partially met","difference":"Control snippet uses undeclared chainId; 3 path-only citations. Candidate steers away from the documented dynamic-row pattern; 1 path-only citation. Citation counts (control 20/3/1, candidate 23/1/1) are diagnostic."}
+  ],
+  "prohibited": "Neither arm commits P0–P3.",
+  "usability": {"control":"usable with corrections","candidate":"usable with corrections"},
+  "otherConsumerVisible": ["Candidate records App + GovKit revision SHAs and GovKit 2.11.4 provenance; control reports gov-ui-kit 2.10.0 and a bundle sha12 only and does not identify AddressesInput as App-owned."],
+  "verdict": "EQUIVALENT — each arm wins one criterion with a real consumer-visible correctness defect in the other (candidate: wrong row-rendering claim; control: wrong editable/accepted intermediate-state claims). Neither defect set is clearly worse; the candidate's citation/provenance edge is diagnostic, not material."
+}

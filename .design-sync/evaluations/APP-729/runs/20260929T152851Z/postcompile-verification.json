@@ -1,0 +1,2374 @@
+{
+ "generatedAt": "2026-09-29",
+ "projects": {
+  "prod": "2f22a679-7abb-4283-9f39-e28a63dba83b",
+  "control": "e9176f67-b24b-466e-845a-13fc48239fd0",
+  "candidate": "899e0f14-8113-4db2-9908-04107df18b62"
+ },
+ "toolNote": "DesignSync tool was not available in this session; used mcp__claude-design__list_files (depth -1) and mcp__claude-design__read_file (HTML-entity-escaped wrapper, 256 KiB cap). Served bytes = entity-decoded body with the wrapper newline framing removed. Inline results were transcribed to disk (fidelity cross-checked by exact hash vs manifest for candidate, byte length vs list_files size for control/prod, and control==prod byte identity). No writes to any Design project.",
+ "listings": {
+  "control": "/Users/kd-m2air/.herdr/worktrees/app-next/app-729/.design-sync/evaluations/APP-729/runs/20260929T152851Z/control/listing-postcompile.json",
+  "candidate": "/Users/kd-m2air/.herdr/worktrees/app-next/app-729/.design-sync/evaluations/APP-729/runs/20260929T152851Z/candidate/listing-postcompile.json",
+  "prod": "/Users/kd-m2air/.herdr/worktrees/app-next/app-729/.design-sync/evaluations/APP-729/runs/20260929T152851Z/control/prod-listing-postcompile.json"
+ },
+ "sentinels": {
+  "control": {
+   "fileCount": 567,
+   "_ds_needs_recompile": false,
+   "_ds_manifest.json": true,
+   "_adherence.oxlintrc.json": true
+  },
+  "candidate": {
+   "fileCount": 576,
+   "_ds_needs_recompile": false,
+   "_ds_manifest.json": true,
+   "_adherence.oxlintrc.json": true
+  },
+  "prod": {
+   "fileCount": 568,
+   "_ds_needs_recompile": false,
+   "_ds_manifest.json": true,
+   "_adherence.oxlintrc.json": true
+  }
+ },
+ "listingDiffs": {
+  "prodOnlyVsControl": [
+   "handoff/members-step-handoff.md"
+  ],
+  "controlOnlyVsProd": [],
+  "controlVsProdSizeDiffs": [],
+  "candidateOnlyVsManifest": [
+   "_adherence.oxlintrc.json",
+   "_ds_manifest.json"
+  ],
+  "manifestOnlyVsCandidate": [
+   "_ds_needs_recompile"
+  ],
+  "candidateSizeDiffsVsManifest": []
+ },
+ "files": [
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "README.md",
+   "servedBytes": 18425,
+   "servedSha256": "df102a71196a2f061abb6da9f8b07eff1aa00443884527b4afbd775c12397e84",
+   "expectedBytes": 18425,
+   "expectedSha256": "df102a71196a2f061abb6da9f8b07eff1aa00443884527b4afbd775c12397e84",
+   "match": true,
+   "listingBytes": 18425,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "styles.css",
+   "servedBytes": 57,
+   "servedSha256": "76eb38b2044fbe4cc5b59ad2eef70e3b4669a8b83ae9082cde1122fdb8bf37df",
+   "expectedBytes": 57,
+   "expectedSha256": "76eb38b2044fbe4cc5b59ad2eef70e3b4669a8b83ae9082cde1122fdb8bf37df",
+   "match": true,
+   "listingBytes": 57,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "_ds_sync.json",
+   "servedBytes": 35799,
+   "servedSha256": "6153621792e387d7f32cf2e902d48f20ad9b01d1a278884c4b22f40b5396f18e",
+   "expectedBytes": 35799,
+   "expectedSha256": "6153621792e387d7f32cf2e902d48f20ad9b01d1a278884c4b22f40b5396f18e",
+   "match": true,
+   "listingBytes": 35799,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "_ds_bundle.css",
+   "servedBytes": 202642,
+   "servedSha256": "3aeaba628753705c6c27793ae4478244a97de05a0792ebc183e4d5cf42649770",
+   "expectedBytes": 202642,
+   "expectedSha256": "3aeaba628753705c6c27793ae4478244a97de05a0792ebc183e4d5cf42649770",
+   "match": true,
+   "listingBytes": 202642,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "oversized read_file result saved by harness; unwrapped + entity-decoded by script (exact)"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "fonts/fonts.css",
+   "servedBytes": 321,
+   "servedSha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9",
+   "expectedBytes": 321,
+   "expectedSha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9",
+   "match": true,
+   "listingBytes": 321,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "guidelines/index.md",
+   "servedBytes": 1618,
+   "servedSha256": "ebc8aa4ea29afbb7fa68e461ed0a3072a416a50e1833472643c4dc6eefbf9a20",
+   "expectedBytes": 1618,
+   "expectedSha256": "ebc8aa4ea29afbb7fa68e461ed0a3072a416a50e1833472643c4dc6eefbf9a20",
+   "match": true,
+   "listingBytes": 1618,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "guidelines/context/index.md",
+   "servedBytes": 1220,
+   "servedSha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd",
+   "expectedBytes": 1220,
+   "expectedSha256": "2ede7c1fcbf733d88df5dc39c27dc34628b3608aa2c6f2580cd1fe4b659e09dd",
+   "match": true,
+   "listingBytes": 1220,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "guidelines/context/registry-report.md",
+   "servedBytes": 25160,
+   "servedSha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0",
+   "expectedBytes": 25160,
+   "expectedSha256": "dd52f5198e8fbab1b573fdbc5ae83b39649b2f8b376dfc388bcb273e431804d0",
+   "match": true,
+   "listingBytes": 25160,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "guidelines/context/selection-guide.json",
+   "servedBytes": 189637,
+   "servedSha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e",
+   "expectedBytes": 189637,
+   "expectedSha256": "c7613aba12f7ac12c500d794c7fbef6efd1b7c2af2740b04aaea01c0d845302e",
+   "match": true,
+   "listingBytes": 189637,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "oversized read_file result saved by harness; unwrapped + entity-decoded by script (exact)"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "guidelines/context/source-index.md",
+   "servedBytes": 295296,
+   "servedSha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03",
+   "expectedBytes": 295296,
+   "expectedSha256": "2f5fbc0f8ce81fc06e0b705a2ff6eca61e65e73cdb822492e7306ac00eadea03",
+   "match": true,
+   "listingBytes": 295296,
+   "truncated": true,
+   "fullContentObtained": true,
+   "method": "read_file truncated at 256 KiB cap (lines 1-1059, 261915 bytes); remainder read with offset=1060 (lines 1060-1171, 33381 bytes); windows concatenated"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/forms/AddressesInput/AddressesInput.prompt.md",
+   "servedBytes": 2155,
+   "servedSha256": "61e86cf9c41a0efe58618247ec896f8b68103118ee5f5976d571f1b502567076",
+   "expectedBytes": 2155,
+   "expectedSha256": "61e86cf9c41a0efe58618247ec896f8b68103118ee5f5976d571f1b502567076",
+   "match": true,
+   "listingBytes": 2155,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/forms/AddressesInput/AddressesInput.d.ts",
+   "servedBytes": 2236,
+   "servedSha256": "41a64f5d5512428038dfd2de98f398dbdde6c652186c6615a18fc5bcc4c816f3",
+   "expectedBytes": 2236,
+   "expectedSha256": "41a64f5d5512428038dfd2de98f398dbdde6c652186c6615a18fc5bcc4c816f3",
+   "match": true,
+   "listingBytes": 2236,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/general/AddressInput/AddressInput.prompt.md",
+   "servedBytes": 3016,
+   "servedSha256": "109760ac04158b16eff3c2bafbcd0407c3216681566dfbeb4fceecef9b8bc756",
+   "expectedBytes": 3016,
+   "expectedSha256": "109760ac04158b16eff3c2bafbcd0407c3216681566dfbeb4fceecef9b8bc756",
+   "match": true,
+   "listingBytes": 3016,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/general/AddressInput/AddressInput.d.ts",
+   "servedBytes": 1962,
+   "servedSha256": "f0e08c6819e2bb27356bba19380e6dd3b4ab46fb5d1b130e3eb06ed57f11d272",
+   "expectedBytes": 1962,
+   "expectedSha256": "f0e08c6819e2bb27356bba19380e6dd3b4ab46fb5d1b130e3eb06ed57f11d272",
+   "match": true,
+   "listingBytes": 1962,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/design-sync/FormWrapper/FormWrapper.prompt.md",
+   "servedBytes": 277,
+   "servedSha256": "c79904b027f3b9a75727b0e91915d223d2094544c1666b3ef59aa94e23595695",
+   "expectedBytes": 277,
+   "expectedSha256": "c79904b027f3b9a75727b0e91915d223d2094544c1666b3ef59aa94e23595695",
+   "match": true,
+   "listingBytes": 277,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/design-sync/FormWrapper/FormWrapper.d.ts",
+   "servedBytes": 298,
+   "servedSha256": "2155275f77c1a8d82ceed61c1a56f4906493e58f123d1f8c3b188a0f08436ce0",
+   "expectedBytes": 298,
+   "expectedSha256": "2155275f77c1a8d82ceed61c1a56f4906493e58f123d1f8c3b188a0f08436ce0",
+   "match": true,
+   "listingBytes": 298,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/wizards/WizardPage/WizardPage.prompt.md",
+   "servedBytes": 5315,
+   "servedSha256": "aba467cb95021e235295ec258a015bf2a2bc0c65b172871b29fbf67318c80365",
+   "expectedBytes": 5315,
+   "expectedSha256": "aba467cb95021e235295ec258a015bf2a2bc0c65b172871b29fbf67318c80365",
+   "match": true,
+   "listingBytes": 5315,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "candidate_vs_manifest",
+   "arm": "candidate",
+   "path": "components/wizards/WizardPage/WizardPage.d.ts",
+   "servedBytes": 4028,
+   "servedSha256": "ec3c9c4a9f6e682154b6d532a5dc889f28420774d2dbda18a616e0dcb793bb6b",
+   "expectedBytes": 4028,
+   "expectedSha256": "ec3c9c4a9f6e682154b6d532a5dc889f28420774d2dbda18a616e0dcb793bb6b",
+   "match": true,
+   "listingBytes": 4028,
+   "truncated": false,
+   "fullContentObtained": true,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "README.md",
+   "servedBytes": 11940,
+   "servedSha256": "6c942168d2c49e7aefae4208df96f4714de8003c07a142486df04660d4c1d9e4",
+   "expectedBytes": 11940,
+   "expectedSha256": "6c942168d2c49e7aefae4208df96f4714de8003c07a142486df04660d4c1d9e4",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 11940,
+   "listingBytesProd": 11940,
+   "truncated": false,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "styles.css",
+   "servedBytes": 57,
+   "servedSha256": "76eb38b2044fbe4cc5b59ad2eef70e3b4669a8b83ae9082cde1122fdb8bf37df",
+   "expectedBytes": 57,
+   "expectedSha256": "76eb38b2044fbe4cc5b59ad2eef70e3b4669a8b83ae9082cde1122fdb8bf37df",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 57,
+   "listingBytesProd": 57,
+   "truncated": false,
+   "method": "inline read_file on both arms; served text identical to candidate served file (hash-verified vs manifest); copied from that transcription"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "_ds_sync.json",
+   "servedBytes": 35492,
+   "servedSha256": "e1ce1b301345a60ef7fcced1fd1fc2be5176449265a62ae81beb5005ab8e0d1f",
+   "expectedBytes": 35492,
+   "expectedSha256": "e1ce1b301345a60ef7fcced1fd1fc2be5176449265a62ae81beb5005ab8e0d1f",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 35492,
+   "listingBytesProd": 35492,
+   "truncated": false,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "_ds_bundle.css",
+   "servedBytes": 219166,
+   "servedSha256": "05b17a94d59e0f2cc157b9634e8e79e30af2d8ef4ea8c8877dd8e089f3e2296e",
+   "expectedBytes": 219166,
+   "expectedSha256": "05b17a94d59e0f2cc157b9634e8e79e30af2d8ef4ea8c8877dd8e089f3e2296e",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 219166,
+   "listingBytesProd": 219166,
+   "truncated": false,
+   "method": "oversized read_file result saved by harness; unwrapped + entity-decoded by script (exact)"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "_ds_manifest.json",
+   "servedBytes": 62185,
+   "servedSha256": "29d1c646183a671f01fe70d4d195ed85a836d1891cf930d33467f0c092dcef3b",
+   "expectedBytes": 62185,
+   "expectedSha256": "29d1c646183a671f01fe70d4d195ed85a836d1891cf930d33467f0c092dcef3b",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 62185,
+   "listingBytesProd": 62185,
+   "truncated": false,
+   "method": "oversized read_file result saved by harness; unwrapped + entity-decoded by script (exact)"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "fonts/fonts.css",
+   "servedBytes": 321,
+   "servedSha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9",
+   "expectedBytes": 321,
+   "expectedSha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 321,
+   "listingBytesProd": 321,
+   "truncated": false,
+   "method": "inline read_file on both arms; served text identical to candidate served file (hash-verified vs manifest); copied from that transcription"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "components/forms/AddressesInput/AddressesInput.prompt.md",
+   "servedBytes": 1791,
+   "servedSha256": "282fad97415daedd965d6bbaa08bc65879ca701a2c28109db09e5c8d85e9e695",
+   "expectedBytes": 1791,
+   "expectedSha256": "282fad97415daedd965d6bbaa08bc65879ca701a2c28109db09e5c8d85e9e695",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 1791,
+   "listingBytesProd": 1791,
+   "truncated": false,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "components/forms/AddressesInput/AddressesInput.d.ts",
+   "servedBytes": 242,
+   "servedSha256": "cfc619988d0c52919d07eac0e0fc37d5c98f874773b2c5233dd6da6d885c1362",
+   "expectedBytes": 242,
+   "expectedSha256": "cfc619988d0c52919d07eac0e0fc37d5c98f874773b2c5233dd6da6d885c1362",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 242,
+   "listingBytesProd": 242,
+   "truncated": false,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "components/general/AddressInput/AddressInput.prompt.md",
+   "servedBytes": 3016,
+   "servedSha256": "109760ac04158b16eff3c2bafbcd0407c3216681566dfbeb4fceecef9b8bc756",
+   "expectedBytes": 3016,
+   "expectedSha256": "109760ac04158b16eff3c2bafbcd0407c3216681566dfbeb4fceecef9b8bc756",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 3016,
+   "listingBytesProd": 3016,
+   "truncated": false,
+   "method": "inline read_file on both arms; served text identical to candidate served file (hash-verified vs manifest); copied from that transcription"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "components/general/AddressInput/AddressInput.d.ts",
+   "servedBytes": 1853,
+   "servedSha256": "b9be1ca38a3a020e9c31b2290c4a79e6fb50420f1296a820918fbeb2cd407ce8",
+   "expectedBytes": 1853,
+   "expectedSha256": "b9be1ca38a3a020e9c31b2290c4a79e6fb50420f1296a820918fbeb2cd407ce8",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 1853,
+   "listingBytesProd": 1853,
+   "truncated": false,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "components/wizards/WizardPage/WizardPage.prompt.md",
+   "servedBytes": 4973,
+   "servedSha256": "9eafde7fc6cf67fc3194e6f76e212490f8ab460c3b4e7be4c9ef86e9f4678056",
+   "expectedBytes": 4973,
+   "expectedSha256": "9eafde7fc6cf67fc3194e6f76e212490f8ab460c3b4e7be4c9ef86e9f4678056",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 4973,
+   "listingBytesProd": 4973,
+   "truncated": false,
+   "method": "inline read_file on both arms; served body identical to candidate ## Examples body (already hash-verified) apart from header line and missing Sub-components/Related sections; file assembled from that body by script"
+  },
+  {
+   "check": "control_vs_prod",
+   "arm": "control",
+   "path": "components/wizards/WizardPage/WizardPage.d.ts",
+   "servedBytes": 226,
+   "servedSha256": "6cce3b660bc41fd51997898371aee929c92cfb586db8edfaf8f61312e8e4e529",
+   "expectedBytes": 226,
+   "expectedSha256": "6cce3b660bc41fd51997898371aee929c92cfb586db8edfaf8f61312e8e4e529",
+   "expectedSource": "PROD served",
+   "match": true,
+   "listingBytesControl": 226,
+   "listingBytesProd": 226,
+   "truncated": false,
+   "method": "inline read_file result; entity-decoded body transcribed to disk"
+  }
+ ],
+ "bundleJs": {
+  "check": "bundle_js_size_only",
+  "path": "_ds_bundle.js",
+  "prodBytes": 5542197,
+  "controlBytes": 5542197,
+  "candidateBytes": 5175889,
+  "candidateManifestBytes": 5175889,
+  "candidateManifestSha256": "4e1288caae7b1c049ed7025cdc1fadda6c39e2d99fc84feffca6079ef036ecf6",
+  "controlEqualsProd": true,
+  "candidateEqualsManifest": true,
+  "note": "size-only from list_files; line 1 @ds-bundle header read on all arms (limit=1): candidate total_lines 114622, control/prod 126177; header contains no commit SHA; header sourceHashes match each arm's _ds_sync.json sourceHashes"
+ },
+ "embeddedRevisions": {
+  "candidate": {
+   "README.md": [
+    "64b517f5b90052797ecaced5f15ab616b5733f30 (GovKit commit, in link text)"
+   ],
+   "_ds_sync.json": [],
+   "guidelines/context/index.md": [
+    "2b512b90d3093f1170a14f2ccf7eab41dcc7f036 (Recorded App revision)",
+    "64b517f5b90052797ecaced5f15ab616b5733f30 (GovKit revision)"
+   ],
+   "_ds_bundle.js header": []
+  },
+  "control": {
+   "README.md": [],
+   "_ds_sync.json": [],
+   "_ds_bundle.js header": []
+  },
+  "prod": {
+   "README.md": [],
+   "_ds_sync.json": [],
+   "_ds_bundle.js header": []
+  },
+  "note": "40-hex regex also hits the first 40 chars of the 64-hex styleSha in each _ds_sync.json (candidate f0c9f5ce..., control/prod bc243d69...); those are style hashes, not commits."
+ },
+ "controlPayload": {
+  "dir": "/Users/kd-m2air/.herdr/worktrees/app-next/app-729/.design-sync/evaluations/APP-729/runs/20260929T152851Z/control/payload",
+  "count": 231,
+  "totalBytes": 408226,
+  "sizeMismatches": [],
+  "files": [
+   {
+    "path": "README.md",
+    "bytes": 11940,
+    "sha256": "6c942168d2c49e7aefae4208df96f4714de8003c07a142486df04660d4c1d9e4",
+    "listingBytes": 11940,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "_ds_manifest.json",
+    "bytes": 62185,
+    "sha256": "29d1c646183a671f01fe70d4d195ed85a836d1891cf930d33467f0c092dcef3b",
+    "listingBytes": 62185,
+    "sizeMatchesListing": true
+   },
+   {
+    "path": "_ds_sync.json",
+    "bytes": 35492,
+    "sha256": "e1ce1b301345a60ef7fcced1fd1fc2be5176449265a62ae81beb5005ab8e0d1f",
+    "listingBytes": 35492,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/blocknavigationcontext/BlockNavigationContextProvider/BlockNavigationContextProvider.d.ts",
+    "bytes": 306,
+    "sha256": "71417b87a90d3c43fbff85353ba066a7dd941e621f2ba766da84cc01bdb26556",
+    "listingBytes": 306,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/blocknavigationcontext/BlockNavigationContextProvider/BlockNavigationContextProvider.prompt.md",
+    "bytes": 725,
+    "sha256": "052de3c1e1758541eb43505ce1f480c4333e3086eadcc1c2459c1281b58580f5",
+    "listingBytes": 725,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/debugprovider/DebugContextProvider/DebugContextProvider.d.ts",
+    "bytes": 266,
+    "sha256": "85be87d4ce1abae1f7cf57e26ffcfd7431d73447a248ba7d4ec3b49a2e45b88e",
+    "listingBytes": 266,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/debugprovider/DebugContextProvider/DebugContextProvider.prompt.md",
+    "bytes": 140,
+    "sha256": "4f7ee7c3f28027ac7f927852b05752442d68e9dc3a55c4a91aa234299e0e1fee",
+    "listingBytes": 140,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/design-sync/AppTransactionStatus/AppTransactionStatus.d.ts",
+    "bytes": 266,
+    "sha256": "9830e367f9ab7dc88966f9c4b36254c8ceade555176e4d8805beb5cf94d72655",
+    "listingBytes": 266,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/design-sync/AppTransactionStatus/AppTransactionStatus.prompt.md",
+    "bytes": 3899,
+    "sha256": "302e8e3d5c094b9f936267f5d8c7e2ec13042884fc5afd0dbad8a58c61a65dc0",
+    "listingBytes": 3899,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/design-sync/Page/Page.d.ts",
+    "bytes": 202,
+    "sha256": "ed2325252b7e844c6c0a16bf33373f180ad55e7c33b953c8935858ade68c06a3",
+    "listingBytes": 202,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/design-sync/Page/Page.prompt.md",
+    "bytes": 4849,
+    "sha256": "dbc3886a64926e0cb9dab154a4e0a0d3e0ff3af5ee191987037650052debe6c8",
+    "listingBytes": 4849,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AddressesInput/AddressesInput.d.ts",
+    "bytes": 242,
+    "sha256": "cfc619988d0c52919d07eac0e0fc37d5c98f874773b2c5233dd6da6d885c1362",
+    "listingBytes": 242,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AddressesInput/AddressesInput.prompt.md",
+    "bytes": 1791,
+    "sha256": "282fad97415daedd965d6bbaa08bc65879ca701a2c28109db09e5c8d85e9e695",
+    "listingBytes": 1791,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AdvancedDateInput/AdvancedDateInput.d.ts",
+    "bytes": 254,
+    "sha256": "4ef4b6cbf7180e9b765679315b9e1895fe2cd46696e9a57468a68413c3dd8c87",
+    "listingBytes": 254,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AdvancedDateInput/AdvancedDateInput.prompt.md",
+    "bytes": 1236,
+    "sha256": "9858b99bbce6796a6512cac6856937427174124d1758bbeb8428e8ad466329c8",
+    "listingBytes": 1236,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AutocompleteInput/AutocompleteInput.d.ts",
+    "bytes": 254,
+    "sha256": "f7a09e7c8d84b3c7164c36ee42497abfb516c0381a0689042c0f630fe37d3cf6",
+    "listingBytes": 254,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AutocompleteInput/AutocompleteInput.prompt.md",
+    "bytes": 1375,
+    "sha256": "b2dd86a10f8f4980ec9279a9e04b9210af6f4748182c13c96ea9df66d06e8702",
+    "listingBytes": 1375,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AvatarInput/AvatarInput.d.ts",
+    "bytes": 230,
+    "sha256": "93c7d0eb8242d0321793ec363c405ae72cd2b1d13d1f715fab68f0bbd188b318",
+    "listingBytes": 230,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/AvatarInput/AvatarInput.prompt.md",
+    "bytes": 749,
+    "sha256": "1fdc3e9d384c09dfe7641c55e91c129ec0d89d390bba2d3fb27809d35b4c9556",
+    "listingBytes": 749,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/NumberProgressInput/NumberProgressInput.d.ts",
+    "bytes": 262,
+    "sha256": "9d49e4e3c8f695ae79ad09ce12551b1e107b38f7880b22da4994fdd567745359",
+    "listingBytes": 262,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/NumberProgressInput/NumberProgressInput.prompt.md",
+    "bytes": 1737,
+    "sha256": "2b4a9579200e1b00621f66e9b8baadc17c1429b2058b940a52ba00335a9443f1",
+    "listingBytes": 1737,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/ResourcesInput/ResourcesInput.d.ts",
+    "bytes": 242,
+    "sha256": "7843c1c0937adb862e173a52fd6ab4e9db16d6e2decd00b830e6a1d8a6fa9ae3",
+    "listingBytes": 242,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/forms/ResourcesInput/ResourcesInput.prompt.md",
+    "bytes": 974,
+    "sha256": "52cb2c7b41113823b14036bd7546bb928946afc6aec617ab701cfe3f8009de68",
+    "listingBytes": 974,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Accordion/Accordion.d.ts",
+    "bytes": 382,
+    "sha256": "bc3b6283d30b8b322ee13929af586cc16ad608d52e25199e7a10f17f29412800",
+    "listingBytes": 382,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Accordion/Accordion.prompt.md",
+    "bytes": 2782,
+    "sha256": "80ecfc2c2e8ee337884bdd6d90ab4a147319e6606531846ec8e519a2b6afa91c",
+    "listingBytes": 2782,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ActionSimulation/ActionSimulation.d.ts",
+    "bytes": 779,
+    "sha256": "6c5282c2173695742581fd45a254acf8cdb068b67875daa241ff72a552790233",
+    "listingBytes": 779,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ActionSimulation/ActionSimulation.prompt.md",
+    "bytes": 1891,
+    "sha256": "83a9ea9772bf1cdbf43b9521360b9ffa645fbd175e935a8ee9fb1f40454d6952",
+    "listingBytes": 1891,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/AddressInput/AddressInput.d.ts",
+    "bytes": 1853,
+    "sha256": "b9be1ca38a3a020e9c31b2290c4a79e6fb50420f1296a820918fbeb2cd407ce8",
+    "listingBytes": 1853,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AddressInput/AddressInput.prompt.md",
+    "bytes": 3016,
+    "sha256": "109760ac04158b16eff3c2bafbcd0407c3216681566dfbeb4fceecef9b8bc756",
+    "listingBytes": 3016,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/AddressOutput/AddressOutput.d.ts",
+    "bytes": 1209,
+    "sha256": "5d44359f28976e6f11ec76c1619292ae07ae60ca616f77b7cac5ac5c73c88879",
+    "listingBytes": 1209,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AddressOutput/AddressOutput.prompt.md",
+    "bytes": 1177,
+    "sha256": "17a951ea994eca9658ac6c09f98fd2f8eb7722e5cbde75421d1dc5c723c27db9",
+    "listingBytes": 1177,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AlertCard/AlertCard.d.ts",
+    "bytes": 429,
+    "sha256": "f97a5f35b3937094496195e6336a28fadf0f12db8226e9a668fb4155679969ce",
+    "listingBytes": 429,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AlertCard/AlertCard.prompt.md",
+    "bytes": 1224,
+    "sha256": "93821ded9f27e07768234b9ba325907bed3b49ef6adaa183dace8a523b3fd97e",
+    "listingBytes": 1224,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/AlertInline/AlertInline.d.ts",
+    "bytes": 450,
+    "sha256": "e19b9ce5596412ee97146ce724c984b0e43eec18a56c149f02510e4c64b92bbe",
+    "listingBytes": 450,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AlertInline/AlertInline.prompt.md",
+    "bytes": 1034,
+    "sha256": "9cf8e6a31a9e18dac68576b14a4a076577d61180e3e946539112ff21865fdfc4",
+    "listingBytes": 1034,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/AssetDataListItem/AssetDataListItem.d.ts",
+    "bytes": 337,
+    "sha256": "39af59ed63cbe5bf38cd5ee20e75c42580bdeb6a73c071bcb681ced9e7b2d0bf",
+    "listingBytes": 337,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AssetDataListItem/AssetDataListItem.prompt.md",
+    "bytes": 1848,
+    "sha256": "d27c6a45186fc4405b958dfa9a4739d28b26fcdfb7fd8c8ace619164841216e8",
+    "listingBytes": 1848,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AssetTransfer/AssetTransfer.d.ts",
+    "bytes": 984,
+    "sha256": "194fe3804816e5db86e9614dd5630f88c9b44032b3d662f4ebed082a796935bc",
+    "listingBytes": 984,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AssetTransfer/AssetTransfer.prompt.md",
+    "bytes": 2716,
+    "sha256": "434d83ea970e92634cb4bb59f45b2d85034001f612f1e621a972da9633801955",
+    "listingBytes": 2716,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Avatar/Avatar.d.ts",
+    "bytes": 598,
+    "sha256": "d8311e27f3e11fa7a6da2aa325ce00d2bc2c0114339b313fbaa3ebcb222cd946",
+    "listingBytes": 598,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Avatar/Avatar.prompt.md",
+    "bytes": 1745,
+    "sha256": "50ae944f6c814b14653b5c2233a2e9df9498b7fadcf574db28703fcf2ff2fb75",
+    "listingBytes": 1745,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/AvatarBase/AvatarBase.d.ts",
+    "bytes": 441,
+    "sha256": "f87d320a2e57a3e526a9f3020f1bd656b1939db0d8abf021e570181df3c6e289",
+    "listingBytes": 441,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AvatarBase/AvatarBase.prompt.md",
+    "bytes": 412,
+    "sha256": "db16a202d471d9587b24f59677fa46f52a19f2d355c28e3ccf738001b1507747",
+    "listingBytes": 412,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/AvatarIcon/AvatarIcon.d.ts",
+    "bytes": 772,
+    "sha256": "6a559b456fa345b759dfd28a2ee45056174c8c9614253285060751973caef65f",
+    "listingBytes": 772,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/AvatarIcon/AvatarIcon.prompt.md",
+    "bytes": 2184,
+    "sha256": "cd588d514c7f508be74a92299823aaff2087c72d91647b1b669ba6c02849e2ec",
+    "listingBytes": 2184,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Breadcrumbs/Breadcrumbs.d.ts",
+    "bytes": 471,
+    "sha256": "25963c28eeae5512af0166b6426f93ee9666f47880287ac9b3e55c1ed803d125",
+    "listingBytes": 471,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Breadcrumbs/Breadcrumbs.prompt.md",
+    "bytes": 1532,
+    "sha256": "d95d8713db413932d1d059d85edea3976af5234c25b61562f2f32547f86a63a3",
+    "listingBytes": 1532,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Button/Button.d.ts",
+    "bytes": 1576,
+    "sha256": "f0a24b9a7e0004945430dc335ab6bf2f6286e4fcd53783b2c6576d83bda1e88e",
+    "listingBytes": 1576,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Button/Button.prompt.md",
+    "bytes": 2955,
+    "sha256": "1d6e05c2fffc8ee6a0002b6697414523f3fa20fdbc08b9ea66530eb5d5228fa0",
+    "listingBytes": 2955,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Card/Card.d.ts",
+    "bytes": 268,
+    "sha256": "05873ec7aac97292c827694204dda52f42f892fec155f2b4ec7ab4427f184953",
+    "listingBytes": 268,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Card/Card.prompt.md",
+    "bytes": 1737,
+    "sha256": "b8f3a17c053e697d007a2c1bce3bc1d6f00a572626c2cfde7ad384d78cdac0d7",
+    "listingBytes": 1737,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/CardCollapsible/CardCollapsible.d.ts",
+    "bytes": 1353,
+    "sha256": "7fec65985bb7bf9ab5968da358e95db717d93c694ebf35a5e0262e4c2108c084",
+    "listingBytes": 1353,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/CardCollapsible/CardCollapsible.prompt.md",
+    "bytes": 2071,
+    "sha256": "f4124e63d2eb286aaa65790a931ac9a4c049503941e43170ab92f2ffec2ac369",
+    "listingBytes": 2071,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/CardEmptyState/CardEmptyState.d.ts",
+    "bytes": 1126,
+    "sha256": "41d8e7eaeedd7217ebf4b298acb7d8ac6f1558dc9dfb8f1f9c1fc74d5ea0aa14",
+    "listingBytes": 1126,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/CardEmptyState/CardEmptyState.prompt.md",
+    "bytes": 2084,
+    "sha256": "0fb95024b9ab8ce37ead05197ed5a8ca6e4e0a64216ff9dd2d97db3310da45c7",
+    "listingBytes": 2084,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/CardSummary/CardSummary.d.ts",
+    "bytes": 600,
+    "sha256": "f679728da9d001759330bc7a7de443931378dd0e0af75ce53fbcc9ae47f326db",
+    "listingBytes": 600,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/CardSummary/CardSummary.prompt.md",
+    "bytes": 1296,
+    "sha256": "b9ed33c53472931bb6ae29523b7be285a23245aaad6401784200a8ee11b8b84b",
+    "listingBytes": 1296,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Checkbox/Checkbox.d.ts",
+    "bytes": 870,
+    "sha256": "ea392e589eafc27264daac096f5f0f44933c717468f8df87d449599efed73889",
+    "listingBytes": 870,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Checkbox/Checkbox.prompt.md",
+    "bytes": 1850,
+    "sha256": "8fec07fca0745540ae207f7d3eeb91c499d30a68f30ffecc8cb1850ba0aadaf5",
+    "listingBytes": 1850,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/CheckboxCard/CheckboxCard.d.ts",
+    "bytes": 1031,
+    "sha256": "041fe1902c0c8f9a301bb342cdafa8ae1961f5c471007abc19e62d11661688a7",
+    "listingBytes": 1031,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/CheckboxCard/CheckboxCard.prompt.md",
+    "bytes": 2425,
+    "sha256": "ffd8362cb557e51893465937a4cfab8cb98eace52236644cd50ee6ff6cee4a78",
+    "listingBytes": 2425,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/CheckboxGroup/CheckboxGroup.d.ts",
+    "bytes": 621,
+    "sha256": "cd75b17ff1647e65125a8c1af10e366134dbfe0c453c4530f053a0339e87965d",
+    "listingBytes": 621,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/CheckboxGroup/CheckboxGroup.prompt.md",
+    "bytes": 2557,
+    "sha256": "688fef6954920255f838a2f4f1b979c1a50ca590f150c0df0a7ced1a05cf7043",
+    "listingBytes": 2557,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Clipboard/Clipboard.d.ts",
+    "bytes": 587,
+    "sha256": "de9dbe1eea0a5c4ec89303251dad72482fbf74b131b2b0ea2417661427bd47fd",
+    "listingBytes": 587,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Clipboard/Clipboard.prompt.md",
+    "bytes": 1695,
+    "sha256": "58654f5b6b4cb31cf1d45232c8133ef5e489e4ef3a251acb1c1c2d01a7738f7a",
+    "listingBytes": 1695,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Collapsible/Collapsible.d.ts",
+    "bytes": 1431,
+    "sha256": "512bc62bb1ceef8fc89a25f93c1a94b2c694d3c9b22e70a1cfa030f66fc50b86",
+    "listingBytes": 1431,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Collapsible/Collapsible.prompt.md",
+    "bytes": 2545,
+    "sha256": "e3e432bf3e77fcf9b59d2f074211bd812406fab0d4bb6f61c7df8256d357208c",
+    "listingBytes": 2545,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/DaoAvatar/DaoAvatar.d.ts",
+    "bytes": 531,
+    "sha256": "d30f1fa63ce96de966e7490d3c0883d9665b3add16f983d8fe54f12b09ba7d9d",
+    "listingBytes": 531,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DaoAvatar/DaoAvatar.prompt.md",
+    "bytes": 1401,
+    "sha256": "c198a2b6dbac5b8b4f39170c96656e9054a273baf0e6f538084e7f8d3741f44d",
+    "listingBytes": 1401,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/DaoDataListItem/DaoDataListItem.d.ts",
+    "bytes": 329,
+    "sha256": "ed7efa712407a3fc1db7c1cbb4e3cae19a22e61287cf105809fe95f036831496",
+    "listingBytes": 329,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DaoDataListItem/DaoDataListItem.prompt.md",
+    "bytes": 1785,
+    "sha256": "86f3992658c941fe275af875aa22e3512f7a90b543ef1a41c46d2fc44aa4672a",
+    "listingBytes": 1785,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DataList/DataList.d.ts",
+    "bytes": 410,
+    "sha256": "16ce349d281450bd25a921469a4ad763d81c29575c4ebdde83e49c884759856b",
+    "listingBytes": 410,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DataList/DataList.prompt.md",
+    "bytes": 4714,
+    "sha256": "d46ce546dae84971dc94e11111715491f887a5d4394fd0cbcb56c2e479ca2d9d",
+    "listingBytes": 4714,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DefinitionList/DefinitionList.d.ts",
+    "bytes": 321,
+    "sha256": "cfd90d4491da3b06f3eb4e8e67a0a3a1a633804512930e0802cd028c4e6aba9f",
+    "listingBytes": 321,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DefinitionList/DefinitionList.prompt.md",
+    "bytes": 2419,
+    "sha256": "e6abfb38b932b690d60dc28e1853f827feca94920090792f4860fba8e7f03ae4",
+    "listingBytes": 2419,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Dialog/Dialog.d.ts",
+    "bytes": 344,
+    "sha256": "f50481d71d71070254db3914b08ac6149b9ad627ef7e8c8f5596d4c0eb732678",
+    "listingBytes": 344,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Dialog/Dialog.prompt.md",
+    "bytes": 3979,
+    "sha256": "fedf7b9b7414a2106a85c7b5fe059098913a64184782ef90e20b68b84afb0493",
+    "listingBytes": 3979,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DialogAlert/DialogAlert.d.ts",
+    "bytes": 339,
+    "sha256": "ddc812236eacda04bcec7d8c693f11048e4d30477f89ce08958e004871791ef5",
+    "listingBytes": 339,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DialogAlert/DialogAlert.prompt.md",
+    "bytes": 2261,
+    "sha256": "e1aca4272a234ef08aea1f6d759fc6901116609c94bc4152b5e9aeb9764a4ffe",
+    "listingBytes": 2261,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DocumentParser/DocumentParser.d.ts",
+    "bytes": 510,
+    "sha256": "b6f077433e78b88df210c21ccabd610e794c02334e8e5d0a9f202af822130ae7",
+    "listingBytes": 510,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/DocumentParser/DocumentParser.prompt.md",
+    "bytes": 727,
+    "sha256": "c64d79caace2f4f40b49e7b3220b821fb132f0651ece652cd51aedf25fafaec5",
+    "listingBytes": 727,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Dropdown/Dropdown.d.ts",
+    "bytes": 317,
+    "sha256": "b137a366ef5d09b91abcf0f7639e35eda15d80c9035eeb9b0f9610e63ce4ecb0",
+    "listingBytes": 317,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Dropdown/Dropdown.prompt.md",
+    "bytes": 1472,
+    "sha256": "52b34965241635c3e855586792bce9ef9327ee6aebfe0d55d999ecd282c49731",
+    "listingBytes": 1472,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/EmptyState/EmptyState.d.ts",
+    "bytes": 1110,
+    "sha256": "18dc72ddebdfedb95e648c68a3862741d927aa4767b9162487acf16e7f358279",
+    "listingBytes": 1110,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/EmptyState/EmptyState.prompt.md",
+    "bytes": 2469,
+    "sha256": "55727c1f4b864165435eff093d0196795ff5ec24c85a4718697645c3ecc3ce67",
+    "listingBytes": 2469,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/GukCoreProvider/GukCoreProvider.d.ts",
+    "bytes": 364,
+    "sha256": "3e660c7897e43a9335f73913e85de54183e64e0c388b4f17f19bf8a0801c765f",
+    "listingBytes": 364,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/GukCoreProvider/GukCoreProvider.prompt.md",
+    "bytes": 330,
+    "sha256": "4bfc251b51cd9f48778947aab74e91eb03caf8493105fcf3bbbe8309bad2a93f",
+    "listingBytes": 330,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/GukModulesProvider/GukModulesProvider.d.ts",
+    "bytes": 863,
+    "sha256": "6c93c4bdf178a59866057f96a3251ff93c227557567d95a0052ff2d5eddbd8f4",
+    "listingBytes": 863,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/GukModulesProvider/GukModulesProvider.prompt.md",
+    "bytes": 826,
+    "sha256": "79516b0bb11586bff96712efd991f33f94987e6ceb23411417c8ab8062500740",
+    "listingBytes": 826,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Heading/Heading.d.ts",
+    "bytes": 773,
+    "sha256": "1cfefc22e8e593727d578c1e330db6a9b20b33f0c373773ae4c5c5ad64a29bb2",
+    "listingBytes": 773,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Heading/Heading.prompt.md",
+    "bytes": 1532,
+    "sha256": "19ac9229b885612bdd3fa0763fbf7b818090492cdeeafb6e0601fa34b50a9a79",
+    "listingBytes": 1532,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Icon/Icon.d.ts",
+    "bytes": 642,
+    "sha256": "bf9865e108ad5f35bb4fcf2ad4c1c44890459e9f5086a1a32c877ddd7878c8bd",
+    "listingBytes": 642,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Icon/Icon.prompt.md",
+    "bytes": 2320,
+    "sha256": "7296b8ff18a21e33ccce277d581bf9e4424cc466ce2a37578097f03637a85f1d",
+    "listingBytes": 2320,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/IllustrationHuman/IllustrationHuman.d.ts",
+    "bytes": 1533,
+    "sha256": "353287f853ce1c2ea1ef8880f8662a58308fba30523d5ce5e5a00fe5f91c7eac",
+    "listingBytes": 1533,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/IllustrationHuman/IllustrationHuman.prompt.md",
+    "bytes": 3458,
+    "sha256": "bb579b80dabc964163f9a2d3263ba0e1bae74ffed8edec03fb5278d347980b8d",
+    "listingBytes": 3458,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/IllustrationObject/IllustrationObject.d.ts",
+    "bytes": 532,
+    "sha256": "69fbd5bcd9d946f8fdaacbd249dbb9852f7aa7ee6a47e7e92c6e33bfcaddd222",
+    "listingBytes": 532,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/IllustrationObject/IllustrationObject.prompt.md",
+    "bytes": 1624,
+    "sha256": "269200ed315c4e2e7c7cf7c1bcce2905861fd4d0f545eb80e68da14abc57c071",
+    "listingBytes": 1624,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputContainer/InputContainer.d.ts",
+    "bytes": 1398,
+    "sha256": "d7c14bdaf588c30bc5a559460d93152f0e7c09c4ad8c9eeb79e3472b323b26fb",
+    "listingBytes": 1398,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputContainer/InputContainer.prompt.md",
+    "bytes": 1365,
+    "sha256": "a9225a9494984b72e9f790dfea3f7eee0025e8ef7aa10dbebc59d0aea895b956",
+    "listingBytes": 1365,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputDate/InputDate.d.ts",
+    "bytes": 893,
+    "sha256": "9490d3c17f02d4d0abafc5e981c83e252a1d738262042f76030a0ee232fb1925",
+    "listingBytes": 893,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputDate/InputDate.prompt.md",
+    "bytes": 1628,
+    "sha256": "2cd64abffaa86a6534fb9a8df6b6b2ccc0653275d1bc775109aac7d7981d943e",
+    "listingBytes": 1628,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputFileAvatar/InputFileAvatar.d.ts",
+    "bytes": 1465,
+    "sha256": "de4617c5c85b39ea3a344d70f8756baaaa097ed3da690eddc15c84d6517392d1",
+    "listingBytes": 1465,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputFileAvatar/InputFileAvatar.prompt.md",
+    "bytes": 2316,
+    "sha256": "8c62df4b29f60d6b1c63ee20ef73228de2516923402a44c03b1a54a564d41fde",
+    "listingBytes": 2316,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputNumber/InputNumber.d.ts",
+    "bytes": 1623,
+    "sha256": "dba7efeb3272f3895ea4a29868f8682f5d1ad59e36285608294c143ad433c0b1",
+    "listingBytes": 1623,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputNumber/InputNumber.prompt.md",
+    "bytes": 3328,
+    "sha256": "e5a9adf933f513b8937e7a230b05e26b84f8d6067d2571f85c7d34c5edf64e68",
+    "listingBytes": 3328,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputNumberMax/InputNumberMax.d.ts",
+    "bytes": 1096,
+    "sha256": "4ca87d071822920cf9569e8111f52fc1aba28ef966ec896f5416923701956f33",
+    "listingBytes": 1096,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputNumberMax/InputNumberMax.prompt.md",
+    "bytes": 2108,
+    "sha256": "c5b7091cd9ca03da751bda7afe3c463f8dd51300a725a0f133d60c1893b90122",
+    "listingBytes": 2108,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputSearch/InputSearch.d.ts",
+    "bytes": 1203,
+    "sha256": "6ab177b8e4a1f0f1548af013b779382d94d464fe9ce16efb03cb13185ce7e868",
+    "listingBytes": 1203,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputSearch/InputSearch.prompt.md",
+    "bytes": 1799,
+    "sha256": "f4bde0ca0bbd5bf35292f406a8165084a71caa912679034c137a65ef626b3bc7",
+    "listingBytes": 1799,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputText/InputText.d.ts",
+    "bytes": 1472,
+    "sha256": "de5c6061b1960f0b15b3350ae2cc98b545ea4494f83efca64afa7042a97ba6bb",
+    "listingBytes": 1472,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputText/InputText.prompt.md",
+    "bytes": 3384,
+    "sha256": "c0100361afade857bd82e8b275a8c5f5d5b2e3ba235b7ee7876eaa8f63202de9",
+    "listingBytes": 3384,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/InputTime/InputTime.d.ts",
+    "bytes": 1042,
+    "sha256": "f3499cca58c08d848f3cf5baf970306e88333d781963bbf67397a363be3c2583",
+    "listingBytes": 1042,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/InputTime/InputTime.prompt.md",
+    "bytes": 1754,
+    "sha256": "adf71893ebdb3ae8418348d676d64632f977cc317df63d2ea5dd5aedb979c0cc",
+    "listingBytes": 1754,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Link/Link.d.ts",
+    "bytes": 877,
+    "sha256": "e4191af19841ea4ae29159e712a3018071ed176f0442932b5d995efb8363899b",
+    "listingBytes": 877,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Link/Link.prompt.md",
+    "bytes": 1950,
+    "sha256": "983da10103878cbe22465d7bdbd55529e2bdbdfe977beccfac5fbd51455f862b",
+    "listingBytes": 1950,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/LinkBase/LinkBase.d.ts",
+    "bytes": 433,
+    "sha256": "989c1b147e10eb21f5df1e2a217fa1161b1260fba81768b0150571900d82e754",
+    "listingBytes": 433,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/LinkBase/LinkBase.prompt.md",
+    "bytes": 406,
+    "sha256": "03f38eff023cd3c0d86a73d9ca7ee33511273ee21dc574ab82a391ed6d83f377",
+    "listingBytes": 406,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/MemberAvatar/MemberAvatar.d.ts",
+    "bytes": 951,
+    "sha256": "c6039188f26d553373764671c47f58eaf3792fcabc04824af605f16939ce2426",
+    "listingBytes": 951,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/MemberAvatar/MemberAvatar.prompt.md",
+    "bytes": 2894,
+    "sha256": "cb02a340e55c4057a2089a27f19b980a8d70b2177b8083861ab3286b04d7ed67",
+    "listingBytes": 2894,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/MemberDataListItem/MemberDataListItem.d.ts",
+    "bytes": 341,
+    "sha256": "20e13c84498e9ab277dc77fe2183fa0bf303ca6f06e9c3a5c07ae9c9b3f77438",
+    "listingBytes": 341,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/MemberDataListItem/MemberDataListItem.prompt.md",
+    "bytes": 2500,
+    "sha256": "ebc8499e833441c019a2a95e8a35913fb4ecfeb0de740a84357f262701fd4cd3",
+    "listingBytes": 2500,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Progress/Progress.d.ts",
+    "bytes": 734,
+    "sha256": "6aa651a563a4fefad628de2fee2c58bf15260cfaf444833d7c1a901a3e267811",
+    "listingBytes": 734,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Progress/Progress.prompt.md",
+    "bytes": 1560,
+    "sha256": "d3602130ec72178491e65b652ec4c31fd59400a7e58773f638672af6381e3135",
+    "listingBytes": 1560,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.d.ts",
+    "bytes": 590,
+    "sha256": "bc298c4717c50f3cd1cf7a80c2017c8df6c75101784acbf08cb1e9e3a129610a",
+    "listingBytes": 590,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalActionChangeMembers/ProposalActionChangeMembers.prompt.md",
+    "bytes": 2508,
+    "sha256": "a59c95366f72fa82714ae0fb79fd2de3c691c5c10f9cd8f494efaa8bf7a5ccde",
+    "listingBytes": 2508,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.d.ts",
+    "bytes": 595,
+    "sha256": "65518a6e874fe054dc1fc4f3f263d543167366dcf38b05a7dd47ae32f338909e",
+    "listingBytes": 595,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalActionChangeSettings/ProposalActionChangeSettings.prompt.md",
+    "bytes": 2758,
+    "sha256": "d4ec12f34c7230b4b44b61cfbd3cae9a2f34d9e9dabf7d5cd744723e94893e69",
+    "listingBytes": 2758,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.d.ts",
+    "bytes": 570,
+    "sha256": "6cfcc6f91187d66f3b8d76e042d8b5db7145e56bc2a9ac7c75ed5f49f14b6434",
+    "listingBytes": 570,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalActionTokenMint/ProposalActionTokenMint.prompt.md",
+    "bytes": 1637,
+    "sha256": "cf448c14c11549cc8111bf3bc6d730ee4f4ddf3bc39314ff840303e9598ad445",
+    "listingBytes": 1637,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.d.ts",
+    "bytes": 595,
+    "sha256": "0f5bf1acb1c04b052760d4bafcd93f7f4f2ecc04828ead8f26c27df177700bfc",
+    "listingBytes": 595,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalActionUpdateMetadata/ProposalActionUpdateMetadata.prompt.md",
+    "bytes": 4439,
+    "sha256": "f7e920640ab959a69ce8cb5be0f2360e6237c4a393fdb63cdf85e7c3bcab3d7c",
+    "listingBytes": 4439,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.d.ts",
+    "bytes": 590,
+    "sha256": "f7c2bdca6cb7c11ad396c5d1f8a3e72ef155ad16d9baba8297bd865b71301513",
+    "listingBytes": 590,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalActionWithdrawToken/ProposalActionWithdrawToken.prompt.md",
+    "bytes": 2381,
+    "sha256": "24e4607b801a3ab7012dda40b9c9d756630a09039ea19f4632f3af094a6dc78c",
+    "listingBytes": 2381,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ProposalActions/ProposalActions.d.ts",
+    "bytes": 393,
+    "sha256": "00e2e818bf0db6f42f538be18bda59d5e0b13c007e287b5d2ed54cdd6dc901a6",
+    "listingBytes": 393,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalActions/ProposalActions.prompt.md",
+    "bytes": 8899,
+    "sha256": "1625944c089d519a6d39f0503430fab8a639d86d20256e9fb441fc65b975d6a4",
+    "listingBytes": 8899,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalDataListItem/ProposalDataListItem.d.ts",
+    "bytes": 349,
+    "sha256": "adbdcbbd0b25d43b9e7da922bd6be5e345da43fc78631972533cc92cc5ebf301",
+    "listingBytes": 349,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalDataListItem/ProposalDataListItem.prompt.md",
+    "bytes": 3294,
+    "sha256": "d446af94c8cc9f6f20dcaf503985653a1f13bca02d468d5e51afca8c7ed5e53a",
+    "listingBytes": 3294,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalVoting/ProposalVoting.d.ts",
+    "bytes": 705,
+    "sha256": "6422c4264517f72e483accb4315e957dd2d20af554e0785c79a1fe4b441d8674",
+    "listingBytes": 705,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalVoting/ProposalVoting.prompt.md",
+    "bytes": 7287,
+    "sha256": "4536e927ed96cbc330cf8dd7dde0d0bc6ff5553c9563078c8a4152a29dd4e4f1",
+    "listingBytes": 7287,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalVotingProgress/ProposalVotingProgress.d.ts",
+    "bytes": 353,
+    "sha256": "2c845e60f9d6c078009389d1b95bfdc33b0855febda3e198f7ac2c78627a6605",
+    "listingBytes": 353,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ProposalVotingProgress/ProposalVotingProgress.prompt.md",
+    "bytes": 2775,
+    "sha256": "91f37409c6583ebab5c9d26fe6b6856382ca5cc53a659c453e8a5be855ac0fd1",
+    "listingBytes": 2775,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Radio/Radio.d.ts",
+    "bytes": 693,
+    "sha256": "c6bfbacf5cc12a4b5af79371d3b53b792ffbcc1742c81acefee34d1875712b00",
+    "listingBytes": 693,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Radio/Radio.prompt.md",
+    "bytes": 1658,
+    "sha256": "62fbde68a955c592f82dfa939157283b00dbc2a70b4953c34cac11b1963ef33a",
+    "listingBytes": 1658,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/RadioCard/RadioCard.d.ts",
+    "bytes": 811,
+    "sha256": "e7327d9a427f39f675324d7b1f18ba44a402976a2d9d48e39daec2394370be0a",
+    "listingBytes": 811,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/RadioCard/RadioCard.prompt.md",
+    "bytes": 2374,
+    "sha256": "a5700ebc772b340201a597b140db08f96d58beda72c714b76b6aa35166a7a6f4",
+    "listingBytes": 2374,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/RadioGroup/RadioGroup.d.ts",
+    "bytes": 1209,
+    "sha256": "fac4e29fd92d63f6290f79c718b3c7c2447e74358edebd7441030520d22e0782",
+    "listingBytes": 1209,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/RadioGroup/RadioGroup.prompt.md",
+    "bytes": 3284,
+    "sha256": "2a911ebd174041387acac0a45fed0a81bd1411190e64f84746a0c6b29b5e1965",
+    "listingBytes": 3284,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Rerender/Rerender.d.ts",
+    "bytes": 373,
+    "sha256": "34602021f6d71315253a8e8654329ed41d7d310d5f7f7447af4559364327f1de",
+    "listingBytes": 373,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Rerender/Rerender.prompt.md",
+    "bytes": 346,
+    "sha256": "f00a84d8285e02313181c42b801a7b5be7d745707e5eee54f080f098b08bf6f6",
+    "listingBytes": 346,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.d.ts",
+    "bytes": 401,
+    "sha256": "c0ed680329746f0514b7ace35dea8cfad7c483c662d684f9811b765f47e4ee49",
+    "listingBytes": 401,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.prompt.md",
+    "bytes": 1859,
+    "sha256": "226bb6389eb3e79390523c740095d28e985d084bb7728a08d1560cfc94a3494f",
+    "listingBytes": 1859,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Spinner/Spinner.d.ts",
+    "bytes": 685,
+    "sha256": "2b756063d2a2ebc90933b2262f3ae19f08bc84044a1f326c6dada555b38e51e9",
+    "listingBytes": 685,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Spinner/Spinner.prompt.md",
+    "bytes": 1710,
+    "sha256": "2b9e3741623066a00a23bee1ed79e3b43b678f067856510fb34dd9e13dd95b39",
+    "listingBytes": 1710,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/StatePingAnimation/StatePingAnimation.d.ts",
+    "bytes": 438,
+    "sha256": "50f15a66afd718cadedcddeadafde2b2ed635bb56eaa2ca6eae1279140262b0e",
+    "listingBytes": 438,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/StatePingAnimation/StatePingAnimation.prompt.md",
+    "bytes": 1554,
+    "sha256": "d2ae6d3de40e10bc149d97ee5d16f20589e4fed1db5588fa828230c753c62b78",
+    "listingBytes": 1554,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/StateSkeletonBar/StateSkeletonBar.d.ts",
+    "bytes": 838,
+    "sha256": "2814b9aa0c1de4c130bdddf1617a590542ad3701ad1ad3c48269b132dde7742f",
+    "listingBytes": 838,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/StateSkeletonBar/StateSkeletonBar.prompt.md",
+    "bytes": 2032,
+    "sha256": "7cbf5e09277504411b0c94c32a0110ec221959714f2ff1aec6700be0f2c8a152",
+    "listingBytes": 2032,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/StateSkeletonCircular/StateSkeletonCircular.d.ts",
+    "bytes": 692,
+    "sha256": "2772aaab2900c28444566f7b0da3e95abc2fd5f8776ecee25c7e56639fa94364",
+    "listingBytes": 692,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/StateSkeletonCircular/StateSkeletonCircular.prompt.md",
+    "bytes": 1937,
+    "sha256": "a36ecf11abfdbc930b1707326822c12e8d75bf94216646f3e210a0732b391e24",
+    "listingBytes": 1937,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Switch/Switch.d.ts",
+    "bytes": 988,
+    "sha256": "cb72cc75614a153a01f8acf54b70158e030c60772c640c45555a7607fda715f4",
+    "listingBytes": 988,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Switch/Switch.prompt.md",
+    "bytes": 1957,
+    "sha256": "cf1b6371326bd289c77eff1090de9054c3926c08392b1f332bae81a9ad167f61",
+    "listingBytes": 1957,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Tabs/Tabs.d.ts",
+    "bytes": 317,
+    "sha256": "e755943a3e3840c84f0dfa06c9ae2757c51f10138918a6c04f4275d7bdf99f92",
+    "listingBytes": 317,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Tabs/Tabs.prompt.md",
+    "bytes": 3145,
+    "sha256": "1477b0e1197d2a4fee6d4f149910766e01a219091252299eb97d4cd4fac23985",
+    "listingBytes": 3145,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Tag/Tag.d.ts",
+    "bytes": 396,
+    "sha256": "9d95f5b08f606c98ec4f08c6430dba56d8d1f990868b32c8da3c33349e305424",
+    "listingBytes": 396,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Tag/Tag.prompt.md",
+    "bytes": 913,
+    "sha256": "c8645535463f5e08040e554602102866fa0b8b31c8a8d8f2d638bd0d7aea1e78",
+    "listingBytes": 913,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/TextArea/TextArea.d.ts",
+    "bytes": 1134,
+    "sha256": "73b85fc17bae43a046f9a3bb2046345abf7f5de0bafa6833b38c9b9c31eb52a5",
+    "listingBytes": 1134,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TextArea/TextArea.prompt.md",
+    "bytes": 2839,
+    "sha256": "5ae128f340e03a20325ca4cf1c33bd230b360a203630e90c7457b95dd569e89c",
+    "listingBytes": 2839,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/TextAreaRichText/TextAreaRichText.d.ts",
+    "bytes": 1692,
+    "sha256": "b3b9010bf3ec956a9689cf71111b51a757df1ee94b541d2c2ea08854b6acde98",
+    "listingBytes": 1692,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TextAreaRichText/TextAreaRichText.prompt.md",
+    "bytes": 3177,
+    "sha256": "eac8ab6ab421cbd024d7419e02346ea2eca64aed10beb470484fac9f217a178e",
+    "listingBytes": 3177,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Toggle/Toggle.d.ts",
+    "bytes": 370,
+    "sha256": "801cfbba2757c27de71293b8dc5d55734a6dd1a93590ca8f1daef77bb4911bbd",
+    "listingBytes": 370,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Toggle/Toggle.prompt.md",
+    "bytes": 862,
+    "sha256": "4d886eb7868ec518c411a833e218f116062a28bf7c04522032b43c6f8561ad46",
+    "listingBytes": 862,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/ToggleGroup/ToggleGroup.d.ts",
+    "bytes": 881,
+    "sha256": "0df6c6d53d207c10dac7385fe1fbf558db5be693fde3b81f6a5d1308d571632f",
+    "listingBytes": 881,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/ToggleGroup/ToggleGroup.prompt.md",
+    "bytes": 2124,
+    "sha256": "38f582606b254dc6c3b99e63b9af131c78b80241a4766f4b35c6e7e890b25659",
+    "listingBytes": 2124,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/Tooltip/Tooltip.d.ts",
+    "bytes": 1258,
+    "sha256": "2389519d0ff491779e0d597994a2439d8a33430d0e47129399b7d739ec7266eb",
+    "listingBytes": 1258,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Tooltip/Tooltip.prompt.md",
+    "bytes": 2715,
+    "sha256": "87fe5f401574db55cf64d6f1ca0b0aaf450eef15f5b63b9a39a628d3d977dcab",
+    "listingBytes": 2715,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/TransactionDataListItem/TransactionDataListItem.d.ts",
+    "bytes": 361,
+    "sha256": "81a12a379c5a0caa131091bf4e4e0b9bd0adf1a9da6a92eba3a9d2514f1293cb",
+    "listingBytes": 361,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TransactionDataListItem/TransactionDataListItem.prompt.md",
+    "bytes": 2836,
+    "sha256": "2abe8e140fa7ce440143ba15d55104ce0f7ca5b966afbf9a437898992c64f579",
+    "listingBytes": 2836,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TransactionDetail/TransactionDetail.d.ts",
+    "bytes": 248,
+    "sha256": "9e18f8b06dcd327dc1c45bb1844b131fe826e2a76a6935ee0771363bf131f0d4",
+    "listingBytes": 248,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TransactionDetail/TransactionDetail.prompt.md",
+    "bytes": 2109,
+    "sha256": "395d65f99f15a75786e64b81673cf00fbff8c7e03bdb3078ff5b818d5fc973cc",
+    "listingBytes": 2109,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TransactionDetailSummary/TransactionDetailSummary.d.ts",
+    "bytes": 1142,
+    "sha256": "fe0ca49b09028184dc64478139443950d48750dcf0eeb2d9f370b8f69aa6901f",
+    "listingBytes": 1142,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/TransactionDetailSummary/TransactionDetailSummary.prompt.md",
+    "bytes": 2649,
+    "sha256": "fbad8aec67082db79f174cbc943dcd41be2fe09b79a99e23a540c8e7a66fd271",
+    "listingBytes": 2649,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/general/VoteDataListItem/VoteDataListItem.d.ts",
+    "bytes": 333,
+    "sha256": "298ac9bdebd51bebfa44d39510c9a93b40381a8a17c2a72df552e57f032ffd96",
+    "listingBytes": 333,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/VoteDataListItem/VoteDataListItem.prompt.md",
+    "bytes": 2403,
+    "sha256": "fcb699f1fc93fac903be6795b181ecd77d8ad654e4351da0cfba3c9d97ecbc53",
+    "listingBytes": 2403,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.d.ts",
+    "bytes": 365,
+    "sha256": "88ba1bcb839ce34ba78af3dadbea9c21702c6a24fd64b3c8fbc7df909be936e0",
+    "listingBytes": 365,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/VoteProposalDataListItem/VoteProposalDataListItem.prompt.md",
+    "bytes": 2247,
+    "sha256": "ff746bd4bcf292244fafb8bfeb0922838d3d3a2a3da8855fe014a91c73652b29",
+    "listingBytes": 2247,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Wallet/Wallet.d.ts",
+    "bytes": 544,
+    "sha256": "d4e474de9404fc0b006578d578c29864c6f401bea0173e5332d20c1b407bfd02",
+    "listingBytes": 544,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/general/Wallet/Wallet.prompt.md",
+    "bytes": 1234,
+    "sha256": "c2a93bc43f348eabeb7e8f4f8636e4eea6d695a7100422e652b315d0e860ac88",
+    "listingBytes": 1234,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "components/shared/AragonLogo/AragonLogo.d.ts",
+    "bytes": 226,
+    "sha256": "cba0b7f1ff75e5cf40a6bd0ef7b66fe450d5ad14454bdde88730f75a610c5c48",
+    "listingBytes": 226,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/AragonLogo/AragonLogo.prompt.md",
+    "bytes": 887,
+    "sha256": "f4050bdc87b40c7fac183bd448a2adf897c48512cfa36815bb7ca347703e98e9",
+    "listingBytes": 887,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/Banner/Banner.d.ts",
+    "bytes": 210,
+    "sha256": "caaf84e89286f772db33964e724a3bfffd835cd46a6ed0e1d1f51bab94e3e3d3",
+    "listingBytes": 210,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/Banner/Banner.prompt.md",
+    "bytes": 1018,
+    "sha256": "bce14b7db7724081a530c9f6e8947914a6fb0d5fd52dd2f2a83558fe769f1e3f",
+    "listingBytes": 1018,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/Carousel/Carousel.d.ts",
+    "bytes": 218,
+    "sha256": "5768c71870e24222beff5581b6432cc2a0d5bfa9d233efd3aa3375528c9e0355",
+    "listingBytes": 218,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/Carousel/Carousel.prompt.md",
+    "bytes": 678,
+    "sha256": "58f3853e83559a221899c295916cb6b163ffa9c7f3d05fc4e9047889b7a6ab27",
+    "listingBytes": 678,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/Container/Container.d.ts",
+    "bytes": 222,
+    "sha256": "ed71208e798738bd54d143e161bb86a6793e0e9e438137b580fa40b02e5ded84",
+    "listingBytes": 222,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/Container/Container.prompt.md",
+    "bytes": 1851,
+    "sha256": "a2e74adef596959b8cbfba5eed6edec0b9c20eaf74efe0d5e89a504e436ae962",
+    "listingBytes": 1851,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/CtaCard/CtaCard.d.ts",
+    "bytes": 214,
+    "sha256": "f49b688d1a6d57b4172df54124df33846da5140135316a171b48d4f9c3f51361",
+    "listingBytes": 214,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/CtaCard/CtaCard.prompt.md",
+    "bytes": 1714,
+    "sha256": "179dab9e0d8494ab3ca2ff4a9ed2723be5a270a7f1ca65f5c107d47ec97ae9c3",
+    "listingBytes": 1714,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/DaoTargetIndicator/DaoTargetIndicator.d.ts",
+    "bytes": 258,
+    "sha256": "d5eeb52b19dfba27dcf17e3aa8550203cb4c99cb673453ee32cecb210913e97b",
+    "listingBytes": 258,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/DaoTargetIndicator/DaoTargetIndicator.prompt.md",
+    "bytes": 754,
+    "sha256": "292e433b3795d32d16bd0c3f726fdb0ab3a437b727e11f507152d3611d1d194c",
+    "listingBytes": 754,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/DaoTypeTag/DaoTypeTag.d.ts",
+    "bytes": 226,
+    "sha256": "0c711c20c6c0093ef8ccd248e1452e2545d99dcc124498019fcd908269c16784",
+    "listingBytes": 226,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/DaoTypeTag/DaoTypeTag.prompt.md",
+    "bytes": 661,
+    "sha256": "eaf3c464465861c1a11f358506593f929d40c787e22bc6b3d8bcf1d1b18f2880",
+    "listingBytes": 661,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/DialogProvider/DialogProvider.d.ts",
+    "bytes": 242,
+    "sha256": "0e9e066ad0b7f92844a62b75ace407742d8699e3df0670a071d3cb9c2025f18f",
+    "listingBytes": 242,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/DialogProvider/DialogProvider.prompt.md",
+    "bytes": 128,
+    "sha256": "3284e699b6137086f65ee9b3af3d9fdc6f4da362c08ec30d2d72b86e544029e1",
+    "listingBytes": 128,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/ErrorFeedback/ErrorFeedback.d.ts",
+    "bytes": 238,
+    "sha256": "c1372bdc70c75d41ae06a609f7bbc6c598eda195c6145a3f66938d7d5e4e693b",
+    "listingBytes": 238,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/ErrorFeedback/ErrorFeedback.prompt.md",
+    "bytes": 495,
+    "sha256": "b62275bb1e07414600082186d75abdb397f79063e5b67f68d5d067c78c435bc0",
+    "listingBytes": 495,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/FooterInfo/FooterInfo.d.ts",
+    "bytes": 226,
+    "sha256": "57933b7f91aced51ee45640c1d78cf02e6dfe9e6a3ba63f6ffe184e15e8d6508",
+    "listingBytes": 226,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/FooterInfo/FooterInfo.prompt.md",
+    "bytes": 670,
+    "sha256": "369567b43c11159d834f07e6cd9dddb3a160b98d5b33cf446320d47c59e85391",
+    "listingBytes": 670,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/KeyboardShortcut/KeyboardShortcut.d.ts",
+    "bytes": 250,
+    "sha256": "617651d7eec914caa7fe0c4255d7b05ae74adc28ba8aadba651794632bb10928",
+    "listingBytes": 250,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/KeyboardShortcut/KeyboardShortcut.prompt.md",
+    "bytes": 776,
+    "sha256": "4b2bb3a62261e219d637a43afd08a73f9b1a941d4a9c14544d33d9542f92ed54",
+    "listingBytes": 776,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.d.ts",
+    "bytes": 258,
+    "sha256": "785df28dae3a324af73af54c66a4d82a44d23047a0cf50a424bae09fd8804d15",
+    "listingBytes": 258,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/NetworkSwitchAlert/NetworkSwitchAlert.prompt.md",
+    "bytes": 676,
+    "sha256": "4f083c3325f7f15c143f52070d57c5d8ec4eec8ec043d55585b6a5327ea96fb7",
+    "listingBytes": 676,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/ResourceLink/ResourceLink.d.ts",
+    "bytes": 234,
+    "sha256": "8aff8374945b9e63961a62186940fa04b7a83d16fbabff1c9a261fd0f72064c4",
+    "listingBytes": 234,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/ResourceLink/ResourceLink.prompt.md",
+    "bytes": 1208,
+    "sha256": "36244ec8bdb87e63a8310ac57c9e9801f2a689ab70b189de1136c9a67cfd238a",
+    "listingBytes": 1208,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/SafeDocumentParser/SafeDocumentParser.d.ts",
+    "bytes": 258,
+    "sha256": "f0ec3f7f918c71b22270e6c27ef1988e470a0118e561b8ee43aee7179c46d5ae",
+    "listingBytes": 258,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/SafeDocumentParser/SafeDocumentParser.prompt.md",
+    "bytes": 457,
+    "sha256": "80c53026df2d81812f245a73cda054ddc1d7bcff5b37f5166056255970000375",
+    "listingBytes": 457,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/SafeHtml/SafeHtml.d.ts",
+    "bytes": 218,
+    "sha256": "adb911deb509c40aac0157f7573e5e641ce6f7a2ed1fd43913f6171e8585beb4",
+    "listingBytes": 218,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/SafeHtml/SafeHtml.prompt.md",
+    "bytes": 714,
+    "sha256": "2aec21d550c891b38256355317f4fcac5c45a4303b32b077820671938c401887",
+    "listingBytes": 714,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/StatCard/StatCard.d.ts",
+    "bytes": 218,
+    "sha256": "3c0c6436fc4268e055440a342119be41d49cdbbcf165309ac721f4f972a4ad04",
+    "listingBytes": 218,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/StatCard/StatCard.prompt.md",
+    "bytes": 774,
+    "sha256": "e1b3b30dbca3d7972fef48f2bfcdbf01bd030019f00124cc4d0f39792f50f863",
+    "listingBytes": 774,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/TranslationsProvider/TranslationsProvider.d.ts",
+    "bytes": 266,
+    "sha256": "732b5f94a6cd65e6e752e4a43b423bd4c272c8481f6cef7b32ee97ee584e37b1",
+    "listingBytes": 266,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/TranslationsProvider/TranslationsProvider.prompt.md",
+    "bytes": 140,
+    "sha256": "982bf195294c062cebba07a6e3ccb48c278295fd499aac8980e0710a8a4372e2",
+    "listingBytes": 140,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/WizardDetailsDialog/WizardDetailsDialog.d.ts",
+    "bytes": 262,
+    "sha256": "9dba90db6fbc6ab19149ce1a6b3a7295c81467251e585da90a9d1e452fa50f15",
+    "listingBytes": 262,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/shared/WizardDetailsDialog/WizardDetailsDialog.prompt.md",
+    "bytes": 2978,
+    "sha256": "6d7dccf2595e2f400e6d00e0f85ed1ede858dd918b5e7bd3ef062554e536d58a",
+    "listingBytes": 2978,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/wizards/Wizard/Wizard.d.ts",
+    "bytes": 210,
+    "sha256": "10f7ce8ea51cafbcf36f71ac4117d5d76e3df544dad4cdbebd9e1b4049008335",
+    "listingBytes": 210,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/wizards/Wizard/Wizard.prompt.md",
+    "bytes": 1142,
+    "sha256": "60b6c2eecb4447355e029891557b4960eb06b838490080351f4203a2b6108e08",
+    "listingBytes": 1142,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/wizards/WizardDialog/WizardDialog.d.ts",
+    "bytes": 234,
+    "sha256": "f020b4eba9639c0920bc0c8d9bec6a8e7f2eeb04411fbc3a9ddbecb39b924010",
+    "listingBytes": 234,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/wizards/WizardDialog/WizardDialog.prompt.md",
+    "bytes": 4074,
+    "sha256": "a8b2d3b6f504ec8d60314bb15dcf270f6ea29885883b2b4ff7f4cebf2487110c",
+    "listingBytes": 4074,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/wizards/WizardPage/WizardPage.d.ts",
+    "bytes": 226,
+    "sha256": "6cce3b660bc41fd51997898371aee929c92cfb586db8edfaf8f61312e8e4e529",
+    "listingBytes": 226,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "components/wizards/WizardPage/WizardPage.prompt.md",
+    "bytes": 4973,
+    "sha256": "9eafde7fc6cf67fc3194e6f76e212490f8ab460c3b4e7be4c9ef86e9f4678056",
+    "listingBytes": 4973,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": false
+   },
+   {
+    "path": "fonts/fonts.css",
+    "bytes": 321,
+    "sha256": "3b5faa33bf84ae39225b2a0986f4d3c9ea46b778c7152e31c1d5435c1e1385a9",
+    "listingBytes": 321,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   },
+   {
+    "path": "styles.css",
+    "bytes": 57,
+    "sha256": "76eb38b2044fbe4cc5b59ad2eef70e3b4669a8b83ae9082cde1122fdb8bf37df",
+    "listingBytes": 57,
+    "sizeMatchesListing": true,
+    "identicalToCandidateLocal": true
+   }
+  ]
+ }
+}

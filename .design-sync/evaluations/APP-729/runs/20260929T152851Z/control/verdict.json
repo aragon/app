@@ -1,0 +1,157 @@
+{
+  "criteria": [
+    {
+      "id": 1,
+      "name": "Supported composition and exact public contracts",
+      "verdict": "met",
+      "evidence": [
+        {"quote": "└ AddressesInput.Container name=\"members\" label helpText\n            └ AddressesInput.Item index={i}   (one per field-array entry)", "handoffLines": "18-19",
+         "payloadCheck": "_ds_bundle.js:121967-121970 `var AddressesInput = { Container: AddressesInputContainer, Item: AddressesInputItem }`; source path comments apps/app/src/shared/components/forms/addressesInput/* show it is App-owned (README: groups shared/wizards/forms are the App's own components)."},
+        {"quote": "`AddressesInput.d.ts` ships as `[key: string]: unknown` — there is **no published type**. The following is destructured verbatim from the compiled implementation (`_ds_bundle.js:119835` and `:121885`).", "handoffLines": "30",
+         "payloadCheck": "components/forms/AddressesInput/AddressesInput.d.ts is `[key: string]: unknown`; _ds_bundle.js:119835-119845 destructures children, fieldPrefix, name, allowEmptyList, onAddClick, label, helpText, showResetAllAction = true; :121886 destructures index, disabled, customValidator, chainId. Matches the two prop tables exactly."},
+        {"quote": "`AddressesInput.Item` throws outside `AddressesInput.Container` (`useAddressesInputContext: the hook must be used within AddressesInputContextProvider`)", "handoffLines": "22",
+         "payloadCheck": "_ds_bundle.js:119789-119792 asserts with that exact message."},
+        {"quote": "Remove button: `canRemove = members.length > 1` — disabled at one row **regardless of `allowEmptyList`**.", "handoffLines": "61",
+         "payloadCheck": "_ds_bundle.js:121893 `const canRemove = membersField.length > 1;` and Item buttons `disabled: !canRemove`; container handleRemoveMember honors allowEmptyList (119855-119861)."}
+      ],
+      "defects": [
+        "Prop types in the tables (e.g. `label: ReactNode`, `customValidator: (member) => string | true`) are inferred from compiled JS; the handoff states no published type exists but does not mark the individual type annotations as inferred.",
+        "Does not state that AddressesInput is an App-owned component rather than a gov-ui-kit primitive; line 5 attributes everything to '@aragon/gov-ui-kit@2.10.0'."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Prefill, add/edit/remove, editable-versus-accepted state, invalid/duplicate handling",
+      "verdict": "partially met",
+      "evidence": [
+        {"quote": "defaultValues={{ members: existingAddresses.map((address) => ({ address })) }}", "handoffLines": "83",
+         "payloadCheck": "_ds_bundle.js:105271-105290 WizardPageContainer destructures defaultValues and passes to Wizard.Root; 104975-104978 `useForm({ mode: \"onTouched\", defaultValues })`."},
+        {"quote": "Inside `Item`, the visible text is **local component state** (`const [addressInput, setAddressInput] = useState(value.address)`), wired to `AddressInput.onChange`. Form state is written **only** from `AddressInput.onAccept`.", "handoffLines": "66",
+         "payloadCheck": "_ds_bundle.js:121912-121928: useState(value.address); `onAccept: handleAddressAccept` -> onAddressChange({address, name}); `onChange: setAddressInput`. Correct."},
+        {"quote": "- typing → local only; the form value keeps the last accepted `{ address, name }`;", "handoffLines": "68",
+         "payloadCheck": "Contradicted by _ds_bundle.js:103856-103867: onAccept effect runs on every 300ms-debounced value change and calls `e3?.(void 0)` for any non-address/non-resolved intermediate text, so the form value is overwritten (to {address: undefined, name: undefined}) during typing, not kept."},
+        {"quote": "- unresolvable/invalid → `onAccept(undefined)` → form value cleared → `required` fires.", "handoffLines": "70",
+         "payloadCheck": "Item maps onAccept(undefined) to onChange({address: undefined, name: undefined}) (121916), an object. RHF isEmpty check (_ds_bundle.js:99337) treats only undefined/''/empty array as empty, so `required` does not fire; `validate` returns `...error.invalid` via isAddress(undefined)=false (121865-121867)."},
+        {"quote": "2. `checkIsAlreadyInList(members, index, address)` — `isAddressEqual` against **`members.slice(0, index)`** only → `…error.alreadyInList` → **\"Address has already been added.\"** Only the *later* occurrence is flagged; the first stays clean.", "handoffLines": "121",
+         "payloadCheck": "_ds_bundle.js:121862-121874 and en strings 109669-109672. Correct."},
+        {"quote": "5. **Rendering a fixed number of `Item` children.** `Container` maps `Children.map(children, …)` and returns `null` for any child at `index >= fields.length`", "handoffLines": "160",
+         "payloadCheck": "_ds_bundle.js:119915-119924 childrenWithKeys returns null when index5 >= membersField.length; add uses append({address:''}) (119862-119868). Correct."},
+        {"quote": "(Note the asymmetry: the field-array `validate` uses non-strict `isAddress`, so the row can look accepted to RHF while `AddressInput` visually rejects it. Checksum on the way in.)", "handoffLines": "92",
+         "payloadCheck": "Partly contradicted: _ds_bundle.js:103859-103867 emits onAccept(undefined) once not fetching when V (checksum failure) is true, which clears the RHF address, so RHF will not keep it as accepted. The checksum-on-seed recommendation itself is supported (enforceChecksum default true, 103855)."}
+      ],
+      "defects": [
+        "Line 68 states the form value keeps the last accepted value while typing; the source emits onAccept(undefined) on each debounced non-address input, clearing it.",
+        "Line 70 states `required` fires on an unresolved row; the stored value is an object, so the error type is the `validate` 'invalid' message, not `required`.",
+        "Line 92 asymmetry claim is inconsistent with the mount-time onAccept(undefined) the same bullet describes."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Wizard form ownership and navigation",
+      "verdict": "met",
+      "evidence": [
+        {"quote": "`WizardPage.Container` → `Wizard.Root` calls `useForm({ mode: 'onTouched', defaultValues })` and renders `FormProvider`; `Wizard.Form` renders the single `<form>` and, on submit, calls `handleSubmit(hasNext ? nextStep : onSubmit, handleInvalidSubmit)`. The step contributes fields only", "handoffLines": "24",
+         "payloadCheck": "_ds_bundle.js:104975-104978 useForm; 105041-105044 FormProvider; 104744-104749 handleFormSubmit with submitCallback = hasNext ? nextStep : onSubmit; 105281-105300 WizardPageContainer wraps Wizard.Form."},
+        {"quote": "1. **Wrapping the step in `FormWrapper` (or any nested `<form>`).** `FormWrapper` calls its own `useForm` + `FormProvider`; the step's fields would register in that inner form and be invisible to the wizard's `handleSubmit`", "handoffLines": "156",
+         "payloadCheck": "_ds_bundle.js:126088-126097 FormWrapper = useForm + FormProvider. Correct."},
+        {"quote": "`Wizard.Form`'s submit handler gates navigation: invalid → `handleInvalidSubmit` (analytics only), `nextStep` is not called, so **Next is blocked automatically**.", "handoffLines": "131",
+         "payloadCheck": "_ds_bundle.js:104729-104742 handleInvalidSubmit only tracks analytics. Correct."}
+      ],
+      "defects": []
+    },
+    {
+      "id": 4,
+      "name": "Provider, checksum, ENS, and network semantics",
+      "verdict": "met",
+      "evidence": [
+        {"quote": "**ENS is pinned to mainnet.** Both `useEnsAddress` and `useEnsName` are called with `chainId: mainnet.id`, independent of the `chainId` prop. The `chainId` prop is used for block-explorer URL building only.", "handoffLines": "105",
+         "payloadCheck": "_ds_bundle.js:103855 `y3 = mainnet.id`, useEnsAddress/useEnsName use `chainId: y3`; `bp({ chainId: u4 })` builds entity URL. Correct."},
+        {"quote": "ENS queries are enabled only when the active wagmi config's mainnet chain exposes `contracts.ensUniversalResolver`", "handoffLines": "106",
+         "payloadCheck": "_ds_bundle.js:103855 `S3 = null != _3?.contracts?.ensUniversalResolver`, both queries `enabled: S3 && ...`. Correct."},
+        {"quote": "| `GukModulesProvider` | `AddressInput` calls `useConfig`, `useQueryClient`, `useEnsAddress`, `useEnsName` | throws at render |", "handoffLines": "143",
+         "payloadCheck": "README 'Setup & wrapping': AddressInput is a module component needing GukModulesProvider, 'Without it they throw at render'; bundle 103855 calls useQueryClient/useConfig."},
+        {"quote": "`GukModulesProvider` takes no required props and bundles its own react-query + wagmi defaults.", "handoffLines": "148",
+         "payloadCheck": "components/general/GukModulesProvider/GukModulesProvider.d.ts: all props optional; README same wording."}
+      ],
+      "defects": [
+        "Line 146: 'the unsaved-changes exit guard is silently inert' without BlockNavigationContextProvider overstates it; _ds_bundle.js:104803-104830 still installs popstate/beforeunload handlers; only setIsBlocked is a no-op default (104784-104787)."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Unsupported assumptions and invented policy",
+      "verdict": "partially met",
+      "evidence": [
+        {"quote": "- Any app-side minimum/maximum member count rule; the component only enforces \"at least one row\" and offers no maximum. **[UNESTABLISHED]**", "handoffLines": "226",
+         "payloadCheck": "No min/max rule in Container/Item source (119834-119975, 121884-121965); correctly left to the app and marked unknown."},
+        {"quote": "The real wizard's step ids, `order` values, and the canonical field path for members (plain `members` vs. a `fieldPrefix`-scoped path such as `body.members`). No app route or create-DAO flow source is present in this project. **[UNESTABLISHED]**", "handoffLines": "222",
+         "payloadCheck": "No create-DAO flow source in PAYLOAD; correctly marked."},
+        {"quote": "Provider **order** beyond \"all four present, wizard inside them\" is **[UNESTABLISHED]** here: the shipped preview harness only demonstrates `DebugContextProvider > TranslationsProvider > FormWrapper`", "handoffLines": "150",
+         "payloadCheck": "Contradicted: _preview/AddressesInput.js:111 AppForm = DebugContextProvider > TranslationsProvider > GukModulesProvider > FormWrapper."},
+        {"quote": "`FormWrapper` exists for isolated component previews.", "handoffLines": "156",
+         "payloadCheck": "Not established: README 'App form inputs' presents FormWrapper as the wrapper for app form inputs without restricting it to previews; unmarked inference (conclusion that it must not be nested in the wizard is still supported by source)."}
+      ],
+      "defects": [
+        "Line 150 misstates the preview harness provider stack (omits GukModulesProvider, which the harness does include).",
+        "Unmarked factual claims about state transitions (lines 68, 70, 92) that the source contradicts (see criterion 2).",
+        "No invented component props, providers, or source paths found; no App duplicate/required policy delegated to the AddressInput primitive."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Compile usefulness and mechanically resolvable evidence",
+      "verdict": "partially met",
+      "evidence": [
+        {"quote": "| Container implementation | `_ds_bundle.js:119796–119978` |", "handoffLines": "172",
+         "payloadCheck": "Range contains the addressesInputContainer.tsx module. All eight _ds_bundle.js ranges in lines 172-179 resolve to the stated content."},
+        {"quote": "| Usage examples (default / filled / checksum error) | `components/forms/AddressesInput/AddressesInput.prompt.md`, compiled `_preview/AddressesInput.js:108–150` |", "handoffLines": "180",
+         "payloadCheck": "Prompt headings Default/Filled/ChecksumError exist; preview 108-150 contains the three examples."},
+        {"quote": "<AddressesInput.Item index={index} key={index} chainId={chainId} />", "handoffLines": "208",
+         "payloadCheck": "`chainId` is not declared in the MembersStep snippet (lines 192-213); `useWatch` import not shown; components accessed via `window.GovUiKit` with no App import path given (bundle source-path comments apps/app/src/shared/components/forms/addressesInput/ are not cited)."},
+        {"quote": "| `AddressInput` prop docs | `components/general/AddressInput/AddressInput.prompt.md`, `.d.ts` |", "handoffLines": "181",
+         "payloadCheck": "Path-only citation; does not resolve under the rules."}
+      ],
+      "defects": [
+        "Reference composition references undeclared `chainId`; would not compile as written.",
+        "No App-side import specifier for AddressesInput/WizardPage and it is not marked unknown.",
+        "Three path-only citations (AddressInput.prompt.md, AddressInput.d.ts, WizardPage.prompt.md) and one contradicting citation (preview harness, line 150)."
+      ]
+    }
+  ],
+  "prohibited": [
+    {"id": "P0", "verdict": "not committed", "quote": "1. **Wrapping the step in `FormWrapper` (or any nested `<form>`).** `FormWrapper` calls its own `useForm` + `FormProvider`; the step's fields would register in that inner form and be invisible to the wizard's `handleSubmit`"},
+    {"id": "P1", "verdict": "not committed", "quote": "Inside `Item`, the visible text is **local component state** (`const [addressInput, setAddressInput] = useState(value.address)`), wired to `AddressInput.onChange`. Form state is written **only** from `AddressInput.onAccept`."},
+    {"id": "P2", "verdict": "not committed", "quote": "3. **Using bare `AddressInput` + hand-rolled rows.** Loses `required`, the duplicate check, the checksum normalization path, the re-validation trigger, and the wizard's navigation gate."},
+    {"id": "P3", "verdict": "not committed", "quote": "`AddressesInput.d.ts` ships as `[key: string]: unknown` — there is **no published type**. The following is destructured verbatim from the compiled implementation (`_ds_bundle.js:119835` and `:121885`)."}
+  ],
+  "citations": {
+    "resolved": 20,
+    "unresolved": 3,
+    "contradicting": 1,
+    "unresolvedList": [
+      {"citation": "components/general/AddressInput/AddressInput.prompt.md (line 181)", "reason": "path alone"},
+      {"citation": "components/general/AddressInput/AddressInput.d.ts (line 181)", "reason": "path alone"},
+      {"citation": "components/wizards/WizardPage/WizardPage.prompt.md (line 182)", "reason": "path alone"},
+      {"citation": "preview harness 'only demonstrates DebugContextProvider > TranslationsProvider > FormWrapper' (line 150)", "reason": "contradicting: _preview/AddressesInput.js:111 includes GukModulesProvider between TranslationsProvider and FormWrapper"}
+    ]
+  },
+  "diagnostics": [
+    "Resolved citations: _ds_sync.json bundleSha12 and three renderHashes (AddressesInput 2eaaf9b088e51cee, AddressInput ab8c9fdc00581bac, WizardPage 8ca5c5d8cb186c61); _ds_bundle.js:119835, :121885, :103854; eight bundle ranges in §8; _preview/AddressesInput.js:108-150; AddressesInput.prompt.md examples; useAddressesInputContext error string; README 'App form inputs' and 'Styling idiom' sections.",
+    "Line 78 paraphrases README 'App form inputs' as hydrating 'from the owning form's defaultValues'; README literally says 'hydrate ONLY from FormWrapper defaultValues'. Handoff's reading is supported by bundle source (Wizard.Root useForm defaultValues) and README 'Form fields inside steps get their form context from the wizard'.",
+    "README's WizardPage.Container prop list omits defaultValues; the handoff's claim that it is accepted is established only by _ds_bundle.js:105271-105290.",
+    "Handoff mentions a styling idiom via README in §8 but no CSS/Tailwind custom-property guidance is given; none needed."
+  ],
+  "outsideRubric": [
+    "On mount, AddressInput's onAccept effect (_ds_bundle.js:103859-103867) calls onChange({address, name}) for each prefilled row, which may mark the seeded form dirty and engage useConfirmWizardExit immediately; the handoff does not address this.",
+    "Handoff does not mention that inactive WizardPage steps unmount/remount, or whether field values persist across step navigation; not asserted either way."
+  ],
+  "usability": {
+    "verdict": "usable with corrections",
+    "drivers": [
+      "criterion 2: typing-state and required-vs-invalid claims (lines 68, 70, 92) contradict the AddressInput/RHF source; developer must not rely on 'form keeps last accepted value' or 'required' error type.",
+      "criterion 5: preview-harness provider stack misstated (line 150).",
+      "criterion 6: reference snippet uses undeclared chainId and gives no App import path; three path-only citations.",
+      "criteria 1, 3, 4: core composition (WizardPage.Container > Step > AddressesInput.Container > Item), wizard form ownership, defaultValues seeding, duplicate/invalid rules, and ENS/checksum/chainId semantics are correct and source-backed."
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "candidate": {"preUpload": "575 files / 8,676,148 bytes / manifest af41067c... / app 2b512b90... / 0 mismatches",
+    "servedListing": "575 path+size exact match after upload; post-compile 576 = 575 - _ds_needs_recompile + _ds_manifest.json + _adherence.oxlintrc.json",
+    "servedHashes": "18/18 critical files sha256+bytes match manifest (incl. README, _ds_sync.json, _ds_bundle.css, all guidelines/*, AddressesInput/AddressInput/FormWrapper/WizardPage .d.ts+.prompt.md)",
+    "bundleJs": "size-only 5,175,889 (over 256 KiB read cap)",
+    "embeddedRevisions": {"app": "2b512b90d3093f1170a14f2ccf7eab41dcc7f036 (guidelines/context/index.md)", "govKit": "64b517f5b90052797ecaced5f15ab616b5733f30"}},
+  "control": {"source": "production 2f22a679 (568 files); copied server-side via copy_files, 567 files / 8,555,533 bytes, excluded stray handoff/members-step-handoff.md, _ds_sync.json copied last",
+    "servedListing": "567 path+size exact match to production minus handoff, pre- and post-compile",
+    "servedHashes": "12/12 critical files identical to production; _ds_bundle.css (05b17a94...) and _ds_manifest.json (29d1c646...) mechanically hashed from saved results; small files compared via inline-read transcription + size match (weaker method, no mismatch found)",
+    "bundleJs": "size-only 5,542,197 = production",
+    "embeddedRevisions": "none found in README.md or _ds_sync.json (production payload carries no 40-hex commit SHA)"},
+  "graderPayloadCaveat": "control/payload/ (231 files) size-matched to listing; 62 byte-identical to candidate local copies; remainder transcribed from inline reads and size-checked, not hash-checked",
+  "verdict": "PASS — no mismatch"
+}
