@@ -1,4 +1,5 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,11 +12,20 @@ import {
     generateSppStage,
 } from '@/plugins/sppPlugin/testUtils';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
-import { Network } from '@/shared/api/daoService';
+import * as daoService from '@/shared/api/daoService';
+import {
+    type IDao,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
-import { generateDialogContext } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateDialogContext,
+} from '@/shared/testUtils';
 import type {
     ISafeMultisigBodyReport,
     ISafeMultisigSettledReport,
@@ -46,6 +56,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     );
     const dialogOpen = jest.fn();
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useFeatureFlagsSpy = jest.spyOn(
         featureFlagsProvider,
         'useFeatureFlags',
@@ -69,6 +80,8 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     });
     const stage = generateSppStage({ stageIndex: 1 });
     const executedHash = `0x${'4'.repeat(64)}` as `0x${string}`;
+    const pendingTransactionHref = `https://app.safe.global/transactions/tx?safe=sep:${safeAddress}&id=multisig_${safeAddress}_0xsafeTxHash`;
+    const accountHref = `https://app.safe.global/home?safe=sep:${safeAddress}`;
 
     const createPendingReport = (
         transaction?: Partial<ISafeMultisigTransaction>,
@@ -102,6 +115,43 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         },
     });
 
+    const selectVoteMode = async (
+        route:
+            | 'approveAndExecute'
+            | 'approveOnly'
+            | 'vetoAndExecute'
+            | 'vetoOnly',
+    ) => {
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreVotingOptions',
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('menuitemradio', {
+                name: `app.plugins.safeMultisig.safeMultisigSubmitVote.${route}`,
+            }),
+        );
+    };
+
+    const clickPrimaryAction = async (
+        route:
+            | 'approve'
+            | 'veto'
+            | 'approveAndExecute'
+            | 'approveOnly'
+            | 'vetoAndExecute'
+            | 'vetoOnly'
+            | 'executeSafeTransaction',
+    ) => {
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: `app.plugins.safeMultisig.safeMultisigSubmitVote.${route}`,
+            }),
+        );
+    };
+
+    // A menu choice only sets the primary button's mode; execution follows the primary click.
     const clickVoteAction = async (
         route:
             | 'approveAndExecute'
@@ -109,18 +159,8 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             | 'vetoAndExecute'
             | 'vetoOnly' = 'approveAndExecute',
     ) => {
-        const trigger = route.startsWith('veto') ? 'veto' : 'approve';
-
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: `app.plugins.safeMultisig.safeMultisigSubmitVote.${trigger}`,
-            }),
-        );
-        await userEvent.click(
-            screen.getByRole('menuitem', {
-                name: `app.plugins.safeMultisig.safeMultisigSubmitVote.${route}`,
-            }),
-        );
+        await selectVoteMode(route);
+        await clickPrimaryAction(route);
     };
 
     const createTestComponent = (
@@ -154,6 +194,9 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             result: true,
         });
         useSafeBodyStateSpy.mockReturnValue(baseState);
+        useDaoSpy.mockReturnValue({
+            data: undefined,
+        } as UseQueryResult<IDao, Error>);
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ open: dialogOpen }),
         );
@@ -286,6 +329,253 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         expect(dialogOpen).not.toHaveBeenCalled();
     });
 
+    it('changes mode without executing until the primary action is clicked', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            hasConnectedWalletSigned: false,
+            isExecutableNow: true,
+            pendingReport: createPendingReport({
+                confirmations: [
+                    generateSafeConfirmation({
+                        owner: '0x0000000000000000000000000000000000000012',
+                    }),
+                ],
+                confirmationsRequired: 1,
+            }),
+        });
+
+        renderCard();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        ).toBeEnabled();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreVotingOptions',
+            }),
+        );
+        expect(
+            screen.getByRole('menuitemradio', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        ).toHaveAttribute('aria-checked', 'true');
+        expect(
+            screen.getByRole('menuitemradio', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveOnly',
+            }),
+        ).toHaveAttribute('aria-checked', 'false');
+
+        await userEvent.click(
+            screen.getByRole('menuitemradio', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveOnly',
+            }),
+        );
+        expect(dialogOpen).not.toHaveBeenCalled();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveOnly',
+            }),
+        ).toBeEnabled();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        ).not.toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreVotingOptions',
+            }),
+        );
+        expect(
+            screen.getByRole('menuitemradio', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveOnly',
+            }),
+        ).toHaveAttribute('aria-checked', 'true');
+        await userEvent.click(
+            screen.getByRole('menuitemradio', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+        expect(dialogOpen).not.toHaveBeenCalled();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeDialogId.PROPOSAL_TRANSACTION,
+            expect.objectContaining({
+                params: expect.objectContaining({ bundleExecution: true }),
+            }),
+        );
+    });
+
+    it('uses bundled approval as the direct default action', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            isExecutableNow: true,
+            pendingReport: createPendingReport({ confirmationsRequired: 1 }),
+        });
+
+        renderCard();
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeDialogId.PROPOSAL_TRANSACTION,
+            expect.objectContaining({
+                params: expect.objectContaining({ bundleExecution: true }),
+            }),
+        );
+    });
+
+    it('routes the sign-only primary click through the vote guard', async () => {
+        const check = jest.fn();
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check,
+            result: false,
+        });
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            isExecutableNow: true,
+            pendingReport: createPendingReport({ confirmationsRequired: 1 }),
+        });
+
+        renderCard();
+        await selectVoteMode('approveOnly');
+
+        expect(check).not.toHaveBeenCalled();
+        expect(dialogOpen).not.toHaveBeenCalled();
+
+        await clickPrimaryAction('approveOnly');
+
+        expect(check).toHaveBeenCalled();
+        expect(dialogOpen).not.toHaveBeenCalled();
+    });
+
+    it('keeps an unsigned owner able to sign when quorum is queued', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            canStillAffectOutcome: true,
+            hasConnectedWalletSigned: false,
+            isExecutableNow: false,
+            nonceDistance: 2,
+            pendingReport: createPendingReport({
+                confirmations: [
+                    generateSafeConfirmation({
+                        owner: '0x0000000000000000000000000000000000000012',
+                    }),
+                ],
+                confirmationsRequired: 1,
+                nonce: '6',
+            }),
+        });
+
+        renderCard();
+        const action = screen.getByRole('button', {
+            name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+        });
+        expect(action).toBeEnabled();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreVotingOptions',
+            }),
+        ).not.toBeInTheDocument();
+        await userEvent.click(action);
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeDialogId.PROPOSAL_TRANSACTION,
+            expect.objectContaining({
+                params: expect.objectContaining({ bundleExecution: false }),
+            }),
+        );
+    });
+
+    it('keeps a signed owner on execute-only after quorum', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            canStillAffectOutcome: true,
+            hasConnectedWalletSigned: true,
+            isExecutableNow: true,
+            pendingReport: createPendingReport({
+                confirmations: [generateSafeConfirmation({ owner })],
+                confirmationsRequired: 1,
+            }),
+        });
+
+        renderCard();
+        const action = screen.getByRole('button', {
+            name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
+        });
+        expect(action).toBeEnabled();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreVotingOptions',
+            }),
+        ).not.toBeInTheDocument();
+        await userEvent.click(action);
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeDialogId.PROPOSAL_TRANSACTION,
+            expect.objectContaining({
+                params: expect.objectContaining({ bundleExecution: true }),
+            }),
+        );
+    });
+
+    it('offers the same bundled and sign-only choices for veto', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            hasConnectedWalletSigned: false,
+            isExecutableNow: true,
+            pendingReport: createPendingReport({ confirmationsRequired: 1 }),
+        });
+
+        renderCard({ isVeto: true });
+        const bundledAction = screen.getByRole('button', {
+            name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.vetoAndExecute',
+        });
+        expect(bundledAction).toBeEnabled();
+        await userEvent.click(bundledAction);
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeDialogId.PROPOSAL_TRANSACTION,
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    bundleExecution: true,
+                    isVeto: true,
+                }),
+            }),
+        );
+
+        dialogOpen.mockClear();
+        await selectVoteMode('vetoOnly');
+        expect(dialogOpen).not.toHaveBeenCalled();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.vetoOnly',
+            }),
+        ).toBeEnabled();
+
+        await clickPrimaryAction('vetoOnly');
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeDialogId.PROPOSAL_TRANSACTION,
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    bundleExecution: false,
+                    isVeto: true,
+                }),
+            }),
+        );
+    });
+
     it('opens the Safe dialog with bundled execution for approve-and-execute', async () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
@@ -336,7 +626,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             screen.getByRole('link', {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
             }),
-        ).toHaveAttribute('href', `/safe/${proposal.network}/${safeAddress}`);
+        ).toHaveAttribute('href', pendingTransactionHref);
     });
 
     it('shows the Safe link for stale reads but hides the vote action', () => {
@@ -368,7 +658,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             screen.getByRole('link', {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
             }),
-        ).toHaveAttribute('href', `/safe/${proposal.network}/${safeAddress}`);
+        ).toHaveAttribute('href', accountHref);
     });
 
     it('uses the no-data read description and keeps settled cards suppressed during errors', () => {
@@ -440,7 +730,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         expect(
             screen.getByRole('button', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
             }),
         ).toBeDisabled();
     });
@@ -512,6 +802,142 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    it('names and links the proposal occupying the current nonce, in its own DAO', () => {
+        const blockerDao = generateDao({
+            id: 'other-dao',
+            address: '0x0000000000000000000000000000000000000099',
+            network: Network.ETHEREUM_SEPOLIA,
+            plugins: [
+                generateDaoPlugin({
+                    address: '0x0000000000000000000000000000000000000077',
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    slug: 'tlt',
+                }),
+            ],
+        });
+        useDaoSpy.mockReturnValue({
+            data: blockerDao,
+        } as UseQueryResult<IDao, Error>);
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            safeInfo: generateSafeInfo({
+                address: safeAddress,
+                owners: [owner],
+                threshold: 2,
+                nonce: '7',
+            }),
+            pendingReport: createPendingReport({
+                confirmations: [],
+                confirmationsRequired: 2,
+                nonce: '8',
+            }),
+            nonceDistance: 1,
+            nonceBlockerReport: {
+                daoId: 'other-dao',
+                bodyId: '0x0000000000000000000000000000000000000077',
+                proposalId: 1,
+                stageId: 0,
+                resultType: 1,
+            },
+        });
+
+        renderCard();
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueuedDescriptionBlocker (transactionNonce=8)',
+                {
+                    // The sentence continues into the linked proposal slug.
+                    exact: false,
+                },
+            ),
+        ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'TLT-1' })).toHaveAttribute(
+            'href',
+            '/dao/ethereum-sepolia/0x0000000000000000000000000000000000000099/proposals/TLT-1',
+        );
+    });
+
+    it('keeps the plain queued warning when the blocking transaction does not resolve to a proposal', () => {
+        useDaoSpy.mockReturnValue({
+            data: undefined,
+        } as UseQueryResult<IDao, Error>);
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            safeInfo: generateSafeInfo({
+                address: safeAddress,
+                owners: [owner],
+                threshold: 2,
+                nonce: '7',
+            }),
+            pendingReport: createPendingReport({
+                confirmations: [],
+                confirmationsRequired: 2,
+                nonce: '8',
+            }),
+            nonceDistance: 1,
+            nonceBlockerReport: {
+                daoId: 'unknown-dao',
+                bodyId: '0x0000000000000000000000000000000000000088',
+                proposalId: 3,
+                stageId: 0,
+                resultType: 1,
+            },
+        });
+
+        renderCard();
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueuedDescription (transactionNonce=8)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: 'TLT-3' }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('shows a queued warning before threshold without disabling sign-only', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            safeInfo: generateSafeInfo({
+                address: safeAddress,
+                owners: [owner],
+                threshold: 2,
+                nonce: '7',
+            }),
+            pendingReport: createPendingReport({
+                confirmations: [],
+                confirmationsRequired: 2,
+                nonce: '8',
+            }),
+            nonceDistance: 1,
+        });
+
+        renderCard();
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueued (currentNonce=7)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.nonceQueuedDescription (transactionNonce=8)',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+            }),
+        ).toBeEnabled();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeSafeTransaction',
+            }),
+        ).not.toBeInTheDocument();
+    });
+
     it('renders a signed waiting-owner state as a linked secondary checkmark', () => {
         useSafeBodyStateSpy.mockReturnValue({
             ...baseState,
@@ -524,13 +950,19 @@ describe('<SafeMultisigSubmitVote /> component', () => {
 
         renderCard();
 
-        expect(
-            screen.getByRole('link', {
-                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approved',
-            }),
-        ).toHaveAttribute('href', `/safe/${proposal.network}/${safeAddress}`);
-    });
+        const completedAction = screen.getByRole('link', {
+            name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approved',
+        });
+        const safeLink = screen.getByRole('link', {
+            name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.viewInAccountQueue',
+        });
+        const internalHref = `/safe/${proposal.network}/${safeAddress}`;
 
+        expect(completedAction).toHaveAttribute('href', internalHref);
+        expect(safeLink).toHaveAttribute('href', pendingTransactionHref);
+        expect(safeLink).toHaveAttribute('target', '_blank');
+        expect(safeLink).not.toHaveAttribute('href', internalHref);
+    });
     it('disables a signed waiting action without a queued report link', () => {
         useFeatureFlagsSpy.mockReturnValue({
             snapshot: [],

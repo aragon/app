@@ -6,6 +6,7 @@ import type {
 } from '@/plugins/sppPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import type {
+    IAragonProposalReport,
     ISafeInfo,
     ISafeMultisigTransaction,
 } from '@/shared/api/safeService';
@@ -146,6 +147,12 @@ export interface IUseSafeMultisigBodyStateReturn {
      * describes a report that already exists.
      */
     isCurrentNonceFree: boolean;
+    /**
+     * Aragon proposal occupying the Safe's current nonce, when the backend correlates that
+     * transaction to exactly one. A Safe can be reused by anything, so an unmatched or ambiguous
+     * blocker leaves this undefined and the surface says only which nonce is in the way.
+     */
+    nonceBlockerReport?: IAragonProposalReport;
     /**
      * Positive distance from the Safe's current nonce to the queued report's nonce, or zero.
      * Not a transaction count: nonce slots may be empty or have competing transactions.

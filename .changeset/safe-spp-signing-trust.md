@@ -9,3 +9,11 @@ Open Safe proposal transactions with the complete pre-action review in the share
 Wait for wallet reconnection before preparing or continuing a Safe transaction, and keep review retryable when a persisted connector has not yet restored its provider.
 
 Keep live Safe confirmation progress neutral until execution, show recovered decisions with their signers and execution link, and use the external-body fallback for unsupported Safe versions or missing confirmation history. Consolidate read warnings, prioritize stage advancement, and keep execution recovery and indexing inside the transaction dialog.
+
+Restore Safe approval and execution in one wallet transaction. Keep gasless approve-only and veto-only available to unsigned owners after quorum and while queued, with a direct execution action and a separate options dropdown.
+
+Open “View in Safe” in the Safe web app and show queued-nonce warnings before quorum. Refresh Safe state again when a completed transaction dialog is closed, so Done can pick up confirmations that were not yet visible on the first read.
+
+Use the Safe voting dropdown to select the primary button's mode. Selecting approve-only or veto-only changes the button without starting a transaction; the primary button starts the selected action.
+
+Name the proposal occupying the Safe's current nonce in the queued-behind warning, linking to it wherever it lives. A Safe can be shared by anything, so a transaction with no Aragon correlation keeps the plain nonce warning.

@@ -10,17 +10,22 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { safeAppTransactionUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import {
+    safeAppAccountUrl,
+    safeAppTransactionUrl,
+} from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { SafeDialogId } from '@/modules/safe/constants';
 import type { ISafeProposalTransactionDialogParams } from '@/modules/safe/dialogs/safeProposalTransactionDialog';
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { safeServiceKeys } from '@/shared/api/safeService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { safeBodyPluginId } from '../../constants';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
@@ -48,6 +53,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const { open } = useDialogContext();
     const queryClient = useQueryClient();
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [bundleExecution, setBundleExecution] = useState(true);
 
     /**
      * The Safe body is an external plugin, so it has no `interfaceType` of its own: the registry
@@ -89,6 +95,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         isLoading,
         isExecutableNow,
         isCurrentNonceFree,
+        nonceBlockerReport,
         nonceDistance,
         canStillAffectOutcome,
     } = useSafeMultisigBodyState({
@@ -107,8 +114,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         safeMultisigProposalUtils.isThresholdReached(liveReport.transaction);
 
     /**
-     * Whether this owner's confirmation is the one that reaches the threshold, so execution follows
-     * in the same flow and the wallet opens twice: once to sign for free, once to pay gas.
+     * Whether this owner's confirmation is the one that reaches the threshold, so execution can
+     * follow in the same flow without a second visit.
      *
      * Covers the first confirmation too: on a 1-of-n Safe, proposing already satisfies the
      * threshold, so execution can be offered as the next explicit step.
@@ -136,13 +143,51 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const isWaitingForOwners =
         liveReport != null && hasConnectedWalletSigned && !thresholdReached;
 
-    // A signature binds an exact nonce. Gaps and competing transactions mean nonce distance
-    // cannot tell us how many queued transactions exist.
+    // A live report can be queued before threshold; that warning is separate from the execution
+    // gate below, which only disables execution once a signed transaction is behind the nonce.
+    const hasQueuedNonce =
+        !hasSettled && liveReport != null && nonceDistance > 0;
     const isQueuedBehindNonce =
         !hasSettled && thresholdReached && nonceDistance > 0;
 
+    // An unsigned owner can still add a confirmation whenever their wallet can affect the outcome:
+    // below threshold it counts toward it, at or past threshold it adds weight for majority or
+    // unanimity, or simply avoids paying gas.
+    const canSignNow =
+        !hasSettled && !hasConnectedWalletSigned && canStillAffectOutcome;
+
+    // Whether execution can follow in this same flow now: the threshold is met - by this signature
+    // or already - and the transaction sits at an executable nonce, not queued behind one.
+    const canExecuteNow =
+        !hasSettled &&
+        !isQueuedBehindNonce &&
+        (canBundleExecution || (thresholdReached && isExecutableNow));
+
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const isAdvanceable = stageStatus === ProposalStatus.ADVANCEABLE;
+
+    /**
+     * The proposal holding the Safe's current nonce, when the backend correlated that transaction
+     * to exactly one. A Safe can be shared by anything, so an unmatched blocker - or one whose DAO
+     * or plugin does not resolve to a route - leaves the warning as it is rather than naming
+     * something the reader cannot open.
+     */
+    const blockerReportParams = {
+        incrementalId: nonceBlockerReport?.proposalId ?? 0,
+        pluginAddress: nonceBlockerReport?.bodyId ?? '',
+    };
+    const { data: blockerDao } = useDao(
+        { urlParams: { id: nonceBlockerReport?.daoId ?? '' } },
+        { enabled: nonceBlockerReport != null },
+    );
+    const blockerProposalSlug =
+        nonceBlockerReport != null
+            ? proposalUtils.getProposalSlug(blockerReportParams, blockerDao)
+            : undefined;
+    const blockerProposalUrl =
+        blockerProposalSlug != null
+            ? proposalUtils.getProposalUrl(blockerReportParams, blockerDao)
+            : undefined;
 
     /**
      * Every dialog path starts with Safe service reads and writes, so while the service can't be
@@ -154,7 +199,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const canRetryRead = !isRateLimited && (isError || isStale);
 
     // Below threshold the action produces a confirmation, so it is named for its governance intent.
-    // At threshold the only thing left is executing a Safe transaction, named for the Safe.
+    // At threshold execution is the headline action, but an unsigned owner can still add a
+    // confirmation, so a sign-only choice stays available and named for that governance intent.
     let buttonKey = isVeto ? 'veto' : 'approve';
 
     if (hasSettled) {
@@ -167,6 +213,21 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         buttonKey = isVeto ? 'vetoAndRequeue' : 'approveAndRequeue';
     } else if (isWaitingForOwners) {
         buttonKey = isVeto ? 'vetoed' : 'approved';
+    }
+
+    // The sign-only action is always a confirmation, never an execution, so it keeps the governance
+    // label even at threshold where the bundled default reads for the Safe.
+    let signLabel = isVeto ? 'veto' : 'approve';
+
+    if (isSuperseded) {
+        signLabel = isVeto ? 'vetoAndRequeue' : 'approveAndRequeue';
+    }
+
+    let bundleActionKey = isVeto ? 'vetoAndExecute' : 'approveAndExecute';
+    const signOnlyActionKey = isVeto ? 'vetoOnly' : 'approveOnly';
+
+    if (isSuperseded) {
+        bundleActionKey = isVeto ? 'vetoAndRequeue' : 'approveAndRequeue';
     }
 
     // Safe-only realities are alerts, not layout. A read problem is the one thing the slot must talk
@@ -215,7 +276,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             });
         }
 
-        if (isQueuedBehindNonce) {
+        if (hasQueuedNonce) {
             alerts.push({
                 key: 'nonceQueued',
                 variant: 'warning',
@@ -266,8 +327,24 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
               })
             : undefined;
 
+    const safeExternalHref =
+        (liveReport != null
+            ? safeAppTransactionUrl({
+                  network: proposal.network,
+                  address: externalAddress,
+                  safeTxHash: liveReport.transaction.safeTxHash,
+              })
+            : undefined) ??
+        safeAppAccountUrl({
+            network: proposal.network,
+            address: externalAddress,
+        });
+
     const showAction = !isReadBlocked && (hasSettled || canStillAffectOutcome);
-    const showDropdown = canBundleExecution && !hasSettled;
+    // An unsigned owner who could execute now gets both the bundled default and a sign-only opt-out;
+    // when execution is unavailable they can still add their confirmation on its own.
+    const showBundleChoice = canSignNow && canExecuteNow;
+    const showSignOnly = canSignNow && !canExecuteNow;
     // Once the stage is advanceable, advancing is the primary action and the Safe's own action
     // becomes optional; a signed or settled body is a completed link, not a call to act.
     const actionVariant =
@@ -336,9 +413,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     };
 
     /**
-     * Bundling is the default: when the confirmation completes the threshold there is nothing left
-     * to wait for, so executing in the same flow saves a second visit. `Approve only` opts out and
-     * leaves the fully-signed transaction in the queue for any owner to execute.
+     * Bundling is the default when this confirmation reaches an executable threshold. `Approve only`
+     * opts out and leaves the fully-signed transaction in the queue for any owner to execute.
      *
      * Connection and Safe ownership are the standard vote guard's business, so an unconnected or
      * non-owner wallet gets the wallet dialog and then the permission dialog - not a message
@@ -388,12 +464,24 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                 {alert.key === 'nonceQueued' && (
                                     <p>
                                         {t(
-                                            `${translationKey}.nonceQueuedDescription`,
+                                            `${translationKey}.${blockerProposalUrl != null ? 'nonceQueuedDescriptionBlocker' : 'nonceQueuedDescription'}`,
                                             {
                                                 transactionNonce:
                                                     liveReport?.transaction
                                                         .nonce,
                                             },
+                                        )}
+                                        {blockerProposalUrl != null && (
+                                            <>
+                                                {' '}
+                                                <Link
+                                                    className="text-primary-400 hover:text-primary-600"
+                                                    href={blockerProposalUrl}
+                                                >
+                                                    {blockerProposalSlug}
+                                                </Link>
+                                                {'.'}
+                                            </>
                                         )}
                                     </p>
                                 )}
@@ -426,30 +514,74 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             {(showAction || queuedReportHref != null) && (
                 <div className="flex flex-col items-start gap-3 md:flex-row md:items-center">
                     {showAction &&
-                        (showDropdown ? (
-                            <Dropdown.Container
-                                align="end"
-                                constrainContentWidth={false}
-                                disabled={isActionDisabled}
-                                label={t(`${translationKey}.${buttonKey}`)}
+                        (showBundleChoice ? (
+                            <div className="flex w-full gap-2 md:w-fit">
+                                <Button
+                                    className="w-full md:w-fit"
+                                    disabled={isActionDisabled}
+                                    onClick={() =>
+                                        handleVoteClick(bundleExecution)
+                                    }
+                                    size="md"
+                                    variant={actionVariant}
+                                >
+                                    {t(
+                                        `${translationKey}.${bundleExecution ? bundleActionKey : signOnlyActionKey}`,
+                                    )}
+                                </Button>
+                                <Dropdown.Container
+                                    align="end"
+                                    constrainContentWidth={false}
+                                    customTrigger={
+                                        <Button
+                                            aria-label={t(
+                                                `${translationKey}.moreVotingOptions`,
+                                            )}
+                                            className="shrink-0"
+                                            disabled={isActionDisabled}
+                                            iconLeft={IconType.CHEVRON_DOWN}
+                                            size="md"
+                                            variant={actionVariant}
+                                        />
+                                    }
+                                    disabled={isActionDisabled}
+                                >
+                                    <Dropdown.Item
+                                        aria-checked={bundleExecution}
+                                        onSelect={() =>
+                                            setBundleExecution(true)
+                                        }
+                                        role="menuitemradio"
+                                        selected={bundleExecution}
+                                    >
+                                        {t(
+                                            `${translationKey}.${bundleActionKey}`,
+                                        )}
+                                    </Dropdown.Item>
+                                    <Dropdown.Item
+                                        aria-checked={!bundleExecution}
+                                        onSelect={() =>
+                                            setBundleExecution(false)
+                                        }
+                                        role="menuitemradio"
+                                        selected={!bundleExecution}
+                                    >
+                                        {t(
+                                            `${translationKey}.${signOnlyActionKey}`,
+                                        )}
+                                    </Dropdown.Item>
+                                </Dropdown.Container>
+                            </div>
+                        ) : showSignOnly ? (
+                            <Button
+                                className="w-full md:w-fit"
+                                disabled={isLoading}
+                                onClick={() => handleVoteClick(false)}
                                 size="md"
                                 variant={actionVariant}
                             >
-                                <Dropdown.Item
-                                    onClick={() => handleVoteClick(true)}
-                                >
-                                    {t(
-                                        `${translationKey}.${isVeto ? 'vetoAndExecute' : 'approveAndExecute'}`,
-                                    )}
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                    onClick={() => handleVoteClick(false)}
-                                >
-                                    {t(
-                                        `${translationKey}.${isVeto ? 'vetoOnly' : 'approveOnly'}`,
-                                    )}
-                                </Dropdown.Item>
-                            </Dropdown.Container>
+                                {t(`${translationKey}.${signLabel}`)}
+                            </Button>
                         ) : (
                             <Button
                                 className="w-full md:w-fit"
@@ -477,10 +609,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         ))}
                     {/* A contextual navigate-away action: one emphasis everywhere, so ghost in every
                         state it appears rather than styled by its neighbour count. */}
-                    {queuedReportHref != null && (
+                    {queuedReportHref != null && safeExternalHref != null && (
                         <Button
                             className="w-full md:w-fit"
-                            href={queuedReportHref}
+                            href={safeExternalHref}
                             iconRight={IconType.LINK_EXTERNAL}
                             size="md"
                             target="_blank"

@@ -9,6 +9,7 @@ import {
     StateSkeletonBar,
 } from '@aragon/gov-ui-kit';
 import type Safe from '@safe-global/protocol-kit';
+import { generatePreValidatedSignature } from '@safe-global/protocol-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type Hex, isHex, numberToHex, pad, toEventSelector } from 'viem';
@@ -310,17 +311,15 @@ const getSafePlan = (params: {
         hasOwnerSignedSignature || hasOwnerSignature(transaction, owner);
     const enoughSignatures =
         signatureCount >= transaction.confirmationsRequired;
-    const canExecuteNow =
-        bundleExecution && landsOnCurrentNonce && enoughSignatures;
-    const needsSignature = !ownerSigned && !canExecuteNow;
-    const reachesThresholdAfterSignature =
+    // The sender contributes a prevalidated signature at execution time, so a bundled
+    // execution needs no separate signing step when that one signature reaches threshold.
+    const reachesThresholdWithSender =
         enoughSignatures ||
         (!ownerSigned &&
             signatureCount + 1 >= transaction.confirmationsRequired);
     const canExecute =
-        bundleExecution &&
-        landsOnCurrentNonce &&
-        reachesThresholdAfterSignature;
+        bundleExecution && landsOnCurrentNonce && reachesThresholdWithSender;
+    const needsSignature = !ownerSigned && !canExecute;
 
     return [
         ...(needsSignature ? (['SIGN_SUBMIT'] as const) : []),
@@ -1357,6 +1356,20 @@ export const SafeProposalTransactionDialog: React.FC<
             if (!context.landsOnCurrentNonce) {
                 throw new Error(t(`${translationKey}.nonceNotCurrent`));
             }
+            if (
+                context.signatures.length <
+                    context.transaction.confirmationsRequired &&
+                !context.signatures.some((signature) =>
+                    addressUtils.isAddressEqual(
+                        signature.signer,
+                        prepared.ownerAddress,
+                    ),
+                )
+            ) {
+                context.signatures.push(
+                    generatePreValidatedSignature(prepared.ownerAddress),
+                );
+            }
             const executionRecovery = {
                 safeAddress: externalAddress as Hex,
                 chainId: requiredChainId,
@@ -1717,6 +1730,14 @@ export const SafeProposalTransactionDialog: React.FC<
         runPreparation();
     }, [runPreparation]);
 
+    // Recheck on Done: the immediate post-sign read may precede service indexing.
+    const handleClose = useCallback(() => {
+        if (isComplete) {
+            refreshAfterAccepted();
+        }
+        close(location.id);
+    }, [close, isComplete, location.id, refreshAfterAccepted]);
+
     if (plan == null || prepared == null) {
         return (
             <>
@@ -1768,7 +1789,7 @@ export const SafeProposalTransactionDialog: React.FC<
         <TransactionDialog
             completion={{
                 label: t('app.safe.safeProposalTransactionDialog.completion'),
-                onClick: () => close(location.id),
+                onClick: handleClose,
             }}
             customSteps={customSteps}
             description={t(
@@ -1779,7 +1800,7 @@ export const SafeProposalTransactionDialog: React.FC<
             isComplete={isComplete}
             mode="custom"
             network={network}
-            onDismiss={() => close(location.id)}
+            onDismiss={handleClose}
             onIndexed={handleIndexed}
             primaryActionDisabled={primaryDisabled}
             showStatus={actionStarted || isComplete}

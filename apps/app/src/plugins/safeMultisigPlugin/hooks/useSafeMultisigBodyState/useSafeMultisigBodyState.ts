@@ -8,6 +8,7 @@ import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeU
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
+    isAragonProposalReport,
     SafeServiceError,
     useSafeInfo,
     useSafePendingTransactions,
@@ -281,6 +282,40 @@ export const useSafeMultisigBodyState = (
                 !isExecuted && BigInt(nonce) === BigInt(currentNonce),
         );
 
+    /**
+     * The one Aragon proposal occupying the Safe's current nonce, from the backend's queue
+     * correlation. Only a single unexecuted transaction on the current nonce carrying exactly one
+     * distinct valid report qualifies: with competing transactions or several associations, naming
+     * any one proposal would be misleading, so this stays undefined and the surface keeps its
+     * plain numeric copy.
+     */
+    const nonceBlockerReport = useMemo(() => {
+        if (currentNonce == null) {
+            return undefined;
+        }
+
+        const blockers = transactions.filter(
+            ({ nonce, isExecuted }) =>
+                !isExecuted && BigInt(nonce) === BigInt(currentNonce),
+        );
+
+        if (blockers.length !== 1) {
+            return undefined;
+        }
+
+        const reports = (blockers[0].aragonReports ?? []).filter(
+            isAragonProposalReport,
+        );
+        const distinctReports = new Set(
+            reports.map(
+                ({ daoId, bodyId, proposalId }) =>
+                    `${daoId}-${bodyId}-${proposalId.toString()}`,
+            ),
+        );
+
+        return distinctReports.size === 1 ? reports[0] : undefined;
+    }, [transactions, currentNonce]);
+
     return {
         safeInfo,
         /**
@@ -310,6 +345,7 @@ export const useSafeMultisigBodyState = (
             !pendingReport.transaction.isExecuted &&
             nonceGap === BigInt(0),
         isCurrentNonceFree,
+        nonceBlockerReport,
         nonceDistance: nonceGap > BigInt(0) ? Number(nonceGap) : 0,
         signers,
         hasConnectedWalletSigned:

@@ -79,6 +79,7 @@ const signatureData = `0x${'3'.repeat(130)}` as Hex;
 const protocolKitModule = jest.requireMock('@safe-global/protocol-kit') as {
     default: { init: jest.Mock };
     buildSignatureBytes: jest.Mock;
+    generatePreValidatedSignature: jest.Mock;
     EthSafeSignature: jest.Mock;
     EthSafeTransaction: jest.Mock;
 };
@@ -183,6 +184,7 @@ const makeTransaction = (
 });
 
 const createSafeTransaction = (): void => {
+    const executionSignatures: unknown[] = [];
     safeTransaction = {
         data: {
             to: pluginAddress,
@@ -196,8 +198,12 @@ const createSafeTransaction = (): void => {
             refundReceiver: zeroAddress,
             nonce: 0,
         },
-        addSignature: jest.fn(),
-        encodedSignatures: jest.fn(() => '0xsignatureBytes'),
+        addSignature: jest.fn((signature: unknown) => {
+            executionSignatures.push(signature);
+        }),
+        encodedSignatures: jest.fn(() =>
+            protocolKitModule.buildSignatureBytes(executionSignatures),
+        ),
     };
 
     protocolKit = {
@@ -213,11 +219,23 @@ const createSafeTransaction = (): void => {
         getThreshold: jest.fn().mockResolvedValue(2),
         getOwners: jest.fn().mockResolvedValue([owner, secondOwner]),
         isValidTransaction: jest.fn().mockResolvedValue(true),
-        getEncodedTransaction: jest.fn().mockResolvedValue('0xexecTransaction'),
+        getEncodedTransaction: jest
+            .fn()
+            .mockImplementation(
+                () =>
+                    `0xexecTransaction${protocolKitModule.buildSignatureBytes(
+                        executionSignatures,
+                    )}`,
+            ),
     };
 
     protocolKitModule.default.init.mockResolvedValue(protocolKit);
-    protocolKitModule.buildSignatureBytes.mockReturnValue('0xsignatureBytes');
+    const actualBuildSignatureBytes = jest.requireActual<{
+        buildSignatureBytes: (signatures: unknown[]) => string;
+    }>('@safe-global/protocol-kit').buildSignatureBytes;
+    protocolKitModule.buildSignatureBytes.mockImplementation(
+        actualBuildSignatureBytes,
+    );
     protocolKitModule.EthSafeSignature.mockImplementation(
         (signer: string, data: Hex, isContractSignature: boolean) => ({
             signer,
@@ -263,12 +281,12 @@ const makeParams = (
 
 const renderDialog = (
     overrides: Partial<ISafeProposalTransactionDialogParams> = {},
-) => {
-    const queryClient = new QueryClient({
+    queryClient = new QueryClient({
         defaultOptions: {
             queries: { retry: false },
         },
-    });
+    }),
+) => {
     const content = () => (
         <GukModulesProvider>
             <QueryClientProvider client={queryClient}>
@@ -291,6 +309,19 @@ const renderDialog = (
         queryClient,
         rerenderDialog: () => result.rerender(content()),
     };
+};
+
+const SafeConfirmationObserver = () => {
+    const { data } = safeServiceApi.useSafePendingTransactions({
+        urlParams: { network, address: safeAddress },
+    });
+    const transaction = data?.results[0];
+
+    return (
+        <output data-testid="safe-confirmation-count">
+            {`${transaction?.confirmations.length ?? 0}/${transaction?.confirmationsRequired ?? 2}`}
+        </output>
+    );
 };
 
 const actionLabels = {
@@ -528,6 +559,130 @@ afterEach(() => {
 });
 
 describe('SafeProposalTransactionDialog', () => {
+    it('executes the final owner approval with one wallet transaction instead of a separate signature', async () => {
+        configureThresholdOne();
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
+            successfulReceipt(),
+        );
+        renderDialog();
+        const action = await screen.findByRole('button', {
+            name: actionLabels.execute,
+        });
+        await waitFor(() => expect(action).toBeEnabled());
+        expect(
+            screen.queryByRole('button', { name: actionLabels.signSubmit }),
+        ).not.toBeInTheDocument();
+        await userEvent.click(action);
+
+        await waitFor(() =>
+            expect(WagmiActions.sendTransaction).toHaveBeenCalledTimes(1),
+        );
+        const expectedSignature =
+            protocolKitModule.generatePreValidatedSignature(owner);
+        expect(safeTransaction.addSignature).toHaveBeenCalledWith(
+            expectedSignature,
+        );
+        const expectedEncodedSignatures = protocolKitModule.buildSignatureBytes(
+            [expectedSignature],
+        );
+        expect(safeTransaction.encodedSignatures()).toBe(
+            expectedEncodedSignatures,
+        );
+        expect(
+            jest.mocked(WagmiActions.sendTransaction).mock.calls[0][1].data,
+        ).toContain(expectedEncodedSignatures);
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+        expect(confirmMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('bundles the sender approval with existing confirmations', async () => {
+        const existing = makeTransaction({
+            confirmations: [
+                generateSafeConfirmation({
+                    owner: secondOwner,
+                    signature: `0x${'4'.repeat(130)}`,
+                }),
+            ],
+            confirmationsRequired: 2,
+        });
+        serviceTransaction = existing;
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
+            successfulReceipt(),
+        );
+
+        renderDialog({ pendingTransaction: existing });
+        await waitForExecuteStep();
+        await clickPrimary(actionLabels.execute);
+
+        await waitFor(() =>
+            expect(WagmiActions.sendTransaction).toHaveBeenCalledTimes(1),
+        );
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+        expect(confirmMutateAsync).not.toHaveBeenCalled();
+
+        const expectedSignature =
+            protocolKitModule.generatePreValidatedSignature(owner);
+        expect(safeTransaction.addSignature).toHaveBeenCalledTimes(2);
+        expect(safeTransaction.addSignature).toHaveBeenCalledWith(
+            expectedSignature,
+        );
+        expect(safeTransaction.addSignature).toHaveBeenCalledWith(
+            expect.objectContaining({
+                signer: secondOwner,
+                data: `0x${'4'.repeat(130)}`,
+            }),
+        );
+        const expectedExistingSignature = protocolKitModule.EthSafeSignature(
+            secondOwner,
+            `0x${'4'.repeat(130)}`,
+            false,
+        );
+        const expectedEncodedSignatures = protocolKitModule.buildSignatureBytes(
+            [expectedSignature, expectedExistingSignature],
+        );
+        expect(safeTransaction.encodedSignatures()).toBe(
+            expectedEncodedSignatures,
+        );
+        expect(
+            jest.mocked(WagmiActions.sendTransaction).mock.calls[0][1].data,
+        ).toContain(expectedEncodedSignatures);
+    });
+
+    it('does not double-count a sender confirmation during bundled execution', async () => {
+        const existing = makeTransaction({
+            confirmations: [
+                generateSafeConfirmation({
+                    owner,
+                    signature: signatureData,
+                }),
+            ],
+            confirmationsRequired: 1,
+        });
+        safeInfo.threshold = 1;
+        protocolKit.getThreshold.mockResolvedValue(1);
+        serviceTransaction = existing;
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
+            successfulReceipt(),
+        );
+
+        renderDialog({ pendingTransaction: existing });
+        await waitForExecuteStep();
+        await clickPrimary(actionLabels.execute);
+
+        await waitFor(() =>
+            expect(WagmiActions.sendTransaction).toHaveBeenCalledTimes(1),
+        );
+        expect(safeTransaction.addSignature).toHaveBeenCalledTimes(1);
+        expect(safeTransaction.addSignature).toHaveBeenCalledWith(
+            expect.objectContaining({ signer: owner, data: signatureData }),
+        );
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+        expect(confirmMutateAsync).not.toHaveBeenCalled();
+    });
+
     it('keeps review retryable when reconnection exposes only persisted connector metadata', async () => {
         const existing = makeTransaction();
         serviceTransaction = existing;
@@ -625,7 +780,7 @@ describe('SafeProposalTransactionDialog', () => {
             return Promise.resolve();
         });
 
-        renderDialog({ pendingTransaction: existing });
+        renderDialog({ bundleExecution: false, pendingTransaction: existing });
         await waitForSignStep();
         await clickPrimary(actionLabels.signSubmit);
 
@@ -639,8 +794,75 @@ describe('SafeProposalTransactionDialog', () => {
         expect(proposeMutateAsync).not.toHaveBeenCalled();
     });
 
+    it('refreshes the confirmation observer when Done follows delayed service visibility', async () => {
+        let serviceIndexed = false;
+        const confirmedTransaction = makeTransaction({
+            confirmations: [
+                generateSafeConfirmation({
+                    owner,
+                    signature: signatureData,
+                }),
+            ],
+            confirmationsRequired: 2,
+        });
+        getPendingTransactionsSpy.mockImplementation(async () =>
+            makePage(serviceIndexed ? [confirmedTransaction] : []),
+        );
+        const queryClient = new QueryClient({
+            defaultOptions: {
+                queries: { retry: false },
+            },
+        });
+        const onSafeStateChange = () =>
+            queryClient.invalidateQueries({
+                queryKey:
+                    safeServiceApi.safeServiceKeys.safePendingTransactions({
+                        urlParams: { network, address: safeAddress },
+                    }),
+            });
+
+        renderDialog(
+            {
+                bundleExecution: false,
+                onSafeStateChange,
+            },
+            queryClient,
+        );
+        render(
+            <QueryClientProvider client={queryClient}>
+                <SafeConfirmationObserver />
+            </QueryClientProvider>,
+        );
+
+        await waitFor(() =>
+            expect(
+                screen.getByTestId('safe-confirmation-count'),
+            ).toHaveTextContent('0/2'),
+        );
+        await waitForSignStep();
+        await clickPrimary(actionLabels.signSubmit);
+        await waitFor(() =>
+            expect(
+                screen.getByText(
+                    'app.safe.safeProposalTransactionDialog.confirmationRecorded',
+                ),
+            ).toBeInTheDocument(),
+        );
+        expect(screen.getByTestId('safe-confirmation-count')).toHaveTextContent(
+            '0/2',
+        );
+
+        serviceIndexed = true;
+        await clickPrimary('app.safe.safeProposalTransactionDialog.completion');
+        await waitFor(() =>
+            expect(
+                screen.getByTestId('safe-confirmation-count'),
+            ).toHaveTextContent('1/2'),
+        );
+    });
+
     it('confirms a newly prepared envelope when another owner races it into the queue', async () => {
-        renderDialog();
+        renderDialog({ bundleExecution: false });
         await waitForSignStep();
 
         serviceTransaction = makeTransaction({
@@ -675,7 +897,7 @@ describe('SafeProposalTransactionDialog', () => {
                 }),
         );
 
-        renderDialog();
+        renderDialog({ bundleExecution: false });
         await waitForSignStep();
         await clickPrimary(actionLabels.signSubmit);
         await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
@@ -691,7 +913,13 @@ describe('SafeProposalTransactionDialog', () => {
         expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
 
         resolvePost?.();
-        await waitForExecuteStep();
+        await waitFor(() =>
+            expect(
+                screen.getByText(
+                    'app.safe.safeProposalTransactionDialog.confirmationRecorded',
+                ),
+            ).toBeInTheDocument(),
+        );
         expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
     });
     it('reconciles an unknown service error without reposting', async () => {
@@ -1042,8 +1270,8 @@ describe('SafeProposalTransactionDialog', () => {
         protocolKit.getOwners.mockResolvedValue([secondOwner]);
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
+        await waitForExecuteStep();
+        await clickPrimary(actionLabels.execute);
 
         await waitFor(() => {
             expect(
@@ -1059,9 +1287,6 @@ describe('SafeProposalTransactionDialog', () => {
         configureThresholdOne();
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
 
         protocolKit.getThreshold.mockResolvedValue(2);
@@ -1082,9 +1307,6 @@ describe('SafeProposalTransactionDialog', () => {
         protocolKit.isValidTransaction.mockResolvedValue(false);
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1101,7 +1323,7 @@ describe('SafeProposalTransactionDialog', () => {
     it('signs the reviewed Safe transaction as EIP-712 data', async () => {
         configureThresholdOne();
 
-        renderDialog();
+        renderDialog({ bundleExecution: false });
         await waitForSignStep();
         expect(protocolKit.signTypedData).not.toHaveBeenCalled();
         await clickPrimary(actionLabels.signSubmit);
@@ -1112,65 +1334,41 @@ describe('SafeProposalTransactionDialog', () => {
         });
     });
 
-    it('keeps the frozen three-step plan while actions advance', async () => {
-        configureThresholdOne();
+    it('still collects the owner confirmation in sign-only mode after quorum', async () => {
+        const existing = makeTransaction({
+            confirmations: [
+                generateSafeConfirmation({
+                    owner: secondOwner,
+                    signature: `0x${'4'.repeat(130)}`,
+                }),
+            ],
+            confirmationsRequired: 1,
+        });
+        safeInfo.owners = [owner, secondOwner];
         safeInfo.threshold = 1;
+        protocolKit.getOwners.mockResolvedValue([owner, secondOwner]);
+        protocolKit.getThreshold.mockResolvedValue(1);
+        serviceTransaction = existing;
 
-        renderDialog();
-
-        const expectFrozenPlan = (current: number): void => {
-            expect(
-                screen.getByText(
-                    'app.safe.safeProposalTransactionDialog.steps.sign_submit',
-                ),
-            ).toBeInTheDocument();
-            expect(
-                screen.getByText(
-                    'app.safe.safeProposalTransactionDialog.steps.execute',
-                ),
-            ).toBeInTheDocument();
-            expect(
-                screen.getByText(
-                    `app.shared.transactionStatus.info.current (current=${current})`,
-                ),
-            ).toBeInTheDocument();
-            expect(
-                screen.getByText(
-                    'app.shared.transactionStatus.info.total (total=2)',
-                ),
-            ).toBeInTheDocument();
-        };
+        renderDialog({
+            bundleExecution: false,
+            pendingTransaction: existing,
+        });
         await waitForSignStep();
-        expect(
-            screen.queryByText(
-                'app.safe.safeProposalTransactionDialog.steps.sign_submit',
-            ),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByText(
-                'app.safe.safeProposalTransactionDialog.steps.execute',
-            ),
-        ).not.toBeInTheDocument();
-        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
-        expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
-
         await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
-        await waitForExecuteStep();
-        expectFrozenPlan(2);
+
+        await waitFor(() => expect(confirmMutateAsync).toHaveBeenCalled());
+        expect(protocolKit.signTypedData).toHaveBeenCalled();
         expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
     });
 
-    it('executes immediately after a threshold-one service acceptance', async () => {
+    it('executes a threshold-one bundled report in one wallet transaction', async () => {
         configureThresholdOne({ nonce: 6, currentNonce: 6, nextNonce: 6 });
         jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
             successfulReceipt(),
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1179,7 +1377,11 @@ describe('SafeProposalTransactionDialog', () => {
         });
         expect(
             jest.mocked(WagmiActions.sendTransaction).mock.calls[0][1],
-        ).toEqual(expect.objectContaining({ data: '0xexecTransaction' }));
+        ).toEqual(
+            expect.objectContaining({
+                data: expect.stringContaining('0xexecTransaction'),
+            }),
+        );
         expect(WagmiActions.waitForTransactionReceipt).toHaveBeenCalled();
     });
 
@@ -1194,9 +1396,6 @@ describe('SafeProposalTransactionDialog', () => {
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1208,6 +1407,9 @@ describe('SafeProposalTransactionDialog', () => {
             ).toBeInTheDocument();
         });
         expect(pendingTransactionManager.get(intentId)).toBeUndefined();
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
+        expect(proposeMutateAsync).not.toHaveBeenCalled();
+        expect(confirmMutateAsync).not.toHaveBeenCalled();
     });
 
     it('persists uncertain execution without trusting an error hash or retrying send', async () => {
@@ -1220,9 +1422,6 @@ describe('SafeProposalTransactionDialog', () => {
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1326,9 +1525,6 @@ describe('SafeProposalTransactionDialog', () => {
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1361,9 +1557,6 @@ describe('SafeProposalTransactionDialog', () => {
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1383,9 +1576,6 @@ describe('SafeProposalTransactionDialog', () => {
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
@@ -1405,9 +1595,6 @@ describe('SafeProposalTransactionDialog', () => {
         );
 
         renderDialog();
-        await waitForSignStep();
-        await clickPrimary(actionLabels.signSubmit);
-        await waitFor(() => expect(proposeMutateAsync).toHaveBeenCalled());
         await waitForExecuteStep();
         await clickPrimary(actionLabels.execute);
 
