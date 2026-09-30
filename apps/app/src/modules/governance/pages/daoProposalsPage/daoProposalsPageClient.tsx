@@ -6,7 +6,11 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -129,10 +133,16 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
     return (
         <>
             <Page.Main
-                action={{
-                    label: t('app.governance.daoProposalsPage.main.action'),
-                    ...actionProps,
-                }}
+                action={
+                    activePlugin.id === PluginInterfaceType.SAFE
+                        ? undefined
+                        : {
+                              label: t(
+                                  'app.governance.daoProposalsPage.main.action',
+                              ),
+                              ...actionProps,
+                          }
+                }
                 title={t('app.governance.daoProposalsPage.main.title')}
             >
                 <DaoProposalList

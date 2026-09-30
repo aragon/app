@@ -147,4 +147,31 @@ describe('useProposalPermissionCheckGuard hook', () => {
         // With the fix, it should only be called once
         expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
     });
+
+    it('runs the creation guard once after it is subsequently enabled', () => {
+        const checkCreateProposalGuard = jest.fn();
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
+        usePermissionCheckGuardSpy.mockImplementation(() => ({
+            result: false,
+            check: jest.fn(() => checkCreateProposalGuard()),
+        }));
+
+        const { rerender } = renderHook(
+            ({ enabled }) =>
+                useProposalPermissionCheckGuard({
+                    daoId: '',
+                    pluginAddress: '',
+                    enabled,
+                }),
+            { initialProps: { enabled: false } },
+        );
+        expect(checkCreateProposalGuard).not.toHaveBeenCalled();
+
+        rerender({ enabled: true });
+        rerender({ enabled: true });
+
+        expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
+    });
 });

@@ -1,14 +1,18 @@
 import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
+import { PluginInterfaceType } from '@/shared/api/daoService';
+import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
 /**
- * Plugin id an external Safe body resolves to. `PluginId` and `PluginInterfaceType` share one
- * string namespace, so the id is namespaced under the existing `external` id rather than a bare
- * `safe` that could collide with a future backend interface type.
- *
- * A Safe is not installable and has no repository addresses: this id is only ever used to register
- * slot components and functions, never with `registerPlugin`.
+ * Slot identity for an external Safe body in an SPP stage. A Safe process uses the
+ * backend's separate `safe` identity; process rows must never replace stage bodies.
  */
 export const safeBodyPluginId = 'external-safe';
+
+/** A Safe process is registered for display, not installed through a plugin repository. */
+export const safeProcessPlugin: IPlugin = {
+    id: PluginInterfaceType.SAFE,
+    name: 'Safe',
+};
 
 /**
  * Poll cadence of the Safe reads while the Safe queue holds a live transaction. An idle body card

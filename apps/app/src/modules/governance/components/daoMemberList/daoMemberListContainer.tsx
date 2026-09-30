@@ -2,11 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useMemo } from 'react';
-import {
-    type IDaoPlugin,
-    PluginInterfaceType,
-    useDao,
-} from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import {
     type IFilterComponentPlugin,
     type IPluginFilterComponentProps,
@@ -84,7 +80,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
     });
     const processPlugins = useDaoPlugins({
         daoId: initialParams.queryParams.daoId,
-        interfaceType: PluginInterfaceType.SPP,
+        type: PluginType.PROCESS,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
     });

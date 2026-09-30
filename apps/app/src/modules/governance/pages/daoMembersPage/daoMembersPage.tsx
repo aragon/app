@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { cmsService, daoOverridesOptions } from '@/shared/api/cmsService';
-import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
+import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
@@ -72,7 +72,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
 
     const processPlugins =
         daoUtils.getDaoPlugins(dao, {
-            interfaceType: PluginInterfaceType.SPP,
+            type: PluginType.PROCESS,
             includeSubPlugins: true,
             includeLinkedAccounts: true,
         }) ?? [];

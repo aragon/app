@@ -60,17 +60,45 @@ class DaoMemberSourceUtils {
             }),
         );
         const safeSources = new Set<string>();
+        const pushSafeSource = (sourceDaoId: string, safeAddress: string) => {
+            const uniqueId = this.getSafeSourceId(sourceDaoId, safeAddress);
+            if (safeSources.has(uniqueId)) {
+                return;
+            }
+            safeSources.add(uniqueId);
+
+            sources.push({
+                kind: 'safe',
+                id: safeBodyPluginId,
+                uniqueId,
+                label: `Safe ${safeAddress.slice(0, 6)}…${safeAddress.slice(-4)}`,
+                address: safeAddress,
+                daoId: sourceDaoId,
+            });
+        };
 
         for (const processPlugin of processPlugins) {
-            if (processPlugin.interfaceType !== PluginInterfaceType.SPP) {
-                continue;
-            }
-
             const processDaoId = daoUtils.resolvePluginDaoId(
                 daoId,
                 processPlugin,
                 dao,
             );
+
+            // Standalone Safe process: the plugin itself is the Safe, so its
+            // address is the member source. Deduped against the same Safe when
+            // it also appears as an SPP body below.
+            if (
+                processPlugin.interfaceType === PluginInterfaceType.SAFE &&
+                !processPlugin.isBody
+            ) {
+                pushSafeSource(processDaoId, processPlugin.address);
+                continue;
+            }
+
+            if (processPlugin.interfaceType !== PluginInterfaceType.SPP) {
+                continue;
+            }
+
             const settings = processPlugin.settings as ISppPluginSettings;
 
             for (const stage of settings.stages ?? []) {
@@ -81,23 +109,7 @@ class DaoMemberSourceUtils {
                     ) {
                         continue;
                     }
-                    const uniqueId = this.getSafeSourceId(
-                        processDaoId,
-                        body.address,
-                    );
-                    if (safeSources.has(uniqueId)) {
-                        continue;
-                    }
-                    safeSources.add(uniqueId);
-
-                    sources.push({
-                        kind: 'safe',
-                        id: safeBodyPluginId,
-                        uniqueId,
-                        label: `Safe ${body.address.slice(0, 6)}…${body.address.slice(-4)}`,
-                        address: body.address,
-                        daoId: processDaoId,
-                    });
+                    pushSafeSource(processDaoId, body.address);
                 }
             }
         }

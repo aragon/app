@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 // biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
 import { getAddress, isAddress } from 'viem';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
-import { daoService, PluginInterfaceType } from '@/shared/api/daoService';
+import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { PluginType } from '@/shared/types';
@@ -81,7 +81,7 @@ export const DaoMemberDetailsPage: React.FC<
     );
     const processPlugins =
         daoUtils.getDaoPlugins(dao, {
-            interfaceType: PluginInterfaceType.SPP,
+            type: PluginType.PROCESS,
             includeSubPlugins: true,
             includeLinkedAccounts: true,
         }) ?? [];

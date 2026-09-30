@@ -1,7 +1,11 @@
 import { Dialog, invariant, Spinner } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -75,7 +79,9 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
     })!;
 
     const processedDaoPlugins = daoPlugins.filter(
-        (plugin) => !excludePluginIds?.includes(plugin.uniqueId),
+        (plugin) =>
+            plugin.meta.interfaceType !== PluginInterfaceType.SAFE &&
+            !excludePluginIds?.includes(plugin.uniqueId),
     );
 
     const [selectedPlugin, setSelectedPlugin] = useState(initialPlugin);

@@ -3,6 +3,7 @@ export enum PluginInterfaceType {
     MULTISIG = 'multisig',
     ADMIN = 'admin',
     SPP = 'spp',
+    SAFE = 'safe',
     GAUGE_VOTER = 'gauge',
     CAPITAL_DISTRIBUTOR = 'capitalDistributor',
     LOCK_TO_VOTE = 'lockToVote',

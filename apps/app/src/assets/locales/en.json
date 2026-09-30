@@ -3220,6 +3220,12 @@
         }
       },
       "safeMultisig": {
+        "safeProcess": {
+          "creationRequirement": "Safe owner, with the Safe authorized to execute on this DAO",
+          "transactionsTitle": "Safe transactions",
+          "transactionsDescription": "View, propose, and sign transactions in Safe.",
+          "viewInSafe": "View in Safe"
+        },
         "safeMultisigProposalVotingSummary": {
           "approvalLabel": "approvals",
           "approved": "approved",

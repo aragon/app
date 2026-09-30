@@ -791,6 +791,22 @@ describe('dao utils', () => {
     });
 
     describe('getAvailablePluginUpdates', () => {
+        it('does not offer repository updates for a Safe process', () => {
+            getPluginsSpy.mockReturnValue([
+                { id: PluginInterfaceType.SAFE, name: 'Safe' },
+            ]);
+            const dao = generateDao({
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.SAFE,
+                        subdomain: undefined,
+                    }),
+                ],
+            });
+
+            expect(daoUtils.getAvailablePluginUpdates(dao)).toEqual([]);
+        });
+
         it('returns the list of plugins that can be updated', () => {
             const plugins = [
                 generateDaoPlugin({

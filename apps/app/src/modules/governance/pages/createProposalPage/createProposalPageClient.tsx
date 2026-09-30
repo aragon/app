@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { SafeProcessOverview } from '@/plugins/safeMultisigPlugin/components/safeProcessOverview';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -69,6 +70,7 @@ export const CreateProposalPageClient: React.FC<
         daoId,
         pluginAddress,
         redirectTab: 'proposals',
+        enabled: plugin?.interfaceType !== PluginInterfaceType.SAFE,
     });
 
     const [prepareActions, setPrepareActions] =
@@ -110,6 +112,17 @@ export const CreateProposalPageClient: React.FC<
                 error={errorUtils.serialize(pluginNotFoundError)}
                 errorNamespace="app.governance.createProposalPage.error"
             />
+        );
+    }
+
+    if (plugin.interfaceType === PluginInterfaceType.SAFE) {
+        return (
+            <Page.Main>
+                <SafeProcessOverview
+                    initialParams={{ queryParams: { daoId } }}
+                    plugin={plugin}
+                />
+            </Page.Main>
         );
     }
 

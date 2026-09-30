@@ -20,12 +20,22 @@ export interface IUseProposalPermissionCheckGuardParams {
      * @default dashboard
      */
     redirectTab?: 'dashboard' | 'proposals' | 'settings';
+    /**
+     * Runs the creation guard. Disable for read-only destinations.
+     * @default true
+     */
+    enabled?: boolean;
 }
 
 export const useProposalPermissionCheckGuard = (
     params: IUseProposalPermissionCheckGuardParams,
 ) => {
-    const { daoId, pluginAddress, redirectTab = 'dashboard' } = params;
+    const {
+        daoId,
+        pluginAddress,
+        redirectTab = 'dashboard',
+        enabled = true,
+    } = params;
 
     const router = useRouter();
 
@@ -62,6 +72,7 @@ export const useProposalPermissionCheckGuard = (
 
     useEffect(() => {
         if (
+            enabled &&
             plugin != null &&
             !canCreateProposal &&
             !hasCalledGuardRef.current
@@ -69,5 +80,5 @@ export const useProposalPermissionCheckGuard = (
             hasCalledGuardRef.current = true;
             createProposalGuard();
         }
-    }, [plugin, canCreateProposal, createProposalGuard]);
+    }, [enabled, plugin, canCreateProposal, createProposalGuard]);
 };
