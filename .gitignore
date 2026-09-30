@@ -73,7 +73,6 @@ next-env.d.ts
 # design-sync (claude.ai/design) — staged scripts, build output, machine state
 ds-bundle/
 .design-sync/.cache/
-.design-sync/learnings/
-.design-sync/evaluations/
+.design-sync/internal/
 .ds-sync/
 .design-sync/node_modules
