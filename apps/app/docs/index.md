@@ -11,6 +11,16 @@ Ensure consistency and maintainability by following our coding guidelines:
 - [Naming Conventions](./codingGuidelines/namingConventions.md)
 - [Pull Requests](./codingGuidelines/pullRequests.md)
 
+## Design and interaction guidance
+
+Use the maintained design-sync guide for component selection, composition,
+interaction/domain behavior, styling, accessibility and implementation copy:
+
+- [Design-sync usage conventions](../../../.design-sync/conventions.md) — the
+  maintained entry point used by the App design surface.
+- [GovKit Storybook](https://aragon.github.io/gov-ui-kit/) — published component
+  examples; check source/API contracts at the consumed package revision.
+
 ## Project Docs
 
 Check the project specific processes and guidelines below:

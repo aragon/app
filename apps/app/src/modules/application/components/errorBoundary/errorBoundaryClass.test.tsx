@@ -26,7 +26,22 @@ describe('<ErrorBoundary /> component', () => {
         };
 
         render(createTestComponent({ children: <Children /> }));
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    });
+
+    it('renders the fallback property instead of the error feedback when set', () => {
+        testLogger.suppressErrors();
+
+        const Children = () => {
+            throw new Error('Test error');
+        };
+        const fallback = 'custom-fallback';
+
+        render(createTestComponent({ children: <Children />, fallback }));
+        expect(screen.getByText(fallback)).toBeInTheDocument();
+        expect(
+            screen.queryByText('Something went wrong'),
+        ).not.toBeInTheDocument();
     });
 
     it('resets the error state on pathname change', () => {
@@ -42,7 +57,7 @@ describe('<ErrorBoundary /> component', () => {
                 children: <ChildrenError />,
             }),
         );
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
 
         const newPathname = '/create';
         const children = 'new-children';

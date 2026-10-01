@@ -20,6 +20,8 @@ const buildRequestBody = (session = sessionId) => ({
         },
     ],
     appContext: { route: '/dao', appVersion: '1.33.2' },
+    // The host enables the documentation tools; the intake-only case sends no features.
+    features: { docsSearch: true },
 });
 
 const buildApp = (deps: ITestDependencies) =>
@@ -284,7 +286,7 @@ describe('POST /chat guardrails', () => {
         const streamCalls = JSON.stringify(model.doStreamCalls);
         expect(streamCalls).toContain('[attached: screenshot.png]');
         // The system prompt explains the marker only when the conversation carries one.
-        expect(streamCalls).toContain('means the user attached that file');
+        expect(streamCalls).toContain('it goes with the ticket');
     });
 
     it('leaves the attachment guidance out of a conversation without files', async () => {
@@ -295,7 +297,7 @@ describe('POST /chat guardrails', () => {
         await response.text();
 
         expect(JSON.stringify(model.doStreamCalls)).not.toContain(
-            'means the user attached that file',
+            'it goes with the ticket',
         );
     });
 
@@ -442,5 +444,122 @@ describe('POST /chat guardrails', () => {
         expect(streamed).toContain('reached its size limit');
         expect(model.doStreamCalls).toHaveLength(0);
         expect(deps.linear.createIssueCalls).toHaveLength(0);
+    });
+
+    it('gives the agent the documentation tools and guidance when the request enables them', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        await response.text();
+
+        const call = model.doStreamCalls[0];
+        const toolNames = (call?.tools ?? []).map((tool) => tool.name);
+        expect(toolNames).toEqual(
+            expect.arrayContaining([
+                'createLinearTicket',
+                'flagOffTopic',
+                'searchDocs',
+                'readDoc',
+            ]),
+        );
+        const systemPrompt = JSON.stringify(call?.prompt[0]);
+        expect(systemPrompt).toContain('Search before you answer');
+        expect(systemPrompt).not.toContain(
+            "can't answer product questions here",
+        );
+    });
+
+    it('leaves the documentation tools out and collects tickets only when the request enables nothing', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const { features: _features, ...body } = buildRequestBody();
+
+        const response = await buildApp(deps).request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const call = model.doStreamCalls[0];
+        const toolNames = (call?.tools ?? []).map((tool) => tool.name);
+        expect(toolNames).toEqual(['createLinearTicket', 'flagOffTopic']);
+        expect(JSON.stringify(call?.prompt[0])).toContain(
+            "can't answer product questions here",
+        );
+    });
+
+    it('drops the documentation lookups of earlier turns from the history the model sees', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const body = {
+            ...buildRequestBody(),
+            messages: [
+                ...buildRequestBody().messages,
+                {
+                    id: 'message-2',
+                    role: 'assistant',
+                    parts: [
+                        { type: 'step-start' },
+                        {
+                            type: 'tool-searchDocs',
+                            toolCallId: 'docs-1',
+                            state: 'output-available',
+                            input: { query: 'vote button' },
+                            output: { results: [{ excerpt: 'STALE PASSAGE' }] },
+                        },
+                        { type: 'step-start' },
+                        { type: 'text', text: 'The earlier answer.' },
+                    ],
+                },
+                {
+                    id: 'message-3',
+                    role: 'user',
+                    parts: [{ type: 'text', text: 'And on mobile?' }],
+                },
+            ],
+        };
+
+        const response = await buildApp(deps).request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const streamCalls = JSON.stringify(model.doStreamCalls);
+        expect(streamCalls).toContain('The earlier answer.');
+        expect(streamCalls).toContain('And on mobile?');
+        expect(streamCalls).not.toContain('STALE PASSAGE');
+    });
+
+    it('runs a documentation search inline and hands the passages back to the model', async () => {
+        const model = createMockChatModel({
+            streamedText: 'Let me check.',
+            toolCall: {
+                toolName: 'searchDocs',
+                input: { query: 'linking control permissions' },
+            },
+            followUpText: 'Linking is a signal, not control.',
+        });
+        const deps = createTestDependencies(model);
+
+        const response = await postChat(buildApp(deps));
+        const body = await response.text();
+
+        expect(response.status).toEqual(200);
+        // No approval gate on a read-only tool: the result reaches the model in the same turn
+        // and the model answers on top of it, while the passages stay on the server.
+        expect(body).toContain('tool-output-available');
+        expect(body).not.toContain('accounts/linked-account.md');
+        expect(JSON.stringify(model.doStreamCalls)).toContain(
+            'accounts/linked-account.md',
+        );
+        expect(body).toContain('Linking is a signal, not control.');
+        expect(body).not.toContain('tool-approval-request');
+        expect(model.doStreamCalls).toHaveLength(2);
     });
 });

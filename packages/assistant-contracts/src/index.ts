@@ -1,15 +1,19 @@
 export {
     appContextSchema,
+    chatFeaturesSchema,
     chatMessageSchema,
     chatRequestSchema,
     debugTransactionSchema,
     type IAppContext,
+    type IChatFeatures,
     type IChatMessage,
     type IChatRequest,
     type IDebugTransaction,
 } from './chat';
 export {
     docSearchResultSchema,
+    docsToolNameSet,
+    docsToolNames,
     type IDocSearchResult,
 } from './docs';
 export {

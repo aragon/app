@@ -46,6 +46,18 @@ interface IAdapterEntry {
      * Server identifier of the queued file once confirmed, used to delete it again.
      */
     serverId?: string;
+    /**
+     * Set when the upload was rejected (validation, sanitization) or failed. The entry is kept
+     * so `send` can refuse to attach a file the server does not hold, but it no longer occupies
+     * a composer slot.
+     */
+    uploadError?: unknown;
+    /**
+     * Set once the file has ridden along with a message. Kept (rather than dropping the entry) so
+     * a repeated `send` is idempotent: the composer re-sends every attachment when one of them
+     * fails, and a file that already went must not look like one that never uploaded.
+     */
+    sent?: boolean;
 }
 
 const toAttachmentType = (file: File): string =>
@@ -85,8 +97,12 @@ export const createAttachmentAdapter = (
     // Files sitting in the composer: entries are dropped again when their message is sent, so the
     // cap applies per message, not per session.
     const usedSlots = (sessionId: string): number =>
-        [...entries.values()].filter((entry) => entry.sessionId === sessionId)
-            .length;
+        [...entries.values()].filter(
+            (entry) =>
+                entry.sessionId === sessionId &&
+                entry.uploadError == null &&
+                !entry.sent,
+        ).length;
 
     return {
         accept: attachmentAccept,
@@ -129,7 +145,10 @@ export const createAttachmentAdapter = (
                     entry.handle = undefined;
                 })
                 .catch((error: unknown) => {
-                    entries.delete(id);
+                    // Kept (not deleted) so `send` can tell a rejected file apart from one that
+                    // was never picked: the tile stays in the composer showing its error, and the
+                    // message cannot be sent until the user removes it.
+                    entry.uploadError = error;
                     throw error;
                 });
 
@@ -187,13 +206,30 @@ export const createAttachmentAdapter = (
             entries.delete(attachment.id);
         },
         send: async (attachment: PendingAttachment) => {
-            // Sending while the upload is still in flight simply waits for it; a failed upload
-            // keeps the composer intact so the user can remove the broken tile.
-            await entries.get(attachment.id)?.uploadPromise;
+            const entry = entries.get(attachment.id);
 
-            // The message takes the file with it: the entry no longer occupies a composer slot,
-            // and the server queue (bounded by its own session cap) holds it for the ticket.
-            entries.delete(attachment.id);
+            // The server holds bytes only for uploads it accepted. A rejected one (unsupported
+            // type, session limit, active content) must never ride along with the message: the
+            // send fails so the user removes the tile first, instead of the transcript showing
+            // an attachment the support team will never receive.
+            if (entry == null) {
+                throw new Error(chatCopy.fileAlerts.uploadFailed);
+            }
+
+            // Sending while the upload is still in flight waits for it; a rejection landing at
+            // this point fails the send for the same reason.
+            try {
+                await entry.uploadPromise;
+            } catch (error) {
+                throw new Error(toUploadErrorText(error), { cause: error });
+            }
+
+            // The message takes the file with it, so the entry stops occupying a composer slot —
+            // but it is marked rather than dropped: when one attachment of a message fails, the
+            // composer restores them all and re-sends, and a dropped entry would then look like a
+            // file that never uploaded (blocking the message, and letting `remove` skip the
+            // server-side deletion so a removed file still reached the ticket).
+            entry.sent = true;
 
             // The content part exists only for the local transcript: assistant-ui rebuilds the
             // sent message's attachment tiles from it, the chat transport strips file parts from

@@ -1,0 +1,81 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { VoteDataListItem } from '..';
+
+const meta: Meta<typeof VoteDataListItem.Structure> = {
+    title: 'Modules/Components/Vote/VoteDataListItem/VoteDataListItem.Structure',
+    component: VoteDataListItem.Structure,
+    parameters: {
+        design: {
+            type: 'figma',
+            url: 'https://www.figma.com/design/ISSDryshtEpB7SUSdNqAcw/Governance-UI-Kit?m=auto&node-id=17239-29368&t=peSiBlLobN0veIUU-1',
+        },
+    },
+};
+
+type Story = StoryObj<typeof VoteDataListItem.Structure>;
+
+/**
+ * Usage example of the VotesDataListItem module component for a token based vote.
+ */
+export const TokenVoting: Story = {
+    args: {
+        voter: { address: '0x1234567890123456789012345678901234567890', name: 'vitalik.eth' },
+        voteIndicator: 'yes',
+        voteIndicatorDescription: 'to approve',
+        votingPower: 1_230_000,
+        tokenSymbol: 'PDC',
+    },
+};
+
+/**
+ * Usage example of the VotesDataListItem module component for a token based vote in veto mode.
+ */
+export const TokenVotingVeto: Story = {
+    args: {
+        voter: { address: '0x1234567890123456789012345678901234567890', name: 'vitalik.eth' },
+        isVeto: true,
+        voteIndicator: 'yes',
+        voteIndicatorDescription: 'to veto',
+        votingPower: 1_230_000,
+        tokenSymbol: 'PDC',
+    },
+};
+
+/**
+ * Usage example of the VotesDataListItem module component for a multisig vote.
+ */
+export const Multisig: Story = {
+    args: {
+        voter: { address: '0x1234567890123456789012345678901234567890', name: 'vitalik.eth' },
+        voteIndicator: 'approve',
+    },
+};
+
+/**
+ * Usage example of the VotesDataListItem module component for a token based vote with large number and long ens name.
+ */
+export const TokenVotingLongNames: Story = {
+    args: {
+        voter: {
+            address: '0x1234567890123456789012345678901234567890',
+            name: 'theLongestEnsDomainEverThatWillTruncateWhenNeeded.eth',
+        },
+        voteIndicator: 'yes',
+        voteIndicatorDescription: 'to approve',
+        votingPower: 123_456_789,
+        tokenSymbol: 'PDC',
+    },
+};
+
+/**
+ * The item stays a whole-row link while AddressOutput keeps its reveal and copy controls outside the link.
+ */
+export const InteractiveItem: Story = {
+    args: {
+        voter: { address: '0x1234567890123456789012345678901234567890', name: 'vitalik.eth' },
+        voteIndicator: 'yes',
+        href: '/members/vitalik.eth',
+    },
+};
+
+export default meta;

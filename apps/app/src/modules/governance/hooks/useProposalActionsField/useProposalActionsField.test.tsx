@@ -137,6 +137,8 @@ describe('useProposalActionsField hook', () => {
         expect(controls.moveDown?.disabled).toBe(true);
     });
 
+    // The calldata-level repro of a reorder mixing up action values lives in
+    // `actions/core/permissionManager/permissionActionReorder.test.tsx`; run it too.
     describe('reordering', () => {
         let formApi: UseFormReturn<Record<string, unknown>>;
 
