@@ -17,6 +17,8 @@ export interface IWithdrawTokenActionDetailsProps
 export const WithdrawTokenActionDetails: React.FC<
     IWithdrawTokenActionDetailsProps
 > = (props) => {
+    // Only chainId is forwarded: the app never sets wagmiConfig on ProposalActions.Item, and AssetTransfer falls back
+    // to the global wagmi config, which is the same one, to build block-explorer links.
     const { action, chainId } = props;
 
     const { sender, receiver, amount, token } =
