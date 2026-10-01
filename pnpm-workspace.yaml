@@ -42,6 +42,7 @@ catalog:
   "@upstash/redis": ^1.38.4
   "@vercel/blob": ^2.8.0
   ai: ^7.0.102
+  ajv: ^8.20.0
   classnames: ^2.5.1
   cross-env: ^10.1.0
   file-type: ^22.1.0
