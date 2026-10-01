@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-// Names of the agent's documentation tools. Shared by the service (tool registration and the
-// narration filter) and the widget (the tool parts it renders a spinner for while they run).
+// Names of the agent's documentation tools. Shared by the service (tool registration, the
+// narration filter and the history trim) and the widget (the tool parts it renders a spinner for
+// while they run).
 export const docsToolNames = {
-    listDocs: 'listDocs',
     searchDocs: 'searchDocs',
     readDoc: 'readDoc',
 } as const;

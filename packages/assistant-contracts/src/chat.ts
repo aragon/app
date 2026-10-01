@@ -55,6 +55,16 @@ export const chatMessageSchema = z.object({
 
 export type IChatMessage = z.infer<typeof chatMessageSchema>;
 
+// What the host lets this conversation do; absent means off. The host decides per environment
+// (its feature flags), so a rollout is a flag flip there and nothing on the service. The service
+// enforces its limits whatever the request enables, so this is no trust boundary.
+export const chatFeaturesSchema = z.object({
+    // Answer product questions from the documentation; off, the assistant only collects tickets.
+    docsSearch: z.boolean().optional(),
+});
+
+export type IChatFeatures = z.infer<typeof chatFeaturesSchema>;
+
 export const chatRequestSchema = z.object({
     sessionId: z.uuid(),
     messages: z
@@ -62,6 +72,7 @@ export const chatRequestSchema = z.object({
         .min(1)
         .max(assistantLimits.maxMessages),
     appContext: appContextSchema,
+    features: chatFeaturesSchema.optional(),
 });
 
 export type IChatRequest = z.infer<typeof chatRequestSchema>;

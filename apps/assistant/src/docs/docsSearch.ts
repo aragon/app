@@ -29,13 +29,6 @@ export interface IDocPage {
     content: string;
 }
 
-export interface IDocListEntry {
-    path: string;
-    title: string;
-    breadcrumb: string;
-    summary?: string;
-}
-
 export interface IDocsSearchModels {
     /**
      * Embeds a query in the space the index vectors live in. Absent (or failing) → the search
@@ -66,7 +59,6 @@ export interface IDocsSearch {
     meta: IDocsIndexMeta;
     search: (query: string) => Promise<IDocsSearchHit[]>;
     readDoc: (path: string) => IDocPage | undefined;
-    listDocs: (params?: { area?: string }) => IDocListEntry[];
 }
 
 // Hybrid retrieval keeps the top candidates for the reranker; the model then sees the best five.
@@ -291,24 +283,5 @@ export const createDocsSearch = (
         };
     };
 
-    const listDocs = (params: { area?: string } = {}): IDocListEntry[] => {
-        const area = params.area?.trim().toLowerCase();
-
-        return documents
-            .filter(
-                (document) =>
-                    area == null ||
-                    area === '' ||
-                    document.breadcrumb.toLowerCase().startsWith(area) ||
-                    document.path.toLowerCase().startsWith(area),
-            )
-            .map(({ path, title, breadcrumb, summary }) => ({
-                path,
-                title,
-                breadcrumb,
-                summary,
-            }));
-    };
-
-    return { meta, search, readDoc, listDocs };
+    return { meta, search, readDoc };
 };

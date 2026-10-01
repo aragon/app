@@ -242,6 +242,39 @@ describe('<AssistantChat /> integration', () => {
         return screen.getByRole('button', { name: 'Create ticket' });
     };
 
+    it('tells the user they talk to an AI, with the legal pages, before the first message', async () => {
+        chatResponses = [createChatResponse(draftChunks('tc-1'))];
+        renderWidget();
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        // The description computation pads the inline links with spaces ("terms .").
+        expect(composer).toHaveAccessibleDescription(
+            /^The Aragon Assistant uses AI to provide you with helpful information\. Sometimes it can be wrong\. For more information about how third parties may process your messages, read the privacy policy and terms/,
+        );
+        // The notice sits under the composer, not in the welcome block above it.
+        expect(
+            composer.compareDocumentPosition(
+                screen.getByText(/uses AI to provide you/),
+            ) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+        expect(
+            screen.getByRole('link', { name: 'privacy policy' }),
+        ).toHaveAttribute('href', 'https://aragon.org/privacy-policy');
+        expect(screen.getByRole('link', { name: 'terms' })).toHaveAttribute(
+            'href',
+            'https://aragon.org/terms-and-conditions',
+        );
+
+        await sendMessageAndReviewDraft();
+
+        expect(
+            screen.queryByText(/uses AI to provide you/),
+        ).not.toBeInTheDocument();
+        expect(composer).not.toHaveAccessibleDescription();
+    });
+
     it('drafts the ticket and creates it on approval', async () => {
         chatResponses = [
             createChatResponse(draftChunks('tc-1')),
@@ -278,6 +311,38 @@ describe('<AssistantChat /> integration', () => {
                 localStorage.getItem('aragon-assistant:requests') ?? '[]',
             ),
         ).toEqual([expect.objectContaining({ identifier: 'SUP-123' })]);
+    });
+
+    it('sends what the host lets the chat do with every request', async () => {
+        chatResponses = [
+            createChatResponse(textChunks('An account lives on one network.')),
+        ];
+        render(
+            <AssistantChat
+                appContext={{ route: '/dashboard', appVersion: '1.0.0' }}
+                assistantUrl={assistantUrl}
+                features={{ docsSearch: true }}
+                isOpen={true}
+                onClose={jest.fn()}
+            />,
+        );
+
+        const composer = await screen.findByRole('textbox', {
+            name: 'Message',
+        });
+        await userEvent.type(
+            composer,
+            'What chains does Aragon support?{Enter}',
+        );
+        expect(
+            await screen.findByText('An account lives on one network.'),
+        ).toBeInTheDocument();
+
+        const [, chatRequest] = chatCalls()[0];
+        const requestBody = JSON.parse(chatRequest?.body as string) as {
+            features: unknown;
+        };
+        expect(requestBody.features).toEqual({ docsSearch: true });
     });
 
     it('shows exactly one spinner from the send until the answer streams, through every lookup', async () => {
