@@ -6,7 +6,10 @@ import type {
     ISafeMultisigTransaction,
     ISafeNextNonce,
     ISafePaginatedResponse,
+    ISafeStoredTransactionsResponse,
+    ISafeTransactionActions,
     ISafeTransactionData,
+    SafeStoredTransactionState,
 } from './domain';
 
 export interface ISafeUrlParams {
@@ -18,6 +21,10 @@ export interface ISafeUrlParams {
      * Address of the Safe. Normalised to its checksummed form at the service boundary.
      */
     address: string;
+}
+
+export interface ISafeTransactionUrlParams extends ISafeUrlParams {
+    safeTxHash: string;
 }
 
 export interface IGetSafeInfoParams extends IRequestUrlParams<ISafeUrlParams> {}
@@ -57,18 +64,37 @@ export interface IGetSafeTransactionHistoryParams
     queryParams?: IGetSafeTransactionHistoryQueryParams;
 }
 
+export interface IGetSafeStoredTransactionsQueryParams {
+    limit?: number;
+    offset?: number | string;
+    to?: string;
+    state?: SafeStoredTransactionState;
+}
+
+export interface IGetSafeStoredTransactionsParams
+    extends IRequestUrlParams<ISafeUrlParams> {
+    queryParams?: IGetSafeStoredTransactionsQueryParams;
+}
+
+export interface IGetSafeTransactionActionsParams
+    extends IRequestUrlParams<ISafeTransactionUrlParams> {}
+
 export interface IGetSafeBalancesParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 
 /**
- * Identity of a native Safe DAO proposal feed: the Safe account whose queue/history is read and
- * the DAO whose `execute` calls select the governance proposals out of it. Not a URL-params shape
- * because the feed is a client-side join of two Safe reads, not one endpoint.
+ * Identity of a native Safe DAO proposal feed: the Safe account whose stored transactions are read
+ * and the DAO whose `execute` calls select the governance proposals out of it.
  */
 export interface IGetSafeDaoProposalsParams {
     network: Network;
     safeAddress: string;
     daoAddress: string;
+}
+
+export interface IGetSafeDaoProposalParams extends IGetSafeDaoProposalsParams {
+    safeTxHash: string;
+    state?: SafeStoredTransactionState;
 }
 
 export interface ISafeInfoResponse extends ISafeInfo {
@@ -83,6 +109,9 @@ export interface ISafeQueueResponse
     extends ISafePaginatedResponse<ISafeMultisigTransaction> {
     meta: ISafeMeta;
 }
+
+export type ISafeStoredTransactions = ISafeStoredTransactionsResponse;
+export type ISafeTransactionActionsResponse = ISafeTransactionActions;
 
 export interface IProposeSafeTransactionBody {
     safeTransactionData: ISafeTransactionData;

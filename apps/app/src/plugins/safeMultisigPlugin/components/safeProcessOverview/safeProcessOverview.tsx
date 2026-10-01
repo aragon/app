@@ -5,10 +5,10 @@ import {
     Button,
     Card,
     DataListContainer,
-    DataListPagination,
     DataListRoot,
     IconType,
     ProposalDataListItem,
+    useGukCoreContext,
 } from '@aragon/gov-ui-kit';
 import Image from 'next/image';
 import safeWallet from '@/assets/images/safeWallet.png';
@@ -18,8 +18,6 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeDaoProposals } from '../../hooks/useSafeDaoProposals';
-
-const proposalsPerPage = 6;
 
 /** Transaction destination for a Safe process; Safe transactions are not indexed Aragon proposals. */
 export interface ISafeProcessOverviewProps {
@@ -32,20 +30,31 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
     initialParams,
 }) => {
     const { t } = useTranslations();
+    const { copy } = useGukCoreContext();
     const { network, address: rootDaoAddress } = daoUtils.parseDaoId(
         initialParams.queryParams.daoId,
     );
     const daoAddress = plugin.daoAddress ?? rootDaoAddress;
-    const { data, isError, isLoading, isPartial, isStale } =
-        useSafeDaoProposals({
-            network,
-            safeAddress: plugin.address,
-            daoAddress,
-        });
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isError,
+        isFetchNextPageError,
+        isFetchingNextPage,
+        isIndexing,
+        isLoading,
+        isPartial,
+        isStale,
+    } = useSafeDaoProposals({
+        network,
+        safeAddress: plugin.address,
+        daoAddress,
+    });
     const safeUrl = safeAppAccountUrl({ network, address: plugin.address });
     const daoUrl = `/dao/${network}/${daoAddress}`;
     const state = safeDataListUtils.getDataListState({
-        isError,
+        isError: isError && data == null,
         isLoading,
     });
 
@@ -84,19 +93,23 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                     </Button>
                 )}
             </Card>
-            {(isStale || isPartial) && (
-                <AlertInline
-                    className="mb-4"
-                    message={t(
-                        'app.plugins.safeMultisig.safeProcess.transactionsStale',
-                    )}
-                    variant="warning"
-                />
-            )}
+            {!isLoading &&
+                (isStale ||
+                    isPartial ||
+                    isIndexing ||
+                    isFetchNextPageError) && (
+                    <AlertInline
+                        className="mb-4"
+                        message={t(
+                            'app.plugins.safeMultisig.safeProcess.transactionsStale',
+                        )}
+                        variant="warning"
+                    />
+                )}
             <DataListRoot
                 entityLabel={t('app.safe.safePendingTransactionList.entity')}
                 itemsCount={data?.proposals.length ?? 0}
-                pageSize={proposalsPerPage}
+                pageSize={Math.max(data?.proposals.length ?? 0, 1)}
                 state={state}
             >
                 <DataListContainer
@@ -127,7 +140,7 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                                 transaction.submissionDate
                             }
                             href={`${daoUrl}/proposals/safe/${transaction.safeTxHash}?safeAddress=${encodeURIComponent(plugin.address)}`}
-                            id={`${plugin.address}:${transaction.safeTxHash}`}
+                            id={`SAFE-${transaction.nonce}`}
                             key={`${plugin.address}:${transaction.safeTxHash}`}
                             publisher={{ address: plugin.address }}
                             status={status}
@@ -143,7 +156,19 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                         />
                     ))}
                 </DataListContainer>
-                <DataListPagination />
+                {hasNextPage && (
+                    <Button
+                        className="mt-4"
+                        iconRight={IconType.CHEVRON_DOWN}
+                        isLoading={isFetchingNextPage}
+                        onClick={() => {
+                            void fetchNextPage();
+                        }}
+                        variant="tertiary"
+                    >
+                        {copy.dataListPagination.more}
+                    </Button>
+                )}
             </DataListRoot>
         </>
     );

@@ -14,6 +14,10 @@ export interface IUseSafeDaoProposalsParams {
     enabled?: boolean;
 }
 
+export interface IUseSafeDaoProposalParams extends IUseSafeDaoProposalsParams {
+    safeTxHash: string;
+}
+
 export interface ISafeDaoProposal {
     transaction: ISafeMultisigTransaction;
     actions: ITransactionRequest[];
@@ -23,14 +27,17 @@ export interface ISafeDaoProposal {
 
 export interface ISafeDaoProposalsMeta {
     /**
-     * At least one Safe read was served from the backend's stale window.
+     * At least one stored Safe read was served from the backend's stale window.
      */
     stale: boolean;
     /**
-     * Pagination ended before the response count was exhausted or returned an unusable next page.
-     * The rows are usable but must not be presented as a complete feed.
+     * The store reports that its refresh did not cover the complete upstream feed.
      */
     partial: boolean;
+    /**
+     * Last store refresh timestamp. Null means the store has never completed a pull.
+     */
+    fetchedAt: string | null;
 }
 
 export interface ISafeDaoProposalsData {
@@ -38,6 +45,7 @@ export interface ISafeDaoProposalsData {
     proposals: ISafeDaoProposal[];
     meta: ISafeDaoProposalsMeta;
 }
+
 export interface IUseSafeDaoProposalsReturn {
     data: ISafeDaoProposalsData | undefined;
     isLoading: boolean;
@@ -45,4 +53,20 @@ export interface IUseSafeDaoProposalsReturn {
     error: Error | null;
     isStale: boolean;
     isPartial: boolean;
+    isIndexing: boolean;
+    fetchNextPage: () => Promise<unknown>;
+    hasNextPage: boolean;
+    isFetchingNextPage: boolean;
+    isFetchNextPageError: boolean;
+}
+
+export interface IUseSafeDaoProposalReturn
+    extends Omit<
+        IUseSafeDaoProposalsReturn,
+        | 'fetchNextPage'
+        | 'hasNextPage'
+        | 'isFetchingNextPage'
+        | 'isFetchNextPageError'
+    > {
+    isNotFound: boolean;
 }

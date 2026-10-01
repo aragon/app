@@ -103,6 +103,48 @@ describe('safe service keys', () => {
         );
     });
 
+    it('canonicalizes Safe transaction action hashes', () => {
+        const safeTxHash = `0x${'AB'.repeat(32)}`;
+
+        expect(
+            safeServiceKeys.safeTransactionActions({
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: lowercased,
+                    safeTxHash,
+                },
+            }),
+        ).toEqual(
+            safeServiceKeys.safeTransactionActions({
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: checksummed,
+                    safeTxHash: safeTxHash.toLowerCase(),
+                },
+            }),
+        );
+    });
+
+    it('keeps list and detail DAO proposal feeds separate', () => {
+        const daoAddress = '0x665928FeacC8739116A3f2eF66a9c61936348DC2';
+        const safeTxHash = `0x${'ab'.repeat(32)}`;
+
+        expect(
+            safeServiceKeys.safeDaoProposals({
+                network: Network.ETHEREUM_MAINNET,
+                safeAddress: checksummed,
+                daoAddress,
+            }),
+        ).not.toEqual(
+            safeServiceKeys.safeDaoProposal({
+                network: Network.ETHEREUM_MAINNET,
+                safeAddress: checksummed,
+                daoAddress,
+                safeTxHash,
+            }),
+        );
+    });
+
     it('keeps distinct Safes on distinct keys', () => {
         const other = '0x665928FeacC8739116A3f2eF66a9c61936348DC2';
 

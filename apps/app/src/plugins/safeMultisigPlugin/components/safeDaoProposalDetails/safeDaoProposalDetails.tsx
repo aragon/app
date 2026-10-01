@@ -14,8 +14,8 @@ import {
     ProposalVoting,
     VoteDataListItem,
 } from '@aragon/gov-ui-kit';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { ProposalActionsItem } from '@/modules/governance/components/proposalActionsItem';
-import type { IRawActionTuple } from '@/modules/governance/types';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { SafeOwnerList } from '@/modules/safe/components/safeOwnerList';
 import { SafeTransactionReviewContent } from '@/modules/safe/components/safeTransactionReviewContent';
@@ -37,12 +37,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
+import { useSafeDaoProposalActions } from '../../hooks/useSafeDaoProposalActions';
 import type { ISafeDaoProposal } from '../../hooks/useSafeDaoProposals';
-import {
-    findSafeDaoProposal,
-    useSafeDaoProposals,
-} from '../../hooks/useSafeDaoProposals';
+import { useSafeDaoProposal } from '../../hooks/useSafeDaoProposals';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
 
 export interface ISafeDaoProposalDetailsProps {
@@ -84,13 +81,14 @@ export const SafeDaoProposalDetails: React.FC<ISafeDaoProposalDetailsProps> = ({
     const targetDaoAddress = safePlugin?.daoAddress ?? dao?.address;
     const hasValidTargetDao =
         targetDaoAddress != null && addressUtils.isAddress(targetDaoAddress);
-    const proposals = useSafeDaoProposals({
+    const proposals = useSafeDaoProposal({
         daoAddress: targetDaoAddress ?? '',
         enabled: dao != null && safePlugin != null && hasValidTargetDao,
         network: dao?.network ?? Network.ETHEREUM_MAINNET,
         safeAddress: safePlugin?.address ?? '',
+        safeTxHash,
     });
-    const proposal = findSafeDaoProposal(proposals.data?.proposals, safeTxHash);
+    const proposal = proposals.data?.proposals[0];
 
     if (isDaoLoading || (safePlugins == null && !isDaoError)) {
         return (
@@ -140,6 +138,18 @@ export const SafeDaoProposalDetails: React.FC<ISafeDaoProposalDetailsProps> = ({
         );
     }
 
+    if (proposals.isIndexing && (proposal == null || proposals.data == null)) {
+        return (
+            <SafeDaoProposalDetailsState
+                description={t(
+                    'app.safe.safeDaoProposalDetails.loadingDescription',
+                )}
+                heading={t('app.safe.safeDaoProposalDetails.loadingHeading')}
+                illustration="ACTION"
+            />
+        );
+    }
+
     if (proposals.isError) {
         return (
             <SafeDaoProposalDetailsState
@@ -168,7 +178,11 @@ export const SafeDaoProposalDetails: React.FC<ISafeDaoProposalDetailsProps> = ({
         <SafeDaoProposalDetailsContent
             dao={dao}
             daoId={daoId}
-            isStale={proposals.data.meta.stale || proposals.data.meta.partial}
+            isStale={
+                proposals.data.meta.stale ||
+                proposals.data.meta.partial ||
+                proposals.isIndexing
+            }
             plugin={safePlugin}
             proposal={proposal}
             safeInfo={proposals.data.safeInfo}
@@ -211,9 +225,17 @@ const SafeDaoProposalDetailsContent: React.FC<
 > = ({ dao, daoId, isStale, plugin, proposal, safeInfo }) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { transaction, actions, status } = proposal;
+    const { transaction, actions: localActions, status } = proposal;
     const targetDaoAddress = plugin.daoAddress ?? dao.address;
     const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
+    const { actions } = useSafeDaoProposalActions({
+        daoAddress: targetDaoAddress,
+        enabled: true,
+        localActions,
+        network: dao.network,
+        safeAddress: plugin.address,
+        safeTxHash: transaction.safeTxHash,
+    });
     const confirmedOwners = getCurrentOwnerConfirmations(
         transaction.confirmations,
         safeInfo.owners,
@@ -402,7 +424,7 @@ const SafeDaoProposalDetailsContent: React.FC<
 };
 
 interface ISafeDaoProposalActionsProps {
-    actions: ITransactionRequest[];
+    actions: IProposalAction[];
     dao: IDao;
     daoId: string;
 }
@@ -414,13 +436,8 @@ const SafeDaoProposalActions: React.FC<ISafeDaoProposalActionsProps> = ({
 }) => {
     const { t } = useTranslations();
     const { chainId } = useDaoChain({ network: dao.network });
-    const rawActions: IRawActionTuple[] = actions.map((action) => ({
-        data: action.data,
-        to: action.to,
-        value: action.value.toString(),
-    }));
     const normalizedActions = proposalActionUtils.normalizeActions(
-        proposalActionUtils.buildRawActionStubs(rawActions),
+        actions,
         dao,
     );
 

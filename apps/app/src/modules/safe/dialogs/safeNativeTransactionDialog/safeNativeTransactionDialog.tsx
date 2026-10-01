@@ -371,11 +371,14 @@ export const SafeNativeTransactionDialog: React.FC<
         [network, safeAddress],
     );
     const invalidateSafeQueries = useCallback(() => {
-        void queryClient
-            .invalidateQueries({
+        void Promise.all([
+            queryClient.invalidateQueries({
                 queryKey: [SafeServiceKey.SAFE_DAO_PROPOSALS],
-            })
-            .catch(() => undefined);
+            }),
+            queryClient.invalidateQueries({
+                queryKey: [SafeServiceKey.SAFE_TRANSACTION_ACTIONS],
+            }),
+        ]).catch(() => undefined);
     }, [queryClient]);
     const handleSign = useCallback(async () => {
         if (prepared == null || walletAddress == null || reviewGateBlocked) {
