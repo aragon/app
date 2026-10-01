@@ -4,7 +4,10 @@ import {
     generateSafeMultisigTransaction,
 } from '../../testUtils';
 import { SafeTransactionState } from '../../types';
-import { safeMultisigProposalUtils } from './safeMultisigProposalUtils';
+import {
+    SafeApprovalReadiness,
+    safeMultisigProposalUtils,
+} from './safeMultisigProposalUtils';
 
 describe('safeMultisigProposal utils', () => {
     describe('supportsEip1271Signatures', () => {
@@ -251,6 +254,113 @@ describe('safeMultisigProposal utils', () => {
                 expect(
                     safeMultisigProposalUtils.isThresholdReached(transaction),
                 ).toEqual(reached);
+            },
+        );
+    });
+    describe('getApprovalReadiness', () => {
+        const ownerOne = '0x0000000000000000000000000000000000000011';
+        const ownerTwo = '0x0000000000000000000000000000000000000012';
+
+        it.each([
+            {
+                currentNonce: '10',
+                isExecuted: false,
+                isSuccessful: null,
+                label: 'awaits the live threshold',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.AWAITING_APPROVALS,
+                threshold: 2,
+                confirmations: [ownerOne],
+            },
+            {
+                currentNonce: '10',
+                isExecuted: false,
+                isSuccessful: null,
+                label: 'is ready at the current nonce',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.READY_TO_EXECUTE,
+                threshold: 2,
+                confirmations: [ownerOne, ownerTwo],
+            },
+            {
+                currentNonce: '10',
+                isExecuted: false,
+                isSuccessful: null,
+                label: 'waits for an earlier nonce',
+                nonce: '11',
+                readiness: SafeApprovalReadiness.WAITING_FOR_NONCE,
+                threshold: 2,
+                confirmations: [ownerOne, ownerTwo],
+            },
+            {
+                currentNonce: '11',
+                isExecuted: false,
+                isSuccessful: null,
+                label: 'rejects a consumed nonce',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.SUPERSEDED,
+                threshold: 1,
+                confirmations: [ownerOne],
+            },
+            {
+                currentNonce: '10',
+                isExecuted: true,
+                isSuccessful: true,
+                label: 'reports a successful execution',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.EXECUTED_SUCCESS,
+                threshold: 2,
+                confirmations: [ownerOne],
+            },
+            {
+                currentNonce: '10',
+                isExecuted: true,
+                isSuccessful: null,
+                label: 'keeps an unknown execution outcome unresolved',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.EXECUTED_UNKNOWN,
+                threshold: 2,
+                confirmations: [ownerOne],
+            },
+            {
+                currentNonce: '10',
+                isExecuted: true,
+                isSuccessful: false,
+                label: 'reports a reverted execution instead of ready',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.EXECUTED_FAILURE,
+                threshold: 1,
+                confirmations: [ownerOne],
+            },
+        ])(
+            'classifies a transaction that $label',
+            ({
+                currentNonce,
+                isExecuted,
+                isSuccessful,
+                nonce,
+                readiness,
+                threshold,
+                confirmations,
+            }) => {
+                const transaction = generateSafeMultisigTransaction({
+                    confirmations: confirmations.map((owner) =>
+                        generateSafeConfirmation({ owner }),
+                    ),
+                    confirmationsRequired: 1,
+                    isExecuted,
+                    isSuccessful,
+                    nonce,
+                });
+
+                expect(
+                    safeMultisigProposalUtils.getApprovalReadiness({
+                        currentNonce,
+                        owners: [ownerOne, ownerTwo],
+                        threshold,
+                        transaction,
+                    }),
+                ).toEqual(readiness);
             },
         );
     });

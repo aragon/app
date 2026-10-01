@@ -121,7 +121,7 @@ describe('<SafeProcessOverview />', () => {
 
         render(createTestComponent());
         expect(
-            screen.getByRole('link', { name: /SAFE-7/ }),
+            screen.getByRole('link', { name: /SAFE-7 ·/ }),
         ).toBeInTheDocument();
 
         const moreButton = screen.getByRole('button', { name: 'More' });

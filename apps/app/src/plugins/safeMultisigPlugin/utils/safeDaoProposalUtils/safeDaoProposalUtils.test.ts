@@ -61,6 +61,32 @@ describe('safe DAO proposal utils', () => {
             ],
         });
 
+    it('qualifies IDs with transaction hashes across nonce competitors and Safes', () => {
+        const sameSafeNonceCompetitor = generateSafeMultisigTransaction({
+            nonce: '7',
+            safeTxHash: `0x${'1'.repeat(64)}`,
+        });
+        const sameSafeRival = generateSafeMultisigTransaction({
+            nonce: '7',
+            safeTxHash: `0x${'2'.repeat(64)}`,
+        });
+        const differentSafeTransaction = generateSafeMultisigTransaction({
+            nonce: '7',
+            safeTxHash: `0x${'3'.repeat(64)}`,
+        });
+
+        const displayIds = [
+            sameSafeNonceCompetitor,
+            sameSafeRival,
+            differentSafeTransaction,
+        ].map((transaction) =>
+            safeDaoProposalUtils.getProposalDisplayId(transaction),
+        );
+
+        expect(new Set(displayIds).size).toBe(3);
+        expect(displayIds.every((id) => id.startsWith('SAFE-7 · '))).toBe(true);
+    });
+
     it('extracts actions from a direct DAO.execute call', () => {
         const transaction = generateSafeMultisigTransaction({
             to: daoAddress,

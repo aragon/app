@@ -19,15 +19,18 @@ export interface ICreateExecuteActionsPageClientStepsProps {
      */
     daoId: string;
     /**
-     * Whether the actions are being proposed through a native Safe.
+     * Address of the native Safe that calls `DAO.execute`, so the actions are simulated from the
+     * Safe (which holds `EXECUTE_PERMISSION`) rather than the connected owner EOA. When set, the
+     * step also uses the native-Safe copy.
      */
-    isSafeProcess?: boolean;
+    safeAddress?: string;
 }
 
 export const CreateExecuteActionsPageClientSteps: React.FC<
     ICreateExecuteActionsPageClientStepsProps
 > = (props) => {
-    const { daoId, isSafeProcess = false } = props;
+    const { daoId, safeAddress } = props;
+    const isSafeProcess = safeAddress != null;
     const { t } = useTranslations();
     const { address } = useWalletAccount();
 
@@ -38,7 +41,7 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
 
     const simulateDropdownItems = useSimulateActionsDropdown({
         daoId,
-        from: address,
+        from: safeAddress ?? address,
         isDirectExecute: true,
         formId: createExecuteActionsWizardId,
     });

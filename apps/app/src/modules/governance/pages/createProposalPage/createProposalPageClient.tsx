@@ -73,12 +73,13 @@ export const CreateProposalPageClient: React.FC<
         );
     })?.meta;
 
-    useProposalPermissionCheckGuard({
-        daoId,
-        pluginAddress,
-        redirectTab: 'proposals',
-        enabled: plugin?.interfaceType !== PluginInterfaceType.SAFE,
-    });
+    const { canCreateProposal, isLoading: isProposalPermissionLoading } =
+        useProposalPermissionCheckGuard({
+            daoId,
+            pluginAddress,
+            redirectTab: 'proposals',
+            enabled: plugin != null,
+        });
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
@@ -123,7 +124,7 @@ export const CreateProposalPageClient: React.FC<
     }
 
     if (plugin.interfaceType === PluginInterfaceType.SAFE) {
-        if (dao == null) {
+        if (dao == null || isProposalPermissionLoading || !canCreateProposal) {
             return null;
         }
 

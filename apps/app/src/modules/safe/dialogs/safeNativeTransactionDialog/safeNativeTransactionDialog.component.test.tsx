@@ -7,17 +7,22 @@ import * as WagmiActions from 'wagmi/actions';
 import * as connectedWalletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import { generateProposalAction } from '@/modules/governance/testUtils/generators/proposalAction';
-import { readSafeTransactions } from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
+import {
+    readSafeTransactions,
+    rememberAcceptedSafeDaoProposal,
+} from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
 import {
     generateSafeConfirmation,
     generateSafeInfo,
 } from '@/plugins/safeMultisigPlugin/testUtils/generators';
 import { Network } from '@/shared/api/daoService';
-import type {
-    ISafeInfoResponse,
-    ISafeMultisigTransaction,
-} from '@/shared/api/safeService';
 import * as safeServiceApi from '@/shared/api/safeService';
+import {
+    type ISafeInfoResponse,
+    type ISafeMultisigTransaction,
+    SafeServiceError,
+    SafeServiceErrorCode,
+} from '@/shared/api/safeService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import * as translationsProvider from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -51,6 +56,7 @@ jest.mock('@/modules/safe/components/safeTransactionReviewContent', () => ({
 
 jest.mock('@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals', () => ({
     readSafeTransactions: jest.fn(),
+    rememberAcceptedSafeDaoProposal: jest.fn(),
 }));
 
 jest.mock('@/modules/application/hooks/useConnectedWalletGuard', () => ({
@@ -66,6 +72,7 @@ const safeTxHash = `0x${'1'.repeat(64)}` as Hex;
 const changedSafeTxHash = `0x${'2'.repeat(64)}` as Hex;
 const signature = `0x${'3'.repeat(130)}` as Hex;
 const signLabel = 'app.safe.safeNativeTransactionDialog.actions.sign';
+const viewLabel = 'app.safe.safeNativeTransactionDialog.actions.view';
 const recheckLabel = 'app.safe.safeNativeTransactionDialog.actions.recheck';
 
 const protocolKitModule = jest.requireMock('@safe-global/protocol-kit') as {
@@ -255,6 +262,53 @@ test('does not sign or submit when the reviewed hash changes', async () => {
     expect(proposeSafeTransactionSpy).not.toHaveBeenCalled();
 });
 
+test('links an accepted native proposal to its exact Safe detail', async () => {
+    renderDialog();
+    await confirmReview();
+    await userEvent.click(screen.getByRole('button', { name: signLabel }));
+
+    const proposalLink = await screen.findByRole('link', {
+        name: viewLabel,
+    });
+    expect(proposalLink).toHaveAttribute(
+        'href',
+        `/dao/${network}/${daoAddress}/proposals/safe/${safeTxHash}?safeAddress=${encodeURIComponent(safeAddress)}`,
+    );
+    expect(
+        screen.getByText('app.safe.safeNativeTransactionDialog.submitted'),
+    ).toBeInTheDocument();
+    expect(rememberAcceptedSafeDaoProposal).toHaveBeenCalledWith(
+        expect.objectContaining({
+            transaction: expect.objectContaining({ safeTxHash }),
+            owner,
+            signature,
+        }),
+    );
+});
+
+test('does not offer proposal navigation after definitive submission failure', async () => {
+    proposeSafeTransactionSpy.mockRejectedValueOnce(
+        new SafeServiceError(
+            SafeServiceErrorCode.INVALID_RESPONSE,
+            'submit failed',
+            400,
+        ),
+    );
+
+    renderDialog();
+    await confirmReview();
+    await userEvent.click(screen.getByRole('button', { name: signLabel }));
+
+    expect(
+        await screen.findByRole('button', {
+            name: 'app.safe.safeNativeTransactionDialog.actions.close',
+        }),
+    ).toBeEnabled();
+    expect(
+        screen.queryByRole('link', { name: viewLabel }),
+    ).not.toBeInTheDocument();
+});
+
 test('prompts for a wallet before signing while disconnected', async () => {
     const checkWalletConnection = jest.fn();
     useConnectedWalletGuardSpy.mockReturnValue({
@@ -299,10 +353,10 @@ test('rechecks an uncertain write without resubmitting it', async () => {
 
     await waitFor(() => {
         expect(
-            screen.getByRole('button', {
-                name: 'app.safe.safeNativeTransactionDialog.actions.done',
+            screen.getByRole('link', {
+                name: viewLabel,
             }),
-        ).toBeEnabled();
+        ).toBeInTheDocument();
     });
     expect(proposeSafeTransactionSpy).toHaveBeenCalledTimes(1);
     expect(protocolKit.signTypedData).toHaveBeenCalledTimes(1);

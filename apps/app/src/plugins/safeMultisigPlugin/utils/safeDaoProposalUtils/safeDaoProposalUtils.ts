@@ -40,6 +40,13 @@ const executeSelector = toFunctionSelector(globalExecutorAbi[0]);
  * hostile row can never take the list down with it.
  */
 class SafeDaoProposalUtils {
+    getProposalDisplayId = (
+        transaction: Pick<ISafeMultisigTransaction, 'nonce' | 'safeTxHash'>,
+    ): string =>
+        `SAFE-${transaction.nonce} · ${addressUtils.truncateHash(
+            transaction.safeTxHash,
+        )}`;
+
     /**
      * The DAO actions carried by every `execute` call in the transaction, or undefined when the
      * transaction is not a proposal on `daoAddress`.

@@ -85,7 +85,7 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByTestId('execute-actions')).toBeInTheDocument();
     });
-    it('uses direct-execute copy by default', () => {
+    it('uses the connected wallet for direct-execute simulations by default', () => {
         render(createTestComponent());
 
         expect(
@@ -94,16 +94,22 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
             'data-description',
             'app.governance.createExecuteActionsPage.steps.ACTIONS.description',
         );
+        expect(useSimulateActionsDropdownSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ from: '0xwallet' }),
+        );
     });
 
-    it('uses proposal copy for native Safe actions', () => {
-        render(createTestComponent({ isSafeProcess: true }));
+    it('uses Safe copy and address for native Safe actions', () => {
+        render(createTestComponent({ safeAddress: '0xsafe' }));
 
         expect(
             screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
         ).toHaveAttribute(
             'data-description',
             'app.governance.createExecuteActionsPage.steps.ACTIONS.safeDescription',
+        );
+        expect(useSimulateActionsDropdownSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ from: '0xsafe' }),
         );
     });
 

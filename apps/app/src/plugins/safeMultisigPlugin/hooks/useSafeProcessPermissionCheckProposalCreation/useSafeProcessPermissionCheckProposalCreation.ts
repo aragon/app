@@ -1,9 +1,11 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
 import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
+import { useSafeInfo } from '@/shared/api/safeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
@@ -16,6 +18,16 @@ export const useSafeProcessPermissionCheckProposalCreation = (
     const { t } = useTranslations();
     const { network, address: rootDaoAddress } = daoUtils.parseDaoId(daoId);
     const enabled = useConnectedUserInfo && address != null;
+    const {
+        data: safeInfo,
+        isPending: isSafeInfoPending,
+        isError: isSafeInfoError,
+    } = useSafeInfo(
+        {
+            urlParams: { network, address: plugin.address },
+        },
+        { enabled },
+    );
     const { data, isPending, isError } = useCanCreateProposal(
         {
             queryParams: {
@@ -27,10 +39,16 @@ export const useSafeProcessPermissionCheckProposalCreation = (
         },
         { enabled },
     );
+    const isOwner =
+        enabled &&
+        safeInfo?.owners.some((owner) =>
+            addressUtils.isAddressEqual(owner, address),
+        ) === true;
 
     return {
-        hasPermission: enabled && !isError && data?.status === true,
-        isLoading: enabled && isPending,
+        hasPermission:
+            isOwner && !isSafeInfoError && !isError && data?.status === true,
+        isLoading: enabled && (isSafeInfoPending || isPending),
         isRestricted: true,
         settings: [
             [

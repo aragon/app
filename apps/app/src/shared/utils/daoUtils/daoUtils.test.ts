@@ -198,6 +198,15 @@ describe('dao utils', () => {
     });
 
     describe('getPluginName', () => {
+        it('formats native Safe names in server-reachable code', () => {
+            const plugin = generateDaoPlugin({
+                address: '0x1234567890123456789012345678901234567890',
+                interfaceType: PluginInterfaceType.SAFE,
+                name: undefined,
+            });
+
+            expect(daoUtils.getPluginName(plugin)).toBe('Safe 0x1234…7890');
+        });
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';
             const plugin = generateDaoPlugin({ name });

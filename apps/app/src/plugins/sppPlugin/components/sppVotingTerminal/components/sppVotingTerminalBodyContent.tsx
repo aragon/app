@@ -8,6 +8,7 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
+import { SafeMultisigVotingBody } from '@/plugins/safeMultisigPlugin/components/safeMultisigVotingBody';
 import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { useSppGovernanceSettingsDefault } from '@/plugins/sppPlugin/hooks/useSppGovernanceSettingsDefault';
 import type {
@@ -166,83 +167,88 @@ export const SppVotingTerminalBodyContent: React.FC<
               }
             : undefined;
 
+    const bodyBreakdown =
+        processedSubProposal != null || isExternalBody ? (
+            <PluginSingleComponent
+                body={isExternalBody ? plugin.address : undefined}
+                canVote={canVote}
+                Fallback={SppVotingTerminalBodyBreakdownDefault}
+                isVeto={isVeto}
+                pluginId={bodyPluginId}
+                proposal={isExternalBody ? proposal : subProposal}
+                slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
+                stage={stage}
+            >
+                <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
+                    {isHistoryMissing && (
+                        <AlertInline
+                            message={t(
+                                'app.plugins.spp.sppVotingTerminalBodyContent.historyMissing',
+                            )}
+                            variant="info"
+                        />
+                    )}
+                    {showAction && (
+                        <PluginSingleComponent
+                            daoId={daoId}
+                            externalAddress={
+                                isExternalBody ? plugin.address : undefined
+                            }
+                            Fallback={SppVotingTerminalBodyVoteDefault}
+                            isVeto={isVeto}
+                            pluginId={bodyPluginId}
+                            proposal={
+                                isExternalBody ? proposal : processedSubProposal
+                            }
+                            slotId={GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE}
+                            stage={stage}
+                        />
+                    )}
+                    {children}
+                </div>
+            </PluginSingleComponent>
+        ) : null;
+
+    const bodyVotes =
+        processedSubProposal != null ? (
+            <VoteList
+                daoId={daoId}
+                initialParams={voteListParams}
+                isVeto={isVeto}
+                pluginAddress={plugin.address}
+            />
+        ) : isExternalBody ? (
+            <PluginSingleComponent
+                body={plugin.address}
+                isVeto={isVeto}
+                pluginId={bodyPluginId}
+                proposal={proposal}
+                slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+                stage={stage}
+            />
+        ) : null;
+
+    const hasBodyContent = bodyBreakdown != null && bodyVotes != null;
+
     return (
         <>
-            {(processedSubProposal != null || isExternalBody) && (
-                <>
-                    <PluginSingleComponent
-                        body={isExternalBody ? plugin.address : undefined}
-                        canVote={canVote}
-                        Fallback={SppVotingTerminalBodyBreakdownDefault}
-                        isVeto={isVeto}
-                        pluginId={bodyPluginId}
-                        proposal={isExternalBody ? proposal : subProposal}
-                        slotId={
-                            GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN
-                        }
-                        stage={stage}
-                    >
-                        <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
-                            {isHistoryMissing && (
-                                <AlertInline
-                                    message={t(
-                                        'app.plugins.spp.sppVotingTerminalBodyContent.historyMissing',
-                                    )}
-                                    variant="info"
-                                />
-                            )}
-                            {showAction && (
-                                <PluginSingleComponent
-                                    daoId={daoId}
-                                    externalAddress={
-                                        isExternalBody
-                                            ? plugin.address
-                                            : undefined
-                                    }
-                                    Fallback={SppVotingTerminalBodyVoteDefault}
-                                    isVeto={isVeto}
-                                    pluginId={bodyPluginId}
-                                    proposal={
-                                        isExternalBody
-                                            ? proposal
-                                            : processedSubProposal
-                                    }
-                                    slotId={
-                                        GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE
-                                    }
-                                    stage={stage}
-                                />
-                            )}
-                            {children}
-                        </div>
-                    </PluginSingleComponent>
-                    {/* An indexed sub-proposal has indexed votes; a body without one can still have
-                        its own notion of votes, so the slot answers for it. Nothing registered means
-                        no votes to show, and the tab-policy slot has already hidden the tab. */}
-                    {processedSubProposal != null ? (
-                        <ProposalVoting.Votes>
-                            <VoteList
-                                daoId={daoId}
-                                initialParams={voteListParams}
-                                isVeto={isVeto}
-                                pluginAddress={plugin.address}
-                            />
-                        </ProposalVoting.Votes>
-                    ) : (
-                        <ProposalVoting.Votes>
-                            <PluginSingleComponent
-                                body={plugin.address}
-                                isVeto={isVeto}
-                                pluginId={bodyPluginId}
-                                proposal={proposal}
-                                slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
-                                stage={stage}
-                            />
-                        </ProposalVoting.Votes>
-                    )}
-                </>
+            {hasBodyContent ? (
+                bodyPluginId === safeBodyPluginId ? (
+                    <SafeMultisigVotingBody
+                        breakdown={bodyBreakdown}
+                        settings={proposalSettings}
+                        votes={bodyVotes}
+                    />
+                ) : (
+                    <>
+                        {bodyBreakdown}
+                        <ProposalVoting.Votes>{bodyVotes}</ProposalVoting.Votes>
+                        <ProposalVoting.Details settings={proposalSettings} />
+                    </>
+                )
+            ) : (
+                <ProposalVoting.Details settings={proposalSettings} />
             )}
-            <ProposalVoting.Details settings={proposalSettings} />
         </>
     );
 };

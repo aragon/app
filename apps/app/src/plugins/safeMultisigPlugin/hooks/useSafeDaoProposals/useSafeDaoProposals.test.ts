@@ -15,7 +15,11 @@ import {
 } from '@/shared/testUtils';
 import { globalExecutorAbi } from '@/shared/utils/transactionUtils/globalExecutorAbi';
 import { safeBodyPollInterval } from '../../constants';
-import { useSafeDaoProposal, useSafeDaoProposals } from './useSafeDaoProposals';
+import {
+    rememberAcceptedSafeDaoProposal,
+    useSafeDaoProposal,
+    useSafeDaoProposals,
+} from './useSafeDaoProposals';
 
 const safeAddress = '0xd84C233A7D1578021d21E39785439bEdDB165F3D';
 const daoAddress = '0x1111111111111111111111111111111111111111';
@@ -377,6 +381,58 @@ describe('useSafeDaoProposals', () => {
         } finally {
             jest.useRealTimers();
         }
+    });
+
+    it('keeps an accepted proposal visible while the stored index catches up', async () => {
+        const hash = '0xaccepted-handoff';
+        const transaction = generateSafeTransaction({
+            safeTxHash: hash,
+            to: daoAddress,
+            data: buildExecute(),
+        });
+        rememberAcceptedSafeDaoProposal({
+            ...params,
+            transaction,
+            owner: safeAddress,
+            signature: `0x${'1'.repeat(130)}`,
+        });
+
+        const { result } = renderHook(
+            () => useSafeDaoProposal({ ...params, safeTxHash: hash }),
+            { wrapper: testWrapper },
+        );
+
+        await waitFor(() =>
+            expect(
+                result.current.data?.proposals[0]?.transaction.safeTxHash,
+            ).toBe(hash),
+        );
+        expect(result.current.isIndexing).toBe(true);
+        expect(result.current.isNotFound).toBe(false);
+        expect(
+            result.current.data?.proposals[0]?.transaction.confirmations,
+        ).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    owner: safeAddress,
+                    signature: `0x${'1'.repeat(130)}`,
+                }),
+            ]),
+        );
+    });
+
+    it('reports not found for an unknown hash after a complete lookup', async () => {
+        const { result } = renderHook(
+            () =>
+                useSafeDaoProposal({
+                    ...params,
+                    safeTxHash: '0xunknown-complete-lookup',
+                }),
+            { wrapper: testWrapper },
+        );
+
+        await waitFor(() => expect(result.current.isNotFound).toBe(true));
+        expect(result.current.isIndexing).toBe(false);
     });
 
     it('reports a hard stored lookup error instead of indexing forever', async () => {

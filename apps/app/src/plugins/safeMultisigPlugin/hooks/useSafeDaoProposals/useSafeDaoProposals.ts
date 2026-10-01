@@ -154,6 +154,71 @@ export const readSafeTransactions = async (
 
     return result.transactions;
 };
+interface IAcceptedSafeDaoProposalHandoff {
+    transaction: ISafeMultisigTransaction;
+    expiresAt: number;
+}
+
+const acceptedSafeDaoProposalHandoffs = new Map<
+    string,
+    IAcceptedSafeDaoProposalHandoff
+>();
+
+const getAcceptedSafeDaoProposalKey = (params: {
+    network: IUseSafeDaoProposalParams['network'];
+    safeAddress: string;
+    daoAddress: string;
+    safeTxHash: string;
+}): string =>
+    [
+        params.network,
+        params.safeAddress.toLowerCase(),
+        params.daoAddress.toLowerCase(),
+        params.safeTxHash.toLowerCase(),
+    ].join(':');
+
+export const rememberAcceptedSafeDaoProposal = (params: {
+    network: IUseSafeDaoProposalParams['network'];
+    safeAddress: string;
+    daoAddress: string;
+    transaction: ISafeMultisigTransaction;
+    owner: string;
+    signature: string;
+}): void => {
+    const now = Date.now();
+    for (const [key, handoff] of acceptedSafeDaoProposalHandoffs) {
+        if (handoff.expiresAt <= now) {
+            acceptedSafeDaoProposalHandoffs.delete(key);
+        }
+    }
+
+    const handoffKey = getAcceptedSafeDaoProposalKey({
+        ...params,
+        safeTxHash: params.transaction.safeTxHash,
+    });
+    const expiresAt = now + safeBodyPollInterval * 2;
+
+    acceptedSafeDaoProposalHandoffs.set(handoffKey, {
+        transaction: {
+            ...params.transaction,
+            confirmations: [
+                ...params.transaction.confirmations,
+                {
+                    owner: params.owner,
+                    signature: params.signature,
+                    submissionDate: new Date().toISOString(),
+                },
+            ],
+        },
+        expiresAt,
+    });
+    setTimeout(() => {
+        const handoff = acceptedSafeDaoProposalHandoffs.get(handoffKey);
+        if (handoff?.expiresAt === expiresAt) {
+            acceptedSafeDaoProposalHandoffs.delete(handoffKey);
+        }
+    }, expiresAt - now);
+};
 
 const getStoredProposalState = (
     transaction: ISafeStoredTransaction,
@@ -365,12 +430,12 @@ const readStoredProposal = async (
         SafeStoredTransactionState.SUPERSEDED,
         SafeStoredTransactionState.REMOVED,
     ];
+    const acceptedHandoffKey = getAcceptedSafeDaoProposalKey(params);
     let stale = false;
     let partial = false;
     let fetchedAt: string | null = null;
     let hasFetchedAt = false;
     let paginationError = false;
-
     for (const state of states) {
         let offset: StoredPageParam = 0;
 
@@ -407,6 +472,7 @@ const readStoredProposal = async (
             );
 
             if (transaction != null) {
+                acceptedSafeDaoProposalHandoffs.delete(acceptedHandoffKey);
                 const lookup = {
                     transaction,
                     stale,
@@ -442,6 +508,25 @@ const readStoredProposal = async (
         fetchedAt,
         paginationError,
     };
+    const acceptedHandoff =
+        acceptedSafeDaoProposalHandoffs.get(acceptedHandoffKey);
+
+    if (acceptedHandoff != null) {
+        if (acceptedHandoff.expiresAt <= Date.now()) {
+            acceptedSafeDaoProposalHandoffs.delete(acceptedHandoffKey);
+        } else {
+            return {
+                ...lookup,
+                fetchedAt: null,
+                partial: true,
+                transaction: {
+                    ...acceptedHandoff.transaction,
+                    state: SafeStoredTransactionState.LIVE,
+                },
+                complete: false,
+            };
+        }
+    }
 
     return {
         ...lookup,

@@ -10,7 +10,10 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { executeActionsDialogUtils } from '@/modules/governance/dialogs/executeActionsDialog/executeActionsDialogUtils';
 import { SafeTransactionReviewContent } from '@/modules/safe/components/safeTransactionReviewContent';
-import { readSafeTransactions } from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
+import {
+    readSafeTransactions,
+    rememberAcceptedSafeDaoProposal,
+} from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
 import { safeDaoProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeDaoProposalUtils';
 import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import {
@@ -380,6 +383,22 @@ export const SafeNativeTransactionDialog: React.FC<
             }),
         ]).catch(() => undefined);
     }, [queryClient]);
+    const handoffAcceptedProposal = useCallback(
+        (attempt: IUncertainSafeWriteAttempt) => {
+            if (!attempt.isNew || prepared == null) {
+                return;
+            }
+            rememberAcceptedSafeDaoProposal({
+                network,
+                safeAddress,
+                daoAddress,
+                transaction: prepared.transaction,
+                owner: attempt.owner,
+                signature: attempt.signature,
+            });
+        },
+        [daoAddress, network, prepared, safeAddress],
+    );
     const handleSign = useCallback(async () => {
         if (prepared == null || walletAddress == null || reviewGateBlocked) {
             return;
@@ -590,6 +609,7 @@ export const SafeNativeTransactionDialog: React.FC<
                 setState('uncertain');
                 try {
                     if (await reconcile(attempt)) {
+                        handoffAcceptedProposal(attempt);
                         invalidateSafeQueries();
                         setUncertainAttempt(undefined);
                         setState('success');
@@ -602,6 +622,7 @@ export const SafeNativeTransactionDialog: React.FC<
                 setError(getErrorMessage(writeError));
                 return;
             }
+            handoffAcceptedProposal(attempt);
             invalidateSafeQueries();
             setUncertainAttempt(undefined);
             setState('success');
@@ -623,9 +644,14 @@ export const SafeNativeTransactionDialog: React.FC<
         safeAddress,
         setUncertainAttempt,
         t,
+        handoffAcceptedProposal,
         walletAddress,
     ]);
 
+    const proposalHref =
+        state === 'success' && inputTransaction == null && prepared != null
+            ? `/dao/${network}/${daoAddress}/proposals/safe/${prepared.transaction.safeTxHash}?safeAddress=${encodeURIComponent(safeAddress)}`
+            : undefined;
     const title = t('app.safe.safeNativeTransactionDialog.title');
     const primaryAction =
         state === 'ready'
@@ -648,8 +674,11 @@ export const SafeNativeTransactionDialog: React.FC<
             : state === 'success'
               ? {
                     label: t(
-                        'app.safe.safeNativeTransactionDialog.actions.done',
+                        proposalHref == null
+                            ? 'app.safe.safeNativeTransactionDialog.actions.done'
+                            : 'app.safe.safeNativeTransactionDialog.actions.view',
                     ),
+                    href: proposalHref,
                     onClick: () => close(SafeDialogId.NATIVE_TRANSACTION),
                 }
               : state === 'uncertain'
@@ -699,6 +728,9 @@ export const SafeNativeTransactionDialog: React.FC<
                     <p>{t('app.safe.safeNativeTransactionDialog.loading')}</p>
                 )}
                 {error != null && <p className="text-critical">{error}</p>}
+                {state === 'success' && inputTransaction == null && (
+                    <p>{t('app.safe.safeNativeTransactionDialog.submitted')}</p>
+                )}
                 {state === 'uncertain' && (
                     <p>{t('app.safe.safeNativeTransactionDialog.uncertain')}</p>
                 )}

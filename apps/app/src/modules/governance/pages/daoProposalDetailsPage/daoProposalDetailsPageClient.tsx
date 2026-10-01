@@ -6,14 +6,12 @@ import {
     CardCollapsible,
     ChainEntityType,
     DateFormat,
-    DefinitionList,
     formatterUtils,
     type IProposalActionsFooterDropdownItem,
     ProposalActions,
     ProposalActionTypeNoBasicView,
     ProposalStatus,
     proposalStatusToTagVariant,
-    Tag,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
@@ -43,6 +41,7 @@ import {
     useProposalBySlug,
 } from '../../api/governanceService';
 import { ProposalActionsItem } from '../../components/proposalActionsItem';
+import { ProposalDetailsAside } from '../../components/proposalDetailsAside';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -375,72 +374,17 @@ export const DaoProposalDetailsPageClient: React.FC<
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.AsideCard
-                        data-testid="proposal-details-container"
-                        title={t(
-                            'app.governance.daoProposalDetailsPage.aside.details.title',
-                        )}
-                    >
-                        <DefinitionList.Container>
-                            <DefinitionList.Item
-                                copyValue={proposal.proposalIndex}
-                                term={t(
-                                    'app.governance.daoProposalDetailsPage.aside.details.onChainId',
-                                )}
-                            >
-                                <p className="truncate text-neutral-500">
-                                    {proposal.proposalIndex}
-                                </p>
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.governance.daoProposalDetailsPage.aside.details.id',
-                                )}
-                            >
-                                <p className="truncate text-neutral-500">
-                                    {proposalSlug.toUpperCase()}
-                                </p>
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                copyValue={
-                                    creatorEnsName != null
-                                        ? creator.address
-                                        : undefined
-                                }
-                                link={{
-                                    href: creatorLink,
-                                    isOnchainEntity: true,
-                                }}
-                                term={t(
-                                    'app.governance.daoProposalDetailsPage.aside.details.creator',
-                                )}
-                            >
-                                {creatorEnsName ?? creator.address}
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                link={{
-                                    href: creationBlockLink,
-                                    textClassName: 'first-letter:capitalize',
-                                }}
-                                term={t(
-                                    'app.governance.daoProposalDetailsPage.aside.details.published',
-                                )}
-                            >
-                                {formattedCreationDate}
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.governance.daoProposalDetailsPage.aside.details.status',
-                                )}
-                            >
-                                <Tag
-                                    className="w-fit"
-                                    label={statusTag.label}
-                                    variant={statusTag.variant}
-                                />
-                            </DefinitionList.Item>
-                        </DefinitionList.Container>
-                    </Page.AsideCard>
+                    <ProposalDetailsAside
+                        creatorAddress={creator.address}
+                        creatorEnsName={creatorEnsName}
+                        creatorLink={creatorLink}
+                        id={proposalSlug.toUpperCase()}
+                        onChainId={proposal.proposalIndex}
+                        publishedDate={formattedCreationDate}
+                        publishedLink={creationBlockLink}
+                        statusLabel={statusTag.label}
+                        statusVariant={statusTag.variant}
+                    />
                     {resources.length > 0 && (
                         <Page.AsideCard
                             title={t(

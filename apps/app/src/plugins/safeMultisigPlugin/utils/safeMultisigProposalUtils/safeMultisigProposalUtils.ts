@@ -46,6 +46,47 @@ export interface ISafeConfirmedByParams {
     address?: string;
 }
 
+/**
+ * Executable lifecycle of a live Safe transaction, combining confirmation count against the live
+ * threshold with nonce position. Distinct from `SafeTransactionState`, which only answers whether a
+ * transaction can ever execute again; this answers what the owner should do next.
+ */
+export enum SafeApprovalReadiness {
+    /** Fewer current-owner confirmations than the live threshold. */
+    AWAITING_APPROVALS = 'awaitingApprovals',
+    /** Threshold reached and the transaction sits on the Safe's current nonce. */
+    READY_TO_EXECUTE = 'readyToExecute',
+    /** Threshold reached but an earlier nonce must execute first. */
+    WAITING_FOR_NONCE = 'waitingForNonce',
+    /** The nonce was consumed by another transaction — permanently unexecutable. */
+    SUPERSEDED = 'superseded',
+    /** Executed onchain successfully. */
+    EXECUTED_SUCCESS = 'executedSuccess',
+    /** Executed onchain but reverted; the nonce is still consumed. */
+    EXECUTED_FAILURE = 'executedFailure',
+    /** Executed but the outcome is not yet reported. */
+    EXECUTED_UNKNOWN = 'executedUnknown',
+}
+
+export interface ISafeApprovalReadinessParams {
+    /**
+     * Transaction to classify.
+     */
+    transaction: ISafeMultisigTransaction;
+    /**
+     * Current Safe owners (`ISafeInfo.owners`).
+     */
+    owners: string[];
+    /**
+     * Live confirmation threshold (`ISafeInfo.threshold`).
+     */
+    threshold: number;
+    /**
+     * Current nonce of the Safe (`ISafeInfo.nonce`).
+     */
+    currentNonce: string;
+}
+
 const transactionStateToProposalStatus: Record<
     SafeTransactionState,
     ProposalStatus
@@ -171,6 +212,45 @@ class SafeMultisigProposalUtils {
         }
 
         return approvingOwners.size;
+    };
+
+    getApprovalReadiness = ({
+        transaction,
+        owners,
+        threshold,
+        currentNonce,
+    }: ISafeApprovalReadinessParams): SafeApprovalReadiness => {
+        if (transaction.isExecuted) {
+            if (transaction.isSuccessful === true) {
+                return SafeApprovalReadiness.EXECUTED_SUCCESS;
+            }
+
+            if (transaction.isSuccessful === false) {
+                return SafeApprovalReadiness.EXECUTED_FAILURE;
+            }
+
+            return SafeApprovalReadiness.EXECUTED_UNKNOWN;
+        }
+
+        if (
+            this.getTransactionState({ transaction, currentNonce }) ===
+            SafeTransactionState.SUPERSEDED
+        ) {
+            return SafeApprovalReadiness.SUPERSEDED;
+        }
+
+        const approvalCount = this.countCurrentOwnerApprovals(
+            transaction,
+            owners,
+        );
+
+        if (approvalCount < threshold) {
+            return SafeApprovalReadiness.AWAITING_APPROVALS;
+        }
+
+        return BigInt(transaction.nonce) === BigInt(currentNonce)
+            ? SafeApprovalReadiness.READY_TO_EXECUTE
+            : SafeApprovalReadiness.WAITING_FOR_NONCE;
     };
 }
 

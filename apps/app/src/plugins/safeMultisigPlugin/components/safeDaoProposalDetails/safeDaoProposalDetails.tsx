@@ -5,21 +5,26 @@ import {
     addressUtils,
     Button,
     CardEmptyState,
-    DataListContainer,
-    DataListPagination,
-    DataListRoot,
-    type IDefinitionSetting,
+    ChainEntityType,
+    DateFormat,
+    DefinitionList,
+    formatterUtils,
+    IconType,
     ProposalActions,
-    ProposalStatus,
     ProposalVoting,
-    VoteDataListItem,
+    proposalStatusToTagVariant,
+    useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { safeAppAccountUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { useEnsName } from '@/modules/ens';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { ProposalActionsItem } from '@/modules/governance/components/proposalActionsItem';
+import { ProposalDetailsAside } from '@/modules/governance/components/proposalDetailsAside';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
-import { SafeOwnerList } from '@/modules/safe/components/safeOwnerList';
-import { SafeTransactionReviewContent } from '@/modules/safe/components/safeTransactionReviewContent';
 import { SafeDialogId } from '@/modules/safe/constants/safeDialogId';
+import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
+import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types';
 import {
     type IDao,
     type IDaoPlugin,
@@ -40,7 +45,15 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeDaoProposalActions } from '../../hooks/useSafeDaoProposalActions';
 import type { ISafeDaoProposal } from '../../hooks/useSafeDaoProposals';
 import { useSafeDaoProposal } from '../../hooks/useSafeDaoProposals';
-import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
+import { safeDaoProposalUtils } from '../../utils/safeDaoProposalUtils';
+import {
+    SafeApprovalReadiness,
+    safeMultisigProposalUtils,
+} from '../../utils/safeMultisigProposalUtils';
+import { safeMultisigSettingsUtils } from '../../utils/safeMultisigSettingsUtils';
+import { SafeMultisigProposalVotingBreakdownView } from '../safeMultisigProposalVotingBreakdown';
+import { SafeMultisigVoteListView } from '../safeMultisigVoteList';
+import { SafeMultisigVotingBody } from '../safeMultisigVotingBody';
 
 export interface ISafeDaoProposalDetailsProps {
     daoId: string;
@@ -224,8 +237,13 @@ const SafeDaoProposalDetailsContent: React.FC<
     ISafeDaoProposalDetailsContentProps
 > = ({ dao, daoId, isStale, plugin, proposal, safeInfo }) => {
     const { t } = useTranslations();
+    const { copy } = useGukModulesContext();
     const { open } = useDialogContext();
-    const { transaction, actions: localActions, status } = proposal;
+    const { address: connectedAddress } = useWalletAccount();
+    const { data: safeEnsName } = useEnsName(plugin.address);
+    const { transaction, actions: localActions } = proposal;
+    const { data: proposerEnsName } = useEnsName(transaction.from ?? undefined);
+    const { buildEntityUrl } = useDaoChain({ network: dao.network });
     const targetDaoAddress = plugin.daoAddress ?? dao.address;
     const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
     const { actions } = useSafeDaoProposalActions({
@@ -244,43 +262,58 @@ const SafeDaoProposalDetailsContent: React.FC<
         transaction,
         safeInfo.owners,
     );
-    const statusKey = getSafeDaoProposalStatusKey({
-        isExecuted: transaction.isExecuted,
-        isSuccessful: transaction.isSuccessful,
-        status,
+    const readiness = safeMultisigProposalUtils.getApprovalReadiness({
+        currentNonce: safeInfo.nonce,
+        owners: safeInfo.owners,
+        threshold: safeInfo.threshold,
+        transaction,
     });
-    const details: IDefinitionSetting[] = [
-        {
-            term: t('app.safe.safeDaoProposalDetails.status'),
-            definition: t(`app.safe.safeDaoProposalDetails.${statusKey}`),
-        },
-        {
-            copyValue: plugin.address,
-            term: t('app.safe.safeDaoProposalDetails.safeAddress'),
-            definition: addressUtils.truncateAddress(plugin.address),
-        },
-        {
-            copyValue: transaction.safeTxHash,
-            term: t('app.safe.safeDaoProposalDetails.safeTransactionHash'),
-            definition: addressUtils.truncateAddress(transaction.safeTxHash),
-        },
-        {
-            term: t('app.safe.safeDaoProposalDetails.nonce'),
-            definition: transaction.nonce,
-        },
-        {
-            term: t('app.safe.safeDaoProposalDetails.confirmations'),
-            definition: t('app.safe.safeDaoProposalDetails.confirmationCount', {
-                approved: approvalCount,
-                required: safeInfo.threshold,
-            }),
-        },
-        {
-            copyValue: targetDaoAddress,
-            term: t('app.safe.safeDaoProposalDetails.targetDao'),
-            definition: addressUtils.truncateAddress(targetDaoAddress),
-        },
-    ];
+    const readinessPresentation = safeApprovalReadinessPresentation[readiness];
+    const readinessLabel = t(
+        `app.safe.safeDaoProposalDetails.${readinessPresentation.labelKey}`,
+    );
+    const formattedSubmissionDate = formatterUtils.formatDate(
+        transaction.submissionDate,
+        { format: DateFormat.YEAR_MONTH_DAY },
+    );
+    const formattedExecutionDate =
+        transaction.executionDate == null
+            ? undefined
+            : formatterUtils.formatDate(transaction.executionDate, {
+                  format: DateFormat.YEAR_MONTH_DAY,
+              });
+    const proposalDisplayId =
+        safeDaoProposalUtils.getProposalDisplayId(transaction);
+    const statusTag = {
+        label: copy.proposalDataListItemStatus.statusLabel[proposal.status],
+        variant: proposalStatusToTagVariant[proposal.status],
+    };
+    const proposerLink =
+        transaction.from == null
+            ? undefined
+            : buildEntityUrl({
+                  type: ChainEntityType.ADDRESS,
+                  id: transaction.from,
+              });
+    const executionLink =
+        transaction.transactionHash == null
+            ? undefined
+            : buildEntityUrl({
+                  type: ChainEntityType.TRANSACTION,
+                  id: transaction.transactionHash,
+              });
+
+    const isConnected = connectedAddress != null;
+    const isOwner =
+        isConnected &&
+        safeInfo.owners.some((owner) =>
+            addressUtils.isAddressEqual(owner, connectedAddress),
+        );
+    const hasSigned = safeMultisigProposalUtils.hasAddressConfirmed({
+        address: connectedAddress,
+        transaction,
+    });
+
     const handleSign = () => {
         open(SafeDialogId.NATIVE_TRANSACTION, {
             params: {
@@ -291,7 +324,63 @@ const SafeDaoProposalDetailsContent: React.FC<
             },
         });
     };
-    const canSign = !transaction.isExecuted && status === ProposalStatus.ACTIVE;
+
+    // A disconnected visitor is offered the action and the dialog gates on connection and ownership;
+    // a connected non-owner has nothing to sign, and an owner who already confirmed is never asked
+    // to sign the same transaction again.
+    const canOfferSign = !isConnected || (isOwner && !hasSigned);
+
+    let actionContent: React.ReactNode = null;
+
+    if (readiness === SafeApprovalReadiness.AWAITING_APPROVALS) {
+        if (isOwner && hasSigned) {
+            actionContent = (
+                <Button
+                    className="w-fit"
+                    disabled={true}
+                    iconLeft={IconType.CHECKMARK}
+                    variant="secondary"
+                >
+                    {t('app.safe.safeDaoProposalDetails.signed')}
+                </Button>
+            );
+        } else if (canOfferSign) {
+            actionContent = (
+                <Button className="w-fit" onClick={handleSign}>
+                    {t('app.safe.safeDaoProposalDetails.sign')}
+                </Button>
+            );
+        }
+    } else if (readiness === SafeApprovalReadiness.READY_TO_EXECUTE) {
+        actionContent = (
+            <Button className="w-fit" onClick={handleSign}>
+                {t('app.safe.safeDaoProposalDetails.execute')}
+            </Button>
+        );
+    } else {
+        actionContent = (
+            <AlertInline
+                message={readinessLabel}
+                variant={readinessPresentation.alertVariant ?? 'warning'}
+            />
+        );
+    }
+
+    const safeName =
+        safeEnsName ?? addressUtils.truncateAddress(plugin.address);
+    const settings = safeMultisigSettingsUtils.parseSettings({
+        address: plugin.address,
+        isDecided: transaction.isExecuted,
+        safeHref: safeAppAccountUrl({
+            address: plugin.address,
+            network: dao.network,
+        }),
+        safeInfo,
+        safeName,
+        settledTransaction: transaction.isExecuted ? transaction : undefined,
+        t,
+        version: safeInfo.version,
+    });
 
     return (
         <>
@@ -299,34 +388,21 @@ const SafeDaoProposalDetailsContent: React.FC<
                 breadcrumbs={[
                     {
                         href: proposalsUrl,
-                        label: t('app.governance.daoProposalsPage.main.title'),
+                        label: t(
+                            'app.governance.daoProposalDetailsPage.header.breadcrumb.proposals',
+                        ),
                     },
+                    { label: proposalDisplayId },
                 ]}
-                title={t('app.safe.safeDaoProposalDetails.title', {
-                    nonce: transaction.nonce,
-                })}
+                breadcrumbsTag={statusTag}
+                title={proposalDisplayId}
             />
             <Page.Content>
                 <Page.Main>
                     <Page.MainSection
                         title={t(
-                            'app.safe.safeDaoProposalDetails.actionsTitle',
+                            'app.safe.safeDaoProposalDetails.approvalsTitle',
                         )}
-                    >
-                        <SafeTransactionReviewContent
-                            network={dao.network}
-                            safeAddress={plugin.address}
-                            safeVersion={safeInfo.version}
-                            transaction={transaction}
-                        />
-                        <SafeDaoProposalActions
-                            actions={actions}
-                            dao={dao}
-                            daoId={daoId}
-                        />
-                    </Page.MainSection>
-                    <Page.MainSection
-                        title={t('app.safe.safeDaoProposalDetails.votingTitle')}
                     >
                         {isStale && (
                             <AlertInline
@@ -338,60 +414,49 @@ const SafeDaoProposalDetailsContent: React.FC<
                             />
                         )}
                         {safeInfo.owners.length > 0 ? (
-                            <ProposalVoting.Container status={status}>
+                            <ProposalVoting.Container status={proposal.status}>
                                 <ProposalVoting.BodyContent
-                                    name={addressUtils.truncateAddress(
-                                        plugin.address,
-                                    )}
-                                    status={status}
+                                    bodyBrand={
+                                        brandedExternals[
+                                            VotingBodyBrandIdentity.SAFE
+                                        ]
+                                    }
+                                    name={safeName}
+                                    status={proposal.status}
                                 >
-                                    <ProposalVoting.BreakdownMultisig
-                                        approvalsAmount={approvalCount}
-                                        membersCount={safeInfo.owners.length}
-                                        minApprovals={safeInfo.threshold}
-                                    >
-                                        {transaction.isExecuted ? (
-                                            <AlertInline
-                                                className="mt-6"
-                                                message={t(
-                                                    `app.safe.safeDaoProposalDetails.${statusKey}`,
-                                                )}
-                                                variant={
-                                                    transaction.isSuccessful ===
-                                                    true
-                                                        ? 'success'
-                                                        : transaction.isSuccessful ===
-                                                            false
-                                                          ? 'critical'
-                                                          : 'warning'
+                                    <SafeMultisigVotingBody
+                                        breakdown={
+                                            <SafeMultisigProposalVotingBreakdownView
+                                                approvalsAmount={approvalCount}
+                                                isSettled={
+                                                    transaction.isExecuted
                                                 }
-                                            />
-                                        ) : canSign ? (
-                                            <Button
-                                                className="mt-6"
-                                                onClick={handleSign}
+                                                membersCount={
+                                                    safeInfo.owners.length
+                                                }
+                                                minApprovals={
+                                                    transaction.confirmationsRequired
+                                                }
                                             >
-                                                {t(
-                                                    'app.safe.safeDaoProposalDetails.sign',
+                                                {actionContent != null && (
+                                                    <div className="pt-6 md:pt-8">
+                                                        {actionContent}
+                                                    </div>
                                                 )}
-                                            </Button>
-                                        ) : (
-                                            <AlertInline
-                                                className="mt-6"
-                                                message={t(
-                                                    `app.safe.safeDaoProposalDetails.${statusKey}`,
-                                                )}
-                                                variant="warning"
+                                            </SafeMultisigProposalVotingBreakdownView>
+                                        }
+                                        settings={settings}
+                                        votes={
+                                            <SafeMultisigVoteListView
+                                                connectedAddress={
+                                                    connectedAddress
+                                                }
+                                                daoAddress={targetDaoAddress}
+                                                network={dao.network}
+                                                safeAddress={plugin.address}
+                                                signers={confirmedOwners}
                                             />
-                                        )}
-                                    </ProposalVoting.BreakdownMultisig>
-                                    <ProposalVoting.Votes>
-                                        <SafeDaoProposalConfirmations
-                                            confirmations={confirmedOwners}
-                                        />
-                                    </ProposalVoting.Votes>
-                                    <ProposalVoting.Details
-                                        settings={details}
+                                        }
                                     />
                                 </ProposalVoting.BodyContent>
                             </ProposalVoting.Container>
@@ -407,16 +472,48 @@ const SafeDaoProposalDetailsContent: React.FC<
                             />
                         )}
                     </Page.MainSection>
+                    <Page.MainSection
+                        title={t(
+                            'app.safe.safeDaoProposalDetails.actionsTitle',
+                        )}
+                    >
+                        <SafeDaoProposalActions
+                            actions={actions}
+                            dao={dao}
+                            daoId={daoId}
+                        />
+                    </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.AsideCard
-                        title={t('app.safe.safeDaoProposalDetails.ownersTitle')}
+                    <ProposalDetailsAside
+                        creatorAddress={transaction.from ?? undefined}
+                        creatorEnsName={proposerEnsName}
+                        creatorLink={proposerLink}
+                        id={proposalDisplayId}
+                        idCopyValue={transaction.safeTxHash}
+                        publishedDate={formattedSubmissionDate}
+                        statusLabel={statusTag.label}
+                        statusVariant={statusTag.variant}
                     >
-                        <SafeOwnerList
-                            address={plugin.address}
-                            network={dao.network}
-                        />
-                    </Page.AsideCard>
+                        {formattedExecutionDate != null && (
+                            <DefinitionList.Item
+                                link={
+                                    executionLink != null
+                                        ? {
+                                              href: executionLink,
+                                              textClassName:
+                                                  'first-letter:capitalize',
+                                          }
+                                        : undefined
+                                }
+                                term={t(
+                                    'app.safe.safeDaoProposalDetails.executionDate',
+                                )}
+                            >
+                                {formattedExecutionDate}
+                            </DefinitionList.Item>
+                        )}
+                    </ProposalDetailsAside>
                 </Page.Aside>
             </Page.Content>
         </>
@@ -470,49 +567,6 @@ const SafeDaoProposalActions: React.FC<ISafeDaoProposalActionsProps> = ({
     );
 };
 
-interface ISafeDaoProposalConfirmationsProps {
-    confirmations: string[];
-}
-
-const SafeDaoProposalConfirmations: React.FC<
-    ISafeDaoProposalConfirmationsProps
-> = ({ confirmations }) => {
-    const { t } = useTranslations();
-
-    return (
-        <DataListRoot
-            entityLabel={t(
-                'app.safe.safeDaoProposalDetails.confirmationsEntity',
-            )}
-            itemsCount={confirmations.length}
-            pageSize={6}
-            state="idle"
-        >
-            <DataListContainer
-                emptyState={{
-                    description: t(
-                        'app.safe.safeDaoProposalDetails.confirmationsEmptyDescription',
-                    ),
-                    heading: t(
-                        'app.safe.safeDaoProposalDetails.confirmationsEmptyHeading',
-                    ),
-                    objectIllustration: { object: 'USERS' },
-                }}
-                SkeletonElement={VoteDataListItem.Skeleton}
-            >
-                {confirmations.map((owner) => (
-                    <VoteDataListItem.Structure
-                        key={owner}
-                        voteIndicator="approve"
-                        voter={{ address: owner }}
-                    />
-                ))}
-            </DataListContainer>
-            <DataListPagination />
-        </DataListRoot>
-    );
-};
-
 const getCurrentOwnerConfirmations = (
     confirmations: ISafeConfirmation[],
     owners: string[],
@@ -535,25 +589,39 @@ const getCurrentOwnerConfirmations = (
 
     return confirmedOwners;
 };
+type SafeReadinessAlertVariant = 'critical' | 'success' | 'warning';
 
-const getSafeDaoProposalStatusKey = ({
-    isExecuted,
-    isSuccessful,
-    status,
-}: {
-    isExecuted: boolean;
-    isSuccessful: boolean | null;
-    status: ProposalStatus;
-}): string => {
-    if (isExecuted) {
-        if (isSuccessful === true) {
-            return 'executedSuccess';
-        }
-        if (isSuccessful === false) {
-            return 'executedFailure';
-        }
-        return 'executedUnknown';
+const safeApprovalReadinessPresentation: Record<
+    SafeApprovalReadiness,
+    {
+        alertVariant?: SafeReadinessAlertVariant;
+        labelKey: string;
     }
-
-    return status === ProposalStatus.EXPIRED ? 'superseded' : 'ready';
+> = {
+    [SafeApprovalReadiness.AWAITING_APPROVALS]: {
+        labelKey: 'awaitingApprovals',
+    },
+    [SafeApprovalReadiness.READY_TO_EXECUTE]: {
+        labelKey: 'readyToExecute',
+    },
+    [SafeApprovalReadiness.WAITING_FOR_NONCE]: {
+        alertVariant: 'warning',
+        labelKey: 'waitingForNonce',
+    },
+    [SafeApprovalReadiness.SUPERSEDED]: {
+        alertVariant: 'warning',
+        labelKey: 'superseded',
+    },
+    [SafeApprovalReadiness.EXECUTED_SUCCESS]: {
+        alertVariant: 'success',
+        labelKey: 'executedSuccess',
+    },
+    [SafeApprovalReadiness.EXECUTED_FAILURE]: {
+        alertVariant: 'critical',
+        labelKey: 'executedFailure',
+    },
+    [SafeApprovalReadiness.EXECUTED_UNKNOWN]: {
+        alertVariant: 'warning',
+        labelKey: 'executedUnknown',
+    },
 };

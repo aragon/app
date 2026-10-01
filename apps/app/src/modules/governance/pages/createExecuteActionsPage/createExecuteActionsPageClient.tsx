@@ -121,7 +121,7 @@ export const CreateExecuteActionsPageClient: React.FC<
                 <CreateExecuteActionsForm.Provider value={contextValues}>
                     <CreateExecuteActionsPageClientSteps
                         daoId={daoId}
-                        isSafeProcess={safeProcess != null}
+                        safeAddress={safeProcess?.safeAddress}
                     />
                 </CreateExecuteActionsForm.Provider>
             </WizardPage.Container>

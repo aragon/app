@@ -12,12 +12,12 @@ import {
 } from '@aragon/gov-ui-kit';
 import Image from 'next/image';
 import safeWallet from '@/assets/images/safeWallet.png';
-import { safeAppAccountUrl } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { safeDataListUtils } from '@/modules/safe/utils/safeDataListUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeDaoProposals } from '../../hooks/useSafeDaoProposals';
+import { safeDaoProposalUtils } from '../../utils/safeDaoProposalUtils';
 
 /** Transaction destination for a Safe process; Safe transactions are not indexed Aragon proposals. */
 export interface ISafeProcessOverviewProps {
@@ -51,7 +51,6 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
         safeAddress: plugin.address,
         daoAddress,
     });
-    const safeUrl = safeAppAccountUrl({ network, address: plugin.address });
     const daoUrl = `/dao/${network}/${daoAddress}`;
     const state = safeDataListUtils.getDataListState({
         isError: isError && data == null,
@@ -81,17 +80,6 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                         </p>
                     </div>
                 </div>
-                {safeUrl != null && (
-                    <Button
-                        href={safeUrl}
-                        iconRight={IconType.LINK_EXTERNAL}
-                        rel="noopener"
-                        target="_blank"
-                        variant="tertiary"
-                    >
-                        {t('app.plugins.safeMultisig.safeProcess.viewInSafe')}
-                    </Button>
-                )}
             </Card>
             {!isLoading &&
                 (isStale ||
@@ -115,10 +103,10 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                 <DataListContainer
                     emptyState={{
                         heading: t(
-                            'app.safe.safePendingTransactionList.empty.heading',
+                            'app.plugins.safeMultisig.safeProcess.emptyHeading',
                         ),
                         description: t(
-                            'app.safe.safePendingTransactionList.empty.description',
+                            'app.plugins.safeMultisig.safeProcess.emptyDescription',
                         ),
                         objectIllustration: { object: 'ACTION' },
                     }}
@@ -133,28 +121,33 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                     }}
                     layoutClassName="grid grid-cols-1"
                 >
-                    {data?.proposals.map(({ transaction, status, actions }) => (
-                        <ProposalDataListItem.Structure
-                            date={
-                                transaction.executionDate ??
-                                transaction.submissionDate
-                            }
-                            href={`${daoUrl}/proposals/safe/${transaction.safeTxHash}?safeAddress=${encodeURIComponent(plugin.address)}`}
-                            id={`SAFE-${transaction.nonce}`}
-                            key={`${plugin.address}:${transaction.safeTxHash}`}
-                            publisher={{ address: plugin.address }}
-                            status={status}
-                            summary={t(
-                                actions.length === 1
-                                    ? 'app.safe.safeDaoProposalDetails.oneAction'
-                                    : 'app.safe.safeDaoProposalDetails.manyActions',
-                                { count: actions.length },
-                            )}
-                            title={t('app.safe.safeDaoProposalDetails.title', {
-                                nonce: transaction.nonce,
-                            })}
-                        />
-                    ))}
+                    {data?.proposals.map(({ transaction, status, actions }) => {
+                        const proposalDisplayId =
+                            safeDaoProposalUtils.getProposalDisplayId(
+                                transaction,
+                            );
+
+                        return (
+                            <ProposalDataListItem.Structure
+                                date={
+                                    transaction.executionDate ??
+                                    transaction.submissionDate
+                                }
+                                href={`${daoUrl}/proposals/safe/${transaction.safeTxHash}?safeAddress=${encodeURIComponent(plugin.address)}`}
+                                id={proposalDisplayId}
+                                key={`${plugin.address}:${transaction.safeTxHash}`}
+                                publisher={{ address: plugin.address }}
+                                status={status}
+                                summary={t(
+                                    actions.length === 1
+                                        ? 'app.safe.safeDaoProposalDetails.oneAction'
+                                        : 'app.safe.safeDaoProposalDetails.manyActions',
+                                    { count: actions.length },
+                                )}
+                                title={proposalDisplayId}
+                            />
+                        );
+                    })}
                 </DataListContainer>
                 {hasNextPage && (
                     <Button

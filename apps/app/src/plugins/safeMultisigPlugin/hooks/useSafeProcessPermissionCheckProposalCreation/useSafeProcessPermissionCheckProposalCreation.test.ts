@@ -5,7 +5,12 @@ import type { Address } from 'viem';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import { governanceService } from '@/modules/governance/api/governanceService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
-import { generateDaoPlugin, ReactQueryWrapper } from '@/shared/testUtils';
+import * as safeServiceApi from '@/shared/api/safeService';
+import {
+    generateDaoPlugin,
+    generateSafeInfo,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { useSafeProcessPermissionCheckProposalCreation } from './useSafeProcessPermissionCheckProposalCreation';
 
 describe('useSafeProcessPermissionCheckProposalCreation', () => {
@@ -16,6 +21,7 @@ describe('useSafeProcessPermissionCheckProposalCreation', () => {
         walletAccountApi,
         'useWalletAccount',
     );
+    const useSafeInfoSpy = jest.spyOn(safeServiceApi, 'useSafeInfo');
     const getCanCreateProposalSpy = jest.spyOn(
         governanceService,
         'getCanCreateProposal',
@@ -32,10 +38,16 @@ describe('useSafeProcessPermissionCheckProposalCreation', () => {
 
     beforeEach(() => {
         connectWallet(connectedAddress);
+        useSafeInfoSpy.mockReturnValue({
+            data: generateSafeInfo({ owners: [connectedAddress] }),
+            isPending: false,
+            isError: false,
+        } as never);
     });
 
     afterEach(() => {
         useWalletAccountSpy.mockReset();
+        useSafeInfoSpy.mockReset();
         getCanCreateProposalSpy.mockReset();
     });
 
@@ -125,5 +137,23 @@ describe('useSafeProcessPermissionCheckProposalCreation', () => {
         expect(result.current.hasPermission).toBe(false);
         expect(result.current.isLoading).toBe(false);
         expect(getCanCreateProposalSpy).not.toHaveBeenCalled();
+    });
+    it('requires the connected wallet to be an owner of the selected Safe', async () => {
+        const nonOwner = `0x${'1'.repeat(40)}` as Address;
+        connectWallet(nonOwner);
+        useSafeInfoSpy.mockReturnValue({
+            data: generateSafeInfo({ owners: [connectedAddress] }),
+            isPending: false,
+            isError: false,
+        } as never);
+        getCanCreateProposalSpy.mockResolvedValue({ status: true });
+
+        const { result } = renderGuard(
+            `ethereum-mainnet-0x${'a'.repeat(40)}`,
+            createSharedWrapper(),
+        );
+
+        await waitFor(() => expect(result.current.isLoading).toBe(false));
+        expect(result.current.hasPermission).toBe(false);
     });
 });
