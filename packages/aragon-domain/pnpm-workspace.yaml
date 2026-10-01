@@ -1,0 +1,26 @@
+minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
+strictDepBuilds: true
+blockExoticSubdeps: true
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 131400 # skip trust checks for packages published >3 months ago
+
+#npm settings
+savePrefix: ^
+strictPeerDependencies: true
+autoInstallPeers: false
+sideEffectsCache: true
+preferFrozenLockfile: true
+dedupePeerDependents: true
+ignoreScripts: true
+autoInstallTypes: true
+nodeVersion: 24.16.0
+engineStrict: true
+
+# pnpm overrides
+overrides:
+  ws@>=8.0.0 <8.21.0: '>=8.21.0'
+  js-yaml@<=4.1.1: '>=4.1.2'
+  # read-yaml-file@1.x calls js-yaml's removed `safeLoad`; 2.1.0 is the last CJS
+  # release that uses the js-yaml 4 `load` API (compatible with @manypkg).
+  read-yaml-file@<2.1.0: ^2.1.0
+  esbuild@^0.27.0: '>=0.28.1'
