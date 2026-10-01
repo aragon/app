@@ -7,7 +7,8 @@ export type IAssistantStep =
     | 'removeFile'
     | 'transferFiles'
     | 'cleanupBlobs'
-    | 'rateLimit';
+    | 'rateLimit'
+    | 'searchDocs';
 
 export type IRefusalReason =
     | 'off_topic'
@@ -27,8 +28,15 @@ export interface IStepLogEntry {
     tokensOut?: number;
     refusalReason?: IRefusalReason;
     issueId?: string;
-    // Ticket intent (feedback/bug/support) on a createTicket event — a category, never content.
+    // Ticket intent (feedback/bug/support/question) on a createTicket event — a category, never
+    // content.
     intent?: string;
+    // searchDocs events: how many passages the documentation returned for the query and the
+    // relevance score of the best one — the query itself never gets logged.
+    resultCount?: number;
+    topScore?: number;
+    // Which corpus the answering index was built from ('ready' or 'drafts').
+    docsCorpus?: string;
     // Model stop reason ('stop', 'length', 'tool-calls', …): a 'length' means the reply or the
     // tool arguments were truncated before completing.
     finishReason?: string;

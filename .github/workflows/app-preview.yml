@@ -72,14 +72,21 @@ jobs:
     needs: [deploy-assistant, deploy]
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/gh-ensure-pr-comment
+
       - name: Comment preview PR
-        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1 (https://github.com/thollander/actions-comment-pull-request/releases/tag/v3.0.1)
+        uses: ./.github/actions/gh-ensure-pr-comment
         with:
           message: |
             🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})
             ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('🤖 **Assistant Preview:** [View Here]({0}) (app preview points at it)', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
-          comment-tag: preview-url
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: preview-url
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   e2e:
     needs: deploy
@@ -95,12 +102,19 @@ jobs:
     if: ${{ always() && needs.deploy.result == 'success' && needs.e2e.result != 'skipped' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/gh-ensure-pr-comment
+
       - name: Comment E2E results
         env:
           ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
-        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1 (https://github.com/thollander/actions-comment-pull-request/releases/tag/v3.0.1)
+        uses: ./.github/actions/gh-ensure-pr-comment
         with:
-          comment-tag: e2e-results
+          tag: e2e-results
           message: |
             **E2E results (preview)**
 
@@ -115,4 +129,4 @@ jobs:
             | GitHub job | ${{ needs.e2e.result == 'success' && '✅ completed' || needs.e2e.result == 'failure' && '❌ workflow failed' || '⏹️ cancelled' }} |
 
             [View run #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

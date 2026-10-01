@@ -1,4 +1,8 @@
-import { createTicketToolName } from '@aragon/assistant-contracts';
+import {
+    assistantLimits,
+    createTicketToolName,
+    docsToolNameSet,
+} from '@aragon/assistant-contracts';
 import { Heading, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
 import {
     ActionBarPrimitive,
@@ -12,8 +16,13 @@ import {
     useAuiState,
 } from '@assistant-ui/react';
 import classNames from 'classnames';
-import { useEffect, useRef } from 'react';
-import { chatCopy, supportEmailHref } from '../../copy';
+import { useEffect, useId, useRef } from 'react';
+import {
+    chatCopy,
+    privacyPolicyUrl,
+    supportEmailHref,
+    termsUrl,
+} from '../../copy';
 import { useRequestHistory } from '../../requests';
 import { getAssistantErrorText, parseAssistantError } from '../../transport';
 import {
@@ -52,6 +61,8 @@ const isNewChatView = (state: AssistantState) =>
 export const Thread: React.FC<IThreadProps> = (props) => {
     const { isOpen, onViewRequests } = props;
 
+    const aiNoticeId = useId();
+
     return (
         <ThreadPrimitive.Root
             className="flex h-full min-h-0 flex-1 flex-col bg-neutral-0"
@@ -89,10 +100,12 @@ export const Thread: React.FC<IThreadProps> = (props) => {
                         <AuiIf condition={isNewChatView}>
                             <ThreadSuggestions />
                         </AuiIf>
-                        <Composer isOpen={isOpen} />
-                        {/* One quiet line under the composer: the way back to a filed request on a
-                            fresh chat, the way to a human once the conversation is under way. */}
+                        <Composer aiNoticeId={aiNoticeId} isOpen={isOpen} />
+                        {/* Quiet lines under the composer: on a fresh chat the AI notice and the
+                            way back to a filed request, once the conversation is under way the
+                            way to a human. */}
                         <AuiIf condition={isNewChatView}>
+                            <AiNotice id={aiNoticeId} />
                             <PastRequestsLink onViewRequests={onViewRequests} />
                         </AuiIf>
                         <AuiIf condition={(state) => !isNewChatView(state)}>
@@ -171,6 +184,32 @@ const ThreadMessage: React.FC = () => {
     );
 };
 
+// Styled after the gov-ui-kit Link (its own type scale is too large for the caption lines): the
+// app's plain link look, opening in a new tab so the chat stays put.
+const captionLinkClassName =
+    'focus-ring-primary inline-flex items-center gap-1.5 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700';
+
+interface ICaptionLinkProps {
+    href: string;
+    children: string;
+}
+
+const CaptionLink: React.FC<ICaptionLinkProps> = (props) => {
+    const { href, children } = props;
+
+    return (
+        <a
+            className={captionLinkClassName}
+            href={href}
+            rel="noopener noreferrer"
+            target="_blank"
+        >
+            {children}
+            <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
+        </a>
+    );
+};
+
 // Fills the space between header and composer on a fresh chat.
 const ThreadWelcome: React.FC = () => (
     <div className="flex flex-1 flex-col items-center justify-center px-8 py-6 text-center">
@@ -179,6 +218,55 @@ const ThreadWelcome: React.FC = () => (
         </Heading>
     </div>
 );
+
+interface IAiNoticeProps {
+    /**
+     * Id of the notice, which the composer input references as its description.
+     */
+    id: string;
+}
+
+interface INoticeLinkProps {
+    href: string;
+    children: string;
+}
+
+// A link inside the notice's sentence: underlined like the other caption links under the
+// composer, opening in a new tab so the chat stays put.
+const NoticeLink: React.FC<INoticeLinkProps> = (props) => {
+    const { href, children } = props;
+
+    return (
+        <a
+            className="focus-ring-primary rounded-sm underline underline-offset-2 hover:text-neutral-600"
+            href={href}
+            rel="noopener noreferrer"
+            target="_blank"
+        >
+            {children}
+        </a>
+    );
+};
+
+// Under the composer on a fresh chat, so it is read before the first message; it stays out of
+// the requests view, which does not mount the thread.
+const AiNotice: React.FC<IAiNoticeProps> = (props) => {
+    const { id } = props;
+    const { text, privacyPolicy, and, terms, end } = chatCopy.composer.aiNotice;
+
+    return (
+        <p
+            className="text-balance px-2 text-center text-neutral-400 text-xs leading-normal"
+            id={id}
+        >
+            {text}
+            <NoticeLink href={privacyPolicyUrl}>{privacyPolicy}</NoticeLink>
+            {and}
+            <NoticeLink href={termsUrl}>{terms}</NoticeLink>
+            {end}
+        </p>
+    );
+};
 
 interface IPastRequestsLinkProps {
     /**
@@ -210,17 +298,9 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 const EmailEscalation: React.FC = () => (
     <p className="flex items-center justify-center gap-1 text-center text-neutral-400 text-xs">
         {chatCopy.composer.escalationPrompt}
-        {/* Styled after the gov-ui-kit Link (its own type scale is too large for this caption
-            line): the app's plain link look, opening in a new tab so the chat stays put. */}
-        <a
-            className="focus-ring-primary inline-flex items-center gap-1.5 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700"
-            href={supportEmailHref}
-            rel="noopener noreferrer"
-            target="_blank"
-        >
+        <CaptionLink href={supportEmailHref}>
             {chatCopy.composer.escalationLink}
-            <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
-        </a>
+        </CaptionLink>
     </p>
 );
 
@@ -260,19 +340,24 @@ interface IComposerProps {
      * Whether the chat is currently visible; the input grabs focus when it becomes true.
      */
     isOpen: boolean;
+    /**
+     * Id of the AI notice of a fresh chat. The input takes focus on open, so without it a screen
+     * reader would skip the notice.
+     */
+    aiNoticeId: string;
 }
 
 const Composer: React.FC<IComposerProps> = (props) => {
-    const { isOpen } = props;
+    const { isOpen, aiNoticeId } = props;
+
+    const isNewChat = useAuiState(isNewChatView);
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // A fresh chat asks for the issue, an ongoing one for the next reply.
-    const placeholder = useAuiState((state) =>
-        isNewChatView(state)
-            ? chatCopy.composer.placeholder
-            : chatCopy.composer.placeholderReply,
-    );
+    const placeholder = isNewChat
+        ? chatCopy.composer.placeholder
+        : chatCopy.composer.placeholderReply;
 
     // The host panel is non-modal (no focus trap), so the composer takes focus itself whenever
     // the chat becomes visible — including the very first lazy mount.
@@ -296,10 +381,16 @@ const Composer: React.FC<IComposerProps> = (props) => {
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
+                    {/* The limit the service enforces per message, applied where the text is
+                        typed: the textarea stops at it (a longer paste is clipped) and the count
+                        below says so, instead of the message travelling to the service and
+                        coming back as a failed reply. */}
                     <ComposerPrimitive.Input
+                        aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
                         className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-neutral-800 text-sm caret-primary-400 outline-none placeholder:text-neutral-300"
                         enterKeyHint="send"
+                        maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
                         ref={inputRef}
                         rows={1}
@@ -329,11 +420,41 @@ const SendArrowIcon: React.FC = () => (
     </svg>
 );
 
+// The count appears once the message is this far towards the limit: a short message never
+// shows it, a long paste that the textarea clipped at the limit is noticed.
+const characterCountThreshold = 0.8;
+
+const characterCountFormatter = new Intl.NumberFormat('en-US');
+
+const ComposerCharacterCount: React.FC = () => {
+    const length = useAuiState((state) => state.composer.text.length);
+    const limit = assistantLimits.maxMessageLength;
+
+    if (length < limit * characterCountThreshold) {
+        return null;
+    }
+
+    return (
+        <p
+            className={classNames(
+                'text-xs tabular-nums',
+                length >= limit ? 'text-critical-600' : 'text-neutral-400',
+            )}
+        >
+            {chatCopy.composer.characterCount(
+                characterCountFormatter.format(length),
+                characterCountFormatter.format(limit),
+            )}
+        </p>
+    );
+};
+
 const ComposerAction: React.FC = () => {
     return (
         <div className="relative flex items-center justify-between">
             <ComposerAddAttachment />
             <div className="flex items-center gap-1.5">
+                <ComposerCharacterCount />
                 <AuiIf condition={(state) => !state.thread.isRunning}>
                     <ComposerPrimitive.Send asChild={true}>
                         <TooltipIconButton
@@ -398,15 +519,55 @@ const MessageError: React.FC = () => (
     </MessagePrimitive.Error>
 );
 
-// Waiting for the first token: a plain spinner, the familiar chat loader.
-const AssistantTyping: EmptyMessagePartComponent = ({ status }) => {
-    if (status.type !== 'running') {
+// assistant-ui renders the Empty part not only for a message without parts but also, while the
+// message runs, next to a trailing part that is not text (a tool call); a spinner there sat
+// under the spinner of the running documentation tool and made two, three with a second tool.
+// The Empty part is silenced and the indicator below is the one place a spinner comes from.
+const SilentEmptyPart: EmptyMessagePartComponent = () => null;
+
+// What the reply is waiting on with nothing to show for it yet, or undefined once there is
+// something to show. Before any part: the first token. After a tool call that renders nothing
+// (the documentation tools run silently — the service drops the text a model writes before
+// calling one — and so does flagOffTopic): the text that follows it; the ticket tool draws its
+// own card and needs no indicator. The message state decides, so the same element stays up from
+// the send until the answer streams, through every tool call in between, however many and in
+// whatever order.
+const selectWorkingLabel = (state: AssistantState): string | undefined => {
+    const { status, parts } = state.message;
+
+    if (status?.type !== 'running') {
+        return undefined;
+    }
+
+    const lastPart = parts.at(-1);
+
+    if (lastPart == null || lastPart.type === 'reasoning') {
+        return chatCopy.thread.typing;
+    }
+
+    if (
+        lastPart.type === 'tool-call' &&
+        lastPart.toolName !== createTicketToolName
+    ) {
+        return docsToolNameSet.has(lastPart.toolName)
+            ? chatCopy.thread.lookingUp
+            : chatCopy.thread.typing;
+    }
+
+    return undefined;
+};
+
+// A plain spinner, the familiar chat loader, labelled for what is happening.
+const AssistantWorking: React.FC = () => {
+    const label = useAuiState(selectWorkingLabel);
+
+    if (label == null) {
         return null;
     }
 
     return (
         <div
-            aria-label={chatCopy.thread.typing}
+            aria-label={label}
             className="flex items-center py-1"
             role="status"
         >
@@ -442,17 +603,21 @@ const AssistantMessage: React.FC = () => (
         data-role="assistant"
     >
         <div className="wrap-break-word px-2 text-neutral-800 text-sm leading-relaxed">
-            {/* Tools without a registered component (flagOffTopic, the future searchDocs)
-                deliberately render nothing — the model narrates around them. */}
+            {/* A tool without a registered component deliberately renders nothing: the model
+                narrates around flagOffTopic, and the documentation tools are covered by the
+                single indicator below. */}
             <MessagePrimitive.Parts
                 components={{
                     Text: MarkdownText,
-                    Empty: AssistantTyping,
+                    Empty: SilentEmptyPart,
                     tools: {
-                        by_name: { [createTicketToolName]: CreateTicketCard },
+                        by_name: {
+                            [createTicketToolName]: CreateTicketCard,
+                        },
                     },
                 }}
             />
+            <AssistantWorking />
             <MessageError />
         </div>
 

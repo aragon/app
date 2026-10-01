@@ -252,3 +252,5 @@
 {"ts":"2026-09-07T14:29:57.453Z","tool":"Edit","file":"apps/app/src/modules/governance/pages/daoProposalsPage/daoProposalsPageClient.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-09-07T14:30:27.840Z","tool":"Edit","file":"apps/app/src/shared/utils/bigIntUtils/bigIntUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-09-07T14:30:29.460Z","tool":"Edit","file":"apps/app/src/shared/utils/bigIntUtils/bigIntUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-09-23T04:49:03.582Z","tool":"Write","file":"apps/app/src/actions/core/permissionManager/permissionActionReorder.test.tsx","rule":"core-action-decoded-input","bytes":948,"elapsed_ms":6,"adapter":"claude"}
+{"ts":"2026-09-23T04:49:03.582Z","tool":"Write","file":"apps/app/src/actions/core/permissionManager/permissionActionReorder.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":6,"adapter":"claude"}

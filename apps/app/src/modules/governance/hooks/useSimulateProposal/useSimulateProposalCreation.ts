@@ -4,6 +4,8 @@ import { useCall } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 
 export interface IUseSimulateProposalCreationParams {
@@ -56,7 +58,16 @@ export const useSimulateProposalCreation = (
     const chainId =
         network != null ? networkDefinitions[network].id : undefined;
 
-    const isEnabled = userAddress != null && chainId != null;
+    // A process this build cannot build a proposal for is not eligible: skip the
+    // simulation and report a definite failure, not the fail-open request error.
+    const canBuildProposal =
+        pluginRegistryUtils.getSlotFunction({
+            pluginId: plugin.interfaceType,
+            slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
+        }) != null;
+
+    const isEnabled =
+        canBuildProposal && userAddress != null && chainId != null;
 
     // Memoized so the calldata (which embeds a now-relative end date) is built
     // once and does not change the useCall query key on every render, which
@@ -91,14 +102,11 @@ export const useSimulateProposalCreation = (
             : undefined;
     const isRequestError = isError && revertError == null;
     const isSimulationError = isError && revertError != null;
+    const isFailure = !canBuildProposal || isSimulationError;
 
     return {
         isLoading,
         isError: isRequestError,
-        result: isSuccess
-            ? 'success'
-            : isSimulationError
-              ? 'failure'
-              : undefined,
+        result: isSuccess ? 'success' : isFailure ? 'failure' : undefined,
     };
 };

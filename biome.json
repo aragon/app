@@ -12,7 +12,10 @@
             "!.next",
             "!coverage",
             "!.turbo",
-            "!**/*.svg"
+            "!**/*.svg",
+            "!apps/app/src/modules/application/components/layouts/layoutRoot/breakpoints.css",
+            "!apps/assistant/src/docs/generated/*.js",
+            "!apps/assistant/.docs-corpus"
         ]
     },
     "formatter": {

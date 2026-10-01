@@ -1,0 +1,58 @@
+# dependencies
+node_modules
+.pnpm-store
+
+# testing
+coverage
+
+# production
+build
+build.txt
+build.css
+dist
+dist-ssr
+*.local
+.cache
+storybook-static
+typechain
+
+# turbo
+.turbo
+
+# misc
+.vscode
+.idea
+.cursor
+.cursorignore
+.DS_Store
+*.pem
+.pnp.*
+
+# debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+docker.env
+docker-compose.yml
+
+# deployments
+deployments
+
+# generated
+generated
+subgraph.yaml
+.bin
+stats.*.html
+
+# IDE/AI
+.claude
+.tempor/

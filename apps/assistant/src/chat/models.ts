@@ -1,4 +1,4 @@
-import type { LanguageModel } from 'ai';
+import type { LanguageModel, LanguageModelCallOptions } from 'ai';
 import { getConfig } from '../lib/config';
 
 // Model boundary: everything below the routes consumes LanguageModel values; the Gateway model id
@@ -19,14 +19,32 @@ export const getChatModels = (): string[] => {
 // Wall-clock cap on the agent stream, including the AI SDK's internal retries and the resume step
 // that runs the tool (blob transfer + Linear create): a stalled upstream call must fail fast so
 // the user can retry, instead of burning the function timeout (observed: a single gateway call
-// hanging for 34s).
-export const chatTimeoutMs = 60_000;
+// hanging for 34s). Sized so that a turn of several lookups and a reasoned answer fits, with
+// room over the slowest ones seen.
+export const chatTimeoutMs = 90_000;
 
-// How long a model may stay silent before the turn moves to the next one. A healthy call on the
-// current provider starts answering in about a second (measured on the preview: 1.0s, 1.7s,
-// 2.3s), so this leaves generous room for a cold start while still catching the stall — the same
-// prompt on the same provider has taken 47.8s and, once, longer than the cap above. Two attempts
-// at this deadline still fit inside chatTimeoutMs.
+// Bounded step count of one agent turn: a documentation answer is a search, at most a couple of
+// page reads and the reply; a report is the draft, the tool and the post-approval summary.
+export const maxAgentSteps = 8;
+
+export type IChatReasoning = NonNullable<LanguageModelCallOptions['reasoning']>;
+
+// Level for a model the chain does not configure.
+export const defaultChatReasoning: IChatReasoning = 'low';
+
+/**
+ * Reasoning effort of the attempts a model serves, as the provider-neutral AI SDK setting.
+ * Thinking tokens count against maxOutputTokens and delay the answer; each model runs at the
+ * level at which it weighs the options of a case the documentation does not spell out instead
+ * of settling on the first that fits, and still answers well inside chatTimeoutMs. A Gateway
+ * fallback after a failed call resends the request unchanged, at the failed model's level.
+ */
+export const getChatReasoning = (model: string): IChatReasoning =>
+    getConfig().chat.reasoning[model] ?? defaultChatReasoning;
+
+// How long a model may stay silent before the turn moves to the next one: room for a cold start,
+// short enough to catch a stalled provider. One attempt per model of the chain at this deadline
+// fits inside chatTimeoutMs.
 export const firstContentTimeoutMs = 12_000;
 
 // AI Gateway natively retries a failed call on the given fallback models — passed as
@@ -35,19 +53,16 @@ export const firstContentTimeoutMs = 12_000;
 // layer up, in modelFailover.
 export const getChatProviderOptions = (fallbackModels: string[]) => ({
     // strictJsonSchema constrains tool-call argument decoding to the exact input schema so the
-    // model cannot drift from it. It only applies when the Gateway routes to the OpenAI API;
-    // other providers ignore the key.
+    // model cannot drift from it (OpenAI models; other providers ignore the key).
     openai: { strictJsonSchema: true },
-    // Intake needs no reasoning, and thinking tokens are invisible output that eats the
-    // maxOutputTokens budget (observed: a draft clipped to an empty turn). Off for Gemini;
-    // other providers ignore the key.
-    google: { thinkingConfig: { thinkingBudget: 0 } },
     gateway: {
         models: fallbackModels,
-        // The gateway load-balances one model across providers; the deepseek first-party host
-        // proved flaky in testing (finishReason "other", retry storms surfacing error parts in
-        // the chat) while Fireworks stayed clean — prefer it, without excluding the providers
-        // that host the fallback models.
-        order: ['fireworks'],
+        // Chat text goes only to providers under a zero-data-retention agreement; the gateway
+        // fails the call when a model has none. A privacy commitment, not a tuning knob.
+        zeroDataRetention: true,
+        // A preference within that set, not a restriction: the faster host of each model first,
+        // and a host that does not serve a model is skipped for it. A host that accepts a call
+        // and goes quiet is handled in modelFailover.
+        order: ['openai', 'togetherai'],
     },
 });

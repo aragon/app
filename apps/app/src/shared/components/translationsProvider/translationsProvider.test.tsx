@@ -5,6 +5,7 @@ import { testLogger } from '@/test/utils';
 import {
     type ITranslationsProviderProps,
     TranslationsProvider,
+    useSafeTranslations,
     useTranslations,
 } from './translationsProvider';
 
@@ -50,6 +51,25 @@ describe('<TranslationsProvider /> component', () => {
             const { result } = renderHook(() => useTranslations(), {
                 wrapper: createHookWrapper(translations),
             });
+            expect(result.current.t('key')).toEqual('value');
+        });
+    });
+
+    describe('useSafeTranslations hook', () => {
+        it('resolves keys from the fallback dictionary and echoes unknown keys when not wrapped inside a provider', () => {
+            const { result } = renderHook(() =>
+                useSafeTranslations({ key: 'fallback' }),
+            );
+            expect(result.current.t('key')).toEqual('fallback');
+            expect(result.current.t('other')).toEqual('other');
+        });
+
+        it('returns the context values when a provider is available', () => {
+            const translations = { key: 'value' } as unknown as Translations;
+            const { result } = renderHook(
+                () => useSafeTranslations({ key: 'fallback' }),
+                { wrapper: createHookWrapper(translations) },
+            );
             expect(result.current.t('key')).toEqual('value');
         });
     });

@@ -25,6 +25,11 @@ runs:
         PRETTIER_CHANGELOG: ${{ inputs.prettier_changelog }}
       run: |
         set -euo pipefail
+        # `changeset version` exits 1 when no changeset is pending; keep that case a no-op.
+        if [ -z "$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' -print -quit)" ]; then
+          echo "No pending changesets."
+          exit 0
+        fi
         # Workflows name the release scope they own; the central mapper resolves it to packages
         # and the inversion into changesets --ignore flags happens here, in one place, so flows
         # stay declarative.

@@ -88,7 +88,7 @@ describe('<LayoutWizard /> component', () => {
         expect(
             screen.getByTestId('navigation-wizard-mock'),
         ).toBeInTheDocument();
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     });
 
     it('renders error with a link to the explore page on fetch DAO error', async () => {
@@ -99,7 +99,7 @@ describe('<LayoutWizard /> component', () => {
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        const errorLink = screen.getByRole('link', { name: /link.explore/ });
+        const errorLink = screen.getByRole('link', { name: 'Explore DAOs' });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual('/');
     });
