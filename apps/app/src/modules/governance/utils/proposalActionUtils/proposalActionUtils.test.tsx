@@ -1,15 +1,12 @@
 import {
     ProposalActionType as GukProposalActionType,
     type IProposalActionUpdateMetadata,
-    type IProposalActionWithdrawToken,
 } from '@aragon/gov-ui-kit';
 import { toFunctionSelector } from 'viem';
-import { generateToken } from '@/modules/finance/testUtils';
 import {
     generateProposalAction,
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
-    generateProposalActionWithdrawToken,
 } from '@/modules/governance/testUtils';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -82,39 +79,17 @@ describe('proposalActionUtils', () => {
     });
 
     describe('normalizeDefaultAction', () => {
-        const normalizeTransferActionSpy = jest.spyOn(
-            proposalActionUtils,
-            'normalizeTransferAction',
-        );
         const normalizeUpdateMetaDataActionSpy = jest.spyOn(
             proposalActionUtils,
             'normalizeUpdateMetaDataAction',
         );
 
         afterEach(() => {
-            normalizeTransferActionSpy.mockReset();
             normalizeUpdateMetaDataActionSpy.mockReset();
         });
 
         afterAll(() => {
-            normalizeTransferActionSpy.mockRestore();
             normalizeUpdateMetaDataActionSpy.mockRestore();
-        });
-
-        it('uses the transfer-action normalization function when action is of transfer type', () => {
-            const action = generateProposalAction({
-                type: ProposalActionType.TRANSFER,
-            });
-            const normalizedAction = generateProposalAction({
-                type: 'normalized',
-            });
-            normalizeTransferActionSpy.mockReturnValue(
-                normalizedAction as IProposalActionWithdrawToken,
-            );
-            expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(
-                normalizedAction,
-            );
-            expect(normalizeTransferActionSpy).toHaveBeenCalledWith(action);
         });
 
         it('uses the update-metadata-action normalization function when action is of update-metadata type', () => {
@@ -140,23 +115,6 @@ describe('proposalActionUtils', () => {
             expect(proposalActionUtils.normalizeDefaultAction(action)).toEqual(
                 action,
             );
-        });
-    });
-
-    describe('normalizeTransferAction', () => {
-        it('correctly normalizes a transfer action', () => {
-            const token = generateToken({ decimals: 18 });
-            const transferAction = generateProposalActionWithdrawToken({
-                amount: '1000000000000000',
-                token,
-            });
-            const normalizedAction =
-                proposalActionUtils.normalizeTransferAction(transferAction);
-            expect(normalizedAction.type).toEqual(
-                GukProposalActionType.WITHDRAW_TOKEN,
-            );
-            expect(normalizedAction.amount).toEqual('0.001');
-            expect(normalizedAction.sender).toEqual(transferAction.sender);
         });
     });
 
@@ -304,35 +262,6 @@ describe('proposalActionUtils', () => {
                 { label: links[0].name, href: links[0].url },
                 { label: links[1].name, href: links[1].url },
             ]);
-        });
-    });
-
-    describe('isWithdrawTokenAction', () => {
-        it('returns true when action is of transfer type', () => {
-            const action = generateProposalAction({
-                type: ProposalActionType.TRANSFER,
-            });
-            expect(
-                proposalActionUtils.isWithdrawTokenAction(action),
-            ).toBeTruthy();
-        });
-
-        it('returns true when action is of native transfer type', () => {
-            const action = generateProposalAction({
-                type: ProposalActionType.TRANSFER_NATIVE,
-            });
-            expect(
-                proposalActionUtils.isWithdrawTokenAction(action),
-            ).toBeTruthy();
-        });
-
-        it('returns false when action is not of transfer type', () => {
-            const action = generateProposalAction({
-                type: ProposalActionType.METADATA_UPDATE,
-            });
-            expect(
-                proposalActionUtils.isWithdrawTokenAction(action),
-            ).toBeFalsy();
         });
     });
 
