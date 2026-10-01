@@ -1,5 +1,21 @@
 # @aragon/assistant-chat
 
+## 0.5.1
+
+### Patch Changes
+
+- [#1394](https://github.com/aragon/app/pull/1394) [`c6e3d70`](https://github.com/aragon/app/commit/c6e3d7045295b954e619659e285ef43723c85eff) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Show a spinner in the support chat while the assistant looks through the documentation. The documentation tools run silently — no text streams around them — so without it the reply was a blank bubble until the answer arrived.
+
+- [#1394](https://github.com/aragon/app/pull/1394) [`c6e3d70`](https://github.com/aragon/app/commit/c6e3d7045295b954e619659e285ef43723c85eff) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix three support chat glitches from the feedback round. Links in a reply were plain text: the markdown renderer now enables GitHub-flavored markdown, so a bare URL is a clickable link like a labelled one (both open in a new tab), the rare table renders as one instead of a run of pipes, and images are not rendered at all (a reply never needs one, and an image would make the browser fetch a URL of the model's choosing). A documentation lookup showed two spinners at once (assistant-ui keeps the empty-message spinner up next to a trailing tool part, and each running tool part drew its own) and none while the model read the results: the reply now shows a single spinner from the send until the answer starts streaming, through every lookup in between. And a message longer than the service accepts used to leave as usual and come back as a generic failure: the composer now stops at the limit (8,000 characters, a longer paste is clipped) and shows the count once a message gets close to it.
+
+- [#1423](https://github.com/aragon/app/pull/1423) [`83a52ac`](https://github.com/aragon/app/commit/83a52ac77d1aff6fcd47d303d974f70bad04b1eb) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Tell the user the support chat is AI before the first message, with the privacy policy and terms linked, and add the `supportChatDocs` feature flag that lets the chat answer product questions from the documentation.
+
+- [#1310](https://github.com/aragon/app/pull/1310) [`83b8cb8`](https://github.com/aragon/app/commit/83b8cb865f4813f47eaecd504ce2db8ca57e079a) Thanks [@jjavieralv](https://github.com/jjavieralv)! - Prevent sending a message with an attachment the service rejected: a file blocked by validation or sanitization can no longer ride along with the message as if it had been delivered.
+
+- [#1310](https://github.com/aragon/app/pull/1310) [`83b8cb8`](https://github.com/aragon/app/commit/83b8cb865f4813f47eaecd504ce2db8ca57e079a) Thanks [@jjavieralv](https://github.com/jjavieralv)! - Keep an attachment sendable after another attachment of the same message failed. The composer restores and re-sends every attachment when one throws, and dropping the entry on the first send made the surviving file look like one that never uploaded: the message could no longer be sent, and removing the file skipped its server-side deletion so it still reached the ticket.
+
+- [#1415](https://github.com/aragon/app/pull/1415) [`c020ff9`](https://github.com/aragon/app/commit/c020ff97c172f59165d947842c74f6f99b962d8f) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (Next.js 16.3.5, React 19.3, Sentry 10.74, viem 2.56, wagmi 3.7.7, WalletConnect 2.25, assistant-ui 0.15, isomorphic-dompurify 4), bump pnpm to 11.27, and lift gov-ui-kit's sanitize-html to 2.17.7, closing two XSS advisories in proposal body rendering
+
 ## 0.5.0
 
 ### Minor Changes
