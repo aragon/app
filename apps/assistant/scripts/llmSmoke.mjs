@@ -57,14 +57,18 @@ const chunksToText = (chunks) =>
         .map((chunk) => chunk.delta)
         .join('');
 
+// What the host lets the chat do: the documentation scenarios turn the documentation tools on,
+// the ticket scenarios send nothing, like a host with the flag off.
+const docsFeatures = { docsSearch: true };
+
 // One request against /chat, digested into what the scenarios assert on: the assembled reply
 // text, the createLinearTicket draft (input + approval request) when the agent produced one,
 // and the executed tool output on a resume.
-const sendChatTurn = async (sessionId, messages) => {
+const sendChatTurn = async (sessionId, messages, features) => {
     const response = await fetch(`${baseUrl}/chat`, {
         method: 'POST',
         headers: { 'content-type': 'application/json', ...bypassHeaders },
-        body: JSON.stringify({ sessionId, messages, appContext }),
+        body: JSON.stringify({ sessionId, messages, appContext, features }),
     });
 
     if (!response.ok) {
@@ -193,19 +197,21 @@ await runScenario(
     },
 );
 
-// Where the documentation tools are on (every environment but production) the agent answers a
-// documented question from the knowledge base; where they are off it says it cannot answer and
-// offers to pass the question on. Either way a plain question never turns into a ticket draft by
-// itself — the user has to agree first.
+// With the documentation tools on the agent answers a documented question from the knowledge
+// base; a plain question never turns into a ticket draft by itself — the user has to agree first.
 await runScenario(
-    'a product question is answered, or offered to the team, without a draft',
+    'a product question is answered from the documentation without a draft',
     async () => {
         const sessionId = randomUUID();
-        const turn = await sendChatTurn(sessionId, [
-            buildUserMessage(
-                'What is the difference between an account and a DAO in the Aragon App?',
-            ),
-        ]);
+        const turn = await sendChatTurn(
+            sessionId,
+            [
+                buildUserMessage(
+                    'What is the difference between an account and a DAO in the Aragon App?',
+                ),
+            ],
+            docsFeatures,
+        );
 
         if (turn.text.length < 40) {
             throw new Error(
@@ -215,6 +221,33 @@ await runScenario(
         if (turn.draftInput || turn.approvalRequest) {
             throw new Error(
                 `expected no ticket draft for a plain question, got: ${JSON.stringify(turn.draftInput?.input)}`,
+            );
+        }
+        logStep(`answer: ${turn.text.slice(0, 160).replace(/\s+/g, ' ')}`);
+    },
+);
+
+// A capability the app may not have is looked up and answered, never filed as a feature request
+// on the spot. How well it is answered (a plain no with the contact link rather than "I don't
+// know") is judged by reading conversations, not gated here.
+await runScenario(
+    'a capability the app may lack is answered, not filed',
+    async () => {
+        const sessionId = randomUUID();
+        const turn = await sendChatTurn(
+            sessionId,
+            [buildUserMessage('I want private quadratic voting')],
+            docsFeatures,
+        );
+
+        if (turn.draftInput || turn.approvalRequest) {
+            throw new Error(
+                `expected no ticket draft, got: ${JSON.stringify(turn.draftInput?.input)}`,
+            );
+        }
+        if (turn.text.length < 40) {
+            throw new Error(
+                `expected an answer, got: ${JSON.stringify(turn.text)}`,
             );
         }
         logStep(`answer: ${turn.text.slice(0, 160).replace(/\s+/g, ' ')}`);

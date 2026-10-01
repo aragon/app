@@ -268,7 +268,9 @@ describe('<PermissionChangesCreate /> component', () => {
 
         const whoOfFirstRow = 'actions.0.inputData.parameters.0.value.0.2';
 
-        await formMethods?.trigger(whoOfFirstRow);
+        await act(async () => {
+            await formMethods?.trigger(whoOfFirstRow);
+        });
         expect(formMethods?.getFieldState(whoOfFirstRow).error).toBeDefined();
 
         const [firstRemove] = screen.getAllByRole('button', {

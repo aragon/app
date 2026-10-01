@@ -12,7 +12,7 @@ export const createTicketToolName = 'createLinearTicket';
 export const ticketIntentSchema = z
     .enum(['feedback', 'bug', 'support', 'question'])
     .describe(
-        'feedback: a suggestion or opinion about the app; bug: something is broken; support: the user needs the team to do or check something for them; question: a product question you cannot answer, filed so the team can answer it. Describe the product question itself, without commentary about your knowledge or its sources.',
+        'feedback: a suggestion or opinion about the product, including about this assistant; bug: something is broken; support: the team needs to do or check something for the user in the app (their DAO, a proposal, their account); question: a product question you cannot answer, filed so the team can answer it. Describe the product question itself, without commentary about your knowledge or its sources.',
     );
 
 export type ITicketIntent = z.infer<typeof ticketIntentSchema>;
@@ -22,19 +22,33 @@ export type ITicketIntent = z.infer<typeof ticketIntentSchema>;
 // model then narrated verbatim to the user. The ceilings are far above anything a model drafts
 // from a chat — they bound what a hand-made tool call can push into Linear. The description's is
 // three messages long, since a draft may quote a pasted message in full next to its summary.
-// Fields are English (enforced by the system prompt) while the chat stays in the user's language.
+// The descriptions travel into the tool schema; that the fields are English while the chat stays
+// in the user's language is a rule of the system prompt.
 export const createTicketToolInputSchema = z.object({
     intent: ticketIntentSchema,
-    title: z.string().min(1).max(160),
+    title: z
+        .string()
+        .min(1)
+        .max(160)
+        .describe('What happened, so the team can find it.'),
     description: z
         .string()
         .min(1)
-        .max(3 * assistantLimits.maxMessageLength),
+        .max(3 * assistantLimits.maxMessageLength)
+        .describe('What the user observed, in your words.'),
     // Optional free-form contact channel (email, Telegram, anything the user offers): used by the
     // team to follow up when provided, never blocks creation.
-    contact: z.string().max(200).optional(),
+    contact: z
+        .string()
+        .max(200)
+        .optional()
+        .describe('A way to reach the user, exactly as they gave it.'),
     // One step per item, unnumbered — the natural shape models produce; rendering owns numbering.
-    stepsToReproduce: z.array(z.string().max(500)).max(30).optional(),
+    stepsToReproduce: z
+        .array(z.string().max(500))
+        .max(30)
+        .optional()
+        .describe('For a bug: the steps that lead to it.'),
 });
 
 export type ICreateTicketToolInput = z.infer<

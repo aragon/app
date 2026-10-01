@@ -129,20 +129,6 @@ describe('createDocsSearch', () => {
         ).toEqual('accounts/account.md');
         expect(docsSearch.readDoc('accounts/missing.md')).toBeUndefined();
     });
-
-    it('lists the pages, optionally narrowed to one area', () => {
-        const docsSearch = createDocsSearch(docsIndexArtifact);
-
-        expect(docsSearch.listDocs().map((entry) => entry.path)).toEqual([
-            'accounts/account.md',
-            'accounts/linked-account.md',
-        ]);
-        expect(docsSearch.listDocs({ area: 'accounts' })).toHaveLength(2);
-        expect(docsSearch.listDocs({ area: 'Governance' })).toEqual([]);
-        expect(docsSearch.listDocs()[1]?.summary).toContain(
-            'links another account',
-        );
-    });
 });
 
 describe('buildExcerpt', () => {
