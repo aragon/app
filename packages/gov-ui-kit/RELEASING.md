@@ -1,7 +1,7 @@
 # Releasing @aragon/gov-ui-kit
 
-`@aragon/gov-ui-kit` is the only package in this monorepo published to npm. Releasing it publishes
-to npm **for external consumers** — it does not deploy anything, and `apps/app` does not wait on
+`@aragon/gov-ui-kit` is published to npm, like `@aragon/aragon-domain` (same flow, see
+`packages/aragon-domain/RELEASING.md`). Releasing it publishes to npm **for external consumers** — it does not deploy anything, and `apps/app` does not wait on
 it: the app builds against the workspace copy, so a kit change reaches the app the moment it
 merges to `main`.
 

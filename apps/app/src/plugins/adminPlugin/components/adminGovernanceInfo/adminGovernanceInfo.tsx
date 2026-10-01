@@ -11,6 +11,7 @@ export const AdminGovernanceInfo: React.FC<IAdminGovernanceInfoProps> = () => {
     return (
         <DefinitionList.Container>
             {settings.map((governanceSetting, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: static settings list, never reordered
                 <DefinitionList.Item key={index} term={governanceSetting.term}>
                     <p className="text-neutral-500">
                         {governanceSetting.definition}

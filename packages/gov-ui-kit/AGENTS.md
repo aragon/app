@@ -46,10 +46,11 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   config and overrides only `build` (`outputs: ["dist/**", "build.css"]`, cached), which is what
   lets `^build` compile the package before dependents type-check. `build.css` must stay listed
   explicitly — it is emitted to the package root, not into `dist/`.
-- **Lint/format is a local `biome.jsonc`**, carried over from the standalone repo so the migration
-  caused no reformatting. It sets `"root": false` and must stay `.jsonc`: Biome silently treats a
-  commented `biome.json` as a *root* config and fails with "Found a nested root configuration".
-  There is a TODO in that file to fold it into the root config later.
+- **Lint/format rules come from the root `biome.json`.** The local `biome.jsonc` extends it
+  (`"root": false`, `"extends": "//"`) and holds only the kit's own policy: 120-column lines,
+  Tailwind class sorting, `noImgElement` / `noReactForwardRef` off, overrides for scripts, tests
+  and stories. It must stay `.jsonc`: Biome silently treats a commented `biome.json` as a *root*
+  config and fails with "Found a nested root configuration".
 - **`tsconfig.json` extends the root `tsconfig.base.json`** but keeps `outDir` literal, because
   `rollup.config.mjs` reads it via `require('./tsconfig.json')` as raw JSON and does not follow
   `extends`. That also means the file can never contain comments. `incremental: false` is set

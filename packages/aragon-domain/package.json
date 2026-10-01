@@ -1,0 +1,67 @@
+{
+    "name": "@aragon/aragon-domain",
+    "version": "0.4.0",
+    "description": "Aragon governance business logic package — domain model, use cases, and infrastructure adapters",
+    "homepage": "https://github.com/aragon/app/tree/main/packages/aragon-domain#readme",
+    "bugs": {
+        "url": "https://github.com/aragon/app/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git",
+        "directory": "packages/aragon-domain"
+    },
+    "license": "GPL-3.0",
+    "author": "Aragon Association",
+    "sideEffects": false,
+    "type": "commonjs",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "test": "vitest run --coverage",
+        "test:changed": "vitest run --changed origin/main --passWithNoTests",
+        "test:contract": "vitest run --config vitest.contract.config.ts",
+        "test:coverage": "vitest run --coverage",
+        "test:watch": "vitest",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "bignumber.js": "11.1.5",
+        "ddd-core-ts": "0.1.1",
+        "graphql": "16.14.1",
+        "graphql-request": "7.4.0",
+        "viem": "catalog:",
+        "zod": "3.25.76"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "catalog:",
+        "@types/node": "catalog:",
+        "@vitest/coverage-v8": "catalog:",
+        "tsup": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:"
+    },
+    "engines": {
+        "node": ">=24.16.0"
+    }
+}
