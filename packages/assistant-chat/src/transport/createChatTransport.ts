@@ -1,6 +1,7 @@
 import {
     attachmentPartType,
     type IAppContext,
+    type IChatFeatures,
     type IChatRequest,
 } from '@aragon/assistant-contracts';
 import { DefaultChatTransport } from 'ai';
@@ -19,6 +20,10 @@ export interface ICreateChatTransportParams {
      * Returns the app context sent alongside every request.
      */
     getAppContext: () => IAppContext;
+    /**
+     * Returns what the host lets the chat do, sent alongside every request.
+     */
+    getFeatures: () => IChatFeatures;
 }
 
 // A file part carries the whole file inline as a data URL (the local transcript renders its
@@ -43,6 +48,7 @@ const buildRequestBody = (
         parts: message.parts.map(toRequestPart),
     })),
     appContext: params.getAppContext(),
+    features: params.getFeatures(),
 });
 
 export const createChatTransport = (params: ICreateChatTransportParams) =>

@@ -88,4 +88,15 @@ export interface IAutocompleteInputProps
      * Label displayed on the menu footer for selecting an item.
      */
     selectItemLabel: string;
+    /**
+     * Keeps the typed text in the input after an item is selected, so a value the parent
+     * rejects can still be seen and corrected.
+     * @default false
+     */
+    keepInputOnSelect?: boolean;
+    /**
+     * Text the input starts with, for a parent that kept a rejected value in the form
+     * and needs it back on screen when the input mounts again.
+     */
+    defaultInputValue?: string;
 }

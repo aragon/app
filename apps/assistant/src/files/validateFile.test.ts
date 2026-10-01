@@ -32,6 +32,16 @@ describe('sanitizeFilename', () => {
         expect(sanitizeFilename('re\u0007port.txt')).toEqual('report.txt');
     });
 
+    it('strips invisible format characters used to disguise the extension', () => {
+        // A right-to-left override makes the rest of the name render reversed, so this shows up
+        // as "invoiceexe.png" to whoever reads the ticket.
+        expect(sanitizeFilename('invoice\u202Egnp.exe')).toEqual(
+            'invoicegnp.exe',
+        );
+        // Zero-width characters would otherwise let two files carry the same visible name.
+        expect(sanitizeFilename('report\u200B.pdf')).toEqual('report.pdf');
+    });
+
     it('falls back for empty or dot-only names', () => {
         expect(sanitizeFilename('..')).toEqual('file');
         expect(sanitizeFilename('')).toEqual('file');
@@ -104,6 +114,24 @@ describe('validateFile', () => {
 
         const withNulByte = new TextEncoder().encode('text\u0000more');
         expect(await validateFile(withNulByte, 'notes.txt')).toEqual({
+            error: 'unsupported_file',
+        });
+    });
+
+    it('rejects text that is not valid utf-8', async () => {
+        // No NUL byte, so this reaches the strict decode: 0xFF never starts a UTF-8 sequence.
+        const loneHighByte = new Uint8Array([
+            ...new TextEncoder().encode('error: '),
+            0xff,
+            ...new TextEncoder().encode(' failed'),
+        ]);
+        expect(await validateFile(loneHighByte, 'app.log')).toEqual({
+            error: 'unsupported_file',
+        });
+
+        // A truncated multi-byte sequence: the lead byte promises two more that never arrive.
+        const truncatedSequence = new Uint8Array([0x68, 0x69, 0xe2, 0x82]);
+        expect(await validateFile(truncatedSequence, 'notes.txt')).toEqual({
             error: 'unsupported_file',
         });
     });

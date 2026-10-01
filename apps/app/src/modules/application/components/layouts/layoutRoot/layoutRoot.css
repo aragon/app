@@ -4,6 +4,7 @@
 @import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/utils/index.css";
 /* biome-ignore lint/suspicious/noDuplicateAtImportRules: Preserve GovKit's original Tailwind layer boundary. */
 @import "tailwindcss";
+@import "./breakpoints.css";
 
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";
