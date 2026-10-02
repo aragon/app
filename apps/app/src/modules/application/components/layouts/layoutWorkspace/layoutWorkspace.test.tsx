@@ -55,11 +55,23 @@ describe('<LayoutWorkspace /> component', () => {
         expect(screen.getByTestId('page-mock')).toBeInTheDocument();
     });
 
-    it('renders the navigation inside the gate, so it never paints without a workspace', async () => {
+    it('renders the navigation outside the gate, so it is navigable while the workspace loads', async () => {
         render(await createTestComponent());
 
-        expect(screen.getByTestId('workspace-gate-mock')).toContainElement(
+        expect(screen.getByTestId('workspace-gate-mock')).not.toContainElement(
             screen.getByTestId('navigation-workspace-mock'),
+        );
+    });
+
+    it('gates the page and not the navigation', async () => {
+        render(
+            await createTestComponent({
+                children: <div data-testid="page-mock" />,
+            }),
+        );
+
+        expect(screen.getByTestId('workspace-gate-mock')).toContainElement(
+            screen.getByTestId('page-mock'),
         );
     });
 

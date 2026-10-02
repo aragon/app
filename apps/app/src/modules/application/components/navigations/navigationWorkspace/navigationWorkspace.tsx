@@ -35,6 +35,10 @@ export interface INavigationWorkspaceProps extends INavigationContainerProps {
  * Unlike the DAO navigation, the workspace is resolved here on the client instead of being passed down from the
  * layout: the workspace registry is backed by local storage and cannot be read during a server render (see
  * `docs/projectDocs/createWorkspace.md`).
+ *
+ * It renders without waiting for that read. Every section link is built from the workspace ID on the route, so the
+ * bar is navigable from the first paint on a cold load; the workspace name, avatar and account count are the only
+ * things that arrive with the read, and they are absent until it resolves.
  */
 export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     props,
@@ -74,13 +78,19 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             : undefined;
 
     const workspaceAvatar = ipfsUtils.cidToSrc(workspace?.avatar);
-    const workspaceExists = workspace != null;
-    const links = workspaceExists
-        ? navigationWorkspaceUtils.buildLinks(workspace, 'page', accountId)
-        : [];
-    const dialogLinks = workspaceExists
-        ? navigationWorkspaceUtils.buildLinks(workspace, 'dialog', accountId)
-        : [];
+
+    // Built from the route, so the links are complete on the first paint: only the name, avatar and account count
+    // below wait for the workspace itself.
+    const links = navigationWorkspaceUtils.buildLinks(
+        workspaceId,
+        'page',
+        accountId,
+    );
+    const dialogLinks = navigationWorkspaceUtils.buildLinks(
+        workspaceId,
+        'dialog',
+        accountId,
+    );
 
     return (
         <Navigation.Container
