@@ -24,7 +24,7 @@ const DEFAULT_OUTPUT = join(
 const KIT_PACKAGE = '@aragon/gov-ui-kit';
 const PRIMITIVES_REL = 'src/theme/tokens/primitives';
 const APP_OVERRIDE_REL =
-    'src/modules/application/components/layouts/layoutRoot/layoutRoot.css';
+    'src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css';
 const GENERATED_FONT_ASSET_PREFIX =
     '../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/';
 const UNQUOTED_FONT_FAMILIES = new Set([
