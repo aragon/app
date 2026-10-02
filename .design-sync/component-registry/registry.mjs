@@ -175,7 +175,7 @@ function resolveRoots(options = {}) {
     const kitRoot = path.resolve(
         options.kitRoot ||
             process.env.GOVKIT_KIT_ROOT ||
-            path.resolve(WORKSPACE_ROOT, '../gov-ui-kit'),
+            path.join(WORKSPACE_ROOT, 'packages/gov-ui-kit'),
     );
     if (!exists(path.join(kitRoot, 'package.json'))) {
         throw new Error(
