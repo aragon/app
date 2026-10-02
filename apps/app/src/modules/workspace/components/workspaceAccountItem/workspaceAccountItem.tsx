@@ -27,14 +27,17 @@ export interface IWorkspaceAccountItemProps {
      */
     accountInfo?: IWorkspaceAccountInfo;
     /**
-     * ID of the workspace the account belongs to, which the row links into for a DAO account.
+     * ID of the workspace the account belongs to, which the row links into.
      */
     workspaceId: string;
 }
 
 /**
- * An account of a workspace, displayed as a row of the workspace overview and linking to the account itself: its
- * pages inside this workspace for a DAO, its address on the block explorer for anything else.
+ * An account of a workspace, displayed as a row of the workspace overview and linking into the pages of that
+ * account inside this workspace, whatever its type.
+ *
+ * An account stays inside the workspace rather than leaving for its own `/dao` pages, so that opening one from the
+ * overview lands on the same account-scoped route the navigation and the account selector use.
  *
  * The type comes from the registry rather than from the lookup: it was resolved when the workspace was created and
  * is what decides which APIs the workspace pages query, so the row keeps showing it even when the lookup fails.
@@ -53,19 +56,16 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     const truncatedAddress = addressUtils.truncateAddress(address);
 
     const name = workspaceUtils.getAccountName(account, accountInfo);
-    const accountUrl = workspaceUtils.getAccountUrl(account, workspaceId);
-
-    // A DAO row points at a page of this app, so it is left to open on the current tab: `DataList.Item` renders the
-    // row through the gov-ui-kit core provider, on which the app registers its own `next/link` wrapper, and that is
-    // what prefetches the route and follows it client-side. A target would hand the click back to the browser and
-    // discard the document, therefore only the block explorer link of any other account keeps one.
-    const target = isDao ? undefined : '_blank';
+    const accountUrl = workspaceUtils.getAccountScopeUrl(
+        workspaceId,
+        account.id,
+        'overview',
+    );
 
     return (
         <DataList.Item
             className="flex items-center gap-3 p-4 md:p-6"
             href={accountUrl}
-            target={target}
         >
             {isDao ? (
                 <DaoAvatar
