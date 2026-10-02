@@ -2,6 +2,7 @@ import type { Redis } from '@upstash/redis';
 import type { LanguageModel } from 'ai';
 import type { IDocsSearch } from '../docs/docsSearch';
 import type { IBlobStore } from '../files/blobStore';
+import type { IFileSanitizer } from '../files/sanitizeFile';
 import type { ILinearGateway } from '../linear/linearGateway';
 import type { ISessionStore } from './sessionStore';
 
@@ -17,9 +18,10 @@ export interface IAppDependencies {
     // omitting it resolves the configured agent model.
     getChatModel: (model?: string) => LanguageModel;
     getBlobStore: () => IBlobStore;
-    // The documentation index behind the agent's docs tools (registered when
-    // config.docsSearchEnabled is true); the default wraps the index built into the bundle.
+    // The documentation index behind the agent's docs tools (registered when the request enables
+    // them); the default wraps the index built into the bundle.
     getDocsSearch: () => IDocsSearch;
+    getFileSanitizer: () => IFileSanitizer;
 }
 
 export const lazy = <TValue>(factory: () => TValue): (() => TValue) => {

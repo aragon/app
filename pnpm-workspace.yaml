@@ -42,6 +42,7 @@ catalog:
   "@upstash/redis": ^1.38.4
   "@vercel/blob": ^2.8.0
   ai: ^7.0.102
+  ajv: ^8.20.0
   classnames: ^2.5.1
   cross-env: ^10.1.0
   file-type: ^22.1.0
@@ -53,11 +54,13 @@ catalog:
   jest-environment-jsdom: ~30.4.1
   lint-staged: ^17.5.1
   mdast-util-from-markdown: ^2.0.3
+  pdf-lib: ^1.17.1
   react: ^19.3.0
   react-dom: ^19.3.0
   react-dropzone: ^15.0.0
   react-hook-form: ^7.88.0
   remark-gfm: ^4.0.1
+  sharp: ^0.35.4
   tailwindcss: ^4.3.3
   ts-jest: ^29.4.12
   tsup: ^8.5.1

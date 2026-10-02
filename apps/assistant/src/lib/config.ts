@@ -1,3 +1,4 @@
+import type { IChatReasoning } from '../chat/models';
 import type { IDocsCorpusMode } from '../docs/corpus';
 import { type AssistantEnvironment, env } from './env';
 
@@ -10,18 +11,12 @@ export interface IAssistantConfig {
      */
     corsAllowedOrigins: string[];
     /**
-     * Registers the documentation tools (searchDocs, readDoc, listDocs) on the chat pipeline and
-     * switches the agent from "no product knowledge" to answering product questions from the
-     * documentation index. Production stays dark until enough pages are validated — a separate
-     * decision.
-     */
-    docsSearchEnabled: boolean;
-    /**
      * Which pages the documentation index is built from (at build time, see
      * docs/buildDocsIndex.ts): `ready` is the product-owner-validated set the public docs
      * site will publish (pages whose `status: draft` the owner removed, or marked `ready`);
-     * `drafts` adds the pages still under review, so the non-production environments have a real
-     * corpus to test against while the review is in progress.
+     * `drafts` adds the pages still under review. Every environment answers from `drafts`: the
+     * product owner considers the draft content correct and only its wording unreviewed, so the
+     * chatbot may use it while the public docs site shows the reviewed pages only.
      */
     docsCorpus: IDocsCorpusMode;
     /**
@@ -45,6 +40,11 @@ export interface IAssistantConfig {
     chat: {
         agentModel: string;
         fallbackModels: string[];
+        /**
+         * Reasoning level of each model of the chain, applied to the attempts that model serves
+         * (see getChatReasoning).
+         */
+        reasoning: Record<string, IChatReasoning>;
     };
 }
 
@@ -56,25 +56,19 @@ const previewOrigins = ['http://localhost:3000', '*-aragon-app.vercel.app'];
 // and for several users behind one NAT, still a hard abuse cap. Tunable per-env without a redeploy
 // via ASSISTANT_RATE_LIMIT_* env overrides.
 const defaultRateLimit = { requestsPerMinute: 10, sessionsPerDay: 10 };
-// Model selection criteria, in priority order: tool-calling fidelity (the agent drafts the ticket
-// as a tool call and drives the documentation tools), time-to-first-token on the streamed reply,
-// multilingual chat (ticket fields are forced English, the reply follows the user), proven
-// providers, ≤ ~$0.15/M input. flash-lite is the starting agent (fast, cheap, thinking off by
-// default); the fallbacks run on different serving infrastructure (Groq/Cerebras, AWS) so a vendor
-// outage or a per-model rate limit degrades instead of failing. Fallback tool-calling fitness is
-// to be re-confirmed on the stand / llm-smoke before finalizing.
-const defaultChat = {
-    // deepseek-v4-flash won the in-budget bake-off (4/4 tool calls with a warm sentence, clean
-    // refusals); gemini-2.5-flash-lite skipped tool calls and once fabricated a ticket number,
-    // gpt-5-nano never called the tool, gpt-oss-20b leaked harmony markup into the chat (which
-    // also rules it out as a fallback). v4.1-flash replaced v4-flash after a ten-scenario sweep
-    // over the documentation prompt: it kept every rule the older model kept and dropped the
-    // ones it broke (three mentions of "the documentation" and three closing offers in ten
-    // answers, against none), answered in 4–6.5 s instead of 8–15 s, and v4-flash is being
-    // retired by its hosts anyway (Fireworks drops it on 2026-09-25; DeepSeek redirects legacy
-    // endpoints to the 4.1 family). Twice the price per token, still well under a cent a turn.
+// Only models with a zero-data-retention host qualify (see getChatProviderOptions). The agent is
+// the model that reads the documentation best at a low price, chosen by reading the same
+// conversations side by side on every candidate. The fallbacks run on other serving
+// infrastructure, so an outage or a per-model rate limit degrades instead of failing; they take
+// over a call that fails or stalls, never an answer that is weak.
+const defaultChat: IAssistantConfig['chat'] = {
     agentModel: 'deepseek/deepseek-v4.1-flash',
-    fallbackModels: ['google/gemini-2.5-flash-lite'],
+    fallbackModels: ['openai/gpt-6-luna', 'openai/gpt-6-sol'],
+    reasoning: {
+        'openai/gpt-6-luna': 'medium',
+        'deepseek/deepseek-v4.1-flash': 'medium',
+        'openai/gpt-6-sol': 'low',
+    },
 };
 // Retrieval models settled in the APP-1069 analysis: voyage-4 for its retrieval quality at
 // $0.06/M (embedding the whole corpus costs about a cent per build), rerank-2.5-lite because the
@@ -90,7 +84,6 @@ const defaultDocsModels = {
 const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     local: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsSearchEnabled: true,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
@@ -98,7 +91,6 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     },
     development: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsSearchEnabled: true,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
@@ -106,7 +98,6 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     },
     preview: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsSearchEnabled: true,
         docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
@@ -114,8 +105,7 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     },
     production: {
         corsAllowedOrigins: appOrigins,
-        docsSearchEnabled: false,
-        docsCorpus: 'ready',
+        docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
         chat: defaultChat,

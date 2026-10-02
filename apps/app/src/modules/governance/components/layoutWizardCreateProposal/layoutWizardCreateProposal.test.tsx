@@ -58,7 +58,7 @@ describe('<LayoutWizardCreateProposal /> component', () => {
             pluginAddress: '0x123',
         };
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     });
 
     it('renders the plugin name on the wizard name when DAO has multiple process plugins', async () => {

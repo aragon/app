@@ -147,6 +147,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
+        key: 'supportChatDocs',
+        name: 'Support chat documentation answers',
+        description:
+            'Lets the support chat answer product questions from the documentation; off, it only collects tickets.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
+    {
         key: 'telegramSubscription',
         name: 'Telegram subscription',
         description:

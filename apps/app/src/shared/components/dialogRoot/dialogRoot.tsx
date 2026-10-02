@@ -6,11 +6,13 @@ import {
     type IDialogRootProps as IGukDialogRootProps,
 } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
+import { ErrorBoundary } from '@/modules/application/components/errorBoundary';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     type IDialogComponentDefinitions,
     useDialogContext,
 } from '../dialogProvider';
+import { ErrorFeedback } from '../errorFeedback';
 import { useTranslations } from '../translationsProvider';
 
 export interface IDialogRootProps extends IGukDialogRootProps {
@@ -109,6 +111,19 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                     ? undefined
                     : handleOpenChange;
 
+                // Dialogs render outside the layout error boundaries: without one here a
+                // throwing dialog unmounts the whole app into the global error page.
+                const errorFallback = (
+                    <div className="px-4 py-6 md:px-6">
+                        <ErrorFeedback
+                            primaryButton={{
+                                label: t('app.shared.dialogRoot.errorClose'),
+                                onClick: () => close(location.id),
+                            }}
+                        />
+                    </div>
+                );
+
                 return (
                     <DialogWrapper
                         containerClassName={isTopmost ? undefined : 'hidden'}
@@ -121,7 +136,9 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                         open={true}
                         {...otherDialogProps}
                     >
-                        <ActiveDialogComponent location={location} />
+                        <ErrorBoundary fallback={errorFallback}>
+                            <ActiveDialogComponent location={location} />
+                        </ErrorBoundary>
                     </DialogWrapper>
                 );
             })}

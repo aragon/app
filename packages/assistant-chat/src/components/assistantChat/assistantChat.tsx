@@ -19,6 +19,7 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
         onClose,
         assistantUrl,
         appContext,
+        features = {},
         monitoring = noopMonitoring,
     } = props;
 
@@ -40,6 +41,7 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
         assistantUrl,
         sessionId,
         appContext,
+        features,
         monitoring,
     });
 

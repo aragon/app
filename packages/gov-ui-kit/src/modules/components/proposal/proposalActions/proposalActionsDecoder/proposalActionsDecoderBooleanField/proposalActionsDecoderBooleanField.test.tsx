@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as ReactHookForm from 'react-hook-form';
 import { modulesCopy } from '../../../../../assets';
@@ -131,8 +131,10 @@ describe('<ProposalActionsDecoderBooleanField /> component', () => {
         const radioGroup = screen.getByRole('radiogroup');
         expect(ref).toHaveBeenCalledWith(radioGroup);
 
-        radioGroup.focus();
-        radioGroup.blur();
+        act(() => {
+            radioGroup.focus();
+            radioGroup.blur();
+        });
         expect(onBlur).toHaveBeenCalled();
     });
 

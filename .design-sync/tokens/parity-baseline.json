@@ -1,0 +1,940 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "Traceability baseline: GovKit primitive CSS to DTCG 2025.10 token mapping, plus CSS constructs that stay in CSS.",
+    "dtcgSchema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "source": {
+        "repository": "https://github.com/aragon/gov-ui-kit",
+        "package": "@aragon/gov-ui-kit",
+        "version": "2.11.4",
+        "revision": "64b517f5b90052797ecaced5f15ab616b5733f30",
+        "tokenPath": "src/theme/tokens/primitives",
+        "appRevision": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5"
+    },
+    "mappings": [
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-md",
+            "sourceValue": "4px",
+            "token": "radius.md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-lg",
+            "sourceValue": "8px",
+            "token": "radius.lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-xl",
+            "sourceValue": "12px",
+            "token": "radius.xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-2xl",
+            "sourceValue": "16px",
+            "token": "radius.2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-3xl",
+            "sourceValue": "24px",
+            "token": "radius.3xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-full",
+            "sourceValue": "9999px",
+            "token": "radius.full"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-sm-px",
+            "sourceValue": "640",
+            "token": "breakpoint.px.sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-md-px",
+            "sourceValue": "768",
+            "token": "breakpoint.px.md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-lg-px",
+            "sourceValue": "1024",
+            "token": "breakpoint.px.lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-xl-px",
+            "sourceValue": "1280",
+            "token": "breakpoint.px.xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-2xl-px",
+            "sourceValue": "1536",
+            "token": "breakpoint.px.2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-sm",
+            "sourceValue": "40rem",
+            "token": "breakpoint.css.sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-md",
+            "sourceValue": "48rem",
+            "token": "breakpoint.css.md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-lg",
+            "sourceValue": "64rem",
+            "token": "breakpoint.css.lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-xl",
+            "sourceValue": "80rem",
+            "token": "breakpoint.css.xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "sourceVariable": "--breakpoint-2xl",
+            "sourceValue": "96rem",
+            "token": "breakpoint.css.2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-50",
+            "sourceValue": "#f5f8ff",
+            "token": "color.primary.50"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-100",
+            "sourceValue": "#c4d7ff",
+            "token": "color.primary.100"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-200",
+            "sourceValue": "#93b2ff",
+            "token": "color.primary.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-300",
+            "sourceValue": "#628cfe",
+            "token": "color.primary.300"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-400",
+            "sourceValue": "#3164fa",
+            "token": "color.primary.400"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-500",
+            "sourceValue": "#003bf5",
+            "token": "color.primary.500"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-600",
+            "sourceValue": "#0037d2",
+            "token": "color.primary.600"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-700",
+            "sourceValue": "#0031ad",
+            "token": "color.primary.700"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-800",
+            "sourceValue": "#002985",
+            "token": "color.primary.800"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-primary-900",
+            "sourceValue": "#001f5c",
+            "token": "color.primary.900"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-0",
+            "sourceValue": "#ffffff",
+            "token": "color.neutral.0"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-50",
+            "sourceValue": "#f5f7fa",
+            "token": "color.neutral.50"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-100",
+            "sourceValue": "#e4e7eb",
+            "token": "color.neutral.100"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-200",
+            "sourceValue": "#cbd2d9",
+            "token": "color.neutral.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-300",
+            "sourceValue": "#9aa5b1",
+            "token": "color.neutral.300"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-400",
+            "sourceValue": "#7b8794",
+            "token": "color.neutral.400"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-500",
+            "sourceValue": "#616e7c",
+            "token": "color.neutral.500"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-600",
+            "sourceValue": "#52606d",
+            "token": "color.neutral.600"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-700",
+            "sourceValue": "#3e4c59",
+            "token": "color.neutral.700"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-800",
+            "sourceValue": "#323f4b",
+            "token": "color.neutral.800"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-900",
+            "sourceValue": "#1f2933",
+            "token": "color.neutral.900"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-100",
+            "sourceValue": "#d1fdfa",
+            "token": "color.info.100"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-200",
+            "sourceValue": "#a4f9fb",
+            "token": "color.info.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-300",
+            "sourceValue": "#75e8f3",
+            "token": "color.info.300"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-400",
+            "sourceValue": "#52cfe7",
+            "token": "color.info.400"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-500",
+            "sourceValue": "#1eadd8",
+            "token": "color.info.500"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-600",
+            "sourceValue": "#1588b9",
+            "token": "color.info.600"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-700",
+            "sourceValue": "#0f669b",
+            "token": "color.info.700"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-800",
+            "sourceValue": "#09497d",
+            "token": "color.info.800"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-info-900",
+            "sourceValue": "#053467",
+            "token": "color.info.900"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-100",
+            "sourceValue": "#f3fccc",
+            "token": "color.success.100"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-200",
+            "sourceValue": "#e4f99a",
+            "token": "color.success.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-300",
+            "sourceValue": "#ccef66",
+            "token": "color.success.300"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-400",
+            "sourceValue": "#b2e040",
+            "token": "color.success.400"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-500",
+            "sourceValue": "#8ecc0a",
+            "token": "color.success.500"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-600",
+            "sourceValue": "#74af07",
+            "token": "color.success.600"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-700",
+            "sourceValue": "#5c9205",
+            "token": "color.success.700"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-800",
+            "sourceValue": "#467603",
+            "token": "color.success.800"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-success-900",
+            "sourceValue": "#366101",
+            "token": "color.success.900"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-100",
+            "sourceValue": "#fff3d6",
+            "token": "color.warning.100"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-200",
+            "sourceValue": "#ffe4ad",
+            "token": "color.warning.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-300",
+            "sourceValue": "#ffd083",
+            "token": "color.warning.300"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-400",
+            "sourceValue": "#ffbe65",
+            "token": "color.warning.400"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-500",
+            "sourceValue": "#ff9f32",
+            "token": "color.warning.500"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-600",
+            "sourceValue": "#db7d24",
+            "token": "color.warning.600"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-700",
+            "sourceValue": "#b75e19",
+            "token": "color.warning.700"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-800",
+            "sourceValue": "#93430f",
+            "token": "color.warning.800"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-warning-900",
+            "sourceValue": "#7a3009",
+            "token": "color.warning.900"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-100",
+            "sourceValue": "#fee4d6",
+            "token": "color.critical.100"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-200",
+            "sourceValue": "#fec3ae",
+            "token": "color.critical.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-300",
+            "sourceValue": "#fd9a86",
+            "token": "color.critical.300"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-400",
+            "sourceValue": "#fb7467",
+            "token": "color.critical.400"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-500",
+            "sourceValue": "#f93636",
+            "token": "color.critical.500"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-600",
+            "sourceValue": "#d62736",
+            "token": "color.critical.600"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-700",
+            "sourceValue": "#b31b35",
+            "token": "color.critical.700"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-800",
+            "sourceValue": "#901132",
+            "token": "color.critical.800"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-critical-900",
+            "sourceValue": "#770a30",
+            "token": "color.critical.900"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-transparent",
+            "sourceValue": "transparent",
+            "token": "color.transparent"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-primary",
+            "sourceValue": "var(--color-primary-200)",
+            "token": "ring.color.primary",
+            "aliasTarget": "color.primary.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-success",
+            "sourceValue": "var(--color-success-200)",
+            "token": "ring.color.success",
+            "aliasTarget": "color.success.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-warning",
+            "sourceValue": "var(--color-warning-200)",
+            "token": "ring.color.warning",
+            "aliasTarget": "color.warning.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "sourceVariable": "--ring-color-critical",
+            "sourceValue": "var(--color-critical-200)",
+            "token": "ring.color.critical",
+            "aliasTarget": "color.critical.200"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(97, 110, 124, 0.05)",
+            "token": "shadow.neutral-sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral",
+            "sourceValue": "0px 1px 3px 0px rgba(97, 110, 124, 0.1), 0px 1px 2px -1px rgba(97, 110, 124, 0.1)",
+            "token": "shadow.neutral"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-md",
+            "sourceValue": "0px 4px 6px -1px rgba(82, 96, 109, 0.1), 0px 2px 4px -2px rgba(82, 96, 109, 0.1)",
+            "token": "shadow.neutral-md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(82, 96, 109, 0.1), 0px 4px 6px -4px rgba(82, 96, 109, 0.1)",
+            "token": "shadow.neutral-lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(82, 96, 109, 0.1), 0px 8px 10px -6px rgba(82, 96, 109, 0.1)",
+            "token": "shadow.neutral-xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-neutral-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(82, 96, 109, 0.24)",
+            "token": "shadow.neutral-2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(0, 59, 245, 0.05)",
+            "token": "shadow.primary-sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary",
+            "sourceValue": "0px 1px 3px 0px rgba(0, 59, 245, 0.1), 0px 1px 2px -1px rgba(0, 59, 245, 0.1)",
+            "token": "shadow.primary"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-md",
+            "sourceValue": "0px 4px 6px -1px rgba(0, 59, 245, 0.1), 0px 2px 4px -2px rgba(0, 59, 245, 0.1)",
+            "token": "shadow.primary-md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(0, 59, 245, 0.1), 0px 4px 6px -4px rgba(0, 59, 245, 0.1)",
+            "token": "shadow.primary-lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(0, 59, 245, 0.1), 0px 8px 10px -6px rgba(0, 59, 245, 0.1)",
+            "token": "shadow.primary-xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-primary-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(0, 59, 245, 0.24)",
+            "token": "shadow.primary-2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(116, 175, 7, 0.05)",
+            "token": "shadow.success-sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success",
+            "sourceValue": "0px 1px 3px 0px rgba(116, 175, 7, 0.1), 0px 1px 2px -1px rgba(116, 175, 7, 0.1)",
+            "token": "shadow.success"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-md",
+            "sourceValue": "0px 4px 6px -1px rgba(116, 175, 7, 0.1), 0px 2px 4px -2px rgba(116, 175, 7, 0.1)",
+            "token": "shadow.success-md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(116, 175, 7, 0.1), 0px 4px 6px -4px rgba(116, 175, 7, 0.1)",
+            "token": "shadow.success-lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(116, 175, 7, 0.1), 0px 8px 10px -6px rgba(116, 175, 7, 0.1)",
+            "token": "shadow.success-xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-success-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(116, 175, 7, 0.24)",
+            "token": "shadow.success-2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(219, 125, 36, 0.05)",
+            "token": "shadow.warning-sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning",
+            "sourceValue": "0px 1px 3px 0px rgba(219, 125, 36, 0.1), 0px 1px 2px -1px rgba(219, 125, 36, 0.1)",
+            "token": "shadow.warning"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-md",
+            "sourceValue": "0px 4px 6px -1px rgba(219, 125, 36, 0.1), 0px 2px 4px -2px rgba(219, 125, 36, 0.1)",
+            "token": "shadow.warning-md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(219, 125, 36, 0.1), 0px 4px 6px -4px rgba(219, 125, 36, 0.1)",
+            "token": "shadow.warning-lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(219, 125, 36, 0.1), 0px 8px 10px -6px rgba(219, 125, 36, 0.1)",
+            "token": "shadow.warning-xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-warning-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(219, 125, 36, 0.24)",
+            "token": "shadow.warning-2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(214, 39, 54, 0.05)",
+            "token": "shadow.critical-sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical",
+            "sourceValue": "0px 1px 3px 0px rgba(214, 39, 54, 0.1), 0px 1px 2px -1px rgba(214, 39, 54, 0.1)",
+            "token": "shadow.critical"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-md",
+            "sourceValue": "0px 4px 6px -1px rgba(214, 39, 54, 0.1), 0px 2px 4px -2px rgba(214, 39, 54, 0.1)",
+            "token": "shadow.critical-md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(214, 39, 54, 0.1), 0px 4px 6px -4px rgba(214, 39, 54, 0.1)",
+            "token": "shadow.critical-lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(214, 39, 54, 0.1), 0px 8px 10px -6px rgba(214, 39, 54, 0.1)",
+            "token": "shadow.critical-xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-critical-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(214, 39, 54, 0.24)",
+            "token": "shadow.critical-2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-sm",
+            "sourceValue": "0px 1px 2px 0px rgba(21, 136, 185, 0.05)",
+            "token": "shadow.info-sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info",
+            "sourceValue": "0px 1px 3px 0px rgba(21, 136, 185, 0.1), 0px 1px 2px -1px rgba(21, 136, 185, 0.1)",
+            "token": "shadow.info"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-md",
+            "sourceValue": "0px 4px 6px -1px rgba(21, 136, 185, 0.1), 0px 2px 4px -2px rgba(21, 136, 185, 0.1)",
+            "token": "shadow.info-md"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-lg",
+            "sourceValue": "0px 10px 15px -3px rgba(21, 136, 185, 0.1), 0px 4px 6px -4px rgba(21, 136, 185, 0.1)",
+            "token": "shadow.info-lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-xl",
+            "sourceValue": "0px 20px 25px -5px rgba(21, 136, 185, 0.1), 0px 8px 10px -6px rgba(21, 136, 185, 0.1)",
+            "token": "shadow.info-xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-info-2xl",
+            "sourceValue": "0px 25px 50px -12px rgba(21, 136, 185, 0.24)",
+            "token": "shadow.info-2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "sourceVariable": "--shadow-none",
+            "sourceValue": "0px 0px #0000",
+            "token": "shadow.none"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/spacing.css",
+            "sourceVariable": "--spacing",
+            "sourceValue": "4px",
+            "token": "spacing.base"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--font-sans",
+            "sourceValue": "\"Manrope\", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+            "token": "font.family.sans"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--font-weight-normal",
+            "sourceValue": "400",
+            "token": "font.weight.normal"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--font-weight-semibold",
+            "sourceValue": "600",
+            "token": "font.weight.semibold"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-xs",
+            "sourceValue": "0.75rem",
+            "token": "font.size.xs"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-sm",
+            "sourceValue": "0.875rem",
+            "token": "font.size.sm"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-base",
+            "sourceValue": "1rem",
+            "token": "font.size.base"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-lg",
+            "sourceValue": "1.125rem",
+            "token": "font.size.lg"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-xl",
+            "sourceValue": "1.25rem",
+            "token": "font.size.xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-2xl",
+            "sourceValue": "1.5rem",
+            "token": "font.size.2xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-3xl",
+            "sourceValue": "1.875rem",
+            "token": "font.size.3xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-4xl",
+            "sourceValue": "2.25rem",
+            "token": "font.size.4xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--text-5xl",
+            "sourceValue": "3rem",
+            "token": "font.size.5xl"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--leading-tight",
+            "sourceValue": "1.25",
+            "token": "font.leading.tight"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--leading-normal",
+            "sourceValue": "1.5",
+            "token": "font.leading.normal"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "sourceVariable": "--leading-relaxed",
+            "sourceValue": "1.65",
+            "token": "font.leading.relaxed"
+        }
+    ],
+    "unsupported": [
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "sourceVariable": "--radius-none",
+            "sourceValue": "none",
+            "reason": "DTCG dimension values require a numeric value and unit; CSS `none` has no dimension representation."
+        }
+    ],
+    "retainedCss": [
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./borderRadius.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./breakpoints.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./colors.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./focusRing.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./shadows.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./spacing.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/index.css",
+            "css": "@import \"./typography.css\";"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/borderRadius.css",
+            "css": "--radius-*: initial;"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/breakpoints.css",
+            "css": "--breakpoint-*: initial;"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "css": "--color-*: initial;"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "css": "@utility gradient-neutral-50-transparent-to-b { @apply bg-linear-to-b from-neutral-50/100 to-neutral-50/0; }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "css": "@utility gradient-neutral-50-transparent-to-t { @apply bg-linear-to-t from-neutral-50/100 to-neutral-50/0; }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "css": "--ring-color-*: initial;"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "css": "@utility focus-ring { &:focus, &:has(:focus) { outline: none; } &:focus-visible, &:has(:focus-visible) { @apply ring-3 ring-offset-3; } }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "css": "@utility focus-ring-primary { @apply focus-ring; &:focus-visible, &:has(:focus-visible) { @apply ring-primary; } }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "css": "@utility focus-ring-success { @apply focus-ring; &:focus-visible, &:has(:focus-visible) { @apply ring-success; } }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "css": "@utility focus-ring-warning { @apply focus-ring; &:focus-visible, &:has(:focus-visible) { @apply ring-warning; } }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/focusRing.css",
+            "css": "@utility focus-ring-critical { @apply focus-ring; &:focus-visible, &:has(:focus-visible) { @apply ring-critical; } }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/shadows.css",
+            "css": "--shadow-*: initial;"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "css": "--font-*: initial;"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "css": "@font-face { font-family: \"Manrope\"; font-style: normal; font-weight: 400; font-display: swap; src: url(\"../../fonts/Manrope-Regular.ttf\") format(\"truetype\"); }"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/typography.css",
+            "css": "@font-face { font-family: \"Manrope\"; font-style: normal; font-weight: 600; font-display: swap; src: url(\"../../fonts/Manrope-SemiBold.ttf\") format(\"truetype\"); }"
+        }
+    ],
+    "runtimeOverrides": [
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-avatar-container-position",
+            "sourceValue": "relative"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-overlay-z-index",
+            "sourceValue": "20"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-alert-overlay-z-index",
+            "sourceValue": "20"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-content-z-index",
+            "sourceValue": "30"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dialog-alert-content-z-index",
+            "sourceValue": "30"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-text-area-rich-text-expanded-z-index",
+            "sourceValue": "35"
+        },
+        {
+            "sourceFile": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css",
+            "sourceVariable": "--guk-dropdown-container-content-z-index",
+            "sourceValue": "40"
+        }
+    ]
+}

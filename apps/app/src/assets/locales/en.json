@@ -4327,6 +4327,9 @@
         "mainLabel": "Primary account",
         "subLabel": "Linked account"
       },
+      "dialogRoot": {
+        "errorClose": "Close"
+      },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team.",
         "link": {
