@@ -20,7 +20,7 @@ import {
 const componentDirectory = path.dirname(new URL(import.meta.url).pathname);
 const kitRoot = path.resolve(
     process.env.GOVKIT_KIT_ROOT ||
-        path.join(componentDirectory, '../../../packages/gov-ui-kit'),
+        path.join(componentDirectory, '../../packages/gov-ui-kit'),
 );
 if (!existsSync(path.join(kitRoot, 'package.json'))) {
     throw new Error(
