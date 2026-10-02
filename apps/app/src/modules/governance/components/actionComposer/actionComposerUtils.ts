@@ -295,13 +295,15 @@ class ActionComposerUtils {
                 // composer dropdown, never to the action itself, as `ProposalActionsItem` resolves the
                 // "unverified contract" / "unknown function" labels and the warning from a null
                 // `inputData` on its own.
-                const { contractName, functionName, inputs } = decoded ?? {};
+                const { contractName, functionName, inputs, stateMutability } =
+                    decoded ?? {};
                 const item =
                     contractName != null && functionName != null
                         ? this.buildDefaultCustomAction(
                               { address: target, name: contractName },
                               {
                                   name: functionName,
+                                  stateMutability,
                                   parameters: inputs ?? [],
                               },
                               actionIndex,
