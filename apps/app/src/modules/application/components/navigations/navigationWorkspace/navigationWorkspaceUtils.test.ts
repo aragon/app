@@ -1,0 +1,107 @@
+import {
+    type IWorkspace,
+    WorkspaceAccountType,
+} from '@/modules/workspace/api/workspaceService';
+import { Network } from '@/shared/api/daoService';
+import { navigationWorkspaceUtils } from './navigationWorkspaceUtils';
+
+describe('navigationWorkspace utils', () => {
+    const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
+        id: 'demo',
+        name: 'Demo Workspace',
+        description: '',
+        avatar: null,
+        links: [],
+        owner: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
+        accounts: [
+            {
+                id: 'ethereum-sepolia-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+                type: WorkspaceAccountType.DAO,
+                address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+                network: Network.ETHEREUM_SEPOLIA,
+            },
+        ],
+        targets: [],
+        ...workspace,
+    });
+
+    describe('getWorkspaceUrl', () => {
+        it('builds the workspace base url', () => {
+            expect(
+                navigationWorkspaceUtils.getWorkspaceUrl(buildWorkspace()),
+            ).toEqual('/workspace/demo');
+        });
+
+        it('appends the given path', () => {
+            expect(
+                navigationWorkspaceUtils.getWorkspaceUrl(
+                    buildWorkspace(),
+                    'assets',
+                ),
+            ).toEqual('/workspace/demo/assets');
+        });
+    });
+
+    describe('buildLinks', () => {
+        it('scopes every link to the given account', () => {
+            const accountId = 'ethereum-sepolia-0x123';
+            const links = navigationWorkspaceUtils.buildLinks(
+                buildWorkspace(),
+                'page',
+                accountId,
+            );
+
+            expect(links.map((link) => link.link)).toEqual([
+                `/workspace/demo/${accountId}/overview`,
+                `/workspace/demo/${accountId}/proposals`,
+                `/workspace/demo/${accountId}/members`,
+                `/workspace/demo/${accountId}/assets`,
+                `/workspace/demo/${accountId}/transactions`,
+            ]);
+        });
+
+        it('only links to the pages that exist', () => {
+            const links = navigationWorkspaceUtils.buildLinks(
+                buildWorkspace(),
+                'page',
+            );
+
+            expect(links.map((link) => link.link)).toEqual([
+                '/workspace/demo/all/overview',
+                '/workspace/demo/all/proposals',
+                '/workspace/demo/all/members',
+                '/workspace/demo/all/assets',
+                '/workspace/demo/all/transactions',
+            ]);
+        });
+
+        it('only displays the overview in the navigation dialog', () => {
+            const overviewUrl = '/workspace/demo/all/overview';
+
+            const pageLink = navigationWorkspaceUtils
+                .buildLinks(buildWorkspace(), 'page')
+                .find((link) => link.link === overviewUrl);
+            const dialogLink = navigationWorkspaceUtils
+                .buildLinks(buildWorkspace(), 'dialog')
+                .find((link) => link.link === overviewUrl);
+
+            expect(pageLink?.hidden).toBeTruthy();
+            expect(dialogLink?.hidden).toBeFalsy();
+        });
+
+        it('lists every page link in both the navigation bar and the navigation dialog', () => {
+            const isPageLink = (link: { link: string }) =>
+                link.link !== '/workspace/demo/all/overview';
+
+            const pageLinks = navigationWorkspaceUtils
+                .buildLinks(buildWorkspace(), 'page')
+                .filter(isPageLink);
+            const dialogLinks = navigationWorkspaceUtils
+                .buildLinks(buildWorkspace(), 'dialog')
+                .filter(isPageLink);
+
+            expect(pageLinks.some((link) => link.hidden)).toBeFalsy();
+            expect(dialogLinks.some((link) => link.hidden)).toBeFalsy();
+        });
+    });
+});

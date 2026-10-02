@@ -3,6 +3,7 @@
 import { Heading } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useFeaturedDaos } from '@/shared/api/cmsService';
@@ -10,6 +11,7 @@ import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { CtaCard } from '@/shared/components/ctaCard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import NetBackground from '../../../../assets/images/net_bg.svg';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
@@ -35,6 +37,8 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { data: featuredDaos } = useFeaturedDaos();
+    const router = useRouter();
+    const { isEnabled } = useFeatureFlags();
 
     return (
         <>
@@ -139,6 +143,28 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     'app.explore.exploreDaosPage.noCodeSetup.title',
                                 )}
                             />
+                            {isEnabled('workspaces') && (
+                                <CtaCard
+                                    className="flex-1"
+                                    description={t(
+                                        'app.explore.exploreDaosPage.createWorkspace.subtitle',
+                                    )}
+                                    isPrimary={false}
+                                    objectType="CHAIN"
+                                    primaryAction={{
+                                        label: t(
+                                            'app.explore.exploreDaosPage.createWorkspace.actionLabel',
+                                        ),
+                                        onClick: () => {
+                                            router.push('/create/workspace');
+                                        },
+                                    }}
+                                    textSize="smaller"
+                                    title={t(
+                                        'app.explore.exploreDaosPage.createWorkspace.title',
+                                    )}
+                                />
+                            )}
                             <CtaCard
                                 className="flex-1"
                                 description={t(

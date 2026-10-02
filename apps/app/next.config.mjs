@@ -84,6 +84,30 @@ const nextConfig = {
                 destination: '/dao/:network/:addressOrEns/dashboard',
                 permanent: true,
             },
+            // The workspace redirects fill in the segments a URL is missing, and are deliberately temporary: the
+            // account segment was added to these URLs recently, and a permanent one is cached by the browser, which
+            // would keep sending readers to a shape the app no longer serves.
+            {
+                // Workspace pages are scoped to an account; the bare workspace URL opens the aggregated overview.
+                source: '/workspace/:workspaceId',
+                destination: '/workspace/:workspaceId/all/overview',
+                permanent: false,
+            },
+            {
+                // A section with no account in front of it, i.e. the shape these URLs had before the account moved
+                // onto the path. Kept ahead of the rule below so that the section is not read as an account.
+                source: '/workspace/:workspaceId/:section(overview|proposals|members|assets|transactions)',
+                destination: '/workspace/:workspaceId/all/:section',
+                permanent: false,
+            },
+            {
+                // An account scope with no section opens the overview of that account, `all` included. The account
+                // segment is matched on its shape — the aggregated sentinel or `{network}-{address}` — so that no
+                // other single segment is mistaken for an account and sent on to a second redirect.
+                source: '/workspace/:workspaceId/:accountId(all|[^/]+-0x[0-9a-fA-F]{40})',
+                destination: '/workspace/:workspaceId/:accountId/overview',
+                permanent: false,
+            },
         ];
     },
     async rewrites() {
