@@ -3,6 +3,7 @@
 import { match } from 'ts-pattern';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTokenDelegationOnboardingCheck } from '../../hooks/useTokenDelegationOnboardingCheck';
 import { useTokenLockAndWrapOnboardingCheck } from '../../hooks/useTokenLockAndWrapOnboardingCheck';
 import type { ITokenPluginSettings } from '../../types';
@@ -12,7 +13,9 @@ import { TokenMemberListWrapCardEmptyState } from './components/tokenMemberListW
 import { TokenMemberListBase } from './tokenMemberListBase';
 
 export interface ITokenMemberListProps
-    extends IDaoMemberListDefaultProps<ITokenPluginSettings> {}
+    extends IDaoMemberListDefaultProps<ITokenPluginSettings> {
+    plugin: IDaoPlugin<ITokenPluginSettings>;
+}
 
 export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
     const { initialParams, plugin } = props;

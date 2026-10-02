@@ -2,9 +2,9 @@ import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
+import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ITokenMemberListPluginSettings } from '../tokenMemberListBase';
 
 export interface ITokenMemberListItemProps {
@@ -21,6 +21,10 @@ export interface ITokenMemberListItemProps {
      */
     plugin: IDaoPlugin<ITokenMemberListPluginSettings>;
     /**
+     * Selected member source to preserve on the details route.
+     */
+    memberSourceId?: string;
+    /**
      * Whether the member is the current user's delegate.
      */
     isDelegate?: boolean;
@@ -29,7 +33,7 @@ export interface ITokenMemberListItemProps {
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
     props,
 ) => {
-    const { member, plugin, daoId, isDelegate } = props;
+    const { member, plugin, daoId, isDelegate, memberSourceId } = props;
 
     const tokenDecimals = plugin.settings.token.decimals;
     const parsedVotingPower = formatUnits(
@@ -50,7 +54,11 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
             className="min-w-0"
             delegationCount={member.delegationCount}
             ensName={displayName ?? undefined}
-            href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
+            href={daoMemberSourceUtils.getMemberUrl(
+                dao,
+                member.address,
+                memberSourceId,
+            )}
             isDelegate={isDelegate}
             key={member.address}
             tokenAmount={parsedVotingPower}

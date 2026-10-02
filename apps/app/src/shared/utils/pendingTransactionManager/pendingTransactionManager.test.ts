@@ -296,6 +296,96 @@ describe('pendingTransactionManager', () => {
             });
         });
 
+        it('registers an already broadcast hash without sending and persists recovery context', () => {
+            const hash = `0x${'a'.repeat(64)}` as Hex;
+            const recovery = {
+                safeAddress: `0x${'b'.repeat(40)}`,
+                safeTxHash: `0x${'c'.repeat(64)}`,
+            };
+            const manager = new PendingTransactionManager();
+
+            manager.registerSubmitted(
+                'id',
+                { hash, chainId: 137 },
+                { recovery },
+            );
+
+            expect(sendTransactionSpy).not.toHaveBeenCalled();
+            expect(manager.get('id')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash,
+                submittedAt: expect.any(Number),
+                chainId: 137,
+                recovery,
+            });
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({
+                id: {
+                    status: PendingTransactionStatus.SUBMITTED,
+                    hash,
+                    submittedAt: expect.any(Number),
+                    chainId: 137,
+                    recovery,
+                },
+            });
+        });
+
+        it('retains an uncertain no-hash submission and its recovery context after reload', () => {
+            const submittedAt = Date.now() - 25 * 60 * 60 * 1000;
+            const recovery = {
+                safeAddress: `0x${'b'.repeat(40)}`,
+                safeTxHash: `0x${'c'.repeat(64)}`,
+            };
+            const meta = {
+                type: 'safeExecution',
+                scope: 'dao:plugin',
+                recovery,
+            };
+            const manager = new PendingTransactionManager();
+
+            manager.registerSubmissionUncertain(
+                'id',
+                { chainId: 137, submittedAt },
+                meta,
+            );
+
+            expect(sendTransactionSpy).not.toHaveBeenCalled();
+            expect(manager.getRequest('id')).toBeUndefined();
+            expect(manager.get('id')).toEqual({
+                status: PendingTransactionStatus.PENDING,
+                submittedAt,
+                chainId: 137,
+                ...meta,
+            });
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({
+                id: {
+                    status: PendingTransactionStatus.PENDING,
+                    submittedAt,
+                    chainId: 137,
+                    ...meta,
+                },
+            });
+
+            const rehydrated = new PendingTransactionManager();
+
+            expect(getReceiptSpy).not.toHaveBeenCalled();
+            expect(rehydrated.getRequest('id')).toBeUndefined();
+            expect(rehydrated.get('id')).toEqual({
+                status: PendingTransactionStatus.PENDING,
+                submittedAt,
+                chainId: 137,
+                ...meta,
+            });
+
+            rehydrated.clear('id');
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({});
+        });
+
         it('hydrates persisted records on construction so a reload can resume', () => {
             const submittedAt = Date.now();
             sessionStorage.setItem(
@@ -391,6 +481,50 @@ describe('pendingTransactionManager', () => {
                     },
                 }),
             );
+        });
+
+        it('retains caller-managed recovery after a mined receipt and reload until acknowledged', async () => {
+            const hash = `0x${'d'.repeat(64)}` as Hex;
+            const submittedAt = Date.now() - 25 * 60 * 60 * 1000;
+            const recovery = {
+                safeAddress: `0x${'e'.repeat(40)}`,
+                safeTxHash: `0x${'f'.repeat(64)}`,
+            };
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({
+                    recoveryId: {
+                        status: 'SUBMITTED',
+                        hash,
+                        submittedAt,
+                        chainId: 1,
+                        recovery,
+                    },
+                }),
+            );
+            getReceiptSpy.mockResolvedValue(
+                {} as Awaited<
+                    ReturnType<typeof wagmiActions.getTransactionReceipt>
+                >,
+            );
+
+            const manager = new PendingTransactionManager();
+            await flushPromises();
+
+            expect(getReceiptSpy).not.toHaveBeenCalled();
+            expect(manager.get('recoveryId')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash,
+                submittedAt,
+                chainId: 1,
+                recovery,
+            });
+
+            manager.clear('recoveryId');
+            expect(manager.get('recoveryId')).toBeUndefined();
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({});
         });
 
         it('looks the receipt up on the chain the transaction was broadcast to', () => {

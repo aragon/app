@@ -10,6 +10,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppPluginSettings, ISppStagePlugin } from '../../types';
 import { SppProposalType, VotingBodyBrandIdentity } from '../../types';
+import { sppStageUtils } from '../../utils/sppStageUtils';
 import { useSppExternalPermissionCheckProposalCreation } from '../useSppExternalPermissionCheckProposalCreation';
 
 export interface IUseSppPermissionCheckProposalCreationParams
@@ -46,7 +47,7 @@ export const useSppPermissionCheckProposalCreation = (
     const externalProposers = (plugin.settings.externalProposers ?? []).map(
         (proposer): ISppStagePlugin => ({
             proposalType: SppProposalType.NONE, // non-body proposers do not vote
-            interfaceType: undefined, // marks it external, resolving to pluginId 'external'
+            interfaceType: undefined, // marks it external, so the body plugin id resolver handles it
             brandId: VotingBodyBrandIdentity.SAFE,
             address: proposer.address,
             proposalCreationConditionAddress:
@@ -69,8 +70,11 @@ export const useSppPermissionCheckProposalCreation = (
         // Sub plugins delegate to their own permission-check slot function. External bodies (e.g. Safe)
         // are not DAO plugins, so no slot function is registered for them — fall back to the external
         // permission-check hook, mirroring the SETTINGS_GOVERNANCE_SETTINGS_HOOK fallback in the voting terminal.
-        const bodyPlugin = (subPlugin?.meta ?? sppPlugin) as IDaoPlugin;
-        const pluginId = subPlugin?.meta.interfaceType ?? 'external';
+        const bodyPlugin = subPlugin?.meta ?? sppPlugin;
+        const pluginId = sppStageUtils.getBodyPluginId(
+            bodyPlugin as ISppStagePlugin,
+            dao?.network,
+        );
 
         const permissionCheck =
             pluginRegistryUtils.getSlotFunction<
@@ -82,7 +86,7 @@ export const useSppPermissionCheckProposalCreation = (
             }) ?? useSppExternalPermissionCheckProposalCreation;
 
         return permissionCheck({
-            plugin: bodyPlugin,
+            plugin: bodyPlugin as IDaoPlugin,
             daoId,
             useConnectedUserInfo,
         });

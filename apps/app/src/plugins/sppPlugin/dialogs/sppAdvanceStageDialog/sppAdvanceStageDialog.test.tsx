@@ -8,6 +8,10 @@ import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
+import {
+    externalPluginId,
+    safeBodyPluginId,
+} from '@/plugins/safeMultisigPlugin/constants';
 import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
@@ -22,8 +26,14 @@ import {
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { generateSppProposal } from '../../testUtils';
+import {
+    generateSppPluginSettings,
+    generateSppProposal,
+    generateSppStage,
+    generateSppStagePlugin,
+} from '../../testUtils';
 import * as sppProposalUtils from '../../utils/sppProposalUtils';
+import * as sppStageUtils from '../../utils/sppStageUtils';
 import type {
     ISppAdvanceStageDialogParams,
     ISppAdvanceStageDialogProps,
@@ -205,5 +215,53 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
             ([params]) => params.urlParams.slug === 'SLUG-1',
         );
         expect(fetchedWithLocalSlug).toBe(true);
+    });
+
+    describe('queued Safe report forfeiture warning', () => {
+        const getBodyPluginIdSpy = jest.spyOn(
+            sppStageUtils.sppStageUtils,
+            'getBodyPluginId',
+        );
+        const warningKey =
+            'app.plugins.spp.advanceStageDialog.queuedReportWarning';
+
+        afterEach(() => getBodyPluginIdSpy.mockReset());
+
+        const generateStagedProposal = () =>
+            generateSppProposal({
+                stageIndex: 1,
+                settings: generateSppPluginSettings({
+                    stages: [
+                        generateSppStage({
+                            stageIndex: 0,
+                            plugins: [generateSppStagePlugin()],
+                        }),
+                        generateSppStage({
+                            stageIndex: 1,
+                            plugins: [generateSppStagePlugin()],
+                        }),
+                    ],
+                }),
+            });
+
+        it('warns when the stage being advanced from carries a Safe body', () => {
+            getBodyPluginIdSpy.mockReturnValue(safeBodyPluginId);
+            const location = generateDialogLocation({
+                proposal: generateStagedProposal(),
+            });
+            render(createTestComponent({ location }));
+
+            expect(screen.getByText(warningKey)).toBeInTheDocument();
+        });
+
+        it('stays silent when no Safe body sits on the stage being advanced from', () => {
+            getBodyPluginIdSpy.mockReturnValue(externalPluginId);
+            const location = generateDialogLocation({
+                proposal: generateStagedProposal(),
+            });
+            render(createTestComponent({ location }));
+
+            expect(screen.queryByText(warningKey)).not.toBeInTheDocument();
+        });
     });
 });

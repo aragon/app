@@ -2,6 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import {
     daoOptions,
     Network,
@@ -135,6 +136,55 @@ describe('<DaoMembersPage /> component', () => {
         );
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             tokenVotingMembershipOptions(expectedParams).queryKey,
+        );
+    });
+
+    it('prefetches Safe owners when a Safe is an SPP body', async () => {
+        const expectedDaoId = 'test-dao-id';
+        const safeAddress = '0x1234567890123456789012345678901234567890';
+        const sppPlugin = generateDaoPlugin<ISppPluginSettings>({
+            interfaceType: PluginInterfaceType.SPP,
+            isBody: false,
+            isProcess: true,
+            settings: {
+                pluginAddress: '0xspp',
+                stages: [
+                    {
+                        stageIndex: 0,
+                        plugins: [
+                            {
+                                address: safeAddress,
+                                interfaceType: undefined,
+                                brandId: 'safe',
+                                proposalType: 1,
+                            },
+                        ],
+                        voteDuration: 1,
+                        maxAdvance: 1,
+                        minAdvance: 0,
+                        approvalThreshold: 1,
+                        vetoThreshold: 0,
+                    },
+                ],
+            },
+        });
+        const dao = generateDao({ plugins: [sppPlugin] });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockImplementation((_dao, params) =>
+            params?.type === PluginType.BODY ? [] : [sppPlugin],
+        );
+
+        render(await createTestComponent());
+
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            memberListOptions({
+                queryParams: {
+                    daoId: expectedDaoId,
+                    pageSize: daoMembersCount,
+                    pluginAddress: safeAddress,
+                },
+            }).queryKey,
         );
     });
 

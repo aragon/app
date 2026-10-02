@@ -65,6 +65,102 @@ describe('<TransactionDialogFooter /> component', () => {
         expect(onCancelClick).toHaveBeenCalled();
     });
 
+    it('uses receipt-free custom completion without closing the dialog', async () => {
+        const close = jest.fn();
+        const onClick = jest.fn();
+        const completion = { label: 'Done', onClick };
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+        render(
+            createTestComponent({
+                mode: 'custom',
+                isComplete: true,
+                completion,
+                activeStep: {
+                    id: 'REVIEW',
+                    meta: { state: 'error' },
+                } as ITransactionDialogStep,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(close).not.toHaveBeenCalled();
+    });
+
+    it('keeps completion disabled while a caller-owned gate is active', async () => {
+        const onClick = jest.fn();
+
+        render(
+            createTestComponent({
+                mode: 'custom',
+                isComplete: true,
+                completion: { label: 'Done', onClick },
+                primaryActionDisabled: true,
+            }),
+        );
+
+        const primaryButton = screen.getByRole('button', { name: 'Done' });
+        expect(primaryButton).toBeDisabled();
+        await userEvent.click(primaryButton);
+        expect(onClick).not.toHaveBeenCalled();
+    });
+
+    it('disables the custom primary action while caller gates are unresolved', async () => {
+        const action = jest.fn();
+        render(
+            createTestComponent({
+                mode: 'custom',
+                activeStep: {
+                    id: 'REVIEW',
+                    order: 0,
+                    meta: { label: 'review', state: 'idle', action },
+                },
+                primaryActionDisabled: true,
+            }),
+        );
+
+        const primaryButton = screen.getByRole('button', { name: 'label' });
+        expect(primaryButton).toBeDisabled();
+        await userEvent.click(primaryButton);
+        expect(action).not.toHaveBeenCalled();
+    });
+
+    it('uses the scoped custom dismissal handler and disables it when requested', async () => {
+        const close = jest.fn();
+        const onDismiss = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+        const { rerender } = render(
+            createTestComponent({
+                mode: 'custom',
+                onDismiss,
+            }),
+        );
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            }),
+        );
+        expect(onDismiss).toHaveBeenCalledTimes(1);
+        expect(close).not.toHaveBeenCalled();
+
+        rerender(
+            createTestComponent({
+                mode: 'custom',
+                disableCancel: true,
+                onDismiss,
+            }),
+        );
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            }),
+        ).toBeDisabled();
+    });
+
     it('disables the cancel button when the active step is confirm and its state is pending', () => {
         const activeStep = {
             id: TransactionDialogStep.CONFIRM,

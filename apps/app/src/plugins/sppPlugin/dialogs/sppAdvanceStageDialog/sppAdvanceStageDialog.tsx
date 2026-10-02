@@ -1,10 +1,15 @@
 'use client';
 
-import { invariant, ProposalDataListItem } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    invariant,
+    ProposalDataListItem,
+} from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -18,6 +23,7 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ISppProposal } from '../../types';
 import { sppProposalUtils } from '../../utils/sppProposalUtils';
+import { sppStageUtils } from '../../utils/sppStageUtils';
 import { sppAdvanceStageDialogUtils } from './sppAdvanceStageDialogUtils';
 
 export interface ISppAdvanceStageDialogParams {
@@ -75,6 +81,25 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
         setIsIndexed(true);
     }, []);
 
+    /**
+     * Advancement is permissionless, so this is disclosure rather than a lock: blocking the action
+     * would assure Safe owners while an off-app actor advances anyway. A queued report for this
+     * stage loses its effect the moment progression leaves the stage, and advancing does not stop
+     * the Safe transaction from executing later and writing to history.
+     *
+     * Shown whenever the stage being left carries a Safe body, phrased conditionally, rather than
+     * reading that Safe's queue: the warning is about what an advance forfeits, and a queue read
+     * here would go stale before the transaction mines while adding a network dependency to a
+     * dialog that needs none.
+     */
+    const hasSafeBody = proposal.settings.stages
+        .find(({ stageIndex }) => stageIndex === proposal.stageIndex)
+        ?.plugins.some(
+            (plugin) =>
+                sppStageUtils.getBodyPluginId(plugin, proposal.network) ===
+                safeBodyPluginId,
+        );
+
     return (
         <TransactionDialog
             description={t('app.plugins.spp.advanceStageDialog.description')}
@@ -91,6 +116,14 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
             title={t('app.plugins.spp.advanceStageDialog.title')}
             transactionType={TransactionType.PROPOSAL_ADVANCE_STAGE}
         >
+            {hasSafeBody === true && (
+                <AlertInline
+                    message={t(
+                        'app.plugins.spp.advanceStageDialog.queuedReportWarning',
+                    )}
+                    variant="warning"
+                />
+            )}
             <ProposalDataListItem.Structure
                 id={slug}
                 publisher={{
