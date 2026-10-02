@@ -66,10 +66,10 @@ export const chatCopy = {
             'Files go to the Aragon support team with your request, and people there will see them.',
         escalationPrompt: 'Prefer a human?',
         escalationLink: 'Email support',
-        // Under the composer on a fresh chat, read before the first message: one sentence with
-        // the two legal pages linked in it.
+        // Under the composer on a fresh chat, read before the first message: the caveat, then
+        // the two legal pages linked.
         aiNotice: {
-            text: 'The Aragon Assistant uses AI to provide you with helpful information. Sometimes it can be wrong. For more information about how third parties may process your messages, read the ',
+            text: 'Responses from this AI assistant are for informational purposes only and may be incomplete or inaccurate, so if anything is unclear or you are unsure, reach out to the Aragon team. For more information about how third parties may process your messages, read the ',
             privacyPolicy: 'privacy policy',
             and: ' and ',
             terms: 'terms',
