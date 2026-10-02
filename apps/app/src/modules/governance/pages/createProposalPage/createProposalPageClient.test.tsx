@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as daoService from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -29,6 +30,15 @@ jest.mock('./createProposalPageClientSteps', () => ({
         <button data-testid="steps-mock" type="submit" />
     ),
 }));
+jest.mock('../createExecuteActionsPage/createExecuteActionsPageClient', () => ({
+    CreateExecuteActionsPageClient: ({
+        safeProcess,
+    }: {
+        safeProcess: { safeAddress: string };
+    }) => (
+        <div data-testid="safe-actions-wizard">{safeProcess.safeAddress}</div>
+    ),
+}));
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -39,6 +49,10 @@ describe('<CreateProposalPageClient /> component', () => {
     const usePermissionCheckGuardSpy = jest.spyOn(
         usePermissionCheckGuard,
         'usePermissionCheckGuard',
+    );
+    const useWalletAccountSpy = jest.spyOn(
+        walletAccountApi,
+        'useWalletAccount',
     );
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
@@ -53,6 +67,12 @@ describe('<CreateProposalPageClient /> component', () => {
         resumeRegistryGetSpy.mockReturnValue(undefined);
         trackAnalyticsSpy.mockImplementation(() => undefined);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
+        useWalletAccountSpy.mockReturnValue({
+            address: '0xabc0000000000000000000000000000000000001',
+            chainId: 1,
+            isConnecting: false,
+            isReconnecting: false,
+        });
         usePermissionCheckGuardSpy.mockReturnValue({
             check: jest.fn(),
             result: false,
@@ -72,6 +92,7 @@ describe('<CreateProposalPageClient /> component', () => {
         clearActiveSpy.mockReset();
         resumeRegistryGetSpy.mockReset();
         trackAnalyticsSpy.mockReset();
+        useWalletAccountSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -220,6 +241,88 @@ describe('<CreateProposalPageClient /> component', () => {
         expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, {
             params: resumeParams,
         });
+    });
+
+    it('blocks a native Safe wizard until permission is granted', () => {
+        const daoAddress = '0x1111111111111111111111111111111111111111';
+        const safeAddress = '0x2222222222222222222222222222222222222222';
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: false,
+            isLoading: true,
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: daoAddress }),
+            }),
+        );
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({
+                    address: safeAddress,
+                    daoAddress,
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                    isBody: false,
+                    isProcess: true,
+                }),
+            }),
+        ]);
+
+        const safeProps = {
+            daoId: 'dao-id',
+            pluginAddress: safeAddress,
+        };
+        const { rerender } = render(
+            <CreateProposalPageClient {...safeProps} />,
+        );
+
+        expect(
+            screen.queryByTestId('safe-actions-wizard'),
+        ).not.toBeInTheDocument();
+
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: true,
+            isLoading: false,
+        });
+        rerender(<CreateProposalPageClient {...safeProps} />);
+
+        expect(screen.getByTestId('safe-actions-wizard')).toHaveTextContent(
+            safeAddress,
+        );
+    });
+
+    it('rejects a native Safe plugin owned by a different DAO', () => {
+        const pluginAddress = '0x3333333333333333333333333333333333333333';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({
+                    address: '0x1111111111111111111111111111111111111111',
+                }),
+            }),
+        );
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({
+                    address: pluginAddress,
+                    daoAddress: '0x2222222222222222222222222222222222222222',
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                }),
+            }),
+        ]);
+
+        render(
+            <CreateProposalPageClient
+                daoId="dao-id"
+                pluginAddress={pluginAddress}
+            />,
+        );
+
+        expect(
+            screen.getByText(
+                'app.governance.createProposalPage.error.notFound.title',
+            ),
+        ).toBeInTheDocument();
     });
 
     it('renders a not-found state instead of the wizard when the plugin address matches no DAO plugin', () => {

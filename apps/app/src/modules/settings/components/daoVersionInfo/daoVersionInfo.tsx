@@ -1,5 +1,5 @@
 import { ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
-import type { IDao } from '@/shared/api/daoService';
+import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -47,29 +47,34 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
             >
                 {dao.address}
             </DefinitionList.Item>
-            {processPlugins?.map((plugin) => (
-                <DefinitionList.Item
-                    description={t(
-                        'app.settings.daoVersionInfo.governanceValue',
-                        {
-                            name: daoUtils.getPluginName(plugin.meta),
-                            release: plugin.meta.release,
-                            build: plugin.meta.build,
-                        },
-                    )}
-                    key={plugin.uniqueId}
-                    link={{
-                        href: buildEntityUrl({
-                            type: ChainEntityType.ADDRESS,
-                            id: plugin.meta.address,
-                        }),
-                        isOnchainEntity: true,
-                    }}
-                    term={daoUtils.getPluginName(plugin.meta)}
-                >
-                    {plugin.meta.address}
-                </DefinitionList.Item>
-            ))}
+            {processPlugins
+                ?.filter(
+                    (plugin) =>
+                        plugin.meta.interfaceType !== PluginInterfaceType.SAFE,
+                )
+                .map((plugin) => (
+                    <DefinitionList.Item
+                        description={t(
+                            'app.settings.daoVersionInfo.governanceValue',
+                            {
+                                name: daoUtils.getPluginName(plugin.meta),
+                                release: plugin.meta.release,
+                                build: plugin.meta.build,
+                            },
+                        )}
+                        key={plugin.uniqueId}
+                        link={{
+                            href: buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: plugin.meta.address,
+                            }),
+                            isOnchainEntity: true,
+                        }}
+                        term={daoUtils.getPluginName(plugin.meta)}
+                    >
+                        {plugin.meta.address}
+                    </DefinitionList.Item>
+                ))}
         </DefinitionList.Container>
     );
 };

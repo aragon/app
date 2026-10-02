@@ -19,11 +19,13 @@ jest.mock('@/shared/components/wizards/wizardPage', () => ({
     WizardPage: {
         Step: ({
             children,
+            description,
             id,
             nextDropdownItems,
             disableNext,
         }: IWizardPageStepProps) => (
             <div
+                data-description={description}
                 data-disable-next={disableNext}
                 data-dropdown-items={nextDropdownItems?.length ?? 0}
                 data-testid={id}
@@ -82,6 +84,33 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
             screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
         ).toBeInTheDocument();
         expect(screen.getByTestId('execute-actions')).toBeInTheDocument();
+    });
+    it('uses the connected wallet for direct-execute simulations by default', () => {
+        render(createTestComponent());
+
+        expect(
+            screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
+        ).toHaveAttribute(
+            'data-description',
+            'app.governance.createExecuteActionsPage.steps.ACTIONS.description',
+        );
+        expect(useSimulateActionsDropdownSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ from: '0xwallet' }),
+        );
+    });
+
+    it('uses Safe copy and address for native Safe actions', () => {
+        render(createTestComponent({ safeAddress: '0xsafe' }));
+
+        expect(
+            screen.getByTestId(CreateExecuteActionsWizardStep.ACTIONS),
+        ).toHaveAttribute(
+            'data-description',
+            'app.governance.createExecuteActionsPage.steps.ACTIONS.safeDescription',
+        );
+        expect(useSimulateActionsDropdownSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ from: '0xsafe' }),
+        );
     });
 
     it('disables next when there are no actions', () => {

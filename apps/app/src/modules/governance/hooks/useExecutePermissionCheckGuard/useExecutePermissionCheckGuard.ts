@@ -10,6 +10,14 @@ export interface IUseExecutePermissionCheckGuardParams {
      * ID of the DAO to check the execute permission on.
      */
     daoId: string;
+    /**
+     * Skip the direct-execution guard for Safe-owned proposal flows.
+     */
+    enabled?: boolean;
+    /**
+     * Whether to prompt for a wallet connection when the permission check is disabled.
+     */
+    checkWalletConnection?: boolean;
 }
 
 /**
@@ -23,14 +31,14 @@ export interface IUseExecutePermissionCheckGuardParams {
 export const useExecutePermissionCheckGuard = (
     params: IUseExecutePermissionCheckGuardParams,
 ) => {
-    const { daoId } = params;
+    const { daoId, enabled = true, checkWalletConnection = false } = params;
 
     const router = useRouter();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { hasPermission, isLoading } = useDaoExecutePermission({ dao });
 
     const checkPermission = useCallback(() => {
-        if (dao == null || isLoading) {
+        if (!enabled || dao == null || isLoading) {
             return;
         }
 
@@ -40,7 +48,7 @@ export const useExecutePermissionCheckGuard = (
                 router.replace(transactionsUrl);
             }
         }
-    }, [dao, hasPermission, isLoading, router]);
+    }, [dao, enabled, hasPermission, isLoading, router]);
 
     const { check: checkWalletConnected } = useConnectedWalletGuard({
         onSuccess: checkPermission,
@@ -48,6 +56,8 @@ export const useExecutePermissionCheckGuard = (
     });
 
     useEffect(() => {
-        checkWalletConnected();
-    }, [checkWalletConnected]);
+        if (enabled || checkWalletConnection) {
+            checkWalletConnected();
+        }
+    }, [checkWalletConnected, checkWalletConnection, enabled]);
 };

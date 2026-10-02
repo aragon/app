@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { useSafeProcessPermissionCheckProposalCreation } from '@/plugins/safeMultisigPlugin/hooks/useSafeProcessPermissionCheckProposalCreation';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import {
     type IProcessDataListItemProps,
     ProcessDataListItem,
@@ -17,6 +19,35 @@ export type ISelectPluginDialogProcessListItemProps =
         onEligibilityResult: (pluginId: string, isEligible: boolean) => void;
     };
 
+const SelectNativeSafeProcessListItem: React.FC<
+    ISelectPluginDialogProcessListItemProps
+> = (props) => {
+    const { process, dao, pluginId, onEligibilityResult, ...otherProps } =
+        props;
+    const { hasPermission, isLoading } =
+        useSafeProcessPermissionCheckProposalCreation({
+            daoId: dao?.id ?? '',
+            plugin: process,
+            useConnectedUserInfo: dao != null,
+        });
+
+    useEffect(() => {
+        if (!isLoading) {
+            onEligibilityResult(pluginId, hasPermission);
+        }
+    }, [hasPermission, isLoading, onEligibilityResult, pluginId]);
+
+    return (
+        <ProcessDataListItem
+            {...otherProps}
+            dao={dao}
+            isDisabled={isLoading || !hasPermission}
+            process={process}
+            showNotEligibleHelpText={!isLoading && !hasPermission}
+        />
+    );
+};
+
 export const SelectPluginDialogProcessListItem: React.FC<
     ISelectPluginDialogProcessListItemProps
 > = (props) => {
@@ -24,8 +55,9 @@ export const SelectPluginDialogProcessListItem: React.FC<
         props;
 
     const { result, isLoading } = useSimulateProposalCreation({
-        plugin: process,
+        enabled: process.interfaceType !== PluginInterfaceType.SAFE,
         network: dao?.network,
+        plugin: process,
     });
     const simulationFailed = result === 'failure';
 
@@ -35,10 +67,20 @@ export const SelectPluginDialogProcessListItem: React.FC<
     // just an UX improvement, not a line of defense. Create proposal guard would
     // catch it in rare cases when simulation cannot be run for any reason.
     useEffect(() => {
-        if (!isLoading) {
+        if (process.interfaceType !== PluginInterfaceType.SAFE && !isLoading) {
             onEligibilityResult(pluginId, !simulationFailed);
         }
-    }, [isLoading, simulationFailed, pluginId, onEligibilityResult]);
+    }, [
+        isLoading,
+        pluginId,
+        onEligibilityResult,
+        process.interfaceType,
+        simulationFailed,
+    ]);
+
+    if (process.interfaceType === PluginInterfaceType.SAFE) {
+        return <SelectNativeSafeProcessListItem {...props} />;
+    }
 
     return (
         <ProcessDataListItem

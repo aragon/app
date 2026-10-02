@@ -13,40 +13,34 @@ import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
-import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
+import type {
+    ISafeMultisigVoteListProps,
+    ISafeMultisigVoteListViewProps,
+} from './safeMultisigVoteList.api';
 
 const signersPerPage = 6;
 
 const translationKey = 'app.plugins.safeMultisig.safeMultisigVoteList';
 
-export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
-    props,
-) => {
-    const { proposal, body, stage, isVeto } = props;
-    const network = proposal.network;
-
-    const { t } = useTranslations();
-    const { address: connectedAddress } = useWalletAccount();
-
-    const { safeInfo, signers } = useSafeMultisigBodyState({
+export const SafeMultisigVoteListView: React.FC<
+    ISafeMultisigVoteListViewProps
+> = (props) => {
+    const {
+        connectedAddress,
+        daoAddress,
+        isLoading = false,
+        isVeto,
         network,
-        address: body,
-        proposal,
-        stage,
-    });
-
-    const safeDaoId = `${network}-${proposal.daoAddress}`;
+        safeAddress,
+        signers,
+    } = props;
+    const { t } = useTranslations();
+    const safeDaoId = `${network}-${daoAddress}`;
     const memberSourceId = daoMemberSourceUtils.getSafeSourceId(
         safeDaoId,
-        body,
+        safeAddress,
     );
-
-    // A Safe confirmation is only ever agreement: an owner signs or does not, so there is no
-    // against-indicator to render here.
     const voteIndicator: VoteIndicator = isVeto === true ? 'veto' : 'approve';
-    const state = safeInfo == null ? 'initialLoading' : 'idle';
-
-    // The owner reading the card cares first about whether their own signature is on the report.
     const orderedSigners = [...signers].sort((a, b) => {
         const aIsViewer = addressUtils.isAddressEqual(a, connectedAddress);
         const bIsViewer = addressUtils.isAddressEqual(b, connectedAddress);
@@ -59,7 +53,7 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
             entityLabel={t(`${translationKey}.entity`)}
             itemsCount={orderedSigners.length}
             pageSize={signersPerPage}
-            state={state}
+            state={isLoading ? 'initialLoading' : 'idle'}
         >
             <DataListContainer
                 emptyState={{
@@ -84,6 +78,31 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
+    );
+};
+
+export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
+    props,
+) => {
+    const { proposal, body, stage, isVeto } = props;
+    const { address: connectedAddress } = useWalletAccount();
+    const { safeInfo, signers } = useSafeMultisigBodyState({
+        network: proposal.network,
+        address: body,
+        proposal,
+        stage,
+    });
+
+    return (
+        <SafeMultisigVoteListView
+            connectedAddress={connectedAddress}
+            daoAddress={proposal.daoAddress}
+            isLoading={safeInfo == null}
+            isVeto={isVeto}
+            network={proposal.network}
+            safeAddress={body}
+            signers={signers}
+        />
     );
 };
 

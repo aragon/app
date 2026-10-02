@@ -120,7 +120,7 @@ describe('dao utils', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(false);
             const daoPlugins = [
                 generateDaoPlugin({
-                    interfaceType: 'safe' as PluginInterfaceType,
+                    interfaceType: 'unrecognized-plugin' as PluginInterfaceType,
                 }),
             ];
             const dao = generateDao({ plugins: daoPlugins });
@@ -159,7 +159,7 @@ describe('dao utils', () => {
 
         it('returns false for interface types the app does not know', () => {
             const plugin = generateDaoPlugin({
-                interfaceType: 'safe' as PluginInterfaceType,
+                interfaceType: 'unrecognized-plugin' as PluginInterfaceType,
                 isSupported: true,
             });
             expect(daoUtils.isSupportedPlugin(plugin)).toBeFalsy();
@@ -218,6 +218,15 @@ describe('dao utils', () => {
     });
 
     describe('getPluginName', () => {
+        it('formats native Safe names in server-reachable code', () => {
+            const plugin = generateDaoPlugin({
+                address: '0x1234567890123456789012345678901234567890',
+                interfaceType: PluginInterfaceType.SAFE,
+                name: undefined,
+            });
+
+            expect(daoUtils.getPluginName(plugin)).toBe('Safe 0x1234…7890');
+        });
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';
             const plugin = generateDaoPlugin({ name });
@@ -684,7 +693,7 @@ describe('dao utils', () => {
         it('drops plugins with an interface type the app does not know by default', () => {
             const plugins = [
                 generateDaoPlugin({
-                    interfaceType: 'safe' as PluginInterfaceType,
+                    interfaceType: 'unrecognized-plugin' as PluginInterfaceType,
                     isSupported: true,
                 }),
                 generateDaoPlugin({
@@ -828,6 +837,22 @@ describe('dao utils', () => {
     });
 
     describe('getAvailablePluginUpdates', () => {
+        it('does not offer repository updates for a Safe process', () => {
+            getPluginsSpy.mockReturnValue([
+                { id: PluginInterfaceType.SAFE, name: 'Safe' },
+            ]);
+            const dao = generateDao({
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.SAFE,
+                        subdomain: undefined,
+                    }),
+                ],
+            });
+
+            expect(daoUtils.getAvailablePluginUpdates(dao)).toEqual([]);
+        });
+
         it('returns the list of plugins that can be updated', () => {
             const plugins = [
                 generateDaoPlugin({

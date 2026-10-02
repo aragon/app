@@ -8,6 +8,7 @@ import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { FeaturedDelegatesList } from '@/plugins/tokenPlugin/components/featuredDelegatesList';
 import { useFeaturedDelegatesPlugin } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
+import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -19,7 +20,7 @@ import {
     featuredDelegatesTabId,
 } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { safeMemberSourceIdPrefix } from '../../utils/daoMemberSourceUtils';
+import { daoMemberSourceUtils } from '../../utils/daoMemberSourceUtils';
 
 export interface IDaoMembersPageClientProps {
     /**
@@ -80,6 +81,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         };
     }, [featuredDelegatesInfo, daoId, t]);
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
     // Resolve the active body for the aside. Must match the visible member-list
     // tabs, so hidden bodies are excluded here too.
     const allBodyPlugins = useDaoPlugins({
@@ -89,20 +91,40 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         includeLinkedAccounts: true,
         visibleOnly: true,
     });
+    const processPlugins = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+    });
     const activeSafeSource = useMemo(() => {
-        if (!activeTabParam?.startsWith(safeMemberSourceIdPrefix)) {
+        if (
+            isFeaturedTabActive ||
+            dao == null ||
+            allBodyPlugins == null ||
+            processPlugins == null
+        ) {
             return undefined;
         }
 
-        const source = activeTabParam.slice(safeMemberSourceIdPrefix.length);
-        const separatorIndex = source.lastIndexOf(':');
-        const safeDaoId = source.slice(0, separatorIndex);
-        const safeAddress = source.slice(separatorIndex + 1);
-
-        return separatorIndex > 0 && addressUtils.isAddress(safeAddress)
-            ? { daoId: safeDaoId, address: safeAddress }
-            : undefined;
-    }, [activeTabParam]);
+        const sources = daoMemberSourceUtils.resolve({
+            dao,
+            daoId,
+            bodyPlugins: allBodyPlugins.map(({ meta }) => meta),
+            processPlugins: processPlugins.map(({ meta }) => meta),
+        });
+        const activeSource =
+            sources.find(({ uniqueId }) => uniqueId === activeTabParam) ??
+            sources[0];
+        return activeSource?.kind === 'safe' ? activeSource : undefined;
+    }, [
+        activeTabParam,
+        allBodyPlugins,
+        dao,
+        daoId,
+        isFeaturedTabActive,
+        processPlugins,
+    ]);
 
     const activeAsidePlugin = useMemo(() => {
         if (allBodyPlugins == null) {

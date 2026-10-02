@@ -5,7 +5,11 @@ import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppPluginSettings, ISppStagePlugin } from '../../types';
@@ -58,8 +62,10 @@ export const useSppPermissionCheckProposalCreation = (
     const sppPlugins = [...stageBodies, ...externalProposers];
 
     const pluginProposalCreationGuardResults = sppPlugins.map((sppPlugin) => {
-        const subPlugin = daoPlugins.find(({ meta }) =>
-            addressUtils.isAddressEqual(meta.address, sppPlugin.address),
+        const subPlugin = daoPlugins.find(
+            ({ meta }) =>
+                meta.interfaceType !== PluginInterfaceType.SAFE &&
+                addressUtils.isAddressEqual(meta.address, sppPlugin.address),
         );
 
         // Internal bodies not installed on the DAO can't be resolved, so skip them.

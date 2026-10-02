@@ -138,6 +138,12 @@ class DaoUtils {
     };
 
     getPluginName = (plugin: IDaoPlugin): string => {
+        if (plugin.interfaceType === PluginInterfaceType.SAFE) {
+            const address = isAddress(plugin.address, { strict: false })
+                ? `${plugin.address.slice(0, 6)}…${plugin.address.slice(-4)}`
+                : plugin.address;
+            return `Safe ${address}`;
+        }
         if (plugin.name) {
             return plugin.name;
         }
@@ -243,7 +249,10 @@ class DaoUtils {
             // Preparing the update looks the plugin info up by interfaceType, so
             // both lookups have to agree, otherwise we would prepare the update
             // against the wrong repository.
-            if (target == null || target.id !== plugin.interfaceType) {
+            if (
+                target?.installVersion == null ||
+                target.id !== plugin.interfaceType
+            ) {
                 return false;
             }
 
