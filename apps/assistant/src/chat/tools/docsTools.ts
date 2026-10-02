@@ -4,11 +4,11 @@ import { z } from 'zod';
 import type { IDocsSearch } from '../../docs/docsSearch';
 import { observability } from '../../lib/observability';
 
-// The agent's documentation tools, registered on the chat pipeline only when
-// config.docsSearchEnabled is true. None of them needs an approval: they read the index built
-// into the bundle. They run silently — the prompt asks for no text around them and the narration
-// filter drops what slips through — so the widget shows a spinner on their tool parts while they
-// run and nothing once they are done.
+// The agent's documentation tools, registered only when the request enables them
+// (features.docsSearch). Neither needs an approval: they read the index built into the bundle.
+// They run silently: the prompt asks for no text around them, the narration filter drops what
+// slips through, and the widget shows a spinner while they run. The route drops their outputs
+// from the history of later turns (see routes/chat.ts).
 
 export const buildDocsTools = (params: {
     docsSearch: IDocsSearch;
@@ -19,13 +19,13 @@ export const buildDocsTools = (params: {
     return {
         [docsToolNames.searchDocs]: tool({
             description:
-                'Search the Aragon platform documentation. Call it before answering any question about how the app works, how to do something in it, whether something is possible, or why it behaves the way it does. Returns the most relevant passages, each with the path of the page it comes from. The passages describe the product from the outside; your answer speaks to the user in the second person about what they can do. The path is an internal id for readDoc, never shown or linked.',
+                "Search Aragon's product documentation. Returns the best-matching passages, each with the path of its page; a path is an id for readDoc, never shown or linked. When the user's own terms return nothing that fits, search for the general rule behind their case instead.",
             inputSchema: z.object({
                 query: z
                     .string()
                     .min(1)
                     .describe(
-                        'The user\'s task in a few words, in English, e.g. "which networks can I create an account on".',
+                        'What the user needs, in a few English words, e.g. "which networks can I create an account on" or, for a case the documentation may not name, the rule behind it: "how membership of a voting body is defined".',
                     ),
             }),
             execute: async ({ query }) => {
@@ -48,7 +48,7 @@ export const buildDocsTools = (params: {
         }),
         [docsToolNames.readDoc]: tool({
             description:
-                'Read a whole documentation page by its path (as returned by searchDocs or listDocs), when a passage is not enough to answer — and whenever the user asks for a complete list (every network, every option): a passage may hold only part of it.',
+                'Read a whole documentation page by its path, when a passage is cut off or the question needs the complete picture (every option, every network).',
             inputSchema: z.object({
                 path: z
                     .string()
@@ -62,24 +62,10 @@ export const buildDocsTools = (params: {
                     page ?? {
                         found: false,
                         message:
-                            'No documentation page at this path. Find pages with searchDocs or listDocs.',
+                            'No documentation page at this path. Find pages with searchDocs.',
                     },
                 );
             },
-        }),
-        [docsToolNames.listDocs]: tool({
-            description:
-                'List the documentation pages (title, path, summary), optionally only those of one area. Use it to see what the documentation covers, or to find a page by topic when a search returned nothing useful. This inventory is for internal navigation only; do not show or describe it to the user.',
-            inputSchema: z.object({
-                area: z
-                    .string()
-                    .optional()
-                    .describe(
-                        'Optional area name to narrow the list to, e.g. Governance.',
-                    ),
-            }),
-            execute: ({ area }) =>
-                Promise.resolve({ docs: docsSearch.listDocs({ area }) }),
         }),
     };
 };

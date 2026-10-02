@@ -1,6 +1,6 @@
 {
     "name": "@aragon/assistant",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "private": true,
     "description": "Aragon assistant service: support-chat intake API",
     "homepage": "https://github.com/aragon/app#readme",
@@ -37,6 +37,8 @@
         "ai": "catalog:",
         "file-type": "catalog:",
         "hono": "catalog:",
+        "pdf-lib": "catalog:",
+        "sharp": "catalog:",
         "zod": "catalog:"
     },
     "devDependencies": {

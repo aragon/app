@@ -116,6 +116,18 @@ describe('dao utils', () => {
             expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith([]);
         });
 
+        it('ignores plugins with an interface type the app does not know', () => {
+            listContainsRegisteredPluginsSpy.mockReturnValue(false);
+            const daoPlugins = [
+                generateDaoPlugin({
+                    interfaceType: 'unrecognized-plugin' as PluginInterfaceType,
+                }),
+            ];
+            const dao = generateDao({ plugins: daoPlugins });
+            expect(daoUtils.hasSupportedPlugins(dao)).toBeFalsy();
+            expect(listContainsRegisteredPluginsSpy).toHaveBeenCalledWith([]);
+        });
+
         it('returns false when dao parameter is not defined', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(false);
             expect(daoUtils.hasSupportedPlugins()).toBeFalsy();
@@ -141,6 +153,14 @@ describe('dao utils', () => {
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.MULTISIG,
                 isSupported: false,
+            });
+            expect(daoUtils.isSupportedPlugin(plugin)).toBeFalsy();
+        });
+
+        it('returns false for interface types the app does not know', () => {
+            const plugin = generateDaoPlugin({
+                interfaceType: 'unrecognized-plugin' as PluginInterfaceType,
+                isSupported: true,
             });
             expect(daoUtils.isSupportedPlugin(plugin)).toBeFalsy();
         });
@@ -665,6 +685,23 @@ describe('dao utils', () => {
                 }),
             ];
             const dao = generateDao({ plugins });
+            expect(
+                daoUtils.getDaoPlugins(dao, { includeUnsupported: true }),
+            ).toEqual(plugins);
+        });
+
+        it('drops plugins with an interface type the app does not know by default', () => {
+            const plugins = [
+                generateDaoPlugin({
+                    interfaceType: 'unrecognized-plugin' as PluginInterfaceType,
+                    isSupported: true,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao)).toEqual([plugins[1]]);
             expect(
                 daoUtils.getDaoPlugins(dao, { includeUnsupported: true }),
             ).toEqual(plugins);

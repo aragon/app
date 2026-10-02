@@ -1,3 +1,4 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
@@ -65,7 +66,11 @@ class PublishProposalDialogUtils {
         >({
             pluginId: plugin.interfaceType,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_CREATE_PROPOSAL_DATA,
-        })!;
+        });
+        invariant(
+            buildDataFunction != null,
+            `PublishProposalDialogUtils: no create-proposal builder registered for plugin "${plugin.interfaceType}".`,
+        );
 
         const parsedActions = actions.map(this.actionToTransactionRequest);
         const buildDataParams: IBuildCreateProposalDataParams = {

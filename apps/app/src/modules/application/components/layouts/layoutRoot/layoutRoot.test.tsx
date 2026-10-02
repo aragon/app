@@ -89,7 +89,7 @@ describe('<LayoutRoot /> component', () => {
 
         render(await createTestComponent({ children: <Children /> }));
         expect(screen.getByText(/footer.link.explore/)).toBeInTheDocument();
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     });
 
     it('retrieves and passes the wagmi initial state to the providers component', async () => {

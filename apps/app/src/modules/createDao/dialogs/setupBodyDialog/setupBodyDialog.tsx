@@ -1,4 +1,4 @@
-import { addressUtils, invariant } from '@aragon/gov-ui-kit';
+import { invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { daoProcessDetailsClientUtils } from '@/modules/settings/pages/daoProcessDetailsPage';
@@ -6,6 +6,7 @@ import { useDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { BodyType } from '../../types/enum';
 import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import {
@@ -56,9 +57,13 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
 
     const handleSubmit = (values: ISetupBodyForm) => {
         if (values.type === BodyType.EXTERNAL) {
-            const existingPlugin = dao?.plugins.find((plugin) =>
-                addressUtils.isAddressEqual(plugin.address, values.address),
-            );
+            // Resolve through getDaoPlugins so a plugin the app has no UI for stays an external body.
+            const [existingPlugin] =
+                daoUtils.getDaoPlugins(dao, {
+                    pluginAddress: values.address,
+                    includeSubPlugins: true,
+                    includeLinkedAccounts: true,
+                }) ?? [];
 
             const processedValues = existingPlugin
                 ? daoProcessDetailsClientUtils.bodyToFormData({

@@ -4,11 +4,16 @@ import * as wagmi from 'wagmi';
 import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import { useSimulateProposalCreation } from './useSimulateProposalCreation';
 
 describe('useSimulateProposalCreation hook', () => {
     const useCallSpy = jest.spyOn(wagmi, 'useCall');
+    const getSlotFunctionSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotFunction',
+    );
     const useWalletAccountSpy = jest.spyOn(
         useWalletAccountModule,
         'useWalletAccount',
@@ -43,6 +48,7 @@ describe('useSimulateProposalCreation hook', () => {
             data: '0x',
             value: BigInt(0),
         });
+        getSlotFunctionSpy.mockReturnValue(jest.fn());
         useCallSpy.mockReturnValue(buildResult({}));
     });
 
@@ -50,6 +56,7 @@ describe('useSimulateProposalCreation hook', () => {
         useCallSpy.mockReset();
         useWalletAccountSpy.mockReset();
         buildTransactionSpy.mockReset();
+        getSlotFunctionSpy.mockReset();
     });
 
     const renderSimulation = () =>
@@ -126,6 +133,39 @@ describe('useSimulateProposalCreation hook', () => {
             }),
         );
 
+        expect(useCallSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                query: expect.objectContaining({ enabled: false }),
+            }),
+        );
+    });
+
+    it('reports a failure without simulating when no proposal builder is registered for the plugin', () => {
+        getSlotFunctionSpy.mockReturnValue(undefined);
+
+        const { result } = renderSimulation();
+
+        expect(result.current.result).toBe('failure');
+        expect(result.current.isLoading).toBeFalsy();
+        expect(result.current.isError).toBeFalsy();
+        expect(buildTransactionSpy).not.toHaveBeenCalled();
+        expect(useCallSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                query: expect.objectContaining({ enabled: false }),
+            }),
+        );
+    });
+
+    it('does not build or simulate a proposal when explicitly disabled', () => {
+        renderHook(() =>
+            useSimulateProposalCreation({
+                plugin: generateDaoPlugin(),
+                network: Network.ETHEREUM_MAINNET,
+                enabled: false,
+            }),
+        );
+
+        expect(buildTransactionSpy).not.toHaveBeenCalled();
         expect(useCallSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 query: expect.objectContaining({ enabled: false }),

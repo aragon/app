@@ -5,6 +5,7 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { IDaoPermission } from '@/shared/api/daoService';
 import { generateDaoPermission } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
@@ -336,9 +337,9 @@ describe('<PermissionsList /> component', () => {
         for (const permissionHash of permissionHashes) {
             expect(permissionHash.closest('a')).toBeNull();
         }
-        screen
-            .getAllByTestId(IconType.COPY)
-            .forEach((copyIcon) => fireEvent.click(copyIcon));
+        for (const copyIcon of screen.getAllByTestId(IconType.COPY)) {
+            await userEvent.click(copyIcon);
+        }
         expect(clipboardCopySpy).toHaveBeenCalledWith(EXECUTE_PERMISSION_ID);
         expect(
             container.querySelector(`a[href*="${EXECUTE_PERMISSION_ID}"]`),
