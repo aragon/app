@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "1.1.0",
-            "sha256": "0f6e3fb37622d665aa11dd354b89cdbdb8423dc72a3d806e3ced4a5e9ed7cea9",
+            "sha256": "4503e9e34fa4231664aac515a68242d07809234fdf71e0007978b8f59ce00fcb",
             "totalRecords": 418,
             "entryCount": 150,
             "uiEntryCount": 143,
@@ -237,7 +237,7 @@
                 "appExamples": [
                     "app:src/modules/finance/components/transferAssetForm/transferAssetForm.tsx:83",
                     "app:src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx:60",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:191"
+                    "app:src/actions/core/permissionManager/components/permissionAddressInput.tsx:92"
                 ]
             }
         },
@@ -641,7 +641,7 @@
                 "appExamples": [
                     "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:52",
                     "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:306",
-                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:169"
+                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:238"
                 ]
             }
         },
@@ -928,7 +928,7 @@
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:126",
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:149",
                     "app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36",
                     "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:138"
                 ]
@@ -1444,7 +1444,7 @@
                     "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:99"
+                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:101"
                 ]
             }
         },
@@ -1863,9 +1863,9 @@
                     "kit:src/core/components/heading/heading.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionChangeCard.tsx:46",
                     "app:src/modules/application/components/debugPanel/debugPanel.tsx:106",
-                    "app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26",
-                    "app:src/modules/dashboard/components/dashboardOnboarding/nonAdminOnboarding.tsx:30"
+                    "app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26"
                 ]
             }
         },
@@ -2431,7 +2431,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/index.ts:7",
                 "stories": [],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:45",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:50",
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
                     "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
                 ]
@@ -2456,7 +2456,7 @@
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:46",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:51",
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:161",
                     "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:65"
                 ]
@@ -2505,8 +2505,8 @@
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:48",
-                    "app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:57",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:57",
+                    "app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:62",
                     "app:src/modules/governance/components/proposalActionsItem/proposalActionsItem.tsx:43"
                 ]
             }
@@ -2551,7 +2551,7 @@
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:45",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:50",
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
                     "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
                 ]
@@ -3636,9 +3636,9 @@
                     "kit:src/core/components/toggles/toggle/toggle.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:228",
                     "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:100",
-                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69",
-                    "app:src/modules/finance/components/assetInput/assetInput.tsx:303"
+                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69"
                 ]
             }
         },
@@ -3665,9 +3665,9 @@
                     "kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:210",
                     "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:112",
-                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63",
-                    "app:src/modules/finance/components/assetInput/assetInput.tsx:296"
+                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63"
                 ]
             }
         },
@@ -3692,6 +3692,7 @@
                     "kit:src/core/components/tooltip/tooltip.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionIdItem.tsx:40",
                     "app:src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx:29"
                 ]
             }
@@ -4049,7 +4050,7 @@
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:105",
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:132",
                     "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:147",
                     "app:src/modules/explore/components/exploreNav/exploreNav.tsx:85"
                 ]
