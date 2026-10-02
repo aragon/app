@@ -7,15 +7,16 @@ import {
 } from '@assistant-ui/react-markdown';
 import classNames from 'classnames';
 import { memo, useState } from 'react';
+import remarkGfm from 'remark-gfm';
 import { chatCopy } from '../../copy';
 import { TooltipIconButton } from '../tooltipIconButton';
 
 // Port of the assistant-ui registry markdown-text: the assistant reply rendered as markdown with
 // the registry's element styling remapped to the Aragon theme tokens. Deliberate deviations:
-// links open in a new tab (the widget lives in a side panel), remark-gfm is left out (plain
-// markdown covers support answers; one dependency less) along with the table styles only GFM
-// could produce, and the streaming-dot stylesheet is skipped — the widget has its own typing
-// indicator.
+// links open in a new tab (the widget lives in a side panel), and the streaming-dot stylesheet
+// is skipped — the widget has its own typing indicator. GFM is on for its autolinks: a bare URL
+// in a reply is a link, not text to copy by hand. The table styling GFM makes possible is kept
+// minimal — the prompt asks for sentences or a list instead, so a table is the exception.
 
 const useCopyToClipboard = ({ copiedDuration = 3000 } = {}) => {
     const [isCopied, setIsCopied] = useState(false);
@@ -218,12 +219,50 @@ const defaultComponents = memoizeMarkdownComponents({
             {...props}
         />
     ),
+    table: ({ className, ...props }) => (
+        <div className="my-3 overflow-x-auto">
+            <table
+                className={classNames(
+                    'w-full border-collapse text-sm',
+                    className,
+                )}
+                {...props}
+            />
+        </div>
+    ),
+    th: ({ className, ...props }) => (
+        <th
+            className={classNames(
+                'border border-neutral-100 bg-neutral-50 px-2 py-1 text-left font-semibold',
+                className,
+            )}
+            {...props}
+        />
+    ),
+    td: ({ className, ...props }) => (
+        <td
+            className={classNames(
+                'border border-neutral-100 px-2 py-1 align-top',
+                className,
+            )}
+            {...props}
+        />
+    ),
+    // A reply never needs an image, and an image tag would make the reader's browser fetch a URL
+    // of the model's choosing.
+    img: () => null,
     code: Code,
     CodeHeader,
 });
 
+const remarkPlugins = [remarkGfm];
+
 const MarkdownTextImpl: React.FC = () => (
-    <MarkdownTextPrimitive components={defaultComponents} defer={true} />
+    <MarkdownTextPrimitive
+        components={defaultComponents}
+        defer={true}
+        remarkPlugins={remarkPlugins}
+    />
 );
 
 export const MarkdownText = memo(MarkdownTextImpl);

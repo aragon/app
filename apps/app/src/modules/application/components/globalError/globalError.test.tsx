@@ -24,9 +24,9 @@ describe('<GlobalError /> component', () => {
         return <GlobalError {...completeProps} />;
     };
 
-    it('renders an error feedback', () => {
+    it('renders an error feedback with text, not translation keys', () => {
         render(createTestComponent());
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     });
 
     it('logs the error to the monitoring service', () => {

@@ -33,6 +33,16 @@ export interface IErrorFeedbackProps {
     hideReportButton?: boolean;
 }
 
+// The global error page renders this above the root layout, without a TranslationsProvider.
+// Mirrors en.json so the screen shows text, not keys (errorFeedback.test.tsx checks the two agree).
+const fallbackTranslations = {
+    'app.shared.errorFeedback.title': 'Something went wrong',
+    'app.shared.errorFeedback.description':
+        "If you'd like to help, you can report the issue to our team.",
+    'app.shared.errorFeedback.link.explore': 'Explore DAOs',
+    'app.shared.errorFeedback.link.report': 'Report issue',
+};
+
 export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
     const {
         titleKey,
@@ -42,7 +52,7 @@ export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
         hideReportButton,
     } = props;
 
-    const { t } = useSafeTranslations();
+    const { t } = useSafeTranslations(fallbackTranslations);
 
     const reportIssueButton = {
         label: t('app.shared.errorFeedback.link.report'),

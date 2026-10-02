@@ -1,0 +1,99 @@
+# The "Shared Storybook Deploy" workflow deploys a Storybook to Vercel. It is deliberately separate
+# from shared-deploy.yml: that workflow prepares a Next.js app (it runs `pnpm run setup <env>` inside
+# the workspace and pulls a `<vault-prefix>_<env>` secrets file into `<workspace>/.env`), neither of
+# which exists for a static Storybook. Keeping them apart means Storybook changes can never affect
+# the workflow that deploys production.
+#
+# Production vs preview is selected by `domain`: set it to alias the deployment (production build),
+# leave it empty for a throwaway preview URL.
+
+name: Shared Storybook Deploy
+
+on:
+  workflow_call:
+    inputs:
+      domain:
+        description: "Assign the new deployment URL to this domain when set (also switches the build to production)"
+        required: false
+        type: string
+      workspace:
+        description: "Workspace directory holding the Storybook"
+        required: false
+        type: string
+        default: "packages/gov-ui-kit"
+      vault-prefix:
+        description: "1Password vault prefix for the Vercel credentials (`<vault-prefix>_infra`)"
+        required: false
+        type: string
+        default: "kv_gov-ui-kit"
+      ref:
+        description: "The branch, tag or SHA to checkout"
+        required: false
+        type: string
+      patch-root-directory:
+        description: "Patch .vercel/project.json with the workspace as rootDirectory. Set false once the Vercel project itself has the root directory configured."
+        required: false
+        type: boolean
+        default: true
+    outputs:
+      deploymentUrl:
+        description: "The URL of the Vercel deployment"
+        value: ${{ jobs.deploy.outputs.deploymentUrl }}
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_SCOPE: aragon-app
+  VERCEL_ARGS: ${{ (inputs.domain != '' && '--prod') || '' }}
+  ENABLE_EXPERIMENTAL_COREPACK: "1"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
+    steps:
+      - name: Download infra credentials
+        uses: aragon/github-templates/steps/credential-retrieval@4992848afd79e5feb5fa4a688674d13e9ed47c22 # https://github.com/aragon/github-templates/commit/4992848afd79e5feb5fa4a688674d13e9ed47c22
+        with:
+          op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
+          op-vault: "${{ inputs.vault-prefix }}_infra"
+
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Pull Vercel project settings
+        run: pnpm vercel pull --yes --environment=${{ (inputs.domain != '' && 'production') || 'preview' }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+
+      # `vercel pull` does not bring the project's rootDirectory down, and the build must run with
+      # the pnpm workspace root as the build root (pnpm symlinks point outside the workspace).
+      # Same approach as shared-deploy.yml. Pass patch-root-directory: false once the Vercel
+      # project has its root directory set in the dashboard.
+      - name: Set workspace as Vercel root directory
+        if: inputs.patch-root-directory
+        run: |
+          jq '.settings.rootDirectory = "${{ inputs.workspace }}"' .vercel/project.json > .vercel/project.json.tmp
+          mv .vercel/project.json.tmp .vercel/project.json
+
+      - name: Bundle Vercel application
+        run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+
+      - name: Vercel deployment
+        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.domain != '' && '--skip-domain' || '' }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+
+      - name: Set output
+        id: set-deployment-url
+        run: echo "deploymentUrl=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+
+      - name: Set deployment alias
+        if: ${{ inputs.domain != '' }}
+        run: pnpm vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}

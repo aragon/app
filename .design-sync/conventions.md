@@ -63,12 +63,13 @@ Banner and App form inputs). Font: **Manrope** (bundled).
   context. Standalone, wrap them in the exported `<FormWrapper defaultValues={{…}}>`;
   array-backed lists hydrate only from `FormWrapper.defaultValues`.
 - Inside a wizard, do not add `FormWrapper`: the wizard already owns the form
-  context. `Wizard.Root` calls `useForm` and renders `FormProvider`, and
-  `WizardPage.Container` / `WizardDialog.Container` compose `Wizard.Root` with
-  `Wizard.Form`. A nested `FormWrapper` creates a second, separate form: the
-  inputs then write to a context the wizard never reads, so its validation gates
-  and submit payload silently lose those fields. Seed values through the wizard
-  container's own `defaultValues` instead.
+  context. [`Wizard.Root`](../apps/app/src/shared/components/wizards/wizard/wizardRoot/wizardRoot.tsx)
+  calls `useForm` and renders `FormProvider`, and `WizardPage.Container` /
+  `WizardDialog.Container` compose `Wizard.Root` with `Wizard.Form`. A nested
+  `FormWrapper` creates a second, separate form: the inputs then write to a
+  context the wizard never reads, so its validation gates and submit payload
+  silently lose those fields. Seed values through the wizard container's own
+  `defaultValues` instead.
 - Dialogs open through the controlled `open` prop on `Dialog.Root` or
   `DialogAlert.Root`; `defaultOpen` is not a substitute in this bundle. In the
   [App dialog provider](../apps/app/src/shared/components/dialogProvider/dialogProvider.tsx),

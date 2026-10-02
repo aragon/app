@@ -1,0 +1,89 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import type { PropsWithChildren } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { modulesCopy } from '../../../../assets';
+import { GukModulesProvider } from '../../../gukModulesProvider';
+import { type IProposalActionsContext, ProposalActionsContextProvider } from '../proposalActionsContext';
+import { ProposalActionsItem } from '../proposalActionsItem';
+import { generateProposalAction, generateProposalActionsContext } from '../proposalActionsTestUtils';
+import { type IProposalActionsContainerProps, ProposalActionsContainer } from './proposalActionsContainer';
+
+describe('<ProposalActionsContainer /> component', () => {
+    const FormWrapper = ({ children }: PropsWithChildren) => {
+        const methods = useForm();
+        return <FormProvider {...methods}>{children}</FormProvider>;
+    };
+
+    const createTestComponent = (values?: {
+        context?: Partial<IProposalActionsContext>;
+        props?: Partial<IProposalActionsContainerProps>;
+    }) => {
+        const completeProps: IProposalActionsContainerProps = {
+            emptyStateDescription: 'test',
+            ...values?.props,
+        };
+
+        return (
+            <FormWrapper>
+                <GukModulesProvider>
+                    <ProposalActionsContextProvider value={generateProposalActionsContext(values?.context)}>
+                        <ProposalActionsContainer {...completeProps} />
+                    </ProposalActionsContextProvider>
+                </GukModulesProvider>
+            </FormWrapper>
+        );
+    };
+
+    it('renders an empty state when actions list is empty', () => {
+        const context = { actionsCount: 0 };
+        const props = { emptyStateDescription: 'no-actions' };
+        render(createTestComponent({ context, props }));
+        expect(screen.getByText(modulesCopy.proposalActionsContainer.emptyHeader)).toBeInTheDocument();
+        expect(screen.getByText(props.emptyStateDescription)).toBeInTheDocument();
+    });
+
+    it('correctly renders the proposal actions', () => {
+        const children = [
+            <ProposalActionsItem action={generateProposalAction()} key={1} />,
+            <ProposalActionsItem action={generateProposalAction()} key={2} />,
+        ];
+        const context = { actionsCount: children.length };
+        render(createTestComponent({ props: { children }, context }));
+        expect(screen.queryByText(modulesCopy.proposalActionsContainer.emptyHeader)).not.toBeInTheDocument();
+        // One accordion trigger per item (the copy controls carry the "Copy" label).
+        expect(screen.getAllByRole('button', { name: /0x/i })).toHaveLength(children.length);
+    });
+
+    it('updates the list of expanded actions on action click', async () => {
+        const children = [
+            <ProposalActionsItem action={generateProposalAction()} key={1} />,
+            <ProposalActionsItem action={generateProposalAction()} key={2} />,
+        ];
+        const setExpandedActions = jest.fn();
+        const context = { actionsCount: children.length, setExpandedActions };
+        render(createTestComponent({ props: { children }, context }));
+        await userEvent.click(screen.getAllByRole('button', { name: /0x/i })[1]);
+        expect(setExpandedActions).toHaveBeenCalledWith(['1']);
+    });
+
+    it('updates the actions-count context value using the number of child components', () => {
+        const children = <ProposalActionsItem action={generateProposalAction()} key={1} />;
+        const setActionsCount = jest.fn();
+        const context = { setActionsCount };
+        render(createTestComponent({ props: { children }, context }));
+        expect(setActionsCount).toHaveBeenCalledWith(1);
+    });
+
+    it('renders the correct number of skeletons when loading state is active', () => {
+        const children = [
+            <ProposalActionsItem action={generateProposalAction()} key={1} />,
+            <ProposalActionsItem action={generateProposalAction()} key={2} />,
+        ];
+        const context = { actionsCount: children.length, isLoading: true };
+        render(createTestComponent({ props: { children }, context }));
+
+        const skeletonItems = screen.getAllByLabelText('loading');
+        expect(skeletonItems).toHaveLength(children.length);
+    });
+});

@@ -7,7 +7,7 @@
 - Package: `@aragon/gov-ui-kit@2.11.4`
 - GovKit source revision: `64b517f5b90052797ecaced5f15ab616b5733f30`
 - Primitive import barrel: `src/theme/tokens/primitives/index.css`
-- App CSS: `apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css`
+- App override source: `apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css`
 
 `parity-baseline.json` maps every represented CSS variable to its DTCG path and original CSS value. It also records namespace resets, utility rules, font faces, imports, the unsupported `--radius-none: none` value, and app runtime overrides. These CSS constructs must survive any later output conversion.
 
@@ -43,6 +43,7 @@ pnpm tokens:generate
 ```
 
 This validates the DTCG snapshot against the installed GovKit CSS and App overrides, then writes `.design-sync/generated/govkit-primitives.css`. The artifact is App-owned generated input for APP-736: it replaces only the primitive token CSS layer, while GovKit core component CSS and Tailwind remain separate consumer imports.
+The artifact is not a new theme: it projects the same consumed GovKit primitive values, plus the seven App overrides, through the validated DTCG snapshot. `layoutRoot.overrides.css` is generator input only; its declarations are emitted into the artifact, so it is intentionally not imported at runtime.
 
 The generator materializes the primitive import barrel in source order, preserving token names, units, aliases, namespace resets, utilities, focus-ring behavior, font faces, CSS-only `--radius-none: none`, and the seven App overrides. Primitive imports are flattened because the artifact is a single CSS entry; the header records this intentional difference from the source barrel. Font-face URLs are rewritten relative to this checked-in artifact's location, using the installed GovKit font directory under `apps/app/node_modules`. APP-736 must consume this file from its checked-in location or rebase the URLs when copying compiled CSS; moving the CSS without rebasing breaks font resolution. Re-run the command after changing the DTCG snapshot, parity baseline, GovKit dependency, or App root CSS. Never edit the emitted CSS.
 Block placement comes from the live GovKit CSS structure: declarations are replaced inside their existing parent rule, so pixel breakpoint variables remain in plain `:root` while rem breakpoint variables remain in `@theme`.

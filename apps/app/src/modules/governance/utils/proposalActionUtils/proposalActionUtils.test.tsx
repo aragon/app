@@ -3,6 +3,7 @@ import {
     type IProposalActionUpdateMetadata,
     type IProposalActionWithdrawToken,
 } from '@aragon/gov-ui-kit';
+import { toFunctionSelector } from 'viem';
 import { generateToken } from '@/modules/finance/testUtils';
 import {
     generateProposalAction,
@@ -473,5 +474,55 @@ describe('proposalActionUtils', () => {
                 ).toEqual(expectedStubs);
             },
         );
+    });
+    describe('actionToFunctionSelector', () => {
+        const grantInputData = {
+            function: 'grant',
+            contract: 'DAO',
+            parameters: [
+                { name: '_where', type: 'address', value: '' },
+                { name: '_who', type: 'address', value: '' },
+                { name: '_permissionId', type: 'bytes32', value: '' },
+            ],
+        };
+
+        it('derives the selector from the ABI even when the calldata is not encoded yet', () => {
+            // A freshly composed call starts with empty calldata; the action view registry
+            // still has to resolve it by selector before anything is filled in.
+            const action = generateProposalAction({
+                data: '0x',
+                inputData: grantInputData,
+            });
+
+            expect(proposalActionUtils.actionToFunctionSelector(action)).toBe(
+                toFunctionSelector('function grant(address,address,bytes32)'),
+            );
+        });
+
+        it('returns undefined for a native transfer, which has no parameters and no selector', () => {
+            const action = generateProposalAction({
+                data: '0x',
+                inputData: {
+                    function: 'transfer',
+                    contract: 'Ether',
+                    parameters: [],
+                },
+            });
+
+            expect(
+                proposalActionUtils.actionToFunctionSelector(action),
+            ).toBeUndefined();
+        });
+
+        it('returns undefined when the action has no ABI', () => {
+            const action = generateProposalAction({
+                data: '0x1234',
+                inputData: undefined,
+            });
+
+            expect(
+                proposalActionUtils.actionToFunctionSelector(action),
+            ).toBeUndefined();
+        });
     });
 });
