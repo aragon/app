@@ -3,9 +3,9 @@
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspace } from '../../api/workspaceService';
-import { useWorkspaceAccountSelectorContext } from '../../components/workspaceAccountSelectorProvider';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
+import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 
 export interface IWorkspaceTransactionsPageClientProps {
     /**
@@ -31,10 +31,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const accounts = workspace?.accounts ?? [];
 
-    const { activeOption } = useWorkspaceAccountSelectorContext();
-
-    const accountsToDisplay =
-        activeOption?.account != null ? [activeOption.account] : accounts;
+    const { activeOption } = useWorkspaceAccountOptions();
 
     return (
         <Page.Content>
@@ -42,7 +39,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
                 title={t('app.workspace.workspaceTransactionsPage.main.title')}
             >
                 <WorkspaceTransactionList
-                    accounts={accountsToDisplay}
+                    accounts={accounts}
                     isPending={isWorkspacePending}
                     pageSize={pageSize}
                 />

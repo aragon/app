@@ -4256,7 +4256,7 @@
       "createWorkspaceForm": {
         "accounts": {
           "add": "Add account",
-          "helpText": "The DAOs and accounts whose assets, transactions and members this workspace brings together.",
+          "helpText": "The accounts whose assets, transactions and members this workspace brings together.",
           "identity": {
             "resolving": "Checking address…",
             "type": {
@@ -4311,7 +4311,7 @@
         "finalStep": "Create workspace",
         "steps": {
           "ACCOUNTS": {
-            "description": "Add the DAOs and accounts belonging to this workspace. Each one is identified by its network and address.",
+            "description": "Add the accounts belonging to this workspace. Each one is identified by its network and address.",
             "name": "Add accounts",
             "title": "Add accounts"
           },
@@ -4353,11 +4353,10 @@
           "safe": "Safe"
         }
       },
-      "workspaceAccountSelectorProvider": {
-        "allAccounts": "All accounts",
+      "workspaceAccountGate": {
         "error": {
-          "description": "Something went wrong while loading the workspace. Please try again later.",
-          "title": "Workspace failed to load"
+          "description": "This account could not be loaded. Please try again later or open another account.",
+          "heading": "Dashboard could not be loaded"
         }
       },
       "workspaceAssetList": {
@@ -4395,14 +4394,6 @@
           "owner": "Owner",
           "resources": "Resources"
         },
-        "daoError": {
-          "description": "The DAO of the selected account could not be loaded. Please try again later or select another account.",
-          "heading": "Dashboard could not be loaded"
-        },
-        "notFound": {
-          "description": "No workspace with the ID \"{{id}}\" exists in this browser.",
-          "title": "Workspace not found"
-        },
         "section": {
           "accounts": "Accounts",
           "targets": "Targets",
@@ -4413,24 +4404,26 @@
           "targets": "Targets"
         }
       },
+      "workspaceGate": {
+        "error": {
+          "description": "Something went wrong while loading the workspace. Please try again later.",
+          "title": "Workspace failed to load"
+        }
+      },
       "workspaceInfoAside": {
         "accounts": "Accounts",
         "owner": "Owner"
       },
       "workspaceMembersPage": {
-        "daoError": {
-          "description": "The DAO of the selected account could not be loaded. Please try again later or select another account.",
-          "heading": "Members could not be loaded"
-        },
         "emptyState": {
-          "description": "This will show the members of the DAOs in this workspace when available.",
+          "description": "This will show the members of the accounts in this workspace when available.",
           "heading": "No members found"
         },
         "main": {
           "title": "Members"
         },
         "selectAccount": {
-          "description": "Members are listed one DAO at a time. Select a DAO account in the account selector to see its members.",
+          "description": "Members are listed one account at a time. Open an account of this workspace to see its members.",
           "heading": "Select an account"
         }
       },
@@ -4464,7 +4457,7 @@
       },
       "workspaceProposalList": {
         "emptyState": {
-          "description": "The DAOs of this workspace have no proposals yet.",
+          "description": "The accounts of this workspace have no proposals yet.",
           "heading": "No proposals"
         },
         "entity": "Proposals",
@@ -4474,8 +4467,8 @@
         }
       },
       "workspaceAllProposalsAsideCard": {
+        "accounts": "Accounts",
         "allProposals": "All proposals",
-        "daos": "DAOs",
         "mostRecent": "Most recent",
         "recentUnit": " {{unit}} ago",
         "total": "Total proposals"
@@ -4499,6 +4492,9 @@
           "dao": "DAO",
           "safe": "Safe"
         }
+      },
+      "useWorkspaceAccountOptions": {
+        "allAccounts": "All accounts"
       },
       "workspaceSelector": {
         "create": "Create workspace"

@@ -6,6 +6,10 @@ import { useState } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspace, useWorkspaceList } from '../../api/workspaceService';
+import {
+    workspaceAllAccountsSegment,
+    workspaceUtils,
+} from '../../utils/workspaceUtils';
 
 export interface IWorkspaceSelectorProps {
     /**
@@ -30,9 +34,15 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     });
     const { data: workspaces = [] } = useWorkspaceList();
 
-    // The account selection belongs to the previous workspace, so the new one is opened on its overview without it.
+    // The account scope belongs to the previous workspace, so the new one opens on its aggregated overview.
     const handleSelectWorkspace = (id: string) =>
-        router.push(`/workspace/${id}/overview`);
+        router.push(
+            workspaceUtils.getAccountScopeUrl(
+                id,
+                workspaceAllAccountsSegment,
+                'overview',
+            ),
+        );
 
     const handleCreateWorkspace = () => router.push('/create/workspace');
 

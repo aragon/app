@@ -6,7 +6,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
+import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import * as workspaceAllAssetsAsideCard from './workspaceAllAssetsAsideCard';
 import {
     type IWorkspaceAssetsAsideCardProps,
@@ -41,7 +41,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         network: Network.ETHEREUM_SEPOLIA,
     };
 
-    const allAccountsOption: IWorkspaceAccountFilterOption = {
+    const allAccountsOption: IWorkspaceAccountOption = {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
@@ -98,7 +98,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
 
     it('renders the DAO card when the selected account is a DAO', () => {
         const metadata = generatePaginatedResponseMetadata();
-        const activeOption: IWorkspaceAccountFilterOption = {
+        const activeOption: IWorkspaceAccountOption = {
             id: daoAccount.id,
             label: 'Demo DAO',
             account: daoAccount,
@@ -115,7 +115,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
     });
 
     it('falls back to the aggregated card for account types with no card of their own', () => {
-        const activeOption: IWorkspaceAccountFilterOption = {
+        const activeOption: IWorkspaceAccountOption = {
             id: safeAccount.id,
             label: 'Demo Safe',
             account: safeAccount,

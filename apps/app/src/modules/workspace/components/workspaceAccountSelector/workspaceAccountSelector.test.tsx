@@ -1,7 +1,9 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
@@ -12,7 +14,7 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
-import * as workspaceAccountSelectorProvider from '../workspaceAccountSelectorProvider';
+import * as useWorkspaceAccountOptionsHook from '../../hooks/useWorkspaceAccountOptions';
 import {
     type IWorkspaceAccountSelectorProps,
     WorkspaceAccountSelector,
@@ -24,11 +26,14 @@ describe('<WorkspaceAccountSelector /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
-    const useWorkspaceAccountSelectorContextSpy = jest.spyOn(
-        workspaceAccountSelectorProvider,
-        'useWorkspaceAccountSelectorContext',
+    const useWorkspaceAccountOptionsSpy = jest.spyOn(
+        useWorkspaceAccountOptionsHook,
+        'useWorkspaceAccountOptions',
     );
-    const setActiveOptionMock = jest.fn();
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
+    const pushMock = jest.fn();
+    const prefetchMock = jest.fn();
 
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
@@ -48,25 +53,29 @@ describe('<WorkspaceAccountSelector /> component', () => {
         targets: [],
     };
 
-    const allAccountsOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
-        { id: 'all', label: 'All accounts', isAllAccounts: true };
-
-    const daoOption: workspaceAccountSelectorProvider.IWorkspaceAccountFilterOption =
+    const allAccountsOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption =
         {
-            id: daoAccount.id,
-            label: 'Demo DAO',
-            account: daoAccount,
-            isAllAccounts: false,
+            id: 'all',
+            label: 'All accounts',
+            isAllAccounts: true,
         };
 
-    const mockAccountSelector = (
-        context?: Partial<workspaceAccountSelectorProvider.IWorkspaceAccountSelectorContext>,
+    const daoOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption = {
+        id: daoAccount.id,
+        label: 'Demo DAO',
+        account: daoAccount,
+        isAllAccounts: false,
+    };
+
+    const mockAccountOptions = (
+        result?: Partial<useWorkspaceAccountOptionsHook.IUseWorkspaceAccountOptionsResult>,
     ) =>
-        useWorkspaceAccountSelectorContextSpy.mockReturnValue({
-            activeOption: allAccountsOption,
-            setActiveOption: setActiveOptionMock,
+        useWorkspaceAccountOptionsSpy.mockReturnValue({
             options: [allAccountsOption, daoOption],
-            ...context,
+            accountId: allAccountsOption.id,
+            activeOption: allAccountsOption,
+            isAllAccounts: true,
+            ...result,
         });
 
     beforeEach(() => {
@@ -77,15 +86,25 @@ describe('<WorkspaceAccountSelector /> component', () => {
         cidToSrcSpy.mockImplementation((cid) =>
             cid != null ? `https://ipfs/${cid}` : undefined,
         );
-        mockAccountSelector();
+        useRouterSpy.mockReturnValue({
+            push: pushMock,
+            prefetch: prefetchMock,
+        } as unknown as AppRouterInstance);
+        usePathnameSpy.mockReturnValue(
+            '/workspace/test-workspace/all/proposals',
+        );
+        mockAccountOptions();
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
-        useWorkspaceAccountSelectorContextSpy.mockReset();
-        setActiveOptionMock.mockReset();
+        useWorkspaceAccountOptionsSpy.mockReset();
+        useRouterSpy.mockReset();
+        usePathnameSpy.mockReset();
+        pushMock.mockReset();
+        prefetchMock.mockReset();
     });
 
     const createTestComponent = (
@@ -128,17 +147,78 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(cidToSrcSpy).toHaveBeenCalledWith('workspace-cid');
     });
 
-    it('selects the clicked option', async () => {
+    it('routes the selected option to the current section of its own account scope', async () => {
         render(createTestComponent());
 
         await userEvent.click(screen.getByRole('button'));
         await userEvent.click(await screen.findByText('Demo DAO'));
 
-        expect(setActiveOptionMock).toHaveBeenCalledWith(daoOption);
+        expect(pushMock).toHaveBeenCalledWith(
+            `/workspace/test-workspace/${daoAccount.id}/proposals`,
+        );
+    });
+
+    it('routes to the overview when the current URL names no section', async () => {
+        usePathnameSpy.mockReturnValue('/workspace/test-workspace');
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+        await userEvent.click(await screen.findByText('Demo DAO'));
+
+        expect(pushMock).toHaveBeenCalledWith(
+            `/workspace/test-workspace/${daoAccount.id}/overview`,
+        );
+    });
+
+    it('closes the dropdown on the selected option', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+        await userEvent.click(await screen.findByText('Demo DAO'));
+
+        await waitFor(() =>
+            expect(screen.queryByRole('menuitem')).not.toBeInTheDocument(),
+        );
+    });
+
+    it('prefetches the route of every option when the dropdown opens', async () => {
+        render(createTestComponent());
+
+        expect(prefetchMock).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByRole('button'));
+
+        await waitFor(() =>
+            expect(prefetchMock).toHaveBeenCalledWith(
+                `/workspace/test-workspace/${daoAccount.id}/proposals`,
+            ),
+        );
+        expect(prefetchMock).toHaveBeenCalledWith(
+            '/workspace/test-workspace/all/proposals',
+        );
+    });
+
+    it('checks the option named by the URL and marks the others with a chevron', async () => {
+        mockAccountOptions({
+            accountId: daoOption.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const items = await screen.findAllByRole('menuitem');
+        expect(
+            within(items[1] as HTMLElement).getByTestId(IconType.CHECKMARK),
+        ).toBeInTheDocument();
+        expect(
+            within(items[0] as HTMLElement).getByTestId(IconType.CHEVRON_RIGHT),
+        ).toBeInTheDocument();
     });
 
     it('renders nothing when there is no option to choose between', () => {
-        mockAccountSelector({ options: [allAccountsOption] });
+        mockAccountOptions({ options: [allAccountsOption] });
         const { container } = render(createTestComponent());
 
         expect(container).toBeEmptyDOMElement();

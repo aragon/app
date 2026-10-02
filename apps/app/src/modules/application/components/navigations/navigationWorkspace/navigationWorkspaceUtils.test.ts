@@ -43,6 +43,23 @@ describe('navigationWorkspace utils', () => {
     });
 
     describe('buildLinks', () => {
+        it('scopes every link to the given account', () => {
+            const accountId = 'ethereum-sepolia-0x123';
+            const links = navigationWorkspaceUtils.buildLinks(
+                buildWorkspace(),
+                'page',
+                accountId,
+            );
+
+            expect(links.map((link) => link.link)).toEqual([
+                `/workspace/demo/${accountId}/overview`,
+                `/workspace/demo/${accountId}/proposals`,
+                `/workspace/demo/${accountId}/members`,
+                `/workspace/demo/${accountId}/assets`,
+                `/workspace/demo/${accountId}/transactions`,
+            ]);
+        });
+
         it('only links to the pages that exist', () => {
             const links = navigationWorkspaceUtils.buildLinks(
                 buildWorkspace(),
@@ -50,16 +67,16 @@ describe('navigationWorkspace utils', () => {
             );
 
             expect(links.map((link) => link.link)).toEqual([
-                '/workspace/demo/overview',
-                '/workspace/demo/proposals',
-                '/workspace/demo/members',
-                '/workspace/demo/assets',
-                '/workspace/demo/transactions',
+                '/workspace/demo/all/overview',
+                '/workspace/demo/all/proposals',
+                '/workspace/demo/all/members',
+                '/workspace/demo/all/assets',
+                '/workspace/demo/all/transactions',
             ]);
         });
 
         it('only displays the overview in the navigation dialog', () => {
-            const overviewUrl = '/workspace/demo/overview';
+            const overviewUrl = '/workspace/demo/all/overview';
 
             const pageLink = navigationWorkspaceUtils
                 .buildLinks(buildWorkspace(), 'page')
@@ -74,7 +91,7 @@ describe('navigationWorkspace utils', () => {
 
         it('lists every page link in both the navigation bar and the navigation dialog', () => {
             const isPageLink = (link: { link: string }) =>
-                link.link !== '/workspace/demo/overview';
+                link.link !== '/workspace/demo/all/overview';
 
             const pageLinks = navigationWorkspaceUtils
                 .buildLinks(buildWorkspace(), 'page')

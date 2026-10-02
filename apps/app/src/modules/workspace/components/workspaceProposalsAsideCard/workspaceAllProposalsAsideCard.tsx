@@ -82,7 +82,7 @@ export const WorkspaceAllProposalsAsideCard: React.FC<
             suffix: undefined as string | undefined,
         },
         {
-            label: t('app.workspace.workspaceAllProposalsAsideCard.daos'),
+            label: t('app.workspace.workspaceAllProposalsAsideCard.accounts'),
             value: formatCount(accounts.length),
             suffix: undefined,
         },

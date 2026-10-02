@@ -240,11 +240,16 @@ taken. Falls back to `workspace` when the name slugifies to nothing.
 
 ### Consequence: no server prefetch
 
-`localStorage` is client-only, so the workspace pages are thin `Page.Container` shells with **no** `prefetchQuery`;
-their client components call `useWorkspace`, and `workspaceService` rejects when called on the server. This
-diverges from the prefetch-then-hydrate pattern in `dataFetching.md` and is the one shape that can work with a
-client-side registry. It reverts to the normal pattern when a real registry lands. Do not add a server prefetch
-while the registry is `localStorage`-backed — it will always miss and can produce hydration mismatches.
+`localStorage` is client-only, so the aggregated (`all/`) pages are thin `Page.Container` shells with **no**
+`prefetchQuery`; their client components call `useWorkspace`, and `workspaceService` rejects when called on the
+server. This diverges from the prefetch-then-hydrate pattern in `dataFetching.md` and is the one shape that can
+work with a client-side registry. It reverts to the normal pattern when a real registry lands. Do not add a server
+prefetch of anything that comes out of the registry while it is `localStorage`-backed — it will always miss and can
+produce hydration mismatches.
+
+**The account-scoped routes are the exception, and not one that breaks the rule.** They read nothing from the
+registry: an account ID is a DAO ID, so `LayoutWorkspaceAccount` resolves the DAO straight from the path. The
+*workspace* still cannot be prefetched; the *account* always can.
 
 ## Routes and layouts
 
@@ -262,10 +267,19 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
   (`src/modules/workspace/components/layoutWizardCreateWorkspace/`, same body as `LayoutWizardCreateDao` with
   `name="app.workspace.layoutWizardCreateWorkspace.name"`)
 - **add** `src/app/create/workspace/page.tsx` → `CreateWorkspacePage`
-- **add** `src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}` → `WorkspaceDetailsPage`
+- **add** the workspace route tree, every section scoped to an account:
 
-No `src/app/workspace/[workspaceId]/layout.tsx` is added, deliberately: branch 1096 adds that exact file, so
-skipping it keeps the collision surface to nothing.
+```
+src/app/workspace/[workspaceId]/
+├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
+├─ all/{overview,proposals,assets,transactions,members}/page.tsx
+└─ [accountId]/
+   └─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
+```
+
+The `all/` directory is static and sits beside the dynamic `[accountId]/`. Next resolves static segments first, so
+each gets its own route file, its own RSC and its own prefetch behaviour — which is what lets the account tree
+prefetch a DAO while the aggregate tree does not try to.
 
 `LayoutWizard` is an async server component that resolves a DAO from `params` when present; with no params it
 just renders `NavigationWizard` with no DAO, which is what both create flows want.
@@ -310,24 +324,53 @@ name ?? truncated address` — so an option and its row never disagree.
 **Only DAO accounts can be selected.** The selector options are DAO-only for every page: the aggregated option still
 covers every account, so a Safe's balances are visible there, but a Safe has no option of its own.
 
-### Account selection
+### Account scope
 
-The selected account is shared by every workspace page. `WorkspaceAccountSelectorProvider`, rendered by
-`LayoutWorkspace` around the navigation and the pages, builds the options ("All accounts" first, then one per DAO
-account) and keeps the selection on the `?account=` URL param. It also remembers the last selection, so it survives
-navigating to a page whose link carries no param. The provider owns the workspace loading lifecycle as well: it
-renders a spinner while the workspace loads and a generic error when it fails, so the pages can assume a loaded
-workspace.
+**The path says what you are looking at; the query string says how.** The account a page shows is therefore a path
+segment, not a parameter:
 
-`WorkspaceAccountSelector`, in `NavigationWorkspace`, is the only control for the selection: a dropdown showing
-the avatar and name of each option (the workspace avatar for "All accounts", the DAO avatar for a DAO account).
-Pages only read the selection. The members page reads members one DAO at a time, so with "All accounts" selected
-it asks the user to pick an account instead of showing a list.
+| Route | Shows |
+| --- | --- |
+| `/workspace/{workspaceId}/all/{section}` | every account of the workspace, aggregated |
+| `/workspace/{workspaceId}/{accountId}/{section}` | one account |
 
-`WorkspaceSelector`, the workspace avatar pill before it, switches workspace: a dropdown of every stored workspace
-plus a "Create workspace" item. Picking one opens its overview, and `?account=` is dropped since account IDs
-belong to the previous workspace. The pill used to open the navigation dialog, so the dialog now opens from the menu
-button, placed first in the bar and visible at every width.
+The account segment is always filled — by an account ID or by the `all` sentinel
+(`workspaceUtils.workspaceAllAccountsSegment`). It cannot collide with an account ID, which is always
+`{network}-{address}`. URLs are built only through `workspaceUtils.getAccountScopeUrl`. Three redirects fill in the
+segments a URL is missing (`next.config.mjs`): `/workspace/{workspaceId}` opens `all/overview`; a section with no
+account in front of it — the shape these URLs had before the account moved onto the path — opens the same section
+under `all`; and an account scope with no section, `all` included, opens the overview of that account. The account
+rule matches the account segment **on its shape**, so that a section is never read as an account and sent on to a
+second redirect. All three are temporary (307): a permanent one is cached by the browser, which would go on
+resolving URLs against a shape the app no longer serves.
+
+The account scopes the path **before** the section, mirroring `/dao/{network}/{addressOrEns}/{section}`, so that
+everything below one account shares a scope. That is what lets `LayoutWorkspaceAccount` fetch the account's DAO
+once and hydrate it for every section below, the way `LayoutDao` does for the DAO pages — an account ID *is* a DAO
+ID, so the server resolves it without reading the registry. Both its reads use `prefetchQuery`, which resolves
+rather than throws: a workspace holds Safes as well as DAOs, and a Safe has no DAO.
+
+Why not a parameter: the selection used to live on `?account=`, moved with `history.replaceState`. That never
+re-runs the server component, so the account was invisible to the server and nothing about an account-scoped page
+could be prefetched. It also could not express an account the workspace does not hold — `?account=X` asserts *"the
+selected option is X"*, and there is no honest value for it when X is not an option.
+
+Two pieces replace the old provider:
+
+- **`WorkspaceGate`**, in `LayoutWorkspace`, owns the workspace loading lifecycle — a spinner while it loads, an
+  error when it fails — so every page below can assume a loaded workspace.
+- **`useWorkspaceAccountOptions`** returns the options to switch to plus the `accountId` from the route, read with
+  `useParams()`. It is a hook and not a context because both of its reads go through React Query, whose cache
+  already shares them. Note `activeOption` may be undefined while `accountId` is set: what is being *looked at* is
+  not the same question as what can be *switched to*.
+
+Only DAO accounts become options. The aggregated option still covers every account, so a Safe's balances are
+visible there, but a Safe has no option of its own.
+
+`WorkspaceSelector`, the workspace avatar pill, switches workspace: a dropdown of every stored workspace plus a
+"Create workspace" item. Picking one opens its aggregated overview, since account IDs belong to the previous
+workspace. The pill used to open the navigation dialog, so the dialog now opens from the menu button, placed first
+in the bar and visible at every width.
 
 The aside is `WorkspaceAssetsAsideCard`, a router over one card per account type: `WorkspaceDaoAssetsAsideCard` for
 a DAO account and `WorkspaceAllAssetsAsideCard` for the aggregated option (and, until it has a card of its own, for

@@ -20,11 +20,11 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import {
     generateWorkspaceQueryResponse,
     generateWorkspaceTransaction,
 } from '../../testUtils';
-import type { IWorkspaceAccountFilterOption } from '../workspaceAccountSelectorProvider';
 import {
     type IWorkspaceTransactionsAsideCardProps,
     WorkspaceTransactionsAsideCard,
@@ -66,7 +66,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         targets: [],
     };
 
-    const daoOption: IWorkspaceAccountFilterOption = {
+    const daoOption: IWorkspaceAccountOption = {
         id: daoAccount.id,
         label: 'Demo DAO',
         account: daoAccount,

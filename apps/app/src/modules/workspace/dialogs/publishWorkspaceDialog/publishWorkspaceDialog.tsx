@@ -23,6 +23,10 @@ import {
     workspaceServiceKeys,
 } from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
+import {
+    workspaceAllAccountsSegment,
+    workspaceUtils,
+} from '../../utils/workspaceUtils';
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
 export interface IPublishWorkspaceDialogParams {
@@ -136,7 +140,11 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     const primaryAction = isSuccess
         ? {
               label: t('app.workspace.publishWorkspaceDialog.button.success'),
-              href: `/workspace/${workspaceId!}/overview`,
+              href: workspaceUtils.getAccountScopeUrl(
+                  workspaceId!,
+                  workspaceAllAccountsSegment,
+                  'overview',
+              ),
               onClick: () => close(location.id),
           }
         : {
