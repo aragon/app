@@ -80,7 +80,7 @@ line of defense the app tooling is also shielded from the shims (jest pins
 - `process is not defined`: `.design-sync/process-shim.ts` is the FIRST import of app-entry (import hoisting — a later statement would run too late).
 - Entry graph landmines (why some components are excluded): `monitoringUtils → @sentry/nextjs → next server`; `daoUtils → daoService api tree → sentry`; `policyDisplayUtils → capitalFlow module tree`. Anything importing shared/api or shared/utils/daoUtils is unbundlable — trace with an esbuild onResolve logger before adding components.
 - `FormWrapper` is exported from the entry so previews AND the design agent get react-hook-form context from the bundle's own RHF copy.
-- App `Link` is excluded (collides with kit `Link`); app `DialogRoot` is exported as `AppDialogRoot` (bundle-only, no folder).
+- App `Link` is excluded because it collides with kit `Link`; app `DialogRoot` is excluded because its `ErrorBoundary` pulls `@sentry/nextjs` and Next server internals into the portable bundle.
 
 ## Preview-authoring learnings (wave 4 — app components, 2026-07-16)
 
