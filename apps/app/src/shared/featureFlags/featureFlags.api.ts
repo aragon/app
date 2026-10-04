@@ -19,6 +19,7 @@ export type FeatureFlagKey =
     | 'existingProposalCreationCondition'
     | 'aragonProfiles'
     | 'supportChat'
+    | 'supportChatDocs'
     | 'telegramSubscription'
     | 'domainMemberList';
 

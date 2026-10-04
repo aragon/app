@@ -1,0 +1,43 @@
+name: GitHub Ensure PR Comment
+description: Creates or updates the PR comment that carries a given tag, so reruns edit one comment instead of stacking new ones.
+
+inputs:
+  tag:
+    description: Tag that identifies the comment across runs
+    required: true
+  message:
+    description: Comment body (markdown)
+    required: true
+  token:
+    description: GitHub token with pull-requests write access
+    required: true
+  pr_number:
+    description: Pull request number (defaults to the PR that triggered the run)
+    required: false
+    default: ${{ github.event.pull_request.number }}
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        MESSAGE: ${{ inputs.message }}
+        PR_NUMBER: ${{ inputs.pr_number }}
+        REPO: ${{ github.repository }}
+        # Same marker thollander/actions-comment-pull-request wrote, so comments posted before the
+        # switch keep being updated in place.
+        MARKER: <!-- thollander/actions-comment-pull-request "${{ inputs.tag }}" -->
+      run: |
+        set -euo pipefail
+        BODY_FILE="$(mktemp)"
+        trap 'rm -f "$BODY_FILE"' EXIT
+        printf '%s\n%s' "$MESSAGE" "$MARKER" > "$BODY_FILE"
+
+        COMMENT_ID="$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" \
+          --jq '.[] | select(.body | contains(env.MARKER)) | .id' | head -n 1)"
+        if [ -n "$COMMENT_ID" ]; then
+          gh api -X PATCH "repos/$REPO/issues/comments/$COMMENT_ID" -F body=@"$BODY_FILE" > /dev/null
+        else
+          gh api -X POST "repos/$REPO/issues/$PR_NUMBER/comments" -F body=@"$BODY_FILE" > /dev/null
+        fi

@@ -36,11 +36,13 @@ export const AutocompleteInput = forwardRef<
         onKeyDown,
         onOpenChange,
         selectItemLabel,
+        keepInputOnSelect = false,
+        defaultInputValue = '',
         ...otherProps
     } = props;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(defaultInputValue);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const updateOpenState = (open: boolean) => {
@@ -50,7 +52,11 @@ export const AutocompleteInput = forwardRef<
 
     const handleItemSelected = (item: IAutocompleteInputItem) => {
         updateOpenState(false);
-        setInputValue('');
+
+        if (!keepInputOnSelect) {
+            setInputValue('');
+        }
+
         onChange?.(item.id, inputValue);
     };
 

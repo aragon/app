@@ -24,6 +24,9 @@ export interface IPluginInfo extends IPlugin {
     setup?: IPluginInfoSetup;
     /**
      * Plugin-specific pages shown on the DAO navigation. Use `order` on each link to control position.
+     * The links are the same wherever the navigation renders: the bar drops its inline links on the
+     * width of the application column, which the portalled dialog cannot observe, so a link that is
+     * listed in one surface and not the other would become unreachable.
      */
-    pageLinks?: (baseUrl: string, context: string) => INavigationLink[];
+    pageLinks?: (baseUrl: string) => INavigationLink[];
 }

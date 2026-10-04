@@ -32,7 +32,7 @@ class NavigationDaoUtils {
         const baseUrl = daoUtils.getDaoUrl(dao)!;
 
         const defaultLinks = this.getDefaultLinks(dao, baseUrl, context);
-        const pluginLinks = this.getPluginLinks(dao, baseUrl, context);
+        const pluginLinks = this.getPluginLinks(dao, baseUrl);
 
         const allLinks = [...defaultLinks, ...pluginLinks].sort(
             (a, b) => (a.order ?? 0) - (b.order ?? 0),
@@ -52,6 +52,30 @@ class NavigationDaoUtils {
         });
     };
 
+    /**
+     * Links of the navigation dialog. While the bar is expanded, the dialog skips the links the bar
+     * already shows.
+     */
+    buildDialogLinks = (
+        dao: IDao,
+        isBarCollapsed: boolean,
+        navLinksToHide?: string[],
+    ): INavigationLink[] => {
+        const dialogLinks = this.buildLinks(dao, 'dialog', navLinksToHide);
+
+        if (isBarCollapsed) {
+            return dialogLinks;
+        }
+
+        const inlineLinks = new Set(
+            this.buildLinks(dao, 'page', navLinksToHide)
+                .filter((link) => !link.hidden)
+                .map((link) => link.link),
+        );
+
+        return dialogLinks.filter((link) => !inlineLinks.has(link.link));
+    };
+
     private getDefaultLinks = (
         dao: IDao,
         baseUrl: string,
@@ -61,7 +85,6 @@ class NavigationDaoUtils {
         const hasBodyPlugin = daoUtils.hasPluginBody(dao);
 
         const isPageContext = context === 'page';
-        const isDialogContext = context === 'dialog';
 
         return [
             {
@@ -83,7 +106,6 @@ class NavigationDaoUtils {
                 link: `${baseUrl}/proposals`,
                 icon: IconType.APP_PROPOSALS,
                 hidden: !isSupported,
-                lgHidden: isDialogContext,
                 order: 200,
             },
             {
@@ -91,21 +113,18 @@ class NavigationDaoUtils {
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
                 hidden: !(isSupported && hasBodyPlugin),
-                lgHidden: isDialogContext,
                 order: 300,
             },
             {
                 label: 'app.application.navigationDao.link.assets',
                 link: `${baseUrl}/assets`,
                 icon: IconType.APP_ASSETS,
-                lgHidden: isDialogContext,
                 order: 400,
             },
             {
                 label: 'app.application.navigationDao.link.transactions',
                 link: `${baseUrl}/transactions`,
                 icon: IconType.APP_TRANSACTIONS,
-                lgHidden: isDialogContext,
                 order: 500,
             },
             {
@@ -121,7 +140,6 @@ class NavigationDaoUtils {
     private getPluginLinks = (
         dao: IDao,
         baseUrl: string,
-        context: NavigationDaoContext,
     ): INavigationLink[] => {
         const plugins =
             daoUtils.getDaoPlugins(dao, { includeLinkedAccounts: false }) ?? [];
@@ -131,7 +149,7 @@ class NavigationDaoUtils {
                 plugin.interfaceType,
             ) as IPluginInfo | undefined;
 
-            return pluginInfo?.pageLinks?.(baseUrl, context) ?? [];
+            return pluginInfo?.pageLinks?.(baseUrl) ?? [];
         });
     };
 }

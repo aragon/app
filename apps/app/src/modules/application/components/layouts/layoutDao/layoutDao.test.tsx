@@ -94,14 +94,14 @@ describe('<LayoutDao /> component', () => {
 
         render(await createTestComponent({ children: <Children /> }));
         expect(screen.getByTestId('navigation-dao-mock')).toBeInTheDocument();
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     });
 
     it('renders error with a link to explore page on fetch DAO error', async () => {
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent());
-        const errorLink = screen.getByRole('link', { name: /link.explore/ });
+        const errorLink = screen.getByRole('link', { name: 'Explore DAOs' });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual('/');
     });

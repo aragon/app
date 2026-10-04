@@ -26,13 +26,11 @@ describe('<Page.Error /> component', () => {
             createTestComponent({ actionLink, errorNamespace, error: 'error' }),
         );
 
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
         expect(
-            screen.getByText(/errorFeedback.description/),
+            screen.getByText(/you can report the issue to our team/),
         ).toBeInTheDocument();
-        expect(
-            screen.getByText(/errorFeedback.link.report/),
-        ).toBeInTheDocument();
+        expect(screen.getByText('Report issue')).toBeInTheDocument();
 
         const customLink = screen.getByRole('link', {
             name: `${errorNamespace}.action`,
@@ -60,9 +58,7 @@ describe('<Page.Error /> component', () => {
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
 
-        expect(
-            screen.queryByText(/errorFeedback.link.report/),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('Report issue')).not.toBeInTheDocument();
     });
 
     it('renders the specified error title and description', () => {

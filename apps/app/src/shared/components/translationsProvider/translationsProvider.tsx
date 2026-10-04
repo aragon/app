@@ -86,14 +86,16 @@ export const useTranslations = () => {
  * TranslationsProvider is not available. Use this in error boundary components
  * or other places where the provider might not be mounted yet.
  *
- * Falls back to returning the translation key as-is if no provider is found.
+ * Without a provider, resolves the key from the given dictionary and falls back
+ * to the key itself.
  */
-export const useSafeTranslations = (): ITranslationContext => {
+export const useSafeTranslations = (
+    fallbackTranslations?: Record<string, string>,
+): ITranslationContext => {
     const values = useContext(translationsContext);
 
     if (values == null) {
-        // Fallback: return the key as-is (useful for error boundaries)
-        return { t: (key: string) => key };
+        return { t: (key: string) => fallbackTranslations?.[key] ?? key };
     }
 
     return values;

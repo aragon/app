@@ -1,5 +1,10 @@
 # design-sync notes
 
+For the current candidate workflow, see [APP-1208 repeatable refresh](#app-1208-repeatable-refresh).
+The dated run notes below preserve historical observations, not current package,
+source-equivalence, grading, or upload claims. Use the fresh payload manifest and
+converter verdict for the candidate being evaluated.
+
 ## Isolation rule (read first)
 
 Sync sessions MUST NOT run in the developer's main checkout — the bundle build
@@ -20,13 +25,16 @@ line of defense the app tooling is also shielded from the shims (jest pins
 
 ## Re-sync risks (watch-list for the next run)
 
-- **Kit is on 2.10.0 and the anchor now matches it.** Previews and grades were fully re-verified against `@aragon/gov-ui-kit@2.10.0` on 2026-08-24 and uploaded, so APP-1084's "pending write access" blocker is closed. The three upstream kit bugs noted below are fixed in 2.10.0 and confirmed visually.
+- **Kit moved to 2.11.4 and the uploaded anchor has NOT been re-verified against it.** The APP-1208 candidate builds against `@aragon/gov-ui-kit@2.11.4`; the last full re-verification (previews, grades, upload) was against 2.10.0 on 2026-08-24, which closed APP-1084's "pending write access" blocker and confirmed the three upstream kit fixes. Treat every 2.10.0 grade as carried, not re-verified: the 2.10.0→2.11.4 anchor diff still has to scope a re-verification pass, and the two checks in the next bullet (emitted-utility names in `conventions.md`, the app's radix ranges) are outstanding for this bump.
 - **Kit version drift:** on the next bump the anchor diff scopes re-verification. There is no Storybook ground truth any more — the old claim rested on a local `gov-ui-kit` checkout at `c:\dev\gov-ui-kit`, which does not exist on this machine; grading is on the absolute rubric. Also re-check `conventions.md`'s emitted-utility names and the app's radix ranges on every bump (both sections below).
-- **CSS is compiled at sync time** by `cfg.buildCmd` from `.design-sync/tailwind-entry.css` — it inlines the app's `--guk-*` overrides copied from `layoutRoot.css`; if the app changes those overrides, re-copy them into the entry file (they do NOT sync automatically).
+- **CSS is compiled at sync time** by `cfg.buildCmd` from `.design-sync/tailwind-entry.css` — it consumes the generated GovKit artifact, whose seven App `--guk-*` overrides come from `layoutRoot.overrides.css`; regenerate tokens after changing that generator input (it is not a runtime import).
 - **Tailwind CLI version:** `@tailwindcss/cli` is an `apps/app` devDependency managed by the repo's pnpm lockfile and shared catalog; `build-css.mjs` verifies it matches the app's installed `tailwindcss` version, so update both catalog entries in the same PR as any Tailwind bump.
 - **Dialog/DialogAlert previews** depend on the force-open workaround (frozen-clock + framer-motion); a kit animation refactor may break them silently — check their sheets on any kit bump.
 - **Transient validate flake:** Accordion occasionally reports `[RENDER] root empty` in driver runs (animation timing); a re-run clears it. Don't chase unless it repeats.
 - The module components (25) and 5 infrastructure primitives ship floor cards by design — the standing offer for incremental authoring on any later re-sync (slice 2: modules with `GukModulesProvider` wrapping).
+- **Four `.design-sync/overrides/*.mjs` forks now wrap converter internals** (`emit.mjs`, `dts.mjs`, `docs.mjs` + the shared `app-ownership.mjs`), declared in `cfg.libOverrides`. They call into bundled internals — `base.emitPerComponent`, `base.emitReadme`, `propsBodyFor(name, ctx)`, `base.loadDts` — and assert on exact generated text (the `— from …` d.ts header, the `// Re-export of …` JSX line, the prompt header, the README's "For a specific component," anchor). §3.11 re-copies `.ds-sync/` from the skill dir on every re-sync, so a converter update can invalidate them silently. After any converter update run `node --test .design-sync/refresh.test.mjs`, which compiles every App-owned `.d.ts` as a consumer contract, and diff the GovKit output for unintended change. Their bytes also enter the grade key via `configSlicesFor`, so touching them re-grades everything.
+- **The emit fork now also touches GovKit `.d.ts`, not just App files.** Two deliberate widenings: kit compound members were emitted as `React.ComponentType<any>` by the base template (61 of them — `Dialog.Header`, `Tabs.Trigger`, …), and are now typed from the shipped member props the base extractor already had; and React type names the base renderer leaves bare (`style?: CSSProperties` with only `import * as React`) are qualified. The bare-name defect is the BASE emitter's, not this fork's — `Card.d.ts` has no members and still carried it — but this fork now carries it too and is the thing that fixes it. Kit `.jsx`, `.prompt.md`, previews and every runtime artifact remain untouched base output.
+- **Still-dangling names in kit `.d.ts` — tracked in APP-1223, not fixed here.** The base extractor never populates `prelude`, so kit-owned type references are emitted unresolved: ~30 distinct names, led by `IInputContainerAlert` (15 refs), `ITagProps`, `ICompositeAddress`, `Config` and most of the `IProposalAction*` family. They parse — which is all the converter's `[DTS_PARSE]` checks — but do not resolve for a consumer. Also unfixed: 4 `unknown | X` unions in kit files (App-side ones are collapsed), and `.prompt.md` is unrefined base output, so it disagrees with the refined `.d.ts` for the same component. Beware the measurement, it has produced two wrong lists already: compound member keys (`Container`, `Root`, `Item`, `Structure`, `Skeleton`) are not type references, JSDoc prose (`Accept`, `Allows`, `ETH`) is not code, `Network` and `PluginInterfaceType` are declared locally in the App-owned `DaoTargetIndicator.d.ts` and do resolve, and generic parameters (`TFormData`, `TMeta`, `TStepId`) are bound by the emitted generics clause. Compiling the files is the honest measure. `refresh.test.mjs` covers the React class of this bug across every emitted file; the kit-owned class needs a kit-side type closure like the App one.
 
 - Sync source is THIS repo (`apps/app`), not gov-ui-kit. Decision 2026-07-16: the design system is the app's design layer; gov-ui-kit is a component library it inherits. One project ("Aragon App Design System") holds kit re-exports + app shared components across slices.
 - Slice plan (run-to-completion slices so verified work banks in the anchor): 1) gov-ui-kit core components ✓, 2) gov-ui-kit modules components ✓, 3) app shared components (wizards, dialogs, etc.) — FINAL slice. A design wiki (semantic layer / interaction patterns) is planned by the user but DOES NOT EXIST yet — do not attempt to read or distill it; when it exists, its distilled rules can join conventions.md via a re-sync.
@@ -34,7 +42,7 @@ line of defense the app tooling is also shielded from the shims (jest pins
 - Env: Git Bash resolves Node v23.1.0 (breaks pnpm 11 — no `node:sqlite`); PowerShell has Node 24.14 at `C:\Program Files\nodejs` but no `pnpm` on PATH. Use PowerShell with a standalone pnpm install (https://pnpm.io/installation) or `npx pnpm`.
 - Existing Claude Design project "Aragon Gov UI Kit — Design System" (owner Selim) is unrelated to this sync — do not touch.
 - **Kit build.css minifier bug — FIXED in `@aragon/gov-ui-kit@2.10.0`** (kit PR #745, APP-1081). The published `build.css` (≤2.9.0) was corrupted by its cssnano pass: rules with child selectors had their selector lists wrongly merged with dozens of unrelated utilities (~54 `md:*` gave children `border-right:1px`; ~140 `2xl:*` gave `&>:last-child{border-style:none}`), showing as stray vertical bars on AlertCard/Accordion for consumers of the precompiled file. It is now minified by Tailwind's own optimizer and guarded by `pnpm css:check`, so a consumer on ≥2.10.0 can trust the precompiled bundle.
-- The sync compiles CSS from source rather than using `build.css` regardless: `cfg.buildCmd` (`pnpm --workspace-root run design-sync:build-css`) mirrors the app's own wiring in `layoutRoot.css` (`@import tailwindcss` + kit `index.css` + `@source` scan of the kit package + the app's `--guk-*` z-index/positioning overrides) — those overrides are the reason it can't just consume `build.css`, independent of the (now-fixed) minifier bug. Output is written to `apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css` because `cfg.cssEntry` is security-bounded to the package dir; the file is regenerated on every sync so reinstalls are harmless.
+- The sync compiles CSS from source rather than using `build.css` regardless: `cfg.buildCmd` (`pnpm --workspace-root run design-sync:build-css`) mirrors the app's own wiring in `layoutRoot.css` (`@import tailwindcss` + GovKit core CSS + generated primitives + theme utils + the second Tailwind layer boundary + `@source` scans) — the generated artifact owns the seven App z-index/positioning overrides, so design-sync does not copy them from the runtime layout file. Output is written to `apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css` because `cfg.cssEntry` is security-bounded to the package dir; the file is regenerated on every sync so reinstalls are harmless.
 - `.design-sync/tailwind-entry.css` imports tailwind via a relative node_modules path (plain `"tailwindcss"` doesn't resolve from `.design-sync/`).
 
 ## Known render warns (triaged legitimate)
@@ -72,12 +80,12 @@ line of defense the app tooling is also shielded from the shims (jest pins
 - `process is not defined`: `.design-sync/process-shim.ts` is the FIRST import of app-entry (import hoisting — a later statement would run too late).
 - Entry graph landmines (why some components are excluded): `monitoringUtils → @sentry/nextjs → next server`; `daoUtils → daoService api tree → sentry`; `policyDisplayUtils → capitalFlow module tree`. Anything importing shared/api or shared/utils/daoUtils is unbundlable — trace with an esbuild onResolve logger before adding components.
 - `FormWrapper` is exported from the entry so previews AND the design agent get react-hook-form context from the bundle's own RHF copy.
-- App `Link` is excluded (collides with kit `Link`); app `DialogRoot` is exported as `AppDialogRoot` (bundle-only, no folder).
+- App `Link` is excluded because it collides with kit `Link`; app `DialogRoot` is excluded because its `ErrorBoundary` pulls `@sentry/nextjs` and Next server internals into the portable bundle.
 
 ## Preview-authoring learnings (wave 4 — app components, 2026-07-16)
 
 - Provider stack for app components: `DebugContextProvider > TranslationsProvider(enTranslations)`; add `BlockNavigationContextProvider` only for wizards. Wrap in TranslationsProvider even when a component looks presentational — subcomponents may call `useTranslations` (AutocompleteInput's menu).
-- `FormWrapper defaultValues` is the ONLY way to hydrate `useFieldArray`-backed lists (ResourcesInput/AddressesInput) — component-level `defaultValue` props don't.
+- `useFieldArray`-backed lists (ResourcesInput/AddressesInput) hydrate only from the enclosing react-hook-form provider's `defaultValues` — `FormWrapper` standalone, or the wizard container's own `defaultValues` inside a wizard. Component-level `defaultValue` props don't.
 - `Page.Container` needs the app's QueryClientProvider (react-query HydrationBoundary) — not in the bundle; previews use a plain div; the design agent should use Page.Main/Content/Aside/Header directly.
 - `Page.AsideCard` icon prop uses next/image (shimmed to <img> in the bundle).
 - App and kit share one radix copy in the bundle, so the DialogProvider + open Dialog.Root + force-open-style pattern works for app dialogs too.
@@ -159,3 +167,44 @@ bundle text, the colour/spacing/type families, Manrope in `fonts/`, and `--color
   read those sheets and write their grade files. After that every later run reports `pendingGrade: 0`.
   Grade files are gitignored (`.design-sync/.cache/`), so a fresh clone re-does this; the durable
   carry-forward is the uploaded `_ds_sync.json`.
+
+## APP-1208 repeatable refresh
+
+Run these commands from the worktree root. The kit checkout is an input only;
+the refresh never uploads or changes that checkout:
+
+```sh
+export GOVKIT_KIT_ROOT=/path/to/gov-ui-kit
+node .design-sync/refresh.mjs
+node .design-sync/refresh.mjs --check
+node --test .design-sync/refresh.test.mjs
+```
+
+The entrypoint first rejects a stale component registry or selection guide,
+then invokes the existing local `resync.mjs`/`package-build.mjs` path. It
+delivers the authoritative registry and selection guide under
+`ds-bundle/guidelines/context/`, alongside a generated commit-addressed source
+index and registry report. `README.md` links those shipped context files rather
+than source-only worktree paths.
+
+`ds-bundle/.payload-manifest.json` separates candidate upload files from
+capture/local evidence and records byte lengths, SHA-256 hashes, source/kit
+revisions, consumed package hashes and source-equivalence status, converter
+identity and guidance identity. An unavailable converter version remains `null`;
+the converter scripts, adapters, configuration and dependency lockfile are hashed.
+Upload is `candidate`; accepted and deployed remain `unknown`. The manifest is
+local evidence, not a remote receipt. A prior bundle is copied to
+`.design-sync/.cache/previous-ds-bundle/` before rebuilding so failed refreshes
+can restore the previous evidence.
+
+The upload list includes `_ds_sync.json`, which must be sent **last** after the
+converter's sentinel/content/deletion/re-arm sequence. Neither this command nor
+the manifest performs an upload. Do not update the original Design baseline.
+
+The App adapters delegate the official component emitter once over the full
+component list, then refine only App provenance and source-derived compound
+declarations. This deliberately departs from the upstream instruction not to
+fork `emit.mjs`: it uses the override loader but is not an upstream-endorsed
+emitter extension. GovKit templates and runtime output remain delegated to the
+official emitter. Re-run the contract checks and compare retained GovKit output
+when the converter changes; these adapters depend on its emitted structure.

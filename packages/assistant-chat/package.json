@@ -1,6 +1,6 @@
 {
     "name": "@aragon/assistant-chat",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "private": true,
     "description": "Support-chat widget for the Aragon App, backed by the Aragon assistant service",
     "homepage": "https://github.com/aragon/app#readme",
@@ -17,7 +17,7 @@
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "test": "jest",
-        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=origin/main",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch",
         "type-check": "tsc --noEmit"
@@ -32,10 +32,11 @@
         "@vercel/blob": "catalog:",
         "ai": "catalog:",
         "classnames": "catalog:",
+        "remark-gfm": "catalog:",
         "zod": "catalog:"
     },
     "devDependencies": {
-        "@aragon/gov-ui-kit": "catalog:",
+        "@aragon/gov-ui-kit": "workspace:*",
         "@biomejs/biome": "catalog:",
         "@tailwindcss/typography": "catalog:",
         "@tanstack/react-query": "catalog:",

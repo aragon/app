@@ -1,29 +1,30 @@
 import { render, screen } from '@testing-library/react';
+import translations from '@/assets/locales/en.json';
 import { ErrorFeedback, type IErrorFeedbackProps } from './errorFeedback';
 
 describe('<ErrorFeedback /> component', () => {
+    const { title, description, link } = translations.app.shared.errorFeedback;
+
     const createTestComponent = (props?: Partial<IErrorFeedbackProps>) => {
         const completeProps: IErrorFeedbackProps = { ...props };
 
         return <ErrorFeedback {...completeProps} />;
     };
 
-    it('renders the default error title and description', () => {
+    it('renders the default error title and description as text without a translations provider', () => {
         render(createTestComponent());
-        expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
-        expect(
-            screen.getByText(/errorFeedback.description/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(title)).toBeInTheDocument();
+        expect(screen.getByText(description)).toBeInTheDocument();
     });
 
     it('renders the correct default CTAs', () => {
         render(createTestComponent());
 
         const exploreDaosButton = screen.getByRole('link', {
-            name: /errorFeedback.link.explore/,
+            name: link.explore,
         });
         const reportIssueButton = screen.getByRole('link', {
-            name: /errorFeedback.link.report/,
+            name: link.report,
         });
 
         expect(exploreDaosButton).toBeInTheDocument();
@@ -64,7 +65,7 @@ describe('<ErrorFeedback /> component', () => {
         const hideReportButton = true;
         render(createTestComponent({ hideReportButton }));
         expect(
-            screen.queryByRole('link', { name: /errorFeedback.link.report/ }),
+            screen.queryByRole('link', { name: link.report }),
         ).not.toBeInTheDocument();
     });
 });
