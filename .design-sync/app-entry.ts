@@ -5,6 +5,7 @@
  * PluginFilterComponent, DaoFilterComponent, ManageMembershipAddressList,
  * RedirectToUrl, FeatureFlagsProvider, Navigation (usePathname), app Link
  * (name-collides with kit Link; router-coupled), Image (next/image),
+ * AppDialogRoot (wallet state and ErrorBoundary → @sentry/nextjs),
  * PluginSingleComponent (needs populated plugin registry), PolicyDataListItem
  * (policyDisplayUtils drags the capitalFlow module tree), Page.Error
  * (monitoringUtils → @sentry/nextjs), GovernanceBodyInfo and
@@ -57,7 +58,6 @@ export {
     DialogProvider,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
-export { DialogRoot as AppDialogRoot } from '@/shared/components/dialogRoot';
 export { ErrorFeedback } from '@/shared/components/errorFeedback';
 export { FooterInfo } from '@/shared/components/footerInfo';
 // Form building blocks (compose inside react-hook-form FormProvider)
