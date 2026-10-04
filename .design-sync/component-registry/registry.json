@@ -8,7 +8,7 @@
         },
         "app": {
             "root": "app",
-            "commit": "8fd92c85c50db95809a7864b5a552685fafada7b",
+            "commit": "8c2afd664ab9c48b78982948916f72cc03ef1819",
             "dirty": [],
             "kitReexportBoundary": {
                 "path": "src/shared/lib/@aragon/gov-ui-kit.ts",
@@ -18,7 +18,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "8fd92c85c50db95809a7864b5a552685fafada7b",
+            "commit": "8c2afd664ab9c48b78982948916f72cc03ef1819",
             "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
