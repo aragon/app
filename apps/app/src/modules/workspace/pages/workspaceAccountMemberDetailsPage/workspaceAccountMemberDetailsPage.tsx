@@ -61,9 +61,9 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
 
     const member = memberList?.data[0];
 
-    // The address is a member of nothing on this account, so there is no member page to serve. Falling back to the
-    // account's members page is the rule `WorkspaceAccountSelector` already applies when switching account, applied
-    // here to a stale or hand-edited URL — the member page exists only where the membership does. A failed lookup
+    // The address is a member of nothing on this account, so there is no member page to serve. Nothing in the app
+    // links here — the aggregated list only ever points at an account the member belongs to — so this is a stale,
+    // shared or hand-edited URL, and the account's members page is the nearest thing it asked for. A failed lookup
     // is not an answer, so it falls through to the DAO page instead of redirecting.
     if (memberList != null && member == null) {
         return (
