@@ -1,5 +1,6 @@
 import { Network } from '@/shared/api/daoService';
 import {
+    generateWorkspaceMember,
     generateWorkspaceQueryResponse,
     generateWorkspaceTransaction,
 } from '../../testUtils';
@@ -8,6 +9,7 @@ import { WorkspaceAccountInfoStatus, WorkspaceAccountInfoType } from './domain';
 import { workspaceQueryService } from './workspaceQueryService';
 import type {
     IGetWorkspaceAssetListParams,
+    IGetWorkspaceMemberListParams,
     IGetWorkspaceTransactionsParams,
 } from './workspaceQueryService.api';
 
@@ -88,6 +90,27 @@ describe('workspaceQuery service', () => {
                 { method: 'POST' },
             );
             expect(result).toEqual(response);
+        });
+    });
+
+    describe('getMemberList', () => {
+        it('posts the accounts to the v2 workspace members endpoint and returns the response', async () => {
+            const members = generateWorkspaceQueryResponse({
+                data: [generateWorkspaceMember()],
+            });
+            requestSpy.mockResolvedValue(members);
+
+            const params: IGetWorkspaceMemberListParams = {
+                body: { accounts: [account], pagination: { pageSize: 18 } },
+            };
+            const result = await workspaceQueryService.getMemberList(params);
+
+            expect(requestSpy).toHaveBeenCalledWith(
+                '/v2/workspaces/query/members',
+                params,
+                { method: 'POST' },
+            );
+            expect(result).toEqual(members);
         });
     });
 
