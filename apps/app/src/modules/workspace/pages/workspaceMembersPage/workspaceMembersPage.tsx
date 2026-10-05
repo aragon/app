@@ -13,21 +13,33 @@ export interface IWorkspaceMembersPageProps {
 }
 
 /**
- * Members of a workspace, which are always the members of one of its accounts.
+ * Number of members read per page. Matches the DAO members page; the workspace API caps the page size at 50.
+ */
+export const workspaceMembersCount = 18;
+
+/**
+ * Aggregated members of a workspace.
  *
- * Nothing is prefetched, and nothing needs to be: there is no aggregated membership to read, so this page only
- * points the reader at an account. The list belongs to the account-scoped route.
+ * Nothing is prefetched: the member query needs the account list, which only exists in the local-storage registry
+ * and is therefore resolved on the client (see `docs/projectDocs/createWorkspace.md`).
  */
 export const WorkspaceMembersPage: React.FC<
     IWorkspaceMembersPageProps
-> = async () => {
+> = async (props) => {
+    const { params } = props;
+
     if (!(await featureFlags.isEnabled('workspaces'))) {
         notFound();
     }
 
+    const { workspaceId } = await params;
+
     return (
         <Page.Container>
-            <WorkspaceMembersPageClient />
+            <WorkspaceMembersPageClient
+                pageSize={workspaceMembersCount}
+                workspaceId={workspaceId}
+            />
         </Page.Container>
     );
 };
