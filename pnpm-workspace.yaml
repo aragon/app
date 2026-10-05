@@ -7,79 +7,79 @@ packages:
 # (run `pnpm up` from the root afterwards). Remember: a catalog bump changes all workspaces, so run
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
-  "@ai-sdk/react": ^4.0.105
+  "@ai-sdk/react": ^4.0.126
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
-  "@assistant-ui/react": 0.15.20
-  "@assistant-ui/react-ai-sdk": 1.4.11
-  "@assistant-ui/react-markdown": 0.14.15
+  "@assistant-ui/react": 0.15.22
+  "@assistant-ui/react-ai-sdk": 1.4.13
+  "@assistant-ui/react-markdown": 0.14.17
   "@biomejs/biome": ^2.5.14
   "@changesets/changelog-github": ^1.0.1
   "@changesets/cli": ^3.0.3
-  "@hono/node-server": ^2.1.1
-  "@linear/sdk": ^95.0.0
+  "@hono/node-server": ^2.1.3
+  "@linear/sdk": ^97.0.0
   # orama: tilde-pinned to the 3.1 line — the assistant persists its documentation index in a
   # shape the runtime re-inserts into Orama, and a major/minor bump can change search behavior.
   "@orama/orama": ~3.1.18
   "@radix-ui/react-dialog": ^1.1.23
-  "@sentry/cli": ^3.7.0
-  "@sentry/hono": ^10.74.0
-  "@sentry/node": ^10.74.0
-  "@sentry/profiling-node": ^10.74.0
+  "@sentry/cli": ^3.8.0
+  "@sentry/hono": ^10.75.3
+  "@sentry/node": ^10.75.3
+  "@sentry/profiling-node": ^10.75.3
   "@tailwindcss/cli": 4.3.3
   "@tailwindcss/typography": ^0.5.20
-  "@tanstack/react-query": ^5.103.0
+  "@tanstack/react-query": ^5.104.0
   "@testing-library/dom": ^10.4.2
   "@testing-library/jest-dom": ^7.0.1
   "@testing-library/react": ^16.3.3
   "@testing-library/user-event": ^14.6.7
   "@types/jest": ^30.0.0
   "@types/mdast": ^4.0.4
-  "@types/node": ^24.13.5
+  "@types/node": ^24.19.0
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
-  "@upstash/ratelimit": ^2.1.0
-  "@upstash/redis": ^1.38.4
+  "@upstash/ratelimit": ^2.2.0
+  "@upstash/redis": ^1.39.0
   "@vercel/blob": ^2.8.0
   # @vitest/coverage-v8: pinned EXACT — it peers on the exact vitest version, so the two move
   # together, by hand.
-  "@vitest/coverage-v8": 3.2.6
-  ai: ^7.0.102
+  "@vitest/coverage-v8": 5.0.3
+  ai: ^7.0.123
   ajv: ^8.20.0
   classnames: ^2.5.1
   cross-env: ^10.1.0
-  file-type: ^22.1.0
-  hono: ^4.13.8
+  file-type: ^22.1.1
+  hono: ^4.13.12
   husky: ^9.1.7
   # jest: held on 30.4 — 30.5 replaces module.register/registerHooks with a throwing stub, and
   # @tailwindcss/node calls one on import, so breakpoints.test.ts cannot load Tailwind.
   jest: ~30.4.2
   jest-environment-jsdom: ~30.4.1
-  lint-staged: ^17.5.1
+  lint-staged: ^17.6.0
   mdast-util-from-markdown: ^2.0.3
   pdf-lib: ^1.17.1
   react: ^19.3.0
   react-dom: ^19.3.0
-  react-dropzone: ^15.0.0
-  react-hook-form: ^7.88.0
+  react-dropzone: ^20.1.2
+  react-hook-form: ^7.89.0
   remark-gfm: ^4.0.1
-  sharp: ^0.35.4
+  sharp: ^0.35.5
   tailwindcss: ^4.3.3
-  ts-jest: ^29.4.12
+  ts-jest: ^29.4.14
   tsup: ^8.5.1
-  tsx: ^4.23.13
-  turbo: ^2.10.13
+  tsx: ^4.23.15
+  turbo: ^2.11.5
   typescript: ^5.9.3
   # ultracite: pinned EXACT — minor releases add lint rules, which breaks CI for every workspace
   # at once (7.8.3 -> 7.10.6 surfaced ~1400 findings in gov-ui-kit alone). Bump by hand together
   # with the resulting fixes, and keep it in step with @biomejs/biome.
-  ultracite: 7.12.0
+  ultracite: 7.12.2
   # vercel: pinned EXACT — releases after 58.4.4 ship without SLSA provenance and trip the
   # trustPolicy; move by hand once provenance returns (a range would resolve to an untrusted one).
   vercel: 58.4.4
-  viem: ^2.56.5
+  viem: ^2.57.1
   # vitest: pinned EXACT together with @vitest/coverage-v8 (see there).
-  vitest: 3.2.6
+  vitest: 5.0.3
   wagmi: ^3.7.7
   yaml: ^2.9.1
   # zod: packages/gov-ui-kit deliberately does NOT take this range — it pins 3.25.76 outright.
@@ -131,17 +131,21 @@ overrides:
   # Hold @vercel/oidc at 3.8.1: later releases ship without SLSA provenance and trip the
   # trustPolicy (no-downgrade). Drop this once provenance returns.
   '@vercel/oidc@>3.8.1': 3.8.1
-  # Hold @coinbase/cdp-sdk (transitive of @base-org/account) at 1.52.0: 1.55.0 lazy-imports the
-  # optional @x402/* peers, which are not installed (autoInstallPeers: false) and break next build
-  # with "Module not found: @x402/core/client". Wallet-adjacent, so don't let it linger: re-test
-  # at every deps refresh (drop the override, pnpm install, next build) and remove once it passes.
+  # Hold @coinbase/cdp-sdk (transitive of @base-org/account) at 1.52.0: 1.55.0 and later lazy-import
+  # the optional @x402/* peers, which are not installed (autoInstallPeers: false) and break next
+  # build with "Module not found: @x402/core/client". Wallet-adjacent, so don't let it linger:
+  # re-test at every deps refresh (drop the override, pnpm install, next build) and remove once it
+  # passes.
   '@coinbase/cdp-sdk@>1.52.0': 1.52.0
   # Hold isomorphic-dompurify's jsdom (it declares ^30) at 26: jsdom 27+ depends on ESM-only
   # packages (html-encoding-sniffer 6+) that Jest cannot parse, breaking every suite that imports
   # the sanitizer. Lift together with transformIgnorePatterns work for jsdom's ESM dependencies.
   isomorphic-dompurify>jsdom: 26.1.0
-  axios@<1.18.0: '>=1.18.0'
-  undici@<6.28.0: ^6.28.0
+  # Advisory floors for transitive deps: each range mirrors the `pnpm audit` patched version.
+  # Re-verify at every refresh by dropping them, `pnpm up -r`, `pnpm audit`, and re-adding only
+  # what comes back.
+  axios@<1.20.0: '>=1.20.0'
+  undici@<6.28.1: ^6.28.1
   '@hookform/devtools>uuid': ^14.0.0
   esbuild@<0.28.1: '>=0.28.1'
   tsup@<8.3.5: ^8.5.1
@@ -151,16 +155,10 @@ overrides:
   minimatch@>=10.0.0 <10.2.4: ^10.2.4
   ws@>=8.0.0 <8.21.0: '>=8.21.0'
   glob@>=10.2.0 <10.5.0: '>=10.5.0'
-  smol-toml@<1.7.1: '>=1.7.1'
+  smol-toml@<1.9.0: '>=1.9.0'
   path-to-regexp@>=4.0.0 <6.3.0: '>=6.3.0'
   path-to-regexp@>=8.0.0 <8.4.0: '>=8.4.0'
-  # packages/gov-ui-kit pins sanitize-html EXACT 2.17.5 (its DocumentParser sanitizes proposal
-  # bodies); the XSS fixes (GHSA-jxwj-j7wr-gfrw, GHSA-g8qq-57p8-ggw5) are in 2.17.7, whose
-  # htmlparser2@12 chain is ESM-only and therefore listed in the jest transformIgnorePatterns.
-  # Drop once the kit unpins.
-  sanitize-html@<2.17.7: ^2.17.7
   js-yaml@>=4.0.0 <4.3.2: ^4.3.2
-  # Carried over from the gov-ui-kit repo at the monorepo merge; they now apply repo-wide.
-  nanoid@<3.3.18: ^3.3.18
-  'linkify-it@>=5.0.0 <5.0.2': '>=5.0.2'
-  serialize-javascript@<7.0.3: ^7.0.3
+  seroval@<1.6.3: '>=1.6.3'
+  source-map-js@<1.2.2: '>=1.2.2'
+  postcss-selector-parser@<7.1.6: '>=7.1.6'
