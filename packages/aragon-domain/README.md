@@ -1,0 +1,122 @@
+# Aragon Domain
+
+Shared business-logic package for the Aragon governance platform. It is the single home for everything a frontend consumer needs that *isn't* raw on-chain data — membership rules, voting-power math, delegation logic, permission checks, ENS profile enrichment. Paired with [`aragon-indexer`](../aragon-indexer) (which provides only deterministic, indexed on-chain state), it lets any frontend consumer stay thin.
+
+Today the package ships two capabilities — listing the members of a TokenVoting plugin (ERC20Votes delegates with voting power, delegation count, activity window and primary ENS name) and looking up the ENS text records attached to a member's `.aragon.eth` subdomain — with the rest of the surface area arriving as the Envio migration progresses.
+
+## How it fits in
+
+```
+On-chain events → Envio (aragon-indexer) → aragon-domain → Frontend consumers
+```
+
+`aragon-indexer` indexes raw on-chain state. `aragon-domain` queries that indexed data, pulls non-deterministic data from other sources, applies domain rules, and returns clean DTOs. Consumers (the App Next.js BFF, an MCP server, future mobile app, etc) call into a single `AragonDomain` controller.
+
+## Architecture
+
+Built with Domain-Driven Design on top of [`ddd-core-ts`](https://github.com/asciiman/ddd-core-ts). Three layers, dependencies point inward:
+
+| Layer | Purpose | Depends on |
+|-------|---------|------------|
+| **Domain** | Pure business logic — value objects, aggregates, store interfaces | Nothing |
+| **Use Cases** | Application logic that orchestrates domain objects and I/O | Domain |
+| **Infrastructure** | Adapters for Envio and other external systems; the public controller | Domain + Use Cases |
+
+Validation is done with [`zod`](https://zod.dev) inside domain value objects, and the Envio adapter talks to the indexer through [`graphql-request`](https://github.com/jasonkuhrt/graphql-request).
+
+## Quick start
+
+Requires Node >= 24.13 (pinned in [`.nvmrc`](./.nvmrc)) and pnpm >= 11 (pinned via `packageManager` in `package.json`). Use [nvm](https://github.com/nvm-sh/nvm) for Node and Corepack for pnpm:
+
+```bash
+nvm install        # installs the Node version from .nvmrc
+nvm use
+corepack enable    # activates the pinned pnpm 11 version
+
+pnpm install
+pnpm run build
+pnpm run test
+```
+
+## Usage
+
+```ts
+import { AragonDomain, EnvioClient } from '@aragon/aragon-domain';
+
+const envioClient = new EnvioClient(ENVIO_GRAPHQL_ENDPOINT, ENVIO_API_TOKEN);
+// RPC endpoints keyed by chain id. The mainnet (1) entry backs ENS reverse
+// resolution and is required — `load` throws without it.
+const aragon = AragonDomain.load(envioClient, { 1: MAINNET_RPC_URL });
+
+const membership = await aragon.getTokenVotingMembership({
+  chainId: 1,
+  pluginAddress: '0xCa6f…15F3', // a TokenVoting plugin…
+  tokenContractAddress: '0xcb8b…6905', // …and its ERC20Votes token
+  page: 1,
+  pageSize: 20,
+});
+// → { success: true, result: { metadata: { page, pageSize, totalPages, totalRecords },
+//                              data: [{ address, ens, votingPower, delegationCount, … }] } }
+
+const records = await aragon.getMemberProfileTextRecords({
+  subdomain: 'alice.aragon.eth',
+});
+// → { success: true, result: [{ key: 'avatar', value: 'ipfs://…' }, …] }
+// The result is [] if the subdomain is unknown, has no resolver, or has no records.
+```
+
+Every controller method returns a `ResultOrError` envelope from `ddd-core-ts`: check `success` before reading `result`; failures carry an `error` instead of throwing.
+
+## Roadmap
+
+This package is the target for the [Envio migration](https://www.notion.so/aragonorg/Plan-POC-to-use-Envio-as-backend-32e6b18349dc8084a1d9f8886539c8ad), which moves governance business logic out of `app-backend` and `app` and into a shared library. Upcoming areas, in rough order:
+
+- **Membership** — list members for a plugin, routed by governance type (ERC20 vs. VE)
+- **Voting power** — VP calculation per governance type, including VE locks
+- **Delegation** — delegation relationships and validation rules
+- **Permissions** — proposal-creation and membership permission checks
+- **Member detail** — single-member views enriched with balances and ENS metadata
+
+Scope is tracked against the [Aragon Governance Membership Domain Model](https://www.figma.com/board/WTlB4By8MoKhh5BJ58dpVE/Aragon-Governance---Membership-Domain-Model).
+
+## Development
+
+### Publishing a snapshot release to npm
+
+Snapshot releases let you test unreleased changes from a branch on npm without cutting a real version. The flow uses [Changesets](https://github.com/changesets/changesets) and a manually-dispatched GitHub Actions workflow.
+
+1. **Add a changeset locally** describing the change:
+
+   ```bash
+   pnpm changeset
+   ```
+
+   Pick the bump type and write a short summary. Commit the generated file under `.changeset/` and push your branch.
+
+2. **Run the snapshot workflow.** On GitHub, go to *Actions → Publish → Run workflow* and select your branch. The workflow builds the package, runs `pnpm changeset version --snapshot`, and publishes to npm under a per-run dist-tag (`snapshot-<run-id>`). Publishing uses [npm Trusted Publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/) — no npm token is involved.
+
+3. **Install the snapshot** in a consumer — the exact command also appears in the workflow run's summary:
+
+   ```bash
+   pnpm add @aragon/aragon-domain@snapshot-<run-id>
+   ```
+
+Each run gets its own dist-tag, so multiple in-flight branches can publish snapshots in parallel without colliding. The workflow won't publish anything if no changesets are pending.
+
+### Contract test against the deployed indexer
+
+The test suite runs on canned indexer responses, so it cannot notice when the deployed `aragon-indexer` changes shape. [`test/contract/`](./test/contract) sends the real query documents to a live endpoint and lets the mappers' schemas validate what comes back. `pnpm test` leaves it out, and it is skipped unless the endpoint is set:
+
+```bash
+ENVIO_GRAPHQL_ENDPOINT=https://… ENVIO_API_TOKEN=… pnpm test:contract
+```
+
+Run it against the dev indexer before cutting a release, and whenever the indexer's `schema.graphql` changes.
+
+## Related projects
+
+| Package | Path | Relationship |
+|---------|------|--------------|
+| `aragon-indexer` | `/aragon-indexer` | Upstream — Envio indexer this package queries |
+| `app` | `/app` | Consumer — Next.js frontend and BFF |
+| `app-backend` | `/app-backend` | Consumer being replaced as logic moves here |
