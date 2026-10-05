@@ -56,8 +56,8 @@ interface IWorkspaceMemberListItemProps {
      */
     workspaceId: string;
     /**
-     * ID of the account whose member page the row links to, undefined when the member holds no membership on a DAO
-     * account of the workspace.
+     * ID of the account whose member page the row links to, undefined when the member holds no membership on an
+     * account of the workspace that has one.
      */
     accountId?: string;
 }
@@ -131,8 +131,8 @@ export interface IWorkspaceMemberListProps {
  * Members of every account of a workspace, laid out like `DaoMemberListDefault` of the DAO pages.
  *
  * The endpoint merges an address into a single entry carrying one membership per account, so each row links to the
- * member page of the first DAO account it belongs to: there is no aggregated member page, the member details live
- * under a single account.
+ * member page of the first of its accounts that has one: there is no aggregated member page, the member details
+ * live under a single account.
  */
 export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
     props,

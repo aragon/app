@@ -12,8 +12,8 @@ import { buildWorkspaceMemberListParams } from '../workspaceMemberList';
 export interface IWorkspaceMembersAsideCardProps {
     /**
      * Account option selected on the page. Only its label is used, as the page it sits on aggregates every account;
-     * the members of a single account are the account-scoped route, which renders the DAO members page and its own
-     * aside.
+     * the members of a single account are the account-scoped route, which renders the members page of that account
+     * and its own aside.
      */
     activeOption?: IWorkspaceAccountOption;
     /**
