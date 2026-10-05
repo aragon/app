@@ -1,81 +1,74 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { queryClientConfig } from '@/modules/application/constants/reactQuery';
-import { daoService, Network } from '@/shared/api/daoService';
-import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
+import type { ReactNode } from 'react';
+import { daoOptions, Network } from '@/shared/api/daoService';
+import { generateDao } from '@/shared/testUtils';
 import {
     type IWorkspaceAccountGateProps,
     WorkspaceAccountGate,
 } from './workspaceAccountGate';
 
+jest.mock('@tanstack/react-query', () => ({
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
+    HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
+        <div data-testid="hydration-mock">{props.children}</div>
+    ),
+}));
+
+jest.mock('./workspaceAccountGateError', () => ({
+    WorkspaceAccountGateError: () => <div data-testid="gate-error-mock" />,
+}));
+
 describe('<WorkspaceAccountGate /> component', () => {
-    const getDaoSpy = jest.spyOn(daoService, 'getDao');
+    const accountId = `${Network.ETHEREUM_SEPOLIA}-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5`;
+
+    const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
 
     beforeEach(() => {
-        getDaoSpy.mockResolvedValue(generateDao());
+        fetchQuerySpy.mockResolvedValue(generateDao());
     });
 
     afterEach(() => {
-        getDaoSpy.mockReset();
+        fetchQuerySpy.mockReset();
     });
 
-    // Each test builds its own address so the DAO queries are never deduped across tests by React Query.
-    let testIndex = 0;
-
-    const buildAccountId = () => {
-        testIndex += 1;
-        const suffix = testIndex.toString().padStart(2, '0');
-
-        return `${Network.ETHEREUM_SEPOLIA}-0xE8fd9Fe445A037ee07fb98FDD4b146d939140D${suffix}`;
-    };
-
-    const createTestComponent = (
+    const createTestComponent = async (
         props?: Partial<IWorkspaceAccountGateProps>,
     ) => {
         const completeProps: IWorkspaceAccountGateProps = {
-            accountId: buildAccountId(),
+            accountId,
             children: <div data-testid="page-mock" />,
             ...props,
         };
 
-        // The query client must sit inside the gov-ui-kit provider, which carries a query client of its own that
-        // would otherwise shadow this one.
-        return (
-            <GukModulesProvider>
-                <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
-                    <WorkspaceAccountGate {...completeProps} />
-                </ReactQueryWrapper>
-            </GukModulesProvider>
-        );
+        return await WorkspaceAccountGate(completeProps);
     };
 
-    it('renders the page once the DAO of the account has resolved', async () => {
-        const accountId = buildAccountId();
-        render(createTestComponent({ accountId }));
+    it('fetches the DAO of the account on the server', async () => {
+        await createTestComponent();
 
-        expect(await screen.findByTestId('page-mock')).toBeInTheDocument();
-        expect(getDaoSpy).toHaveBeenCalledWith({
-            urlParams: { id: accountId },
-        });
+        const [options] = fetchQuerySpy.mock.calls[0] as [
+            { queryKey: unknown[] },
+        ];
+        expect(options.queryKey).toEqual(
+            daoOptions({ urlParams: { id: accountId } }).queryKey,
+        );
     });
 
-    it('displays a loading state while the DAO loads', async () => {
-        getDaoSpy.mockReturnValue(new Promise(() => undefined));
-        render(createTestComponent());
+    it('renders the page, hydrated, once the DAO of the account has resolved', async () => {
+        render(await createTestComponent());
 
-        expect(await screen.findByRole('progressbar')).toBeInTheDocument();
-        expect(screen.queryByTestId('page-mock')).not.toBeInTheDocument();
+        expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('page-mock')).toBeInTheDocument();
+        expect(screen.queryByTestId('gate-error-mock')).not.toBeInTheDocument();
     });
 
-    it('displays an error instead of the page when the DAO fails to load', async () => {
-        getDaoSpy.mockRejectedValue(new Error('dao error'));
-        render(createTestComponent());
+    it('renders an error instead of the page when the DAO fails to load', async () => {
+        fetchQuerySpy.mockRejectedValue(new Error('dao error'));
+        render(await createTestComponent());
 
-        expect(
-            await screen.findByText(/workspaceAccountGate\.error\.heading$/),
-        ).toBeInTheDocument();
+        expect(screen.getByTestId('gate-error-mock')).toBeInTheDocument();
         expect(screen.queryByTestId('page-mock')).not.toBeInTheDocument();
-        expect(getDaoSpy).toHaveBeenCalledTimes(1);
     });
 });
