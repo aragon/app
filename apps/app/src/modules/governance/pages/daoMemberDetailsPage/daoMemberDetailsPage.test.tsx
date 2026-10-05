@@ -116,6 +116,82 @@ describe('<DaoMemberDetailsPage /> component', () => {
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
 
+    describe('body plugin selection', () => {
+        const firstBodyAddress = '0x1111111111111111111111111111111111111111';
+        const secondBodyAddress = '0x2222222222222222222222222222222222222222';
+
+        /**
+         * Mocks a DAO with two visible bodies and returns the plugin address the member read was made under.
+         */
+        const renderAndReadPluginAddress = async (
+            props?: Partial<IDaoMemberDetailsPageProps>,
+        ) => {
+            getDaoSpy.mockResolvedValue(
+                generateDao({
+                    plugins: [
+                        generateDaoPlugin({
+                            address: firstBodyAddress,
+                            interfaceType: PluginInterfaceType.MULTISIG,
+                            isBody: true,
+                        }),
+                        generateDaoPlugin({
+                            address: secondBodyAddress,
+                            interfaceType: PluginInterfaceType.MULTISIG,
+                            isBody: true,
+                        }),
+                    ],
+                }),
+            );
+            render(await createTestComponent(props));
+
+            return (
+                fetchQuerySpy.mock.calls[1][0] as unknown as {
+                    queryKey: unknown[];
+                }
+            ).queryKey;
+        };
+
+        const expectedQueryKey = (pluginAddress: string) =>
+            memberOptions({
+                urlParams: { address: validAddress },
+                queryParams: { daoId: 'test-dao-id', pluginAddress },
+            }).queryKey;
+
+        // Membership is plugin-scoped, so reading the member under the wrong body reports no voting power and no
+        // token balance for a member that has both.
+        it('reads the membership under the named body plugin', async () => {
+            const queryKey = await renderAndReadPluginAddress({
+                bodyPluginAddress: secondBodyAddress,
+            });
+
+            expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
+        });
+
+        it('matches the named body plugin regardless of the address casing', async () => {
+            const queryKey = await renderAndReadPluginAddress({
+                bodyPluginAddress: secondBodyAddress.toUpperCase(),
+            });
+
+            expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
+        });
+
+        // A governance that has since been hidden, or that belongs to another DAO, degrades to the default page.
+        it('falls back to the first visible body when the address names none', async () => {
+            const queryKey = await renderAndReadPluginAddress({
+                bodyPluginAddress: '0x3333333333333333333333333333333333333333',
+            });
+
+            expect(queryKey).toEqual(expectedQueryKey(firstBodyAddress));
+        });
+
+        // The `/dao/…` route has no way to name a body, so it keeps reading the first one.
+        it('falls back to the first visible body when given no address', async () => {
+            const queryKey = await renderAndReadPluginAddress();
+
+            expect(queryKey).toEqual(expectedQueryKey(firstBodyAddress));
+        });
+    });
+
     it('renders error with a link to the members page when the address is not a valid hex address', async () => {
         const daoEns = 'test.dao.eth';
         const daoNetwork = Network.ETHEREUM_MAINNET;
