@@ -1,7 +1,11 @@
 import * as GovUiKit from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { zeroAddress } from 'viem';
 import { generateToken } from '@/modules/finance/testUtils';
-import type { IProposalActionWithdrawToken } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalActionWithdrawToken,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { generateProposalActionWithdrawToken } from '@/modules/governance/testUtils';
 import {
@@ -82,6 +86,31 @@ describe('<WithdrawTokenActionDetails /> component', () => {
                 assetAddress: token.address,
                 assetFiatPrice: token.priceUsd,
                 chainId: 137,
+            }),
+            undefined,
+        );
+    });
+
+    it('forwards the zero address as asset address for native transfers', () => {
+        const token = generateToken({
+            address: zeroAddress,
+            name: 'Ether',
+            symbol: 'ETH',
+            decimals: 18,
+        });
+        const withdrawAction = generateProposalActionWithdrawToken({
+            type: ProposalActionType.TRANSFER_NATIVE,
+            amount: '2000000000000000000',
+            token,
+        });
+
+        render(createTestComponent({ action: buildAction(withdrawAction) }));
+
+        expect(assetTransferSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                assetAddress: zeroAddress,
+                assetAmount: '2',
+                assetSymbol: 'ETH',
             }),
             undefined,
         );
