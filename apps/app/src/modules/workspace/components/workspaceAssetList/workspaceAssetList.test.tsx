@@ -88,6 +88,25 @@ describe('<WorkspaceAssetList /> component', () => {
         );
     });
 
+    it('shows its empty state and not skeletons when the selection holds no account', async () => {
+        render(createTestComponent({ accounts: [] }));
+
+        expect(
+            await screen.findByText(/workspaceAssetList\.emptyState\.heading$/),
+        ).toBeInTheDocument();
+        expect(getAssetListSpy).not.toHaveBeenCalled();
+    });
+
+    // Same empty selection as above, so what is asserted is that `isPending` wins over it: an empty selection that
+    // is still being resolved is not an empty selection yet.
+    it('stays in its loading state while the accounts are still being resolved', () => {
+        render(createTestComponent({ accounts: [], isPending: true }));
+
+        expect(
+            screen.queryByText(/workspaceAssetList\.emptyState\.heading$/),
+        ).not.toBeInTheDocument();
+    });
+
     it('warns when an account could not be read', async () => {
         getAssetListSpy.mockResolvedValue(
             buildResponse({

@@ -55,6 +55,36 @@ class WorkspaceUtils {
     };
 
     /**
+     * Finds the account of the given list that the account segment of a workspace URL names.
+     *
+     * Matches on network and address rather than on the ID string, because a stored ID is checksummed
+     * (`buildAccountId`) while a URL may carry any casing — `LayoutWorkspaceAccount` is deliberately not strict
+     * about the checksum, so a lowercase account on a shared link must resolve to the same account here.
+     *
+     * Returns undefined for the aggregated segment, for a segment that is not an account ID, and for an account the
+     * workspace does not hold. Callers that need to tell those apart have the segment itself.
+     * @param accounts - Accounts of the workspace.
+     * @param accountId - Account segment of the URL, i.e. an account ID or the aggregated sentinel.
+     * @returns The matching account, or undefined when the list holds none.
+     */
+    findAccountById = (
+        accounts: IWorkspaceAccount[],
+        accountId: string,
+    ): IWorkspaceAccount | undefined => {
+        if (
+            this.resolveAccountScope(accountId) === workspaceAllAccountsSegment
+        ) {
+            return undefined;
+        }
+
+        const networkAddress = daoUtils.parseDaoId(accountId);
+
+        return accounts.find((account) =>
+            this.isSameNetworkAddress(account, networkAddress),
+        );
+    };
+
+    /**
      * URL of a workspace.
      *
      * Takes the ID rather than the workspace itself so that callers holding only a route parameter — which is most
