@@ -1,0 +1,57 @@
+# The "Aragon Domain Contract Test" workflow runs the contract suite of packages/aragon-domain against
+# a deployed aragon-indexer. The unit suite runs on canned indexer responses, so a shape change in the
+# deployed indexer would otherwise surface only in production. Deliberately NON-BLOCKING: not a
+# required check anywhere — a red run means the indexer and the mappers' zod schemas disagree.
+
+name: Aragon Domain Contract Test
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Environment whose indexer to test (selects the kv_app_<env> vault)"
+        type: choice
+        options: [development]
+        default: development
+
+permissions:
+  contents: read
+
+jobs:
+  contract-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # The indexer coordinates are the ones the deployed app reads: the same two items of the
+      # app's per-environment vault that shared-deploy.yml writes into apps/app/.env.
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          ENVIO_GRAPHQL_ENDPOINT: op://kv_app_${{ inputs.env || 'development' }}/NEXT_SECRET_ENVIO_GRAPHQL_ENDPOINT/credential
+          ENVIO_API_TOKEN: op://kv_app_${{ inputs.env || 'development' }}/NEXT_SECRET_ENVIO_API_TOKEN/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      # The suite skips itself when the endpoint is unset (describe.skipIf in test/contract); an empty
+      # vault item must fail the run, not green-skip it.
+      - name: Run contract suite
+        env:
+          ENVIO_GRAPHQL_ENDPOINT: ${{ steps.secrets.outputs.ENVIO_GRAPHQL_ENDPOINT }}
+          ENVIO_API_TOKEN: ${{ steps.secrets.outputs.ENVIO_API_TOKEN }}
+        run: |
+          : "${ENVIO_GRAPHQL_ENDPOINT:?empty — check the 1Password item}"
+          pnpm --filter @aragon/aragon-domain test:contract

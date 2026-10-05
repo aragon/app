@@ -1,9 +1,8 @@
 import { Tooltip } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { forwardRef } from 'react';
 
 export interface ITooltipIconButtonProps
-    extends React.ComponentPropsWithoutRef<'button'> {
+    extends React.ComponentPropsWithRef<'button'> {
     /**
      * Tooltip text, doubling as the accessible name of the button.
      */
@@ -57,10 +56,7 @@ const sizeClasses: Record<
 // label. The shadcn button/tooltip pair is replaced by a styled native button and the gov-ui-kit
 // Tooltip; primitives compose onto it through `asChild`, so it forwards ref and props. The
 // registry passes shadcn button variants through — mirrored here as the variant/size props.
-export const TooltipIconButton = forwardRef<
-    HTMLButtonElement,
-    ITooltipIconButtonProps
->((props, ref) => {
+export const TooltipIconButton: React.FC<ITooltipIconButtonProps> = (props) => {
     const {
         children,
         tooltip,
@@ -69,6 +65,7 @@ export const TooltipIconButton = forwardRef<
         variant = 'ghost',
         size = 'md',
         href,
+        ref,
         ...rest
     } = props;
 
@@ -105,6 +102,4 @@ export const TooltipIconButton = forwardRef<
             )}
         </Tooltip>
     );
-});
-
-TooltipIconButton.displayName = 'TooltipIconButton';
+};

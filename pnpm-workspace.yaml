@@ -41,6 +41,9 @@ catalog:
   "@upstash/ratelimit": ^2.1.0
   "@upstash/redis": ^1.38.4
   "@vercel/blob": ^2.8.0
+  # @vitest/coverage-v8: pinned EXACT — it peers on the exact vitest version, so the two move
+  # together, by hand.
+  "@vitest/coverage-v8": 3.2.6
   ai: ^7.0.102
   ajv: ^8.20.0
   classnames: ^2.5.1
@@ -75,6 +78,8 @@ catalog:
   # trustPolicy; move by hand once provenance returns (a range would resolve to an untrusted one).
   vercel: 58.4.4
   viem: ^2.56.5
+  # vitest: pinned EXACT together with @vitest/coverage-v8 (see there).
+  vitest: 3.2.6
   wagmi: ^3.7.7
   yaml: ^2.9.1
   # zod: packages/gov-ui-kit deliberately does NOT take this range — it pins 3.25.76 outright.
@@ -82,12 +87,11 @@ catalog:
   # under, so the kit and apps/app share one instance (dedupePeerDependents). Drop it and the kit
   # flips to the zod@4 flavour of viem/wagmi — the app's WagmiProvider goes invisible to the kit's
   # hooks (WagmiProviderNotFoundError). Bumping this range must keep the kit's pin in step.
+  # packages/aragon-domain pins the same 3.25.76: it does import zod 3, and the shared pin keeps
+  # its viem on the app's instance too.
   zod: ^4.6.5
 
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
-minimumReleaseAgeExclude:
-  # https://pnpm.io/settings#minimumreleaseageexclude
-  - "@aragon/aragon-domain"
 strictDepBuilds: true
 blockExoticSubdeps: true
 trustPolicy: no-downgrade
