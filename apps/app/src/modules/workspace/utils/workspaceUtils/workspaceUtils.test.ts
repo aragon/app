@@ -109,6 +109,40 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('resolveAccountScope', () => {
+        const accountId =
+            'ethereum-sepolia-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
+
+        it.each([
+            { segment: accountId, expected: accountId },
+            { segment: 'all', expected: 'all' },
+            // A section left on the account segment, i.e. a link built before the account moved onto the path.
+            { segment: 'overview', expected: 'all' },
+            { segment: undefined, expected: 'all' },
+            { segment: '', expected: 'all' },
+            // Right shape, unknown network.
+            {
+                segment:
+                    'not-a-network-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
+                expected: 'all',
+            },
+            // Known network, truncated address.
+            { segment: 'ethereum-sepolia-0x123', expected: 'all' },
+        ])('resolves "$segment" to "$expected"', ({ segment, expected }) => {
+            expect(workspaceUtils.resolveAccountScope(segment)).toEqual(
+                expected,
+            );
+        });
+
+        it('accepts a lowercase address, as a shared link carries any casing', () => {
+            const lowercase = accountId.toLowerCase();
+
+            expect(workspaceUtils.resolveAccountScope(lowercase)).toEqual(
+                lowercase,
+            );
+        });
+    });
+
     describe('slugify', () => {
         it.each([
             { value: 'Demo Workspace', expected: 'demo-workspace' },

@@ -23,10 +23,12 @@ export interface ILayoutWorkspaceProps {
  * holds the pages back until it resolves (see `docs/projectDocs/createWorkspace.md`). Once a real registry exists
  * this layout becomes the place to fetch the workspace once and hydrate it for every page.
  *
- * The navigation sits inside the gate rather than beside it. Everything it displays — the workspace name and
- * avatar, the account options, the section links — comes from that read, so outside the gate it would paint as an
- * empty bar and fill in a frame later. It costs nothing on a section or account change, which keeps this layout
- * mounted and the workspace cached; the gate only holds on a cold entry, where there is nothing to show anyway.
+ * The navigation sits beside the gate rather than inside it, so the gate holds back the page and not the way out of
+ * it. Its section links are built from the workspace ID on the route, which needs no read, so the bar is navigable
+ * on a cold load and while the workspace is failing to load — only the workspace name, avatar and account count
+ * wait for the read. Inside the gate the whole bar would be replaced by the spinner, leaving a reader who opened a
+ * link to a workspace that is slow or missing with nothing to click. This may be worth exploring having a skeleton
+ * to minimize the jarring effect of layout shifts
  *
  * The account a page is scoped to is a route segment, not state, so there is nothing here to reset when the
  * workspace changes.
@@ -38,9 +40,11 @@ export const LayoutWorkspace: React.FC<ILayoutWorkspaceProps> = async (
     const { workspaceId } = await params;
 
     return (
-        <WorkspaceGate workspaceId={workspaceId}>
+        <>
             <NavigationWorkspace workspaceId={workspaceId} />
-            <ErrorBoundary>{children}</ErrorBoundary>
-        </WorkspaceGate>
+            <WorkspaceGate workspaceId={workspaceId}>
+                <ErrorBoundary>{children}</ErrorBoundary>
+            </WorkspaceGate>
+        </>
     );
 };
