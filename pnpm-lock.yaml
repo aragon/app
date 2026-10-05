@@ -99,6 +99,9 @@ catalogs:
     ai:
       specifier: ^7.0.102
       version: 7.0.102
+    ajv:
+      specifier: ^8.20.0
+      version: 8.20.0
     classnames:
       specifier: ^2.5.1
       version: 2.5.1
@@ -221,6 +224,9 @@ importers:
       '@changesets/cli':
         specifier: 'catalog:'
         version: 3.0.3
+      ajv:
+        specifier: 'catalog:'
+        version: 8.20.0
       husky:
         specifier: 'catalog:'
         version: 9.1.7
