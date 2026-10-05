@@ -1,5 +1,11 @@
 # @aragon/assistant-chat
 
+## 0.5.2
+
+### Patch Changes
+
+- [#1425](https://github.com/aragon/app/pull/1425) [`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Consume `@aragon/aragon-domain` from the workspace instead of npm, and follow the monorepo-wide Biome rules.
+
 ## 0.5.1
 
 ### Patch Changes
