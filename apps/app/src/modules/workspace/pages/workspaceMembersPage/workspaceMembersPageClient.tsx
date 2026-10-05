@@ -20,7 +20,7 @@ export interface IWorkspaceMembersPageClientProps {
 
 /**
  * Members of every account of a workspace. The members of a single account are an account-scoped page, which — the
- * account being on its path — renders the DAO members page.
+ * account being on its path — renders the members page of that account.
  *
  * Unlike proposals, Safe accounts take part: their owners are members of the workspace.
  */
