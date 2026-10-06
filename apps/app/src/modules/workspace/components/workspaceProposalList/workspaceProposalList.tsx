@@ -1,43 +1,20 @@
 'use client';
 
+import { daoProposalListFilterParam } from '@/modules/governance/components/daoProposalList';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import {
-    DataListContainer,
-    DataListPagination,
-    DataListRoot,
-    ProposalDataListItem,
-} from '@aragon/gov-ui-kit';
-import { DaoProposalListDefaultItem } from '@/modules/governance/components/daoProposalList';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+    type IFilterComponentPlugin,
+    PluginFilterComponent,
+} from '@/shared/components/pluginFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IGetWorkspaceProposalListParams } from '../../api/workspaceQueryService';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { pluginSortUtils } from '@/shared/utils/pluginSortUtils';
+import type { IWorkspaceProposalListFilters } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
-import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
-import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
-import { workspaceUtils } from '../../utils/workspaceUtils';
-
-/**
- * Builds the parameters of the aggregated proposal list request.
- *
- * Shared with the aside card, which reads the totals out of the same response: the two only stay on a single
- * request as long as they build the very same body, since that is what the query key is made of.
- * @param accounts - DAO accounts to aggregate the proposals of.
- * @param pageSize - Number of proposals to read per page.
- * @returns The parameters of the workspace proposal list request.
- */
-export const buildWorkspaceProposalListParams = (
-    accounts: IWorkspaceAccount[],
-    pageSize: number,
-): IGetWorkspaceProposalListParams => ({
-    body: {
-        accounts: accounts.map(({ network, address }) => ({
-            network,
-            address,
-        })),
-        pagination: { pageSize },
-    },
-});
+import { useWorkspacePlugins } from '../../hooks/useWorkspacePlugins';
+import { WorkspaceProposalListDefault } from './workspaceProposalListDefault';
 
 export interface IWorkspaceProposalListProps {
     /**
@@ -50,12 +27,18 @@ export interface IWorkspaceProposalListProps {
     pageSize: number;
 }
 
+interface IWorkspaceProposalListTabProps {
+    /**
+     * Filters narrowing the proposals to the plugin of the tab, unset for the group tab.
+     */
+    filters?: IWorkspaceProposalListFilters;
+}
+
 /**
- * Aggregated proposal list of a workspace, laid out like `DaoProposalListDefault` of the DAO pages and reusing its
- * rows, so plugin-specific items keep rendering their own details.
+ * Aggregated proposal list of a workspace, filtered by tabs like `DaoProposalList` of the DAO pages: one "all" tab
+ * followed by one tab for every visible process plugin of every DAO, grouped by DAO in the order of the accounts.
  *
- * Each row is tagged with the name of the DAO it belongs to, which the DAO pages never need. The name comes from
- * the metadata the endpoint embeds, while the link and the slug need the full DAO — see `useWorkspaceDaos`.
+ * Linked-account plugins are left out, as the endpoint only returns the proposals of the selected accounts.
  */
 export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
     props,
@@ -64,69 +47,67 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
 
     const { t } = useTranslations();
 
-    const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
-
     const {
-        onLoadMore,
-        proposalList,
-        state,
-        itemsCount,
-        emptyState,
-        errorState,
-    } = useWorkspaceProposalListData({
-        params: buildWorkspaceProposalListParams(accounts, pageSize),
-        isDaosPending,
-        enabled: accounts.length > 0,
+        daos,
+        isPending: isDaosPending,
+        plugins,
+    } = useWorkspacePlugins({ accounts, type: PluginType.PROCESS });
+
+    const pluginTabs = plugins.flatMap(({ dao, plugins: daoPlugins }) => {
+        const tabs: IFilterComponentPlugin<
+            IDaoPlugin,
+            IWorkspaceProposalListTabProps
+        >[] = daoPlugins.map((plugin) => ({
+            id: plugin.interfaceType,
+            // The network is part of the ID, as the same address is a different plugin on another chain.
+            uniqueId: `${dao.network}-${plugin.address}-${plugin.slug}`,
+            label: t('app.workspace.workspaceProposalList.pluginTab', {
+                dao: daoUtils.getDaoDisplayName(dao),
+                plugin: daoUtils.getPluginName(plugin),
+            }),
+            meta: plugin,
+            props: {
+                filters: {
+                    network: dao.network,
+                    pluginAddress: plugin.address,
+                },
+            },
+        }));
+
+        return pluginSortUtils.sortByDisplayOrder(tabs, {
+            rootDaoAddress: dao.address,
+        });
     });
 
-    return (
-        <DataListRoot
-            entityLabel={t('app.workspace.workspaceProposalList.entity')}
-            itemsCount={itemsCount}
-            onLoadMore={onLoadMore}
+    const renderList = (filters?: IWorkspaceProposalListFilters) => (
+        <WorkspaceProposalListDefault
+            accounts={accounts}
+            daos={daos}
+            filters={filters}
+            isDaosPending={isDaosPending}
             pageSize={pageSize}
-            state={state}
-        >
-            <DataListContainer
-                emptyState={emptyState}
-                errorState={errorState}
-                layoutClassName="grid grid-cols-1"
-                SkeletonElement={ProposalDataListItem.Skeleton}
-            >
-                {proposalList.map((proposal) => {
-                    const accountId = workspaceUtils.buildAccountId({
-                        network: proposal.network,
-                        address: proposal.daoAddress,
-                    });
-                    const dao = daos[accountId];
+        />
+    );
 
-                    // The rows wait for the DAOs, so a missing one means its read failed. The item components
-                    // require a DAO for the link and the publisher, so the row is dropped rather than rendered
-                    // half-broken.
-                    if (dao == null) {
-                        return null;
-                    }
+    // Tabs wait for the DAOs, as the URL parameter is only validated against the tabs known at mount. With a single
+    // plugin the unfiltered list already shows only its proposals, and shares its request with the aside card.
+    if (isDaosPending || pluginTabs.length <= 1) {
+        return renderList();
+    }
 
-                    return (
-                        <PluginSingleComponent
-                            dao={dao}
-                            Fallback={DaoProposalListDefaultItem}
-                            key={proposal.id}
-                            pluginId={proposal.pluginInterfaceType}
-                            proposal={proposal}
-                            proposalSlug={proposalUtils.getProposalSlug(
-                                proposal,
-                                dao,
-                            )}
-                            slotId={
-                                GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM
-                            }
-                            tag={dao.name}
-                        />
-                    );
-                })}
-            </DataListContainer>
-            <DataListPagination />
-        </DataListRoot>
+    const groupTab: IFilterComponentPlugin<
+        IDaoPlugin,
+        IWorkspaceProposalListTabProps
+    > = {
+        ...pluginGroupFilter,
+        label: t('app.workspace.workspaceProposalList.groupTab'),
+    };
+
+    return (
+        <PluginFilterComponent<IDaoPlugin, IWorkspaceProposalListTabProps>
+            plugins={[groupTab, ...pluginTabs]}
+            renderContent={(plugin) => renderList(plugin.props.filters)}
+            searchParamName={daoProposalListFilterParam}
+        />
     );
 };

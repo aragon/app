@@ -4473,7 +4473,9 @@
         "errorState": {
           "description": "The proposals of this workspace could not be loaded.",
           "heading": "Unable to load proposals"
-        }
+        },
+        "groupTab": "All proposals",
+        "pluginTab": "{{dao}} · {{plugin}}"
       },
       "workspaceAllProposalsAsideCard": {
         "accounts": "Accounts",
