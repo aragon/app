@@ -42,8 +42,9 @@ export const WorkspaceAssetsPageClient: React.FC<
 
     const accounts = workspace?.accounts ?? [];
 
-    // Every account of the workspace, or just the one the route names. Read from the route rather than from the
-    // active option because only DAO accounts become options, so a Safe has none of its own.
+    // Every account of the workspace, or just the one the route names.
+    // The account is read from the route rather than the activeOption
+    // because the latter does not yet take into account Safe accounts.
     const account = workspaceUtils.findAccountById(accounts, accountId);
 
     const accountsToDisplay = (account != null ? [account] : accounts).map(
