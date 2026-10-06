@@ -13,7 +13,7 @@ Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. 
 - Legacy stays the source of truth until a slice is proven on Sepolia.
 - The BFF falls back to legacy on the first page and never mixes two sources in one list.
 - Every slice ships behind its own feature flag and its own network list. Flags flip through the CMS without a deploy; network lists change in app code.
-- The app never calls Envio directly. It goes through `@aragon/aragon-domain` and a BFF route.
+- The app never calls Envio directly. It goes through `@aragon/aragon-domain` and the BFF service: a route for the browser, in-process for RSC prefetch.
 - One multichain indexer. Every deploy re-indexes from the start blocks while the previous deployment keeps serving.
 - Every count the app shows is computed at index time, because the hosted endpoint has no aggregates.
 - The DDD foundation of `aragon-domain` stays. The domain DTO is the shape the app reads; legacy responses are mapped into it.
