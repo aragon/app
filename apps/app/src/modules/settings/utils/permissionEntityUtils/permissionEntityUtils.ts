@@ -59,7 +59,7 @@ export interface IPermissionEntity {
     brandId?: IPermissionEntityRef['brandId'];
     /**
      * Secondary detail label shown under the address in the expanded row — the
-     * DAO name, or the plugin metadata name and version (e.g. `Core v1.3`).
+     * DAO name, or the plugin contract name and version (e.g. `Multisig v1.3`).
      */
     detailName?: string;
 }
@@ -300,14 +300,14 @@ class PermissionEntityUtils {
     };
 
     private formatPluginDetail = (plugin: IDaoPlugin): string => {
-        const name = daoUtils.getPluginName(plugin);
         const { release, build } = plugin;
 
         if (release != null && build != null) {
+            const name = daoUtils.getPluginContractName(plugin);
             return `${name} v${release}.${build}`;
         }
 
-        return name;
+        return daoUtils.getPluginName(plugin);
     };
 }
 

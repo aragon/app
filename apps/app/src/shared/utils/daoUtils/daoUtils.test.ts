@@ -326,6 +326,44 @@ describe('dao utils', () => {
         });
     });
 
+    describe('getPluginContractName', () => {
+        it.each([
+            { subdomain: 'token-voting', expected: 'Token Voting' },
+            {
+                subdomain: 'custom-token-voting',
+                expected: 'Custom Token Voting',
+            },
+            { subdomain: undefined, expected: 'Token Voting' },
+            { subdomain: '', expected: 'Token Voting' },
+        ])(
+            'uses the contract identity for subdomain "$subdomain" despite a custom name',
+            ({ subdomain, expected }) => {
+                const plugin = generateDaoPlugin({
+                    name: 'TV',
+                    subdomain,
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                });
+
+                expect(daoUtils.getPluginContractName(plugin)).toEqual(
+                    expected,
+                );
+                expect(daoUtils.getPluginName(plugin)).toEqual('TV');
+            },
+        );
+
+        it('uses the repository name for plugins the app does not recognize', () => {
+            const plugin = generateDaoPlugin({
+                name: 'Test',
+                subdomain: 'custom-governance',
+                interfaceType: PluginInterfaceType.UNKNOWN,
+            });
+
+            expect(daoUtils.getPluginContractName(plugin)).toEqual(
+                'Custom Governance',
+            );
+        });
+    });
+
     describe('getDaoPlugins', () => {
         it('returns all dao plugins by default', () => {
             const plugins = [

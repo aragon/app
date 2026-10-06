@@ -38,7 +38,7 @@ describe('permissionEntity Utils', () => {
                 label: 'Multisig',
                 meta: {
                     address: pluginAddress,
-                    name: 'Multisig',
+                    name: 'Core',
                     interfaceType: 'multisig',
                     release: '1',
                     build: '2',
@@ -87,10 +87,10 @@ describe('permissionEntity Utils', () => {
             },
             {
                 description:
-                    'resolves a matching plugin to name + type tag, with the metadata name and version as the detail name',
+                    'keeps the custom label and uses the contract name beside the version',
                 address: pluginAddress,
                 expected: {
-                    label: 'Multisig',
+                    label: 'Core',
                     detailName: 'Multisig v1.2',
                     isSentinel: false,
                     tag: 'MULTISIG',

@@ -507,8 +507,9 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
     });
 
     describe('getPluginUpdateDetails', () => {
-        it('returns the details of the plugin update', () => {
+        it('uses the contract name for current and target versions despite a custom name', () => {
             const plugin = generateDaoPlugin({
+                name: 'TV',
                 subdomain: 'token-voting',
                 release: '1',
                 build: '1',
