@@ -1,4 +1,4 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -161,9 +161,9 @@ describe('<WorkspaceMemberList /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    // A Safe has no plugin to split its owners across, so it gets a single tab of its own, and no on-chain metadata
-    // to fall back on when the workspace named none, so an unnamed one is labelled by its address.
-    it('renders a tab for every Safe account, in the order of the accounts', async () => {
+    // A Safe contributes members but has no body to put in a tab, so the group tab shows more than the single body
+    // tab does and the tabs earn their place.
+    it('renders the tabs for a single body when the workspace also holds a Safe account', async () => {
         const address = nextAddress();
         getDaoSpy.mockResolvedValue(
             generateDao({
@@ -184,47 +184,8 @@ describe('<WorkspaceMemberList /> component', () => {
         render(
             createTestComponent({
                 accounts: [
+                    buildAccount(address),
                     buildAccount(safeAddress, WorkspaceAccountType.SAFE),
-                    buildAccount(address),
-                ],
-            }),
-        );
-
-        const tabs = await screen.findAllByTestId('plugin-tab');
-        expect(tabs.map((tab) => tab.textContent)).toEqual([
-            'app.workspace.workspaceMemberList.groupTab',
-            `app.workspace.workspaceMemberList.safeTab (address=${addressUtils.truncateAddress(safeAddress)})`,
-            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
-        ]);
-    });
-
-    // The name the workspace gave the Safe is the only name it has, so it wins over the address.
-    it('labels a Safe tab with the name the workspace gave the account', async () => {
-        const address = nextAddress();
-        getDaoSpy.mockResolvedValue(
-            generateDao({
-                address,
-                network,
-                name: 'Only DAO',
-                plugins: [
-                    generateDaoPlugin({
-                        address: '0xBody',
-                        name: 'Body',
-                        isBody: true,
-                        interfaceType: PluginInterfaceType.MULTISIG,
-                    }),
-                ],
-            }),
-        );
-
-        render(
-            createTestComponent({
-                accounts: [
-                    buildAccount(address),
-                    {
-                        ...buildAccount(safeAddress, WorkspaceAccountType.SAFE),
-                        metadata: { name: 'Treasury Safe' },
-                    },
                 ],
             }),
         );
@@ -233,50 +194,7 @@ describe('<WorkspaceMemberList /> component', () => {
         expect(tabs.map((tab) => tab.textContent)).toEqual([
             'app.workspace.workspaceMemberList.groupTab',
             'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
-            'Treasury Safe',
         ]);
-    });
-
-    // A Safe is its own governance: there is no plugin address to narrow by.
-    it('narrows the members of a Safe tab by the address of the Safe', async () => {
-        const address = nextAddress();
-        const safeAccount = buildAccount(
-            safeAddress,
-            WorkspaceAccountType.SAFE,
-        );
-        getDaoSpy.mockResolvedValue(
-            generateDao({
-                address,
-                network,
-                plugins: [
-                    generateDaoPlugin({
-                        address: '0xBody',
-                        isBody: true,
-                        interfaceType: PluginInterfaceType.MULTISIG,
-                    }),
-                ],
-            }),
-        );
-
-        // The mock renders the last tab, which is the Safe one with the accounts in this order.
-        render(
-            createTestComponent({
-                accounts: [buildAccount(address), safeAccount],
-            }),
-        );
-
-        await waitFor(() =>
-            expect(getMemberListSpy).toHaveBeenCalledWith({
-                body: {
-                    accounts: [
-                        { network, address },
-                        { network, address: safeAddress },
-                    ],
-                    filters: { network, governanceAddress: safeAddress },
-                    pagination: { pageSize: 18 },
-                },
-            }),
-        );
     });
 
     // Its owners still reach the list, so the group tab shows more than the only tab does.
