@@ -1,7 +1,12 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import userEvent from '@testing-library/user-event';
+import {
+    type IProposalAction,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import {
     CrossChainControllerNestedActionsList,
     type ICrossChainControllerNestedActionsListProps,
@@ -13,8 +18,14 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         'normalizeDefaultAction',
     );
 
+    const getViewByActionTypeSpy = jest.spyOn(
+        actionViewRegistry,
+        'getViewByActionType',
+    );
+
     afterEach(() => {
         normalizeDefaultActionSpy.mockClear();
+        getViewByActionTypeSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -98,6 +109,42 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         );
 
         expect(normalizeDefaultActionSpy).toHaveBeenCalledWith(rawActions[0]);
+    });
+
+    it.each([ProposalActionType.TRANSFER, ProposalActionType.TRANSFER_NATIVE])(
+        'renders the view registered for %s actions',
+        async (type) => {
+            getViewByActionTypeSpy.mockReturnValue({
+                actionType: type,
+                componentDetails: () => 'transfer-view',
+            });
+            const action = generateAction({ type, data: '0x', value: '1' });
+
+            render(
+                createTestComponent({
+                    rawTuple: [{ to: action.to, value: '1', data: '0x' }],
+                    rawActions: [action],
+                }),
+            );
+
+            await userEvent.click(screen.getAllByRole('button')[0]);
+
+            expect(getViewByActionTypeSpy).toHaveBeenCalledWith(type);
+            expect(screen.getByText('transfer-view')).toBeInTheDocument();
+        },
+    );
+
+    it('does not resolve views by action type for other actions', () => {
+        const action = generateAction({ type: 'Execute' });
+
+        render(
+            createTestComponent({
+                rawTuple: [{ to: action.to, value: '0', data: action.data }],
+                rawActions: [action],
+            }),
+        );
+
+        expect(getViewByActionTypeSpy).not.toHaveBeenCalled();
     });
 
     it('renders nothing when both rawActions and rawTuple are empty', () => {

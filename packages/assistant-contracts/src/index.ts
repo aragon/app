@@ -1,9 +1,11 @@
 export {
     appContextSchema,
+    chatFeaturesSchema,
     chatMessageSchema,
     chatRequestSchema,
     debugTransactionSchema,
     type IAppContext,
+    type IChatFeatures,
     type IChatMessage,
     type IChatRequest,
     type IDebugTransaction,

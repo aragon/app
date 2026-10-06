@@ -53,6 +53,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
             </div>
             <div className="flex flex-col">
                 {steps.map((step, index) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static steps list, never reordered
                     <div className="flex items-center gap-x-6 py-4" key={index}>
                         <IllustrationObject
                             className="size-16 rounded-full border border-neutral-100"

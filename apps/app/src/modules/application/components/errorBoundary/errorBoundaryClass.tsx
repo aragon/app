@@ -19,6 +19,10 @@ export interface IErrorBoundaryClassProps {
      */
     pathname?: string;
     /**
+     * Rendered instead of the default error feedback when an error occurs.
+     */
+    fallback?: ReactNode;
+    /**
      * The children to render.
      */
     children?: ReactNode;
@@ -51,7 +55,7 @@ export class ErrorBoundaryClass extends Component<
 
     render() {
         if (this.state.hasError) {
-            return <ErrorFeedback />;
+            return this.props.fallback ?? <ErrorFeedback />;
         }
 
         return this.props.children;

@@ -1,0 +1,64 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "root": false,
+    "extends": "//",
+    "files": {
+        // files.includes of a nested config replaces the root list, so the shared exclusions repeat here.
+        "includes": [
+            "**",
+            "!**/*.svg",
+            "!snapshots",
+            "!src/modules/application/components/layouts/layoutRoot/breakpoints.css",
+            "!public/web-workers"
+        ]
+    },
+    "formatter": {
+        "includes": [
+            "**",
+            "!src/app/manifest.json",
+            "!src/assets/locales/**"
+        ]
+    },
+    "linter": {
+        "rules": {
+            "style": {
+                "noRestrictedImports": {
+                    "level": "warn",
+                    "options": {
+                        "paths": {
+                            "wagmi": {
+                                "importNames": [
+                                    "useConnection",
+                                    "useEnsAvatar",
+                                    "useEnsName"
+                                ],
+                                "message": "Import ENS hooks from @/modules/ens, wallet account state (address/chainId) from @/modules/application/hooks/useWalletAccount, and connection-gating from @/modules/application/hooks/useWalletConnected. Add biome-ignore with reason if direct wagmi access is needed."
+                            },
+                            "viem": {
+                                "importNames": [
+                                    "isAddress"
+                                ],
+                                "message": "Use addressUtils.isAddress from @aragon/gov-ui-kit instead. Viem's isAddress defaults to strict EIP-55 checksum validation, which rejects otherwise valid mixed-case addresses (e.g. links shared from other tools). If you must use viem directly (e.g. inside a server component, where the gov-ui-kit client shim breaks), biome-ignore this line and pass { strict: false } explicitly."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": [
+                "e2e/scripts/**/*.mjs",
+                "scripts/**/*.mjs"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

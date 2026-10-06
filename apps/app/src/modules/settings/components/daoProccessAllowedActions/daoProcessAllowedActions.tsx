@@ -79,14 +79,14 @@ export const DaoProcessAllowedActions: React.FC<
                 emptyState={emptyState}
                 SkeletonElement={SmartContractFunctionDataListItem.Skeleton}
             >
-                {allowedActionsList?.map((action, index) => (
+                {allowedActionsList?.map((action) => (
                     <SmartContractFunctionDataListItem.Structure
                         chainId={networkDefinitions[network].id}
                         contractAddress={action.target}
                         contractName={action.decoded?.contractName}
                         functionName={action.decoded?.functionName}
                         functionSelector={action.selector ?? undefined}
-                        key={index}
+                        key={action.id}
                     />
                 ))}
             </DataList.Container>

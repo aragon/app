@@ -1,5 +1,49 @@
 # @aragon/app
 
+## 1.40.1
+
+### Patch Changes
+
+- [#1416](https://github.com/aragon/app/pull/1416) [`a379bb8`](https://github.com/aragon/app/commit/a379bb8a6825048965d40eaff2a36747a9a3a296) Thanks [@evanaronson](https://github.com/evanaronson)! - Stop a removed or reordered proposal action from passing its validation state on to the action that takes its place in the action builder: re-adding an action after removing one that had shown an error no longer shows that error straight away, and moving actions no longer makes an untouched action validate before it has been edited.
+
+- [#1425](https://github.com/aragon/app/pull/1425) [`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Consume `@aragon/aragon-domain` from the workspace instead of npm, and follow the monorepo-wide Biome rules.
+
+- [#1422](https://github.com/aragon/app/pull/1422) [`cdc1b83`](https://github.com/aragon/app/commit/cdc1b832bab02a6968c47d74383356aa21bdc8ec) Thanks [@harryburger](https://github.com/harryburger)! - Show the value field when a payable function is picked from the only-allowed actions list, by forwarding the function's state mutability from the allowed actions to the action composer.
+
+- [#1413](https://github.com/aragon/app/pull/1413) [`d3a23a4`](https://github.com/aragon/app/commit/d3a23a43835b413eace95e6d1165918b2a801fab) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Consume generated GovKit primitive tokens in App and design-sync consumers.
+
+- Thanks [@evanaronson](https://github.com/evanaronson)! - Point the application to the new version 1.3.0 of the SPP plugin which contains several bugfixes.
+
+- Thanks [@tyhonchik](https://github.com/tyhonchik)! - Register the prepare-update data builder for the Staged Proposal Processor plugin, so the contract-upgrade dialog prepares the SPP update instead of failing before the transaction is built. The SPP setup derives the update from the current rule condition it receives as helper and ignores the data payload.
+- Updated dependencies [[`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d)]:
+    - @aragon/assistant-chat@0.5.2
+
+## 1.40.0
+
+### Minor Changes
+
+- [#1128](https://github.com/aragon/app/pull/1128) [`3c9bb79`](https://github.com/aragon/app/commit/3c9bb798f3679fb2eb8052a192847ab2274ed1d5) Thanks [@asciiman](https://github.com/asciiman)! - Add the aragon-domain (Envio) source for mainnet ERC-20 token-voting member lists behind the `domainMemberList` feature flag (off by default): a chain-scoped BFF route, per-plugin source routing that falls back to the legacy backend, the library DTO as the member list contract, and SSR hydration of the members page
+
+- [#1382](https://github.com/aragon/app/pull/1382) [`0c3c946`](https://github.com/aragon/app/commit/0c3c946c0f3206ac1c224fed43e8a100540f7bf4) Thanks [@harryburger](https://github.com/harryburger)! - Add a Basic view for the DAO permission actions: `grant`, `revoke`, `grantWithCondition`, `applySingleTargetPermissions` and `applyMultiTargetPermissions`. The proposal view shows who gets which permission on which contract. The permission name comes from the same keccak dictionary as the permissions page and the hash stays as the copyable value, an unknown hash is marked instead of hidden. The bulk actions render one card per change in calldata order, a revoke followed by a re-grant stays two changes. In the composer the same actions get a permission picker that also takes a pasted ID or a typed name (hashed for you), address inputs with ENS, and a high risk warning. The decoded view is left exactly as the kit renders it, so a reviewer can always check the raw parameters.
+
+### Patch Changes
+
+- [#1394](https://github.com/aragon/app/pull/1394) [`c6e3d70`](https://github.com/aragon/app/commit/c6e3d7045295b954e619659e285ef43723c85eff) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Show a spinner in the support chat while the assistant looks through the documentation. The documentation tools run silently — no text streams around them — so without it the reply was a blank bubble until the answer arrived.
+
+- [#1399](https://github.com/aragon/app/pull/1399) [`8140cd2`](https://github.com/aragon/app/commit/8140cd2a9b128ea5ff1e22e833feb05828bba1af) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Lay out the application against the width of its own column instead of the browser window, so the interface stays usable while the AI assistant is docked beside it. The breakpoint variants (`sm:` … `2xl:` and `max-*`) are now container queries on the application column, which covers every page and the gov-ui-kit components alike: with the assistant open at a 1280px window the app renders its stacked layout instead of a desktop layout that no longer fits, where the main column used to be squeezed to 268px (and to 4px at 1024px). Collapsing the assistant leaves the layout unchanged — the column is then exactly window-wide. The assistant panel itself keeps measuring the window, and the DAO navigation dialog now lists every destination, since it cannot see which links the bar dropped for width.
+
+- [#1394](https://github.com/aragon/app/pull/1394) [`c6e3d70`](https://github.com/aragon/app/commit/c6e3d7045295b954e619659e285ef43723c85eff) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix three support chat glitches from the feedback round. Links in a reply were plain text: the markdown renderer now enables GitHub-flavored markdown, so a bare URL is a clickable link like a labelled one (both open in a new tab), the rare table renders as one instead of a run of pipes, and images are not rendered at all (a reply never needs one, and an image would make the browser fetch a URL of the model's choosing). A documentation lookup showed two spinners at once (assistant-ui keeps the empty-message spinner up next to a trailing tool part, and each running tool part drew its own) and none while the model read the results: the reply now shows a single spinner from the send until the answer starts streaming, through every lookup in between. And a message longer than the service accepts used to leave as usual and come back as a generic failure: the composer now stops at the limit (8,000 characters, a longer paste is clipped) and shows the count once a message gets close to it.
+
+- [#1423](https://github.com/aragon/app/pull/1423) [`83a52ac`](https://github.com/aragon/app/commit/83a52ac77d1aff6fcd47d303d974f70bad04b1eb) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Tell the user the support chat is AI before the first message, with the privacy policy and terms linked, and add the `supportChatDocs` feature flag that lets the chat answer product questions from the documentation.
+
+- [#1436](https://github.com/aragon/app/pull/1436) [`033d917`](https://github.com/aragon/app/commit/033d917cada1d8b12a01e634792a0ceac32a6c70) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Hide plugins whose interface type this build ships no plugin for. The backend now registers a Safe holding EXECUTE as a `safe` process (APP-1165); the app accepted it as a governance target, so opening the process picker with a connected wallet called a create-proposal builder that was never registered and crashed the whole app into the global error page, and the Safe body of an SPP stage resolved to that row instead of staying an external body. A dialog that throws now shows the error inside the dialog with a close button instead of unmounting the app, and the global error page shows text instead of translation keys.
+
+- [#1424](https://github.com/aragon/app/pull/1424) [`0131b15`](https://github.com/aragon/app/commit/0131b1549a9db1ebc01e051bbb0b488b4ae60c38) Thanks [@evanaronson](https://github.com/evanaronson)! - Show DAO destination links in the navigation dialog only while the inline navigation is collapsed, including when the AI assistant reduces the application column width.
+
+- [#1415](https://github.com/aragon/app/pull/1415) [`c020ff9`](https://github.com/aragon/app/commit/c020ff97c172f59165d947842c74f6f99b962d8f) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (Next.js 16.3.5, React 19.3, Sentry 10.74, viem 2.56, wagmi 3.7.7, WalletConnect 2.25, assistant-ui 0.15, isomorphic-dompurify 4), bump pnpm to 11.27, and lift gov-ui-kit's sanitize-html to 2.17.7, closing two XSS advisories in proposal body rendering
+- Updated dependencies [[`c6e3d70`](https://github.com/aragon/app/commit/c6e3d7045295b954e619659e285ef43723c85eff), [`c6e3d70`](https://github.com/aragon/app/commit/c6e3d7045295b954e619659e285ef43723c85eff), [`83a52ac`](https://github.com/aragon/app/commit/83a52ac77d1aff6fcd47d303d974f70bad04b1eb), [`83b8cb8`](https://github.com/aragon/app/commit/83b8cb865f4813f47eaecd504ce2db8ca57e079a), [`83b8cb8`](https://github.com/aragon/app/commit/83b8cb865f4813f47eaecd504ce2db8ca57e079a), [`c020ff9`](https://github.com/aragon/app/commit/c020ff97c172f59165d947842c74f6f99b962d8f)]:
+    - @aragon/assistant-chat@0.5.1
+
 ## 1.39.1
 
 ### Patch Changes

@@ -1,5 +1,5 @@
 import { useChat } from '@ai-sdk/react';
-import type { IAppContext } from '@aragon/assistant-contracts';
+import type { IAppContext, IChatFeatures } from '@aragon/assistant-contracts';
 import { useAISDKRuntime } from '@assistant-ui/react-ai-sdk';
 import { lastAssistantMessageIsCompleteWithApprovalResponses } from 'ai';
 import { useCallback, useMemo, useRef } from 'react';
@@ -22,6 +22,10 @@ export interface IUseAssistantRuntimeParams {
      */
     appContext: IAppContext;
     /**
+     * What the host lets the chat do, sent alongside every request.
+     */
+    features: IChatFeatures;
+    /**
      * Monitoring implementation used to report transport errors.
      */
     monitoring: IChatMonitoring;
@@ -35,14 +39,17 @@ export interface IUseAssistantRuntimeParams {
 export const useAssistantRuntime = (
     params: IUseAssistantRuntimeParams,
 ): ReturnType<typeof useAISDKRuntime> => {
-    const { assistantUrl, sessionId, appContext, monitoring } = params;
+    const { assistantUrl, sessionId, appContext, features, monitoring } =
+        params;
 
-    // The transport reads session and context through refs so a stale closure can never send an
-    // outdated session identifier after a rotation.
+    // The transport reads session, context and features through refs so a stale closure can
+    // never send an outdated session identifier after a rotation.
     const sessionIdRef = useRef(sessionId);
     sessionIdRef.current = sessionId;
     const appContextRef = useRef(appContext);
     appContextRef.current = appContext;
+    const featuresRef = useRef(features);
+    featuresRef.current = features;
 
     const transport = useMemo(
         () =>
@@ -50,6 +57,7 @@ export const useAssistantRuntime = (
                 assistantUrl,
                 getSessionId: () => sessionIdRef.current,
                 getAppContext: () => appContextRef.current,
+                getFeatures: () => featuresRef.current,
             }),
         [assistantUrl],
     );

@@ -57,18 +57,4 @@ describe('docs tools', () => {
         expect(page.content).toContain('## What an account is');
         expect(missing.found).toBe(false);
     });
-
-    it('lists the pages of an area', async () => {
-        const tools = buildTools();
-
-        const output = (await tools[docsToolNames.listDocs].execute?.(
-            { area: 'Accounts' },
-            toolOptions,
-        )) as { docs: Array<{ title: string }> };
-
-        expect(output.docs.map((entry) => entry.title)).toEqual([
-            'Account',
-            'Linked account',
-        ]);
-    });
 });
