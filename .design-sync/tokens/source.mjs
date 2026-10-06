@@ -1,6 +1,6 @@
 // Shared source reader for the GovKit token-parity baseline (APP-727).
-// Reads the installed gov-ui-kit primitive CSS plus the App :root runtime
-// overrides and returns a structured, DTCG-2025.10 view. No values are
+// Reads the installed gov-ui-kit primitive CSS plus the generator-only App
+// override source and returns a structured, DTCG-2025.10 view. No values are
 // hardcoded: everything is derived from the CSS actually on disk. Unknown
 // custom properties or value syntax throw rather than being silently dropped.
 //
@@ -20,7 +20,7 @@ const postcss = require('postcss');
 const KIT_PACKAGE = '@aragon/gov-ui-kit';
 const PRIMITIVES_REL = 'src/theme/tokens/primitives';
 const APP_OVERRIDE_REL =
-    'src/modules/application/components/layouts/layoutRoot/layoutRoot.css';
+    'src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css';
 
 const repoRoot = fileURLToPath(new URL('../../', import.meta.url));
 

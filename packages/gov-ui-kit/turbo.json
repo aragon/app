@@ -1,15 +1,22 @@
 {
-    "extends": ["//"],
+    "extends": [
+        "//"
+    ],
     "tasks": {
         "build": {
-            "outputs": ["dist/**", "build.css"],
+            "outputs": [
+                "dist/**",
+                "build.css"
+            ],
             "cache": true
         },
         // Compares the built `build.css` against a fresh compile of `index.css`, so it needs
         // the build to have run. Guards the 2.8.1/2.9.0 regression where a nesting-unaware
         // minifier merged selector lists in the published bundle.
         "css:check": {
-            "dependsOn": ["build"],
+            "dependsOn": [
+                "build"
+            ],
             "cache": true,
             "outputs": []
         }

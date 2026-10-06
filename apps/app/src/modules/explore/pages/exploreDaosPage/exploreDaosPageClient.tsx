@@ -83,6 +83,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                             speedOnHoverFactor={0.2}
                         >
                             {featuredDaos.map((dao, index) => (
+                                // biome-ignore lint/suspicious/noArrayIndexKey: CMS entries have no id and are never reordered
                                 <DaoCarouselCard key={index} {...dao} />
                             ))}
                         </Carousel>

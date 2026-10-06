@@ -61,7 +61,7 @@ describe('<ExploreDaosPageClient /> component', () => {
 
         return (
             <GukModulesProvider>
-                <ExploreDaosPageClient {...completeProps} />;
+                <ExploreDaosPageClient {...completeProps} />
             </GukModulesProvider>
         );
     };

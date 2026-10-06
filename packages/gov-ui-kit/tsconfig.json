@@ -5,7 +5,10 @@
         "downlevelIteration": true,
         "incremental": false,
         "jsx": "react-jsx",
-        "lib": ["dom", "esnext"],
+        "lib": [
+            "dom",
+            "esnext"
+        ],
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
@@ -14,6 +17,16 @@
         "sourceMap": true,
         "target": "ES2020"
     },
-    "include": ["src", ".storybook/**/*", "*.config.js", "*.config.mjs"],
-    "exclude": ["node_modules", "dist", "storybook-static", "coverage"]
+    "include": [
+        "src",
+        ".storybook/**/*",
+        "*.config.js",
+        "*.config.mjs"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "storybook-static",
+        "coverage"
+    ]
 }
