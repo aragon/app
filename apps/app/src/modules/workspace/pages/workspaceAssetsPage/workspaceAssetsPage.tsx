@@ -18,7 +18,17 @@ export interface IWorkspaceAssetsPageProps {
 export const workspaceAssetsCount = 20;
 
 /**
- * Aggregated assets of a workspace.
+ * Assets of a workspace under either scope: every account of the workspace, or one account.
+ *
+ * One page serves both, unlike the account overview, which renders `DaoDashboardPage` as is. Every scope reads
+ * `POST /v2/workspaces/query/assets`, which is what keeps a single account summing into the aggregated view — both
+ * come out of the same aggregation — and what makes a Safe account, which has no DAO page to delegate to, readable
+ * at all. For the same reason `WorkspaceAccountGate` is deliberately not applied here: it fails the route when the
+ * DAO cannot be read, which is the permanent state of every Safe.
+ *
+ * The scope is not read here. The aggregated route spells the account `all`, a static segment, so there is no
+ * `accountId` parameter to read on that route and typing one would be a lie; the client resolves the scope from the
+ * route instead (`useWorkspaceAccountOptions`).
  *
  * Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry
  * and is therefore resolved on the client (see `docs/projectDocs/createWorkspace.md`).

@@ -21,6 +21,10 @@ export interface IWorkspaceAssetListProps {
      * Number of assets to read per page.
      */
     pageSize: number;
+    /**
+     * Keeps the list in its loading state while the accounts are still being resolved.
+     */
+    isPending?: boolean;
 }
 
 /**
@@ -30,7 +34,7 @@ export interface IWorkspaceAssetListProps {
 export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
     props,
 ) => {
-    const { accounts, pageSize } = props;
+    const { accounts, pageSize, isPending } = props;
 
     const { t } = useTranslations();
 
@@ -48,6 +52,16 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
     );
 
     const isSingleAccount = accounts.length === 1;
+
+    // A selection with no account keeps the query disabled, and a disabled query reads as pending, which would
+    // otherwise leave the list loading forever instead of showing its empty state.
+    const listState = () => {
+        if (isPending) {
+            return 'initialLoading';
+        }
+
+        return accounts.length > 0 ? state : 'idle';
+    };
 
     return (
         <div className="flex flex-col gap-4 md:gap-6">
@@ -75,7 +89,7 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
                 itemsCount={itemsCount}
                 onLoadMore={onLoadMore}
                 pageSize={pageSize}
-                state={state}
+                state={listState()}
             >
                 <DataListContainer
                     emptyState={emptyState}
