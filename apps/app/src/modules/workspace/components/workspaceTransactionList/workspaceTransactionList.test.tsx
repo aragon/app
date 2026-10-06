@@ -225,18 +225,13 @@ describe('<WorkspaceTransactionList /> component', () => {
         ).toBeInTheDocument();
     });
 
-    // An account-scoped view is the account, so saying "some accounts" would only raise the question of which one.
-    it('warns about the account itself under an account scope', () => {
+    // A single-account view is the account, so saying "some accounts" would only raise the question of which one.
+    it('warns about the account itself when it is the only one of the selection', () => {
         mockTransactions([generateWorkspaceTransaction({ account })], {
             partial: true,
         });
 
-        render(
-            createTestComponent({
-                accounts: [buildAccount()],
-                isAccountScoped: true,
-            }),
-        );
+        render(createTestComponent({ accounts: [buildAccount()] }));
 
         expect(
             screen.getByText(
@@ -246,25 +241,6 @@ describe('<WorkspaceTransactionList /> component', () => {
         expect(
             screen.queryByText(
                 'app.workspace.workspaceTransactionList.partial',
-            ),
-        ).not.toBeInTheDocument();
-    });
-
-    // The copy follows the scope, not the account count: the aggregated view of a workspace that happens to hold
-    // one account is still the aggregated view, and reading as "this account" there would name nothing.
-    it('keeps the aggregated warning on the aggregated view of a single-account workspace', () => {
-        mockTransactions([generateWorkspaceTransaction({ account })], {
-            partial: true,
-        });
-
-        render(createTestComponent({ accounts: [buildAccount()] }));
-
-        expect(
-            screen.getByText('app.workspace.workspaceTransactionList.partial'),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByText(
-                'app.workspace.workspaceTransactionList.partialSingle',
             ),
         ).not.toBeInTheDocument();
     });

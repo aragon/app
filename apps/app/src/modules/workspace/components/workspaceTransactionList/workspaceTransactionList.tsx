@@ -202,13 +202,13 @@ export const WorkspaceTransactionList: React.FC<
     // The list is incomplete as soon as one account of one loaded page could not be read in full. Saying so is what
     // stops a short list from reading as the complete history.
     const isPartial = data?.pages.some((page) => page.partial) ?? false;
-    const isAccountScoped = accounts.length === 1;
+    const isSingleAccount = accounts.length === 1;
 
-    const partialMessage = isAccountScoped
+    const partialMessage = isSingleAccount
         ? t('app.workspace.workspaceTransactionList.partialSingle')
         : t('app.workspace.workspaceTransactionList.partial');
 
-    const emptyStateDescription = isAccountScoped
+    const emptyStateDescription = isSingleAccount
         ? t(
               'app.workspace.workspaceTransactionList.emptyState.descriptionSingle',
           )

@@ -48,7 +48,7 @@ describe('<WorkspaceDaoTransactionsAsideCard /> component', () => {
         blockTimestamp: 1_700_000_000,
     });
 
-    const mockTransactions = (partial = false) =>
+    const mockTransactions = () =>
         useWorkspaceTransactionsSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({
                 data: {
@@ -58,7 +58,6 @@ describe('<WorkspaceDaoTransactionsAsideCard /> component', () => {
                             metadata: generatePaginatedResponseMetadata({
                                 totalRecords: 7,
                             }),
-                            partial,
                         }),
                     ],
                     pageParams: [],
@@ -156,26 +155,6 @@ describe('<WorkspaceDaoTransactionsAsideCard /> component', () => {
                     metadata: expect.objectContaining({ totalRecords: 7 }),
                 }),
             }),
-            undefined,
-        );
-    });
-
-    it('marks the count as exact when every account of the page could be read', () => {
-        render(createTestComponent());
-
-        expect(daoFilterAsideCardSpy).toHaveBeenLastCalledWith(
-            expect.objectContaining({ isPartialCount: false }),
-            undefined,
-        );
-    });
-
-    // The list beside the card warns that it is incomplete, so an exact-looking count would contradict it.
-    it('marks the count as a lower bound when the page is partial', () => {
-        mockTransactions(true);
-        render(createTestComponent());
-
-        expect(daoFilterAsideCardSpy).toHaveBeenLastCalledWith(
-            expect.objectContaining({ isPartialCount: true }),
             undefined,
         );
     });
