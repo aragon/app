@@ -60,6 +60,11 @@ export const initialiseSppPlugin = () => {
             function: useSppGovernanceSettings,
         })
         .registerSlotFunction({
+            slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
+            pluginId: sppPlugin.id,
+            function: sppTransactionUtils.buildPrepareUpdateData,
+        })
+        .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
             pluginId: sppPlugin.id,
             function: sppTransactionUtils.getUninstallHelpers,

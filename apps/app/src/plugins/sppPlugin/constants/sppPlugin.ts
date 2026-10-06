@@ -9,7 +9,7 @@ export const sppPlugin: IPluginInfo = {
         release: 1,
         build: 3,
         releaseNotes:
-            'https://github.com/aragon/staged-proposal-processor-plugin/releases/tag/v1.3.0',
+            'https://github.com/aragon/staged-proposal-processor-plugin/releases',
         description: '',
     },
     repositoryAddresses: {
