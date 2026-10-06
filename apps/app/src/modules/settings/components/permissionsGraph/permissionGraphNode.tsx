@@ -103,7 +103,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                             label={label}
                         />
                         <span className="truncate text-neutral-500 text-sm">
-                            {t(subtitleKey)}
+                            {data.versionName ?? t(subtitleKey)}
                         </span>
                     </div>
                     {isDaoKind && (

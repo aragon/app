@@ -180,6 +180,31 @@ describe('permissionEntity Utils', () => {
             });
         });
 
+        it.each(['topLevelPlugin', 'processInternal'] as const)(
+            'uses the matched plugin version under a custom backend %s name',
+            (layer) => {
+                const result = permissionEntityUtils.resolvePermissionEntity(
+                    pluginAddress,
+                    {
+                        daoPlugins,
+                        entity: {
+                            address: pluginAddress,
+                            label: 'Test',
+                            interfaceType: 'multisig',
+                            layer,
+                            parentPluginName: 'Parent process',
+                        },
+                    },
+                );
+
+                expect(result).toMatchObject({
+                    label: 'Test',
+                    detailName: 'Multisig v1.2',
+                    versionName: 'Multisig v1.2',
+                });
+            },
+        );
+
         it('uses the local plugin formatter when a backend plugin label is only the raw interface type', () => {
             const gaugeAddress = '0x8ab7f7b617b5248358ea9c9b728f3c2edbaa97a2';
             const result = permissionEntityUtils.resolvePermissionEntity(
@@ -213,6 +238,7 @@ describe('permissionEntity Utils', () => {
                 tag: 'GAUGE',
                 type: 'plugin',
                 detailName: 'Citrea Xctr Gauge Voter 0',
+                versionName: undefined,
                 layer: 'topLevelPlugin',
             });
         });
@@ -282,11 +308,13 @@ describe('permissionEntity Utils', () => {
             const result = permissionEntityUtils.resolvePermissionEntity(
                 unknownAddress,
                 {
+                    daoPlugins,
                     entity: {
                         address: unknownAddress,
                         label,
                         layer: 'processInternal',
                         interfaceType,
+                        parentPluginAddress: pluginAddress,
                         parentPluginName: 'Core Governance',
                     },
                 },
@@ -296,6 +324,7 @@ describe('permissionEntity Utils', () => {
                 ...expected,
                 type: 'plugin',
                 layer: 'processInternal',
+                versionName: undefined,
             });
         });
     });

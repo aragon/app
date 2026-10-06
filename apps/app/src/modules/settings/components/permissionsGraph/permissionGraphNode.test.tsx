@@ -54,6 +54,25 @@ const renderGraphNode = (
 };
 
 describe('<PermissionGraphNode /> component', () => {
+    it('shows the plugin version below its custom name', () => {
+        renderGraphNode({
+            label: 'Test',
+            tag: 'OSx',
+            versionName: 'Staged Proposal Processor v1.1',
+        });
+
+        expect(screen.getByText('Test')).toBeInTheDocument();
+        expect(screen.getByText('OSx')).toBeInTheDocument();
+        expect(
+            screen.getByText('Staged Proposal Processor v1.1'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.settings.daoPermissionsPage.graphView.node.plugin',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
     it.each([
         {
             name: 'uninstalled plugin nodes as historical',
