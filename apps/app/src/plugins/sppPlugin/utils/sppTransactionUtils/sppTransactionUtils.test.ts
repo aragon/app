@@ -141,6 +141,12 @@ describe('sppTransaction utils', () => {
         });
     });
 
+    describe('buildPrepareUpdateData', () => {
+        it('returns empty data as the SPP setup only relies on the current helpers', () => {
+            expect(sppTransactionUtils.buildPrepareUpdateData()).toEqual('0x');
+        });
+    });
+
     describe('buildPluginsSetupActions', () => {
         const buildUpdateStagesTransactionSpy = jest.spyOn(
             sppTransactionUtils as any,

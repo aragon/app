@@ -11,6 +11,10 @@
 - [#1422](https://github.com/aragon/app/pull/1422) [`cdc1b83`](https://github.com/aragon/app/commit/cdc1b832bab02a6968c47d74383356aa21bdc8ec) Thanks [@harryburger](https://github.com/harryburger)! - Show the value field when a payable function is picked from the only-allowed actions list, by forwarding the function's state mutability from the allowed actions to the action composer.
 
 - [#1413](https://github.com/aragon/app/pull/1413) [`d3a23a4`](https://github.com/aragon/app/commit/d3a23a43835b413eace95e6d1165918b2a801fab) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Consume generated GovKit primitive tokens in App and design-sync consumers.
+
+- Thanks [@evanaronson](https://github.com/evanaronson)! - Point the application to the new version 1.3.0 of the SPP plugin which contains several bugfixes.
+
+- Thanks [@tyhonchik](https://github.com/tyhonchik)! - Register the prepare-update data builder for the Staged Proposal Processor plugin, so the contract-upgrade dialog prepares the SPP update instead of failing before the transaction is built. The SPP setup derives the update from the current rule condition it receives as helper and ignores the data payload.
 - Updated dependencies [[`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d)]:
     - @aragon/assistant-chat@0.5.2
 
