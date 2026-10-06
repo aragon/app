@@ -3,24 +3,17 @@ import {
     ProposalActionType as GukProposalActionType,
     type IProposalAction as IGukProposalAction,
     type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
-    type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
     type IProposalActionUpdateMetadataDaoMetadata,
     type IProposalActionUpdateMetadataDaoMetadataLink,
     ProposalActionTypeNoBasicView,
 } from '@aragon/gov-ui-kit';
-import {
-    type AbiStateMutability,
-    formatUnits,
-    type Hex,
-    toFunctionSelector,
-} from 'viem';
+import { type AbiStateMutability, type Hex, toFunctionSelector } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionUpdateMetadata,
     type IProposalActionUpdateMetadataObject,
     type IProposalActionUpdatePluginMetadata,
     type IProposalActionUpdatePluginMetadataObject,
-    type IProposalActionWithdrawToken,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import type { IDao, IResource } from '@/shared/api/daoService';
@@ -121,28 +114,11 @@ class ProposalActionUtils {
     };
 
     normalizeDefaultAction = (action: IProposalAction): IGukProposalAction => {
-        if (this.isWithdrawTokenAction(action)) {
-            return this.normalizeTransferAction(action);
-        }
         if (this.isUpdateMetadataAction(action)) {
             return this.normalizeUpdateMetaDataAction(action);
         }
 
         return action;
-    };
-
-    normalizeTransferAction = (
-        action: IProposalActionWithdrawToken,
-    ): IGukProposalActionWithdrawToken => {
-        const { amount, token, ...otherValues } = action;
-        const parsedAmount = formatUnits(BigInt(amount), token.decimals);
-
-        return {
-            ...otherValues,
-            type: GukProposalActionType.WITHDRAW_TOKEN,
-            token,
-            amount: parsedAmount,
-        };
     };
 
     normalizeUpdateMetaDataAction = (
@@ -192,12 +168,6 @@ class ProposalActionUtils {
         links: IResource[] = [],
     ): IProposalActionUpdateMetadataDaoMetadataLink[] =>
         links.map(({ name, url }) => ({ label: name, href: url }));
-
-    isWithdrawTokenAction = (
-        action: Partial<IProposalAction>,
-    ): action is IProposalActionWithdrawToken =>
-        action.type === ProposalActionType.TRANSFER ||
-        action.type === ProposalActionType.TRANSFER_NATIVE;
 
     isUpdateMetadataAction = (
         action: Partial<IProposalAction>,

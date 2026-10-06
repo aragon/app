@@ -4,12 +4,8 @@ import {
     generateProposalActionChangeMembers,
     generateProposalActionChangeSettings,
     generateProposalActionTokenMint,
-    generateProposalActionWithdrawToken,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-
-const tokenLogo =
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%233164FA'/%3E%3Cpath d='M32 14l14 26H18z' fill='white'/%3E%3C/svg%3E";
 
 const noOp = () => undefined;
 
@@ -69,44 +65,15 @@ export const Default = () => (
     </GukModulesProvider>
 );
 
-export const TokenTransfers = () => (
+export const TokenMint = () => (
     <GukModulesProvider>
         <div style={{ width: '100%', maxWidth: 640 }}>
             <ProposalActions.Root
-                actionsCount={2}
+                actionsCount={1}
                 expandedActions={['0']}
                 onExpandedActionsChange={noOp}
             >
                 <ProposalActions.Container emptyStateDescription="Proposal has no actions">
-                    <ProposalActions.Item
-                        action={generateProposalActionWithdrawToken({
-                            sender: {
-                                address:
-                                    '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-                            },
-                            receiver: {
-                                address:
-                                    '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
-                                name: 'grants.eth',
-                            },
-                            token: {
-                                name: 'Aragon',
-                                symbol: 'ARA',
-                                logo: tokenLogo,
-                                priceUsd: '1.24',
-                                decimals: 18,
-                                address:
-                                    '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
-                            },
-                            amount: '50000',
-                            inputData: {
-                                function: 'transfer',
-                                contract: 'ARA Token',
-                                parameters: [],
-                            },
-                        })}
-                        index={0}
-                    />
                     <ProposalActions.Item
                         action={generateProposalActionTokenMint({
                             to: '0x80CB2f4f9B403C4C418C597d96c95FE14FD344a6',
@@ -123,7 +90,7 @@ export const TokenTransfers = () => (
                                 parameters: [],
                             },
                         })}
-                        index={1}
+                        index={0}
                     />
                 </ProposalActions.Container>
                 <ProposalActions.Footer>
