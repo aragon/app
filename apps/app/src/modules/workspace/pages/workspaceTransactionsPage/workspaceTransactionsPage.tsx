@@ -15,7 +15,17 @@ export interface IWorkspaceTransactionsPageProps {
 export const workspaceTransactionsCount = 20;
 
 /**
- * Transactions of every account of a workspace, aggregated into a single list.
+ * Transactions of a workspace under either scope: every account of the workspace, or one account.
+ *
+ * One page serves both, as the assets page does. Every scope reads `POST /v2/workspaces/query/transactions`, which
+ * is what keeps a single account summing into the aggregated view — both come out of the same aggregation — and
+ * what makes a Safe account, which has no DAO page to delegate to, readable at all. For the same reason
+ * `WorkspaceAccountGate` is deliberately not applied here: it fails the route when the DAO cannot be read, which is
+ * the permanent state of every Safe.
+ *
+ * The scope is not read here. The aggregated route spells the account `all`, a static segment, so there is no
+ * `accountId` parameter to read on that route and typing one would be a lie; the client resolves the scope from the
+ * route instead (`useWorkspaceAccountOptions`).
  *
  * Like the other workspace pages it performs no prefetch: the accounts to query come from the workspace registry,
  * which is backed by local storage and cannot be read during a server render, so a prefetch would always miss (see

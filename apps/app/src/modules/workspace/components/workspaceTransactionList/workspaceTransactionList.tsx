@@ -9,12 +9,13 @@ import {
     ToggleGroup,
     TransactionDataListItem,
 } from '@aragon/gov-ui-kit';
-import { useQueries } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { TransactionSide } from '@/modules/finance/api/financeService';
+import {
+    type ITransactionExecution,
+    TransactionSide,
+} from '@/modules/finance/api/financeService';
 import { TransactionList } from '@/modules/finance/components/transactionList';
 import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
-import { daoOptions, type IDao } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
@@ -26,10 +27,8 @@ import {
     useWorkspaceTransactions,
     WorkspaceTransactionType,
 } from '../../api/workspaceQueryService';
-import {
-    type IWorkspaceAccount,
-    WorkspaceAccountType,
-} from '../../api/workspaceService';
+import type { IWorkspaceAccount } from '../../api/workspaceService';
+import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 enum WorkspaceTransactionListTypeFilter {
@@ -193,29 +192,9 @@ export const WorkspaceTransactionList: React.FC<
         );
 
     // Execution rows need the DAO they were emitted by: it resolves the plugin name displayed on the row and is a
-    // required parameter of the transaction detail dialog. A workspace account ID is already the DAO ID, so the
-    // DAO accounts are fetched one by one and matched to their rows below.
-    const daoQueries = useMemo(
-        () =>
-            accounts
-                .filter((account) => account.type === WorkspaceAccountType.DAO)
-                .map((account) =>
-                    daoOptions(
-                        { urlParams: { id: account.id } },
-                        { retry: false },
-                    ),
-                ),
-        [accounts],
-    );
-
-    const daoResults = useQueries({ queries: daoQueries });
-
-    const daosByAccount = new Map<string, IDao>(
-        daoResults
-            .map((result) => result.data)
-            .filter((dao) => dao != null)
-            .map((dao) => [workspaceUtils.buildAccountId(dao), dao]),
-    );
+    // required parameter of the transaction detail dialog. Keyed by account ID, which is the checksummed
+    // `network-address` that `buildAccountId` builds, so a row looks its DAO up by the ID of its own account.
+    const { daos } = useWorkspaceDaos(accounts);
 
     const transactions = data?.pages.flatMap((page) => page.data);
     const metadata = data?.pages[0].metadata;
@@ -223,6 +202,17 @@ export const WorkspaceTransactionList: React.FC<
     // The list is incomplete as soon as one account of one loaded page could not be read in full. Saying so is what
     // stops a short list from reading as the complete history.
     const isPartial = data?.pages.some((page) => page.partial) ?? false;
+    const isAccountScoped = accounts.length === 1;
+
+    const partialMessage = isAccountScoped
+        ? t('app.workspace.workspaceTransactionList.partialSingle')
+        : t('app.workspace.workspaceTransactionList.partial');
+
+    const emptyStateDescription = isAccountScoped
+        ? t(
+              'app.workspace.workspaceTransactionList.emptyState.descriptionSingle',
+          )
+        : t('app.workspace.workspaceTransactionList.emptyState.description');
 
     // A selection with no account keeps every query disabled, which would otherwise leave the list loading forever
     // instead of showing its empty state.
@@ -241,6 +231,15 @@ export const WorkspaceTransactionList: React.FC<
             isFetchingNextPage,
         });
     };
+
+    // Without a DAO the dialog cannot be opened, so the row stays a link to the block explorer.
+    const buildTransactionClickHandler = (dao?: IDao) =>
+        dao == null
+            ? undefined
+            : (transaction: ITransactionExecution) =>
+                  open(FinanceDialogId.TRANSACTION_DETAIL, {
+                      params: { dao, transaction },
+                  });
 
     return (
         <DataListRoot
@@ -272,21 +271,14 @@ export const WorkspaceTransactionList: React.FC<
                 </ToggleGroup>
             )}
             {isPartial && (
-                <AlertInline
-                    message={t(
-                        'app.workspace.workspaceTransactionList.partial',
-                    )}
-                    variant="warning"
-                />
+                <AlertInline message={partialMessage} variant="warning" />
             )}
             <DataListContainer
                 emptyState={{
                     heading: t(
                         'app.workspace.workspaceTransactionList.emptyState.heading',
                     ),
-                    description: t(
-                        'app.workspace.workspaceTransactionList.emptyState.description',
-                    ),
+                    description: emptyStateDescription,
                 }}
                 errorState={{
                     heading: t(
@@ -302,29 +294,16 @@ export const WorkspaceTransactionList: React.FC<
                     const accountId = workspaceUtils.buildAccountId(
                         transaction.account,
                     );
-                    const dao = daosByAccount.get(accountId);
+                    const dao = daos[accountId];
 
                     return (
                         <TransactionList.Item
                             dao={dao}
                             index={index}
                             key={`${accountId}-${transaction.id}`}
-                            // Without a DAO the dialog cannot be opened, so the row stays a link to the block
-                            // explorer instead of a dead click.
-                            onTransactionClick={
-                                dao == null
-                                    ? undefined
-                                    : (execution) =>
-                                          open(
-                                              FinanceDialogId.TRANSACTION_DETAIL,
-                                              {
-                                                  params: {
-                                                      dao,
-                                                      transaction: execution,
-                                                  },
-                                              },
-                                          )
-                            }
+                            onTransactionClick={buildTransactionClickHandler(
+                                dao,
+                            )}
                             transaction={transaction}
                         />
                     );

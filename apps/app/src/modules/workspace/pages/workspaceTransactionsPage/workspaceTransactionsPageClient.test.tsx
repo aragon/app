@@ -87,8 +87,8 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     });
 
     /**
-     * Mocks the hook as the aggregated route does: the DAO account is an option to switch to rather than the one
-     * being looked at, the page being reachable only there.
+     * Mocks the hook as the aggregated route does, the overrides standing in for an account-scoped route. On the
+     * aggregated route the DAO account is an option to switch to rather than the one being looked at.
      */
     const mockAccountOptions = (
         result?: Partial<IUseWorkspaceAccountOptionsResult>,
@@ -164,14 +164,63 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         expect(screen.getByTestId('list-mock')).toBeInTheDocument();
     });
 
-    it('passes the workspace and the aggregated option to the aside card by default', async () => {
+    it('passes every account and the aggregated option to the aside card by default', async () => {
         render(createTestComponent());
 
         await waitFor(() =>
             expect(lastAsideCardProps()).toEqual({
-                workspace: buildWorkspace(),
+                accounts: [daoAccount, safeAccount],
                 pageSize: 20,
                 activeOption: allAccountsOption,
+            }),
+        );
+    });
+
+    it('narrows the list to the selected DAO account', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([daoAccount]),
+        );
+    });
+
+    // Only DAO accounts become options, so the route of a Safe keeps the aggregated selection. A known gap, see
+    // `docs/projectDocs/createWorkspace.md`.
+    it('falls back to every account on the route of an account that is not an option', async () => {
+        mockAccountOptions({
+            accountId: safeAccount.id,
+            activeOption: undefined,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([
+                daoAccount,
+                safeAccount,
+            ]),
+        );
+    });
+
+    // The card describes what the list shows, so both narrow from the same option rather than each resolving it.
+    it('gives the aside card the same selection as the list under an account scope', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastAsideCardProps()).toEqual({
+                accounts: [daoAccount],
+                pageSize: 20,
+                activeOption: daoOption,
             }),
         );
     });
