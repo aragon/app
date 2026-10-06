@@ -68,7 +68,7 @@ Every controller method returns a `ResultOrError` envelope from `ddd-core-ts`: c
 
 ## Roadmap
 
-This package is the target for the [Envio migration](https://www.notion.so/aragonorg/Plan-POC-to-use-Envio-as-backend-32e6b18349dc8084a1d9f8886539c8ad), which moves governance business logic out of `app-backend` and `app` and into a shared library. Upcoming areas, in rough order:
+This package is the target for the [Envio migration](https://www.notion.so/aragonorg/Plan-POC-to-use-Envio-as-backend-32e6b18349dc8084a1d9f8886539c8ad), which moves governance business logic out of `app-backend` and `app` and into a shared library. The decisions, rollout and runbook are in the [data-layer migration ADR](/apps/app/docs/projectDocs/dataLayerMigration.md). Upcoming areas, in rough order:
 
 - **Membership** — list members for a plugin, routed by governance type (ERC20 vs. VE)
 - **Voting power** — VP calculation per governance type, including VE locks
