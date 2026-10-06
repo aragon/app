@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.40.1
+
+### Patch Changes
+
+- [#1416](https://github.com/aragon/app/pull/1416) [`a379bb8`](https://github.com/aragon/app/commit/a379bb8a6825048965d40eaff2a36747a9a3a296) Thanks [@evanaronson](https://github.com/evanaronson)! - Stop a removed or reordered proposal action from passing its validation state on to the action that takes its place in the action builder: re-adding an action after removing one that had shown an error no longer shows that error straight away, and moving actions no longer makes an untouched action validate before it has been edited.
+
+- [#1425](https://github.com/aragon/app/pull/1425) [`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Consume `@aragon/aragon-domain` from the workspace instead of npm, and follow the monorepo-wide Biome rules.
+
+- [#1422](https://github.com/aragon/app/pull/1422) [`cdc1b83`](https://github.com/aragon/app/commit/cdc1b832bab02a6968c47d74383356aa21bdc8ec) Thanks [@harryburger](https://github.com/harryburger)! - Show the value field when a payable function is picked from the only-allowed actions list, by forwarding the function's state mutability from the allowed actions to the action composer.
+
+- [#1413](https://github.com/aragon/app/pull/1413) [`d3a23a4`](https://github.com/aragon/app/commit/d3a23a43835b413eace95e6d1165918b2a801fab) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Consume generated GovKit primitive tokens in App and design-sync consumers.
+
+- Thanks [@evanaronson](https://github.com/evanaronson)! - Point the application to the new version 1.3.0 of the SPP plugin which contains several bugfixes.
+
+- Thanks [@tyhonchik](https://github.com/tyhonchik)! - Register the prepare-update data builder for the Staged Proposal Processor plugin, so the contract-upgrade dialog prepares the SPP update instead of failing before the transaction is built. The SPP setup derives the update from the current rule condition it receives as helper and ignores the data payload.
+- Updated dependencies [[`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d)]:
+    - @aragon/assistant-chat@0.5.2
+
 ## 1.40.0
 
 ### Minor Changes

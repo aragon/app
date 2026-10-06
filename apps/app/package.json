@@ -1,6 +1,6 @@
 {
     "name": "@aragon/app",
-    "version": "1.40.0",
+    "version": "1.40.1",
     "private": true,
     "description": "Human-centered DAO infrastructure",
     "keywords": [
