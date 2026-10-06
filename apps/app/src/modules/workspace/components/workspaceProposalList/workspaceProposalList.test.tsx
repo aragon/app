@@ -1,8 +1,14 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { generateProposal } from '@/modules/governance/testUtils';
-import { daoService, Network } from '@/shared/api/daoService';
+import {
+    daoService,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import {
     generateDao,
     generateDaoPlugin,
@@ -22,6 +28,31 @@ import {
     type IWorkspaceProposalListProps,
     WorkspaceProposalList,
 } from './workspaceProposalList';
+
+const useDaoOverridesMock = jest.fn(() => ({ data: undefined }));
+
+jest.mock('@/shared/api/cmsService', () => ({
+    useDaoOverrides: () => useDaoOverridesMock(),
+}));
+
+// Lists the tabs and renders the content of the last one, so the request of a plugin tab can be asserted.
+jest.mock('@/shared/components/pluginFilterComponent', () => ({
+    PluginFilterComponent: (props: {
+        plugins: IFilterComponentPlugin[];
+        renderContent: (plugin: IFilterComponentPlugin) => ReactNode;
+    }) => (
+        <div data-testid="plugin-filter-mock">
+            {props.plugins.map((plugin) => (
+                <span data-testid="plugin-tab" key={plugin.uniqueId}>
+                    {plugin.label}
+                </span>
+            ))}
+            {props.renderContent(
+                props.plugins.at(-1) as IFilterComponentPlugin,
+            )}
+        </div>
+    ),
+}));
 
 describe('<WorkspaceProposalList /> component', () => {
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
@@ -81,6 +112,7 @@ describe('<WorkspaceProposalList /> component', () => {
     afterEach(() => {
         getProposalListSpy.mockReset();
         getDaoSpy.mockReset();
+        useDaoOverridesMock.mockReturnValue({ data: undefined });
     });
 
     const createTestComponent = (
@@ -207,5 +239,116 @@ describe('<WorkspaceProposalList /> component', () => {
         render(createTestComponent({ accounts: [] }));
 
         expect(getProposalListSpy).not.toHaveBeenCalled();
+    });
+
+    it('renders no tabs when the DAOs have a single process plugin', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [generateDaoPlugin({ isProcess: true })],
+            }),
+        );
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        await waitFor(() => expect(getProposalListSpy).toHaveBeenCalled());
+        expect(
+            screen.queryByTestId('plugin-filter-mock'),
+        ).not.toBeInTheDocument();
+    });
+
+    it('renders a group tab followed by the visible process plugins of every DAO', async () => {
+        const firstAddress = nextAddress();
+        const secondAddress = nextAddress();
+        const firstAccount = buildAccount(firstAddress);
+        const secondAccount = buildAccount(secondAddress);
+
+        const multisig = generateDaoPlugin({
+            address: '0xMultisig',
+            name: 'Multisig',
+            interfaceType: PluginInterfaceType.MULTISIG,
+            isProcess: true,
+        });
+        const tokenVoting = generateDaoPlugin({
+            address: '0xTokenVoting',
+            name: 'Token voting',
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+            isProcess: true,
+        });
+        const body = generateDaoPlugin({ address: '0xBody', isBody: true });
+        const subPlugin = generateDaoPlugin({
+            address: '0xSub',
+            isProcess: true,
+            isSubPlugin: true,
+        });
+        const hidden = generateDaoPlugin({
+            address: '0xHidden',
+            name: 'Hidden',
+            isProcess: true,
+        });
+        const linked = generateDaoPlugin({
+            address: '0xLinked',
+            name: 'Linked',
+            isProcess: true,
+            daoAddress: '0xLinkedAccount',
+        });
+
+        getDaoSpy.mockImplementation((params) =>
+            Promise.resolve(
+                params.urlParams.id === firstAccount.id
+                    ? generateDao({
+                          id: firstAccount.id,
+                          address: firstAddress,
+                          network,
+                          name: 'First',
+                          plugins: [multisig, tokenVoting, body, subPlugin],
+                      })
+                    : generateDao({
+                          id: secondAccount.id,
+                          address: secondAddress,
+                          network,
+                          name: 'Second',
+                          plugins: [tokenVoting, hidden, linked],
+                          linkedAccounts: [
+                              generateDao({ address: '0xLinkedAccount' }),
+                          ],
+                      }),
+            ),
+        );
+        useDaoOverridesMock.mockReturnValue({
+            data: {
+                [secondAccount.id]: {
+                    pluginsToHide: [{ address: '0xHidden' }],
+                },
+            },
+        } as never);
+
+        render(
+            createTestComponent({ accounts: [firstAccount, secondAccount] }),
+        );
+
+        const pluginTab = 'app.workspace.workspaceProposalList.pluginTab';
+        const tabs = await screen.findAllByTestId('plugin-tab');
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceProposalList.groupTab',
+            `${pluginTab} (dao=First,plugin=Token voting)`,
+            `${pluginTab} (dao=First,plugin=Multisig)`,
+            `${pluginTab} (dao=Second,plugin=Token voting)`,
+        ]);
+
+        await waitFor(() =>
+            expect(getProposalListSpy).toHaveBeenCalledWith({
+                body: {
+                    accounts: [
+                        { network, address: firstAddress },
+                        { network, address: secondAddress },
+                    ],
+                    filters: { network, pluginAddress: '0xTokenVoting' },
+                    pagination: { pageSize: 10 },
+                },
+            }),
+        );
     });
 });
