@@ -4424,7 +4424,9 @@
           "description": "The members of this workspace could not be loaded.",
           "heading": "Unable to load members"
         },
-        "partial": "Some accounts of this workspace could not be read, so this list may be incomplete."
+        "groupTab": "All members",
+        "partial": "Some accounts of this workspace could not be read, so this list may be incomplete.",
+        "pluginTab": "{{dao}} · {{plugin}}"
       },
       "workspaceMembersAsideCard": {
         "accounts": "Accounts",

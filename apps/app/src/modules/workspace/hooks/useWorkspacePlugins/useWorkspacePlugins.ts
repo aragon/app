@@ -17,9 +17,19 @@ export interface IUseWorkspacePluginsParams {
      * Type of the plugins to return.
      */
     type: PluginType;
+    /**
+     * Includes the plugins nested inside a process (e.g. the bodies of an SPP stage) when set to true. They belong
+     * to the account they are installed on, so the aggregated endpoints do return their data.
+     * @default false
+     */
+    includeSubPlugins?: boolean;
 }
 
 export interface IWorkspaceDaoPlugins {
+    /**
+     * ID of the account the plugins belong to, to pair the entry back with the account it was read for.
+     */
+    accountId: string;
     /**
      * DAO the plugins are installed on.
      */
@@ -48,15 +58,15 @@ export interface IUseWorkspacePluginsReturn {
 /**
  * Reads the visible plugins of the given type of every DAO account of a workspace.
  *
- * Sub-plugins and linked-account plugins are left out, as the workspace query endpoints only return the data of
- * the selected accounts.
- * @param params - Accounts of the workspace and type of the plugins to return.
+ * Linked-account plugins are always left out, as the workspace query endpoints only return the data of the
+ * selected accounts. Sub-plugins are opt-in: they sit on a selected account, so the endpoints cover them.
+ * @param params - Accounts of the workspace, type of the plugins to return and whether to include sub-plugins.
  * @returns The DAOs, whether any is still being read and their plugins grouped by DAO.
  */
 export const useWorkspacePlugins = (
     params: IUseWorkspacePluginsParams,
 ): IUseWorkspacePluginsReturn => {
-    const { accounts, type } = params;
+    const { accounts, type, includeSubPlugins = false } = params;
 
     const { daos, isPending } = useWorkspaceDaos(accounts);
     const { data: daoOverrides } = useDaoOverrides();
@@ -70,7 +80,7 @@ export const useWorkspacePlugins = (
 
         const daoPlugins = daoUtils.getDaoPlugins(dao, {
             type,
-            includeSubPlugins: false,
+            includeSubPlugins,
             includeLinkedAccounts: false,
         });
         const visiblePlugins = daoVisibilityUtils.filterHiddenPlugins(
@@ -78,7 +88,7 @@ export const useWorkspacePlugins = (
             daoOverrides?.[dao.id],
         );
 
-        return [{ dao, plugins: visiblePlugins }];
+        return [{ accountId: account.id, dao, plugins: visiblePlugins }];
     });
 
     return { daos, isPending, plugins };

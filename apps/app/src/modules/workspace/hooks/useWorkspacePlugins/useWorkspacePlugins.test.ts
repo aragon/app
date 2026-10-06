@@ -80,8 +80,8 @@ describe('useWorkspacePlugins hook', () => {
         );
 
         expect(result.current.plugins).toEqual([
-            { dao: secondDao, plugins: [process] },
-            { dao: firstDao, plugins: [process] },
+            { accountId: 'second', dao: secondDao, plugins: [process] },
+            { accountId: 'first', dao: firstDao, plugins: [process] },
         ]);
     });
 
@@ -104,7 +104,37 @@ describe('useWorkspacePlugins hook', () => {
             }),
         );
 
-        expect(result.current.plugins).toEqual([{ dao, plugins: [body] }]);
+        expect(result.current.plugins).toEqual([
+            { accountId: 'dao', dao, plugins: [body] },
+        ]);
+    });
+
+    // Sub-plugins sit on a selected account, so the aggregated endpoints do cover them — unlike the plugins of a
+    // linked account, which are dropped whatever the parameters.
+    it('includes the sub-plugins when asked to', () => {
+        const body = generatePlugin({ address: '0xBody', isBody: true });
+        const subBody = generatePlugin({
+            address: '0xSubBody',
+            isBody: true,
+            isSubPlugin: true,
+        });
+        const dao = generateDao({ id: 'dao', plugins: [body, subBody] });
+        useWorkspaceDaosSpy.mockReturnValue({
+            daos: { dao },
+            isPending: false,
+        });
+
+        const { result } = renderHook(() =>
+            useWorkspacePlugins({
+                accounts: [buildAccount('dao')],
+                type: PluginType.BODY,
+                includeSubPlugins: true,
+            }),
+        );
+
+        expect(result.current.plugins).toEqual([
+            { accountId: 'dao', dao, plugins: [body, subBody] },
+        ]);
     });
 
     it('leaves out the DAOs that are not resolved', () => {

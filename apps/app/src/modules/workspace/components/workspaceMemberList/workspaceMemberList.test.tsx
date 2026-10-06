@@ -1,313 +1,451 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import * as ensModule from '@/modules/ens';
-import { Network } from '@/shared/api/daoService';
-import * as useDaoChainHook from '@/shared/hooks/useDaoChain';
+import { render, screen, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import {
-    generatePaginatedResponseMetadata,
-    generateReactQueryInfiniteResultSuccess,
+    daoService,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
+import {
+    generateDao,
+    generateDaoPlugin,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
-import * as workspaceQueryService from '../../api/workspaceQueryService';
+import {
+    type IWorkspaceMember,
+    type IWorkspaceQueryResponse,
+    workspaceQueryService,
+} from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import {
-    generateWorkspaceMember,
-    generateWorkspaceMembership,
-    generateWorkspaceQueryResponse,
-} from '../../testUtils';
+import { generateWorkspaceQueryResponse } from '../../testUtils';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspaceMemberListProps,
     WorkspaceMemberList,
 } from './workspaceMemberList';
 
+const useDaoOverridesMock = jest.fn(() => ({ data: undefined }));
+
+jest.mock('@/shared/api/cmsService', () => ({
+    useDaoOverrides: () => useDaoOverridesMock(),
+}));
+
+// Lists the tabs and renders the content of the last one, so the request of a body tab can be asserted.
+jest.mock('@/shared/components/pluginFilterComponent', () => ({
+    PluginFilterComponent: (props: {
+        plugins: IFilterComponentPlugin[];
+        renderContent: (plugin: IFilterComponentPlugin) => ReactNode;
+    }) => (
+        <div data-testid="plugin-filter-mock">
+            {props.plugins.map((plugin) => (
+                <span data-testid="plugin-tab" key={plugin.uniqueId}>
+                    {plugin.label}
+                </span>
+            ))}
+            {props.renderContent(
+                props.plugins.at(-1) as IFilterComponentPlugin,
+            )}
+        </div>
+    ),
+}));
+
 describe('<WorkspaceMemberList /> component', () => {
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const safeAddress = '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c';
-    const memberAddress = '0x1234567890123456789012345678901234567890';
+    const network = Network.ETHEREUM_SEPOLIA;
 
-    const daoAccount: IWorkspaceAccount = {
-        id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
-        type: WorkspaceAccountType.DAO,
-        address: daoAddress,
-        network: Network.ETHEREUM_SEPOLIA,
-    };
-
-    const safeAccount: IWorkspaceAccount = {
-        id: `${Network.ETHEREUM_SEPOLIA}-${safeAddress}`,
-        type: WorkspaceAccountType.SAFE,
-        address: safeAddress,
-        network: Network.ETHEREUM_SEPOLIA,
-    };
-
-    const useWorkspaceMemberListSpy = jest.spyOn(
-        workspaceQueryService,
-        'useWorkspaceMemberList',
-    );
-    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
-    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
-    const useDaoChainSpy = jest.spyOn(useDaoChainHook, 'useDaoChain');
-    const buildEntityUrlMock = jest.fn(
-        ({ type, id }: { type: string; id?: string }) =>
-            `https://explorer.test/${type}/${id}`,
-    );
-
-    const mockMembers = (
-        members: workspaceQueryService.IWorkspaceMember[],
-        options?: { partial?: boolean },
-    ) =>
-        useWorkspaceMemberListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({
-                data: {
-                    pages: [
-                        generateWorkspaceQueryResponse({
-                            data: members,
-                            partial: options?.partial ?? false,
-                            metadata: generatePaginatedResponseMetadata({
-                                page: 1,
-                                totalPages: 1,
-                                totalRecords: members.length,
-                            }),
-                        }),
-                    ],
-                    pageParams: [],
-                },
-            }) as unknown as ReturnType<
-                typeof workspaceQueryService.useWorkspaceMemberList
-            >,
+    // React Query dedupes by key, so each test gets its own address: a result cached by an earlier test would
+    // otherwise satisfy a later render and its own mock would never be called.
+    let testIndex = 0;
+    const nextAddress = () => {
+        testIndex += 1;
+        return daoAddress.replace(
+            /.{2}$/,
+            testIndex.toString().padStart(2, '0'),
         );
+    };
+
+    const getMemberListSpy = jest.spyOn(workspaceQueryService, 'getMemberList');
+    const getDaoSpy = jest.spyOn(daoService, 'getDao');
+
+    const buildAccount = (
+        address: string,
+        type = WorkspaceAccountType.DAO,
+    ): IWorkspaceAccount => ({
+        id: workspaceUtils.buildAccountId({ network, address }),
+        type,
+        network,
+        address,
+    });
 
     beforeEach(() => {
-        mockMembers([]);
-        useEnsNameSpy.mockReturnValue({
-            data: null,
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
-        useEnsAvatarSpy.mockReturnValue({
-            data: null,
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsAvatar>);
-        useDaoChainSpy.mockReturnValue({
-            buildEntityUrl: buildEntityUrlMock,
-        } as unknown as ReturnType<typeof useDaoChainHook.useDaoChain>);
+        getMemberListSpy.mockResolvedValue(
+            generateWorkspaceQueryResponse<IWorkspaceMember>({
+                data: [],
+            }) as IWorkspaceQueryResponse<IWorkspaceMember>,
+        );
+        getDaoSpy.mockResolvedValue(generateDao());
     });
 
     afterEach(() => {
-        useWorkspaceMemberListSpy.mockReset();
-        useEnsNameSpy.mockReset();
-        useEnsAvatarSpy.mockReset();
-        useDaoChainSpy.mockReset();
-        buildEntityUrlMock.mockClear();
+        getMemberListSpy.mockReset();
+        getDaoSpy.mockReset();
+        useDaoOverridesMock.mockReturnValue({ data: undefined });
     });
 
-    // The query client must sit inside the gov-ui-kit provider, which carries a query client of its own that would
-    // otherwise shadow this one.
     const createTestComponent = (
         props?: Partial<IWorkspaceMemberListProps>,
     ) => {
         const completeProps: IWorkspaceMemberListProps = {
             workspaceId: 'demo',
-            accounts: [daoAccount, safeAccount],
+            accounts: [buildAccount(nextAddress())],
             pageSize: 18,
             ...props,
         };
 
+        // The client must reach `GukModulesProvider`: it nests its own `QueryClientProvider` and otherwise falls
+        // back to a module-level default client, which both ignores these options and leaks its cache between
+        // tests.
+        const client = new QueryClient({
+            defaultOptions: { queries: { retry: false } },
+        });
+
         return (
-            <GukModulesProvider>
-                <ReactQueryWrapper client={new QueryClient()}>
+            <ReactQueryWrapper client={client}>
+                <GukModulesProvider queryClient={client}>
                     <WorkspaceMemberList {...completeProps} />
-                </ReactQueryWrapper>
-            </GukModulesProvider>
+                </GukModulesProvider>
+            </ReactQueryWrapper>
         );
     };
 
-    it('requests the members of every account, DAOs and Safes alike', () => {
-        render(createTestComponent());
+    it('reads the members of the given accounts', async () => {
+        const address = nextAddress();
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
 
-        expect(useWorkspaceMemberListSpy).toHaveBeenCalledWith(
-            {
+        await waitFor(() =>
+            expect(getMemberListSpy).toHaveBeenCalledWith({
                 body: {
-                    accounts: [
-                        {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: daoAddress,
-                        },
-                        {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: safeAddress,
-                        },
-                    ],
+                    accounts: [{ network, address }],
                     pagination: { pageSize: 18 },
                 },
+            }),
+        );
+    });
+
+    it('renders no tabs when the DAOs have a single body', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                ],
+            }),
+        );
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        await waitFor(() => expect(getMemberListSpy).toHaveBeenCalled());
+        expect(
+            screen.queryByTestId('plugin-filter-mock'),
+        ).not.toBeInTheDocument();
+    });
+
+    // A Safe has no plugin to split its owners across, so it gets a single tab of its own, and no on-chain metadata
+    // to fall back on when the workspace named none, so an unnamed one is labelled by its address.
+    it('renders a tab for every Safe account, in the order of the accounts', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                name: 'Only DAO',
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xBody',
+                        name: 'Body',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                ],
+            }),
+        );
+
+        render(
+            createTestComponent({
+                accounts: [
+                    buildAccount(safeAddress, WorkspaceAccountType.SAFE),
+                    buildAccount(address),
+                ],
+            }),
+        );
+
+        const tabs = await screen.findAllByTestId('plugin-tab');
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceMemberList.groupTab',
+            `app.workspace.workspaceMemberList.safeTab (address=${addressUtils.truncateAddress(safeAddress)})`,
+            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
+        ]);
+    });
+
+    // The name the workspace gave the Safe is the only name it has, so it wins over the address.
+    it('labels a Safe tab with the name the workspace gave the account', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                name: 'Only DAO',
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xBody',
+                        name: 'Body',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                ],
+            }),
+        );
+
+        render(
+            createTestComponent({
+                accounts: [
+                    buildAccount(address),
+                    {
+                        ...buildAccount(safeAddress, WorkspaceAccountType.SAFE),
+                        metadata: { name: 'Treasury Safe' },
+                    },
+                ],
+            }),
+        );
+
+        const tabs = await screen.findAllByTestId('plugin-tab');
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceMemberList.groupTab',
+            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
+            'Treasury Safe',
+        ]);
+    });
+
+    // A Safe is its own governance: there is no plugin address to narrow by.
+    it('narrows the members of a Safe tab by the address of the Safe', async () => {
+        const address = nextAddress();
+        const safeAccount = buildAccount(
+            safeAddress,
+            WorkspaceAccountType.SAFE,
+        );
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xBody',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                ],
+            }),
+        );
+
+        // The mock renders the last tab, which is the Safe one with the accounts in this order.
+        render(
+            createTestComponent({
+                accounts: [buildAccount(address), safeAccount],
+            }),
+        );
+
+        await waitFor(() =>
+            expect(getMemberListSpy).toHaveBeenCalledWith({
+                body: {
+                    accounts: [
+                        { network, address },
+                        { network, address: safeAddress },
+                    ],
+                    filters: { network, governanceAddress: safeAddress },
+                    pagination: { pageSize: 18 },
+                },
+            }),
+        );
+    });
+
+    // Its owners still reach the list, so the group tab shows more than the only tab does.
+    it('renders the tabs for a single body when another account contributes no tab', async () => {
+        const readableAddress = nextAddress();
+        const failingAddress = nextAddress();
+        const readableAccount = buildAccount(readableAddress);
+
+        getDaoSpy.mockImplementation((params) =>
+            params.urlParams.id === readableAccount.id
+                ? Promise.resolve(
+                      generateDao({
+                          id: readableAccount.id,
+                          address: readableAddress,
+                          network,
+                          name: 'Only DAO',
+                          plugins: [
+                              generateDaoPlugin({
+                                  address: '0xBody',
+                                  name: 'Body',
+                                  isBody: true,
+                                  interfaceType: PluginInterfaceType.MULTISIG,
+                              }),
+                          ],
+                      }),
+                  )
+                : Promise.reject(new Error('dao not found')),
+        );
+
+        render(
+            createTestComponent({
+                accounts: [readableAccount, buildAccount(failingAddress)],
+            }),
+        );
+
+        const tabs = await screen.findAllByTestId('plugin-tab');
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceMemberList.groupTab',
+            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
+        ]);
+    });
+
+    it('renders a group tab followed by the visible bodies of every DAO', async () => {
+        const firstAddress = nextAddress();
+        const secondAddress = nextAddress();
+        const firstAccount = buildAccount(firstAddress);
+        const secondAccount = buildAccount(secondAddress);
+
+        const multisig = generateDaoPlugin({
+            address: '0xMultisig',
+            name: 'Multisig',
+            interfaceType: PluginInterfaceType.MULTISIG,
+            isBody: true,
+        });
+        const tokenVoting = generateDaoPlugin({
+            address: '0xTokenVoting',
+            name: 'Token voting',
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+            isBody: true,
+        });
+        const process = generateDaoPlugin({
+            address: '0xProcess',
+            isProcess: true,
+        });
+        const hidden = generateDaoPlugin({
+            address: '0xHidden',
+            name: 'Hidden',
+            isBody: true,
+        });
+        const linked = generateDaoPlugin({
+            address: '0xLinked',
+            name: 'Linked',
+            isBody: true,
+            daoAddress: '0xLinkedAccount',
+        });
+
+        getDaoSpy.mockImplementation((params) =>
+            Promise.resolve(
+                params.urlParams.id === firstAccount.id
+                    ? generateDao({
+                          id: firstAccount.id,
+                          address: firstAddress,
+                          network,
+                          name: 'First',
+                          plugins: [multisig, tokenVoting, process],
+                      })
+                    : generateDao({
+                          id: secondAccount.id,
+                          address: secondAddress,
+                          network,
+                          name: 'Second',
+                          plugins: [tokenVoting, hidden, linked],
+                          linkedAccounts: [
+                              generateDao({ address: '0xLinkedAccount' }),
+                          ],
+                      }),
+            ),
+        );
+        useDaoOverridesMock.mockReturnValue({
+            data: {
+                [secondAccount.id]: {
+                    pluginsToHide: [{ address: '0xHidden' }],
+                },
             },
-            { enabled: true },
+        } as never);
+
+        render(
+            createTestComponent({ accounts: [firstAccount, secondAccount] }),
+        );
+
+        const pluginTab = 'app.workspace.workspaceMemberList.pluginTab';
+        const tabs = await screen.findAllByTestId('plugin-tab');
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceMemberList.groupTab',
+            `${pluginTab} (dao=First,plugin=Token voting)`,
+            `${pluginTab} (dao=First,plugin=Multisig)`,
+            `${pluginTab} (dao=Second,plugin=Token voting)`,
+        ]);
+
+        // The member endpoint narrows by governance address, not by plugin address as the proposal one does.
+        await waitFor(() =>
+            expect(getMemberListSpy).toHaveBeenCalledWith({
+                body: {
+                    accounts: [
+                        { network, address: firstAddress },
+                        { network, address: secondAddress },
+                    ],
+                    filters: { network, governanceAddress: '0xTokenVoting' },
+                    pagination: { pageSize: 18 },
+                },
+            }),
         );
     });
 
-    it('links a member to its member page under its first DAO account', () => {
-        mockMembers([
-            generateWorkspaceMember({
-                network: Network.ETHEREUM_SEPOLIA,
-                address: memberAddress,
-                memberships: [
-                    generateWorkspaceMembership({
-                        account: {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: daoAddress,
-                        },
+    // `DaoMemberListContainer` lists them too: a body nested in a process holds members of its own, and it sits on
+    // a selected account, so the endpoint returns them.
+    it('includes the bodies nested inside a process', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                name: 'DAO',
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xBody',
+                        name: 'Body',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
                     }),
-                    generateWorkspaceMembership({
-                        account: {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: safeAddress,
-                        },
-                        governance: { address: safeAddress, type: 'safe' },
+                    generateDaoPlugin({
+                        address: '0xSubBody',
+                        name: 'Sub body',
+                        isBody: true,
+                        isSubPlugin: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
                     }),
                 ],
             }),
-        ]);
-        render(createTestComponent());
-
-        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
-            'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}`,
         );
-    });
 
-    // Only a DAO account serves a member page, so a Safe membership is skipped even when the endpoint lists it first.
-    it('skips the non-DAO memberships when picking the account to link to', () => {
-        mockMembers([
-            generateWorkspaceMember({
-                address: memberAddress,
-                memberships: [
-                    generateWorkspaceMembership({
-                        account: {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: safeAddress,
-                        },
-                        governance: { address: safeAddress, type: 'safe' },
-                    }),
-                    generateWorkspaceMembership({
-                        account: {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: daoAddress,
-                        },
-                    }),
-                ],
-            }),
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        const pluginTab = 'app.workspace.workspaceMemberList.pluginTab';
+        const tabs = await screen.findAllByTestId('plugin-tab');
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceMemberList.groupTab',
+            `${pluginTab} (dao=DAO,plugin=Body)`,
+            `${pluginTab} (dao=DAO,plugin=Sub body)`,
         ]);
-        render(createTestComponent());
-
-        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
-            'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}`,
-        );
-    });
-
-    // A Safe owner that is a member of no DAO has no member page to open inside the workspace, and linking to its
-    // Safe would render the account gate's error state.
-    it('links a member of no DAO account to the address on the block explorer', () => {
-        mockMembers([
-            generateWorkspaceMember({
-                network: Network.ETHEREUM_SEPOLIA,
-                address: memberAddress,
-                memberships: [
-                    generateWorkspaceMembership({
-                        account: {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: safeAddress,
-                        },
-                        governance: { address: safeAddress, type: 'safe' },
-                    }),
-                ],
-            }),
-        ]);
-        render(createTestComponent());
-
-        expect(useDaoChainSpy).toHaveBeenCalledWith({
-            network: Network.ETHEREUM_SEPOLIA,
-        });
-        expect(buildEntityUrlMock).toHaveBeenCalledWith({
-            type: 'address',
-            id: memberAddress,
-        });
-
-        const link = screen.getAllByRole('link')[0];
-        expect(link).toHaveAttribute(
-            'href',
-            `https://explorer.test/address/${memberAddress}`,
-        );
-        expect(link).toHaveAttribute('target', '_blank');
-        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-    });
-
-    // The DAO member page redirects any non-checksummed address to the `/dao/…` route, which would leave the
-    // workspace.
-    it('links to the checksummed address of the member', () => {
-        const checksummed = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
-        mockMembers([
-            generateWorkspaceMember({
-                address: checksummed.toLowerCase(),
-                memberships: [
-                    generateWorkspaceMembership({
-                        account: {
-                            network: Network.ETHEREUM_SEPOLIA,
-                            address: daoAddress,
-                        },
-                    }),
-                ],
-            }),
-        ]);
-        render(createTestComponent());
-
-        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
-            'href',
-            `/workspace/demo/${daoAccount.id}/members/${checksummed}`,
-        );
-    });
-
-    // Resolved through the ENS module, not read off the endpoint, so a member reads the same here and on the account
-    // members page — the Aragon registry suffix included.
-    it('displays the ENS name resolved for the member', () => {
-        useEnsNameSpy.mockReturnValue({
-            data: 'member.eth',
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
-        mockMembers([
-            generateWorkspaceMember({
-                address: memberAddress,
-                ens: 'stale.eth',
-            }),
-        ]);
-        render(createTestComponent());
-
-        expect(useEnsNameSpy).toHaveBeenCalledWith(memberAddress, {
-            stripAragonRegistrySuffix: true,
-        });
-        expect(screen.getByText('member.eth')).toBeInTheDocument();
-    });
-
-    it('warns that the list is incomplete when an account could not be read', () => {
-        mockMembers([generateWorkspaceMember()], { partial: true });
-        render(createTestComponent());
-
-        expect(
-            screen.getByText(/workspaceMemberList\.partial$/),
-        ).toBeInTheDocument();
-    });
-
-    it('renders the empty state and disables the request when the workspace has no account', () => {
-        render(createTestComponent({ accounts: [] }));
-
-        expect(useWorkspaceMemberListSpy).toHaveBeenCalledWith(
-            expect.anything(),
-            { enabled: false },
-        );
-        expect(
-            screen.getByText(/workspaceMemberList\.emptyState\.heading$/),
-        ).toBeInTheDocument();
     });
 });
