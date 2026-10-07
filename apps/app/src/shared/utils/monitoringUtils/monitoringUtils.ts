@@ -67,6 +67,8 @@ class MonitoringUtils {
         'User rejected the request', // Standard wallet rejection (MetaMask, WalletConnect, …)
         'Signing aborted by user', // Opera wallet rejection
         'User denied transaction signature', // Older wallet variants
+        'User disapproved requested methods', // WalletConnect: user declined the requested session methods
+        'User cancelled action on Trezor', // Trezor: confirmation or passphrase dismissed on the device
         'must be connected', // Dialog invariants opened without a connected wallet
         'wallet must has at least one account', // Wallet connected with no selected account
         'exceeds the balance', // Insufficient balance for gas/value
@@ -92,7 +94,11 @@ class MonitoringUtils {
         "Failed to execute 'removeChild'", // Extensions/Google Translate mutating the DOM behind React
         "Failed to execute 'insertBefore'", // Same extension DOM mutation, surfacing on insert instead of removal
         "Can't find variable: indexedDB", // Private mode / restricted WebView storage
+        'The operation is insecure', // Safari: storage access denied (private mode, embedded context)
+        'Access is denied for this document', // Chrome: storage blocked by site settings or an iframe
+        'Relay service: ClientOffline', // WalletConnect: relay unreachable while the wallet is offline
         'Failed to find Server Action', // Deploy skew: the client bundle is older/newer than the server
+        'was not found on the server', // Deploy skew: UnrecognizedActionError wording of the same case
         'The destination stream closed early', // Client aborted the streaming response mid-render
         // Next rejects the request itself when the `Next-Router-State-Tree` header of an RSC
         // request is not valid JSON: scanners fuzzing headers or proxies truncating them.
@@ -196,7 +202,43 @@ class MonitoringUtils {
 
     logError = (error: unknown, params?: ILogErrorParams) => {
         const { context } = params ?? {};
-        captureException(error, { extra: context });
+        captureException(this.toError(error), { extra: context });
+    };
+
+    /**
+     * Errors crossing the server/client boundary arrive as plain objects (see
+     * errorUtils.serialize). Sentry titles a captured plain object after the capturing
+     * function, which minifies to a different name per release and groups nothing.
+     * Rebuilding an Error restores name, message and stack for grouping; the other fields
+     * (code, status, …) are kept so `beforeSend` can still classify on them.
+     */
+    private toError = (error: unknown): unknown => {
+        if (
+            error instanceof Error ||
+            error == null ||
+            typeof error !== 'object'
+        ) {
+            return error;
+        }
+
+        const { name, message, stack, ...rest } = error as Record<
+            string,
+            unknown
+        >;
+
+        if (typeof message !== 'string') {
+            return error;
+        }
+
+        const rebuilt = new Error(message);
+        if (typeof name === 'string') {
+            rebuilt.name = name;
+        }
+        if (typeof stack === 'string') {
+            rebuilt.stack = stack;
+        }
+
+        return Object.assign(rebuilt, rest);
     };
 
     /**

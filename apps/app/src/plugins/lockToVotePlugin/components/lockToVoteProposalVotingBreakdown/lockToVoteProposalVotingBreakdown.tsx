@@ -1,6 +1,6 @@
 'use client';
 
-import { ProposalVoting } from '@aragon/gov-ui-kit';
+import { ProposalVoting, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { formatUnits } from 'viem';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
@@ -45,12 +45,24 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
         VoteOption.ABSTAIN,
     );
 
-    const tokenTotalSupply = formatUnits(
-        bigIntUtils.safeParse(
-            lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
-        ),
-        decimals,
+    const totalSupply = bigIntUtils.safeParse(
+        lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
     );
+
+    // The kit cannot measure participation against an unknown supply; keep the tab and the
+    // vote submission it holds rather than failing the page.
+    if (totalSupply <= BigInt(0)) {
+        return (
+            <Tabs.Content
+                className="flex flex-col gap-4"
+                value={ProposalVotingTab.BREAKDOWN}
+            >
+                {children}
+            </Tabs.Content>
+        );
+    }
+
+    const tokenTotalSupply = formatUnits(totalSupply, decimals);
 
     return (
         <ProposalVoting.BreakdownToken

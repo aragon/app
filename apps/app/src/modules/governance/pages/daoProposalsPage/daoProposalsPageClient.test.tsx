@@ -151,4 +151,26 @@ describe('<DaoProposalsPageClient /> component', () => {
             screen.queryByTestId('proposal-list-mock'),
         ).not.toBeInTheDocument();
     });
+
+    it('titles the aside with the plugin name and slug, or the name alone when the plugin has no slug', () => {
+        const plugin = generateDaoPlugin({ slug: 'tv' });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: plugin,
+                label: 'Token voting',
+            }),
+        ]);
+        const { unmount } = render(createTestComponent());
+        expect(screen.getByText('Token voting (TV)')).toBeInTheDocument();
+        unmount();
+
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({ slug: undefined }),
+                label: 'Token voting',
+            }),
+        ]);
+        render(createTestComponent());
+        expect(screen.getByText('Token voting')).toBeInTheDocument();
+    });
 });

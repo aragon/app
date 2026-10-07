@@ -122,9 +122,13 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
 
     const allProposalsSelected =
         activePlugin.uniqueId === pluginGroupFilter.uniqueId;
+    // Not every plugin the backend returns carries a slug.
+    const activePluginSlug = activePlugin.meta.slug?.toUpperCase();
     const asideCardTitle = allProposalsSelected
         ? t('app.governance.daoProposalsPage.aside.stats')
-        : `${activePlugin.label} (${activePlugin.meta.slug.toUpperCase()})`;
+        : activePluginSlug != null
+          ? `${activePlugin.label} (${activePluginSlug})`
+          : activePlugin.label;
 
     return (
         <>

@@ -73,7 +73,11 @@ describe('monitoring utils', () => {
                 "TypeError: 'get' on proxy: property 'removeListener' is a read-only and non-configurable data property",
                 "NotFoundError: Failed to execute 'removeChild' on 'Node'",
                 "ReferenceError: Can't find variable: indexedDB",
+                'SecurityError: The operation is insecure.',
+                "SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.",
+                'Error: Relay service: ClientOffline',
                 'Error: Failed to find Server Action. This request might be from an older or newer deployment.',
+                'UnrecognizedActionError: Server Action "403be7de8c" was not found on the server.',
                 'Error: The destination stream closed early.',
             ];
 
@@ -100,6 +104,20 @@ describe('monitoring utils', () => {
             expect(result).not.toBeNull();
             expect(result?.tags?.noise_class).toEqual('expected');
             expect(result?.level).toEqual('info');
+        });
+
+        it('tags wallet-side cancellations surfaced as RPC errors as expected/info', () => {
+            const cancellationMessages = [
+                'TransactionExecutionError: An unknown RPC error occurred. Details: User disapproved requested methods',
+                'TransactionExecutionError: An internal error was received. Details: User cancelled action on Trezor device (Passphrase dismissed)',
+            ];
+
+            cancellationMessages.forEach((message) => {
+                const result = monitoringUtils.beforeSend(buildEvent(message));
+                expect(result).not.toBeNull();
+                expect(result?.tags?.noise_class).toEqual('expected');
+                expect(result?.level).toEqual('info');
+            });
         });
 
         it('treats non-actionable ENS gateway failures as expected/info', () => {
@@ -186,6 +204,37 @@ describe('monitoring utils', () => {
             const result = monitoringUtils.beforeSend(event);
             expect(result).not.toBeNull();
             expect(result?.tags?.noise_class).toEqual('expected');
+        });
+    });
+
+    describe('toError', () => {
+        it('rebuilds an Error from a serialized error so Sentry titles and groups it by name and message', () => {
+            const serialized = {
+                name: 'AragonBackendServiceError',
+                message: 'Error parsing response (status=502)',
+                stack: 'AragonBackendServiceError: Error parsing response\n    at n.fromResponse',
+                code: 'parseError',
+                status: 502,
+            };
+            const result = monitoringUtils['toError'](serialized) as Error & {
+                code?: string;
+                status?: number;
+            };
+            expect(result).toBeInstanceOf(Error);
+            expect(result.name).toEqual(serialized.name);
+            expect(result.message).toEqual(serialized.message);
+            expect(result.stack).toEqual(serialized.stack);
+            expect(result.code).toEqual(serialized.code);
+            expect(result.status).toEqual(serialized.status);
+        });
+
+        it('passes errors, primitives and objects without a message through untouched', () => {
+            const error = new Error('boom');
+            const noMessage = { code: 4001 };
+            expect(monitoringUtils['toError'](error)).toBe(error);
+            expect(monitoringUtils['toError']('boom')).toEqual('boom');
+            expect(monitoringUtils['toError'](undefined)).toBeUndefined();
+            expect(monitoringUtils['toError'](noMessage)).toBe(noMessage);
         });
     });
 

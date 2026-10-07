@@ -1,4 +1,4 @@
-import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
+import { Button, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits } from 'viem';
@@ -49,19 +49,30 @@ export interface IGaugeVoterLockFormProps {
  */
 export interface IGaugeVoterLockFormData extends IAssetInputFormData {}
 
-export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
+interface IGaugeVoterLockFormContentProps extends IGaugeVoterLockFormProps {
+    /**
+     * Escrow settings of the plugin.
+     */
+    votingEscrow: NonNullable<IGaugeVoterPlugin['settings']['votingEscrow']>;
+    /**
+     * Escrow contract addresses of the plugin.
+     */
+    votingEscrowAddresses: NonNullable<IGaugeVoterPlugin['votingEscrow']>;
+}
+
+const GaugeVoterLockFormContent: React.FC<IGaugeVoterLockFormContentProps> = (
     props,
 ) => {
-    const { plugin, daoId, mode = 'panel', onCancel } = props;
+    const {
+        plugin,
+        daoId,
+        mode = 'panel',
+        onCancel,
+        votingEscrow,
+        votingEscrowAddresses,
+    } = props;
 
-    const { votingEscrow, token } = plugin.settings;
-    const { votingEscrow: votingEscrowAddresses } = plugin;
-
-    invariant(
-        votingEscrow != null && votingEscrowAddresses != null,
-        'GaugeVoterLockForm: escrow settings are required',
-    );
-
+    const { token } = plugin.settings;
     const { escrowAddress } = votingEscrowAddresses;
     const { decimals } = token;
 
@@ -301,5 +312,27 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                 )}
             </form>
         </FormProvider>
+    );
+};
+
+export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
+    props,
+) => {
+    const { plugin } = props;
+    const { votingEscrow } = plugin.settings;
+    const { votingEscrow: votingEscrowAddresses } = plugin;
+
+    // Escrow settings exist only with Aragon's `ivotesAdapter`; a plugin without them has
+    // nothing to lock into, so the form is left out rather than failing the page.
+    if (votingEscrow == null || votingEscrowAddresses == null) {
+        return null;
+    }
+
+    return (
+        <GaugeVoterLockFormContent
+            {...props}
+            votingEscrow={votingEscrow}
+            votingEscrowAddresses={votingEscrowAddresses}
+        />
     );
 };

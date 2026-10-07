@@ -427,26 +427,6 @@
           "termsOfService": "Terms of Service"
         }
       },
-      "layoutDao": {
-        "error": {
-          "invalidNetwork": {
-            "description": "We don’t support DAOs on that network.",
-            "title": "Invalid network"
-          },
-          "notFound": {
-            "description": "We couldn't find the DAO you're looking for.",
-            "title": "DAO not found"
-          }
-        }
-      },
-      "layoutWizard": {
-        "error": {
-          "notFound": {
-            "description": "We couldn't find the DAO you're looking for.",
-            "title": "DAO not found"
-          }
-        }
-      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
@@ -474,6 +454,11 @@
         "action": "Go to dashboard",
         "description": "We couldn't find the page you're looking for.",
         "title": "Page not found"
+      },
+      "notFoundDaoMissing": {
+        "action": "Explore DAOs",
+        "description": "We couldn't find the DAO you're looking for.",
+        "title": "DAO not found"
       },
       "supportChat": {
         "panel": {

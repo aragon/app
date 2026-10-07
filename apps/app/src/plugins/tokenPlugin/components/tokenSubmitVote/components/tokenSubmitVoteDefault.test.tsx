@@ -189,4 +189,10 @@ describe('<TokenSubmitVoteDefault /> component', () => {
             }),
         ).toBeEnabled();
     });
+
+    it('renders nothing while the plugin of the proposal cannot be resolved', () => {
+        useDaoPluginsSpy.mockReturnValue(undefined);
+        render(createTestComponent());
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
 });
