@@ -3,21 +3,57 @@
 import {
     AlertInline,
     Button,
-    Card,
     DataListContainer,
     DataListRoot,
     IconType,
     ProposalDataListItem,
     useGukCoreContext,
 } from '@aragon/gov-ui-kit';
-import Image from 'next/image';
-import safeWallet from '@/assets/images/safeWallet.png';
+import { useEnsName } from '@/modules/ens';
 import { safeDataListUtils } from '@/modules/safe/utils/safeDataListUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import type { ISafeDaoProposal } from '../../hooks/useSafeDaoProposals';
 import { useSafeDaoProposals } from '../../hooks/useSafeDaoProposals';
 import { safeDaoProposalUtils } from '../../utils/safeDaoProposalUtils';
+
+interface ISafeProcessOverviewItemProps {
+    daoUrl: string;
+    proposal: ISafeDaoProposal;
+    safeAddress: string;
+}
+
+const SafeProcessOverviewItem: React.FC<ISafeProcessOverviewItemProps> = ({
+    daoUrl,
+    proposal,
+    safeAddress,
+}) => {
+    const { transaction, status } = proposal;
+    const proposalDisplayId =
+        safeDaoProposalUtils.getProposalDisplayId(transaction);
+    const { data: proposerEnsName } = useEnsName(transaction.from ?? undefined);
+    const proposerAddress = transaction.from ?? '';
+
+    return (
+        <ProposalDataListItem.Structure
+            date={transaction.executionDate ?? transaction.submissionDate}
+            href={`${daoUrl}/proposals/safe/${transaction.safeTxHash}?safeAddress=${encodeURIComponent(safeAddress)}`}
+            id={proposalDisplayId}
+            publisher={{
+                address: proposerAddress,
+                link:
+                    transaction.from == null
+                        ? undefined
+                        : `${daoUrl}/members/${transaction.from}`,
+                name: proposerEnsName ?? undefined,
+            }}
+            status={status}
+            summary=""
+            title=""
+        />
+    );
+};
 
 /** Transaction destination for a Safe process; Safe transactions are not indexed Aragon proposals. */
 export interface ISafeProcessOverviewProps {
@@ -59,28 +95,6 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
 
     return (
         <>
-            <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-                <div className="flex min-w-0 items-center gap-3">
-                    <Image
-                        alt={t('app.plugins.safeMultisig.safeProcess.logoAlt')}
-                        height={32}
-                        src={safeWallet}
-                        width={32}
-                    />
-                    <div>
-                        <h2 className="text-lg text-neutral-800">
-                            {t(
-                                'app.plugins.safeMultisig.safeProcess.transactionsTitle',
-                            )}
-                        </h2>
-                        <p className="text-neutral-500 text-sm">
-                            {t(
-                                'app.plugins.safeMultisig.safeProcess.transactionsDescription',
-                            )}
-                        </p>
-                    </div>
-                </div>
-            </Card>
             {!isLoading &&
                 (isStale ||
                     isPartial ||
@@ -121,33 +135,14 @@ export const SafeProcessOverview: React.FC<ISafeProcessOverviewProps> = ({
                     }}
                     layoutClassName="grid grid-cols-1"
                 >
-                    {data?.proposals.map(({ transaction, status, actions }) => {
-                        const proposalDisplayId =
-                            safeDaoProposalUtils.getProposalDisplayId(
-                                transaction,
-                            );
-
-                        return (
-                            <ProposalDataListItem.Structure
-                                date={
-                                    transaction.executionDate ??
-                                    transaction.submissionDate
-                                }
-                                href={`${daoUrl}/proposals/safe/${transaction.safeTxHash}?safeAddress=${encodeURIComponent(plugin.address)}`}
-                                id={proposalDisplayId}
-                                key={`${plugin.address}:${transaction.safeTxHash}`}
-                                publisher={{ address: plugin.address }}
-                                status={status}
-                                summary={t(
-                                    actions.length === 1
-                                        ? 'app.safe.safeDaoProposalDetails.oneAction'
-                                        : 'app.safe.safeDaoProposalDetails.manyActions',
-                                    { count: actions.length },
-                                )}
-                                title={proposalDisplayId}
-                            />
-                        );
-                    })}
+                    {data?.proposals.map((proposal) => (
+                        <SafeProcessOverviewItem
+                            daoUrl={daoUrl}
+                            key={`${plugin.address}:${proposal.transaction.safeTxHash}`}
+                            proposal={proposal}
+                            safeAddress={plugin.address}
+                        />
+                    ))}
                 </DataListContainer>
                 {hasNextPage && (
                     <Button

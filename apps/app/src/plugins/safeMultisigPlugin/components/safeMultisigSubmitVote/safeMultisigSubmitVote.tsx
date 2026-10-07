@@ -21,13 +21,16 @@ import { SafeDialogId } from '@/modules/safe/constants';
 import type { ISafeProposalTransactionDialogParams } from '@/modules/safe/dialogs/safeProposalTransactionDialog';
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { safeServiceKeys } from '@/shared/api/safeService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { safeBodyPluginId } from '../../constants';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
@@ -56,19 +59,15 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const [bundleExecution, setBundleExecution] = useState(true);
 
     /**
-     * The Safe body is an external plugin, so it has no `interfaceType` of its own: the registry
-     * addresses its slots by `safeBodyPluginId`, the same id `sppStageUtils.getBodyPluginId`
-     * resolves for a Safe on a supported chain.
-     *
-     * The guard pins this object in a ref on its first render, so the card is keyed to one Safe for
-     * its lifetime. A different body must be a different card, which is how the terminal renders
-     * them - the memo keeps the object from churning on every render in the meantime.
+     * The Safe body uses the unified Safe identity for every registered slot, including the
+     * vote-permission guard. The guard pins this object in a ref on its first render, so the card
+     * is keyed to one Safe for its lifetime.
      */
     const guardPlugin = useMemo(
         () =>
             ({
                 address: externalAddress,
-                interfaceType: safeBodyPluginId,
+                interfaceType: PluginInterfaceType.SAFE,
             }) as unknown as IDaoPlugin,
         [externalAddress],
     );

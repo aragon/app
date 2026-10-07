@@ -67,6 +67,7 @@ export const CreateProposalPageClient: React.FC<
         }
 
         return (
+            meta.isProcess &&
             dao != null &&
             (meta.daoAddress ?? dao.address).toLowerCase() ===
                 dao.address.toLowerCase()

@@ -4,11 +4,10 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { FeaturedDelegatesList } from '@/plugins/tokenPlugin/components/featuredDelegatesList';
 import { useFeaturedDelegatesPlugin } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -174,7 +173,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
                     <PluginSingleComponent
                         daoId={activeSafeSource.daoId}
                         pluginAddress={activeSafeSource.address}
-                        pluginId={safeBodyPluginId}
+                        pluginId={PluginInterfaceType.SAFE}
                         slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
                     />
                 )}

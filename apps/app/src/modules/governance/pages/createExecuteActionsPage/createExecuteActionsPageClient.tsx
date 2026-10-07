@@ -47,7 +47,6 @@ export const CreateExecuteActionsPageClient: React.FC<
     const { open } = useDialogContext();
 
     useExecutePermissionCheckGuard({
-        checkWalletConnection: safeProcess != null,
         daoId,
         enabled: safeProcess == null,
     });

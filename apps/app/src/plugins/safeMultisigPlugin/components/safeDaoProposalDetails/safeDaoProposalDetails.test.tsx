@@ -1,6 +1,8 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as walletAccountHook from '@/modules/application/hooks/useWalletAccount';
+import { SafeDialogId } from '@/modules/safe/constants/safeDialogId';
 import * as daoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
@@ -121,17 +123,12 @@ describe('<SafeDaoProposalDetails />', () => {
         render(createTestComponent());
 
         expect(
-            screen.getByRole('heading', {
-                name: 'app.safe.safeDaoProposalDetails.loadingHeading',
-                level: 1,
-            }),
-        ).toBeInTheDocument();
-        expect(
             screen.queryByRole('heading', {
                 name: 'app.safe.safeDaoProposalDetails.notFoundHeading',
                 level: 1,
             }),
         ).not.toBeInTheDocument();
+        expect(screen.queryByRole('main')).not.toBeInTheDocument();
     });
 
     it('renders not-found only after the singular lookup is definitive', () => {
@@ -154,14 +151,149 @@ describe('<SafeDaoProposalDetails />', () => {
                 level: 1,
             }),
         ).toBeInTheDocument();
+    });
+    it('resolves a Safe to the canonical DAO when a linked association comes first', () => {
+        const linkedDaoAddress = '0x3333333333333333333333333333333333333333';
+        const linkedSafePlugin = generateDaoPlugin({
+            address: safeAddress,
+            daoAddress: linkedDaoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+        });
+        const canonicalBodyPlugin = generateDaoPlugin({
+            address: safeAddress,
+            daoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+        });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: linkedSafePlugin }),
+            generateFilterComponentPlugin({ meta: canonicalBodyPlugin }),
+        ]);
+        const transaction = generateSafeMultisigTransaction({
+            safeTxHash,
+        });
+        useSafeDaoProposalSpy.mockImplementation((params) => {
+            if (params.daoAddress !== daoAddress) {
+                return {
+                    data: undefined,
+                    error: null,
+                    isError: false,
+                    isIndexing: false,
+                    isLoading: false,
+                    isNotFound: true,
+                    isPartial: false,
+                    isStale: false,
+                };
+            }
+
+            return {
+                data: {
+                    meta: {
+                        fetchedAt: '2026-01-01T00:00:00.000Z',
+                        partial: false,
+                        stale: false,
+                    },
+                    proposals: [
+                        {
+                            actions: [],
+                            state: SafeTransactionState.LIVE,
+                            status: ProposalStatus.ACTIVE,
+                            transaction,
+                        },
+                    ],
+                    safeInfo: generateSafeInfo({
+                        address: safeAddress,
+                    }),
+                },
+                error: null,
+                isError: false,
+                isIndexing: false,
+                isLoading: false,
+                isNotFound: false,
+                isPartial: false,
+                isStale: false,
+            };
+        });
+
+        render(
+            <GukModulesProvider>{createTestComponent()}</GukModulesProvider>,
+        );
+
         expect(
-            screen.queryByRole('heading', {
-                name: 'app.safe.safeDaoProposalDetails.loadingHeading',
+            screen.getByRole('heading', { name: /^SAFE-0 ·/ }),
+        ).toBeInTheDocument();
+    });
+
+    it('rejects a Safe that is only associated with a foreign DAO', () => {
+        const linkedDaoAddress = '0x3333333333333333333333333333333333333333';
+        const linkedSafePlugin = generateDaoPlugin({
+            address: safeAddress,
+            daoAddress: linkedDaoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+        });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: linkedSafePlugin }),
+        ]);
+        const transaction = generateSafeMultisigTransaction({
+            safeTxHash,
+        });
+        useSafeDaoProposalSpy.mockImplementation((params) => {
+            if (params.daoAddress !== linkedDaoAddress) {
+                return {
+                    data: undefined,
+                    error: null,
+                    isError: false,
+                    isIndexing: false,
+                    isLoading: false,
+                    isNotFound: false,
+                    isPartial: false,
+                    isStale: false,
+                };
+            }
+
+            return {
+                data: {
+                    meta: {
+                        fetchedAt: '2026-01-01T00:00:00.000Z',
+                        partial: false,
+                        stale: false,
+                    },
+                    proposals: [
+                        {
+                            actions: [],
+                            state: SafeTransactionState.LIVE,
+                            status: ProposalStatus.ACTIVE,
+                            transaction,
+                        },
+                    ],
+                    safeInfo: generateSafeInfo({
+                        address: safeAddress,
+                    }),
+                },
+                error: null,
+                isError: false,
+                isIndexing: false,
+                isLoading: false,
+                isNotFound: false,
+                isPartial: false,
+                isStale: false,
+            };
+        });
+
+        render(
+            <GukModulesProvider>{createTestComponent()}</GukModulesProvider>,
+        );
+
+        expect(
+            screen.getByRole('heading', {
+                name: 'app.safe.safeDaoProposalDetails.invalidHeading',
                 level: 1,
             }),
-        ).not.toBeInTheDocument();
+        ).toBeInTheDocument();
     });
-    it('renders native approvals before actions and Safe details', () => {
+
+    it('renders native voting before actions and Safe details', async () => {
+        const dialogContext = generateDialogContext();
         const ownerOne = '0x0000000000000000000000000000000000000011';
         const ownerTwo = '0x0000000000000000000000000000000000000012';
         const transaction = generateSafeMultisigTransaction({
@@ -169,6 +301,7 @@ describe('<SafeDaoProposalDetails />', () => {
             nonce: '7',
             safeTxHash,
         });
+        useDialogContextSpy.mockReturnValue(dialogContext);
 
         useSafeDaoProposalSpy.mockReturnValue({
             data: {
@@ -225,36 +358,39 @@ describe('<SafeDaoProposalDetails />', () => {
                 'app.governance.daoProposalDetailsPage.aside.details.published',
             ),
         ).toBeInTheDocument();
-        expect(screen.queryByText('Confirmations')).not.toBeInTheDocument();
 
-        const approvalsHeading = screen.getByRole('heading', {
-            name: 'app.safe.safeDaoProposalDetails.approvalsTitle',
+        const votingHeading = screen.getByRole('heading', {
+            name: 'app.governance.daoProposalDetailsPage.main.voting',
         });
         const actionsHeading = screen.getByRole('heading', {
-            name: 'app.safe.safeDaoProposalDetails.actionsTitle',
+            name: 'app.governance.daoProposalDetailsPage.main.actions.header',
         });
 
         expect(
-            approvalsHeading.compareDocumentPosition(actionsHeading) &
+            votingHeading.compareDocumentPosition(actionsHeading) &
                 Node.DOCUMENT_POSITION_FOLLOWING,
         ).not.toBe(0);
-        expect(
-            screen.getByRole('button', {
-                name: 'app.safe.safeDaoProposalDetails.sign',
-            }),
-        ).toBeInTheDocument();
+        const signButton = screen.getByRole('button', {
+            name: 'app.safe.safeDaoProposalDetails.sign',
+        });
+        expect(signButton).toBeInTheDocument();
+        await userEvent.click(signButton);
+        expect(dialogContext.open).toHaveBeenCalledWith(
+            SafeDialogId.NATIVE_TRANSACTION,
+            {
+                params: {
+                    daoAddress,
+                    network: dao.network,
+                    safeAddress,
+                    transaction,
+                },
+            },
+        );
         expect(
             screen.getByText(
                 'app.governance.daoProposalDetailsPage.aside.details.title',
             ),
         ).toBeInTheDocument();
-        expect(screen.getByRole('progressbar')).toBeInTheDocument();
-        expect(screen.getByText('Approval')).toBeInTheDocument();
-        expect(screen.queryByText(/left to vote/i)).not.toBeInTheDocument();
-        expect(
-            screen.getByText('Active', { selector: 'main span' }),
-        ).toBeInTheDocument();
-        expect(screen.queryByText('is pending')).not.toBeInTheDocument();
     });
     it('shows the signed state when the connected owner already confirmed', () => {
         const ownerOne = '0x0000000000000000000000000000000000000011';

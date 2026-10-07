@@ -3224,9 +3224,6 @@
       "safeMultisig": {
         "safeProcess": {
           "creationRequirement": "Safe owner, with the Safe authorized to execute on this DAO",
-          "logoAlt": "Safe",
-          "transactionsTitle": "Safe transactions",
-          "transactionsDescription": "Review and sign DAO transactions proposed through this Safe.",
           "emptyHeading": "No DAO transactions",
           "emptyDescription": "No Safe transactions executing actions on this DAO have been found. Votes submitted to governance stages are shown in their respective processes.",
           "transactionsStale": "Some Safe transactions could not be refreshed. This list may be incomplete or out of date."
@@ -3948,9 +3945,9 @@
       },
       "safeNativeTransactionDialog": {
         "title": "Review Safe proposal",
-        "description": "Review the exact DAO actions before signing this Safe transaction.",
+        "description": "Review the exact DAO actions before signing or executing this Safe transaction.",
         "loading": "Preparing the Safe transaction…",
-        "walletRequired": "Connect an owner wallet on the selected network to sign this transaction.",
+        "walletRequired": "Connect an owner wallet on the selected network to sign or execute this transaction.",
         "providerUnavailable": "The connected wallet provider is unavailable.",
         "noActions": "This proposal has no actions to submit.",
         "invalidNonce": "The Safe nonce is invalid.",
@@ -3963,9 +3960,14 @@
         "alreadyExecuted": "This Safe transaction has already executed.",
         "uncertain": "The service response was inconclusive. Re-check before trying anything again.",
         "submitted": "Submitted to Safe. The proposal is now pending owner approvals.",
+        "executing": "Executing the Safe transaction…",
+        "executed": "Safe transaction executed successfully.",
+        "executionUnavailable": "This Safe transaction is no longer ready to execute.",
+        "executionFailed": "The Safe transaction could not be executed.",
         "actionsHeading": "DAO actions",
         "actions": {
           "sign": "Sign and submit",
+          "execute": "Execute",
           "done": "Done",
           "view": "View proposal",
           "recheck": "Re-check",
@@ -3973,16 +3975,12 @@
         }
       },
       "safeDaoProposalDetails": {
-        "loadingHeading": "Loading Safe transaction",
-        "loadingDescription": "The Safe transaction is being loaded.",
         "errorHeading": "Could not load Safe transaction",
         "errorDescription": "The Safe transaction could not be loaded. Try again later.",
         "invalidHeading": "Invalid Safe transaction",
         "invalidDescription": "This Safe transaction does not belong to the selected DAO and Safe.",
         "notFoundHeading": "Safe transaction unavailable",
         "notFoundDescription": "The requested Safe transaction could not be found for this DAO and Safe.",
-        "actionsTitle": "DAO actions",
-        "approvalsTitle": "Approvals",
         "executionDate": "Executed",
         "stale": "Safe data may be stale or incomplete. Refresh before signing.",
         "awaitingApprovals": "Awaiting approvals",
@@ -3996,11 +3994,7 @@
         "signed": "Already signed",
         "execute": "Review and execute",
         "noOwnersHeading": "Safe owners unavailable",
-        "noOwnersDescription": "The Safe returned no current owners, so approval progress cannot be shown.",
-        "noActionsHeading": "No DAO actions",
-        "noActionsDescription": "This Safe transaction does not contain DAO actions.",
-        "oneAction": "{{count}} DAO action",
-        "manyActions": "{{count}} DAO actions"
+        "noOwnersDescription": "The Safe returned no current owners, so approval progress cannot be shown."
       }
     },
     "settings": {

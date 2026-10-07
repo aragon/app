@@ -48,7 +48,7 @@ jest.mock('@/shared/components/pluginSingleComponent', () => {
             pluginAddress?: string;
             pluginId: string;
         }) =>
-            props.pluginId === 'external-safe' &&
+            props.pluginId === PluginInterfaceType.SAFE &&
             props.pluginAddress != null ? (
                 <SafeMemberPanel
                     daoId={props.daoId}
@@ -103,7 +103,7 @@ describe('<DaoMembersPageClient /> component', () => {
             address,
             interfaceType: PluginInterfaceType.SAFE,
             isProcess: true,
-            isBody: false,
+            isBody: true,
         });
 
         return generateFilterComponentPlugin({

@@ -1,4 +1,3 @@
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
@@ -28,7 +27,34 @@ describe('daoMemberSourceUtils.resolve', () => {
             expect.objectContaining({
                 address: safeAddress,
                 daoId,
-                id: safeBodyPluginId,
+                id: PluginInterfaceType.SAFE,
+                kind: 'safe',
+                uniqueId: daoMemberSourceUtils.getSafeSourceId(
+                    daoId,
+                    safeAddress,
+                ),
+            }),
+        ]);
+    });
+    it('includes a Safe body row with both process and body roles', () => {
+        const safeBody = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+            isProcess: true,
+        });
+
+        const sources = daoMemberSourceUtils.resolve({
+            dao: generateDao({ plugins: [safeBody] }),
+            daoId,
+            bodyPlugins: [safeBody],
+            processPlugins: [],
+        });
+
+        expect(sources).toEqual([
+            expect.objectContaining({
+                address: safeAddress,
+                id: PluginInterfaceType.SAFE,
                 kind: 'safe',
                 uniqueId: daoMemberSourceUtils.getSafeSourceId(
                     daoId,

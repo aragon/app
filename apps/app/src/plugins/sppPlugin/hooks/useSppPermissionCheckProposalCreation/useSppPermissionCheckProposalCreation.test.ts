@@ -409,9 +409,8 @@ describe('useSppPermissionCheckProposalCreation', () => {
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
 
-        // Only the internal body resolves to a slot function; the external Safe
-        // (stage body or external proposer) falls through to the fallback hook
-        // (pluginId 'external').
+        // Internal bodies resolve an installed slot; external stage refs use their stage condition
+        // even when a matching Safe row is also present in the DAO plugin list.
         getSlotFunctionSpy.mockImplementation(((slotParams: {
             pluginId: string;
         }) =>
@@ -436,7 +435,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
             isProcess: true,
-            isBody: false,
+            isBody: true,
         });
         const sppPlugin = generateDaoPlugin({
             address: `0x${'a'.repeat(40)}`,
@@ -469,7 +468,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
             plugin: sppPlugin,
         });
 
-        expect(result.current.isRestricted).toBeTruthy();
+        expect(getSlotFunctionSpy).not.toHaveBeenCalled();
         expect(result.current.settings).toEqual([
             buildExpectedSafeGroup(safeAddress),
         ]);

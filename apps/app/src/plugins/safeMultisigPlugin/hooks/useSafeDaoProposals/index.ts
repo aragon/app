@@ -3,6 +3,7 @@ export {
     findSafeDaoProposal,
     readSafeTransactions,
     rememberAcceptedSafeDaoProposal,
+    safeDaoProposalOptions,
     safeDaoProposalsOptions,
     useSafeDaoProposal,
     useSafeDaoProposals,

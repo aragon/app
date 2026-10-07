@@ -1,6 +1,6 @@
 import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { generateSppStagePlugin } from '../sppPlugin/testUtils';
 import { VotingBodyBrandIdentity } from '../sppPlugin/types';
@@ -10,6 +10,7 @@ import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigPr
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
 import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
+import { SafeProcessSelector } from './components/safeProcessSelector';
 import { useSafeMultisigVotePermissionCheck } from './hooks/useSafeMultisigVotePermissionCheck';
 import { initialiseSafeMultisigPlugin } from './index';
 
@@ -23,8 +24,17 @@ describe('safeMultisigPlugin registrations', () => {
         initialiseSafeMultisigPlugin();
     });
 
-    // A slot registered under an id the resolver never produces fails silently: the body simply
-    // renders through the generic external fallback. Pair the two rather than trusting either.
+    // Slot and resolver identities must match; unsupported Safe networks intentionally use the
+    // generic external fallback.
+    it('registers the process selector under the unified Safe identity', () => {
+        expect(
+            pluginRegistryUtils.getSlotComponent({
+                slotId: GovernanceSlotId.GOVERNANCE_SELECT_PLUGIN_PROCESS_LIST_ITEM,
+                pluginId: PluginInterfaceType.SAFE,
+            }),
+        ).toEqual(SafeProcessSelector);
+    });
+
     it.each([
         {
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,

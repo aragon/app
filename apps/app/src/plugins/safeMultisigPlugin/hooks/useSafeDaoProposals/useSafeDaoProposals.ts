@@ -1,5 +1,3 @@
-'use client';
-
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
@@ -533,23 +531,24 @@ const readStoredProposal = async (
         complete: isCompleteStoredLookup(lookup),
     };
 };
+export const safeDaoProposalOptions = (params: IUseSafeDaoProposalParams) => ({
+    queryKey: safeServiceKeys.safeDaoProposal({
+        network: params.network,
+        safeAddress: params.safeAddress,
+        daoAddress: params.daoAddress,
+        safeTxHash: params.safeTxHash,
+    }),
+    queryFn: () => readStoredProposal(params),
+    enabled: params.enabled !== false && params.safeTxHash.length > 0,
+    gcTime: safeQueryGcTime,
+    refetchInterval: safeBodyPollInterval,
+});
 
 export const useSafeDaoProposal = (
     params: IUseSafeDaoProposalParams,
 ): IUseSafeDaoProposalReturn => {
     const safeInfoQuery = useQuery(safeInfoOptions(params));
-    const lookupQuery = useQuery({
-        queryKey: safeServiceKeys.safeDaoProposal({
-            network: params.network,
-            safeAddress: params.safeAddress,
-            daoAddress: params.daoAddress,
-            safeTxHash: params.safeTxHash,
-        }),
-        queryFn: () => readStoredProposal(params),
-        enabled: params.enabled !== false && params.safeTxHash.length > 0,
-        gcTime: safeQueryGcTime,
-        refetchInterval: safeBodyPollInterval,
-    });
+    const lookupQuery = useQuery(safeDaoProposalOptions(params));
     const data =
         safeInfoQuery.data == null || lookupQuery.data == null
             ? undefined

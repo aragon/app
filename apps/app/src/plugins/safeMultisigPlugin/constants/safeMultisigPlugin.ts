@@ -2,13 +2,7 @@ import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
-/**
- * Slot identity for an external Safe body in an SPP stage. A Safe process uses the
- * backend's separate `safe` identity; process rows must never replace stage bodies.
- */
-export const safeBodyPluginId = 'external-safe';
-
-/** A Safe process is registered for display, not installed through a plugin repository. */
+/** The unified Safe identity used by Safe processes and external SPP Safe bodies. */
 export const safeProcessPlugin: IPlugin = {
     id: PluginInterfaceType.SAFE,
     name: 'Safe',
@@ -54,9 +48,8 @@ export const settledHistoryMaxPages = 10;
 export const safeQueueReadLimit = 100;
 
 /**
- * Plugin id a generic (non-Safe) external body resolves to. Kept beside `safeBodyPluginId` because
- * both live in the same string namespace and the resolver switches between them; a plain constant
- * living in a client component would drag react-hook-form into server code.
+ * Plugin id generic external stage bodies resolve to. Supported-network SPP Safe bodies use the
+ * unified Safe identity instead; unsupported networks stay on this fallback.
  */
 export const externalPluginId = 'external';
 

@@ -2,8 +2,8 @@
 
 import { addressUtils, Dialog } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { type Hex, isHex, zeroAddress } from 'viem';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type Hex, isHex, toEventSelector, zeroAddress } from 'viem';
 import { getBytecode, getConnection } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
@@ -11,11 +11,22 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { executeActionsDialogUtils } from '@/modules/governance/dialogs/executeActionsDialog/executeActionsDialogUtils';
 import { SafeTransactionReviewContent } from '@/modules/safe/components/safeTransactionReviewContent';
 import {
+    type ISafeExecutionOutcomeReport,
+    SafeExecutionPendingError,
+    SafeExecutionResult,
+    SafeExecutionSubmissionError,
+    useSafeTransactionExecution,
+} from '@/modules/safe/hooks/useSafeTransactionExecution';
+import { SafeExecutionOutcome } from '@/modules/safe/utils/safeExecutionOutcomeUtils';
+import {
     readSafeTransactions,
     rememberAcceptedSafeDaoProposal,
 } from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
 import { safeDaoProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeDaoProposalUtils';
-import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
+import {
+    SafeApprovalReadiness,
+    safeMultisigProposalUtils,
+} from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import {
     type ISafeInfo,
     type ISafeMultisigTransaction,
@@ -28,21 +39,29 @@ import {
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
+import {
+    buildIntentId,
+    PendingTransactionStatus,
+    pendingTransactionManager,
+} from '@/shared/utils/pendingTransactionManager';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { SafeDialogId } from '../../constants/safeDialogId';
+import { SafeDialogId } from '../../constants';
 import type { ISafeNativeTransactionDialogProps } from './safeNativeTransactionDialog.api';
 
 interface IPreparedTransaction {
     transaction: ISafeMultisigTransaction;
     safeInfo: ISafeInfo;
     actions: ITransactionRequest[];
+    canExecute: boolean;
 }
 
 type DialogState =
     | 'loading'
     | 'ready'
     | 'signing'
+    | 'executing'
+    | 'executionPending'
     | 'success'
     | 'uncertain'
     | 'error';
@@ -121,14 +140,30 @@ const getSafeTransactionData = (
     };
 };
 
+const daoExecutedTopic = toEventSelector(
+    'Executed(address,bytes32,(address,uint256,bytes)[],uint256,uint256,bytes[])',
+);
+
+const canExecuteTransaction = (
+    transaction: ISafeMultisigTransaction,
+    safeInfo: ISafeInfo,
+): boolean =>
+    safeMultisigProposalUtils.getApprovalReadiness({
+        currentNonce: safeInfo.nonce,
+        owners: safeInfo.owners,
+        threshold: safeInfo.threshold,
+        transaction,
+    }) === SafeApprovalReadiness.READY_TO_EXECUTE;
+
 export const SafeNativeTransactionDialog: React.FC<
     ISafeNativeTransactionDialogProps
 > = (props) => {
     const { params } = props.location;
-    const { close } = useDialogContext();
+    const { close, updateOptions } = useDialogContext();
     const { t } = useTranslations();
     const { address: walletAddress } = useWalletAccount();
     const queryClient = useQueryClient();
+    const { execute, resume } = useSafeTransactionExecution();
 
     if (params == null) {
         throw new Error('SafeNativeTransactionDialog: params not set');
@@ -145,11 +180,27 @@ export const SafeNativeTransactionDialog: React.FC<
     const { requiredChainId, withNetworkSwitch } = useNetworkSwitch({
         network,
     });
+    const inputSafeTxHash = inputTransaction?.safeTxHash;
+    const executionIntentId = useMemo(
+        () =>
+            inputSafeTxHash == null
+                ? undefined
+                : buildIntentId({
+                      type: 'safe-native-execution',
+                      network,
+                      daoAddress,
+                      safeAddress,
+                      safeTxHash: inputSafeTxHash,
+                  }),
+        [daoAddress, inputSafeTxHash, network, safeAddress],
+    );
     const { check: checkWalletConnection, result: isWalletConnected } =
         useConnectedWalletGuard();
     const [state, setState] = useState<DialogState>('loading');
     const [prepared, setPrepared] = useState<IPreparedTransaction>();
     const [error, setError] = useState<string>();
+    const [executionSucceeded, setExecutionSucceeded] = useState(false);
+    const [executionPending, setExecutionPending] = useState(false);
     const [reviewGateBlocked, setReviewGateBlocked] = useState(true);
     const uncertainAttemptRef = useRef<IUncertainSafeWriteAttempt | undefined>(
         undefined,
@@ -285,6 +336,7 @@ export const SafeNativeTransactionDialog: React.FC<
                     value: BigInt(action.value),
                     data: action.data as Hex,
                 })),
+                canExecute: false,
             };
         },
         [
@@ -313,7 +365,12 @@ export const SafeNativeTransactionDialog: React.FC<
                     t('app.safe.safeNativeTransactionDialog.invalidPayload'),
                 );
             }
-            return { transaction: inputTransaction, safeInfo: info, actions };
+            return {
+                transaction: inputTransaction,
+                safeInfo: info,
+                actions,
+                canExecute: canExecuteTransaction(inputTransaction, info),
+            };
         }
 
         return buildNewTransaction(info);
@@ -333,6 +390,21 @@ export const SafeNativeTransactionDialog: React.FC<
         let cancelled = false;
         setState('loading');
         setError(undefined);
+        setExecutionSucceeded(false);
+        const pendingExecution =
+            executionIntentId == null
+                ? undefined
+                : pendingTransactionManager.get(executionIntentId);
+        if (
+            pendingExecution?.status === PendingTransactionStatus.FAILED &&
+            executionIntentId != null
+        ) {
+            pendingTransactionManager.clear(executionIntentId);
+        }
+        setExecutionPending(
+            pendingExecution?.status === PendingTransactionStatus.PENDING ||
+                pendingExecution?.status === PendingTransactionStatus.SUBMITTED,
+        );
         setReviewGateBlocked(true);
         void prepare()
             .then((value) => {
@@ -352,7 +424,7 @@ export const SafeNativeTransactionDialog: React.FC<
         return () => {
             cancelled = true;
         };
-    }, [prepare]);
+    }, [executionIntentId, prepare]);
 
     const reconcile = useCallback(
         async (attempt: IUncertainSafeWriteAttempt) => {
@@ -399,8 +471,343 @@ export const SafeNativeTransactionDialog: React.FC<
         },
         [daoAddress, network, prepared, safeAddress],
     );
+    const verifyDaoExecution = useCallback(
+        (receipt: {
+            logs: readonly {
+                address: string;
+                topics: readonly string[];
+            }[];
+        }) =>
+            receipt.logs.some(
+                (log) =>
+                    addressUtils.isAddressEqual(log.address, daoAddress) &&
+                    log.topics[0] === daoExecutedTopic,
+            ),
+        [daoAddress],
+    );
+    const markExecutionPending = useCallback(() => {
+        setExecutionPending(true);
+        setError(t('app.safe.safeNativeTransactionDialog.uncertain'));
+        setState('executionPending');
+    }, [t]);
+    const registerExecutionSubmitted = useCallback(
+        (hash: Hex) => {
+            if (executionIntentId == null || prepared == null) {
+                return;
+            }
+            pendingTransactionManager.registerSubmitted(
+                executionIntentId,
+                { hash, chainId: requiredChainId },
+                {
+                    type: 'safe-native-execution',
+                    scope: executionIntentId,
+                    recovery: {
+                        safeAddress,
+                        chainId: requiredChainId,
+                        safeTxHash: prepared.transaction.safeTxHash,
+                    },
+                },
+            );
+            setExecutionPending(true);
+        },
+        [executionIntentId, prepared, requiredChainId, safeAddress],
+    );
+    const registerExecutionUncertain = useCallback(() => {
+        if (executionIntentId == null || prepared == null) {
+            return;
+        }
+        pendingTransactionManager.registerSubmissionUncertain(
+            executionIntentId,
+            { chainId: requiredChainId },
+            {
+                type: 'safe-native-execution',
+                scope: executionIntentId,
+                recovery: {
+                    safeAddress,
+                    chainId: requiredChainId,
+                    safeTxHash: prepared.transaction.safeTxHash,
+                },
+            },
+        );
+    }, [executionIntentId, prepared, requiredChainId, safeAddress]);
+    const finishExecution = useCallback(
+        (result: ISafeExecutionOutcomeReport) => {
+            if (
+                result.result === SafeExecutionResult.FAILED &&
+                result.outcome === SafeExecutionOutcome.UNMATCHED
+            ) {
+                markExecutionPending();
+                return;
+            }
+            if (executionIntentId != null) {
+                pendingTransactionManager.clear(executionIntentId);
+            }
+            setExecutionPending(false);
+            if (result.result === SafeExecutionResult.EXECUTED) {
+                invalidateSafeQueries();
+                setExecutionSucceeded(true);
+                setState('success');
+                return;
+            }
+            setError(
+                t(
+                    result.result === SafeExecutionResult.AUTHORITY_CHANGED
+                        ? 'app.safe.safeNativeTransactionDialog.executionUnavailable'
+                        : 'app.safe.safeNativeTransactionDialog.executionFailed',
+                ),
+            );
+            setState('error');
+        },
+        [executionIntentId, invalidateSafeQueries, markExecutionPending, t],
+    );
+    const handleExecute = useCallback(async () => {
+        if (prepared == null || reviewGateBlocked) {
+            return;
+        }
+
+        const pendingExecution =
+            executionIntentId == null
+                ? undefined
+                : pendingTransactionManager.get(executionIntentId);
+        const resumeExecution = async (hash: Hex): Promise<void> => {
+            const result = await resume({
+                hash,
+                safeTxHash: prepared.transaction.safeTxHash,
+                safeAddress,
+                chainId: requiredChainId,
+                verifyEffect: verifyDaoExecution,
+            });
+            finishExecution(result);
+        };
+
+        if (
+            pendingExecution?.status === PendingTransactionStatus.SUBMITTED &&
+            pendingExecution.hash != null
+        ) {
+            setError(undefined);
+            setState('executing');
+            try {
+                await resumeExecution(pendingExecution.hash);
+            } catch (reason: unknown) {
+                if (reason instanceof SafeExecutionPendingError) {
+                    markExecutionPending();
+                    return;
+                }
+                setError(getErrorMessage(reason));
+                setState('error');
+            }
+            return;
+        }
+
+        if (pendingExecution?.status === PendingTransactionStatus.PENDING) {
+            setError(undefined);
+            setState('executing');
+            let resumeHash = pendingExecution.hash;
+            try {
+                if (resumeHash == null) {
+                    const exact = (
+                        await readSafeTransactions({
+                            network,
+                            safeAddress,
+                        })
+                    ).find(
+                        ({ safeTxHash }) =>
+                            safeTxHash.toLowerCase() ===
+                            prepared.transaction.safeTxHash.toLowerCase(),
+                    );
+                    if (
+                        exact == null ||
+                        !exact.isExecuted ||
+                        !isHex(exact.transactionHash) ||
+                        exact.transactionHash.length !== 66
+                    ) {
+                        markExecutionPending();
+                        return;
+                    }
+                    resumeHash = exact.transactionHash as Hex;
+                    registerExecutionSubmitted(resumeHash);
+                }
+                await resumeExecution(resumeHash);
+            } catch (reason: unknown) {
+                if (reason instanceof SafeExecutionPendingError) {
+                    if (isHex(reason.hash) && reason.hash.length === 66) {
+                        registerExecutionSubmitted(reason.hash);
+                    }
+                    markExecutionPending();
+                    return;
+                }
+                setError(getErrorMessage(reason));
+                setState('error');
+            }
+            return;
+        }
+
+        if (walletAddress == null || !prepared.canExecute) {
+            return;
+        }
+
+        setError(undefined);
+        setState('executing');
+        try {
+            const protocolKit = await getProtocolKit(walletAddress);
+            const [owners, threshold, currentNonce] = await Promise.all([
+                protocolKit.getOwners(),
+                protocolKit.getThreshold(),
+                protocolKit.getNonce(),
+            ]);
+            if (
+                !owners.some((owner) =>
+                    addressUtils.isAddressEqual(owner, walletAddress),
+                )
+            ) {
+                throw new Error(
+                    t('app.safe.safeNativeTransactionDialog.notOwner'),
+                );
+            }
+            if (threshold < 1 || threshold > owners.length) {
+                throw new Error(
+                    t('app.safe.safeNativeTransactionDialog.invalidThreshold'),
+                );
+            }
+            const exact = (
+                await readSafeTransactions({
+                    network,
+                    safeAddress,
+                })
+            ).find(
+                ({ safeTxHash }) =>
+                    safeTxHash.toLowerCase() ===
+                    prepared.transaction.safeTxHash.toLowerCase(),
+            );
+            if (exact == null) {
+                throw new Error(
+                    t(
+                        'app.safe.safeNativeTransactionDialog.transactionUnavailable',
+                    ),
+                );
+            }
+            if (
+                !matchesReviewedTransaction(
+                    prepared.transaction.safeTxHash,
+                    exact.safeTxHash,
+                )
+            ) {
+                throw new Error(
+                    t('app.safe.safeNativeTransactionDialog.hashMismatch'),
+                );
+            }
+            if (
+                safeDaoProposalUtils.findDaoExecuteActions({
+                    transaction: exact,
+                    daoAddress,
+                }) == null
+            ) {
+                throw new Error(
+                    t('app.safe.safeNativeTransactionDialog.invalidPayload'),
+                );
+            }
+            if (exact.isExecuted) {
+                throw new Error(
+                    t('app.safe.safeNativeTransactionDialog.alreadyExecuted'),
+                );
+            }
+            const readiness = safeMultisigProposalUtils.getApprovalReadiness({
+                currentNonce: String(currentNonce),
+                owners,
+                threshold,
+                transaction: exact,
+            });
+            if (readiness !== SafeApprovalReadiness.READY_TO_EXECUTE) {
+                throw new Error(
+                    t(
+                        'app.safe.safeNativeTransactionDialog.executionUnavailable',
+                    ),
+                );
+            }
+            const safeTransactionData = getSafeTransactionData(exact);
+            const { EthSafeSignature, EthSafeTransaction } = await import(
+                '@safe-global/protocol-kit'
+            );
+            const safeTransaction = new EthSafeTransaction({
+                ...safeTransactionData,
+            });
+            const safeTxHash = (await protocolKit.getTransactionHash(
+                safeTransaction,
+            )) as Hex;
+            if (safeTxHash.toLowerCase() !== exact.safeTxHash.toLowerCase()) {
+                throw new Error(
+                    t('app.safe.safeNativeTransactionDialog.hashMismatch'),
+                );
+            }
+            const signatures = exact.confirmations.map(
+                ({ owner, signature, signatureType }) =>
+                    new EthSafeSignature(
+                        owner,
+                        signature,
+                        signatureType === 'CONTRACT_SIGNATURE',
+                    ),
+            );
+            const result = await execute({
+                protocolKit,
+                safeTransaction,
+                safeTxHash,
+                safeAddress,
+                chainId: requiredChainId,
+                signatures,
+                verifyEffect: verifyDaoExecution,
+                onSubmitted: registerExecutionSubmitted,
+            });
+            finishExecution(result);
+        } catch (reason: unknown) {
+            if (reason instanceof SafeExecutionPendingError) {
+                if (isHex(reason.hash) && reason.hash.length === 66) {
+                    registerExecutionSubmitted(reason.hash);
+                }
+                markExecutionPending();
+                return;
+            }
+            if (reason instanceof SafeExecutionSubmissionError) {
+                registerExecutionUncertain();
+                markExecutionPending();
+                return;
+            }
+            setError(getErrorMessage(reason));
+            setState('error');
+        }
+    }, [
+        daoAddress,
+        execute,
+        executionIntentId,
+        finishExecution,
+        getProtocolKit,
+        markExecutionPending,
+        network,
+        prepared,
+        registerExecutionSubmitted,
+        registerExecutionUncertain,
+        requiredChainId,
+        resume,
+        reviewGateBlocked,
+        safeAddress,
+        t,
+        verifyDaoExecution,
+        walletAddress,
+    ]);
+
     const handleSign = useCallback(async () => {
         if (prepared == null || walletAddress == null || reviewGateBlocked) {
+            return;
+        }
+        const pendingExecution =
+            executionIntentId == null
+                ? undefined
+                : pendingTransactionManager.get(executionIntentId);
+        if (
+            executionPending ||
+            pendingExecution?.status === PendingTransactionStatus.PENDING ||
+            pendingExecution?.status === PendingTransactionStatus.SUBMITTED
+        ) {
+            markExecutionPending();
             return;
         }
         setError(undefined);
@@ -474,6 +881,7 @@ export const SafeNativeTransactionDialog: React.FC<
                     transaction: exact,
                     safeInfo: info,
                     actions,
+                    canExecute: false,
                 };
             }
             if (
@@ -633,12 +1041,15 @@ export const SafeNativeTransactionDialog: React.FC<
     }, [
         buildNewTransaction,
         daoAddress,
+        executionIntentId,
+        executionPending,
         getProtocolKit,
         inputTransaction,
         network,
         prepared,
         reconcile,
         invalidateSafeQueries,
+        markExecutionPending,
         requiredChainId,
         reviewGateBlocked,
         safeAddress,
@@ -648,26 +1059,59 @@ export const SafeNativeTransactionDialog: React.FC<
         walletAddress,
     ]);
 
+    const isDismissBlocked = state === 'signing' || state === 'executing';
+    const handleDismiss = useCallback(() => {
+        if (isDismissBlocked) {
+            return;
+        }
+
+        close(SafeDialogId.NATIVE_TRANSACTION);
+    }, [close, isDismissBlocked]);
+
+    useEffect(() => {
+        updateOptions({
+            disableOutsideClick: true,
+            onClose: handleDismiss,
+        });
+    }, [handleDismiss, updateOptions]);
+
     const proposalHref =
         state === 'success' && inputTransaction == null && prepared != null
             ? `/dao/${network}/${daoAddress}/proposals/safe/${prepared.transaction.safeTxHash}?safeAddress=${encodeURIComponent(safeAddress)}`
             : undefined;
     const title = t('app.safe.safeNativeTransactionDialog.title');
+    const pendingExecution =
+        executionIntentId == null
+            ? undefined
+            : pendingTransactionManager.get(executionIntentId);
+    const executionNeedsRecheck =
+        executionPending ||
+        pendingExecution?.status === PendingTransactionStatus.PENDING ||
+        pendingExecution?.status === PendingTransactionStatus.SUBMITTED;
     const primaryAction =
         state === 'ready'
             ? {
-                  label: t('app.safe.safeNativeTransactionDialog.actions.sign'),
+                  label: t(
+                      executionNeedsRecheck
+                          ? 'app.safe.safeNativeTransactionDialog.actions.recheck'
+                          : prepared?.canExecute
+                            ? 'app.safe.safeNativeTransactionDialog.actions.execute'
+                            : 'app.safe.safeNativeTransactionDialog.actions.sign',
+                  ),
                   disabled:
                       prepared == null ||
                       reviewGateBlocked ||
-                      prepared.transaction.isExecuted,
+                      (!executionNeedsRecheck &&
+                          prepared.transaction.isExecuted),
                   onClick: () => {
                       if (!isWalletConnected) {
                           checkWalletConnection();
                           return;
                       }
                       withNetworkSwitch(() => {
-                          void handleSign();
+                          void (executionNeedsRecheck || prepared?.canExecute
+                              ? handleExecute()
+                              : handleSign());
                       });
                   },
               }
@@ -681,43 +1125,55 @@ export const SafeNativeTransactionDialog: React.FC<
                     href: proposalHref,
                     onClick: () => close(SafeDialogId.NATIVE_TRANSACTION),
                 }
-              : state === 'uncertain'
+              : state === 'executionPending'
                 ? {
                       label: t(
                           'app.safe.safeNativeTransactionDialog.actions.recheck',
                       ),
                       onClick: () => {
-                          if (uncertainAttempt == null) {
-                              return;
-                          }
                           setError(undefined);
-                          setState('signing');
-                          void reconcile(uncertainAttempt)
-                              .then((accepted) => {
-                                  if (accepted) {
-                                      invalidateSafeQueries();
-                                      setUncertainAttempt(undefined);
-                                  }
-                                  setState(accepted ? 'success' : 'uncertain');
-                              })
-                              .catch((reason: unknown) => {
-                                  setError(getErrorMessage(reason));
-                                  setState('uncertain');
-                              });
+                          void handleExecute();
                       },
                   }
-                : state === 'error'
+                : state === 'uncertain'
                   ? {
                         label: t(
-                            'app.safe.safeNativeTransactionDialog.actions.close',
+                            'app.safe.safeNativeTransactionDialog.actions.recheck',
                         ),
-                        onClick: () => close(SafeDialogId.NATIVE_TRANSACTION),
+                        onClick: () => {
+                            if (uncertainAttempt == null) {
+                                return;
+                            }
+                            setError(undefined);
+                            setState('signing');
+                            void reconcile(uncertainAttempt)
+                                .then((accepted) => {
+                                    if (accepted) {
+                                        invalidateSafeQueries();
+                                        setUncertainAttempt(undefined);
+                                    }
+                                    setState(
+                                        accepted ? 'success' : 'uncertain',
+                                    );
+                                })
+                                .catch((reason: unknown) => {
+                                    setError(getErrorMessage(reason));
+                                    setState('uncertain');
+                                });
+                        },
                     }
-                  : undefined;
+                  : state === 'error'
+                    ? {
+                          label: t(
+                              'app.safe.safeNativeTransactionDialog.actions.close',
+                          ),
+                          onClick: () => close(SafeDialogId.NATIVE_TRANSACTION),
+                      }
+                    : undefined;
 
     return (
         <>
-            <Dialog.Header title={title} />
+            <Dialog.Header onClose={handleDismiss} title={title} />
             <Dialog.Content
                 className="max-h-[70vh] overflow-y-auto"
                 description={t(
@@ -727,12 +1183,15 @@ export const SafeNativeTransactionDialog: React.FC<
                 {state === 'loading' && (
                     <p>{t('app.safe.safeNativeTransactionDialog.loading')}</p>
                 )}
+                {state === 'executing' && (
+                    <p>{t('app.safe.safeNativeTransactionDialog.executing')}</p>
+                )}
                 {error != null && <p className="text-critical">{error}</p>}
                 {state === 'success' && inputTransaction == null && (
                     <p>{t('app.safe.safeNativeTransactionDialog.submitted')}</p>
                 )}
-                {state === 'uncertain' && (
-                    <p>{t('app.safe.safeNativeTransactionDialog.uncertain')}</p>
+                {state === 'success' && executionSucceeded && (
+                    <p>{t('app.safe.safeNativeTransactionDialog.executed')}</p>
                 )}
                 {prepared != null && (
                     <SafeTransactionReviewContent
@@ -744,7 +1203,14 @@ export const SafeNativeTransactionDialog: React.FC<
                     />
                 )}
             </Dialog.Content>
-            <Dialog.Footer primaryAction={primaryAction} />
+            <Dialog.Footer
+                primaryAction={primaryAction}
+                secondaryAction={{
+                    label: t('app.shared.transactionDialog.footer.cancel'),
+                    onClick: handleDismiss,
+                    disabled: isDismissBlocked,
+                }}
+            />
         </>
     );
 };

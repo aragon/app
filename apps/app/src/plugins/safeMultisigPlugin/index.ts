@@ -7,11 +7,8 @@ import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProp
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
 import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
 import { SafeProcessOverview } from './components/safeProcessOverview';
-import {
-    safeBodyHiddenTabs,
-    safeBodyPluginId,
-    safeProcessPlugin,
-} from './constants';
+import { SafeProcessSelector } from './components/safeProcessSelector';
+import { safeBodyHiddenTabs, safeProcessPlugin } from './constants';
 import { useSafeMultisigGovernanceSettings } from './hooks/useSafeMultisigGovernanceSettings';
 import { useSafeMultisigVotePermissionCheck } from './hooks/useSafeMultisigVotePermissionCheck';
 import { useSafeProcessPermissionCheckProposalCreation } from './hooks/useSafeProcessPermissionCheckProposalCreation';
@@ -19,6 +16,11 @@ import { useSafeProcessPermissionCheckProposalCreation } from './hooks/useSafePr
 export const initialiseSafeMultisigPlugin = () => {
     pluginRegistryUtils
         .registerPlugin(safeProcessPlugin)
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_SELECT_PLUGIN_PROCESS_LIST_ITEM,
+            pluginId: safeProcessPlugin.id,
+            component: SafeProcessSelector,
+        })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST,
             pluginId: safeProcessPlugin.id,
@@ -40,48 +42,38 @@ export const initialiseSafeMultisigPlugin = () => {
             function: useSafeMultisigGovernanceSettings,
         })
         .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
-            pluginId: safeBodyPluginId,
-            component: SafeMemberPanel,
-        })
-        .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             component: SafeMultisigProposalVotingBreakdown,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             component: SafeMultisigProposalVotingSummary,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             component: SafeMultisigSubmitVote,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             component: SafeMultisigVoteList,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             function: () => safeBodyHiddenTabs,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             function: () => true,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
-            pluginId: safeBodyPluginId,
+            pluginId: safeProcessPlugin.id,
             function: useSafeMultisigVotePermissionCheck,
-        })
-        .registerSlotFunction({
-            slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-            pluginId: safeBodyPluginId,
-            function: useSafeMultisigGovernanceSettings,
         });
 };

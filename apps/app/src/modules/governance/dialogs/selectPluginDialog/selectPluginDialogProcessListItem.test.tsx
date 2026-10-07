@@ -1,64 +1,37 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as wagmi from 'wagmi';
-import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
-import * as safePermissionHook from '@/plugins/safeMultisigPlugin/hooks/useSafeProcessPermissionCheckProposalCreation';
+import * as simulateProposalModule from '@/modules/governance/hooks/useSimulateProposal';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { publishProposalDialogUtils } from '../publishProposalDialog/publishProposalDialogUtils';
 import { SelectPluginDialogProcessListItem } from './selectPluginDialogProcessListItem';
 
 describe('<SelectPluginDialogProcessListItem /> component', () => {
-    const useCallSpy = jest.spyOn(wagmi, 'useCall');
-    const useWalletAccountSpy = jest.spyOn(
-        useWalletAccountModule,
-        'useWalletAccount',
-    );
-    const buildTransactionSpy = jest.spyOn(
-        publishProposalDialogUtils,
-        'buildTransaction',
-    );
-    const useSafePermissionSpy = jest.spyOn(
-        safePermissionHook,
-        'useSafeProcessPermissionCheckProposalCreation',
+    const useSimulateProposalSpy = jest.spyOn(
+        simulateProposalModule,
+        'useSimulateProposalCreation',
     );
 
     beforeEach(() => {
-        useWalletAccountSpy.mockReturnValue({
-            address: '0xabc0000000000000000000000000000000000001',
-            chainId: 1,
-            isConnecting: false,
-            isReconnecting: false,
-        });
-        useSafePermissionSpy.mockReturnValue({
-            hasPermission: true,
-            isLoading: false,
-            isRestricted: true,
-            settings: [],
-        });
-        useCallSpy.mockReturnValue({
-            error: null,
+        useSimulateProposalSpy.mockReturnValue({
             isError: false,
             isLoading: false,
-            isSuccess: false,
-        } as wagmi.UseCallReturnType);
+            result: undefined,
+        });
     });
 
     afterEach(() => {
-        useCallSpy.mockReset();
-        useWalletAccountSpy.mockReset();
-        buildTransactionSpy.mockReset();
-        useSafePermissionSpy.mockReset();
+        useSimulateProposalSpy.mockReset();
     });
 
-    it('renders a connected native Safe row without proposal simulation', async () => {
+    it('keeps the row disabled while proposal creation is loading', async () => {
+        useSimulateProposalSpy.mockReturnValue({
+            isError: false,
+            isLoading: true,
+            result: undefined,
+        });
         const onEligibilityResult = jest.fn();
         const onClick = jest.fn();
-        const safePlugin = generateDaoPlugin({
-            interfaceType: PluginInterfaceType.SAFE,
-            name: 'Native Safe',
-        });
 
         render(
             <GukModulesProvider>
@@ -67,49 +40,126 @@ describe('<SelectPluginDialogProcessListItem /> component', () => {
                     isActive={false}
                     onClick={onClick}
                     onEligibilityResult={onEligibilityResult}
-                    pluginId="safe"
-                    process={safePlugin}
+                    process={generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.UNKNOWN,
+                        name: 'Process',
+                    })}
+                    uniqueId="process"
                 />
             </GukModulesProvider>,
         );
 
+        await userEvent.click(screen.getByText('Process'));
+        expect(onClick).not.toHaveBeenCalled();
+        expect(onEligibilityResult).not.toHaveBeenCalled();
+    });
+
+    it('reports a reverted proposal creation as ineligible', async () => {
+        useSimulateProposalSpy.mockReturnValue({
+            isError: false,
+            isLoading: false,
+            result: 'failure',
+        });
+        const onEligibilityResult = jest.fn();
+        const onClick = jest.fn();
+
+        render(
+            <GukModulesProvider>
+                <SelectPluginDialogProcessListItem
+                    dao={generateDao()}
+                    isActive={false}
+                    onClick={onClick}
+                    onEligibilityResult={onEligibilityResult}
+                    process={generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.UNKNOWN,
+                        name: 'Process',
+                    })}
+                    uniqueId="process"
+                />
+            </GukModulesProvider>,
+        );
+
+        await waitFor(() =>
+            expect(onEligibilityResult).toHaveBeenCalledWith('process', false),
+        );
+        await userEvent.click(screen.getByText('Process'));
+        expect(onClick).not.toHaveBeenCalled();
+    });
+
+    it('fails open when the simulation request errors', async () => {
+        useSimulateProposalSpy.mockReturnValue({
+            isError: true,
+            isLoading: false,
+            result: undefined,
+        });
+        const onEligibilityResult = jest.fn();
+        const onClick = jest.fn();
+
+        render(
+            <GukModulesProvider>
+                <SelectPluginDialogProcessListItem
+                    dao={generateDao()}
+                    isActive={false}
+                    onClick={onClick}
+                    onEligibilityResult={onEligibilityResult}
+                    process={generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.UNKNOWN,
+                        name: 'Process',
+                    })}
+                    uniqueId="process"
+                />
+            </GukModulesProvider>,
+        );
+
+        await waitFor(() =>
+            expect(onEligibilityResult).toHaveBeenCalledWith('process', true),
+        );
         await userEvent.click(screen.getByRole('button'));
         expect(onClick).toHaveBeenCalledTimes(1);
-        expect(buildTransactionSpy).not.toHaveBeenCalled();
-        await waitFor(() =>
-            expect(onEligibilityResult).toHaveBeenCalledWith('safe', true),
-        );
     });
 
-    it('disables a native Safe row when the connected wallet is not eligible', async () => {
-        useSafePermissionSpy.mockReturnValue({
-            hasPermission: false,
-            isLoading: false,
-            isRestricted: true,
-            settings: [],
-        });
+    it('keeps eligibility results isolated by process unique id', async () => {
         const onEligibilityResult = jest.fn();
-        const onClick = jest.fn();
+        const dao = generateDao();
 
         render(
             <GukModulesProvider>
                 <SelectPluginDialogProcessListItem
-                    dao={generateDao()}
+                    dao={dao}
                     isActive={false}
-                    onClick={onClick}
+                    onClick={jest.fn()}
                     onEligibilityResult={onEligibilityResult}
-                    pluginId="safe"
                     process={generateDaoPlugin({
-                        interfaceType: PluginInterfaceType.SAFE,
+                        address: '0xprocess-one',
+                        daoAddress: '0xdao-one',
+                        interfaceType: PluginInterfaceType.UNKNOWN,
                     })}
+                    uniqueId="dao-one-process"
+                />
+                <SelectPluginDialogProcessListItem
+                    dao={dao}
+                    isActive={false}
+                    onClick={jest.fn()}
+                    onEligibilityResult={onEligibilityResult}
+                    process={generateDaoPlugin({
+                        address: '0xprocess-two',
+                        daoAddress: '0xdao-two',
+                        interfaceType: PluginInterfaceType.UNKNOWN,
+                    })}
+                    uniqueId="dao-two-process"
                 />
             </GukModulesProvider>,
         );
 
-        await waitFor(() =>
-            expect(onEligibilityResult).toHaveBeenCalledWith('safe', false),
-        );
-        await userEvent.click(screen.getByText('Safe 0x123'));
-        expect(onClick).not.toHaveBeenCalled();
+        await waitFor(() => {
+            expect(onEligibilityResult).toHaveBeenCalledWith(
+                'dao-one-process',
+                true,
+            );
+            expect(onEligibilityResult).toHaveBeenCalledWith(
+                'dao-two-process',
+                true,
+            );
+        });
     });
 });

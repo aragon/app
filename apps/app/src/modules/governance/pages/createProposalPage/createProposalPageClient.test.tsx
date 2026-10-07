@@ -292,6 +292,43 @@ describe('<CreateProposalPageClient /> component', () => {
         );
     });
 
+    it('rejects an SPP-only Safe from direct proposal creation', () => {
+        const daoAddress = '0x1111111111111111111111111111111111111111';
+        const safeAddress = '0x2222222222222222222222222222222222222222';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: daoAddress }),
+            }),
+        );
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({
+                    address: safeAddress,
+                    daoAddress,
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                    isBody: true,
+                    isProcess: false,
+                }),
+            }),
+        ]);
+
+        render(
+            <CreateProposalPageClient
+                daoId="dao-id"
+                pluginAddress={safeAddress}
+            />,
+        );
+
+        expect(
+            screen.getByText(
+                'app.governance.createProposalPage.error.notFound.title',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('safe-actions-wizard'),
+        ).not.toBeInTheDocument();
+    });
+
     it('rejects a native Safe plugin owned by a different DAO', () => {
         const pluginAddress = '0x3333333333333333333333333333333333333333';
         useDaoSpy.mockReturnValue(

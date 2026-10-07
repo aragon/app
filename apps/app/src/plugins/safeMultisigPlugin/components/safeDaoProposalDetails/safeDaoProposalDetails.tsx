@@ -83,13 +83,16 @@ export const SafeDaoProposalDetails: React.FC<ISafeDaoProposalDetailsProps> = ({
         includeUnsupported: true,
     });
     const safePluginCandidates = safePlugins?.map(({ meta }) => meta) ?? [];
+    const canonicalSafePluginCandidates = safePluginCandidates.filter(
+        (plugin) => !daoUtils.isLinkedAccountPlugin(plugin, dao),
+    );
     const safePlugin =
         safeAddress != null
-            ? safePluginCandidates.find((plugin) =>
+            ? canonicalSafePluginCandidates.find((plugin) =>
                   addressUtils.isAddressEqual(plugin.address, safeAddress),
               )
-            : safePluginCandidates.length === 1
-              ? safePluginCandidates[0]
+            : canonicalSafePluginCandidates.length === 1
+              ? canonicalSafePluginCandidates[0]
               : undefined;
     const targetDaoAddress = safePlugin?.daoAddress ?? dao?.address;
     const hasValidTargetDao =
@@ -104,15 +107,7 @@ export const SafeDaoProposalDetails: React.FC<ISafeDaoProposalDetailsProps> = ({
     const proposal = proposals.data?.proposals[0];
 
     if (isDaoLoading || (safePlugins == null && !isDaoError)) {
-        return (
-            <SafeDaoProposalDetailsState
-                description={t(
-                    'app.safe.safeDaoProposalDetails.loadingDescription',
-                )}
-                heading={t('app.safe.safeDaoProposalDetails.loadingHeading')}
-                illustration="ACTION"
-            />
-        );
+        return null;
     }
 
     if (isDaoError) {
@@ -140,27 +135,11 @@ export const SafeDaoProposalDetails: React.FC<ISafeDaoProposalDetailsProps> = ({
     }
 
     if (proposals.isLoading) {
-        return (
-            <SafeDaoProposalDetailsState
-                description={t(
-                    'app.safe.safeDaoProposalDetails.loadingDescription',
-                )}
-                heading={t('app.safe.safeDaoProposalDetails.loadingHeading')}
-                illustration="ACTION"
-            />
-        );
+        return null;
     }
 
     if (proposals.isIndexing && (proposal == null || proposals.data == null)) {
-        return (
-            <SafeDaoProposalDetailsState
-                description={t(
-                    'app.safe.safeDaoProposalDetails.loadingDescription',
-                )}
-                heading={t('app.safe.safeDaoProposalDetails.loadingHeading')}
-                illustration="ACTION"
-            />
-        );
+        return null;
     }
 
     if (proposals.isError) {
@@ -401,7 +380,7 @@ const SafeDaoProposalDetailsContent: React.FC<
                 <Page.Main>
                     <Page.MainSection
                         title={t(
-                            'app.safe.safeDaoProposalDetails.approvalsTitle',
+                            'app.governance.daoProposalDetailsPage.main.voting',
                         )}
                     >
                         {isStale && (
@@ -474,7 +453,7 @@ const SafeDaoProposalDetailsContent: React.FC<
                     </Page.MainSection>
                     <Page.MainSection
                         title={t(
-                            'app.safe.safeDaoProposalDetails.actionsTitle',
+                            'app.governance.daoProposalDetailsPage.main.actions.header',
                         )}
                     >
                         <SafeDaoProposalActions
@@ -531,25 +510,11 @@ const SafeDaoProposalActions: React.FC<ISafeDaoProposalActionsProps> = ({
     dao,
     daoId,
 }) => {
-    const { t } = useTranslations();
     const { chainId } = useDaoChain({ network: dao.network });
     const normalizedActions = proposalActionUtils.normalizeActions(
         actions,
         dao,
     );
-
-    if (normalizedActions.length === 0) {
-        return (
-            <CardEmptyState
-                className="mt-4"
-                description={t(
-                    'app.safe.safeDaoProposalDetails.noActionsDescription',
-                )}
-                heading={t('app.safe.safeDaoProposalDetails.noActionsHeading')}
-                objectIllustration={{ object: 'ACTION' }}
-            />
-        );
-    }
 
     return (
         <ProposalActions.Root actionsCount={normalizedActions.length}>
@@ -563,6 +528,7 @@ const SafeDaoProposalActions: React.FC<ISafeDaoProposalActionsProps> = ({
                     />
                 ))}
             </ProposalActions.Container>
+            <ProposalActions.Footer />
         </ProposalActions.Root>
     );
 };

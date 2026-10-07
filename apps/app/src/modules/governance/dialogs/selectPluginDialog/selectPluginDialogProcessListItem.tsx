@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useSafeProcessPermissionCheckProposalCreation } from '@/plugins/safeMultisigPlugin/hooks/useSafeProcessPermissionCheckProposalCreation';
-import { PluginInterfaceType } from '@/shared/api/daoService';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import {
     type IProcessDataListItemProps,
     ProcessDataListItem,
 } from '@/shared/components/processDataListItem';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { useSimulateProposalCreation } from '../../hooks/useSimulateProposal';
 
 export type ISelectPluginDialogProcessListItemProps =
@@ -12,50 +12,20 @@ export type ISelectPluginDialogProcessListItemProps =
         /**
          * Unique ID of the process, reported alongside the eligibility result.
          */
-        pluginId: string;
+        uniqueId: string;
         /**
          * Called with the proposal creation eligibility result once it is ready.
          */
-        onEligibilityResult: (pluginId: string, isEligible: boolean) => void;
+        onEligibilityResult: (uniqueId: string, isEligible: boolean) => void;
     };
 
-const SelectNativeSafeProcessListItem: React.FC<
+const SelectPluginDialogDefaultProcessListItem: React.FC<
     ISelectPluginDialogProcessListItemProps
 > = (props) => {
-    const { process, dao, pluginId, onEligibilityResult, ...otherProps } =
-        props;
-    const { hasPermission, isLoading } =
-        useSafeProcessPermissionCheckProposalCreation({
-            daoId: dao?.id ?? '',
-            plugin: process,
-            useConnectedUserInfo: dao != null,
-        });
-
-    useEffect(() => {
-        if (!isLoading) {
-            onEligibilityResult(pluginId, hasPermission);
-        }
-    }, [hasPermission, isLoading, onEligibilityResult, pluginId]);
-
-    return (
-        <ProcessDataListItem
-            {...otherProps}
-            dao={dao}
-            isDisabled={isLoading || !hasPermission}
-            process={process}
-            showNotEligibleHelpText={!isLoading && !hasPermission}
-        />
-    );
-};
-
-export const SelectPluginDialogProcessListItem: React.FC<
-    ISelectPluginDialogProcessListItemProps
-> = (props) => {
-    const { process, dao, pluginId, onEligibilityResult, ...otherProps } =
+    const { process, dao, uniqueId, onEligibilityResult, ...otherProps } =
         props;
 
     const { result, isLoading } = useSimulateProposalCreation({
-        enabled: process.interfaceType !== PluginInterfaceType.SAFE,
         network: dao?.network,
         plugin: process,
     });
@@ -63,24 +33,12 @@ export const SelectPluginDialogProcessListItem: React.FC<
 
     // Fail open on inconclusive simulations (request error or simulation
     // disabled): only a concrete revert marks the process as not eligible, so
-    // users are not blocked when the permission check itself cannot run. This is
-    // just an UX improvement, not a line of defense. Create proposal guard would
-    // catch it in rare cases when simulation cannot be run for any reason.
+    // users are not blocked when the simulation request itself cannot run.
     useEffect(() => {
-        if (process.interfaceType !== PluginInterfaceType.SAFE && !isLoading) {
-            onEligibilityResult(pluginId, !simulationFailed);
+        if (!isLoading) {
+            onEligibilityResult(uniqueId, !simulationFailed);
         }
-    }, [
-        isLoading,
-        pluginId,
-        onEligibilityResult,
-        process.interfaceType,
-        simulationFailed,
-    ]);
-
-    if (process.interfaceType === PluginInterfaceType.SAFE) {
-        return <SelectNativeSafeProcessListItem {...props} />;
-    }
+    }, [isLoading, onEligibilityResult, simulationFailed, uniqueId]);
 
     return (
         <ProcessDataListItem
@@ -92,3 +50,14 @@ export const SelectPluginDialogProcessListItem: React.FC<
         />
     );
 };
+
+export const SelectPluginDialogProcessListItem: React.FC<
+    ISelectPluginDialogProcessListItemProps
+> = (props) => (
+    <PluginSingleComponent
+        {...props}
+        Fallback={SelectPluginDialogDefaultProcessListItem}
+        pluginId={props.process.interfaceType}
+        slotId={GovernanceSlotId.GOVERNANCE_SELECT_PLUGIN_PROCESS_LIST_ITEM}
+    />
+);

@@ -14,10 +14,6 @@ export interface IUseExecutePermissionCheckGuardParams {
      * Skip the direct-execution guard for Safe-owned proposal flows.
      */
     enabled?: boolean;
-    /**
-     * Whether to prompt for a wallet connection when the permission check is disabled.
-     */
-    checkWalletConnection?: boolean;
 }
 
 /**
@@ -31,7 +27,7 @@ export interface IUseExecutePermissionCheckGuardParams {
 export const useExecutePermissionCheckGuard = (
     params: IUseExecutePermissionCheckGuardParams,
 ) => {
-    const { daoId, enabled = true, checkWalletConnection = false } = params;
+    const { daoId, enabled = true } = params;
 
     const router = useRouter();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -56,8 +52,6 @@ export const useExecutePermissionCheckGuard = (
     });
 
     useEffect(() => {
-        if (enabled || checkWalletConnection) {
-            checkWalletConnected();
-        }
-    }, [checkWalletConnected, checkWalletConnection, enabled]);
+        checkWalletConnected();
+    }, [checkWalletConnected]);
 };

@@ -156,4 +156,53 @@ describe('useSafeProcessPermissionCheckProposalCreation', () => {
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(result.current.hasPermission).toBe(false);
     });
+
+    it.each([
+        {
+            isBody: false,
+            isProcess: true,
+            kind: 'legacy process-only metadata',
+        },
+        {
+            isBody: true,
+            isProcess: true,
+            kind: 'canonical process+body metadata',
+        },
+    ])(
+        'allows a $kind Safe process only with its exact DAO grant',
+        async ({ isBody, isProcess }) => {
+            const daoAddress = `0x${'d'.repeat(40)}`;
+            const safeAddress = `0x${'5'.repeat(40)}`;
+            const daoId = `ethereum-mainnet-0x${'a'.repeat(40)}`;
+            const plugin = generateDaoPlugin({
+                address: safeAddress,
+                daoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isBody,
+                isProcess,
+            });
+            getCanCreateProposalSpy.mockResolvedValue({ status: true });
+
+            const { result } = renderHook(
+                () =>
+                    useSafeProcessPermissionCheckProposalCreation({
+                        daoId,
+                        plugin,
+                    }),
+                { wrapper: createSharedWrapper() },
+            );
+
+            await waitFor(() =>
+                expect(result.current.hasPermission).toBe(true),
+            );
+            expect(getCanCreateProposalSpy).toHaveBeenCalledWith({
+                queryParams: expect.objectContaining({
+                    daoAddress,
+                    memberAddress: connectedAddress,
+                    network: 'ethereum-mainnet',
+                    pluginAddress: safeAddress,
+                }),
+            });
+        },
+    );
 });

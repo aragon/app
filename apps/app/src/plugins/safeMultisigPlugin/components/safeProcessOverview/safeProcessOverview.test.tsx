@@ -1,6 +1,8 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { IUseEnsNameReturn } from '@/modules/ens';
+import * as ensModule from '@/modules/ens';
 import { generateDaoPlugin } from '@/shared/testUtils/generators';
 import type {
     ISafeDaoProposalsData,
@@ -13,15 +15,6 @@ import {
 } from '../../testUtils';
 import { SafeTransactionState } from '../../types';
 import { SafeProcessOverview } from './safeProcessOverview';
-
-jest.mock('@/assets/images/safeWallet.png', () => ({
-    __esModule: true,
-    default: {
-        height: 32,
-        src: '/safeWallet.png',
-        width: 32,
-    },
-}));
 
 const daoAddress = '0x1111111111111111111111111111111111111111';
 const safeAddress = '0x2222222222222222222222222222222222222222';
@@ -61,6 +54,7 @@ describe('<SafeProcessOverview />', () => {
         safeDaoProposalsHook,
         'useSafeDaoProposals',
     );
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const plugin = generateDaoPlugin({
         address: safeAddress,
         daoAddress,
@@ -75,8 +69,16 @@ describe('<SafeProcessOverview />', () => {
         </GukModulesProvider>
     );
 
+    beforeEach(() => {
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as IUseEnsNameReturn);
+    });
+
     afterEach(() => {
         useSafeDaoProposalsSpy.mockReset();
+        useEnsNameSpy.mockReset();
     });
 
     it('keeps More available when the first backend page filters to zero rows', async () => {
@@ -128,5 +130,79 @@ describe('<SafeProcessOverview />', () => {
         await userEvent.click(moreButton);
 
         expect(fetchNextPage).toHaveBeenCalledTimes(1);
+    });
+    it('keeps the freshness warning without the Safe announcement and links the proposer', () => {
+        const proposerAddress = '0x3333333333333333333333333333333333333333';
+        const transaction = generateSafeMultisigTransaction({
+            from: proposerAddress,
+            nonce: '8',
+            safeTxHash: `0x${'8'.repeat(64)}`,
+        });
+        useSafeDaoProposalsSpy.mockReturnValue(
+            createHookResult({
+                data: createData([
+                    {
+                        actions: [],
+                        state: SafeTransactionState.LIVE,
+                        status: ProposalStatus.ACTIVE,
+                        transaction,
+                    },
+                ]),
+                isStale: true,
+            }),
+        );
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(
+                'app.plugins.safeMultisig.safeProcess.transactionsTitle',
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeProcess.transactionsStale',
+            ),
+        ).toBeInTheDocument();
+
+        const proposerHref = `/dao/ethereum-mainnet/${daoAddress}/members/${proposerAddress}`;
+        const proposerLink = screen
+            .getAllByRole('link')
+            .find((link) => link.getAttribute('href') === proposerHref);
+        expect(proposerLink?.getAttribute('href')).toBe(proposerHref);
+        expect(proposerLink?.getAttribute('href')).not.toContain(safeAddress);
+    });
+
+    it('does not use the Safe address when a transaction has no proposer', () => {
+        const transaction = generateSafeMultisigTransaction({
+            from: null,
+            nonce: '9',
+            safeTxHash: `0x${'9'.repeat(64)}`,
+        });
+        useSafeDaoProposalsSpy.mockReturnValue(
+            createHookResult({
+                data: createData([
+                    {
+                        actions: [],
+                        state: SafeTransactionState.LIVE,
+                        status: ProposalStatus.ACTIVE,
+                        transaction,
+                    },
+                ]),
+            }),
+        );
+
+        render(createTestComponent());
+
+        expect(useEnsNameSpy).toHaveBeenCalledWith(undefined);
+        expect(
+            screen
+                .getAllByRole('link')
+                .some((link) =>
+                    link
+                        .getAttribute('href')
+                        ?.includes(`/members/${safeAddress}`),
+                ),
+        ).toBe(false);
     });
 });

@@ -47,23 +47,23 @@ jest.mock('./selectPluginDialogProcessListItem', () => {
 
     return {
         SelectPluginDialogProcessListItem: ({
-            pluginId,
+            uniqueId,
             process,
             onEligibilityResult,
         }: {
-            pluginId: string;
+            uniqueId: string;
             process: { interfaceType: string };
             onEligibilityResult: (
-                pluginId: string,
+                uniqueId: string,
                 isEligible: boolean,
             ) => void;
         }) => {
             useEffect(() => {
-                onEligibilityResult(pluginId, true);
-            }, [onEligibilityResult, pluginId]);
+                onEligibilityResult(uniqueId, true);
+            }, [onEligibilityResult, uniqueId]);
 
             return (
-                <div data-testid={`plugin-${pluginId}`}>
+                <div data-testid={`plugin-${uniqueId}`}>
                     {process.interfaceType}
                 </div>
             );

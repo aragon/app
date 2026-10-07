@@ -1,9 +1,6 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
-import {
-    externalPluginId,
-    safeBodyPluginId,
-} from '@/plugins/safeMultisigPlugin/constants';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import * as settledReportApi from '@/plugins/safeMultisigPlugin/hooks/useSafeSettledReport';
 import {
     type IUseSafeSettledReportReturn,
@@ -92,7 +89,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
 
         const { result } = renderMode();
 
-        expect(result.current.pluginId).toBe(safeBodyPluginId);
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
         expect(result.current.isHistoryMissing).toBe(false);
     });
 
@@ -131,7 +128,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
 
         const { result } = renderMode();
 
-        expect(result.current.pluginId).toBe(safeBodyPluginId);
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
         expect(result.current.isHistoryMissing).toBe(false);
     });
 
@@ -144,7 +141,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
 
         const { result } = renderMode();
 
-        expect(result.current.pluginId).toBe(safeBodyPluginId);
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
         expect(result.current.isHistoryMissing).toBe(false);
     });
 
@@ -157,7 +154,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
 
         const { result } = renderMode({ proposal: { results: [] } });
 
-        expect(result.current.pluginId).toBe(safeBodyPluginId);
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
         expect(result.current.isHistoryMissing).toBe(false);
         expect(useSafeSettledReportSpy).toHaveBeenCalledWith(
             expect.objectContaining({ enabled: false }),
@@ -195,7 +192,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
 
         const { result } = renderMode();
 
-        expect(result.current.pluginId).toBe(safeBodyPluginId);
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
         expect(result.current.isHistoryMissing).toBe(false);
     });
 
@@ -211,7 +208,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
 
         const { result } = renderMode();
 
-        expect(result.current.pluginId).toBe(safeBodyPluginId);
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
         expect(result.current.isHistoryMissing).toBe(false);
     });
 

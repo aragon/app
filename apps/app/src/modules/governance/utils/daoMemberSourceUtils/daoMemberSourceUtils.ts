@@ -1,4 +1,3 @@
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
@@ -37,13 +36,18 @@ export interface IResolveDaoMemberSourcesParams {
 class DaoMemberSourceUtils {
     resolve = (params: IResolveDaoMemberSourcesParams): IDaoMemberSource[] => {
         const { bodyPlugins, dao, daoId, processPlugins } = params;
-        const filterPlugins = bodyPlugins.map((plugin) => ({
-            id: plugin.interfaceType,
-            uniqueId: `${plugin.address}-${plugin.slug}`,
-            label: daoUtils.getPluginName(plugin),
-            meta: plugin,
-            props: {},
-        }));
+        const filterPlugins = bodyPlugins
+            .filter(
+                ({ interfaceType }) =>
+                    interfaceType !== PluginInterfaceType.SAFE,
+            )
+            .map((plugin) => ({
+                id: plugin.interfaceType,
+                uniqueId: `${plugin.address}-${plugin.slug}`,
+                label: daoUtils.getPluginName(plugin),
+                meta: plugin,
+                props: {},
+            }));
         const sortedBodyPlugins = pluginSortUtils.sortByDisplayOrder(
             filterPlugins,
             { rootDaoAddress: dao.address },
@@ -69,13 +73,24 @@ class DaoMemberSourceUtils {
 
             sources.push({
                 kind: 'safe',
-                id: safeBodyPluginId,
+                id: PluginInterfaceType.SAFE,
                 uniqueId,
                 label: `Safe ${safeAddress.slice(0, 6)}…${safeAddress.slice(-4)}`,
                 address: safeAddress,
                 daoId: sourceDaoId,
             });
         };
+
+        for (const bodyPlugin of bodyPlugins) {
+            if (bodyPlugin.interfaceType !== PluginInterfaceType.SAFE) {
+                continue;
+            }
+
+            pushSafeSource(
+                daoUtils.resolvePluginDaoId(daoId, bodyPlugin, dao),
+                bodyPlugin.address,
+            );
+        }
 
         for (const processPlugin of processPlugins) {
             const processDaoId = daoUtils.resolvePluginDaoId(
@@ -84,13 +99,9 @@ class DaoMemberSourceUtils {
                 dao,
             );
 
-            // Standalone Safe process: the plugin itself is the Safe, so its
-            // address is the member source. Deduped against the same Safe when
-            // it also appears as an SPP body below.
-            if (
-                processPlugin.interfaceType === PluginInterfaceType.SAFE &&
-                !processPlugin.isBody
-            ) {
+            // A Safe row can be both a process and a body. Every Safe identity contributes the same
+            // deduped member source regardless of which backend collection returned it.
+            if (processPlugin.interfaceType === PluginInterfaceType.SAFE) {
                 pushSafeSource(processDaoId, processPlugin.address);
                 continue;
             }

@@ -105,13 +105,13 @@ describe('<NavigationDao /> component', () => {
         );
     };
 
-    it('shows members for a Safe-only process without a plugin body', () => {
+    it('shows members when a Safe process is also reported as a body', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
         const dao = generateDao({
             plugins: [
                 generateDaoPlugin({
                     interfaceType: PluginInterfaceType.SAFE,
-                    isBody: false,
+                    isBody: true,
                     isProcess: true,
                 }),
             ],

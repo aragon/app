@@ -92,11 +92,11 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
     const [eligibility, setEligibility] = useState<Record<string, boolean>>({});
 
     const handleEligibilityResult = useCallback(
-        (pluginId: string, isEligible: boolean) =>
+        (uniqueId: string, isEligible: boolean) =>
             setEligibility((current) =>
-                current[pluginId] === isEligible
+                current[uniqueId] === isEligible
                     ? current
-                    : { ...current, [pluginId]: isEligible },
+                    : { ...current, [uniqueId]: isEligible },
             ),
         [],
     );
@@ -159,8 +159,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
                             key={plugin.uniqueId}
                             onClick={() => setSelectedPlugin(plugin)}
                             onEligibilityResult={handleEligibilityResult}
-                            pluginId={plugin.uniqueId}
                             process={plugin.meta}
+                            uniqueId={plugin.uniqueId}
                         />
                     ))}
                 </div>

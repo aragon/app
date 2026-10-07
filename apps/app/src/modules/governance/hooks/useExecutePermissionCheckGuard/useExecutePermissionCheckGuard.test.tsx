@@ -78,7 +78,6 @@ describe('useExecutePermissionCheckGuard hook', () => {
 
         renderHook(() =>
             useExecutePermissionCheckGuard({
-                checkWalletConnection: true,
                 daoId: 'dao-id',
                 enabled: false,
             }),
