@@ -87,7 +87,6 @@ describe('<DaoMemberListContainer /> component', () => {
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
             isBody: true,
-            name: 'Safe',
             slug: 'safe',
         });
         useDaoPluginsSpy.mockReturnValue([
@@ -103,7 +102,7 @@ describe('<DaoMemberListContainer /> component', () => {
             screen
                 .getByTestId('plugin-filter-mock')
                 .getAttribute('data-labels'),
-        ).toEqual('Safe');
+        ).toEqual('Safe 0x1234…7890');
         expect(
             screen.getByTestId('plugin-component-mock').dataset.pluginid,
         ).toEqual(PluginInterfaceType.SAFE);

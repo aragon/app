@@ -139,6 +139,17 @@ describe('<SafeMultisigVoteList /> component', () => {
         );
     });
 
+    // The members tab is addressed by the Safe's canonical body record. Without one there is no
+    // tab to open, so a link would lead to whichever body happened to sort first.
+    it('renders signers without a profile link when the DAO carries no Safe body', () => {
+        useDaoPluginsSpy.mockReturnValue([]);
+
+        render(createTestComponent());
+
+        expect(screen.queryAllByRole('link')).toHaveLength(0);
+        expect(screen.getByText(/0xaaaa/i)).toBeInTheDocument();
+    });
+
     it('states no signatures rather than an empty list when a successful read is empty', () => {
         useSafeBodyStateSpy.mockReturnValue({ ...bodyState, signers: [] });
 

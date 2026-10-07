@@ -218,6 +218,18 @@ describe('dao utils', () => {
     });
 
     describe('getPluginName', () => {
+        // The backend names no Safe, so without the address every Safe tab in a DAO reads the same.
+        it('names a Safe by its truncated address', () => {
+            const plugin = generateDaoPlugin({
+                address: '0x1234567890123456789012345678901234567890',
+                interfaceType: PluginInterfaceType.SAFE,
+                name: undefined,
+                subdomain: undefined,
+            });
+
+            expect(daoUtils.getPluginName(plugin)).toEqual('Safe 0x1234…7890');
+        });
+
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';
             const plugin = generateDaoPlugin({ name });
@@ -828,6 +840,24 @@ describe('dao utils', () => {
     });
 
     describe('getAvailablePluginUpdates', () => {
+        // A Safe is registered for its slots only, with no repository or install version. Matching
+        // it on an undefined subdomain would otherwise compare its version against undefined.
+        it('does not offer repository updates for a Safe', () => {
+            getPluginsSpy.mockReturnValue([
+                { id: PluginInterfaceType.SAFE, name: 'Safe' },
+            ]);
+            const dao = generateDao({
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.SAFE,
+                        subdomain: undefined,
+                    }),
+                ],
+            });
+
+            expect(daoUtils.getAvailablePluginUpdates(dao)).toEqual([]);
+        });
+
         it('returns the list of plugins that can be updated', () => {
             const plugins = [
                 generateDaoPlugin({
