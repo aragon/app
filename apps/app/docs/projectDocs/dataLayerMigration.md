@@ -36,7 +36,7 @@ Settled in [aragon-indexer#33](https://github.com/aragon/aragon-indexer/pull/33)
 
 Breaking: removing or renaming an entity or a field, changing a type or nullability, changing an id format, or changing what a value means. Adding an entity or an optional field is not breaking. A breaking change ships only together with the matching domain change.
 
-**Cutover rule.** A deployment takes the static endpoint only when its schema serves everything the released domain reads. Before promoting a candidate deployment, run the domain contract suite against the candidate's own endpoint, with the domain version that is being served:
+**Cutover rule.** A deployment takes the static endpoint only when its schema serves everything the released domain reads. Before a candidate deployment is promoted, the domain contract suite runs against the candidate's own endpoint with the domain production serves: the domain ships inside the app and has no tags of its own, so that is the domain at the latest `@aragon/app` release. The indexer's `Release candidate` workflow does this for every release PR and writes the result to the PR ([indexer README, "Release"](https://github.com/aragon/aragon-indexer/blob/main/README.md#release)). By hand, from the app monorepo checked out at that release:
 
 ```bash
 ENVIO_GRAPHQL_ENDPOINT=<candidate endpoint> ENVIO_API_TOKEN=… pnpm --filter @aragon/aragon-domain test:contract
@@ -98,7 +98,7 @@ From fastest and smallest to slowest. Check each step by restarting the list fro
 | 3. Remove the network from the slice's network list **(pending APP-1177)** | the slice on one chain | app team | an app deploy; measured in APP-1185 |
 | 4. Promote the previous Envio deployment | a bad indexer deployment | indexer owners | Envio describes the switch as instant; measured end to end in APP-1185 |
 
-A cookie override wins over the CMS, so step 2 does not turn the slice off for a browser that has it forced on; clear the `aragon.featureFlags.overrides` cookie before checking (see [local overrides](/apps/app/src/shared/featureFlags/README.md#local-overrides-debugging)). Today there is one shared list, `domainNetworks` in `aragonDomainService.constants.ts`, which also configures the domain's RPC urls, so removing a chain there is not a single-slice rollback; per-slice lists come with `domainNetworksBySlice`. Step 4 only works while the previous deployment still exists and serves the schema the released domain reads.
+A cookie override wins over the CMS, so step 2 does not turn the slice off for a browser that has it forced on; clear the `aragon.featureFlags.overrides` cookie before checking (see [local overrides](/apps/app/src/shared/featureFlags/README.md#local-overrides-debugging)). Today there is one shared list, `domainNetworks` in `aragonDomainService.constants.ts`, which also configures the domain's RPC urls, so removing a chain there is not a single-slice rollback; per-slice lists come with `domainNetworksBySlice`. Step 4 only works while the previous deployment still exists and serves the schema the released domain reads: it stays for a day after a promote, and the indexer's release workflow reminds in Slack before it is deleted by hand.
 
 ## Legacy freeze
 
@@ -126,12 +126,15 @@ Read the row of each chain the slice serves (1 and 11155111 today). `isReady` me
 
 ### Deploy and switch an indexer version
 
-1. Save the cache on the serving deployment (Envio dashboard, Save Cache), then enable caching and select that cache under Settings → Cache, all **before** creating the new deployment. A new deployment restores it automatically; saving after the new deployment exists is too late.
-2. Push to the deployment branch to create the new deployment. It re-indexes from the start blocks while the old one keeps serving. A deploy workflow is planned **(pending APP-1168)**.
-3. Wait until `_meta` shows `isReady` for chains 1 and 11155111, then run the status checks above on the new deployment's own endpoint: lag small and `progressBlockTime` recent on both chains. Lag limits per chain come with APP-1177.
-4. Run the domain contract suite against the new deployment's endpoint (see the cutover rule).
-5. Promote it to production in the Envio dashboard. The static endpoint stays the same. Run the status checks again through the static endpoint.
-6. To roll back, promote the previous deployment the same way, after the same status checks and the contract suite against it.
+An indexer version is a release PR in aragon-indexer. Its `Release candidate` workflow deploys the PR head to Envio, waits for `_meta.isReady` on chains 1 and 11155111, runs the domain contract suite (the cutover rule) and reports in the PR and in the release's Slack thread; the flow is in the [indexer README, "Release"](https://github.com/aragon/aragon-indexer/blob/main/README.md#release). Promote, the cache and deleting the previous production stay manual, with the commands in the PR comment:
+
+1. Run the status checks above on the candidate's own endpoint: lag small and `progressBlockTime` recent on both chains. Lag limits per chain come with APP-1177.
+2. Promote it: `envio-cloud deployment promote aragon-indexer <sha> aragon --yes`. The static endpoint stays the same. Run the status checks again through it.
+3. Save Cache on the new production once it is synced (Envio dashboard, Quick Actions) and keep it selected under Settings → Cache. A deployment restores the selected cache when it is created, so a cache saved after a candidate exists helps only the next one. The cache is off today; the first promoted deployment of the new entities creates it. The workflow reminds at every promote.
+4. Delete the previous production the next day; the workflow reminds. Until then it is the rollback.
+5. To roll back, promote the previous deployment the same way, after the status checks and the contract suite against it.
+
+A `main` commit outside a release goes to hosting by hand ([indexer README, "Deployments"](https://github.com/aragon/aragon-indexer/blob/main/README.md#deployments)).
 
 ### Turn a slice off
 
