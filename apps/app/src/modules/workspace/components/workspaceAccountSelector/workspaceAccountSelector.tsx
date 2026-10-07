@@ -2,8 +2,8 @@
 
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspace } from '../../api/workspaceService';
 import {
@@ -35,12 +35,9 @@ const fallbackSection = 'overview';
  * Every option is a link to the same section under another account, not a piece of state: the account lives on the
  * route, so switching account is a navigation.
  *
- * Being a real anchor is what makes an option open in a new tab, show its target on hover and read as a link to a
- * screen reader. A primary click is then handed to the router, because the server resolves the account either way:
- * a client-side transition still renders `LayoutWorkspaceAccount` on the server and still arrives with the DAO
- * prefetched. Letting the browser follow the anchor instead would additionally discard the document — and with it
- * the workspace registry, which cannot be read during a server render, so every switch would blank the page behind
- * `WorkspaceGate`'s spinner while local storage is read again.
+ * Options render through the app's `next/link`, so they open in a new tab, show their target on hover, read as links
+ * to a screen reader and navigate client-side. A full page load would discard the workspace registry, which cannot be
+ * read during a server render, and blank every switch behind `WorkspaceGate`'s spinner.
  */
 export const WorkspaceAccountSelector: React.FC<
     IWorkspaceAccountSelectorProps
@@ -49,7 +46,6 @@ export const WorkspaceAccountSelector: React.FC<
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const router = useRouter();
     const pathname = usePathname();
 
     const { options, accountId, activeOption } = useWorkspaceAccountOptions();
@@ -77,22 +73,10 @@ export const WorkspaceAccountSelector: React.FC<
         [options, workspaceId, section],
     );
 
-    // manually prefetch when the dialog is opened;
-    // this can be removed if the dropdown item can be a Link component
-    useEffect(() => {
-        if (isOpen) {
-            for (const { url } of optionLinks) {
-                router.prefetch(url);
-            }
-        }
-    }, [isOpen, optionLinks, router]);
-
     // A single option is the aggregated one already displayed, so there is nothing to choose between.
     if (options.length <= 1) {
         return null;
     }
-
-    const handleAccountSelect = (url: string) => router.push(url);
 
     const getOptionAvatar = (option?: IWorkspaceAccountOption) => {
         const avatar = option?.isAllAccounts
@@ -136,13 +120,13 @@ export const WorkspaceAccountSelector: React.FC<
         >
             {optionLinks.map(({ option, url }) => (
                 <Dropdown.Item
+                    href={url}
                     icon={
                         option.id === accountId
                             ? IconType.CHECKMARK
                             : IconType.CHEVRON_RIGHT
                     }
                     key={option.id}
-                    onSelect={() => handleAccountSelect(url)}
                     selected={option.id === accountId}
                 >
                     {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing content is

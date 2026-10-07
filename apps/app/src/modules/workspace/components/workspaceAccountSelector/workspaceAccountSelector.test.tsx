@@ -2,7 +2,6 @@ import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
@@ -30,10 +29,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         useWorkspaceAccountOptionsHook,
         'useWorkspaceAccountOptions',
     );
-    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
-    const pushMock = jest.fn();
-    const prefetchMock = jest.fn();
 
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
@@ -86,10 +82,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         cidToSrcSpy.mockImplementation((cid) =>
             cid != null ? `https://ipfs/${cid}` : undefined,
         );
-        useRouterSpy.mockReturnValue({
-            push: pushMock,
-            prefetch: prefetchMock,
-        } as unknown as AppRouterInstance);
         usePathnameSpy.mockReturnValue(
             '/workspace/test-workspace/all/proposals',
         );
@@ -101,10 +93,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
-        useRouterSpy.mockReset();
         usePathnameSpy.mockReset();
-        pushMock.mockReset();
-        prefetchMock.mockReset();
     });
 
     const createTestComponent = (
@@ -147,54 +136,33 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(cidToSrcSpy).toHaveBeenCalledWith('workspace-cid');
     });
 
-    it('routes the selected option to the current section of its own account scope', async () => {
+    it('renders every option as a link to the current section of its own account scope', async () => {
         render(createTestComponent());
 
         await userEvent.click(screen.getByRole('button'));
-        await userEvent.click(await screen.findByText('Demo DAO'));
 
-        expect(pushMock).toHaveBeenCalledWith(
+        const items = await screen.findAllByRole('menuitem');
+        expect(items[0]).toHaveAttribute(
+            'href',
+            '/workspace/test-workspace/all/proposals',
+        );
+        expect(items[1]).toHaveAttribute(
+            'href',
             `/workspace/test-workspace/${daoAccount.id}/proposals`,
         );
     });
 
-    it('routes to the overview when the current URL names no section', async () => {
+    it('links to the overview when the current URL names no section', async () => {
         usePathnameSpy.mockReturnValue('/workspace/test-workspace');
         render(createTestComponent());
 
         await userEvent.click(screen.getByRole('button'));
-        await userEvent.click(await screen.findByText('Demo DAO'));
 
-        expect(pushMock).toHaveBeenCalledWith(
+        expect(
+            await screen.findByRole('menuitem', { name: /Demo DAO/ }),
+        ).toHaveAttribute(
+            'href',
             `/workspace/test-workspace/${daoAccount.id}/overview`,
-        );
-    });
-
-    it('closes the dropdown on the selected option', async () => {
-        render(createTestComponent());
-
-        await userEvent.click(screen.getByRole('button'));
-        await userEvent.click(await screen.findByText('Demo DAO'));
-
-        await waitFor(() =>
-            expect(screen.queryByRole('menuitem')).not.toBeInTheDocument(),
-        );
-    });
-
-    it('prefetches the route of every option when the dropdown opens', async () => {
-        render(createTestComponent());
-
-        expect(prefetchMock).not.toHaveBeenCalled();
-
-        await userEvent.click(screen.getByRole('button'));
-
-        await waitFor(() =>
-            expect(prefetchMock).toHaveBeenCalledWith(
-                `/workspace/test-workspace/${daoAccount.id}/proposals`,
-            ),
-        );
-        expect(prefetchMock).toHaveBeenCalledWith(
-            '/workspace/test-workspace/all/proposals',
         );
     });
 

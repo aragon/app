@@ -87,5 +87,3 @@ One URL is one state. The path says **what** the page shows. The query string is
     today's "DAO or nothing" `daoOptions` prefetch. It then branches: DAO pages for `dao`, Safe pages for `safe`
     once they exist, and `notFound()` for `unknown`. Cost: one extra request per account-scoped server render.
 - Decide how best to re-introduce ENS support back into URLs.
-- Make account selector options real links that can be opened in a new tab
-  ([APP-1314](https://linear.app/aragon/issue/APP-1314/make-workspace-account-selector-options-links-that-can-be-opened-in-a)).
