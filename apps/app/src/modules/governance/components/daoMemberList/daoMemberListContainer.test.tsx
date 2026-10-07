@@ -87,7 +87,6 @@ describe('<DaoMemberListContainer /> component', () => {
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
             isBody: true,
-            name: 'Safe',
             slug: 'safe',
         });
         useDaoPluginsSpy.mockReturnValue([
