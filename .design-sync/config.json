@@ -81,9 +81,6 @@
         },
         "AssetTransfer": {
             "cardMode": "column"
-        },
-        "ProposalActionWithdrawToken": {
-            "cardMode": "column"
         }
     },
     "docsMap": {

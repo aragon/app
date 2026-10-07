@@ -4,7 +4,6 @@ import {
     generateProposalActionChangeSettings,
     generateProposalActionTokenMint,
     generateProposalActionUpdateMetadata,
-    generateProposalActionWithdrawToken,
 } from '../proposalActionsList';
 import { generateProposalAction } from '../proposalActionsTestUtils';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
@@ -22,18 +21,6 @@ describe('ProposalActions utils', () => {
         });
     });
 
-    describe('isWithdrawTokenAction', () => {
-        it('returns true for withdraw action', () => {
-            const action = generateProposalActionWithdrawToken();
-            expect(proposalActionsItemUtils.isWithdrawTokenAction(action)).toBeTruthy();
-        });
-
-        it('returns false for other actions', () => {
-            const action = generateProposalActionUpdateMetadata();
-            expect(proposalActionsItemUtils.isWithdrawTokenAction(action)).toBeFalsy();
-        });
-    });
-
     describe('isChangeMemberAction', () => {
         it('returns true for change members actions', () => {
             const addMembersAction = generateProposalActionChangeMembers({ type: ProposalActionType.ADD_MEMBERS });
@@ -45,7 +32,7 @@ describe('ProposalActions utils', () => {
         });
 
         it('returns false for other actions', () => {
-            const action = generateProposalActionWithdrawToken();
+            const action = generateProposalActionTokenMint();
             expect(proposalActionsItemUtils.isChangeMembersAction(action)).toBeFalsy();
         });
     });

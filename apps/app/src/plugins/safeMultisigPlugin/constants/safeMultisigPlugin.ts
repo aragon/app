@@ -2,8 +2,15 @@ import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
-/** The unified Safe identity used by Safe processes and external SPP Safe bodies. */
-export const safeProcessPlugin: IPlugin = {
+/**
+ * The single Safe identity. The backend reports every DAO-associated Safe as one canonical
+ * `safe` plugin record, so the same registry id serves a Safe wherever it appears: as a DAO body,
+ * as an SPP stage body, or as both at once.
+ *
+ * A Safe is not installed through a plugin repository, so it is registered for its slots only and
+ * resolves no repository address.
+ */
+export const safePlugin: IPlugin = {
     id: PluginInterfaceType.SAFE,
     name: 'Safe',
 };
@@ -48,8 +55,9 @@ export const settledHistoryMaxPages = 10;
 export const safeQueueReadLimit = 100;
 
 /**
- * Plugin id generic external stage bodies resolve to. Supported-network SPP Safe bodies use the
- * unified Safe identity instead; unsupported networks stay on this fallback.
+ * Plugin id a generic (non-Safe) external stage body resolves to. A Safe on a chain the Safe
+ * transaction service covers resolves to the canonical Safe identity instead; Safes on other
+ * chains stay on this fallback, which has no Safe-specific reads.
  */
 export const externalPluginId = 'external';
 

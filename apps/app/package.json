@@ -1,6 +1,6 @@
 {
     "name": "@aragon/app",
-    "version": "1.39.1",
+    "version": "1.40.1",
     "private": true,
     "description": "Human-centered DAO infrastructure",
     "keywords": [
@@ -43,7 +43,7 @@
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
-        "@aragon/aragon-domain": "^0.4.0",
+        "@aragon/aragon-domain": "workspace:*",
         "@aragon/assistant-chat": "workspace:*",
         "@aragon/assistant-contracts": "workspace:*",
         "@aragon/gov-ui-kit": "workspace:*",

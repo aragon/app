@@ -59,9 +59,13 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const [bundleExecution, setBundleExecution] = useState(true);
 
     /**
-     * The Safe body uses the unified Safe identity for every registered slot, including the
-     * vote-permission guard. The guard pins this object in a ref on its first render, so the card
-     * is keyed to one Safe for its lifetime.
+     * An SPP stage references a Safe body by address alone, so this card shapes one for the guard
+     * under the canonical Safe identity — the same id `sppStageUtils.getBodyPluginId` resolves for a
+     * Safe on a supported chain.
+     *
+     * The guard pins this object in a ref on its first render, so the card is keyed to one Safe for
+     * its lifetime. A different body must be a different card, which is how the terminal renders
+     * them - the memo keeps the object from churning on every render in the meantime.
      */
     const guardPlugin = useMemo(
         () =>

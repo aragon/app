@@ -101,6 +101,7 @@ export const ManageMembershipAddressList: React.FC<
                     alreadyMemberErrorKey={alreadyMemberErrorKey}
                     disabled={disabled}
                     index={index}
+                    // biome-ignore lint/suspicious/noArrayIndexKey: rows are bound to form fields by index
                     key={index}
                     member={member}
                     network={membershipNetwork}

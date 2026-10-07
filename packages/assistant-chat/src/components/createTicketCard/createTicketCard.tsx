@@ -192,8 +192,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                     </p>
                     <ol className="list-decimal pl-5 text-neutral-600 text-sm leading-normal">
                         {steps.map((step, index) => (
-                            // Steps are positional and may repeat verbatim, so the index is the
-                            // only stable identity available.
+                            // biome-ignore lint/suspicious/noArrayIndexKey: steps are positional and may repeat verbatim
                             <li key={`step-${index}`}>{step}</li>
                         ))}
                     </ol>

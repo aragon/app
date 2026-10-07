@@ -79,17 +79,10 @@ export const DaoMemberDetailsPage: React.FC<
         allBodyPlugins,
         daoOverride,
     );
-    const processPlugins =
-        daoUtils.getDaoPlugins(dao, {
-            type: PluginType.PROCESS,
-            includeSubPlugins: true,
-            includeLinkedAccounts: true,
-        }) ?? [];
     const memberSources = daoMemberSourceUtils.resolve({
         dao,
         daoId,
         bodyPlugins: visibleBodyPlugins,
-        processPlugins,
     });
     const memberSource =
         memberSources.find(({ uniqueId }) => uniqueId === selectedSourceId) ??
@@ -100,15 +93,12 @@ export const DaoMemberDetailsPage: React.FC<
         return <RedirectToUrl url={membersUrl} />;
     }
 
-    const token =
-        memberSource.kind === 'plugin'
-            ? (
-                  memberSource.plugin.settings as unknown as Record<
-                      string,
-                      unknown
-                  >
-              ).token
-            : undefined;
+    // A body need not carry settings at all (a Safe has none), so this stays optional.
+    const token = (
+        memberSource.plugin.settings as unknown as
+            | Record<string, unknown>
+            | undefined
+    )?.token;
     const tokenInfo = token as { address: string; network: string } | undefined;
 
     const memberUrlParams = { address };

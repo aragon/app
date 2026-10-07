@@ -42,11 +42,11 @@ export const useSppPermissionCheckProposalCreation = (
     );
 
     // Non-body proposer Safes: shape them as external bodies so the stage-condition fallback
-    // resolves them into a Safe eligibility group.
+    // (useSppExternalPermissionCheckProposalCreation) resolves them into a Safe eligibility group.
     const externalProposers = (plugin.settings.externalProposers ?? []).map(
         (proposer): ISppStagePlugin => ({
             proposalType: SppProposalType.NONE, // non-body proposers do not vote
-            interfaceType: undefined, // marks it external for the stage-condition fallback
+            interfaceType: undefined, // marks it external, so the stage condition governs creation
             brandId: VotingBodyBrandIdentity.SAFE,
             address: proposer.address,
             proposalCreationConditionAddress:
@@ -57,6 +57,9 @@ export const useSppPermissionCheckProposalCreation = (
     const sppPlugins = [...stageBodies, ...externalProposers];
 
     const pluginProposalCreationGuardResults = sppPlugins.map((sppPlugin) => {
+        // Only an installed stage body resolves to a DAO plugin. An external stage reference is
+        // matched by address alone, and a Safe can be carried as an ordinary body record of the
+        // same DAO — resolving one here would hand the stage to that body's installed guard.
         const subPlugin =
             sppPlugin.interfaceType == null
                 ? undefined
@@ -72,10 +75,10 @@ export const useSppPermissionCheckProposalCreation = (
             return undefined;
         }
 
-        // External stage bodies are governed by their stage condition, not by an installed plugin
-        // permission slot. Keep this decision tied to the stage-plugin relationship so a shared Safe
-        // identity cannot route an external body through the standalone Safe process guard.
-        const bodyPlugin = subPlugin?.meta ?? (sppPlugin as IDaoPlugin);
+        // Installed bodies delegate to their own permission-check slot function. External bodies
+        // are governed by the stage condition the process was created with, so they always use the
+        // external hook — mirroring the SETTINGS_GOVERNANCE_SETTINGS_HOOK fallback in the terminal.
+        const bodyPlugin = (subPlugin?.meta ?? sppPlugin) as IDaoPlugin;
         const permissionCheck =
             subPlugin == null
                 ? useSppExternalPermissionCheckProposalCreation

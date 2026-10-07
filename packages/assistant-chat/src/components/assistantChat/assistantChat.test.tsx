@@ -251,12 +251,12 @@ describe('<AssistantChat /> integration', () => {
         });
         // The description computation pads the inline links with spaces ("terms .").
         expect(composer).toHaveAccessibleDescription(
-            /^The Aragon Assistant uses AI to provide you with helpful information\. Sometimes it can be wrong\. For more information about how third parties may process your messages, read the privacy policy and terms/,
+            /^Responses from this AI assistant are for informational purposes only and may be incomplete or inaccurate, so if anything is unclear or you are unsure, reach out to the Aragon team\. For more information about how third parties may process your messages, read the privacy policy and terms/,
         );
         // The notice sits under the composer, not in the welcome block above it.
         expect(
             composer.compareDocumentPosition(
-                screen.getByText(/uses AI to provide you/),
+                screen.getByText(/Responses from this AI assistant/),
             ) & Node.DOCUMENT_POSITION_FOLLOWING,
         ).toBeTruthy();
         expect(
@@ -270,7 +270,7 @@ describe('<AssistantChat /> integration', () => {
         await sendMessageAndReviewDraft();
 
         expect(
-            screen.queryByText(/uses AI to provide you/),
+            screen.queryByText(/Responses from this AI assistant/),
         ).not.toBeInTheDocument();
         expect(composer).not.toHaveAccessibleDescription();
     });

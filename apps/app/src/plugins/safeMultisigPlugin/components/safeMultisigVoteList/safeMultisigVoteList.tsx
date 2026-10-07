@@ -12,6 +12,8 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import type {
     ISafeMultisigVoteListProps,
@@ -36,10 +38,13 @@ export const SafeMultisigVoteListView: React.FC<
     } = props;
     const { t } = useTranslations();
     const safeDaoId = `${network}-${daoAddress}`;
-    const memberSourceId = daoMemberSourceUtils.getSafeSourceId(
-        safeDaoId,
-        safeAddress,
-    );
+    const safeBodyPlugin = useDaoPlugins({
+        daoId: safeDaoId,
+        type: PluginType.BODY,
+        pluginAddress: safeAddress,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+    })?.at(0);
     const voteIndicator: VoteIndicator = isVeto === true ? 'veto' : 'approve';
     const orderedSigners = [...signers].sort((a, b) => {
         const aIsViewer = addressUtils.isAddressEqual(a, connectedAddress);
@@ -65,11 +70,15 @@ export const SafeMultisigVoteListView: React.FC<
             >
                 {orderedSigners.map((signer) => (
                     <SafeMultisigVoteListItem
-                        href={daoMemberSourceUtils.getMemberUrlFromDaoId(
-                            safeDaoId,
-                            signer,
-                            memberSourceId,
-                        )}
+                        href={
+                            safeBodyPlugin == null
+                                ? undefined
+                                : daoMemberSourceUtils.getMemberUrlFromDaoId(
+                                      safeDaoId,
+                                      signer,
+                                      safeBodyPlugin.uniqueId,
+                                  )
+                        }
                         key={signer}
                         signer={signer}
                         voteIndicator={voteIndicator}

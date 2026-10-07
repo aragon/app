@@ -21,8 +21,9 @@ class SppStageUtils {
     /**
      * Resolves the plugin id a stage body is rendered through. Installed bodies use their own
      * interface type; external bodies fall back to the generic external id unless they are a Safe
-     * on a chain the Safe transaction service covers, which uses the unified Safe plugin identity.
-     * Networks without a transaction service therefore keep rendering through the external fallback.
+     * on a chain the Safe transaction service covers, which resolves to the canonical Safe identity.
+     * Networks without a transaction service therefore keep rendering through the external
+     * fallbacks with no extra branching.
      */
     getBodyPluginId = (
         plugin: ISppStagePlugin,

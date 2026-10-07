@@ -7,7 +7,12 @@ import {
     generateSppProposal,
     generateSppStage,
 } from '@/plugins/sppPlugin/testUtils';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import * as useDaoPluginsApi from '@/shared/hooks/useDaoPlugins';
+import {
+    generateDaoPlugin,
+    generateFilterComponentPlugin,
+} from '@/shared/testUtils';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import { generateSafeBodyState, generateSafeInfo } from '../../testUtils';
 import { SafeMultisigVoteList } from './safeMultisigVoteList';
@@ -27,6 +32,7 @@ describe('<SafeMultisigVoteList /> component', () => {
         safeBodyStateApi,
         'useSafeMultisigBodyState',
     );
+    const useDaoPluginsSpy = jest.spyOn(useDaoPluginsApi, 'useDaoPlugins');
 
     const bodyState = generateSafeBodyState({
         safeInfo: generateSafeInfo({ owners: [viewer, otherOwner] }),
@@ -58,6 +64,18 @@ describe('<SafeMultisigVoteList /> component', () => {
         useEnsAvatarSpy.mockReturnValue(
             unresolved as unknown as ReturnType<typeof ensModule.useEnsAvatar>,
         );
+        useDaoPluginsSpy.mockImplementation(({ pluginAddress }) => [
+            generateFilterComponentPlugin({
+                id: PluginInterfaceType.SAFE,
+                uniqueId: `${pluginAddress ?? ''}-safe`,
+                meta: generateDaoPlugin({
+                    address: pluginAddress,
+                    interfaceType: PluginInterfaceType.SAFE,
+                    isBody: true,
+                    slug: 'safe',
+                }),
+            }),
+        ]);
     });
 
     afterEach(() => {
@@ -65,6 +83,7 @@ describe('<SafeMultisigVoteList /> component', () => {
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
         useSafeBodyStateSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -116,7 +135,7 @@ describe('<SafeMultisigVoteList /> component', () => {
 
         expect(screen.getAllByRole('link')[0]).toHaveAttribute(
             'href',
-            `/dao/ethereum-mainnet/${daoAddress}/members/${viewer}?members=safe%3Aethereum-mainnet-${daoAddress}%3A${body}`,
+            `/dao/ethereum-mainnet/${daoAddress}/members/${viewer}?members=${body}-safe`,
         );
     });
 

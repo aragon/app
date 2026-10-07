@@ -524,6 +524,7 @@ const SafeDaoProposalActions: React.FC<ISafeDaoProposalActionsProps> = ({
                         action={action}
                         chainId={chainId}
                         daoId={daoId}
+                        // biome-ignore lint/suspicious/noArrayIndexKey: Actions can share a target and have no stable id.
                         key={`${action.to}-${index}`}
                     />
                 ))}
