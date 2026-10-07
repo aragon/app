@@ -280,6 +280,7 @@ src/app/workspace/[workspaceId]/
    ├─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
    ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard)
    ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
+   ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
    └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
 
@@ -696,11 +697,13 @@ Keep it that way when extending this.
 ## Known gaps
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
-- Of the five scopes' sections, only `overview` and `assets` have an account-scoped route; `proposals`, `members`
-  and `transactions` exist under `all/` alone, so the navigation links to a 404 for them under an account scope.
-- `workspaceTransactionsPageClient` and `workspaceTransactionsAsideCard` still narrow by `activeOption?.account`,
-  which has the Safe blind spot the assets page no longer has. Unreachable today — there is no account-scoped
-  transactions route — and `workspaceUtils.findAccountById` reduces the fix to a few lines.
+- Of the five scopes' sections, only `overview`, `assets` and `transactions` have an account-scoped route;
+  `proposals` and `members` exist under `all/` alone, so the navigation links to a 404 for them under an account
+  scope.
+- `workspaceTransactionsPageClient` narrows by `activeOption?.account`, which has the Safe blind spot the assets
+  page does not: only DAO accounts become options, so the account-scoped transactions route of a Safe falls back to
+  the aggregated selection and shows every account. Reachable since that route landed;
+  `workspaceUtils.findAccountById` is the fix, as on the assets page.
 - Viewing an account the workspace does not hold is not supported: the assets page falls back to every account.
   The intended behaviour is to show it and offer adding it to the workspace, from the account selector.
 - The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only

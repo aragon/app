@@ -18,6 +18,13 @@ export interface IWorkspaceTransactionsPageClientProps {
     pageSize: number;
 }
 
+/**
+ * Transactions of a workspace, scoped to the account on the route.
+ *
+ * One page serves both scopes, as the assets page does: every scope reads the same workspace query endpoint, so a
+ * single account sums into the aggregated view, and a Safe account — which has no DAO page to delegate to — is
+ * readable at all.
+ */
 export const WorkspaceTransactionsPageClient: React.FC<
     IWorkspaceTransactionsPageClientProps
 > = (props) => {
@@ -29,9 +36,13 @@ export const WorkspaceTransactionsPageClient: React.FC<
         urlParams: { id: workspaceId },
     });
 
+    const { activeOption } = useWorkspaceAccountOptions();
+
     const accounts = workspace?.accounts ?? [];
 
-    const { activeOption } = useWorkspaceAccountOptions();
+    const selectedAccount = activeOption?.account;
+    const accountsToDisplay =
+        selectedAccount != null ? [selectedAccount] : accounts;
 
     return (
         <Page.Content>
@@ -39,7 +50,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
                 title={t('app.workspace.workspaceTransactionsPage.main.title')}
             >
                 <WorkspaceTransactionList
-                    accounts={accounts}
+                    accounts={accountsToDisplay}
                     isPending={isWorkspacePending}
                     pageSize={pageSize}
                 />
@@ -47,9 +58,9 @@ export const WorkspaceTransactionsPageClient: React.FC<
             <Page.Aside>
                 {workspace != null && (
                     <WorkspaceTransactionsAsideCard
+                        accounts={accountsToDisplay}
                         activeOption={activeOption}
                         pageSize={pageSize}
-                        workspace={workspace}
                     />
                 )}
             </Page.Aside>

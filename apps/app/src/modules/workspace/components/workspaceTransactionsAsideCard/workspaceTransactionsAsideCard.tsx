@@ -1,24 +1,21 @@
 'use client';
 
-import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { DaoInfoAside } from '@/modules/finance/components/daoInfoAside';
-import { useDao } from '@/shared/api/daoService';
-import { Page } from '@/shared/components/page';
-import { StatCard } from '@/shared/components/statCard';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWorkspaceTransactions } from '../../api/workspaceQueryService';
+import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel/dispatchPanel';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import {
-    type IWorkspace,
+    type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
-import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
+import { WorkspaceAllTransactionsAsideCard } from './workspaceAllTransactionsAsideCard';
+import { WorkspaceDaoTransactionsAsideCard } from './workspaceDaoTransactionsAsideCard';
 
 export interface IWorkspaceTransactionsAsideCardProps {
     /**
-     * Workspace the transactions belong to.
+     * Accounts the stats cover, i.e. the selection displayed by the list next to the card. Resolved by the page, so
+     * the card and the list never disagree on what is being looked at.
      */
-    workspace: IWorkspace;
+    accounts: IWorkspaceAccount[];
     /**
      * Account option selected on the page. The whole workspace is described when unset or set to the aggregated
      * option.
@@ -32,108 +29,49 @@ export interface IWorkspaceTransactionsAsideCardProps {
 }
 
 /**
- * Aside card of the workspace transactions page. The same transaction stats serve every selection, since they are
- * all read from the workspace endpoint; the metadata around them is the DAO's for a single DAO account and the
- * workspace's otherwise.
+ * Aside card of the workspace transactions page, picking the card matching the selected account.
+ *
+ * Each account type describes itself differently, so the card of a type is its own component: a DAO account shows
+ * the same card as the DAO transactions page, the aggregated view shows the workspace totals. A new account type is
+ * added by branching on it here.
+ *
+ * Only DAO accounts become options today (`useWorkspaceAccountOptions`), so the aggregated branch is reached only
+ * when no account is selected and the totals card is left to title itself. An account type that gains an option
+ * before it gains a card of its own should pass `activeOption.label` down as that card's title.
  */
 export const WorkspaceTransactionsAsideCard: React.FC<
     IWorkspaceTransactionsAsideCardProps
 > = (props) => {
-    const { workspace, activeOption, pageSize } = props;
+    const { accounts, activeOption, pageSize } = props;
 
-    const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+    const isAutomationEnabled = isEnabled('capitalFlowAutomation');
 
-    const selectedAccount = activeOption?.account;
+    const account = activeOption?.account;
+
     const isDaoAccountSelected =
-        selectedAccount?.type === WorkspaceAccountType.DAO;
+        activeOption != null && account?.type === WorkspaceAccountType.DAO;
 
-    const accounts =
-        selectedAccount != null ? [selectedAccount] : workspace.accounts;
-
-    // Unfiltered first page of the list: it carries the total count, the most recent transaction and the partial flag.
-    // Shares its key with the list's own "all" query, so it only adds a request while another type is selected.
-    const { data: transactions } = useWorkspaceTransactions(
-        buildWorkspaceTransactionListParams(
-            accounts.map(({ network, address }) => ({ network, address })),
-            pageSize,
-        ),
-        { enabled: accounts.length > 0 },
-    );
-
-    // A single DAO account shows the DAO's own metadata, the same one the DAO pages show. A workspace account ID is
-    // already the DAO ID, so this shares its key with the DAO the list reads for its execution rows.
-    const { data: dao } = useDao(
-        { urlParams: { id: selectedAccount?.id ?? '' } },
-        { enabled: isDaoAccountSelected },
-    );
-
-    const firstPage = transactions?.pages[0];
-    const transactionsCount = firstPage?.metadata.totalRecords;
-    const lastActivity = firstPage?.data[0]?.blockTimestamp;
-
-    const formattedCount =
-        transactionsCount != null
-            ? (formatterUtils.formatNumber(transactionsCount, {
-                  format: NumberFormat.GENERIC_SHORT,
-              }) ?? '-')
-            : '-';
-
-    const formattedLastActivity =
-        lastActivity != null
-            ? (formatterUtils.formatDate(lastActivity * 1000, {
-                  format: DateFormat.RELATIVE,
-              }) ?? '-')
-            : '-';
-
-    const stats = [
-        {
-            label: t(
-                'app.workspace.workspaceTransactionsAsideCard.transactions',
-            ),
-            // Unread accounts are missing from the count, so it is only a lower bound.
-            value:
-                firstPage?.partial && transactionsCount != null
-                    ? `${formattedCount}+`
-                    : formattedCount,
-        },
-        {
-            label: t(
-                'app.workspace.workspaceTransactionsAsideCard.lastActivity',
-            ),
-            value: formattedLastActivity,
-        },
-    ];
-
-    // The aggregated view describes the workspace itself, so it is titled generically.
-    const title =
-        selectedAccount != null && activeOption != null
-            ? activeOption.label
-            : t('app.workspace.workspaceTransactionsAsideCard.allTransactions');
-
-    const renderContent = () => {
-        if (isDaoAccountSelected && dao != null) {
-            return (
-                <DaoInfoAside
-                    dao={dao}
-                    daoId={dao.id}
-                    network={dao.network}
-                    stats={stats}
+    return (
+        <>
+            {isDaoAccountSelected ? (
+                <WorkspaceDaoTransactionsAsideCard
+                    account={account}
+                    label={activeOption.label}
+                    pageSize={pageSize}
                 />
-            );
-        }
-
-        return (
-            <div className="grid w-full grid-cols-2 gap-3">
-                {stats.map((stat) => (
-                    <StatCard
-                        key={stat.label}
-                        label={stat.label}
-                        value={stat.value}
-                    />
-                ))}
-            </div>
-        );
-    };
-
-    return <Page.AsideCard title={title}>{renderContent()}</Page.AsideCard>;
+            ) : (
+                <WorkspaceAllTransactionsAsideCard
+                    accounts={accounts}
+                    pageSize={pageSize}
+                />
+            )}
+            {isAutomationEnabled && account != null && (
+                <DispatchPanel
+                    daoAddress={account.address}
+                    network={account.network}
+                />
+            )}
+        </>
+    );
 };
