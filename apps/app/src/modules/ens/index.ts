@@ -34,7 +34,7 @@ export {
     useDelegateStatementCid,
 } from './hooks/useDelegateStatementCid';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
-export { useEnsName } from './hooks/useEnsName';
+export { type IUseEnsNameReturn, useEnsName } from './hooks/useEnsName';
 export { useEnsProfileRecords } from './hooks/useEnsProfileRecords';
 export {
     type IEnsResolverRecords,

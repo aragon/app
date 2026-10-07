@@ -81,7 +81,7 @@ export interface IDaoAvailableUpdates {
 }
 
 // Interface types this build ships a plugin for. A backend may classify a plugin
-// with a type the app has no plugin for yet (e.g. `safe`, APP-1165).
+// with a type the app has no plugin for yet.
 const supportedInterfaceTypes = new Set<string>(
     Object.values(PluginInterfaceType).filter(
         (type) => type !== PluginInterfaceType.UNKNOWN,
@@ -138,6 +138,18 @@ class DaoUtils {
     };
 
     getPluginName = (plugin: IDaoPlugin): string => {
+        // A DAO can hold several Safes and the backend names none of them, so the address is the
+        // only thing that tells two Safe tabs apart. Truncated here rather than through
+        // `addressUtils`: this runs in Server Components, where the gov-ui-kit alias is a
+        // 'use client' shim.
+        if (plugin.interfaceType === PluginInterfaceType.SAFE) {
+            const address = isAddress(plugin.address, { strict: false })
+                ? `${plugin.address.slice(0, 6)}…${plugin.address.slice(-4)}`
+                : plugin.address;
+
+            return `Safe ${address}`;
+        }
+
         if (plugin.name) {
             return plugin.name;
         }
@@ -243,7 +255,12 @@ class DaoUtils {
             // Preparing the update looks the plugin info up by interfaceType, so
             // both lookups have to agree, otherwise we would prepare the update
             // against the wrong repository.
-            if (target == null || target.id !== plugin.interfaceType) {
+            // A Safe is not installed from a plugin repository, so it pins down no install version
+            // and can never offer an update.
+            if (
+                target?.installVersion == null ||
+                target.id !== plugin.interfaceType
+            ) {
                 return false;
             }
 

@@ -34,7 +34,7 @@ export interface IProposalVotingProgressItemProps extends Omit<IProgressProps, '
      * Variant of the voting progress item component.
      * @default 'default'
      */
-    variant?: 'default' | 'critical' | 'success';
+    variant?: 'default' | 'neutral' | 'critical' | 'success';
     /**
      * Description of the voting progress displayed below the progress bar.
      */

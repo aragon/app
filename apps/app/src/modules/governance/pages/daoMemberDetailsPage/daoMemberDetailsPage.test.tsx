@@ -111,6 +111,44 @@ describe('<DaoMemberDetailsPage /> component', () => {
         );
     });
 
+    it('prefetches the member of the body selected by the members URL parameter', async () => {
+        const expectedDaoId = 'test-dao-id';
+        const safeAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        const multisigPlugin = generateDaoPlugin({
+            address: '0x1111111111111111111111111111111111111111',
+            interfaceType: PluginInterfaceType.MULTISIG,
+            isBody: true,
+            slug: 'multisig',
+        });
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+            slug: 'safe',
+        });
+        const dao = generateDao({ plugins: [multisigPlugin, safePlugin] });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        getDaoSpy.mockResolvedValue(dao);
+
+        render(
+            await createTestComponent({
+                searchParams: Promise.resolve({
+                    members: `${safeAddress}-safe`,
+                }),
+            }),
+        );
+
+        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
+            memberOptions({
+                urlParams: { address: validAddress },
+                queryParams: {
+                    daoId: expectedDaoId,
+                    pluginAddress: safeAddress,
+                },
+            }).queryKey,
+        );
+    });
+
     it('renders the page client component', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();

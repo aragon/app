@@ -16,8 +16,11 @@ import {
 } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
-import type { IPluginSettings } from '@/shared/api/daoService';
-import { useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    type IPluginSettings,
+    useDao,
+} from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useTokenPinnedMembers } from '../../hooks/useTokenPinnedMembers';
 import type { ITokenMember } from '../../types';
@@ -46,6 +49,7 @@ export interface ITokenMemberListBaseProps
      * Enables delegation-specific behavior in the shared member list.
      */
     enableDelegation?: boolean;
+    plugin: IDaoPlugin<ITokenMemberListPluginSettings>;
 }
 
 export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
@@ -57,6 +61,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         layoutClassNames,
         plugin,
         onboardingCard,
+        memberSource,
         enableDelegation,
         children,
     } = props;
@@ -174,6 +179,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
                         }
                         key={member.address}
                         member={member}
+                        memberSourceId={memberSource?.uniqueId}
                         plugin={plugin}
                     />
                 ))}
