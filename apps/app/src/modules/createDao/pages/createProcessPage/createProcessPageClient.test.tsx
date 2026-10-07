@@ -95,7 +95,10 @@ describe('<CreateProcessPageClient /> component', () => {
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useProposalPermissionCheckGuardSpy.mockImplementation(() => undefined);
+        useProposalPermissionCheckGuardSpy.mockReturnValue({
+            canCreateProposal: true,
+            isLoading: false,
+        });
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),

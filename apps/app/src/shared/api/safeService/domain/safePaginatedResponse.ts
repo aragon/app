@@ -10,11 +10,11 @@ export interface ISafePaginatedResponse<TData> {
      */
     count: number;
     /**
-     * URL of the next page, or null on the last page.
+     * Pagination cursor for the next page, or null on the last page.
      */
     next: string | null;
     /**
-     * URL of the previous page, or null on the first page.
+     * Pagination cursor for the previous page, or null on the first page.
      */
     previous: string | null;
     /**

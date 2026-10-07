@@ -148,6 +148,10 @@ export interface IGetCanCreateProposalQueryParams {
      * Network of the plugin.
      */
     network: Network;
+    /**
+     * DAO granting execute permission to a Safe process.
+     */
+    daoAddress?: string;
 }
 
 export interface IGetCanCreateProposalParams

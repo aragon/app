@@ -6,6 +6,8 @@ import {
     isSafeMultisigTransaction,
     isSafeNextNonce,
     isSafePaginatedResponse,
+    isSafeStoredTransactionsResponse,
+    isSafeTransactionActions,
     SafeServiceErrorCode,
 } from './domain';
 import { checksumSafeAddress } from './safeAddressUtils';
@@ -13,7 +15,10 @@ import type {
     IGetSafeInfoParams,
     IGetSafeNextNonceParams,
     IGetSafePendingTransactionsParams,
+    IGetSafeStoredTransactionsParams,
+    IGetSafeTransactionActionsParams,
     IGetSafeTransactionHistoryParams,
+    ISafeTransactionUrlParams,
     ISafeUrlParams,
 } from './safeService.api';
 import { SafeServiceError } from './safeServiceError';
@@ -36,6 +41,9 @@ class SafeService extends AragonBackendService {
         safeQueue: '/v2/safe/:network/:address/queue',
         safeNextNonce: '/v2/safe/:network/:address/next-nonce',
         safeHistory: '/v2/safe/:network/:address/history',
+        safeStoredTransactions: '/v2/safe/:network/:address/transactions',
+        safeTransactionActions:
+            '/v2/safe/:network/:address/transactions/:safeTxHash/actions',
     };
 
     constructor() {
@@ -81,6 +89,44 @@ class SafeService extends AragonBackendService {
     };
 
     /**
+     * Reads stored Safe transactions. This is eventual store data for display; write safety still
+     * uses the live queue/history reads above.
+     */
+    getSafeStoredTransactions = async ({
+        urlParams,
+        queryParams,
+    }: IGetSafeStoredTransactionsParams) => {
+        const response = await this.request<unknown>(
+            this.urls.safeStoredTransactions,
+            {
+                urlParams: this.buildUrlParams(urlParams),
+                queryParams,
+            },
+        );
+
+        if (!isSafeStoredTransactionsResponse(response)) {
+            return this.throwInvalidResponse('Safe stored transactions');
+        }
+
+        return response;
+    };
+
+    getSafeTransactionActions = async ({
+        urlParams,
+    }: IGetSafeTransactionActionsParams) => {
+        const response = await this.request<unknown>(
+            this.urls.safeTransactionActions,
+            { urlParams: this.buildTransactionUrlParams(urlParams) },
+        );
+
+        if (!isSafeTransactionActions(response)) {
+            return this.throwInvalidResponse('Safe transaction actions');
+        }
+
+        return response;
+    };
+
+    /**
      * Reads the executed transactions of a Safe, newest nonce first.
      *
      * The queue serves unexecuted transactions only, so this is the sole source for a settled
@@ -112,7 +158,7 @@ class SafeService extends AragonBackendService {
     /**
      * Resolves the nonce a new transaction must occupy.
      *
-     * Takes no `currentNonce`: given one, a caller would eventually pass a polled value, and a stale
+     * Takes no `currentNonce`: given one, a caller would eventually be handed a polled value, and a stale
      * floor allocates a nonce the Safe has already consumed. The backend reads both the live onchain
      * nonce and the queue itself, uncached.
      */
@@ -148,6 +194,15 @@ class SafeService extends AragonBackendService {
     private buildUrlParams = ({ network, address }: ISafeUrlParams) => ({
         network,
         address: checksumSafeAddress(address),
+    });
+
+    private buildTransactionUrlParams = ({
+        network,
+        address,
+        safeTxHash,
+    }: ISafeTransactionUrlParams) => ({
+        ...this.buildUrlParams({ network, address }),
+        safeTxHash: safeTxHash.toLowerCase(),
     });
 }
 

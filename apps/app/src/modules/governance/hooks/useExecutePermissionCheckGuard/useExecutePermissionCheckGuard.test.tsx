@@ -72,6 +72,20 @@ describe('useExecutePermissionCheckGuard hook', () => {
         expect(check).toHaveBeenCalled();
         expect(mockRouter.replace).not.toHaveBeenCalled();
     });
+    it('prompts for a wallet when the permission redirect is disabled explicitly', () => {
+        const check = jest.fn();
+        useConnectedWalletGuardSpy.mockReturnValue({ check, result: false });
+
+        renderHook(() =>
+            useExecutePermissionCheckGuard({
+                daoId: 'dao-id',
+                enabled: false,
+            }),
+        );
+
+        expect(check).toHaveBeenCalled();
+        expect(mockRouter.replace).not.toHaveBeenCalled();
+    });
 
     it('redirects to the transactions page when connected but not permitted', () => {
         const daoNetwork = Network.ETHEREUM_MAINNET;

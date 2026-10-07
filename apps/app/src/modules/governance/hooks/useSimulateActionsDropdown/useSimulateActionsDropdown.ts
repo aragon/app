@@ -18,8 +18,9 @@ export interface IUseSimulateActionsDropdownParams {
     daoId: string;
     /**
      * Address that calls `DAO.execute` and the actions are therefore simulated from (the `from`
-     * address): the governance plugin for proposals, the connected wallet for direct execution.
-     * When `undefined` (e.g. no connected wallet) the dropdown is not rendered.
+     * address): the governance plugin for proposals, the connected wallet for direct execution, or
+     * the native Safe for Safe-backed direct execution. When `undefined` (e.g. no connected wallet)
+     * the dropdown is not rendered.
      */
     from?: string;
     /**

@@ -1963,10 +1963,12 @@
         "steps": {
           "ACTIONS": {
             "description": "Add the actions to execute directly on the DAO. They will run in the order listed on this page.",
+            "safeDescription": "Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.",
             "name": "Add actions",
             "title": "Add actions"
           }
         },
+        "safeSubmitLabel": "Create proposal",
         "submitLabel": "Execute"
       },
       "createProposalForm": {
@@ -3220,6 +3222,12 @@
         }
       },
       "safeMultisig": {
+        "safeProcess": {
+          "creationRequirement": "Safe owner, with the Safe authorized to execute on this DAO",
+          "emptyHeading": "No DAO transactions",
+          "emptyDescription": "No Safe transactions executing actions on this DAO have been found. Votes submitted to governance stages are shown in their respective processes.",
+          "transactionsStale": "Some Safe transactions could not be refreshed. This list may be incomplete or out of date."
+        },
         "safeMultisigProposalVotingSummary": {
           "approvalLabel": "approvals",
           "approved": "approved",
@@ -3934,6 +3942,59 @@
           "result_verification": "Verifying Safe execution and proposal result",
           "execute": "Execute"
         }
+      },
+      "safeNativeTransactionDialog": {
+        "title": "Review Safe proposal",
+        "description": "Review the exact DAO actions before signing or executing this Safe transaction.",
+        "loading": "Preparing the Safe transaction…",
+        "walletRequired": "Connect an owner wallet on the selected network to sign or execute this transaction.",
+        "providerUnavailable": "The connected wallet provider is unavailable.",
+        "noActions": "This proposal has no actions to submit.",
+        "invalidNonce": "The Safe nonce is invalid.",
+        "invalidPayload": "This Safe transaction does not contain a valid action for this DAO.",
+        "notOwner": "The connected wallet is not a current Safe owner.",
+        "transactionUnavailable": "The exact Safe transaction is no longer available from the service.",
+        "invalidThreshold": "The Safe returned an invalid owner threshold.",
+        "nonceConsumed": "This Safe nonce has already been consumed.",
+        "hashMismatch": "The transaction fields do not match the Safe transaction hash.",
+        "alreadyExecuted": "This Safe transaction has already executed.",
+        "uncertain": "The service response was inconclusive. Re-check before trying anything again.",
+        "submitted": "Submitted to Safe. The proposal is now pending owner approvals.",
+        "executing": "Executing the Safe transaction…",
+        "executed": "Safe transaction executed successfully.",
+        "executionUnavailable": "This Safe transaction is no longer ready to execute.",
+        "executionFailed": "The Safe transaction could not be executed.",
+        "actionsHeading": "DAO actions",
+        "actions": {
+          "sign": "Sign and submit",
+          "execute": "Execute",
+          "done": "Done",
+          "view": "View proposal",
+          "recheck": "Re-check",
+          "close": "Close"
+        }
+      },
+      "safeDaoProposalDetails": {
+        "errorHeading": "Could not load Safe transaction",
+        "errorDescription": "The Safe transaction could not be loaded. Try again later.",
+        "invalidHeading": "Invalid Safe transaction",
+        "invalidDescription": "This Safe transaction does not belong to the selected DAO and Safe.",
+        "notFoundHeading": "Safe transaction unavailable",
+        "notFoundDescription": "The requested Safe transaction could not be found for this DAO and Safe.",
+        "executionDate": "Executed",
+        "stale": "Safe data may be stale or incomplete. Refresh before signing.",
+        "awaitingApprovals": "Awaiting approvals",
+        "readyToExecute": "Ready to execute",
+        "waitingForNonce": "Waiting for earlier nonce",
+        "superseded": "No longer executable",
+        "executedSuccess": "Executed successfully",
+        "executedFailure": "Execution failed",
+        "executedUnknown": "Execution result is being verified",
+        "sign": "Sign and submit",
+        "signed": "Already signed",
+        "execute": "Review and execute",
+        "noOwnersHeading": "Safe owners unavailable",
+        "noOwnersDescription": "The Safe returned no current owners, so approval progress cannot be shown."
       }
     },
     "settings": {
