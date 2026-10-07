@@ -1,15 +1,16 @@
 import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { Network } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { generateSppStagePlugin } from '../sppPlugin/testUtils';
 import { VotingBodyBrandIdentity } from '../sppPlugin/types';
 import { sppStageUtils } from '../sppPlugin/utils/sppStageUtils';
-import { SafeMemberPanel } from './components/safeMemberPanel';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
 import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
+import { SafePluginInfo } from './components/safePluginInfo';
 import { useSafeMultisigVotePermissionCheck } from './hooks/useSafeMultisigVotePermissionCheck';
 import { initialiseSafeMultisigPlugin } from './index';
 
@@ -27,8 +28,8 @@ describe('safeMultisigPlugin registrations', () => {
     // renders through the generic external fallback. Pair the two rather than trusting either.
     it.each([
         {
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
-            component: SafeMemberPanel,
+            slotId: SettingsSlotId.SETTINGS_PLUGIN_INFO,
+            component: SafePluginInfo,
         },
         {
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN,

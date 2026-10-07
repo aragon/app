@@ -1,9 +1,6 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import {
-    externalPluginId,
-    safeBodyPluginId,
-} from '@/plugins/safeMultisigPlugin/constants';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
@@ -44,7 +41,7 @@ describe('SppStageUtils', () => {
                     brandId: VotingBodyBrandIdentity.SAFE,
                 }),
                 network: Network.ETHEREUM_MAINNET,
-                expected: safeBodyPluginId,
+                expected: PluginInterfaceType.SAFE,
             },
             {
                 label: 'a Safe on an unsupported network',

@@ -2,7 +2,6 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import {
     daoOptions,
     Network,
@@ -139,41 +138,18 @@ describe('<DaoMembersPage /> component', () => {
         );
     });
 
-    it('prefetches Safe owners when a Safe is an SPP body', async () => {
+    it('prefetches Safe owners when a Safe is a DAO body', async () => {
         const expectedDaoId = 'test-dao-id';
         const safeAddress = '0x1234567890123456789012345678901234567890';
-        const sppPlugin = generateDaoPlugin<ISppPluginSettings>({
-            interfaceType: PluginInterfaceType.SPP,
-            isBody: false,
-            isProcess: true,
-            settings: {
-                pluginAddress: '0xspp',
-                stages: [
-                    {
-                        stageIndex: 0,
-                        plugins: [
-                            {
-                                address: safeAddress,
-                                interfaceType: undefined,
-                                brandId: 'safe',
-                                proposalType: 1,
-                            },
-                        ],
-                        voteDuration: 1,
-                        maxAdvance: 1,
-                        minAdvance: 0,
-                        approvalThreshold: 1,
-                        vetoThreshold: 0,
-                    },
-                ],
-            },
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
         });
-        const dao = generateDao({ plugins: [sppPlugin] });
+        const dao = generateDao({ plugins: [safePlugin] });
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         fetchQuerySpy.mockResolvedValue(dao);
-        getDaoPluginsSpy.mockImplementation((_dao, params) =>
-            params?.type === PluginType.BODY ? [] : [sppPlugin],
-        );
+        getDaoPluginsSpy.mockReturnValue([safePlugin]);
 
         render(await createTestComponent());
 

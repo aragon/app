@@ -1,14 +1,19 @@
 import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
+import { PluginInterfaceType } from '@/shared/api/daoService';
+import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
 /**
- * Plugin id an external Safe body resolves to. `PluginId` and `PluginInterfaceType` share one
- * string namespace, so the id is namespaced under the existing `external` id rather than a bare
- * `safe` that could collide with a future backend interface type.
+ * The single Safe identity. The backend reports every DAO-associated Safe as one canonical
+ * `safe` plugin record, so the same registry id serves a Safe wherever it appears: as a DAO body,
+ * as an SPP stage body, or as both at once.
  *
- * A Safe is not installable and has no repository addresses: this id is only ever used to register
- * slot components and functions, never with `registerPlugin`.
+ * A Safe is not installed through a plugin repository, so it is registered for its slots only and
+ * resolves no repository address.
  */
-export const safeBodyPluginId = 'external-safe';
+export const safePlugin: IPlugin = {
+    id: PluginInterfaceType.SAFE,
+    name: 'Safe',
+};
 
 /**
  * Poll cadence of the Safe reads while the Safe queue holds a live transaction. An idle body card
@@ -50,9 +55,9 @@ export const settledHistoryMaxPages = 10;
 export const safeQueueReadLimit = 100;
 
 /**
- * Plugin id a generic (non-Safe) external body resolves to. Kept beside `safeBodyPluginId` because
- * both live in the same string namespace and the resolver switches between them; a plain constant
- * living in a client component would drag react-hook-form into server code.
+ * Plugin id a generic (non-Safe) external stage body resolves to. A Safe on a chain the Safe
+ * transaction service covers resolves to the canonical Safe identity instead; Safes on other
+ * chains stay on this fallback, which has no Safe-specific reads.
  */
 export const externalPluginId = 'external';
 

@@ -81,7 +81,7 @@ export interface IDaoAvailableUpdates {
 }
 
 // Interface types this build ships a plugin for. A backend may classify a plugin
-// with a type the app has no plugin for yet (e.g. `safe`, APP-1165).
+// with a type the app has no plugin for yet.
 const supportedInterfaceTypes = new Set<string>(
     Object.values(PluginInterfaceType).filter(
         (type) => type !== PluginInterfaceType.UNKNOWN,

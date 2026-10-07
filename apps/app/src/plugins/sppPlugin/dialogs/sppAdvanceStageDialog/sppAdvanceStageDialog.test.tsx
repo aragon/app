@@ -8,10 +8,7 @@ import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
-import {
-    externalPluginId,
-    safeBodyPluginId,
-} from '@/plugins/safeMultisigPlugin/constants';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
@@ -245,7 +242,7 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
             });
 
         it('warns when the stage being advanced from carries a Safe body', () => {
-            getBodyPluginIdSpy.mockReturnValue(safeBodyPluginId);
+            getBodyPluginIdSpy.mockReturnValue(PluginInterfaceType.SAFE);
             const location = generateDialogLocation({
                 proposal: generateStagedProposal(),
             });

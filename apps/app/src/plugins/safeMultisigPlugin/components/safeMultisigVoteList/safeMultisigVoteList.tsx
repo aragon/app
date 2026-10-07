@@ -12,6 +12,8 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
 
@@ -35,11 +37,16 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
         stage,
     });
 
+    // Owner links point at the Safe's own members tab, identified by the canonical Safe body
+    // record. A Safe the DAO does not carry as a body has no tab to open, so the row is not a link.
     const safeDaoId = `${network}-${proposal.daoAddress}`;
-    const memberSourceId = daoMemberSourceUtils.getSafeSourceId(
-        safeDaoId,
-        body,
-    );
+    const safeBodyPlugin = useDaoPlugins({
+        daoId: safeDaoId,
+        type: PluginType.BODY,
+        pluginAddress: body,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+    })?.at(0);
 
     // A Safe confirmation is only ever agreement: an owner signs or does not, so there is no
     // against-indicator to render here.
@@ -71,11 +78,15 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
             >
                 {orderedSigners.map((signer) => (
                     <SafeMultisigVoteListItem
-                        href={daoMemberSourceUtils.getMemberUrlFromDaoId(
-                            safeDaoId,
-                            signer,
-                            memberSourceId,
-                        )}
+                        href={
+                            safeBodyPlugin == null
+                                ? undefined
+                                : daoMemberSourceUtils.getMemberUrlFromDaoId(
+                                      safeDaoId,
+                                      signer,
+                                      safeBodyPlugin.uniqueId,
+                                  )
+                        }
                         key={signer}
                         signer={signer}
                         voteIndicator={voteIndicator}

@@ -120,7 +120,7 @@ describe('dao utils', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(false);
             const daoPlugins = [
                 generateDaoPlugin({
-                    interfaceType: 'safe' as PluginInterfaceType,
+                    interfaceType: 'futureBody' as PluginInterfaceType,
                 }),
             ];
             const dao = generateDao({ plugins: daoPlugins });
@@ -159,7 +159,7 @@ describe('dao utils', () => {
 
         it('returns false for interface types the app does not know', () => {
             const plugin = generateDaoPlugin({
-                interfaceType: 'safe' as PluginInterfaceType,
+                interfaceType: 'futureBody' as PluginInterfaceType,
                 isSupported: true,
             });
             expect(daoUtils.isSupportedPlugin(plugin)).toBeFalsy();
@@ -684,7 +684,7 @@ describe('dao utils', () => {
         it('drops plugins with an interface type the app does not know by default', () => {
             const plugins = [
                 generateDaoPlugin({
-                    interfaceType: 'safe' as PluginInterfaceType,
+                    interfaceType: 'futureBody' as PluginInterfaceType,
                     isSupported: true,
                 }),
                 generateDaoPlugin({

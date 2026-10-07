@@ -2,11 +2,8 @@
 
 import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useMemo } from 'react';
-import {
-    type IDaoPlugin,
-    PluginInterfaceType,
-    useDao,
-} from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useDao } from '@/shared/api/daoService';
 import {
     type IFilterComponentPlugin,
     type IPluginFilterComponentProps,
@@ -26,6 +23,8 @@ import { DaoMemberListDefault } from './daoMemberListDefault';
 
 export const featuredDelegatesTabId = 'featured-delegates';
 
+// The featured-delegates tab is synthetic and carries its plugin directly; every other tab is a
+// member source resolved from a canonical body record.
 type DaoMemberListFilterMeta = IDaoMemberSource | IDaoPlugin;
 type DaoMemberListFilterPlugin =
     IFilterComponentPlugin<DaoMemberListFilterMeta>;
@@ -82,15 +81,9 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
         includeLinkedAccounts: true,
         visibleOnly: true,
     });
-    const processPlugins = useDaoPlugins({
-        daoId: initialParams.queryParams.daoId,
-        interfaceType: PluginInterfaceType.SPP,
-        includeSubPlugins: true,
-        includeLinkedAccounts: true,
-    });
 
     const memberSources = useMemo(() => {
-        if (dao == null || bodyPlugins == null || processPlugins == null) {
+        if (dao == null || bodyPlugins == null) {
             return [];
         }
 
@@ -98,46 +91,34 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
             dao,
             daoId: initialParams.queryParams.daoId,
             bodyPlugins: bodyPlugins.map(({ meta }) => meta),
-            processPlugins: processPlugins.map(({ meta }) => meta),
         });
-    }, [bodyPlugins, dao, initialParams.queryParams.daoId, processPlugins]);
+    }, [bodyPlugins, dao, initialParams.queryParams.daoId]);
 
     const processedPlugins: DaoMemberListFilterPlugin[] = memberSources.map(
-        (memberSource) => {
-            const pluginInitialParams = {
-                ...initialParams,
-                queryParams: {
-                    ...initialParams.queryParams,
-                    pluginAddress: memberSource.address,
-                },
-            };
-
-            return {
-                id: memberSource.id,
-                uniqueId: memberSource.uniqueId,
-                label: memberSource.label,
-                meta: memberSource,
-                props: {},
-                renderContent: () =>
-                    memberSource.kind === 'plugin' ? (
-                        <PluginSingleComponent
-                            Fallback={DaoMemberListDefault}
-                            initialParams={pluginInitialParams}
-                            memberSource={memberSource}
-                            plugin={memberSource.plugin}
-                            pluginId={memberSource.id}
-                            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
-                            {...contentProps}
-                        />
-                    ) : (
-                        <DaoMemberListDefault
-                            initialParams={pluginInitialParams}
-                            memberSource={memberSource}
-                            {...contentProps}
-                        />
-                    ),
-            };
-        },
+        (memberSource) => ({
+            id: memberSource.id,
+            uniqueId: memberSource.uniqueId,
+            label: memberSource.label,
+            meta: memberSource,
+            props: {},
+            renderContent: () => (
+                <PluginSingleComponent
+                    Fallback={DaoMemberListDefault}
+                    initialParams={{
+                        ...initialParams,
+                        queryParams: {
+                            ...initialParams.queryParams,
+                            pluginAddress: memberSource.address,
+                        },
+                    }}
+                    memberSource={memberSource}
+                    plugin={memberSource.plugin}
+                    pluginId={memberSource.id}
+                    slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
+                    {...contentProps}
+                />
+            ),
+        }),
     );
 
     const allPlugins: DaoMemberListFilterPlugin[] =

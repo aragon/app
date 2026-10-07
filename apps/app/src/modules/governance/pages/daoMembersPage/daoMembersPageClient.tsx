@@ -4,7 +4,7 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { FeaturedDelegatesList } from '@/plugins/tokenPlugin/components/featuredDelegatesList';
 import { useFeaturedDelegatesPlugin } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
@@ -19,7 +19,6 @@ import {
     featuredDelegatesTabId,
 } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { safeMemberSourceIdPrefix } from '../../utils/daoMemberSourceUtils';
 
 export interface IDaoMembersPageClientProps {
     /**
@@ -50,10 +49,6 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
 
     // Read active tab directly from URL — DaoMemberList.Container manages URL internally.
     const activeTabParam = searchParams.get(daoMembersPageFilterParam);
-    // The container defaults to the featured tab when no param is present and featured delegates exist.
-    const isFeaturedTabActive =
-        activeTabParam === featuredDelegatesTabId ||
-        (activeTabParam == null && featuredDelegatesInfo.hasFeaturedDelegates);
 
     // Build synthetic featured delegates tab item for DaoMemberList.Container.
     const featuredDelegatesTab = useMemo(() => {
@@ -89,26 +84,23 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         includeLinkedAccounts: true,
         visibleOnly: true,
     });
-    const activeSafeSource = useMemo(() => {
-        if (!activeTabParam?.startsWith(safeMemberSourceIdPrefix)) {
-            return undefined;
+    // The container resolves an absent or unknown `members` value to its first tab, which is the
+    // featured-delegates tab when one exists. The aside has to make the same call or the two
+    // surfaces disagree on a stale or hand-edited link.
+    const isFeaturedTabActive = useMemo(() => {
+        if (!featuredDelegatesInfo.hasFeaturedDelegates) {
+            return false;
         }
 
-        const source = activeTabParam.slice(safeMemberSourceIdPrefix.length);
-        const separatorIndex = source.lastIndexOf(':');
-        const safeDaoId = source.slice(0, separatorIndex);
-        const safeAddress = source.slice(separatorIndex + 1);
-
-        return separatorIndex > 0 && addressUtils.isAddress(safeAddress)
-            ? { daoId: safeDaoId, address: safeAddress }
-            : undefined;
-    }, [activeTabParam]);
+        return (
+            activeTabParam == null ||
+            activeTabParam === featuredDelegatesTabId ||
+            !allBodyPlugins?.some(({ uniqueId }) => uniqueId === activeTabParam)
+        );
+    }, [activeTabParam, allBodyPlugins, featuredDelegatesInfo]);
 
     const activeAsidePlugin = useMemo(() => {
         if (allBodyPlugins == null) {
-            return undefined;
-        }
-        if (activeSafeSource != null) {
             return undefined;
         }
 
@@ -136,7 +128,6 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         activeTabParam,
         isFeaturedTabActive,
         featuredDelegatesInfo,
-        activeSafeSource,
     ]);
 
     return (
@@ -148,30 +139,25 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
                 />
             </Page.Main>
             <Page.Aside>
-                {activeSafeSource != null && (
-                    <PluginSingleComponent
-                        daoId={activeSafeSource.daoId}
-                        pluginAddress={activeSafeSource.address}
-                        pluginId={safeBodyPluginId}
-                        slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
-                    />
-                )}
                 {activeAsidePlugin != null && (
-                    <Page.AsideCard title={activeAsidePlugin.label}>
-                        <DaoPluginInfo
+                    <>
+                        <Page.AsideCard title={activeAsidePlugin.label}>
+                            <PluginSingleComponent
+                                daoId={daoId}
+                                Fallback={DaoPluginInfo}
+                                plugin={activeAsidePlugin.meta}
+                                pluginId={activeAsidePlugin.id}
+                                slotId={SettingsSlotId.SETTINGS_PLUGIN_INFO}
+                                type={PluginType.BODY}
+                            />
+                        </Page.AsideCard>
+                        <PluginSingleComponent
                             daoId={daoId}
                             plugin={activeAsidePlugin.meta}
-                            type={PluginType.BODY}
+                            pluginId={activeAsidePlugin.id}
+                            slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
                         />
-                    </Page.AsideCard>
-                )}
-                {activeAsidePlugin != null && (
-                    <PluginSingleComponent
-                        daoId={daoId}
-                        plugin={activeAsidePlugin.meta}
-                        pluginId={activeAsidePlugin.id}
-                        slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
-                    />
+                    </>
                 )}
             </Page.Aside>
         </>

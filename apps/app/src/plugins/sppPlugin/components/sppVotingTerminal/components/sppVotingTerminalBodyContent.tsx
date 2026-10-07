@@ -8,7 +8,6 @@ import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { useSppGovernanceSettingsDefault } from '@/plugins/sppPlugin/hooks/useSppGovernanceSettingsDefault';
 import type {
     ISppProposal,
@@ -17,6 +16,7 @@ import type {
     ISppSubProposal,
 } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
@@ -104,7 +104,7 @@ export const SppVotingTerminalBodyContent: React.FC<
     const showAction =
         !isHistoryMissing &&
         (canVote ||
-            (bodyPluginId === safeBodyPluginId &&
+            (bodyPluginId === PluginInterfaceType.SAFE &&
                 sppStageUtils.getBodyResult(
                     proposal,
                     plugin.address,

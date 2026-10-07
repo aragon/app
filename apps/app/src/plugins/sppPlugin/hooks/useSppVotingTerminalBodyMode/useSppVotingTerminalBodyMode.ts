@@ -1,12 +1,10 @@
-import {
-    externalPluginId,
-    safeBodyPluginId,
-} from '@/plugins/safeMultisigPlugin/constants';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import {
     SafeSettledReportOutcome,
     useSafeSettledReport,
 } from '@/plugins/safeMultisigPlugin/hooks/useSafeSettledReport';
 import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useSafeInfo } from '@/shared/api/safeService';
 import { SppProposalType } from '../../types';
 import { sppStageUtils } from '../../utils/sppStageUtils';
@@ -24,7 +22,7 @@ export const useSppVotingTerminalBodyMode = (
         plugin,
         proposal.network,
     );
-    const isSafe = registeredPluginId === safeBodyPluginId;
+    const isSafe = registeredPluginId === PluginInterfaceType.SAFE;
     const { data: safeInfo } = useSafeInfo(
         { urlParams: { network: proposal.network, address: plugin.address } },
         { enabled: isSafe },

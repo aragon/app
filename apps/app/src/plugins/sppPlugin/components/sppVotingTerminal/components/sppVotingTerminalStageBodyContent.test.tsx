@@ -3,12 +3,9 @@ import { render, screen } from '@testing-library/react';
 import type * as React from 'react';
 import type { IUseEnsNameReturn } from '@/modules/ens';
 import * as ensApi from '@/modules/ens';
-import {
-    externalPluginId,
-    safeBodyPluginId,
-} from '@/plugins/safeMultisigPlugin/constants';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import * as bodyModeApi from '@/plugins/sppPlugin/hooks/useSppVotingTerminalBodyMode';
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     generateSppProposal,
     generateSppStage,
@@ -40,8 +37,8 @@ jest.mock('@aragon/gov-ui-kit', () => {
 jest.mock('./sppVotingTerminalBodyContent', () => {
     const { createElement, useState } =
         jest.requireActual<typeof React>('react');
-    const { safeBodyPluginId } = jest.requireActual(
-        '@/plugins/safeMultisigPlugin/constants',
+    const { PluginInterfaceType } = jest.requireActual(
+        '@/shared/api/daoService',
     );
     const useSafeSettings = () => useState('Safe settings')[0];
     const getExternalSettings = () => 'External settings';
@@ -54,7 +51,7 @@ jest.mock('./sppVotingTerminalBodyContent', () => {
         }) => {
             useState(null);
             const getSettings =
-                bodyPluginId === safeBodyPluginId
+                bodyPluginId === PluginInterfaceType.SAFE
                     ? useSafeSettings
                     : getExternalSettings;
             return createElement('div', null, getSettings());
@@ -93,7 +90,7 @@ describe('<SppVotingTerminalStageBodyContent />', () => {
             data: undefined,
         } as unknown as IUseEnsNameReturn);
         useBodyModeSpy.mockReturnValue({
-            pluginId: safeBodyPluginId,
+            pluginId: PluginInterfaceType.SAFE,
             isHistoryMissing: false,
         });
     });
@@ -128,7 +125,7 @@ describe('<SppVotingTerminalStageBodyContent />', () => {
         expect(screen.getByText('External settings')).toBeInTheDocument();
 
         useBodyModeSpy.mockReturnValue({
-            pluginId: safeBodyPluginId,
+            pluginId: PluginInterfaceType.SAFE,
             isHistoryMissing: false,
         });
         rerender(createTestComponent());

@@ -1,42 +1,34 @@
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
-import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { PluginInterfaceType } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginSortUtils } from '@/shared/utils/pluginSortUtils';
 
-export const safeMemberSourceIdPrefix = 'safe:';
-
-interface IDaoMemberSourceBase {
-    address: string;
-    daoId: string;
+/**
+ * A members tab: one body plugin, in the DAO that owns it. Safes are ordinary body plugins, so
+ * every tab is backed by a canonical plugin record.
+ */
+export interface IDaoMemberSource {
+    /** Registry id the member-list slot is resolved with. */
     id: string;
-    label: string;
+    /** Stable tab identity carried in the `members` URL parameter. */
     uniqueId: string;
-}
-
-export interface IDaoPluginMemberSource extends IDaoMemberSourceBase {
-    kind: 'plugin';
+    label: string;
+    /** Address of the body plugin whose members are listed. */
+    address: string;
+    /** DAO owning the body plugin, which differs from the viewed DAO for linked accounts. */
+    daoId: string;
     plugin: IDaoPlugin;
 }
-
-export interface IDaoSafeMemberSource extends IDaoMemberSourceBase {
-    kind: 'safe';
-}
-
-export type IDaoMemberSource = IDaoPluginMemberSource | IDaoSafeMemberSource;
 
 export interface IResolveDaoMemberSourcesParams {
     dao: IDao;
     daoId: string;
     bodyPlugins: IDaoPlugin[];
-    processPlugins: IDaoPlugin[];
 }
 
 class DaoMemberSourceUtils {
     resolve = (params: IResolveDaoMemberSourcesParams): IDaoMemberSource[] => {
-        const { bodyPlugins, dao, daoId, processPlugins } = params;
+        const { bodyPlugins, dao, daoId } = params;
+
         const filterPlugins = bodyPlugins.map((plugin) => ({
             id: plugin.interfaceType,
             uniqueId: `${plugin.address}-${plugin.slug}`,
@@ -44,68 +36,18 @@ class DaoMemberSourceUtils {
             meta: plugin,
             props: {},
         }));
-        const sortedBodyPlugins = pluginSortUtils.sortByDisplayOrder(
-            filterPlugins,
-            { rootDaoAddress: dao.address },
-        );
-        const sources: IDaoMemberSource[] = sortedBodyPlugins.map(
-            ({ id, label, meta: plugin, uniqueId }) => ({
-                kind: 'plugin',
+
+        return pluginSortUtils
+            .sortByDisplayOrder(filterPlugins, { rootDaoAddress: dao.address })
+            .map(({ id, label, meta: plugin, uniqueId }) => ({
                 id,
                 uniqueId,
                 label,
                 address: plugin.address,
                 daoId: daoUtils.resolvePluginDaoId(daoId, plugin, dao),
                 plugin,
-            }),
-        );
-        const safeSources = new Set<string>();
-
-        for (const processPlugin of processPlugins) {
-            if (processPlugin.interfaceType !== PluginInterfaceType.SPP) {
-                continue;
-            }
-
-            const processDaoId = daoUtils.resolvePluginDaoId(
-                daoId,
-                processPlugin,
-                dao,
-            );
-            const settings = processPlugin.settings as ISppPluginSettings;
-
-            for (const stage of settings.stages ?? []) {
-                for (const body of stage.plugins) {
-                    if (
-                        body.interfaceType != null ||
-                        body.brandId !== VotingBodyBrandIdentity.SAFE
-                    ) {
-                        continue;
-                    }
-                    const uniqueId = this.getSafeSourceId(
-                        processDaoId,
-                        body.address,
-                    );
-                    if (safeSources.has(uniqueId)) {
-                        continue;
-                    }
-                    safeSources.add(uniqueId);
-
-                    sources.push({
-                        kind: 'safe',
-                        id: safeBodyPluginId,
-                        uniqueId,
-                        label: `Safe ${body.address.slice(0, 6)}…${body.address.slice(-4)}`,
-                        address: body.address,
-                        daoId: processDaoId,
-                    });
-                }
-            }
-        }
-
-        return sources;
+            }));
     };
-    getSafeSourceId = (daoId: string, safeAddress: string): string =>
-        `${safeMemberSourceIdPrefix}${daoId.toLowerCase()}:${safeAddress.toLowerCase()}`;
 
     getMemberUrlFromDaoId = (
         daoId: string,

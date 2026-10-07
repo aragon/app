@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import type { ISppPluginSettings } from '@/plugins/sppPlugin/types';
 import * as daoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
@@ -10,7 +9,6 @@ import {
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { PluginType } from '@/shared/types';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     DaoMemberListContainer,
@@ -83,63 +81,31 @@ describe('<DaoMemberListContainer /> component', () => {
         );
     });
 
-    it('adds Safe bodies from SPP stages to the member tabs', () => {
-        const bodyPlugin = generateDaoPlugin({
-            interfaceType: PluginInterfaceType.TOKEN_VOTING,
-            isBody: true,
-        });
+    it('renders a Safe body as an ordinary member tab', () => {
         const safeAddress = '0x1234567890123456789012345678901234567890';
-        const secondSafeAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-        const sppPlugin = generateDaoPlugin<ISppPluginSettings>({
-            interfaceType: PluginInterfaceType.SPP,
-            isProcess: true,
-            settings: {
-                pluginAddress: '0xspp',
-                stages: [
-                    {
-                        stageIndex: 0,
-                        plugins: [
-                            {
-                                address: safeAddress,
-                                interfaceType: undefined,
-                                brandId: 'safe',
-                                proposalType: 1,
-                            },
-                            {
-                                address: secondSafeAddress,
-                                interfaceType: undefined,
-                                brandId: 'safe',
-                                proposalType: 1,
-                            },
-                        ],
-                        voteDuration: 1,
-                        maxAdvance: 1,
-                        minAdvance: 0,
-                        approvalThreshold: 1,
-                        vetoThreshold: 0,
-                    },
-                ],
-            },
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+            name: 'Safe',
+            slug: 'safe',
         });
-        const bodyFilter = generateFilterComponentPlugin({
-            meta: bodyPlugin,
-        });
-        const processFilter = generateFilterComponentPlugin({
-            meta: sppPlugin,
-        });
-        useDaoPluginsSpy.mockImplementation((params) =>
-            params.type === PluginType.BODY ? [bodyFilter] : [processFilter],
-        );
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                id: PluginInterfaceType.SAFE,
+                meta: safePlugin,
+            }),
+        ]);
 
         render(createTestComponent());
 
-        const labels = screen
-            .getByTestId('plugin-filter-mock')
-            .getAttribute('data-labels')
-            ?.split(',');
-
-        expect(labels).toEqual(
-            expect.arrayContaining(['Safe 0x1234…7890', 'Safe 0xabcd…abcd']),
-        );
+        expect(
+            screen
+                .getByTestId('plugin-filter-mock')
+                .getAttribute('data-labels'),
+        ).toEqual('Safe');
+        expect(
+            screen.getByTestId('plugin-component-mock').dataset.pluginid,
+        ).toEqual(PluginInterfaceType.SAFE);
     });
 });

@@ -1,8 +1,8 @@
 export {
     externalPluginId,
     safeBodyHiddenTabs,
-    safeBodyPluginId,
     safeBodyPollInterval,
+    safePlugin,
     safeQueueReadLimit,
     settledHistoryMaxPages,
     settledHistoryPageSize,

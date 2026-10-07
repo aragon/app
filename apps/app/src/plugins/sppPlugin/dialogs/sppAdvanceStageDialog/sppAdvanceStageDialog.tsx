@@ -9,8 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -97,7 +96,7 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
         ?.plugins.some(
             (plugin) =>
                 sppStageUtils.getBodyPluginId(plugin, proposal.network) ===
-                safeBodyPluginId,
+                PluginInterfaceType.SAFE,
         );
 
     return (

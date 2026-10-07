@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { useSearchParams } from 'next/navigation';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import type { IUseFeaturedDelegatesPluginResult } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
 import * as useFeaturedDelegatesPluginHook from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
 import * as daoService from '@/shared/api/daoService';
@@ -25,20 +24,18 @@ jest.mock('../../components/daoMemberList', () => ({
     DaoMemberList: { Container: () => <div data-testid="member-list-mock" /> },
 }));
 
-jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
-    DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
-}));
 jest.mock('@/shared/components/pluginSingleComponent', () => ({
     PluginSingleComponent: (props: {
         daoId: string;
-        pluginAddress?: string;
+        plugin?: { address: string };
         pluginId: string;
+        slotId: string;
     }) => (
         <div
             data-dao-id={props.daoId}
-            data-plugin-address={props.pluginAddress}
+            data-plugin-address={props.plugin?.address}
             data-plugin-id={props.pluginId}
-            data-testid="member-panel-mock"
+            data-testid={`slot-${props.slotId}`}
         />
     ),
 }));
@@ -97,7 +94,9 @@ describe('<DaoMembersPageClient /> component', () => {
             screen.getByText(/daoMembersPage.main.title/),
         ).toBeInTheDocument();
         expect(screen.getByTestId('member-list-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('slot-SETTINGS_PLUGIN_INFO'),
+        ).toBeInTheDocument();
     });
 
     it('renders the aside plugin info on the featured delegates tab for the plugin resolved by the CMS plugin address', () => {
@@ -126,27 +125,39 @@ describe('<DaoMembersPageClient /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('slot-SETTINGS_PLUGIN_INFO'),
+        ).toBeInTheDocument();
     });
 
-    it('renders the selected Safe member panel with the Safe address', () => {
-        const safeDaoId =
-            'ethereum-sepolia-0x1111111111111111111111111111111111111111';
+    it('renders the aside for the selected body through the plugin-info slot', () => {
         const safeAddress = '0x2222222222222222222222222222222222222222';
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: daoService.PluginInterfaceType.SAFE,
+            slug: 'safe',
+        });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                id: daoService.PluginInterfaceType.SAFE,
+                uniqueId: `${safeAddress}-safe`,
+                meta: safePlugin,
+            }),
+        ]);
         useSearchParamsMock.mockReturnValue(
-            createSearchParams({
-                members: `safe:${safeDaoId}:${safeAddress}`,
-            }) as never,
+            createSearchParams({ members: `${safeAddress}-safe` }) as never,
         );
 
         render(createTestComponent());
 
-        const panel = screen.getByTestId('member-panel-mock');
-        expect(panel).toHaveAttribute('data-dao-id', safeDaoId);
-        expect(panel).toHaveAttribute('data-plugin-address', safeAddress);
-        expect(panel).toHaveAttribute('data-plugin-id', safeBodyPluginId);
-        expect(
-            screen.queryByTestId('plugin-info-mock'),
-        ).not.toBeInTheDocument();
+        const pluginInfoSlot = screen.getByTestId('slot-SETTINGS_PLUGIN_INFO');
+        expect(pluginInfoSlot).toHaveAttribute(
+            'data-plugin-address',
+            safeAddress,
+        );
+        expect(pluginInfoSlot).toHaveAttribute(
+            'data-plugin-id',
+            daoService.PluginInterfaceType.SAFE,
+        );
     });
 });

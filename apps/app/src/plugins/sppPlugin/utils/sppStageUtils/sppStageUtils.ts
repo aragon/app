@@ -2,11 +2,8 @@ import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import {
-    externalPluginId,
-    safeBodyPluginId,
-} from '@/plugins/safeMultisigPlugin/constants';
-import type { Network } from '@/shared/api/daoService';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import { type Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     type PluginId,
     pluginRegistryUtils,
@@ -24,7 +21,7 @@ class SppStageUtils {
     /**
      * Resolves the plugin id a stage body is rendered through. Installed bodies use their own
      * interface type; external bodies fall back to the generic external id unless they are a Safe
-     * on a chain the Safe transaction service covers, which has its own slot implementations.
+     * on a chain the Safe transaction service covers, which resolves to the canonical Safe identity.
      * Networks without a transaction service therefore keep rendering through the external
      * fallbacks with no extra branching.
      */
@@ -41,7 +38,7 @@ class SppStageUtils {
             network != null &&
             safeShortNameFromNetwork(network) != null;
 
-        return isSupportedSafe ? safeBodyPluginId : externalPluginId;
+        return isSupportedSafe ? PluginInterfaceType.SAFE : externalPluginId;
     };
 
     getStageStatus = (
