@@ -49,10 +49,10 @@ export interface IUseWorkspacePluginsReturn {
      * Whether the plugins are still being resolved, i.e. any of the DAOs or the visibility overrides is still being
      * read. This is what anything built out of {@link IUseWorkspacePluginsReturn.plugins} must wait for.
      *
-     * It covers the overrides and not only the DAOs because the overrides decide which plugins are returned: a
-     * caller that renders on the DAOs alone renders plugins that are about to be filtered out. The tabs built on
-     * this are validated against the URL parameter at mount only, so a hidden body appearing for a tick is a hidden
-     * body that can be selected — and whose members are then fetched and shown.
+     * It covers both reads because either one alone misstates the plugin list: a caller that renders on the DAOs
+     * alone renders plugins that are about to be filtered out — a hidden body appearing for a tick is a hidden body
+     * that can be selected, and whose members are then fetched and shown — while a caller that renders on the
+     * overrides alone is missing the plugins of every DAO that is still loading.
      */
     isPending: boolean;
     /**
@@ -61,8 +61,12 @@ export interface IUseWorkspacePluginsReturn {
      */
     isDaosPending: boolean;
     /**
-     * Whether the visibility overrides are still being read, ignoring the DAOs.
-     * For the callers that need the plugin list itself rather than a DAO
+     * Whether the visibility overrides are still being read, ignoring the DAOs. The narrow counterpart of
+     * {@link IUseWorkspacePluginsReturn.isDaosPending}, kept for symmetry and currently unused.
+     *
+     * Not the flag to gate tabs on, nor anything else built out of {@link IUseWorkspacePluginsReturn.plugins}: the
+     * overrides arrive hydrated from `LayoutWorkspace`, so this is already false while the DAOs are still loading
+     * and the plugin list is still incomplete. Use {@link IUseWorkspacePluginsReturn.isPending} for that.
      */
     isPluginsPending: boolean;
     /**

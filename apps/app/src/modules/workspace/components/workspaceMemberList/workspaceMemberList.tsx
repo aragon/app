@@ -68,12 +68,11 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
 
     // Sub-plugins are included, as `DaoMemberListContainer` does: the bodies nested in a process hold members of
     // their own, and they sit on a selected account, so the endpoint returns them.
-    const { isPending: isPluginsPending, plugins: bodyPlugins } =
-        useWorkspacePlugins({
-            accounts,
-            type: PluginType.BODY,
-            includeSubPlugins: true,
-        });
+    const { isPending, plugins: bodyPlugins } = useWorkspacePlugins({
+        accounts,
+        type: PluginType.BODY,
+        includeSubPlugins: true,
+    });
 
     // The processes the rows need alongside the bodies
     const { plugins: processPlugins } = useWorkspacePlugins({
@@ -154,7 +153,7 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
     const hasTabs =
         tabs.length > 1 || (tabs.length === 1 && hasAccountWithoutTab);
 
-    if (isPluginsPending || !hasTabs) {
+    if (isPending || !hasTabs) {
         return renderList();
     }
 

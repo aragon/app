@@ -359,9 +359,8 @@ describe('<WorkspaceProposalList /> component', () => {
         );
     });
 
-    // The overrides decide which processes are visible, and the tabs are validated against the URL parameter at
-    // mount only: a tab offered before they land is a tab for a process the CMS may hide, selectable and fetched
-    // behind it.
+    // The overrides decide which processes are visible, so a tab offered before they land is a tab for a process
+    // the CMS may hide, selectable and with its proposals fetched behind it.
     it('renders no tabs until the CMS overrides land', async () => {
         const address = nextAddress();
         getDaoSpy.mockResolvedValue(
@@ -388,6 +387,50 @@ describe('<WorkspaceProposalList /> component', () => {
         });
 
         render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        await waitFor(() => expect(getProposalListSpy).toHaveBeenCalled());
+        expect(
+            screen.queryByTestId('plugin-filter-mock'),
+        ).not.toBeInTheDocument();
+    });
+
+    // A DAO that lands after the tabs are built contributes none of its own, so the parameter naming one of its
+    // plugins is invalid and the group tab shows in its place until the DAO is in. The overrides arrive hydrated
+    // from `LayoutWorkspace`, so this is the case the page actually hits.
+    it('renders no tabs until every DAO lands', async () => {
+        const firstAddress = nextAddress();
+        const secondAddress = nextAddress();
+        const firstAccount = buildAccount(firstAddress);
+        const secondAccount = buildAccount(secondAddress);
+
+        getDaoSpy.mockImplementation((params) =>
+            params.urlParams.id === firstAccount.id
+                ? Promise.resolve(
+                      generateDao({
+                          id: firstAccount.id,
+                          address: firstAddress,
+                          network,
+                          plugins: [
+                              generateDaoPlugin({
+                                  address: '0xMultisig',
+                                  isProcess: true,
+                                  interfaceType: PluginInterfaceType.MULTISIG,
+                              }),
+                              generateDaoPlugin({
+                                  address: '0xTokenVoting',
+                                  isProcess: true,
+                                  interfaceType:
+                                      PluginInterfaceType.TOKEN_VOTING,
+                              }),
+                          ],
+                      }),
+                  )
+                : new Promise<never>(() => undefined),
+        );
+
+        render(
+            createTestComponent({ accounts: [firstAccount, secondAccount] }),
+        );
 
         await waitFor(() => expect(getProposalListSpy).toHaveBeenCalled());
         expect(
