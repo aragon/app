@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/vitepress.css";
+@import "fumadocs-ui/css/preset.css";
+
+/*
+ * The theme of the site, in one place: the VitePress preset above (the look of the protocol
+ * documentation), Aragon's blue as the accent and the font next/font loads in src/app/layout.tsx
+ * (--font-inter). Another preset, or the gov-ui-kit tokens, is a change to this file only.
+ */
+@theme {
+    --color-fd-primary: #003bf5;
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* The lighter Aragon blue (gov-ui-kit primary-300) keeps links readable on the dark background. */
+.dark {
+    --color-fd-primary: #628cfe;
+}
