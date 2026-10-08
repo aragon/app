@@ -1,0 +1,10 @@
+{
+    "framework": "nextjs",
+    "buildCommand": "pnpm build",
+    "rewrites": [
+        {
+            "source": "/help/:path*",
+            "destination": "/:path*"
+        }
+    ]
+}

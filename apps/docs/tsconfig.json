@@ -1,0 +1,27 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        ".next",
+        "out",
+        "coverage"
+    ],
+    "include": [
+        "next.config.ts",
+        "next-env.d.ts",
+        "src"
+    ]
+}

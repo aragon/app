@@ -34,6 +34,15 @@ assistant:
   - ".github/workflows/shared-deploy.yml"
   - ".github/filters.yml"
 
+# Gates the docs site deploys (dev on push, preview on PRs). A knowledge-base change reaches the
+# site through a repository_dispatch from aragon/platform-doc, not through a commit here.
+docs:
+  - "apps/docs/**"
+  - "packages/docs-corpus/**"
+  - ".github/workflows/docs-*.yml"
+  - ".github/workflows/shared-deploy.yml"
+  - ".github/filters.yml"
+
 # Gates the Storybook deploys only. Deliberately narrow: adding shared build inputs such as
 # pnpm-lock.yaml here would redeploy the Storybook on every unrelated dependency change. The kit's
 # commits reach app release notes through the `app` filter above, which already lists its path.
