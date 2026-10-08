@@ -1,8 +1,4 @@
-import {
-    dehydrate,
-    HydrationBoundary,
-    QueryClient,
-} from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { daoOptions } from '@/shared/api/daoService';
 import { WorkspaceAccountGateError } from './workspaceAccountGateError';
@@ -32,7 +28,6 @@ export interface IWorkspaceAccountGateProps {
  * The DAO is read on the server, so the outcome is settled before anything reaches the client: no client-side
  * loading state, and no client refetch of a DAO that already failed to load. The read is the same GET request
  * `LayoutWorkspaceAccount` makes within the same render, which Next.js memoizes, so it reaches the backend once.
- * The DAO is hydrated here too so the gate stays self-sufficient.
  *
  * TODO: once Safe accounts are implemented, merge this gate into `LayoutWorkspaceAccount` instead of wrapping every
  * account-level page. The gate has to learn the account type first: it currently renders an error for anything that
@@ -56,9 +51,5 @@ export const WorkspaceAccountGate: React.FC<
         return <WorkspaceAccountGateError />;
     }
 
-    return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            {children}
-        </HydrationBoundary>
-    );
+    return children;
 };

@@ -137,6 +137,42 @@ class DaoUtils {
             : addressUtils.truncateAddress(dao.address);
     };
 
+    /**
+     * Identifier of a plugin inside a filter, i.e. the value its tab carries on the URL.
+     *
+     * Built here rather so that a server component resolves the same string the client wrote.
+     * @param plugin - Plugin to identify.
+     * @returns The filter identifier of the plugin.
+     */
+    buildPluginUniqueId = (
+        plugin: Pick<IDaoPlugin, 'address' | 'slug'>,
+    ): string => `${plugin.address}-${plugin.slug}`;
+
+    /**
+     * The process a governance body acts through, out of the given processes.
+     *
+     * The first match wins. A body configured into two processes
+     * resolves to the first plugin based on the plugin order of the DAO
+     * @param body - Body to find the process of.
+     * @param processes - Processes to look through, e.g. the processes of the DAO the body is installed on.
+     * @returns The process the body acts through, or undefined when it belongs to none.
+     */
+    findPluginProcess = (
+        body: IDaoPlugin,
+        processes: IDaoPlugin[],
+    ): IDaoPlugin | undefined =>
+        processes.find(
+            (process) =>
+                this.isSameAddress(process.address, body.address) ||
+                (body.parentPlugin != null &&
+                    this.isSameAddress(process.address, body.parentPlugin)) ||
+                process.subPlugins?.some((group) =>
+                    group.addresses.some((address) =>
+                        this.isSameAddress(address, body.address),
+                    ),
+                ),
+        );
+
     getPluginName = (plugin: IDaoPlugin): string => {
         if (plugin.name) {
             return plugin.name;

@@ -217,6 +217,107 @@ describe('dao utils', () => {
         });
     });
 
+    describe('buildPluginUniqueId', () => {
+        // The value the plugin filters carry on the URL. A server component resolves it without the client hook
+        // that writes it, so both sides must build the very same string.
+        it('identifies a plugin by its address and slug', () => {
+            const plugin = generateDaoPlugin({
+                address: '0x1234',
+                slug: 'multisig',
+            });
+
+            expect(daoUtils.buildPluginUniqueId(plugin)).toEqual(
+                '0x1234-multisig',
+            );
+        });
+    });
+
+    describe('findPluginProcess', () => {
+        // Real 20-byte addresses: the comparison validates the shape before comparing, so a placeholder would
+        // never match and the test would pass for the wrong reason.
+        const bodyAddress = '0x1111111111111111111111111111111111111111';
+        const processAddress = '0x2222222222222222222222222222222222222Abc';
+        const otherAddress = '0x3333333333333333333333333333333333333333';
+
+        // A DAO whose single plugin supports both interfaces is its own process.
+        it('returns the body itself when it is a process', () => {
+            const plugin = generateDaoPlugin({
+                address: bodyAddress,
+                isBody: true,
+                isProcess: true,
+            });
+
+            expect(daoUtils.findPluginProcess(plugin, [plugin])).toEqual(
+                plugin,
+            );
+        });
+
+        // The link as the child carries it.
+        it('returns the process the body names as its parent', () => {
+            const process = generateDaoPlugin({
+                address: processAddress,
+                isProcess: true,
+            });
+            const body = generateDaoPlugin({
+                address: bodyAddress,
+                isBody: true,
+                isSubPlugin: true,
+                parentPlugin: processAddress,
+            });
+
+            expect(daoUtils.findPluginProcess(body, [process])).toEqual(
+                process,
+            );
+        });
+
+        // The same link as the parent carries it, for the responses that fill only this end.
+        it('returns the process that lists the body among its sub-plugins', () => {
+            const process = generateDaoPlugin({
+                address: processAddress,
+                isProcess: true,
+                subPlugins: [{ addresses: [bodyAddress], stageIndex: 0 }],
+            });
+            const body = generateDaoPlugin({
+                address: bodyAddress,
+                isBody: true,
+                isSubPlugin: true,
+            });
+
+            expect(daoUtils.findPluginProcess(body, [process])).toEqual(
+                process,
+            );
+        });
+
+        it('matches regardless of the address casing', () => {
+            const process = generateDaoPlugin({
+                address: processAddress.toLowerCase(),
+                isProcess: true,
+            });
+            const body = generateDaoPlugin({
+                address: bodyAddress,
+                parentPlugin: processAddress.toUpperCase().replace('0X', '0x'),
+            });
+
+            expect(daoUtils.findPluginProcess(body, [process])).toEqual(
+                process,
+            );
+        });
+
+        // A membership-only plugin creates no proposals, so there is no process to name.
+        it('returns undefined for a body that belongs to no process', () => {
+            const body = generateDaoPlugin({
+                address: bodyAddress,
+                isBody: true,
+            });
+            const other = generateDaoPlugin({
+                address: otherAddress,
+                isProcess: true,
+            });
+
+            expect(daoUtils.findPluginProcess(body, [other])).toBeUndefined();
+        });
+    });
+
     describe('getPluginName', () => {
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';

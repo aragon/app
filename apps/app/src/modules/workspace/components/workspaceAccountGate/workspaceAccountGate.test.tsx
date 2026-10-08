@@ -9,6 +9,7 @@ import {
     WorkspaceAccountGate,
 } from './workspaceAccountGate';
 
+// Rendered as a marker so the assertion below can show the gate wraps the page in no boundary of its own.
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
@@ -56,12 +57,19 @@ describe('<WorkspaceAccountGate /> component', () => {
         );
     });
 
-    it('renders the page, hydrated, once the DAO of the account has resolved', async () => {
+    it('renders the page once the DAO of the account has resolved', async () => {
         render(await createTestComponent());
 
-        expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
         expect(screen.getByTestId('page-mock')).toBeInTheDocument();
         expect(screen.queryByTestId('gate-error-mock')).not.toBeInTheDocument();
+    });
+
+    // `LayoutWorkspaceAccount`, which every page using the gate renders inside, has already hydrated the same
+    // query. Hydrating it again would serialize a second copy of it for the client to discard.
+    it('leaves the hydration of the DAO to the layout above it', async () => {
+        render(await createTestComponent());
+
+        expect(screen.queryByTestId('hydration-mock')).not.toBeInTheDocument();
     });
 
     it('renders an error instead of the page when the DAO fails to load', async () => {
