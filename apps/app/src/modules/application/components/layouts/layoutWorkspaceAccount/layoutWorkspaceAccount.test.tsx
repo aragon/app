@@ -67,13 +67,22 @@ describe('<LayoutWorkspaceAccount /> component', () => {
 
     // This is what the account scope buys: an account ID is a DAO ID, so the DAO resolves without the registry and
     // is hydrated once for every section below, which the workspace layout cannot do.
-    it('prefetches the DAO of the account and the CMS overrides', async () => {
+    it('prefetches the DAO of the account', async () => {
         await createTestComponent();
 
         expect(prefetchedKeys()).toContainEqual(
             daoOptions({ urlParams: { id: accountId } }).queryKey,
         );
-        expect(prefetchedKeys()).toContainEqual(daoOverridesOptions().queryKey);
+    });
+
+    // `LayoutWorkspace`, which this layout always renders inside, has already read them — reading them again would
+    // be the same read twice in one render.
+    it('leaves the CMS overrides to the workspace layout above it', async () => {
+        await createTestComponent();
+
+        expect(prefetchedKeys()).not.toContainEqual(
+            daoOverridesOptions().queryKey,
+        );
     });
 
     it('hydrates what it prefetched for the sections below', async () => {
