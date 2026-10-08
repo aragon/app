@@ -12,6 +12,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import {
     DaoMemberList,
@@ -21,9 +22,13 @@ import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoMembersPageClientProps {
     /**
-     * Initial parameters to use to fetch the DAO member list.
+     * Initial parameters to use to fetch the DAO member list. The member list sets the plugin address of each body
+     * tab itself.
      */
-    initialParams: IGetMemberListParams;
+    initialParams: NestedOmit<
+        IGetMemberListParams,
+        'queryParams.pluginAddress'
+    >;
     /**
      * Featured delegates config from CMS.
      */

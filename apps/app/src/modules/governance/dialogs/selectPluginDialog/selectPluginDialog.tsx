@@ -37,6 +37,11 @@ export interface ISelectPluginDialogParams {
      * Only allow plugins with full execute permissions.
      */
     fullExecuteOnly?: boolean;
+    /**
+     * Callback called on back action. Turns the secondary action into a back one for the callers opening this
+     * dialog as the second step of a stacked flow, where cancelling would drop the first step as well.
+     */
+    onBack?: () => void;
 }
 
 export interface ISelectPluginDialogProps
@@ -58,6 +63,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
         initialPlugin,
         variant = 'proposal',
         fullExecuteOnly,
+        onBack,
     } = location.params;
 
     const { t } = useTranslations();
@@ -162,8 +168,10 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
                     disabled: selectedPlugin == null || !allResultsReady,
                 }}
                 secondaryAction={{
-                    label: t('app.governance.selectPluginDialog.action.cancel'),
-                    onClick: () => close(),
+                    label: t(
+                        `app.governance.selectPluginDialog.action.${onBack != null ? 'back' : 'cancel'}`,
+                    ),
+                    onClick: onBack ?? (() => close()),
                 }}
             />
         </>

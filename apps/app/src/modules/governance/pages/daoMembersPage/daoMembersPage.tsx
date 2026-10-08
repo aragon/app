@@ -25,6 +25,22 @@ export interface IDaoMembersPageProps {
 
 export const daoMembersCount = 18;
 
+/**
+ * TODO: every URL this page and `DaoMemberDetailsPage` build is a `/dao/…` URL, so a reader who reached them
+ * through `WorkspaceAccountMembersPage` / `WorkspaceAccountMemberDetailsPage` is dropped out of the workspace by
+ * the next click. Three exits, to be closed together:
+ *
+ * - the rows of `DaoMemberListDefault` link to `daoUtils.getDaoUrl(dao, 'members/{address}')`;
+ * - the no-visible-body redirect below points at the DAO dashboard;
+ * - `DaoMemberDetailsPage` redirects a non-checksummed address to `/dao/…` and its invalid-address error links
+ *   there too, which is what makes a hand-typed or shared lowercase workspace URL leave the workspace.
+ *
+ * The fix is to make the base URL of these pages a parameter rather than always `daoUtils.getDaoUrl`, so the
+ * workspace pages can pass their own account-scoped base. Alternatively, the utility can be updated to serve
+ * workspace-scoped URLS as well for now. Either way the shape already exists: `DaoMemberDetailsPage` takes a
+ * `bodyPluginAddress` prop for the other thing only the workspace knows.
+ */
+
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     const { params } = props;
     const daoPageParams = await params;

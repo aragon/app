@@ -44,6 +44,27 @@ describe('<ErrorBoundary /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    it('rethrows the errors Next throws for its own control flow, e.g. notFound()', () => {
+        testLogger.suppressErrors();
+
+        const ChildrenNotFound = () => {
+            const error = new Error('NEXT_HTTP_ERROR_FALLBACK;404');
+            (error as Error & { digest: string }).digest =
+                'NEXT_HTTP_ERROR_FALLBACK;404';
+
+            throw error;
+        };
+
+        // The error must reach the not-found boundary Next places above this one instead of being turned into the
+        // error feedback here, therefore it leaves this boundary as it came in.
+        expect(() =>
+            render(createTestComponent({ children: <ChildrenNotFound /> })),
+        ).toThrow('NEXT_HTTP_ERROR_FALLBACK;404');
+        expect(
+            screen.queryByText(/errorFeedback.title/),
+        ).not.toBeInTheDocument();
+    });
+
     it('resets the error state on pathname change', () => {
         testLogger.suppressErrors();
         const initialPathname = '/explore';

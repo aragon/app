@@ -21,7 +21,8 @@ export type FeatureFlagKey =
     | 'supportChat'
     | 'supportChatDocs'
     | 'telegramSubscription'
-    | 'domainMemberList';
+    | 'domainMemberList'
+    | 'workspaces';
 
 /**
  * Feature flag definition structure.
