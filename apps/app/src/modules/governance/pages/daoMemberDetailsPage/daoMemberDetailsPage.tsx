@@ -18,13 +18,14 @@ export interface IDaoMemberDetailsPageProps {
      */
     params: Promise<IDaoMemberPageParams>;
     /**
-     * Address of the body plugin to read the membership under, defaulting to the first visible body of the DAO.
+     * Body plugin to read the membership under, defaulting to the first visible body of the DAO. Either its filter
+     * identifier — what the `vote` search parameter of the page carries — or its plain address.
      *
      * Membership is plugin-scoped, so the plugin decides which voting power and token balance the page reports. The
      * `/dao/…` route does not name one — it has no way to — and takes the default; a caller that knows the
      * governance the member actually belongs to passes it, so the page does not report a body the member is not in.
      */
-    bodyPluginAddress?: string;
+    bodyPluginId?: string;
 }
 
 /**
@@ -35,7 +36,7 @@ export interface IDaoMemberDetailsPageProps {
 export const DaoMemberDetailsPage: React.FC<
     IDaoMemberDetailsPageProps
 > = async (props) => {
-    const { params, bodyPluginAddress } = props;
+    const { params, bodyPluginId } = props;
     const { address: rawAddress, addressOrEns, network } = await params;
 
     if (!isAddress(rawAddress, { strict: false })) {
@@ -76,16 +77,16 @@ export const DaoMemberDetailsPage: React.FC<
         allBodyPlugins,
         daoOverride,
     );
-    // Compared lowercased rather than through `addressUtils.isAddressEqual`, as the gov-ui-kit client shim breaks
-    // in a server component — the same reason the address checks above come straight from viem.
-    const normalizedBodyPluginAddress = bodyPluginAddress?.toLowerCase();
 
-    // Falls back to the first body rather than failing on an address that names none: a governance that has since
-    // been hidden, or that belongs to another DAO, must degrade to the default page instead of a dead end.
+    const normalizedBodyPluginId = bodyPluginId?.toLowerCase();
+
+    // Falls back to the first body rather than failing on an invalid value like hidden body
     const bodyPlugin =
         visibleBodyPlugins.find(
             (plugin) =>
-                plugin.address.toLowerCase() === normalizedBodyPluginAddress,
+                plugin.address.toLowerCase() === normalizedBodyPluginId ||
+                daoUtils.buildPluginUniqueId(plugin).toLowerCase() ===
+                    normalizedBodyPluginId,
         ) ?? visibleBodyPlugins[0];
 
     if (bodyPlugin == null) {

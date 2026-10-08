@@ -29,7 +29,10 @@ import {
     WorkspaceProposalList,
 } from './workspaceProposalList';
 
-const useDaoOverridesMock = jest.fn(() => ({ data: undefined }));
+const useDaoOverridesMock = jest.fn(() => ({
+    data: undefined,
+    isPending: false,
+}));
 
 jest.mock('@/shared/api/cmsService', () => ({
     useDaoOverrides: () => useDaoOverridesMock(),
@@ -112,7 +115,10 @@ describe('<WorkspaceProposalList /> component', () => {
     afterEach(() => {
         getProposalListSpy.mockReset();
         getDaoSpy.mockReset();
-        useDaoOverridesMock.mockReturnValue({ data: undefined });
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: false,
+        });
     });
 
     const createTestComponent = (
@@ -323,6 +329,7 @@ describe('<WorkspaceProposalList /> component', () => {
                     pluginsToHide: [{ address: '0xHidden' }],
                 },
             },
+            isPending: false,
         } as never);
 
         render(
@@ -350,5 +357,41 @@ describe('<WorkspaceProposalList /> component', () => {
                 },
             }),
         );
+    });
+
+    // The overrides decide which processes are visible, and the tabs are validated against the URL parameter at
+    // mount only: a tab offered before they land is a tab for a process the CMS may hide, selectable and fetched
+    // behind it.
+    it('renders no tabs until the CMS overrides land', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xMultisig',
+                        isProcess: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                    generateDaoPlugin({
+                        address: '0xTokenVoting',
+                        isProcess: true,
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    }),
+                ],
+            }),
+        );
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: true,
+        });
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        await waitFor(() => expect(getProposalListSpy).toHaveBeenCalled());
+        expect(
+            screen.queryByTestId('plugin-filter-mock'),
+        ).not.toBeInTheDocument();
     });
 });

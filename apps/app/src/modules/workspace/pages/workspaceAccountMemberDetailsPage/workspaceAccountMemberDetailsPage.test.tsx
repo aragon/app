@@ -158,7 +158,7 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         render(await createTestComponent());
 
         expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginAddress: governanceAddress }),
+            expect.objectContaining({ bodyPluginId: governanceAddress }),
             undefined,
         );
     });
@@ -185,7 +185,80 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
             screen.getByTestId('dao-member-details-mock'),
         ).toBeInTheDocument();
         expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginAddress: undefined }),
+            expect.objectContaining({ bodyPluginId: undefined }),
+            undefined,
+        );
+    });
+
+    // An empty answer only means "a member of nothing" when the account behind it could be read. A partial one is
+    // no more an answer than a thrown one, so it degrades the same way instead of redirecting a real member away.
+    it('renders the member page without a governance when the account could not be read in full', async () => {
+        getMemberListSpy.mockResolvedValue(
+            generateWorkspaceQueryResponse({ data: [], partial: true }),
+        );
+        render(await createTestComponent());
+
+        expect(screen.queryByTestId('redirect-mock')).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId('dao-member-details-mock'),
+        ).toBeInTheDocument();
+        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
+            expect.objectContaining({ bodyPluginId: undefined }),
+            undefined,
+        );
+    });
+
+    // The rows of the member lists name the body they stood for, which is the whole question the lookup answers. It
+    // rides on the parameter the page already carries for its vote list, so one value picks both.
+    it('takes the body from the URL and asks the endpoint nothing', async () => {
+        const linkedBody = '0x3333333333333333333333333333333333333333-slug';
+        render(
+            await createTestComponent({
+                searchParams: Promise.resolve({ vote: linkedBody }),
+            }),
+        );
+
+        expect(getMemberListSpy).not.toHaveBeenCalled();
+        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
+            expect.objectContaining({ bodyPluginId: linkedBody }),
+            undefined,
+        );
+    });
+
+    // A URL that names a body opts out of the lookup, and therefore out of the redirect that goes with it. The DAO
+    // page matches the address against the visible bodies and falls back to the first, so it cannot dead-end.
+    it('does not redirect a URL that names a body', async () => {
+        getMemberListSpy.mockResolvedValue(
+            generateWorkspaceQueryResponse({ data: [] }),
+        );
+        render(
+            await createTestComponent({
+                searchParams: Promise.resolve({
+                    vote: '0x3333333333333333333333333333333333333333-slug',
+                }),
+            }),
+        );
+
+        expect(screen.queryByTestId('redirect-mock')).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId('dao-member-details-mock'),
+        ).toBeInTheDocument();
+    });
+
+    // There is no sensible pick between two bodies, and the app never writes a repeated parameter, so a URL that
+    // carries one is read as naming none and falls back to the lookup.
+    it('falls back to the lookup when the URL repeats the body parameter', async () => {
+        render(
+            await createTestComponent({
+                searchParams: Promise.resolve({
+                    vote: ['0x3333333333333333333333333333333333333333', '0x4'],
+                }),
+            }),
+        );
+
+        expect(getMemberListSpy).toHaveBeenCalled();
+        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
+            expect.objectContaining({ bodyPluginId: governanceAddress }),
             undefined,
         );
     });

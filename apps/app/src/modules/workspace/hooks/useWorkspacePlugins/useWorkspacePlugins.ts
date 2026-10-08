@@ -46,9 +46,25 @@ export interface IUseWorkspacePluginsReturn {
      */
     daos: Record<string, IDao>;
     /**
-     * Whether any of the DAOs is still being read.
+     * Whether the plugins are still being resolved, i.e. any of the DAOs or the visibility overrides is still being
+     * read. This is what anything built out of {@link IUseWorkspacePluginsReturn.plugins} must wait for.
+     *
+     * It covers the overrides and not only the DAOs because the overrides decide which plugins are returned: a
+     * caller that renders on the DAOs alone renders plugins that are about to be filtered out. The tabs built on
+     * this are validated against the URL parameter at mount only, so a hidden body appearing for a tick is a hidden
+     * body that can be selected — and whose members are then fetched and shown.
      */
     isPending: boolean;
+    /**
+     * Whether any of the DAOs is still being read, ignoring the visibility overrides.
+     * For the callers that need a DAO rather than the plugin list itself
+     */
+    isDaosPending: boolean;
+    /**
+     * Whether the visibility overrides are still being read, ignoring the DAOs.
+     * For the callers that need the plugin list itself rather than a DAO
+     */
+    isPluginsPending: boolean;
     /**
      * Plugins grouped by DAO, in the order of the accounts. DAOs that could not be read are left out.
      */
@@ -61,15 +77,16 @@ export interface IUseWorkspacePluginsReturn {
  * Linked-account plugins are always left out, as the workspace query endpoints only return the data of the
  * selected accounts. Sub-plugins are opt-in: they sit on a selected account, so the endpoints cover them.
  * @param params - Accounts of the workspace, type of the plugins to return and whether to include sub-plugins.
- * @returns The DAOs, whether any is still being read and their plugins grouped by DAO.
+ * @returns The DAOs, whether the plugins and the DAOs are still being resolved, and the plugins grouped by DAO.
  */
 export const useWorkspacePlugins = (
     params: IUseWorkspacePluginsParams,
 ): IUseWorkspacePluginsReturn => {
     const { accounts, type, includeSubPlugins = false } = params;
 
-    const { daos, isPending } = useWorkspaceDaos(accounts);
-    const { data: daoOverrides } = useDaoOverrides();
+    const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
+    const { data: daoOverrides, isPending: isOverridesPending } =
+        useDaoOverrides();
 
     const plugins = accounts.flatMap((account) => {
         const dao = daos[account.id];
@@ -91,5 +108,11 @@ export const useWorkspacePlugins = (
         return [{ accountId: account.id, dao, plugins: visiblePlugins }];
     });
 
-    return { daos, isPending, plugins };
+    return {
+        daos,
+        plugins,
+        isDaosPending,
+        isPluginsPending: isOverridesPending,
+        isPending: isDaosPending || isOverridesPending,
+    };
 };

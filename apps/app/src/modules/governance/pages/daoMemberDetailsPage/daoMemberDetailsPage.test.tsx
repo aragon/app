@@ -120,6 +120,12 @@ describe('<DaoMemberDetailsPage /> component', () => {
         const firstBodyAddress = '0x1111111111111111111111111111111111111111';
         const secondBodyAddress = '0x2222222222222222222222222222222222222222';
 
+        const secondBody = generateDaoPlugin({
+            address: secondBodyAddress,
+            interfaceType: PluginInterfaceType.MULTISIG,
+            isBody: true,
+        });
+
         /**
          * Mocks a DAO with two visible bodies and returns the plugin address the member read was made under.
          */
@@ -134,11 +140,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
                             interfaceType: PluginInterfaceType.MULTISIG,
                             isBody: true,
                         }),
-                        generateDaoPlugin({
-                            address: secondBodyAddress,
-                            interfaceType: PluginInterfaceType.MULTISIG,
-                            isBody: true,
-                        }),
+                        secondBody,
                     ],
                 }),
             );
@@ -161,7 +163,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
         // token balance for a member that has both.
         it('reads the membership under the named body plugin', async () => {
             const queryKey = await renderAndReadPluginAddress({
-                bodyPluginAddress: secondBodyAddress,
+                bodyPluginId: secondBodyAddress,
             });
 
             expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
@@ -169,23 +171,33 @@ describe('<DaoMemberDetailsPage /> component', () => {
 
         it('matches the named body plugin regardless of the address casing', async () => {
             const queryKey = await renderAndReadPluginAddress({
-                bodyPluginAddress: secondBodyAddress.toUpperCase(),
+                bodyPluginId: secondBodyAddress.toUpperCase(),
+            });
+
+            expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
+        });
+
+        // The links into this page name the body with the identifier its own filters carry on the URL, so that one
+        // value picks both the body reported here and the body the vote list opens on.
+        it('matches the named body plugin by its filter identifier', async () => {
+            const queryKey = await renderAndReadPluginAddress({
+                bodyPluginId: daoUtils.buildPluginUniqueId(secondBody),
             });
 
             expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
         });
 
         // A governance that has since been hidden, or that belongs to another DAO, degrades to the default page.
-        it('falls back to the first visible body when the address names none', async () => {
+        it('falls back to the first visible body when the value names none', async () => {
             const queryKey = await renderAndReadPluginAddress({
-                bodyPluginAddress: '0x3333333333333333333333333333333333333333',
+                bodyPluginId: '0x3333333333333333333333333333333333333333',
             });
 
             expect(queryKey).toEqual(expectedQueryKey(firstBodyAddress));
         });
 
         // The `/dao/…` route has no way to name a body, so it keeps reading the first one.
-        it('falls back to the first visible body when given no address', async () => {
+        it('falls back to the first visible body when given no body', async () => {
             const queryKey = await renderAndReadPluginAddress();
 
             expect(queryKey).toEqual(expectedQueryKey(firstBodyAddress));

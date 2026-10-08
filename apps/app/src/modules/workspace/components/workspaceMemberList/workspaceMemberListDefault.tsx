@@ -10,8 +10,12 @@ import {
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
+import { daoProposalListFilterParam } from '@/modules/governance/components/daoProposalList';
+import { voteListFilterParam } from '@/modules/governance/components/voteList';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import {
     type IGetWorkspaceMemberListParams,
@@ -51,6 +55,37 @@ export const buildWorkspaceMemberListParams = (
     },
 });
 
+/**
+ * Visible governance plugins of one account, as the rows need them: the bodies to pick a membership from, and the
+ * processes to name the one the chosen body acts through.
+ */
+export interface IWorkspaceAccountPlugins {
+    /**
+     * Bodies of the account, sub-plugins included.
+     */
+    bodies: IDaoPlugin[];
+    /**
+     * Processes of the account, sub-plugins excluded, matching the set the member page filters its proposals by.
+     *
+     * Unset while they are still being read. A row must be able to tell that from an account that has none, the
+     * same distinction the map itself draws for the bodies: an empty list means the body is in no process and the
+     * link says nothing about proposals, whereas an unresolved one would be a process the row simply cannot name
+     * yet.
+     */
+    processes?: IDaoPlugin[];
+}
+
+/**
+ * The membership a row links to: the account whose member page serves it and, when the plugins of that account are
+ * known, the identifiers of the body the membership is held on and of the process that body acts through.
+ */
+interface IWorkspaceMemberTarget {
+    accountId: string;
+    bodyAddress: string;
+    bodyId?: string;
+    processId?: string;
+}
+
 interface IWorkspaceMemberListItemProps {
     /**
      * Member the row stands for.
@@ -65,6 +100,16 @@ interface IWorkspaceMemberListItemProps {
      * account of the workspace that has one.
      */
     accountId?: string;
+    /**
+     * Filter identifier of the governance body of the membership the row links to, so the member page reports the
+     * body the row stands for rather than resolving one of its own.
+     */
+    bodyId?: string;
+    /**
+     * Filter identifier of the process the body acts through, so the proposals of the member page open on the same
+     * governance the row stands for instead of on every process of the account.
+     */
+    processId?: string;
 }
 
 /**
@@ -77,7 +122,7 @@ interface IWorkspaceMemberListItemProps {
 const WorkspaceMemberListItem: React.FC<IWorkspaceMemberListItemProps> = (
     props,
 ) => {
-    const { member, workspaceId, accountId } = props;
+    const { member, workspaceId, accountId, bodyId, processId } = props;
 
     // Resolved exactly as `DaoMemberListDefault` does — including the stripped Aragon registry suffix — so a member
     // reads the same here and on the account members page this row links to.
@@ -89,20 +134,48 @@ const WorkspaceMemberListItem: React.FC<IWorkspaceMemberListItemProps> = (
 
     const { buildEntityUrl } = useDaoChain({ network: member.network });
 
-    // A member of no account that serves a member page — a Safe owner, today — has nowhere to go inside the
-    // workspace, and linking to its Safe would render `WorkspaceAccountGate`'s error state, so the row points at the
-    // address on the block explorer instead.
-    const isExternalLink = accountId == null;
+    /**
+     * URL of the member page of the member on the given account.
+     *
+     * The workspace address is checksummed because the DAO member page redirects any other casing to the `/dao/…`
+     * route, which would leave the workspace.
+     *
+     * The governance travels on the parameters the member page already carries — the ones its vote list and its
+     * proposal list write — rather than on any of its own: membership is body-scoped, so naming the body picks
+     * both the body the page reports and the body its voting activity opens on, and naming the process the body
+     * acts through opens its proposals on the same governance. A row that could not name one leaves that parameter
+     * off, and the page resolves it as it did before.
+     */
+    const getMemberPageUrl = (accountId: string) => {
+        const url = workspaceUtils.getAccountScopeUrl(
+            workspaceId,
+            accountId,
+            `members/${addressUtils.getChecksum(member.address)}`,
+        );
 
-    // The workspace address is checksummed because the DAO member page redirects any other casing to the `/dao/…`
-    // route, which would leave the workspace.
-    const href = isExternalLink
-        ? buildEntityUrl({ type: ChainEntityType.ADDRESS, id: member.address })
-        : workspaceUtils.getAccountScopeUrl(
-              workspaceId,
-              accountId,
-              `members/${addressUtils.getChecksum(member.address)}`,
-          );
+        const query = new URLSearchParams();
+
+        if (bodyId != null) {
+            query.set(voteListFilterParam, bodyId);
+        }
+
+        if (processId != null) {
+            query.set(daoProposalListFilterParam, processId);
+        }
+
+        const queryString = query.toString();
+
+        return queryString === '' ? url : `${url}?${queryString}`;
+    };
+
+    const memberPageUrl =
+        accountId == null ? undefined : getMemberPageUrl(accountId);
+
+    const isExternalLink = memberPageUrl == null;
+
+    const href =
+        memberPageUrl ??
+        buildEntityUrl({ type: ChainEntityType.ADDRESS, id: member.address });
 
     return (
         <MemberDataListItem.Structure
@@ -134,19 +207,29 @@ export interface IWorkspaceMemberListDefaultProps {
      * Filters narrowing the members inside the accounts.
      */
     filters?: IWorkspaceMemberListFilters;
+    /**
+     * Visible governance plugins of every account keyed by account ID.
+     */
+    visiblePluginsByAccountId?: Record<string, IWorkspaceAccountPlugins>;
 }
 
 /**
  * Members of every account of a workspace, laid out like `DaoMemberListDefault` of the DAO pages.
  *
- * The endpoint merges an address into a single entry carrying one membership per account, so each row links to the
- * member page of the first of its accounts that has one: there is no aggregated member page, the member details
- * live under a single account.
+ * The endpoint merges an address into a single entry carrying one membership per account and body, so each row
+ * links to the first of those memberships the workspace serves a page for: there is no aggregated member page, the
+ * member details live under a single account and a single body.
  */
 export const WorkspaceMemberListDefault: React.FC<
     IWorkspaceMemberListDefaultProps
 > = (props) => {
-    const { workspaceId, accounts, pageSize, filters } = props;
+    const {
+        workspaceId,
+        accounts,
+        pageSize,
+        filters,
+        visiblePluginsByAccountId,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -185,16 +268,77 @@ export const WorkspaceMemberListDefault: React.FC<
             .map((account) => account.id),
     );
 
-    /**
-     * The account whose member page the member is linked to: the first of its memberships held on an account that
-     * has one. The endpoint orders the memberships, so this is stable for a given member.
-     */
-    const getMemberAccountId = (member: IWorkspaceMember): string | undefined =>
-        member.memberships
-            .map((membership) =>
-                workspaceUtils.buildAccountId(membership.account),
-            )
-            .find((accountId) => memberPageAccountIds.has(accountId));
+    const getMemberTarget = (
+        member: IWorkspaceMember,
+    ): IWorkspaceMemberTarget | undefined => {
+        const targets = member.memberships.flatMap<IWorkspaceMemberTarget>(
+            (membership) => {
+                const accountId = workspaceUtils.buildAccountId(
+                    membership.account,
+                );
+                const bodyAddress = membership.governance.address;
+
+                if (!memberPageAccountIds.has(accountId)) {
+                    return [];
+                }
+
+                const visiblePlugins = visiblePluginsByAccountId?.[accountId];
+
+                // The plugins of the account are not known — the DAO read failed, or has not resolved yet.
+                // The membership is kept and linked without naming a governance.
+                if (visiblePlugins == null) {
+                    return [{ accountId, bodyAddress }];
+                }
+
+                const body = visiblePlugins.bodies.find((plugin) =>
+                    addressUtils.isAddressEqual(plugin.address, bodyAddress),
+                );
+
+                // The body is hidden (through the CMS overrides).
+                // Member should not be linked to the Member Details page for the account.
+                if (body == null) {
+                    return [];
+                }
+
+                // The process the body acts through, so the proposals of the member page open on the same
+                // governance.
+                const process =
+                    visiblePlugins.processes == null
+                        ? undefined
+                        : daoUtils.findPluginProcess(
+                              body,
+                              visiblePlugins.processes,
+                          );
+
+                const processId =
+                    process == null
+                        ? undefined
+                        : daoUtils.buildPluginUniqueId(process);
+
+                const bodyId = daoUtils.buildPluginUniqueId(body);
+
+                return [
+                    {
+                        accountId,
+                        bodyAddress,
+                        bodyId,
+                        processId,
+                    },
+                ];
+            },
+        );
+
+        const filteredBody = filters?.governanceAddress;
+
+        const filteredTarget =
+            filteredBody != null
+                ? targets.find(({ bodyAddress }) =>
+                      addressUtils.isAddressEqual(bodyAddress, filteredBody),
+                  )
+                : undefined;
+
+        return filteredTarget ?? targets[0];
+    };
 
     return (
         <DataListRoot
@@ -230,14 +374,20 @@ export const WorkspaceMemberListDefault: React.FC<
                 layoutClassName="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
                 SkeletonElement={MemberDataListItem.Skeleton}
             >
-                {members?.map((member) => (
-                    <WorkspaceMemberListItem
-                        accountId={getMemberAccountId(member)}
-                        key={`${member.network}-${member.address}`}
-                        member={member}
-                        workspaceId={workspaceId}
-                    />
-                ))}
+                {members?.map((member) => {
+                    const target = getMemberTarget(member);
+
+                    return (
+                        <WorkspaceMemberListItem
+                            accountId={target?.accountId}
+                            bodyId={target?.bodyId}
+                            key={`${member.network}-${member.address}`}
+                            member={member}
+                            processId={target?.processId}
+                            workspaceId={workspaceId}
+                        />
+                    );
+                })}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
