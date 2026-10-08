@@ -114,6 +114,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
         <div className="flex grow flex-col gap-4">
             <Card className="flex grow flex-col gap-3 border border-neutral-100 p-6">
                 {completeDetails.map((detailsGroup, index) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: fixed groups, never reordered
                     <React.Fragment key={index}>
                         <div className="flex flex-row">
                             {detailsGroup.map((details) => (

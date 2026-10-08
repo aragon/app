@@ -5,7 +5,6 @@ import type { IWeb3ComponentProps } from '../../../types';
  * Proposal action types for which the basic view is available.
  */
 export enum ProposalActionType {
-    WITHDRAW_TOKEN = 'WITHDRAW_TOKEN',
     ADD_MEMBERS = 'ADD_MEMBERS',
     REMOVE_MEMBERS = 'REMOVE_MEMBERS',
     UPDATE_METADATA = 'UPDATE_METADATA',

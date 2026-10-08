@@ -136,6 +136,10 @@ class SppTransactionUtils {
         ].filter((action) => action != null);
     };
 
+    // The SPP setup derives the update from the current helper (the rule condition) it receives in the setup
+    // payload and ignores the data field, so the prepare-update data is always empty.
+    buildPrepareUpdateData = (): Hex => '0x';
+
     getUninstallHelpers = (params: IGetUninstallHelpersParams): Hex[] => {
         const { proposalCreationConditionAddress } = params.plugin;
 

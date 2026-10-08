@@ -4,14 +4,10 @@ import type {
     IProposalActionChangeSettings,
     IProposalActionTokenMint,
     IProposalActionUpdateMetadata,
-    IProposalActionWithdrawToken,
 } from '../proposalActionsList';
 
 class ProposalActionsItemUtils {
     isActionSupported = (action: IProposalAction) => Object.keys(ProposalActionType).includes(action.type);
-
-    isWithdrawTokenAction = (action: Partial<IProposalAction>): action is IProposalActionWithdrawToken =>
-        action.type === ProposalActionType.WITHDRAW_TOKEN;
 
     isChangeMembersAction = (action: Partial<IProposalAction>): action is IProposalActionChangeMembers =>
         action.type === ProposalActionType.ADD_MEMBERS || action.type === ProposalActionType.REMOVE_MEMBERS;

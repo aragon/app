@@ -176,11 +176,12 @@ export const createSessionTicket = async (
 
 // The agent's ticket-filing tool, bound to one request's session and transcript. The model calls it
 // with the assembled ticket fields; creation only runs after the user approves the draft (the route
-// registers it under toolApproval).
+// registers it under toolApproval). The description is where the model learns how the draft card
+// behaves, next to the call it explains.
 export const buildCreateLinearTicketTool = (context: ICreateTicketContext) =>
     tool({
         description:
-            'File the collected feedback, bug report or support request as a support ticket for the Aragon team. Requires the user to approve the draft.',
+            "Opens a ticket draft for the Aragon team. The call files nothing: the user sees a card with a Create button, and the ticket exists only when this tool's result arrives. Until then never say filed, created or sent; after it, confirm in one short sentence with the reference. To change the draft, call again with all the fields; a user message sent while a draft waits sets it aside. A denied result means the user dismissed the draft (ask briefly what to change) or a newer message replaced it; a failed call is not reported to the user.",
         inputSchema: createTicketToolInputSchema,
         execute: (fields, { toolCallId }) =>
             createSessionTicket(context, fields, toolCallId),

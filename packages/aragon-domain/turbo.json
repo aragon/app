@@ -1,0 +1,22 @@
+{
+    "extends": [
+        "//"
+    ],
+    "tasks": {
+        "build": {
+            "outputs": [
+                "dist/**"
+            ],
+            "cache": true
+        },
+        // Talks to a deployed indexer (see .github/workflows/aragon-domain-contract-test.yml), so it
+        // is never cached and stays out of the test fan-out.
+        "test:contract": {
+            "cache": false,
+            "passThroughEnv": [
+                "ENVIO_GRAPHQL_ENDPOINT",
+                "ENVIO_API_TOKEN"
+            ]
+        }
+    }
+}

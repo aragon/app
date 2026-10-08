@@ -68,6 +68,7 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
                         action={action}
                         chainId={chainId}
                         daoId={daoId}
+                        // biome-ignore lint/suspicious/noArrayIndexKey: actions have no id and are never reordered
                         key={index}
                     />
                 ))}

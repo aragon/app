@@ -8,7 +8,6 @@ jest.mock('../proposalActionsList', () => ({
     ProposalActionChangeSettings: () => <div data-testid="change-settings-mock" />,
     ProposalActionTokenMint: () => <div data-testid="token-mint-mock" />,
     ProposalActionUpdateMetadata: () => <div data-testid="update-metadata-mock" />,
-    ProposalActionWithdrawToken: () => <div data-testid="withdraw-token-mock" />,
 }));
 
 describe('<ProposalActionsItemBasicView /> component', () => {
@@ -35,7 +34,6 @@ describe('<ProposalActionsItemBasicView /> component', () => {
     });
 
     it.each([
-        { type: ProposalActionType.WITHDRAW_TOKEN, testId: 'withdraw-token-mock' },
         { type: ProposalActionType.TOKEN_MINT, testId: 'token-mint-mock' },
         { type: ProposalActionType.CHANGE_SETTINGS_MULTISIG, testId: 'change-settings-mock' },
         { type: ProposalActionType.CHANGE_SETTINGS_TOKENVOTE, testId: 'change-settings-mock' },

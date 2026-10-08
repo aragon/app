@@ -90,6 +90,7 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                     {rules.map((rule, index) => (
                         <li
                             className="flex flex-col gap-2"
+                            // biome-ignore lint/suspicious/noArrayIndexKey: a permission can carry several rules; order is fixed on-chain
                             key={`${rule.permissionId}-${index}`}
                         >
                             <p className="font-medium text-neutral-800">

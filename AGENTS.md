@@ -7,16 +7,16 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 ## Monorepo layout
 
 - `apps/*` — deployable applications, one Vercel project each. Every app owns its source, configs, docs and CHANGELOG; workspace specifics live in the workspace's README, not here.
-- `packages/*` — workspace libraries. Most are version-only and ship inside their consumers; `@aragon/gov-ui-kit` is the exception — it is also published to npm for external consumers and owns a release flow of its own (see Releases). Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
+- `packages/*` — workspace libraries. Most are version-only and ship inside their consumers; `@aragon/gov-ui-kit` and `@aragon/aragon-domain` are the exceptions — they are also published to npm for external consumers and own release flows of their own (see Releases). Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
 - The product knowledge base (`aragon/platform-doc`, branch `development`) is not vendored here: the assistant fetches it while building its documentation index (`apps/assistant/README.md`, "Documentation answering").
 - Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). The root `package.json` has no version.
-- CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`, `gov-ui-kit-*.yml`) plus reusable `shared-*.yml`. Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
+- CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`, `gov-ui-kit-*.yml`, `aragon-domain-*.yml`) plus reusable `shared-*.yml`. Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
 
 ### Releases
 
 Every deployable workspace releases independently through the same PR-based flow; the packages each flow versions together are declared once in `.github/release-scopes.yml` (a flow names its scope via the `scope` input of the `changeset-version` action; the inversion into changesets `--ignore` flags happens inside the action). The shape: dispatch `<workspace>-release-start` → it runs `changeset version` for the scoped packages and opens a `Release <package>@x.y.z` PR (branch `release/<workspace>/…`) describing every bumped package → merging the PR is the release act → `<workspace>-release-pr-finalize` tags the release (`@aragon/app@1.17.0`) and the tag triggers the production deploy.
 
-Most `packages/*` get no tags or flows of their own and belong to the scope whose release deploys them (a package bundled by exactly one app joins that app's scope; a package shared across scopes stays with its domain owner). `@aragon/gov-ui-kit` is the exception: because it ships to npm, it owns the `gov-ui-kit` scope, its own `gov-ui-kit-release-start` / `gov-ui-kit-release-pr-finalize` flows and its own `@aragon/gov-ui-kit@x.y.z` tags — finalize creates the GitHub release, and that release (not a deploy) triggers `gov-ui-kit-publish.yml` behind the human-approved `npm-publish` environment. Versions never move in lockstep. A single changeset must never mix packages from different release scopes (changesets refuses mixed ignored/not-ignored changesets, which breaks every scoped flow) — write one changeset per scope; CI enforces this via `pnpm validate:changesets`. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
+Most `packages/*` get no tags or flows of their own and belong to the scope whose release deploys them (a package bundled by exactly one app joins that app's scope; a package shared across scopes stays with its domain owner). The npm-published packages are the exception: `@aragon/gov-ui-kit` and `@aragon/aragon-domain` each own a scope of the same name (`gov-ui-kit`, `aragon-domain`), their own `<pkg>-release-start` / `<pkg>-release-pr-finalize` flows and their own `@aragon/<pkg>@x.y.z` tags — finalize creates the GitHub release, and that release (not a deploy) triggers `<pkg>-publish.yml` behind the human-approved `npm-publish` environment. Versions never move in lockstep. A single changeset must never mix packages from different release scopes (changesets refuses mixed ignored/not-ignored changesets, which breaks every scoped flow) — write one changeset per scope; CI enforces this via `pnpm validate:changesets`. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
 
 ### Adding a new workspace — the mappers
 
@@ -27,7 +27,7 @@ Cross-cutting workspace knowledge lives in root-level mappers; register a new wo
 - `pnpm-workspace.yaml` `catalog:` — central version pins for shared tooling/deps; workspaces reference them as `"catalog:"`, bumps happen once at the root (then run the full test fan-out — a catalog bump touches every workspace and triggers releases everywhere).
 - Releases: a new deployable workspace gets its own release flow (or joins an existing domain flow) by adding its packages to a scope in `release-scopes.yml` and naming that scope in its `changeset-version` call — other flows are not touched.
 
-Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is root-only (`biome.json`), with one exception: `packages/gov-ui-kit` carries a nested `biome.jsonc` (`"root": false`) so the migration caused no reformatting — there is a TODO in that file to fold it into the root config.
+Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`; `packages/aragon-domain` runs Vitest with its own `vitest.config.ts` instead). Lint/format rules are root-only (`biome.json`); workspace-specific policy lives in a nested `biome.jsonc` that extends the root (`"root": false`, `"extends": "//"`): `apps/app`, `packages/gov-ui-kit`, `packages/aragon-domain`. A nested `files.includes` replaces the root list, so shared exclusions have to be repeated there.
 
 ## Where things live
 
@@ -47,8 +47,8 @@ Full wiring conventions (dynamic imports, definitions map, params) live in the `
 
 Two parallel trees, each split into `shared/` (checked in) and `local/` (gitignored):
 
-- `.agents/shared/` — agent-neutral commons: rule-skills, loader, metrics. Consumed by any runtime.
-- `.agents/local/` — IC-personal agent-neutral stuff (drafts, personal skills, metric buffer).
+- `.agents/shared/` — agent-neutral commons: guardrails loader, metrics. Rule-skills live at `skills/shared/rules/` (see below). Consumed by any runtime.
+- `.agents/local/` — IC-personal agent-neutral stuff (drafts, metric buffer). Personal *skills* belong in `skills/local/` instead — that catalog is gitignored the same way but is synced to your agent discovery roots, so the skills actually reach your agents.
 - `.claude/shared/` — Claude-specific shared wiring (the adapter hook). Tiny on purpose.
 - `.claude/` (root) — Claude's required fixed paths: `settings.json` (checked in), `settings.local.json` and `CLAUDE.md` (gitignored, IC-personal).
 
@@ -58,13 +58,13 @@ Gitignore exposes `.agents/shared/**` and `.claude/shared/**` (plus `.claude/set
 
 Narrow, prescriptive guardrails scoped by file path. Each rule fires only when the file you're editing matches its `globs` field.
 
-Rules live at `.agents/shared/skills/rules/*.md` — always checked in, never per-IC. A rule that's worth firing on every PR is by definition a shared convention; personal preferences belong in `.claude/CLAUDE.md` or IC settings, not in the rule stream.
+Rules live at `skills/shared/rules/<name>/SKILL.md` — always checked in, never per-IC. A rule that's worth firing on every PR is by definition a shared convention; personal preferences belong in `.claude/CLAUDE.md` or IC settings, not in the rule stream.
 
-The shared loader lives at `.agents/shared/hooks/inject-rules.mjs`. The rule stream stays agent-agnostic; only the proprietary adapter shape differs. Claude Code consumes it via `.claude/shared/hooks/inject-rules.mjs`. Spec: `.agents/shared/skills/rules/README.md`.
+The shared loader lives at `.agents/shared/hooks/inject-rules.mjs`. The rule stream stays agent-agnostic; only the proprietary adapter shape differs. Claude Code consumes it via `.claude/shared/hooks/inject-rules.mjs`. Spec: `skills/shared/rules/README.md`.
 
-In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. The MVP/POC and its proof live in `.agents/shared/skills/rules/README.md` and `.agents/shared/hooks/README.md`.
+In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. The MVP/POC and its proof live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
 
-To author a new rule, copy an existing one in `.agents/shared/skills/rules/` and follow the README — the `rule-authoring` rule-skill auto-injects when you edit anything in that folder.
+To author a new rule, copy an existing one in `skills/shared/rules/` and follow the README — the `rule-authoring` rule-skill auto-injects when you edit anything in that folder.
 
 Authorship is bottom-up: when a code review surfaces a non-obvious convention, or you catch yourself fixing the same class of mistake more than once, propose a rule-skill update. Don't pre-write rules speculatively.
 
@@ -74,7 +74,7 @@ The root only carries workspace-wide tasks (turbo fan-out) and root infra:
 
 ```sh
 pnpm dev          # Dev servers of all workspaces (turbo)
-pnpm test         # Jest across workspaces (turbo)
+pnpm test         # Jest/Vitest across workspaces (turbo)
 pnpm lint         # Biome check --write (auto-fix)
 pnpm lint:check   # Biome check (CI mode)
 pnpm type-check   # TypeScript check across workspaces
