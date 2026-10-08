@@ -37,12 +37,8 @@ const executePermissionId = permissionNameUtils.getPermissionId(
  * carries its own `chainId`, as the accounts of a workspace may span networks.
  *
  * Every given account is reported rather than only the ones that were read, so callers can index the record
- * without defaulting. An account is reported as executable when the read says so, and — deliberately, see the
- * comment on the result below — also when the read could not run at all. It is reported as `false` when the read
- * denies it, while it is still in flight, and for an account type that is not read.
- *
- * This is where the plural form parts ways with `useDaoExecutePermission`, which collapses a failed read into
- * `false`; aligning the two is the TODO on the result below.
+ * without defaulting. Only a read that answers in the affirmative reports `true`: a read that denies it, one that
+ * could not run, one still in flight and an account type that is not read all report `false`.
  * @param accounts - Accounts to check. Only DAO accounts are read, see below.
  * @returns The permission of every given account keyed by account ID, and whether any read is still pending.
  */
@@ -100,8 +96,7 @@ export const useWorkspaceAccountsExecutePermission = (
             const read = data?.[index];
 
             result[account.id] =
-                read != null &&
-                (read.status === 'failure' || read.result === true);
+                read?.status === 'success' && read.result === true;
         });
 
         return result;

@@ -157,9 +157,9 @@ describe('useWorkspaceAccountsExecutePermission hook', () => {
         expect(result.current.permissions).toEqual({ pending: false });
     });
 
-    // Fails open as the process eligibility check does: a check that cannot answer must not block the wallet, and
-    // the guard on the create flow is what actually enforces the permission.
-    it('reports an account whose read could not run as executable', () => {
+    // Fails closed as `useDaoExecutePermission` does: the create action this gates leads to a wizard that re-reads
+    // the permission and redirects away on a denial, so an account that cannot be read must not offer the action.
+    it('reports an account whose read could not run as not executable', () => {
         const account = buildAccount({ id: 'unreadable' });
         mockReadContracts({ data: [failedRead()] });
 
@@ -167,10 +167,10 @@ describe('useWorkspaceAccountsExecutePermission hook', () => {
             useWorkspaceAccountsExecutePermission([account]),
         );
 
-        expect(result.current.permissions).toEqual({ unreadable: true });
+        expect(result.current.permissions).toEqual({ unreadable: false });
     });
 
-    it('still reports an account the contract denies as not executable', () => {
+    it('reports both a denied and an unreadable account of one batch as not executable', () => {
         const denied = buildAccount({ id: 'denied' });
         const unreadable = buildAccount({
             id: 'unreadable',
@@ -184,7 +184,7 @@ describe('useWorkspaceAccountsExecutePermission hook', () => {
 
         expect(result.current.permissions).toEqual({
             denied: false,
-            unreadable: true,
+            unreadable: false,
         });
     });
 
