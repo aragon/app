@@ -110,7 +110,7 @@ A cookie override wins over the CMS, so step 2 does not turn the slice off for a
 
 ## Legacy freeze
 
-Once a slice is on in production, its legacy handlers in `app-backend` take bug fixes only; CODEOWNERS covers those paths **(pending APP-1187)**. The nightly parity run catches drift.
+Once a slice is on in production, its legacy handlers in `app-backend` take bug fixes only; CODEOWNERS covers those paths **(pending APP-1187)**. The nightly parity run catches drift **(pending APP-1178)**.
 
 ## Capacity
 
