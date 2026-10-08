@@ -180,7 +180,10 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         expect(openMock).toHaveBeenCalledWith(
             WorkspaceDialogId.SELECT_ACCOUNT,
             expect.objectContaining({
-                params: expect.objectContaining({ accounts: [daoAccount] }),
+                params: expect.objectContaining({
+                    accounts: [daoAccount],
+                    variant: 'proposal',
+                }),
             }),
         );
     });

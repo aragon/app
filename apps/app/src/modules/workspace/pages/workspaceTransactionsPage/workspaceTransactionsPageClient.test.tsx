@@ -1,8 +1,16 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
 import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import {
+    generateDao,
+    generateDialogContext,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import {
     type IWorkspace,
     type IWorkspaceAccount,
@@ -13,11 +21,15 @@ import type * as workspaceTransactionList from '../../components/workspaceTransa
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import type * as workspaceTransactionsAsideCard from '../../components/workspaceTransactionsAsideCard';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
+import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
+import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import type {
     IUseWorkspaceAccountOptionsResult,
     IWorkspaceAccountOption,
 } from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAccountOptionsModule from '../../hooks/useWorkspaceAccountOptions';
+import * as useWorkspaceAccountsExecutePermissionModule from '../../hooks/useWorkspaceAccountsExecutePermission';
+import * as useWorkspaceDaosModule from '../../hooks/useWorkspaceDaos';
 import {
     type IWorkspaceTransactionsPageClientProps,
     WorkspaceTransactionsPageClient,
@@ -42,6 +54,22 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         useWorkspaceAccountOptionsModule,
         'useWorkspaceAccountOptions',
     );
+    const useWorkspaceAccountsExecutePermissionSpy = jest.spyOn(
+        useWorkspaceAccountsExecutePermissionModule,
+        'useWorkspaceAccountsExecutePermission',
+    );
+    const useWorkspaceDaosSpy = jest.spyOn(
+        useWorkspaceDaosModule,
+        'useWorkspaceDaos',
+    );
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+
+    const openMock = jest.fn();
+    const closeMock = jest.fn();
+    const pushMock = jest.fn();
+
+    const createActionName = /workspaceTransactionsPage\.main\.action$/;
 
     const listMock = WorkspaceTransactionList as jest.Mock;
     const asideCardMock = WorkspaceTransactionsAsideCard as jest.Mock;
@@ -117,16 +145,62 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             | workspaceTransactionsAsideCard.IWorkspaceTransactionsAsideCardProps
             | undefined;
 
+    /**
+     * Mocks the execute-permission check. The default is the no-permission case, as on the DAO transactions page.
+     */
+    const mockExecutePermissions = (
+        permissions: Record<string, boolean> = {},
+    ) =>
+        useWorkspaceAccountsExecutePermissionSpy.mockReturnValue({
+            permissions,
+            isPending: false,
+        });
+
+    /**
+     * Params of the last account-selection dialog the page opened.
+     */
+    const lastDialogParams = () =>
+        (
+            openMock.mock.calls.at(-1)?.[1] as
+                | { params: IWorkspaceSelectAccountDialogParams }
+                | undefined
+        )?.params;
+
     beforeEach(() => {
         getWorkspaceSpy.mockResolvedValue(buildWorkspace());
         mockAccountOptions();
+        mockExecutePermissions();
+        useWorkspaceDaosSpy.mockReturnValue({
+            daos: {
+                [daoAccount.id]: generateDao({
+                    id: daoAccount.id,
+                    address: daoAddress,
+                    network: daoAccount.network,
+                    ens: null,
+                }),
+            },
+            isPending: false,
+        });
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ open: openMock, close: closeMock }),
+        );
+        useRouterSpy.mockReturnValue({
+            push: pushMock,
+        } as unknown as AppRouterInstance);
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
+        useWorkspaceAccountsExecutePermissionSpy.mockReset();
+        useWorkspaceDaosSpy.mockReset();
+        useDialogContextSpy.mockReset();
+        useRouterSpy.mockReset();
         asideCardMock.mockClear();
         listMock.mockClear();
+        openMock.mockClear();
+        closeMock.mockClear();
+        pushMock.mockClear();
     });
 
     let testIndex = 0;
@@ -235,5 +309,112 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         await waitFor(() =>
             expect(lastListProps()?.accounts).toEqual([safeAccount]),
         );
+    });
+    it('offers no create action when no account in view can be executed on', async () => {
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('asks which account to use when several are in view, listing the ones that cannot be used as disabled', async () => {
+        mockExecutePermissions({ [daoAccount.id]: true });
+        render(createTestComponent());
+
+        const action = await screen.findByRole('button', {
+            name: createActionName,
+        });
+        await userEvent.click(action);
+
+        expect(openMock).toHaveBeenCalledWith(
+            WorkspaceDialogId.SELECT_ACCOUNT,
+            expect.anything(),
+        );
+        expect(lastDialogParams()).toEqual(
+            expect.objectContaining({
+                accounts: [daoAccount, safeAccount],
+                variant: 'transaction',
+                disabledAccountIds: [safeAccount.id],
+            }),
+        );
+    });
+
+    it('closes the selection and opens the create flow of the account that was picked', async () => {
+        mockExecutePermissions({ [daoAccount.id]: true });
+        render(createTestComponent());
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: createActionName }),
+        );
+        lastDialogParams()?.onAccountSelected(daoAccount);
+
+        expect(closeMock).toHaveBeenCalledWith(
+            WorkspaceDialogId.SELECT_ACCOUNT,
+        );
+        expect(pushMock).toHaveBeenCalledWith(
+            `/dao/${daoAccount.network}/${daoAddress}/create/execute`,
+        );
+    });
+
+    // The account is on the path already, so there is nothing to ask and the action is a plain link.
+    it('links straight to the create flow of the account under an account scope', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        mockExecutePermissions({ [daoAccount.id]: true });
+        render(createTestComponent());
+
+        const action = await screen.findByRole('link', {
+            name: createActionName,
+        });
+
+        expect(action).toHaveAttribute(
+            'href',
+            `/dao/${daoAccount.network}/${daoAddress}/create/execute`,
+        );
+        // A link rather than the button the aggregated scope renders, so there is no selection step to open.
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+        expect(openMock).not.toHaveBeenCalled();
+    });
+
+    // What keeps an account-scoped route from reading the permission of every account of the workspace.
+    it('checks the permission of the account in scope only', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(
+                useWorkspaceAccountsExecutePermissionSpy,
+            ).toHaveBeenCalledWith([daoAccount]),
+        );
+    });
+
+    it('offers no create action under an account scope the wallet cannot execute on', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([daoAccount]),
+        );
+        expect(
+            screen.queryByRole('link', { name: createActionName }),
+        ).not.toBeInTheDocument();
     });
 });

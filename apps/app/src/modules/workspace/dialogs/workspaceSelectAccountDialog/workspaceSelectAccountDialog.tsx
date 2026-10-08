@@ -20,16 +20,29 @@ export interface IWorkspaceSelectAccountDialogParams {
      * it can send the user back here.
      */
     onAccountSelected: (account: IWorkspaceAccount) => void;
+    /**
+     * Flow the dialog is the first step of. Used to customize labels.
+     * @default 'proposal'
+     */
+    variant?: 'proposal' | 'transaction';
+    /**
+     * IDs of the accounts that are listed but cannot be selected, because the connected wallet may not act on them.
+     * They are dimmed and sorted last rather than hidden, so that the workspace reads the same whoever is
+     * connected.
+     */
+    disabledAccountIds?: string[];
 }
 
 export interface IWorkspaceSelectAccountDialogProps
     extends IDialogComponentProps<IWorkspaceSelectAccountDialogParams> {}
 
 /**
- * First step of creating a proposal in a workspace: which account of the workspace to create it for.
+ * First step of creating a proposal or a transaction in a workspace: which account of the workspace to create it
+ * for.
  *
- * The second step is the DAO-bound `SelectPluginDialog`, opened on top of this one by the caller, which decides
- * what an account leads to: a DAO leads to its processes, other account types will lead to their own flow.
+ * What an account leads to is the caller's decision: a proposal stacks the DAO-bound `SelectPluginDialog` on top of
+ * this one to pick a process, whereas a transaction has no second step and navigates straight to the create flow of
+ * the account.
  *
  * The DAOs are only read to name and picture the rows, from the cache the workspace pages already filled.
  */
@@ -42,7 +55,12 @@ export const WorkspaceSelectAccountDialog: React.FC<
         location.params != null,
         'WorkspaceSelectAccountDialog: params must be set for the dialog to work correctly',
     );
-    const { accounts, onAccountSelected } = location.params;
+    const {
+        accounts,
+        onAccountSelected,
+        variant = 'proposal',
+        disabledAccountIds,
+    } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -51,20 +69,38 @@ export const WorkspaceSelectAccountDialog: React.FC<
 
     const [selectedId, setSelectedId] = useState<string>();
 
+    const isAccountDisabled = (account: IWorkspaceAccount) =>
+        disabledAccountIds?.includes(account.id) ?? false;
+
+    // Show the accounts that cannot be selected at the bottom, as the process selection does.
+    const sortedAccounts = [...accounts].sort(
+        (a, b) => Number(isAccountDisabled(a)) - Number(isAccountDisabled(b)),
+    );
+
     const selectedAccount = accounts.find(
         (account) => account.id === selectedId,
     );
+    const isSelectionValid =
+        selectedAccount != null && !isAccountDisabled(selectedAccount);
 
-    const handleConfirm = () => onAccountSelected(selectedAccount!);
+    const handleConfirm = () => {
+        if (!isSelectionValid) {
+            return;
+        }
+
+        onAccountSelected(selectedAccount);
+    };
 
     return (
         <>
             <Dialog.Header
                 description={t(
-                    'app.workspace.workspaceSelectAccountDialog.description',
+                    `app.workspace.workspaceSelectAccountDialog.${variant}.description`,
                 )}
                 onClose={close}
-                title={t('app.workspace.workspaceSelectAccountDialog.title')}
+                title={t(
+                    `app.workspace.workspaceSelectAccountDialog.${variant}.title`,
+                )}
             />
             <Dialog.Content>
                 {isPending && (
@@ -77,15 +113,21 @@ export const WorkspaceSelectAccountDialog: React.FC<
                         hidden: isPending,
                     })}
                 >
-                    {accounts.map((account) => (
-                        <WorkspaceSelectAccountDialogItem
-                            account={account}
-                            dao={daos[account.id]}
-                            isActive={account.id === selectedId}
-                            key={account.id}
-                            onClick={() => setSelectedId(account.id)}
-                        />
-                    ))}
+                    {sortedAccounts.map((account) => {
+                        const isDisabled = isAccountDisabled(account);
+
+                        return (
+                            <WorkspaceSelectAccountDialogItem
+                                account={account}
+                                dao={daos[account.id]}
+                                isActive={account.id === selectedId}
+                                isDisabled={isDisabled}
+                                key={account.id}
+                                onClick={() => setSelectedId(account.id)}
+                                showNotEligibleHelpText={isDisabled}
+                            />
+                        );
+                    })}
                 </div>
             </Dialog.Content>
             <Dialog.Footer
@@ -94,7 +136,7 @@ export const WorkspaceSelectAccountDialog: React.FC<
                         'app.workspace.workspaceSelectAccountDialog.action.select',
                     ),
                     onClick: handleConfirm,
-                    disabled: selectedAccount == null || isPending,
+                    disabled: !isSelectionValid || isPending,
                 }}
                 secondaryAction={{
                     label: t(
