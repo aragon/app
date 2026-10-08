@@ -65,14 +65,19 @@ export const WorkspaceTransactionsPageClient: React.FC<
     const getCreateTransactionUrl = (account: IWorkspaceAccount) =>
         daoUtils.getDaoUrl(daos[account.id], 'create/execute');
 
+    const canCreateTransactionFor = (account: IWorkspaceAccount) =>
+        permissions[account.id] === true &&
+        getCreateTransactionUrl(account) != null;
+
     const handleAccountSelected = (account: IWorkspaceAccount) => {
         const createTransactionUrl = getCreateTransactionUrl(account);
 
-        close(WorkspaceDialogId.SELECT_ACCOUNT);
-
-        if (createTransactionUrl != null) {
-            router.push(createTransactionUrl);
+        if (createTransactionUrl == null) {
+            return;
         }
+
+        close(WorkspaceDialogId.SELECT_ACCOUNT);
+        router.push(createTransactionUrl);
     };
 
     const handleCreateTransaction = () => {
@@ -81,7 +86,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
             onAccountSelected: handleAccountSelected,
             variant: 'transaction',
             disabledAccountIds: accountsToDisplay
-                .filter((account) => !permissions[account.id])
+                .filter((account) => !canCreateTransactionFor(account))
                 .map((account) => account.id),
         };
         open(WorkspaceDialogId.SELECT_ACCOUNT, { params });
@@ -92,7 +97,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
     );
 
     const scopedCreateUrl =
-        selectedAccount != null && permissions[selectedAccount.id]
+        selectedAccount != null && canCreateTransactionFor(selectedAccount)
             ? getCreateTransactionUrl(selectedAccount)
             : undefined;
 
@@ -101,8 +106,8 @@ export const WorkspaceTransactionsPageClient: React.FC<
             ? { label: actionLabel, href: scopedCreateUrl }
             : undefined;
 
-    const aggregatedAction = accountsToDisplay.some(
-        (account) => permissions[account.id],
+    const aggregatedAction = accountsToDisplay.some((account) =>
+        canCreateTransactionFor(account),
     )
         ? { label: actionLabel, onClick: handleCreateTransaction }
         : undefined;

@@ -361,6 +361,45 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         );
     });
 
+    // The permission and the DAO come from different services, so holding the permission is not enough: an account
+    // whose DAO could not be read has no destination and must not be offered.
+    it('does not offer an account the wallet may execute on but whose DAO could not be read', async () => {
+        useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: false });
+        mockExecutePermissions({ [daoAccount.id]: true });
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('disables an account without a destination in the selection it opens', async () => {
+        const otherAddress = '0xB941b1C1D9aDC88C9241aA3ACA59E8B8f0386420';
+        const unreadableAccount: IWorkspaceAccount = {
+            id: `${Network.ETHEREUM_SEPOLIA}-${otherAddress}`,
+            type: WorkspaceAccountType.DAO,
+            address: otherAddress,
+            network: Network.ETHEREUM_SEPOLIA,
+        };
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({ accounts: [daoAccount, unreadableAccount] }),
+        );
+        mockExecutePermissions({
+            [daoAccount.id]: true,
+            [unreadableAccount.id]: true,
+        });
+        render(createTestComponent());
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: createActionName }),
+        );
+
+        expect(lastDialogParams()?.disabledAccountIds).toEqual([
+            unreadableAccount.id,
+        ]);
+    });
+
     // The account is on the path already, so there is nothing to ask and the action is a plain link.
     it('links straight to the create flow of the account under an account scope', async () => {
         mockAccountOptions({
