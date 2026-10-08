@@ -30,6 +30,73 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('findAccountById', () => {
+        const daoAccount: IWorkspaceAccount = {
+            id: `citrea-mainnet-${addressOne}`,
+            type: WorkspaceAccountType.DAO,
+            address: addressOne,
+            network: Network.CITREA_MAINNET,
+        };
+        const safeAccount: IWorkspaceAccount = {
+            id: `citrea-mainnet-${addressTwo}`,
+            type: WorkspaceAccountType.SAFE,
+            address: addressTwo,
+            network: Network.CITREA_MAINNET,
+        };
+        const accounts = [daoAccount, safeAccount];
+
+        it('finds the account the id names', () => {
+            expect(
+                workspaceUtils.findAccountById(accounts, daoAccount.id),
+            ).toEqual(daoAccount);
+        });
+
+        // A Safe is never an option, so this is the only way a page learns the route is scoped to one.
+        it('finds an account of any type', () => {
+            expect(
+                workspaceUtils.findAccountById(accounts, safeAccount.id),
+            ).toEqual(safeAccount);
+        });
+
+        it('matches on the address, so any casing of it resolves the account', () => {
+            const id = `citrea-mainnet-${addressOne.toLowerCase()}`;
+
+            expect(workspaceUtils.findAccountById(accounts, id)).toEqual(
+                daoAccount,
+            );
+        });
+
+        it('finds no account for the aggregated segment', () => {
+            expect(
+                workspaceUtils.findAccountById(
+                    accounts,
+                    workspaceAllAccountsSegment,
+                ),
+            ).toBeUndefined();
+        });
+
+        it('finds no account for a segment that is not an account id', () => {
+            expect(
+                workspaceUtils.findAccountById(accounts, 'not-an-account'),
+            ).toBeUndefined();
+        });
+
+        it('finds no account for an account the workspace does not hold', () => {
+            expect(
+                workspaceUtils.findAccountById([safeAccount], daoAccount.id),
+            ).toBeUndefined();
+        });
+
+        it('finds no account on a different network', () => {
+            expect(
+                workspaceUtils.findAccountById(
+                    accounts,
+                    `ethereum-sepolia-${addressOne}`,
+                ),
+            ).toBeUndefined();
+        });
+    });
+
     describe('getWorkspaceUrl', () => {
         it('builds the workspace base url from its id', () => {
             expect(workspaceUtils.getWorkspaceUrl('demo')).toEqual(

@@ -272,10 +272,21 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 ```
 src/app/workspace/[workspaceId]/
 ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
-├─ all/{overview,proposals,assets,transactions,members}/page.tsx
+├─ not-found.tsx           NotFoundBase, so a 404 keeps the workspace navigation
+├─ all/
+│  ├─ {overview,proposals,assets,transactions,members}/page.tsx
+│  └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 └─ [accountId]/
-   └─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
+   ├─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
+   ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard)
+   ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
+   ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
+   └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
+
+Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
+it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
+A real section page wins over the catch-all, being more specific, which is all it takes to add a section.
 
 The `all/` directory is static and sits beside the dynamic `[accountId]/`. Next resolves static segments first, so
 each gets its own route file, its own RSC and its own prefetch behaviour — which is what lets the account tree
@@ -300,26 +311,47 @@ differences, all forced by this branch:
 contained in the layout component. When a real registry lands, the fetch/hydrate shape of 1096 becomes correct
 again and this layout should adopt it.
 
-`navigationWorkspaceUtils.buildLinks` lists **only the pages that exist** — Overview at order 200 and Assets at
-400, reusing 1096's ordering so its members (300) and transactions (500) entries slot in untouched once those
-pages land.
+`navigationWorkspaceUtils.buildLinks` builds every link through `workspaceUtils.getAccountScopeUrl`, scoped to the
+account on the route, at orders 100-500: Overview, Proposals, Members, Assets, Transactions. It lists them all,
+including the ones that have no account-scoped route yet — so under an account scope those links lead to the
+section-not-found page until the route lands.
 
 ### Assets page
 
-`/workspace/{workspaceId}/assets` mirrors `daoAssetsPage`: `Page.Main` with the asset list, plus an aside. The
-account to show is not picked on the page: it comes from the global account selector (see
-[Account selection](#account-selection)), read through `useWorkspaceAccountSelectorContext`.
+`workspaceAssetsPage` mirrors `daoAssetsPage`: `Page.Main` with the asset list, plus an aside. **One page serves
+both scopes** — `/workspace/{workspaceId}/all/assets` and `/workspace/{workspaceId}/{accountId}/assets` — unlike
+the account overview, which renders `DaoDashboardPage` as is. Delegating to the DAO assets page would read the DAO
+finance API instead, which breaks the invariant below and has nothing to show for a Safe.
 
-**Every selection reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — "All accounts" over all
-accounts, a single account over just that one. The page only decides which accounts to send:
+For the same reason **`WorkspaceAccountGate` is deliberately not applied here**. The gate exists for pages that are
+DAO pages and therefore assume a resolved DAO; it resolves the DAO with `fetchQuery`, which throws, so wrapping the
+assets page would replace a perfectly readable Safe asset list with an error state. `LayoutWorkspaceAccount` says
+the same thing from the other side: assets and transactions "work from the workspace query endpoints regardless".
+
+**Every scope reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — the aggregated one over all
+accounts, an account over just that one. The page only decides which accounts to send:
 
 ```ts
-const selectedAccountRefs = selectedAccount != null ? [selectedRef] : accountRefs;
+const account = workspaceUtils.findAccountById(accounts, accountId);
+const displayedAccounts = account != null ? [account] : accounts;
 ```
 
 Going through one endpoint throughout keeps the single accounts summing to the aggregated view, since both come out
 of the same aggregation. Option labels use the same precedence as the overview rows — `metadata.name ?? accounts-API
 name ?? truncated address` — so an option and its row never disagree.
+
+Two properties of that lookup are load-bearing:
+
+- **It keys off the account segment of the route, not off `activeOption`.** Only DAO accounts become options, so
+  narrowing by the option would leave a Safe with no selection and answer a question about one account with the
+  totals of every other. `workspaceUtils.findAccountById` matches on network and address rather than on the ID
+  string, because a stored ID is checksummed while a URL may carry any casing.
+- **Anything the lookup does not resolve reads as every account**: the aggregated segment, and — until viewing one
+  is supported — an account the workspace does not hold.
+
+A workspace holding no account keeps the query disabled, and a disabled query reads as pending, so
+`WorkspaceAssetList` resolves the state itself rather than leaving the list on skeletons forever.
+`WorkspaceTransactionList` carries the same guard.
 
 **Only DAO accounts can be selected.** The selector options are DAO-only for every page: the aggregated option still
 covers every account, so a Safe's balances are visible there, but a Safe has no option of its own.
@@ -373,8 +405,12 @@ workspace. The pill used to open the navigation dialog, so the dialog now opens 
 in the bar and visible at every width.
 
 The aside is `WorkspaceAssetsAsideCard`, a router over one card per account type: `WorkspaceDaoAssetsAsideCard` for
-a DAO account and `WorkspaceAllAssetsAsideCard` for the aggregated option (and, until it has a card of its own, for
+a DAO account and `WorkspaceAllAssetsAsideCard` for the aggregated scope (and, until it has a card of its own, for
 anything else). A Safe card slots in as one more branch.
+
+It still branches on `activeOption`, so a Safe scope — reachable by URL, never by the selector, since a Safe is no
+option — falls back to the aggregated card with no title of its own. The list beside it is correctly narrowed to
+that Safe; only the card's heading is generic.
 
 `WorkspaceAllAssetsAsideCard` is fed `totalAmountUsd`, `totalRecords` and `spamCount` from the response for the
 selected accounts; it shares its query key with the list, so the totals cost no extra request.
@@ -410,7 +446,7 @@ list, and the empty state then says the assets could not be loaded rather than t
 is the permanent state of every non-indexed account (so every Safe) and is deliberately **not** warned about;
 otherwise the banner would always be on and would stop being read.
 
-A single-account selection gets its own copy (`unavailable.descriptionSingle`): the selection *is* the account, so counting
+An account scope gets its own copy (`unavailable.descriptionSingle`): the scope *is* the account, so counting
 "1 of the accounts could not be read" would only raise the question of which one.
 
 Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry.
@@ -486,7 +522,7 @@ Three gates, one per entry point:
 | --- | --- |
 | `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
 | `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
-| `/workspace/{workspaceId}/assets` | `workspaceAssetsPage` (server) — same |
+| `/workspace/{workspaceId}/all/assets` and `/{accountId}/assets` | `workspaceAssetsPage` (server) — same, one page for both |
 | `/workspace/{workspaceId}/proposals` | `workspaceProposalsPage` (server) — same |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
@@ -603,7 +639,7 @@ src/modules/workspace/
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
-├── components/workspaceAccountSelectorProvider/{workspaceAccountSelectorProvider.tsx,index.ts}
+├── hooks/useWorkspaceAccountOptions/{useWorkspaceAccountOptions.ts,index.ts}
 ├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
 ├── components/workspaceAssetList/{workspaceAssetList.tsx,index.ts}
 ├── components/workspaceAssetsAsideCard/{workspaceAssetsAsideCard.tsx,workspaceAllAssetsAsideCard.tsx,workspaceDaoAssetsAsideCard.tsx,index.ts}
@@ -661,8 +697,15 @@ Keep it that way when extending this.
 ## Known gaps
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
-- Only `query/accounts` is wired. The workspace pages still read nothing from `query/{assets,transactions,proposals,members}`.
-- Only assets are aggregated; the transactions, proposals and members query endpoints are not wired.
+- Of the five scopes' sections, only `overview`, `assets` and `transactions` have an account-scoped route;
+  `proposals` and `members` exist under `all/` alone, so the navigation links to a 404 for them under an account
+  scope.
+- `workspaceTransactionsPageClient` narrows by `activeOption?.account`, which has the Safe blind spot the assets
+  page does not: only DAO accounts become options, so the account-scoped transactions route of a Safe falls back to
+  the aggregated selection and shows every account. Reachable since that route landed;
+  `workspaceUtils.findAccountById` is the fix, as on the assets page.
+- Viewing an account the workspace does not hold is not supported: the assets page falls back to every account.
+  The intended behaviour is to show it and offer adding it to the workspace, from the account selector.
 - The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show

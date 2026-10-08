@@ -30,6 +30,7 @@ import {
 
 describe('<WorkspaceTransactionList /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
+    const otherAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
     const account = { network: Network.ETHEREUM_SEPOLIA, address };
 
     const useWorkspaceTransactionsSpy = jest.spyOn(
@@ -207,11 +208,41 @@ describe('<WorkspaceTransactionList /> component', () => {
             partial: true,
         });
 
-        render(createTestComponent());
+        render(
+            createTestComponent({
+                accounts: [
+                    buildAccount(),
+                    buildAccount({
+                        id: `${Network.ETHEREUM_SEPOLIA}-${otherAddress}`,
+                        address: otherAddress,
+                    }),
+                ],
+            }),
+        );
 
         expect(
             screen.getByText('app.workspace.workspaceTransactionList.partial'),
         ).toBeInTheDocument();
+    });
+
+    // A single-account view is the account, so saying "some accounts" would only raise the question of which one.
+    it('warns about the account itself when it is the only one of the selection', () => {
+        mockTransactions([generateWorkspaceTransaction({ account })], {
+            partial: true,
+        });
+
+        render(createTestComponent({ accounts: [buildAccount()] }));
+
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceTransactionList.partialSingle',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceTransactionList.partial',
+            ),
+        ).not.toBeInTheDocument();
     });
 
     it('does not warn when every account could be read', () => {
@@ -220,6 +251,11 @@ describe('<WorkspaceTransactionList /> component', () => {
         expect(
             screen.queryByText(
                 'app.workspace.workspaceTransactionList.partial',
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceTransactionList.partialSingle',
             ),
         ).not.toBeInTheDocument();
     });

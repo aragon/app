@@ -4441,6 +4441,7 @@
       "workspaceTransactionList": {
         "emptyState": {
           "description": "This will show the transactions of every account in this workspace when available.",
+          "descriptionSingle": "This will show the transactions of this account when available.",
           "heading": "No transactions found"
         },
         "entity": "Transactions",
@@ -4449,6 +4450,7 @@
           "heading": "Error loading transactions"
         },
         "partial": "Some accounts of this workspace could not be read, so this list may be incomplete.",
+        "partialSingle": "This account could not be read in full, so this list may be incomplete.",
         "typeFilter": {
           "all": "All transactions",
           "executions": "Executions",

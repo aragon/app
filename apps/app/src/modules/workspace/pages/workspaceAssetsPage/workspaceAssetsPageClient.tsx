@@ -7,6 +7,7 @@ import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAssetListData } from '../../hooks/useWorkspaceAssetListData';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAssetsPageClientProps {
     /**
@@ -20,12 +21,11 @@ export interface IWorkspaceAssetsPageClientProps {
 }
 
 /**
- * Assets of a workspace, filtered by the account picked on the workspace navigation.
+ * Assets of a workspace, scoped to the account on the route.
  *
- * Every selection reads the workspace query API, "All accounts" over all accounts and a single account over just
- * that one. Going through the same endpoint throughout keeps the accounts summing to the aggregated view, since both
- * come out of the same aggregation. Safe accounts cannot be selected, so their balances show up only inside the
- * aggregated view.
+ * Every scope reads the workspace query API, the aggregated one over all accounts and an account over just that
+ * one. Going through the same endpoint throughout keeps the accounts summing to the aggregated view, since both
+ * come out of the same aggregation.
  */
 export const WorkspaceAssetsPageClient: React.FC<
     IWorkspaceAssetsPageClientProps
@@ -34,17 +34,25 @@ export const WorkspaceAssetsPageClient: React.FC<
 
     const { t } = useTranslations();
 
-    const { data: workspace } = useWorkspace({
+    const { data: workspace, isPending: isWorkspacePending } = useWorkspace({
         urlParams: { id: workspaceId },
     });
 
-    const { activeOption } = useWorkspaceAccountOptions();
+    const { accountId, activeOption } = useWorkspaceAccountOptions();
 
     const accounts = workspace?.accounts ?? [];
-    const accountsToDisplay = accounts.map(({ network, address }) => ({
-        network,
-        address,
-    }));
+
+    // Every account of the workspace, or just the one the route names.
+    // The account is read from the route rather than the activeOption
+    // because the latter does not yet take into account Safe accounts.
+    const account = workspaceUtils.findAccountById(accounts, accountId);
+
+    const accountsToDisplay = (account != null ? [account] : accounts).map(
+        ({ network, address }) => ({
+            network,
+            address,
+        }),
+    );
 
     // Totals of the selection. Shares its key with the list's own query, so this adds no extra request.
     const { metadata } = useWorkspaceAssetListData(
@@ -59,6 +67,7 @@ export const WorkspaceAssetsPageClient: React.FC<
             >
                 <WorkspaceAssetList
                     accounts={accountsToDisplay}
+                    isPending={isWorkspacePending}
                     pageSize={pageSize}
                 />
             </Page.Main>

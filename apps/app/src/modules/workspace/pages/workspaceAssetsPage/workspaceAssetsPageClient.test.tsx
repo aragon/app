@@ -1,6 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { ReactQueryWrapper } from '@/shared/testUtils';
@@ -11,7 +11,11 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
-import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
+import * as workspaceAssetsAsideCardModule from '../../components/workspaceAssetsAsideCard';
+import type {
+    IUseWorkspaceAccountOptionsResult,
+    IWorkspaceAccountOption,
+} from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAccountOptionsModule from '../../hooks/useWorkspaceAccountOptions';
 import {
     type IWorkspaceAssetsPageClientProps,
@@ -28,6 +32,12 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
     const useWorkspaceAccountOptionsSpy = jest.spyOn(
         useWorkspaceAccountOptionsModule,
         'useWorkspaceAccountOptions',
+    );
+    // Stubbed below: the aside renders a DAO card that reads the DAO, which belongs to its own tests. Here only
+    // what the page hands it matters.
+    const assetsAsideCardSpy = jest.spyOn(
+        workspaceAssetsAsideCardModule,
+        'WorkspaceAssetsAsideCard',
     );
 
     // React Query dedupes by key and the asset key is built from the accounts, so each test gets its own addresses:
@@ -50,6 +60,13 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         network: Network.ETHEREUM_SEPOLIA,
     });
 
+    const buildSafeAccount = (safeAddress: string): IWorkspaceAccount => ({
+        id: `ethereum-sepolia-${safeAddress}`,
+        type: WorkspaceAccountType.SAFE,
+        address: safeAddress,
+        network: Network.ETHEREUM_SEPOLIA,
+    });
+
     const buildWorkspace = (params: {
         daoAddress: string;
         safeAddress: string;
@@ -62,12 +79,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         owner: params.safeAddress,
         accounts: [
             buildDaoAccount(params.daoAddress),
-            {
-                id: `ethereum-sepolia-${params.safeAddress}`,
-                type: WorkspaceAccountType.SAFE,
-                address: params.safeAddress,
-                network: Network.ETHEREUM_SEPOLIA,
-            },
+            buildSafeAccount(params.safeAddress),
         ],
         targets: [],
     });
@@ -86,18 +98,36 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
     });
 
     /**
-     * Mocks the hook as the aggregated route does: the page is only reachable there, so the DAO account is an
-     * option to switch to rather than the one being looked at.
+     * Mocks the hook as the aggregated route does, the overrides standing in for an account-scoped route.
      */
-    const mockAccountOptions = (daoAddress: string) =>
+    const mockAccountOptions = (
+        daoAddress: string,
+        overrides?: Partial<IUseWorkspaceAccountOptionsResult>,
+    ) =>
         useWorkspaceAccountOptionsSpy.mockReturnValue({
             options: [allAccountsOption, buildDaoOption(daoAddress)],
             accountId: allAccountsOption.id,
             activeOption: allAccountsOption,
             isAllAccounts: true,
+            ...overrides,
         });
 
+    const expectAssetsRequestedFor = async (accounts: IWorkspaceAccount[]) =>
+        waitFor(() =>
+            expect(getWorkspaceAssetsSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    body: expect.objectContaining({
+                        accounts: accounts.map(({ network, address }) => ({
+                            network,
+                            address,
+                        })),
+                    }),
+                }),
+            ),
+        );
+
     beforeEach(() => {
+        assetsAsideCardSpy.mockImplementation(() => null);
         getAccountsSpy.mockResolvedValue([]);
         getWorkspaceAssetsSpy.mockResolvedValue({
             data: [],
@@ -118,14 +148,19 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         getAccountsSpy.mockReset();
         getWorkspaceAssetsSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
+        assetsAsideCardSpy.mockReset();
     });
 
     const createTestComponent = (
         props?: Partial<IWorkspaceAssetsPageClientProps>,
+        accountOptions?: (addresses: {
+            daoAddress: string;
+            safeAddress: string;
+        }) => Partial<IUseWorkspaceAccountOptionsResult>,
     ) => {
         const addresses = nextAddresses();
         getWorkspaceSpy.mockResolvedValue(buildWorkspace(addresses));
-        mockAccountOptions(addresses.daoAddress);
+        mockAccountOptions(addresses.daoAddress, accountOptions?.(addresses));
 
         const completeProps: IWorkspaceAssetsPageClientProps = {
             workspaceId: `test-workspace-${testIndex.toString()}`,
@@ -146,36 +181,99 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         return { component, ...addresses };
     };
 
-    it('reads the workspace assets API for the aggregated tab, with every account', async () => {
+    it('reads the workspace assets API for the aggregated scope, with every account', async () => {
         const { component, daoAddress, safeAddress } = createTestComponent();
         render(component);
 
+        await expectAssetsRequestedFor([
+            buildDaoAccount(daoAddress),
+            buildSafeAccount(safeAddress),
+        ]);
+    });
+
+    it('reads the workspace assets API for a DAO account scope, with that account only', async () => {
+        const { component, daoAddress } = createTestComponent(
+            undefined,
+            ({ daoAddress: address }) => ({
+                accountId: `ethereum-sepolia-${address}`,
+                activeOption: buildDaoOption(address),
+                isAllAccounts: false,
+            }),
+        );
+        render(component);
+
+        await expectAssetsRequestedFor([buildDaoAccount(daoAddress)]);
+    });
+
+    // A Safe is a scope but never an option, so narrowing by the option would show the whole workspace here.
+    it('reads the workspace assets API for a Safe account scope, with that account only', async () => {
+        const { component, safeAddress } = createTestComponent(
+            undefined,
+            ({ safeAddress: address }) => ({
+                accountId: `ethereum-sepolia-${address}`,
+                activeOption: undefined,
+                isAllAccounts: false,
+            }),
+        );
+        render(component);
+
+        await expectAssetsRequestedFor([buildSafeAccount(safeAddress)]);
+    });
+
+    // Viewing an account the workspace does not hold is not supported yet, so the route falls back to every
+    // account rather than to an empty list.
+    it('reads every account when the route names an account the workspace does not hold', async () => {
+        const { component, daoAddress, safeAddress } = createTestComponent(
+            undefined,
+            () => ({
+                accountId: `ethereum-sepolia-${nextAddresses().daoAddress}`,
+                activeOption: undefined,
+                isAllAccounts: false,
+            }),
+        );
+        render(component);
+
+        await expectAssetsRequestedFor([
+            buildDaoAccount(daoAddress),
+            buildSafeAccount(safeAddress),
+        ]);
+    });
+
+    it('hands the active option to the aside', async () => {
+        const { component, daoAddress } = createTestComponent(
+            undefined,
+            ({ daoAddress: address }) => ({
+                accountId: `ethereum-sepolia-${address}`,
+                activeOption: buildDaoOption(address),
+                isAllAccounts: false,
+            }),
+        );
+        render(component);
+
         await waitFor(() =>
-            expect(getWorkspaceAssetsSpy).toHaveBeenCalledWith(
+            expect(assetsAsideCardSpy).toHaveBeenLastCalledWith(
                 expect.objectContaining({
-                    body: expect.objectContaining({
-                        accounts: [
-                            {
-                                network: Network.ETHEREUM_SEPOLIA,
-                                address: daoAddress,
-                            },
-                            {
-                                network: Network.ETHEREUM_SEPOLIA,
-                                address: safeAddress,
-                            },
-                        ],
-                    }),
+                    activeOption: buildDaoOption(daoAddress),
                 }),
+                undefined,
             ),
         );
     });
 
-    it('displays the totals of the aggregated tab on the aside', async () => {
+    it('hands the totals of the selection to the aside', async () => {
         const { component } = createTestComponent();
         render(component);
 
-        expect(
-            await screen.findByText(/workspaceAllAssetsAsideCard\.totalValue$/),
-        ).toBeInTheDocument();
+        await waitFor(() =>
+            expect(assetsAsideCardSpy).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    metadata: expect.objectContaining({
+                        totalAmountUsd: '1234',
+                        totalRecords: 7,
+                    }),
+                }),
+                undefined,
+            ),
+        );
     });
 });
