@@ -47,11 +47,10 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
 
     const { t } = useTranslations();
 
-    const {
-        daos,
-        isPending: isDaosPending,
-        plugins,
-    } = useWorkspacePlugins({ accounts, type: PluginType.PROCESS });
+    const { daos, isPending, isDaosPending, plugins } = useWorkspacePlugins({
+        accounts,
+        type: PluginType.PROCESS,
+    });
 
     const pluginTabs = plugins.flatMap(({ dao, plugins: daoPlugins }) => {
         const tabs: IFilterComponentPlugin<
@@ -89,9 +88,12 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
         />
     );
 
-    // Tabs wait for the DAOs, as the URL parameter is only validated against the tabs known at mount. With a single
-    // plugin the unfiltered list already shows only its proposals, and shares its request with the aside card.
-    if (isDaosPending || pluginTabs.length <= 1) {
+    // Tabs wait for the CMS overrides that decide which plugins are visible *and* for every DAO: a tab built while
+    // the overrides are pending is a tab for a plugin about to be filtered out, selectable and with its proposals
+    // fetched behind it; and a tab set built while a DAO is still loading leaves the URL parameter of one of its
+    // plugins invalid, so the group tab shows in its place until that DAO lands. With a single plugin the unfiltered
+    // list already shows only its proposals, and shares its request with the aside card.
+    if (isPending || pluginTabs.length <= 1) {
         return renderList();
     }
 

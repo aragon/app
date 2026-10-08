@@ -1,8 +1,19 @@
+import type * as ReactQuery from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
 import type { IWorkspaceGateProps } from '@/modules/workspace/components/workspaceGate';
+import { daoOverridesOptions } from '@/shared/api/cmsService';
 import type { INavigationWorkspaceProps } from '../../navigations/navigationWorkspace';
 import { type ILayoutWorkspaceProps, LayoutWorkspace } from './layoutWorkspace';
+
+jest.mock('@tanstack/react-query', () => ({
+    ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
+    HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
+        <div data-testid="hydration-mock">{props.children}</div>
+    ),
+}));
 
 jest.mock('../../navigations/navigationWorkspace', () => ({
     NavigationWorkspace: (props: INavigationWorkspaceProps) => (
@@ -21,10 +32,23 @@ jest.mock('@/modules/workspace/components/workspaceGate', () => ({
 
 describe('<LayoutWorkspace /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
+    const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+
+    beforeEach(() => {
+        fetchQuerySpy.mockResolvedValue({});
+    });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
+        fetchQuerySpy.mockReset();
     });
+
+    // Query options carry a fresh queryFn per call, so the key is what identifies the read. `prefetchQuery` passes
+    // its options straight to `fetchQuery`, which is what is spied here.
+    const prefetchedKeys = () =>
+        fetchQuerySpy.mock.calls.map(
+            ([options]) => (options as { queryKey: unknown[] }).queryKey,
+        );
 
     const createTestComponent = async (
         props?: Partial<ILayoutWorkspaceProps>,
@@ -79,5 +103,19 @@ describe('<LayoutWorkspace /> component', () => {
         render(await createTestComponent());
 
         expect(getWorkspaceSpy).not.toHaveBeenCalled();
+    });
+
+    // The tabs of the aggregated pages are validated against the URL parameter at mount only, so a body the CMS
+    // hides must never be offered as one — not even for the tick before the overrides land.
+    it('prefetches the CMS overrides for the pages below', async () => {
+        await createTestComponent();
+
+        expect(prefetchedKeys()).toContainEqual(daoOverridesOptions().queryKey);
+    });
+
+    it('hydrates what it prefetched for the pages below', async () => {
+        render(await createTestComponent());
+
+        expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
     });
 });

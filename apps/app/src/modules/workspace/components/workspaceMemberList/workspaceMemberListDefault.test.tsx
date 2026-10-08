@@ -2,13 +2,15 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
-import { Network } from '@/shared/api/daoService';
+import { type IDaoPlugin, Network } from '@/shared/api/daoService';
 import * as useDaoChainHook from '@/shared/hooks/useDaoChain';
 import {
+    generateDaoPlugin,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import * as workspaceQueryService from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -20,6 +22,7 @@ import {
     generateWorkspaceQueryResponse,
 } from '../../testUtils';
 import {
+    type IWorkspaceAccountPlugins,
     type IWorkspaceMemberListDefaultProps,
     WorkspaceMemberListDefault,
 } from './workspaceMemberListDefault';
@@ -28,6 +31,25 @@ describe('<WorkspaceMemberListDefault /> component', () => {
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const safeAddress = '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c';
     const memberAddress = '0x1234567890123456789012345678901234567890';
+
+    // Default governance of `generateWorkspaceMembership`, i.e. the body the links below are expected to name.
+    const governanceAddress = '0x0000000000000000000000000000000000000001';
+    // A membership-only body: no process of its own, so the rows below name only the body.
+    const body = generateDaoPlugin({
+        address: governanceAddress,
+        isBody: true,
+    });
+    const bodyId = daoUtils.buildPluginUniqueId(body);
+
+    /**
+     * The plugin map the list is handed in production, where the bodies of an account are known.
+     */
+    const buildPlugins = (
+        bodies: IDaoPlugin[],
+        processes: IDaoPlugin[] = [],
+    ): Record<string, IWorkspaceAccountPlugins> => ({
+        [daoAccount.id]: { bodies, processes },
+    });
 
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
@@ -112,6 +134,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
             workspaceId: 'demo',
             accounts: [daoAccount, safeAccount],
             pageSize: 18,
+            visiblePluginsByAccountId: buildPlugins([body]),
             ...props,
         };
 
@@ -147,7 +170,9 @@ describe('<WorkspaceMemberListDefault /> component', () => {
         );
     });
 
-    it('links a member to its member page under its first DAO account', () => {
+    // The body travels with the link: membership is body-scoped, and the member page would otherwise pick a body of
+    // its own, which for a member of two bodies need not be the one the row stood for.
+    it('links a member to its member page under its first DAO account, naming the body of that membership', () => {
         mockMembers([
             generateWorkspaceMember({
                 network: Network.ETHEREUM_SEPOLIA,
@@ -173,7 +198,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
 
         expect(screen.getAllByRole('link')[0]).toHaveAttribute(
             'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}`,
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${bodyId}`,
         );
     });
 
@@ -203,7 +228,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
 
         expect(screen.getAllByRole('link')[0]).toHaveAttribute(
             'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}`,
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${bodyId}`,
         );
     });
 
@@ -265,7 +290,244 @@ describe('<WorkspaceMemberListDefault /> component', () => {
 
         expect(screen.getAllByRole('link')[0]).toHaveAttribute(
             'href',
-            `/workspace/demo/${daoAccount.id}/members/${checksummed}`,
+            `/workspace/demo/${daoAccount.id}/members/${checksummed}?vote=${bodyId}`,
+        );
+    });
+
+    // The row must name the body its tab names, which is what stops a member of a token and a multisig body,
+    // clicked on the token tab, from being reported under the multisig one.
+    it('names the body the list is filtered by in the member link', () => {
+        const tokenBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000Af',
+            slug: 'token',
+        });
+        mockMembers([
+            generateWorkspaceMember({
+                address: memberAddress,
+                memberships: [
+                    generateWorkspaceMembership({
+                        account: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: daoAddress,
+                        },
+                    }),
+                    generateWorkspaceMembership({
+                        account: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: daoAddress,
+                        },
+                        governance: {
+                            address: tokenBody.address,
+                            type: 'tokenVoting',
+                        },
+                    }),
+                ],
+            }),
+        ]);
+        render(
+            createTestComponent({
+                filters: {
+                    network: Network.ETHEREUM_SEPOLIA,
+                    governanceAddress: tokenBody.address,
+                },
+                visiblePluginsByAccountId: buildPlugins([body, tokenBody]),
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${daoUtils.buildPluginUniqueId(tokenBody)}`,
+        );
+    });
+
+    /**
+     * Renders a member holding one membership on the DAO account and returns the row's href.
+     */
+    const renderMemberOfBody = (
+        bodyAddress: string,
+        plugins: Record<string, IWorkspaceAccountPlugins>,
+    ) => {
+        mockMembers([
+            generateWorkspaceMember({
+                network: Network.ETHEREUM_SEPOLIA,
+                address: memberAddress,
+                memberships: [
+                    generateWorkspaceMembership({
+                        account: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: daoAddress,
+                        },
+                        governance: { address: bodyAddress, type: 'multisig' },
+                    }),
+                ],
+            }),
+        ]);
+        render(createTestComponent({ visiblePluginsByAccountId: plugins }));
+
+        return screen.getAllByRole('link')[0];
+    };
+
+    // The proposals of the member page are filtered by process, so the row names the process the body acts through
+    // as well: a DAO whose single plugin is both the body and the process names the very same governance twice.
+    it('names the body as the process when the body is one', () => {
+        const basicBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000B0',
+            slug: 'multisig',
+            isBody: true,
+            isProcess: true,
+        });
+        const id = daoUtils.buildPluginUniqueId(basicBody);
+
+        expect(
+            renderMemberOfBody(
+                basicBody.address,
+                buildPlugins([basicBody], [basicBody]),
+            ),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${id}&proposals=${id}`,
+        );
+    });
+
+    // A body nested in a process — a stage body of an SPP process — votes in its own right but creates proposals
+    // through its parent, which is the process the member page must open its proposals on.
+    it('names the parent process of a body nested in one', () => {
+        const process = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000C0',
+            slug: 'spp',
+            isProcess: true,
+        });
+        const stageBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000C1',
+            slug: 'stage-multisig',
+            isBody: true,
+            isSubPlugin: true,
+            parentPlugin: process.address,
+        });
+
+        expect(
+            renderMemberOfBody(
+                stageBody.address,
+                buildPlugins([stageBody], [process]),
+            ),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${daoUtils.buildPluginUniqueId(stageBody)}&proposals=${daoUtils.buildPluginUniqueId(process)}`,
+        );
+    });
+
+    // The same nesting, expressed on the parent instead of the child — the backend does not guarantee which end of
+    // the link it fills, and the row must name the process either way.
+    it('names the process that lists the body among its sub-plugins', () => {
+        const process = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000D0',
+            slug: 'spp',
+            isProcess: true,
+            subPlugins: [
+                {
+                    addresses: ['0x00000000000000000000000000000000000000D1'],
+                    stageIndex: 0,
+                },
+            ],
+        });
+        const stageBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000D1',
+            slug: 'stage-multisig',
+            isBody: true,
+            isSubPlugin: true,
+        });
+
+        expect(
+            renderMemberOfBody(
+                stageBody.address,
+                buildPlugins([stageBody], [process]),
+            ),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${daoUtils.buildPluginUniqueId(stageBody)}&proposals=${daoUtils.buildPluginUniqueId(process)}`,
+        );
+    });
+
+    // "In no process" and "not read yet" are different answers, and the row must only act on the first: naming a
+    // process it cannot yet resolve is impossible, so the parameter is simply left off until it can.
+    it('names no process while the processes of the account are unknown', () => {
+        expect(
+            renderMemberOfBody(governanceAddress, {
+                [daoAccount.id]: { bodies: [body] },
+            }),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${bodyId}`,
+        );
+    });
+
+    // A membership-only plugin is in no process, so there is no process to open the proposals on and the row says
+    // nothing about them.
+    it('names no process for a body that is in none', () => {
+        expect(
+            renderMemberOfBody(governanceAddress, buildPlugins([body])),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${bodyId}`,
+        );
+    });
+
+    // A hidden body reports no voting power and no balance on the member page, so a membership held only on one is
+    // no reason to link there — the member page would report a body the member is not in.
+    it('links a member of hidden bodies only to the address on the block explorer', () => {
+        mockMembers([
+            generateWorkspaceMember({
+                network: Network.ETHEREUM_SEPOLIA,
+                address: memberAddress,
+                memberships: [
+                    generateWorkspaceMembership({
+                        account: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: daoAddress,
+                        },
+                    }),
+                ],
+            }),
+        ]);
+        render(
+            createTestComponent({
+                visiblePluginsByAccountId: buildPlugins([
+                    generateDaoPlugin({
+                        address: '0x00000000000000000000000000000000000000Af',
+                    }),
+                ]),
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `https://explorer.test/address/${memberAddress}`,
+        );
+    });
+
+    // An account whose bodies could not be read is absent from the map. Reading that as "no visible body" would turn
+    // every one of its members into a link out of the workspace; the row links bare instead, and the member page
+    // resolves a body for itself as it did before.
+    it('links the members of an account whose bodies are unknown without naming a body', () => {
+        mockMembers([
+            generateWorkspaceMember({
+                network: Network.ETHEREUM_SEPOLIA,
+                address: memberAddress,
+                memberships: [
+                    generateWorkspaceMembership({
+                        account: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: daoAddress,
+                        },
+                    }),
+                ],
+            }),
+        ]);
+        render(createTestComponent({ visiblePluginsByAccountId: {} }));
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}`,
         );
     });
 

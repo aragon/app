@@ -29,7 +29,10 @@ import {
     WorkspaceMemberList,
 } from './workspaceMemberList';
 
-const useDaoOverridesMock = jest.fn(() => ({ data: undefined }));
+const useDaoOverridesMock = jest.fn(() => ({
+    data: undefined,
+    isPending: false,
+}));
 
 jest.mock('@/shared/api/cmsService', () => ({
     useDaoOverrides: () => useDaoOverridesMock(),
@@ -95,7 +98,10 @@ describe('<WorkspaceMemberList /> component', () => {
     afterEach(() => {
         getMemberListSpy.mockReset();
         getDaoSpy.mockReset();
-        useDaoOverridesMock.mockReturnValue({ data: undefined });
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: false,
+        });
     });
 
     const createTestComponent = (
@@ -299,6 +305,7 @@ describe('<WorkspaceMemberList /> component', () => {
                     pluginsToHide: [{ address: '0xHidden' }],
                 },
             },
+            isPending: false,
         } as never);
 
         render(
@@ -365,5 +372,40 @@ describe('<WorkspaceMemberList /> component', () => {
             `${pluginTab} (dao=DAO,plugin=Body)`,
             `${pluginTab} (dao=DAO,plugin=Sub body)`,
         ]);
+    });
+
+    // The overrides decide which bodies are visible, and the tabs are validated against the URL parameter at mount
+    // only: a tab offered before they land is a tab for a body the CMS may hide, selectable and fetched behind it.
+    it('renders no tabs until the CMS overrides land', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xMultisig',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                    generateDaoPlugin({
+                        address: '0xTokenVoting',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    }),
+                ],
+            }),
+        );
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: true,
+        });
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        await waitFor(() => expect(getMemberListSpy).toHaveBeenCalled());
+        expect(
+            screen.queryByTestId('plugin-filter-mock'),
+        ).not.toBeInTheDocument();
     });
 });

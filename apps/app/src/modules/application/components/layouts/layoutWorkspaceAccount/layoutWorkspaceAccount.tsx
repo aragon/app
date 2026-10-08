@@ -7,7 +7,6 @@ import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 // biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
 import { isAddress } from 'viem';
-import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions } from '@/shared/api/daoService';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -34,12 +33,10 @@ export interface ILayoutWorkspaceAccountProps {
  * `LayoutDao` does for the DAO pages, so those sections render complete on the first paint instead of behind a
  * client-side spinner. A prefetch added to `LayoutDao` does not reach these routes and belongs here too.
  *
- * Both reads use `prefetchQuery`, which resolves rather than throws, because neither is load-bearing *here*:
- *
- * - A workspace holds Safe accounts as well as DAOs, and a Safe has no DAO to read. The sections that need one
- *   render their own not-found state; the ones that do not — assets, transactions — work from the workspace query
- *   endpoints regardless.
- * - The CMS overrides are prefetched so hidden plugins never flash in, but a CMS hiccup must not fail the page.
+ * The read uses `prefetchQuery`, which resolves rather than throws, because it is not load-bearing *here*: a
+ * workspace holds Safe accounts as well as DAOs, and a Safe has no DAO to read. The sections that need one render
+ * their own not-found state; the ones that do not — assets, transactions — work from the workspace query endpoints
+ * regardless.
  */
 export const LayoutWorkspaceAccount: React.FC<
     ILayoutWorkspaceAccountProps
@@ -64,10 +61,9 @@ export const LayoutWorkspaceAccount: React.FC<
 
     // TODO: once Safe accounts are implemented, `WorkspaceAccountGate` moves here and its `fetchQuery` replaces this
     // DAO prefetch — see the TODO on the gate for what has to hold first.
-    await Promise.all([
-        queryClient.prefetchQuery(daoOptions({ urlParams: { id: accountId } })),
-        queryClient.prefetchQuery(daoOverridesOptions()),
-    ]);
+    await queryClient.prefetchQuery(
+        daoOptions({ urlParams: { id: accountId } }),
+    );
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

@@ -46,9 +46,29 @@ export interface IUseWorkspacePluginsReturn {
      */
     daos: Record<string, IDao>;
     /**
-     * Whether any of the DAOs is still being read.
+     * Whether the plugins are still being resolved, i.e. any of the DAOs or the visibility overrides is still being
+     * read. This is what anything built out of {@link IUseWorkspacePluginsReturn.plugins} must wait for.
+     *
+     * It covers both reads because either one alone misstates the plugin list: a caller that renders on the DAOs
+     * alone renders plugins that are about to be filtered out — a hidden body appearing for a tick is a hidden body
+     * that can be selected, and whose members are then fetched and shown — while a caller that renders on the
+     * overrides alone is missing the plugins of every DAO that is still loading.
      */
     isPending: boolean;
+    /**
+     * Whether any of the DAOs is still being read, ignoring the visibility overrides.
+     * For the callers that need a DAO rather than the plugin list itself
+     */
+    isDaosPending: boolean;
+    /**
+     * Whether the visibility overrides are still being read, ignoring the DAOs. The narrow counterpart of
+     * {@link IUseWorkspacePluginsReturn.isDaosPending}, kept for symmetry and currently unused.
+     *
+     * Not the flag to gate tabs on, nor anything else built out of {@link IUseWorkspacePluginsReturn.plugins}: the
+     * overrides arrive hydrated from `LayoutWorkspace`, so this is already false while the DAOs are still loading
+     * and the plugin list is still incomplete. Use {@link IUseWorkspacePluginsReturn.isPending} for that.
+     */
+    isPluginsPending: boolean;
     /**
      * Plugins grouped by DAO, in the order of the accounts. DAOs that could not be read are left out.
      */
@@ -61,15 +81,16 @@ export interface IUseWorkspacePluginsReturn {
  * Linked-account plugins are always left out, as the workspace query endpoints only return the data of the
  * selected accounts. Sub-plugins are opt-in: they sit on a selected account, so the endpoints cover them.
  * @param params - Accounts of the workspace, type of the plugins to return and whether to include sub-plugins.
- * @returns The DAOs, whether any is still being read and their plugins grouped by DAO.
+ * @returns The DAOs, whether the plugins and the DAOs are still being resolved, and the plugins grouped by DAO.
  */
 export const useWorkspacePlugins = (
     params: IUseWorkspacePluginsParams,
 ): IUseWorkspacePluginsReturn => {
     const { accounts, type, includeSubPlugins = false } = params;
 
-    const { daos, isPending } = useWorkspaceDaos(accounts);
-    const { data: daoOverrides } = useDaoOverrides();
+    const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
+    const { data: daoOverrides, isPending: isOverridesPending } =
+        useDaoOverrides();
 
     const plugins = accounts.flatMap((account) => {
         const dao = daos[account.id];
@@ -91,5 +112,11 @@ export const useWorkspacePlugins = (
         return [{ accountId: account.id, dao, plugins: visiblePlugins }];
     });
 
-    return { daos, isPending, plugins };
+    return {
+        daos,
+        plugins,
+        isDaosPending,
+        isPluginsPending: isOverridesPending,
+        isPending: isDaosPending || isOverridesPending,
+    };
 };

@@ -16,7 +16,10 @@ const generatePlugin = (plugin: Parameters<typeof generateDaoPlugin>[0]) =>
         ...plugin,
     });
 
-const useDaoOverridesMock = jest.fn(() => ({ data: undefined }));
+const useDaoOverridesMock = jest.fn(() => ({
+    data: undefined,
+    isPending: false,
+}));
 
 jest.mock('@/shared/api/cmsService', () => ({
     useDaoOverrides: () => useDaoOverridesMock(),
@@ -37,7 +40,10 @@ describe('useWorkspacePlugins hook', () => {
 
     afterEach(() => {
         useWorkspaceDaosSpy.mockReset();
-        useDaoOverridesMock.mockReturnValue({ data: undefined });
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: false,
+        });
     });
 
     it('returns the visible plugins of the given type grouped by DAO in the order of the accounts', () => {
@@ -149,5 +155,54 @@ describe('useWorkspacePlugins hook', () => {
 
         expect(result.current.plugins).toEqual([]);
         expect(result.current.isPending).toBe(true);
+    });
+
+    // The overrides decide which plugins are returned, so a caller that renders on the DAOs alone renders plugins
+    // that are about to be filtered out — a tab for a hidden body, and its rows fetched behind it.
+    it('reports the plugins as pending until the CMS overrides land', () => {
+        const body = generatePlugin({ address: '0xBody', isBody: true });
+        const dao = generateDao({ id: 'dao', plugins: [body] });
+        useWorkspaceDaosSpy.mockReturnValue({
+            daos: { dao },
+            isPending: false,
+        });
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: true,
+        });
+
+        const { result } = renderHook(() =>
+            useWorkspacePlugins({
+                accounts: [buildAccount('dao')],
+                type: PluginType.BODY,
+            }),
+        );
+
+        expect(result.current.isPending).toBe(true);
+    });
+
+    // The callers that only need a DAO — the rows of a list naming the DAO they belong to — must not wait for the
+    // CMS, which decides nothing they read.
+    it('reports the DAOs as resolved while the CMS overrides are still pending', () => {
+        const body = generatePlugin({ address: '0xBody', isBody: true });
+        const dao = generateDao({ id: 'dao', plugins: [body] });
+        useWorkspaceDaosSpy.mockReturnValue({
+            daos: { dao },
+            isPending: false,
+        });
+        useDaoOverridesMock.mockReturnValue({
+            data: undefined,
+            isPending: true,
+        });
+
+        const { result } = renderHook(() =>
+            useWorkspacePlugins({
+                accounts: [buildAccount('dao')],
+                type: PluginType.BODY,
+            }),
+        );
+
+        expect(result.current.isPending).toBe(true);
+        expect(result.current.isDaosPending).toBe(false);
     });
 });
