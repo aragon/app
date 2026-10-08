@@ -2,6 +2,7 @@ import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import classNames from 'classnames';
 import React, { type ComponentProps } from 'react';
 import { Icon, IconType } from '../../icon';
+import { LinkBase } from '../../link';
 
 export interface IDropdownItemProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
     /**
@@ -69,7 +70,7 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
         | object = {};
 
     if (renderLink) {
-        ItemWrapper = 'a';
+        ItemWrapper = LinkBase as React.ElementType;
         itemWrapperProps = {
             href,
             target,
