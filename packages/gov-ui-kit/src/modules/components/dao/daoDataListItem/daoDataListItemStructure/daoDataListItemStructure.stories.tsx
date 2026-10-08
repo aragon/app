@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DaoDataListItemStructure } from './daoDataListItemStructure';
 
 const meta: Meta<typeof DaoDataListItemStructure> = {
-    title: 'Modules/Components/Dao/DaoDataListItem/DaoDataListItem.Structure',
+    title: 'Modules/Dao/DaoDataListItem/DaoDataListItem.Structure',
     component: DaoDataListItemStructure,
     parameters: {
         design: {

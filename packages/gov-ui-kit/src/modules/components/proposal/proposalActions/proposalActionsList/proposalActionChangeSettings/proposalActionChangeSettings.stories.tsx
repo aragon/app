@@ -3,7 +3,7 @@ import { ProposalActionChangeSettings } from './proposalActionChangeSettings';
 import { generateProposalActionChangeSettings } from './proposalActionChangeSettings.testUtils';
 
 const meta: Meta<typeof ProposalActionChangeSettings> = {
-    title: 'Modules/Components/Proposal/ProposalActions/Actions/ChangeSettings',
+    title: 'Modules/Proposal/ProposalActions/Actions/ChangeSettings',
     component: ProposalActionChangeSettings,
     parameters: {
         design: {

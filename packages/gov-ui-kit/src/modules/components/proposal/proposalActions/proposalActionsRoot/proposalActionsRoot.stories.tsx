@@ -4,7 +4,7 @@ import { Button } from '../../../../../core';
 import { generateProposalActionChangeMembers, generateProposalActionChangeSettings, ProposalActions } from '../index';
 
 const meta: Meta<typeof ProposalActions.Root> = {
-    title: 'Modules/Components/Proposal/ProposalActions/ProposalActions.Root',
+    title: 'Modules/Proposal/ProposalActions/ProposalActions.Root',
     component: ProposalActions.Root,
     parameters: {
         design: {

@@ -4,7 +4,7 @@ import { Link } from '../link';
 import { Clipboard } from './clipboard';
 
 const meta: Meta<typeof Clipboard> = {
-    title: 'Core/Components/Clipboard',
+    title: 'Core/Clipboard',
     component: Clipboard,
     parameters: {
         design: {

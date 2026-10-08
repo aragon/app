@@ -4,7 +4,7 @@ import { CheckboxCard } from '../checkboxCard';
 import { CheckboxGroup } from './checkboxGroup';
 
 const meta: Meta<typeof CheckboxGroup> = {
-    title: 'Core/Components/Forms/CheckboxGroup',
+    title: 'Core/Forms/CheckboxGroup',
     component: CheckboxGroup,
     parameters: {
         design: {

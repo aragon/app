@@ -4,7 +4,7 @@ import { IconType } from '../../icon';
 import { InputText } from './inputText';
 
 const meta: Meta<typeof InputText> = {
-    title: 'Core/Components/Forms/InputText',
+    title: 'Core/Forms/InputText',
     component: InputText,
     parameters: {
         design: {

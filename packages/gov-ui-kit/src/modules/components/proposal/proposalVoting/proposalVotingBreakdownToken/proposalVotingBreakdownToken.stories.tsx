@@ -4,7 +4,7 @@ import { ProposalVoting } from '../index';
 import { ProposalVotingTab } from '../proposalVotingDefinitions';
 
 const meta: Meta<typeof ProposalVoting.BreakdownToken> = {
-    title: 'Modules/Components/Proposal/ProposalVoting/ProposalVoting.BreakdownToken',
+    title: 'Modules/Proposal/ProposalVoting/ProposalVoting.BreakdownToken',
     component: ProposalVoting.BreakdownToken,
     parameters: {
         design: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DefinitionList, type IDefinitionListContainerProps } from '../index';
 
 const meta: Meta<typeof DefinitionList.Container> = {
-    title: 'Core/Components/DefinitionList/DefinitionList.Container',
+    title: 'Core/DefinitionList/DefinitionList.Container',
     component: DefinitionList.Container,
     parameters: {
         design: {

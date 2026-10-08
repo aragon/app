@@ -8,7 +8,7 @@ import { TransactionDetailSummary } from '../transactionDetailSummary';
 import { TransactionDetail } from './index';
 
 const meta: Meta<typeof TransactionDetail.Root> = {
-    title: 'Modules/Components/Transaction/TransactionDetail',
+    title: 'Modules/Transaction/TransactionDetail',
     component: TransactionDetail.Root,
     parameters: {
         design: {

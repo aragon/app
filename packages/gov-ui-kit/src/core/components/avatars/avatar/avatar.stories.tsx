@@ -3,7 +3,7 @@ import { Avatar } from './avatar';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Avatar> = {
-    title: 'Core/Components/Avatars/Avatar',
+    title: 'Core/Avatars/Avatar',
     component: Avatar,
     parameters: {
         style,

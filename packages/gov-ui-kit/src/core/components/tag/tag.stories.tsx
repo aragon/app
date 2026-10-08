@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Tag } from './tag';
 
 const meta: Meta<typeof Tag> = {
-    title: 'Core/Components/Tag',
+    title: 'Core/Tag',
     component: Tag,
     parameters: {
         design: {

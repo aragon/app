@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AvatarBase } from './avatarBase';
 
 const meta: Meta<typeof AvatarBase> = {
-    title: 'Core/Components/Avatars/AvatarBase',
+    title: 'Core/Avatars/AvatarBase',
     component: AvatarBase,
 };
 

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TransactionDetailSummary } from './transactionDetailSummary';
 
 const meta: Meta<typeof TransactionDetailSummary> = {
-    title: 'Modules/Components/Transaction/TransactionDetailSummary',
+    title: 'Modules/Transaction/TransactionDetailSummary',
     component: TransactionDetailSummary,
     parameters: {
         design: {

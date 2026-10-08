@@ -12,7 +12,7 @@ const ComponentWrapper: DecoratorFunction = (Story) => (
 );
 
 const meta: Meta<typeof ProposalVoting.Stage> = {
-    title: 'Modules/Components/Proposal/ProposalVoting/ProposalVoting.Stage',
+    title: 'Modules/Proposal/ProposalVoting/ProposalVoting.Stage',
     component: ProposalVoting.Stage,
     decorators: ComponentWrapper,
     parameters: {

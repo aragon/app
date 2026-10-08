@@ -4,7 +4,7 @@ import { ProposalActions } from '../index';
 import { generateProposalAction } from '../proposalActionsTestUtils';
 
 const meta: Meta<typeof ProposalActions.Container> = {
-    title: 'Modules/Components/Proposal/ProposalActions/ProposalActions.Container',
+    title: 'Modules/Proposal/ProposalActions/ProposalActions.Container',
     component: ProposalActions.Container,
     parameters: {
         design: {

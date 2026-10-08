@@ -4,7 +4,7 @@ import { ProposalVoting } from '../index';
 import { ProposalVotingTab } from '../proposalVotingDefinitions';
 
 const meta: Meta<typeof ProposalVoting.BreakdownMultisig> = {
-    title: 'Modules/Components/Proposal/ProposalVoting/ProposalVoting.BreakdownMultisig',
+    title: 'Modules/Proposal/ProposalVoting/ProposalVoting.BreakdownMultisig',
     component: ProposalVoting.BreakdownMultisig,
     parameters: {
         design: {
