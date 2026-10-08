@@ -1,0 +1,58 @@
+# The "Docs Development" workflow deploys the knowledge-base site (apps/docs) to its development
+# origin on every merge to main that touches the site or the corpus loader (see .github/filters.yml),
+# when aragon/platform-doc reports a change (repository_dispatch `docs-updated`, sent by its own
+# workflow on every push to `development`) and on manual dispatch. The build fetches the current
+# knowledge base, so no commit here is involved in a documentation change; the paths filter only
+# gates pushes. Repo-wide checks (type-check, lint, tests) run in app-development.yml via the Turbo
+# fan-out.
+
+name: Docs Development
+
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:
+    types:
+      - docs-updated
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      # Push events are compared locally by paths-filter, so the repository must be checked out.
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Detect docs changes
+        id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v3.0.2 (https://github.com/dorny/paths-filter/releases/tag/v3.0.2)
+        with:
+          base: main
+          filters: .github/filters.yml
+
+  deploy:
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'push' || needs.changes.outputs.docs == 'true') }}
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: "dev.platform-doc.aragon.org"
+      env: "development"
+      workspace: "apps/docs"
+      vault-prefix: "kv_docs"
+      docs-repo-token: true
+      patch-root-directory: false

@@ -1,0 +1,38 @@
+# The "Docs Production" workflow deploys the knowledge-base site (apps/docs) to production, by hand
+# only: a manual dispatch here (of main, or of the given ref) or the manual workflow in
+# aragon/platform-doc (repository_dispatch `release-docs`), which publishes the knowledge base as it
+# stands without a change in this repository. The site has no versioned releases: the build fetches
+# the pages the product owner validated and deploys them from main.
+
+name: Docs Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or SHA to deploy (default: main)"
+        required: false
+        type: string
+  repository_dispatch:
+    types:
+      - release-docs
+
+concurrency:
+  group: docs-production-deployment
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: "platform-doc.aragon.org"
+      env: "production"
+      ref: ${{ inputs.ref || 'main' }}
+      workspace: "apps/docs"
+      vault-prefix: "kv_docs"
+      docs-repo-token: true
+      patch-root-directory: false
