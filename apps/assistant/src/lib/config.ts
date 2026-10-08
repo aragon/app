@@ -1,5 +1,4 @@
 import type { IChatReasoning } from '../chat/models';
-import type { IDocsCorpusMode } from '../docs/corpus';
 import { type AssistantEnvironment, env } from './env';
 
 export interface IAssistantConfig {
@@ -11,18 +10,10 @@ export interface IAssistantConfig {
      */
     corsAllowedOrigins: string[];
     /**
-     * Which pages the documentation index is built from (at build time, see
-     * docs/buildDocsIndex.ts): `ready` is the product-owner-validated set the public docs
-     * site will publish (pages whose `status: draft` the owner removed, or marked `ready`);
-     * `drafts` adds the pages still under review. Every environment answers from `drafts`: the
-     * product owner considers the draft content correct and only its wording unreviewed, so the
-     * chatbot may use it while the public docs site shows the reviewed pages only.
-     */
-    docsCorpus: IDocsCorpusMode;
-    /**
      * AI Gateway model ids of the documentation search: the embedding model the index is built
      * with (and queries are embedded with, at runtime) and the reranker that orders the candidate
-     * passages before they reach the agent.
+     * passages before they reach the agent. Which pages the index is built from is the
+     * environment's corpus mode, kept with the loader (`docsCorpusModes` in @aragon/docs-corpus).
      */
     docs: {
         embeddingModel: string;
@@ -84,28 +75,24 @@ const defaultDocsModels = {
 const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
     local: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
     },
     development: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
     },
     preview: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
-        docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
     },
     production: {
         corsAllowedOrigins: appOrigins,
-        docsCorpus: 'drafts',
         docs: defaultDocsModels,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
