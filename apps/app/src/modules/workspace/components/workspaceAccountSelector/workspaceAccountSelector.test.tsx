@@ -7,6 +7,7 @@ import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
     type IWorkspaceAccount,
@@ -24,6 +25,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
+    const getMemberListSpy = jest.spyOn(workspaceQueryService, 'getMemberList');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const useWorkspaceAccountOptionsSpy = jest.spyOn(
         useWorkspaceAccountOptionsHook,
@@ -91,6 +93,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         getDaoSpy.mockReset();
+        getMemberListSpy.mockReset();
         cidToSrcSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
         usePathnameSpy.mockReset();
@@ -164,6 +167,27 @@ describe('<WorkspaceAccountSelector /> component', () => {
             'href',
             `/workspace/test-workspace/${daoAccount.id}/overview`,
         );
+    });
+
+    // A member page names a record below the section, and only the section is carried over: switching account
+    // links to the members page of each account, not that member under it.
+    it('links a member page to the members page of each account', async () => {
+        const memberAddress = '0x1234567890123456789012345678901234567890';
+        usePathnameSpy.mockReturnValue(
+            `/workspace/test-workspace/${daoAccount.id}/members/${memberAddress}`,
+        );
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        expect(
+            await screen.findByRole('menuitem', { name: /Demo DAO/ }),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/test-workspace/${daoAccount.id}/members`,
+        );
+        // Switching account must cost no lookup of its own.
+        expect(getMemberListSpy).not.toHaveBeenCalled();
     });
 
     it('checks the option named by the URL and marks the others with a chevron', async () => {

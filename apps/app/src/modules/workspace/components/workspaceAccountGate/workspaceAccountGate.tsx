@@ -32,8 +32,14 @@ export interface IWorkspaceAccountGateProps {
  * The DAO is read on the server, so the outcome is settled before anything reaches the client: no client-side
  * loading state, and no client refetch of a DAO that already failed to load. The read is the same GET request
  * `LayoutWorkspaceAccount` makes within the same render, which Next.js memoizes, so it reaches the backend once.
- * The DAO is hydrated here too so the gate stays self-sufficient — e.g. once Safes are filtered out it can wrap
- * the whole account level instead of single pages.
+ * The DAO is hydrated here too so the gate stays self-sufficient.
+ *
+ * TODO: once Safe accounts are implemented, merge this gate into `LayoutWorkspaceAccount` instead of wrapping every
+ * account-level page. The gate has to learn the account type first: it currently renders an error for anything that
+ * is not a DAO, which in the layout would also block the sections a Safe can serve (assets, transactions). The merge
+ * replaces the layout's DAO `prefetchQuery` with this `fetchQuery`, renders the error state in place of `children`,
+ * and drops the wrapper from the pages. Before merging, check that a DAO page rendered under a layout that withholds
+ * its children cannot surface its own `notFound()` (e.g. `DaoMembersPage`) over the gate's error state.
  */
 export const WorkspaceAccountGate: React.FC<
     IWorkspaceAccountGateProps

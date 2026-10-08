@@ -1,4 +1,8 @@
-export { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
+export {
+    DaoProposalList,
+    daoProposalListFilterParam,
+    type IDaoProposalListProps,
+} from './daoProposalList';
 export type { IDaoProposalListDefaultProps } from './daoProposalListDefault';
 export {
     DaoProposalListDefaultItem,

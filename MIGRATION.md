@@ -53,7 +53,7 @@ naming (changesets-native format), so future apps/packages get their own paralle
 - **Tags:** `@aragon/app@1.17.0` (hotfix: `@aragon/app@1.17.0-hotfix.1`). Old `vX.Y.Z` tags stay as history.
 - **Branches:** `release/app/YYYY-MM-DD_HH-mm`, `hotfix/app/<version>_<timestamp>`.
 - **Workflows:** the `app-*.yml` release flows only react to `release/app/*`, `hotfix/app/*` and `@aragon/app@*`; a future workspace gets its own copies with its own prefix.
-- **Lockstep versions:** when packages must release together (planned: `@aragon/domain` + the indexer app), add them to the `fixed` group in `.changeset/config.json` — it can only reference packages that already exist in the workspace, so this happens when they land.
+- **Library packages:** a package bundled by one app joins that app's release scope in `.github/release-scopes.yml`; the npm-published ones (`@aragon/gov-ui-kit`, `@aragon/aragon-domain`) own a scope and `<pkg>-*.yml` flows instead.
 - **When a second released workspace lands:** `changeset version` consumes changesets of *all* packages at once, so each per-package release flow must pass `--ignore <other-pkg>` (supported by our CLI version) or we adopt a combined release train — decide when it happens.
 
 **Migration boundary caveat:** `App Rollback` and `App Hotfix Start` run the *current* workflow

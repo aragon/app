@@ -10,10 +10,15 @@
 # genuinely shared (bundled by both the app and the assistant service) and can live in only one
 # scope; it stays with its domain owner, the assistant — an app deploy may therefore ship
 # contracts changes whose changeset is consumed by the next assistant release.
+# @aragon/gov-ui-kit and @aragon/aragon-domain are the exception: only the app bundles them, but
+# both are published to npm, so each owns a scope, tags and flows of its own.
 
 app:
   - "@aragon/app"
   - "@aragon/assistant-chat"
+
+aragon-domain:
+  - "@aragon/aragon-domain"
 
 assistant:
   - "@aragon/assistant"

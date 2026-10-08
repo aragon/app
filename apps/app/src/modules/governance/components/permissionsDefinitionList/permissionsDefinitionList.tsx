@@ -60,11 +60,13 @@ export const PermissionsDefinitionList: React.FC<
     return (
         <div className={classNames('', className)}>
             {settings.map((settingsGroup, groupIndex) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: static settings list, never reordered
                 <div className="flex flex-col gap-y-1" key={groupIndex}>
                     <DefinitionList.Container>
                         {settingsGroup.map(
                             ({ term, definition, link }, settingIndex) => (
                                 <DefinitionList.Item
+                                    // biome-ignore lint/suspicious/noArrayIndexKey: static settings list, never reordered
                                     key={settingIndex}
                                     link={link}
                                     term={term}

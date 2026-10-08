@@ -8,7 +8,7 @@ In plain English: we want the agent to get the right project-specific advice rig
 
 1. The agent says it is about to edit a file.
 2. The loader looks at that file path.
-3. It finds any matching rule docs under `.agents/shared/skills/rules/`.
+3. It finds any matching rule docs under `skills/shared/rules/`.
 4. It bundles those matches into `additionalContext`.
 5. The agent-specific adapter hands that context to the runtime in whatever proprietary shape that runtime expects.
 
@@ -42,7 +42,7 @@ If another runtime needs a different wrapper, it should reuse the shared loader 
 
 This spike is real because all of these are present:
 
-- checked-in shared rules under `.agents/shared/skills/rules/`
+- checked-in shared rules under `skills/shared/rules/`
 - a shared loader that can be run directly from the CLI
 - a Claude adapter that uses the shared loader
 - contract tests proving the generic and Claude outputs carry the same rule content

@@ -1,0 +1,62 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    // Shared rules and formatting come from the root biome.json; only the DDD layer boundaries live here.
+    "root": false,
+    "extends": "//",
+    "overrides": [
+        {
+            "includes": [
+                "src/domain/**"
+            ],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noRestrictedImports": {
+                            "level": "error",
+                            "options": {
+                                "patterns": [
+                                    {
+                                        "group": [
+                                            "@/use-cases/**"
+                                        ],
+                                        "message": "Domain layer must not import from use-cases. Dependencies flow inward: infrastructure → use-cases → domain."
+                                    },
+                                    {
+                                        "group": [
+                                            "@/infrastructure/**"
+                                        ],
+                                        "message": "Domain layer must not import from infrastructure. Dependencies flow inward: infrastructure → use-cases → domain."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "includes": [
+                "src/use-cases/**"
+            ],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noRestrictedImports": {
+                            "level": "error",
+                            "options": {
+                                "patterns": [
+                                    {
+                                        "group": [
+                                            "@/infrastructure/**"
+                                        ],
+                                        "message": "Use-cases layer must not import from infrastructure. Dependencies flow inward: infrastructure → use-cases → domain."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

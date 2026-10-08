@@ -7,6 +7,10 @@ export {
     workspaceAssetListOptions,
 } from './useWorkspaceAssetList';
 export {
+    useWorkspaceMemberList,
+    workspaceMemberListOptions,
+} from './useWorkspaceMemberList';
+export {
     useWorkspaceProposalList,
     workspaceProposalListOptions,
 } from './useWorkspaceProposalList';

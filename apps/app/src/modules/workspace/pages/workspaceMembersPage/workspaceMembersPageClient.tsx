@@ -1,58 +1,62 @@
 'use client';
 
-import { Card, EmptyState } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useWorkspace } from '../../api/workspaceService';
+import { WorkspaceMemberList } from '../../components/workspaceMemberList';
+import { WorkspaceMembersAsideCard } from '../../components/workspaceMembersAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 
+export interface IWorkspaceMembersPageClientProps {
+    /**
+     * ID of the workspace.
+     */
+    workspaceId: string;
+    /**
+     * Number of members to read per page.
+     */
+    pageSize: number;
+}
+
 /**
- * Members of a workspace, which are always the members of one of its accounts.
+ * Members of every account of a workspace. The members of a single account are an account-scoped page, which — the
+ * account being on its path — renders the members page of that account.
  *
- * There is no aggregated membership: members are read one DAO at a time, so this page — the aggregated one — can
- * only point at an account. The list itself lives on the account-scoped route, which is where the DAO is resolvable
- * from the path and can therefore be prefetched.
+ * Unlike proposals, Safe accounts take part: their owners are members of the workspace.
  */
-export const WorkspaceMembersPageClient: React.FC = () => {
+export const WorkspaceMembersPageClient: React.FC<
+    IWorkspaceMembersPageClientProps
+> = (props) => {
+    const { workspaceId, pageSize } = props;
+
     const { t } = useTranslations();
 
-    const { options } = useWorkspaceAccountOptions();
-    const hasDaoAccounts = options.some((option) => !option.isAllAccounts);
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
 
-    // A workspace with no DAO account has no body, so there is no membership to point at either. Both states are
-    // spelled out rather than built from a variable key, so the translation keys stay searchable.
-    const emptyState = hasDaoAccounts
-        ? {
-              description: t(
-                  'app.workspace.workspaceMembersPage.selectAccount.description',
-              ),
-              heading: t(
-                  'app.workspace.workspaceMembersPage.selectAccount.heading',
-              ),
-              object: 'USERS' as const,
-          }
-        : {
-              description: t(
-                  'app.workspace.workspaceMembersPage.emptyState.description',
-              ),
-              heading: t(
-                  'app.workspace.workspaceMembersPage.emptyState.heading',
-              ),
-              object: 'MAGNIFYING_GLASS' as const,
-          };
+    const accounts = workspace?.accounts ?? [];
+
+    const { activeOption } = useWorkspaceAccountOptions();
 
     return (
         <Page.Content>
             <Page.Main
                 title={t('app.workspace.workspaceMembersPage.main.title')}
             >
-                <Card className="border border-neutral-100 py-10">
-                    <EmptyState
-                        description={emptyState.description}
-                        heading={emptyState.heading}
-                        objectIllustration={{ object: emptyState.object }}
-                    />
-                </Card>
+                <WorkspaceMemberList
+                    accounts={accounts}
+                    pageSize={pageSize}
+                    workspaceId={workspaceId}
+                />
             </Page.Main>
+            <Page.Aside>
+                <WorkspaceMembersAsideCard
+                    accounts={accounts}
+                    activeOption={activeOption}
+                    pageSize={pageSize}
+                />
+            </Page.Aside>
         </Page.Content>
     );
 };

@@ -4,7 +4,7 @@ import {
     narrationMaxChars,
 } from './docsNarrationFilter';
 
-const toolNames = new Set(['searchDocs', 'readDoc', 'listDocs']);
+const toolNames = new Set(['searchDocs', 'readDoc']);
 
 const runThrough = async (
     chunks: UIMessageChunk[],
