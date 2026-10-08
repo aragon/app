@@ -507,31 +507,43 @@ describe('prepareDaoContractsUpdateDialog utils', () => {
     });
 
     describe('getPluginUpdateDetails', () => {
-        it('returns the details of the plugin update', () => {
-            const plugin = generateDaoPlugin({
-                subdomain: 'token-voting',
-                release: '1',
-                build: '1',
-            });
-            const pluginInfo = {
-                id: 'plugin',
-                name: 'Plugin',
-                installVersion: {
-                    release: 1,
-                    build: 2,
-                    description: 'New-token',
-                    releaseNotes: 'https://releases',
-                },
-            };
-            getPluginSpy.mockReturnValue(pluginInfo);
-            const result =
-                prepareDaoContractsUpdateDialogUtils['getPluginUpdateDetails'](
-                    plugin,
+        it.each([
+            { name: 'Test', heading: 'Test' },
+            { name: 'Finance & <Core>', heading: 'Finance &amp; &lt;Core&gt;' },
+        ])(
+            'keeps "$name" as the heading and labels current and new contract versions separately',
+            ({ name, heading }) => {
+                const plugin = generateDaoPlugin({
+                    name,
+                    subdomain: 'token-voting',
+                    release: '1',
+                    build: '1',
+                });
+                const pluginInfo = {
+                    id: 'plugin',
+                    name: 'Plugin',
+                    installVersion: {
+                        release: 1,
+                        build: 3,
+                        description: 'New-token',
+                        releaseNotes: 'https://releases',
+                    },
+                };
+                getPluginSpy.mockReturnValue(pluginInfo);
+                const result =
+                    prepareDaoContractsUpdateDialogUtils[
+                        'getPluginUpdateDetails'
+                    ](plugin);
+                expect(result).toContain(`<strong>${heading}</strong>`);
+                expect(result).toContain(
+                    '<li><strong>Current version</strong>: Token Voting v1.1</li>',
                 );
-            expect(result).toContain('Token Voting 1.2');
-            expect(result).toContain('Token Voting 1.1');
-            expect(result).toContain('New-token');
-            expect(result).toContain('https://releases');
-        });
+                expect(result).toContain(
+                    '<li><strong>New version</strong>: Token Voting v1.3</li>',
+                );
+                expect(result).toContain('New-token');
+                expect(result).toContain('https://releases');
+            },
+        );
     });
 });

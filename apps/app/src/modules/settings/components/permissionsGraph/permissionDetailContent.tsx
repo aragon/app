@@ -13,6 +13,7 @@ import type { IPermissionDetailsEntity } from '../permissionsList/permissionEnti
 interface IPermissionDetailEntity {
     address: string;
     label?: string;
+    versionName?: string;
 }
 
 export interface IPermissionDetailContentProps {
@@ -38,7 +39,7 @@ const toDetailsEntity = (
     address,
     label: detail?.label,
     isSentinel: isSentinelAddress(address),
-    detailName: detail?.label,
+    detailName: detail?.versionName ?? detail?.label,
 });
 
 export const PermissionDetailContent: React.FC<

@@ -29,6 +29,8 @@ const daoPlugins = [
             address: pluginAddress,
             name: 'Founders',
             interfaceType: 'multisig',
+            release: '1',
+            build: '2',
         } as IDaoPlugin,
     }),
 ] satisfies IFilterComponentPlugin<IDaoPlugin>[];
@@ -123,7 +125,11 @@ describe('buildPermissionGraph', () => {
         });
         expect(
             graph.nodes.find((node) => node.kind === 'plugin'),
-        ).toMatchObject({ label: 'Founders', tag: 'MULTISIG' });
+        ).toMatchObject({
+            label: 'Founders',
+            tag: 'OSx',
+            versionName: 'Multisig v1.2',
+        });
         expect(graph.nodes.find((node) => node.kind === 'actor')).toMatchObject(
             { label: 'Anyone' },
         );
@@ -200,7 +206,7 @@ describe('buildPermissionGraph', () => {
             expected: {
                 kind: 'plugin',
                 label: 'Backend Process',
-                tag: 'SPP',
+                tag: 'OSx',
                 layer: 'topLevelPlugin',
                 status: 'installed',
             },
@@ -566,7 +572,7 @@ describe('buildPermissionGraph', () => {
         ).toMatchObject({
             kind: 'plugin',
             label: 'Polling',
-            tag: 'SPP',
+            tag: 'OSx',
             address: secondPluginAddress,
         });
     });

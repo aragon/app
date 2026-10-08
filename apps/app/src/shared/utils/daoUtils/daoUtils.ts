@@ -137,11 +137,18 @@ class DaoUtils {
             : addressUtils.truncateAddress(dao.address);
     };
 
-    getPluginName = (plugin: IDaoPlugin): string => {
-        if (plugin.name) {
-            return plugin.name;
-        }
+    /**
+     * Returns the custom plugin name, falling back to its contract name.
+     */
+    getPluginName = (plugin: IDaoPlugin): string =>
+        plugin.name || this.getPluginContractName(plugin);
 
+    /**
+     * Returns the repository name for contract version labels, falling back to the interface type.
+     */
+    getPluginContractName = (
+        plugin: Pick<IDaoPlugin, 'subdomain' | 'interfaceType'>,
+    ): string => {
         if (plugin.subdomain) {
             return this.parsePluginSubdomain(plugin.subdomain);
         }
