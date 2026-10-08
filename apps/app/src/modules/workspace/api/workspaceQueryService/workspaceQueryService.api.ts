@@ -10,6 +10,7 @@ import type { IRequestBodyParams } from '@/shared/api/httpService';
 import type {
     IWorkspaceAccountRef,
     IWorkspaceCoverage,
+    WorkspaceMembershipRole,
     WorkspaceTransactionType,
 } from './domain';
 
@@ -204,3 +205,43 @@ export interface IGetWorkspaceProposalListBody {
 
 export interface IGetWorkspaceProposalListParams
     extends IRequestBodyParams<IGetWorkspaceProposalListBody> {}
+
+export interface IWorkspaceMemberListFilters {
+    /**
+     * Keeps only the accounts on this network for the request.
+     */
+    network?: Network;
+    /**
+     * Keeps only this member.
+     */
+    memberAddress?: string;
+    /**
+     * Keeps only the memberships of this governance plugin or Safe. Requires `network`, since the same address is a
+     * different governance on another chain.
+     */
+    governanceAddress?: string;
+    /**
+     * Keeps only the memberships with this role.
+     */
+    role?: WorkspaceMembershipRole;
+}
+
+export type WorkspaceMemberListSort = 'address';
+
+export interface IGetWorkspaceMemberListBody {
+    /**
+     * Accounts to aggregate the members of, DAOs and Safes alike. Max {@link workspaceAccountsRequestLimit}.
+     */
+    accounts: IWorkspaceAccountRef[];
+    /**
+     * Filters narrowing the rows inside the selected accounts. They can never add accounts.
+     */
+    filters?: IWorkspaceMemberListFilters;
+    /**
+     * Page to read. Rows are sorted by network and address.
+     */
+    pagination?: IWorkspaceQueryPagination<WorkspaceMemberListSort>;
+}
+
+export interface IGetWorkspaceMemberListParams
+    extends IRequestBodyParams<IGetWorkspaceMemberListBody> {}

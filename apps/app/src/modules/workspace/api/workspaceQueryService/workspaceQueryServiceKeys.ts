@@ -2,6 +2,7 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import type {
     IGetWorkspaceAccountsParams,
     IGetWorkspaceAssetListParams,
+    IGetWorkspaceMemberListParams,
     IGetWorkspaceProposalListParams,
     IGetWorkspaceTransactionsParams,
 } from './workspaceQueryService.api';
@@ -11,6 +12,7 @@ export enum WorkspaceQueryServiceKey {
     TRANSACTIONS = 'WORKSPACE_TRANSACTIONS',
     ASSET_LIST = 'WORKSPACE_ASSET_LIST',
     PROPOSAL_LIST = 'WORKSPACE_PROPOSAL_LIST',
+    MEMBER_LIST = 'WORKSPACE_MEMBER_LIST',
 }
 
 export const workspaceQueryServiceKeys = {
@@ -31,6 +33,11 @@ export const workspaceQueryServiceKeys = {
     ],
     proposalList: (params: IGetWorkspaceProposalListParams) => [
         WorkspaceQueryServiceKey.PROPOSAL_LIST,
+        apiVersionUtils.getApiVersion(),
+        params,
+    ],
+    memberList: (params: IGetWorkspaceMemberListParams) => [
+        WorkspaceQueryServiceKey.MEMBER_LIST,
         apiVersionUtils.getApiVersion(),
         params,
     ],

@@ -17,12 +17,25 @@ export interface IDaoMemberDetailsPageProps {
      * DAO member page parameters.
      */
     params: Promise<IDaoMemberPageParams>;
+    /**
+     * Address of the body plugin to read the membership under, defaulting to the first visible body of the DAO.
+     *
+     * Membership is plugin-scoped, so the plugin decides which voting power and token balance the page reports. The
+     * `/dao/…` route does not name one — it has no way to — and takes the default; a caller that knows the
+     * governance the member actually belongs to passes it, so the page does not report a body the member is not in.
+     */
+    bodyPluginAddress?: string;
 }
 
+/**
+ * TODO: the fallbacks below build `/dao/…` URLs, which drop a reader who arrived through
+ * `WorkspaceAccountMemberDetailsPage` out of the workspace — see the TODO on `DaoMembersPage`, where the three
+ * exits are listed and fixed together.
+ */
 export const DaoMemberDetailsPage: React.FC<
     IDaoMemberDetailsPageProps
 > = async (props) => {
-    const { params } = props;
+    const { params, bodyPluginAddress } = props;
     const { address: rawAddress, addressOrEns, network } = await params;
 
     if (!isAddress(rawAddress, { strict: false })) {
@@ -63,7 +76,17 @@ export const DaoMemberDetailsPage: React.FC<
         allBodyPlugins,
         daoOverride,
     );
-    const bodyPlugin = visibleBodyPlugins[0];
+    // Compared lowercased rather than through `addressUtils.isAddressEqual`, as the gov-ui-kit client shim breaks
+    // in a server component — the same reason the address checks above come straight from viem.
+    const normalizedBodyPluginAddress = bodyPluginAddress?.toLowerCase();
+
+    // Falls back to the first body rather than failing on an address that names none: a governance that has since
+    // been hidden, or that belongs to another DAO, must degrade to the default page instead of a dead end.
+    const bodyPlugin =
+        visibleBodyPlugins.find(
+            (plugin) =>
+                plugin.address.toLowerCase() === normalizedBodyPluginAddress,
+        ) ?? visibleBodyPlugins[0];
 
     if (bodyPlugin == null) {
         const membersUrl = daoUtils.getDaoUrl(dao, 'members')!;

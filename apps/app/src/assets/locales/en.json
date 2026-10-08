@@ -4414,17 +4414,28 @@
         "accounts": "Accounts",
         "owner": "Owner"
       },
-      "workspaceMembersPage": {
+      "workspaceMemberList": {
         "emptyState": {
-          "description": "This will show the members of the accounts in this workspace when available.",
-          "heading": "No members found"
+          "description": "The accounts of this workspace have no members yet.",
+          "heading": "No members"
         },
+        "entity": "Members",
+        "errorState": {
+          "description": "The members of this workspace could not be loaded.",
+          "heading": "Unable to load members"
+        },
+        "groupTab": "All members",
+        "partial": "Some accounts of this workspace could not be read, so this list may be incomplete.",
+        "pluginTab": "{{dao}} · {{plugin}}"
+      },
+      "workspaceMembersAsideCard": {
+        "accounts": "Accounts",
+        "allMembers": "All members",
+        "total": "Total members"
+      },
+      "workspaceMembersPage": {
         "main": {
           "title": "Members"
-        },
-        "selectAccount": {
-          "description": "Members are listed one account at a time. Open an account of this workspace to see its members.",
-          "heading": "Select an account"
         }
       },
       "workspaceTransactionList": {
@@ -4466,7 +4477,9 @@
         "errorState": {
           "description": "The proposals of this workspace could not be loaded.",
           "heading": "Unable to load proposals"
-        }
+        },
+        "groupTab": "All proposals",
+        "pluginTab": "{{dao}} · {{plugin}}"
       },
       "workspaceAllProposalsAsideCard": {
         "accounts": "Accounts",

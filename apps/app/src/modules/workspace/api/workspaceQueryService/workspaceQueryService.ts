@@ -8,6 +8,7 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import type {
     IWorkspaceAccountInfo,
     IWorkspaceAssetListResponse,
+    IWorkspaceMember,
     IWorkspaceProposalListResponse,
     IWorkspaceTransaction,
 } from './domain';
@@ -15,6 +16,7 @@ import type {
 import type {
     IGetWorkspaceAccountsParams,
     IGetWorkspaceAssetListParams,
+    IGetWorkspaceMemberListParams,
     IGetWorkspaceProposalListParams,
     IGetWorkspaceTransactionsParams,
     IWorkspaceQueryResponse,
@@ -32,6 +34,7 @@ class WorkspaceQueryService extends AragonBackendService {
         transactions: '/workspaces/query/transactions',
         assetList: '/workspaces/query/assets',
         proposalList: '/workspaces/query/proposals',
+        memberList: '/workspaces/query/members',
     };
 
     private get urls() {
@@ -50,6 +53,10 @@ class WorkspaceQueryService extends AragonBackendService {
             ),
             proposalList: apiVersionUtils.buildVersionedUrl(
                 this.basePaths.proposalList,
+                { forceVersion: 'v2' },
+            ),
+            memberList: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.memberList,
                 { forceVersion: 'v2' },
             ),
         };
@@ -106,6 +113,19 @@ class WorkspaceQueryService extends AragonBackendService {
     ): Promise<IWorkspaceProposalListResponse> =>
         await this.request<IWorkspaceProposalListResponse>(
             this.urls.proposalList,
+            params,
+            { method: 'POST' },
+        );
+
+    /**
+     * Reads the members of the given accounts — governance members of the DAOs and owners of the Safes — merged
+     * into one entry per address and network.
+     */
+    getMemberList = async (
+        params: IGetWorkspaceMemberListParams,
+    ): Promise<IWorkspaceQueryResponse<IWorkspaceMember>> =>
+        await this.request<IWorkspaceQueryResponse<IWorkspaceMember>>(
+            this.urls.memberList,
             params,
             { method: 'POST' },
         );

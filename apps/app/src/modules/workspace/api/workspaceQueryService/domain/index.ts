@@ -13,6 +13,10 @@ export type {
     IWorkspaceAssetListResponse,
 } from './workspaceAssetListResponse';
 export type { IWorkspaceCoverage } from './workspaceCoverage';
+export type {
+    IWorkspaceMember,
+    IWorkspaceMembership,
+} from './workspaceMember';
 export type { IWorkspaceProposal } from './workspaceProposal';
 export type { IWorkspaceProposalListResponse } from './workspaceProposalListResponse';
 export type {

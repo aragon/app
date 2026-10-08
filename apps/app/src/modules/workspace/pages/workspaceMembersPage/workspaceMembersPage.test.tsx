@@ -5,7 +5,9 @@ import { featureFlags } from '@/shared/featureFlags';
 import {
     type IWorkspaceMembersPageProps,
     WorkspaceMembersPage,
+    workspaceMembersCount,
 } from './workspaceMembersPage';
+import { WorkspaceMembersPageClient } from './workspaceMembersPageClient';
 
 jest.mock('next/navigation-original', () => ({
     notFound: jest.fn(() => {
@@ -30,6 +32,7 @@ describe('<WorkspaceMembersPage /> component', () => {
     afterEach(() => {
         isEnabledSpy.mockReset();
         notFoundMock.mockClear();
+        (WorkspaceMembersPageClient as jest.Mock).mockClear();
     });
 
     const createTestComponent = async (
@@ -50,6 +53,15 @@ describe('<WorkspaceMembersPage /> component', () => {
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
         expect(notFoundMock).not.toHaveBeenCalled();
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
+    });
+
+    it('hands the client the workspace and the page size', async () => {
+        render(await createTestComponent());
+
+        expect(WorkspaceMembersPageClient).toHaveBeenCalledWith(
+            { workspaceId: 'demo', pageSize: workspaceMembersCount },
+            undefined,
+        );
     });
 
     it('renders the 404 page when the workspaces feature is disabled', async () => {
