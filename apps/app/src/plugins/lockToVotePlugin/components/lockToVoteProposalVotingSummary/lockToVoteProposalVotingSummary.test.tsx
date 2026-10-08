@@ -246,4 +246,14 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         const statusText = screen.getByText(`${translationPrefix}.notVetoed`);
         expect(statusText).toHaveClass('text-neutral-500');
     });
+
+    it('displays the support progress when the proposal supply is unknown', () => {
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+        const proposal = generateTestProposal({
+            yes: '7500',
+            totalSupply: '0',
+        });
+        render(createTestComponent({ proposal }));
+        expect(screen.getByRole('progressbar').dataset.value).toEqual('100');
+    });
 });

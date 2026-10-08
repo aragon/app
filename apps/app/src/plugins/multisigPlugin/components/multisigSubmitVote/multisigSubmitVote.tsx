@@ -35,6 +35,10 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
     });
 
     const openTransactionDialog = () => {
+        if (plugin == null) {
+            return;
+        }
+
         const vote = {
             label: isVeto ? 'veto' : 'approve',
             value: undefined,
@@ -57,12 +61,14 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
           ? 'veto'
           : 'approve';
 
-    const { meta: plugin } = useDaoPlugins({
+    // Unset while the DAO query has not resolved (e.g. a backend outage): the vote has
+    // nothing to check permissions against until it does.
+    const plugin = useDaoPlugins({
         daoId,
         pluginAddress,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
-    })![0];
+    })?.[0]?.meta;
 
     const { check: submitVoteGuard, result: canSubmitVote } =
         usePermissionCheckGuard({
@@ -76,6 +82,10 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
 
     const handleVoteClick = () =>
         canSubmitVote ? openTransactionDialog() : submitVoteGuard();
+
+    if (plugin == null) {
+        return null;
+    }
 
     return (
         <div className="w-full">

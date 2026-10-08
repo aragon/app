@@ -125,15 +125,17 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
 
     // handles infinite drag wrap when isDraggable is true
     useEffect(() => {
-        if (!isDraggable) {
+        // the wrap needs a measured width: with finalPosition 0 both bounds are hit at once
+        if (!isDraggable || finalPosition === 0) {
             return;
         }
 
-        // subscribe to x value changes for infinite wrap
+        // subscribe to x value changes for infinite wrap; wrap strictly past a bound, as a
+        // value sitting on one would be moved onto the other and back forever
         const unsubscribe = translation.on('change', (latest) => {
-            if (latest <= finalPosition) {
+            if (latest < finalPosition) {
                 translation.set(latest - finalPosition);
-            } else if (latest >= 0) {
+            } else if (latest > 0) {
                 translation.set(latest + finalPosition);
             }
         });

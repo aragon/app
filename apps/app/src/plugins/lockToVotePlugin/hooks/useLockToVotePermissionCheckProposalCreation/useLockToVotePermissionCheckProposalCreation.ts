@@ -8,7 +8,6 @@ import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
-import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
@@ -38,8 +37,8 @@ export const useLockToVotePermissionCheckProposalCreation = (
 
     const { lockedAmount, isLoading: isLoadingLockToVoteData } =
         useLockToVoteData({ plugin, daoId });
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const { id: chainId } = networkDefinitions[dao!.network];
+    const { network } = daoUtils.parseDaoId(daoId);
+    const { id: chainId } = networkDefinitions[network];
 
     const pluginName = daoUtils.getPluginName(plugin);
 

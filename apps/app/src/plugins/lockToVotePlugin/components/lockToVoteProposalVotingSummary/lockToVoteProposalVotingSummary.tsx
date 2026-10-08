@@ -2,14 +2,11 @@
 
 import {
     formatterUtils,
-    invariant,
     NumberFormat,
     Progress,
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { VoteOption } from '../../../tokenPlugin/types';
 import { tokenSettingsUtils } from '../../../tokenPlugin/utils/tokenSettingsUtils';
 import type { ILockToVoteProposal } from '../../types';
@@ -50,7 +47,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
     }
 
     const { supportThreshold } = proposal.settings;
-    const { symbol, decimals } = proposal.settings.token;
+    const { symbol } = proposal.settings.token;
 
     const status = lockToVoteProposalUtils.getProposalStatus(proposal);
 
@@ -59,19 +56,6 @@ export const LockToVoteProposalVotingSummary: React.FC<
     );
     const noVotes = Number(
         lockToVoteProposalUtils.getOptionVotingPower(proposal, VoteOption.NO),
-    );
-
-    const tokenTotalSupply = formatUnits(
-        bigIntUtils.safeParse(
-            lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
-        ),
-        decimals,
-    );
-    const totalSupplyNumber = Number(tokenTotalSupply);
-
-    invariant(
-        totalSupplyNumber > 0,
-        'LockToVoteProposalVotingSummary: tokenTotalSupply must be a positive number',
     );
 
     const countableTotalVotes = yesVotes + noVotes;
