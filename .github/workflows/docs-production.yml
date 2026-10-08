@@ -1,0 +1,38 @@
+# The "Docs Production" workflow deploys the knowledge-base site (apps/docs) to production, by hand
+# only: a manual dispatch of main, or of the given ref. It publishes the knowledge base as it stands,
+# without a change in this repository. The site has no versioned releases: the build fetches the
+# pages the product owner validated and deploys them from main.
+
+name: Docs Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or SHA to deploy (default: main)"
+        required: false
+        type: string
+
+concurrency:
+  group: docs-production-deployment
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: production
+      ref: ${{ inputs.ref || 'main' }}
+      domain: platform-doc.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/docs
+      op-infra-vault: kv_docs_infra
+      op-env-vault: kv_docs_production
+      setup-command: pnpm run setup production
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
