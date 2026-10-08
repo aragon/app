@@ -39,7 +39,7 @@
         "ajv": "catalog:",
         "husky": "catalog:",
         "lint-staged": "catalog:",
-        "skills": "1.5.20",
+        "skills": "1.7.0",
         "turbo": "catalog:",
         "ultracite": "catalog:",
         "vercel": "catalog:",
