@@ -1,0 +1,216 @@
+@import "tailwindcss";
+@import "../../node_modules/@aragon/gov-ui-kit/src/theme/tokens/index.css";
+@import "fumadocs-ui/css/preset.css";
+
+/*
+ * The theme of the site is the gov-ui-kit, as on docs.aragon.org: its primitives (colors, radii,
+ * spacing, type scale and the Manrope faces) replace the Tailwind defaults, the way the app
+ * consumes them. The kit's exports map only names its bundles, hence the import by path.
+ *
+ * Fumadocs draws its layout from semantic `fd` colors, mapped here onto the kit primitives, and
+ * compiles its own utilities with this stylesheet (`@source inline` in its preset), so the few
+ * namespaces the kit resets and Fumadocs relies on are filled in below. Light only, like the kit.
+ */
+@theme {
+    --color-fd-background: var(--color-neutral-0);
+    --color-fd-foreground: var(--color-neutral-900);
+    --color-fd-muted: var(--color-neutral-50);
+    --color-fd-muted-foreground: var(--color-neutral-500);
+    --color-fd-popover: var(--color-neutral-0);
+    --color-fd-popover-foreground: var(--color-neutral-900);
+    --color-fd-card: var(--color-neutral-0);
+    --color-fd-card-foreground: var(--color-neutral-900);
+    --color-fd-border: var(--color-neutral-100);
+    --color-fd-primary: var(--color-primary-400);
+    --color-fd-primary-foreground: var(--color-neutral-0);
+    --color-fd-secondary: var(--color-neutral-50);
+    --color-fd-secondary-foreground: var(--color-neutral-800);
+    --color-fd-accent: var(--color-neutral-50);
+    --color-fd-accent-foreground: var(--color-neutral-800);
+    --color-fd-ring: var(--color-primary-200);
+    --color-fd-overlay: rgb(31 41 51 / 0.3);
+    --color-fd-diff-remove: var(--color-critical-100);
+    --color-fd-diff-remove-symbol: var(--color-critical-600);
+    --color-fd-diff-add: var(--color-success-100);
+    --color-fd-diff-add-symbol: var(--color-success-700);
+    /* Shadow color of the Fumadocs overlays. */
+    --color-black: #000;
+
+    /* The code font of docs.aragon.org; next/font loads it (src/app/layout.tsx). */
+    --font-mono:
+        var(--font-roboto-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* The kit ships Manrope as 400 and 600: medium resolves to the regular face, bold to the
+       semibold one, without synthesized weights. */
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    --radius-sm: 2px;
+    --shadow-sm: var(--shadow-neutral-sm);
+    --shadow-md: var(--shadow-neutral-md);
+    --shadow-lg: var(--shadow-neutral-lg);
+    --shadow-xl: var(--shadow-neutral-xl);
+    --shadow-2xl: var(--shadow-neutral-2xl);
+}
+
+/* The callout colors are read at runtime (inline `var()`), so they are emitted unconditionally. */
+@theme static {
+    --color-fd-info: var(--color-info-500);
+    --color-fd-warning: var(--color-warning-500);
+    --color-fd-error: var(--color-critical-500);
+    --color-fd-success: var(--color-success-500);
+    --color-fd-idea: var(--color-warning-400);
+}
+
+/* Default font smoothing, as on docs.aragon.org: Manrope is drawn at its real weight. */
+body {
+    @apply bg-neutral-0 text-neutral-900;
+}
+
+/*
+ * Header, sidebar and table of contents as on docs.aragon.org: white, a hairline between them, the
+ * flat search field, 16px navigation text in the neutral-600 of the kit, the uppercase label.
+ */
+#nd-sidebar {
+    --color-fd-muted-foreground: var(--color-neutral-600);
+    border-inline-end: 1px solid var(--color-neutral-100);
+    font-size: var(--text-base);
+}
+
+#nd-toc {
+    --color-fd-muted-foreground: var(--color-neutral-700);
+}
+
+#nd-subnav button[data-search-full] {
+    @apply rounded-md border-neutral-200 bg-neutral-50 text-neutral-500;
+}
+
+#nd-toc #toc-title {
+    @apply text-neutral-400 text-sm uppercase tracking-wider;
+}
+
+#nd-toc #toc-title svg {
+    display: none;
+}
+
+/*
+ * Prose as on docs.aragon.org: regular-weight headings (the h1 30px, the h2 24px), 16px/24px text,
+ * the kit's link colors without underline, bordered inline code, flat code blocks.
+ */
+.prose {
+    --tw-prose-body: var(--color-neutral-900);
+    --tw-prose-headings: var(--color-neutral-900);
+    --tw-prose-bold: var(--color-neutral-900);
+    --tw-prose-links: var(--color-primary-500);
+    --tw-prose-code: var(--color-neutral-900);
+    --tw-prose-quotes: var(--color-neutral-700);
+    --tw-prose-quote-borders: var(--color-neutral-200);
+    --tw-prose-th-borders: var(--color-neutral-200);
+    --tw-prose-td-borders: var(--color-neutral-100);
+    line-height: var(--leading-normal);
+}
+
+.prose
+    :where(h1, h2, h3, h4):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-tight);
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-2xl);
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-xl);
+}
+
+.prose a:not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    text-decoration: none;
+    transition: color 150ms ease;
+}
+
+.prose a:not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+    color: var(--color-primary-400);
+}
+
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    background-color: var(--color-neutral-50);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-normal);
+    padding: 0 0.25em;
+}
+
+figure.shiki {
+    background-color: var(--color-neutral-50);
+    border-radius: var(--radius-lg);
+}
+
+/*
+ * The card grids of the landing pages (src/lib/remarkLinkCards.ts), the cards of docs.aragon.org:
+ * the title's link covers the whole card.
+ */
+.prose .link-cards {
+    display: grid;
+    gap: var(--spacing-4, 1rem);
+    grid-template-columns: repeat(auto-fill, minmax(max(30%, 230px), 1fr));
+    margin: 1.5rem 0;
+}
+
+.prose .link-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-neutral-md);
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.prose .link-card:hover {
+    border-color: var(--color-neutral-200);
+    box-shadow: var(--shadow-neutral-lg);
+}
+
+.prose .link-card-title {
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-neutral-900);
+}
+
+.prose .link-card:hover .link-card-title {
+    color: var(--color-primary-400);
+}
+
+.prose .link-card-title a {
+    color: inherit;
+}
+
+.prose .link-card-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.prose .link-card-body {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-neutral-600);
+}
+
+/* The 16px links of the header and of the table of contents; last, after the less specific `a` rules. */
+#nd-toc a {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+}
+
+#nd-subnav [data-header-body] a {
+    font-size: var(--text-base);
+}

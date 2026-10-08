@@ -1,8 +1,19 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { createFeatureFlags } from '@/shared/featureFlags';
 import packageInfo from '../../../../../package.json' with { type: 'json' };
 
+// The help center, the knowledge-base site (apps/docs), lives in its own deployment and is served
+// under this path while the helpCenter flag is on.
+const helpCenterPath = '/help';
+
 class ProxyUtils {
-    proxy = (request: NextRequest): NextResponse => {
+    proxy = async (request: NextRequest): Promise<NextResponse> => {
+        const helpCenterResponse = await this.rewriteHelpCenter(request);
+
+        if (helpCenterResponse != null) {
+            return helpCenterResponse;
+        }
+
         const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
         const cspHeader = this.getContentSecurityPolicies(
             nonce,
@@ -19,6 +30,35 @@ class ProxyUtils {
         response.headers.set('Content-Security-Policy', cspHeader);
 
         return response;
+    };
+
+    // Rewrites /help and everything under it to the site deployment (NEXT_PUBLIC_DOCS_URL) when the
+    // helpCenter flag is on for this request (environment, CMS, cookie overrides). The site brings its
+    // own pages and scripts, so the response keeps the origin's headers instead of the app's CSP.
+    // Flag off, the request goes on to the app, which has no such route and answers not found.
+    private rewriteHelpCenter = async (
+        request: NextRequest,
+    ): Promise<NextResponse | undefined> => {
+        const { pathname, search } = request.nextUrl;
+        const isHelpCenter =
+            pathname === helpCenterPath ||
+            pathname.startsWith(`${helpCenterPath}/`);
+        const docsUrl = process.env.NEXT_PUBLIC_DOCS_URL;
+
+        if (!isHelpCenter || docsUrl == null || docsUrl === '') {
+            return undefined;
+        }
+
+        const featureFlags = createFeatureFlags(() =>
+            request.headers.get('cookie'),
+        );
+        const isEnabled = await featureFlags.isEnabled('helpCenter');
+
+        if (!isEnabled) {
+            return undefined;
+        }
+
+        return NextResponse.rewrite(new URL(`${pathname}${search}`, docsUrl));
     };
 
     private getContentSecurityPolicies = (
