@@ -21,6 +21,24 @@ node .ds-sync/resync.mjs --config .design-sync/config.json \
 `--entry` and `--node-modules` must be absolute paths: a relative `--entry` resolves
 against the repo root and fails with `[NO_DIST]` plus a misleading `[DTS_REACT]`.
 
+## Record the sync
+
+After an upload verifies (`list_files` count matches), record which source produced it and
+commit the file with `projectId` in `config.json`:
+
+```sh
+node -e 'const fs=require("fs"),{execSync:x}=require("child_process"),c=require("crypto");
+fs.writeFileSync(".design-sync/last-sync.json",JSON.stringify({
+  commit:x("git rev-parse HEAD").toString().trim(),
+  kitVersion:require("./packages/gov-ui-kit/package.json").version,
+  dsSyncSha256:c.createHash("sha256").update(fs.readFileSync("ds-bundle/_ds_sync.json")).digest("hex"),
+  projectId:require("./.design-sync/config.json").projectId,
+  syncedAt:new Date().toISOString().slice(0,10)},null,4)+"\n")'
+```
+
+`_ds_sync.json` is the upload anchor; its hash ties the Design project to this record. No
+`last-sync.json` exists until the first upload of the storybook-shape design system.
+
 ## Global fixes (config-level)
 
 - [GENERAL] **Kit-internal imports in stories.** Stories import through folder barrels
