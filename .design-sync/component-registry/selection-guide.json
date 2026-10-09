@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "1.1.0",
-            "sha256": "170fc4e99478632ebc4ab3508dce4a95ec22229d6e5eac6d5eb35fdd770a5858",
+            "sha256": "6763d983ab02af19cc1adbd15b39ed18f4f379df850b03ccbacd8c51ce9672f6",
             "totalRecords": 414,
             "entryCount": 149,
             "uiEntryCount": 142,
@@ -15,7 +15,7 @@
         "generation": {
             "tool": "selection-guide.mjs",
             "deterministic": true,
-            "enrichment": "Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields, plus source-extracted enum values; registry intent remains authoritative."
+            "enrichment": "Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields, plus source-extracted JSDoc usage notes and enum values; registry intent remains authoritative."
         }
     },
     "entries": [
@@ -32,6 +32,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "isMulti switches between single and multiple open sections"
             ],
@@ -59,6 +60,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -84,6 +86,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -107,6 +110,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -130,6 +134,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -156,6 +161,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Displays caller-supplied results and invokes onSimulate; it does not execute the simulation itself."
             ],
@@ -219,6 +225,13 @@
                     "contract": "Hides ENS/address toggle, block-explorer link, copy, clear and paste controls."
                 }
             ],
+            "usageNotes": [
+                "The ENS/address toggle and paste controls call `onChange` with the replacement string, while clear calls it with `undefined`; these updates are the controlled `value` channel, not `onAccept`.",
+                "When an unfocused valid address resolves to an ENS name, the component switches to ENS mode and invokes `onChange` with that ENS name.",
+                "`onAccept` is withheld while either ENS lookup is fetching and runs only after those lookups settle, rather than emitting a transient `undefined` during resolution.",
+                "With `enforceChecksum` (the default), a typed all-lowercase or all-uppercase address comes back through `onChange` in checksum form. Only a mixed-case address with a wrong checksum shows the checksum alert, and `onAccept` then receives `undefined`.",
+                "ENS names always resolve on mainnet, and only when the `GukModulesProvider` wagmi config includes mainnet with an ENS universal resolver; otherwise ENS input is unsupported. `chainId` only picks the block-explorer link."
+            ],
             "constraints": [
                 "Uses wagmi hooks and useQueryClient, so it must render under Wagmi and React-Query providers (GukModulesProvider supplies these)",
                 "onChange represents edited input state and may normalize a valid address to checksum form or trim surrounding whitespace on blur; it is separate from accepted output",
@@ -230,7 +243,7 @@
                 "App AddressesInputItem keeps local raw text state and writes accepted {address,name} into form state for duplicate/custom validation."
             ],
             "references": {
-                "source": "kit:src/modules/components/addressInput/addressInput.tsx:67",
+                "source": "kit:src/modules/components/addressInput/addressInput.tsx:82",
                 "stories": [
                     "kit:src/modules/components/addressInput/addressInput.stories.tsx:1"
                 ],
@@ -264,6 +277,7 @@
                     "contract": "Builds the explorer link for the displayed address."
                 }
             ],
+            "usageNotes": [],
             "constraints": [
                 "showCompleteAddress is ignored when label is set",
                 "A truthy href makes the component link-like (a tap navigates and the copy control turns primary); the URL is whatever the caller supplies",
@@ -344,6 +358,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -371,6 +386,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -398,6 +414,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: AssetDataListItem.Skeleton, AssetDataListItem.Structure."
@@ -423,6 +440,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -448,6 +466,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -475,10 +494,15 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "For a non-native transfer, the asset row uses the token's block-explorer URL and opens it in a new tab; `assetAddress` set to the zero address marks a native transfer and leaves the row unlinked.",
+                "The fiat value line is visually blank when the optional `assetFiatPrice` is absent; when supplied, it is calculated as `assetAmount × assetFiatPrice`.",
+                "`assetAmount` uses signed formatting, so positive transfers receive a leading `+` (negative values retain their `-` sign)."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:44",
+                "source": "kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:54",
                 "stories": [
                     "kit:src/modules/components/asset/assetTransfer/assetTransfer.stories.tsx:1"
                 ],
@@ -500,6 +524,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -527,6 +552,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -550,6 +576,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -577,6 +604,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -630,13 +658,17 @@
                     "contract": "Either state disables interaction; loading swaps icons/content emphasis for a spinner."
                 }
             ],
+            "usageNotes": [
+                "`isLoading` keeps the text label rendered and only replaces `iconLeft`/`iconRight` with a spinner — the label does not disappear.",
+                "In the link form (`href` set), `disabled` is not forwarded as a native attribute: it sets `aria-disabled` and calls `preventDefault()` on click, so navigation is blocked while still rendering an `<a>` (the same guard applies while `isLoading`)."
+            ],
             "constraints": [
                 "href renders the anchor form; the button-typed branch forbids link-only attrs (target/rel/download/hrefLang/media/ping/referrerPolicy)",
                 "with no children it renders as an only-icon button using iconLeft"
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/button/button.tsx:179",
+                "source": "kit:src/core/components/button/button.tsx:188",
                 "stories": [
                     "kit:src/core/components/button/button.stories.tsx:1"
                 ],
@@ -660,10 +692,13 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`Card` styles only its surface (rounding, neutral background, shadow): it adds no padding and no border. Add spacing through `className` or the content inside."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/card/card.tsx:6",
+                "source": "kit:src/core/components/cards/card/card.tsx:12",
                 "stories": [
                     "kit:src/core/components/cards/card/card.stories.tsx:1"
                 ],
@@ -687,6 +722,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -712,10 +748,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`CardEmptyState` forwards EmptyState props, so `primaryButton` is available in both stacked and horizontal layouts; `isStacked` changes layout and button sizing only.",
+                "`className` applies to the outer full-width Card wrapper; the inner EmptyState supplies its own padding, while the Card surface itself does not add padding."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:5",
+                "source": "kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:13",
                 "stories": [
                     "kit:src/core/components/cards/cardEmptyState/cardEmptyState.stories.tsx:1"
                 ],
@@ -739,6 +779,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -762,10 +803,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`checked` and `onCheckedChange` are tri-state: use a boolean or `'indeterminate'`, not only `true`/`false`; the indeterminate state renders the mixed-state icon.",
+                "Use `CheckboxGroup` only for shared label/help/alert chrome; each `Checkbox` keeps its own `checked` and `onCheckedChange` state."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/checkbox/checkbox.tsx:37",
+                "source": "kit:src/core/components/forms/checkbox/checkbox.tsx:45",
                 "stories": [
                     "kit:src/core/components/forms/checkbox/checkbox.stories.tsx:1"
                 ],
@@ -787,10 +832,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`CheckboxCard` is independently controlled with tri-state `checked`/`onCheckedChange`; it uses a checkbox root directly and does not require a group.",
+                "`children` render only when the card is checked, not when it is `'indeterminate'`."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:49",
+                "source": "kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:56",
                 "stories": [
                     "kit:src/core/components/forms/checkboxCard/checkboxCard.stories.tsx:1"
                 ],
@@ -814,6 +863,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -837,6 +887,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -892,13 +943,17 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "The expand/collapse trigger is rendered only when measured content is taller than the collapsed height (`collapsedPixels` or the calculated `collapsedLines` height); content that fits has no trigger.",
+                "With `showOverlay`, the gradient is shown only while overflowing content is closed, and the overlay-mode trigger is a tertiary `Button`; without it, the trigger is a native button."
+            ],
             "constraints": [
                 "collapsedPixels overrides collapsedLines",
                 "controlled via isOpen or uncontrolled via defaultOpen"
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/collapsible/collapsible.tsx:33",
+                "source": "kit:src/core/components/collapsible/collapsible.tsx:40",
                 "stories": [
                     "kit:src/core/components/collapsible/collapsible.stories.tsx:1"
                 ],
@@ -922,10 +977,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "Without a usable `src`, the avatar shows a primary-colored initials fallback instead of an empty image.",
+                "The fallback initials are uppercase: a short name is kept whole, a longer single word uses its first two characters, and a multi-word name uses the first character of its first two words."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:74",
+                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81",
                 "stories": [
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ],
@@ -949,6 +1008,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: DaoDataListItem.Skeleton, DaoDataListItem.Structure."
@@ -974,6 +1034,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -997,6 +1058,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1025,6 +1087,10 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`DataList.Filter` renders the filter action only when `onFilterClick` is supplied; its reset action additionally requires `state=\"filtered\"` and `onResetFiltersClick`, while sort controls render from non-empty `sortItems` even without `onSortChange`.",
+                "Pagination is click-driven “load more,” not infinite scroll: the button calls `onLoadMore` for the next page, and the list displays children only through the current page-size slice."
+            ],
             "constraints": [
                 "Root shares pagination/state context and calls onLoadMore; it does not fetch or filter data."
             ],
@@ -1032,7 +1098,7 @@
                 "Compound export with members: DataList.ActionItem, DataList.Container, DataList.Filter, DataList.Item, DataList.Pagination, DataList.Root."
             ],
             "references": {
-                "source": "kit:src/core/components/dataList/index.ts:8",
+                "source": "kit:src/core/components/dataList/index.ts:17",
                 "stories": [],
                 "appExamples": [
                     "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31",
@@ -1052,6 +1118,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1076,6 +1143,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1101,6 +1169,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1126,6 +1195,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1151,6 +1221,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1176,6 +1247,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1203,6 +1275,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Compose DefinitionList.Container > DefinitionList.Item"
             ],
@@ -1230,6 +1303,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1255,6 +1329,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1305,6 +1380,10 @@
                     "contract": "Defaults true and traps focus inside the dialog content."
                 }
             ],
+            "usageNotes": [
+                "`Dialog.Header` accepts a string `title` and optional string `description`; neither prop accepts arbitrary React elements.",
+                "`Dialog.Content` adds horizontal inset padding by default; pass `noInset` when the content needs to reach the dialog edges."
+            ],
             "constraints": [
                 "Caller supplies controlled open; Root renders the modal portal when open"
             ],
@@ -1314,7 +1393,7 @@
                 "Compound export with members: Dialog.Content, Dialog.Footer, Dialog.Header, Dialog.Root."
             ],
             "references": {
-                "source": "kit:src/core/components/dialogs/dialog/index.ts:6",
+                "source": "kit:src/core/components/dialogs/dialog/index.ts:14",
                 "stories": [],
                 "appExamples": [
                     "app:src/shared/components/dialogRoot/dialogRoot.tsx:98",
@@ -1336,6 +1415,10 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`DialogAlert.Header` and `DialogAlert.Footer` require the `DialogAlert.Root` provider; using either outside the matching Root throws, while `DialogAlert.Content` does not consume that custom context.",
+                "`DialogAlert.Header` accepts a string `title`, not an arbitrary React element; use the component's other regions for custom content."
+            ],
             "constraints": [
                 "Caller supplies controlled open; Root renders the modal portal when open"
             ],
@@ -1343,7 +1426,7 @@
                 "Compound export with members: DialogAlert.Content, DialogAlert.Footer, DialogAlert.Header, DialogAlert.Root."
             ],
             "references": {
-                "source": "kit:src/core/components/dialogs/dialogAlert/index.ts:6",
+                "source": "kit:src/core/components/dialogs/dialogAlert/index.ts:14",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40",
@@ -1363,6 +1446,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1388,6 +1472,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1413,6 +1498,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1438,6 +1524,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1461,6 +1548,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1486,6 +1574,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1511,6 +1600,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1549,6 +1639,7 @@
                     "contract": "Defaults true; disable only when the caller owns focus management."
                 }
             ],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1575,10 +1666,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`document` accepts Markdown or HTML, and the parser sanitizes the content before rendering; an image `src` using a `data:` URI is stripped (the image element itself is not necessarily removed).",
+                "Rendering is driven by the `document` prop; any `children` passed to `DocumentParser` are discarded."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/documentParser/documentParser.tsx:32",
+                "source": "kit:src/core/components/documentParser/documentParser.tsx:41",
                 "stories": [
                     "kit:src/core/components/documentParser/documentParser.stories.tsx:1"
                 ],
@@ -1600,6 +1695,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: Dropdown.Container, Dropdown.Item."
@@ -1625,6 +1721,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1650,6 +1747,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1677,12 +1775,16 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`primaryButton` renders in both stacked and horizontal layouts; `isStacked` changes the surrounding layout and button sizes, not whether the action exists.",
+                "Choose the mutually exclusive `humanIllustration` (with required `body`/`expression`) or `objectIllustration` (with `object`) shape; these values use exported TypeScript literal unions, not runtime enum objects."
+            ],
             "constraints": [
                 "Illustration is either humanIllustration or objectIllustration"
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/states/emptyState/emptyState.tsx:6",
+                "source": "kit:src/core/components/states/emptyState/emptyState.tsx:14",
                 "stories": [
                     "kit:src/core/components/states/emptyState/emptyState.stories.tsx:1"
                 ],
@@ -1790,6 +1892,7 @@
                     "contract": "Overrides core component copy; unspecified values use coreCopy defaults."
                 }
             ],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1828,6 +1931,7 @@
                     "contract": "Overrides modules component copy; unspecified values use modulesCopy defaults."
                 }
             ],
+            "usageNotes": [],
             "constraints": [
                 "Module copy has defaults, so copy-only consumers work without this provider",
                 "Bundles Wagmi and React-Query providers (default chains) plus GukCoreProvider"
@@ -1857,6 +1961,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1884,6 +1989,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1911,10 +2017,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "The root gets an inline `width: 100%` by default, but an explicit `style.width` overrides it; size the illustration with that style or a wrapper.",
+                "Body, expression, hair, sunglasses, accessory and object choices use exported TypeScript string-union types, not runtime enum objects."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.tsx:52",
+                "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.tsx:60",
                 "stories": [
                     "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.stories.tsx:1"
                 ],
@@ -1934,10 +2044,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`IllustrationObject` returns the selected SVG directly and does not add a wrapper or default `width: 100%`; size it through the forwarded SVG props such as `style`, `className` or `width`.",
+                "`object` must use the exported `IllustrationObjectType` string-union values, which are compile-time types rather than runtime enum objects."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:12",
+                "source": "kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:20",
                 "stories": [
                     "kit:src/core/components/illustrations/illustrationObject/illustrationObject.stories.tsx:1"
                 ],
@@ -1961,6 +2075,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -1988,6 +2103,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2014,6 +2130,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Validates the selected file against acceptedFileTypes, maxFileSize, min/maxDimension and onlySquare"
             ],
@@ -2041,10 +2158,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`min` and `max` are enforced by the numeric mask and clamp values to the boundary; they do not produce an out-of-range alert, so pass `alert` when that state needs to be shown.",
+                "`prefix` and `suffix` are escaped into the numeric mask and render as literal text, not as mask syntax or markup."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/inputNumber/inputNumber.tsx:43",
+                "source": "kit:src/core/components/forms/inputNumber/inputNumber.tsx:51",
                 "stories": [
                     "kit:src/core/components/forms/inputNumber/inputNumber.stories.tsx:1"
                 ],
@@ -2068,10 +2189,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`max` is required, clamps values through the numeric mask, and also supplies the value used by the max-value button; it does not produce an out-of-range alert, so pass `alert` for that state.",
+                "`InputNumberMax` does not expose `prefix` or `suffix`; use `InputNumber` when literal numeric affixes are needed."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/inputNumberMax/inputNumberMax.tsx:19",
+                "source": "kit:src/core/components/forms/inputNumberMax/inputNumberMax.tsx:27",
                 "stories": [
                     "kit:src/core/components/forms/inputNumberMax/inputNumberMax.stories.tsx:1"
                 ],
@@ -2091,6 +2216,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2114,10 +2240,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "When `maxLength` is set, an uncontrolled `defaultValue` does not initialize the character counter: it starts at `0` and updates after an input change; controlled `value` changes synchronize it immediately.",
+                "`addon` renders only when its string is non-empty after trimming, and is displayed as literal text rather than parsed markup."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/inputText/inputText.tsx:22",
+                "source": "kit:src/core/components/forms/inputText/inputText.tsx:30",
                 "stories": [
                     "kit:src/core/components/forms/inputText/inputText.stories.tsx:1"
                 ],
@@ -2141,6 +2271,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2166,6 +2297,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2193,6 +2325,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2229,12 +2362,16 @@
                     "contract": "Forwarded to wagmi ENS hooks; chainId defaults to mainnet."
                 }
             ],
+            "usageNotes": [
+                "Render it inside `GukModulesProvider`: its three wagmi ENS hooks are always mounted and need the provider's wagmi and React Query context. Passing `avatarSrc` disables every ENS query but does not remove that requirement.",
+                "If the image is unavailable after lookup, its fallback is a deterministic blockies identicon seeded from the resolved address, generated only client-side (not during SSR)."
+            ],
             "constraints": [
                 "avatarSrc suppresses ENS queries; otherwise the supplied ensName/address is resolved using chainId (default mainnet)."
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:26",
+                "source": "kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:35",
                 "stories": [
                     "kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1"
                 ],
@@ -2258,6 +2395,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: MemberDataListItem.Skeleton, MemberDataListItem.Structure."
@@ -2283,6 +2421,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2307,6 +2446,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2334,10 +2474,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "The progress track is wrapped in `w-full`, so it fills the containing block by default; the component's `className` targets the inner progress root.",
+                "`value` and `indicator` are clamped to `1`–`100`, not `0`–`100`; a value of `0` still renders the minimum 1% indicator."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/progress/progress.tsx:52",
+                "source": "kit:src/core/components/progress/progress.tsx:60",
                 "stories": [
                     "kit:src/core/components/progress/progress.stories.tsx:1"
                 ],
@@ -2359,6 +2503,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2380,6 +2525,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2421,6 +2567,11 @@
                     "contract": "Propagates loading state through ProposalActions context."
                 }
             ],
+            "usageNotes": [
+                "Each `ProposalActions.Item` action must include `from`, `to`, `data`, `value`, `type`, and nullable `inputData`; use the exported `ProposalActionType` enum for action types with a basic view.",
+                "Render `ProposalActions.Item` as a child of `ProposalActions.Container`: the container injects each item's zero-based `index`, and an item rendered without it throws.",
+                "`editMode` requires a `react-hook-form` `FormProvider`; set `readOnly` when an item must render outside a provider without watching form values."
+            ],
             "constraints": [
                 "Root controls expanded state (expandedActions/onExpandedActionsChange) and editMode"
             ],
@@ -2430,7 +2581,7 @@
                 "Compound export with members: ProposalActions.Container, ProposalActions.Footer, ProposalActions.Item, ProposalActions.ItemSkeleton, ProposalActions.Root."
             ],
             "references": {
-                "source": "kit:src/modules/components/proposal/proposalActions/index.ts:7",
+                "source": "kit:src/modules/components/proposal/proposalActions/index.ts:17",
                 "stories": [],
                 "appExamples": [
                     "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107",
@@ -2450,6 +2601,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2475,6 +2627,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2499,6 +2652,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2524,6 +2678,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2545,6 +2700,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2570,6 +2726,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2591,6 +2748,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2614,12 +2772,16 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "Status tags map `ACTIVE`, `ADVANCEABLE`, and `EXECUTABLE` to `info`; `ACCEPTED` and `EXECUTED` to `success`; `FAILED`, `EXPIRED`, `REJECTED`, and `VETOED` to `critical`; and `DRAFT`, `PENDING`, and `UNREACHED` to `neutral`.",
+                "`statusContext` is shown only for `ACTIVE` and `ADVANCEABLE`; metadata is hidden for `DRAFT`."
+            ],
             "constraints": [],
             "composition": [
                 "Compound export with members: ProposalDataListItem.Skeleton, ProposalDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/proposal/proposalDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/proposal/proposalDataListItem/index.ts:12",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97",
@@ -2639,6 +2801,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2663,6 +2826,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2704,6 +2868,11 @@
                     "contract": "Provides voting body context to body summary/content descendants."
                 }
             ],
+            "usageNotes": [
+                "For multi-stage voting, `StageContainer.activeStage` is the single-open accordion value: each `Stage` receives a zero-based index and uses its string form (`'0'`, `'1'`, etc.), so leaving `activeStage` undefined leaves every stage collapsed.",
+                "Place body members such as `BodyContent` and `BodySummary` inside `Container` or `Stage`; those wrappers provide the `ProposalVoting` context that the members consume.",
+                "`BodyContent` initially selects Details for `PENDING`/`UNREACHED` statuses and Breakdown for other statuses."
+            ],
             "constraints": [],
             "composition": [
                 "Compose ProposalVoting.Container with status/detail, breakdown, votes, stages, body summary/content and progress members.",
@@ -2711,7 +2880,7 @@
                 "Compound export with members: ProposalVoting.BodyContent, ProposalVoting.BodySummary, ProposalVoting.BodySummaryList, ProposalVoting.BodySummaryListItem, ProposalVoting.BreakdownMultisig, ProposalVoting.BreakdownToken, ProposalVoting.Container, ProposalVoting.Details, ProposalVoting.Progress, ProposalVoting.Stage, ProposalVoting.StageContainer, ProposalVoting.Votes."
             ],
             "references": {
-                "source": "kit:src/modules/components/proposal/proposalVoting/index.ts:14",
+                "source": "kit:src/modules/components/proposal/proposalVoting/index.ts:24",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx:1"
                 ],
@@ -2733,6 +2902,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2755,6 +2925,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2776,6 +2947,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2797,6 +2969,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2818,6 +2991,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2841,6 +3015,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2865,6 +3040,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2886,6 +3062,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2910,6 +3087,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: ProposalVotingProgress.Container, ProposalVotingProgress.Item."
@@ -2933,6 +3111,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2952,6 +3131,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2971,6 +3151,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -2994,6 +3175,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3015,6 +3197,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3041,6 +3224,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Documented to be used inside a RadioGroup, which supplies selection state"
             ],
@@ -3066,10 +3250,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "Render `RadioCard` inside a `RadioGroup`: it is a Radix radio item that reads its selected state from the group and carries only a `value`, not a checked prop.",
+                "`children` render only while the card is selected, so use them for detail that should appear once the option is chosen."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/radioCard/radioCard.tsx:40",
+                "source": "kit:src/core/components/forms/radioCard/radioCard.tsx:48",
                 "stories": [
                     "kit:src/core/components/forms/radioCard/radioCard.stories.tsx:1"
                 ],
@@ -3093,6 +3281,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3120,6 +3309,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Re-renders its child on an interval set by intervalDuration"
             ],
@@ -3175,6 +3365,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: SmartContractFunctionDataListItem.Skeleton, SmartContractFunctionDataListItem.Structure."
@@ -3199,6 +3390,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3222,6 +3414,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3248,6 +3441,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3303,6 +3497,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3326,10 +3521,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "The component renders an inline `<span>` without a display utility, so its width/height need a flex/grid parent or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.",
+                "Defaults are `width={160}` and `size=\"md\"` (`h-4`); `style.width` takes precedence over the `width` prop."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:40",
+                "source": "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:47",
                 "stories": [
                     "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.stories.tsx:1"
                 ],
@@ -3353,10 +3552,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "The component renders an inline `<span>` without a display utility, so its size needs a flex/grid parent or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.",
+                "The default is `size=\"md\"` (`size-8`); all size choices use the exported `StateSkeletonCircularSize` union."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:63",
+                "source": "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:70",
                 "stories": [
                     "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.stories.tsx:1"
                 ],
@@ -3380,6 +3583,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3407,12 +3611,16 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`Tabs.List` returns nothing when it has exactly one direct React child; its guard counts direct children and does not require them to be `Tabs.Trigger` elements.",
+                "`Tabs.Root` always passes `orientation=\"horizontal\"` to the underlying tabs primitive; vertical orientation is not available through this component."
+            ],
             "constraints": [],
             "composition": [
                 "Compound export with members: Tabs.Content, Tabs.List, Tabs.Root, Tabs.Trigger."
             ],
             "references": {
-                "source": "kit:src/core/components/tabs/index.ts:6",
+                "source": "kit:src/core/components/tabs/index.ts:14",
                 "stories": [],
                 "appExamples": [
                     "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367",
@@ -3432,6 +3640,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3455,6 +3664,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3477,6 +3687,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3501,6 +3712,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3527,6 +3739,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3554,10 +3767,14 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "When `maxLength` is set, an uncontrolled `defaultValue` does not initialize the character counter: it starts at `0` and updates after an input change; controlled `value` changes synchronize it immediately.",
+                "The field wrapper is configured to grow and scroll, while the `<textarea>` starts with a `min-h-40` minimum height; size the surrounding layout rather than assuming a fixed-height field."
+            ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/forms/textArea/textArea.tsx:8",
+                "source": "kit:src/core/components/forms/textArea/textArea.tsx:16",
                 "stories": [
                     "kit:src/core/components/forms/textArea/textArea.stories.tsx:1"
                 ],
@@ -3581,6 +3798,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3607,6 +3825,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Documented to require rendering inside a ToggleGroup to function"
             ],
@@ -3636,12 +3855,16 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "`isMultiSelect` is required: with `false`, `value`/`defaultValue`/`onChange` use `string | undefined`; with `true`, they use `string[] | undefined`.",
+                "Selection is controlled by the group; each `Toggle` child contributes a `value`, while the group owns `value`/`defaultValue` and `onChange`."
+            ],
             "constraints": [
                 "isMultiSelect allows multiple selected toggles"
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:39",
+                "source": "kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:47",
                 "stories": [
                     "kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1"
                 ],
@@ -3665,6 +3888,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3691,6 +3915,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: TransactionDataListItem.Skeleton, TransactionDataListItem.Structure."
@@ -3715,6 +3940,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3738,6 +3964,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3763,6 +3990,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "Documented to render inside a Dialog.Root, composed with TransactionDetailSummary and an action-list component"
             ],
@@ -3790,6 +4018,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3813,6 +4042,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [
                 "label/address/href/executedBy combinations map to the distinct executed-by states"
             ],
@@ -3870,6 +4100,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: VoteDataListItem.Skeleton, VoteDataListItem.Structure."
@@ -3894,6 +4125,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3918,6 +4150,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3944,6 +4177,7 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [
                 "Compound export with members: VoteProposalDataListItem.Skeleton, VoteProposalDataListItem.Structure."
@@ -3969,6 +4203,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -3993,6 +4228,7 @@
             "useWhen": [],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [],
             "constraints": [],
             "composition": [],
             "references": {
@@ -4020,13 +4256,17 @@
             ],
             "alternatives": [],
             "keyProps": [],
+            "usageNotes": [
+                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.",
+                "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`."
+            ],
             "constraints": [
                 "ENS name resolved via wagmi useEnsName on the chain from the chainId prop (default mainnet), and skipped when user.name is provided",
                 "Displays caller-supplied user state; wallet connection behavior must be supplied through button handlers."
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/wallet/wallet.tsx:17",
+                "source": "kit:src/modules/components/wallet/wallet.tsx:30",
                 "stories": [
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
                 ],

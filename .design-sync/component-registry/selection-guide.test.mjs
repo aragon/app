@@ -60,6 +60,7 @@ function makeRegistry() {
                     ],
                 },
                 {
+                    usageNotes: ['label stays visible while loading'],
                     usage: {
                         refs: [
                             {
@@ -140,6 +141,10 @@ test('renders entries and enum values without discussion questions', () => {
     const button = markdown.slice(
         markdown.indexOf('### Button'),
         markdown.indexOf('### Link'),
+    );
+    assert.match(
+        button,
+        /\*\*Usage notes\*\*\n\n- label stays visible while loading/,
     );
     assert.match(button, /\*\*Use when\*\*\n\n- clicking/);
     assert.match(button, /\*\*Instead\*\*\n\n- `kit:Link`: navigation/);

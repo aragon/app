@@ -76,6 +76,14 @@ Renders a proposal-action simulation summary (status, total actions, last-simula
 
 Text input that resolves wallet or contract addresses and ENS names.
 
+**Usage notes**
+
+- The ENS/address toggle and paste controls call `onChange` with the replacement string, while clear calls it with `undefined`; these updates are the controlled `value` channel, not `onAccept`.
+- When an unfocused valid address resolves to an ENS name, the component switches to ENS mode and invokes `onChange` with that ENS name.
+- `onAccept` is withheld while either ENS lookup is fetching and runs only after those lookups settle, rather than emitting a transient `undefined` during resolution.
+- With `enforceChecksum` (the default), a typed all-lowercase or all-uppercase address comes back through `onChange` in checksum form. Only a mixed-case address with a wrong checksum shows the checksum alert, and `onAccept` then receives `undefined`.
+- ENS names always resolve on mainnet, and only when the `GukModulesProvider` wagmi config includes mainnet with an ENS universal resolver; otherwise ENS input is unsupported. `chainId` only picks the block-explorer link.
+
 **Use when**
 
 - Capturing a wallet/contract address or ENS name in a form
@@ -109,7 +117,7 @@ Text input that resolves wallet or contract addresses and ENS names.
 
 **References**
 
-- `kit:src/modules/components/addressInput/addressInput.tsx:67`
+- `kit:src/modules/components/addressInput/addressInput.tsx:82`
 - `kit:src/modules/components/addressInput/addressInput.stories.tsx:1`
 - `app:src/modules/finance/components/transferAssetForm/transferAssetForm.tsx:83`
 - `app:src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx:60`
@@ -203,13 +211,19 @@ AssetDataListItemStructure: presentational item structure driven by props of the
 
 Displays an asset transfer (sender, recipient, amount, symbol, fiat value).
 
+**Usage notes**
+
+- For a non-native transfer, the asset row uses the token's block-explorer URL and opens it in a new tab; `assetAddress` set to the zero address marks a native transfer and leaves the row unlinked.
+- The fiat value line is visually blank when the optional `assetFiatPrice` is absent; when supplied, it is calculated as `assetAmount × assetFiatPrice`.
+- `assetAmount` uses signed formatting, so positive transfers receive a leading `+` (negative values retain their `-` sign).
+
 **Use when**
 
 - Rendering a token transfer summary
 
 **References**
 
-- `kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:44`
+- `kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:54`
 - `kit:src/modules/components/asset/assetTransfer/assetTransfer.stories.tsx:1`
 - `app:src/actions/core/withdrawToken/withdrawTokenActionDetails.tsx:30`
 
@@ -276,6 +290,11 @@ Breadcrumb navigation trail built from a list of links.
 
 Polymorphic button that renders as a native <button> or, when given href, as an <a>, with variant/size/icon/loading states.
 
+**Usage notes**
+
+- `isLoading` keeps the text label rendered and only replaces `iconLeft`/`iconRight` with a spinner — the label does not disappear.
+- In the link form (`href` set), `disabled` is not forwarded as a native attribute: it sets `aria-disabled` and calls `preventDefault()` on click, so navigation is blocked while still rendering an `<a>` (the same guard applies while `isLoading`).
+
 **Use when**
 
 - Primary interactive action trigger
@@ -301,7 +320,7 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 **References**
 
-- `kit:src/core/components/button/button.tsx:179`
+- `kit:src/core/components/button/button.tsx:188`
 - `kit:src/core/components/button/button.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:52`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:306`
@@ -311,13 +330,17 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 Basic surface container (border/padding) for grouping content.
 
+**Usage notes**
+
+- `Card` styles only its surface (rounding, neutral background, shadow): it adds no padding and no border. Add spacing through `className` or the content inside.
+
 **Use when**
 
 - Grouping related content on a surface
 
 **References**
 
-- `kit:src/core/components/cards/card/card.tsx:6`
+- `kit:src/core/components/cards/card/card.tsx:12`
 - `kit:src/core/components/cards/card/card.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:272`
 - `app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:331`
@@ -341,13 +364,18 @@ Card whose body collapses/expands, with an optional exact collapsed pixel height
 
 Card wrapper around EmptyState for empty/zero-data surfaces (props mirror EmptyState).
 
+**Usage notes**
+
+- `CardEmptyState` forwards EmptyState props, so `primaryButton` is available in both stacked and horizontal layouts; `isStacked` changes layout and button sizing only.
+- `className` applies to the outer full-width Card wrapper; the inner EmptyState supplies its own padding, while the Card surface itself does not add padding.
+
 **Use when**
 
 - Empty list/section presented on a card surface
 
 **References**
 
-- `kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:5`
+- `kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:13`
 - `kit:src/core/components/cards/cardEmptyState/cardEmptyState.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:133`
 - `app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:133`
@@ -370,13 +398,18 @@ Card presenting a labelled value/description with an optional action and icon.
 
 Single checkbox control with label, position and checked/onCheckedChange state.
 
+**Usage notes**
+
+- `checked` and `onCheckedChange` are tri-state: use a boolean or `'indeterminate'`, not only `true`/`false`; the indeterminate state renders the mixed-state icon.
+- Use `CheckboxGroup` only for shared label/help/alert chrome; each `Checkbox` keeps its own `checked` and `onCheckedChange` state.
+
 **Use when**
 
 - Boolean opt-in within a form
 
 **References**
 
-- `kit:src/core/components/forms/checkbox/checkbox.tsx:37`
+- `kit:src/core/components/forms/checkbox/checkbox.tsx:45`
 - `kit:src/core/components/forms/checkbox/checkbox.stories.tsx:1`
 - `app:src/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimDialog/capitalDistributorClaimDialogDetails/capitalDistributorClaimDialogDetails.tsx:154`
 
@@ -384,13 +417,18 @@ Single checkbox control with label, position and checked/onCheckedChange state.
 
 Card-styled selectable checkbox with avatar/label/description/tag.
 
+**Usage notes**
+
+- `CheckboxCard` is independently controlled with tri-state `checked`/`onCheckedChange`; it uses a checkbox root directly and does not require a group.
+- `children` render only when the card is checked, not when it is `'indeterminate'`.
+
 **Use when**
 
 - Selectable option cards (multi-select)
 
 **References**
 
-- `kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:49`
+- `kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:56`
 - `kit:src/core/components/forms/checkboxCard/checkboxCard.stories.tsx:1`
 - `app:src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/proposalCreationSettingsDefault.tsx:47`
 - `app:src/plugins/multisigPlugin/components/multisigProposalCreationSettings/multisigProposalCreationSettings.tsx:60`
@@ -426,6 +464,11 @@ Copy-to-clipboard affordance wrapping content, copying copyValue.
 
 Wraps arbitrary content and visually collapses it with a gradient overlay and toggle; controlled or uncontrolled.
 
+**Usage notes**
+
+- The expand/collapse trigger is rendered only when measured content is taller than the collapsed height (`collapsedPixels` or the calculated `collapsedLines` height); content that fits has no trigger.
+- With `showOverlay`, the gradient is shown only while overflowing content is closed, and the overlay-mode trigger is a tertiary `Button`; without it, the trigger is a native button.
+
 **Use when**
 
 - Truncating long text/description blocks with show-more/less
@@ -437,7 +480,7 @@ Wraps arbitrary content and visually collapses it with a gradient overlay and to
 
 **References**
 
-- `kit:src/core/components/collapsible/collapsible.tsx:33`
+- `kit:src/core/components/collapsible/collapsible.tsx:40`
 - `kit:src/core/components/collapsible/collapsible.stories.tsx:1`
 - `app:src/actions/core/createProposal/createProposalActionDetails.tsx:102`
 - `app:src/modules/finance/components/daoInfoAside/daoInfoAside.tsx:48`
@@ -447,13 +490,18 @@ Wraps arbitrary content and visually collapses it with a gradient overlay and to
 
 Avatar specialized for a DAO (name + image with fallback).
 
+**Usage notes**
+
+- Without a usable `src`, the avatar shows a primary-colored initials fallback instead of an empty image.
+- The fallback initials are uppercase: a short name is kept whole, a longer single word uses its first two characters, and a multi-word name uses the first character of its first two words.
+
 **Use when**
 
 - Displaying a DAO identity image
 
 **References**
 
-- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:74`
+- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81`
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1`
 - `app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:149`
 - `app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36`
@@ -679,13 +727,18 @@ DialogRoot: compound root owning shared state/config of the Dialog compound (Com
 
 Renders parsed document/rich content from a document prop.
 
+**Usage notes**
+
+- `document` accepts Markdown or HTML, and the parser sanitizes the content before rendering; an image `src` using a `data:` URI is stripped (the image element itself is not necessarily removed).
+- Rendering is driven by the `document` prop; any `children` passed to `DocumentParser` are discarded.
+
 **Use when**
 
 - Displaying rich parsed document content read-only
 
 **References**
 
-- `kit:src/core/components/documentParser/documentParser.tsx:32`
+- `kit:src/core/components/documentParser/documentParser.tsx:41`
 - `kit:src/core/components/documentParser/documentParser.stories.tsx:1`
 - `app:src/shared/components/SafeDocumentParser.tsx:13`
 
@@ -717,6 +770,11 @@ DropdownItem: individual item element of the Dropdown compound (Compound dropdow
 
 Empty/zero-data state with an illustration, heading, description and up to two action buttons.
 
+**Usage notes**
+
+- `primaryButton` renders in both stacked and horizontal layouts; `isStacked` changes the surrounding layout and button sizes, not whether the action exists.
+- Choose the mutually exclusive `humanIllustration` (with required `body`/`expression`) or `objectIllustration` (with `object`) shape; these values use exported TypeScript literal unions, not runtime enum objects.
+
 **Use when**
 
 - Communicating no-data / empty-list / error states
@@ -727,7 +785,7 @@ Empty/zero-data state with an illustration, heading, description and up to two a
 
 **References**
 
-- `kit:src/core/components/states/emptyState/emptyState.tsx:6`
+- `kit:src/core/components/states/emptyState/emptyState.tsx:14`
 - `kit:src/core/components/states/emptyState/emptyState.stories.tsx:1`
 - `app:src/actions/gaugeRegistrar/components/gaugeRegistrarUnregisterGaugeActionDetails/gaugeRegistrarUnregisterGaugeActionDetails.tsx:115`
 - `app:src/actions/gaugeVoter/components/gaugeVoterActivateGaugeActionDetails/gaugeVoterActivateGaugeActionDetails.tsx:68`
@@ -817,18 +875,28 @@ Renders a kit glyph selected by IconType with size variants.
 
 Composable human illustration (body/expression/hairs/accessory/object parts).
 
+**Usage notes**
+
+- The root gets an inline `width: 100%` by default, but an explicit `style.width` overrides it; size the illustration with that style or a wrapper.
+- Body, expression, hair, sunglasses, accessory and object choices use exported TypeScript string-union types, not runtime enum objects.
+
 **Use when**
 
 - Human-themed empty-state/marketing illustrations
 
 **References**
 
-- `kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.tsx:52`
+- `kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.tsx:60`
 - `kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.stories.tsx:1`
 
 ### IllustrationObject
 
 Object illustration selected by object type.
+
+**Usage notes**
+
+- `IllustrationObject` returns the selected SVG directly and does not add a wrapper or default `width: 100%`; size it through the forwarded SVG props such as `style`, `className` or `width`.
+- `object` must use the exported `IllustrationObjectType` string-union values, which are compile-time types rather than runtime enum objects.
 
 **Use when**
 
@@ -836,7 +904,7 @@ Object illustration selected by object type.
 
 **References**
 
-- `kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:12`
+- `kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:20`
 - `kit:src/core/components/illustrations/illustrationObject/illustrationObject.stories.tsx:1`
 - `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx:73`
 - `app:src/shared/components/ctaCard/ctaCard.tsx:108`
@@ -895,13 +963,18 @@ Avatar image file input with preview, accepted types, size and dimension validat
 
 Numeric input with min/max/step and optional prefix/suffix.
 
+**Usage notes**
+
+- `min` and `max` are enforced by the numeric mask and clamp values to the boundary; they do not produce an out-of-range alert, so pass `alert` when that state needs to be shown.
+- `prefix` and `suffix` are escaped into the numeric mask and render as literal text, not as mask syntax or markup.
+
 **Use when**
 
 - Capturing a numeric amount
 
 **References**
 
-- `kit:src/core/components/forms/inputNumber/inputNumber.tsx:43`
+- `kit:src/core/components/forms/inputNumber/inputNumber.tsx:51`
 - `kit:src/core/components/forms/inputNumber/inputNumber.stories.tsx:1`
 - `app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:129`
 - `app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:236`
@@ -911,13 +984,18 @@ Numeric input with min/max/step and optional prefix/suffix.
 
 Numeric input variant exposing a max-value affordance.
 
+**Usage notes**
+
+- `max` is required, clamps values through the numeric mask, and also supplies the value used by the max-value button; it does not produce an out-of-range alert, so pass `alert` for that state.
+- `InputNumberMax` does not expose `prefix` or `suffix`; use `InputNumber` when literal numeric affixes are needed.
+
 **Use when**
 
 - Amount fields offering a max button (e.g. token amounts)
 
 **References**
 
-- `kit:src/core/components/forms/inputNumberMax/inputNumberMax.tsx:19`
+- `kit:src/core/components/forms/inputNumberMax/inputNumberMax.tsx:27`
 - `kit:src/core/components/forms/inputNumberMax/inputNumberMax.stories.tsx:1`
 
 ### InputSearch
@@ -937,13 +1015,18 @@ Search input with a search affordance and loading state.
 
 Single-line text input built on InputContainer, with optional addon and icons.
 
+**Usage notes**
+
+- When `maxLength` is set, an uncontrolled `defaultValue` does not initialize the character counter: it starts at `0` and updates after an input change; controlled `value` changes synchronize it immediately.
+- `addon` renders only when its string is non-empty after trimming, and is displayed as literal text rather than parsed markup.
+
 **Use when**
 
 - Capturing free-form single-line text
 
 **References**
 
-- `kit:src/core/components/forms/inputText/inputText.tsx:22`
+- `kit:src/core/components/forms/inputText/inputText.tsx:30`
 - `kit:src/core/components/forms/inputText/inputText.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:199`
 - `app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:167`
@@ -996,6 +1079,11 @@ Low-level ref-forwarding anchor primitive underlying Link.
 
 Avatar for a member/address that resolves the ENS avatar via web3.
 
+**Usage notes**
+
+- Render it inside `GukModulesProvider`: its three wagmi ENS hooks are always mounted and need the provider's wagmi and React Query context. Passing `avatarSrc` disables every ENS query but does not remove that requirement.
+- If the image is unavailable after lookup, its fallback is a deterministic blockies identicon seeded from the resolved address, generated only client-side (not during SSR).
+
 **Use when**
 
 - Displaying a member/wallet identity image
@@ -1012,7 +1100,7 @@ Avatar for a member/address that resolves the ENS avatar via web3.
 
 **References**
 
-- `kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:26`
+- `kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:35`
 - `kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1`
 - `app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:288`
 - `app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:29`
@@ -1045,13 +1133,18 @@ MemberDataListItemStructure: presentational item structure driven by props of th
 
 Linear progress bar with value, size/variant and an optional threshold indicator.
 
+**Usage notes**
+
+- The progress track is wrapped in `w-full`, so it fills the containing block by default; the component's `className` targets the inner progress root.
+- `value` and `indicator` are clamped to `1`–`100`, not `0`–`100`; a value of `0` still renders the minimum 1% indicator.
+
 **Use when**
 
 - Showing measured completion/threshold progress (e.g. voting)
 
 **References**
 
-- `kit:src/core/components/progress/progress.tsx:52`
+- `kit:src/core/components/progress/progress.tsx:60`
 - `kit:src/core/components/progress/progress.stories.tsx:1`
 - `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingSummary/lockToVoteProposalVotingSummary.tsx:118`
 - `app:src/plugins/multisigPlugin/components/multisigProposalVotingSummary/multisigProposalVotingSummary.tsx:113`
@@ -1317,13 +1410,18 @@ Single radio control with label/value.
 
 Card-styled radio option with avatar/label/description/tag.
 
+**Usage notes**
+
+- Render `RadioCard` inside a `RadioGroup`: it is a Radix radio item that reads its selected state from the group and carries only a `value`, not a checked prop.
+- `children` render only while the card is selected, so use them for detail that should appear once the option is chosen.
+
 **Use when**
 
 - Single-select option cards
 
 **References**
 
-- `kit:src/core/components/forms/radioCard/radioCard.tsx:40`
+- `kit:src/core/components/forms/radioCard/radioCard.tsx:48`
 - `kit:src/core/components/forms/radioCard/radioCard.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:107`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:89`
@@ -1417,13 +1515,18 @@ Animated ping/pulse indicator with a variant.
 
 Rectangular skeleton placeholder (ref-forwarding) with configurable width/size.
 
+**Usage notes**
+
+- The component renders an inline `<span>` without a display utility, so its width/height need a flex/grid parent or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.
+- Defaults are `width={160}` and `size="md"` (`h-4`); `style.width` takes precedence over the `width` prop.
+
 **Use when**
 
 - Loading placeholder for text/bar content
 
 **References**
 
-- `kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:40`
+- `kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:47`
 - `kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:13`
 - `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:16`
@@ -1433,13 +1536,18 @@ Rectangular skeleton placeholder (ref-forwarding) with configurable width/size.
 
 Circular skeleton placeholder for avatar/icon loading.
 
+**Usage notes**
+
+- The component renders an inline `<span>` without a display utility, so its size needs a flex/grid parent or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.
+- The default is `size="md"` (`size-8`); all size choices use the exported `StateSkeletonCircularSize` union.
+
 **Use when**
 
 - Loading placeholder for avatars/circular media
 
 **References**
 
-- `kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:63`
+- `kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:70`
 - `kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.stories.tsx:1`
 - `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:14`
 - `app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:16`
@@ -1524,13 +1632,18 @@ Small labelled tag/badge with a variant.
 
 Multi-line text input (ref-forwarding).
 
+**Usage notes**
+
+- When `maxLength` is set, an uncontrolled `defaultValue` does not initialize the character counter: it starts at `0` and updates after an input change; controlled `value` changes synchronize it immediately.
+- The field wrapper is configured to grow and scroll, while the `<textarea>` starts with a `min-h-40` minimum height; size the surrounding layout rather than assuming a fixed-height field.
+
 **Use when**
 
 - Capturing free-form multi-line text
 
 **References**
 
-- `kit:src/core/components/forms/textArea/textArea.tsx:8`
+- `kit:src/core/components/forms/textArea/textArea.tsx:16`
 - `kit:src/core/components/forms/textArea/textArea.stories.tsx:1`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:205`
 - `app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:176`
@@ -1575,6 +1688,11 @@ Button representing a value within a ToggleGroup.
 
 Coordinates a group of Toggle buttons (single or multi-select, orientation).
 
+**Usage notes**
+
+- `isMultiSelect` is required: with `false`, `value`/`defaultValue`/`onChange` use `string | undefined`; with `true`, they use `string[] | undefined`.
+- Selection is controlled by the group; each `Toggle` child contributes a `value`, while the group owns `value`/`defaultValue` and `onChange`.
+
 **Use when**
 
 - Segmented controls / filter toggles
@@ -1585,7 +1703,7 @@ Coordinates a group of Toggle buttons (single or multi-select, orientation).
 
 **References**
 
-- `kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:39`
+- `kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:47`
 - `kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1`
 - `app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:210`
 - `app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:112`
@@ -1702,6 +1820,11 @@ VoteProposalDataListItemStructure: presentational item structure driven by props
 
 Wallet connect/identity button: shows connect copy when disconnected, or MemberAvatar + resolved handle (name/ENS/truncated address) when connected.
 
+**Usage notes**
+
+- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.
+- Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`.
+
 **Use when**
 
 - Header wallet connect/identity control
@@ -1713,7 +1836,7 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **References**
 
-- `kit:src/modules/components/wallet/wallet.tsx:17`
+- `kit:src/modules/components/wallet/wallet.tsx:30`
 - `kit:src/modules/components/wallet/wallet.stories.tsx:1`
 - `app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:132`
 - `app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:147`
@@ -1786,6 +1909,11 @@ DataList item structure for a DAO (name, logo, description, address/ens, network
 
 Compound list presentation with filter controls and pagination; the caller supplies items and loading/error/filter state.
 
+**Usage notes**
+
+- `DataList.Filter` renders the filter action only when `onFilterClick` is supplied; its reset action additionally requires `state="filtered"` and `onResetFiltersClick`, while sort controls render from non-empty `sortItems` even without `onSortChange`.
+- Pagination is click-driven “load more,” not infinite scroll: the button calls `onLoadMore` for the next page, and the list displays children only through the current page-size slice.
+
 **Use when**
 
 - Rendering paginated lists of entities (proposals, members, assets, transactions)
@@ -1801,7 +1929,7 @@ Compound list presentation with filter controls and pagination; the caller suppl
 
 **References**
 
-- `kit:src/core/components/dataList/index.ts:8`
+- `kit:src/core/components/dataList/index.ts:17`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17`
 - `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107`
@@ -1833,6 +1961,11 @@ Compound term/description list (DefinitionList.Container/Item).
 
 Compound modal dialog (Dialog.Root/Header/Content/Footer) built on Radix.
 
+**Usage notes**
+
+- `Dialog.Header` accepts a string `title` and optional string `description`; neither prop accepts arbitrary React elements.
+- `Dialog.Content` adds horizontal inset padding by default; pass `noInset` when the content needs to reach the dialog edges.
+
 **Use when**
 
 - Modal flows: forms, confirmations, multi-step wizards
@@ -1861,7 +1994,7 @@ Compound modal dialog (Dialog.Root/Header/Content/Footer) built on Radix.
 
 **References**
 
-- `kit:src/core/components/dialogs/dialog/index.ts:6`
+- `kit:src/core/components/dialogs/dialog/index.ts:14`
 - `app:src/shared/components/dialogRoot/dialogRoot.tsx:98`
 - `app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195`
 - `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138`
@@ -1869,6 +2002,11 @@ Compound modal dialog (Dialog.Root/Header/Content/Footer) built on Radix.
 ### DialogAlert
 
 Compound alert/confirmation modal (DialogAlert.Root/Header/Content/Footer) with a variant.
+
+**Usage notes**
+
+- `DialogAlert.Header` and `DialogAlert.Footer` require the `DialogAlert.Root` provider; using either outside the matching Root throws, while `DialogAlert.Content` does not consume that custom context.
+- `DialogAlert.Header` accepts a string `title`, not an arbitrary React element; use the component's other regions for custom content.
 
 **Use when**
 
@@ -1884,7 +2022,7 @@ Compound alert/confirmation modal (DialogAlert.Root/Header/Content/Footer) with 
 
 **References**
 
-- `kit:src/core/components/dialogs/dialogAlert/index.ts:6`
+- `kit:src/core/components/dialogs/dialogAlert/index.ts:14`
 - `app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40`
 - `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29`
 - `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41`
@@ -1931,6 +2069,12 @@ DataList item structure for a member (avatar, address/ENS, delegate/token-voting
 
 Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionWithdrawToken/TokenMint/ChangeMembers/ChangeSettings/UpdateMetadata) are standalone exports.
 
+**Usage notes**
+
+- Each `ProposalActions.Item` action must include `from`, `to`, `data`, `value`, `type`, and nullable `inputData`; use the exported `ProposalActionType` enum for action types with a basic view.
+- Render `ProposalActions.Item` as a child of `ProposalActions.Container`: the container injects each item's zero-based `index`, and an item rendered without it throws.
+- `editMode` requires a `react-hook-form` `FormProvider`; set `readOnly` when an item must render outside a provider without watching form values.
+
 **Use when**
 
 - Reviewing decoded proposal actions
@@ -1955,7 +2099,7 @@ Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/Item
 
 **References**
 
-- `kit:src/modules/components/proposal/proposalActions/index.ts:7`
+- `kit:src/modules/components/proposal/proposalActions/index.ts:17`
 - `app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107`
 - `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154`
 - `app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64`
@@ -1963,6 +2107,11 @@ Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/Item
 ### ProposalDataListItem
 
 DataList item structure for a proposal, linking to the proposal via link.
+
+**Usage notes**
+
+- Status tags map `ACTIVE`, `ADVANCEABLE`, and `EXECUTABLE` to `info`; `ACCEPTED` and `EXECUTED` to `success`; `FAILED`, `EXPIRED`, `REJECTED`, and `VETOED` to `critical`; and `DRAFT`, `PENDING`, and `UNREACHED` to `neutral`.
+- `statusContext` is shown only for `ACTIVE` and `ADVANCEABLE`; metadata is hidden for `DRAFT`.
 
 **Use when**
 
@@ -1974,7 +2123,7 @@ DataList item structure for a proposal, linking to the proposal via link.
 
 **References**
 
-- `kit:src/modules/components/proposal/proposalDataListItem/index.ts:4`
+- `kit:src/modules/components/proposal/proposalDataListItem/index.ts:12`
 - `app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97`
 - `app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64`
 - `app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109`
@@ -1982,6 +2131,12 @@ DataList item structure for a proposal, linking to the proposal via link.
 ### ProposalVoting
 
 Compound proposal voting UI (ProposalVoting.Container/Stage/StageContainer/Details/Votes/BreakdownToken/BreakdownMultisig/BodySummary/BodySummaryList/BodySummaryListItem/BodyContent/Progress) for displaying multi-stage voting with token or multisig breakdowns.
+
+**Usage notes**
+
+- For multi-stage voting, `StageContainer.activeStage` is the single-open accordion value: each `Stage` receives a zero-based index and uses its string form (`'0'`, `'1'`, etc.), so leaving `activeStage` undefined leaves every stage collapsed.
+- Place body members such as `BodyContent` and `BodySummary` inside `Container` or `Stage`; those wrappers provide the `ProposalVoting` context that the members consume.
+- `BodyContent` initially selects Details for `PENDING`/`UNREACHED` statuses and Breakdown for other statuses.
 
 **Use when**
 
@@ -2002,7 +2157,7 @@ Compound proposal voting UI (ProposalVoting.Container/Stage/StageContainer/Detai
 
 **References**
 
-- `kit:src/modules/components/proposal/proposalVoting/index.ts:14`
+- `kit:src/modules/components/proposal/proposalVoting/index.ts:24`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx:1`
 - `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100`
 - `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68`
@@ -2043,6 +2198,11 @@ DataList item structure for a smart-contract function call (name, contract, sele
 
 Compound tabs (Tabs.Root/List/Trigger/Content) built on Radix.
 
+**Usage notes**
+
+- `Tabs.List` returns nothing when it has exactly one direct React child; its guard counts direct children and does not require them to be `Tabs.Trigger` elements.
+- `Tabs.Root` always passes `orientation="horizontal"` to the underlying tabs primitive; vertical orientation is not available through this component.
+
 **Use when**
 
 - Switching between sibling views/panels
@@ -2053,7 +2213,7 @@ Compound tabs (Tabs.Root/List/Trigger/Content) built on Radix.
 
 **References**
 
-- `kit:src/core/components/tabs/index.ts:6`
+- `kit:src/core/components/tabs/index.ts:14`
 - `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367`
 - `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60`

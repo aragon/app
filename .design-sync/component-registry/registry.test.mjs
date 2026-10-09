@@ -97,6 +97,21 @@ test('distinguishes nested compounds from callable contexts and enums', () => {
     );
 });
 
+test('reads JSDoc usage notes, enum values and string-union values', () => {
+    const { records } = extractExports(kitRoot);
+    const byName = (name) => records.find((record) => record.name === name);
+    const button = byName('Button').usageNotes;
+    assert.equal(button.length, 2);
+    assert.match(button[0], /spinner — the label does not disappear\.$/u);
+    // In a JSDoc that also has a description and @param tags, only the list is taken.
+    const collapsible = byName('Collapsible').usageNotes;
+    assert.equal(collapsible.length, 2);
+    assert.match(collapsible[1], /^With `showOverlay`.*native button\.$/u);
+    assert.ok(byName('IconType').values.includes('PLUS'));
+    assert.ok(byName('IllustrationObjectType').values.includes("'ACTION'"));
+    assert.equal(byName('Card').values, undefined);
+});
+
 test('refreshes isolated fixtures while preserving intent and marking stale evidence', async () => {
     const appRoot = await makeFixture();
     const registryPath = path.join(appRoot, 'registry.json');

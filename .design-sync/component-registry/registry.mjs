@@ -594,6 +594,31 @@ function packageExports(kitRoot) {
     return { packageJson, js: js.sort(), css: css.sort() };
 }
 
+// Bullets under a "Usage notes:" line in the declaration's JSDoc; continuation
+// lines join their bullet, and the list ends at the first non-list paragraph.
+function jsdocUsageNotes(ts, declaration) {
+    const text = ts
+        .getJSDocCommentsAndTags(declaration)
+        .filter((node) => ts.isJSDoc(node))
+        .map((doc) => ts.getTextOfJSDocComment(doc.comment) ?? '')
+        .join('\n');
+    const section = text.split(/^Usage notes:[ \t]*$/mu)[1];
+    if (!section) {
+        return [];
+    }
+    const notes = [];
+    for (const line of section.trim().split('\n')) {
+        if (line.startsWith('- ')) {
+            notes.push(line.slice(2).trim());
+        } else if (/^\s+\S/u.test(line) && notes.length > 0) {
+            notes[notes.length - 1] += ` ${line.trim()}`;
+        } else {
+            break;
+        }
+    }
+    return notes;
+}
+
 function extractExports(kitRoot) {
     const ts = loadTypeScript(kitRoot);
     const { program, sourceFile } = parseKitProgram(ts, kitRoot);
@@ -716,6 +741,10 @@ function extractExports(kitRoot) {
             record.values = declaration.type.types.map((type) =>
                 type.literal.getText(),
             );
+        }
+        const usageNotes = declaration && jsdocUsageNotes(ts, declaration);
+        if (usageNotes?.length) {
+            record.usageNotes = usageNotes;
         }
         records.push(record);
         for (const name of names) {

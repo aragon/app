@@ -14,16 +14,20 @@ Kit source, stories and tests live under `packages/gov-ui-kit/src/core` and
 
 ## Where the detail lives
 
-- **Usage notes** at the end of a component's prompt come from the kit's Storybook docs
-  page for that component. They hold contracts the props table doesn't show: render
-  conditions, controlled state, required parents, layout defaults.
-- `guidelines/selection-guide.md` says which export fits an intent, what to use instead,
-  the key-prop contracts and how compounds compose. Its **Allowed values** section lists
-  every enum and string-union value. A `.d.ts` prints `unknown` for a type too wide to
-  inline (`IconType`, `IllustrationObjectType`, the `EmptyState` button configs); take the
-  values from there instead of guessing.
-- `guidelines/src/**` holds the kit's own Storybook pages for the providers, modules setup
-  and tokens.
+Before using a component, read its section in `guidelines/selection-guide.md` (heading
+`### <Name>`). It is generated from kit source:
+
+- **Usage notes:** contracts the props table doesn't show, such as render conditions,
+  controlled state, required parents and providers, and layout defaults. They come from
+  the component's JSDoc, which also heads its kit Storybook docs page.
+- **Use when**, **Instead**, **Key props** and **Composition:** which export fits an intent,
+  what to use instead, and how compounds compose.
+- **Allowed values** (end of the file): every enum and string-union value. A `.d.ts` prints
+  `unknown` for a type too wide to inline (`IconType`, `IllustrationObjectType`, the
+  `EmptyState` button configs); take the values from there instead of guessing.
+
+`guidelines/src/**` holds the kit's own Storybook pages for the providers, modules setup
+and tokens.
 
 ## Select and compose
 

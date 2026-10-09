@@ -8,7 +8,6 @@
     "storybookStatic": ".design-sync/sb-reference",
     "storybookConfigDir": "packages/gov-ui-kit/.storybook",
     "readmeHeader": ".design-sync/conventions.md",
-    "docsDir": "src",
     "guidelinesGlob": [
         "../../.design-sync/guidelines/*.md",
         "src/theme/tokens/index.mdx",

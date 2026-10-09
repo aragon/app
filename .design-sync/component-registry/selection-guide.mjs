@@ -64,6 +64,7 @@ function renderMarkdown(guide) {
         )) {
             const refs = entry.references ?? {};
             lines.push('', `### ${entry.import.name}`, '', entry.description);
+            list('Usage notes', asStrings(entry.usageNotes));
             list('Use when', asStrings(entry.useWhen));
             list(
                 'Instead',
@@ -190,6 +191,7 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
             entry.keyProps = Array.isArray(component.intent?.keyProps)
                 ? component.intent.keyProps
                 : [];
+            entry.usageNotes = asStrings(component.usageNotes);
         } else {
             entry.methods = Array.isArray(component.intent?.methods)
                 ? component.intent.methods
@@ -225,7 +227,7 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
                 tool: 'selection-guide.mjs',
                 deterministic: true,
                 enrichment:
-                    'Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields, plus source-extracted enum values; registry intent remains authoritative.',
+                    'Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields, plus source-extracted JSDoc usage notes and enum values; registry intent remains authoritative.',
             },
         },
         entries,

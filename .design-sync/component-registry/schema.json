@@ -750,6 +750,14 @@
                         "minLength": 1
                     }
                 },
+                "usageNotes": {
+                    "description": "Bullets under \"Usage notes:\" in the declaration's JSDoc.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
                 "exportNames": {
                     "type": "array",
                     "minItems": 1,
