@@ -4,7 +4,7 @@ import { InputFileAvatar } from './inputFileAvatar';
 import type { IInputFileAvatarValue } from './inputFileAvatar.api';
 
 const meta: Meta<typeof InputFileAvatar> = {
-    title: 'Core/Components/Forms/InputFileAvatar',
+    title: 'Core/Forms/InputFileAvatar',
     component: InputFileAvatar,
 
     parameters: {

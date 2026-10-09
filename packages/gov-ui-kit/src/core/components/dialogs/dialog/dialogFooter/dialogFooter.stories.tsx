@@ -3,7 +3,7 @@ import { Dialog } from '..';
 import { DialogStoryComponent } from '../dialogStoryComponent';
 
 const meta: Meta<typeof Dialog.Footer> = {
-    title: 'Core/Components/Dialogs/Dialog/Dialog.Footer',
+    title: 'Core/Dialogs/Dialog/Dialog.Footer',
     component: Dialog.Footer,
     parameters: {
         design: {

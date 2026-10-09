@@ -6,7 +6,7 @@ import { type IVoteDataListItemStructureProps, VoteDataListItem } from '../../vo
 import { ProposalStatus, ProposalVoting, ProposalVotingTab } from '../index';
 
 const meta: Meta<typeof ProposalVoting.StageContainer> = {
-    title: 'Modules/Components/Proposal/ProposalVoting/ProposalVoting',
+    title: 'Modules/Proposal/ProposalVoting/ProposalVoting',
     component: ProposalVoting.StageContainer,
     parameters: {
         design: {

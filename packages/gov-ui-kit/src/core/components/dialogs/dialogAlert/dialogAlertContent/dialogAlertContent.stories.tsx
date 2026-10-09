@@ -3,7 +3,7 @@ import { DialogAlert } from '..';
 import { DialogAlertStoryComponent } from '../dialogAlertStoryComponent';
 
 const meta: Meta<typeof DialogAlert.Content> = {
-    title: 'Core/Components/Dialogs/DialogAlert/DialogAlert.Content',
+    title: 'Core/Dialogs/DialogAlert/DialogAlert.Content',
     component: DialogAlert.Content,
     parameters: {
         design: {

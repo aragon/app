@@ -5,7 +5,7 @@ import { ProposalVotingContextProvider } from '../proposalVotingContext';
 import { ProposalVotingTab } from '../proposalVotingDefinitions';
 
 const meta: Meta<typeof ProposalVoting.Details> = {
-    title: 'Modules/Components/Proposal/ProposalVoting/ProposalVoting.Details',
+    title: 'Modules/Proposal/ProposalVoting/ProposalVoting.Details',
     component: ProposalVoting.Details,
     parameters: {
         design: {

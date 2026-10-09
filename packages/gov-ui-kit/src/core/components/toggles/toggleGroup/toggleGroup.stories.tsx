@@ -4,7 +4,7 @@ import { Toggle } from '../toggle';
 import { type IToggleGroupProps, ToggleGroup } from './toggleGroup';
 
 const meta: Meta<typeof ToggleGroup> = {
-    title: 'Core/Components/Toggles/ToggleGroup',
+    title: 'Core/Toggles/ToggleGroup',
     component: ToggleGroup,
     parameters: {
         design: {

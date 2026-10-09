@@ -3,7 +3,7 @@ import { Dialog } from '..';
 import { DialogStoryComponent } from '../dialogStoryComponent';
 
 const meta: Meta<typeof Dialog.Content> = {
-    title: 'Core/Components/Dialogs/Dialog/Dialog.Content',
+    title: 'Core/Dialogs/Dialog/Dialog.Content',
     component: Dialog.Content,
     parameters: {
         design: {

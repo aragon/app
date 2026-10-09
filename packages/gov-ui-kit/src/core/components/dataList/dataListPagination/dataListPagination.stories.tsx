@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DataList } from '../index';
 
 const meta: Meta<typeof DataList.Pagination> = {
-    title: 'Core/Components/DataList/DataList.Pagination',
+    title: 'Core/DataList/DataList.Pagination',
     component: DataList.Pagination,
     parameters: {
         design: {

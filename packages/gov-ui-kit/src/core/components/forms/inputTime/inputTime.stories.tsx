@@ -3,7 +3,7 @@ import { type ChangeEvent, useState } from 'react';
 import { InputTime } from './inputTime';
 
 const meta: Meta<typeof InputTime> = {
-    title: 'Core/Components/Forms/InputTime',
+    title: 'Core/Forms/InputTime',
     component: InputTime,
     parameters: {
         design: {

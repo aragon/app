@@ -7,7 +7,7 @@ import { type ITabsRootProps, Tabs } from '..';
  * Tabs.Root can contain multiple Tabs.Triggers inside it's requisite Tabs.List. These tabs will coordinate with what Tabs.Content to show by matching their value prop.
  */
 const meta: Meta<typeof Tabs.Root> = {
-    title: 'Core/Components/Tabs/Tabs.Root',
+    title: 'Core/Tabs/Tabs.Root',
     component: Tabs.Root,
     parameters: {
         design: {

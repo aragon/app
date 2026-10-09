@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Rerender } from './rerender';
 
 const meta: Meta<typeof Rerender> = {
-    title: 'Core/Components/Rerender',
+    title: 'Core/Rerender',
     component: Rerender,
 };
 

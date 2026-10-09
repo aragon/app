@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StatePingAnimation } from './statePingAnimation';
 
 const meta: Meta<typeof StatePingAnimation> = {
-    title: 'Core/Components/States/StatePingAnimation',
+    title: 'Core/States/StatePingAnimation',
     component: StatePingAnimation,
     parameters: {
         design: {

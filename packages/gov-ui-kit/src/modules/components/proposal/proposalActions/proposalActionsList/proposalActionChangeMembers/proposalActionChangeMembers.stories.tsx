@@ -4,7 +4,7 @@ import { ProposalActionChangeMembers } from './proposalActionChangeMembers';
 import { generateProposalActionChangeMembers } from './proposalActionChangeMembers.testUtils';
 
 const meta: Meta<typeof ProposalActionChangeMembers> = {
-    title: 'Modules/Components/Proposal/ProposalActions/Actions/ChangeMembers',
+    title: 'Modules/Proposal/ProposalActions/Actions/ChangeMembers',
     component: ProposalActionChangeMembers,
     parameters: {
         design: {

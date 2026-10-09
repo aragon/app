@@ -4,7 +4,7 @@ import { DialogAlertStoryComponent } from '../dialogAlertStoryComponent';
 import style from './index.css?raw';
 
 const meta: Meta<typeof DialogAlert.Root> = {
-    title: 'Core/Components/Dialogs/DialogAlert/DialogAlert.Root',
+    title: 'Core/Dialogs/DialogAlert/DialogAlert.Root',
     component: DialogAlert.Root,
     parameters: {
         style,

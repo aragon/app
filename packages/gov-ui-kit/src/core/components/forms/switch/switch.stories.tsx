@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { type ISwitchProps, Switch } from './switch';
 
 const meta: Meta<typeof Switch> = {
-    title: 'Core/Components/Forms/Switch',
+    title: 'Core/Forms/Switch',
     component: Switch,
     parameters: {
         design: {

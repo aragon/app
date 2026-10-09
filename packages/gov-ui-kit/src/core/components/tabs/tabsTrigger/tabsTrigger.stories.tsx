@@ -14,7 +14,7 @@ const ComponentWrapper = (Story: ComponentType) => (
 );
 
 const meta: Meta<typeof Tabs.Trigger> = {
-    title: 'Core/Components/Tabs/Tabs.Trigger',
+    title: 'Core/Tabs/Tabs.Trigger',
     component: Tabs.Trigger,
     decorators: ComponentWrapper,
     parameters: {

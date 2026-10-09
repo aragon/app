@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { VoteProposalDataListItem } from '..';
 
 const meta: Meta<typeof VoteProposalDataListItem.Skeleton> = {
-    title: 'Modules/Components/Vote/VoteProposalDataListItem/VoteProposalDataListItem.Skeleton',
+    title: 'Modules/Vote/VoteProposalDataListItem/VoteProposalDataListItem.Skeleton',
     component: VoteProposalDataListItem.Skeleton,
     parameters: {
         design: {

@@ -4,7 +4,7 @@ import { ProposalActionUpdateMetadata } from './proposalActionUpdateMetadata';
 import { generateProposalActionUpdateMetadata } from './proposalActionUpdateMetadata.testUtils';
 
 const meta: Meta<typeof ProposalActionUpdateMetadata> = {
-    title: 'Modules/Components/Proposal/ProposalActions/Actions/UpdateMetadata',
+    title: 'Modules/Proposal/ProposalActions/Actions/UpdateMetadata',
     component: ProposalActionUpdateMetadata,
     parameters: {
         design: {

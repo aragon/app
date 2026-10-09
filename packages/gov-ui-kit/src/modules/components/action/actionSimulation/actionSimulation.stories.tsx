@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { ActionSimulation } from './actionSimulation';
 
 const meta: Meta<typeof ActionSimulation> = {
-    title: 'Modules/Components/Action/ActionSimulation',
+    title: 'Modules/Action/ActionSimulation',
     component: ActionSimulation,
     parameters: {
         design: {

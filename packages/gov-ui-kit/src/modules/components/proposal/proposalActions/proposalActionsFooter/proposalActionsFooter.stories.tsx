@@ -11,7 +11,7 @@ const ComponentWrapper = (Story: ComponentType) => (
 );
 
 const meta: Meta<typeof ProposalActions.Footer> = {
-    title: 'Modules/Components/Proposal/ProposalActions/ProposalActions.Footer',
+    title: 'Modules/Proposal/ProposalActions/ProposalActions.Footer',
     component: ProposalActions.Footer,
     decorators: ComponentWrapper,
     parameters: {
