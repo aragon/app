@@ -3,9 +3,6 @@ import { useState } from 'react';
 import { Collapsible } from './collapsible';
 import style from './index.css?raw';
 
-/**
- * Collapsible component that can wrap any content and visually collapse it for space-saving purposes.
- */
 const meta: Meta<typeof Collapsible> = {
     title: 'Core/Components/Collapsible',
     component: Collapsible,

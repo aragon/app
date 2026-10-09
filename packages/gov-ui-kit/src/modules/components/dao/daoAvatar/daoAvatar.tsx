@@ -71,6 +71,13 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
     },
 };
 
+/**
+ * Usage notes:
+ *
+ * - Without a usable `src`, the avatar shows a primary-colored initials fallback instead of an empty image.
+ * - The fallback initials are uppercase: a short name is kept whole, a longer single word uses its first two
+ *   characters, and a multi-word name uses the first character of its first two words.
+ */
 export const DaoAvatar: React.FC<IDaoAvatarProps> = (props) => {
     const { name, size = 'lg', responsiveSize, className, ...otherProps } = props;
     const daoInitials = getDaoInitials(name).toUpperCase();

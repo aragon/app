@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DocumentParser } from './documentParser';
 
-/**
- * DocumentParser component is used to render HTML or Markdown content in a read-only format.
- */
 const meta: Meta<typeof DocumentParser> = {
     title: 'Core/Components/DocumentParser',
     component: DocumentParser,

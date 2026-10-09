@@ -49,6 +49,14 @@ export interface IIllustrationHumanProps extends HTMLAttributes<HTMLDivElement> 
     objectPosition?: 'right' | 'left';
 }
 
+/**
+ * Usage notes:
+ *
+ * - The root gets an inline `width: 100%` by default, but an explicit `style.width` overrides it; size the
+ *   illustration with that style or a wrapper.
+ * - Body, expression, hair, sunglasses, accessory and object choices use exported TypeScript string-union types,
+ *   not runtime enum objects.
+ */
 export const IllustrationHuman: React.FC<IIllustrationHumanProps> = (props) => {
     const {
         body,
