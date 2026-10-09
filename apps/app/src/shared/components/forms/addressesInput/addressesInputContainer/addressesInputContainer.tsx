@@ -11,6 +11,7 @@ import {
     type ComponentProps,
     cloneElement,
     isValidElement,
+    useId,
 } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -102,6 +103,8 @@ export const AddressesInputContainer: React.FC<
 
     const { t } = useTranslations();
     const { formState } = useFormContext();
+    const addressesInputId = useId();
+    const addressesLabelId = `${addressesInputId}-label`;
 
     const membersFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -194,11 +197,22 @@ export const AddressesInputContainer: React.FC<
                 <InputContainer
                     className="gap-3"
                     helpText={helpText}
-                    id="addresses"
-                    label={label}
+                    id={addressesInputId}
+                    label={
+                        label == null ? undefined : (
+                            <span id={addressesLabelId}>{label}</span>
+                        )
+                    }
                     useCustomWrapper={true}
                 >
-                    {childrenWithKeys}
+                    <fieldset
+                        aria-labelledby={
+                            label == null ? undefined : addressesLabelId
+                        }
+                        className="m-0 flex min-w-0 flex-col gap-3 border-0 p-0"
+                    >
+                        {childrenWithKeys}
+                    </fieldset>
                 </InputContainer>
                 <div className="flex w-full justify-between">
                     <Button
