@@ -8,6 +8,14 @@
     "storybookStatic": ".design-sync/sb-reference",
     "storybookConfigDir": "packages/gov-ui-kit/.storybook",
     "readmeHeader": ".design-sync/conventions.md",
+    "docsDir": "src",
+    "guidelinesGlob": [
+        "../../.design-sync/guidelines/*.md",
+        "src/theme/tokens/index.mdx",
+        "src/modules/index.mdx",
+        "src/modules/components/gukModulesProvider/gukModulesProvider.mdx",
+        "src/core/components/gukCoreProvider/gukCoreProvider.mdx"
+    ],
     "provider": {
         "component": "GukModulesProvider"
     },

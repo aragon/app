@@ -742,6 +742,14 @@
                 "runtime": {
                     "type": "boolean"
                 },
+                "values": {
+                    "description": "Allowed values of an exported enum (member names) or string-literal union type (quoted literals), in declaration order.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
                 "exportNames": {
                     "type": "array",
                     "minItems": 1,

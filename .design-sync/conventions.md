@@ -8,8 +8,22 @@ documented in the App, at `apps/app/docs/projectDocs/formsAndWizards.md`.
 ## Source of truth
 
 When sources disagree, trust them in this order: the component's `.d.ts` and the compiled
-bundle, then its preview (its Storybook story), then this guide. Kit source, stories and
-tests live under `packages/gov-ui-kit/src/core` and `packages/gov-ui-kit/src/modules`.
+bundle, then its preview (its Storybook story), then its **Usage notes**, then this guide.
+Kit source, stories and tests live under `packages/gov-ui-kit/src/core` and
+`packages/gov-ui-kit/src/modules`.
+
+## Where the detail lives
+
+- **Usage notes** at the end of a component's prompt come from the kit's Storybook docs
+  page for that component. They hold contracts the props table doesn't show: render
+  conditions, controlled state, required parents, layout defaults.
+- `guidelines/selection-guide.md` says which export fits an intent, what to use instead,
+  the key-prop contracts and how compounds compose. Its **Allowed values** section lists
+  every enum and string-union value. A `.d.ts` prints `unknown` for a type too wide to
+  inline (`IconType`, `IllustrationObjectType`, the `EmptyState` button configs); take the
+  values from there instead of guessing.
+- `guidelines/src/**` holds the kit's own Storybook pages for the providers, modules setup
+  and tokens.
 
 ## Select and compose
 
@@ -22,25 +36,6 @@ tests live under `packages/gov-ui-kit/src/core` and `packages/gov-ui-kit/src/mod
 - `modules` components that read chain data (`AddressInput`, `Wallet`, `MemberAvatar`) need
   `<GukModulesProvider>` for wagmi and query context. Components that only use module copy
   work without it. Check the component's story before choosing a provider stack.
-- Dialogs open through the controlled `open` prop on `Dialog.Root` or `DialogAlert.Root`.
-
-## Interaction and domain contracts
-
-- `AddressInput.onChange` is the editable string: typing can checksum addresses, blur trims
-  whitespace, and controls can replace or clear it. `onAccept` reports the resolved
-  `{ address, name }`, or `undefined` when the value is not a valid address, including a
-  mixed-case address that fails the EIP-55 checksum (`enforceChecksum`, on by default). It
-  does not fire while ENS lookups load. ENS resolves on mainnet; `chainId` only controls
-  explorer links.
-- `Button` renders a native button unless `href` is set, then a link. `isLoading` disables
-  it and replaces icons with a spinner; `disabled` on a link sets `aria-disabled` and
-  prevents navigation.
-- `ActionSimulation` displays caller-supplied simulation state and calls `onSimulate`; it
-  does not run a simulation.
-- Proposal statuses map deliberately: `ACTIVE`, `ADVANCEABLE` and `EXECUTABLE` are
-  actionable; `ACCEPTED` and `EXECUTED` are success; `FAILED`, `EXPIRED`, `REJECTED` and
-  `VETOED` are critical; `DRAFT`, `PENDING` and `UNREACHED` are neutral. Don't collapse
-  them into a generic "complete".
 
 ## Accessibility
 

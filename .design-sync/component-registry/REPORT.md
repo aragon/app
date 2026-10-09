@@ -93,24 +93,22 @@ The notes record a verified `2.10.0` upload, while this App consumes `2.11.4`. T
 6. Can a concrete non-Aragon proposal/voting/action flow, such as a Nouns flow, use the relevant components without distorting its governance model into OSx/SPP? Record the actual constraints per component; this scenario has not been exercised.
 7. Which opinions belong to the reusable governance experience, and which should be optional integrations or explicitly Aragon-specific functionality? Serving Aragon is compatible with the public-good goal; unnecessary coupling is what needs examination.
 
-## Migration recheck
+## Monorepo migration
 
-After APP-594 lands, point the kit source root at the integrated package and regenerate. Recheck package `exports`, the source entrypoint and build mapping, App workspace dependency/catalog/lock resolution, the client shim and original alias, and design-sync source/preview paths. Keep existing IDs and curated judgments; refresh source references and review any changed evidence. Do not copy the inventory into a new catalog or silently infer an integrated package location before it exists.
+The kit now lives in `packages/gov-ui-kit`, which is the default source root. The re-extraction against it dropped the four `ProposalActionWithdrawToken` records (moved into `apps/app/src/actions/core/withdrawToken` by APP-1218, #1433), stopped counting object keys such as `{ wrapper: GukModulesProvider }` as usage, and re-pinned the evidence of `Breadcrumbs`, `Dialog` and `DialogRoot` after confirming their curated intent still matches source.
 
 ## Update and validation
 
 Run from the App workspace root. The tooling reuses installed TypeScript and Ajv; it does not call an LLM, install packages, rebuild GovKit or run design-sync.
 
 ```sh
-export GOVKIT_KIT_ROOT=/Users/kd-m2air/Local/gov-ui-kit
-export GOVKIT_CONSUMED_ROOT=/Users/kd-m2air/Local/app-next/apps/app/node_modules/@aragon/gov-ui-kit
 node .design-sync/component-registry/registry.mjs extract
 node .design-sync/component-registry/registry.mjs validate
 node .design-sync/component-registry/registry.mjs check
 node --test .design-sync/component-registry/registry.test.mjs .design-sync/component-registry/selection-guide.test.mjs
 ```
 
-`GOVKIT_APP_ROOT` defaults to this workspace's `apps/app`. Point `GOVKIT_KIT_ROOT` at the integrated source package after migration; `GOVKIT_CONSUMED_ROOT` identifies the package actually installed for the App, rather than the source checkout or its local build output.
+`GOVKIT_APP_ROOT` defaults to `apps/app` and `GOVKIT_KIT_ROOT` to `packages/gov-ui-kit`. `GOVKIT_CONSUMED_ROOT` (default `apps/app/node_modules/@aragon/gov-ui-kit`) identifies the package actually installed for the App, rather than the source checkout or its local build output.
 Registry references labeled `app` resolve relative to `GOVKIT_APP_ROOT`; references labeled `kit` resolve relative to `GOVKIT_KIT_ROOT`. Paths elsewhere in this report are workspace-relative unless labeled.
 
 
@@ -131,15 +129,15 @@ node --test .design-sync/component-registry/selection-guide.test.mjs
 node .design-sync/component-registry/selection-guide.mjs print govkit:AddressInput govkit:Button govkit:Dialog govkit:formatterUtils
 ```
 
-The guide is not included in the sync bundle by this change.
+`generate` also writes `../guidelines/selection-guide.md`, a Markdown view of the same entries, and `check` fails when either file is stale. Design-sync ships that file to Claude Design as `guidelines/selection-guide.md` (`guidelinesGlob` in `.design-sync/config.json`).
 
 ## Verified coverage and limits
 
-- Schema `1.1.0`: 418 records covering all 416 source/root declaration exports plus two CSS subpaths. The 143 UI entries are 124 renderable components and 19 compound namespaces; the remaining root exports are seven runtime utilities and 266 other noncomponents. Compound members link to canonical entries, including `ProposalVoting.Progress`. The compact guide includes all 143 UI entries and the seven utilities.
-- All 143 UI entries have source-grounded selection guidance and remain `unreviewed`; selected entries also carry explicitly labeled discussion-derived review questions. Maintainer ownership is unknown. Of 124 renderable components, 123 have props references. The remaining `ProposalActionsItemSkeleton` takes no props.
-- Static App references were found for 122 UI entries; 21 have none within the recorded scope. Examples include `InputSearch`, `AvatarBase`, and `LinkBase`. This does **not** mean unused at runtime: kit-internal composition, dynamic access, and runtime reachability are outside the scan.
-- `AddressInput` has 18 JSX references across 17 App files. The original-package `AlertCard` import and the conditional App `DialogRoot` wrapper resolve to kit declarations. The App's relative `node_modules` stylesheet import is recorded separately.
-- All 12,116 source-reference occurrences resolve against 1,121 distinct files with matching hashes and valid lines. Extraction preserves curated intent and its evidence fingerprints. The new utility contracts carry source evidence, including the formatter preset definitions.
+- Schema `1.1.0`: 414 records covering all 412 source/root declaration exports plus two CSS subpaths. The 142 UI entries are 123 renderable components and 19 compound namespaces; the remaining root exports are seven runtime utilities and 263 other noncomponents. Compound members link to canonical entries, including `ProposalVoting.Progress`. The compact guide includes all 142 UI entries and the seven utilities.
+- All 142 UI entries have source-grounded selection guidance and remain `unreviewed`; selected entries also carry explicitly labeled discussion-derived review questions. Maintainer ownership is unknown. Of 123 renderable components, 122 have props references. The remaining `ProposalActionsItemSkeleton` takes no props.
+- Static App references were found for 123 UI entries; 19 have none within the recorded scope. Examples include `AvatarBase`, `CheckboxGroup`, and `Clipboard`. This does **not** mean unused at runtime: kit-internal composition, dynamic access, and runtime reachability are outside the scan.
+- `AddressInput` has 19 JSX references across 18 App files. The original-package `AlertCard` import and the conditional App `DialogRoot` wrapper resolve to kit declarations. The App's relative `node_modules` stylesheet import is recorded separately.
+- All 12,362 source-reference occurrences resolve against 1,141 distinct files with matching hashes and valid lines. Extraction preserves curated intent and its evidence fingerprints. The new utility contracts carry source evidence, including the formatter preset definitions.
 
 The scanner reads TS/JS throughout `<app>/src`, including tests and stories, follows compiler symbols through import aliases and transparent re-exports, and records quoted CSS imports. Bare unused imports are not usage. Markdown/MDX prose, files outside that source root (including design-sync previews), computed property access, and interprocedural render reachability are not analyzed. Actual references here are classified as production or test; fixture coverage also exercises the story category. New JavaScript package subpaths fail extraction until their source mapping is supported rather than being silently omitted.
 

@@ -4,7 +4,12 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
-import { buildGuide, checkGuide, validateGuide } from './selection-guide.mjs';
+import {
+    buildGuide,
+    checkGuide,
+    renderMarkdown,
+    validateGuide,
+} from './selection-guide.mjs';
 
 const REVIEW_QUESTION_PREFIX = 'Review question (maintainer discussion):';
 
@@ -93,9 +98,13 @@ function makeRegistry() {
                 methods: [{ name: 'toWei', contract: 'string -> bigint' }],
                 composition: [],
             }),
-            component('kit:SomeEnum', 'SomeEnum', 'non-component', {
-                description: 'not eligible',
-            }),
+            component(
+                'kit:SomeEnum',
+                'SomeEnum',
+                'non-component',
+                { description: 'not eligible' },
+                { values: ['FIRST', 'SECOND'] },
+            ),
         ],
     };
 }
@@ -124,6 +133,27 @@ test('projects kind-appropriate fields for UI and utility entries', () => {
     const utility = entryById(guide, 'kit:formatUtils');
     assert.ok(Array.isArray(utility.methods));
     assert.ok(!('keyProps' in utility) && !('alternatives' in utility));
+});
+
+test('renders entries and enum values without discussion questions', () => {
+    const markdown = renderMarkdown(buildGuide(makeRegistry()));
+    const button = markdown.slice(
+        markdown.indexOf('### Button'),
+        markdown.indexOf('### Link'),
+    );
+    assert.match(button, /\*\*Use when\*\*\n\n- clicking/);
+    assert.match(button, /\*\*Instead\*\*\n\n- `kit:Link`: navigation/);
+    assert.match(button, /- `variant`: primary\|secondary/);
+    assert.doesNotMatch(markdown, /Review question/);
+    assert.match(
+        markdown,
+        /## Utilities\n\n### formatUtils[\s\S]*- `toWei`: string -> bigint/,
+    );
+    assert.match(
+        markdown,
+        /## Allowed values[\s\S]*### SomeEnum\n\n`FIRST`, `SECOND`/,
+    );
+    assert.doesNotMatch(markdown, /### SomeEnum\n\nnot eligible/);
 });
 
 test('includes every eligible id regardless of review state', () => {

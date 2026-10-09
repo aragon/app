@@ -175,7 +175,7 @@ function resolveRoots(options = {}) {
     const kitRoot = path.resolve(
         options.kitRoot ||
             process.env.GOVKIT_KIT_ROOT ||
-            path.resolve(WORKSPACE_ROOT, '../gov-ui-kit'),
+            path.join(WORKSPACE_ROOT, 'packages/gov-ui-kit'),
     );
     if (!exists(path.join(kitRoot, 'package.json'))) {
         throw new Error(
@@ -698,6 +698,25 @@ function extractExports(kitRoot) {
             tests: related.tests,
             docs: related.docs,
         };
+        if (declaration && ts.isEnumDeclaration(declaration)) {
+            record.values = declaration.members.map((member) =>
+                member.name.getText(),
+            );
+        } else if (
+            declaration &&
+            ts.isTypeAliasDeclaration(declaration) &&
+            ts.isUnionTypeNode(declaration.type) &&
+            declaration.type.types.every(
+                (type) =>
+                    ts.isLiteralTypeNode(type) &&
+                    ts.isStringLiteral(type.literal),
+            )
+        ) {
+            // Quoted, so string unions read differently from enum members.
+            record.values = declaration.type.types.map((type) =>
+                type.literal.getText(),
+            );
+        }
         records.push(record);
         for (const name of names) {
             namesByKey.set(name, record);
@@ -1180,7 +1199,17 @@ function extractUsage(ts, appRoot, namesByKey, kitRoot) {
                     ).line + 1,
                 );
             }
-            if (ts.isIdentifier(node) && !isImportBindingName(ts, node)) {
+            // Object keys (`{ wrapper: GukModulesProvider }`) resolve through their
+            // initializer; the initializer identifier is the real reference.
+            const isPropertyKey =
+                node.parent &&
+                ts.isPropertyAssignment(node.parent) &&
+                node.parent.name === node;
+            if (
+                ts.isIdentifier(node) &&
+                !isPropertyKey &&
+                !isImportBindingName(ts, node)
+            ) {
                 const isMember =
                     node.parent &&
                     ts.isPropertyAccessExpression(node.parent) &&

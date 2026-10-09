@@ -8,6 +8,13 @@ const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const REGISTRY_DIR = path.dirname(SCRIPT_PATH);
 const REGISTRY_PATH = path.join(REGISTRY_DIR, 'registry.json');
 const GUIDE_PATH = path.join(REGISTRY_DIR, 'selection-guide.json');
+// Markdown view of the guide, shipped to Claude Design as guidelines/selection-guide.md.
+const GUIDE_MD_PATH = path.join(
+    REGISTRY_DIR,
+    '..',
+    'guidelines',
+    'selection-guide.md',
+);
 const PACKAGE_NAME = '@aragon/gov-ui-kit';
 const UI_KINDS = new Set(['component', 'compound']);
 const GUIDE_KINDS = new Set(['component', 'compound', 'utility']);
@@ -23,6 +30,87 @@ function writeJson(filePath, value) {
 
 function serialize(value) {
     return `${JSON.stringify(value, null, 4)}\n`;
+}
+
+const KIND_TITLES = {
+    component: 'Components',
+    compound: 'Compound components',
+    utility: 'Utilities',
+};
+
+function renderMarkdown(guide) {
+    const lines = [
+        '# GovKit selection guide',
+        '',
+        'Which `@aragon/gov-ui-kit` export to choose for an intent, what to use instead, and the',
+        'contracts that matter when composing it. Generated from the component registry',
+        '(`.design-sync/component-registry/`); do not edit by hand. References: `kit:` paths are in',
+        '`packages/gov-ui-kit`, `app:` paths are App usages in `apps/app`.',
+    ];
+    const list = (title, items) => {
+        if (items.length > 0) {
+            lines.push(
+                '',
+                `**${title}**`,
+                '',
+                ...items.map((item) => `- ${item}`),
+            );
+        }
+    };
+    for (const kind of ['component', 'compound', 'utility']) {
+        lines.push('', `## ${KIND_TITLES[kind]}`);
+        for (const entry of guide.entries.filter(
+            (item) => item.kind === kind,
+        )) {
+            const refs = entry.references ?? {};
+            lines.push('', `### ${entry.import.name}`, '', entry.description);
+            list('Use when', asStrings(entry.useWhen));
+            list(
+                'Instead',
+                (entry.alternatives ?? []).map(
+                    (alt) =>
+                        `\`${alt.id.replace(/^govkit:/, '')}\`: ${alt.useWhen}`,
+                ),
+            );
+            list(
+                'Key props',
+                (entry.keyProps ?? []).map(
+                    (prop) => `\`${prop.name}\`: ${prop.contract}`,
+                ),
+            );
+            list(
+                'Methods',
+                (entry.methods ?? []).map(
+                    (method) => `\`${method.name}\`: ${method.contract}`,
+                ),
+            );
+            list('Constraints', asStrings(entry.constraints));
+            list('Composition', asStrings(entry.composition));
+            list(
+                'References',
+                [
+                    ...asStrings([refs.source]),
+                    ...asStrings(refs.stories),
+                    ...asStrings(refs.appExamples).slice(0, 3),
+                ].map((ref) => `\`${ref}\``),
+            );
+        }
+    }
+    lines.push(
+        '',
+        '## Allowed values',
+        '',
+        'Enum props take a member (`icon={IconType.PLUS}`); string-union props take the quoted value (`object="ACTION"`).',
+    );
+    for (const { name, values } of guide.allowedValues) {
+        lines.push(
+            '',
+            `### ${name}`,
+            '',
+            values.map((value) => `\`${value}\``).join(', '),
+        );
+    }
+    return `${lines.join('\n')}\n`;
 }
 
 function sha256(filePath) {
@@ -137,10 +225,18 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
                 tool: 'selection-guide.mjs',
                 deterministic: true,
                 enrichment:
-                    'Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields; registry intent remains authoritative.',
+                    'Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields, plus source-extracted enum values; registry intent remains authoritative.',
             },
         },
         entries,
+        allowedValues: registry.components
+            .filter((component) => Array.isArray(component.values))
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((component) => ({
+                name: component.name,
+                values: component.values,
+                source: refString(component.source),
+            })),
     };
 }
 
@@ -361,6 +457,15 @@ function checkGuide(filePath = GUIDE_PATH) {
         actual === expected,
         `Selection guide is stale; run node ${path.relative(process.cwd(), SCRIPT_PATH)}`,
     );
+    if (filePath === GUIDE_PATH) {
+        const markdown = fs.existsSync(GUIDE_MD_PATH)
+            ? fs.readFileSync(GUIDE_MD_PATH, 'utf8')
+            : '';
+        assert(
+            markdown === renderMarkdown(guide),
+            `${path.relative(process.cwd(), GUIDE_MD_PATH)} is stale; run node ${path.relative(process.cwd(), SCRIPT_PATH)}`,
+        );
+    }
     return guide;
 }
 
@@ -377,6 +482,8 @@ function main(argv = process.argv.slice(2)) {
         const guide = buildGuide();
         validateGuide(guide);
         writeJson(GUIDE_PATH, guide);
+        fs.mkdirSync(path.dirname(GUIDE_MD_PATH), { recursive: true });
+        fs.writeFileSync(GUIDE_MD_PATH, renderMarkdown(guide));
         process.stdout.write(
             `Wrote ${guide.entries.length} selection-guide entries to ${path.relative(process.cwd(), GUIDE_PATH)}\n`,
         );
@@ -398,7 +505,7 @@ function main(argv = process.argv.slice(2)) {
     );
 }
 
-export { buildGuide, checkGuide, main, validateGuide };
+export { buildGuide, checkGuide, main, renderMarkdown, validateGuide };
 
 if (path.resolve(process.argv[1] || '') === path.resolve(SCRIPT_PATH)) {
     try {

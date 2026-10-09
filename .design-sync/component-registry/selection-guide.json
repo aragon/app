@@ -5,17 +5,17 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "1.1.0",
-            "sha256": "ee07f9ecde3e6f8e8e3ca819d5ee184bdaed628c37cdccd1816181c64850903b",
-            "totalRecords": 418,
-            "entryCount": 150,
-            "uiEntryCount": 143,
+            "sha256": "170fc4e99478632ebc4ab3508dce4a95ec22229d6e5eac6d5eb35fdd770a5858",
+            "totalRecords": 414,
+            "entryCount": 149,
+            "uiEntryCount": 142,
             "utilityEntryCount": 7,
             "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
         },
         "generation": {
             "tool": "selection-guide.mjs",
             "deterministic": true,
-            "enrichment": "Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields; registry intent remains authoritative."
+            "enrichment": "Guide projects optional intent.keyProps, intent.alternatives, intent.composition and intent.methods fields, plus source-extracted enum values; registry intent remains authoritative."
         }
     },
     "entries": [
@@ -237,7 +237,7 @@
                 "appExamples": [
                     "app:src/modules/finance/components/transferAssetForm/transferAssetForm.tsx:83",
                     "app:src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx:60",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:191"
+                    "app:src/actions/core/permissionManager/components/permissionAddressInput.tsx:92"
                 ]
             }
         },
@@ -482,7 +482,9 @@
                 "stories": [
                     "kit:src/modules/components/asset/assetTransfer/assetTransfer.stories.tsx:1"
                 ],
-                "appExamples": []
+                "appExamples": [
+                    "app:src/actions/core/withdrawToken/withdrawTokenActionDetails.tsx:30"
+                ]
             }
         },
         {
@@ -641,7 +643,7 @@
                 "appExamples": [
                     "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:52",
                     "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:306",
-                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:169"
+                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:238"
                 ]
             }
         },
@@ -768,7 +770,7 @@
                     "kit:src/core/components/forms/checkbox/checkbox.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimDialog/capitalDistributorClaimDialogDetails/capitalDistributorClaimDialogDetails.tsx:153"
+                    "app:src/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimDialog/capitalDistributorClaimDialogDetails/capitalDistributorClaimDialogDetails.tsx:154"
                 ]
             }
         },
@@ -928,7 +930,7 @@
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:126",
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:149",
                     "app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36",
                     "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:138"
                 ]
@@ -1444,7 +1446,7 @@
                     "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:99"
+                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:101"
                 ]
             }
         },
@@ -1863,9 +1865,9 @@
                     "kit:src/core/components/heading/heading.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionChangeCard.tsx:46",
                     "app:src/modules/application/components/debugPanel/debugPanel.tsx:106",
-                    "app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26",
-                    "app:src/modules/dashboard/components/dashboardOnboarding/nonAdminOnboarding.tsx:30"
+                    "app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26"
                 ]
             }
         },
@@ -1942,7 +1944,7 @@
                 "appExamples": [
                     "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx:73",
                     "app:src/shared/components/ctaCard/ctaCard.tsx:108",
-                    "app:src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx:57"
+                    "app:src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx:58"
                 ]
             }
         },
@@ -2340,9 +2342,9 @@
                     "kit:src/core/components/progress/progress.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingSummary/lockToVoteProposalVotingSummary.tsx:134",
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingSummary/lockToVoteProposalVotingSummary.tsx:118",
                     "app:src/plugins/multisigPlugin/components/multisigProposalVotingSummary/multisigProposalVotingSummary.tsx:113",
-                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingSummary/tokenProposalVotingSummary.tsx:130"
+                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingSummary/tokenProposalVotingSummary.tsx:116"
                 ]
             }
         },
@@ -2431,7 +2433,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/index.ts:7",
                 "stories": [],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:45",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107",
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
                     "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
                 ]
@@ -2456,7 +2458,7 @@
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:46",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107",
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:161",
                     "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:65"
                 ]
@@ -2482,7 +2484,7 @@
                 ],
                 "appExamples": [
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:171",
-                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:360"
+                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:361"
                 ]
             }
         },
@@ -2505,8 +2507,8 @@
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:48",
-                    "app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:57",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:96",
+                    "app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:62",
                     "app:src/modules/governance/components/proposalActionsItem/proposalActionsItem.tsx:43"
                 ]
             }
@@ -2551,7 +2553,7 @@
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:45",
+                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:108",
                     "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
                     "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
                 ]
@@ -2595,27 +2597,6 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx:7",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx:1"
-                ],
-                "appExamples": []
-            }
-        },
-        {
-            "id": "govkit:ProposalActionWithdrawToken",
-            "kind": "component",
-            "import": {
-                "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionWithdrawToken"
-            },
-            "description": "ProposalActionWithdrawToken: withdraw-token action view of the ProposalActions compound (Compound decoded proposal-actions list).",
-            "useWhen": [],
-            "alternatives": [],
-            "keyProps": [],
-            "constraints": [],
-            "composition": [],
-            "references": {
-                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionWithdrawToken/proposalActionWithdrawToken.tsx:4",
-                "stories": [
-                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionWithdrawToken/proposalActionWithdrawToken.stories.tsx:1"
                 ],
                 "appExamples": []
             }
@@ -2736,7 +2717,7 @@
                 ],
                 "appExamples": [
                     "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100",
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68",
                     "app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28"
                 ]
             }
@@ -2868,8 +2849,8 @@
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
-                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown.tsx:50"
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68",
+                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown.tsx:66"
                 ]
             }
         },
@@ -3435,8 +3416,8 @@
                 "stories": [],
                 "appExamples": [
                     "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:101"
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60"
                 ]
             }
         },
@@ -3458,8 +3439,8 @@
                 "stories": [],
                 "appExamples": [
                     "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:382",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:101"
+                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
+                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60"
                 ]
             }
         },
@@ -3636,9 +3617,9 @@
                     "kit:src/core/components/toggles/toggle/toggle.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:228",
                     "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:100",
-                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69",
-                    "app:src/modules/finance/components/assetInput/assetInput.tsx:303"
+                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69"
                 ]
             }
         },
@@ -3665,9 +3646,9 @@
                     "kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:210",
                     "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:112",
-                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63",
-                    "app:src/modules/finance/components/assetInput/assetInput.tsx:296"
+                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63"
                 ]
             }
         },
@@ -3692,6 +3673,7 @@
                     "kit:src/core/components/tooltip/tooltip.stories.tsx:1"
                 ],
                 "appExamples": [
+                    "app:src/actions/core/permissionManager/components/permissionIdItem.tsx:40",
                     "app:src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx:29"
                 ]
             }
@@ -4049,11 +4031,600 @@
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
                 ],
                 "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:105",
+                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:132",
                     "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:147",
                     "app:src/modules/explore/components/exploreNav/exploreNav.tsx:85"
                 ]
             }
+        }
+    ],
+    "allowedValues": [
+        {
+            "name": "AlertVariant",
+            "values": [
+                "'critical'",
+                "'info'",
+                "'success'",
+                "'warning'"
+            ],
+            "source": "kit:src/core/components/alerts/alertUtils.ts:3"
+        },
+        {
+            "name": "AvatarIconSize",
+            "values": [
+                "'sm'",
+                "'md'",
+                "'lg'"
+            ],
+            "source": "kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:9"
+        },
+        {
+            "name": "AvatarIconVariant",
+            "values": [
+                "'neutral'",
+                "'primary'",
+                "'info'",
+                "'success'",
+                "'warning'",
+                "'critical'"
+            ],
+            "source": "kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:10"
+        },
+        {
+            "name": "AvatarSize",
+            "values": [
+                "'xs'",
+                "'sm'",
+                "'md'",
+                "'lg'",
+                "'xl'",
+                "'2xl'"
+            ],
+            "source": "kit:src/core/components/avatars/avatar/avatar.tsx:9"
+        },
+        {
+            "name": "Breakpoint",
+            "values": [
+                "'default'",
+                "'sm'",
+                "'md'",
+                "'lg'",
+                "'xl'",
+                "'2xl'"
+            ],
+            "source": "kit:src/core/types/responsive.ts:1"
+        },
+        {
+            "name": "ButtonContext",
+            "values": [
+                "'default'",
+                "'onlyIcon'"
+            ],
+            "source": "kit:src/core/components/button/button.api.ts:6"
+        },
+        {
+            "name": "ButtonSize",
+            "values": [
+                "'lg'",
+                "'md'",
+                "'sm'"
+            ],
+            "source": "kit:src/core/components/button/button.api.ts:7"
+        },
+        {
+            "name": "ButtonVariant",
+            "values": [
+                "'primary'",
+                "'secondary'",
+                "'tertiary'",
+                "'ghost'",
+                "'success'",
+                "'warning'",
+                "'critical'"
+            ],
+            "source": "kit:src/core/components/button/button.api.ts:5"
+        },
+        {
+            "name": "ChainEntityType",
+            "values": [
+                "ADDRESS",
+                "TRANSACTION",
+                "TOKEN"
+            ],
+            "source": "kit:src/modules/hooks/useBlockExplorer/useBlockExplorer.api.ts:3"
+        },
+        {
+            "name": "ClipboardVariant",
+            "values": [
+                "'button'",
+                "'avatar'",
+                "'avatar-neutral'"
+            ],
+            "source": "kit:src/core/components/clipboard/clipboard.tsx:9"
+        },
+        {
+            "name": "DataListActionItemVariant",
+            "values": [
+                "'primary'",
+                "'neutral'"
+            ],
+            "source": "kit:src/core/components/dataList/dataListActionItem/dataListActionItem.tsx:5"
+        },
+        {
+            "name": "DataListState",
+            "values": [
+                "'initialLoading'",
+                "'loading'",
+                "'error'",
+                "'fetchingNextPage'",
+                "'idle'",
+                "'filtered'"
+            ],
+            "source": "kit:src/core/components/dataList/dataListRoot/dataListRoot.tsx:14"
+        },
+        {
+            "name": "DateFormat",
+            "values": [
+                "YEAR_MONTH_DAY_TIME",
+                "YEAR_MONTH_DAY",
+                "YEAR_MONTH",
+                "DURATION",
+                "RELATIVE"
+            ],
+            "source": "kit:src/core/utils/formatterUtils/formatterUtilsDefinitions.ts:108"
+        },
+        {
+            "name": "DialogAlertVariant",
+            "values": [
+                "'critical'",
+                "'info'",
+                "'success'",
+                "'warning'"
+            ],
+            "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.api.ts:3"
+        },
+        {
+            "name": "DialogSize",
+            "values": [
+                "'sm'",
+                "'md'",
+                "'lg'",
+                "'xl'"
+            ],
+            "source": "kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.api.ts:3"
+        },
+        {
+            "name": "HeadingSize",
+            "values": [
+                "'h1'",
+                "'h2'",
+                "'h3'",
+                "'h4'",
+                "'h5'"
+            ],
+            "source": "kit:src/core/components/heading/heading.tsx:4"
+        },
+        {
+            "name": "IconSize",
+            "values": [
+                "'sm'",
+                "'md'",
+                "'lg'"
+            ],
+            "source": "kit:src/core/components/icon/icon.tsx:8"
+        },
+        {
+            "name": "IconType",
+            "values": [
+                "APP_ASSETS",
+                "APP_DASHBOARD",
+                "APP_EXPLORE",
+                "APP_GAUGE",
+                "APP_MEMBERS",
+                "APP_PERMISSIONS",
+                "APP_PROPOSALS",
+                "APP_TRANSACTIONS",
+                "BLOCKCHAIN_BLOCK",
+                "BLOCKCHAIN_BLOCKCHAIN",
+                "BLOCKCHAIN_GASFEE",
+                "BLOCKCHAIN_SMARTCONTRACT",
+                "BLOCKCHAIN_WALLET",
+                "BURN_ASSETS",
+                "BLOCKCHAIN_WALLETCONNECT",
+                "CALENDAR",
+                "CHECKBOX",
+                "CHECKBOX_INDETERMINATE",
+                "CHECKBOX_SELECTED",
+                "CHECKMARK",
+                "CHEVRON_DOWN",
+                "CHEVRON_LEFT",
+                "CHEVRON_RIGHT",
+                "CHEVRON_UP",
+                "CLOCK",
+                "CLOSE",
+                "COPY",
+                "CRITICAL",
+                "DEPOSIT",
+                "DOTS_HORIZONTAL",
+                "DOTS_VERTICAL",
+                "EXPAND",
+                "FAVORITE",
+                "FAVORITE_SELECTED",
+                "FEEDBACK",
+                "FILTER",
+                "FLAG",
+                "HELP",
+                "HOME",
+                "INFO",
+                "LINK_EXTERNAL",
+                "LOGOUT",
+                "MENU",
+                "MINUS",
+                "PEN",
+                "PERSON",
+                "PLUS",
+                "RADIO",
+                "RADIO_SELECTED",
+                "RELOAD",
+                "REMOVE",
+                "REWARDS",
+                "RICHTEXT_BOLD",
+                "RICHTEXT_HEADING",
+                "RICHTEXT_ITALIC",
+                "RICHTEXT_LINK_ADD",
+                "RICHTEXT_LINK_REMOVE",
+                "RICHTEXT_LIST_ORDERED",
+                "RICHTEXT_LIST_UNORDERED",
+                "SEARCH",
+                "SETTINGS",
+                "SHRINK",
+                "SLASH",
+                "SORT_ASC",
+                "SORT_DESC",
+                "SUCCESS",
+                "WARNING",
+                "WITHDRAW",
+                "SOCIAL_X",
+                "SOCIAL_DISCORD",
+                "SOCIAL_GITHUB",
+                "SOCIAL_TELEGRAM",
+                "SOCIAL_EMAIL",
+                "SOCIAL_WEBSITE"
+            ],
+            "source": "kit:src/core/components/icon/iconType.ts:1"
+        },
+        {
+            "name": "IllustrationHumanAccessory",
+            "values": [
+                "'BUDDHA'",
+                "'EARRINGS_CIRCLE'",
+                "'EARRINGS_HOOPS'",
+                "'EARRINGS_RHOMBUS'",
+                "'EARRINGS_SKULL'",
+                "'EARRINGS_THUNDER'",
+                "'EXPRESSION'",
+                "'FLUSHED'",
+                "'HEAD_FLOWER'",
+                "'PIERCINGS_TATTOO'",
+                "'PIERCINGS'"
+            ],
+            "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHumanType.ts:1"
+        },
+        {
+            "name": "IllustrationHumanBody",
+            "values": [
+                "'ARAGON'",
+                "'BLOCKS'",
+                "'CHART'",
+                "'COMPUTER_CORRECT'",
+                "'COMPUTER'",
+                "'CORRECT'",
+                "'DOUBLE_CORRECT'",
+                "'ELEVATING'",
+                "'RELAXED'",
+                "'SENDING_LOVE'",
+                "'VOTING'"
+            ],
+            "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHumanType.ts:27"
+        },
+        {
+            "name": "IllustrationHumanExpression",
+            "values": [
+                "'ANGRY'",
+                "'CASUAL'",
+                "'CRYING'",
+                "'DECIDED'",
+                "'EXCITED'",
+                "'SAD_LEFT'",
+                "'SAD_RIGHT'",
+                "'SMILE_WINK'",
+                "'SMILE'",
+                "'SURPRISED'",
+                "'SUSPECTING'"
+            ],
+            "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHumanType.ts:40"
+        },
+        {
+            "name": "IllustrationHumanHairs",
+            "values": [
+                "'AFRO'",
+                "'BALD'",
+                "'BUN'",
+                "'COOL'",
+                "'CURLY_BANGS'",
+                "'CURLY'",
+                "'INFORMAL'",
+                "'LONG'",
+                "'MIDDLE'",
+                "'OLDSCHOOL'",
+                "'PUNK'",
+                "'SHORT'"
+            ],
+            "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHumanType.ts:53"
+        },
+        {
+            "name": "IllustrationHumanSunglasses",
+            "values": [
+                "'BIG_ROUNDED'",
+                "'BIG_SEMIROUNDED'",
+                "'LARGE_STYLIZED_XL'",
+                "'LARGE_STYLIZED'",
+                "'PIRATE'",
+                "'SMALL_INTELLECTUAL'",
+                "'SMALL_SYMPATHETIC'",
+                "'SMALL_WEIRD_ONE'",
+                "'SMALL_WEIRD_TWO'",
+                "'THUGLIFE_ROUNDED'",
+                "'THUGLIFE'"
+            ],
+            "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHumanType.ts:14"
+        },
+        {
+            "name": "IllustrationObjectType",
+            "values": [
+                "'ACTION'",
+                "'APP'",
+                "'ARCHIVE'",
+                "'BOOK'",
+                "'BUILD'",
+                "'CHAIN'",
+                "'DATABASE'",
+                "'ERROR'",
+                "'EXPLORE'",
+                "'GAS'",
+                "'GOAL'",
+                "'LABELS'",
+                "'LIGHTBULB'",
+                "'MAGNIFYING_GLASS'",
+                "'NOT_FOUND'",
+                "'SECURITY'",
+                "'SETTINGS'",
+                "'SMART_CONTRACT'",
+                "'SUCCESS'",
+                "'TIMELOCK'",
+                "'USERS'",
+                "'WAGMI'",
+                "'WALLET'",
+                "'WARNING'"
+            ],
+            "source": "kit:src/core/components/illustrations/illustrationObject/illustrationObjectType.ts:1"
+        },
+        {
+            "name": "InputFileAvatarError",
+            "values": [
+                "SQUARE_ONLY",
+                "WRONG_DIMENSION",
+                "UNKNOWN_ERROR",
+                "FILE_INVALID_TYPE",
+                "TOO_MANY_FILES",
+                "FILE_TOO_LARGE"
+            ],
+            "source": "kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.api.ts:4"
+        },
+        {
+            "name": "InputVariant",
+            "values": [
+                "'default'",
+                "'warning'",
+                "'critical'"
+            ],
+            "source": "kit:src/core/components/forms/inputContainer/inputContainer.api.ts:4"
+        },
+        {
+            "name": "LinkVariant",
+            "values": [
+                "'primary'",
+                "'neutral'"
+            ],
+            "source": "kit:src/core/components/link/link/link.api.ts:3"
+        },
+        {
+            "name": "NumberFormat",
+            "values": [
+                "GENERIC_SHORT",
+                "GENERIC_LONG",
+                "FIAT_TOTAL_SHORT",
+                "FIAT_TOTAL_LONG",
+                "TOKEN_AMOUNT_SHORT",
+                "TOKEN_AMOUNT_LONG",
+                "TOKEN_PRICE",
+                "PERCENTAGE_SHORT",
+                "PERCENTAGE_LONG"
+            ],
+            "source": "kit:src/core/utils/formatterUtils/formatterUtilsDefinitions.ts:52"
+        },
+        {
+            "name": "ProgressSize",
+            "values": [
+                "'sm'",
+                "'md'"
+            ],
+            "source": "kit:src/core/components/progress/progress.api.ts:4"
+        },
+        {
+            "name": "ProgressVariant",
+            "values": [
+                "'primary'",
+                "'neutral'",
+                "'success'",
+                "'critical'"
+            ],
+            "source": "kit:src/core/components/progress/progress.api.ts:6"
+        },
+        {
+            "name": "ProposalActionType",
+            "values": [
+                "ADD_MEMBERS",
+                "REMOVE_MEMBERS",
+                "UPDATE_METADATA",
+                "TOKEN_MINT",
+                "CHANGE_SETTINGS_MULTISIG",
+                "CHANGE_SETTINGS_TOKENVOTE",
+                "UPDATE_PLUGIN_METADATA"
+            ],
+            "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts:7"
+        },
+        {
+            "name": "ProposalActionTypeNoBasicView",
+            "values": [
+                "RAW_CALLDATA"
+            ],
+            "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts:21"
+        },
+        {
+            "name": "ProposalStatus",
+            "values": [
+                "ACCEPTED",
+                "ACTIVE",
+                "ADVANCEABLE",
+                "DRAFT",
+                "EXECUTED",
+                "EXPIRED",
+                "FAILED",
+                "PENDING",
+                "EXECUTABLE",
+                "REJECTED",
+                "VETOED",
+                "UNREACHED"
+            ],
+            "source": "kit:src/modules/components/proposal/proposalUtils.ts:3"
+        },
+        {
+            "name": "ProposalVotingTab",
+            "values": [
+                "BREAKDOWN",
+                "VOTES",
+                "DETAILS"
+            ],
+            "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingDefinitions.ts:1"
+        },
+        {
+            "name": "SpinnerSize",
+            "values": [
+                "'sm'",
+                "'md'",
+                "'lg'",
+                "'xl'"
+            ],
+            "source": "kit:src/core/components/spinner/spinner.tsx:6"
+        },
+        {
+            "name": "SpinnerVariant",
+            "values": [
+                "'neutral'",
+                "'primary'",
+                "'primaryInverted'",
+                "'success'",
+                "'warning'",
+                "'critical'"
+            ],
+            "source": "kit:src/core/components/spinner/spinner.tsx:7"
+        },
+        {
+            "name": "StatePingAnimationVariant",
+            "values": [
+                "'primary'",
+                "'info'",
+                "'success'",
+                "'warning'",
+                "'critical'"
+            ],
+            "source": "kit:src/core/components/states/statePingAnimation/statePingAnimation.tsx:5"
+        },
+        {
+            "name": "StateSkeletonBarSize",
+            "values": [
+                "'sm'",
+                "'md'",
+                "'lg'",
+                "'xl'",
+                "'2xl'"
+            ],
+            "source": "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:6"
+        },
+        {
+            "name": "StateSkeletonCircularSize",
+            "values": [
+                "'sm'",
+                "'md'",
+                "'lg'",
+                "'xl'",
+                "'2xl'"
+            ],
+            "source": "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:6"
+        },
+        {
+            "name": "TagVariant",
+            "values": [
+                "'neutral'",
+                "'info'",
+                "'warning'",
+                "'critical'",
+                "'success'",
+                "'primary'"
+            ],
+            "source": "kit:src/core/components/tag/tag.tsx:3"
+        },
+        {
+            "name": "TooltipVariant",
+            "values": [
+                "'neutral'",
+                "'info'",
+                "'warning'",
+                "'critical'",
+                "'success'"
+            ],
+            "source": "kit:src/core/components/tooltip/tooltip.tsx:7"
+        },
+        {
+            "name": "TransactionStatus",
+            "values": [
+                "PENDING",
+                "SUCCESS",
+                "FAILED"
+            ],
+            "source": "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.api.ts:4"
+        },
+        {
+            "name": "TransactionType",
+            "values": [
+                "DEPOSIT",
+                "WITHDRAW",
+                "ACTION",
+                "EXECUTION"
+            ],
+            "source": "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.api.ts:10"
+        },
+        {
+            "name": "VoteIndicator",
+            "values": [
+                "'yes'",
+                "'no'",
+                "'abstain'",
+                "'approve'",
+                "'veto'"
+            ],
+            "source": "kit:src/modules/components/vote/voteUtils.ts:3"
         }
     ]
 }

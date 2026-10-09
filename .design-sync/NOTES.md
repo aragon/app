@@ -2,8 +2,8 @@
 
 The design system is `@aragon/gov-ui-kit`, synced from `packages/gov-ui-kit` with
 `shape: storybook`. Previews are compiled from the kit's own stories; Storybook is
-the fidelity oracle. Nothing from `apps/app` is bundled: App context reaches Claude
-Design through the codebase connection, not through this bundle.
+the fidelity oracle. No App code is bundled: App context reaches Claude Design through
+the codebase connection, and the selection guide cites App usages only by path.
 
 ## Run it
 
@@ -20,6 +20,20 @@ node .ds-sync/resync.mjs --config .design-sync/config.json \
 
 `--entry` and `--node-modules` must be absolute paths: a relative `--entry` resolves
 against the repo root and fails with `[NO_DIST]` plus a misleading `[DTS_REACT]`.
+
+## Context the bundle carries
+
+Each channel has one source, maintained where it already lives:
+
+| Bundle output | Source | Keep it current |
+|---|---|---|
+| `README.md` header | `.design-sync/conventions.md` | Cross-cutting rules only: authority order, providers, accessibility, styling and the utility tables. |
+| `## Usage notes` in a component's `.prompt.md` | `<component>.mdx` next to its stories (`docsDir: "src"`); the same file is the kit Storybook docs page | One per component, named after the export. Attach it with `<Meta of={Stories} name="Docs" />` and render `<DocsPage />` first so it replaces autodocs. Add a note only where the props table misleads, and verify it against source. |
+| `guidelines/selection-guide.md` | Registry intent, via `component-registry/selection-guide.mjs generate` | Edit intent in `registry.json`, then run `registry.mjs extract` and `selection-guide.mjs generate`. `check` fails when the JSON or Markdown is stale. Its "Allowed values" section covers props that the `.d.ts` prints as `unknown`. |
+| `guidelines/src/**` | Kit provider, modules and token MDX listed in `guidelinesGlob` | Edit the kit docs. |
+
+Adding an MDX doesn't re-key grades; the resync after the 31 Usage notes kept every
+verdict (`pendingGrade: []`).
 
 ## Record the sync
 
