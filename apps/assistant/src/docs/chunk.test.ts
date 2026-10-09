@@ -1,5 +1,5 @@
+import type { ICorpusDocument } from '@aragon/docs-corpus';
 import { buildBreadcrumb, chunkDocument, toEmbeddingInput } from './chunk';
-import type { ICorpusDocument } from './corpus';
 
 const buildDocument = (body: string): ICorpusDocument => ({
     path: 'accounts/account.md',

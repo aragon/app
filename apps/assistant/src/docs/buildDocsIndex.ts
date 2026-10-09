@@ -1,12 +1,13 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { docsCorpusModes, resolveCorpus } from '@aragon/docs-corpus';
 import { getConfig } from '../lib/config';
+import { env } from '../lib/env';
 import {
     buildDocsIndexArtifact,
     parseDocsIndexModule,
     renderDocsIndexModule,
 } from './buildDocsIndexArtifact';
-import { docsRepository, readGitHead, syncCorpus } from './corpusSource';
 import {
     buildEmptyDocsIndexArtifact,
     type IDocsIndexArtifact,
@@ -15,15 +16,15 @@ import { createGatewayBatchEmbedder } from './docsModels';
 
 // Build-time entry (`pnpm build:docs-index`, run before tsup and before the dev server): fetches
 // the knowledge base (aragon/platform-doc, branch development) into the git-ignored .docs-corpus/
-// — or reads the checkout DOCS_CORPUS_DIR names, unfetched — keeps the pages the environment's
-// corpus mode publishes, embeds the passages through the AI Gateway and writes the index as a
-// generated module the service bundle imports. Runs with the workspace .env files loaded (see
-// package.json): the mode comes from the checked-in per-environment config, the gateway key from
-// the secrets CI writes before the build, the repository token (DOCS_REPO_TOKEN) from the deploy
-// workflow. A developer machine degrades where CI refuses: without a gateway key the index is
-// full-text only, and when the repository cannot be fetched the build keeps the cached checkout,
-// then the previous index, then writes an empty one — a deployment must carry the current
-// documentation, so in CI both are errors.
+// — or reads the checkout DOCS_CORPUS_DIR names, unfetched — through the corpus ladder of
+// @aragon/docs-corpus, keeps the pages the environment's corpus mode publishes, embeds the
+// passages through the AI Gateway and writes the index as a generated module the service bundle
+// imports. Runs with the workspace .env files loaded (see package.json): the environment names
+// the mode (docsCorpusModes), the gateway key comes from the secrets CI writes before the build,
+// the repository token (DOCS_REPO_TOKEN) from the deploy workflow. A developer machine degrades
+// where CI refuses: without a gateway key the index is full-text only, and when the repository
+// cannot be fetched the build keeps the cached checkout, then the previous index, then writes an
+// empty one — a deployment must carry the current documentation, so in CI both are errors.
 
 const log = (message: string) => {
     process.stdout.write(`[docs-index] ${message}\n`);
@@ -36,66 +37,6 @@ const outputFile = path.resolve(
     'src/docs/generated/docsIndex.js',
 );
 const isCi = process.env.CI === 'true';
-
-interface ICorpusLocation {
-    rootDir: string;
-    commit?: string;
-}
-
-// Where the corpus comes from: the directory DOCS_CORPUS_DIR names as-is, otherwise a shallow
-// fetch of the knowledge base into .docs-corpus/. Undefined when there is nothing to build from.
-const resolveCorpus = (): ICorpusLocation | undefined => {
-    const override = process.env.DOCS_CORPUS_DIR ?? '';
-
-    if (override !== '') {
-        const rootDir = path.resolve(workspaceDir, override);
-        const commit = readGitHead(rootDir);
-        log(
-            `corpus: ${rootDir} (DOCS_CORPUS_DIR, commit ${commit ?? 'unknown'})`,
-        );
-
-        return { rootDir, commit };
-    }
-
-    const token = process.env.DOCS_REPO_TOKEN ?? '';
-    const cacheLabel = `${path.relative(workspaceDir, corpusCacheDir)}/`;
-    const source = `${docsRepository.name}@${docsRepository.ref}`;
-    log(
-        `corpus: fetching ${source} into ${cacheLabel} (${token === '' ? 'git credentials of this machine' : 'DOCS_REPO_TOKEN'})`,
-    );
-
-    try {
-        return syncCorpus({
-            repoUrl: docsRepository.url,
-            ref: docsRepository.ref,
-            targetDir: corpusCacheDir,
-            token: token === '' ? undefined : token,
-        });
-    } catch (error) {
-        const failure = `${source}: ${error instanceof Error ? error.message : String(error)}`;
-
-        if (isCi) {
-            throw new Error(
-                `${failure}. A CI build needs DOCS_REPO_TOKEN with read access to the repository (the deploy workflow loads it from 1Password).`,
-                { cause: error },
-            );
-        }
-
-        const cachedCommit = readGitHead(corpusCacheDir);
-
-        if (cachedCommit != null) {
-            log(
-                `warning: ${failure} — building from the cached checkout in ${cacheLabel} (commit ${cachedCommit})`,
-            );
-
-            return { rootDir: corpusCacheDir, commit: cachedCommit };
-        }
-
-        log(`warning: ${failure} — no cached checkout in ${cacheLabel} either`);
-
-        return undefined;
-    }
-};
 
 const readPreviousArtifact = async () => {
     try {
@@ -111,7 +52,8 @@ const writeArtifact = async (artifact: IDocsIndexArtifact) => {
 };
 
 const run = async () => {
-    const { docsCorpus: mode, docs } = getConfig();
+    const mode = docsCorpusModes.assistant[env.environment()];
+    const { docs } = getConfig();
     const hasGatewayKey = (process.env.AI_GATEWAY_API_KEY ?? '') !== '';
 
     if (!hasGatewayKey && isCi) {
@@ -127,7 +69,11 @@ const run = async () => {
     }
 
     const previous = await readPreviousArtifact();
-    const corpus = resolveCorpus();
+    const corpus = resolveCorpus({
+        cacheDir: corpusCacheDir,
+        workspaceDir,
+        log,
+    });
 
     if (corpus == null) {
         if (previous != null) {

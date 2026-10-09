@@ -111,9 +111,33 @@ export interface ICorpusSkippedFile {
     reason: ICorpusSkipReason;
 }
 
+export interface ILinkContext {
+    /**
+     * Corpus-relative path of the page the link is on.
+     */
+    path: string;
+    /**
+     * Paths of the pages the corpus publishes in the mode it was loaded with.
+     */
+    publishedPaths: ReadonlySet<string>;
+}
+
+/**
+ * Where a link destination points once the page is read outside the wiki; null drops the link
+ * and keeps its text (an image its alt text).
+ */
+export type ILinkResolver = (
+    url: string,
+    context: ILinkContext,
+) => string | null;
+
 export interface ILoadCorpusParams {
     rootDir: string;
     mode: IDocsCorpusMode;
+    /**
+     * Where the links of a page point for the consumer's readers; resolvePublicLink when absent.
+     */
+    resolveLink?: ILinkResolver;
 }
 
 export interface ILoadCorpusResult {
@@ -210,13 +234,16 @@ export const isFenceLine = (line: string): boolean => fencePattern.test(line);
 // Rewrites the links (see rewriteLinks), then strips the title heading, the maintenance sections
 // (with everything below them until a heading of the same or a higher level) and the owner
 // checklists; collapses the blank runs that leaves.
-export const cleanBody = (markdown: string): string => {
+export const cleanBody = (
+    markdown: string,
+    resolve: (url: string) => string | null = toPublicDestination,
+): string => {
     const kept: string[] = [];
     let inFence = false;
     let skippingBelowLevel: number | null = null;
     let titleSeen = false;
 
-    for (const line of rewriteLinks(markdown).split(/\r?\n/)) {
+    for (const line of rewriteLinks(markdown, resolve).split(/\r?\n/)) {
         if (isFenceLine(line)) {
             inFence = !inFence;
         }
@@ -261,8 +288,8 @@ export const cleanBody = (markdown: string): string => {
 const absoluteLinkPattern = /^[a-z][a-z0-9+.-]*:/i;
 const protocolDocLinkPattern = /^(?:\.\.?\/)*\/?protocol-doc\/(.*)$/;
 
-// Where a destination may point once outside the wiki: an absolute one where it points, a
-// protocol page at its public address, anything else nowhere (null).
+// Where a destination may point for a reader with no access to the base: an absolute one where
+// it points, a protocol page at its public address, anything else nowhere (null).
 const toPublicDestination = (url: string): string | null => {
     if (absoluteLinkPattern.test(url)) {
         return url;
@@ -276,21 +303,32 @@ const toPublicDestination = (url: string): string | null => {
 };
 
 /**
- * Rewrites the links of a page for a reader outside the wiki. Absolute links (aragon.org,
- * GitHub, explorers) stay as written. A link into the protocol documentation — relative in the
- * base, since it is a submodule there — becomes the public GitHub page of the same file,
- * fragment included: the agent may hand it to a user with a protocol question. Any other
- * relative link points at a page of this knowledge base, which has no public home yet
- * (APP-1145), or at a section of the same page: only its text is kept, so a page path or name
- * can never leave the corpus as a link. Images and link definitions follow the same rule (an
- * image falls back to its alt text, a definition is removed).
+ * The resolver of a reader with no access to the knowledge base, which is what the assistant's
+ * users are. Absolute links (aragon.org, GitHub, explorers) stay as written. A link into the
+ * protocol documentation — relative in the base, since it is a submodule there — becomes the
+ * public GitHub page of the same file, fragment included: the agent may hand it to a user with a
+ * protocol question. Any other relative link points at a page of this knowledge base or at a
+ * section of the same page and resolves nowhere: only its text is kept, so a page path or name
+ * can never leave the corpus as a link. The docs site resolves those onto its own pages instead.
+ */
+export const resolvePublicLink: ILinkResolver = (url) =>
+    toPublicDestination(url);
+
+/**
+ * Rewrites the links of a page for a reader outside the wiki: every destination goes through
+ * the resolver, and a link it resolves nowhere keeps its text only. Images and link definitions
+ * follow the same rule (an image falls back to its alt text, a definition is removed); a
+ * reference follows its definition.
  *
  * Links are found by the markdown parser the widget renders with (micromark; the widget's GFM
  * extension only adds bare absolute URLs), so every form the widget would draw as a link is seen
  * here — inline with or without a title or angle brackets, reference, autolink — and code is
  * never touched. The page is rewritten in place: only the source of a rewritten link changes.
  */
-export const rewriteLinks = (markdown: string): string => {
+export const rewriteLinks = (
+    markdown: string,
+    resolve: (url: string) => string | null = toPublicDestination,
+): string => {
     const tree = fromMarkdown(markdown);
     const definitions = new Map<string, string>();
 
@@ -347,7 +385,7 @@ export const rewriteLinks = (markdown: string): string => {
 
         switch (node.type) {
             case 'link': {
-                const destination = toPublicDestination(node.url);
+                const destination = resolve(node.url);
 
                 if (destination == null) {
                     return renderText(node.children);
@@ -358,7 +396,7 @@ export const rewriteLinks = (markdown: string): string => {
                     : `[${renderText(node.children)}](${destination})`;
             }
             case 'image': {
-                const destination = toPublicDestination(node.url);
+                const destination = resolve(node.url);
 
                 if (destination == null) {
                     return node.alt ?? '';
@@ -369,7 +407,7 @@ export const rewriteLinks = (markdown: string): string => {
                     : `![${node.alt ?? ''}](${destination})`;
             }
             case 'definition': {
-                const destination = toPublicDestination(node.url);
+                const destination = resolve(node.url);
 
                 if (destination == null) {
                     return '';
@@ -382,15 +420,11 @@ export const rewriteLinks = (markdown: string): string => {
             // A reference follows its definition, which is rewritten on its own: a protocol one
             // points at the public page already, a relative one is gone.
             case 'linkReference':
-                return toPublicDestination(
-                    definitions.get(node.identifier) ?? '',
-                ) == null
+                return resolve(definitions.get(node.identifier) ?? '') == null
                     ? renderText(node.children)
                     : verbatim();
             case 'imageReference':
-                return toPublicDestination(
-                    definitions.get(node.identifier) ?? '',
-                ) == null
+                return resolve(definitions.get(node.identifier) ?? '') == null
                     ? (node.alt ?? '')
                     : verbatim();
             default:
@@ -449,12 +483,14 @@ const isSkippedPath = (relativePath: string): boolean =>
 /**
  * Reads the knowledge base and keeps the pages the given mode publishes. The gate fails closed:
  * a page without frontmatter, of a non-knowledge type, without a title, or in a review state the
- * mode does not publish is skipped (and reported, so a build can show what it left out).
+ * mode does not publish is skipped (and reported, so a build can show what it left out). The
+ * links of the kept pages are resolved once the set is known, so a resolver can tell a link to
+ * a published page from one to a page the mode leaves out.
  */
 export const loadCorpus = async (
     params: ILoadCorpusParams,
 ): Promise<ILoadCorpusResult> => {
-    const { rootDir, mode } = params;
+    const { rootDir, mode, resolveLink = resolvePublicLink } = params;
     const publishedStatuses = publishedStatusesByMode[mode];
     const entries = await readdir(rootDir, {
         withFileTypes: true,
@@ -487,7 +523,7 @@ export const loadCorpus = async (
         return area;
     };
 
-    const documents: ICorpusDocument[] = [];
+    const pages: ICorpusDocument[] = [];
     const skipped: ICorpusSkippedFile[] = [];
 
     for (const relativePath of files) {
@@ -517,7 +553,7 @@ export const loadCorpus = async (
             continue;
         }
 
-        documents.push({
+        pages.push({
             path: relativePath,
             title,
             type,
@@ -528,9 +564,19 @@ export const loadCorpus = async (
                     ? ''
                     : path.posix.dirname(relativePath),
             ),
-            body: cleanBody(parsed.body),
+            body: parsed.body,
         });
     }
+
+    const publishedPaths: ReadonlySet<string> = new Set(
+        pages.map((page) => page.path),
+    );
+    const documents = pages.map((page) => ({
+        ...page,
+        body: cleanBody(page.body, (url) =>
+            resolveLink(url, { path: page.path, publishedPaths }),
+        ),
+    }));
 
     return { documents, skipped };
 };

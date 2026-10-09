@@ -50,6 +50,7 @@ jobs:
       env: "development"
       workspace: "apps/assistant"
       vault-prefix: "kv_assistant"
+      docs-repo-token: true
       patch-root-directory: false
       # dev.assistant is an aliased preview deployment, so VERCEL_ENV reports 'preview' at
       # runtime — ASSISTANT_ENV pins the actual environment for src/lib/env.ts.

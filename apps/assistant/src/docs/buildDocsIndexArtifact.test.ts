@@ -7,7 +7,10 @@ import {
 import { decodeVector } from './docsIndexArtifact';
 
 // Jest runs from the workspace root (its rootDir), which is what the paths below assume.
-const fixtureRoot = path.resolve('src/test/fixtures/docsCorpus');
+// The loader's own fixture base, in the package that ships it.
+const fixtureRoot = path.resolve(
+    '../../packages/docs-corpus/src/test/fixtures/docsCorpus',
+);
 
 // Deterministic stand-in for the gateway embedder: one dimension per input, the input length.
 const fakeEmbed = (values: string[]) =>
