@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 // biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
 import { isAddress } from 'viem';
 import { daoOptions } from '@/shared/api/daoService';
+import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -37,11 +38,19 @@ export interface ILayoutWorkspaceAccountProps {
  * workspace holds Safe accounts as well as DAOs, and a Safe has no DAO to read. The sections that need one render
  * their own not-found state; the ones that do not — assets, transactions — work from the workspace query endpoints
  * regardless.
+ *
+ * The `workspaces` flag is checked again here, although `LayoutWorkspace` above already checks it: nested layouts
+ * render in parallel, so the parent's 404 does not stop this layout from requesting the DAO.
  */
 export const LayoutWorkspaceAccount: React.FC<
     ILayoutWorkspaceAccountProps
 > = async (props) => {
     const { params, children } = props;
+
+    if (!(await featureFlags.isEnabled('workspaces'))) {
+        notFound();
+    }
+
     const { accountId } = await params;
 
     // Bots constantly probe account-addressed URLs with unknown or malformed addresses. The DAO routes filter those
