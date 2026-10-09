@@ -3,9 +3,9 @@ import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
-import { Network } from '@/shared/api/daoService';
+import { daoService, type IDao, Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
 import {
     type IWorkspace,
     type IWorkspaceAccount,
@@ -40,6 +40,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
     const safeAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
+    const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useWorkspaceAccountOptionsSpy = jest.spyOn(
         useWorkspaceAccountOptionsModule,
@@ -107,6 +108,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
 
     beforeEach(() => {
         getWorkspaceSpy.mockResolvedValue(buildWorkspace());
+        getDaoSpy.mockResolvedValue(generateDao({ id: daoAccount.id }));
         mockAccountOptions();
         useDialogContextSpy.mockReturnValue({
             open: openMock,
@@ -116,6 +118,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
+        getDaoSpy.mockReset();
         useDialogContextSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
         openMock.mockClear();
@@ -186,6 +189,34 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
                 }),
             }),
         );
+    });
+
+    // The create flow resolves its destination from the DAOs, so the action waits for them.
+    it('offers proposal creation only once the DAOs of the workspace are loaded', async () => {
+        let resolveDao: (dao: IDao) => void = () => undefined;
+        getDaoSpy.mockReturnValue(
+            new Promise((resolve) => {
+                resolveDao = resolve;
+            }),
+        );
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([daoAccount]),
+        );
+        expect(
+            screen.queryByRole('button', {
+                name: /workspaceProposalsPage\.main\.action$/,
+            }),
+        ).not.toBeInTheDocument();
+
+        resolveDao(generateDao({ id: daoAccount.id }));
+
+        expect(
+            await screen.findByRole('button', {
+                name: /workspaceProposalsPage\.main\.action$/,
+            }),
+        ).toBeInTheDocument();
     });
 
     it('offers no proposal creation for a workspace without DAO accounts', async () => {

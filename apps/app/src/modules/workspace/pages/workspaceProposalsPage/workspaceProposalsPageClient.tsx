@@ -61,7 +61,7 @@ export const WorkspaceProposalsPageClient: React.FC<
 
     const { activeOption } = useWorkspaceAccountOptions();
 
-    const { daos } = useWorkspaceDaos(daoAccounts);
+    const { daos, isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
 
     // A single guard instance serves every DAO: the hook freezes its own `plugin` in a ref, but `check` merges the
     // parameters it is called with, and the permission dialog resolves the check from those.
@@ -128,7 +128,7 @@ export const WorkspaceProposalsPageClient: React.FC<
         <Page.Content>
             <Page.Main
                 action={
-                    daoAccounts.length > 0
+                    daoAccounts.length > 0 && !isDaosPending
                         ? {
                               label: t(
                                   'app.workspace.workspaceProposalsPage.main.action',
