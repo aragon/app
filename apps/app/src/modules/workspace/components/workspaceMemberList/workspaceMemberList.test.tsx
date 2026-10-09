@@ -167,6 +167,43 @@ describe('<WorkspaceMemberList /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    // Every tab belongs to the same DAO, so repeating its name on each one says nothing — the rule the proposals
+    // tabs follow.
+    it('labels the tabs with the body alone when a single account contributes them', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                name: 'Only DAO',
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xMultisig',
+                        name: 'Multisig',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                    generateDaoPlugin({
+                        address: '0xTokenVoting',
+                        name: 'Token holders',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    }),
+                ],
+            }),
+        );
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        const tabs = await screen.findAllByTestId('plugin-tab');
+
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceMemberList.groupTab',
+            'Token holders',
+            'Multisig',
+        ]);
+    });
+
     // A Safe contributes members but has no body to put in a tab, so the group tab shows more than the single body
     // tab does and the tabs earn their place.
     it('renders the tabs for a single body when the workspace also holds a Safe account', async () => {
@@ -197,9 +234,10 @@ describe('<WorkspaceMemberList /> component', () => {
         );
 
         const tabs = await screen.findAllByTestId('plugin-tab');
+        // One DAO contributes every tab, so the tab names the body alone.
         expect(tabs.map((tab) => tab.textContent)).toEqual([
             'app.workspace.workspaceMemberList.groupTab',
-            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
+            'Body',
         ]);
     });
 
@@ -237,9 +275,10 @@ describe('<WorkspaceMemberList /> component', () => {
         );
 
         const tabs = await screen.findAllByTestId('plugin-tab');
+        // One DAO contributes every tab, so the tab names the body alone.
         expect(tabs.map((tab) => tab.textContent)).toEqual([
             'app.workspace.workspaceMemberList.groupTab',
-            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
+            'Body',
         ]);
     });
 
@@ -365,12 +404,11 @@ describe('<WorkspaceMemberList /> component', () => {
 
         render(createTestComponent({ accounts: [buildAccount(address)] }));
 
-        const pluginTab = 'app.workspace.workspaceMemberList.pluginTab';
         const tabs = await screen.findAllByTestId('plugin-tab');
         expect(tabs.map((tab) => tab.textContent)).toEqual([
             'app.workspace.workspaceMemberList.groupTab',
-            `${pluginTab} (dao=DAO,plugin=Body)`,
-            `${pluginTab} (dao=DAO,plugin=Sub body)`,
+            'Body',
+            'Sub body',
         ]);
     });
 

@@ -477,14 +477,18 @@ Three questions look like one and are not. Keeping them apart is what the predic
 
 | Question | Predicate | Where |
 | --- | --- | --- |
-| Would the row tag and the tab label repeat themselves? | one account in view | `workspaceProposalListDefault`, `useWorkspaceProposalTabs` |
+| Would the row tag and the tab label repeat themselves? | one account contributing them | `workspaceProposalListDefault`, `useWorkspaceProposalTabs`, `workspaceMemberList` |
 | How does the page present itself in its empty and error copy? | the route names an account (`isAccountScoped`) | `useWorkspaceProposalListData` |
 | Is there exactly one DAO to subscribe to? | the DAO of a selected process, else the only account in view | `workspaceProposalsPageClient` |
 
 A workspace holding a single DAO is where they come apart: on its aggregated route the rows are untagged and the
-tabs unlabelled, because repeating one name on every row says nothing; the copy and the aside still speak of the
-workspace, because that is the route the reader is on; and the Telegram card does appear, because there is exactly
-one DAO in view to subscribe to.
+tabs name the process alone, because repeating one name on every row says nothing; the copy and the aside still
+speak of the workspace, because that is the route the reader is on; and the Telegram card does appear, because
+there is exactly one DAO in view to subscribe to.
+
+The first rule is a workspace-wide convention, not a proposals one: `useWorkspaceMemberTabs` drops the DAO name
+from its body tabs the same way. It counts the accounts that *contributed* a tab rather than the accounts in view,
+because its list holds Safes too — a Safe changes what the group tab covers, not whom the body tabs belong to.
 
 #### Tabs
 
@@ -497,8 +501,13 @@ unknown parameter resolves to no tab, which is what the group tab stands for.
 
 The strip needs more than one process **and** the CMS overrides, since a tab offered before they land may be one
 the CMS hides. Below two processes there is no strip at all: the unfiltered list already shows only that process's
-proposals. That last part diverges from the DAO page, which drops its own group tab below two plugins and so
-describes the single process on its aside; here the DAO-level stats stay, being the more useful card.
+proposals, and the hook then reports that process as the selected one, so the aside describes it exactly as the DAO
+page does — that page drops its own group tab below two plugins, leaving the single process selected.
+
+That only holds while the single account in view holds the single process. Across several accounts the list keeps
+aggregating all of them unfiltered, so one visible process describes only part of what is on screen and the
+aggregated card stands instead. `useWorkspaceMemberTabs` needs no such guard: a lone body earns a strip as soon as
+another account contributes members, so reaching its no-strip branch already means one account and one body.
 
 Three decisions worth keeping:
 
@@ -523,7 +532,8 @@ scope, since a process tab names one account whether or not the route does:
 
 - `WorkspaceProcessProposalsAsideCard` — a process is selected. `DaoPluginInfo` on the tab's account, which is
   already a DAO ID.
-- `WorkspaceDaoProposalsAsideCard` — the route names a DAO account. The DAO page's `ProposalListStats`, read off
+- `WorkspaceDaoProposalsAsideCard` — the route names a DAO account and more than one process is in view. The DAO
+  page's `ProposalListStats`, read off
   the DAO's own endpoints, which is where the stats the aggregated card has to omit come from. It costs two
   requests of its own, so an account scope makes three proposal requests where the DAO page makes two: there the
   stats share the list's query key, which cannot happen across two endpoints. It runs **without** `onlyActive`,
@@ -541,6 +551,30 @@ The "New proposal" action asks for the account first (`WorkspaceSelectAccountDia
 not stacked and offers no back action, there being nothing underneath to go back to. Creating a proposal stays a
 single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
 called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
+
+### Members page
+
+`/workspace/{workspaceId}/all/members` is the only route this page serves: the account-scoped one renders the DAO
+members page instead (`WorkspaceAccountMembersPage`), an account ID being a DAO ID. Safe accounts take part here,
+unlike proposals — their owners are members of the workspace — so the accounts in view are all of them, not just
+the DAOs.
+
+`useWorkspaceMemberTabs` is the counterpart of `useWorkspaceProposalTabs` and follows the same rules: one tab per
+visible body of every account, read by the list that renders the strip and by the page that hands the selected tab
+to the aside, derived from the URL alone so no two readers can disagree, with the list's `PluginFilterComponent`
+the single writer of `?members=`. Sub-plugins are included, as `DaoMemberListContainer` does: a body nested in a
+process holds members of its own. The strip's threshold differs from the proposals one — a single body earns a
+strip when another account contributes members without a tab (a Safe, an unreadable DAO, one whose bodies are all
+hidden), because the group tab then shows more than the lone body tab does.
+
+`WorkspaceMembersAsideCard` dispatches like its proposals equivalent, a selected body winning over the aggregate:
+
+- `WorkspaceBodyMembersAsideCard` — a body is selected, or a single body covers the whole list. `DaoPluginInfo`
+  with `type=BODY` on the tab's account, the swap `daoMembersPageClient` makes. That page also renders a `GOVERNANCE_MEMBER_PANEL` slot component below the
+  card; it is left out here, those panels being plugin-specific and written for the DAO page's own context.
+- `WorkspaceAllMembersAsideCard` — anything else. Total and account count, out of the response it shares with the
+  list. The total reads as a lower bound (`12+`) when the response is `partial`, since an unread account's members
+  are missing from it and the list flags the same gap.
 
 ### Overview page
 
