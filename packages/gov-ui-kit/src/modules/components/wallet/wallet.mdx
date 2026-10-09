@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../.storybook/components';
+import * as WalletStories from './wallet.stories';
+
+<Meta of={WalletStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.
+- Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`.

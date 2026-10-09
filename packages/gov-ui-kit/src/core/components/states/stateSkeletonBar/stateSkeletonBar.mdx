@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../../.storybook/components';
+import * as StateSkeletonBarStories from './stateSkeletonBar.stories';
+
+<Meta of={StateSkeletonBarStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- The component renders an inline `<span>` without a display utility, so its width/height need a flex/grid parent or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.
+- Defaults are `width={160}` and `size="md"` (`h-4`); `style.width` takes precedence over the `width` prop.

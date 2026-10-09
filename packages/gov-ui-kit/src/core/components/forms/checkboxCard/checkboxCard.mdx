@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../../.storybook/components';
+import * as CheckboxCardStories from './checkboxCard.stories';
+
+<Meta of={CheckboxCardStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- `CheckboxCard` is independently controlled with tri-state `checked`/`onCheckedChange`; it uses a checkbox root directly and does not require a group.
+- `children` render only when the card is checked, not when it is `'indeterminate'`.

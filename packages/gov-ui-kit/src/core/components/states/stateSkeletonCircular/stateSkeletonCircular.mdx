@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../../.storybook/components';
+import * as StateSkeletonCircularStories from './stateSkeletonCircular.stories';
+
+<Meta of={StateSkeletonCircularStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- The component renders an inline `<span>` without a display utility, so its size needs a flex/grid parent or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.
+- The default is `size="md"` (`size-8`); all size choices use the exported `StateSkeletonCircularSize` union.

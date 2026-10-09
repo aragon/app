@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../.storybook/components';
+import * as DocumentParserStories from './documentParser.stories';
+
+<Meta of={DocumentParserStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- `document` accepts Markdown or HTML, and the parser sanitizes the content before rendering; an image `src` using a `data:` URI is stripped (the image element itself is not necessarily removed).
+- Rendering is driven by the `document` prop; any `children` passed to `DocumentParser` are discarded.

@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../.storybook/components';
+import * as ButtonStories from './button.stories';
+
+<Meta of={ButtonStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- `isLoading` keeps the text label rendered and only replaces `iconLeft`/`iconRight` with a spinner — the label does not disappear.
+- In the link form (`href` set), `disabled` is not forwarded as a native attribute: it sets `aria-disabled` and calls `preventDefault()` on click, so navigation is blocked while still rendering an `<a>` (the same guard applies while `isLoading`).

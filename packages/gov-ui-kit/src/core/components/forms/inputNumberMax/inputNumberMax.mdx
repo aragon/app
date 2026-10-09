@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../../.storybook/components';
+import * as InputNumberMaxStories from './inputNumberMax.stories';
+
+<Meta of={InputNumberMaxStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- `max` is required, clamps values through the numeric mask, and also supplies the value used by the max-value button; it does not produce an out-of-range alert, so pass `alert` for that state.
+- `InputNumberMax` does not expose `prefix` or `suffix`; use `InputNumber` when literal numeric affixes are needed.

@@ -1,0 +1,12 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../../.storybook/components';
+import * as CheckboxStories from './checkbox.stories';
+
+<Meta of={CheckboxStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- `checked` and `onCheckedChange` are tri-state: use a boolean or `'indeterminate'`, not only `true`/`false`; the indeterminate state renders the mixed-state icon.
+- Use `CheckboxGroup` only for shared label/help/alert chrome; each `Checkbox` keeps its own `checked` and `onCheckedChange` state.

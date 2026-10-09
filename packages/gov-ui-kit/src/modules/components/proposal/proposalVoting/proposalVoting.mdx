@@ -1,0 +1,13 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocsPage } from '../../../../../.storybook/components';
+import * as ProposalVotingStories from './proposalVoting.stories';
+
+<Meta of={ProposalVotingStories} />
+
+<DocsPage />
+
+## Usage notes
+
+- For multi-stage voting, `StageContainer.activeStage` is the single-open accordion value: each `Stage` receives a zero-based index and uses its string form (`'0'`, `'1'`, etc.), so leaving `activeStage` undefined leaves every stage collapsed.
+- Place body members such as `BodyContent` and `BodySummary` inside `Container` or `Stage`; those wrappers provide the `ProposalVoting` context that the members consume.
+- `BodyContent` initially selects Details for `PENDING`/`UNREACHED` statuses and Breakdown for other statuses.
