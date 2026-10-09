@@ -150,10 +150,11 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
      */
     const mockExecutePermissions = (
         permissions: Record<string, boolean> = {},
+        isPending = false,
     ) =>
         useWorkspaceAccountsExecutePermissionSpy.mockReturnValue({
             permissions,
-            isPending: false,
+            isPending,
         });
 
     /**
@@ -317,6 +318,46 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         expect(
             screen.queryByRole('button', { name: createActionName }),
         ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    // The selection dialog snapshots the permissions and destinations it is given, so an action offered while the
+    // accounts that answered first say yes would freeze a disabled list that never catches up.
+    it('offers no create action while the execute permissions are still being read', async () => {
+        mockExecutePermissions({ [daoAccount.id]: true }, true);
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('offers no create action while the DAOs of the accounts are still being read', async () => {
+        useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: true });
+        mockExecutePermissions({ [daoAccount.id]: true });
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('offers no create action under an account scope while the reads are in flight', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        mockExecutePermissions({ [daoAccount.id]: true }, true);
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([daoAccount]),
+        );
         expect(
             screen.queryByRole('link', { name: createActionName }),
         ).not.toBeInTheDocument();

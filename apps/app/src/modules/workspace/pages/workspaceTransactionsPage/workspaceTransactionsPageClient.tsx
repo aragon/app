@@ -56,9 +56,12 @@ export const WorkspaceTransactionsPageClient: React.FC<
     const accountsToDisplay =
         selectedAccount != null ? [selectedAccount] : accounts;
 
-    const { daos } = useWorkspaceDaos(accountsToDisplay);
-    const { permissions } =
+    const { daos, isPending: isDaosPending } =
+        useWorkspaceDaos(accountsToDisplay);
+    const { permissions, isPending: isPermissionsPending } =
         useWorkspaceAccountsExecutePermission(accountsToDisplay);
+
+    const isPending = isDaosPending || isPermissionsPending;
 
     // TODO(APP-1140): the workspace has no create routes of its own yet, so the destination is the create wizard of
     // the account itself. A Safe account will need a destination of its own, which `getDaoUrl` cannot name.
@@ -117,7 +120,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
     return (
         <Page.Content>
             <Page.Main
-                action={action}
+                action={isPending ? undefined : action}
                 title={t('app.workspace.workspaceTransactionsPage.main.title')}
             >
                 <WorkspaceTransactionList

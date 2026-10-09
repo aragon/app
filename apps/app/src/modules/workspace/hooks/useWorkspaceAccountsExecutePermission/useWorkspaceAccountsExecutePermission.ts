@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import type { Hex } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
@@ -53,17 +52,13 @@ export const useWorkspaceAccountsExecutePermission = (
     // accounts as executable too — `useIsSafeContract` and the `brandId: 'safe'` permission enrichment in
     // `shared/api/daoService/domain/daoPermission.ts` are the existing footholds. The create destination of a Safe
     // needs the same follow-up, see `workspaceTransactionsPageClient`.
-    const daoAccounts = useMemo(
-        () =>
-            accounts.filter(
-                (account) => account.type === WorkspaceAccountType.DAO,
-            ),
-        [accounts],
+    const daoAccounts = accounts.filter(
+        (account) => account.type === WorkspaceAccountType.DAO,
     );
 
-    const contracts = useMemo(
-        () =>
-            daoAccounts.map((account) => ({
+    const contracts = daoAccounts.map(
+        (account) =>
+            ({
                 abi: permissionManagerAbi,
                 address: account.address as Hex,
                 functionName: 'hasPermission',
@@ -74,8 +69,7 @@ export const useWorkspaceAccountsExecutePermission = (
                     '0x',
                 ],
                 chainId: networkDefinitions[account.network].id,
-            })),
-        [daoAccounts, address],
+            }) as const,
     );
 
     const enabled = address != null && contracts.length > 0;
@@ -85,22 +79,18 @@ export const useWorkspaceAccountsExecutePermission = (
         query: { enabled },
     });
 
-    const permissions = useMemo(() => {
-        const result: Record<string, boolean> = {};
+    const permissions: Record<string, boolean> = {};
 
-        accounts.forEach((account) => {
-            result[account.id] = false;
-        });
+    accounts.forEach((account) => {
+        permissions[account.id] = false;
+    });
 
-        daoAccounts.forEach((account, index) => {
-            const read = data?.[index];
+    daoAccounts.forEach((account, index) => {
+        const read = data?.[index];
 
-            result[account.id] =
-                read?.status === 'success' && read.result === true;
-        });
-
-        return result;
-    }, [accounts, daoAccounts, data]);
+        permissions[account.id] =
+            read?.status === 'success' && read.result === true;
+    });
 
     return { permissions, isPending: enabled && isLoading };
 };
