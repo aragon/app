@@ -31,7 +31,7 @@ class DaoMemberSourceUtils {
 
         const filterPlugins = bodyPlugins.map((plugin) => ({
             id: plugin.interfaceType,
-            uniqueId: `${plugin.address}-${plugin.slug}`,
+            uniqueId: daoUtils.getPluginTabId(plugin, dao.address),
             label: daoUtils.getPluginName(plugin),
             meta: plugin,
             props: {},

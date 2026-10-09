@@ -126,14 +126,18 @@ describe('<DaoMemberDetailsPage /> component', () => {
             isBody: true,
             slug: 'safe',
         });
-        const dao = generateDao({ plugins: [multisigPlugin, safePlugin] });
+        const daoAddress = '0x3333333333333333333333333333333333333333';
+        const dao = generateDao({
+            address: daoAddress,
+            plugins: [multisigPlugin, safePlugin],
+        });
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
         getDaoSpy.mockResolvedValue(dao);
 
         render(
             await createTestComponent({
                 searchParams: Promise.resolve({
-                    members: `${safeAddress}-safe`,
+                    members: `${safeAddress}-safe-${daoAddress}`,
                 }),
             }),
         );

@@ -132,7 +132,7 @@ const buildFilterPlugins = (
 
     const processedPlugins = filteredPlugins.map((plugin) => ({
         id: plugin.interfaceType,
-        uniqueId: `${plugin.address}-${plugin.slug}`,
+        uniqueId: daoUtils.getPluginTabId(plugin, rootDaoAddress),
         label: daoUtils.getPluginName(plugin),
         meta: plugin,
         props: {},
