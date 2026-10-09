@@ -124,4 +124,65 @@ describe('<WorkspaceSelectAccountDialog /> component', () => {
             }),
         ).toBeDisabled();
     });
+
+    it('describes the flow it is the first step of', () => {
+        const { rerender } = render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceSelectAccountDialog.proposal.description',
+            ),
+        ).toBeInTheDocument();
+
+        rerender(createTestComponent({ variant: 'transaction' }));
+
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceSelectAccountDialog.transaction.description',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('lists a disabled account as not eligible and keeps it out of the selection', async () => {
+        const onAccountSelected = jest.fn();
+        render(
+            createTestComponent({
+                disabledAccountIds: [secondAccount.id],
+                onAccountSelected,
+            }),
+        );
+
+        expect(screen.getByText('Second DAO')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceSelectAccountDialogItem.notEligible',
+            ),
+        ).toBeInTheDocument();
+
+        // A disabled row drops its onClick, so the kit renders it as plain content instead of an overlay button.
+        expect(
+            screen.queryByRole('button', { name: /Second DAO/ }),
+        ).not.toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', { name: /First DAO/ }),
+        );
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /workspaceSelectAccountDialog\.action\.select$/,
+            }),
+        );
+
+        expect(onAccountSelected).toHaveBeenCalledWith(firstAccount);
+    });
+
+    it('sorts the accounts that cannot be selected last', () => {
+        render(createTestComponent({ disabledAccountIds: [firstAccount.id] }));
+
+        const names = screen
+            .getAllByText(/DAO$/)
+            .map((element) => element.textContent);
+
+        expect(names).toEqual(['Second DAO', 'First DAO']);
+    });
 });

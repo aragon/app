@@ -4465,6 +4465,7 @@
       },
       "workspaceTransactionsPage": {
         "main": {
+          "action": "New transaction",
           "title": "Transactions"
         }
       },
@@ -4499,10 +4500,17 @@
           "cancel": "Cancel",
           "select": "Next"
         },
-        "description": "Select the account you want to create a proposal for. You pick the process of that account on the next step.",
-        "title": "Select an account"
+        "proposal": {
+          "description": "Select the account you want to create a proposal for. You pick the process of that account on the next step.",
+          "title": "Select an account"
+        },
+        "transaction": {
+          "description": "Select the account you want to create a transaction for.",
+          "title": "Select an account"
+        }
       },
       "workspaceSelectAccountDialogItem": {
+        "notEligible": "Not eligible",
         "type": {
           "dao": "DAO",
           "safe": "Safe"

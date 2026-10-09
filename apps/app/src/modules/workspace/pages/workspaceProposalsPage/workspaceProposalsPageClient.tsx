@@ -119,6 +119,7 @@ export const WorkspaceProposalsPageClient: React.FC<
             accounts: daoAccounts,
             onAccountSelected: (account) =>
                 openSelectPluginDialog(account, true),
+            variant: 'proposal',
         };
         open(WorkspaceDialogId.SELECT_ACCOUNT, { params });
     };
