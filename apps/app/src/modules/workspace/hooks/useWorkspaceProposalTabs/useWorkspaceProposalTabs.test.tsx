@@ -159,6 +159,24 @@ describe('useWorkspaceProposalTabs hook', () => {
         expect(result.current.activeTab?.meta).toEqual(multisig);
     });
 
+    // The list aggregates both accounts unfiltered, so the one visible process describes only part of it: there is
+    // nothing for a process card to be right about, and the aggregated card stands.
+    it('reports no active tab for a lone process across several accounts', () => {
+        const otherAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
+        mockPlugins([
+            buildGroup(daoAddress, [multisig]),
+            buildGroup(otherAddress, []),
+        ]);
+        const { result } = renderTabs([
+            buildAccount(daoAddress),
+            buildAccount(otherAddress),
+        ]);
+
+        expect(result.current.pluginTabs).toHaveLength(1);
+        expect(result.current.hasTabs).toBeFalsy();
+        expect(result.current.activeTab).toBeUndefined();
+    });
+
     it('reports no active tab while the DAOs are still being read', () => {
         mockPlugins([buildGroup(daoAddress)], true);
         urlWithTab(`${network}-0xMultisig-mul`);

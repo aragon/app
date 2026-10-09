@@ -139,11 +139,13 @@ export const useWorkspaceProposalTabs = (
             return pluginTabs.find((tab) => tab.uniqueId === requestedTab);
         }
 
-        // No strip to choose from, so the unfiltered list already shows only this one process: it is what the page
-        // is about, and the aside describes it. The DAO proposals page does exactly the same — below two plugins it
-        // drops its own group tab, leaving the single process selected — and undefined here when no process is in
-        // view at all, which is a workspace with nothing to describe.
-        return pluginTabs[0];
+        // No strip to choose from. When the single account in view holds the single process, the list *is* that
+        // process and the aside describes it — what the DAO proposals page does for a single-process DAO, its own
+        // group tab being dropped below two plugins. Across several accounts the list still aggregates every one
+        // of them unfiltered, so a lone visible process would describe only part of what is on screen.
+        return accounts.length === 1 && pluginTabs.length === 1
+            ? pluginTabs[0]
+            : undefined;
     };
 
     const activeTab = resolveActiveTab();
