@@ -1,13 +1,16 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
+import type { IWorkspaceProposalTab } from '../../hooks/useWorkspaceProposalTabs';
 import * as workspaceAllProposalsAsideCard from './workspaceAllProposalsAsideCard';
 import * as workspaceDaoProposalsAsideCard from './workspaceDaoProposalsAsideCard';
+import * as workspaceProcessProposalsAsideCard from './workspaceProcessProposalsAsideCard';
 import {
     type IWorkspaceProposalsAsideCardProps,
     WorkspaceProposalsAsideCard,
@@ -25,7 +28,10 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         workspaceDaoProposalsAsideCard,
         'WorkspaceDaoProposalsAsideCard',
     );
-
+    const processProposalsCardSpy = jest.spyOn(
+        workspaceProcessProposalsAsideCard,
+        'WorkspaceProcessProposalsAsideCard',
+    );
     const daoAccount: IWorkspaceAccount = {
         id: `${Network.ETHEREUM_SEPOLIA}-${daoAddress}`,
         type: WorkspaceAccountType.DAO,
@@ -46,6 +52,16 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         isAllAccounts: true,
     };
 
+    const buildProcessTab = (label: string) =>
+        ({
+            accountId: daoAccount.id,
+            id: 'multisig',
+            uniqueId: `${Network.ETHEREUM_SEPOLIA}-0xMultisig-mul`,
+            label,
+            meta: generateDaoPlugin({ address: '0xMultisig', slug: 'mul' }),
+            props: {},
+        }) as IWorkspaceProposalTab;
+
     beforeEach(() => {
         allProposalsCardSpy.mockImplementation(() => (
             <div data-testid="all-proposals-mock" />
@@ -53,11 +69,15 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         daoProposalsCardSpy.mockImplementation(() => (
             <div data-testid="dao-proposals-mock" />
         ));
+        processProposalsCardSpy.mockImplementation(() => (
+            <div data-testid="process-proposals-mock" />
+        ));
     });
 
     afterEach(() => {
         allProposalsCardSpy.mockReset();
         daoProposalsCardSpy.mockReset();
+        processProposalsCardSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -129,6 +149,49 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         render(createTestComponent({ activeOption }));
 
         expect(screen.getByTestId('all-proposals-mock')).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('dao-proposals-mock'),
+        ).not.toBeInTheDocument();
+    });
+    // A process tab names one process of one account, so it describes the list better than the scope does.
+    it('renders the process card when a process tab is selected, whatever the scope', () => {
+        const tab = buildProcessTab('Demo DAO · Multisig');
+        render(
+            createTestComponent({
+                activeOption: allAccountsOption,
+                activeTab: tab,
+            }),
+        );
+
+        expect(
+            screen.getByTestId('process-proposals-mock'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('all-proposals-mock'),
+        ).not.toBeInTheDocument();
+        expect(processProposalsCardSpy).toHaveBeenLastCalledWith(
+            { tab },
+            undefined,
+        );
+    });
+
+    it('prefers the process card over the card of the account the route names', () => {
+        const activeOption: IWorkspaceAccountOption = {
+            id: daoAccount.id,
+            label: 'Demo DAO',
+            account: daoAccount,
+            isAllAccounts: false,
+        };
+        render(
+            createTestComponent({
+                activeOption,
+                activeTab: buildProcessTab('Multisig'),
+            }),
+        );
+
+        expect(
+            screen.getByTestId('process-proposals-mock'),
+        ).toBeInTheDocument();
         expect(
             screen.queryByTestId('dao-proposals-mock'),
         ).not.toBeInTheDocument();

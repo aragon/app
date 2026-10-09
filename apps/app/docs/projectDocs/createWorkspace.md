@@ -281,6 +281,8 @@ src/app/workspace/[workspaceId]/
    ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard)
    ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
    ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
+   ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
+   ├─ members/page.tsx     WorkspaceAccountMembersPage
    └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
 
@@ -453,21 +455,50 @@ Nothing is prefetched: the asset queries need the account list, which only exist
 
 ### Proposals page
 
-`/workspace/{workspaceId}/proposals` follows the same shape as the assets page: `Page.Main` filtered by the global
-account selection, plus an aside. **Only DAO accounts take part** — Safes have no indexed proposals.
+`/workspace/{workspaceId}/all/proposals` and `/workspace/{workspaceId}/{accountId}/proposals` are one page,
+`workspaceProposalsPage`, as on the assets and transactions pages. **Only DAO accounts take part** — Safes have no
+indexed proposals, so an account scope naming a Safe falls back to every DAO account rather than showing nothing.
 
-A selected DAO reuses `DaoProposalList` unchanged, so it shows the DAO page: process sub-tabs when the DAO
-runs several, plugin-specific rows, working links. The aggregated view calls
-`POST /v2/workspaces/query/proposals` through `workspaceQueryService.getProposalList`.
+Every scope reads `POST /v2/workspaces/query/proposals` through `workspaceQueryService.getProposalList`, so an
+account sums into the aggregated view. `DaoProposalList` is deliberately **not** reused for an account scope, as an
+earlier draft of this page did: the process strip is rebuilt on the workspace endpoint by
+`useWorkspaceProposalTabs`, which is what lets one component serve both scopes. Two filters of the DAO page's list
+have no equivalent on the workspace endpoint and are therefore gone from the group tab: `onlyActive` (which means
+*only currently installed plugins*, not *active proposals*) and `includeLinkedAccounts` — the account scope is
+explicit and never expands a DAO into its linked accounts.
 
-Unlike the assets page, this one is **not** migrated to read the workspace endpoint for every selection. Not because the
-endpoint cannot do it — `IWorkspaceProposal extends IProposal`, so `WorkspaceProposalList` renders a single account
-as-is, and `filters.pluginAddress` exists — but because `DaoProposalList` is what renders the process strip
-(`useDaoPluginFilterUrlParam` → `PluginFilterComponent`, on the `?proposals=` URL param). Rebuilding the strip on
-the workspace endpoint is a modest piece of work, since the DAO is already read by `useWorkspaceDaos`, with two
-gaps left on the "All" group tab: `onlyActive` (which means *only currently installed plugins*, not *active
-proposals*) and `includeLinkedAccounts` have no equivalent there — the account scope is explicit and never expands
-a DAO into its linked accounts.
+#### The scope
+
+`workspaceProposalsPageClient` resolves it with `workspaceUtils.findAccountById`, not off `activeOption`: an option
+is matched on the exact ID string, while `LayoutWorkspaceAccount` deliberately accepts any casing, so a shared link
+carrying a lowercase address has to narrow to its account all the same. Only a DAO account becomes the scope.
+
+Three questions look like one and are not. Keeping them apart is what the predicates below are for:
+
+| Question | Predicate | Where |
+| --- | --- | --- |
+| Would the row tag and the tab label repeat themselves? | one account in view | `workspaceProposalListDefault`, `useWorkspaceProposalTabs` |
+| How does the page present itself in its empty and error copy? | the route names an account (`isAccountScoped`) | `useWorkspaceProposalListData` |
+| Is there exactly one DAO to subscribe to? | the DAO of a selected process, else the only account in view | `workspaceProposalsPageClient` |
+
+A workspace holding a single DAO is where they come apart: on its aggregated route the rows are untagged and the
+tabs unlabelled, because repeating one name on every row says nothing; the copy and the aside still speak of the
+workspace, because that is the route the reader is on; and the Telegram card does appear, because there is exactly
+one DAO in view to subscribe to.
+
+#### Tabs
+
+`useWorkspaceProposalTabs` builds one tab per visible process of every account in view, grouped by account. The
+list renders the strip and the page hands the selected tab to the aside card, so both come from one derivation.
+The hook reads `useSearchParams` directly rather than going through `useFilterUrlParam`, which would keep a copy of
+the selection in state: every reader is then a pure function of the URL and the accounts, and two of them cannot
+come to name different tabs. The `PluginFilterComponent` of the list is the single writer of `?proposals=`, and an
+unknown parameter resolves to no tab, which is what the group tab stands for.
+
+The strip needs more than one process **and** the CMS overrides, since a tab offered before they land may be one
+the CMS hides. Below two processes there is no strip at all: the unfiltered list already shows only that process's
+proposals. That last part diverges from the DAO page, which drops its own group tab below two plugins and so
+describes the single process on its aside; here the DAO-level stats stay, being the more useful card.
 
 Three decisions worth keeping:
 
@@ -484,15 +515,30 @@ Three decisions worth keeping:
   displayed. Warning on `partial` would flag data the user cannot see. `metadata.totalRecords` counts `data` only,
   so pagination stays correct without them.
 
-The aside is `WorkspaceProposalsAsideCard`, a router over one card per account type, the same shape as the assets
-aside: `WorkspaceDaoProposalsAsideCard` for a DAO account — it reads the DAO (an account ID *is* the DAO ID) and
-renders the DAO page's `ProposalListStats`, so the card and the list beside it come from the same endpoint — and
-`WorkspaceAllProposalsAsideCard` for the aggregated option, with total, DAO count and most recent, all free from
-the response it shares with the list. "Executed" is omitted there: it needs a second full request, which also
-re-triggers the backend's Safe-queue reads.
+#### Aside
+
+`WorkspaceProposalsAsideCard` dispatches over three cards, and a **selected process wins over the scope** — the
+same swap `daoProposalsPageClient` makes between `ProposalListStats` and `DaoPluginInfo`. It applies under either
+scope, since a process tab names one account whether or not the route does:
+
+- `WorkspaceProcessProposalsAsideCard` — a process is selected. `DaoPluginInfo` on the tab's account, which is
+  already a DAO ID.
+- `WorkspaceDaoProposalsAsideCard` — the route names a DAO account. The DAO page's `ProposalListStats`, read off
+  the DAO's own endpoints, which is where the stats the aggregated card has to omit come from. It costs two
+  requests of its own, so an account scope makes three proposal requests where the DAO page makes two: there the
+  stats share the list's query key, which cannot happen across two endpoints. It runs **without** `onlyActive`,
+  unlike the DAO page's group tab — the workspace endpoint has no such filter, so asking for it would make the
+  total read lower than the rows the list pages through beside it.
+- `WorkspaceAllProposalsAsideCard` — anything else, including a Safe route. Total, DAO count and most recent, all
+  free from the response it shares with the list. "Executed" is omitted there: it needs a second full request,
+  which also re-triggers the backend's Safe-queue reads.
+
+`TelegramSubscriptionCard` sits below the card whenever exactly one DAO is in view, since a subscription is bound
+to a single DAO.
 
 The "New proposal" action asks for the account first (`WorkspaceSelectAccountDialog`) and then for the process
-(`SelectPluginDialog`), skipping the account step when a tab has already named one. Creating a proposal stays a
+(`SelectPluginDialog`), skipping the account step when the route has already named one — the plugin dialog is then
+not stacked and offers no back action, there being nothing underneath to go back to. Creating a proposal stays a
 single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
 called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
 
@@ -523,7 +569,7 @@ Three gates, one per entry point:
 | `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
 | `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
 | `/workspace/{workspaceId}/all/assets` and `/{accountId}/assets` | `workspaceAssetsPage` (server) — same, one page for both |
-| `/workspace/{workspaceId}/proposals` | `workspaceProposalsPage` (server) — same |
+| `/workspace/{workspaceId}/all/proposals` and `/{accountId}/proposals` | `workspaceProposalsPage` (server) — same, one page for both |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
 Notes:
@@ -697,13 +743,15 @@ Keep it that way when extending this.
 ## Known gaps
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
-- Of the five scopes' sections, only `overview`, `assets` and `transactions` have an account-scoped route;
-  `proposals` and `members` exist under `all/` alone, so the navigation links to a 404 for them under an account
-  scope.
-- `workspaceTransactionsPageClient` narrows by `activeOption?.account`, which has the Safe blind spot the assets
-  page does not: only DAO accounts become options, so the account-scoped transactions route of a Safe falls back to
-  the aggregated selection and shows every account. Reachable since that route landed;
-  `workspaceUtils.findAccountById` is the fix, as on the assets page.
+- All five scopes' sections now have an account-scoped route.
+- `workspaceTransactionsPageClient` is the last page still narrowing by `activeOption?.account`, which has the
+  blind spot the assets and proposals pages do not: an option is matched on the exact ID string, so a lowercased
+  account ID in a shared link falls back to the aggregated selection and shows every account under a URL naming
+  one, and a Safe — which never becomes an option — does the same. `workspaceUtils.findAccountById` is the fix, as
+  on those two pages. The proposals page keeps the Safe fallback on purpose, a Safe having no proposals to show.
+- The workspace proposals endpoint has no `onlyActive`, so an account scope counts the proposals of uninstalled
+  plugins where the DAO proposals page does not. The list and its aside card agree with each other; the DAO page's
+  own total for the same DAO can read lower.
 - Viewing an account the workspace does not hold is not supported: the assets page falls back to every account.
   The intended behaviour is to show it and offer adding it to the workspace, from the account selector.
 - The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only
