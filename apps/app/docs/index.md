@@ -13,13 +13,11 @@ Ensure consistency and maintainability by following our coding guidelines:
 
 ## Design and interaction guidance
 
-Use the maintained design-sync guide for component selection, composition,
-interaction/domain behavior, styling, accessibility and implementation copy:
-
-- [Design-sync usage conventions](../../../.design-sync/conventions.md) — the
-  maintained entry point used by the App design surface.
-- [GovKit Storybook](https://aragon.github.io/gov-ui-kit/) — published component
-  examples; check source/API contracts at the consumed package revision.
+- [Forms and wizards](./projectDocs/formsAndWizards.md) — how App form inputs, wizards and
+  dialogs compose.
+- [GovKit usage conventions](../../../.design-sync/conventions.md) — kit component selection,
+  composition and styling; also the README header of the GovKit design system in Claude Design.
+- [GovKit Storybook](https://aragon.github.io/gov-ui-kit/) — published component examples.
 
 ## Project Docs
 

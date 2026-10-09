@@ -1514,7 +1514,6 @@ function makeProvenance(
               'pnpm-workspace.yaml',
               'pnpm-lock.yaml',
               '.design-sync/config.json',
-              '.design-sync/app-entry.ts',
           ]
         : ['src', 'package.json', 'tsconfig.json'];
     const kit = {
