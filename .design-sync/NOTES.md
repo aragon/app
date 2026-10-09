@@ -97,6 +97,10 @@ fs.writeFileSync(".design-sync/last-sync.json",JSON.stringify({
   are skipped for this. `extraEntries: ["react-hook-form"]` would put one instance on the
   global and route story imports to it, but `extraEntries` is part of every component's
   grade key: adopt it only on a run that re-grades everything.
+- Validate prints six `[RENDER_THIN]` warnings, all triaged as expected: `Icon`,
+  `IllustrationHuman` and `IllustrationObject` ("paint nothing") are SVG-only cards with no
+  text, and their cards render correctly; `Dialog`, `DialogAlert` and `Tooltip` ("variants
+  render identically") are the click-gated stories above. Any other `[RENDER_THIN]` is new.
 - `InputText` `Addon` is skipped: its story wraps the input in an `absolute` div, so the
   Storybook root measures empty.
 - `compare.mjs` prints `[ASSETS_BLOCKED] metadata.ens.domains, api.opensea.io`. The ENS

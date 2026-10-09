@@ -1,4 +1,5 @@
 {
+    "projectId": "89073a1a-b055-4ad2-8499-87445026c626",
     "shape": "storybook",
     "pkg": "@aragon/gov-ui-kit",
     "globalName": "GovUiKit",
