@@ -4470,13 +4470,19 @@
         }
       },
       "workspaceProposalList": {
+        "emptyFilteredState": {
+          "description": "This will show relevant proposals when available.",
+          "heading": "No proposals found"
+        },
         "emptyState": {
           "description": "The accounts of this workspace have no proposals yet.",
+          "descriptionSingle": "This account has no proposals yet.",
           "heading": "No proposals"
         },
         "entity": "Proposals",
         "errorState": {
           "description": "The proposals of this workspace could not be loaded.",
+          "descriptionSingle": "The proposals of this account could not be loaded.",
           "heading": "Unable to load proposals"
         },
         "groupTab": "All proposals",
