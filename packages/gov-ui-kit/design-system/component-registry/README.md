@@ -7,7 +7,8 @@ props, App usages and curated selection intent. `selection-guide.json` and
 
 ## Update
 
-From the repo root:
+From the repo root, after building the kit (`pnpm --filter @aragon/gov-ui-kit build`;
+extraction hashes its `dist`, so an older build reads as a stale registry):
 
 ```sh
 node packages/gov-ui-kit/design-system/component-registry/registry.mjs extract
