@@ -8,7 +8,7 @@
         },
         "app": {
             "root": "app",
-            "commit": "beb06ce15a2570122cd126f6d869c42579333467",
+            "commit": "8bfc26355bf569e59cb2c741dbf916e21e94cd1e",
             "dirty": [],
             "kitReexportBoundary": {
                 "path": "src/shared/lib/@aragon/gov-ui-kit.ts",
@@ -18,40 +18,8 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "beb06ce15a2570122cd126f6d869c42579333467",
-            "dirty": [
-                "packages/gov-ui-kit/src/core/components/accordion/accordionContainer/accordionContainer.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/accordionContainer/accordionContainer.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/accordionItem/accordionItem.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/accordionItemContent/accordionItemContent.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/index.ts",
-                "packages/gov-ui-kit/src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/definitionList/index.ts",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownItem/dropdownItem.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/index.ts",
-                "packages/gov-ui-kit/src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/asset/assetDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/dao/daoDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/member/memberDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgress.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/vote/voteDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/vote/voteProposalDataListItem/index.ts",
-                "packages/gov-ui-kit/src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.stories.tsx"
-            ],
+            "commit": "8bfc26355bf569e59cb2c741dbf916e21e94cd1e",
+            "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
                 "js": [
@@ -74,7 +42,7 @@
             "root": "consumed",
             "dist": {
                 "dist/types/src/index.d.ts": "d5b4cd419b877a922830d6d4d4d2eba59e9e4dcf213ca70588e7b41e0901f09d",
-                "dist/index.es.js": "8c0d7c50d4f22c1a87ac96f0ed801f408a9367a782fc071658dcdd65b6b8168c",
+                "dist/index.es.js": "85b275784d7f906fde4d5f69afdf2f289714d8a5d2740b843e2665911dc52c59",
                 "index.css": "22c94650fd16431a5e8b606a44f9201ba79eb9e121c2ccc4f49c8c6c99b1071a",
                 "build.css": "e9948976176218b3ef4017fe5250c89761acf1cadbf1e0edf06df5afa99b702e"
             },
