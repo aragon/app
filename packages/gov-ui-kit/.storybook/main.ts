@@ -20,6 +20,9 @@ const config: StorybookConfig = {
         reactDocgen: 'react-docgen-typescript',
     },
 
+    // Emits manifests/components.json and docs.json: components, props, stories and MDX for agents.
+    features: { componentsManifest: true },
+
     addons: [getAbsolutePath('@storybook/addon-docs')],
 
     viteFinal: (viteConfig) => {
@@ -31,7 +34,10 @@ const config: StorybookConfig = {
                 include: '**/*.svg',
                 svgrOptions: { plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'], svgoConfig },
             }),
-            viteStaticCopy({ targets: [{ src: './src/theme/fonts/*.ttf', dest: './fonts' }] }),
+            // The kit CSS loads `/fonts/Manrope-*.ttf`; without stripBase the copy keeps `src/theme/fonts/`.
+            viteStaticCopy({
+                targets: [{ src: './src/theme/fonts/*.ttf', dest: './fonts', rename: { stripBase: true } }],
+            }),
         ];
         const resolve = { alias: { 'source-map-js': 'source-map' } };
 

@@ -1,9 +1,9 @@
 # GovKit selection guide
 
 Which `@aragon/gov-ui-kit` export to choose for an intent, what to use instead, and the
-contracts that matter when composing it. Generated from the component registry
-(`.design-sync/component-registry/`); do not edit by hand. References: `kit:` paths are in
-`packages/gov-ui-kit`, `app:` paths are App usages in `apps/app`.
+contracts that matter when composing it. Generated from the component registry in
+`packages/gov-ui-kit/design-system/component-registry/`; do not edit by hand. References:
+`kit:` paths are in `packages/gov-ui-kit`, `app:` paths are App usages in `apps/app`.
 
 ## Components
 

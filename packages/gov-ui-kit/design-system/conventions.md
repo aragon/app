@@ -1,9 +1,10 @@
 # Aragon Governance UI Kit — usage conventions
 
-This design system is `@aragon/gov-ui-kit`, compiled from `packages/gov-ui-kit` in the
-`aragon/app` repository. Previews are the kit's own Storybook stories. Font: **Manrope**
-(bundled). How the Aragon App composes these components (forms, wizards, dialogs, copy) is
-documented in the App, at `apps/app/docs/projectDocs/formsAndWizards.md`.
+This design system is `@aragon/gov-ui-kit`, built from `packages/gov-ui-kit` in the
+`aragon/app` repository (`packages/gov-ui-kit/design-system/SYNC.md` describes the sync).
+Previews are the kit's own Storybook stories. Font: **Manrope** (bundled). How the Aragon
+App composes these components (forms, wizards, dialogs, copy) is documented in the App, at
+`apps/app/docs/projectDocs/formsAndWizards.md`.
 
 ## Source of truth
 
@@ -14,32 +15,21 @@ Kit source, stories and tests live under `packages/gov-ui-kit/src/core` and
 
 ## Where the detail lives
 
-Before using a component, read its section in `guidelines/selection-guide.md` (heading
-`### <Name>`). It is generated from kit source:
+Before using a component, read its section in the selection guide, `selection-guide.md`
+(heading `### <Name>`). It is generated from kit source:
 
-- **Usage notes:** contracts the props table doesn't show, such as render conditions,
-  controlled state, required parents and providers, and layout defaults. They come from
-  the component's JSDoc, which also heads its kit Storybook docs page.
-- **Use when**, **Instead**, **Key props** and **Composition:** which export fits an intent,
-  what to use instead, and how compounds compose.
-- **Allowed values** (end of the file): every enum and string-union value. A `.d.ts` prints
-  `unknown` for a type too wide to inline (`IconType`, `IllustrationObjectType`, the
-  `EmptyState` button configs); take the values from there instead of guessing.
+- **Usage notes:** contracts the props table doesn't show, such as render conditions, controlled state, required parents and providers, and layout defaults. They come from the component's JSDoc, which also heads its kit Storybook docs page.
+- **Use when**, **Instead**, **Key props** and **Composition:** which export fits an intent, what to use instead, and how compounds compose.
+- **Allowed values** (end of the file): every enum and string-union value. A `.d.ts` prints `unknown` for a type too wide to inline (`IconType`, `IllustrationObjectType`, the `EmptyState` button configs); take the values from there instead of guessing.
 
-`guidelines/src/**` holds the kit's own Storybook pages for the providers, modules setup
-and tokens.
+The kit's Storybook MDX pages (`src/**/*.mdx`) cover the providers, modules setup, tokens
+and formatters.
 
 ## Select and compose
 
-- Prefer a kit primitive or compound component when its contract matches the interaction.
-  Compound namespaces are aliases of their direct exports: compose
-  `Dialog.Root/Header/Content/Footer`, `DataList.Root/Container/Filter/Pagination`,
-  `Accordion.Container/Item/ItemHeader/ItemContent` and `Tabs.Root/List/Trigger/Content`
-  rather than treating each member as a standalone alternative.
+- Prefer a kit primitive or compound component when its contract matches the interaction. Compound namespaces are aliases of their direct exports: compose `Dialog.Root/Header/Content/Footer`, `DataList.Root/Container/Filter/Pagination`, `Accordion.Container/Item/ItemHeader/ItemContent` and `Tabs.Root/List/Trigger/Content` rather than treating each member as a standalone alternative.
 - Compound children can require their parent's context; follow the component's story.
-- `modules` components that read chain data (`AddressInput`, `Wallet`, `MemberAvatar`) need
-  `<GukModulesProvider>` for wagmi and query context. Components that only use module copy
-  work without it. Check the component's story before choosing a provider stack.
+- `modules` components that read chain data (`AddressInput`, `Wallet`, `MemberAvatar`) need `<GukModulesProvider>` for wagmi and query context. Components that only use module copy work without it. Check the component's story before choosing a provider stack.
 
 ## Accessibility
 
@@ -69,14 +59,14 @@ build:
 | Radius | `rounded-none/md/lg/xl/2xl/3xl/full`; `rounded-xl` is the 12px card radius. No `rounded-sm`. |
 | Shadows | `shadow-none`, `shadow-neutral{,-sm,-md,-lg}`, `shadow-primary{,-sm,-lg,-xl}`, `shadow-info{,-md}`, `shadow-success{,-sm,-md}`, `shadow-warning{,-sm,-md}`, `shadow-critical{,-sm,-md}`. No `shadow-sm`. |
 | Type | `text-xs/sm/base/lg/xl/2xl/3xl`, `font-normal/semibold`; headings via `Heading` |
-| Spacing | Common `p-*`/`gap-*` steps; check `_ds_bundle.css` before relying on a less common one (`space-y-2` exists only as `md:space-y-2`). |
+| Spacing | Common `p-*`/`gap-*` steps; check `build.css` before relying on a less common one (`space-y-2` exists only as `md:space-y-2`). |
 
-Token custom properties are `--color-*`, `--radius-*` and `--guk-*`; `styles.css` imports
-`_ds_bundle.css`. For a colour with no utility above, use its token in `style`
-(`style={{ color: 'var(--color-primary-600)' }}`). Token scales: primary 50–900; neutral
-0, 50–600, 800, 900; info, success, warning and critical 100–600, 800, 900. There is no
-`-700` outside primary. Icons: `<Icon icon={IconType.PLUS} />`; icons inherit
-`currentColor`.
+Token custom properties are `--color-*`, `--radius-*` and `--guk-*`. For a colour with no
+utility above, use its token in `style` (`style={{ color: 'var(--color-primary-600)' }}`).
+Colour scales defined in `build.css`: primary 50–900; neutral 0, 50–600, 800, 900; info,
+success, warning and critical 100–600, 800, 900. The kit source defines every `-700`, but
+`build.css` compiles only `primary-700`. Icons: `<Icon icon={IconType.PLUS} />`; icons
+inherit `currentColor`.
 
 ## Example
 

@@ -9,7 +9,7 @@ import { isDeepStrictEqual } from 'node:util';
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const REGISTRY_DIR = path.dirname(SCRIPT_PATH);
-const WORKSPACE_ROOT = path.resolve(REGISTRY_DIR, '../..');
+const WORKSPACE_ROOT = path.resolve(REGISTRY_DIR, '../../../..');
 const SCHEMA_PATH = path.join(REGISTRY_DIR, 'schema.json');
 const REGISTRY_PATH = path.join(REGISTRY_DIR, 'registry.json');
 const PACKAGE_NAME = '@aragon/gov-ui-kit';
@@ -23,31 +23,9 @@ const UTILITY_NAMES = new Set([
     'urlUtils',
 ]);
 const ORIGINAL_PACKAGE_NAME = '@aragon/gov-ui-kit-original';
-const SOURCE_EXTENSIONS = new Set([
-    '.ts',
-    '.tsx',
-    '.js',
-    '.jsx',
-    '.mjs',
-    '.cjs',
-]);
-const RELATED_EXTENSIONS = new Set([
-    '.ts',
-    '.tsx',
-    '.js',
-    '.jsx',
-    '.md',
-    '.mdx',
-]);
-const SKIP_DIRS = new Set([
-    '.git',
-    'node_modules',
-    'dist',
-    'coverage',
-    'storybook-static',
-    '.next',
-    '.turbo',
-]);
+const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
+const RELATED_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.md', '.mdx']);
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist', 'coverage', 'storybook-static', '.next', '.turbo']);
 const DEFAULT_SCHEMA_VERSION = '1.1.0';
 
 function exists(filePath) {
@@ -146,13 +124,7 @@ function gitCommit(root) {
 }
 
 function gitDirty(root, paths) {
-    const output = runGit(root, [
-        'status',
-        '--porcelain',
-        '--untracked-files=all',
-        '--',
-        ...paths,
-    ]);
+    const output = runGit(root, ['status', '--porcelain', '--untracked-files=all', '--', ...paths]);
     return output
         ? output
               .split('\n')
@@ -168,24 +140,16 @@ function gitRootFor(root) {
 
 function resolveRoots(options = {}) {
     const appRoot = path.resolve(
-        options.appRoot ||
-            process.env.GOVKIT_APP_ROOT ||
-            path.join(WORKSPACE_ROOT, 'apps/app'),
+        options.appRoot || process.env.GOVKIT_APP_ROOT || path.join(WORKSPACE_ROOT, 'apps/app'),
     );
     const kitRoot = path.resolve(
-        options.kitRoot ||
-            process.env.GOVKIT_KIT_ROOT ||
-            path.join(WORKSPACE_ROOT, 'packages/gov-ui-kit'),
+        options.kitRoot || process.env.GOVKIT_KIT_ROOT || path.join(WORKSPACE_ROOT, 'packages/gov-ui-kit'),
     );
     if (!exists(path.join(kitRoot, 'package.json'))) {
-        throw new Error(
-            `GovKit source root not found: ${kitRoot}; set GOVKIT_KIT_ROOT`,
-        );
+        throw new Error(`GovKit source root not found: ${kitRoot}; set GOVKIT_KIT_ROOT`);
     }
     const consumedRoot = path.resolve(
-        options.consumedRoot ||
-            process.env.GOVKIT_CONSUMED_ROOT ||
-            path.join(appRoot, 'node_modules', PACKAGE_NAME),
+        options.consumedRoot || process.env.GOVKIT_CONSUMED_ROOT || path.join(appRoot, 'node_modules', PACKAGE_NAME),
     );
     return { appRoot, kitRoot, consumedRoot };
 }
@@ -211,12 +175,7 @@ function resolvePackageRequire(packageName, roots) {
             if (!folder.startsWith(`${packageName}@`)) {
                 continue;
             }
-            const packageRoot = path.join(
-                pnpmRoot,
-                folder,
-                'node_modules',
-                packageName,
-            );
+            const packageRoot = path.join(pnpmRoot, folder, 'node_modules', packageName);
             const packageJson = path.join(packageRoot, 'package.json');
             if (!exists(packageJson)) {
                 continue;
@@ -236,14 +195,9 @@ function resolvePackageRequire(packageName, roots) {
 }
 
 function loadTypeScript(kitRoot) {
-    const resolved = resolvePackageRequire('typescript', [
-        kitRoot,
-        WORKSPACE_ROOT,
-    ]);
+    const resolved = resolvePackageRequire('typescript', [kitRoot, WORKSPACE_ROOT]);
     if (!resolved) {
-        throw new Error(
-            'TypeScript is required from the GovKit or workspace node_modules',
-        );
+        throw new Error('TypeScript is required from the GovKit or workspace node_modules');
     }
     return resolved.require('typescript');
 }
@@ -251,9 +205,7 @@ function loadTypeScript(kitRoot) {
 function loadAjv(kitRoot) {
     const resolved = resolvePackageRequire('ajv', [WORKSPACE_ROOT, kitRoot]);
     if (!resolved) {
-        throw new Error(
-            'Ajv is required from the workspace node_modules (pnpm install)',
-        );
+        throw new Error('Ajv is required from the workspace node_modules (pnpm install)');
     }
     const loaded = resolved.require('ajv');
     return loaded.default || loaded;
@@ -285,11 +237,7 @@ function parseKitProgram(ts, kitRoot) {
 function resolveSymbol(ts, checker, symbol) {
     let current = symbol;
     const seen = new Set();
-    while (
-        current &&
-        current.flags & ts.SymbolFlags.Alias &&
-        !seen.has(current)
-    ) {
+    while (current && current.flags & ts.SymbolFlags.Alias && !seen.has(current)) {
         seen.add(current);
         const next = checker.getAliasedSymbol(current);
         if (!next || next === current) {
@@ -306,10 +254,7 @@ function firstDeclaration(symbol) {
 
 function declarationSource(declaration, kitRoot) {
     const fileName = declaration?.getSourceFile?.()?.fileName;
-    return fileName &&
-        path.resolve(fileName).startsWith(`${path.resolve(kitRoot)}${path.sep}`)
-        ? fileName
-        : null;
+    return fileName && path.resolve(fileName).startsWith(`${path.resolve(kitRoot)}${path.sep}`) ? fileName : null;
 }
 
 function declarationKey(symbol, kitRoot) {
@@ -325,30 +270,18 @@ function declarationLine(declaration) {
     if (!declaration) {
         return 1;
     }
-    return (
-        declaration
-            .getSourceFile()
-            .getLineAndCharacterOfPosition(declaration.getStart()).line + 1
-    );
+    return declaration.getSourceFile().getLineAndCharacterOfPosition(declaration.getStart()).line + 1;
 }
 
 function likelyComponent(ts, checker, symbol, declaration, source) {
-    if (
-        !symbol ||
-        !(symbol.flags & ts.SymbolFlags.Value) ||
-        !source ||
-        !/\.tsx$/u.test(source)
-    ) {
+    if (!symbol || !(symbol.flags & ts.SymbolFlags.Value) || !source || !/\.tsx$/u.test(source)) {
         return false;
     }
     if (!/^[A-Z]/u.test(symbol.name || '')) {
         return false;
     }
     const initializer =
-        declaration &&
-        ts.isVariableDeclaration(declaration) &&
-        declaration.initializer &&
-        declaration.initializer;
+        declaration && ts.isVariableDeclaration(declaration) && declaration.initializer && declaration.initializer;
     if (
         initializer &&
         ts.isCallExpression(initializer) &&
@@ -358,15 +291,10 @@ function likelyComponent(ts, checker, symbol, declaration, source) {
         return false;
     }
     try {
-        const type = checker.getTypeOfSymbolAtLocation(
-            symbol,
-            declaration || symbol.valueDeclaration,
-        );
+        const type = checker.getTypeOfSymbolAtLocation(symbol, declaration || symbol.valueDeclaration);
         return (
             type.getCallSignatures().length > 0 ||
-            type
-                .getProperties()
-                .some((property) => property.name === 'displayName')
+            type.getProperties().some((property) => property.name === 'displayName')
         );
     } catch {
         return false;
@@ -384,122 +312,64 @@ function collectMembers(ts, checker, symbol, declaration, kitRoot, allFiles) {
         return [];
     }
     const members = [];
-    for (const property of type
-        .getProperties()
-        .sort((a, b) => a.name.localeCompare(b.name))) {
+    for (const property of type.getProperties().sort((a, b) => a.name.localeCompare(b.name))) {
         if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/u.test(property.name)) {
             continue;
         }
         const propertySymbol = resolveSymbol(ts, checker, property);
         const propertyDeclaration = firstDeclaration(propertySymbol);
         let implementationSymbol = propertySymbol;
-        if (
-            propertyDeclaration &&
-            ts.isPropertyAssignment(propertyDeclaration)
-        ) {
-            const initializerSymbol = checker.getSymbolAtLocation(
-                propertyDeclaration.initializer,
-            );
+        if (propertyDeclaration && ts.isPropertyAssignment(propertyDeclaration)) {
+            const initializerSymbol = checker.getSymbolAtLocation(propertyDeclaration.initializer);
             if (initializerSymbol) {
-                implementationSymbol = resolveSymbol(
-                    ts,
-                    checker,
-                    initializerSymbol,
-                );
+                implementationSymbol = resolveSymbol(ts, checker, initializerSymbol);
             }
-        } else if (
-            propertyDeclaration &&
-            ts.isShorthandPropertyAssignment(propertyDeclaration)
-        ) {
-            const initializerSymbol =
-                checker.getShorthandAssignmentValueSymbol(propertyDeclaration);
+        } else if (propertyDeclaration && ts.isShorthandPropertyAssignment(propertyDeclaration)) {
+            const initializerSymbol = checker.getShorthandAssignmentValueSymbol(propertyDeclaration);
             if (initializerSymbol) {
-                implementationSymbol = resolveSymbol(
-                    ts,
-                    checker,
-                    initializerSymbol,
-                );
+                implementationSymbol = resolveSymbol(ts, checker, initializerSymbol);
             }
         }
-        const implementationDeclaration =
-            firstDeclaration(implementationSymbol);
-        const propertySource = declarationSource(
-            implementationDeclaration,
-            kitRoot,
-        );
+        const implementationDeclaration = firstDeclaration(implementationSymbol);
+        const propertySource = declarationSource(implementationDeclaration, kitRoot);
         let propertyType;
         try {
-            propertyType = checker.getTypeOfSymbolAtLocation(
-                implementationSymbol,
-                implementationDeclaration,
-            );
+            propertyType = checker.getTypeOfSymbolAtLocation(implementationSymbol, implementationDeclaration);
         } catch {
             continue;
         }
         const renderable =
             propertyType.getCallSignatures().length > 0 ||
-            propertyType
-                .getProperties()
-                .some((item) => item.name === 'displayName');
-        const nestedCompound = propertyType
-            .getProperties()
-            .some((nestedProperty) => {
-                let nestedSymbol = resolveSymbol(ts, checker, nestedProperty);
-                const nestedPropertyDeclaration =
-                    firstDeclaration(nestedSymbol);
-                if (
-                    nestedPropertyDeclaration &&
-                    ts.isPropertyAssignment(nestedPropertyDeclaration)
-                ) {
-                    const nestedInitializerSymbol = checker.getSymbolAtLocation(
-                        nestedPropertyDeclaration.initializer,
-                    );
-                    if (nestedInitializerSymbol) {
-                        nestedSymbol = resolveSymbol(
-                            ts,
-                            checker,
-                            nestedInitializerSymbol,
-                        );
-                    }
-                } else if (
-                    nestedPropertyDeclaration &&
-                    ts.isShorthandPropertyAssignment(nestedPropertyDeclaration)
-                ) {
-                    const nestedInitializerSymbol =
-                        checker.getShorthandAssignmentValueSymbol(
-                            nestedPropertyDeclaration,
-                        );
-                    if (nestedInitializerSymbol) {
-                        nestedSymbol = resolveSymbol(
-                            ts,
-                            checker,
-                            nestedInitializerSymbol,
-                        );
-                    }
+            propertyType.getProperties().some((item) => item.name === 'displayName');
+        const nestedCompound = propertyType.getProperties().some((nestedProperty) => {
+            let nestedSymbol = resolveSymbol(ts, checker, nestedProperty);
+            const nestedPropertyDeclaration = firstDeclaration(nestedSymbol);
+            if (nestedPropertyDeclaration && ts.isPropertyAssignment(nestedPropertyDeclaration)) {
+                const nestedInitializerSymbol = checker.getSymbolAtLocation(nestedPropertyDeclaration.initializer);
+                if (nestedInitializerSymbol) {
+                    nestedSymbol = resolveSymbol(ts, checker, nestedInitializerSymbol);
                 }
-                const nestedDeclaration = firstDeclaration(nestedSymbol);
-                const nestedSource = declarationSource(
-                    nestedDeclaration,
-                    kitRoot,
+            } else if (nestedPropertyDeclaration && ts.isShorthandPropertyAssignment(nestedPropertyDeclaration)) {
+                const nestedInitializerSymbol = checker.getShorthandAssignmentValueSymbol(nestedPropertyDeclaration);
+                if (nestedInitializerSymbol) {
+                    nestedSymbol = resolveSymbol(ts, checker, nestedInitializerSymbol);
+                }
+            }
+            const nestedDeclaration = firstDeclaration(nestedSymbol);
+            const nestedSource = declarationSource(nestedDeclaration, kitRoot);
+            if (!nestedSource || !/\.tsx$/u.test(nestedSource)) {
+                return false;
+            }
+            try {
+                const nestedType = checker.getTypeOfSymbolAtLocation(nestedSymbol, nestedDeclaration);
+                return (
+                    nestedType.getCallSignatures().length > 0 ||
+                    nestedType.getProperties().some((item) => item.name === 'displayName')
                 );
-                if (!nestedSource || !/\.tsx$/u.test(nestedSource)) {
-                    return false;
-                }
-                try {
-                    const nestedType = checker.getTypeOfSymbolAtLocation(
-                        nestedSymbol,
-                        nestedDeclaration,
-                    );
-                    return (
-                        nestedType.getCallSignatures().length > 0 ||
-                        nestedType
-                            .getProperties()
-                            .some((item) => item.name === 'displayName')
-                    );
-                } catch {
-                    return false;
-                }
-            });
+            } catch {
+                return false;
+            }
+        });
         if (
             !propertySource ||
             (!/\.tsx$/u.test(propertySource) && !nestedCompound) ||
@@ -508,12 +378,7 @@ function collectMembers(ts, checker, symbol, declaration, kitRoot, allFiles) {
             continue;
         }
         const related = findRelatedRefs(kitRoot, propertySource, allFiles);
-        const propertyRef = repositoryRef(
-            'kit',
-            kitRoot,
-            propertySource,
-            declarationLine(implementationDeclaration),
-        );
+        const propertyRef = repositoryRef('kit', kitRoot, propertySource, declarationLine(implementationDeclaration));
         if (!propertyRef) {
             continue;
         }
@@ -550,8 +415,7 @@ function findRelatedRefs(kitRoot, sourceFile, allFiles) {
         const candidateBase = path.basename(candidate).toLowerCase();
         const sameDirectory = candidateDirectory === sourceDirectory;
         const matchesStem =
-            candidateBase.includes(sourceBase) ||
-            (sourceBase === 'index' && candidateBase.includes(parentBase));
+            candidateBase.includes(sourceBase) || (sourceBase === 'index' && candidateBase.includes(parentBase));
         if (!sameDirectory || !matchesStem) {
             continue;
         }
@@ -586,9 +450,7 @@ function packageExports(kitRoot) {
         } else if (/\.css$/u.test(subpath)) {
             css.push(subpath);
         } else {
-            throw new Error(
-                `Unsupported GovKit package export ${subpath}; add explicit extraction support`,
-            );
+            throw new Error(`Unsupported GovKit package export ${subpath}; add explicit extraction support`);
         }
     }
     return { packageJson, js: js.sort(), css: css.sort() };
@@ -645,55 +507,28 @@ function extractExports(kitRoot) {
     const records = [];
     const namesByKey = new Map();
     for (const group of groups.values()) {
-        const names = [...new Set(group.names)].sort((a, b) =>
-            a.localeCompare(b),
-        );
+        const names = [...new Set(group.names)].sort((a, b) => a.localeCompare(b));
         const declaration = firstDeclaration(group.resolved);
         const sourceFileName = declarationSource(declaration, kitRoot);
-        const source = repositoryRef(
-            'kit',
-            kitRoot,
-            sourceFileName,
-            declarationLine(declaration),
-        );
-        const canonical = names.includes(group.resolved.name)
-            ? group.resolved.name
-            : names[0];
+        const source = repositoryRef('kit', kitRoot, sourceFileName, declarationLine(declaration));
+        const canonical = names.includes(group.resolved.name) ? group.resolved.name : names[0];
         const runtime =
-            group.exported.some((entry) =>
-                Boolean(entry.flags & ts.SymbolFlags.Value),
-            ) || Boolean(group.resolved.flags & ts.SymbolFlags.Value);
-        const members = collectMembers(
-            ts,
-            checker,
-            group.resolved,
-            declaration,
-            kitRoot,
-            allFiles,
-        );
+            group.exported.some((entry) => Boolean(entry.flags & ts.SymbolFlags.Value)) ||
+            Boolean(group.resolved.flags & ts.SymbolFlags.Value);
+        const members = collectMembers(ts, checker, group.resolved, declaration, kitRoot, allFiles);
         const kind = UTILITY_NAMES.has(canonical)
             ? 'utility'
             : members.length > 0
               ? 'compound'
-              : likelyComponent(
-                      ts,
-                      checker,
-                      group.resolved,
-                      declaration,
-                      sourceFileName,
-                  )
+              : likelyComponent(ts, checker, group.resolved, declaration, sourceFileName)
                 ? 'component'
                 : 'non-component';
         const related = sourceFileName
             ? findRelatedRefs(kitRoot, sourceFileName, allFiles)
             : { props: [], stories: [], tests: [], docs: [] };
         const propsType = declaration?.type?.typeArguments?.[0];
-        const propsSymbol =
-            propsType &&
-            checker.getSymbolAtLocation(propsType.typeName || propsType);
-        const propsDeclaration =
-            propsSymbol &&
-            firstDeclaration(resolveSymbol(ts, checker, propsSymbol));
+        const propsSymbol = propsType && checker.getSymbolAtLocation(propsType.typeName || propsType);
+        const propsDeclaration = propsSymbol && firstDeclaration(resolveSymbol(ts, checker, propsSymbol));
         if (kind === 'component' && propsDeclaration) {
             const propsRef = repositoryRef(
                 'kit',
@@ -724,23 +559,15 @@ function extractExports(kitRoot) {
             docs: related.docs,
         };
         if (declaration && ts.isEnumDeclaration(declaration)) {
-            record.values = declaration.members.map((member) =>
-                member.name.getText(),
-            );
+            record.values = declaration.members.map((member) => member.name.getText());
         } else if (
             declaration &&
             ts.isTypeAliasDeclaration(declaration) &&
             ts.isUnionTypeNode(declaration.type) &&
-            declaration.type.types.every(
-                (type) =>
-                    ts.isLiteralTypeNode(type) &&
-                    ts.isStringLiteral(type.literal),
-            )
+            declaration.type.types.every((type) => ts.isLiteralTypeNode(type) && ts.isStringLiteral(type.literal))
         ) {
             // Quoted, so string unions read differently from enum members.
-            record.values = declaration.type.types.map((type) =>
-                type.literal.getText(),
-            );
+            record.values = declaration.type.types.map((type) => type.literal.getText());
         }
         const usageNotes = declaration && jsdocUsageNotes(ts, declaration);
         if (usageNotes?.length) {
@@ -760,10 +587,7 @@ function extractExports(kitRoot) {
     const recordsBySource = new Map(
         records
             .filter((record) => record.source)
-            .map((record) => [
-                `${record.source.repository}:${record.source.path}:${record.source.line}`,
-                record,
-            ]),
+            .map((record) => [`${record.source.repository}:${record.source.path}:${record.source.line}`, record]),
     );
     for (const record of records) {
         for (const member of record.members) {
@@ -773,18 +597,16 @@ function extractExports(kitRoot) {
             if (direct) {
                 member.id = direct.id;
                 member.props = direct.props;
-                member.exportNames = [
-                    ...new Set([...member.exportNames, ...direct.exportNames]),
-                ].sort((a, b) => a.localeCompare(b));
+                member.exportNames = [...new Set([...member.exportNames, ...direct.exportNames])].sort((a, b) =>
+                    a.localeCompare(b),
+                );
             }
         }
     }
     return {
         records,
         namesByKey,
-        exportNames: exports
-            .map((entry) => entry.name)
-            .sort((a, b) => a.localeCompare(b)),
+        exportNames: exports.map((entry) => entry.name).sort((a, b) => a.localeCompare(b)),
     };
 }
 
@@ -793,9 +615,7 @@ function classifyUsageType(appRoot, filePath) {
     if (/\.(?:stories?|story)\.[^.]+$/iu.test(relative)) {
         return 'story';
     }
-    if (
-        /(?:^|[/\\])__tests__(?:[/\\])|\.(?:test|spec)\.[^.]+$/iu.test(relative)
-    ) {
+    if (/(?:^|[/\\])__tests__(?:[/\\])|\.(?:test|spec)\.[^.]+$/iu.test(relative)) {
         return 'test';
     }
     if (/\.mdx?$/iu.test(relative)) {
@@ -804,16 +624,7 @@ function classifyUsageType(appRoot, filePath) {
     return 'production';
 }
 
-function usageRef(
-    appRoot,
-    filePath,
-    line,
-    kind,
-    usageType,
-    localName,
-    module,
-    wrapperRef,
-) {
+function usageRef(appRoot, filePath, line, kind, usageType, localName, module, wrapperRef) {
     const ref = repositoryRef('app', appRoot, filePath, line);
     if (!ref) {
         return null;
@@ -860,8 +671,7 @@ function isImportBindingName(ts, id) {
         return false;
     }
     return (
-        (ts.isImportSpecifier(parent) &&
-            (parent.name === id || parent.propertyName === id)) ||
+        (ts.isImportSpecifier(parent) && (parent.name === id || parent.propertyName === id)) ||
         (ts.isImportClause(parent) && parent.name === id) ||
         (ts.isNamespaceImport(parent) && parent.name === id)
     );
@@ -869,11 +679,7 @@ function isImportBindingName(ts, id) {
 
 function isJsxTagReference(ts, id) {
     let current = id;
-    while (
-        current.parent &&
-        ts.isPropertyAccessExpression(current.parent) &&
-        current.parent.name === current
-    ) {
+    while (current.parent && ts.isPropertyAccessExpression(current.parent) && current.parent.name === current) {
         current = current.parent;
     }
     const parent = current.parent;
@@ -889,16 +695,10 @@ function isJsxTagReference(ts, id) {
 function isReexportReference(ts, id) {
     let current = id.parent;
     while (current) {
-        if (
-            current.kind === ts.SyntaxKind.ExportSpecifier ||
-            current.kind === ts.SyntaxKind.ExportDeclaration
-        ) {
+        if (current.kind === ts.SyntaxKind.ExportSpecifier || current.kind === ts.SyntaxKind.ExportDeclaration) {
             return true;
         }
-        if (
-            current.kind === ts.SyntaxKind.SourceFile ||
-            ts.isStatement(current)
-        ) {
+        if (current.kind === ts.SyntaxKind.SourceFile || ts.isStatement(current)) {
             return false;
         }
         current = current.parent;
@@ -964,26 +764,13 @@ function moduleForLocalSymbol(ts, symbol) {
 function buildAppProgram(ts, appRoot, kitRoot) {
     const sourceRoot = path.join(appRoot, 'src');
     const kitIndexPath = path.join(kitRoot, 'src/index.ts');
-    const wrapperPath = path.join(
-        sourceRoot,
-        'shared/lib/@aragon/gov-ui-kit.ts',
-    );
+    const wrapperPath = path.join(sourceRoot, 'shared/lib/@aragon/gov-ui-kit.ts');
     const tsconfigPath = path.join(appRoot, 'tsconfig.json');
-    const configRead = exists(tsconfigPath)
-        ? ts.readConfigFile(tsconfigPath, ts.sys.readFile)
-        : { config: {} };
+    const configRead = exists(tsconfigPath) ? ts.readConfigFile(tsconfigPath, ts.sys.readFile) : { config: {} };
     if (configRead.error) {
-        throw new Error(
-            ts.flattenDiagnosticMessageText(configRead.error.messageText, '\n'),
-        );
+        throw new Error(ts.flattenDiagnosticMessageText(configRead.error.messageText, '\n'));
     }
-    const parsed = ts.parseJsonConfigFileContent(
-        configRead.config,
-        ts.sys,
-        appRoot,
-        {},
-        tsconfigPath,
-    );
+    const parsed = ts.parseJsonConfigFileContent(configRead.config, ts.sys, appRoot, {}, tsconfigPath);
     const options = {
         ...parsed.options,
         allowJs: true,
@@ -991,21 +778,16 @@ function buildAppProgram(ts, appRoot, kitRoot) {
         skipLibCheck: true,
         jsx: parsed.options.jsx ?? ts.JsxEmit.ReactJSX,
         module: parsed.options.module ?? ts.ModuleKind.ESNext,
-        moduleResolution:
-            parsed.options.moduleResolution ?? ts.ModuleResolutionKind.Bundler,
+        moduleResolution: parsed.options.moduleResolution ?? ts.ModuleResolutionKind.Bundler,
         target: parsed.options.target ?? ts.ScriptTarget.ES2017,
         baseUrl: parsed.options.baseUrl || appRoot,
         paths: {
             ...parsed.options.paths,
-            [PACKAGE_NAME]: parsed.options.paths?.[PACKAGE_NAME] || [
-                exists(wrapperPath) ? wrapperPath : kitIndexPath,
-            ],
+            [PACKAGE_NAME]: parsed.options.paths?.[PACKAGE_NAME] || [exists(wrapperPath) ? wrapperPath : kitIndexPath],
             [ORIGINAL_PACKAGE_NAME]: [kitIndexPath],
         },
     };
-    const rootFiles = walkFiles(sourceRoot).filter((file) =>
-        SOURCE_EXTENSIONS.has(path.extname(file).toLowerCase()),
-    );
+    const rootFiles = walkFiles(sourceRoot).filter((file) => SOURCE_EXTENSIONS.has(path.extname(file).toLowerCase()));
     rootFiles.push(kitIndexPath);
     const program = ts.createProgram(rootFiles, options);
     return { program, kitIndexPath, wrapperPath, sourceRoot };
@@ -1015,21 +797,13 @@ function buildKitSymbolIndex(ts, program, kitIndexPath, namesByKey) {
     const checker = program.getTypeChecker();
     const kitSource = program.getSourceFile(kitIndexPath);
     if (!kitSource) {
-        throw new Error(
-            `Combined program is missing kit entry: ${kitIndexPath}`,
-        );
+        throw new Error(`Combined program is missing kit entry: ${kitIndexPath}`);
     }
     const moduleSymbol = checker.getSymbolAtLocation(kitSource);
     if (!moduleSymbol) {
-        throw new Error(
-            'TypeScript did not produce a module symbol for the kit entry',
-        );
+        throw new Error('TypeScript did not produce a module symbol for the kit entry');
     }
-    const exportedByName = new Map(
-        checker
-            .getExportsOfModule(moduleSymbol)
-            .map((symbol) => [symbol.name, symbol]),
-    );
+    const exportedByName = new Map(checker.getExportsOfModule(moduleSymbol).map((symbol) => [symbol.name, symbol]));
     const symbolToNames = new Map();
     const addNames = (symbol, names) => {
         const resolved = resolveSymbol(ts, checker, symbol);
@@ -1044,10 +818,7 @@ function buildKitSymbolIndex(ts, program, kitIndexPath, namesByKey) {
         const declaration = firstDeclaration(symbol);
         let type;
         try {
-            type = checker.getTypeOfSymbolAtLocation(
-                symbol,
-                declaration || kitSource,
-            );
+            type = checker.getTypeOfSymbolAtLocation(symbol, declaration || kitSource);
         } catch {
             return null;
         }
@@ -1057,22 +828,13 @@ function buildKitSymbolIndex(ts, program, kitIndexPath, namesByKey) {
         }
         let resolved = resolveSymbol(ts, checker, property);
         const propertyDeclaration = firstDeclaration(resolved);
-        if (
-            propertyDeclaration &&
-            ts.isPropertyAssignment(propertyDeclaration)
-        ) {
-            const initializerSymbol = checker.getSymbolAtLocation(
-                propertyDeclaration.initializer,
-            );
+        if (propertyDeclaration && ts.isPropertyAssignment(propertyDeclaration)) {
+            const initializerSymbol = checker.getSymbolAtLocation(propertyDeclaration.initializer);
             if (initializerSymbol) {
                 resolved = resolveSymbol(ts, checker, initializerSymbol);
             }
-        } else if (
-            propertyDeclaration &&
-            ts.isShorthandPropertyAssignment(propertyDeclaration)
-        ) {
-            const initializerSymbol =
-                checker.getShorthandAssignmentValueSymbol(propertyDeclaration);
+        } else if (propertyDeclaration && ts.isShorthandPropertyAssignment(propertyDeclaration)) {
+            const initializerSymbol = checker.getShorthandAssignmentValueSymbol(propertyDeclaration);
             if (initializerSymbol) {
                 resolved = resolveSymbol(ts, checker, initializerSymbol);
             }
@@ -1080,9 +842,7 @@ function buildKitSymbolIndex(ts, program, kitIndexPath, namesByKey) {
         return resolved;
     };
     const records = new Set([...namesByKey.values()].filter(Boolean));
-    const recordsById = new Map(
-        [...records].map((record) => [record.id, record]),
-    );
+    const recordsById = new Map([...records].map((record) => [record.id, record]));
     const memberNamesByPath = new Map();
     const addMemberPaths = (prefix, member, seen = new Set()) => {
         memberNamesByPath.set(prefix, new Set(member.exportNames));
@@ -1105,9 +865,7 @@ function buildKitSymbolIndex(ts, program, kitIndexPath, namesByKey) {
         }
     }
     for (const record of records) {
-        const rootExport =
-            exportedByName.get(record.name) ||
-            exportedByName.get(record.exportNames[0]);
+        const rootExport = exportedByName.get(record.name) || exportedByName.get(record.exportNames[0]);
         if (!rootExport) {
             continue;
         }
@@ -1133,20 +891,15 @@ function resolveReferenceTarget(ts, checker, id) {
     if (!symbol) {
         return null;
     }
-    const declaration =
-        symbol.valueDeclaration || symbol.getDeclarations?.()?.[0];
+    const declaration = symbol.valueDeclaration || symbol.getDeclarations?.()?.[0];
     if (declaration) {
-        if (
-            ts.isPropertyAssignment(declaration) &&
-            ts.isIdentifier(declaration.initializer)
-        ) {
+        if (ts.isPropertyAssignment(declaration) && ts.isIdentifier(declaration.initializer)) {
             const target = checker.getSymbolAtLocation(declaration.initializer);
             if (target) {
                 symbol = target;
             }
         } else if (ts.isShorthandPropertyAssignment(declaration)) {
-            const target =
-                checker.getShorthandAssignmentValueSymbol(declaration);
+            const target = checker.getShorthandAssignmentValueSymbol(declaration);
             if (target) {
                 symbol = target;
             }
@@ -1157,107 +910,57 @@ function resolveReferenceTarget(ts, checker, id) {
 
 function extractUsage(ts, appRoot, namesByKey, kitRoot) {
     const usage = new Map();
-    const { program, kitIndexPath, wrapperPath, sourceRoot } = buildAppProgram(
-        ts,
-        appRoot,
-        kitRoot,
-    );
-    const { checker, symbolToNames, memberNamesByPath } = buildKitSymbolIndex(
-        ts,
-        program,
-        kitIndexPath,
-        namesByKey,
-    );
-    const wrapperText = exists(wrapperPath)
-        ? fs.readFileSync(wrapperPath, 'utf8')
-        : '';
+    const { program, kitIndexPath, wrapperPath, sourceRoot } = buildAppProgram(ts, appRoot, kitRoot);
+    const { checker, symbolToNames, memberNamesByPath } = buildKitSymbolIndex(ts, program, kitIndexPath, namesByKey);
+    const wrapperText = exists(wrapperPath) ? fs.readFileSync(wrapperPath, 'utf8') : '';
     const wrapperExportOffset = wrapperText.search(/\bexport\b/u);
-    const wrapperLine =
-        wrapperExportOffset < 0
-            ? 1
-            : wrapperText.slice(0, wrapperExportOffset).split('\n').length;
+    const wrapperLine = wrapperExportOffset < 0 ? 1 : wrapperText.slice(0, wrapperExportOffset).split('\n').length;
     const wrapperRef = repositoryRef('app', appRoot, wrapperPath, wrapperLine);
     const kitPrefix = `${path.resolve(kitRoot)}${path.sep}`;
     const appSrcPrefix = `${path.resolve(sourceRoot)}${path.sep}`;
     const recordStylesheet = (specifier, file, line) => {
-        const name = specifier.match(
-            /(?:^|\/node_modules\/)@aragon\/gov-ui-kit(?:-original)?\/(.+\.css)$/u,
-        )?.[1];
+        const name = specifier.match(/(?:^|\/node_modules\/)@aragon\/gov-ui-kit(?:-original)?\/(.+\.css)$/u)?.[1];
         if (name && namesByKey.has(name)) {
             recordUsage(
                 usage,
                 name,
-                usageRef(
-                    appRoot,
-                    file,
-                    line,
-                    'value',
-                    classifyUsageType(appRoot, file),
-                    name,
-                    specifier,
-                    null,
-                ),
+                usageRef(appRoot, file, line, 'value', classifyUsageType(appRoot, file), name, specifier, null),
             );
         }
     };
     for (const sourceFile of program.getSourceFiles()) {
         const fileName = path.resolve(sourceFile.fileName);
-        if (
-            !fileName.startsWith(appSrcPrefix) ||
-            fileName.startsWith(kitPrefix)
-        ) {
+        if (!fileName.startsWith(appSrcPrefix) || fileName.startsWith(kitPrefix)) {
             continue;
         }
-        if (
-            !SOURCE_EXTENSIONS.has(path.extname(fileName).toLowerCase()) ||
-            fileName.endsWith('.d.ts')
-        ) {
+        if (!SOURCE_EXTENSIONS.has(path.extname(fileName).toLowerCase()) || fileName.endsWith('.d.ts')) {
             continue;
         }
         const usageType = classifyUsageType(appRoot, fileName);
         const visit = (node) => {
-            if (
-                ts.isImportDeclaration(node) &&
-                ts.isStringLiteral(node.moduleSpecifier)
-            ) {
+            if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
                 recordStylesheet(
                     node.moduleSpecifier.text,
                     fileName,
-                    sourceFile.getLineAndCharacterOfPosition(
-                        node.getStart(sourceFile),
-                    ).line + 1,
+                    sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1,
                 );
             }
             // Object keys (`{ wrapper: GukModulesProvider }`) resolve through their
             // initializer; the initializer identifier is the real reference.
-            const isPropertyKey =
-                node.parent &&
-                ts.isPropertyAssignment(node.parent) &&
-                node.parent.name === node;
-            if (
-                ts.isIdentifier(node) &&
-                !isPropertyKey &&
-                !isImportBindingName(ts, node)
-            ) {
-                const isMember =
-                    node.parent &&
-                    ts.isPropertyAccessExpression(node.parent) &&
-                    node.parent.name === node;
+            const isPropertyKey = node.parent && ts.isPropertyAssignment(node.parent) && node.parent.name === node;
+            if (ts.isIdentifier(node) && !isPropertyKey && !isImportBindingName(ts, node)) {
+                const isMember = node.parent && ts.isPropertyAccessExpression(node.parent) && node.parent.name === node;
                 const target = resolveReferenceTarget(ts, checker, node);
                 let names = target && symbolToNames.get(target);
                 if (!names && isMember) {
                     const memberText = node.parent.getText(sourceFile);
                     const baseId = leftmostIdentifier(ts, node.parent);
-                    const baseTarget =
-                        baseId && resolveReferenceTarget(ts, checker, baseId);
-                    const baseNames =
-                        baseTarget && symbolToNames.get(baseTarget);
+                    const baseTarget = baseId && resolveReferenceTarget(ts, checker, baseId);
+                    const baseNames = baseTarget && symbolToNames.get(baseTarget);
                     if (baseNames && baseId) {
                         const suffix = memberText.slice(baseId.text.length);
                         for (const baseName of baseNames) {
-                            names = memberNamesByPath.get(
-                                `${baseName}${suffix}`,
-                            );
+                            names = memberNamesByPath.get(`${baseName}${suffix}`);
                             if (names) {
                                 break;
                             }
@@ -1265,35 +968,17 @@ function extractUsage(ts, appRoot, namesByKey, kitRoot) {
                     }
                 }
                 if (names) {
-                    const line =
-                        sourceFile.getLineAndCharacterOfPosition(
-                            node.getStart(sourceFile),
-                        ).line + 1;
+                    const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
                     const kind = classifyRefKind(ts, node);
-                    const baseId = isMember
-                        ? leftmostIdentifier(ts, node.parent)
-                        : node;
-                    const baseSymbol = baseId
-                        ? checker.getSymbolAtLocation(baseId)
-                        : null;
+                    const baseId = isMember ? leftmostIdentifier(ts, node.parent) : node;
+                    const baseSymbol = baseId ? checker.getSymbolAtLocation(baseId) : null;
                     const module = moduleForLocalSymbol(ts, baseSymbol);
-                    const localName = isMember
-                        ? node.parent.getText(sourceFile)
-                        : node.text;
+                    const localName = isMember ? node.parent.getText(sourceFile) : node.text;
                     for (const name of names) {
                         recordUsage(
                             usage,
                             name,
-                            usageRef(
-                                appRoot,
-                                fileName,
-                                line,
-                                kind,
-                                usageType,
-                                localName,
-                                module,
-                                wrapperRef,
-                            ),
+                            usageRef(appRoot, fileName, line, kind, usageType, localName, module, wrapperRef),
                         );
                     }
                 }
@@ -1303,21 +988,13 @@ function extractUsage(ts, appRoot, namesByKey, kitRoot) {
         visit(sourceFile);
     }
     const cssImport = /^\s*@import\s+(?:url\(\s*)?(['"])([^'"\r\n]+)\1/gmu;
-    for (const file of walkFiles(sourceRoot).filter((candidate) =>
-        candidate.endsWith('.css'),
-    )) {
+    for (const file of walkFiles(sourceRoot).filter((candidate) => candidate.endsWith('.css'))) {
         const text = fs
             .readFileSync(file, 'utf8')
-            .replace(/\/\*[\s\S]*?\*\//gu, (comment) =>
-                comment.replace(/[^\n]/gu, ' '),
-            );
+            .replace(/\/\*[\s\S]*?\*\//gu, (comment) => comment.replace(/[^\n]/gu, ' '));
         for (const match of text.matchAll(cssImport)) {
             const offset = match.index + match[0].indexOf('@import');
-            recordStylesheet(
-                match[2],
-                file,
-                text.slice(0, offset).split('\n').length,
-            );
+            recordStylesheet(match[2], file, text.slice(0, offset).split('\n').length);
         }
     }
     for (const [name, refs] of usage) {
@@ -1365,10 +1042,8 @@ function statusForEvidence(evidence, roots) {
 function mergeIntent(previous, component, roots) {
     const old =
         previous instanceof Map
-            ? previous.get(component.id) ||
-              previous.get(`govkit:${component.name}`)
-            : previous?.[component.id] ||
-              previous?.[`govkit:${component.name}`];
+            ? previous.get(component.id) || previous.get(`govkit:${component.name}`)
+            : previous?.[component.id] || previous?.[`govkit:${component.name}`];
     const intent = { ...defaultIntent(), ...clone(old || {}) };
     intent.ownership = {
         ...defaultIntent().ownership,
@@ -1376,12 +1051,8 @@ function mergeIntent(previous, component, roots) {
     };
     intent.review = { ...defaultIntent().review, ...(old?.review || {}) };
     intent.evidence = Array.isArray(old?.evidence) ? clone(old.evidence) : [];
-    intent.evidenceStatus = intent.evidence.map((evidence) =>
-        statusForEvidence(evidence, roots),
-    );
-    intent.stale =
-        Boolean(old?.stale) ||
-        intent.evidenceStatus.some((entry) => entry.status !== 'current');
+    intent.evidenceStatus = intent.evidence.map((evidence) => statusForEvidence(evidence, roots));
+    intent.stale = Boolean(old?.stale) || intent.evidenceStatus.some((entry) => entry.status !== 'current');
     return intent;
 }
 
@@ -1398,9 +1069,7 @@ function loadPreviousIntents(registryPath = REGISTRY_PATH) {
     }
     return {
         intents,
-        ids: new Set(
-            (previous.components || []).map((component) => component.id),
-        ),
+        ids: new Set((previous.components || []).map((component) => component.id)),
         provenance: previous.provenance || null,
     };
 }
@@ -1429,13 +1098,8 @@ function consumedDependency(appRoot) {
             lock: { specifier: 'unknown', version: null },
         };
     }
-    const nextImporter = lockText
-        .slice(importerStart + 1)
-        .search(/\n {2}[^\s].*:\n/u);
-    const importer = lockText.slice(
-        importerStart,
-        nextImporter < 0 ? undefined : importerStart + 1 + nextImporter,
-    );
+    const nextImporter = lockText.slice(importerStart + 1).search(/\n {2}[^\s].*:\n/u);
+    const importer = lockText.slice(importerStart, nextImporter < 0 ? undefined : importerStart + 1 + nextImporter);
     const match = importer.match(
         /\n\s+['"]?@aragon\/gov-ui-kit['"]?:\s*\n\s+specifier:\s*['"]?([^'"\n]+)['"]?\s*\n\s+version:\s*([^\s(]+)/u,
     );
@@ -1462,63 +1126,35 @@ function artifactFiles(root, relativeRoot, predicate = () => true) {
 function artifactTreesMatch(kitRoot, consumedRoot) {
     const compareTree = (relativeRoot, predicate) => {
         const kitFiles = artifactFiles(kitRoot, relativeRoot, predicate);
-        const consumedFiles = artifactFiles(
-            consumedRoot,
-            relativeRoot,
-            predicate,
-        );
-        if (
-            !kitFiles ||
-            !consumedFiles ||
-            !isDeepStrictEqual(kitFiles, consumedFiles)
-        ) {
+        const consumedFiles = artifactFiles(consumedRoot, relativeRoot, predicate);
+        if (!kitFiles || !consumedFiles || !isDeepStrictEqual(kitFiles, consumedFiles)) {
             return false;
         }
         return kitFiles.every((relative) => {
             const kitPath = path.join(kitRoot, relativeRoot, relative);
-            const consumedPath = path.join(
-                consumedRoot,
-                relativeRoot,
-                relative,
-            );
+            const consumedPath = path.join(consumedRoot, relativeRoot, relative);
             return sha256(kitPath) === sha256(consumedPath);
         });
     };
     const fixedFilesMatch = ['index.css', 'build.css'].every((relative) => {
         const kitPath = path.join(kitRoot, relative);
         const consumedPath = path.join(consumedRoot, relative);
-        return (
-            exists(kitPath) &&
-            exists(consumedPath) &&
-            sha256(kitPath) === sha256(consumedPath)
-        );
+        return exists(kitPath) && exists(consumedPath) && sha256(kitPath) === sha256(consumedPath);
     });
     const sourceAssetMatch = compareTree(
         'src',
-        (relative) =>
-            relative.endsWith('.css') || relative.startsWith('theme/fonts/'),
+        (relative) => relative.endsWith('.css') || relative.startsWith('theme/fonts/'),
     );
     return fixedFilesMatch && compareTree('dist') && sourceAssetMatch;
 }
 
-function makeProvenance(
-    roots,
-    exportsInfo,
-    packageInfo,
-    previousProvenance = null,
-) {
+function makeProvenance(roots, exportsInfo, packageInfo, previousProvenance = null) {
     const installedRoot = roots.consumedRoot;
     const installedPackageJsonPath = path.join(installedRoot, 'package.json');
-    const installedPackageJson = exists(installedPackageJsonPath)
-        ? readJson(installedPackageJsonPath)
-        : null;
+    const installedPackageJson = exists(installedPackageJsonPath) ? readJson(installedPackageJsonPath) : null;
     const dist = {};
     const addDistTarget = (target) => {
-        if (
-            !installedRoot ||
-            typeof target !== 'string' ||
-            !target.startsWith('.')
-        ) {
+        if (!installedRoot || typeof target !== 'string' || !target.startsWith('.')) {
             return;
         }
         const absolute = path.resolve(installedRoot, target);
@@ -1546,9 +1182,7 @@ function makeProvenance(
         for (const key of ['main', 'types']) {
             addDistTarget(installedPackageJson[key]);
         }
-        for (const [subpath, target] of Object.entries(
-            installedPackageJson.exports || {},
-        )) {
+        for (const [subpath, target] of Object.entries(installedPackageJson.exports || {})) {
             if (subpath === '.' || /\.css$/u.test(subpath)) {
                 for (const publishedTarget of exportTargets(target)) {
                     addDistTarget(publishedTarget);
@@ -1561,23 +1195,17 @@ function makeProvenance(
     const appGitPaths = appGitRoot
         ? [
               path.join(path.relative(appGitRoot, roots.appRoot), 'src'),
-              path.join(
-                  path.relative(appGitRoot, roots.appRoot),
-                  'package.json',
-              ),
-              path.join(
-                  path.relative(appGitRoot, roots.appRoot),
-                  'tsconfig.json',
-              ),
+              path.join(path.relative(appGitRoot, roots.appRoot), 'package.json'),
+              path.join(path.relative(appGitRoot, roots.appRoot), 'tsconfig.json'),
               'pnpm-workspace.yaml',
               'pnpm-lock.yaml',
-              '.design-sync/config.json',
           ]
         : ['src', 'package.json', 'tsconfig.json'];
     const kit = {
         root: 'kit',
         commit: gitCommit(roots.kitRoot),
-        dirty: gitDirty(roots.kitRoot, ['.']),
+        // The registry lives inside the kit; its own files are output, not build input.
+        dirty: gitDirty(roots.kitRoot, ['.', ':(exclude)design-system']),
         sourceVersion: packageInfo.version || 'unknown',
         entrypoints: { js: exportsInfo.js, css: exportsInfo.css },
     };
@@ -1590,11 +1218,7 @@ function makeProvenance(
         dist,
         sourceEquivalence: 'unknown',
     };
-    if (
-        installedPackageJson?.version &&
-        packageInfo.version &&
-        installedPackageJson.version !== packageInfo.version
-    ) {
+    if (installedPackageJson?.version && packageInfo.version && installedPackageJson.version !== packageInfo.version) {
         consumed.sourceEquivalence = 'diverged';
     } else if (
         kit.commit &&
@@ -1603,10 +1227,7 @@ function makeProvenance(
         previousProvenance.kit?.commit === kit.commit &&
         previousProvenance.kit?.dirty?.length === 0 &&
         previousProvenance.kit?.sourceVersion === kit.sourceVersion &&
-        isDeepStrictEqual(
-            previousProvenance.kit?.entrypoints,
-            kit.entrypoints,
-        ) &&
+        isDeepStrictEqual(previousProvenance.kit?.entrypoints, kit.entrypoints) &&
         previousProvenance.consumed?.version === consumed.version &&
         isDeepStrictEqual(previousProvenance.consumed?.dist, consumed.dist) &&
         artifactTreesMatch(roots.kitRoot, roots.consumedRoot)
@@ -1626,26 +1247,15 @@ function makeProvenance(
             kitReexportBoundary: repositoryRef(
                 'app',
                 roots.appRoot,
-                path.join(
-                    roots.appRoot,
-                    'src/shared/lib/@aragon/gov-ui-kit.ts',
-                ),
+                path.join(roots.appRoot, 'src/shared/lib/@aragon/gov-ui-kit.ts'),
                 3,
             )
                 ? {
                       path: relativePath(
                           roots.appRoot,
-                          path.join(
-                              roots.appRoot,
-                              'src/shared/lib/@aragon/gov-ui-kit.ts',
-                          ),
+                          path.join(roots.appRoot, 'src/shared/lib/@aragon/gov-ui-kit.ts'),
                       ),
-                      sha256: sha256(
-                          path.join(
-                              roots.appRoot,
-                              'src/shared/lib/@aragon/gov-ui-kit.ts',
-                          ),
-                      ),
+                      sha256: sha256(path.join(roots.appRoot, 'src/shared/lib/@aragon/gov-ui-kit.ts')),
                       note: 'The public app alias re-exports the original package; export-star is not counted as direct component usage.',
                   }
                 : null,
@@ -1667,27 +1277,15 @@ function buildRegistry(options = {}) {
     const ts = loadTypeScript(roots.kitRoot);
     const usage = extractUsage(ts, roots.appRoot, usageNames, roots.kitRoot);
     const previous =
-        options.preserveCurated === false
-            ? { intents: new Map(), ids: new Set() }
-            : loadPreviousIntents(registryPath);
+        options.preserveCurated === false ? { intents: new Map(), ids: new Set() } : loadPreviousIntents(registryPath);
     const records = exportsInfo.records.map((record) => {
-        const usageNamesForRecord = [
-            ...record.exportNames,
-            ...record.members.flatMap((member) => member.exportNames),
-        ];
-        const refs = dedupeRefs(
-            usageNamesForRecord.flatMap((name) => usage.get(name) || []),
-        );
+        const usageNamesForRecord = [...record.exportNames, ...record.members.flatMap((member) => member.exportNames)];
+        const refs = dedupeRefs(usageNamesForRecord.flatMap((name) => usage.get(name) || []));
         return {
             ...record,
             usage: {
                 found: refs.length > 0,
-                reachableViaReexport: exists(
-                    path.join(
-                        roots.appRoot,
-                        'src/shared/lib/@aragon/gov-ui-kit.ts',
-                    ),
-                ),
+                reachableViaReexport: exists(path.join(roots.appRoot, 'src/shared/lib/@aragon/gov-ui-kit.ts')),
                 scope: 'Static references in <app>/src TS/JS files, including import aliases, transparent re-exports and compound members. Bare unused imports, Markdown/MDX prose, kit-internal usage and runtime reachability are excluded.',
                 refs,
             },
@@ -1722,24 +1320,15 @@ function buildRegistry(options = {}) {
             intent: mergeIntent(previous.intents, baseRecord, roots),
         };
     });
-    const components = [...records, ...cssRecords].sort((a, b) =>
-        a.id.localeCompare(b.id),
-    );
+    const components = [...records, ...cssRecords].sort((a, b) => a.id.localeCompare(b.id));
     const currentIds = new Set(components.map((component) => component.id));
     const orphaned = [...previous.ids].filter((id) => !currentIds.has(id));
     if (orphaned.length > 0 && options.failOnOrphan !== false) {
-        throw new Error(
-            `Curated intent references missing exports: ${orphaned.sort().join(', ')}`,
-        );
+        throw new Error(`Curated intent references missing exports: ${orphaned.sort().join(', ')}`);
     }
     return {
         schemaVersion: DEFAULT_SCHEMA_VERSION,
-        provenance: makeProvenance(
-            roots,
-            packageInfo,
-            packageInfo.packageJson,
-            previous.provenance,
-        ),
+        provenance: makeProvenance(roots, packageInfo, packageInfo.packageJson, previous.provenance),
         components,
     };
 }
@@ -1748,12 +1337,7 @@ function collectReferences(value, references = []) {
     if (!value || typeof value !== 'object') {
         return references;
     }
-    if (
-        value.repository &&
-        value.path &&
-        Number.isInteger(value.line) &&
-        value.sha256
-    ) {
+    if (value.repository && value.path && Number.isInteger(value.line) && value.sha256) {
         references.push(value);
         if (value.via && typeof value.via === 'object') {
             collectReferences(value.via, references);
@@ -1767,22 +1351,16 @@ function collectReferences(value, references = []) {
 }
 
 function validateReference(reference, roots, allowStale) {
-    const root = path.resolve(
-        reference.repository === 'app' ? roots.appRoot : roots.kitRoot,
-    );
+    const root = path.resolve(reference.repository === 'app' ? roots.appRoot : roots.kitRoot);
     const absolute = path.resolve(root, reference.path);
     if (absolute !== root && !absolute.startsWith(`${root}${path.sep}`)) {
-        throw new Error(
-            `Reference escapes ${reference.repository} root: ${reference.path}`,
-        );
+        throw new Error(`Reference escapes ${reference.repository} root: ${reference.path}`);
     }
     if (!exists(absolute)) {
         if (allowStale) {
             return;
         }
-        throw new Error(
-            `Missing ${reference.repository} reference: ${reference.path}`,
-        );
+        throw new Error(`Missing ${reference.repository} reference: ${reference.path}`);
     }
     const actual = sha256(absolute);
     if (actual !== reference.sha256 && !allowStale) {
@@ -1792,9 +1370,7 @@ function validateReference(reference, roots, allowStale) {
     }
     const lineCount = fs.readFileSync(absolute, 'utf8').split('\n').length;
     if (reference.line > lineCount && !allowStale) {
-        throw new Error(
-            `Line ${reference.line} is outside ${reference.repository}:${reference.path}`,
-        );
+        throw new Error(`Line ${reference.line} is outside ${reference.repository}:${reference.path}`);
     }
 }
 
@@ -1820,53 +1396,29 @@ function semanticValidate(registry, roots) {
             exportNames.add(exportName);
         }
         for (const reference of collectReferences(component)) {
-            const isIntentEvidence =
-                component.intent?.evidence?.includes(reference);
+            const isIntentEvidence = component.intent?.evidence?.includes(reference);
             const status = component.intent?.evidenceStatus?.find(
-                (entry) =>
-                    entry.repository === reference.repository &&
-                    entry.path === reference.path,
+                (entry) => entry.repository === reference.repository && entry.path === reference.path,
             );
-            validateReference(
-                reference,
-                roots,
-                Boolean(
-                    isIntentEvidence && status && status.status !== 'current',
-                ),
-            );
+            validateReference(reference, roots, Boolean(isIntentEvidence && status && status.status !== 'current'));
         }
         for (const related of component.intent.related) {
             if (
                 !componentsByName.has(related.name) &&
-                !registry.components.some((candidate) =>
-                    candidate.exportNames.includes(related.name),
-                )
+                !registry.components.some((candidate) => candidate.exportNames.includes(related.name))
             ) {
-                throw new Error(
-                    `${component.id} intent.related references unknown component: ${related.name}`,
-                );
+                throw new Error(`${component.id} intent.related references unknown component: ${related.name}`);
             }
         }
-        const expectedStale = component.intent.evidenceStatus.some(
-            (entry) => entry.status !== 'current',
-        );
-        if (
-            expectedStale !== component.intent.stale &&
-            !component.intent.stale
-        ) {
-            throw new Error(
-                `${component.id} intent stale flag does not match evidenceStatus`,
-            );
+        const expectedStale = component.intent.evidenceStatus.some((entry) => entry.status !== 'current');
+        if (expectedStale !== component.intent.stale && !component.intent.stale) {
+            throw new Error(`${component.id} intent stale flag does not match evidenceStatus`);
         }
         if (
             component.intent.review.state === 'human-reviewed' &&
-            (!component.intent.review.by ||
-                !component.intent.review.at ||
-                component.intent.evidence.length === 0)
+            (!component.intent.review.by || !component.intent.review.at || component.intent.evidence.length === 0)
         ) {
-            throw new Error(
-                `${component.id} human-reviewed intent requires reviewer, date and evidence`,
-            );
+            throw new Error(`${component.id} human-reviewed intent requires reviewer, date and evidence`);
         }
     }
     return { ids, names, exportNames };
@@ -1903,9 +1455,7 @@ function main(argv = process.argv.slice(2)) {
         const filePath = argv[1] ? path.resolve(argv[1]) : REGISTRY_PATH;
         const registry = readJson(filePath);
         validateRegistry(registry);
-        process.stdout.write(
-            `Validated ${registry.components.length} registry records\n`,
-        );
+        process.stdout.write(`Validated ${registry.components.length} registry records\n`);
         return;
     }
     if (command === 'check') {
@@ -1926,60 +1476,36 @@ function main(argv = process.argv.slice(2)) {
             provenance: Object.fromEntries(
                 Object.entries(registry.provenance ?? {}).map(([key, value]) =>
                     key === 'app' || key === 'kit'
-                        ? [
-                              key,
-                              { ...value, commit: undefined, dirty: undefined },
-                          ]
+                        ? [key, { ...value, commit: undefined, dirty: undefined }]
                         : [key, value],
                 ),
             ),
         });
         if (!isDeepStrictEqual(sources(current), sources(regenerated))) {
-            throw new Error(
-                `Registry is stale; run node ${relativePath(process.cwd(), SCRIPT_PATH)} extract`,
-            );
+            throw new Error(`Registry is stale; run node ${relativePath(process.cwd(), SCRIPT_PATH)} extract`);
         }
         const drift = ['app', 'kit']
-            .filter(
-                (root) =>
-                    current.provenance?.[root]?.commit !==
-                    regenerated.provenance?.[root]?.commit,
-            )
+            .filter((root) => current.provenance?.[root]?.commit !== regenerated.provenance?.[root]?.commit)
             .map(
                 (root) =>
                     `${root} ${current.provenance?.[root]?.commit ?? 'none'} -> ${regenerated.provenance?.[root]?.commit ?? 'none'}`,
             );
         if (drift.length) {
-            process.stdout.write(
-                `Recorded revision moved with unchanged sources: ${drift.join('; ')}\n`,
-            );
+            process.stdout.write(`Recorded revision moved with unchanged sources: ${drift.join('; ')}\n`);
         }
-        process.stdout.write(
-            `Registry is current (${current.components.length} records)\n`,
-        );
+        process.stdout.write(`Registry is current (${current.components.length} records)\n`);
         return;
     }
-    throw new Error(
-        `Unknown command ${command}; expected extract, validate or check`,
-    );
+    throw new Error(`Unknown command ${command}; expected extract, validate or check`);
 }
 
-export {
-    buildRegistry,
-    extractExports,
-    extractUsage,
-    main,
-    semanticValidate,
-    validateRegistry,
-};
+export { buildRegistry, extractExports, extractUsage, main, semanticValidate, validateRegistry };
 
 if (path.resolve(process.argv[1] || '') === path.resolve(SCRIPT_PATH)) {
     try {
         main();
     } catch (error) {
-        process.stderr.write(
-            `${error instanceof Error ? error.message : String(error)}\n`,
-        );
+        process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
         process.exitCode = 1;
     }
 }

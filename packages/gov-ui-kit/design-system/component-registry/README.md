@@ -2,19 +2,19 @@
 
 `registry.json` lists every public `@aragon/gov-ui-kit` export with its source, stories,
 props, App usages and curated selection intent. `selection-guide.json` and
-`../guidelines/selection-guide.md` are generated views of it; the Markdown ships to Claude
-Design.
+`../selection-guide.md` are generated views of it; the Markdown ships with the design system
+(see `../SYNC.md`).
 
 ## Update
 
 From the repo root:
 
 ```sh
-node .design-sync/component-registry/registry.mjs extract
-node .design-sync/component-registry/selection-guide.mjs generate
-node .design-sync/component-registry/registry.mjs check
-node .design-sync/component-registry/selection-guide.mjs check
-node --test .design-sync/component-registry/registry.test.mjs .design-sync/component-registry/selection-guide.test.mjs
+node packages/gov-ui-kit/design-system/component-registry/registry.mjs extract
+node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs generate
+node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
+node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
+node --test packages/gov-ui-kit/design-system/component-registry/*.test.mjs
 ```
 
 - Edit curated intent (`description`, `useWhen`, `alternatives`, `keyProps`, `constraints`,

@@ -15,8 +15,8 @@ Ensure consistency and maintainability by following our coding guidelines:
 
 - [Forms and wizards](./projectDocs/formsAndWizards.md) — how App form inputs, wizards and
   dialogs compose.
-- [GovKit usage conventions](../../../.design-sync/conventions.md) — kit component selection,
-  composition and styling; also the README header of the GovKit design system in Claude Design.
+- [GovKit usage conventions](../../../packages/gov-ui-kit/design-system/conventions.md) — kit
+  component selection, composition and styling; also the README of the GovKit design system.
 - [GovKit Storybook](https://aragon.github.io/gov-ui-kit/) — published component examples.
 
 ## Project Docs

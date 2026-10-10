@@ -4,12 +4,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
-import {
-    buildGuide,
-    checkGuide,
-    renderMarkdown,
-    validateGuide,
-} from './selection-guide.mjs';
+import { buildGuide, checkGuide, renderMarkdown, validateGuide } from './selection-guide.mjs';
 
 const REVIEW_QUESTION_PREFIX = 'Review question (maintainer discussion):';
 
@@ -24,9 +19,7 @@ function makeRegistry() {
         exportNames: [name],
         exports: [{ entrypoint: '.', name }],
         source: { repository: 'kit', path: `src/${name}.tsx`, line: 1 },
-        stories: [
-            { repository: 'kit', path: `src/${name}.stories.tsx`, line: 1 },
-        ],
+        stories: [{ repository: 'kit', path: `src/${name}.stories.tsx`, line: 1 }],
         intent: {
             review: { state: 'unreviewed', by: null, at: null },
             ...intent,
@@ -43,14 +36,9 @@ function makeRegistry() {
                 {
                     description: 'A button',
                     useWhen: ['clicking'],
-                    constraints: [
-                        'avoid double submit',
-                        `${REVIEW_QUESTION_PREFIX} should this be split?`,
-                    ],
+                    constraints: ['avoid double submit', `${REVIEW_QUESTION_PREFIX} should this be split?`],
                     alternatives: [{ id: 'kit:Link', useWhen: 'navigation' }],
-                    keyProps: [
-                        { name: 'variant', contract: 'primary|secondary' },
-                    ],
+                    keyProps: [{ name: 'variant', contract: 'primary|secondary' }],
                     composition: ['kit:Card', 'wrap in a form'],
                     related: [
                         {
@@ -117,12 +105,8 @@ function entryById(guide, id) {
 test('preserves registry-curated utility methods and UI keyProps', () => {
     const registry = makeRegistry();
     const guide = buildGuide(registry);
-    assert.deepEqual(entryById(guide, 'kit:formatUtils').methods, [
-        { name: 'toWei', contract: 'string -> bigint' },
-    ]);
-    assert.deepEqual(entryById(guide, 'kit:Button').keyProps, [
-        { name: 'variant', contract: 'primary|secondary' },
-    ]);
+    assert.deepEqual(entryById(guide, 'kit:formatUtils').methods, [{ name: 'toWei', contract: 'string -> bigint' }]);
+    assert.deepEqual(entryById(guide, 'kit:Button').keyProps, [{ name: 'variant', contract: 'primary|secondary' }]);
 });
 
 test('projects kind-appropriate fields for UI and utility entries', () => {
@@ -138,26 +122,14 @@ test('projects kind-appropriate fields for UI and utility entries', () => {
 
 test('renders entries and enum values without discussion questions', () => {
     const markdown = renderMarkdown(buildGuide(makeRegistry()));
-    const button = markdown.slice(
-        markdown.indexOf('### Button'),
-        markdown.indexOf('### Link'),
-    );
-    assert.match(
-        button,
-        /\*\*Usage notes\*\*\n\n- label stays visible while loading/,
-    );
+    const button = markdown.slice(markdown.indexOf('### Button'), markdown.indexOf('### Link'));
+    assert.match(button, /\*\*Usage notes\*\*\n\n- label stays visible while loading/);
     assert.match(button, /\*\*Use when\*\*\n\n- clicking/);
     assert.match(button, /\*\*Instead\*\*\n\n- `kit:Link`: navigation/);
     assert.match(button, /- `variant`: primary\|secondary/);
     assert.doesNotMatch(markdown, /Review question/);
-    assert.match(
-        markdown,
-        /## Utilities\n\n### formatUtils[\s\S]*- `toWei`: string -> bigint/,
-    );
-    assert.match(
-        markdown,
-        /## Allowed values[\s\S]*### SomeEnum\n\n`FIRST`, `SECOND`/,
-    );
+    assert.match(markdown, /## Utilities\n\n### formatUtils[\s\S]*- `toWei`: string -> bigint/);
+    assert.match(markdown, /## Allowed values[\s\S]*### SomeEnum\n\n`FIRST`, `SECOND`/);
     assert.doesNotMatch(markdown, /### SomeEnum\n\nnot eligible/);
 });
 
@@ -165,12 +137,7 @@ test('includes every eligible id regardless of review state', () => {
     const registry = makeRegistry();
     const guide = buildGuide(registry);
     const ids = guide.entries.map((entry) => entry.id).sort();
-    assert.deepEqual(ids, [
-        'kit:Button',
-        'kit:Card',
-        'kit:Link',
-        'kit:formatUtils',
-    ]);
+    assert.deepEqual(ids, ['kit:Button', 'kit:Card', 'kit:Link', 'kit:formatUtils']);
     assert.ok(guide.entries.every((entry) => !('review' in entry)));
     validateGuide(guide, registry);
 });
@@ -178,9 +145,7 @@ test('includes every eligible id regardless of review state', () => {
 test('excludes maintainer discussion questions from the projection', () => {
     const registry = makeRegistry();
     const guide = buildGuide(registry);
-    assert.deepEqual(entryById(guide, 'kit:Button').constraints, [
-        'avoid double submit',
-    ]);
+    assert.deepEqual(entryById(guide, 'kit:Button').constraints, ['avoid double submit']);
     assert.ok(!JSON.stringify(guide).includes(REVIEW_QUESTION_PREFIX));
 });
 
@@ -199,10 +164,7 @@ test('rejects a discussion question that leaks into the guide', () => {
     const registry = makeRegistry();
     const broken = structuredClone(buildGuide(registry));
     broken.entries[0].constraints.push(`${REVIEW_QUESTION_PREFIX} nope`);
-    assert.throws(
-        () => validateGuide(broken, registry),
-        /must not include maintainer review-question prose/,
-    );
+    assert.throws(() => validateGuide(broken, registry), /must not include maintainer review-question prose/);
 });
 
 test('rejects an alternative id that is not a registry entry', () => {
@@ -212,40 +174,28 @@ test('rejects an alternative id that is not a registry entry', () => {
         id: 'kit:Missing',
         useWhen: 'bad',
     });
-    assert.throws(
-        () => validateGuide(broken, registry),
-        /alternative id is not in guide/,
-    );
+    assert.throws(() => validateGuide(broken, registry), /alternative id is not in guide/);
 });
 
 test('rejects a stale source registry fingerprint', () => {
     const registry = makeRegistry();
     const broken = structuredClone(buildGuide(registry));
     broken.metadata.sourceRegistry.sha256 = 'stale';
-    assert.throws(
-        () => validateGuide(broken, registry),
-        /source registry fingerprint is stale/,
-    );
+    assert.throws(() => validateGuide(broken, registry), /source registry fingerprint is stale/);
 });
 
 test('rejects a guide missing an eligible source entry', () => {
     const registry = makeRegistry();
     const broken = structuredClone(buildGuide(registry));
     broken.entries.pop();
-    assert.throws(
-        () => validateGuide(broken, registry),
-        /id set does not match source registry id set/,
-    );
+    assert.throws(() => validateGuide(broken, registry), /id set does not match source registry id set/);
 });
 
 test('rejects UI-only keyProps on a utility entry', () => {
     const registry = makeRegistry();
     const broken = structuredClone(buildGuide(registry));
     entryById(broken, 'kit:formatUtils').keyProps = [];
-    assert.throws(
-        () => validateGuide(broken, registry),
-        /utility must not carry UI-only fields/,
-    );
+    assert.throws(() => validateGuide(broken, registry), /utility must not carry UI-only fields/);
 });
 
 test('checkGuide accepts freshly generated output and rejects edits', async () => {

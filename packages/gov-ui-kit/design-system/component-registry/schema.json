@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://aragon.org/design-sync/component-registry/schema.json",
+    "$id": "https://aragon.org/gov-ui-kit/component-registry/schema.json",
     "title": "GovKit component registry",
     "type": "object",
     "additionalProperties": false,
