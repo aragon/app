@@ -23,8 +23,8 @@ Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifest
 
 | Design system part | Source |
 |---|---|
-| Components: name, import line, description, props, stories with code snippet and description | `storybook-static/manifests/components.json` |
-| Per-component guidance | That component's `### <Name>` section of `design-system/selection-guide.md`, word for word |
+| Components: name, description, props, stories with code snippet and description | `storybook-static/manifests/components.json` |
+| Per-component import line and guidance | That component's `### <Name>` section of `design-system/selection-guide.md`, word for word |
 | `guidelines/selection-guide.md` | `design-system/selection-guide.md`, whole |
 | README, first section | `design-system/conventions.md`, word for word |
 | Guideline pages | Every page in `storybook-static/manifests/docs.json` except `Docs/Changelog` and `Docs/Coding Guidelines/*`; drop Storybook-only setup lines |
@@ -33,11 +33,6 @@ Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifest
 
 Component descriptions in the manifest come from JSDoc, including each component's
 `Usage notes:` list. Show every story's description with its preview.
-
-A manifest `import` keeps the story's relative imports after its `@aragon/gov-ui-kit` line
-(`import { IconType } from '../../icon'`). Show only the `@aragon/gov-ui-kit` import: move
-names the package exports (`IconType`, `ProposalStatus`) into it and drop story-only
-helpers (`generateProposalAction…`, `DevTool`).
 
 ## Previews
 

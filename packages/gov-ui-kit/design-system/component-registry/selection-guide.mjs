@@ -51,7 +51,8 @@ function renderMarkdown(guide) {
         lines.push('', `## ${KIND_TITLES[kind]}`);
         for (const entry of guide.entries.filter((item) => item.kind === kind)) {
             const refs = entry.references ?? {};
-            lines.push('', `### ${entry.import.name}`, '', entry.description);
+            const importLine = `import { ${entry.import.name} } from '${entry.import.package}';`;
+            lines.push('', `### ${entry.import.name}`, '', `\`${importLine}\``, '', entry.description);
             list('Usage notes', asStrings(entry.usageNotes));
             list('Use when', asStrings(entry.useWhen));
             list(
