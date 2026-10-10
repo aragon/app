@@ -34,9 +34,10 @@ Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifest
 Component descriptions in the manifest come from JSDoc, including each component's
 `Usage notes:` list. Show every story's description with its preview.
 
-Compound members whose story `component` is a namespace member (`Accordion.Container`,
-`Dropdown.Item`, the `*.Skeleton` items) carry a docgen error and no props in the manifest.
-Take their props from the package `.d.ts` and their guidance from the selection guide.
+A manifest `import` keeps the story's relative imports after its `@aragon/gov-ui-kit` line
+(`import { IconType } from '../../icon'`). Show only the `@aragon/gov-ui-kit` import: move
+names the package exports (`IconType`, `ProposalStatus`) into it and drop story-only
+helpers (`generateProposalAction…`, `DevTool`).
 
 ## Previews
 

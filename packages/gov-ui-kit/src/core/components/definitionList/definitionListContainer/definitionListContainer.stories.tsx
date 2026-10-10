@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { DefinitionList, type IDefinitionListContainerProps } from '../index';
+import { DefinitionList, DefinitionListContainer, type IDefinitionListContainerProps } from '../index';
 
 const meta: Meta<typeof DefinitionList.Container> = {
     title: 'Core/Components/DefinitionList/DefinitionList.Container',
-    component: DefinitionList.Container,
+    component: DefinitionListContainer,
     parameters: {
         design: {
             type: 'figma',

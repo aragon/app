@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { Dropdown, type IDropdownContainerProps } from '../index';
+import { Dropdown, DropdownContainer, type IDropdownContainerProps } from '../index';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Dropdown.Container> = {
     title: 'Core/Components/Dropdown/Dropdown.Container',
-    component: Dropdown.Container,
+    component: DropdownContainer,
     parameters: {
         style,
         design: {

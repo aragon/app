@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { SmartContractFunctionDataListItem } from '../../smartContractFunctionDataListItem';
+import {
+    type SmartContractFunctionDataListItem,
+    SmartContractFunctionDataListItemSkeleton,
+} from '../../smartContractFunctionDataListItem';
 
 const meta: Meta<typeof SmartContractFunctionDataListItem.Skeleton> = {
     title: 'Modules/Components/SmartContract/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.Skeleton',
-    component: SmartContractFunctionDataListItem.Skeleton,
+    component: SmartContractFunctionDataListItemSkeleton,
     parameters: {
         design: {
             type: 'figma',

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { TransactionDataListItem } from '../../../..';
+import { type TransactionDataListItem, TransactionDataListItemSkeleton } from '../../../..';
 
 const meta: Meta<typeof TransactionDataListItem.Skeleton> = {
     title: 'Modules/Components/Transaction/TransactionDataListItem/TransactionDataListItem.Skeleton',
-    component: TransactionDataListItem.Skeleton,
+    component: TransactionDataListItemSkeleton,
     parameters: {
         design: {
             type: 'figma',

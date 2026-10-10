@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ComponentType } from 'react';
-import { DefinitionList, type IDefinitionListItemProps } from '../index';
+import { DefinitionList, DefinitionListItem, type IDefinitionListItemProps } from '../index';
 
 const ComponentWrapper = (Story: ComponentType) => (
     <DefinitionList.Container>
@@ -10,7 +10,7 @@ const ComponentWrapper = (Story: ComponentType) => (
 
 const meta: Meta<typeof DefinitionList.Item> = {
     title: 'Core/Components/DefinitionList/DefinitionList.Item',
-    component: DefinitionList.Item,
+    component: DefinitionListItem,
     decorators: ComponentWrapper,
     parameters: {
         design: {
