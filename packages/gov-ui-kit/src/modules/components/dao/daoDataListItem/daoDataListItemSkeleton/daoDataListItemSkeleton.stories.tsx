@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { type DaoDataListItem, DaoDataListItemSkeleton } from '../../daoDataListItem';
+import { DaoDataListItem } from '../../daoDataListItem';
 
 const meta: Meta<typeof DaoDataListItem.Skeleton> = {
     title: 'Modules/Components/Dao/DaoDataListItem/DaoDataListItem.Skeleton',
-    component: DaoDataListItemSkeleton,
+    component: DaoDataListItem.Skeleton,
     parameters: {
         design: {
             type: 'figma',

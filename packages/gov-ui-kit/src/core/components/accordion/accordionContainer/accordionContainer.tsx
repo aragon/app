@@ -64,4 +64,4 @@ export const AccordionContainer = forwardRef<HTMLDivElement, IAccordionContainer
     );
 });
 
-AccordionContainer.displayName = 'Accordion.Container';
+AccordionContainer.displayName = 'AccordionContainer';

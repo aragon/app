@@ -1862,7 +1862,7 @@ Compound accordion (Accordion.Container/Item/ItemHeader/ItemContent) for expand/
 
 **References**
 
-- `kit:src/core/components/accordion/index.ts:6`
+- `kit:src/core/components/accordion/index.ts:10`
 - `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118`
 - `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161`
 - `app:src/modules/settings/components/permissionsList/permissionsList.tsx:78`
@@ -1881,7 +1881,7 @@ DataList item structure for an asset/token holding (name, symbol, amount, fiat v
 
 **References**
 
-- `kit:src/modules/components/asset/assetDataListItem/index.ts:4`
+- `kit:src/modules/components/asset/assetDataListItem/index.ts:8`
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159`
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117`
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39`
@@ -1900,7 +1900,7 @@ DataList item structure for a DAO (name, logo, description, address/ens, network
 
 **References**
 
-- `kit:src/modules/components/dao/daoDataListItem/index.ts:4`
+- `kit:src/modules/components/dao/daoDataListItem/index.ts:8`
 - `app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190`
 - `app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25`
 - `app:src/modules/explore/components/daoList/daoList.tsx:131`
@@ -1952,7 +1952,7 @@ Compound term/description list (DefinitionList.Container/Item).
 
 **References**
 
-- `kit:src/core/components/definitionList/index.ts:4`
+- `kit:src/core/components/definitionList/index.ts:8`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273`
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122`
 - `app:src/actions/core/createProposal/createProposalActionDetails.tsx:103`
@@ -2041,7 +2041,7 @@ Compound dropdown menu (Dropdown.Container/Item) with a trigger and menu.
 
 **References**
 
-- `kit:src/core/components/dropdown/index.ts:4`
+- `kit:src/core/components/dropdown/index.ts:7`
 - `app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213`
 - `app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211`
 - `app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166`
@@ -2060,7 +2060,7 @@ DataList item structure for a member (avatar, address/ENS, delegate/token-voting
 
 **References**
 
-- `kit:src/modules/components/member/memberDataListItem/index.ts:4`
+- `kit:src/modules/components/member/memberDataListItem/index.ts:8`
 - `app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178`
 - `app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47`
 - `app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163`
@@ -2173,7 +2173,7 @@ ProposalVotingProgress: progress-indicator sub-compound (ProposalVotingProgress.
 
 **References**
 
-- `kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts:4`
+- `kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts:8`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgress.stories.tsx:1`
 
 ### SmartContractFunctionDataListItem
@@ -2190,7 +2190,7 @@ DataList item structure for a smart-contract function call (name, contract, sele
 
 **References**
 
-- `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:4`
+- `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:8`
 - `app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165`
 - `app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80`
 
@@ -2232,7 +2232,7 @@ DataList item structure for a transaction (type, status, chain, amount, date, ha
 
 **References**
 
-- `kit:src/modules/components/transaction/transactionDataListItem/index.ts:4`
+- `kit:src/modules/components/transaction/transactionDataListItem/index.ts:8`
 - `app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280`
 - `app:src/modules/finance/components/transactionList/transactionListItem.tsx:121`
 
@@ -2272,7 +2272,7 @@ DataList item structure for a single vote (voter, choice indicator, power).
 
 **References**
 
-- `kit:src/modules/components/vote/voteDataListItem/index.ts:4`
+- `kit:src/modules/components/vote/voteDataListItem/index.ts:8`
 - `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101`
 - `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125`
 
@@ -2290,7 +2290,7 @@ DataList item structure showing a proposal with the viewing member's vote.
 
 **References**
 
-- `kit:src/modules/components/vote/voteProposalDataListItem/index.ts:4`
+- `kit:src/modules/components/vote/voteProposalDataListItem/index.ts:8`
 - `app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40`
 - `app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161`
 - `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59`

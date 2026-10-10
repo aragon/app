@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { SmartContractFunctionDataListItem } from '../../smartContractFunctionDataListItem';
-import { SmartContractFunctionDataListItemStructure } from './smartContractFunctionDataListItemStructure';
+import { SmartContractFunctionDataListItem } from '../../smartContractFunctionDataListItem';
+import type { SmartContractFunctionDataListItemStructure } from './smartContractFunctionDataListItemStructure';
 
 const meta: Meta<typeof SmartContractFunctionDataListItem.Structure> = {
     title: 'Modules/Components/SmartContract/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.Structure',
-    component: SmartContractFunctionDataListItemStructure,
+    component: SmartContractFunctionDataListItem.Structure,
     parameters: {
         design: {
             type: 'figma',

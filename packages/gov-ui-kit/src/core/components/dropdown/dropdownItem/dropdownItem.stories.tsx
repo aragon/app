@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Dropdown, DropdownItem, type IDropdownItemProps } from '../index';
+import { Dropdown, type IDropdownItemProps } from '../index';
 
 const meta: Meta<typeof Dropdown.Item> = {
     title: 'Core/Components/Dropdown/Dropdown.Item',
-    component: DropdownItem,
+    component: Dropdown.Item,
     argTypes: {
         disabled: { control: 'boolean' },
     },

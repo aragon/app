@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "1.1.0",
-            "sha256": "fbcbb76590f52ed747d2f3bb9eea66bd83242019ee3b3589e782aed05fc3bd0a",
+            "sha256": "f381e8ac9fb1b273716ba4bd4f2ff5bc21cff44c562fc1cfe1e51eeb5e9c3bbf",
             "totalRecords": 414,
             "entryCount": 149,
             "uiEntryCount": 142,
@@ -40,7 +40,7 @@
                 "Compound export with members: Accordion.Container, Accordion.Item, Accordion.ItemContent, Accordion.ItemHeader."
             ],
             "references": {
-                "source": "kit:src/core/components/accordion/index.ts:6",
+                "source": "kit:src/core/components/accordion/index.ts:10",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118",
@@ -420,7 +420,7 @@
                 "Compound export with members: AssetDataListItem.Skeleton, AssetDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/asset/assetDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/asset/assetDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159",
@@ -1014,7 +1014,7 @@
                 "Compound export with members: DaoDataListItem.Skeleton, DaoDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/dao/daoDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/dao/daoDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190",
@@ -1283,7 +1283,7 @@
                 "Compound export with members: DefinitionList.Container, DefinitionList.Item."
             ],
             "references": {
-                "source": "kit:src/core/components/definitionList/index.ts:4",
+                "source": "kit:src/core/components/definitionList/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273",
@@ -1701,7 +1701,7 @@
                 "Compound export with members: Dropdown.Container, Dropdown.Item."
             ],
             "references": {
-                "source": "kit:src/core/components/dropdown/index.ts:4",
+                "source": "kit:src/core/components/dropdown/index.ts:7",
                 "stories": [],
                 "appExamples": [
                     "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213",
@@ -2401,7 +2401,7 @@
                 "Compound export with members: MemberDataListItem.Skeleton, MemberDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/member/memberDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/member/memberDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178",
@@ -3093,7 +3093,7 @@
                 "Compound export with members: ProposalVotingProgress.Container, ProposalVotingProgress.Item."
             ],
             "references": {
-                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts:4",
+                "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts:8",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgress.stories.tsx:1"
                 ],
@@ -3371,7 +3371,7 @@
                 "Compound export with members: SmartContractFunctionDataListItem.Skeleton, SmartContractFunctionDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165",
@@ -3921,7 +3921,7 @@
                 "Compound export with members: TransactionDataListItem.Skeleton, TransactionDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/transaction/transactionDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/transaction/transactionDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280",
@@ -4106,7 +4106,7 @@
                 "Compound export with members: VoteDataListItem.Skeleton, VoteDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/vote/voteDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/vote/voteDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101",
@@ -4183,7 +4183,7 @@
                 "Compound export with members: VoteProposalDataListItem.Skeleton, VoteProposalDataListItem.Structure."
             ],
             "references": {
-                "source": "kit:src/modules/components/vote/voteProposalDataListItem/index.ts:4",
+                "source": "kit:src/modules/components/vote/voteProposalDataListItem/index.ts:8",
                 "stories": [],
                 "appExamples": [
                     "app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40",

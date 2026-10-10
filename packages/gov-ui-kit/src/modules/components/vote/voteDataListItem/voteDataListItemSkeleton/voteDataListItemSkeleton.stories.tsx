@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { type VoteDataListItem, VoteDataListItemSkeleton } from '..';
+import { VoteDataListItem } from '..';
 
 const meta: Meta<typeof VoteDataListItem.Skeleton> = {
     title: 'Modules/Components/Vote/VoteDataListItem/VoteDataListItem.Skeleton',
-    component: VoteDataListItemSkeleton,
+    component: VoteDataListItem.Skeleton,
     parameters: {
         design: {
             type: 'figma',

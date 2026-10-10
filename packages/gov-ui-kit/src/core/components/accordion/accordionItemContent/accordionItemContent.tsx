@@ -25,4 +25,4 @@ export const AccordionItemContent = forwardRef<HTMLDivElement, IAccordionItemCon
     );
 });
 
-AccordionItemContent.displayName = 'Accordion.Content';
+AccordionItemContent.displayName = 'AccordionItemContent';

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Accordion, AccordionContainer } from '..';
+import { Accordion } from '..';
 
 const meta: Meta<typeof Accordion.Container> = {
     title: 'Core/Components/Accordion/Accordion.Container',
-    component: AccordionContainer,
+    component: Accordion.Container,
     parameters: {
         design: {
             type: 'figma',

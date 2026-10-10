@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { type AssetDataListItem, AssetDataListItemSkeleton } from '../../assetDataListItem';
+import { AssetDataListItem } from '../../assetDataListItem';
 
 const meta: Meta<typeof AssetDataListItem.Skeleton> = {
     title: 'Modules/Components/Asset/AssetDataListItem/AssetDataListItem.Skeleton',
-    component: AssetDataListItemSkeleton,
+    component: AssetDataListItem.Skeleton,
     parameters: {
         design: {
             type: 'figma',
