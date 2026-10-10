@@ -34,6 +34,10 @@ Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifest
 Component descriptions in the manifest come from JSDoc, including each component's
 `Usage notes:` list. Show every story's description with its preview.
 
+Name each component by the last segment of its story title (`Accordion.Container`), as the
+guide and conventions do. For compound members the manifest `name` is the direct-export
+alias (`AccordionContainer`); both import from `@aragon/gov-ui-kit`.
+
 A manifest `import` keeps the story's relative imports after its `@aragon/gov-ui-kit` line
 (`import { IconType } from '../../icon'`). Show only the `@aragon/gov-ui-kit` import: move
 names the package exports (`IconType`, `ProposalStatus`) into it and drop story-only
