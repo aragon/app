@@ -71,4 +71,4 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
     );
 });
 
-AccordionItemHeader.displayName = 'Accordion.ItemHeader';
+AccordionItemHeader.displayName = 'AccordionItemHeader';

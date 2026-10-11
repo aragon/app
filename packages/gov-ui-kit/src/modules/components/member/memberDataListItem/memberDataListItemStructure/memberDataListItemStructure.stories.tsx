@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { MemberDataListItemStructure } from './memberDataListItemStructure';
+import { MemberDataListItem } from '..';
 
-const meta: Meta<typeof MemberDataListItemStructure> = {
+const meta: Meta<typeof MemberDataListItem.Structure> = {
     title: 'Modules/Components/Member/MemberDataListItem/MemberDataListItem.Structure',
-    component: MemberDataListItemStructure,
+    component: MemberDataListItem.Structure,
     parameters: {
         design: {
             type: 'figma',
@@ -12,7 +12,7 @@ const meta: Meta<typeof MemberDataListItemStructure> = {
     },
 };
 
-type Story = StoryObj<typeof MemberDataListItemStructure>;
+type Story = StoryObj<typeof MemberDataListItem.Structure>;
 
 /**
  * Default usage example of the MemberDataList module component.

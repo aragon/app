@@ -37,6 +37,14 @@ export interface IRadioCardProps extends ComponentProps<'button'> {
     children?: ReactNode;
 }
 
+/**
+ * Usage notes:
+ *
+ * - Render `RadioCard` inside a `RadioGroup`: it is a Radix radio item that reads its selected state from the group
+ *   and carries only a `value`, not a checked prop.
+ * - `children` render only while the card is selected, so use them for detail that should appear once the option is
+ *   chosen.
+ */
 export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, ref) => {
     const { value, id, className, tag, avatar, label, description, disabled, children, ...rest } = props;
 

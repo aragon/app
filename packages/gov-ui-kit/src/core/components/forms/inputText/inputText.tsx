@@ -19,6 +19,14 @@ const variantToIconClassNames: Record<InputVariant | 'disabled', string> = {
     disabled: 'text-neutral-300',
 };
 
+/**
+ * Usage notes:
+ *
+ * - When `maxLength` is set, an uncontrolled `defaultValue` does not initialize the character counter: it starts at
+ *   `0` and updates after an input change; controlled `value` changes synchronize it immediately.
+ * - `addon` renders only when its string is non-empty after trimming, and is displayed as literal text rather than
+ *   parsed markup.
+ */
 export const InputText = forwardRef<HTMLInputElement, IInputTextProps>((props, ref) => {
     const { addonPosition = 'left', addon, iconLeft, iconRight, ...otherProps } = props;
     const { containerProps, inputProps } = useInputProps(otherProps);

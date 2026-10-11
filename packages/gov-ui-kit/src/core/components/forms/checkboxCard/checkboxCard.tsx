@@ -46,6 +46,13 @@ export interface ICheckboxCardProps extends ComponentProps<'button'> {
     children?: ReactNode;
 }
 
+/**
+ * Usage notes:
+ *
+ * - `CheckboxCard` is independently controlled with tri-state `checked`/`onCheckedChange`; it uses a checkbox root
+ *   directly and does not require a group.
+ * - `children` render only when the card is checked, not when it is `'indeterminate'`.
+ */
 export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((props, ref) => {
     const {
         id,

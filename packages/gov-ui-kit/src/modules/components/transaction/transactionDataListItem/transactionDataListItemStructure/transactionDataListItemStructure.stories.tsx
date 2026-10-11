@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { TransactionDataListItemStructure } from './transactionDataListItemStructure';
+import { TransactionDataListItem } from '..';
 import { TransactionStatus, TransactionType } from './transactionDataListItemStructure.api';
 
-const meta: Meta<typeof TransactionDataListItemStructure> = {
+const meta: Meta<typeof TransactionDataListItem.Structure> = {
     title: 'Modules/Components/Transaction/TransactionDataListItem/TransactionDataListItem.Structure',
-    component: TransactionDataListItemStructure,
+    component: TransactionDataListItem.Structure,
     parameters: {
         design: {
             type: 'figma',
@@ -18,7 +18,7 @@ const meta: Meta<typeof TransactionDataListItemStructure> = {
     },
 };
 
-type Story = StoryObj<typeof TransactionDataListItemStructure>;
+type Story = StoryObj<typeof TransactionDataListItem.Structure>;
 
 /**
  * Default usage example of the TransactionDataList module component.
