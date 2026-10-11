@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "1.1.0",
-            "sha256": "5f0791a70c832aba6cf712ce795ad96d42f9765a26eacbdcfc1a46c2ec815894",
+            "sha256": "58ed5bc9f169dcb36adaebce9b637fc1730a66df5e60be5e7ead605076f800aa",
             "totalRecords": 414,
             "entryCount": 149,
             "uiEntryCount": 142,
@@ -22,6 +22,7 @@
         {
             "id": "govkit:Accordion",
             "kind": "compound",
+            "name": "Accordion",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Accordion"
@@ -52,6 +53,7 @@
         {
             "id": "govkit:AccordionContainer",
             "kind": "component",
+            "name": "Accordion.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AccordionContainer"
@@ -78,6 +80,7 @@
         {
             "id": "govkit:AccordionItem",
             "kind": "component",
+            "name": "Accordion.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AccordionItem"
@@ -102,6 +105,7 @@
         {
             "id": "govkit:AccordionItemContent",
             "kind": "component",
+            "name": "Accordion.ItemContent",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AccordionItemContent"
@@ -126,6 +130,7 @@
         {
             "id": "govkit:AccordionItemHeader",
             "kind": "component",
+            "name": "Accordion.ItemHeader",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AccordionItemHeader"
@@ -150,6 +155,7 @@
         {
             "id": "govkit:ActionSimulation",
             "kind": "component",
+            "name": "ActionSimulation",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ActionSimulation"
@@ -180,6 +186,7 @@
         {
             "id": "govkit:AddressInput",
             "kind": "component",
+            "name": "AddressInput",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AddressInput"
@@ -257,6 +264,7 @@
         {
             "id": "govkit:AddressOutput",
             "kind": "component",
+            "name": "AddressOutput",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AddressOutput"
@@ -299,6 +307,7 @@
         {
             "id": "govkit:addressUtils",
             "kind": "utility",
+            "name": "addressUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "addressUtils"
@@ -348,6 +357,7 @@
         {
             "id": "govkit:AlertCard",
             "kind": "component",
+            "name": "AlertCard",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AlertCard"
@@ -376,6 +386,7 @@
         {
             "id": "govkit:AlertInline",
             "kind": "component",
+            "name": "AlertInline",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AlertInline"
@@ -404,6 +415,7 @@
         {
             "id": "govkit:AssetDataListItem",
             "kind": "compound",
+            "name": "AssetDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AssetDataListItem"
@@ -432,6 +444,7 @@
         {
             "id": "govkit:AssetDataListItemSkeleton",
             "kind": "component",
+            "name": "AssetDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AssetDataListItemSkeleton"
@@ -458,6 +471,7 @@
         {
             "id": "govkit:AssetDataListItemStructure",
             "kind": "component",
+            "name": "AssetDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AssetDataListItemStructure"
@@ -484,6 +498,7 @@
         {
             "id": "govkit:AssetTransfer",
             "kind": "component",
+            "name": "AssetTransfer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AssetTransfer"
@@ -514,6 +529,7 @@
         {
             "id": "govkit:Avatar",
             "kind": "component",
+            "name": "Avatar",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Avatar"
@@ -542,6 +558,7 @@
         {
             "id": "govkit:AvatarBase",
             "kind": "component",
+            "name": "AvatarBase",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AvatarBase"
@@ -566,6 +583,7 @@
         {
             "id": "govkit:AvatarIcon",
             "kind": "component",
+            "name": "AvatarIcon",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "AvatarIcon"
@@ -594,6 +612,7 @@
         {
             "id": "govkit:Breadcrumbs",
             "kind": "component",
+            "name": "Breadcrumbs",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Breadcrumbs"
@@ -620,6 +639,7 @@
         {
             "id": "govkit:Button",
             "kind": "component",
+            "name": "Button",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Button"
@@ -682,6 +702,7 @@
         {
             "id": "govkit:Card",
             "kind": "component",
+            "name": "Card",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Card"
@@ -712,6 +733,7 @@
         {
             "id": "govkit:CardCollapsible",
             "kind": "component",
+            "name": "CardCollapsible",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "CardCollapsible"
@@ -738,6 +760,7 @@
         {
             "id": "govkit:CardEmptyState",
             "kind": "component",
+            "name": "CardEmptyState",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "CardEmptyState"
@@ -769,6 +792,7 @@
         {
             "id": "govkit:CardSummary",
             "kind": "component",
+            "name": "CardSummary",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "CardSummary"
@@ -793,6 +817,7 @@
         {
             "id": "govkit:Checkbox",
             "kind": "component",
+            "name": "Checkbox",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Checkbox"
@@ -822,6 +847,7 @@
         {
             "id": "govkit:CheckboxCard",
             "kind": "component",
+            "name": "CheckboxCard",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "CheckboxCard"
@@ -853,6 +879,7 @@
         {
             "id": "govkit:CheckboxGroup",
             "kind": "component",
+            "name": "CheckboxGroup",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "CheckboxGroup"
@@ -877,6 +904,7 @@
         {
             "id": "govkit:Clipboard",
             "kind": "component",
+            "name": "Clipboard",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Clipboard"
@@ -901,6 +929,7 @@
         {
             "id": "govkit:clipboardUtils",
             "kind": "utility",
+            "name": "clipboardUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "clipboardUtils"
@@ -933,6 +962,7 @@
         {
             "id": "govkit:Collapsible",
             "kind": "component",
+            "name": "Collapsible",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Collapsible"
@@ -967,6 +997,7 @@
         {
             "id": "govkit:DaoAvatar",
             "kind": "component",
+            "name": "DaoAvatar",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DaoAvatar"
@@ -998,6 +1029,7 @@
         {
             "id": "govkit:DaoDataListItem",
             "kind": "compound",
+            "name": "DaoDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DaoDataListItem"
@@ -1026,6 +1058,7 @@
         {
             "id": "govkit:DaoDataListItemSkeleton",
             "kind": "component",
+            "name": "DaoDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DaoDataListItemSkeleton"
@@ -1050,6 +1083,7 @@
         {
             "id": "govkit:DaoDataListItemStructure",
             "kind": "component",
+            "name": "DaoDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DaoDataListItemStructure"
@@ -1076,6 +1110,7 @@
         {
             "id": "govkit:DataList",
             "kind": "compound",
+            "name": "DataList",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataList"
@@ -1110,6 +1145,7 @@
         {
             "id": "govkit:DataListActionItem",
             "kind": "component",
+            "name": "DataList.ActionItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataListActionItem"
@@ -1135,6 +1171,7 @@
         {
             "id": "govkit:DataListContainer",
             "kind": "component",
+            "name": "DataList.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataListContainer"
@@ -1161,6 +1198,7 @@
         {
             "id": "govkit:DataListFilter",
             "kind": "component",
+            "name": "DataList.Filter",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataListFilter"
@@ -1187,6 +1225,7 @@
         {
             "id": "govkit:DataListItem",
             "kind": "component",
+            "name": "DataList.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataListItem"
@@ -1213,6 +1252,7 @@
         {
             "id": "govkit:DataListPagination",
             "kind": "component",
+            "name": "DataList.Pagination",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataListPagination"
@@ -1239,6 +1279,7 @@
         {
             "id": "govkit:DataListRoot",
             "kind": "component",
+            "name": "DataList.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DataListRoot"
@@ -1265,6 +1306,7 @@
         {
             "id": "govkit:DefinitionList",
             "kind": "compound",
+            "name": "DefinitionList",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DefinitionList"
@@ -1295,6 +1337,7 @@
         {
             "id": "govkit:DefinitionListContainer",
             "kind": "component",
+            "name": "DefinitionList.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DefinitionListContainer"
@@ -1321,6 +1364,7 @@
         {
             "id": "govkit:DefinitionListItem",
             "kind": "component",
+            "name": "DefinitionList.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DefinitionListItem"
@@ -1347,6 +1391,7 @@
         {
             "id": "govkit:Dialog",
             "kind": "compound",
+            "name": "Dialog",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Dialog"
@@ -1405,6 +1450,7 @@
         {
             "id": "govkit:DialogAlert",
             "kind": "compound",
+            "name": "DialogAlert",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogAlert"
@@ -1438,6 +1484,7 @@
         {
             "id": "govkit:DialogAlertContent",
             "kind": "component",
+            "name": "DialogAlert.Content",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogAlertContent"
@@ -1464,6 +1511,7 @@
         {
             "id": "govkit:DialogAlertFooter",
             "kind": "component",
+            "name": "DialogAlert.Footer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogAlertFooter"
@@ -1490,6 +1538,7 @@
         {
             "id": "govkit:DialogAlertHeader",
             "kind": "component",
+            "name": "DialogAlert.Header",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogAlertHeader"
@@ -1516,6 +1565,7 @@
         {
             "id": "govkit:DialogAlertRoot",
             "kind": "component",
+            "name": "DialogAlert.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogAlertRoot"
@@ -1540,6 +1590,7 @@
         {
             "id": "govkit:DialogContent",
             "kind": "component",
+            "name": "Dialog.Content",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogContent"
@@ -1566,6 +1617,7 @@
         {
             "id": "govkit:DialogFooter",
             "kind": "component",
+            "name": "Dialog.Footer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogFooter"
@@ -1592,6 +1644,7 @@
         {
             "id": "govkit:DialogHeader",
             "kind": "component",
+            "name": "Dialog.Header",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogHeader"
@@ -1618,6 +1671,7 @@
         {
             "id": "govkit:DialogRoot",
             "kind": "component",
+            "name": "Dialog.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DialogRoot"
@@ -1656,6 +1710,7 @@
         {
             "id": "govkit:DocumentParser",
             "kind": "component",
+            "name": "DocumentParser",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DocumentParser"
@@ -1685,6 +1740,7 @@
         {
             "id": "govkit:Dropdown",
             "kind": "compound",
+            "name": "Dropdown",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Dropdown"
@@ -1713,6 +1769,7 @@
         {
             "id": "govkit:DropdownContainer",
             "kind": "component",
+            "name": "Dropdown.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DropdownContainer"
@@ -1739,6 +1796,7 @@
         {
             "id": "govkit:DropdownItem",
             "kind": "component",
+            "name": "Dropdown.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "DropdownItem"
@@ -1765,6 +1823,7 @@
         {
             "id": "govkit:EmptyState",
             "kind": "component",
+            "name": "EmptyState",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "EmptyState"
@@ -1798,6 +1857,7 @@
         {
             "id": "govkit:ensUtils",
             "kind": "utility",
+            "name": "ensUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ensUtils"
@@ -1830,6 +1890,7 @@
         {
             "id": "govkit:formatterUtils",
             "kind": "utility",
+            "name": "formatterUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "formatterUtils"
@@ -1869,6 +1930,7 @@
         {
             "id": "govkit:GukCoreProvider",
             "kind": "component",
+            "name": "GukCoreProvider",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "GukCoreProvider"
@@ -1904,6 +1966,7 @@
         {
             "id": "govkit:GukModulesProvider",
             "kind": "component",
+            "name": "GukModulesProvider",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "GukModulesProvider"
@@ -1951,6 +2014,7 @@
         {
             "id": "govkit:Heading",
             "kind": "component",
+            "name": "Heading",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Heading"
@@ -1979,6 +2043,7 @@
         {
             "id": "govkit:Icon",
             "kind": "component",
+            "name": "Icon",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Icon"
@@ -2007,6 +2072,7 @@
         {
             "id": "govkit:IllustrationHuman",
             "kind": "component",
+            "name": "IllustrationHuman",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "IllustrationHuman"
@@ -2034,6 +2100,7 @@
         {
             "id": "govkit:IllustrationObject",
             "kind": "component",
+            "name": "IllustrationObject",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "IllustrationObject"
@@ -2065,6 +2132,7 @@
         {
             "id": "govkit:InputContainer",
             "kind": "component",
+            "name": "InputContainer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputContainer"
@@ -2093,6 +2161,7 @@
         {
             "id": "govkit:InputDate",
             "kind": "component",
+            "name": "InputDate",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputDate"
@@ -2120,6 +2189,7 @@
         {
             "id": "govkit:InputFileAvatar",
             "kind": "component",
+            "name": "InputFileAvatar",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputFileAvatar"
@@ -2148,6 +2218,7 @@
         {
             "id": "govkit:InputNumber",
             "kind": "component",
+            "name": "InputNumber",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputNumber"
@@ -2179,6 +2250,7 @@
         {
             "id": "govkit:InputNumberMax",
             "kind": "component",
+            "name": "InputNumberMax",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputNumberMax"
@@ -2206,6 +2278,7 @@
         {
             "id": "govkit:InputSearch",
             "kind": "component",
+            "name": "InputSearch",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputSearch"
@@ -2230,6 +2303,7 @@
         {
             "id": "govkit:InputText",
             "kind": "component",
+            "name": "InputText",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputText"
@@ -2261,6 +2335,7 @@
         {
             "id": "govkit:InputTime",
             "kind": "component",
+            "name": "InputTime",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "InputTime"
@@ -2287,6 +2362,7 @@
         {
             "id": "govkit:Link",
             "kind": "component",
+            "name": "Link",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Link"
@@ -2315,6 +2391,7 @@
         {
             "id": "govkit:LinkBase",
             "kind": "component",
+            "name": "LinkBase",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "LinkBase"
@@ -2339,6 +2416,7 @@
         {
             "id": "govkit:MemberAvatar",
             "kind": "component",
+            "name": "MemberAvatar",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "MemberAvatar"
@@ -2385,6 +2463,7 @@
         {
             "id": "govkit:MemberDataListItem",
             "kind": "compound",
+            "name": "MemberDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "MemberDataListItem"
@@ -2413,6 +2492,7 @@
         {
             "id": "govkit:MemberDataListItemSkeleton",
             "kind": "component",
+            "name": "MemberDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "MemberDataListItemSkeleton"
@@ -2438,6 +2518,7 @@
         {
             "id": "govkit:MemberDataListItemStructure",
             "kind": "component",
+            "name": "MemberDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "MemberDataListItemStructure"
@@ -2464,6 +2545,7 @@
         {
             "id": "govkit:Progress",
             "kind": "component",
+            "name": "Progress",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Progress"
@@ -2495,6 +2577,7 @@
         {
             "id": "govkit:ProposalActionChangeMembers",
             "kind": "component",
+            "name": "ProposalActionChangeMembers",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionChangeMembers"
@@ -2517,6 +2600,7 @@
         {
             "id": "govkit:ProposalActionChangeSettings",
             "kind": "component",
+            "name": "ProposalActionChangeSettings",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionChangeSettings"
@@ -2539,6 +2623,7 @@
         {
             "id": "govkit:ProposalActions",
             "kind": "compound",
+            "name": "ProposalActions",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActions"
@@ -2593,6 +2678,7 @@
         {
             "id": "govkit:ProposalActionsContainer",
             "kind": "component",
+            "name": "ProposalActions.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionsContainer"
@@ -2619,6 +2705,7 @@
         {
             "id": "govkit:ProposalActionsFooter",
             "kind": "component",
+            "name": "ProposalActions.Footer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionsFooter"
@@ -2644,6 +2731,7 @@
         {
             "id": "govkit:ProposalActionsItem",
             "kind": "component",
+            "name": "ProposalActions.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionsItem"
@@ -2670,6 +2758,7 @@
         {
             "id": "govkit:ProposalActionsItemSkeleton",
             "kind": "component",
+            "name": "ProposalActions.ItemSkeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionsItemSkeleton"
@@ -2692,6 +2781,7 @@
         {
             "id": "govkit:ProposalActionsRoot",
             "kind": "component",
+            "name": "ProposalActions.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionsRoot"
@@ -2718,6 +2808,7 @@
         {
             "id": "govkit:ProposalActionTokenMint",
             "kind": "component",
+            "name": "ProposalActionTokenMint",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionTokenMint"
@@ -2740,6 +2831,7 @@
         {
             "id": "govkit:ProposalActionUpdateMetadata",
             "kind": "component",
+            "name": "ProposalActionUpdateMetadata",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActionUpdateMetadata"
@@ -2762,6 +2854,7 @@
         {
             "id": "govkit:ProposalDataListItem",
             "kind": "compound",
+            "name": "ProposalDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalDataListItem"
@@ -2793,6 +2886,7 @@
         {
             "id": "govkit:ProposalDataListItemSkeleton",
             "kind": "component",
+            "name": "ProposalDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalDataListItemSkeleton"
@@ -2818,6 +2912,7 @@
         {
             "id": "govkit:ProposalDataListItemStructure",
             "kind": "component",
+            "name": "ProposalDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalDataListItemStructure"
@@ -2844,6 +2939,7 @@
         {
             "id": "govkit:ProposalVoting",
             "kind": "compound",
+            "name": "ProposalVoting",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVoting"
@@ -2894,6 +2990,7 @@
         {
             "id": "govkit:ProposalVotingBodyContent",
             "kind": "component",
+            "name": "ProposalVoting.BodyContent",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingBodyContent"
@@ -2917,6 +3014,7 @@
         {
             "id": "govkit:ProposalVotingBodySummary",
             "kind": "component",
+            "name": "ProposalVoting.BodySummary",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingBodySummary"
@@ -2939,6 +3037,7 @@
         {
             "id": "govkit:ProposalVotingBodySummaryList",
             "kind": "component",
+            "name": "ProposalVoting.BodySummaryList",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingBodySummaryList"
@@ -2961,6 +3060,7 @@
         {
             "id": "govkit:ProposalVotingBodySummaryListItem",
             "kind": "component",
+            "name": "ProposalVoting.BodySummaryListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingBodySummaryListItem"
@@ -2983,6 +3083,7 @@
         {
             "id": "govkit:ProposalVotingBreakdownMultisig",
             "kind": "component",
+            "name": "ProposalVoting.BreakdownMultisig",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingBreakdownMultisig"
@@ -3007,6 +3108,7 @@
         {
             "id": "govkit:ProposalVotingBreakdownToken",
             "kind": "component",
+            "name": "ProposalVoting.BreakdownToken",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingBreakdownToken"
@@ -3032,6 +3134,7 @@
         {
             "id": "govkit:ProposalVotingContainer",
             "kind": "component",
+            "name": "ProposalVoting.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingContainer"
@@ -3054,6 +3157,7 @@
         {
             "id": "govkit:ProposalVotingDetails",
             "kind": "component",
+            "name": "ProposalVoting.Details",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingDetails"
@@ -3079,6 +3183,7 @@
         {
             "id": "govkit:ProposalVotingProgress",
             "kind": "compound",
+            "name": "ProposalVoting.Progress",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingProgress"
@@ -3103,6 +3208,7 @@
         {
             "id": "govkit:ProposalVotingProgressContainer",
             "kind": "component",
+            "name": "ProposalVotingProgress.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingProgressContainer"
@@ -3123,6 +3229,7 @@
         {
             "id": "govkit:ProposalVotingProgressItem",
             "kind": "component",
+            "name": "ProposalVotingProgress.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingProgressItem"
@@ -3143,6 +3250,7 @@
         {
             "id": "govkit:ProposalVotingStage",
             "kind": "component",
+            "name": "ProposalVoting.Stage",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingStage"
@@ -3167,6 +3275,7 @@
         {
             "id": "govkit:ProposalVotingStageContainer",
             "kind": "component",
+            "name": "ProposalVoting.StageContainer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingStageContainer"
@@ -3189,6 +3298,7 @@
         {
             "id": "govkit:ProposalVotingVotes",
             "kind": "component",
+            "name": "ProposalVoting.Votes",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalVotingVotes"
@@ -3214,6 +3324,7 @@
         {
             "id": "govkit:Radio",
             "kind": "component",
+            "name": "Radio",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Radio"
@@ -3240,6 +3351,7 @@
         {
             "id": "govkit:RadioCard",
             "kind": "component",
+            "name": "RadioCard",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "RadioCard"
@@ -3271,6 +3383,7 @@
         {
             "id": "govkit:RadioGroup",
             "kind": "component",
+            "name": "RadioGroup",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "RadioGroup"
@@ -3299,6 +3412,7 @@
         {
             "id": "govkit:Rerender",
             "kind": "component",
+            "name": "Rerender",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Rerender"
@@ -3327,6 +3441,7 @@
         {
             "id": "govkit:responsiveUtils",
             "kind": "utility",
+            "name": "responsiveUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "responsiveUtils"
@@ -3355,6 +3470,7 @@
         {
             "id": "govkit:SmartContractFunctionDataListItem",
             "kind": "compound",
+            "name": "SmartContractFunctionDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "SmartContractFunctionDataListItem"
@@ -3382,6 +3498,7 @@
         {
             "id": "govkit:SmartContractFunctionDataListItemSkeleton",
             "kind": "component",
+            "name": "SmartContractFunctionDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "SmartContractFunctionDataListItemSkeleton"
@@ -3406,6 +3523,7 @@
         {
             "id": "govkit:SmartContractFunctionDataListItemStructure",
             "kind": "component",
+            "name": "SmartContractFunctionDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "SmartContractFunctionDataListItemStructure"
@@ -3431,6 +3549,7 @@
         {
             "id": "govkit:Spinner",
             "kind": "component",
+            "name": "Spinner",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Spinner"
@@ -3459,6 +3578,7 @@
         {
             "id": "govkit:ssrUtils",
             "kind": "utility",
+            "name": "ssrUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ssrUtils"
@@ -3487,6 +3607,7 @@
         {
             "id": "govkit:StatePingAnimation",
             "kind": "component",
+            "name": "StatePingAnimation",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "StatePingAnimation"
@@ -3511,6 +3632,7 @@
         {
             "id": "govkit:StateSkeletonBar",
             "kind": "component",
+            "name": "StateSkeletonBar",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "StateSkeletonBar"
@@ -3542,6 +3664,7 @@
         {
             "id": "govkit:StateSkeletonCircular",
             "kind": "component",
+            "name": "StateSkeletonCircular",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "StateSkeletonCircular"
@@ -3573,6 +3696,7 @@
         {
             "id": "govkit:Switch",
             "kind": "component",
+            "name": "Switch",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Switch"
@@ -3601,6 +3725,7 @@
         {
             "id": "govkit:Tabs",
             "kind": "compound",
+            "name": "Tabs",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Tabs"
@@ -3632,6 +3757,7 @@
         {
             "id": "govkit:TabsContent",
             "kind": "component",
+            "name": "Tabs.Content",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TabsContent"
@@ -3656,6 +3782,7 @@
         {
             "id": "govkit:TabsList",
             "kind": "component",
+            "name": "Tabs.List",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TabsList"
@@ -3679,6 +3806,7 @@
         {
             "id": "govkit:TabsRoot",
             "kind": "component",
+            "name": "Tabs.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TabsRoot"
@@ -3704,6 +3832,7 @@
         {
             "id": "govkit:TabsTrigger",
             "kind": "component",
+            "name": "Tabs.Trigger",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TabsTrigger"
@@ -3729,6 +3858,7 @@
         {
             "id": "govkit:Tag",
             "kind": "component",
+            "name": "Tag",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Tag"
@@ -3757,6 +3887,7 @@
         {
             "id": "govkit:TextArea",
             "kind": "component",
+            "name": "TextArea",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TextArea"
@@ -3788,6 +3919,7 @@
         {
             "id": "govkit:TextAreaRichText",
             "kind": "component",
+            "name": "TextAreaRichText",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TextAreaRichText"
@@ -3815,6 +3947,7 @@
         {
             "id": "govkit:Toggle",
             "kind": "component",
+            "name": "Toggle",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Toggle"
@@ -3845,6 +3978,7 @@
         {
             "id": "govkit:ToggleGroup",
             "kind": "component",
+            "name": "ToggleGroup",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "ToggleGroup"
@@ -3878,6 +4012,7 @@
         {
             "id": "govkit:Tooltip",
             "kind": "component",
+            "name": "Tooltip",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Tooltip"
@@ -3905,6 +4040,7 @@
         {
             "id": "govkit:TransactionDataListItem",
             "kind": "compound",
+            "name": "TransactionDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TransactionDataListItem"
@@ -3932,6 +4068,7 @@
         {
             "id": "govkit:TransactionDataListItemSkeleton",
             "kind": "component",
+            "name": "TransactionDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TransactionDataListItemSkeleton"
@@ -3956,6 +4093,7 @@
         {
             "id": "govkit:TransactionDataListItemStructure",
             "kind": "component",
+            "name": "TransactionDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TransactionDataListItemStructure"
@@ -3980,6 +4118,7 @@
         {
             "id": "govkit:TransactionDetail",
             "kind": "compound",
+            "name": "TransactionDetail",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TransactionDetail"
@@ -4010,6 +4149,7 @@
         {
             "id": "govkit:TransactionDetailRoot",
             "kind": "component",
+            "name": "TransactionDetail.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TransactionDetailRoot"
@@ -4032,6 +4172,7 @@
         {
             "id": "govkit:TransactionDetailSummary",
             "kind": "component",
+            "name": "TransactionDetailSummary",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "TransactionDetailSummary"
@@ -4060,6 +4201,7 @@
         {
             "id": "govkit:urlUtils",
             "kind": "utility",
+            "name": "urlUtils",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "urlUtils"
@@ -4090,6 +4232,7 @@
         {
             "id": "govkit:VoteDataListItem",
             "kind": "compound",
+            "name": "VoteDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "VoteDataListItem"
@@ -4117,6 +4260,7 @@
         {
             "id": "govkit:VoteDataListItemSkeleton",
             "kind": "component",
+            "name": "VoteDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "VoteDataListItemSkeleton"
@@ -4142,6 +4286,7 @@
         {
             "id": "govkit:VoteDataListItemStructure",
             "kind": "component",
+            "name": "VoteDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "VoteDataListItemStructure"
@@ -4167,6 +4312,7 @@
         {
             "id": "govkit:VoteProposalDataListItem",
             "kind": "compound",
+            "name": "VoteProposalDataListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "VoteProposalDataListItem"
@@ -4195,6 +4341,7 @@
         {
             "id": "govkit:VoteProposalDataListItemSkeleton",
             "kind": "component",
+            "name": "VoteProposalDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "VoteProposalDataListItemSkeleton"
@@ -4220,6 +4367,7 @@
         {
             "id": "govkit:VoteProposalDataListItemStructure",
             "kind": "component",
+            "name": "VoteProposalDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "VoteProposalDataListItemStructure"
@@ -4246,6 +4394,7 @@
         {
             "id": "govkit:Wallet",
             "kind": "component",
+            "name": "Wallet",
             "import": {
                 "package": "@aragon/gov-ui-kit",
                 "name": "Wallet"

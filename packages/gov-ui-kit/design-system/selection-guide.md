@@ -7,7 +7,7 @@ contracts that matter when composing it. Generated from the component registry i
 
 ## Components
 
-### AccordionContainer
+### Accordion.Container
 
 `import { AccordionContainer } from '@aragon/gov-ui-kit';`
 
@@ -21,7 +21,7 @@ AccordionContainer: layout container for child items of the Accordion compound (
 - `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161`
 - `app:src/modules/settings/components/permissionsList/permissionsList.tsx:78`
 
-### AccordionItem
+### Accordion.Item
 
 `import { AccordionItem } from '@aragon/gov-ui-kit';`
 
@@ -34,7 +34,7 @@ AccordionItem: individual item element of the Accordion compound (Compound accor
 - `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:162`
 - `app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:116`
 
-### AccordionItemContent
+### Accordion.ItemContent
 
 `import { AccordionItemContent } from '@aragon/gov-ui-kit';`
 
@@ -47,7 +47,7 @@ AccordionItemContent: expandable item content region of the Accordion compound (
 - `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:178`
 - `app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:135`
 
-### AccordionItemHeader
+### Accordion.ItemHeader
 
 `import { AccordionItemHeader } from '@aragon/gov-ui-kit';`
 
@@ -201,7 +201,7 @@ Compact inline alert with message and variant.
 - `app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:152`
 - `app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:152`
 
-### AssetDataListItemSkeleton
+### AssetDataListItem.Skeleton
 
 `import { AssetDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -215,7 +215,7 @@ AssetDataListItemSkeleton: loading placeholder for one item of the AssetDataList
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117`
 - `app:src/modules/finance/components/assetList/assetListDefault.tsx:97`
 
-### AssetDataListItemStructure
+### AssetDataListItem.Structure
 
 `import { AssetDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -561,7 +561,7 @@ Avatar specialized for a DAO (name + image with fallback).
 - `app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36`
 - `app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:138`
 
-### DaoDataListItemSkeleton
+### DaoDataListItem.Skeleton
 
 `import { DaoDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -573,7 +573,7 @@ DaoDataListItemSkeleton: loading placeholder for one item of the DaoDataListItem
 - `kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.stories.tsx:1`
 - `app:src/modules/explore/components/daoList/daoList.tsx:131`
 
-### DaoDataListItemStructure
+### DaoDataListItem.Structure
 
 `import { DaoDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -587,7 +587,7 @@ DaoDataListItemStructure: presentational item structure driven by props of the D
 - `app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25`
 - `app:src/modules/explore/components/daoList/daoList.tsx:134`
 
-### DataListActionItem
+### DataList.ActionItem
 
 `import { DataListActionItem } from '@aragon/gov-ui-kit';`
 
@@ -600,7 +600,7 @@ DataListActionItem: clickable action row of the DataList compound (Compound list
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddButton.tsx:14`
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectBackButton.tsx:14`
 
-### DataListContainer
+### DataList.Container
 
 `import { DataListContainer } from '@aragon/gov-ui-kit';`
 
@@ -614,7 +614,7 @@ DataListContainer: layout container for child items of the DataList compound (Co
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:156`
 - `app:src/modules/finance/components/assetList/assetListDefault.tsx:106`
 
-### DataListFilter
+### DataList.Filter
 
 `import { DataListFilter } from '@aragon/gov-ui-kit';`
 
@@ -628,7 +628,7 @@ DataListFilter: filter/search bar of the DataList compound (Compound list UI).
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:145`
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:109`
 
-### DataListItem
+### DataList.Item
 
 `import { DataListItem } from '@aragon/gov-ui-kit';`
 
@@ -642,7 +642,7 @@ DataListItem: individual item element of the DataList compound (Compound list UI
 - `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17`
 - `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:41`
 
-### DataListPagination
+### DataList.Pagination
 
 `import { DataListPagination } from '@aragon/gov-ui-kit';`
 
@@ -656,7 +656,7 @@ DataListPagination: load-more / pagination control of the DataList compound (Com
 - `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:169`
 - `app:src/modules/finance/components/assetList/assetListDefault.tsx:107`
 
-### DataListRoot
+### DataList.Root
 
 `import { DataListRoot } from '@aragon/gov-ui-kit';`
 
@@ -670,7 +670,7 @@ DataListRoot: compound root owning shared state/config of the DataList compound 
 - `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:101`
 - `app:src/actions/gaugeVoter/dialogs/gaugeVoterSelectGaugeDialog/gaugeVoterSelectGaugeDialog.tsx:100`
 
-### DefinitionListContainer
+### DefinitionList.Container
 
 `import { DefinitionListContainer } from '@aragon/gov-ui-kit';`
 
@@ -684,7 +684,7 @@ DefinitionListContainer: layout container for child items of the DefinitionList 
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122`
 - `app:src/actions/core/createProposal/createProposalActionDetails.tsx:140`
 
-### DefinitionListItem
+### DefinitionList.Item
 
 `import { DefinitionListItem } from '@aragon/gov-ui-kit';`
 
@@ -698,7 +698,7 @@ DefinitionListItem: individual item element of the DefinitionList compound (Comp
 - `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:124`
 - `app:src/actions/core/createProposal/createProposalActionDetails.tsx:103`
 
-### DialogAlertContent
+### DialogAlert.Content
 
 `import { DialogAlertContent } from '@aragon/gov-ui-kit';`
 
@@ -712,7 +712,7 @@ DialogAlertContent: scrollable content region of the DialogAlert compound (Compo
 - `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:30`
 - `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:42`
 
-### DialogAlertFooter
+### DialogAlert.Footer
 
 `import { DialogAlertFooter } from '@aragon/gov-ui-kit';`
 
@@ -726,7 +726,7 @@ DialogAlertFooter: footer/actions region of the DialogAlert compound (Compound a
 - `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:36`
 - `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:48`
 
-### DialogAlertHeader
+### DialogAlert.Header
 
 `import { DialogAlertHeader } from '@aragon/gov-ui-kit';`
 
@@ -740,7 +740,7 @@ DialogAlertHeader: header region of the DialogAlert compound (Compound alert/con
 - `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29`
 - `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41`
 
-### DialogAlertRoot
+### DialogAlert.Root
 
 `import { DialogAlertRoot } from '@aragon/gov-ui-kit';`
 
@@ -752,7 +752,7 @@ DialogAlertRoot: compound root owning shared state/config of the DialogAlert com
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.stories.tsx:1`
 - `app:src/shared/components/dialogRoot/dialogRoot.tsx:101`
 
-### DialogContent
+### Dialog.Content
 
 `import { DialogContent } from '@aragon/gov-ui-kit';`
 
@@ -766,7 +766,7 @@ DialogContent: scrollable content region of the Dialog compound (Compound modal 
 - `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138`
 - `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:127`
 
-### DialogFooter
+### Dialog.Footer
 
 `import { DialogFooter } from '@aragon/gov-ui-kit';`
 
@@ -780,7 +780,7 @@ DialogFooter: footer/actions region of the Dialog compound (Compound modal dialo
 - `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:139`
 - `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:128`
 
-### DialogHeader
+### Dialog.Header
 
 `import { DialogHeader } from '@aragon/gov-ui-kit';`
 
@@ -794,7 +794,7 @@ DialogHeader: header region of the Dialog compound (Compound modal dialog).
 - `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:86`
 - `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:77`
 
-### DialogRoot
+### Dialog.Root
 
 `import { DialogRoot } from '@aragon/gov-ui-kit';`
 
@@ -834,7 +834,7 @@ Renders parsed document/rich content from a document prop.
 - `kit:src/core/components/documentParser/documentParser.stories.tsx:1`
 - `app:src/shared/components/SafeDocumentParser.tsx:13`
 
-### DropdownContainer
+### Dropdown.Container
 
 `import { DropdownContainer } from '@aragon/gov-ui-kit';`
 
@@ -848,7 +848,7 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 - `app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211`
 - `app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166`
 
-### DropdownItem
+### Dropdown.Item
 
 `import { DropdownItem } from '@aragon/gov-ui-kit';`
 
@@ -1238,7 +1238,7 @@ Avatar for a member/address that resolves the ENS avatar via web3.
 - `app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:29`
 - `app:src/modules/application/dialogs/userDialog/userDialog.tsx:98`
 
-### MemberDataListItemSkeleton
+### MemberDataListItem.Skeleton
 
 `import { MemberDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -1251,7 +1251,7 @@ MemberDataListItemSkeleton: loading placeholder for one item of the MemberDataLi
 - `app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178`
 - `app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163`
 
-### MemberDataListItemStructure
+### MemberDataListItem.Structure
 
 `import { MemberDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -1310,7 +1310,7 @@ ProposalActionChangeSettings: change-settings action view of the ProposalActions
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.tsx:6`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.stories.tsx:1`
 
-### ProposalActionsContainer
+### ProposalActions.Container
 
 `import { ProposalActionsContainer } from '@aragon/gov-ui-kit';`
 
@@ -1324,7 +1324,7 @@ ProposalActionsContainer: layout container for child items of the ProposalAction
 - `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:161`
 - `app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:65`
 
-### ProposalActionsFooter
+### ProposalActions.Footer
 
 `import { ProposalActionsFooter } from '@aragon/gov-ui-kit';`
 
@@ -1337,7 +1337,7 @@ ProposalActionsFooter: footer/actions region of the ProposalActions compound (Co
 - `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:171`
 - `app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:361`
 
-### ProposalActionsItem
+### ProposalActions.Item
 
 `import { ProposalActionsItem } from '@aragon/gov-ui-kit';`
 
@@ -1351,7 +1351,7 @@ ProposalActionsItem: individual item element of the ProposalActions compound (Co
 - `app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:62`
 - `app:src/modules/governance/components/proposalActionsItem/proposalActionsItem.tsx:43`
 
-### ProposalActionsItemSkeleton
+### ProposalActions.ItemSkeleton
 
 `import { ProposalActionsItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -1362,7 +1362,7 @@ ProposalActionsItemSkeleton: loading placeholder for one item of the ProposalAct
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsItemSkeleton/proposalActionsItemSkeleton.tsx:4`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsItemSkeleton/proposalActionsItemSkeleton.stories.tsx:1`
 
-### ProposalActionsRoot
+### ProposalActions.Root
 
 `import { ProposalActionsRoot } from '@aragon/gov-ui-kit';`
 
@@ -1398,7 +1398,7 @@ ProposalActionUpdateMetadata: update-metadata action view of the ProposalActions
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx:7`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx:1`
 
-### ProposalDataListItemSkeleton
+### ProposalDataListItem.Skeleton
 
 `import { ProposalDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -1411,7 +1411,7 @@ ProposalDataListItemSkeleton: loading placeholder for one item of the ProposalDa
 - `app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97`
 - `app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockList.tsx:100`
 
-### ProposalDataListItemStructure
+### ProposalDataListItem.Structure
 
 `import { ProposalDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -1425,7 +1425,7 @@ ProposalDataListItemStructure: presentational item structure driven by props of 
 - `app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109`
 - `app:src/modules/governance/dialogs/publishProposalDialog/publishProposalDialog.tsx:209`
 
-### ProposalVotingBodyContent
+### ProposalVoting.BodyContent
 
 `import { ProposalVotingBodyContent } from '@aragon/gov-ui-kit';`
 
@@ -1437,7 +1437,7 @@ ProposalVotingBodyContent: body content block of the ProposalVoting compound (Co
 - `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:108`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStageBodyContent.tsx:52`
 
-### ProposalVotingBodySummary
+### ProposalVoting.BodySummary
 
 `import { ProposalVotingBodySummary } from '@aragon/gov-ui-kit';`
 
@@ -1448,7 +1448,7 @@ ProposalVotingBodySummary: body-summary block of the ProposalVoting compound (Co
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummary/proposalVotingBodySummary.tsx:7`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:134`
 
-### ProposalVotingBodySummaryList
+### ProposalVoting.BodySummaryList
 
 `import { ProposalVotingBodySummaryList } from '@aragon/gov-ui-kit';`
 
@@ -1459,7 +1459,7 @@ ProposalVotingBodySummaryList: body-summary list of the ProposalVoting compound 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryList/proposalVotingBodySummaryList.tsx:6`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:122`
 
-### ProposalVotingBodySummaryListItem
+### ProposalVoting.BodySummaryListItem
 
 `import { ProposalVotingBodySummaryListItem } from '@aragon/gov-ui-kit';`
 
@@ -1470,7 +1470,7 @@ ProposalVotingBodySummaryListItem: body-summary list item of the ProposalVoting 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryListItem/proposalVotingBodySummaryListItem.tsx:22`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:120`
 
-### ProposalVotingBreakdownMultisig
+### ProposalVoting.BreakdownMultisig
 
 `import { ProposalVotingBreakdownMultisig } from '@aragon/gov-ui-kit';`
 
@@ -1482,7 +1482,7 @@ ProposalVotingBreakdownMultisig: multisig vote breakdown of the ProposalVoting c
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.stories.tsx:1`
 - `app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28`
 
-### ProposalVotingBreakdownToken
+### ProposalVoting.BreakdownToken
 
 `import { ProposalVotingBreakdownToken } from '@aragon/gov-ui-kit';`
 
@@ -1495,7 +1495,7 @@ ProposalVotingBreakdownToken: token vote breakdown of the ProposalVoting compoun
 - `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68`
 - `app:src/plugins/tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown.tsx:66`
 
-### ProposalVotingContainer
+### ProposalVoting.Container
 
 `import { ProposalVotingContainer } from '@aragon/gov-ui-kit';`
 
@@ -1506,7 +1506,7 @@ ProposalVotingContainer: layout container for child items of the ProposalVoting 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingContainer/proposalVotingContainer.tsx:21`
 - `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:109`
 
-### ProposalVotingDetails
+### ProposalVoting.Details
 
 `import { ProposalVotingDetails } from '@aragon/gov-ui-kit';`
 
@@ -1519,7 +1519,7 @@ ProposalVotingDetails: voting details block of the ProposalVoting compound (Comp
 - `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:107`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:175`
 
-### ProposalVotingProgressContainer
+### ProposalVotingProgress.Container
 
 `import { ProposalVotingProgressContainer } from '@aragon/gov-ui-kit';`
 
@@ -1529,7 +1529,7 @@ ProposalVotingProgressContainer: progress indicator container of the ProposalVot
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx:13`
 
-### ProposalVotingProgressItem
+### ProposalVotingProgress.Item
 
 `import { ProposalVotingProgressItem } from '@aragon/gov-ui-kit';`
 
@@ -1539,7 +1539,7 @@ ProposalVotingProgressItem: progress indicator item of the ProposalVoting compou
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx:60`
 
-### ProposalVotingStage
+### ProposalVoting.Stage
 
 `import { ProposalVotingStage } from '@aragon/gov-ui-kit';`
 
@@ -1551,7 +1551,7 @@ ProposalVotingStage: single voting stage of the ProposalVoting compound (Compoun
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.stories.tsx:1`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:145`
 
-### ProposalVotingStageContainer
+### ProposalVoting.StageContainer
 
 `import { ProposalVotingStageContainer } from '@aragon/gov-ui-kit';`
 
@@ -1562,7 +1562,7 @@ ProposalVotingStageContainer: container sequencing voting stages of the Proposal
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingStageContainer/proposalVotingStageContainer.tsx:16`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/sppVotingTerminal.tsx:33`
 
-### ProposalVotingVotes
+### ProposalVoting.Votes
 
 `import { ProposalVotingVotes } from '@aragon/gov-ui-kit';`
 
@@ -1655,7 +1655,7 @@ Re-renders its child function on an interval, passing the current time.
 - `kit:src/core/components/rerender/rerender.stories.tsx:1`
 - `app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockListItem.tsx:321`
 
-### SmartContractFunctionDataListItemSkeleton
+### SmartContractFunctionDataListItem.Skeleton
 
 `import { SmartContractFunctionDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -1667,7 +1667,7 @@ SmartContractFunctionDataListItemSkeleton: loading placeholder for one item of t
 - `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.stories.tsx:1`
 - `app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80`
 
-### SmartContractFunctionDataListItemStructure
+### SmartContractFunctionDataListItem.Structure
 
 `import { SmartContractFunctionDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -1777,7 +1777,7 @@ Toggle switch for on/off state with optional inline label.
 - `app:src/modules/application/components/debugPanel/debugPanelControl/debugPanelControl.tsx:28`
 - `app:src/modules/createDao/dialogs/setupStageSettingsDialog/fields/setupStageEarlyAdvanceField/setupStageEarlyAdvanceField.tsx:29`
 
-### TabsContent
+### Tabs.Content
 
 `import { TabsContent } from '@aragon/gov-ui-kit';`
 
@@ -1790,7 +1790,7 @@ TabsContent: scrollable content region of the Tabs compound (Compound tabs).
 - `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56`
 - `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60`
 
-### TabsList
+### Tabs.List
 
 `import { TabsList } from '@aragon/gov-ui-kit';`
 
@@ -1802,7 +1802,7 @@ TabsList: list region of the Tabs compound (Compound tabs).
 - `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:371`
 - `app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:84`
 
-### TabsRoot
+### Tabs.Root
 
 `import { TabsRoot } from '@aragon/gov-ui-kit';`
 
@@ -1815,7 +1815,7 @@ TabsRoot: compound root owning shared state/config of the Tabs compound (Compoun
 - `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367`
 - `app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:117`
 
-### TabsTrigger
+### Tabs.Trigger
 
 `import { TabsTrigger } from '@aragon/gov-ui-kit';`
 
@@ -1952,7 +1952,7 @@ Hover/focus tooltip (Radix) with content and variant.
 - `app:src/actions/core/permissionManager/components/permissionIdItem.tsx:40`
 - `app:src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx:29`
 
-### TransactionDataListItemSkeleton
+### TransactionDataListItem.Skeleton
 
 `import { TransactionDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -1964,7 +1964,7 @@ TransactionDataListItemSkeleton: loading placeholder for one item of the Transac
 - `kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.stories.tsx:1`
 - `app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280`
 
-### TransactionDataListItemStructure
+### TransactionDataListItem.Structure
 
 `import { TransactionDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -1976,7 +1976,7 @@ TransactionDataListItemStructure: presentational item structure driven by props 
 - `kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.stories.tsx:1`
 - `app:src/modules/finance/components/transactionList/transactionListItem.tsx:121`
 
-### TransactionDetailRoot
+### TransactionDetail.Root
 
 `import { TransactionDetailRoot } from '@aragon/gov-ui-kit';`
 
@@ -2007,7 +2007,7 @@ Renders the executed-by/summary rows of an execution detail; label/address/href/
 - `kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.stories.tsx:1`
 - `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:137`
 
-### VoteDataListItemSkeleton
+### VoteDataListItem.Skeleton
 
 `import { VoteDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -2020,7 +2020,7 @@ VoteDataListItemSkeleton: loading placeholder for one item of the VoteDataListIt
 - `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:60`
 - `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:65`
 
-### VoteDataListItemStructure
+### VoteDataListItem.Structure
 
 `import { VoteDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -2033,7 +2033,7 @@ VoteDataListItemStructure: presentational item structure driven by props of the 
 - `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101`
 - `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125`
 
-### VoteProposalDataListItemSkeleton
+### VoteProposalDataListItem.Skeleton
 
 `import { VoteProposalDataListItemSkeleton } from '@aragon/gov-ui-kit';`
 
@@ -2046,7 +2046,7 @@ VoteProposalDataListItemSkeleton: loading placeholder for one item of the VotePr
 - `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59`
 - `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:64`
 
-### VoteProposalDataListItemStructure
+### VoteProposalDataListItem.Structure
 
 `import { VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';`
 
@@ -2433,7 +2433,7 @@ Compound proposal voting UI (ProposalVoting.Container/Stage/StageContainer/Detai
 - `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68`
 - `app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28`
 
-### ProposalVotingProgress
+### ProposalVoting.Progress
 
 `import { ProposalVotingProgress } from '@aragon/gov-ui-kit';`
 

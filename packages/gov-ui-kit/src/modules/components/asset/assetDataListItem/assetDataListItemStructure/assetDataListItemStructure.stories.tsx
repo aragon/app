@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AssetDataListItemStructure } from './assetDataListItemStructure';
+import { AssetDataListItem } from '..';
 
-const meta: Meta<typeof AssetDataListItemStructure> = {
+const meta: Meta<typeof AssetDataListItem.Structure> = {
     title: 'Modules/Components/Asset/AssetDataListItem/AssetDataListItem.Structure',
-    component: AssetDataListItemStructure,
+    component: AssetDataListItem.Structure,
     parameters: {
         design: {
             type: 'figma',
@@ -12,7 +12,7 @@ const meta: Meta<typeof AssetDataListItemStructure> = {
     },
 };
 
-type Story = StoryObj<typeof AssetDataListItemStructure>;
+type Story = StoryObj<typeof AssetDataListItem.Structure>;
 
 /**
  * Default usage example of the AssetDataListItem component.

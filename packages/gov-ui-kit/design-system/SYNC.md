@@ -5,7 +5,7 @@ Ask Claude: "Sync the design system from aragon/app `main` following
 `packages/gov-ui-kit/design-system/SYNC.md`."
 
 Regenerate everything from the repo on each sync, including notes edited on the page. To
-change what the design system says, edit the source listed below.
+change what the design system says, edit its source.
 
 ## Build
 
@@ -21,18 +21,12 @@ Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifest
 
 ## Sources
 
-| Design system part | Source |
-|---|---|
-| Components: name, description, props, stories with code snippet and description | `storybook-static/manifests/components.json` |
-| Per-component import line and guidance | That component's `### <Name>` section of `design-system/selection-guide.md`, word for word |
-| `guidelines/selection-guide.md` | `design-system/selection-guide.md`, whole |
-| README, first section | `design-system/conventions.md`, word for word |
-| Guideline pages | Every page in `storybook-static/manifests/docs.json` except `Docs/Changelog` and `Docs/Coding Guidelines/*`; drop Storybook-only setup lines |
-| Tokens and CSS | `src/theme/tokens/primitives/*.css`; components use the published `build.css` |
-| Fonts | `src/theme/fonts/` (Manrope Regular and SemiBold) |
-
-Component descriptions in the manifest come from JSDoc, including each component's
-`Usage notes:` list. Show every story's description with its preview.
+Components, props and stories (with each story's description) come from Storybook's
+manifest, `storybook-static/manifests/components.json`; guideline pages from `docs.json`
+beside it, minus the changelog and coding guidelines. What is written for the design system
+lives in this folder: `conventions.md` opens the README, and `selection-guide.md` ships
+whole as `guidelines/selection-guide.md`, its `### <Name>` sections, named as in the
+manifest, copied into each component's notes. Tokens and fonts are under `src/theme/`.
 
 ## Previews
 

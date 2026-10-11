@@ -52,7 +52,7 @@ function renderMarkdown(guide) {
         for (const entry of guide.entries.filter((item) => item.kind === kind)) {
             const refs = entry.references ?? {};
             const importLine = `import { ${entry.import.name} } from '${entry.import.package}';`;
-            lines.push('', `### ${entry.import.name}`, '', `\`${importLine}\``, '', entry.description);
+            lines.push('', `### ${entry.name}`, '', `\`${importLine}\``, '', entry.description);
             list('Usage notes', asStrings(entry.usageNotes));
             list('Use when', asStrings(entry.useWhen));
             list(
@@ -121,6 +121,10 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
     const uiEntryCount = sourceEntries.filter((component) => UI_KINDS.has(component.kind)).length;
     const utilityEntryCount = sourceEntries.filter((component) => component.kind === 'utility').length;
 
+    // Compound members are used and listed (Storybook manifest) as `Accordion.Container`, not `AccordionContainer`.
+    const memberNames = new Map(
+        registry.components.flatMap((component) => (component.members ?? []).map((member) => [member.id, member.name])),
+    );
     const entries = sourceEntries.map((component) => {
         const constraints = asStrings(component.intent?.constraints).filter(
             (constraint) => !constraint.startsWith(REVIEW_QUESTION_PREFIX),
@@ -146,6 +150,7 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
         const entry = {
             id: component.id,
             kind: component.kind,
+            name: memberNames.get(component.id) ?? firstExportName(component),
             import: { package: PACKAGE_NAME, name: firstExportName(component) },
             description: component.intent?.description ?? null,
             useWhen: asStrings(component.intent?.useWhen),
