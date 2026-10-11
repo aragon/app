@@ -56,7 +56,7 @@
             "name": "Accordion.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "AccordionContainer"
+                "name": "Accordion"
             },
             "description": "AccordionContainer: layout container for child items of the Accordion compound (Compound accordion).",
             "useWhen": [],
@@ -83,7 +83,7 @@
             "name": "Accordion.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "AccordionItem"
+                "name": "Accordion"
             },
             "description": "AccordionItem: individual item element of the Accordion compound (Compound accordion).",
             "useWhen": [],
@@ -108,7 +108,7 @@
             "name": "Accordion.ItemContent",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "AccordionItemContent"
+                "name": "Accordion"
             },
             "description": "AccordionItemContent: expandable item content region of the Accordion compound (Compound accordion).",
             "useWhen": [],
@@ -133,7 +133,7 @@
             "name": "Accordion.ItemHeader",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "AccordionItemHeader"
+                "name": "Accordion"
             },
             "description": "AccordionItemHeader: clickable item header/trigger of the Accordion compound (Compound accordion).",
             "useWhen": [],
@@ -447,7 +447,7 @@
             "name": "AssetDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "AssetDataListItemSkeleton"
+                "name": "AssetDataListItem"
             },
             "description": "AssetDataListItemSkeleton: loading placeholder for one item of the AssetDataListItem compound (DataList item structure for an asset/token holding).",
             "useWhen": [],
@@ -474,7 +474,7 @@
             "name": "AssetDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "AssetDataListItemStructure"
+                "name": "AssetDataListItem"
             },
             "description": "AssetDataListItemStructure: presentational item structure driven by props of the AssetDataListItem compound (DataList item structure for an asset/token holding).",
             "useWhen": [],
@@ -1061,7 +1061,7 @@
             "name": "DaoDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DaoDataListItemSkeleton"
+                "name": "DaoDataListItem"
             },
             "description": "DaoDataListItemSkeleton: loading placeholder for one item of the DaoDataListItem compound (DataList item structure for a DAO).",
             "useWhen": [],
@@ -1086,7 +1086,7 @@
             "name": "DaoDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DaoDataListItemStructure"
+                "name": "DaoDataListItem"
             },
             "description": "DaoDataListItemStructure: presentational item structure driven by props of the DaoDataListItem compound (DataList item structure for a DAO).",
             "useWhen": [],
@@ -1148,7 +1148,7 @@
             "name": "DataList.ActionItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DataListActionItem"
+                "name": "DataList"
             },
             "description": "DataListActionItem: clickable action row of the DataList compound (Compound list UI).",
             "useWhen": [],
@@ -1174,7 +1174,7 @@
             "name": "DataList.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DataListContainer"
+                "name": "DataList"
             },
             "description": "DataListContainer: layout container for child items of the DataList compound (Compound list UI).",
             "useWhen": [],
@@ -1201,7 +1201,7 @@
             "name": "DataList.Filter",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DataListFilter"
+                "name": "DataList"
             },
             "description": "DataListFilter: filter/search bar of the DataList compound (Compound list UI).",
             "useWhen": [],
@@ -1228,7 +1228,7 @@
             "name": "DataList.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DataListItem"
+                "name": "DataList"
             },
             "description": "DataListItem: individual item element of the DataList compound (Compound list UI).",
             "useWhen": [],
@@ -1255,7 +1255,7 @@
             "name": "DataList.Pagination",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DataListPagination"
+                "name": "DataList"
             },
             "description": "DataListPagination: load-more / pagination control of the DataList compound (Compound list UI).",
             "useWhen": [],
@@ -1282,7 +1282,7 @@
             "name": "DataList.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DataListRoot"
+                "name": "DataList"
             },
             "description": "DataListRoot: compound root owning shared state/config of the DataList compound (Compound list UI).",
             "useWhen": [],
@@ -1340,7 +1340,7 @@
             "name": "DefinitionList.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DefinitionListContainer"
+                "name": "DefinitionList"
             },
             "description": "DefinitionListContainer: layout container for child items of the DefinitionList compound (Compound term/description list).",
             "useWhen": [],
@@ -1367,7 +1367,7 @@
             "name": "DefinitionList.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DefinitionListItem"
+                "name": "DefinitionList"
             },
             "description": "DefinitionListItem: individual item element of the DefinitionList compound (Compound term/description list).",
             "useWhen": [],
@@ -1487,7 +1487,7 @@
             "name": "DialogAlert.Content",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogAlertContent"
+                "name": "DialogAlert"
             },
             "description": "DialogAlertContent: scrollable content region of the DialogAlert compound (Compound alert/confirmation modal).",
             "useWhen": [],
@@ -1514,7 +1514,7 @@
             "name": "DialogAlert.Footer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogAlertFooter"
+                "name": "DialogAlert"
             },
             "description": "DialogAlertFooter: footer/actions region of the DialogAlert compound (Compound alert/confirmation modal).",
             "useWhen": [],
@@ -1541,7 +1541,7 @@
             "name": "DialogAlert.Header",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogAlertHeader"
+                "name": "DialogAlert"
             },
             "description": "DialogAlertHeader: header region of the DialogAlert compound (Compound alert/confirmation modal).",
             "useWhen": [],
@@ -1568,7 +1568,7 @@
             "name": "DialogAlert.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogAlertRoot"
+                "name": "DialogAlert"
             },
             "description": "DialogAlertRoot: compound root owning shared state/config of the DialogAlert compound (Compound alert/confirmation modal).",
             "useWhen": [],
@@ -1593,7 +1593,7 @@
             "name": "Dialog.Content",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogContent"
+                "name": "Dialog"
             },
             "description": "DialogContent: scrollable content region of the Dialog compound (Compound modal dialog).",
             "useWhen": [],
@@ -1620,7 +1620,7 @@
             "name": "Dialog.Footer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogFooter"
+                "name": "Dialog"
             },
             "description": "DialogFooter: footer/actions region of the Dialog compound (Compound modal dialog).",
             "useWhen": [],
@@ -1647,7 +1647,7 @@
             "name": "Dialog.Header",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogHeader"
+                "name": "Dialog"
             },
             "description": "DialogHeader: header region of the Dialog compound (Compound modal dialog).",
             "useWhen": [],
@@ -1674,7 +1674,7 @@
             "name": "Dialog.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DialogRoot"
+                "name": "Dialog"
             },
             "description": "DialogRoot: compound root owning shared state/config of the Dialog compound (Compound modal dialog).",
             "useWhen": [],
@@ -1772,7 +1772,7 @@
             "name": "Dropdown.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DropdownContainer"
+                "name": "Dropdown"
             },
             "description": "DropdownContainer: layout container for child items of the Dropdown compound (Compound dropdown menu).",
             "useWhen": [],
@@ -1799,7 +1799,7 @@
             "name": "Dropdown.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "DropdownItem"
+                "name": "Dropdown"
             },
             "description": "DropdownItem: individual item element of the Dropdown compound (Compound dropdown menu).",
             "useWhen": [],
@@ -2495,7 +2495,7 @@
             "name": "MemberDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "MemberDataListItemSkeleton"
+                "name": "MemberDataListItem"
             },
             "description": "MemberDataListItemSkeleton: loading placeholder for one item of the MemberDataListItem compound (DataList item structure for a member).",
             "useWhen": [],
@@ -2521,7 +2521,7 @@
             "name": "MemberDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "MemberDataListItemStructure"
+                "name": "MemberDataListItem"
             },
             "description": "MemberDataListItemStructure: presentational item structure driven by props of the MemberDataListItem compound (DataList item structure for a member).",
             "useWhen": [],
@@ -2681,7 +2681,7 @@
             "name": "ProposalActions.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionsContainer"
+                "name": "ProposalActions"
             },
             "description": "ProposalActionsContainer: layout container for child items of the ProposalActions compound (Compound decoded proposal-actions list).",
             "useWhen": [],
@@ -2708,7 +2708,7 @@
             "name": "ProposalActions.Footer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionsFooter"
+                "name": "ProposalActions"
             },
             "description": "ProposalActionsFooter: footer/actions region of the ProposalActions compound (Compound decoded proposal-actions list).",
             "useWhen": [],
@@ -2734,7 +2734,7 @@
             "name": "ProposalActions.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionsItem"
+                "name": "ProposalActions"
             },
             "description": "ProposalActionsItem: individual item element of the ProposalActions compound (Compound decoded proposal-actions list).",
             "useWhen": [],
@@ -2761,7 +2761,7 @@
             "name": "ProposalActions.ItemSkeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionsItemSkeleton"
+                "name": "ProposalActions"
             },
             "description": "ProposalActionsItemSkeleton: loading placeholder for one item of the ProposalActions compound (Compound decoded proposal-actions list).",
             "useWhen": [],
@@ -2784,7 +2784,7 @@
             "name": "ProposalActions.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionsRoot"
+                "name": "ProposalActions"
             },
             "description": "ProposalActionsRoot: compound root owning shared state/config of the ProposalActions compound (Compound decoded proposal-actions list).",
             "useWhen": [],
@@ -2889,7 +2889,7 @@
             "name": "ProposalDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalDataListItemSkeleton"
+                "name": "ProposalDataListItem"
             },
             "description": "ProposalDataListItemSkeleton: loading placeholder for one item of the ProposalDataListItem compound (DataList item structure for a proposal, linking to the proposal via link).",
             "useWhen": [],
@@ -2915,7 +2915,7 @@
             "name": "ProposalDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalDataListItemStructure"
+                "name": "ProposalDataListItem"
             },
             "description": "ProposalDataListItemStructure: presentational item structure driven by props of the ProposalDataListItem compound (DataList item structure for a proposal, linking to the proposal via link).",
             "useWhen": [],
@@ -2993,7 +2993,7 @@
             "name": "ProposalVoting.BodyContent",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingBodyContent"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingBodyContent: body content block of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3017,7 +3017,7 @@
             "name": "ProposalVoting.BodySummary",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingBodySummary"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingBodySummary: body-summary block of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3040,7 +3040,7 @@
             "name": "ProposalVoting.BodySummaryList",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingBodySummaryList"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingBodySummaryList: body-summary list of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3063,7 +3063,7 @@
             "name": "ProposalVoting.BodySummaryListItem",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingBodySummaryListItem"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingBodySummaryListItem: body-summary list item of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3086,7 +3086,7 @@
             "name": "ProposalVoting.BreakdownMultisig",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingBreakdownMultisig"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingBreakdownMultisig: multisig vote breakdown of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3111,7 +3111,7 @@
             "name": "ProposalVoting.BreakdownToken",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingBreakdownToken"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingBreakdownToken: token vote breakdown of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3137,7 +3137,7 @@
             "name": "ProposalVoting.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingContainer"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingContainer: layout container for child items of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3160,7 +3160,7 @@
             "name": "ProposalVoting.Details",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingDetails"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingDetails: voting details block of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3186,7 +3186,7 @@
             "name": "ProposalVoting.Progress",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingProgress"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingProgress: progress-indicator sub-compound (ProposalVotingProgress.Container/Item) of the ProposalVoting compound, namespaced as ProposalVoting.Progress.",
             "useWhen": [],
@@ -3211,7 +3211,7 @@
             "name": "ProposalVotingProgress.Container",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingProgressContainer"
+                "name": "ProposalVotingProgress"
             },
             "description": "ProposalVotingProgressContainer: progress indicator container of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3232,7 +3232,7 @@
             "name": "ProposalVotingProgress.Item",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingProgressItem"
+                "name": "ProposalVotingProgress"
             },
             "description": "ProposalVotingProgressItem: progress indicator item of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3253,7 +3253,7 @@
             "name": "ProposalVoting.Stage",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingStage"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingStage: single voting stage of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3278,7 +3278,7 @@
             "name": "ProposalVoting.StageContainer",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingStageContainer"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingStageContainer: container sequencing voting stages of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3301,7 +3301,7 @@
             "name": "ProposalVoting.Votes",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "ProposalVotingVotes"
+                "name": "ProposalVoting"
             },
             "description": "ProposalVotingVotes: votes list block of the ProposalVoting compound (Compound proposal voting UI).",
             "useWhen": [],
@@ -3501,7 +3501,7 @@
             "name": "SmartContractFunctionDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "SmartContractFunctionDataListItemSkeleton"
+                "name": "SmartContractFunctionDataListItem"
             },
             "description": "SmartContractFunctionDataListItemSkeleton: loading placeholder for one item of the SmartContractFunctionDataListItem compound (DataList item structure for a smart-contract function call).",
             "useWhen": [],
@@ -3526,7 +3526,7 @@
             "name": "SmartContractFunctionDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "SmartContractFunctionDataListItemStructure"
+                "name": "SmartContractFunctionDataListItem"
             },
             "description": "SmartContractFunctionDataListItemStructure: presentational item structure driven by props of the SmartContractFunctionDataListItem compound (DataList item structure for a smart-contract function call).",
             "useWhen": [],
@@ -3760,7 +3760,7 @@
             "name": "Tabs.Content",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TabsContent"
+                "name": "Tabs"
             },
             "description": "TabsContent: scrollable content region of the Tabs compound (Compound tabs).",
             "useWhen": [],
@@ -3785,7 +3785,7 @@
             "name": "Tabs.List",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TabsList"
+                "name": "Tabs"
             },
             "description": "TabsList: list region of the Tabs compound (Compound tabs).",
             "useWhen": [],
@@ -3809,7 +3809,7 @@
             "name": "Tabs.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TabsRoot"
+                "name": "Tabs"
             },
             "description": "TabsRoot: compound root owning shared state/config of the Tabs compound (Compound tabs).",
             "useWhen": [],
@@ -3835,7 +3835,7 @@
             "name": "Tabs.Trigger",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TabsTrigger"
+                "name": "Tabs"
             },
             "description": "TabsTrigger: tab trigger of the Tabs compound (Compound tabs).",
             "useWhen": [],
@@ -4071,7 +4071,7 @@
             "name": "TransactionDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TransactionDataListItemSkeleton"
+                "name": "TransactionDataListItem"
             },
             "description": "TransactionDataListItemSkeleton: loading placeholder for one item of the TransactionDataListItem compound (DataList item structure for a transaction).",
             "useWhen": [],
@@ -4096,7 +4096,7 @@
             "name": "TransactionDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TransactionDataListItemStructure"
+                "name": "TransactionDataListItem"
             },
             "description": "TransactionDataListItemStructure: presentational item structure driven by props of the TransactionDataListItem compound (DataList item structure for a transaction).",
             "useWhen": [],
@@ -4152,7 +4152,7 @@
             "name": "TransactionDetail.Root",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "TransactionDetailRoot"
+                "name": "TransactionDetail"
             },
             "description": "TransactionDetailRoot: compound root owning shared state/config of the TransactionDetail compound (Compound execution-detail view).",
             "useWhen": [],
@@ -4263,7 +4263,7 @@
             "name": "VoteDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "VoteDataListItemSkeleton"
+                "name": "VoteDataListItem"
             },
             "description": "VoteDataListItemSkeleton: loading placeholder for one item of the VoteDataListItem compound (DataList item structure for a single vote).",
             "useWhen": [],
@@ -4289,7 +4289,7 @@
             "name": "VoteDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "VoteDataListItemStructure"
+                "name": "VoteDataListItem"
             },
             "description": "VoteDataListItemStructure: presentational item structure driven by props of the VoteDataListItem compound (DataList item structure for a single vote).",
             "useWhen": [],
@@ -4344,7 +4344,7 @@
             "name": "VoteProposalDataListItem.Skeleton",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "VoteProposalDataListItemSkeleton"
+                "name": "VoteProposalDataListItem"
             },
             "description": "VoteProposalDataListItemSkeleton: loading placeholder for one item of the VoteProposalDataListItem compound (DataList item structure showing a proposal with the viewing member's vote).",
             "useWhen": [],
@@ -4370,7 +4370,7 @@
             "name": "VoteProposalDataListItem.Structure",
             "import": {
                 "package": "@aragon/gov-ui-kit",
-                "name": "VoteProposalDataListItemStructure"
+                "name": "VoteProposalDataListItem"
             },
             "description": "VoteProposalDataListItemStructure: presentational item structure driven by props of the VoteProposalDataListItem compound (DataList item structure showing a proposal with the viewing member's vote).",
             "useWhen": [],

@@ -121,10 +121,8 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
     const uiEntryCount = sourceEntries.filter((component) => UI_KINDS.has(component.kind)).length;
     const utilityEntryCount = sourceEntries.filter((component) => component.kind === 'utility').length;
 
-    // Compound members are used and listed (Storybook manifest) as `Accordion.Container`, not `AccordionContainer`.
-    const memberNames = new Map(
-        registry.components.flatMap((component) => (component.members ?? []).map((member) => [member.id, member.name])),
-    );
+    // Compound members are used and listed (Storybook manifest) as `Accordion.Container` and imported via `Accordion`.
+    const compoundOf = compoundsByMember(registry);
     const entries = sourceEntries.map((component) => {
         const constraints = asStrings(component.intent?.constraints).filter(
             (constraint) => !constraint.startsWith(REVIEW_QUESTION_PREFIX),
@@ -150,8 +148,11 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
         const entry = {
             id: component.id,
             kind: component.kind,
-            name: memberNames.get(component.id) ?? firstExportName(component),
-            import: { package: PACKAGE_NAME, name: firstExportName(component) },
+            name: compoundOf.get(component.id)?.member.name ?? firstExportName(component),
+            import: {
+                package: PACKAGE_NAME,
+                name: firstExportName(compoundOf.get(component.id)?.compound ?? component),
+            },
             description: component.intent?.description ?? null,
             useWhen: asStrings(component.intent?.useWhen),
         };
@@ -222,6 +223,14 @@ function validatePortableRef(reference, message) {
     assert(reference === null || /^(app|kit|consumed):[^:]+:\d+$/u.test(reference), message);
 }
 
+function compoundsByMember(registry) {
+    return new Map(
+        registry.components.flatMap((compound) =>
+            (compound.members ?? []).map((member) => [member.id, { compound, member }]),
+        ),
+    );
+}
+
 function validateGuide(guide, registry = readJson(REGISTRY_PATH)) {
     assert(guide && typeof guide === 'object', 'Guide must be an object');
     assert(guide.schemaVersion === '1.1.0', 'Unexpected guide schemaVersion');
@@ -233,6 +242,7 @@ function validateGuide(guide, registry = readJson(REGISTRY_PATH)) {
     const registryIds = new Set(sourceEntries.map((component) => component.id));
     const componentsById = new Map(sourceEntries.map((component) => [component.id, component]));
     const entryIds = new Set();
+    const compoundOf = compoundsByMember(registry);
     const serialized = JSON.stringify(guide);
     assert(!serialized.includes(REVIEW_QUESTION_PREFIX), 'Guide must not include maintainer review-question prose');
 
@@ -270,8 +280,9 @@ function validateGuide(guide, registry = readJson(REGISTRY_PATH)) {
         const component = componentsById.get(entry.id);
         assert(entry.kind === component.kind, `${entry.id} kind does not match registry`);
         assert(entry.import?.package === PACKAGE_NAME, `${entry.id} import package must be ${PACKAGE_NAME}`);
+        const importer = compoundOf.get(entry.id)?.compound ?? component;
         assert(
-            component.exportNames.includes(entry.import?.name),
+            importer.exportNames.includes(entry.import?.name),
             `${entry.id} import name does not resolve to registry export`,
         );
         assert(

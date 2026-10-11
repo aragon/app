@@ -9,7 +9,7 @@ contracts that matter when composing it. Generated from the component registry i
 
 ### Accordion.Container
 
-`import { AccordionContainer } from '@aragon/gov-ui-kit';`
+`import { Accordion } from '@aragon/gov-ui-kit';`
 
 AccordionContainer: layout container for child items of the Accordion compound (Compound accordion).
 
@@ -23,7 +23,7 @@ AccordionContainer: layout container for child items of the Accordion compound (
 
 ### Accordion.Item
 
-`import { AccordionItem } from '@aragon/gov-ui-kit';`
+`import { Accordion } from '@aragon/gov-ui-kit';`
 
 AccordionItem: individual item element of the Accordion compound (Compound accordion).
 
@@ -36,7 +36,7 @@ AccordionItem: individual item element of the Accordion compound (Compound accor
 
 ### Accordion.ItemContent
 
-`import { AccordionItemContent } from '@aragon/gov-ui-kit';`
+`import { Accordion } from '@aragon/gov-ui-kit';`
 
 AccordionItemContent: expandable item content region of the Accordion compound (Compound accordion).
 
@@ -49,7 +49,7 @@ AccordionItemContent: expandable item content region of the Accordion compound (
 
 ### Accordion.ItemHeader
 
-`import { AccordionItemHeader } from '@aragon/gov-ui-kit';`
+`import { Accordion } from '@aragon/gov-ui-kit';`
 
 AccordionItemHeader: clickable item header/trigger of the Accordion compound (Compound accordion).
 
@@ -203,7 +203,7 @@ Compact inline alert with message and variant.
 
 ### AssetDataListItem.Skeleton
 
-`import { AssetDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { AssetDataListItem } from '@aragon/gov-ui-kit';`
 
 AssetDataListItemSkeleton: loading placeholder for one item of the AssetDataListItem compound (DataList item structure for an asset/token holding).
 
@@ -217,7 +217,7 @@ AssetDataListItemSkeleton: loading placeholder for one item of the AssetDataList
 
 ### AssetDataListItem.Structure
 
-`import { AssetDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { AssetDataListItem } from '@aragon/gov-ui-kit';`
 
 AssetDataListItemStructure: presentational item structure driven by props of the AssetDataListItem compound (DataList item structure for an asset/token holding).
 
@@ -563,7 +563,7 @@ Avatar specialized for a DAO (name + image with fallback).
 
 ### DaoDataListItem.Skeleton
 
-`import { DaoDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { DaoDataListItem } from '@aragon/gov-ui-kit';`
 
 DaoDataListItemSkeleton: loading placeholder for one item of the DaoDataListItem compound (DataList item structure for a DAO).
 
@@ -575,7 +575,7 @@ DaoDataListItemSkeleton: loading placeholder for one item of the DaoDataListItem
 
 ### DaoDataListItem.Structure
 
-`import { DaoDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { DaoDataListItem } from '@aragon/gov-ui-kit';`
 
 DaoDataListItemStructure: presentational item structure driven by props of the DaoDataListItem compound (DataList item structure for a DAO).
 
@@ -589,7 +589,7 @@ DaoDataListItemStructure: presentational item structure driven by props of the D
 
 ### DataList.ActionItem
 
-`import { DataListActionItem } from '@aragon/gov-ui-kit';`
+`import { DataList } from '@aragon/gov-ui-kit';`
 
 DataListActionItem: clickable action row of the DataList compound (Compound list UI).
 
@@ -602,7 +602,7 @@ DataListActionItem: clickable action row of the DataList compound (Compound list
 
 ### DataList.Container
 
-`import { DataListContainer } from '@aragon/gov-ui-kit';`
+`import { DataList } from '@aragon/gov-ui-kit';`
 
 DataListContainer: layout container for child items of the DataList compound (Compound list UI).
 
@@ -616,7 +616,7 @@ DataListContainer: layout container for child items of the DataList compound (Co
 
 ### DataList.Filter
 
-`import { DataListFilter } from '@aragon/gov-ui-kit';`
+`import { DataList } from '@aragon/gov-ui-kit';`
 
 DataListFilter: filter/search bar of the DataList compound (Compound list UI).
 
@@ -630,7 +630,7 @@ DataListFilter: filter/search bar of the DataList compound (Compound list UI).
 
 ### DataList.Item
 
-`import { DataListItem } from '@aragon/gov-ui-kit';`
+`import { DataList } from '@aragon/gov-ui-kit';`
 
 DataListItem: individual item element of the DataList compound (Compound list UI).
 
@@ -644,7 +644,7 @@ DataListItem: individual item element of the DataList compound (Compound list UI
 
 ### DataList.Pagination
 
-`import { DataListPagination } from '@aragon/gov-ui-kit';`
+`import { DataList } from '@aragon/gov-ui-kit';`
 
 DataListPagination: load-more / pagination control of the DataList compound (Compound list UI).
 
@@ -658,7 +658,7 @@ DataListPagination: load-more / pagination control of the DataList compound (Com
 
 ### DataList.Root
 
-`import { DataListRoot } from '@aragon/gov-ui-kit';`
+`import { DataList } from '@aragon/gov-ui-kit';`
 
 DataListRoot: compound root owning shared state/config of the DataList compound (Compound list UI).
 
@@ -672,7 +672,7 @@ DataListRoot: compound root owning shared state/config of the DataList compound 
 
 ### DefinitionList.Container
 
-`import { DefinitionListContainer } from '@aragon/gov-ui-kit';`
+`import { DefinitionList } from '@aragon/gov-ui-kit';`
 
 DefinitionListContainer: layout container for child items of the DefinitionList compound (Compound term/description list).
 
@@ -686,7 +686,7 @@ DefinitionListContainer: layout container for child items of the DefinitionList 
 
 ### DefinitionList.Item
 
-`import { DefinitionListItem } from '@aragon/gov-ui-kit';`
+`import { DefinitionList } from '@aragon/gov-ui-kit';`
 
 DefinitionListItem: individual item element of the DefinitionList compound (Compound term/description list).
 
@@ -700,7 +700,7 @@ DefinitionListItem: individual item element of the DefinitionList compound (Comp
 
 ### DialogAlert.Content
 
-`import { DialogAlertContent } from '@aragon/gov-ui-kit';`
+`import { DialogAlert } from '@aragon/gov-ui-kit';`
 
 DialogAlertContent: scrollable content region of the DialogAlert compound (Compound alert/confirmation modal).
 
@@ -714,7 +714,7 @@ DialogAlertContent: scrollable content region of the DialogAlert compound (Compo
 
 ### DialogAlert.Footer
 
-`import { DialogAlertFooter } from '@aragon/gov-ui-kit';`
+`import { DialogAlert } from '@aragon/gov-ui-kit';`
 
 DialogAlertFooter: footer/actions region of the DialogAlert compound (Compound alert/confirmation modal).
 
@@ -728,7 +728,7 @@ DialogAlertFooter: footer/actions region of the DialogAlert compound (Compound a
 
 ### DialogAlert.Header
 
-`import { DialogAlertHeader } from '@aragon/gov-ui-kit';`
+`import { DialogAlert } from '@aragon/gov-ui-kit';`
 
 DialogAlertHeader: header region of the DialogAlert compound (Compound alert/confirmation modal).
 
@@ -742,7 +742,7 @@ DialogAlertHeader: header region of the DialogAlert compound (Compound alert/con
 
 ### DialogAlert.Root
 
-`import { DialogAlertRoot } from '@aragon/gov-ui-kit';`
+`import { DialogAlert } from '@aragon/gov-ui-kit';`
 
 DialogAlertRoot: compound root owning shared state/config of the DialogAlert compound (Compound alert/confirmation modal).
 
@@ -754,7 +754,7 @@ DialogAlertRoot: compound root owning shared state/config of the DialogAlert com
 
 ### Dialog.Content
 
-`import { DialogContent } from '@aragon/gov-ui-kit';`
+`import { Dialog } from '@aragon/gov-ui-kit';`
 
 DialogContent: scrollable content region of the Dialog compound (Compound modal dialog).
 
@@ -768,7 +768,7 @@ DialogContent: scrollable content region of the Dialog compound (Compound modal 
 
 ### Dialog.Footer
 
-`import { DialogFooter } from '@aragon/gov-ui-kit';`
+`import { Dialog } from '@aragon/gov-ui-kit';`
 
 DialogFooter: footer/actions region of the Dialog compound (Compound modal dialog).
 
@@ -782,7 +782,7 @@ DialogFooter: footer/actions region of the Dialog compound (Compound modal dialo
 
 ### Dialog.Header
 
-`import { DialogHeader } from '@aragon/gov-ui-kit';`
+`import { Dialog } from '@aragon/gov-ui-kit';`
 
 DialogHeader: header region of the Dialog compound (Compound modal dialog).
 
@@ -796,7 +796,7 @@ DialogHeader: header region of the Dialog compound (Compound modal dialog).
 
 ### Dialog.Root
 
-`import { DialogRoot } from '@aragon/gov-ui-kit';`
+`import { Dialog } from '@aragon/gov-ui-kit';`
 
 DialogRoot: compound root owning shared state/config of the Dialog compound (Compound modal dialog).
 
@@ -836,7 +836,7 @@ Renders parsed document/rich content from a document prop.
 
 ### Dropdown.Container
 
-`import { DropdownContainer } from '@aragon/gov-ui-kit';`
+`import { Dropdown } from '@aragon/gov-ui-kit';`
 
 DropdownContainer: layout container for child items of the Dropdown compound (Compound dropdown menu).
 
@@ -850,7 +850,7 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 ### Dropdown.Item
 
-`import { DropdownItem } from '@aragon/gov-ui-kit';`
+`import { Dropdown } from '@aragon/gov-ui-kit';`
 
 DropdownItem: individual item element of the Dropdown compound (Compound dropdown menu).
 
@@ -1240,7 +1240,7 @@ Avatar for a member/address that resolves the ENS avatar via web3.
 
 ### MemberDataListItem.Skeleton
 
-`import { MemberDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { MemberDataListItem } from '@aragon/gov-ui-kit';`
 
 MemberDataListItemSkeleton: loading placeholder for one item of the MemberDataListItem compound (DataList item structure for a member).
 
@@ -1253,7 +1253,7 @@ MemberDataListItemSkeleton: loading placeholder for one item of the MemberDataLi
 
 ### MemberDataListItem.Structure
 
-`import { MemberDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { MemberDataListItem } from '@aragon/gov-ui-kit';`
 
 MemberDataListItemStructure: presentational item structure driven by props of the MemberDataListItem compound (DataList item structure for a member).
 
@@ -1312,7 +1312,7 @@ ProposalActionChangeSettings: change-settings action view of the ProposalActions
 
 ### ProposalActions.Container
 
-`import { ProposalActionsContainer } from '@aragon/gov-ui-kit';`
+`import { ProposalActions } from '@aragon/gov-ui-kit';`
 
 ProposalActionsContainer: layout container for child items of the ProposalActions compound (Compound decoded proposal-actions list).
 
@@ -1326,7 +1326,7 @@ ProposalActionsContainer: layout container for child items of the ProposalAction
 
 ### ProposalActions.Footer
 
-`import { ProposalActionsFooter } from '@aragon/gov-ui-kit';`
+`import { ProposalActions } from '@aragon/gov-ui-kit';`
 
 ProposalActionsFooter: footer/actions region of the ProposalActions compound (Compound decoded proposal-actions list).
 
@@ -1339,7 +1339,7 @@ ProposalActionsFooter: footer/actions region of the ProposalActions compound (Co
 
 ### ProposalActions.Item
 
-`import { ProposalActionsItem } from '@aragon/gov-ui-kit';`
+`import { ProposalActions } from '@aragon/gov-ui-kit';`
 
 ProposalActionsItem: individual item element of the ProposalActions compound (Compound decoded proposal-actions list).
 
@@ -1353,7 +1353,7 @@ ProposalActionsItem: individual item element of the ProposalActions compound (Co
 
 ### ProposalActions.ItemSkeleton
 
-`import { ProposalActionsItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { ProposalActions } from '@aragon/gov-ui-kit';`
 
 ProposalActionsItemSkeleton: loading placeholder for one item of the ProposalActions compound (Compound decoded proposal-actions list).
 
@@ -1364,7 +1364,7 @@ ProposalActionsItemSkeleton: loading placeholder for one item of the ProposalAct
 
 ### ProposalActions.Root
 
-`import { ProposalActionsRoot } from '@aragon/gov-ui-kit';`
+`import { ProposalActions } from '@aragon/gov-ui-kit';`
 
 ProposalActionsRoot: compound root owning shared state/config of the ProposalActions compound (Compound decoded proposal-actions list).
 
@@ -1400,7 +1400,7 @@ ProposalActionUpdateMetadata: update-metadata action view of the ProposalActions
 
 ### ProposalDataListItem.Skeleton
 
-`import { ProposalDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { ProposalDataListItem } from '@aragon/gov-ui-kit';`
 
 ProposalDataListItemSkeleton: loading placeholder for one item of the ProposalDataListItem compound (DataList item structure for a proposal, linking to the proposal via link).
 
@@ -1413,7 +1413,7 @@ ProposalDataListItemSkeleton: loading placeholder for one item of the ProposalDa
 
 ### ProposalDataListItem.Structure
 
-`import { ProposalDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { ProposalDataListItem } from '@aragon/gov-ui-kit';`
 
 ProposalDataListItemStructure: presentational item structure driven by props of the ProposalDataListItem compound (DataList item structure for a proposal, linking to the proposal via link).
 
@@ -1427,7 +1427,7 @@ ProposalDataListItemStructure: presentational item structure driven by props of 
 
 ### ProposalVoting.BodyContent
 
-`import { ProposalVotingBodyContent } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingBodyContent: body content block of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1439,7 +1439,7 @@ ProposalVotingBodyContent: body content block of the ProposalVoting compound (Co
 
 ### ProposalVoting.BodySummary
 
-`import { ProposalVotingBodySummary } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingBodySummary: body-summary block of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1450,7 +1450,7 @@ ProposalVotingBodySummary: body-summary block of the ProposalVoting compound (Co
 
 ### ProposalVoting.BodySummaryList
 
-`import { ProposalVotingBodySummaryList } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingBodySummaryList: body-summary list of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1461,7 +1461,7 @@ ProposalVotingBodySummaryList: body-summary list of the ProposalVoting compound 
 
 ### ProposalVoting.BodySummaryListItem
 
-`import { ProposalVotingBodySummaryListItem } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingBodySummaryListItem: body-summary list item of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1472,7 +1472,7 @@ ProposalVotingBodySummaryListItem: body-summary list item of the ProposalVoting 
 
 ### ProposalVoting.BreakdownMultisig
 
-`import { ProposalVotingBreakdownMultisig } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingBreakdownMultisig: multisig vote breakdown of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1484,7 +1484,7 @@ ProposalVotingBreakdownMultisig: multisig vote breakdown of the ProposalVoting c
 
 ### ProposalVoting.BreakdownToken
 
-`import { ProposalVotingBreakdownToken } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingBreakdownToken: token vote breakdown of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1497,7 +1497,7 @@ ProposalVotingBreakdownToken: token vote breakdown of the ProposalVoting compoun
 
 ### ProposalVoting.Container
 
-`import { ProposalVotingContainer } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingContainer: layout container for child items of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1508,7 +1508,7 @@ ProposalVotingContainer: layout container for child items of the ProposalVoting 
 
 ### ProposalVoting.Details
 
-`import { ProposalVotingDetails } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingDetails: voting details block of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1521,7 +1521,7 @@ ProposalVotingDetails: voting details block of the ProposalVoting compound (Comp
 
 ### ProposalVotingProgress.Container
 
-`import { ProposalVotingProgressContainer } from '@aragon/gov-ui-kit';`
+`import { ProposalVotingProgress } from '@aragon/gov-ui-kit';`
 
 ProposalVotingProgressContainer: progress indicator container of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1531,7 +1531,7 @@ ProposalVotingProgressContainer: progress indicator container of the ProposalVot
 
 ### ProposalVotingProgress.Item
 
-`import { ProposalVotingProgressItem } from '@aragon/gov-ui-kit';`
+`import { ProposalVotingProgress } from '@aragon/gov-ui-kit';`
 
 ProposalVotingProgressItem: progress indicator item of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1541,7 +1541,7 @@ ProposalVotingProgressItem: progress indicator item of the ProposalVoting compou
 
 ### ProposalVoting.Stage
 
-`import { ProposalVotingStage } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingStage: single voting stage of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1553,7 +1553,7 @@ ProposalVotingStage: single voting stage of the ProposalVoting compound (Compoun
 
 ### ProposalVoting.StageContainer
 
-`import { ProposalVotingStageContainer } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingStageContainer: container sequencing voting stages of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1564,7 +1564,7 @@ ProposalVotingStageContainer: container sequencing voting stages of the Proposal
 
 ### ProposalVoting.Votes
 
-`import { ProposalVotingVotes } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingVotes: votes list block of the ProposalVoting compound (Compound proposal voting UI).
 
@@ -1657,7 +1657,7 @@ Re-renders its child function on an interval, passing the current time.
 
 ### SmartContractFunctionDataListItem.Skeleton
 
-`import { SmartContractFunctionDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';`
 
 SmartContractFunctionDataListItemSkeleton: loading placeholder for one item of the SmartContractFunctionDataListItem compound (DataList item structure for a smart-contract function call).
 
@@ -1669,7 +1669,7 @@ SmartContractFunctionDataListItemSkeleton: loading placeholder for one item of t
 
 ### SmartContractFunctionDataListItem.Structure
 
-`import { SmartContractFunctionDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';`
 
 SmartContractFunctionDataListItemStructure: presentational item structure driven by props of the SmartContractFunctionDataListItem compound (DataList item structure for a smart-contract function call).
 
@@ -1779,7 +1779,7 @@ Toggle switch for on/off state with optional inline label.
 
 ### Tabs.Content
 
-`import { TabsContent } from '@aragon/gov-ui-kit';`
+`import { Tabs } from '@aragon/gov-ui-kit';`
 
 TabsContent: scrollable content region of the Tabs compound (Compound tabs).
 
@@ -1792,7 +1792,7 @@ TabsContent: scrollable content region of the Tabs compound (Compound tabs).
 
 ### Tabs.List
 
-`import { TabsList } from '@aragon/gov-ui-kit';`
+`import { Tabs } from '@aragon/gov-ui-kit';`
 
 TabsList: list region of the Tabs compound (Compound tabs).
 
@@ -1804,7 +1804,7 @@ TabsList: list region of the Tabs compound (Compound tabs).
 
 ### Tabs.Root
 
-`import { TabsRoot } from '@aragon/gov-ui-kit';`
+`import { Tabs } from '@aragon/gov-ui-kit';`
 
 TabsRoot: compound root owning shared state/config of the Tabs compound (Compound tabs).
 
@@ -1817,7 +1817,7 @@ TabsRoot: compound root owning shared state/config of the Tabs compound (Compoun
 
 ### Tabs.Trigger
 
-`import { TabsTrigger } from '@aragon/gov-ui-kit';`
+`import { Tabs } from '@aragon/gov-ui-kit';`
 
 TabsTrigger: tab trigger of the Tabs compound (Compound tabs).
 
@@ -1954,7 +1954,7 @@ Hover/focus tooltip (Radix) with content and variant.
 
 ### TransactionDataListItem.Skeleton
 
-`import { TransactionDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { TransactionDataListItem } from '@aragon/gov-ui-kit';`
 
 TransactionDataListItemSkeleton: loading placeholder for one item of the TransactionDataListItem compound (DataList item structure for a transaction).
 
@@ -1966,7 +1966,7 @@ TransactionDataListItemSkeleton: loading placeholder for one item of the Transac
 
 ### TransactionDataListItem.Structure
 
-`import { TransactionDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { TransactionDataListItem } from '@aragon/gov-ui-kit';`
 
 TransactionDataListItemStructure: presentational item structure driven by props of the TransactionDataListItem compound (DataList item structure for a transaction).
 
@@ -1978,7 +1978,7 @@ TransactionDataListItemStructure: presentational item structure driven by props 
 
 ### TransactionDetail.Root
 
-`import { TransactionDetailRoot } from '@aragon/gov-ui-kit';`
+`import { TransactionDetail } from '@aragon/gov-ui-kit';`
 
 TransactionDetailRoot: compound root owning shared state/config of the TransactionDetail compound (Compound execution-detail view).
 
@@ -2009,7 +2009,7 @@ Renders the executed-by/summary rows of an execution detail; label/address/href/
 
 ### VoteDataListItem.Skeleton
 
-`import { VoteDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { VoteDataListItem } from '@aragon/gov-ui-kit';`
 
 VoteDataListItemSkeleton: loading placeholder for one item of the VoteDataListItem compound (DataList item structure for a single vote).
 
@@ -2022,7 +2022,7 @@ VoteDataListItemSkeleton: loading placeholder for one item of the VoteDataListIt
 
 ### VoteDataListItem.Structure
 
-`import { VoteDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { VoteDataListItem } from '@aragon/gov-ui-kit';`
 
 VoteDataListItemStructure: presentational item structure driven by props of the VoteDataListItem compound (DataList item structure for a single vote).
 
@@ -2035,7 +2035,7 @@ VoteDataListItemStructure: presentational item structure driven by props of the 
 
 ### VoteProposalDataListItem.Skeleton
 
-`import { VoteProposalDataListItemSkeleton } from '@aragon/gov-ui-kit';`
+`import { VoteProposalDataListItem } from '@aragon/gov-ui-kit';`
 
 VoteProposalDataListItemSkeleton: loading placeholder for one item of the VoteProposalDataListItem compound (DataList item structure showing a proposal with the viewing member's vote).
 
@@ -2048,7 +2048,7 @@ VoteProposalDataListItemSkeleton: loading placeholder for one item of the VotePr
 
 ### VoteProposalDataListItem.Structure
 
-`import { VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';`
+`import { VoteProposalDataListItem } from '@aragon/gov-ui-kit';`
 
 VoteProposalDataListItemStructure: presentational item structure driven by props of the VoteProposalDataListItem compound (DataList item structure showing a proposal with the viewing member's vote).
 
@@ -2435,7 +2435,7 @@ Compound proposal voting UI (ProposalVoting.Container/Stage/StageContainer/Detai
 
 ### ProposalVoting.Progress
 
-`import { ProposalVotingProgress } from '@aragon/gov-ui-kit';`
+`import { ProposalVoting } from '@aragon/gov-ui-kit';`
 
 ProposalVotingProgress: progress-indicator sub-compound (ProposalVotingProgress.Container/Item) of the ProposalVoting compound, namespaced as ProposalVoting.Progress.
 
