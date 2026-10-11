@@ -8,7 +8,7 @@
         },
         "app": {
             "root": "app",
-            "commit": "767aa44310209f05a13f7f49a5a28fe74a228a14",
+            "commit": "c4e9e6c8d89862c5736da3228f6179eabf50a58d",
             "dirty": [],
             "kitReexportBoundary": {
                 "path": "src/shared/lib/@aragon/gov-ui-kit.ts",
@@ -18,13 +18,8 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "767aa44310209f05a13f7f49a5a28fe74a228a14",
-            "dirty": [
-                "packages/gov-ui-kit/src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.stories.tsx"
-            ],
+            "commit": "c4e9e6c8d89862c5736da3228f6179eabf50a58d",
+            "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
                 "js": [
@@ -48,8 +43,8 @@
             "dist": {
                 "dist/types/src/index.d.ts": "d5b4cd419b877a922830d6d4d4d2eba59e9e4dcf213ca70588e7b41e0901f09d",
                 "dist/index.es.js": "85b275784d7f906fde4d5f69afdf2f289714d8a5d2740b843e2665911dc52c59",
-                "index.css": "22c94650fd16431a5e8b606a44f9201ba79eb9e121c2ccc4f49c8c6c99b1071a",
-                "build.css": "e9948976176218b3ef4017fe5250c89761acf1cadbf1e0edf06df5afa99b702e"
+                "index.css": "dcccb7b7f04ce859f67df23314238f51e3df57bea33778699ff7d53e24df30e9",
+                "build.css": "15e7b4327eab8ea1cca44f847930c31353178ddaaf5e00371cfcb83e5c675812"
             },
             "sourceEquivalence": "unknown"
         }
@@ -10303,7 +10298,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "e9948976176218b3ef4017fe5250c89761acf1cadbf1e0edf06df5afa99b702e"
+                "sha256": "15e7b4327eab8ea1cca44f847930c31353178ddaaf5e00371cfcb83e5c675812"
             },
             "props": [],
             "stories": [],
@@ -81166,7 +81161,7 @@
                 "repository": "kit",
                 "path": "index.css",
                 "line": 1,
-                "sha256": "22c94650fd16431a5e8b606a44f9201ba79eb9e121c2ccc4f49c8c6c99b1071a"
+                "sha256": "dcccb7b7f04ce859f67df23314238f51e3df57bea33778699ff7d53e24df30e9"
             },
             "props": [],
             "stories": [],
