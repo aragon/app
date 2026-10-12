@@ -3,37 +3,46 @@ import { render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { AddressesInputContextProvider } from '../addressesInputContext';
-import { AddressesInputItem } from './addressesInputItem';
-
-const TestComponent = ({ index = 0 }: { index?: number }) => {
-    const formMethods = useForm({
-        defaultValues: { members: [{ address: '' }, { address: '' }] },
-    });
-
-    return (
-        <FormProvider {...formMethods}>
-            <AddressesInputContextProvider
-                value={{
-                    fieldName: 'members',
-                    inputIdPrefix: 'members',
-                    onRemoveMember: jest.fn(),
-                }}
-            >
-                <AddressesInputItem index={index} />
-            </AddressesInputContextProvider>
-        </FormProvider>
-    );
-};
+import {
+    AddressesInputItem,
+    type IAddressesInputItemProps,
+} from './addressesInputItem';
 
 describe('<AddressesInputItem /> component', () => {
-    it('names the member input by its position in the list', () => {
-        render(
+    const createTestComponent = (props?: Partial<IAddressesInputItemProps>) => {
+        const completeProps: IAddressesInputItemProps = { index: 0, ...props };
+
+        const Harness = () => {
+            const form = useForm({
+                defaultValues: { members: [{ address: '' }, { address: '' }] },
+            });
+
+            return (
+                <FormProvider {...form}>
+                    <AddressesInputContextProvider
+                        value={{
+                            fieldName: 'members',
+                            inputIdPrefix: 'members',
+                            onRemoveMember: jest.fn(),
+                        }}
+                    >
+                        <AddressesInputItem {...completeProps} />
+                    </AddressesInputContextProvider>
+                </FormProvider>
+            );
+        };
+
+        return (
             <GukModulesProvider>
                 <ReactQueryWrapper>
-                    <TestComponent index={1} />
+                    <Harness />
                 </ReactQueryWrapper>
-            </GukModulesProvider>,
+            </GukModulesProvider>
         );
+    };
+
+    it('names the member input by its position in the list', () => {
+        render(createTestComponent({ index: 1 }));
 
         expect(
             screen.getByRole('textbox', {
@@ -43,13 +52,7 @@ describe('<AddressesInputItem /> component', () => {
     });
 
     it('uses the translated label for the remove button', () => {
-        render(
-            <GukModulesProvider>
-                <ReactQueryWrapper>
-                    <TestComponent />
-                </ReactQueryWrapper>
-            </GukModulesProvider>,
-        );
+        render(createTestComponent());
 
         expect(
             screen.getByText('app.shared.addressesInput.item.remove'),
