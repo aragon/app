@@ -133,7 +133,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
                     size="sm"
                     variant="tertiary"
                 >
-                    Remove
+                    {t('app.shared.addressesInput.item.remove')}
                 </Button>
             </div>
         </Card>
