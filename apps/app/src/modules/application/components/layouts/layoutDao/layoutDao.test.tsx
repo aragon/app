@@ -2,6 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOptions, Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { testLogger } from '@/test/utils';
@@ -104,5 +105,30 @@ describe('<LayoutDao /> component', () => {
         const errorLink = screen.getByRole('link', { name: 'Explore DAOs' });
         expect(errorLink).toBeInTheDocument();
         expect(errorLink.getAttribute('href')).toEqual('/');
+    });
+
+    it('renders the 404 page for an unknown network without fetching the DAO', async () => {
+        const params = Promise.resolve({
+            network: 'polygon-mainnet-0x1234' as Network,
+            addressOrEns: 'settings',
+        });
+
+        await expect(createTestComponent({ params })).rejects.toThrow(
+            'NEXT_HTTP_ERROR_FALLBACK;404',
+        );
+        expect(fetchQuerySpy).not.toHaveBeenCalled();
+    });
+
+    it('renders the 404 page when the backend does not know the DAO', async () => {
+        const notFoundError = new AragonBackendServiceError(
+            AragonBackendServiceError.notFoundCode,
+            'Resource not found',
+            404,
+        );
+        fetchQuerySpy.mockRejectedValue(notFoundError);
+
+        await expect(createTestComponent()).rejects.toThrow(
+            'NEXT_HTTP_ERROR_FALLBACK;404',
+        );
     });
 });

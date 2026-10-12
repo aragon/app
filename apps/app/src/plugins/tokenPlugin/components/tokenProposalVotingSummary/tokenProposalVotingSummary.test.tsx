@@ -241,4 +241,14 @@ describe('<TokenProposalVotingSummary /> component', () => {
             ),
         ).toBeInTheDocument();
     });
+
+    it('displays the support progress when the proposal has no supply snapshot', () => {
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+        const proposal = generateTestProposal(
+            [{ type: VoteOption.YES, totalVotingPower: '7500' }],
+            { historicalTotalSupply: undefined },
+        );
+        render(createTestComponent({ proposal }));
+        expect(screen.getByRole('progressbar').dataset.value).toEqual('100');
+    });
 });

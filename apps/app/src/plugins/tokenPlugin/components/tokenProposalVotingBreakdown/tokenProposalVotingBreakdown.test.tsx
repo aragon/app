@@ -72,4 +72,16 @@ describe('<TokenProposalVotingBreakdown /> component', () => {
         expect(screen.getByText('75%')).toBeInTheDocument(); // support
         expect(screen.getByText('5%')).toBeInTheDocument(); // minimum participation
     });
+
+    it('renders only the children when the proposal has no supply snapshot', () => {
+        const settings = generateTokenPluginSettings({
+            historicalTotalSupply: '0',
+            token: generateTokenPluginSettingsToken({ totalSupply: '1000000' }),
+        });
+        const proposal = generateTokenProposal({ settings });
+        render(createTestComponent({ proposal, children: 'vote-children' }));
+        expect(screen.getByRole('tabpanel')).toBeInTheDocument();
+        expect(screen.getByText('vote-children')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
 });

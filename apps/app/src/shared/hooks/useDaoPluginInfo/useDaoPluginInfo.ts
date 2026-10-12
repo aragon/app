@@ -63,7 +63,7 @@ export const useDaoPluginInfo = (
         id: transactionHash,
     });
 
-    const name = daoUtils.getPluginName(plugin.meta);
+    const name = daoUtils.getPluginContractName(plugin.meta);
     const pluginLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
         id: address,
