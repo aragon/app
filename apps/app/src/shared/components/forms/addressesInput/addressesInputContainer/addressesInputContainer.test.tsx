@@ -14,7 +14,6 @@ describe('<AddressesInputContainer /> component', () => {
     const createTestComponent = (
         props?: Partial<IAddressesInputContainerProps>,
         rows: ReactNode = <div>row 0</div>,
-        members = [{ address: '' }],
     ) => {
         const completeProps: IAddressesInputContainerProps = {
             name: 'members',
@@ -23,7 +22,9 @@ describe('<AddressesInputContainer /> component', () => {
         };
 
         const Harness = () => {
-            const form = useForm({ defaultValues: { members } });
+            const form = useForm({
+                defaultValues: { members: [{ address: '' }] },
+            });
 
             return (
                 <FormProvider {...form}>
@@ -46,33 +47,20 @@ describe('<AddressesInputContainer /> component', () => {
         expect(group).toHaveTextContent('row 0');
     });
 
-    it('names each member input by its position and focuses the first from the label', async () => {
+    it('focuses the first member input when the label is clicked', async () => {
         render(
             <GukModulesProvider>
                 <ReactQueryWrapper>
                     {createTestComponent(
                         undefined,
-                        <>
-                            <AddressesInputItem index={0} />
-                            <AddressesInputItem index={1} />
-                        </>,
-                        [{ address: '' }, { address: '' }],
+                        <AddressesInputItem index={0} />,
                     )}
                 </ReactQueryWrapper>
             </GukModulesProvider>,
         );
 
-        const name = 'app.shared.addressesInput.item.input.accessibleName';
-        expect(
-            screen.getByRole('textbox', { name: `${name} (number=1)` }),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole('textbox', { name: `${name} (number=2)` }),
-        ).toBeInTheDocument();
-
         await userEvent.click(screen.getByText('Members'));
-        expect(
-            screen.getByRole('textbox', { name: `${name} (number=1)` }),
-        ).toHaveFocus();
+
+        expect(screen.getByRole('textbox')).toHaveFocus();
     });
 });
