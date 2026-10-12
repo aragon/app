@@ -41,9 +41,10 @@ export interface IInputContainerBaseProps {
      */
     alert?: IInputContainerAlert;
     /**
-     * Id of the input field.
+     * Id of the input field the label points at. Omit it when there is no single input to label, so the label has no
+     * dangling `for`.
      */
-    id: string;
+    id?: string;
     /**
      * Displays an input length counter when set.
      */

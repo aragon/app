@@ -14,6 +14,7 @@ describe('<AddressesInputContainer /> component', () => {
     const createTestComponent = (
         props?: Partial<IAddressesInputContainerProps>,
         rows: ReactNode = <div>row 0</div>,
+        members = [{ address: '' }],
     ) => {
         const completeProps: IAddressesInputContainerProps = {
             name: 'members',
@@ -22,9 +23,7 @@ describe('<AddressesInputContainer /> component', () => {
         };
 
         const Harness = () => {
-            const form = useForm({
-                defaultValues: { members: [{ address: '' }] },
-            });
+            const form = useForm({ defaultValues: { members } });
 
             return (
                 <FormProvider {...form}>
@@ -45,6 +44,14 @@ describe('<AddressesInputContainer /> component', () => {
 
         expect(group).toBeInTheDocument();
         expect(group).toHaveTextContent('row 0');
+    });
+
+    it('leaves the label without a target when the list is empty', () => {
+        render(createTestComponent({ allowEmptyList: true }, null, []));
+
+        expect(
+            screen.getByText('Members').closest('label'),
+        ).not.toHaveAttribute('for');
     });
 
     it('focuses the first member input from the label without renaming it', async () => {

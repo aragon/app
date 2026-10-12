@@ -198,7 +198,11 @@ export const AddressesInputContainer: React.FC<
                 <InputContainer
                     className="gap-3"
                     helpText={helpText}
-                    id={`${addressesInputId}-0`}
+                    id={
+                        membersField.length > 0
+                            ? `${addressesInputId}-0`
+                            : undefined
+                    }
                     label={
                         label == null ? undefined : (
                             <span id={addressesLabelId}>{label}</span>
