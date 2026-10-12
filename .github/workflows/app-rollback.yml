@@ -1,10 +1,13 @@
+# The "App Rollback" workflow rebuilds and deploys an earlier app tag to production, behind the
+# same production approval as a release deploy.
+
 name: App Rollback
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to rollback to (e.g., @aragon/app@1.16.0)'
+        description: "Tag to roll back to (e.g. @aragon/app@1.16.0)"
         required: true
         type: string
 
@@ -21,19 +24,39 @@ jobs:
           fetch-depth: 0
 
       - name: Verify tag is in main
+        env:
+          TAG: ${{ inputs.tag }}
         run: |
+          set -euo pipefail
           git fetch origin main
-          # Check if the tag is contained in origin/main
-          if ! git branch -r --contains ${{ inputs.tag }} | grep -q "origin/main"; then
-            echo "Error: Tag ${{ inputs.tag }} is not reachable from main branch!"
+          if ! git branch -r --contains "$TAG" | grep -q "origin/main"; then
+            echo "::error::Tag $TAG is not reachable from main" >&2
             exit 1
           fi
 
+  # Same production group as app-production.yml's deploy job: a rollback supersedes a release
+  # deploy still waiting for its approval, and vice versa.
   deploy:
     needs: validate
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: 'app.aragon.org'
-      env: 'production'
+      env: production
       ref: ${{ inputs.tag }}
+      domain: app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_production
+      setup-command: pnpm run setup production
+      patch-root-directory: true
+      version: ${{ inputs.tag }}
+      gated: true
+      next-steps: "Rolled back. The next release ships from main as usual."
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

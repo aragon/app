@@ -1,0 +1,138 @@
+# The "Gov UI Kit Release" workflow is the kit's release PR lifecycle, on the shared
+# aragon/github-templates modules: a start every Tuesday (or by hand) cuts release/gov-ui-kit/<timestamp>
+# with the changesets bump of the "gov-ui-kit" release scope and opens the "Release
+# @aragon/gov-ui-kit@x.y.z" PR with its Slack thread; every push refreshes the summary and runs the
+# checks; merging tags the merge commit and publishes the GitHub Release, which starts the npm
+# publish (gov-ui-kit-publish.yml) behind its approval; closing without a merge cancels the release.
+#
+# Packages start their train on Tuesday, apps on Monday. A scheduled start green-skips when a kit
+# release PR is open or there are no pending kit changesets. The kit needs a scope and a flow of its
+# own even though only the app bundles it: publishing is triggered by a GitHub Release on a kit tag.
+
+name: Gov UI Kit Release
+
+on:
+  schedule:
+    - cron: "7 15 * * 2"
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: "Commit SHA to start the release from (default: main HEAD)"
+        required: false
+        type: string
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# One run per PR: a push supersedes the previous run; the close runs (finalize, cancel) get a
+# group of their own, so they are never cancelled.
+concurrency:
+  group: gov-ui-kit-release-${{ github.event.pull_request.number || github.run_id }}${{ github.event.action == 'closed' && '-closed' || '' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+
+jobs:
+  start:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    uses: aragon/github-templates/.github/workflows/release-start.yml@main
+    with:
+      engine: changesets
+      base-ref: ${{ inputs.base_commit || 'main' }}
+      package-dir: packages/gov-ui-kit
+      tag-prefix: "@aragon/gov-ui-kit@"
+      scope: gov-ui-kit
+      release-branch-prefix: release/gov-ui-kit/
+      branch-suffix: timestamp
+      commit-message: "Release {tag}"
+      summary-path-filter: gov-ui-kit
+      on-active-release: ${{ github.event_name == 'schedule' && 'skip' || 'fail' }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-gpg-key-path: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+      op-gpg-passphrase-path: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  refresh:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/gov-ui-kit/')
+    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@main
+    with:
+      release-branch-prefix: release/gov-ui-kit/
+      tag-prefix: "@aragon/gov-ui-kit@"
+      summary-path-filter: gov-ui-kit
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  test:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/gov-ui-kit/')
+    runs-on: ubuntu-latest
+    # Runs the PR head's scripts on a read-only token; pushes and tags go through ARABOT_PAT.
+    permissions:
+      contents: read
+    steps:
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: "0"
+      - name: Check types
+        run: pnpm type-check
+      - name: Check linter with formatter
+        run: pnpm lint:check
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+      - name: Check published CSS bundles
+        run: pnpm css:check
+
+  # The merge commit is tagged: there is no staging ceremony, and the published package must
+  # include the merge. Creating the release is what triggers gov-ui-kit-publish.yml.
+  finalize:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.head.ref, 'release/gov-ui-kit/')
+    uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
+    with:
+      sha: ${{ github.event.pull_request.merge_commit_sha }}
+      pr-body: ${{ github.event.pull_request.body }}
+      package-dir: packages/gov-ui-kit
+      tag-prefix: "@aragon/gov-ui-kit@"
+      changesets-guard: gov-ui-kit
+      after-release-note: "The npm publish starts now and waits for an approval on the npm-publish environment."
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  cancel:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.merged == false
+      && startsWith(github.event.pull_request.head.ref, 'release/gov-ui-kit/')
+    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@main
+    with:
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
