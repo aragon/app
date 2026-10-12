@@ -5,6 +5,7 @@ import { daoMemberListFilterParam } from '@/modules/governance/components/daoMem
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginSortUtils } from '@/shared/utils/pluginSortUtils';
@@ -41,10 +42,14 @@ export interface IUseWorkspaceMemberTabsParams {
 
 export interface IUseWorkspaceMemberTabsResult {
     /**
-     * One tab per visible body of every account, grouped by account in the order of the accounts. The group tab of
-     * the list is not one of them, as it stands for no body.
+     * Entries of the tab strip: the group tab first, then one tab per visible body of every account, grouped by
+     * account in the order of the accounts. Built whether or not the strip renders —
+     * {@link IUseWorkspaceMemberTabsResult.hasTabs} decides that.
+     *
+     * Only the body entries are {@link IWorkspaceMemberTab}s. The group tab stands for no body, so it names no
+     * account and can never be the {@link IUseWorkspaceMemberTabsResult.activeTab}.
      */
-    pluginTabs: IWorkspaceMemberTab[];
+    filterTabs: IFilterComponentPlugin<IDaoPlugin, IWorkspaceMemberTabProps>[];
     /**
      * Whether the tab strip is worth rendering: more than one body to choose from — or one body and an account
      * contributing members without a tab, so that the group tab shows more than the lone body tab does — and the
@@ -56,15 +61,6 @@ export interface IUseWorkspaceMemberTabsResult {
      * from. Undefined while the group tab is active, while the plugins load, and when no body is in view.
      */
     activeTab?: IWorkspaceMemberTab;
-    /**
-     * Visible bodies grouped by DAO, in the order of the accounts, which the rows need alongside the tabs. DAOs
-     * that could not be read are left out, as are Safes.
-     */
-    bodyPlugins: IWorkspaceDaoPlugins[];
-    /**
-     * Whether the bodies are still being resolved, i.e. either the DAOs or the CMS visibility overrides.
-     */
-    isPending: boolean;
 }
 
 /**
@@ -76,10 +72,11 @@ export interface IUseWorkspaceMemberTabsResult {
  * `PluginFilterComponent` of the list owns it — and it derives the selection from the URL alone rather than keeping
  * a copy in state, so no two readers can name different tabs.
  *
- * Sub-plugins are included, as `DaoMemberListContainer` does: the bodies nested in a process hold members of their
- * own, and they sit on a selected account, so the endpoint returns them.
+ * The bodies themselves are not returned: a caller needing them reads `useWorkspacePlugins` for itself, as the
+ * list does for its rows, with the same parameters as below so that the rows and the strip agree on which bodies
+ * are visible. The read is shared, so it costs no request.
  * @param params - Accounts whose bodies become tabs.
- * @returns The tabs, whether the strip is rendered, the selected tab and the bodies behind them.
+ * @returns The strip's entries, whether it is rendered and the selected body.
  */
 export const useWorkspaceMemberTabs = (
     params: IUseWorkspaceMemberTabsParams,
@@ -89,6 +86,8 @@ export const useWorkspaceMemberTabs = (
     const { t } = useTranslations();
     const searchParams = useSearchParams();
 
+    // Sub-plugins included, as `DaoMemberListContainer` does: a body nested in a process holds members of its own,
+    // and it sits on a selected account, so the endpoint returns it. The rows read the bodies the same way.
     const { isPending, plugins: bodyPlugins } = useWorkspacePlugins({
         accounts,
         type: PluginType.BODY,
@@ -148,6 +147,18 @@ export const useWorkspaceMemberTabs = (
         (pluginTabs.length > 1 ||
             (pluginTabs.length === 1 && hasAccountWithoutTab));
 
+    // Not an `IWorkspaceMemberTab`: the group tab stands for no body, so it names no account either. It comes
+    // first, the strip reading left to right from the widest selection. `pluginGroupFilter` types its own `props`
+    // as `object`, hence the override.
+    const groupTab: IFilterComponentPlugin<
+        IDaoPlugin,
+        IWorkspaceMemberTabProps
+    > = {
+        ...pluginGroupFilter,
+        props: {},
+        label: t('app.workspace.workspaceMemberList.groupTab'),
+    };
+
     // Read straight off the router, as `useWorkspaceProposalTabs` does and for the same reason. A parameter naming
     // the group tab, an unknown body or nothing at all resolves to no tab, which is what the group tab stands for.
     const requestedTab = searchParams.get(daoMemberListFilterParam);
@@ -169,5 +180,5 @@ export const useWorkspaceMemberTabs = (
 
     const activeTab = resolveActiveTab();
 
-    return { pluginTabs, hasTabs, activeTab, bodyPlugins, isPending };
+    return { filterTabs: [groupTab, ...pluginTabs], hasTabs, activeTab };
 };

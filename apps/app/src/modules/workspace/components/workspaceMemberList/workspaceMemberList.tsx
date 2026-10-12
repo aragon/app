@@ -2,12 +2,7 @@
 
 import { daoMemberListFilterParam } from '@/modules/governance/components/daoMemberList';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import {
-    type IFilterComponentPlugin,
-    PluginFilterComponent,
-} from '@/shared/components/pluginFilterComponent';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
+import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { PluginType } from '@/shared/types';
 import type { IWorkspaceMemberListFilters } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
@@ -37,9 +32,10 @@ export interface IWorkspaceMemberListProps {
  * Aggregated member list of a workspace, filtered by tabs corresponding to the governance bodies of the accounts:
  * one "all" tab followed by one tab for every visible body of every account
  *
- * The tabs come from `useWorkspaceMemberTabs`, which the page reads too in order to hand the selected one to the
- * aside card, so the card beside the list describes whatever the list is filtered to. This component owns the URL
- * parameter through its `PluginFilterComponent`; every other reader of the hook only reads it.
+ * The strip's entries come from `useWorkspaceMemberTabs`, group tab included, and the page reads the same hook to
+ * hand the selected body to the aside card, so the card beside the list describes whatever the list is filtered
+ * to. This component owns the URL parameter through its `PluginFilterComponent`; every other reader of the hook
+ * only reads it.
  *
  * Linked-account bodies are left out, as the endpoint only returns the members of the selected accounts.
  *
@@ -55,13 +51,17 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
 ) => {
     const { workspaceId, accounts, pageSize } = props;
 
-    const { t } = useTranslations();
+    const { filterTabs, hasTabs } = useWorkspaceMemberTabs({ accounts });
 
-    const { pluginTabs, hasTabs, bodyPlugins } = useWorkspaceMemberTabs({
+    // The plugins the rows are built from: the bodies to pick a membership from, and the processes to name the one
+    // the chosen body acts through. The bodies are read as `useWorkspaceMemberTabs` reads them, sub-plugins and
+    // all, so the rows cannot link a member through a body the strip does not offer. The read is shared with the
+    // tabs' own, so it costs no request.
+    const { plugins: bodyPlugins } = useWorkspacePlugins({
         accounts,
+        type: PluginType.BODY,
+        includeSubPlugins: true,
     });
-
-    // The processes the rows need alongside the bodies
     const { plugins: processPlugins } = useWorkspacePlugins({
         accounts,
         type: PluginType.PROCESS,
@@ -99,19 +99,9 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
         return renderList();
     }
 
-    // Not an `IWorkspaceMemberTab`: the group tab stands for no body, so it names no account either.
-    const groupTab: IFilterComponentPlugin<
-        IDaoPlugin,
-        IWorkspaceMemberTabProps
-    > = {
-        ...pluginGroupFilter,
-        props: {},
-        label: t('app.workspace.workspaceMemberList.groupTab'),
-    };
-
     return (
         <PluginFilterComponent<IDaoPlugin, IWorkspaceMemberTabProps>
-            plugins={[groupTab, ...pluginTabs]}
+            plugins={filterTabs}
             renderContent={(plugin) => renderList(plugin.props.filters)}
             searchParamName={daoMemberListFilterParam}
         />

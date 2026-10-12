@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useSearchParams } from 'next/navigation';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import {
     type IWorkspaceAccount,
@@ -8,7 +9,10 @@ import {
 } from '../../api/workspaceService';
 import type { IWorkspaceDaoPlugins } from '../useWorkspacePlugins';
 import * as useWorkspacePluginsModule from '../useWorkspacePlugins';
-import { useWorkspaceMemberTabs } from './useWorkspaceMemberTabs';
+import {
+    type IUseWorkspaceMemberTabsResult,
+    useWorkspaceMemberTabs,
+} from './useWorkspaceMemberTabs';
 
 jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(() => new URLSearchParams()),
@@ -92,11 +96,26 @@ describe('useWorkspaceMemberTabs hook', () => {
     const renderTabs = (accounts = [buildAccount(daoAddress)]) =>
         renderHook(() => useWorkspaceMemberTabs({ accounts }));
 
+    // The group tab is always the first entry of the strip, so the body tabs are what follows it.
+    const bodyTabs = (result: IUseWorkspaceMemberTabsResult) =>
+        result.filterTabs.slice(1);
+
+    // It stands for no body, which is what makes the aside fall back to the aggregate while it is active.
+    it('opens the strip with a group tab naming no body', () => {
+        const { result } = renderTabs();
+
+        expect(result.current.filterTabs[0]).toEqual({
+            ...pluginGroupFilter,
+            props: {},
+            label: 'app.workspace.workspaceMemberList.groupTab',
+        });
+    });
+
     it('builds one tab per body, tagged with the account it is installed on', () => {
         const { result } = renderTabs();
 
-        expect(result.current.pluginTabs).toHaveLength(2);
-        expect(result.current.pluginTabs[0]).toEqual(
+        expect(bodyTabs(result.current)).toHaveLength(2);
+        expect(bodyTabs(result.current)[0]).toEqual(
             expect.objectContaining({
                 accountId: `${network}-${daoAddress}`,
                 uniqueId: `${network}-0xTokenVoting-tok`,
@@ -109,7 +128,7 @@ describe('useWorkspaceMemberTabs hook', () => {
     it('labels the tabs with the body alone for a single tabbed account', () => {
         const { result } = renderTabs();
 
-        expect(result.current.pluginTabs.map((tab) => tab.label)).toEqual([
+        expect(bodyTabs(result.current).map((tab) => tab.label)).toEqual([
             'Token holders',
             'Multisig',
         ]);
@@ -122,7 +141,7 @@ describe('useWorkspaceMemberTabs hook', () => {
             buildAccount(safeAddress, WorkspaceAccountType.SAFE),
         ]);
 
-        expect(result.current.pluginTabs.map((tab) => tab.label)).toEqual([
+        expect(bodyTabs(result.current).map((tab) => tab.label)).toEqual([
             'Token holders',
             'Multisig',
         ]);
@@ -139,7 +158,7 @@ describe('useWorkspaceMemberTabs hook', () => {
             buildAccount(otherAddress),
         ]);
 
-        expect(result.current.pluginTabs.map((tab) => tab.label)).toEqual([
+        expect(bodyTabs(result.current).map((tab) => tab.label)).toEqual([
             'app.workspace.workspaceMemberList.pluginTab (dao=Demo DAO,plugin=Token holders)',
             'app.workspace.workspaceMemberList.pluginTab (dao=Demo DAO,plugin=Multisig)',
         ]);
@@ -195,7 +214,7 @@ describe('useWorkspaceMemberTabs hook', () => {
         mockPlugins([]);
         const { result } = renderTabs([]);
 
-        expect(result.current.pluginTabs).toEqual([]);
+        expect(bodyTabs(result.current)).toEqual([]);
         expect(result.current.hasTabs).toBeFalsy();
         expect(result.current.activeTab).toBeUndefined();
     });
@@ -208,12 +227,5 @@ describe('useWorkspaceMemberTabs hook', () => {
 
         expect(result.current.hasTabs).toBeTruthy();
         expect(result.current.activeTab).toBeUndefined();
-    });
-
-    // The rows need them alongside the tabs, so they come back out of the same read.
-    it('returns the bodies the rows are built from', () => {
-        const { result } = renderTabs();
-
-        expect(result.current.bodyPlugins).toEqual([buildGroup(daoAddress)]);
     });
 });
