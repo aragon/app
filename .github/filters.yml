@@ -12,11 +12,10 @@ app:
   - "packages/assistant-contracts/**"
   - "packages/gov-ui-kit/**"
   - ".changeset/config.json"
-  - ".github/actions/**"
   - ".github/workflows/app-*.yml"
-  - ".github/workflows/shared-deploy.yml"
   - ".github/workflows/scripts/**"
   - ".github/filters.yml"
+  - ".github/release-scopes.yml"
   - ".nvmrc"
   - "biome.json"
   - "jest.config.base.js"
@@ -31,14 +30,20 @@ assistant:
   - "packages/assistant-contracts/**"
   - "packages/docs-corpus/**"
   - ".github/workflows/assistant-*.yml"
-  - ".github/workflows/shared-deploy.yml"
   - ".github/filters.yml"
 
-# Gates the Storybook deploys only. Deliberately narrow: adding shared build inputs such as
-# pnpm-lock.yaml here would redeploy the Storybook on every unrelated dependency change. The kit's
-# commits reach app release notes through the `app` filter above, which already lists its path.
+# Gates the Storybook deploys and scopes the kit's release notes. Deliberately narrow: adding
+# shared build inputs such as pnpm-lock.yaml here would redeploy the Storybook on every unrelated
+# dependency change. The kit's commits also reach app release notes through the `app` filter
+# above, which already lists its path.
 gov-ui-kit:
   - "packages/gov-ui-kit/**"
   - ".github/workflows/gov-ui-kit-*.yml"
-  - ".github/workflows/shared-storybook-deploy.yml"
+  - ".github/filters.yml"
+
+# Scopes the domain package's release notes; its commits also reach app release notes through the
+# `app` filter above.
+aragon-domain:
+  - "packages/aragon-domain/**"
+  - ".github/workflows/aragon-domain-*.yml"
   - ".github/filters.yml"
