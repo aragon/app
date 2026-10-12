@@ -40,7 +40,7 @@ function renderMarkdown(guide) {
         'Which `@aragon/gov-ui-kit` export to choose for an intent, what to use instead, and the',
         'contracts that matter when composing it. Generated from the component registry in',
         '`packages/gov-ui-kit/design-system/component-registry/`; do not edit by hand. References:',
-        '`kit:` paths are in `packages/gov-ui-kit`, `app:` paths are App usages in `apps/app`.',
+        '`kit:` paths are in `packages/gov-ui-kit`.',
     ];
     const list = (title, items) => {
         if (items.length > 0) {
@@ -71,11 +71,7 @@ function renderMarkdown(guide) {
             list('Composition', asStrings(entry.composition));
             list(
                 'References',
-                [
-                    ...asStrings([refs.source]),
-                    ...asStrings(refs.stories),
-                    ...asStrings(refs.appExamples).slice(0, 3),
-                ].map((ref) => `\`${ref}\``),
+                [...asStrings([refs.source]), ...asStrings(refs.stories)].map((ref) => `\`${ref}\``),
             );
         }
     }
@@ -127,24 +123,6 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
         const constraints = asStrings(component.intent?.constraints).filter(
             (constraint) => !constraint.startsWith(REVIEW_QUESTION_PREFIX),
         );
-        const appReferences = [
-            ...(component.intent?.evidence ?? []).filter((reference) => reference.repository === 'app'),
-            ...(component.usage?.refs ?? []).filter(
-                (reference) => reference.repository === 'app' && reference.usageType === 'production',
-            ),
-        ];
-        const appPaths = new Set();
-        const appExamples = [];
-        for (const reference of appReferences) {
-            if (appPaths.has(reference.path)) {
-                continue;
-            }
-            appPaths.add(reference.path);
-            appExamples.push(refString(reference));
-            if (appExamples.length === 3) {
-                break;
-            }
-        }
         const entry = {
             id: component.id,
             kind: component.kind,
@@ -170,13 +148,12 @@ function buildGuide(registry = readJson(REGISTRY_PATH)) {
         entry.references = {
             source: refString(component.source),
             stories: (component.stories ?? []).map(refString),
-            appExamples,
         };
         return entry;
     });
 
     return {
-        schemaVersion: '1.1.0',
+        schemaVersion: '2.0.0',
         metadata: {
             package: PACKAGE_NAME,
             sourceRegistry: {
@@ -220,7 +197,7 @@ function assertArray(value, message) {
 }
 
 function validatePortableRef(reference, message) {
-    assert(reference === null || /^(app|kit|consumed):[^:]+:\d+$/u.test(reference), message);
+    assert(reference === null || /^kit:[^:]+:\d+$/u.test(reference), message);
 }
 
 function compoundsByMember(registry) {
@@ -233,7 +210,7 @@ function compoundsByMember(registry) {
 
 function validateGuide(guide, registry = readJson(REGISTRY_PATH)) {
     assert(guide && typeof guide === 'object', 'Guide must be an object');
-    assert(guide.schemaVersion === '1.1.0', 'Unexpected guide schemaVersion');
+    assert(guide.schemaVersion === '2.0.0', 'Unexpected guide schemaVersion');
     assertArray(guide.entries, 'Guide entries must be an array');
 
     const sourceEntries = registry.components.filter((component) => GUIDE_KINDS.has(component.kind));
@@ -338,8 +315,7 @@ function validateGuide(guide, registry = readJson(REGISTRY_PATH)) {
         }
         validatePortableRef(entry.references?.source, `${entry.id}.references.source is not portable`);
         assertArray(entry.references?.stories, `${entry.id}.references.stories must be an array`);
-        assertArray(entry.references?.appExamples, `${entry.id}.references.appExamples must be an array`);
-        for (const reference of [...entry.references.stories, ...entry.references.appExamples]) {
+        for (const reference of entry.references.stories) {
             validatePortableRef(reference, `${entry.id} reference is not portable: ${reference}`);
         }
     }

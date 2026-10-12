@@ -27,7 +27,7 @@ function makeRegistry() {
         ...extra,
     });
     return {
-        schemaVersion: '1.0.0',
+        schemaVersion: '2.0.0',
         components: [
             component(
                 'kit:Button',
@@ -49,16 +49,6 @@ function makeRegistry() {
                 },
                 {
                     usageNotes: ['label stays visible while loading'],
-                    usage: {
-                        refs: [
-                            {
-                                repository: 'app',
-                                path: 'src/app.tsx',
-                                line: 5,
-                                usageType: 'production',
-                            },
-                        ],
-                    },
                 },
             ),
             component('kit:Link', 'Link', 'component', {

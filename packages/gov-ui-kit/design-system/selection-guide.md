@@ -3,7 +3,7 @@
 Which `@aragon/gov-ui-kit` export to choose for an intent, what to use instead, and the
 contracts that matter when composing it. Generated from the component registry in
 `packages/gov-ui-kit/design-system/component-registry/`; do not edit by hand. References:
-`kit:` paths are in `packages/gov-ui-kit`, `app:` paths are App usages in `apps/app`.
+`kit:` paths are in `packages/gov-ui-kit`.
 
 ## Components
 
@@ -17,9 +17,6 @@ AccordionContainer: layout container for child items of the Accordion compound (
 
 - `kit:src/core/components/accordion/accordionContainer/accordionContainer.tsx:31`
 - `kit:src/core/components/accordion/accordionContainer/accordionContainer.stories.tsx:1`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:176`
-- `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161`
-- `app:src/modules/settings/components/permissionsList/permissionsList.tsx:78`
 
 ### Accordion.Item
 
@@ -30,9 +27,6 @@ AccordionItem: individual item element of the Accordion compound (Compound accor
 **References**
 
 - `kit:src/core/components/accordion/accordionItem/accordionItem.tsx:16`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:175`
-- `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:162`
-- `app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:116`
 
 ### Accordion.ItemContent
 
@@ -43,9 +37,6 @@ AccordionItemContent: expandable item content region of the Accordion compound (
 **References**
 
 - `kit:src/core/components/accordion/accordionItemContent/accordionItemContent.tsx:12`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:119`
-- `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:178`
-- `app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:135`
 
 ### Accordion.ItemHeader
 
@@ -56,9 +47,6 @@ AccordionItemHeader: clickable item header/trigger of the Accordion compound (Co
 **References**
 
 - `kit:src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx:13`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118`
-- `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:163`
-- `app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:117`
 
 ### ActionSimulation
 
@@ -79,8 +67,6 @@ Renders a proposal-action simulation summary (status, total actions, last-simula
 
 - `kit:src/modules/components/action/actionSimulation/actionSimulation.tsx:16`
 - `kit:src/modules/components/action/actionSimulation/actionSimulation.stories.tsx:1`
-- `app:src/modules/governance/dialogs/simulateActionsDialog/simulateActionsDialog.tsx:133`
-- `app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:331`
 
 ### AddressInput
 
@@ -131,9 +117,6 @@ Text input that resolves wallet or contract addresses and ENS names.
 
 - `kit:src/modules/components/addressInput/addressInput.tsx:82`
 - `kit:src/modules/components/addressInput/addressInput.stories.tsx:1`
-- `app:src/modules/finance/components/transferAssetForm/transferAssetForm.tsx:83`
-- `app:src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx:60`
-- `app:src/actions/core/permissionManager/components/permissionAddressInput.tsx:92`
 
 ### AddressOutput
 
@@ -161,9 +144,6 @@ Displays an address or hash with an optional caller-supplied label or link, copy
 
 - `kit:src/core/components/addressOutput/addressOutput.tsx:61`
 - `kit:src/core/components/addressOutput/addressOutput.stories.tsx:1`
-- `app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:35`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:58`
-- `app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItem.tsx:58`
 
 ### AlertCard
 
@@ -179,9 +159,6 @@ Card-style alert with message and variant (info/success/warning/critical).
 
 - `kit:src/core/components/alerts/alertCard/alertCard.tsx:43`
 - `kit:src/core/components/alerts/alertCard/alertCard.stories.tsx:1`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarActiveVotingAlert/gaugeRegistrarActiveVotingAlert.tsx:17`
-- `app:src/modules/application/dialogs/aragonProfileDialog/aragonProfileDialog.tsx:352`
-- `app:src/modules/application/dialogs/aragonProfileRenameDialog/aragonProfileRenameDialog.tsx:152`
 
 ### AlertInline
 
@@ -197,9 +174,6 @@ Compact inline alert with message and variant.
 
 - `kit:src/core/components/alerts/alertInline/alertInline.tsx:33`
 - `kit:src/core/components/alerts/alertInline/alertInline.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:152`
-- `app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:152`
-- `app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:152`
 
 ### AssetDataListItem.Skeleton
 
@@ -211,9 +185,6 @@ AssetDataListItemSkeleton: loading placeholder for one item of the AssetDataList
 
 - `kit:src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.tsx:9`
 - `kit:src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.stories.tsx:1`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117`
-- `app:src/modules/finance/components/assetList/assetListDefault.tsx:97`
 
 ### AssetDataListItem.Structure
 
@@ -225,9 +196,6 @@ AssetDataListItemStructure: presentational item structure driven by props of the
 
 - `kit:src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx:33`
 - `kit:src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.stories.tsx:1`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39`
-- `app:src/modules/finance/components/assetList/assetListItem.tsx:37`
-- `app:src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterLockUnlockDialog/gaugeVoterLockUnlockDialog.tsx:197`
 
 ### AssetTransfer
 
@@ -249,7 +217,6 @@ Displays an asset transfer (sender, recipient, amount, symbol, fiat value).
 
 - `kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:54`
 - `kit:src/modules/components/asset/assetTransfer/assetTransfer.stories.tsx:1`
-- `app:src/actions/core/withdrawToken/withdrawTokenActionDetails.tsx:30`
 
 ### Avatar
 
@@ -265,9 +232,6 @@ Generic image avatar with size variants and a fallback.
 
 - `kit:src/core/components/avatars/avatar/avatar.tsx:78`
 - `kit:src/core/components/avatars/avatar/avatar.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:166`
-- `app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:121`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:50`
 
 ### AvatarBase
 
@@ -298,9 +262,6 @@ Avatar-shaped frame rendering an Icon with variant styling.
 
 - `kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:83`
 - `kit:src/core/components/avatars/avatarIcon/avatarIcon.stories.tsx:1`
-- `app:src/modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx:118`
-- `app:src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx:67`
-- `app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:148`
 
 ### Breadcrumbs
 
@@ -316,7 +277,6 @@ Breadcrumb navigation trail built from a list of links.
 
 - `kit:src/core/components/breadcrumbs/breadcrumbs.tsx:30`
 - `kit:src/core/components/breadcrumbs/breadcrumbs.stories.tsx:1`
-- `app:src/shared/components/page/pageHeader/pageHeader.tsx:67`
 
 ### Button
 
@@ -356,9 +316,6 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 - `kit:src/core/components/button/button.tsx:188`
 - `kit:src/core/components/button/button.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:52`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:306`
-- `app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:238`
 
 ### Card
 
@@ -378,9 +335,6 @@ Basic surface container (border/padding) for grouping content.
 
 - `kit:src/core/components/cards/card/card.tsx:12`
 - `kit:src/core/components/cards/card/card.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:272`
-- `app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:331`
-- `app:src/daos/alchemix/components/alchemixSubmitVote/components/alchemixObjectionVote.tsx:173`
 
 ### CardCollapsible
 
@@ -396,7 +350,6 @@ Card whose body collapses/expands, with an optional exact collapsed pixel height
 
 - `kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19`
 - `kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1`
-- `app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:294`
 
 ### CardEmptyState
 
@@ -417,9 +370,6 @@ Card wrapper around EmptyState for empty/zero-data surfaces (props mirror EmptyS
 
 - `kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:13`
 - `kit:src/core/components/cards/cardEmptyState/cardEmptyState.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:133`
-- `app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:133`
-- `app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:133`
 
 ### CardSummary
 
@@ -455,7 +405,6 @@ Single checkbox control with label, position and checked/onCheckedChange state.
 
 - `kit:src/core/components/forms/checkbox/checkbox.tsx:45`
 - `kit:src/core/components/forms/checkbox/checkbox.stories.tsx:1`
-- `app:src/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimDialog/capitalDistributorClaimDialogDetails/capitalDistributorClaimDialogDetails.tsx:154`
 
 ### CheckboxCard
 
@@ -476,9 +425,6 @@ Card-styled selectable checkbox with avatar/label/description/tag.
 
 - `kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:56`
 - `kit:src/core/components/forms/checkboxCard/checkboxCard.stories.tsx:1`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/proposalCreationSettingsDefault.tsx:47`
-- `app:src/plugins/multisigPlugin/components/multisigProposalCreationSettings/multisigProposalCreationSettings.tsx:60`
-- `app:src/plugins/tokenPlugin/components/tokenProposalCreationSettings/tokenProposalCreationSettings.tsx:102`
 
 ### CheckboxGroup
 
@@ -534,9 +480,6 @@ Wraps arbitrary content and visually collapses it with a gradient overlay and to
 
 - `kit:src/core/components/collapsible/collapsible.tsx:40`
 - `kit:src/core/components/collapsible/collapsible.stories.tsx:1`
-- `app:src/actions/core/createProposal/createProposalActionDetails.tsx:102`
-- `app:src/modules/finance/components/daoInfoAside/daoInfoAside.tsx:48`
-- `app:src/modules/governance/components/delegationStatementCard/delegationStatementCard.tsx:101`
 
 ### DaoAvatar
 
@@ -557,9 +500,6 @@ Avatar specialized for a DAO (name + image with fallback).
 
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81`
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1`
-- `app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:149`
-- `app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36`
-- `app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:138`
 
 ### DaoDataListItem.Skeleton
 
@@ -571,7 +511,6 @@ DaoDataListItemSkeleton: loading placeholder for one item of the DaoDataListItem
 
 - `kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.tsx:7`
 - `kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.stories.tsx:1`
-- `app:src/modules/explore/components/daoList/daoList.tsx:131`
 
 ### DaoDataListItem.Structure
 
@@ -583,9 +522,6 @@ DaoDataListItemStructure: presentational item structure driven by props of the D
 
 - `kit:src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx:45`
 - `kit:src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.stories.tsx:1`
-- `app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190`
-- `app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25`
-- `app:src/modules/explore/components/daoList/daoList.tsx:134`
 
 ### DataList.ActionItem
 
@@ -597,8 +533,6 @@ DataListActionItem: clickable action row of the DataList compound (Compound list
 
 - `kit:src/core/components/dataList/dataListActionItem/dataListActionItem.tsx:38`
 - `kit:src/core/components/dataList/dataListActionItem/dataListActionItem.stories.tsx:1`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddButton.tsx:14`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectBackButton.tsx:14`
 
 ### DataList.Container
 
@@ -610,9 +544,6 @@ DataListContainer: layout container for child items of the DataList compound (Co
 
 - `kit:src/core/components/dataList/dataListContainer/dataListContainer.tsx:38`
 - `kit:src/core/components/dataList/dataListContainer/dataListContainer.stories.tsx:1`
-- `app:src/modules/explore/components/daoList/daoList.tsx:125`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:156`
-- `app:src/modules/finance/components/assetList/assetListDefault.tsx:106`
 
 ### DataList.Filter
 
@@ -624,9 +555,6 @@ DataListFilter: filter/search bar of the DataList compound (Compound list UI).
 
 - `kit:src/core/components/dataList/dataListFilter/dataListFilter.tsx:62`
 - `kit:src/core/components/dataList/dataListFilter/dataListFilter.stories.tsx:1`
-- `app:src/modules/explore/components/daoList/daoList.tsx:119`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:145`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:109`
 
 ### DataList.Item
 
@@ -638,9 +566,6 @@ DataListItem: individual item element of the DataList compound (Compound list UI
 
 - `kit:src/core/components/dataList/dataListItem/dataListItem.tsx:22`
 - `kit:src/core/components/dataList/dataListItem/dataListItem.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:41`
 
 ### DataList.Pagination
 
@@ -652,9 +577,6 @@ DataListPagination: load-more / pagination control of the DataList compound (Com
 
 - `kit:src/core/components/dataList/dataListPagination/dataListPagination.tsx:11`
 - `kit:src/core/components/dataList/dataListPagination/dataListPagination.stories.tsx:1`
-- `app:src/modules/explore/components/daoList/daoList.tsx:146`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:169`
-- `app:src/modules/finance/components/assetList/assetListDefault.tsx:107`
 
 ### DataList.Root
 
@@ -666,9 +588,6 @@ DataListRoot: compound root owning shared state/config of the DataList compound 
 
 - `kit:src/core/components/dataList/dataListRoot/dataListRoot.tsx:41`
 - `kit:src/core/components/dataList/dataListRoot/dataListRoot.stories.tsx:1`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107`
-- `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:101`
-- `app:src/actions/gaugeVoter/dialogs/gaugeVoterSelectGaugeDialog/gaugeVoterSelectGaugeDialog.tsx:100`
 
 ### DefinitionList.Container
 
@@ -680,9 +599,6 @@ DefinitionListContainer: layout container for child items of the DefinitionList 
 
 - `kit:src/core/components/definitionList/definitionListContainer/definitionListContainer.tsx:6`
 - `kit:src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122`
-- `app:src/actions/core/createProposal/createProposalActionDetails.tsx:140`
 
 ### DefinitionList.Item
 
@@ -694,9 +610,6 @@ DefinitionListItem: individual item element of the DefinitionList compound (Comp
 
 - `kit:src/core/components/definitionList/definitionListItem/definitionListItem.tsx:25`
 - `kit:src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:274`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:124`
-- `app:src/actions/core/createProposal/createProposalActionDetails.tsx:103`
 
 ### DialogAlert.Content
 
@@ -708,9 +621,6 @@ DialogAlertContent: scrollable content region of the DialogAlert compound (Compo
 
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.tsx:13`
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.stories.tsx:1`
-- `app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:45`
-- `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:30`
-- `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:42`
 
 ### DialogAlert.Footer
 
@@ -722,9 +632,6 @@ DialogAlertFooter: footer/actions region of the DialogAlert compound (Compound a
 
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.tsx:25`
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.stories.tsx:1`
-- `app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:53`
-- `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:36`
-- `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:48`
 
 ### DialogAlert.Header
 
@@ -736,9 +643,6 @@ DialogAlertHeader: header region of the DialogAlert compound (Compound alert/con
 
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx:30`
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.stories.tsx:1`
-- `app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40`
-- `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29`
-- `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41`
 
 ### DialogAlert.Root
 
@@ -750,7 +654,6 @@ DialogAlertRoot: compound root owning shared state/config of the DialogAlert com
 
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx:18`
 - `kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.stories.tsx:1`
-- `app:src/shared/components/dialogRoot/dialogRoot.tsx:101`
 
 ### Dialog.Content
 
@@ -762,9 +665,6 @@ DialogContent: scrollable content region of the Dialog compound (Compound modal 
 
 - `kit:src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx:19`
 - `kit:src/core/components/dialogs/dialog/dialogContent/dialogContent.stories.tsx:1`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:203`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138`
-- `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:127`
 
 ### Dialog.Footer
 
@@ -776,9 +676,6 @@ DialogFooter: footer/actions region of the Dialog compound (Compound modal dialo
 
 - `kit:src/core/components/dialogs/dialog/dialogFooter/dialogFooter.tsx:32`
 - `kit:src/core/components/dialogs/dialog/dialogFooter/dialogFooter.stories.tsx:1`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:212`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:139`
-- `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:128`
 
 ### Dialog.Header
 
@@ -790,9 +687,6 @@ DialogHeader: header region of the Dialog compound (Compound modal dialog).
 
 - `kit:src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx:23`
 - `kit:src/core/components/dialogs/dialog/dialogHeader/dialogHeader.stories.tsx:1`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:86`
-- `app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:77`
 
 ### Dialog.Root
 
@@ -810,8 +704,6 @@ DialogRoot: compound root owning shared state/config of the Dialog compound (Com
 
 - `kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.tsx:16`
 - `kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.stories.tsx:1`
-- `app:src/shared/components/dialogRoot/dialogRoot.tsx:98`
-- `app:src/shared/components/navigation/navigationDialog/navigationDialog.tsx:20`
 
 ### DocumentParser
 
@@ -832,7 +724,6 @@ Renders parsed document/rich content from a document prop.
 
 - `kit:src/core/components/documentParser/documentParser.tsx:41`
 - `kit:src/core/components/documentParser/documentParser.stories.tsx:1`
-- `app:src/shared/components/SafeDocumentParser.tsx:13`
 
 ### Dropdown.Container
 
@@ -844,9 +735,6 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72`
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1`
-- `app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213`
-- `app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211`
-- `app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166`
 
 ### Dropdown.Item
 
@@ -858,9 +746,6 @@ DropdownItem: individual item element of the Dropdown compound (Compound dropdow
 
 - `kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:47`
 - `kit:src/core/components/dropdown/dropdownItem/dropdownItem.stories.tsx:1`
-- `app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:220`
-- `app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:218`
-- `app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:182`
 
 ### EmptyState
 
@@ -885,9 +770,6 @@ Empty/zero-data state with an illustration, heading, description and up to two a
 
 - `kit:src/core/components/states/emptyState/emptyState.tsx:14`
 - `kit:src/core/components/states/emptyState/emptyState.stories.tsx:1`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarUnregisterGaugeActionDetails/gaugeRegistrarUnregisterGaugeActionDetails.tsx:115`
-- `app:src/actions/gaugeVoter/components/gaugeVoterActivateGaugeActionDetails/gaugeVoterActivateGaugeActionDetails.tsx:68`
-- `app:src/actions/gaugeVoter/components/gaugeVoterDeactivateGaugeActionDetails/gaugeVoterDeactivateGaugeActionDetails.tsx:68`
 
 ### GukCoreProvider
 
@@ -939,7 +821,6 @@ Bundles WagmiProvider + QueryClientProvider (default chains/query client) and Gu
 **References**
 
 - `kit:src/modules/components/gukModulesProvider/gukModulesProvider.tsx:68`
-- `app:src/modules/application/components/providers/providers.tsx:114`
 
 ### Heading
 
@@ -955,9 +836,6 @@ Semantic heading with size and rendered element (as h1..h5).
 
 - `kit:src/core/components/heading/heading.tsx:28`
 - `kit:src/core/components/heading/heading.stories.tsx:1`
-- `app:src/actions/core/permissionManager/components/permissionChangeCard.tsx:46`
-- `app:src/modules/application/components/debugPanel/debugPanel.tsx:106`
-- `app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26`
 
 ### Icon
 
@@ -973,9 +851,6 @@ Renders a kit glyph selected by IconType with size variants.
 
 - `kit:src/core/components/icon/icon.tsx:53`
 - `kit:src/core/components/icon/icon.stories.tsx:1`
-- `app:src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx:22`
-- `app:src/daos/cryptex/components/cryptexPageHeader/cryptexAvatarIcon.tsx:38`
-- `app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:124`
 
 ### IllustrationHuman
 
@@ -1016,9 +891,6 @@ Object illustration selected by object type.
 
 - `kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:20`
 - `kit:src/core/components/illustrations/illustrationObject/illustrationObject.stories.tsx:1`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx:73`
-- `app:src/shared/components/ctaCard/ctaCard.tsx:108`
-- `app:src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx:58`
 
 ### InputContainer
 
@@ -1034,9 +906,6 @@ Shared label/helpText/alert/length chrome for input components; wraps a custom o
 
 - `kit:src/core/components/forms/inputContainer/inputContainer.tsx:35`
 - `kit:src/core/components/forms/inputContainer/inputContainer.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:117`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:223`
-- `app:src/actions/core/createProposal/createProposalActionDetails.tsx:141`
 
 ### InputDate
 
@@ -1052,8 +921,6 @@ Date input field.
 
 - `kit:src/core/components/forms/inputDate/inputDate.tsx:11`
 - `kit:src/core/components/forms/inputDate/inputDate.stories.tsx:1`
-- `app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:119`
-- `app:src/shared/components/forms/advancedDateInput/advancedDateInputFixed.tsx:81`
 
 ### InputFileAvatar
 
@@ -1073,7 +940,6 @@ Avatar image file input with preview, accepted types, size and dimension validat
 
 - `kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx:42`
 - `kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.stories.tsx:1`
-- `app:src/shared/components/forms/avatarInput/avatarInput.tsx:59`
 
 ### InputNumber
 
@@ -1094,9 +960,6 @@ Numeric input with min/max/step and optional prefix/suffix.
 
 - `kit:src/core/components/forms/inputNumber/inputNumber.tsx:51`
 - `kit:src/core/components/forms/inputNumber/inputNumber.stories.tsx:1`
-- `app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:129`
-- `app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:236`
-- `app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:234`
 
 ### InputNumberMax
 
@@ -1152,9 +1015,6 @@ Single-line text input built on InputContainer, with optional addon and icons.
 
 - `kit:src/core/components/forms/inputText/inputText.tsx:30`
 - `kit:src/core/components/forms/inputText/inputText.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:199`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:167`
-- `app:src/actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate/gaugeVoterCreateGaugeActionCreateForm.tsx:124`
 
 ### InputTime
 
@@ -1170,7 +1030,6 @@ Time-of-day input field.
 
 - `kit:src/core/components/forms/inputTime/inputTime.tsx:11`
 - `kit:src/core/components/forms/inputTime/inputTime.stories.tsx:1`
-- `app:src/shared/components/forms/advancedDateInput/advancedDateInputFixed.tsx:89`
 
 ### Link
 
@@ -1186,9 +1045,6 @@ Text link with variant styling built on LinkBase; can show the URL and mark exte
 
 - `kit:src/core/components/link/link/link.tsx:22`
 - `kit:src/core/components/link/link/link.stories.tsx:1`
-- `app:src/modules/application/dialogs/aragonProfileDialog/aragonProfileDialog.tsx:364`
-- `app:src/modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx:147`
-- `app:src/modules/governance/components/memberLinksCard/memberLinksCard.tsx:171`
 
 ### LinkBase
 
@@ -1234,9 +1090,6 @@ Avatar for a member/address that resolves the ENS avatar via web3.
 
 - `kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:35`
 - `kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1`
-- `app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:288`
-- `app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:29`
-- `app:src/modules/application/dialogs/userDialog/userDialog.tsx:98`
 
 ### MemberDataListItem.Skeleton
 
@@ -1248,8 +1101,6 @@ MemberDataListItemSkeleton: loading placeholder for one item of the MemberDataLi
 
 - `kit:src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.tsx:6`
 - `kit:src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.stories.tsx:1`
-- `app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178`
-- `app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163`
 
 ### MemberDataListItem.Structure
 
@@ -1261,9 +1112,6 @@ MemberDataListItemStructure: presentational item structure driven by props of th
 
 - `kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:52`
 - `kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.stories.tsx:1`
-- `app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:216`
-- `app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47`
-- `app:src/plugins/tokenPlugin/dialogs/tokenDelegationDialog/tokenDelegationDialog.tsx:105`
 
 ### Progress
 
@@ -1284,9 +1132,6 @@ Linear progress bar with value, size/variant and an optional threshold indicator
 
 - `kit:src/core/components/progress/progress.tsx:60`
 - `kit:src/core/components/progress/progress.stories.tsx:1`
-- `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingSummary/lockToVoteProposalVotingSummary.tsx:118`
-- `app:src/plugins/multisigPlugin/components/multisigProposalVotingSummary/multisigProposalVotingSummary.tsx:113`
-- `app:src/plugins/tokenPlugin/components/tokenProposalVotingSummary/tokenProposalVotingSummary.tsx:116`
 
 ### ProposalActionChangeMembers
 
@@ -1320,9 +1165,6 @@ ProposalActionsContainer: layout container for child items of the ProposalAction
 
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.tsx:15`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.stories.tsx:1`
-- `app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:161`
-- `app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:65`
 
 ### ProposalActions.Footer
 
@@ -1334,8 +1176,6 @@ ProposalActionsFooter: footer/actions region of the ProposalActions compound (Co
 
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsFooter/proposalActionsFooter.tsx:39`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsFooter/proposalActionsFooter.stories.tsx:1`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:171`
-- `app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:361`
 
 ### ProposalActions.Item
 
@@ -1347,9 +1187,6 @@ ProposalActionsItem: individual item element of the ProposalActions compound (Co
 
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx:46`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx:1`
-- `app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:96`
-- `app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:62`
-- `app:src/modules/governance/components/proposalActionsItem/proposalActionsItem.tsx:43`
 
 ### ProposalActions.ItemSkeleton
 
@@ -1372,9 +1209,6 @@ ProposalActionsRoot: compound root owning shared state/config of the ProposalAct
 
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.tsx:36`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1`
-- `app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:108`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154`
-- `app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64`
 
 ### ProposalActionTokenMint
 
@@ -1408,8 +1242,6 @@ ProposalDataListItemSkeleton: loading placeholder for one item of the ProposalDa
 
 - `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.tsx:7`
 - `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.stories.tsx:1`
-- `app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97`
-- `app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockList.tsx:100`
 
 ### ProposalDataListItem.Structure
 
@@ -1421,9 +1253,6 @@ ProposalDataListItemStructure: presentational item structure driven by props of 
 
 - `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:26`
 - `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx:1`
-- `app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64`
-- `app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109`
-- `app:src/modules/governance/dialogs/publishProposalDialog/publishProposalDialog.tsx:209`
 
 ### ProposalVoting.BodyContent
 
@@ -1434,8 +1263,6 @@ ProposalVotingBodyContent: body content block of the ProposalVoting compound (Co
 **References**
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx:31`
-- `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:108`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStageBodyContent.tsx:52`
 
 ### ProposalVoting.BodySummary
 
@@ -1446,7 +1273,6 @@ ProposalVotingBodySummary: body-summary block of the ProposalVoting compound (Co
 **References**
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummary/proposalVotingBodySummary.tsx:7`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:134`
 
 ### ProposalVoting.BodySummaryList
 
@@ -1457,7 +1283,6 @@ ProposalVotingBodySummaryList: body-summary list of the ProposalVoting compound 
 **References**
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryList/proposalVotingBodySummaryList.tsx:6`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:122`
 
 ### ProposalVoting.BodySummaryListItem
 
@@ -1468,7 +1293,6 @@ ProposalVotingBodySummaryListItem: body-summary list item of the ProposalVoting 
 **References**
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryListItem/proposalVotingBodySummaryListItem.tsx:22`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:120`
 
 ### ProposalVoting.BreakdownMultisig
 
@@ -1480,7 +1304,6 @@ ProposalVotingBreakdownMultisig: multisig vote breakdown of the ProposalVoting c
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.tsx:26`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.stories.tsx:1`
-- `app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28`
 
 ### ProposalVoting.BreakdownToken
 
@@ -1492,8 +1315,6 @@ ProposalVotingBreakdownToken: token vote breakdown of the ProposalVoting compoun
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.tsx:43`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.stories.tsx:1`
-- `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68`
-- `app:src/plugins/tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown.tsx:66`
 
 ### ProposalVoting.Container
 
@@ -1504,7 +1325,6 @@ ProposalVotingContainer: layout container for child items of the ProposalVoting 
 **References**
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingContainer/proposalVotingContainer.tsx:21`
-- `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:109`
 
 ### ProposalVoting.Details
 
@@ -1516,8 +1336,6 @@ ProposalVotingDetails: voting details block of the ProposalVoting compound (Comp
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingDetails/proposalVotingDetails.tsx:12`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingDetails/proposalVotingDetails.stories.tsx:1`
-- `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:107`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:175`
 
 ### ProposalVotingProgress.Container
 
@@ -1549,7 +1367,6 @@ ProposalVotingStage: single voting stage of the ProposalVoting compound (Compoun
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx:41`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.stories.tsx:1`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:145`
 
 ### ProposalVoting.StageContainer
 
@@ -1560,7 +1377,6 @@ ProposalVotingStageContainer: container sequencing voting stages of the Proposal
 **References**
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingStageContainer/proposalVotingStageContainer.tsx:16`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/sppVotingTerminal.tsx:33`
 
 ### ProposalVoting.Votes
 
@@ -1572,8 +1388,6 @@ ProposalVotingVotes: votes list block of the ProposalVoting compound (Compound p
 
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingVotes/proposalVotingVotes.tsx:6`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVotingVotes/proposalVotingVotes.stories.tsx:1`
-- `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:164`
 
 ### Radio
 
@@ -1613,9 +1427,6 @@ Card-styled radio option with avatar/label/description/tag.
 
 - `kit:src/core/components/forms/radioCard/radioCard.tsx:48`
 - `kit:src/core/components/forms/radioCard/radioCard.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:107`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:89`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:215`
 
 ### RadioGroup
 
@@ -1631,9 +1442,6 @@ Coordinates a group of radios enforcing single selection (controlled via value/o
 
 - `kit:src/core/components/forms/radioGroup/radioGroup.tsx:43`
 - `kit:src/core/components/forms/radioGroup/radioGroup.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:116`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:107`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:204`
 
 ### Rerender
 
@@ -1653,7 +1461,6 @@ Re-renders its child function on an interval, passing the current time.
 
 - `kit:src/core/components/rerender/rerender.tsx:22`
 - `kit:src/core/components/rerender/rerender.stories.tsx:1`
-- `app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockListItem.tsx:321`
 
 ### SmartContractFunctionDataListItem.Skeleton
 
@@ -1665,7 +1472,6 @@ SmartContractFunctionDataListItemSkeleton: loading placeholder for one item of t
 
 - `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.tsx:11`
 - `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.stories.tsx:1`
-- `app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80`
 
 ### SmartContractFunctionDataListItem.Structure
 
@@ -1677,8 +1483,6 @@ SmartContractFunctionDataListItemStructure: presentational item structure driven
 
 - `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx:53`
 - `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.stories.tsx:1`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165`
-- `app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:83`
 
 ### Spinner
 
@@ -1694,9 +1498,6 @@ Indeterminate loading spinner with size/variant.
 
 - `kit:src/core/components/spinner/spinner.tsx:87`
 - `kit:src/core/components/spinner/spinner.stories.tsx:1`
-- `app:src/modules/application/dialogs/aragonProfileRenameDialog/aragonProfileRenameDialog.tsx:149`
-- `app:src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx:164`
-- `app:src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx:135`
 
 ### StatePingAnimation
 
@@ -1732,9 +1533,6 @@ Rectangular skeleton placeholder (ref-forwarding) with configurable width/size.
 
 - `kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:47`
 - `kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:13`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:16`
-- `app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:18`
 
 ### StateSkeletonCircular
 
@@ -1755,9 +1553,6 @@ Circular skeleton placeholder for avatar/icon loading.
 
 - `kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:70`
 - `kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.stories.tsx:1`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:14`
-- `app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:16`
-- `app:src/modules/settings/components/permissionsList/permissionsListSkeleton.tsx:28`
 
 ### Switch
 
@@ -1773,9 +1568,6 @@ Toggle switch for on/off state with optional inline label.
 
 - `kit:src/core/components/forms/switch/switch.tsx:44`
 - `kit:src/core/components/forms/switch/switch.stories.tsx:1`
-- `app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:437`
-- `app:src/modules/application/components/debugPanel/debugPanelControl/debugPanelControl.tsx:28`
-- `app:src/modules/createDao/dialogs/setupStageSettingsDialog/fields/setupStageEarlyAdvanceField/setupStageEarlyAdvanceField.tsx:29`
 
 ### Tabs.Content
 
@@ -1786,9 +1578,6 @@ TabsContent: scrollable content region of the Tabs compound (Compound tabs).
 **References**
 
 - `kit:src/core/components/tabs/tabsContent/tabsContent.tsx:15`
-- `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:382`
-- `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60`
 
 ### Tabs.List
 
@@ -1799,8 +1588,6 @@ TabsList: list region of the Tabs compound (Compound tabs).
 **References**
 
 - `kit:src/core/components/tabs/tabsList/tabsList.tsx:8`
-- `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:371`
-- `app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:84`
 
 ### Tabs.Root
 
@@ -1812,8 +1599,6 @@ TabsRoot: compound root owning shared state/config of the Tabs compound (Compoun
 
 - `kit:src/core/components/tabs/tabsRoot/tabsRoot.tsx:32`
 - `kit:src/core/components/tabs/tabsRoot/tabsRoot.stories.tsx:1`
-- `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367`
-- `app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:117`
 
 ### Tabs.Trigger
 
@@ -1825,8 +1610,6 @@ TabsTrigger: tab trigger of the Tabs compound (Compound tabs).
 
 - `kit:src/core/components/tabs/tabsTrigger/tabsTrigger.tsx:22`
 - `kit:src/core/components/tabs/tabsTrigger/tabsTrigger.stories.tsx:1`
-- `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:373`
-- `app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:86`
 
 ### Tag
 
@@ -1842,9 +1625,6 @@ Small labelled tag/badge with a variant.
 
 - `kit:src/core/components/tag/tag.tsx:30`
 - `kit:src/core/components/tag/tag.stories.tsx:1`
-- `app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:304`
-- `app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:36`
-- `app:src/modules/application/components/footer/footer.tsx:54`
 
 ### TextArea
 
@@ -1865,9 +1645,6 @@ Multi-line text input (ref-forwarding).
 
 - `kit:src/core/components/forms/textArea/textArea.tsx:16`
 - `kit:src/core/components/forms/textArea/textArea.stories.tsx:1`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:205`
-- `app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:176`
-- `app:src/actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate/gaugeVoterCreateGaugeActionCreateForm.tsx:133`
 
 ### TextAreaRichText
 
@@ -1883,8 +1660,6 @@ Rich-text editor textarea emitting formatted output (valueFormat).
 
 - `kit:src/core/components/forms/textAreaRichText/textAreaRichText.tsx:53`
 - `kit:src/core/components/forms/textAreaRichText/textAreaRichText.stories.tsx:1`
-- `app:src/modules/governance/components/createProposalForm/createProposalFormMetadata/createProposalFormMetadata.tsx:64`
-- `app:src/modules/governance/dialogs/delegateStatementDialog/delegateStatementDialog.tsx:101`
 
 ### Toggle
 
@@ -1904,9 +1679,6 @@ Button representing a value within a ToggleGroup.
 
 - `kit:src/core/components/toggles/toggle/toggle.tsx:21`
 - `kit:src/core/components/toggles/toggle/toggle.stories.tsx:1`
-- `app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:228`
-- `app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:100`
-- `app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69`
 
 ### ToggleGroup
 
@@ -1931,9 +1703,6 @@ Coordinates a group of Toggle buttons (single or multi-select, orientation).
 
 - `kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:47`
 - `kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1`
-- `app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:210`
-- `app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:112`
-- `app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63`
 
 ### Tooltip
 
@@ -1949,8 +1718,6 @@ Hover/focus tooltip (Radix) with content and variant.
 
 - `kit:src/core/components/tooltip/tooltip.tsx:70`
 - `kit:src/core/components/tooltip/tooltip.stories.tsx:1`
-- `app:src/actions/core/permissionManager/components/permissionIdItem.tsx:40`
-- `app:src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx:29`
 
 ### TransactionDataListItem.Skeleton
 
@@ -1962,7 +1729,6 @@ TransactionDataListItemSkeleton: loading placeholder for one item of the Transac
 
 - `kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.tsx:6`
 - `kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.stories.tsx:1`
-- `app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280`
 
 ### TransactionDataListItem.Structure
 
@@ -1974,7 +1740,6 @@ TransactionDataListItemStructure: presentational item structure driven by props 
 
 - `kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx:36`
 - `kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.stories.tsx:1`
-- `app:src/modules/finance/components/transactionList/transactionListItem.tsx:121`
 
 ### TransactionDetail.Root
 
@@ -1985,7 +1750,6 @@ TransactionDetailRoot: compound root owning shared state/config of the Transacti
 **References**
 
 - `kit:src/modules/components/transaction/transactionDetail/transactionDetailRoot/transactionDetailRoot.tsx:22`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:136`
 
 ### TransactionDetailSummary
 
@@ -2005,7 +1769,6 @@ Renders the executed-by/summary rows of an execution detail; label/address/href/
 
 - `kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.tsx:7`
 - `kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.stories.tsx:1`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:137`
 
 ### VoteDataListItem.Skeleton
 
@@ -2017,8 +1780,6 @@ VoteDataListItemSkeleton: loading placeholder for one item of the VoteDataListIt
 
 - `kit:src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.tsx:5`
 - `kit:src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.stories.tsx:1`
-- `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:60`
-- `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:65`
 
 ### VoteDataListItem.Structure
 
@@ -2030,8 +1791,6 @@ VoteDataListItemStructure: presentational item structure driven by props of the 
 
 - `kit:src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx:50`
 - `kit:src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.stories.tsx:1`
-- `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101`
-- `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125`
 
 ### VoteProposalDataListItem.Skeleton
 
@@ -2043,8 +1802,6 @@ VoteProposalDataListItemSkeleton: loading placeholder for one item of the VotePr
 
 - `kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.tsx:5`
 - `kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.stories.tsx:1`
-- `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59`
-- `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:64`
 
 ### VoteProposalDataListItem.Structure
 
@@ -2056,9 +1813,6 @@ VoteProposalDataListItemStructure: presentational item structure driven by props
 
 - `kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx:33`
 - `kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.stories.tsx:1`
-- `app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40`
-- `app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161`
-- `app:src/plugins/sppPlugin/dialogs/sppReportProposalResultDialog/sppReportProposalResultDialog.tsx:111`
 
 ### Wallet
 
@@ -2084,9 +1838,6 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 - `kit:src/modules/components/wallet/wallet.tsx:30`
 - `kit:src/modules/components/wallet/wallet.stories.tsx:1`
-- `app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:132`
-- `app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:147`
-- `app:src/modules/explore/components/exploreNav/exploreNav.tsx:85`
 
 ## Compound components
 
@@ -2111,9 +1862,6 @@ Compound accordion (Accordion.Container/Item/ItemHeader/ItemContent) for expand/
 **References**
 
 - `kit:src/core/components/accordion/index.ts:10`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118`
-- `app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161`
-- `app:src/modules/settings/components/permissionsList/permissionsList.tsx:78`
 
 ### AssetDataListItem
 
@@ -2132,9 +1880,6 @@ DataList item structure for an asset/token holding (name, symbol, amount, fiat v
 **References**
 
 - `kit:src/modules/components/asset/assetDataListItem/index.ts:8`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117`
-- `app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39`
 
 ### DaoDataListItem
 
@@ -2153,9 +1898,6 @@ DataList item structure for a DAO (name, logo, description, address/ens, network
 **References**
 
 - `kit:src/modules/components/dao/daoDataListItem/index.ts:8`
-- `app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190`
-- `app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25`
-- `app:src/modules/explore/components/daoList/daoList.tsx:131`
 
 ### DataList
 
@@ -2184,9 +1926,6 @@ Compound list presentation with filter controls and pagination; the caller suppl
 **References**
 
 - `kit:src/core/components/dataList/index.ts:17`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107`
 
 ### DefinitionList
 
@@ -2209,9 +1948,6 @@ Compound term/description list (DefinitionList.Container/Item).
 **References**
 
 - `kit:src/core/components/definitionList/index.ts:8`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122`
-- `app:src/actions/core/createProposal/createProposalActionDetails.tsx:103`
 
 ### Dialog
 
@@ -2253,9 +1989,6 @@ Compound modal dialog (Dialog.Root/Header/Content/Footer) built on Radix.
 **References**
 
 - `kit:src/core/components/dialogs/dialog/index.ts:14`
-- `app:src/shared/components/dialogRoot/dialogRoot.tsx:98`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195`
-- `app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138`
 
 ### DialogAlert
 
@@ -2283,9 +2016,6 @@ Compound alert/confirmation modal (DialogAlert.Root/Header/Content/Footer) with 
 **References**
 
 - `kit:src/core/components/dialogs/dialogAlert/index.ts:14`
-- `app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40`
-- `app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29`
-- `app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41`
 
 ### Dropdown
 
@@ -2304,9 +2034,6 @@ Compound dropdown menu (Dropdown.Container/Item) with a trigger and menu.
 **References**
 
 - `kit:src/core/components/dropdown/index.ts:7`
-- `app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213`
-- `app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211`
-- `app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166`
 
 ### MemberDataListItem
 
@@ -2325,9 +2052,6 @@ DataList item structure for a member (avatar, address/ENS, delegate/token-voting
 **References**
 
 - `kit:src/modules/components/member/memberDataListItem/index.ts:8`
-- `app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178`
-- `app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47`
-- `app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163`
 
 ### ProposalActions
 
@@ -2366,9 +2090,6 @@ Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/Item
 **References**
 
 - `kit:src/modules/components/proposal/proposalActions/index.ts:17`
-- `app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154`
-- `app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64`
 
 ### ProposalDataListItem
 
@@ -2392,9 +2113,6 @@ DataList item structure for a proposal, linking to the proposal via link.
 **References**
 
 - `kit:src/modules/components/proposal/proposalDataListItem/index.ts:12`
-- `app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97`
-- `app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64`
-- `app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109`
 
 ### ProposalVoting
 
@@ -2429,9 +2147,6 @@ Compound proposal voting UI (ProposalVoting.Container/Stage/StageContainer/Detai
 
 - `kit:src/modules/components/proposal/proposalVoting/index.ts:24`
 - `kit:src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx:1`
-- `app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100`
-- `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68`
-- `app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28`
 
 ### ProposalVoting.Progress
 
@@ -2465,8 +2180,6 @@ DataList item structure for a smart-contract function call (name, contract, sele
 **References**
 
 - `kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:8`
-- `app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165`
-- `app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80`
 
 ### Tabs
 
@@ -2490,9 +2203,6 @@ Compound tabs (Tabs.Root/List/Trigger/Content) built on Radix.
 **References**
 
 - `kit:src/core/components/tabs/index.ts:14`
-- `app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367`
-- `app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56`
-- `app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60`
 
 ### TransactionDataListItem
 
@@ -2511,8 +2221,6 @@ DataList item structure for a transaction (type, status, chain, amount, date, ha
 **References**
 
 - `kit:src/modules/components/transaction/transactionDataListItem/index.ts:8`
-- `app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280`
-- `app:src/modules/finance/components/transactionList/transactionListItem.tsx:121`
 
 ### TransactionDetail
 
@@ -2536,7 +2244,6 @@ Compound execution-detail view (TransactionDetail.Root) rendering a dialog heade
 
 - `kit:src/modules/components/transaction/transactionDetail/index.ts:3`
 - `kit:src/modules/components/transaction/transactionDetail/transactionDetail.stories.tsx:1`
-- `app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:136`
 
 ### VoteDataListItem
 
@@ -2555,8 +2262,6 @@ DataList item structure for a single vote (voter, choice indicator, power).
 **References**
 
 - `kit:src/modules/components/vote/voteDataListItem/index.ts:8`
-- `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101`
-- `app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125`
 
 ### VoteProposalDataListItem
 
@@ -2575,9 +2280,6 @@ DataList item structure showing a proposal with the viewing member's vote.
 **References**
 
 - `kit:src/modules/components/vote/voteProposalDataListItem/index.ts:8`
-- `app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40`
-- `app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161`
-- `app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59`
 
 ## Utilities
 
@@ -2608,9 +2310,6 @@ Ethereum address and hash validation, truncation, checksum and equality helpers.
 **References**
 
 - `kit:src/core/utils/addressUtils/addressUtils.ts:56`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:83`
-- `app:src/actions/capitalDistributor/index.ts:30`
-- `app:src/actions/capitalDistributor/utils/capitalDistributorActionParser/capitalDistributorActionParser.ts:34`
 
 ### clipboardUtils
 
@@ -2686,9 +2385,6 @@ Shared number and date formatting utility with configurable locales and predefin
 **References**
 
 - `kit:src/core/utils/formatterUtils/formatterUtils.ts:196`
-- `app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:104`
-- `app:src/actions/core/createProposal/createProposalActionDetails.tsx:51`
-- `app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:94`
 
 ### responsiveUtils
 
@@ -2758,7 +2454,6 @@ External URL normalization helper that adds a safe default protocol for host-lik
 **References**
 
 - `kit:src/core/utils/urlUtils/urlUtils.ts:46`
-- `app:src/shared/security/sanitizeExternalUrl.ts:8`
 
 ## Allowed values
 
