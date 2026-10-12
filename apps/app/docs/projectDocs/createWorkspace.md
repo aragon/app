@@ -282,6 +282,7 @@ src/app/workspace/[workspaceId]/
    ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
    ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
    ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
+   ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
    ├─ members/page.tsx     WorkspaceAccountMembersPage
    └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
@@ -542,6 +543,32 @@ not stacked and offers no back action, there being nothing underneath to go back
 single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
 called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
 
+#### Details page
+
+`/workspace/{workspaceId}/{accountId}/proposals/{proposalSlug}` is `WorkspaceProposalDetailsPage`, which renders
+`DaoProposalDetailsPage` unchanged behind `WorkspaceAccountGate` and only adapts the route parameters — the same
+shape `WorkspaceAccountMemberDetailsPage` uses. The adaptation is free: `resolveDaoId` returns
+`` `${network}-${addressOrEns}` `` for a plain address with no request, so the two halves `parseDaoId` splits out of
+`accountId` reconstruct that same `accountId`.
+
+Metadata is adapted rather than dropped. `generateProposalMetadata` cannot be re-exported as it stands — it
+destructures `{ proposalSlug, addressOrEns, network }`, which this route does not carry — so
+`workspaceMetadataUtils.generateProposalMetadata` parses `accountId` and delegates. It sits in
+`modules/workspace/utils/workspaceMetadataUtils/`, beside the module's other utils and matching
+`governanceMetadataUtils`, rather than in the route file: no `page.tsx` here is tested, and this adaptation is
+worth covering. Its card names the DAO rather than the workspace, which is correct: a proposal lives on the DAO.
+
+It carries the `workspaces` flag gate of its own. Next resolves metadata independently of the page, so the page's
+`notFound()` does not stop it: without the gate a probe of the URL would read the proposal and the DAO from the
+backend for a feature that does not exist yet, and could title the 404 document with a real proposal.
+
+Both proposals lists link into it. `workspaceProposalListDefault` builds
+``workspaceUtils.getAccountScopeUrl(workspaceId, accountId, `proposals/${slug}`)`` per row and passes it as the
+`href` of `DaoProposalListDefaultItem` / `SppProposalListItem`, which default to `proposalUtils.getProposalUrl` so
+the DAO pages are unaffected. The account comes from the proposal's own DAO, so a row of the aggregated list enters
+the scope of the account it belongs to rather than staying under `all`. A proposal whose plugin cannot be resolved
+has no slug, so it gets no href and the row renders unlinked.
+
 ### Overview page
 
 `workspaceDetailsPageClient` composes the standard page primitives, matching the DAO pages:
@@ -749,6 +776,10 @@ Keep it that way when extending this.
   account ID in a shared link falls back to the aggregated selection and shows every account under a URL naming
   one, and a Safe — which never becomes an option — does the same. `workspaceUtils.findAccountById` is the fix, as
   on those two pages. The proposals page keeps the Safe fallback on purpose, a Safe having no proposals to show.
+- The workspace proposal details page is the DAO page as is, so the links inside it still leave the workspace: its
+  breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter, publisher and settings links of its
+  nested plugin components. Held back on purpose until the rest of the migration lands and every call site is
+  visible; the row links into the page are done.
 - The workspace proposals endpoint has no `onlyActive`, so an account scope counts the proposals of uninstalled
   plugins where the DAO proposals page does not. The list and its aside card agree with each other; the DAO page's
   own total for the same DAO can read lower.

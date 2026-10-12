@@ -29,6 +29,10 @@ export interface IWorkspaceProposalListProps {
      * Whether the page is scoped to a single account, which the empty and error copy then names.
      */
     isAccountScoped?: boolean;
+    /**
+     * ID of the workspace, used to link each row to the proposal details page of its account.
+     */
+    workspaceId: string;
 }
 
 /**
@@ -44,7 +48,7 @@ export interface IWorkspaceProposalListProps {
 export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
     props,
 ) => {
-    const { accounts, pageSize, isAccountScoped } = props;
+    const { accounts, pageSize, isAccountScoped, workspaceId } = props;
 
     const { t } = useTranslations();
 
@@ -59,6 +63,7 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
             isAccountScoped={isAccountScoped}
             isDaosPending={isDaosPending}
             pageSize={pageSize}
+            workspaceId={workspaceId}
         />
     );
 
