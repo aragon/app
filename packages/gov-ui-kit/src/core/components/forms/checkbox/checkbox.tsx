@@ -34,6 +34,14 @@ export interface ICheckboxProps extends ComponentProps<'button'> {
     id?: string;
 }
 
+/**
+ * Usage notes:
+ *
+ * - `checked` and `onCheckedChange` are tri-state: use a boolean or `'indeterminate'`, not only `true`/`false`; the
+ *   indeterminate state renders the mixed-state icon.
+ * - Use `CheckboxGroup` only for shared label/help/alert chrome; each `Checkbox` keeps its own `checked` and
+ *   `onCheckedChange` state.
+ */
 export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, ref) => {
     const { label, labelPosition = 'right', checked, onCheckedChange, disabled, id, className, ...otherProps } = props;
 

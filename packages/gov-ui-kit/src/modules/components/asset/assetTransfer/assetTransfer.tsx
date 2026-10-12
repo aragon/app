@@ -41,6 +41,16 @@ export interface IAssetTransferProps extends IWeb3ComponentProps {
     assetFiatPrice?: number | string;
 }
 
+/**
+ * Usage notes:
+ *
+ * - For a non-native transfer, the asset row uses the token's block-explorer URL and opens it in a new tab;
+ *   `assetAddress` set to the zero address marks a native transfer and leaves the row unlinked.
+ * - The fiat value line is visually blank when the optional `assetFiatPrice` is absent; when supplied, it is
+ *   calculated as `assetAmount × assetFiatPrice`.
+ * - `assetAmount` uses signed formatting, so positive transfers receive a leading `+` (negative values retain their
+ *   `-` sign).
+ */
 export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
     const {
         sender,

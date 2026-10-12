@@ -14,6 +14,19 @@ export interface IWalletProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
     user?: ICompositeAddress;
 }
 
+/**
+ * Our Wallet button implementation is intentionally minimal for full flexibility.
+ * As a controlled component you can pass the user details and connectivity actions to the component.
+ * This includes a global connected state, likely from your WAGMI provider.
+ *
+ * Usage notes:
+ *
+ * - The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the
+ *   avatar.
+ * - Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always
+ *   mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only
+ *   for a connected `user` without `name`.
+ */
 export const Wallet: React.FC<IWalletProps> = (props) => {
     const { user, className, chainId = mainnet.id, wagmiConfig, ...otherProps } = props;
 

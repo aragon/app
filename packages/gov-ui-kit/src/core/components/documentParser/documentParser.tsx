@@ -29,6 +29,15 @@ const sanitizeDocument = (document: string): string => {
     return sanitizeHtml(document, { allowedTags, allowedAttributes, disallowedTagsMode });
 };
 
+/**
+ * DocumentParser component is used to render HTML or Markdown content in a read-only format.
+ *
+ * Usage notes:
+ *
+ * - `document` accepts Markdown or HTML, and the parser sanitizes the content before rendering; an image `src`
+ *   using a `data:` URI is stripped (the image element itself is not necessarily removed).
+ * - Rendering is driven by the `document` prop; any `children` passed to `DocumentParser` are discarded.
+ */
 export const DocumentParser: React.FC<IDocumentParserProps> = (props) => {
     const { children, className, document, immediatelyRender, ...otherProps } = props;
 
