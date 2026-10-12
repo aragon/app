@@ -7,6 +7,10 @@ export interface IAddressesInputContext {
      */
     fieldName: string;
     /**
+     * Prefix of the member input ids; the input at index i is `${inputIdPrefix}-${i}`.
+     */
+    inputIdPrefix: string;
+    /**
      * Callback to remove a member from the list.
      */
     onRemoveMember: (index: number) => void;

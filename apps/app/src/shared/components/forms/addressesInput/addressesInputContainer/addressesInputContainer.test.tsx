@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ReactQueryWrapper } from '@/shared/testUtils';
@@ -45,7 +46,7 @@ describe('<AddressesInputContainer /> component', () => {
         expect(group).toHaveTextContent('row 0');
     });
 
-    it('names each member input by its position in the list', () => {
+    it('names each member input by its position and focuses the first from the label', async () => {
         render(
             <GukModulesProvider>
                 <ReactQueryWrapper>
@@ -68,5 +69,10 @@ describe('<AddressesInputContainer /> component', () => {
         expect(
             screen.getByRole('textbox', { name: `${name} (number=2)` }),
         ).toBeInTheDocument();
+
+        await userEvent.click(screen.getByText('Members'));
+        expect(
+            screen.getByRole('textbox', { name: `${name} (number=1)` }),
+        ).toHaveFocus();
     });
 });

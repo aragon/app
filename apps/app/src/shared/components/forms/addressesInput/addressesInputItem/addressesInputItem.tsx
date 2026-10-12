@@ -43,7 +43,8 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
 
     const { getFieldState, trigger } = useFormContext();
 
-    const { fieldName, onRemoveMember } = useAddressesInputContext();
+    const { fieldName, inputIdPrefix, onRemoveMember } =
+        useAddressesInputContext();
 
     const membersField = useWatch<AddressListInputBaseForm>({
         name: fieldName,
@@ -104,6 +105,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
                     chainId={chainId}
                     className="w-full min-w-0"
                     disabled={disabled}
+                    id={`${inputIdPrefix}-${index.toString()}`}
                     onAccept={handleAddressAccept}
                     onChange={setAddressInput}
                     placeholder={t(

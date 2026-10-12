@@ -160,6 +160,7 @@ export const AddressesInputContainer: React.FC<
 
     const contextValue = {
         fieldName: membersFieldName,
+        inputIdPrefix: addressesInputId,
         onRemoveMember: handleRemoveMember,
     };
     const watchedMembers = useWatch<AddressListInputBaseForm>({
@@ -197,7 +198,7 @@ export const AddressesInputContainer: React.FC<
                 <InputContainer
                     className="gap-3"
                     helpText={helpText}
-                    id={addressesInputId}
+                    id={`${addressesInputId}-0`}
                     label={
                         label == null ? undefined : (
                             <span id={addressesLabelId}>{label}</span>
