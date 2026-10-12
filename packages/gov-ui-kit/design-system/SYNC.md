@@ -15,9 +15,13 @@ From the repo root:
 pnpm install
 pnpm --filter @aragon/gov-ui-kit build
 pnpm --filter @aragon/gov-ui-kit build:storybook
+node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
+node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
 ```
 
-Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifests.
+Storybook writes `packages/gov-ui-kit/storybook-static/`, including its manifests. If either
+check fails, stop: the registry or selection guide is stale for this commit
+(`component-registry/README.md`).
 
 ## Sources
 
@@ -50,6 +54,7 @@ Expected differences:
 
 ## After a sync
 
-Report the commit synced, the component count against the manifest, skipped stories and
-blocked assets. Spot-check Wallet: its notes include "hidden below the `md` breakpoint"
-and its connected stories show the handle.
+Start the README with the commit synced and the `@aragon/gov-ui-kit` version. Report the
+component count against the manifest, skipped stories and blocked assets. Spot-check Wallet:
+its notes include "hidden below the `md` breakpoint" and its connected stories show the
+handle.

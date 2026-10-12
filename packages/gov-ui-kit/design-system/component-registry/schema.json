@@ -708,7 +708,6 @@
                 "id",
                 "name",
                 "kind",
-                "runtime",
                 "exportNames",
                 "exports",
                 "members",
@@ -738,9 +737,6 @@
                         "non-component",
                         "css"
                     ]
-                },
-                "runtime": {
-                    "type": "boolean"
                 },
                 "values": {
                     "description": "Allowed values of an exported enum (member names) or string-literal union type (quoted literals), in declaration order.",
@@ -818,19 +814,11 @@
                     "additionalProperties": false,
                     "required": [
                         "found",
-                        "reachableViaReexport",
-                        "scope",
                         "refs"
                     ],
                     "properties": {
                         "found": {
                             "type": "boolean"
-                        },
-                        "reachableViaReexport": {
-                            "type": "boolean"
-                        },
-                        "scope": {
-                            "type": "string"
                         },
                         "refs": {
                             "type": "array",

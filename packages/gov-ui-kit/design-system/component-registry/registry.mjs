@@ -512,9 +512,6 @@ function extractExports(kitRoot) {
         const sourceFileName = declarationSource(declaration, kitRoot);
         const source = repositoryRef('kit', kitRoot, sourceFileName, declarationLine(declaration));
         const canonical = names.includes(group.resolved.name) ? group.resolved.name : names[0];
-        const runtime =
-            group.exported.some((entry) => Boolean(entry.flags & ts.SymbolFlags.Value)) ||
-            Boolean(group.resolved.flags & ts.SymbolFlags.Value);
         const members = collectMembers(ts, checker, group.resolved, declaration, kitRoot, allFiles);
         const kind = UTILITY_NAMES.has(canonical)
             ? 'utility'
@@ -544,7 +541,6 @@ function extractExports(kitRoot) {
             id: `govkit:${canonical}`,
             name: canonical,
             kind,
-            runtime,
             exportNames: names,
             exports: names.map((name) => ({
                 entrypoint: '.',
@@ -606,7 +602,6 @@ function extractExports(kitRoot) {
     return {
         records,
         namesByKey,
-        exportNames: exports.map((entry) => entry.name).sort((a, b) => a.localeCompare(b)),
     };
 }
 
@@ -615,7 +610,7 @@ function classifyUsageType(appRoot, filePath) {
     if (/\.(?:stories?|story)\.[^.]+$/iu.test(relative)) {
         return 'story';
     }
-    if (/(?:^|[/\\])__tests__(?:[/\\])|\.(?:test|spec)\.[^.]+$/iu.test(relative)) {
+    if (/(?:^|[/\\])__tests__[/\\]/iu.test(relative) || /\.(?:test|spec)\.[^.]+$/iu.test(relative)) {
         return 'test';
     }
     if (/\.mdx?$/iu.test(relative)) {
@@ -1285,8 +1280,6 @@ function buildRegistry(options = {}) {
             ...record,
             usage: {
                 found: refs.length > 0,
-                reachableViaReexport: exists(path.join(roots.appRoot, 'src/shared/lib/@aragon/gov-ui-kit.ts')),
-                scope: 'Static references in <app>/src TS/JS files, including import aliases, transparent re-exports and compound members. Bare unused imports, Markdown/MDX prose, kit-internal usage and runtime reachability are excluded.',
                 refs,
             },
             intent: mergeIntent(previous.intents, record, roots),
@@ -1299,7 +1292,6 @@ function buildRegistry(options = {}) {
             id: `govkit:${exportName}`,
             name: exportName,
             kind: 'css',
-            runtime: false,
             exportNames: [exportName],
             exports: [{ entrypoint, name: exportName, isAlias: false }],
             members: [],
@@ -1310,8 +1302,6 @@ function buildRegistry(options = {}) {
             docs: [],
             usage: {
                 found: (usage.get(exportName) || []).length > 0,
-                reachableViaReexport: false,
-                scope: 'Static JS/TS stylesheet imports and quoted CSS @import statements within <app>/src.',
                 refs: dedupeRefs(usage.get(exportName) || []),
             },
         };
@@ -1323,7 +1313,7 @@ function buildRegistry(options = {}) {
     const components = [...records, ...cssRecords].sort((a, b) => a.id.localeCompare(b.id));
     const currentIds = new Set(components.map((component) => component.id));
     const orphaned = [...previous.ids].filter((id) => !currentIds.has(id));
-    if (orphaned.length > 0 && options.failOnOrphan !== false) {
+    if (orphaned.length > 0) {
         throw new Error(`Curated intent references missing exports: ${orphaned.sort().join(', ')}`);
     }
     return {
@@ -1421,7 +1411,6 @@ function semanticValidate(registry, roots) {
             throw new Error(`${component.id} human-reviewed intent requires reviewer, date and evidence`);
         }
     }
-    return { ids, names, exportNames };
 }
 
 function validateRegistry(registry, options = {}) {
@@ -1441,7 +1430,7 @@ function validateRegistry(registry, options = {}) {
 }
 
 function main(argv = process.argv.slice(2)) {
-    const command = argv[0] || 'validate';
+    const command = argv[0] || 'check';
     if (command === 'extract') {
         const registry = buildRegistry({ preserveCurated: true });
         validateRegistry(registry);
@@ -1449,13 +1438,6 @@ function main(argv = process.argv.slice(2)) {
         process.stdout.write(
             `Extracted ${registry.components.length} registry records to ${relativePath(WORKSPACE_ROOT, REGISTRY_PATH)}\n`,
         );
-        return;
-    }
-    if (command === 'validate') {
-        const filePath = argv[1] ? path.resolve(argv[1]) : REGISTRY_PATH;
-        const registry = readJson(filePath);
-        validateRegistry(registry);
-        process.stdout.write(`Validated ${registry.components.length} registry records\n`);
         return;
     }
     if (command === 'check') {
@@ -1496,10 +1478,10 @@ function main(argv = process.argv.slice(2)) {
         process.stdout.write(`Registry is current (${current.components.length} records)\n`);
         return;
     }
-    throw new Error(`Unknown command ${command}; expected extract, validate or check`);
+    throw new Error(`Unknown command ${command}; expected extract or check`);
 }
 
-export { buildRegistry, extractExports, extractUsage, main, semanticValidate, validateRegistry };
+export { buildRegistry, extractExports, validateRegistry };
 
 if (path.resolve(process.argv[1] || '') === path.resolve(SCRIPT_PATH)) {
     try {

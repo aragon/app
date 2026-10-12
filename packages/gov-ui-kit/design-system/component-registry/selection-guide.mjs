@@ -369,13 +369,6 @@ function checkGuide(filePath = GUIDE_PATH) {
     return guide;
 }
 
-function printEntries(ids) {
-    const guide = checkGuide();
-    const byId = new Map(guide.entries.map((entry) => [entry.id, entry]));
-    const selected = ids.map((id) => byId.get(id)).filter(Boolean);
-    process.stdout.write(serialize(selected));
-}
-
 function main(argv = process.argv.slice(2)) {
     const command = argv[0] || 'generate';
     if (command === 'generate') {
@@ -396,14 +389,10 @@ function main(argv = process.argv.slice(2)) {
         );
         return;
     }
-    if (command === 'print') {
-        printEntries(argv.slice(1));
-        return;
-    }
-    throw new Error(`Unknown command ${command}; expected generate, check or print`);
+    throw new Error(`Unknown command ${command}; expected generate or check`);
 }
 
-export { buildGuide, checkGuide, main, renderMarkdown, validateGuide };
+export { buildGuide, checkGuide, renderMarkdown, validateGuide };
 
 if (path.resolve(process.argv[1] || '') === path.resolve(SCRIPT_PATH)) {
     try {
