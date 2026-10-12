@@ -47,7 +47,7 @@ describe('<AddressesInputContainer /> component', () => {
         expect(group).toHaveTextContent('row 0');
     });
 
-    it('focuses the first member input when the label is clicked', async () => {
+    it('focuses the first member input from the label without renaming it', async () => {
         render(
             <GukModulesProvider>
                 <ReactQueryWrapper>
@@ -61,6 +61,10 @@ describe('<AddressesInputContainer /> component', () => {
 
         await userEvent.click(screen.getByText('Members'));
 
-        expect(screen.getByRole('textbox')).toHaveFocus();
+        expect(
+            screen.getByRole('textbox', {
+                name: 'app.shared.addressesInput.item.input.accessibleName (number=1)',
+            }),
+        ).toHaveFocus();
     });
 });
