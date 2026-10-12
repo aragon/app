@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DocumentParser } from './documentParser';
 
 const meta: Meta<typeof DocumentParser> = {
-    title: 'Core/Components/DocumentParser',
+    title: 'Core/DocumentParser',
     component: DocumentParser,
 };
 

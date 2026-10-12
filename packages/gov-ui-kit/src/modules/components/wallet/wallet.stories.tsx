@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Wallet } from './wallet';
 
 const meta: Meta<typeof Wallet> = {
-    title: 'Modules/Components/Wallet/Wallet',
+    title: 'Modules/Wallet/Wallet',
     component: Wallet,
     parameters: {
         design: {

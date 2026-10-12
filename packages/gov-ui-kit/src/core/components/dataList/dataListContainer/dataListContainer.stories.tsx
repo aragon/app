@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DataList } from '..';
 
 const meta: Meta<typeof DataList.Container> = {
-    title: 'Core/Components/DataList/DataList.Container',
+    title: 'Core/DataList/DataList.Container',
     component: DataList.Container,
     parameters: {
         design: {

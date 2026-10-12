@@ -4,7 +4,7 @@ import { Collapsible } from './collapsible';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Collapsible> = {
-    title: 'Core/Components/Collapsible',
+    title: 'Core/Collapsible',
     component: Collapsible,
     parameters: {
         style,

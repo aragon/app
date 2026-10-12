@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Checkbox, type CheckboxState } from './checkbox';
 
 const meta: Meta<typeof Checkbox> = {
-    title: 'Core/Components/Forms/Checkbox',
+    title: 'Core/Forms/Checkbox',
     component: Checkbox,
     argTypes: {
         disabled: { type: 'boolean' },

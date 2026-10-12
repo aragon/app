@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertCard } from './alertCard';
 
 const meta: Meta<typeof AlertCard> = {
-    title: 'Core/Components/Alerts/AlertCard',
+    title: 'Core/Alerts/AlertCard',
     component: AlertCard,
     parameters: {
         design: {
