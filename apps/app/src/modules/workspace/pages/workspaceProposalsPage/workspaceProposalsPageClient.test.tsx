@@ -217,6 +217,14 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         expect(screen.getByTestId('list-mock')).toBeInTheDocument();
     });
 
+    it('passes the workspace id to the list, which links each row into the workspace', async () => {
+        render(createTestComponent({ workspaceId: 'demo' }));
+
+        await waitFor(() =>
+            expect(lastListProps()?.workspaceId).toEqual('demo'),
+        );
+    });
+
     it('passes the page size to the list and the aside card, so both read under one key', async () => {
         render(createTestComponent({ pageSize: 25 }));
 

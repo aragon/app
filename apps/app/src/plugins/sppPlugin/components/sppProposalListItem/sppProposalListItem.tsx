@@ -17,7 +17,7 @@ export interface ISppProposalListItemProps
 export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
     props,
 ) => {
-    const { proposal, dao, proposalSlug, tag } = props;
+    const { proposal, dao, proposalSlug, tag, href } = props;
     const { id, summary, stageIndex, settings, executed, creator } = proposal;
 
     const { t } = useTranslations();
@@ -38,7 +38,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             ? (currentStage.name ?? defaultStageName)
             : undefined;
 
-    const proposalLink = proposalUtils.getProposalUrl(proposal, dao);
+    const proposalLink = href ?? proposalUtils.getProposalUrl(proposal, dao);
     const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const { data: publisherEnsName } = useEnsName(creator.address);
 
