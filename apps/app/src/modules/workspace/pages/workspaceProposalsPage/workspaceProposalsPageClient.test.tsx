@@ -135,12 +135,9 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
      */
     const mockProposalTabs = (activeTab?: IWorkspaceProposalTab) =>
         useWorkspaceProposalTabsSpy.mockReturnValue({
-            pluginTabs: [],
+            filterTabs: [],
             hasTabs: activeTab != null,
             activeTab,
-            daos: {},
-            isPending: false,
-            isDaosPending: false,
         });
 
     const buildProcessTab = (account: IWorkspaceAccount) =>

@@ -81,7 +81,8 @@ export const useWorkspaceProposalListData = (
 
     // An account scope is the account, so the copy names it instead of the workspace it belongs to. It follows the
     // route rather than the number of accounts in view: a workspace holding a single DAO still presents itself as
-    // the workspace on its aggregated route, down to the title of the aside card beside this list.
+    // the workspace on its aggregated route. The aside card beside this list answers a different question — it
+    // describes whatever the list is narrowed to, so a lone process there is described as a process.
     const descriptionKey = isAccountScoped
         ? 'descriptionSingle'
         : 'description';

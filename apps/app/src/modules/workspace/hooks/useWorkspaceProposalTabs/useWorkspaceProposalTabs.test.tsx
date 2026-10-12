@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useSearchParams } from 'next/navigation';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import {
     type IWorkspaceAccount,
@@ -8,7 +9,10 @@ import {
 } from '../../api/workspaceService';
 import type { IWorkspaceDaoPlugins } from '../useWorkspacePlugins';
 import * as useWorkspacePluginsModule from '../useWorkspacePlugins';
-import { useWorkspaceProposalTabs } from './useWorkspaceProposalTabs';
+import {
+    type IUseWorkspaceProposalTabsResult,
+    useWorkspaceProposalTabs,
+} from './useWorkspaceProposalTabs';
 
 jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(() => new URLSearchParams()),
@@ -86,11 +90,26 @@ describe('useWorkspaceProposalTabs hook', () => {
     const renderTabs = (accounts = [buildAccount(daoAddress)]) =>
         renderHook(() => useWorkspaceProposalTabs({ accounts }));
 
+    // The group tab is always the first entry of the strip, so the process tabs are what follows it.
+    const processTabs = (result: IUseWorkspaceProposalTabsResult) =>
+        result.filterTabs.slice(1);
+
+    // It stands for no process, which is what makes the aside fall back to the scope while it is active.
+    it('opens the strip with a group tab naming no process', () => {
+        const { result } = renderTabs();
+
+        expect(result.current.filterTabs[0]).toEqual({
+            ...pluginGroupFilter,
+            props: {},
+            label: 'app.workspace.workspaceProposalList.groupTab',
+        });
+    });
+
     it('builds one tab per process, tagged with the account it is installed on', () => {
         const { result } = renderTabs();
 
-        expect(result.current.pluginTabs).toHaveLength(2);
-        expect(result.current.pluginTabs[0]).toEqual(
+        expect(processTabs(result.current)).toHaveLength(2);
+        expect(processTabs(result.current)[0]).toEqual(
             expect.objectContaining({
                 accountId: `${network}-${daoAddress}`,
                 uniqueId: `${network}-0xTokenVoting-tok`,
@@ -103,7 +122,7 @@ describe('useWorkspaceProposalTabs hook', () => {
     it('labels the tabs with the process alone for a single account', () => {
         const { result } = renderTabs();
 
-        expect(result.current.pluginTabs.map((tab) => tab.label)).toEqual([
+        expect(processTabs(result.current).map((tab) => tab.label)).toEqual([
             'Token voting',
             'Multisig',
         ]);
@@ -120,7 +139,7 @@ describe('useWorkspaceProposalTabs hook', () => {
             buildAccount(otherAddress),
         ]);
 
-        expect(result.current.pluginTabs.map((tab) => tab.label)).toEqual([
+        expect(processTabs(result.current).map((tab) => tab.label)).toEqual([
             'app.workspace.workspaceProposalList.pluginTab (dao=Demo DAO,plugin=Token voting)',
             'app.workspace.workspaceProposalList.pluginTab (dao=Demo DAO,plugin=Multisig)',
         ]);
@@ -172,7 +191,7 @@ describe('useWorkspaceProposalTabs hook', () => {
             buildAccount(otherAddress),
         ]);
 
-        expect(result.current.pluginTabs).toHaveLength(1);
+        expect(processTabs(result.current)).toHaveLength(1);
         expect(result.current.hasTabs).toBeFalsy();
         expect(result.current.activeTab).toBeUndefined();
     });
@@ -191,7 +210,7 @@ describe('useWorkspaceProposalTabs hook', () => {
         mockPlugins([]);
         const { result } = renderTabs([]);
 
-        expect(result.current.pluginTabs).toEqual([]);
+        expect(processTabs(result.current)).toEqual([]);
         expect(result.current.hasTabs).toBeFalsy();
         expect(result.current.activeTab).toBeUndefined();
     });
@@ -201,7 +220,7 @@ describe('useWorkspaceProposalTabs hook', () => {
         mockPlugins([buildGroup(daoAddress, [])]);
         const { result } = renderTabs();
 
-        expect(result.current.pluginTabs).toEqual([]);
+        expect(processTabs(result.current)).toEqual([]);
         expect(result.current.hasTabs).toBeFalsy();
         expect(result.current.activeTab).toBeUndefined();
     });
@@ -216,8 +235,9 @@ describe('useWorkspaceProposalTabs hook', () => {
         expect(result.current.activeTab).toBeUndefined();
     });
 
-    // The rows need a DAO, the strip needs the visibility overrides too, so the two waits are reported apart.
-    it('reports the DAO read apart from the overrides', () => {
+    // A tab offered before the overrides land may be one the CMS hides, so the strip waits for them even once
+    // every DAO has been read.
+    it('offers no tab while the visibility overrides are still being read', () => {
         useWorkspacePluginsSpy.mockReturnValue({
             daos: {},
             isPending: true,
@@ -225,10 +245,10 @@ describe('useWorkspaceProposalTabs hook', () => {
             isPluginsPending: true,
             plugins: [buildGroup(daoAddress)],
         });
+        urlWithTab(`${network}-0xMultisig-mul`);
         const { result } = renderTabs();
 
-        expect(result.current.isPending).toBeTruthy();
-        expect(result.current.isDaosPending).toBeFalsy();
         expect(result.current.hasTabs).toBeFalsy();
+        expect(result.current.activeTab).toBeUndefined();
     });
 });
