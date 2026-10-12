@@ -184,6 +184,7 @@ export const WorkspaceProposalsPageClient: React.FC<
                     accounts={accountsToDisplay}
                     isAccountScoped={scopedAccount != null}
                     pageSize={pageSize}
+                    workspaceId={workspaceId}
                 />
             </Page.Main>
             <Page.Aside>
