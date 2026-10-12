@@ -3,7 +3,7 @@ import { TransactionDataListItemStructure } from './transactionDataListItemStruc
 import { TransactionStatus, TransactionType } from './transactionDataListItemStructure.api';
 
 const meta: Meta<typeof TransactionDataListItemStructure> = {
-    title: 'Modules/Components/Transaction/TransactionDataListItem/TransactionDataListItem.Structure',
+    title: 'Modules/Transaction/TransactionDataListItem/TransactionDataListItem.Structure',
     component: TransactionDataListItemStructure,
     parameters: {
         design: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Link } from './link';
 
 const meta: Meta<typeof Link> = {
-    title: 'Core/Components/Link/Link',
+    title: 'Core/Link/Link',
     component: Link,
     argTypes: {
         href: { control: 'text' },

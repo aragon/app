@@ -3,7 +3,7 @@ import { type ChangeEvent, useState } from 'react';
 import { InputSearch } from './inputSearch';
 
 const meta: Meta<typeof InputSearch> = {
-    title: 'Core/Components/Forms/InputSearch',
+    title: 'Core/Forms/InputSearch',
     component: InputSearch,
     parameters: {
         design: {

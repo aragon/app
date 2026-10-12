@@ -3,7 +3,7 @@ import { zeroAddress } from 'viem';
 import { AssetTransfer } from './assetTransfer';
 
 const meta: Meta<typeof AssetTransfer> = {
-    title: 'Modules/Components/Asset/AssetTransfer',
+    title: 'Modules/Asset/AssetTransfer',
     component: AssetTransfer,
     parameters: {
         design: {

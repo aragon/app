@@ -4,7 +4,7 @@ import { DialogStoryComponent } from '../dialogStoryComponent';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Dialog.Root> = {
-    title: 'Core/Components/Dialogs/Dialog/Dialog.Root',
+    title: 'Core/Dialogs/Dialog/Dialog.Root',
     component: Dialog.Root,
     parameters: {
         style,

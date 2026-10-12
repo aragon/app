@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CardEmptyState } from '.';
 
 const meta: Meta<typeof CardEmptyState> = {
-    title: 'Core/Components/Cards/CardEmptyState',
+    title: 'Core/Cards/CardEmptyState',
     component: CardEmptyState,
     parameters: {
         design: {
