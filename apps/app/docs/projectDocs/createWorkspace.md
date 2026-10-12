@@ -473,22 +473,22 @@ explicit and never expands a DAO into its linked accounts.
 is matched on the exact ID string, while `LayoutWorkspaceAccount` deliberately accepts any casing, so a shared link
 carrying a lowercase address has to narrow to its account all the same. Only a DAO account becomes the scope.
 
-Three questions look like one and are not. Keeping them apart is what the predicates below are for:
+Four questions look like one and are not. Keeping them apart is what the predicates below are for:
 
 | Question | Predicate | Where |
 | --- | --- | --- |
 | Would the row tag and the tab label repeat themselves? | one account contributing them | `workspaceProposalListDefault`, `useWorkspaceProposalTabs`, `workspaceMemberList` |
 | How does the page present itself in its empty and error copy? | the route names an account (`isAccountScoped`) | `useWorkspaceProposalListData` |
+| What does the aside card describe? | the process the list is narrowed to, else the scope | `useWorkspaceProposalTabs`, `workspaceProposalsAsideCard` |
 | Is there exactly one DAO to subscribe to? | the DAO of a selected process, else the only account in view | `workspaceProposalsPageClient` |
 
-A workspace holding a single DAO is where they come apart: on its aggregated route the rows are untagged and the
-tabs name the process alone, because repeating one name on every row says nothing; the copy and the aside still
-speak of the workspace, because that is the route the reader is on; and the Telegram card does appear, because
-there is exactly one DAO in view to subscribe to.
+Only the second one is a question about the route. The aside is a question about the **list**: it describes what
+is on screen, which is why a route naming no account can still be described by a process card.
 
-The first rule is a workspace-wide convention, not a proposals one: `useWorkspaceMemberTabs` drops the DAO name
-from its body tabs the same way. It counts the accounts that *contributed* a tab rather than the accounts in view,
-because its list holds Safes too — a Safe changes what the group tab covers, not whom the body tabs belong to.
+A workspace holding a single DAO is where they come apart: on its aggregated route the rows are untagged and the
+tabs unlabelled, because repeating one name on every row says nothing; the copy still speaks of the workspace,
+because that is the route the reader is on, while the aside describes the lone process the list has narrowed
+itself to; and the Telegram card does appear, because there is exactly one DAO in view to subscribe to.
 
 #### Tabs
 
@@ -501,8 +501,19 @@ unknown parameter resolves to no tab, which is what the group tab stands for.
 
 The strip needs more than one process **and** the CMS overrides, since a tab offered before they land may be one
 the CMS hides. Below two processes there is no strip at all: the unfiltered list already shows only that process's
-proposals, and the hook then reports that process as the selected one, so the aside describes it exactly as the DAO
-page does — that page drops its own group tab below two plugins, leaving the single process selected.
+proposals.
+
+With no strip there is still a selection to report, and **what the list has narrowed itself to decides it** —
+one account in view holding one process. The list then *is* that process, so `activeTab` is it and the aside
+shows `WorkspaceProcessProposalsAsideCard`. This is the DAO page's own rule: `useDaoPlugins` adds its group
+filter only above one plugin, so a single-process DAO lands on that process and gets `DaoPluginInfo` on its
+aside. The card kind therefore depends on the process count, there as here.
+
+It follows that the aside can describe a process under a route that names none — the aggregated route of a
+workspace holding a single DAO, and that workspace's Safe route, which falls back to the same lone DAO. Both show
+exactly that process's proposals, so the card is accurate about what is on screen, which is the only thing it
+claims to be. Across several accounts the list keeps aggregating all of them unfiltered, so a lone visible process
+would describe only part of the screen: `activeTab` stays undefined there and the scope's own card stands.
 
 That only holds while the single account in view holds the single process. Across several accounts the list keeps
 aggregating all of them unfiltered, so one visible process describes only part of what is on screen and the
@@ -539,9 +550,10 @@ scope, since a process tab names one account whether or not the route does:
   stats share the list's query key, which cannot happen across two endpoints. It runs **without** `onlyActive`,
   unlike the DAO page's group tab — the workspace endpoint has no such filter, so asking for it would make the
   total read lower than the rows the list pages through beside it.
-- `WorkspaceAllProposalsAsideCard` — anything else, including a Safe route. Total, DAO count and most recent, all
-  free from the response it shares with the list. "Executed" is omitted there: it needs a second full request,
-  which also re-triggers the backend's Safe-queue reads.
+- `WorkspaceAllProposalsAsideCard` — anything else, as long as no process is selected:
+  with one DAO in view holding one process, the bullet above wins even here, the list being that process. Total,
+  DAO count and most recent, all free from the response it shares with the list. "Executed" is omitted there: it
+  needs a second full request, which also re-triggers the backend's Safe-queue reads.
 
 `TelegramSubscriptionCard` sits below the card whenever exactly one DAO is in view, since a subscription is bound
 to a single DAO.

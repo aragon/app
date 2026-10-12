@@ -71,4 +71,13 @@ describe('<WorkspaceProcessProposalsAsideCard /> component', () => {
             screen.getByText('Demo DAO · Multisig (MUL)'),
         ).toBeInTheDocument();
     });
+
+    it('titles the card with the tab label alone when the process has no slug', () => {
+        const tab = buildTab({
+            meta: generateDaoPlugin({ address: '0xMultisig', slug: undefined }),
+        });
+        render(createTestComponent({ tab }));
+
+        expect(screen.getByText('Demo DAO · Multisig')).toBeInTheDocument();
+    });
 });

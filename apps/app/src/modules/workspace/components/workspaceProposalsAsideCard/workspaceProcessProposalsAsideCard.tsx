@@ -25,8 +25,10 @@ export const WorkspaceProcessProposalsAsideCard: React.FC<
 > = (props) => {
     const { tab } = props;
 
-    // Matches the DAO page, which titles the card with the process and its slug.
-    const title = `${tab.label} (${tab.meta.slug.toUpperCase()})`;
+    // Matches the DAO page, which titles the card with the process and its slug. Not every plugin the backend
+    // returns carries a slug, so the name stands alone when it has none.
+    const slug = tab.meta.slug?.toUpperCase();
+    const title = slug != null ? `${tab.label} (${slug})` : tab.label;
 
     return (
         <Page.AsideCard title={title}>
