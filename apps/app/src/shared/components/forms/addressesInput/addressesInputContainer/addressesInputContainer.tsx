@@ -91,7 +91,7 @@ const hasNestedValue = (value: unknown): boolean => {
  *
  * Ownership: this component owns the `useFieldArray` for `name` (or
  * `fieldPrefix.name`). It appends, removes, resets and clears rows itself and
- * re-keys each child with the RHF field id (the internal `useWatch` does not
+ * re-keys each child with the RHF field id (the caller's `useWatch` does not
  * expose those ids, so without this the list drifts out of sync on removal).
  *
  * Callers MUST NOT open a second `useFieldArray` on the same `name`: the
