@@ -3,7 +3,7 @@ import { IconType } from '../../icon';
 import { CardSummary } from './cardSummary';
 
 const meta: Meta<typeof CardSummary> = {
-    title: 'Core/Components/Cards/CardSummary',
+    title: 'Core/Cards/CardSummary',
     component: CardSummary,
     parameters: {
         design: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { InputContainer } from './inputContainer';
 
 const meta: Meta<typeof InputContainer> = {
-    title: 'Core/Components/Forms/InputContainer',
+    title: 'Core/Forms/InputContainer',
     component: InputContainer,
     parameters: {
         design: {

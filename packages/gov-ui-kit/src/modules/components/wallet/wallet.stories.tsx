@@ -7,7 +7,7 @@ import { Wallet } from './wallet';
  * This includes a global connected state, likely from your WAGMI provider.
  */
 const meta: Meta<typeof Wallet> = {
-    title: 'Modules/Components/Wallet/Wallet',
+    title: 'Modules/Wallet/Wallet',
     component: Wallet,
     parameters: {
         design: {

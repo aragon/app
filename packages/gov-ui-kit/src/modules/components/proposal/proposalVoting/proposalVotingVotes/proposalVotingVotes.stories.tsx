@@ -4,7 +4,7 @@ import { VoteDataListItem } from '../../../vote';
 import { ProposalVoting, ProposalVotingTab } from '../index';
 
 const meta: Meta<typeof ProposalVoting.Votes> = {
-    title: 'Modules/Components/Proposal/ProposalVoting/ProposalVoting.Votes',
+    title: 'Modules/Proposal/ProposalVoting/ProposalVoting.Votes',
     component: ProposalVoting.Votes,
     parameters: {
         design: {

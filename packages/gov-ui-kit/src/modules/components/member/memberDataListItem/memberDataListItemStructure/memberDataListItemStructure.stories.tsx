@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemberDataListItemStructure } from './memberDataListItemStructure';
 
 const meta: Meta<typeof MemberDataListItemStructure> = {
-    title: 'Modules/Components/Member/MemberDataListItem/MemberDataListItem.Structure',
+    title: 'Modules/Member/MemberDataListItem/MemberDataListItem.Structure',
     component: MemberDataListItemStructure,
     parameters: {
         design: {
