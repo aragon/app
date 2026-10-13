@@ -32,8 +32,7 @@ export interface IBuildWorkspaceParams {
 
 class PublishWorkspaceDialogUtils {
     /**
-     * Builds the workspace to be persisted from the form values and avatar URIs. It carries no owner: a local
-     * workspace has none (see `docs/projectDocs/createWorkspace.md` → Ownership).
+     * Builds the workspace to be persisted from the form values and avatar URIs.
      * @param params - Form values, avatar URIs and resolved accounts.
      * @returns The workspace to be sent to the registry, without an ID as it is assigned by the registry.
      */

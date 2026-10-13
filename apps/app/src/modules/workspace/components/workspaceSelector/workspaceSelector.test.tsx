@@ -27,7 +27,6 @@ describe('<WorkspaceSelector /> component', () => {
         description: '',
         avatar: null,
         links: [],
-        owner: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
         accounts: [],
         targets: [],
         ...workspace,

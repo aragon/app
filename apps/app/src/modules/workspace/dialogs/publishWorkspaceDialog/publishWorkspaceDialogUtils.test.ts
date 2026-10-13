@@ -93,16 +93,6 @@ describe('publishWorkspaceDialog utils', () => {
             expect(workspace.avatar).toEqual('ipfs://workspace-cid');
         });
 
-        it('builds a workspace without owner', () => {
-            const workspace = publishWorkspaceDialogUtils.buildWorkspace({
-                values: buildValues(),
-                accountAvatarUris: [undefined],
-                accountInfos,
-            });
-
-            expect(workspace).not.toHaveProperty('owner');
-        });
-
         it('stores the account metadata when the account has been named', () => {
             const values = buildValues({
                 accounts: [

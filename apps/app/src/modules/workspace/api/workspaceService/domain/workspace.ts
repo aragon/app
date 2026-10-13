@@ -24,11 +24,6 @@ export interface IWorkspace {
      */
     links: IResource[];
     /**
-     * Address owning the workspace. Local workspaces have none; it is only set on workspaces created while a wallet
-     * was still required, and is meant to be set by the registry once a workspace is published.
-     */
-    owner?: string;
-    /**
      * Accounts belonging to the workspace. Ordered as they should be displayed on the account filters.
      */
     accounts: IWorkspaceAccount[];

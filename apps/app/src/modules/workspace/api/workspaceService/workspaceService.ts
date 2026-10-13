@@ -89,18 +89,11 @@ class WorkspaceService {
 
         try {
             const workspaces = this.getStoredWorkspaces();
-            const currentWorkspace = workspaces[id];
-
-            if (currentWorkspace == null) {
+            if (workspaces[id] == null) {
                 return Promise.reject(this.buildNotFoundError(id));
             }
 
-            // The owner is not editable, so the one of a workspace that carries it is kept.
-            const workspace: IWorkspace = {
-                ...body,
-                id,
-                owner: currentWorkspace.owner,
-            };
+            const workspace: IWorkspace = { ...body, id };
 
             this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
 
@@ -132,8 +125,7 @@ class WorkspaceService {
     };
 
     /**
-     * Builds the workspace seeded on an empty registry: no accounts, no targets and, like every local workspace, no
-     * owner.
+     * Builds the workspace seeded on an empty registry, with no accounts and no targets.
      *
      * Its ID carries a random suffix: every user gets a default workspace, so a plain slug would be the same for all
      * of them and a link shared from one default workspace would silently open the recipient's own.

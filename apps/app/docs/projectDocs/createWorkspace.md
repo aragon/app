@@ -34,7 +34,7 @@ Out of scope (deliberate, deferred to follow-ups):
 ## Data model
 
 Domain types live in `src/modules/workspace/api/workspaceService/domain/`. They are deliberately kept
-byte-compatible with branch 1096 apart from the two additions called out below.
+byte-compatible with branch 1096 apart from the addition called out below.
 
 ```ts
 // workspace.ts
@@ -44,7 +44,6 @@ interface IWorkspace {
     description: string;
     avatar: string | null;          // ipfs:// URI or null
     links: IResource[];             // `IResource` from @/shared/api/daoService
-    owner?: string;                 // unset on local workspaces, see Ownership below          (NEW vs 1096)
     accounts: IWorkspaceAccount[];
     targets: IWorkspaceTarget[];    //                                       (NEW vs 1096)
 }
@@ -208,18 +207,10 @@ by `networkDefinitions[network].order`. Testnets are included and tagged, becaus
 
 ### Ownership
 
-Local workspaces have no owner, and creating or editing one needs no connected wallet. Both used to be required —
-the connected address was stored as `owner` — and were dropped because, while the registry lives in `localStorage`:
-
-- the owner is written by the client and never verified, and the registry can be edited directly, so gating edits
-  on it would protect nothing — it would only lock the creator out after switching wallets;
-- the planned model (see `workspaceAccess.md`) treats the wallet as a one-off sign-in that opens a session
-  surviving wallet switches, not as a "connected wallet == owner" check on each action.
-
-The intended direction is local-first: a workspace is created and edited locally as a draft, and ownership starts
-when it is published to a registry, which records who published it and enforces who may edit it from then on. So
-`owner` stays an optional field, set by the registry on publish. Workspaces stored while it was still required keep
-theirs; an update preserves it and the overview shows it when present.
+Workspaces have no owner, and creating or editing one needs no wallet. While the registry lives in `localStorage`,
+an owner would be written by the client and never verified, so it would protect nothing. Ownership belongs to the
+future registry: a workspace stays a local draft until it is published, and the registry then records and enforces
+who may edit it (see `workspaceAccess.md`).
 
 `publishWorkspaceDialog` is **not** a `TransactionDialog` — there is no transaction. It is a plain gov-ui-kit
 `Dialog.Header` / `Dialog.Content` / `Dialog.Footer` with local `status` state (`idle | pending | error |
@@ -233,7 +224,7 @@ Submit sequence:
    dialog: it is N+1 pin calls, each of which can fail.
 3. `publishWorkspaceDialogUtils.buildWorkspace()` maps form values to `Omit<IWorkspace, 'id'>` —
    `resources` → `links` (same rename `publishDaoDialogUtils.prepareMetadata` does), avatar files → `ipfs://`
-   URIs via `ipfsUtils.cidToUri`, account ids via `workspaceUtils.buildAccountId`, `type: DAO`, and no `owner`.
+   URIs via `ipfsUtils.cidToUri`, account ids via `workspaceUtils.buildAccountId`, `type: DAO`.
 4. `useCreateWorkspace` → `workspaceService.createWorkspace`, which assigns the id and persists.
 5. Success state links to `/workspace/{id}`.
 
@@ -251,16 +242,15 @@ local storage for real requests is a single-method change:
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
-- `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id' | 'owner'>` → replaces the
-  stored workspace, keeping its ID (so its URLs keep working) and its owner, when it has one; rejects with
+- `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
+  stored workspace, keeping its ID (so its URLs keep working); rejects with
   `notFoundCode` / 404 when absent. Called by the publish dialog in update mode.
 
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
 
 **The registry always holds at least one workspace.** `getWorkspace` and `getWorkspaceList` seed a default
-workspace when the registry is empty — "My workspace", no accounts, no targets and, like every local workspace, no
-owner. Its name is stored data the user can rename, so it is not translated. Its ID is the slug plus a random
+workspace when the registry is empty — "My workspace", no accounts and no targets. Its name is stored data the user can rename, so it is not translated. Its ID is the slug plus a random
 suffix (`my-workspace-1a2b3c4d`): every user gets one, and a plain `my-workspace` would make a link shared from one
 default workspace silently open the recipient's own. `createWorkspace` does not seed, so a user whose first
 workspace comes from the wizard gets that one alone.
@@ -540,7 +530,7 @@ called with the DAO and plugin of the selection, and the flow then hands over to
 
 - `Page.Header` — workspace avatar, name, description and `stats` for the account and target counts.
 - `Page.Main` → `Page.MainSection` for Accounts, and for Targets only when the workspace has any.
-- `Page.Aside` → `Page.AsideCard` for the owner and, when present, the workspace resources.
+- `Page.Aside` → `Page.AsideCard` for the workspace resources, when present.
 
 Each account renders as a `WorkspaceAccountItem`. The **type tag comes from the registry**, not from a lookup: it
 was resolved at creation time and decides which APIs the workspace pages query, so the row keeps showing it even
@@ -741,7 +731,7 @@ Whichever branch lands second must reconcile:
 
 | File | Conflict |
 | --- | --- |
-| `api/workspaceService/domain/workspace.ts` | this branch adds `owner` and `targets` |
+| `api/workspaceService/domain/workspace.ts` | this branch adds `targets` |
 | `api/workspaceService/domain/workspaceAccount.ts` | identical — should merge clean |
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |

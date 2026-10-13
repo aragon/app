@@ -15,7 +15,6 @@ describe('workspaceEditPage utils', () => {
         description: 'A demo workspace',
         avatar: null,
         links: [{ name: 'Website', url: 'https://aragon.org' }],
-        owner: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
         accounts: [
             {
                 id: `${Network.ETHEREUM_SEPOLIA}-${address}`,

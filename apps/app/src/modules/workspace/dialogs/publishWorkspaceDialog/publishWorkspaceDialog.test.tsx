@@ -143,20 +143,6 @@ describe('<PublishWorkspaceDialog /> component', () => {
         expect(setIsBlockedSpy).toHaveBeenCalledWith(false);
     });
 
-    it('creates the workspace without an owner', async () => {
-        render(createTestComponent());
-
-        await userEvent.click(getSubmitButton());
-        await screen.findByRole('link', {
-            name: /publishWorkspaceDialog.button.success/,
-        });
-
-        const workspace = await workspaceService.getWorkspace({
-            urlParams: { id: 'demo-workspace' },
-        });
-        expect(workspace).not.toHaveProperty('owner');
-    });
-
     it('creates a workspace holding no account without resolving account types', async () => {
         render(
             createTestComponent({
@@ -216,7 +202,6 @@ describe('<PublishWorkspaceDialog /> component', () => {
             description: '',
             avatar: 'ipfs://stored-cid',
             links: [],
-            owner: '0x0000000000000000000000000000000000000001',
             accounts: [],
             targets: [],
         };
@@ -246,7 +231,7 @@ describe('<PublishWorkspaceDialog /> component', () => {
             );
         });
 
-        it('updates the workspace, keeping the owner of a workspace that has one', async () => {
+        it('updates the stored workspace', async () => {
             render(createUpdateComponent({ name: 'Renamed' }));
 
             await userEvent.click(getUpdateButton());
@@ -262,10 +247,7 @@ describe('<PublishWorkspaceDialog /> component', () => {
                 workspaceService.getWorkspace({
                     urlParams: { id: storedWorkspace.id },
                 }),
-            ).resolves.toMatchObject({
-                name: 'Renamed',
-                owner: storedWorkspace.owner,
-            });
+            ).resolves.toMatchObject({ name: 'Renamed' });
         });
 
         it('keeps a stored avatar without pinning it again', async () => {

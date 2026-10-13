@@ -108,7 +108,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         description: 'A test workspace',
         avatar: null,
         links: [],
-        owner: daoAddress,
         accounts: [daoAccount, safeAccount],
         targets: [],
         ...workspace,

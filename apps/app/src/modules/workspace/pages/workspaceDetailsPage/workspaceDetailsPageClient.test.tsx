@@ -37,7 +37,6 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             description: 'A test workspace',
             avatar: null,
             links: [],
-            owner: targetAddress,
             accounts: [
                 {
                     id: `${Network.ETHEREUM_SEPOLIA}-${address}`,
@@ -168,15 +167,6 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
         expect(
             screen.queryByText(/workspaceDetailsPage\.emptyAccounts\.heading$/),
-        ).not.toBeInTheDocument();
-    });
-
-    it('hides the owner of a workspace that has none', async () => {
-        renderWorkspace(buildWorkspace({ owner: undefined }));
-
-        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
-        expect(
-            screen.queryByText(/workspaceDetailsPage\.aside\.owner$/),
         ).not.toBeInTheDocument();
     });
 

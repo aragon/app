@@ -4,7 +4,6 @@ import {
     AddressOutput,
     Card,
     DaoAvatar,
-    DefinitionList,
     EmptyState,
     Link,
 } from '@aragon/gov-ui-kit';
@@ -67,7 +66,7 @@ export const WorkspaceDetailsPageClient: React.FC<
         return null;
     }
 
-    const { name, description, avatar, links, targets, owner } = workspace;
+    const { name, description, avatar, links, targets } = workspace;
 
     return (
         <>
@@ -172,24 +171,6 @@ export const WorkspaceDetailsPageClient: React.FC<
                     )}
                 </Page.Main>
                 <Page.Aside>
-                    {/* Local workspaces have no owner; only the ones created while a wallet was required carry one. */}
-                    {owner != null && (
-                        <Page.AsideCard
-                            title={t(
-                                'app.workspace.workspaceDetailsPage.aside.details',
-                            )}
-                        >
-                            <DefinitionList.Container>
-                                <DefinitionList.Item
-                                    term={t(
-                                        'app.workspace.workspaceDetailsPage.aside.owner',
-                                    )}
-                                >
-                                    <AddressOutput address={owner} />
-                                </DefinitionList.Item>
-                            </DefinitionList.Container>
-                        </Page.AsideCard>
-                    )}
                     {links.length > 0 && (
                         <Page.AsideCard
                             title={t(

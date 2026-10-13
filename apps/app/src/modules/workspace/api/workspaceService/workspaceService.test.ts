@@ -15,7 +15,6 @@ describe('workspace service', () => {
         description: '',
         avatar: null,
         links: [],
-        owner: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
         accounts: [
             {
                 id: 'ethereum-sepolia-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
@@ -87,7 +86,6 @@ describe('workspace service', () => {
                     targets: [],
                 },
             ]);
-            expect(workspaces[0].owner).toBeUndefined();
             expect(getStoredWorkspaces()).toEqual({
                 [workspaces[0].id]: workspaces[0],
             });
@@ -178,26 +176,18 @@ describe('workspace service', () => {
     });
 
     describe('updateWorkspace', () => {
-        it('replaces the workspace, keeping its ID and owner', async () => {
+        it('replaces the workspace, keeping its ID', async () => {
             const created = await workspaceService.createWorkspace({
                 body: buildBody(),
             });
 
-            // A body carrying another owner, as the publish dialog builds it, must not overwrite the stored one.
-            const body = {
-                ...buildBody({ name: 'Renamed', accounts: [] }),
-                owner: '0x0000000000000000000000000000000000000001',
-            };
+            const body = buildBody({ name: 'Renamed', accounts: [] });
             const workspace = await workspaceService.updateWorkspace({
                 urlParams: { id: created.id },
                 body,
             });
 
-            expect(workspace).toEqual({
-                ...buildBody({ name: 'Renamed', accounts: [] }),
-                id: created.id,
-                owner: created.owner,
-            });
+            expect(workspace).toEqual({ ...body, id: created.id });
             expect(getStoredWorkspaces()).toEqual({ [created.id]: workspace });
         });
 

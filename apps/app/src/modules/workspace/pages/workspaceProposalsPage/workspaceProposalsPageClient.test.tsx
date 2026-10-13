@@ -74,7 +74,6 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         description: '',
         avatar: null,
         links: [],
-        owner: daoAddress,
         accounts: [daoAccount, safeAccount],
         targets: [],
         ...workspace,

@@ -46,7 +46,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         description: '',
         avatar: 'workspace-cid',
         links: [],
-        owner: daoAddress,
         accounts: [daoAccount],
         targets: [],
     };

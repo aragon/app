@@ -76,7 +76,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         description: '',
         avatar: null,
         links: [],
-        owner: params.safeAddress,
         accounts: [
             buildDaoAccount(params.daoAddress),
             buildSafeAccount(params.safeAddress),

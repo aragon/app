@@ -26,7 +26,7 @@ they cost wildly different amounts. See [What "private" means](#what-private-mea
 | Concern | Today |
 | --- | --- |
 | Storage | `localStorage['aragon-workspaces']`, a `Record<string, IWorkspace>`, merged over `workspaceMocks` |
-| Identity | None. Local workspaces carry no owner; `owner` is reserved for the registry to set on publish |
+| Identity | None. Workspaces carry no owner |
 | Privacy | Private by accident — the data never leaves the browser |
 | Cross-device | Impossible |
 | Sharing | Impossible |
@@ -77,7 +77,7 @@ escape hatch if the backend roadmap can't take it, and route handlers already ex
 
 | Option | What it is | Verdict |
 | --- | --- | --- |
-| **A1** Client asserts its address | What we did until local workspaces dropped `owner` | Not authentication. Anyone can claim any address |
+| **A1** Client asserts its address | The client writes its address into the workspace | Not authentication. Anyone can claim any address |
 | **A2** SIWE (EIP-4361) → server session | Server issues a nonce, wallet signs a structured message, server verifies and sets a session | **Recommended.** Standard, one prompt, well-understood |
 | **A3** Sign every mutating request | No server session state | Fails requirement 3 — the wallet must stay connected, and prompts get spammy |
 | **A4** Signature mints a session *keypair* | One wallet signature authorises a locally generated key for N days (Ceramic's `did-session`/CACAO does exactly this) | Good prior art for requirement 3; more machinery than A2 needs unless the storage layer is decentralised |
@@ -247,7 +247,7 @@ Concrete things the current code will hit, in rough order of how much they'll hu
   `treasury`. A shared backend needs either a server-assigned opaque id (with `slug` kept as a display field) or a
   per-owner path (`/workspace/{owner}/{slug}`). Changing this after URLs are in the wild is a redirect project —
   decide at stage 1.
-- **`IWorkspace` grows an access model.** `owner: string` becomes members + roles + visibility:
+- **`IWorkspace` grows an access model** — members + roles + visibility:
 
   ```ts
   interface IWorkspace {
@@ -286,8 +286,8 @@ Concrete things the current code will hit, in rough order of how much they'll hu
   `prefetchQuery` its accounts again, as branch 1096 originally did.
 - **`workspaceMocks` has to go, or become a per-user seed.** Merging a hardcoded map over authenticated data will
   show every user a workspace they don't own.
-- **Migration of existing local workspaces.** On first sign-in, offer to claim them: ids are reassigned, `owner`
-  becomes the authenticated address. Needs a one-time prompt and a "keep local" opt-out, plus a decision on
+- **Migration of existing local workspaces.** On first sign-in, offer to claim them: ids are reassigned and the
+  authenticated address becomes their owner. Needs a one-time prompt and a "keep local" opt-out, plus a decision on
   whether the local copy is deleted or left as a stale shadow (delete it — two registries with the same ids is
   how you get "my edit disappeared" bug reports).
 - **The proxy gets an auth responsibility.** `proxyBackendUtils` currently forwards `cookie` upstream and injects

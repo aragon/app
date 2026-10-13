@@ -4387,8 +4387,6 @@
       },
       "workspaceDetailsPage": {
         "aside": {
-          "details": "Details",
-          "owner": "Owner",
           "resources": "Resources"
         },
         "emptyAccounts": {
