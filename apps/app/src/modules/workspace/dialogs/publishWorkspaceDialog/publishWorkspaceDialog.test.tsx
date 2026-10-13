@@ -157,6 +157,29 @@ describe('<PublishWorkspaceDialog /> component', () => {
         expect(workspace).not.toHaveProperty('owner');
     });
 
+    it('creates a workspace holding no account without resolving account types', async () => {
+        render(
+            createTestComponent({
+                location: {
+                    id: 'PUBLISH_WORKSPACE',
+                    params: { values: buildValues({ accounts: [] }) },
+                },
+            }),
+        );
+
+        await userEvent.click(getSubmitButton());
+        await screen.findByRole('link', {
+            name: /publishWorkspaceDialog.button.success/,
+        });
+
+        expect(getAccountsSpy).not.toHaveBeenCalled();
+        await expect(
+            workspaceService.getWorkspace({
+                urlParams: { id: 'demo-workspace' },
+            }),
+        ).resolves.toMatchObject({ accounts: [] });
+    });
+
     it('closes the dialog when navigating to the created workspace', async () => {
         render(createTestComponent());
 

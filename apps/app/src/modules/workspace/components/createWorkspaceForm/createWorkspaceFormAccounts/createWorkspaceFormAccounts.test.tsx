@@ -57,20 +57,8 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
     const openRowMenu = () =>
         userEvent.click(screen.getByTestId(IconType.DOTS_VERTICAL));
 
-    it('does not allow removing the only account row by default', async () => {
+    it('allows removing the only account row, accounts being optional', async () => {
         render(createTestComponent());
-
-        await openRowMenu();
-
-        expect(
-            screen
-                .getByText(/createWorkspaceForm.accounts.remove/)
-                .closest('[role="menuitem"]'),
-        ).toHaveAttribute('data-disabled');
-    });
-
-    it('allows removing every account row when allowEmpty is set', async () => {
-        render(createTestComponent({ allowEmpty: true }));
 
         await openRowMenu();
         await userEvent.click(

@@ -113,7 +113,7 @@ export const WorkspaceEditPageClient: React.FC<
                     )}
                     {...accountsStep}
                 >
-                    <CreateWorkspaceForm.Accounts allowEmpty={true} />
+                    <CreateWorkspaceForm.Accounts />
                 </WizardPage.Step>
             </WizardPage.Container>
         </Page.Main>

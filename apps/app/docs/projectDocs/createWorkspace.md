@@ -90,7 +90,7 @@ Route `/create/workspace`, three steps:
 | ----- | ---------- | -------------------------------------------------------------- |
 | 0     | `METADATA` | name, avatar, description, resources                           |
 | 1     | `TARGETS`  | repeatable `{ network, address }` rows, may be empty            |
-| 2     | `ACCOUNTS` | repeatable `{ network, address, metadata? }` rows, at least one |
+| 2     | `ACCOUNTS` | repeatable `{ network, address, metadata? }` rows, optional |
 
 Mechanics are identical to `createDaoPage`: `createWorkspacePageDefinitions.ts` exports a
 `CreateWorkspaceWizardStep` enum plus a `createWorkspaceWizardSteps: IWizardStepperStep[]` array whose
@@ -158,6 +158,16 @@ Account rows additionally have a **collapsible metadata block** toggled by a but
 When any metadata field is filled, `metadata.name` is required (1096 types `name` as non-optional inside the
 block).
 
+### Accounts are optional
+
+A workspace may hold no account, in both the create and the edit wizard. Requiring one only at creation was a nudge,
+not an invariant: the edit wizard can remove the last account, the default workspace starts empty, workspaces are
+meant to grow by adding accounts (including from shared links), and accounts may later be discovered from targets.
+Every page already handles an empty workspace — lists skip their queries, the overview offers to add accounts.
+
+The create wizard still starts with one removable row, since adding an account is what most new workspaces begin
+with. The edit wizard shows the stored accounts as they are, so an empty workspace opens with no row.
+
 ### Validation
 
 - Addresses: format (`addressUtils.isAddress` plus `AddressInput`'s ENS resolution), then — **for accounts only** —
@@ -167,7 +177,8 @@ block).
   target and an account. Same address on different networks is legal.
 - Changing a row's network re-triggers validation of that row's address field (`useFormContext().trigger`),
   otherwise a duplicate created by switching networks would slip through `mode: 'onTouched'`.
-- Accounts require at least one row; Targets may be empty and start empty.
+- Accounts may be empty but start with one removable row; Targets may be empty and start empty. See
+  [Accounts are optional](#accounts-are-optional).
 - New rows default to `Network.ETHEREUM_SEPOLIA`, matching `createDaoFormNetwork`'s default.
 
 ## Shared `NetworkInput`
@@ -552,8 +563,8 @@ workspace holding no account.
 - Submitting opens `PublishWorkspaceDialog` in update mode (`workspaceId` param). Like creating, it needs no wallet
   (see [Ownership](#ownership)). The dialog runs the create pipeline — resolve account types, pin avatars, build the body — but
   only pins a *new* file: an avatar with a URL and no file keeps its stored URI.
-- `CreateWorkspaceForm.Accounts` takes `allowEmpty`, since a workspace may hold no account while the wizard still
-  requires one. The empty account list then skips the account-type request.
+- Accounts are optional in both wizards (see [Accounts are optional](#accounts-are-optional)); an empty account
+  list skips the account-type request.
 - Navigation is blocked while the form is dirty, as in every wizard.
 - No wallet is checked on submit, unlike the create flow.
 
