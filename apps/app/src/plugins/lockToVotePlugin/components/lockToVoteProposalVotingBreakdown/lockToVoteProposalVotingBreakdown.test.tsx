@@ -69,4 +69,12 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
         expect(screen.getByText('75%')).toBeInTheDocument(); // support
         expect(screen.getByText('5%')).toBeInTheDocument(); // minimum participation
     });
+
+    it('renders only the children when the proposal supply is unknown', () => {
+        const proposal = generateLockToVoteProposal({ tokensTotalSupply: {} });
+        render(createTestComponent({ proposal, children: 'vote-children' }));
+        expect(screen.getByRole('tabpanel')).toBeInTheDocument();
+        expect(screen.getByText('vote-children')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
 });

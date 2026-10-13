@@ -121,12 +121,22 @@ describe('<WorkspaceProposalList /> component', () => {
         });
     });
 
+    // Each row renders its own anchor plus the publisher's. The publisher's still points at the DAO member page,
+    // which is deliberately deferred, so the row links are the ones that are not member links.
+    const rowLinks = () =>
+        screen
+            .getAllByRole('link')
+            .filter(
+                (link) => !link.getAttribute('href')?.includes('/members/'),
+            );
+
     const createTestComponent = (
         props?: Partial<IWorkspaceProposalListProps>,
     ) => {
         const completeProps: IWorkspaceProposalListProps = {
             accounts: [buildAccount(nextAddress())],
             pageSize: 10,
+            workspaceId: 'demo',
             ...props,
         };
 
@@ -163,6 +173,41 @@ describe('<WorkspaceProposalList /> component', () => {
 
     it('tags each row with the name of the DAO the proposal belongs to', async () => {
         const address = nextAddress();
+        const otherAddress = nextAddress();
+        getProposalListSpy.mockResolvedValue(
+            buildResponse({
+                data: [buildProposal(address)],
+                metadata: {
+                    page: 1,
+                    pageSize: 10,
+                    totalPages: 1,
+                    totalRecords: 1,
+                },
+            }),
+        );
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                name: 'Embedded DAO name',
+                plugins: [generateDaoPlugin({ address: '0xPlugin' })],
+            }),
+        );
+
+        render(
+            createTestComponent({
+                accounts: [buildAccount(address), buildAccount(otherAddress)],
+            }),
+        );
+
+        expect(
+            await screen.findByText('Embedded DAO name'),
+        ).toBeInTheDocument();
+    });
+
+    // Under an account scope every row belongs to the same DAO, so naming it on each one says nothing.
+    it('leaves the rows untagged when there is a single account', async () => {
+        const address = nextAddress();
         getProposalListSpy.mockResolvedValue(
             buildResponse({
                 data: [buildProposal(address)],
@@ -185,9 +230,104 @@ describe('<WorkspaceProposalList /> component', () => {
 
         render(createTestComponent({ accounts: [buildAccount(address)] }));
 
-        expect(
-            await screen.findByText('Embedded DAO name'),
-        ).toBeInTheDocument();
+        // The row itself lands, so the absence of the name is the tag being dropped rather than an empty list.
+        expect(await screen.findByRole('link')).toBeInTheDocument();
+        expect(screen.queryByText('Embedded DAO name')).not.toBeInTheDocument();
+    });
+
+    it('links each row into the scope of the account its proposal belongs to', async () => {
+        const firstAddress = nextAddress();
+        const secondAddress = nextAddress();
+        const firstAccount = buildAccount(firstAddress);
+        const secondAccount = buildAccount(secondAddress);
+
+        getProposalListSpy.mockResolvedValue(
+            buildResponse({
+                data: [
+                    buildProposal(firstAddress),
+                    buildProposal(secondAddress),
+                ],
+                metadata: {
+                    page: 1,
+                    pageSize: 10,
+                    totalPages: 1,
+                    totalRecords: 2,
+                },
+            }),
+        );
+        getDaoSpy.mockImplementation((params) =>
+            Promise.resolve(
+                params.urlParams.id === firstAccount.id
+                    ? generateDao({
+                          address: firstAddress,
+                          network,
+                          plugins: [
+                              generateDaoPlugin({
+                                  address: '0xPlugin',
+                                  slug: 'mul',
+                                  interfaceType: PluginInterfaceType.MULTISIG,
+                              }),
+                          ],
+                      })
+                    : generateDao({
+                          address: secondAddress,
+                          network,
+                          plugins: [
+                              generateDaoPlugin({
+                                  address: '0xPlugin',
+                                  slug: 'tok',
+                                  interfaceType:
+                                      PluginInterfaceType.TOKEN_VOTING,
+                              }),
+                          ],
+                      }),
+            ),
+        );
+
+        render(
+            createTestComponent({ accounts: [firstAccount, secondAccount] }),
+        );
+
+        await screen.findAllByRole('link');
+
+        expect(rowLinks().map((link) => link.getAttribute('href'))).toEqual([
+            `/workspace/demo/${firstAccount.id}/proposals/MUL-4`,
+            `/workspace/demo/${secondAccount.id}/proposals/TOK-4`,
+        ]);
+    });
+
+    it('leaves a row unlinked when its proposal has no slug', async () => {
+        const address = nextAddress();
+        getProposalListSpy.mockResolvedValue(
+            buildResponse({
+                data: [buildProposal(address, { title: 'Unlinkable' })],
+                metadata: {
+                    page: 1,
+                    pageSize: 10,
+                    totalPages: 1,
+                    totalRecords: 1,
+                },
+            }),
+        );
+        // The DAO resolves, but holds no plugin at the proposal's `pluginAddress`, so no slug can be built.
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xSomethingElse',
+                        slug: 'mul',
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                ],
+            }),
+        );
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        expect(await screen.findByText('Unlinkable')).toBeInTheDocument();
+        expect(rowLinks()).toEqual([]);
     });
 
     it('drops a row whose DAO could not be read but keeps the rows that resolved', async () => {
@@ -245,6 +385,92 @@ describe('<WorkspaceProposalList /> component', () => {
         render(createTestComponent({ accounts: [] }));
 
         expect(getProposalListSpy).not.toHaveBeenCalled();
+    });
+
+    // The query of an empty selection is disabled, and a disabled query reads as pending — without a guard the
+    // list would skeleton forever instead of saying there is nothing.
+    it('shows the empty state rather than a skeleton when there is no account', async () => {
+        render(createTestComponent({ accounts: [] }));
+
+        expect(
+            await screen.findByText(
+                'app.workspace.workspaceProposalList.emptyState.heading',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    // A process tab narrows the rows, so an empty result means nothing matched rather than nothing exists.
+    it('shows the filtered empty state when a process has no proposals', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xMultisig',
+                        name: 'Multisig',
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                        isProcess: true,
+                    }),
+                    generateDaoPlugin({
+                        address: '0xTokenVoting',
+                        name: 'Token voting',
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                        isProcess: true,
+                    }),
+                ],
+            }),
+        );
+
+        // The mock of the filter component renders the content of the last tab, i.e. a process one.
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        expect(
+            await screen.findByText(
+                'app.workspace.workspaceProposalList.emptyFilteredState.heading',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceProposalList.emptyState.heading',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    // Every tab belongs to the same DAO under an account scope, so repeating its name on each one says nothing.
+    it('labels the tabs with the process alone when there is a single account', async () => {
+        const address = nextAddress();
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xMultisig',
+                        name: 'Multisig',
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                        isProcess: true,
+                    }),
+                    generateDaoPlugin({
+                        address: '0xTokenVoting',
+                        name: 'Token voting',
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                        isProcess: true,
+                    }),
+                ],
+            }),
+        );
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        const tabs = await screen.findAllByTestId('plugin-tab');
+
+        expect(tabs.map((tab) => tab.textContent)).toEqual([
+            'app.workspace.workspaceProposalList.groupTab',
+            'Token voting',
+            'Multisig',
+        ]);
     });
 
     it('renders no tabs when the DAOs have a single process plugin', async () => {

@@ -21,7 +21,7 @@ const defaultRender = (props: IProposalActionsDecoderProps) => {
 };
 
 const meta: Meta<typeof ProposalActionsDecoder> = {
-    title: 'Modules/Components/Proposal/ProposalActions/ProposalActions.Decoder',
+    title: 'Modules/Proposal/ProposalActions/ProposalActions.Decoder',
     component: ProposalActionsDecoder,
     // Force component remount on edit-mode change to correctly register the form fields
     decorators: [(Story, context) => <Story key={`story-${context.args.mode ?? '-'}`} />],

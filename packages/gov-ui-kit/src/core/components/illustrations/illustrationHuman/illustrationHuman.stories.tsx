@@ -3,7 +3,7 @@ import style from '../index.css?raw';
 import { IllustrationHuman } from './illustrationHuman';
 
 const meta: Meta<typeof IllustrationHuman> = {
-    title: 'Core/Components/Illustrations/IllustrationHuman',
+    title: 'Core/Illustrations/IllustrationHuman',
     component: IllustrationHuman,
     parameters: {
         style,

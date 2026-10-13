@@ -11,6 +11,7 @@ import {
 } from '@/shared/testUtils';
 import * as useUserVoteHook from '../../hooks/useUserVote';
 import { generateProposal } from '../../testUtils';
+import { proposalUtils } from '../../utils/proposalUtils';
 import {
     DaoProposalListDefaultItem,
     type IDaoProposalListDefaultItemProps,
@@ -65,6 +66,58 @@ describe('<DaoProposalListDefaultItem /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    const rowLink = () =>
+        screen
+            .getAllByRole('link')
+            .find((link) => !link.getAttribute('href')?.includes('/members/'));
+
+    // `getProposalSlug` resolves the plugin through `getDaoPlugins`, which drops unsupported ones, so the link
+    // only builds when the plugin the proposal names is a supported one installed on the DAO.
+    const linkableProps = {
+        proposal: generateProposal({
+            pluginAddress: '0x123',
+            incrementalId: 4,
+        }),
+        dao: generateDao({
+            address: '0x123',
+            plugins: [
+                generateDaoPlugin({
+                    address: '0x123',
+                    slug: 'mul',
+                    interfaceType: daoService.PluginInterfaceType.MULTISIG,
+                }),
+            ],
+        }),
+    };
+
+    it('links the row to the given href', () => {
+        render(
+            createTestComponent({
+                ...linkableProps,
+                href: '/workspace/demo/eth-0xAbc/proposals/MUL-4',
+            }),
+        );
+
+        expect(rowLink()).toHaveAttribute(
+            'href',
+            '/workspace/demo/eth-0xAbc/proposals/MUL-4',
+        );
+    });
+
+    it('falls back to the DAO proposal URL when no href is given', () => {
+        render(createTestComponent(linkableProps));
+
+        const expectedHref = proposalUtils.getProposalUrl(
+            linkableProps.proposal,
+            linkableProps.dao,
+        );
+
+        // A DAO-route URL rather than a workspace one, and the row uses exactly it. The network is left to
+        // `getProposalUrl`, whose own branching has its own tests.
+        expect(expectedHref).toMatch(/^\/dao\/.+\/proposals\/MUL-4$/);
+        expect(rowLink()).toHaveAttribute('href', expectedHref);
+    });
 
     it('renders the proposal info', () => {
         const proposal = generateProposal({

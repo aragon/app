@@ -4,7 +4,7 @@ import { Dropdown, type IDropdownContainerProps } from '../index';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Dropdown.Container> = {
-    title: 'Core/Components/Dropdown/Dropdown.Container',
+    title: 'Core/Dropdown/Dropdown.Container',
     component: Dropdown.Container,
     parameters: {
         style,

@@ -59,9 +59,13 @@ export interface IPermissionEntity {
     brandId?: IPermissionEntityRef['brandId'];
     /**
      * Secondary detail label shown under the address in the expanded row — the
-     * DAO name, or the plugin metadata name and version (e.g. `Core v1.3`).
+     * DAO name, or the plugin contract name and version (e.g. `Multisig v1.3`).
      */
     detailName?: string;
+    /**
+     * Plugin repository name and installed version, when both are available.
+     */
+    versionName?: string;
 }
 
 /**
@@ -141,9 +145,11 @@ class PermissionEntityUtils {
 
         if (matchedPlugin != null) {
             const { meta } = matchedPlugin;
+            const label = daoUtils.getPluginName(meta);
+            const versionName = this.formatPluginVersion(meta);
 
             return {
-                label: daoUtils.getPluginName(meta),
+                label,
                 tag: meta.interfaceType
                     ? daoUtils
                           .parsePluginInterfaceType(meta.interfaceType)
@@ -152,7 +158,8 @@ class PermissionEntityUtils {
                 address,
                 isSentinel: false,
                 type: 'plugin',
-                detailName: this.formatPluginDetail(meta),
+                detailName: versionName ?? label,
+                versionName,
             };
         }
 
@@ -226,6 +233,14 @@ class PermissionEntityUtils {
             };
         }
 
+        const matchedPlugin = daoPlugins?.find((plugin) =>
+            addressUtils.isAddressEqual(plugin.meta.address, address),
+        );
+        const versionName =
+            matchedPlugin != null
+                ? this.formatPluginVersion(matchedPlugin.meta)
+                : undefined;
+
         if (entity.layer === 'processInternal') {
             const bodyInterfaceType = entity.interfaceType;
             const parsedType =
@@ -249,7 +264,8 @@ class PermissionEntityUtils {
                 address,
                 isSentinel: false,
                 type: 'plugin',
-                detailName: entity.parentPluginName ?? bodyName,
+                detailName: versionName ?? entity.parentPluginName ?? bodyName,
+                versionName,
                 layer: entity.layer,
                 status: entity.status,
                 brandId: entity.brandId,
@@ -260,9 +276,6 @@ class PermissionEntityUtils {
             entity.layer === 'topLevelPlugin' ||
             entity.layer === 'historicalPlugin'
         ) {
-            const matchedPlugin = daoPlugins?.find((plugin) =>
-                addressUtils.isAddressEqual(plugin.meta.address, address),
-            );
             const backendLabelIsRawType =
                 entity.interfaceType != null &&
                 entity.label === entity.interfaceType;
@@ -278,9 +291,11 @@ class PermissionEntityUtils {
                 isSentinel: false,
                 type: 'plugin',
                 detailName:
-                    matchedPlugin != null && pluginLabel !== label
-                        ? this.formatPluginDetail(matchedPlugin.meta)
-                        : (entity.parentPluginName ?? pluginLabel),
+                    versionName ??
+                    (pluginLabel !== label
+                        ? pluginLabel
+                        : (entity.parentPluginName ?? pluginLabel)),
+                versionName,
                 layer: entity.layer,
                 status: entity.status,
                 brandId: entity.brandId,
@@ -299,15 +314,15 @@ class PermissionEntityUtils {
         };
     };
 
-    private formatPluginDetail = (plugin: IDaoPlugin): string => {
-        const name = daoUtils.getPluginName(plugin);
+    private formatPluginVersion = (plugin: IDaoPlugin): string | undefined => {
         const { release, build } = plugin;
 
         if (release != null && build != null) {
+            const name = daoUtils.getPluginContractName(plugin);
             return `${name} v${release}.${build}`;
         }
 
-        return name;
+        return undefined;
     };
 }
 

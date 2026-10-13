@@ -26,20 +26,11 @@ class ApplicationMetadataUtils {
 
             if (!networkUtils.isValidNetwork(daoPageParams.network)) {
                 // A bad network param is almost always external bot/scanner traffic, but
-                // when the referer is our own app it signals a broken internal link worth
-                // fixing. Tag both via `noise_class` so they route out of the default alert
-                // stream (internal-broken-link → triage, security-probe → security review).
+                // when the referer is a page of our own app it signals a broken internal link
+                // worth fixing. Tag both via `noise_class` so they route out of the default
+                // alert stream (internal-broken-link → triage, security-probe → security review).
                 const referer = (await headers()).get('referer') ?? '';
-                let isInternalLink = false;
-
-                try {
-                    const refererHost = new URL(referer).hostname.toLowerCase();
-                    isInternalLink =
-                        refererHost === 'aragon.org' ||
-                        refererHost.endsWith('.aragon.org');
-                } catch {
-                    isInternalLink = false;
-                }
+                const isInternalLink = this.isInternalLink(referer);
 
                 monitoringUtils.logMessage('Invalid DAO URL', {
                     level: isInternalLink ? 'warning' : 'info',
@@ -93,6 +84,29 @@ class ApplicationMetadataUtils {
                 title: 'DAO not found',
                 description: 'The requested DAO could not be found.',
             });
+        }
+    };
+
+    /**
+     * True when the referer is a page of our own app that could have carried the link: an
+     * `aragon.org` host and, for DAO routes, a network we support. Bots send the malformed
+     * URL itself as referer, which is no link we emitted.
+     */
+    private isInternalLink = (referer: string): boolean => {
+        try {
+            const { hostname, pathname } = new URL(referer);
+            const host = hostname.toLowerCase();
+            const isOwnHost =
+                host === 'aragon.org' || host.endsWith('.aragon.org');
+
+            const [, rootSegment, networkSegment = ''] = pathname.split('/');
+            const isMalformedDaoRoute =
+                rootSegment === 'dao' &&
+                !networkUtils.isValidNetwork(networkSegment);
+
+            return isOwnHost && !isMalformedDaoRoute;
+        } catch {
+            return false;
         }
     };
 }

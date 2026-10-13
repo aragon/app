@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemberAvatar } from './memberAvatar';
 
 const meta: Meta<typeof MemberAvatar> = {
-    title: 'Modules/Components/Member/MemberAvatar',
+    title: 'Modules/Member/MemberAvatar',
     component: MemberAvatar,
     parameters: {
         design: {

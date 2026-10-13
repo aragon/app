@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Tooltip } from './tooltip';
 
 const meta: Meta<typeof Tooltip> = {
-    title: 'Core/Components/Tooltip',
+    title: 'Core/Tooltip',
     component: Tooltip,
     parameters: {
         design: {

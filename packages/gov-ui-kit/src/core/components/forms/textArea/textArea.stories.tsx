@@ -3,7 +3,7 @@ import { type ChangeEvent, useState } from 'react';
 import { TextArea } from './textArea';
 
 const meta: Meta<typeof TextArea> = {
-    title: 'Core/Components/Forms/TextArea',
+    title: 'Core/Forms/TextArea',
     component: TextArea,
     parameters: {
         design: {

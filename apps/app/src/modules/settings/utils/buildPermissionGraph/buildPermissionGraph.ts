@@ -101,11 +101,19 @@ const resolveNode = (
     });
 
     if (entity.type === 'plugin') {
+        const isOsxPlugin =
+            entity.brandId !== PermissionEntityExternalBrandId.SAFE &&
+            (entity.layer == null ||
+                entity.layer === 'topLevelPlugin' ||
+                entity.layer === 'historicalPlugin' ||
+                entity.versionName != null);
+
         return {
             id,
             kind: 'plugin',
             label: entity.label,
-            tag: entity.tag,
+            tag: isOsxPlugin ? 'OSx' : entity.tag,
+            versionName: entity.versionName,
             layer: entity.layer,
             status: entity.status,
             brandId: entity.brandId,
