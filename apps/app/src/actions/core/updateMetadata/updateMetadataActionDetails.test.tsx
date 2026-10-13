@@ -37,12 +37,24 @@ describe('<UpdateMetadataActionDetails /> component', () => {
         return <UpdateMetadataActionDetails {...completeProps} />;
     };
 
+    const copyKey = (key: string) =>
+        `app.actions.core.updateMetadataActionDetails.${key}`;
+
+    it('renders the proposed and existing toggles', () => {
+        render(createTestComponent());
+        expect(screen.getByText(copyKey('proposedToggle'))).toBeInTheDocument();
+        expect(screen.getByText(copyKey('existingToggle'))).toBeInTheDocument();
+    });
+
     it('renders the proposed metadata by default and the existing metadata when toggled', async () => {
         const action = generateProposalActionUpdateMetadata({
             proposedMetadata: {
                 name: 'Proposed name',
                 description: 'Proposed description',
-                links: [{ name: 'Proposed link', url: 'https://proposed.com' }],
+                links: [
+                    { name: 'Proposed link 1', url: 'https://proposed-1.com' },
+                    { name: 'Proposed link 2', url: 'https://proposed-2.com' },
+                ],
             },
             existingMetadata: {
                 name: 'Existing name',
@@ -55,45 +67,70 @@ describe('<UpdateMetadataActionDetails /> component', () => {
 
         expect(screen.getByText('Proposed name')).toBeInTheDocument();
         expect(screen.getByText('Proposed description')).toBeInTheDocument();
-        expect(screen.getByText('Proposed link')).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /Proposed link 1/ }),
+        ).toHaveAttribute('href', 'https://proposed-1.com');
+        expect(
+            screen.getByRole('link', { name: /Proposed link 2/ }),
+        ).toHaveAttribute('href', 'https://proposed-2.com');
+        expect(screen.queryByText('Existing name')).not.toBeInTheDocument();
 
-        await userEvent.click(
-            screen.getByText(
-                'app.actions.core.updateMetadataActionDetails.existingToggle',
-            ),
-        );
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
 
         expect(screen.getByText('Existing name')).toBeInTheDocument();
         expect(screen.getByText('Existing description')).toBeInTheDocument();
-        expect(screen.getByText('Existing link')).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /Existing link/ }),
+        ).toHaveAttribute('href', 'https://existing.com');
+        expect(screen.queryByText('Proposed name')).not.toBeInTheDocument();
     });
 
-    it('renders the logo and description terms for DAO metadata and resolves the avatar from IPFS', () => {
+    it('renders the DAO metadata terms', () => {
+        render(createTestComponent());
+
+        expect(screen.getByText(copyKey('logoTerm'))).toBeInTheDocument();
+        expect(screen.getByText(copyKey('nameTerm'))).toBeInTheDocument();
+        expect(
+            screen.getByText(copyKey('descriptionTerm')),
+        ).toBeInTheDocument();
+        expect(screen.getByText(copyKey('linkTerm'))).toBeInTheDocument();
+        expect(
+            screen.queryByText(copyKey('summaryTerm')),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(copyKey('processKeyTerm')),
+        ).not.toBeInTheDocument();
+    });
+
+    it('resolves the avatar of the displayed DAO metadata from IPFS', async () => {
         const action = generateProposalActionUpdateMetadata({
             proposedMetadata: {
-                avatar: 'ipfs://avatar-cid',
+                avatar: 'ipfs://proposed-cid',
                 name: 'Proposed name',
                 description: 'Proposed description',
+                links: [],
+            },
+            existingMetadata: {
+                avatar: 'ipfs://existing-cid',
+                name: 'Existing name',
+                description: 'Existing description',
                 links: [],
             },
         });
 
         render(createTestComponent({ action: buildAction(action) }));
+        expect(cidToSrcSpy).toHaveBeenLastCalledWith('ipfs://proposed-cid');
 
-        expect(
-            screen.getByText(
-                'app.actions.core.updateMetadataActionDetails.logoTerm',
-            ),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                'app.actions.core.updateMetadataActionDetails.descriptionTerm',
-            ),
-        ).toBeInTheDocument();
-        expect(cidToSrcSpy).toHaveBeenCalledWith('ipfs://avatar-cid');
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+        expect(cidToSrcSpy).toHaveBeenLastCalledWith('ipfs://existing-cid');
     });
 
-    it('renders the summary and process key terms for plugin metadata with a process key', () => {
+    it('does not resolve an avatar when the DAO metadata has none', () => {
+        render(createTestComponent());
+        expect(cidToSrcSpy).toHaveBeenCalledWith(undefined);
+    });
+
+    it('renders the plugin metadata terms and the process key of the displayed metadata', async () => {
         const action = generateProposalActionUpdatePluginMetadata({
             proposedMetadata: {
                 name: 'Core',
@@ -105,22 +142,17 @@ describe('<UpdateMetadataActionDetails /> component', () => {
 
         render(createTestComponent({ action: buildAction(action) }));
 
+        expect(screen.queryByText(copyKey('logoTerm'))).not.toBeInTheDocument();
         expect(
-            screen.queryByText(
-                'app.actions.core.updateMetadataActionDetails.logoTerm',
-            ),
+            screen.queryByText(copyKey('descriptionTerm')),
         ).not.toBeInTheDocument();
-        expect(
-            screen.getByText(
-                'app.actions.core.updateMetadataActionDetails.summaryTerm',
-            ),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                'app.actions.core.updateMetadataActionDetails.processKeyTerm',
-            ),
-        ).toBeInTheDocument();
+        expect(screen.getByText(copyKey('summaryTerm'))).toBeInTheDocument();
+        expect(screen.getByText(copyKey('processKeyTerm'))).toBeInTheDocument();
         expect(screen.getByText('CRE')).toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+
+        expect(screen.getByText('COR')).toBeInTheDocument();
     });
 
     it('does not render the process key term when the existing plugin metadata has no process key', () => {
@@ -132,9 +164,24 @@ describe('<UpdateMetadataActionDetails /> component', () => {
         render(createTestComponent({ action: buildAction(action) }));
 
         expect(
-            screen.queryByText(
-                'app.actions.core.updateMetadataActionDetails.processKeyTerm',
-            ),
+            screen.queryByText(copyKey('processKeyTerm')),
         ).not.toBeInTheDocument();
+    });
+
+    it('renders plugin metadata with missing fields', async () => {
+        const action = generateProposalActionUpdatePluginMetadata({
+            proposedMetadata: {},
+            existingMetadata: {},
+        });
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        expect(screen.getByText(copyKey('nameTerm'))).toBeInTheDocument();
+        expect(screen.getByText(copyKey('linkTerm'))).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 });
