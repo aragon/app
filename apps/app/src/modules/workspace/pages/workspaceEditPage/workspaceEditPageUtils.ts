@@ -5,7 +5,7 @@ import type {
     ICreateWorkspaceFormAccount,
     ICreateWorkspaceFormData,
 } from '../../components/createWorkspaceForm';
-import { WorkspaceEditWizardStep } from './workspaceEditPageDefinitions';
+import { WorkspaceWizardStep } from '../../components/workspaceWizard';
 
 class WorkspaceEditPageUtils {
     /**
@@ -41,12 +41,12 @@ class WorkspaceEditPageUtils {
      */
     resolveInitialStep = (
         stepParam?: string | string[],
-    ): WorkspaceEditWizardStep | undefined => {
+    ): WorkspaceWizardStep | undefined => {
         if (typeof stepParam !== 'string') {
             return undefined;
         }
 
-        return Object.values(WorkspaceEditWizardStep).find(
+        return Object.values(WorkspaceWizardStep).find(
             (step) => step.toLowerCase() === stepParam.toLowerCase(),
         );
     };

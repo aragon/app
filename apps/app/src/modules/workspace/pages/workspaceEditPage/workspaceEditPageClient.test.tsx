@@ -7,12 +7,12 @@ import * as blockNavigationContext from '@/shared/components/blockNavigationCont
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import { type IWorkspace, workspaceService } from '../../api/workspaceService';
+import { WorkspaceWizardStep } from '../../components/workspaceWizard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import {
     type IWorkspaceEditPageClientProps,
     WorkspaceEditPageClient,
 } from './workspaceEditPageClient';
-import { WorkspaceEditWizardStep } from './workspaceEditPageDefinitions';
 
 describe('<WorkspaceEditPageClient /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
@@ -100,7 +100,7 @@ describe('<WorkspaceEditPageClient /> component', () => {
         getWorkspaceSpy.mockResolvedValue(workspace);
         render(
             createTestComponent({
-                initialStep: WorkspaceEditWizardStep.ACCOUNTS,
+                initialStep: WorkspaceWizardStep.ACCOUNTS,
             }),
         );
 

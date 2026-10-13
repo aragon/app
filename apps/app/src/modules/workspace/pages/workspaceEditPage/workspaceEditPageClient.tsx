@@ -1,22 +1,15 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import { useWorkspace } from '../../api/workspaceService';
+import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
 import {
-    CreateWorkspaceForm,
-    type ICreateWorkspaceFormData,
-} from '../../components/createWorkspaceForm';
+    WorkspaceWizard,
+    type WorkspaceWizardStep,
+} from '../../components/workspaceWizard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IPublishWorkspaceDialogParams } from '../../dialogs/publishWorkspaceDialog';
-import {
-    WorkspaceEditWizardStep,
-    workspaceEditWizardSteps,
-} from './workspaceEditPageDefinitions';
 import { workspaceEditPageUtils } from './workspaceEditPageUtils';
 
 export interface IWorkspaceEditPageClientProps {
@@ -27,7 +20,7 @@ export interface IWorkspaceEditPageClientProps {
     /**
      * Step the wizard opens on, the first one when not set.
      */
-    initialStep?: WorkspaceEditWizardStep;
+    initialStep?: WorkspaceWizardStep;
 }
 
 /**
@@ -40,87 +33,33 @@ export const WorkspaceEditPageClient: React.FC<
 > = (props) => {
     const { workspaceId, initialStep } = props;
 
-    const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
     });
 
-    const processedSteps = useMemo(
-        () =>
-            workspaceEditWizardSteps.map((step) => ({
-                ...step,
-                meta: { ...step.meta, name: t(step.meta.name) },
-            })),
-        [t],
-    );
-
     // Narrows the type only; the gate above has already resolved the workspace.
     if (workspace == null) {
         return null;
     }
 
-    const handleFormSubmit = (values: ICreateWorkspaceFormData) => {
-        plausibleAnalyticsUtils.track('wizard_submit', {
-            flow: 'edit_workspace',
-            accounts: values.accounts.length,
-            targets: values.targets.length,
-            hasAvatar: values.avatar != null,
-        });
+    const handleSubmit = (values: ICreateWorkspaceFormData) => {
         const params: IPublishWorkspaceDialogParams = { values, workspaceId };
         open(WorkspaceDialogId.PUBLISH_WORKSPACE, { params });
     };
 
-    const [metadataStep, targetsStep, accountsStep] = workspaceEditWizardSteps;
-
     return (
         <Page.Main fullWidth={true}>
-            <WizardPage.Container
-                analytics={{ flow: 'edit_workspace' }}
+            <WorkspaceWizard
+                analyticsFlow="edit_workspace"
                 defaultValues={workspaceEditPageUtils.buildFormValues(
                     workspace,
                 )}
-                finalStep={t('app.workspace.workspaceEditPage.finalStep')}
                 initialActiveStep={initialStep}
-                initialSteps={processedSteps}
-                onSubmit={handleFormSubmit}
-                submitLabel={t('app.workspace.workspaceEditPage.submitLabel')}
-            >
-                <WizardPage.Step
-                    description={t(
-                        `app.workspace.workspaceEditPage.steps.${WorkspaceEditWizardStep.METADATA}.description`,
-                    )}
-                    title={t(
-                        `app.workspace.workspaceEditPage.steps.${WorkspaceEditWizardStep.METADATA}.title`,
-                    )}
-                    {...metadataStep}
-                >
-                    <CreateWorkspaceForm.Metadata />
-                </WizardPage.Step>
-                <WizardPage.Step
-                    description={t(
-                        `app.workspace.workspaceEditPage.steps.${WorkspaceEditWizardStep.TARGETS}.description`,
-                    )}
-                    title={t(
-                        `app.workspace.workspaceEditPage.steps.${WorkspaceEditWizardStep.TARGETS}.title`,
-                    )}
-                    {...targetsStep}
-                >
-                    <CreateWorkspaceForm.Targets />
-                </WizardPage.Step>
-                <WizardPage.Step
-                    description={t(
-                        `app.workspace.workspaceEditPage.steps.${WorkspaceEditWizardStep.ACCOUNTS}.description`,
-                    )}
-                    title={t(
-                        `app.workspace.workspaceEditPage.steps.${WorkspaceEditWizardStep.ACCOUNTS}.title`,
-                    )}
-                    {...accountsStep}
-                >
-                    <CreateWorkspaceForm.Accounts />
-                </WizardPage.Step>
-            </WizardPage.Container>
+                onSubmit={handleSubmit}
+                translationNamespace="app.workspace.workspaceEditPage"
+            />
         </Page.Main>
     );
 };

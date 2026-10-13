@@ -14,8 +14,8 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
+import { WorkspaceWizardStep } from '../../components/workspaceWizard';
 import { workspaceUtils } from '../../utils/workspaceUtils';
-import { WorkspaceEditWizardStep } from '../workspaceEditPage/workspaceEditPageDefinitions';
 
 export interface IWorkspaceDetailsPageClientProps {
     /**
@@ -119,7 +119,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         // Opens the wizard straight on the step the button names.
                                         href: workspaceUtils.getWorkspaceEditUrl(
                                             workspaceId,
-                                            WorkspaceEditWizardStep.ACCOUNTS,
+                                            WorkspaceWizardStep.ACCOUNTS,
                                         ),
                                     }}
                                 />

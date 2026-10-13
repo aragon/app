@@ -91,10 +91,11 @@ Route `/create/workspace`, three steps:
 | 1     | `TARGETS`  | repeatable `{ network, address }` rows, may be empty            |
 | 2     | `ACCOUNTS` | repeatable `{ network, address, metadata? }` rows, optional |
 
-Mechanics are identical to `createDaoPage`: `createWorkspacePageDefinitions.ts` exports a
-`CreateWorkspaceWizardStep` enum plus a `createWorkspaceWizardSteps: IWizardStepperStep[]` array whose
-`meta.name` values are untranslated i18n keys; the page client translates them into `processedSteps` and spreads
-each step onto a `WizardPage.Step` inside a `WizardPage.Container`.
+The wizard is `WorkspaceWizard` (`components/workspaceWizard/`), shared by the create and the edit flows. Its
+`WorkspaceWizardStep` enum fixes the steps and their order, and `buildWorkspaceWizardSteps(translationNamespace)`
+names them from the copy of the calling page — the only thing, with the default values, the submit action, the
+analytics flow and the step to open on, that differs between the two flows. Adding a step or a field is one change
+there. The page clients only render it inside `Page.Main` and open the publish dialog on submit.
 
 Metadata is step 0 because naming the thing first reads as a creation flow and leaves the first screen as a text
 field rather than an address row. Targets precede Accounts for the discovery reason above.
@@ -540,8 +541,7 @@ the account.
 
 ## Edit workspace
 
-`/workspace/{workspaceId}/edit` edits a workspace through the same three steps as the create wizard
-(`CreateWorkspaceForm.Metadata`, `.Targets`, `.Accounts`), under `LayoutWizardEditWorkspace`, whose exit leads back
+`/workspace/{workspaceId}/edit` edits a workspace with the same `WorkspaceWizard` as the create flow, under `LayoutWizardEditWorkspace`, whose exit leads back
 to the aggregated overview. It opens from the workspace selector ("Edit workspace") and from the overview of a
 workspace holding no account.
 
@@ -686,9 +686,10 @@ src/modules/workspace/
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
+├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
-├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
+├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
 ├── hooks/useWorkspaceAccountOptions/{useWorkspaceAccountOptions.ts,index.ts}
 ├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
@@ -702,7 +703,7 @@ src/modules/workspace/
 ├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
-├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageDefinitions.ts,workspaceEditPageUtils.ts,index.ts}
+├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 └── index.ts
 
