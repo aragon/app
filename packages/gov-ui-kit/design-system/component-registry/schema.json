@@ -12,7 +12,7 @@
     "properties": {
         "schemaVersion": {
             "type": "string",
-            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            "const": "2.0.0"
         },
         "provenance": {
             "$ref": "#/$defs/provenance"
@@ -38,7 +38,6 @@
                 "repository": {
                     "type": "string",
                     "enum": [
-                        "app",
                         "kit"
                     ]
                 },
@@ -53,77 +52,6 @@
                 "sha256": {
                     "type": "string",
                     "pattern": "^[a-f0-9]{64}$"
-                }
-            }
-        },
-        "usageRef": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-                "repository",
-                "path",
-                "line",
-                "sha256",
-                "kind",
-                "usageType",
-                "localName",
-                "module"
-            ],
-            "properties": {
-                "repository": {
-                    "type": "string",
-                    "enum": [
-                        "app",
-                        "kit"
-                    ]
-                },
-                "path": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "line": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "sha256": {
-                    "type": "string",
-                    "pattern": "^[a-f0-9]{64}$"
-                },
-                "kind": {
-                    "type": "string",
-                    "enum": [
-                        "jsx",
-                        "reexport",
-                        "type",
-                        "value"
-                    ]
-                },
-                "usageType": {
-                    "type": "string",
-                    "enum": [
-                        "production",
-                        "test",
-                        "story",
-                        "docs"
-                    ]
-                },
-                "localName": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "module": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "via": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/ref"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ]
                 }
             }
         },
@@ -132,89 +60,18 @@
             "additionalProperties": false,
             "required": [
                 "sourceRoots",
-                "app",
-                "kit",
-                "consumed"
+                "kit"
             ],
             "properties": {
                 "sourceRoots": {
                     "type": "object",
                     "additionalProperties": false,
                     "required": [
-                        "app",
-                        "kit",
-                        "consumed"
+                        "kit"
                     ],
                     "properties": {
-                        "app": {
-                            "type": "string"
-                        },
                         "kit": {
                             "type": "string"
-                        },
-                        "consumed": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "app": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "root",
-                        "commit",
-                        "dirty",
-                        "kitReexportBoundary"
-                    ],
-                    "properties": {
-                        "root": {
-                            "type": "string",
-                            "const": "app"
-                        },
-                        "commit": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^[a-f0-9]{40}$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ]
-                        },
-                        "dirty": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "kitReexportBoundary": {
-                            "anyOf": [
-                                {
-                                    "type": "null"
-                                },
-                                {
-                                    "type": "object",
-                                    "additionalProperties": false,
-                                    "required": [
-                                        "path",
-                                        "sha256",
-                                        "note"
-                                    ],
-                                    "properties": {
-                                        "path": {
-                                            "type": "string"
-                                        },
-                                        "sha256": {
-                                            "type": "string",
-                                            "pattern": "^[a-f0-9]{64}$"
-                                        },
-                                        "note": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     }
                 },
@@ -274,68 +131,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                },
-                "consumed": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "specifier",
-                        "declaredSpecifier",
-                        "lock",
-                        "version",
-                        "root",
-                        "dist",
-                        "sourceEquivalence"
-                    ],
-                    "properties": {
-                        "specifier": {
-                            "type": "string"
-                        },
-                        "declaredSpecifier": {
-                            "type": "string"
-                        },
-                        "lock": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "required": [
-                                "specifier",
-                                "version"
-                            ],
-                            "properties": {
-                                "specifier": {
-                                    "type": "string"
-                                },
-                                "version": {
-                                    "type": [
-                                        "string",
-                                        "null"
-                                    ]
-                                }
-                            }
-                        },
-                        "version": {
-                            "type": "string"
-                        },
-                        "root": {
-                            "type": "string",
-                            "const": "consumed"
-                        },
-                        "dist": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string",
-                                "pattern": "^[a-f0-9]{64}$"
-                            }
-                        },
-                        "sourceEquivalence": {
-                            "type": "string",
-                            "enum": [
-                                "verified",
-                                "diverged",
-                                "unknown"
-                            ]
                         }
                     }
                 }
@@ -602,7 +397,6 @@
                             "repository": {
                                 "type": "string",
                                 "enum": [
-                                    "app",
                                     "kit"
                                 ]
                             },
@@ -716,7 +510,6 @@
                 "stories",
                 "tests",
                 "docs",
-                "usage",
                 "intent"
             ],
             "properties": {
@@ -807,25 +600,6 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/$defs/ref"
-                    }
-                },
-                "usage": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                        "found",
-                        "refs"
-                    ],
-                    "properties": {
-                        "found": {
-                            "type": "boolean"
-                        },
-                        "refs": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/$defs/usageRef"
-                            }
-                        }
                     }
                 },
                 "intent": {

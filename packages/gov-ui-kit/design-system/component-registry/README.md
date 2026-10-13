@@ -1,7 +1,7 @@
 # GovKit component registry
 
 `registry.json` lists every public `@aragon/gov-ui-kit` export with its source, stories,
-props, App usages and curated selection intent. `selection-guide.json` and
+props and curated selection intent. `selection-guide.json` and
 `../selection-guide.md` are generated views of it; the Markdown ships with the design system
 (see `../SYNC.md`).
 
@@ -26,5 +26,4 @@ node --test packages/gov-ui-kit/design-system/component-registry/*.test.mjs
   intent against source, then update its evidence `sha256` and `line` and set `stale: false`.
 - A removed export fails extraction until its record is deleted from `registry.json`.
 - Entries holding `Review question (maintainer discussion):` constraints stay out of the guide.
-- Roots default to `apps/app` and `packages/gov-ui-kit`; override with `GOVKIT_APP_ROOT`,
-  `GOVKIT_KIT_ROOT` and `GOVKIT_CONSUMED_ROOT`.
+- Roots default to `packages/gov-ui-kit`; override with `GOVKIT_KIT_ROOT`.

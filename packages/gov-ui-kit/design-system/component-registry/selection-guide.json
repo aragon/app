@@ -1,11 +1,11 @@
 {
-    "schemaVersion": "1.1.0",
+    "schemaVersion": "2.0.0",
     "metadata": {
         "package": "@aragon/gov-ui-kit",
         "sourceRegistry": {
             "path": "registry.json",
-            "schemaVersion": "1.1.0",
-            "sha256": "df104b1d3911af68fcb8ce3ac9bc7f74dab8b60d7ca7faa2e925b40f5da3318c",
+            "schemaVersion": "2.0.0",
+            "sha256": "98750a08b91305e5bdfc6086da422968b6ef626c735eef185718f82707230e4e",
             "totalRecords": 414,
             "entryCount": 149,
             "uiEntryCount": 142,
@@ -42,12 +42,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/accordion/index.ts:10",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118",
-                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161",
-                    "app:src/modules/settings/components/permissionsList/permissionsList.tsx:78"
-                ]
+                "stories": []
             }
         },
         {
@@ -69,11 +64,6 @@
                 "source": "kit:src/core/components/accordion/accordionContainer/accordionContainer.tsx:31",
                 "stories": [
                     "kit:src/core/components/accordion/accordionContainer/accordionContainer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:176",
-                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:161",
-                    "app:src/modules/settings/components/permissionsList/permissionsList.tsx:78"
                 ]
             }
         },
@@ -94,12 +84,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/components/accordion/accordionItem/accordionItem.tsx:16",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:175",
-                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:162",
-                    "app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:116"
-                ]
+                "stories": []
             }
         },
         {
@@ -119,12 +104,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/components/accordion/accordionItemContent/accordionItemContent.tsx:12",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:119",
-                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:178",
-                    "app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:135"
-                ]
+                "stories": []
             }
         },
         {
@@ -144,12 +124,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx:13",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceBodyField/governanceBodyField.tsx:118",
-                    "app:src/modules/settings/components/daoHierarchy/daoHierarchy.tsx:163",
-                    "app:src/modules/settings/components/permissionsList/permissionsListRow.tsx:117"
-                ]
+                "stories": []
             }
         },
         {
@@ -176,10 +151,6 @@
                 "source": "kit:src/modules/components/action/actionSimulation/actionSimulation.tsx:16",
                 "stories": [
                     "kit:src/modules/components/action/actionSimulation/actionSimulation.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/dialogs/simulateActionsDialog/simulateActionsDialog.tsx:133",
-                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:331"
                 ]
             }
         },
@@ -253,11 +224,6 @@
                 "source": "kit:src/modules/components/addressInput/addressInput.tsx:82",
                 "stories": [
                     "kit:src/modules/components/addressInput/addressInput.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/components/transferAssetForm/transferAssetForm.tsx:83",
-                    "app:src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx:60",
-                    "app:src/actions/core/permissionManager/components/permissionAddressInput.tsx:92"
                 ]
             }
         },
@@ -296,11 +262,6 @@
                 "source": "kit:src/core/components/addressOutput/addressOutput.tsx:61",
                 "stories": [
                     "kit:src/core/components/addressOutput/addressOutput.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:35",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:58",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItem.tsx:58"
                 ]
             }
         },
@@ -346,12 +307,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/utils/addressUtils/addressUtils.ts:56",
-                "stories": [],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:83",
-                    "app:src/actions/capitalDistributor/index.ts:30",
-                    "app:src/actions/capitalDistributor/utils/capitalDistributorActionParser/capitalDistributorActionParser.ts:34"
-                ]
+                "stories": []
             }
         },
         {
@@ -375,11 +331,6 @@
                 "source": "kit:src/core/components/alerts/alertCard/alertCard.tsx:43",
                 "stories": [
                     "kit:src/core/components/alerts/alertCard/alertCard.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarActiveVotingAlert/gaugeRegistrarActiveVotingAlert.tsx:17",
-                    "app:src/modules/application/dialogs/aragonProfileDialog/aragonProfileDialog.tsx:352",
-                    "app:src/modules/application/dialogs/aragonProfileRenameDialog/aragonProfileRenameDialog.tsx:152"
                 ]
             }
         },
@@ -404,11 +355,6 @@
                 "source": "kit:src/core/components/alerts/alertInline/alertInline.tsx:33",
                 "stories": [
                     "kit:src/core/components/alerts/alertInline/alertInline.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:152",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:152",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:152"
                 ]
             }
         },
@@ -433,12 +379,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/asset/assetDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39"
-                ]
+                "stories": []
             }
         },
         {
@@ -460,11 +401,6 @@
                 "source": "kit:src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.tsx:9",
                 "stories": [
                     "kit:src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:159",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:117",
-                    "app:src/modules/finance/components/assetList/assetListDefault.tsx:97"
                 ]
             }
         },
@@ -487,11 +423,6 @@
                 "source": "kit:src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx:33",
                 "stories": [
                     "kit:src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectItem.tsx:39",
-                    "app:src/modules/finance/components/assetList/assetListItem.tsx:37",
-                    "app:src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterLockUnlockDialog/gaugeVoterLockUnlockDialog.tsx:197"
                 ]
             }
         },
@@ -520,9 +451,6 @@
                 "source": "kit:src/modules/components/asset/assetTransfer/assetTransfer.tsx:54",
                 "stories": [
                     "kit:src/modules/components/asset/assetTransfer/assetTransfer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/core/withdrawToken/withdrawTokenActionDetails.tsx:30"
                 ]
             }
         },
@@ -547,11 +475,6 @@
                 "source": "kit:src/core/components/avatars/avatar/avatar.tsx:78",
                 "stories": [
                     "kit:src/core/components/avatars/avatar/avatar.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:166",
-                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:121",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:50"
                 ]
             }
         },
@@ -576,8 +499,7 @@
                 "source": "kit:src/core/components/avatars/avatarBase/avatarBase.tsx:6",
                 "stories": [
                     "kit:src/core/components/avatars/avatarBase/avatarBase.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -601,11 +523,6 @@
                 "source": "kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:83",
                 "stories": [
                     "kit:src/core/components/avatars/avatarIcon/avatarIcon.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx:118",
-                    "app:src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx:67",
-                    "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:148"
                 ]
             }
         },
@@ -630,9 +547,6 @@
                 "source": "kit:src/core/components/breadcrumbs/breadcrumbs.tsx:30",
                 "stories": [
                     "kit:src/core/components/breadcrumbs/breadcrumbs.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/shared/components/page/pageHeader/pageHeader.tsx:67"
                 ]
             }
         },
@@ -691,11 +605,6 @@
                 "source": "kit:src/core/components/button/button.tsx:188",
                 "stories": [
                     "kit:src/core/components/button/button.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:52",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:306",
-                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:238"
                 ]
             }
         },
@@ -722,11 +631,6 @@
                 "source": "kit:src/core/components/cards/card/card.tsx:12",
                 "stories": [
                     "kit:src/core/components/cards/card/card.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:272",
-                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:331",
-                    "app:src/daos/alchemix/components/alchemixSubmitVote/components/alchemixObjectionVote.tsx:173"
                 ]
             }
         },
@@ -751,9 +655,6 @@
                 "source": "kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19",
                 "stories": [
                     "kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:294"
                 ]
             }
         },
@@ -781,11 +682,6 @@
                 "source": "kit:src/core/components/cards/cardEmptyState/cardEmptyState.tsx:13",
                 "stories": [
                     "kit:src/core/components/cards/cardEmptyState/cardEmptyState.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorEndCampaignActionCreate/capitalDistributorEndCampaignActionCreate.tsx:133",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorPauseCampaignActionCreate/capitalDistributorPauseCampaignActionCreate.tsx:133",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorResumeCampaignActionCreate/capitalDistributorResumeCampaignActionCreate.tsx:133"
                 ]
             }
         },
@@ -810,8 +706,7 @@
                 "source": "kit:src/core/components/cards/cardSummary/cardSummary.tsx:8",
                 "stories": [
                     "kit:src/core/components/cards/cardSummary/cardSummary.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -838,9 +733,6 @@
                 "source": "kit:src/core/components/forms/checkbox/checkbox.tsx:45",
                 "stories": [
                     "kit:src/core/components/forms/checkbox/checkbox.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/capitalDistributorPlugin/dialogs/capitalDistributorClaimDialog/capitalDistributorClaimDialogDetails/capitalDistributorClaimDialogDetails.tsx:154"
                 ]
             }
         },
@@ -868,11 +760,6 @@
                 "source": "kit:src/core/components/forms/checkboxCard/checkboxCard.tsx:56",
                 "stories": [
                     "kit:src/core/components/forms/checkboxCard/checkboxCard.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/proposalCreationSettingsDefault.tsx:47",
-                    "app:src/plugins/multisigPlugin/components/multisigProposalCreationSettings/multisigProposalCreationSettings.tsx:60",
-                    "app:src/plugins/tokenPlugin/components/tokenProposalCreationSettings/tokenProposalCreationSettings.tsx:102"
                 ]
             }
         },
@@ -897,8 +784,7 @@
                 "source": "kit:src/core/components/forms/checkboxGroup/checkboxGroup.tsx:18",
                 "stories": [
                     "kit:src/core/components/forms/checkboxGroup/checkboxGroup.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -922,8 +808,7 @@
                 "source": "kit:src/core/components/clipboard/clipboard.tsx:36",
                 "stories": [
                     "kit:src/core/components/clipboard/clipboard.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -955,8 +840,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/utils/clipboardUtils/clipboardUtils.ts:33",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -986,11 +870,6 @@
                 "source": "kit:src/core/components/collapsible/collapsible.tsx:40",
                 "stories": [
                     "kit:src/core/components/collapsible/collapsible.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:102",
-                    "app:src/modules/finance/components/daoInfoAside/daoInfoAside.tsx:48",
-                    "app:src/modules/governance/components/delegationStatementCard/delegationStatementCard.tsx:101"
                 ]
             }
         },
@@ -1018,11 +897,6 @@
                 "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81",
                 "stories": [
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:149",
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx:36",
-                    "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:138"
                 ]
             }
         },
@@ -1047,12 +921,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/dao/daoDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190",
-                    "app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25",
-                    "app:src/modules/explore/components/daoList/daoList.tsx:131"
-                ]
+                "stories": []
             }
         },
         {
@@ -1074,9 +943,6 @@
                 "source": "kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.tsx:7",
                 "stories": [
                     "kit:src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/explore/components/daoList/daoList.tsx:131"
                 ]
             }
         },
@@ -1099,11 +965,6 @@
                 "source": "kit:src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx:45",
                 "stories": [
                     "kit:src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/createDao/dialogs/publishDaoDialog/publishDaoDialog.tsx:190",
-                    "app:src/modules/explore/components/daoCarouselCard/daoCarouselCard.tsx:25",
-                    "app:src/modules/explore/components/daoList/daoList.tsx:134"
                 ]
             }
         },
@@ -1134,12 +995,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/dataList/index.ts:17",
-                "stories": [],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17",
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107"
-                ]
+                "stories": []
             }
         },
         {
@@ -1161,10 +1017,6 @@
                 "source": "kit:src/core/components/dataList/dataListActionItem/dataListActionItem.tsx:38",
                 "stories": [
                     "kit:src/core/components/dataList/dataListActionItem/dataListActionItem.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddButton.tsx:14",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectBackButton.tsx:14"
                 ]
             }
         },
@@ -1187,11 +1039,6 @@
                 "source": "kit:src/core/components/dataList/dataListContainer/dataListContainer.tsx:38",
                 "stories": [
                     "kit:src/core/components/dataList/dataListContainer/dataListContainer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/explore/components/daoList/daoList.tsx:125",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:156",
-                    "app:src/modules/finance/components/assetList/assetListDefault.tsx:106"
                 ]
             }
         },
@@ -1214,11 +1061,6 @@
                 "source": "kit:src/core/components/dataList/dataListFilter/dataListFilter.tsx:62",
                 "stories": [
                     "kit:src/core/components/dataList/dataListFilter/dataListFilter.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/explore/components/daoList/daoList.tsx:119",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:145",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelectAddAddressView.tsx:109"
                 ]
             }
         },
@@ -1241,11 +1083,6 @@
                 "source": "kit:src/core/components/dataList/dataListItem/dataListItem.tsx:22",
                 "stories": [
                     "kit:src/core/components/dataList/dataListItem/dataListItem.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItem.tsx:31",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:17",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItem.tsx:41"
                 ]
             }
         },
@@ -1268,11 +1105,6 @@
                 "source": "kit:src/core/components/dataList/dataListPagination/dataListPagination.tsx:11",
                 "stories": [
                     "kit:src/core/components/dataList/dataListPagination/dataListPagination.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/explore/components/daoList/daoList.tsx:146",
-                    "app:src/modules/finance/components/assetAddressSelect/assetAddressSelect.tsx:169",
-                    "app:src/modules/finance/components/assetList/assetListDefault.tsx:107"
                 ]
             }
         },
@@ -1295,11 +1127,6 @@
                 "source": "kit:src/core/components/dataList/dataListRoot/dataListRoot.tsx:41",
                 "stories": [
                     "kit:src/core/components/dataList/dataListRoot/dataListRoot.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:107",
-                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:101",
-                    "app:src/actions/gaugeVoter/dialogs/gaugeVoterSelectGaugeDialog/gaugeVoterSelectGaugeDialog.tsx:100"
                 ]
             }
         },
@@ -1326,12 +1153,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/definitionList/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122",
-                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:103"
-                ]
+                "stories": []
             }
         },
         {
@@ -1353,11 +1175,6 @@
                 "source": "kit:src/core/components/definitionList/definitionListContainer/definitionListContainer.tsx:6",
                 "stories": [
                     "kit:src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:273",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:122",
-                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:140"
                 ]
             }
         },
@@ -1380,11 +1197,6 @@
                 "source": "kit:src/core/components/definitionList/definitionListItem/definitionListItem.tsx:25",
                 "stories": [
                     "kit:src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:274",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:124",
-                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:103"
                 ]
             }
         },
@@ -1439,12 +1251,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/dialogs/dialog/index.ts:14",
-                "stories": [],
-                "appExamples": [
-                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:98",
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195",
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138"
-                ]
+                "stories": []
             }
         },
         {
@@ -1473,12 +1280,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/dialogs/dialogAlert/index.ts:14",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40",
-                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29",
-                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41"
-                ]
+                "stories": []
             }
         },
         {
@@ -1500,11 +1302,6 @@
                 "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.tsx:13",
                 "stories": [
                     "kit:src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:45",
-                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:30",
-                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:42"
                 ]
             }
         },
@@ -1527,11 +1324,6 @@
                 "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.tsx:25",
                 "stories": [
                     "kit:src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:53",
-                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:36",
-                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:48"
                 ]
             }
         },
@@ -1554,11 +1346,6 @@
                 "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx:30",
                 "stories": [
                     "kit:src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/aragonProfileReleaseAlertDialog/aragonProfileReleaseAlertDialog.tsx:40",
-                    "app:src/modules/application/dialogs/retryTransactionAlertDialog/retryTransactionAlertDialog.tsx:29",
-                    "app:src/modules/governance/dialogs/duplicateProposalAlertDialog/duplicateProposalAlertDialog.tsx:41"
                 ]
             }
         },
@@ -1581,9 +1368,6 @@
                 "source": "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx:18",
                 "stories": [
                     "kit:src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:101"
                 ]
             }
         },
@@ -1606,11 +1390,6 @@
                 "source": "kit:src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx:19",
                 "stories": [
                     "kit:src/core/components/dialogs/dialog/dialogContent/dialogContent.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:203",
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:138",
-                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:127"
                 ]
             }
         },
@@ -1633,11 +1412,6 @@
                 "source": "kit:src/core/components/dialogs/dialog/dialogFooter/dialogFooter.tsx:32",
                 "stories": [
                     "kit:src/core/components/dialogs/dialog/dialogFooter/dialogFooter.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:212",
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:139",
-                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:128"
                 ]
             }
         },
@@ -1660,11 +1434,6 @@
                 "source": "kit:src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx:23",
                 "stories": [
                     "kit:src/core/components/dialogs/dialog/dialogHeader/dialogHeader.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorCampaignUploadDialog/capitalDistributorCampaignUploadDialog.tsx:195",
-                    "app:src/actions/capitalDistributor/dialogs/capitalDistributorSelectCampaignDialog/capitalDistributorSelectCampaignDialog.tsx:86",
-                    "app:src/actions/gaugeRegistrar/dialogs/gaugeRegistrarSelectGaugeDialog/gaugeRegistrarSelectGaugeDialog.tsx:77"
                 ]
             }
         },
@@ -1700,10 +1469,6 @@
                 "source": "kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.tsx:16",
                 "stories": [
                     "kit:src/core/components/dialogs/dialog/dialogRoot/dialogRoot.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/shared/components/dialogRoot/dialogRoot.tsx:98",
-                    "app:src/shared/components/navigation/navigationDialog/navigationDialog.tsx:20"
                 ]
             }
         },
@@ -1731,9 +1496,6 @@
                 "source": "kit:src/core/components/documentParser/documentParser.tsx:41",
                 "stories": [
                     "kit:src/core/components/documentParser/documentParser.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/shared/components/SafeDocumentParser.tsx:13"
                 ]
             }
         },
@@ -1758,12 +1520,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/dropdown/index.ts:7",
-                "stories": [],
-                "appExamples": [
-                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213",
-                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211",
-                    "app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166"
-                ]
+                "stories": []
             }
         },
         {
@@ -1785,11 +1542,6 @@
                 "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:213",
-                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:211",
-                    "app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:166"
                 ]
             }
         },
@@ -1812,11 +1564,6 @@
                 "source": "kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:47",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownItem/dropdownItem.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:220",
-                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:218",
-                    "app:src/modules/capitalFlow/components/createPolicyForm/createPolicyFormConfigure/createPolicyStrategyDetails.tsx:182"
                 ]
             }
         },
@@ -1846,11 +1593,6 @@
                 "source": "kit:src/core/components/states/emptyState/emptyState.tsx:14",
                 "stories": [
                     "kit:src/core/components/states/emptyState/emptyState.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarUnregisterGaugeActionDetails/gaugeRegistrarUnregisterGaugeActionDetails.tsx:115",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterActivateGaugeActionDetails/gaugeVoterActivateGaugeActionDetails.tsx:68",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterDeactivateGaugeActionDetails/gaugeVoterDeactivateGaugeActionDetails.tsx:68"
                 ]
             }
         },
@@ -1883,8 +1625,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/utils/ensUtils/ensUtils.ts:24",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -1919,12 +1660,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/utils/formatterUtils/formatterUtils.ts:196",
-                "stories": [],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionDetails/capitalDistributorCreateCampaignActionDetails.tsx:104",
-                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:51",
-                    "app:src/actions/crossChainController/components/crossChainControllerForwardMessageDetails/crossChainControllerForwardMessageDetails.tsx:94"
-                ]
+                "stories": []
             }
         },
         {
@@ -1959,8 +1695,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/components/gukCoreProvider/gukCoreProvider.tsx:40",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -2005,10 +1740,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/gukModulesProvider/gukModulesProvider.tsx:68",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/application/components/providers/providers.tsx:114"
-                ]
+                "stories": []
             }
         },
         {
@@ -2032,11 +1764,6 @@
                 "source": "kit:src/core/components/heading/heading.tsx:28",
                 "stories": [
                     "kit:src/core/components/heading/heading.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/core/permissionManager/components/permissionChangeCard.tsx:46",
-                    "app:src/modules/application/components/debugPanel/debugPanel.tsx:106",
-                    "app:src/modules/dashboard/components/dashboardOnboarding/adminOnboarding.tsx:26"
                 ]
             }
         },
@@ -2061,11 +1788,6 @@
                 "source": "kit:src/core/components/icon/icon.tsx:53",
                 "stories": [
                     "kit:src/core/components/icon/icon.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx:22",
-                    "app:src/daos/cryptex/components/cryptexPageHeader/cryptexAvatarIcon.tsx:38",
-                    "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:124"
                 ]
             }
         },
@@ -2093,8 +1815,7 @@
                 "source": "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.tsx:60",
                 "stories": [
                     "kit:src/core/components/illustrations/illustrationHuman/illustrationHuman.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2121,11 +1842,6 @@
                 "source": "kit:src/core/components/illustrations/illustrationObject/illustrationObject.tsx:20",
                 "stories": [
                     "kit:src/core/components/illustrations/illustrationObject/illustrationObject.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx:73",
-                    "app:src/shared/components/ctaCard/ctaCard.tsx:108",
-                    "app:src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx:58"
                 ]
             }
         },
@@ -2150,11 +1866,6 @@
                 "source": "kit:src/core/components/forms/inputContainer/inputContainer.tsx:35",
                 "stories": [
                     "kit:src/core/components/forms/inputContainer/inputContainer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:117",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:223",
-                    "app:src/actions/core/createProposal/createProposalActionDetails.tsx:141"
                 ]
             }
         },
@@ -2179,10 +1890,6 @@
                 "source": "kit:src/core/components/forms/inputDate/inputDate.tsx:11",
                 "stories": [
                     "kit:src/core/components/forms/inputDate/inputDate.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:119",
-                    "app:src/shared/components/forms/advancedDateInput/advancedDateInputFixed.tsx:81"
                 ]
             }
         },
@@ -2209,9 +1916,6 @@
                 "source": "kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx:42",
                 "stories": [
                     "kit:src/core/components/forms/inputFileAvatar/inputFileAvatar.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/shared/components/forms/avatarInput/avatarInput.tsx:59"
                 ]
             }
         },
@@ -2239,11 +1943,6 @@
                 "source": "kit:src/core/components/forms/inputNumber/inputNumber.tsx:51",
                 "stories": [
                     "kit:src/core/components/forms/inputNumber/inputNumber.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/cryptex/dialogs/cryptexMembersFileDownloadDialog/cryptexMembersFileDownloadDialog.tsx:129",
-                    "app:src/daos/gaugeDistributions/dialogs/gaugeDistributionsMembersFileDownloadDialog/gaugeDistributionsMembersFileDownloadDialog.tsx:236",
-                    "app:src/daos/katana/dialogs/capitalDistributorTestMembersFileDownloadDialog/capitalDistributorTestMembersFileDownloadDialog.tsx:234"
                 ]
             }
         },
@@ -2271,8 +1970,7 @@
                 "source": "kit:src/core/components/forms/inputNumberMax/inputNumberMax.tsx:27",
                 "stories": [
                     "kit:src/core/components/forms/inputNumberMax/inputNumberMax.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2296,8 +1994,7 @@
                 "source": "kit:src/core/components/forms/inputSearch/inputSearch.tsx:16",
                 "stories": [
                     "kit:src/core/components/forms/inputSearch/inputSearch.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2324,11 +2021,6 @@
                 "source": "kit:src/core/components/forms/inputText/inputText.tsx:30",
                 "stories": [
                     "kit:src/core/components/forms/inputText/inputText.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:199",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:167",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate/gaugeVoterCreateGaugeActionCreateForm.tsx:124"
                 ]
             }
         },
@@ -2353,9 +2045,6 @@
                 "source": "kit:src/core/components/forms/inputTime/inputTime.tsx:11",
                 "stories": [
                     "kit:src/core/components/forms/inputTime/inputTime.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/shared/components/forms/advancedDateInput/advancedDateInputFixed.tsx:89"
                 ]
             }
         },
@@ -2380,11 +2069,6 @@
                 "source": "kit:src/core/components/link/link/link.tsx:22",
                 "stories": [
                     "kit:src/core/components/link/link/link.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/aragonProfileDialog/aragonProfileDialog.tsx:364",
-                    "app:src/modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx:147",
-                    "app:src/modules/governance/components/memberLinksCard/memberLinksCard.tsx:171"
                 ]
             }
         },
@@ -2409,8 +2093,7 @@
                 "source": "kit:src/core/components/link/linkBase/linkBase.tsx:6",
                 "stories": [
                     "kit:src/core/components/link/linkBase/linkBase.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2452,11 +2135,6 @@
                 "source": "kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:35",
                 "stories": [
                     "kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:288",
-                    "app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:29",
-                    "app:src/modules/application/dialogs/userDialog/userDialog.tsx:98"
                 ]
             }
         },
@@ -2481,12 +2159,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/member/memberDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163"
-                ]
+                "stories": []
             }
         },
         {
@@ -2508,10 +2181,6 @@
                 "source": "kit:src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.tsx:6",
                 "stories": [
                     "kit:src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:178",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase.tsx:163"
                 ]
             }
         },
@@ -2534,11 +2203,6 @@
                 "source": "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:52",
                 "stories": [
                     "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/daoMemberList/daoMemberListDefault.tsx:216",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListItem.tsx:47",
-                    "app:src/plugins/tokenPlugin/dialogs/tokenDelegationDialog/tokenDelegationDialog.tsx:105"
                 ]
             }
         },
@@ -2566,11 +2230,6 @@
                 "source": "kit:src/core/components/progress/progress.tsx:60",
                 "stories": [
                     "kit:src/core/components/progress/progress.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingSummary/lockToVoteProposalVotingSummary.tsx:118",
-                    "app:src/plugins/multisigPlugin/components/multisigProposalVotingSummary/multisigProposalVotingSummary.tsx:113",
-                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingSummary/tokenProposalVotingSummary.tsx:116"
                 ]
             }
         },
@@ -2593,8 +2252,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.tsx:8",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2616,8 +2274,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.tsx:6",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2667,12 +2324,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalActions/index.ts:17",
-                "stories": [],
-                "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107",
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
-                    "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
-                ]
+                "stories": []
             }
         },
         {
@@ -2694,11 +2346,6 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.tsx:15",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsContainer/proposalActionsContainer.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:107",
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:161",
-                    "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:65"
                 ]
             }
         },
@@ -2721,10 +2368,6 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsFooter/proposalActionsFooter.tsx:39",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsFooter/proposalActionsFooter.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:171",
-                    "app:src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.tsx:361"
                 ]
             }
         },
@@ -2747,11 +2390,6 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx:46",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:96",
-                    "app:src/modules/governance/components/proposalActionsEditList/proposalActionsEditList.tsx:62",
-                    "app:src/modules/governance/components/proposalActionsItem/proposalActionsItem.tsx:43"
                 ]
             }
         },
@@ -2774,8 +2412,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsItemSkeleton/proposalActionsItemSkeleton.tsx:4",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsItemSkeleton/proposalActionsItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2797,11 +2434,6 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.tsx:36",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/crossChainController/components/crossChainControllerNestedActionsList/crossChainControllerNestedActionsList.tsx:108",
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:154",
-                    "app:src/modules/governance/components/nestedActionsList/nestedActionsList.tsx:64"
                 ]
             }
         },
@@ -2824,8 +2456,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx:5",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2847,8 +2478,7 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx:7",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -2875,12 +2505,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalDataListItem/index.ts:12",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97",
-                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64",
-                    "app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109"
-                ]
+                "stories": []
             }
         },
         {
@@ -2902,10 +2527,6 @@
                 "source": "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.tsx:7",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefault.tsx:97",
-                    "app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockList.tsx:100"
                 ]
             }
         },
@@ -2928,11 +2549,6 @@
                 "source": "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:26",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/daoProposalList/daoProposalListDefaultItem.tsx:64",
-                    "app:src/modules/governance/dialogs/executeDialog/executeDialog.tsx:109",
-                    "app:src/modules/governance/dialogs/publishProposalDialog/publishProposalDialog.tsx:209"
                 ]
             }
         },
@@ -2979,11 +2595,6 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/index.ts:24",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100",
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68",
-                    "app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28"
                 ]
             }
         },
@@ -3004,11 +2615,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx:31",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:108",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStageBodyContent.tsx:52"
-                ]
+                "stories": []
             }
         },
         {
@@ -3028,10 +2635,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummary/proposalVotingBodySummary.tsx:7",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:134"
-                ]
+                "stories": []
             }
         },
         {
@@ -3051,10 +2655,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryList/proposalVotingBodySummaryList.tsx:6",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:122"
-                ]
+                "stories": []
             }
         },
         {
@@ -3074,10 +2675,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBodySummaryListItem/proposalVotingBodySummaryListItem.tsx:22",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:120"
-                ]
+                "stories": []
             }
         },
         {
@@ -3099,9 +2697,6 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.tsx:26",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownMultisig/proposalVotingBreakdownMultisig.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/multisigPlugin/components/multisigProposalVotingBreakdown/multisigProposalVotingBreakdown.tsx:28"
                 ]
             }
         },
@@ -3124,10 +2719,6 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.tsx:43",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingBreakdownToken/proposalVotingBreakdownToken.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:68",
-                    "app:src/plugins/tokenPlugin/components/tokenProposalVotingBreakdown/tokenProposalVotingBreakdown.tsx:66"
                 ]
             }
         },
@@ -3148,10 +2739,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingContainer/proposalVotingContainer.tsx:21",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:109"
-                ]
+                "stories": []
             }
         },
         {
@@ -3173,10 +2761,6 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingDetails/proposalVotingDetails.tsx:12",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingDetails/proposalVotingDetails.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:107",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:175"
                 ]
             }
         },
@@ -3201,8 +2785,7 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/index.ts:8",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgress.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -3222,8 +2805,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx:13",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -3243,8 +2825,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx:60",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -3266,9 +2847,6 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx:41",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalStage.tsx:145"
                 ]
             }
         },
@@ -3289,10 +2867,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingStageContainer/proposalVotingStageContainer.tsx:16",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/sppVotingTerminal.tsx:33"
-                ]
+                "stories": []
             }
         },
         {
@@ -3314,10 +2889,6 @@
                 "source": "kit:src/modules/components/proposal/proposalVoting/proposalVotingVotes/proposalVotingVotes.tsx:6",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalVoting/proposalVotingVotes/proposalVotingVotes.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/proposalVotingTerminal/proposalVotingTerminal.tsx:100",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyContent.tsx:164"
                 ]
             }
         },
@@ -3344,8 +2915,7 @@
                 "source": "kit:src/core/components/forms/radio/radio.tsx:27",
                 "stories": [
                     "kit:src/core/components/forms/radio/radio.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -3372,11 +2942,6 @@
                 "source": "kit:src/core/components/forms/radioCard/radioCard.tsx:48",
                 "stories": [
                     "kit:src/core/components/forms/radioCard/radioCard.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:107",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:89",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:215"
                 ]
             }
         },
@@ -3401,11 +2966,6 @@
                 "source": "kit:src/core/components/forms/radioGroup/radioGroup.tsx:43",
                 "stories": [
                     "kit:src/core/components/forms/radioGroup/radioGroup.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignPayoutField.tsx:116",
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCampaignScheduleField.tsx:107",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:204"
                 ]
             }
         },
@@ -3432,9 +2992,6 @@
                 "source": "kit:src/core/components/rerender/rerender.tsx:22",
                 "stories": [
                     "kit:src/core/components/rerender/rerender.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/gaugeVoterPlugin/components/gaugeVoterLockList/gaugeVoterLockListItem.tsx:321"
                 ]
             }
         },
@@ -3463,8 +3020,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/utils/responsiveUtils/responsiveUtils.ts:24",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -3488,11 +3044,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165",
-                    "app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80"
-                ]
+                "stories": []
             }
         },
         {
@@ -3514,9 +3066,6 @@
                 "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.tsx:11",
                 "stories": [
                     "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:80"
                 ]
             }
         },
@@ -3539,10 +3088,6 @@
                 "source": "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx:53",
                 "stories": [
                     "kit:src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx:165",
-                    "app:src/modules/settings/components/daoProccessAllowedActions/daoProcessAllowedActions.tsx:83"
                 ]
             }
         },
@@ -3567,11 +3112,6 @@
                 "source": "kit:src/core/components/spinner/spinner.tsx:87",
                 "stories": [
                     "kit:src/core/components/spinner/spinner.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/dialogs/aragonProfileRenameDialog/aragonProfileRenameDialog.tsx:149",
-                    "app:src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx:164",
-                    "app:src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx:135"
                 ]
             }
         },
@@ -3600,8 +3140,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/utils/ssrUtils/ssrUtils.ts:8",
-                "stories": [],
-                "appExamples": []
+                "stories": []
             }
         },
         {
@@ -3625,8 +3164,7 @@
                 "source": "kit:src/core/components/states/statePingAnimation/statePingAnimation.tsx:23",
                 "stories": [
                     "kit:src/core/components/states/statePingAnimation/statePingAnimations.stories.tsx:1"
-                ],
-                "appExamples": []
+                ]
             }
         },
         {
@@ -3653,11 +3191,6 @@
                 "source": "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx:47",
                 "stories": [
                     "kit:src/core/components/states/stateSkeletonBar/stateSkeletonBar.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCampaignListItem/capitalDistributorCampaignListItemSkeleton.tsx:13",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:16",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:18"
                 ]
             }
         },
@@ -3685,11 +3218,6 @@
                 "source": "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.tsx:70",
                 "stories": [
                     "kit:src/core/components/states/stateSkeletonCircular/stateSkeletonCircular.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarGaugeListItem/gaugeRegistrarGaugeListItemSkeleton.tsx:14",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterGaugeListItem/gaugeVoterGaugeListItemSkeleton.tsx:16",
-                    "app:src/modules/settings/components/permissionsList/permissionsListSkeleton.tsx:28"
                 ]
             }
         },
@@ -3714,11 +3242,6 @@
                 "source": "kit:src/core/components/forms/switch/switch.tsx:44",
                 "stories": [
                     "kit:src/core/components/forms/switch/switch.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:437",
-                    "app:src/modules/application/components/debugPanel/debugPanelControl/debugPanelControl.tsx:28",
-                    "app:src/modules/createDao/dialogs/setupStageSettingsDialog/fields/setupStageEarlyAdvanceField/setupStageEarlyAdvanceField.tsx:29"
                 ]
             }
         },
@@ -3746,12 +3269,7 @@
             ],
             "references": {
                 "source": "kit:src/core/components/tabs/index.ts:14",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367",
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60"
-                ]
+                "stories": []
             }
         },
         {
@@ -3771,12 +3289,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/components/tabs/tabsContent/tabsContent.tsx:15",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:382",
-                    "app:src/plugins/lockToVotePlugin/components/lockToVoteProposalVotingBreakdown/lockToVoteProposalVotingBreakdown.tsx:56",
-                    "app:src/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyBreakdownDefault.tsx:60"
-                ]
+                "stories": []
             }
         },
         {
@@ -3796,11 +3309,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/components/tabs/tabsList/tabsList.tsx:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:371",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:84"
-                ]
+                "stories": []
             }
         },
         {
@@ -3822,10 +3331,6 @@
                 "source": "kit:src/core/components/tabs/tabsRoot/tabsRoot.tsx:32",
                 "stories": [
                     "kit:src/core/components/tabs/tabsRoot/tabsRoot.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:367",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:117"
                 ]
             }
         },
@@ -3848,10 +3353,6 @@
                 "source": "kit:src/core/components/tabs/tabsTrigger/tabsTrigger.tsx:22",
                 "stories": [
                     "kit:src/core/components/tabs/tabsTrigger/tabsTrigger.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/gaugeVoterPlugin/pages/gaugeVoterGaugesPage/gaugeVoterGaugesPageContent.tsx:373",
-                    "app:src/plugins/tokenPlugin/components/tokenMemberPanel/tokenMemberPanel.tsx:86"
                 ]
             }
         },
@@ -3876,11 +3377,6 @@
                 "source": "kit:src/core/components/tag/tag.tsx:30",
                 "stories": [
                     "kit:src/core/components/tag/tag.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/daos/alchemix/components/alchemixSubmitVote/alchemixSubmitVote.tsx:304",
-                    "app:src/modules/application/components/aragonProfilePreviewCard/aragonProfilePreviewCard.tsx:36",
-                    "app:src/modules/application/components/footer/footer.tsx:54"
                 ]
             }
         },
@@ -3908,11 +3404,6 @@
                 "source": "kit:src/core/components/forms/textArea/textArea.tsx:16",
                 "stories": [
                     "kit:src/core/components/forms/textArea/textArea.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/capitalDistributor/components/capitalDistributorCreateCampaignActionCreate/capitalDistributorCreateCampaignActionCreateForm.tsx:205",
-                    "app:src/actions/gaugeRegistrar/components/gaugeRegistrarRegisterGaugeActionCreate/gaugeRegistrarRegisterGaugeActionCreateForm.tsx:176",
-                    "app:src/actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate/gaugeVoterCreateGaugeActionCreateForm.tsx:133"
                 ]
             }
         },
@@ -3937,10 +3428,6 @@
                 "source": "kit:src/core/components/forms/textAreaRichText/textAreaRichText.tsx:53",
                 "stories": [
                     "kit:src/core/components/forms/textAreaRichText/textAreaRichText.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/createProposalForm/createProposalFormMetadata/createProposalFormMetadata.tsx:64",
-                    "app:src/modules/governance/dialogs/delegateStatementDialog/delegateStatementDialog.tsx:101"
                 ]
             }
         },
@@ -3967,11 +3454,6 @@
                 "source": "kit:src/core/components/toggles/toggle/toggle.tsx:21",
                 "stories": [
                     "kit:src/core/components/toggles/toggle/toggle.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:228",
-                    "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:100",
-                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:69"
                 ]
             }
         },
@@ -4001,11 +3483,6 @@
                 "source": "kit:src/core/components/toggles/toggleGroup/toggleGroup.tsx:47",
                 "stories": [
                     "kit:src/core/components/toggles/toggleGroup/toggleGroup.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/core/permissionManager/components/permissionChangesCreate.tsx:210",
-                    "app:src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx:112",
-                    "app:src/modules/explore/components/exploreDaos/exploreDaos.tsx:63"
                 ]
             }
         },
@@ -4030,10 +3507,6 @@
                 "source": "kit:src/core/components/tooltip/tooltip.tsx:70",
                 "stories": [
                     "kit:src/core/components/tooltip/tooltip.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/actions/core/permissionManager/components/permissionIdItem.tsx:40",
-                    "app:src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx:29"
                 ]
             }
         },
@@ -4058,11 +3531,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/transaction/transactionDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280",
-                    "app:src/modules/finance/components/transactionList/transactionListItem.tsx:121"
-                ]
+                "stories": []
             }
         },
         {
@@ -4084,9 +3553,6 @@
                 "source": "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.tsx:6",
                 "stories": [
                     "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/components/transactionList/transactionListDefault.tsx:280"
                 ]
             }
         },
@@ -4109,9 +3575,6 @@
                 "source": "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx:36",
                 "stories": [
                     "kit:src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/components/transactionList/transactionListItem.tsx:121"
                 ]
             }
         },
@@ -4140,9 +3603,6 @@
                 "source": "kit:src/modules/components/transaction/transactionDetail/index.ts:3",
                 "stories": [
                     "kit:src/modules/components/transaction/transactionDetail/transactionDetail.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:136"
                 ]
             }
         },
@@ -4163,10 +3623,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/modules/components/transaction/transactionDetail/transactionDetailRoot/transactionDetailRoot.tsx:22",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:136"
-                ]
+                "stories": []
             }
         },
         {
@@ -4192,9 +3649,6 @@
                 "source": "kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.tsx:7",
                 "stories": [
                     "kit:src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/finance/dialogs/transactionDetailDialog/transactionDetailDialog.tsx:137"
                 ]
             }
         },
@@ -4223,10 +3677,7 @@
             "composition": [],
             "references": {
                 "source": "kit:src/core/utils/urlUtils/urlUtils.ts:46",
-                "stories": [],
-                "appExamples": [
-                    "app:src/shared/security/sanitizeExternalUrl.ts:8"
-                ]
+                "stories": []
             }
         },
         {
@@ -4250,11 +3701,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/vote/voteDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101",
-                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125"
-                ]
+                "stories": []
             }
         },
         {
@@ -4276,10 +3723,6 @@
                 "source": "kit:src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.tsx:5",
                 "stories": [
                     "kit:src/modules/components/vote/voteDataListItem/voteDataListItemSkeleton/voteDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:60",
-                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:65"
                 ]
             }
         },
@@ -4302,10 +3745,6 @@
                 "source": "kit:src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx:50",
                 "stories": [
                     "kit:src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:101",
-                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:125"
                 ]
             }
         },
@@ -4330,12 +3769,7 @@
             ],
             "references": {
                 "source": "kit:src/modules/components/vote/voteProposalDataListItem/index.ts:8",
-                "stories": [],
-                "appExamples": [
-                    "app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40",
-                    "app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161",
-                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59"
-                ]
+                "stories": []
             }
         },
         {
@@ -4357,10 +3791,6 @@
                 "source": "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.tsx:5",
                 "stories": [
                     "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemSkeleton/voteProposalDataListItemSkeleton.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/plugins/multisigPlugin/components/multisigVoteList/multisigVoteList.tsx:59",
-                    "app:src/plugins/tokenPlugin/components/tokenVoteList/tokenVoteList.tsx:64"
                 ]
             }
         },
@@ -4383,11 +3813,6 @@
                 "source": "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx:33",
                 "stories": [
                     "kit:src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/governance/components/voteList/voteProposalListItem.tsx:40",
-                    "app:src/modules/governance/dialogs/voteDialog/voteDialog.tsx:161",
-                    "app:src/plugins/sppPlugin/dialogs/sppReportProposalResultDialog/sppReportProposalResultDialog.tsx:111"
                 ]
             }
         },
@@ -4418,11 +3843,6 @@
                 "source": "kit:src/modules/components/wallet/wallet.tsx:30",
                 "stories": [
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
-                ],
-                "appExamples": [
-                    "app:src/modules/application/components/navigations/navigationDao/navigationDao.tsx:132",
-                    "app:src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx:147",
-                    "app:src/modules/explore/components/exploreNav/exploreNav.tsx:85"
                 ]
             }
         }
