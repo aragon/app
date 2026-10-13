@@ -1,5 +1,4 @@
-import { invariant } from '@aragon/gov-ui-kit';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { type IInputFileAvatarValue, invariant } from '@aragon/gov-ui-kit';
 import type { IWorkspaceAccountInfo } from '../../api/workspaceQueryService';
 import type {
     ICreateWorkspaceBody,
@@ -18,17 +17,13 @@ export interface IBuildWorkspaceParams {
      */
     values: ICreateWorkspaceFormData;
     /**
-     * Address of the connected user, set as the owner of the workspace.
+     * IPFS URI of the workspace avatar, undefined when the workspace has no avatar.
      */
-    owner: string;
+    avatarUri?: string;
     /**
-     * CID of the pinned workspace avatar, undefined when the workspace has no avatar.
+     * IPFS URIs of the account avatars, ordered as the accounts of the form values.
      */
-    avatarCid?: string;
-    /**
-     * CIDs of the pinned account avatars, ordered as the accounts of the form values.
-     */
-    accountAvatarCids: (string | undefined)[];
+    accountAvatarUris: (string | undefined)[];
     /**
      * Accounts as resolved by the workspace accounts API, used to store the type of each account.
      */
@@ -37,26 +32,25 @@ export interface IBuildWorkspaceParams {
 
 class PublishWorkspaceDialogUtils {
     /**
-     * Builds the workspace to be persisted from the form values, pinning results and connected address.
-     * @param params - Form values, owner and pinned avatar CIDs.
+     * Builds the workspace to be persisted from the form values and avatar URIs. It carries no owner: a local
+     * workspace has none (see `docs/projectDocs/createWorkspace.md` → Ownership).
+     * @param params - Form values, avatar URIs and resolved accounts.
      * @returns The workspace to be sent to the registry, without an ID as it is assigned by the registry.
      */
     buildWorkspace = (params: IBuildWorkspaceParams): ICreateWorkspaceBody => {
-        const { values, owner, avatarCid, accountAvatarCids, accountInfos } =
-            params;
+        const { values, avatarUri, accountAvatarUris, accountInfos } = params;
         const { name, description, resources, targets, accounts } = values;
 
         return {
             name,
             description,
-            avatar: ipfsUtils.cidToUri(avatarCid) ?? null,
+            avatar: avatarUri ?? null,
             links: resources,
-            owner,
             accounts: accounts.map((account, index) =>
                 this.buildAccount(
                     account,
                     accountInfos,
-                    accountAvatarCids[index],
+                    accountAvatarUris[index],
                 ),
             ),
             targets: targets.map(({ address, network }) => ({
@@ -67,17 +61,15 @@ class PublishWorkspaceDialogUtils {
     };
 
     /**
-     * Returns the avatar files to be pinned for the given accounts, ordered as the accounts themselves.
+     * Returns the avatars to be stored for the given accounts, ordered as the accounts themselves.
      * @param accounts - Accounts of the create-workspace form.
-     * @returns One entry per account, undefined when the account has no avatar to pin.
+     * @returns One entry per account, undefined when the account has no avatar to store.
      */
-    getAccountAvatarFiles = (
+    getAccountAvatars = (
         accounts: ICreateWorkspaceFormAccount[],
-    ): (File | undefined)[] =>
+    ): (IInputFileAvatarValue | undefined)[] =>
         accounts.map((account) =>
-            this.hasMetadata(account)
-                ? account.metadata?.avatar?.file
-                : undefined,
+            this.hasMetadata(account) ? account.metadata?.avatar : undefined,
         );
 
     /**
@@ -92,7 +84,7 @@ class PublishWorkspaceDialogUtils {
     private buildAccount = (
         account: ICreateWorkspaceFormAccount,
         accountInfos: IWorkspaceAccountInfo[],
-        avatarCid?: string,
+        avatarUri?: string,
     ): IWorkspaceAccount => {
         const { address, network } = account;
 
@@ -114,13 +106,13 @@ class PublishWorkspaceDialogUtils {
             type,
             address,
             network,
-            metadata: this.buildAccountMetadata(account, avatarCid),
+            metadata: this.buildAccountMetadata(account, avatarUri),
         };
     };
 
     private buildAccountMetadata = (
         account: ICreateWorkspaceFormAccount,
-        avatarCid?: string,
+        avatarUri?: string,
     ): IWorkspaceAccountMetadata | undefined => {
         if (!this.hasMetadata(account)) {
             return undefined;
@@ -131,8 +123,7 @@ class PublishWorkspaceDialogUtils {
         return {
             name: name.trim(),
             description: description.trim() === '' ? undefined : description,
-            avatar:
-                avatarCid != null ? ipfsUtils.cidToUri(avatarCid) : undefined,
+            avatar: avatarUri,
         };
     };
 }

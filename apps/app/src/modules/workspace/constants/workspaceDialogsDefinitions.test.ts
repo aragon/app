@@ -12,10 +12,12 @@ describe('workspaceDialogsDefinitions', () => {
         ).toBeFalsy();
     });
 
-    it('requires a wallet to publish a workspace, which sends a transaction', () => {
+    it('does not require a wallet to create or update a workspace', () => {
+        // Workspaces are stored locally and carry no owner, so neither mode reads the connected address. Flagging it
+        // would make `DialogRoot` render null for a disconnected user, and saving would silently do nothing.
         expect(
             workspaceDialogsDefinitions[WorkspaceDialogId.PUBLISH_WORKSPACE]
                 .requiresWallet,
-        ).toBe(true);
+        ).toBeFalsy();
     });
 });

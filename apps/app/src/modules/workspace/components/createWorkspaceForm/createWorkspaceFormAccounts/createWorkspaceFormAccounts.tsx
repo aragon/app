@@ -12,6 +12,11 @@ export interface ICreateWorkspaceFormAccountsProps {
      * Prefix to prepend to the accounts form field.
      */
     fieldPrefix?: string;
+    /**
+     * Allows removing every account when set to true. A created workspace needs at least one account, while an
+     * existing one may hold none, as the default workspace does.
+     */
+    allowEmpty?: boolean;
 }
 
 export type CreateWorkspaceFormAccountsBaseForm = Record<
@@ -24,7 +29,7 @@ const fieldName = 'accounts';
 export const CreateWorkspaceFormAccounts: React.FC<
     ICreateWorkspaceFormAccountsProps
 > = (props) => {
-    const { fieldPrefix } = props;
+    const { fieldPrefix, allowEmpty = false } = props;
 
     const { t } = useTranslations();
 
@@ -54,7 +59,7 @@ export const CreateWorkspaceFormAccounts: React.FC<
             >
                 {fields.map((field, index) => (
                     <CreateWorkspaceFormAccountsItem
-                        disableRemove={fields.length === 1}
+                        disableRemove={!allowEmpty && fields.length === 1}
                         index={index}
                         key={field.id}
                         name={accountsFieldName}

@@ -26,11 +26,11 @@ they cost wildly different amounts. See [What "private" means](#what-private-mea
 | Concern | Today |
 | --- | --- |
 | Storage | `localStorage['aragon-workspaces']`, a `Record<string, IWorkspace>`, merged over `workspaceMocks` |
-| Identity | `workspace.owner` is the connected address at creation time, written by the client, never checked |
+| Identity | None. Local workspaces carry no owner; `owner` is reserved for the registry to set on publish |
 | Privacy | Private by accident — the data never leaves the browser |
 | Cross-device | Impossible |
 | Sharing | Impossible |
-| Sessions | None. `useConnectedWalletGuard` gates the create flow on a live connection |
+| Sessions | None. Creating and editing a workspace need no wallet |
 | Server rendering | Disabled for workspace pages — the registry is unreadable during an RSC render |
 
 Two existing pieces are worth knowing about because they shape the options:
@@ -77,7 +77,7 @@ escape hatch if the backend roadmap can't take it, and route handlers already ex
 
 | Option | What it is | Verdict |
 | --- | --- | --- |
-| **A1** Client asserts its address | What we do now (`workspace.owner`) | Not authentication. Anyone can claim any address |
+| **A1** Client asserts its address | What we did until local workspaces dropped `owner` | Not authentication. Anyone can claim any address |
 | **A2** SIWE (EIP-4361) → server session | Server issues a nonce, wallet signs a structured message, server verifies and sets a session | **Recommended.** Standard, one prompt, well-understood |
 | **A3** Sign every mutating request | No server session state | Fails requirement 3 — the wallet must stay connected, and prompts get spammy |
 | **A4** Signature mints a session *keypair* | One wallet signature authorises a locally generated key for N days (Ceramic's `did-session`/CACAO does exactly this) | Good prior art for requirement 3; more machinery than A2 needs unless the storage layer is decentralised |

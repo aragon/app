@@ -44,7 +44,7 @@ interface IWorkspace {
     description: string;
     avatar: string | null;          // ipfs:// URI or null
     links: IResource[];             // `IResource` from @/shared/api/daoService
-    owner: string;                  // address that created the workspace   (NEW vs 1096)
+    owner?: string;                 // unset on local workspaces, see Ownership below          (NEW vs 1096)
     accounts: IWorkspaceAccount[];
     targets: IWorkspaceTarget[];    //                                       (NEW vs 1096)
 }
@@ -191,13 +191,24 @@ by `networkDefinitions[network].order`. Testnets are included and tagged, becaus
 
 ## Submit
 
-`createWorkspacePageClient.handleFormSubmit` runs `useConnectedWalletGuard().check`, tracks
-`wizard_submit` with `plausibleAnalyticsUtils`, then opens `WorkspaceDialogId.PUBLISH_WORKSPACE` with the form
-values. The dialog is registered with `requiresWallet: true` — it reads the connected address to set
-`workspace.owner`, so `DialogRoot` must unmount it if the wallet disconnects.
+`createWorkspacePageClient.handleFormSubmit` tracks `wizard_submit` with `plausibleAnalyticsUtils`, then opens
+`WorkspaceDialogId.PUBLISH_WORKSPACE` with the form values. No wallet is needed and the dialog is not
+`requiresWallet` — see [Ownership](#ownership).
 
-A wallet is required even though nothing is signed or paid for: it establishes the owner, rehearsing the
-off-chain authenticated registry (wallet-signature auth) the real implementation is expected to use.
+### Ownership
+
+Local workspaces have no owner, and creating or editing one needs no connected wallet. Both used to be required —
+the connected address was stored as `owner` — and were dropped because, while the registry lives in `localStorage`:
+
+- the owner is written by the client and never verified, and the registry can be edited directly, so gating edits
+  on it would protect nothing — it would only lock the creator out after switching wallets;
+- the planned model (see `workspaceAccess.md`) treats the wallet as a one-off sign-in that opens a session
+  surviving wallet switches, not as a "connected wallet == owner" check on each action.
+
+The intended direction is local-first: a workspace is created and edited locally as a draft, and ownership starts
+when it is published to a registry, which records who published it and enforces who may edit it from then on. So
+`owner` stays an optional field, set by the registry on publish. Workspaces stored while it was still required keep
+theirs; an update preserves it and the overview shows it when present.
 
 `publishWorkspaceDialog` is **not** a `TransactionDialog` — there is no transaction. It is a plain gov-ui-kit
 `Dialog.Header` / `Dialog.Content` / `Dialog.Footer` with local `status` state (`idle | pending | error |
@@ -211,8 +222,7 @@ Submit sequence:
    dialog: it is N+1 pin calls, each of which can fail.
 3. `publishWorkspaceDialogUtils.buildWorkspace()` maps form values to `Omit<IWorkspace, 'id'>` —
    `resources` → `links` (same rename `publishDaoDialogUtils.prepareMetadata` does), avatar files → `ipfs://`
-   URIs via `ipfsUtils.cidToUri`, account ids via `workspaceUtils.buildAccountId`, `type: DAO`, `owner` from the
-   connected address.
+   URIs via `ipfsUtils.cidToUri`, account ids via `workspaceUtils.buildAccountId`, `type: DAO`, and no `owner`.
 4. `useCreateWorkspace` → `workspaceService.createWorkspace`, which assigns the id and persists.
 5. Success state links to `/workspace/{id}`.
 
@@ -230,10 +240,19 @@ local storage for real requests is a single-method change:
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
+- `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id' | 'owner'>` → replaces the
+  stored workspace, keeping its ID (so its URLs keep working) and its owner, when it has one; rejects with
+  `notFoundCode` / 404 when absent. Called by the publish dialog in update mode.
 
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
-server-side (`typeof window === 'undefined'`) rather than silently returning nothing. There is no seed workspace:
-the registry only holds what was created through the form.
+server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
+
+**The registry always holds at least one workspace.** `getWorkspace` and `getWorkspaceList` seed a default
+workspace when the registry is empty — "My workspace", no accounts, no targets and, like every local workspace, no
+owner. Its name is stored data the user can rename, so it is not translated. Its ID is the slug plus a random
+suffix (`my-workspace-1a2b3c4d`): every user gets one, and a plain `my-workspace` would make a link shared from one
+default workspace silently open the recipient's own. `createWorkspace` does not seed, so a user whose first
+workspace comes from the wizard gets that one alone.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -271,18 +290,26 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 
 ```
 src/app/workspace/[workspaceId]/
-├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
-├─ not-found.tsx           NotFoundBase, so a 404 keeps the workspace navigation
-├─ all/
-│  ├─ {overview,proposals,assets,transactions,members}/page.tsx
-│  └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
-└─ [accountId]/
-   ├─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
-   ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard)
-   ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
-   ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
-   └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
+├─ (workspacePage)/           route group: every page with the workspace navigation
+│  ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
+│  ├─ not-found.tsx           NotFoundBase, so a 404 keeps the workspace navigation
+│  ├─ all/
+│  │  ├─ {overview,proposals,assets,transactions,members}/page.tsx
+│  │  └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
+│  └─ [accountId]/
+│     ├─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
+│     ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard)
+│     ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
+│     ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
+│     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
+└─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
+   ├─ layout.tsx              LayoutWizardEditWorkspace
+   └─ page.tsx                WorkspaceEditPage
 ```
+
+The route group mirrors the DAO routes, where the pages with the DAO navigation sit in `(daoPage)` and the wizards
+(`create/execute`, …) sit beside it under a wizard layout. A group adds no URL segment, so it only decides which
+layout a page renders under.
 
 Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
 it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
@@ -510,6 +537,26 @@ when the lookup fails. Names are resolved with one batched `useWorkspaceAccounts
 not store the DAO name — and the account metadata name wins over it, being what the workspace owner chose to call
 the account.
 
+## Edit workspace
+
+`/workspace/{workspaceId}/edit` edits a workspace through the same three steps as the create wizard
+(`CreateWorkspaceForm.Metadata`, `.Targets`, `.Accounts`), under `LayoutWizardEditWorkspace`, whose exit leads back
+to the aggregated overview. It opens from the workspace selector ("Edit workspace") and from the overview of a
+workspace holding no account.
+
+- The page sits outside `(workspacePage)`, so it does not get `LayoutWorkspace`'s `WorkspaceGate` and renders one
+  itself. The wizard reads its default values on mount, which the gate guarantees are the stored workspace.
+
+- `workspaceEditPageUtils.buildFormValues` is the inverse of `publishWorkspaceDialogUtils.buildWorkspace`. A stored
+  avatar becomes an input value carrying a URL and no file.
+- Submitting opens `PublishWorkspaceDialog` in update mode (`workspaceId` param). Like creating, it needs no wallet
+  (see [Ownership](#ownership)). The dialog runs the create pipeline — resolve account types, pin avatars, build the body — but
+  only pins a *new* file: an avatar with a URL and no file keeps its stored URI.
+- `CreateWorkspaceForm.Accounts` takes `allowEmpty`, since a workspace may hold no account while the wizard still
+  requires one. The empty account list then skips the account-type request.
+- Navigation is blocked while the form is dirty, as in every wizard.
+- No wallet is checked on submit, unlike the create flow.
+
 ## Feature flag
 
 The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/featureFlags.constants.ts`, key
@@ -624,6 +671,7 @@ src/modules/workspace/
 │   ├── queries/useWorkspace/{useWorkspace.ts,index.ts}
 │   ├── queries/index.ts
 │   ├── mutations/useCreateWorkspace/{useCreateWorkspace.ts,index.ts}
+│   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
 │   ├── mutations/index.ts
 │   ├── {workspaceService.ts,workspaceService.api.ts,workspaceServiceKeys.ts,workspaceService.test.ts,index.ts}
 ├── components/createWorkspaceForm/
@@ -635,6 +683,7 @@ src/modules/workspace/
 │   └── index.ts
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
+├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,createWorkspacePageDefinitions.ts,index.ts}
@@ -651,6 +700,7 @@ src/modules/workspace/
 ├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
+├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageDefinitions.ts,workspaceEditPageUtils.ts,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 └── index.ts
 
@@ -710,4 +760,5 @@ Keep it that way when extending this.
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show
   different numbers for one DAO; the shared normaliser only removes the client-side source of drift.
-- No editing, so a typo means creating a new workspace.
+- Workspaces cannot be deleted, and anyone on the device can edit any of them — by design until a registry
+  enforces ownership (see [Ownership](#ownership)).

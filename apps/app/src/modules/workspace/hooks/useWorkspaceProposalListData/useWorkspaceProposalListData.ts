@@ -53,9 +53,14 @@ export const useWorkspaceProposalListData = (
     });
 
     // Rows are held back until their DAOs land, so an untitled proposal never renders blank and then pops in with
-    // its slug, and no row is briefly unlinkable.
+    // its slug, and no row is briefly unlinkable. A disabled query — a workspace with no account — reads as pending,
+    // so it is resolved to idle here rather than leaving the list loading forever instead of showing its empty state.
     const state =
-        isDaosPending && listState !== 'error' ? 'initialLoading' : listState;
+        enabled === false
+            ? 'idle'
+            : isDaosPending && listState !== 'error'
+              ? 'initialLoading'
+              : listState;
 
     const errorState = {
         heading: t('app.workspace.workspaceProposalList.errorState.heading'),

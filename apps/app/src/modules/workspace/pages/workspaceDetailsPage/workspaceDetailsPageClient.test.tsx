@@ -143,6 +143,40 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('links a workspace with no account to its edit wizard to add some', async () => {
+        const workspace = buildWorkspace({ accounts: [] });
+        renderWorkspace(workspace);
+
+        expect(
+            await screen.findByText(
+                /workspaceDetailsPage\.emptyAccounts\.heading$/,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: /workspaceDetailsPage\.emptyAccounts\.action$/,
+            }),
+        ).toHaveAttribute('href', `/workspace/${workspace.id}/edit`);
+    });
+
+    it('hides the empty accounts state when the workspace has accounts', async () => {
+        renderWorkspace(buildWorkspace());
+
+        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
+        expect(
+            screen.queryByText(/workspaceDetailsPage\.emptyAccounts\.heading$/),
+        ).not.toBeInTheDocument();
+    });
+
+    it('hides the owner of a workspace that has none', async () => {
+        renderWorkspace(buildWorkspace({ owner: undefined }));
+
+        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
+        expect(
+            screen.queryByText(/workspaceDetailsPage\.aside\.owner$/),
+        ).not.toBeInTheDocument();
+    });
+
     it('does not resolve accounts for a workspace that has none', async () => {
         renderWorkspace(buildWorkspace({ accounts: [] }));
 

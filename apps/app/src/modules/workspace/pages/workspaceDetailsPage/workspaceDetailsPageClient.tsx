@@ -5,6 +5,7 @@ import {
     Card,
     DaoAvatar,
     DefinitionList,
+    EmptyState,
     Link,
 } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
@@ -101,6 +102,28 @@ export const WorkspaceDetailsPageClient: React.FC<
                             'app.workspace.workspaceDetailsPage.section.accounts',
                         )}
                     >
+                        {accounts.length === 0 && (
+                            <Card className="border border-neutral-100 py-10">
+                                <EmptyState
+                                    description={t(
+                                        'app.workspace.workspaceDetailsPage.emptyAccounts.description',
+                                    )}
+                                    heading={t(
+                                        'app.workspace.workspaceDetailsPage.emptyAccounts.heading',
+                                    )}
+                                    objectIllustration={{ object: 'BUILD' }}
+                                    primaryButton={{
+                                        label: t(
+                                            'app.workspace.workspaceDetailsPage.emptyAccounts.action',
+                                        ),
+                                        href: workspaceUtils.getWorkspaceUrl(
+                                            workspaceId,
+                                            'edit',
+                                        ),
+                                    }}
+                                />
+                            </Card>
+                        )}
                         <div className="flex flex-col gap-3 md:gap-2">
                             {accounts.map((account) => (
                                 <WorkspaceAccountItem
@@ -147,21 +170,24 @@ export const WorkspaceDetailsPageClient: React.FC<
                     )}
                 </Page.Main>
                 <Page.Aside>
-                    <Page.AsideCard
-                        title={t(
-                            'app.workspace.workspaceDetailsPage.aside.details',
-                        )}
-                    >
-                        <DefinitionList.Container>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.workspace.workspaceDetailsPage.aside.owner',
-                                )}
-                            >
-                                <AddressOutput address={owner} />
-                            </DefinitionList.Item>
-                        </DefinitionList.Container>
-                    </Page.AsideCard>
+                    {/* Local workspaces have no owner; only the ones created while a wallet was required carry one. */}
+                    {owner != null && (
+                        <Page.AsideCard
+                            title={t(
+                                'app.workspace.workspaceDetailsPage.aside.details',
+                            )}
+                        >
+                            <DefinitionList.Container>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.workspace.workspaceDetailsPage.aside.owner',
+                                    )}
+                                >
+                                    <AddressOutput address={owner} />
+                                </DefinitionList.Item>
+                            </DefinitionList.Container>
+                        </Page.AsideCard>
+                    )}
                     {links.length > 0 && (
                         <Page.AsideCard
                             title={t(

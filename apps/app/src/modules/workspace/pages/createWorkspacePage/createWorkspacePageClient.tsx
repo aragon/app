@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -27,21 +26,15 @@ export const CreateWorkspacePageClient: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { check: checkWalletConnection } = useConnectedWalletGuard();
-
     const handleFormSubmit = (values: ICreateWorkspaceFormData) => {
-        const params: IPublishWorkspaceDialogParams = { values };
-        checkWalletConnection({
-            onSuccess: () => {
-                plausibleAnalyticsUtils.track('wizard_submit', {
-                    flow: 'create_workspace',
-                    accounts: values.accounts.length,
-                    targets: values.targets.length,
-                    hasAvatar: values.avatar != null,
-                });
-                open(WorkspaceDialogId.PUBLISH_WORKSPACE, { params });
-            },
+        plausibleAnalyticsUtils.track('wizard_submit', {
+            flow: 'create_workspace',
+            accounts: values.accounts.length,
+            targets: values.targets.length,
+            hasAvatar: values.avatar != null,
         });
+        const params: IPublishWorkspaceDialogParams = { values };
+        open(WorkspaceDialogId.PUBLISH_WORKSPACE, { params });
     };
 
     const [metadataStep, targetsStep, accountsStep] =
