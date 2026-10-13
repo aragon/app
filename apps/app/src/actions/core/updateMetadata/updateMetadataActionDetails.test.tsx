@@ -184,4 +184,47 @@ describe('<UpdateMetadataActionDetails /> component', () => {
 
         expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
+
+    it('keeps the current metadata displayed when the selected toggle is clicked again', async () => {
+        const action = generateProposalActionUpdateMetadata({
+            proposedMetadata: {
+                name: 'Proposed name',
+                description: 'Proposed description',
+                links: [],
+            },
+            existingMetadata: {
+                name: 'Existing name',
+                description: 'Existing description',
+                links: [],
+            },
+        });
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        await userEvent.click(screen.getByText(copyKey('proposedToggle')));
+        expect(screen.getByText('Proposed name')).toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+        expect(screen.getByText('Existing name')).toBeInTheDocument();
+    });
+
+    it('renders empty fields when the action metadata is null', async () => {
+        const action = {
+            ...generateProposalActionUpdatePluginMetadata(),
+            proposedMetadata: null,
+            existingMetadata: null,
+        } as unknown as IProposalAction;
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        expect(screen.getByText(copyKey('nameTerm'))).toBeInTheDocument();
+        expect(
+            screen.queryByText(copyKey('processKeyTerm')),
+        ).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+
+        expect(screen.getByText(copyKey('nameTerm'))).toBeInTheDocument();
+    });
 });

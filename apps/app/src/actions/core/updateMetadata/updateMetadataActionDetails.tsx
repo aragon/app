@@ -13,6 +13,7 @@ import { useState } from 'react';
 import {
     type IProposalActionUpdateMetadata,
     type IProposalActionUpdatePluginMetadata,
+    type IProposalActionUpdatePluginMetadataObject,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
@@ -24,6 +25,11 @@ export interface IUpdateMetadataActionDetailsProps
         IProposalActionData<IProposalAction>
     > {}
 
+/**
+ * Metadata rendered when the action carries none, so the view shows empty fields instead of crashing.
+ */
+const emptyMetadata: IProposalActionUpdatePluginMetadataObject = {};
+
 export const UpdateMetadataActionDetails: React.FC<
     IUpdateMetadataActionDetailsProps
 > = (props) => {
@@ -31,13 +37,24 @@ export const UpdateMetadataActionDetails: React.FC<
 
     const { t } = useTranslations();
 
-    const [toggleValue, setToggleValue] = useState<string | undefined>(
-        'proposedMetadata',
-    );
+    const [toggleValue, setToggleValue] = useState<
+        'proposedMetadata' | 'existingMetadata'
+    >('proposedMetadata');
 
-    const { type, proposedMetadata, existingMetadata } = action as unknown as
+    // Clicking the selected toggle emits an empty value, keep the current selection instead of clearing it.
+    const handleToggleChange = (value?: string) => {
+        if (value === 'proposedMetadata' || value === 'existingMetadata') {
+            setToggleValue(value);
+        }
+    };
+
+    const metadataAction = action as unknown as
         | IProposalActionUpdateMetadata
         | IProposalActionUpdatePluginMetadata;
+
+    const { type } = metadataAction;
+    const proposedMetadata = metadataAction.proposedMetadata ?? emptyMetadata;
+    const existingMetadata = metadataAction.existingMetadata ?? emptyMetadata;
 
     const metadataToDisplay =
         toggleValue === 'proposedMetadata'
@@ -64,7 +81,7 @@ export const UpdateMetadataActionDetails: React.FC<
         <div className="flex w-full flex-col gap-2">
             <ToggleGroup
                 isMultiSelect={false}
-                onChange={setToggleValue}
+                onChange={handleToggleChange}
                 value={toggleValue}
             >
                 <Toggle
