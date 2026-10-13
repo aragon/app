@@ -24,6 +24,10 @@ export interface IWorkspaceEditPageClientProps {
      * ID of the workspace to edit.
      */
     workspaceId: string;
+    /**
+     * Step the wizard opens on, the first one when not set.
+     */
+    initialStep?: WorkspaceEditWizardStep;
 }
 
 /**
@@ -34,7 +38,7 @@ export interface IWorkspaceEditPageClientProps {
 export const WorkspaceEditPageClient: React.FC<
     IWorkspaceEditPageClientProps
 > = (props) => {
-    const { workspaceId } = props;
+    const { workspaceId, initialStep } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -78,6 +82,7 @@ export const WorkspaceEditPageClient: React.FC<
                     workspace,
                 )}
                 finalStep={t('app.workspace.workspaceEditPage.finalStep')}
+                initialActiveStep={initialStep}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
                 submitLabel={t('app.workspace.workspaceEditPage.submitLabel')}

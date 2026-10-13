@@ -111,6 +111,20 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('getWorkspaceEditUrl', () => {
+        it('builds the url of the edit wizard', () => {
+            expect(workspaceUtils.getWorkspaceEditUrl('demo')).toEqual(
+                '/workspace/demo/edit',
+            );
+        });
+
+        it('opens the wizard on the given step, written lowercase', () => {
+            expect(
+                workspaceUtils.getWorkspaceEditUrl('demo', 'ACCOUNTS'),
+            ).toEqual('/workspace/demo/edit?step=accounts');
+        });
+    });
+
     describe('getAccountScopeUrl', () => {
         it('scopes the workspace to an account', () => {
             expect(

@@ -5,6 +5,7 @@ import type {
     ICreateWorkspaceFormAccount,
     ICreateWorkspaceFormData,
 } from '../../components/createWorkspaceForm';
+import { WorkspaceEditWizardStep } from './workspaceEditPageDefinitions';
 
 class WorkspaceEditPageUtils {
     /**
@@ -31,6 +32,23 @@ class WorkspaceEditPageUtils {
             })),
             accounts: accounts.map(this.buildAccountValues),
         };
+    };
+
+    /**
+     * Resolves the step the wizard opens on from the step query parameter, matched case-insensitively.
+     * @param stepParam - Value of the step query parameter, if any.
+     * @returns The ID of the step, or undefined to open the first step when the parameter names none.
+     */
+    resolveInitialStep = (
+        stepParam?: string | string[],
+    ): WorkspaceEditWizardStep | undefined => {
+        if (typeof stepParam !== 'string') {
+            return undefined;
+        }
+
+        return Object.values(WorkspaceEditWizardStep).find(
+            (step) => step.toLowerCase() === stepParam.toLowerCase(),
+        );
     };
 
     private buildAccountValues = (

@@ -112,6 +112,10 @@ class WorkspaceService {
 
     /**
      * Returns the workspaces persisted on local storage, seeding the default workspace when there is none.
+     *
+     * Unreadable storage reads as empty (see `getStoredWorkspaces`), so seeding overwrites it, as `createWorkspace`
+     * already does. Accepted while the registry is a local stand-in: the service only ever writes valid JSON, so such
+     * data can only come from outside the app, and it is unusable either way.
      */
     private getStoredWorkspacesOrDefault = (): Record<string, IWorkspace> => {
         const workspaces = this.getStoredWorkspaces();

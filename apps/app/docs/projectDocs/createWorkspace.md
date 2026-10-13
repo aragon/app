@@ -566,7 +566,8 @@ workspace holding no account.
 - Accounts are optional in both wizards (see [Accounts are optional](#accounts-are-optional)); an empty account
   list skips the account-type request.
 - Navigation is blocked while the form is dirty, as in every wizard.
-- No wallet is checked on submit, unlike the create flow.
+- `?step=<step>` (built by `workspaceUtils.getWorkspaceEditUrl`) opens the wizard on that step. The empty-accounts
+  button on the overview uses it to land on the accounts step; an unknown value opens the first step.
 
 ## Feature flag
 

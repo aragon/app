@@ -12,6 +12,7 @@ import {
     type IWorkspaceEditPageClientProps,
     WorkspaceEditPageClient,
 } from './workspaceEditPageClient';
+import { WorkspaceEditWizardStep } from './workspaceEditPageDefinitions';
 
 describe('<WorkspaceEditPageClient /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
@@ -93,6 +94,22 @@ describe('<WorkspaceEditPageClient /> component', () => {
                 name: /createWorkspaceForm.metadata.name.label/,
             }),
         ).toHaveValue('Demo Workspace');
+    });
+
+    it('opens the wizard on the initial step when set', async () => {
+        getWorkspaceSpy.mockResolvedValue(workspace);
+        render(
+            createTestComponent({
+                initialStep: WorkspaceEditWizardStep.ACCOUNTS,
+            }),
+        );
+
+        expect(
+            await screen.findByRole('heading', {
+                level: 1,
+                name: /workspaceEditPage.steps.ACCOUNTS.title/,
+            }),
+        ).toBeInTheDocument();
     });
 
     it('opens the update dialog with the edited values once the last step is submitted', async () => {

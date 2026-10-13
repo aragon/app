@@ -71,6 +71,19 @@ describe('<WorkspaceEditPage /> component', () => {
         );
     });
 
+    it('opens the wizard on the step named by the step query parameter', async () => {
+        render(
+            await createTestComponent({
+                searchParams: Promise.resolve({ step: 'accounts' }),
+            }),
+        );
+
+        expect(WorkspaceEditPageClient).toHaveBeenCalledWith(
+            expect.objectContaining({ initialStep: 'ACCOUNTS' }),
+            undefined,
+        );
+    });
+
     it('renders the 404 page when the workspaces feature is disabled', async () => {
         isEnabledSpy.mockResolvedValue(false);
 

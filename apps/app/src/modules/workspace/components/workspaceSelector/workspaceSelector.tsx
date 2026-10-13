@@ -94,7 +94,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                 </Dropdown.Item>
             ))}
             <Dropdown.Item
-                href={workspaceUtils.getWorkspaceUrl(workspaceId, 'edit')}
+                href={workspaceUtils.getWorkspaceEditUrl(workspaceId)}
                 icon={IconType.SETTINGS}
                 iconPosition="left"
             >

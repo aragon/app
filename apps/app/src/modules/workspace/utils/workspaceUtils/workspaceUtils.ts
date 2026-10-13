@@ -41,6 +41,11 @@ const fallbackWorkspaceSlug = 'workspace';
  */
 export const workspaceAllAccountsSegment = 'all';
 
+/**
+ * Query parameter opening the edit wizard of a workspace on a given step, e.g. `?step=accounts`.
+ */
+export const workspaceEditStepParam = 'step';
+
 class WorkspaceUtils {
     /**
      * Builds the ID of a workspace account, matching the backend `daoId` format for DAO accounts. The address is
@@ -97,6 +102,21 @@ class WorkspaceUtils {
         const baseUrl = `/workspace/${workspaceId}`;
 
         return path != null ? `${baseUrl}/${path}` : baseUrl;
+    };
+
+    /**
+     * URL of the edit wizard of a workspace.
+     * @param workspaceId - ID of the workspace.
+     * @param step - Optional ID of the step to open the wizard on, e.g. `ACCOUNTS`. Written lowercase, as routing
+     * values are.
+     * @returns The edit wizard URL.
+     */
+    getWorkspaceEditUrl = (workspaceId: string, step?: string): string => {
+        const editUrl = this.getWorkspaceUrl(workspaceId, 'edit');
+
+        return step != null
+            ? `${editUrl}?${workspaceEditStepParam}=${step.toLowerCase()}`
+            : editUrl;
     };
 
     /**

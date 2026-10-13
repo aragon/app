@@ -16,6 +16,7 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+import { WorkspaceEditWizardStep } from '../workspaceEditPage/workspaceEditPageDefinitions';
 
 export interface IWorkspaceDetailsPageClientProps {
     /**
@@ -116,9 +117,10 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         label: t(
                                             'app.workspace.workspaceDetailsPage.emptyAccounts.action',
                                         ),
-                                        href: workspaceUtils.getWorkspaceUrl(
+                                        // Opens the wizard straight on the step the button names.
+                                        href: workspaceUtils.getWorkspaceEditUrl(
                                             workspaceId,
-                                            'edit',
+                                            WorkspaceEditWizardStep.ACCOUNTS,
                                         ),
                                     }}
                                 />

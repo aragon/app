@@ -156,7 +156,10 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             screen.getByRole('link', {
                 name: /workspaceDetailsPage\.emptyAccounts\.action$/,
             }),
-        ).toHaveAttribute('href', `/workspace/${workspace.id}/edit`);
+        ).toHaveAttribute(
+            'href',
+            `/workspace/${workspace.id}/edit?step=accounts`,
+        );
     });
 
     it('hides the empty accounts state when the workspace has accounts', async () => {

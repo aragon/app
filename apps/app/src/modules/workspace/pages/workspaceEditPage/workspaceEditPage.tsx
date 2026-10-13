@@ -2,15 +2,21 @@
 import { notFound } from 'next/navigation-original';
 import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
-import type { IWorkspacePageParams } from '@/shared/types';
+import type { IPageSearchParams, IWorkspacePageParams } from '@/shared/types';
 import { WorkspaceGate } from '../../components/workspaceGate';
+import { workspaceEditStepParam } from '../../utils/workspaceUtils';
 import { WorkspaceEditPageClient } from './workspaceEditPageClient';
+import { workspaceEditPageUtils } from './workspaceEditPageUtils';
 
 export interface IWorkspaceEditPageProps {
     /**
      * URL parameters of the page.
      */
     params: Promise<IWorkspacePageParams>;
+    /**
+     * Query parameters of the page, `step` naming the step the wizard opens on.
+     */
+    searchParams?: Promise<IPageSearchParams>;
 }
 
 /**
@@ -23,18 +29,24 @@ export interface IWorkspaceEditPageProps {
 export const WorkspaceEditPage: React.FC<IWorkspaceEditPageProps> = async (
     props,
 ) => {
-    const { params } = props;
+    const { params, searchParams } = props;
 
     if (!(await featureFlags.isEnabled('workspaces'))) {
         notFound();
     }
 
     const { workspaceId } = await params;
+    const initialStep = workspaceEditPageUtils.resolveInitialStep(
+        (await searchParams)?.[workspaceEditStepParam],
+    );
 
     return (
         <Page.Container>
             <WorkspaceGate workspaceId={workspaceId}>
-                <WorkspaceEditPageClient workspaceId={workspaceId} />
+                <WorkspaceEditPageClient
+                    initialStep={initialStep}
+                    workspaceId={workspaceId}
+                />
             </WorkspaceGate>
         </Page.Container>
     );
