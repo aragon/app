@@ -15,8 +15,8 @@ export interface IWorkspaceDaoProposalsAsideCardProps {
      */
     label: string;
     /**
-     * Number of proposals the list next to the card reads per page. The stats are read under the same key, so both
-     * must match for the card to add no request.
+     * Number of proposals the list next to the card reads per page, so the stats describe the same selection the
+     * list shows. The stats come off the DAO's own endpoints, not the list's response — see below.
      */
     pageSize: number;
 }
@@ -24,9 +24,15 @@ export interface IWorkspaceDaoProposalsAsideCardProps {
 /**
  * Proposals aside card of a DAO account of a workspace, rendering the same stats as the DAO proposals page.
  *
- * The account tab reads the single DAO endpoints, so its aside reads them too: the numbers of the card and of the
- * list beside it then come from the same source. Always the DAO-level stats — the page does not lift the process
- * filter to swap in `DaoPluginInfo`.
+ * It reads the DAO's own endpoints while the list beside it reads the workspace aggregate narrowed to this one
+ * account, so the two could disagree if the backend ever treated them differently — the same gap the assets page
+ * accepts between its tabs. It is worth it for the parity: these are the stats of the DAO proposals page, including
+ * the ones the aggregated card has to omit. It costs two requests of its own (`ProposalListStats` reads the
+ * proposals, then the executed ones), so an account scope makes three proposal requests where the DAO page makes
+ * two: there the stats share the list's own query key, which cannot happen across two endpoints.
+ *
+ * Always the DAO-level stats: a selected process is described by `WorkspaceProcessProposalsAsideCard` instead,
+ * which the dispatcher reaches first.
  */
 export const WorkspaceDaoProposalsAsideCard: React.FC<
     IWorkspaceDaoProposalsAsideCardProps
@@ -40,7 +46,11 @@ export const WorkspaceDaoProposalsAsideCard: React.FC<
         return null;
     }
 
-    // The same parameters the list beside the card reads, so the stats describe exactly what it shows.
+    // The same selection the list beside the card reads, so the stats describe exactly what it shows. Deliberately
+    // without the DAO page's `onlyActive`, which keeps only the proposals of currently installed plugins: the
+    // workspace endpoint has no equivalent filter, so asking for it here would make this total read lower than the
+    // rows the list pages through right next to it. Agreeing with that list matters more than matching the total of
+    // the DAO proposals page, which is another screen.
     const initialParams = {
         queryParams: {
             daoId: account.id,

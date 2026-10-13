@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { InputNumber } from './inputNumber';
 
 const meta: Meta<typeof InputNumber> = {
-    title: 'Core/Components/Forms/InputNumber',
+    title: 'Core/Forms/InputNumber',
     component: InputNumber,
     parameters: {
         design: {

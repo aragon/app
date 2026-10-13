@@ -3,7 +3,7 @@ import { RadioGroup } from '../radioGroup';
 import { RadioCard } from './radioCard';
 
 const meta: Meta<typeof RadioCard> = {
-    title: 'Core/Components/Forms/RadioCard',
+    title: 'Core/Forms/RadioCard',
     component: RadioCard,
     argTypes: {
         disabled: { control: 'boolean' },

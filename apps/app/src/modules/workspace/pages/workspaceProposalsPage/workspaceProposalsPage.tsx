@@ -18,7 +18,8 @@ export interface IWorkspaceProposalsPageProps {
 export const workspaceProposalsCount = 10;
 
 /**
- * Aggregated proposals of a workspace.
+ * Proposals of a workspace, serving both the aggregated route and the account-scoped one, which re-export this
+ * same page. The client resolves the scope from the route parameters.
  *
  * Nothing is prefetched: the proposal queries need the account list, which only exists in the local-storage
  * registry and is therefore resolved on the client (see `docs/projectDocs/createWorkspace.md`).

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DaoAvatar } from './daoAvatar';
 
 const meta: Meta<typeof DaoAvatar> = {
-    title: 'Modules/Components/Dao/DaoAvatar',
+    title: 'Modules/Dao/DaoAvatar',
     component: DaoAvatar,
     parameters: {
         design: {

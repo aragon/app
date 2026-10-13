@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StateSkeletonBar } from './stateSkeletonBar';
 
 const meta: Meta<typeof StateSkeletonBar> = {
-    title: 'Core/Components/States/StateSkeletonBar',
+    title: 'Core/States/StateSkeletonBar',
     component: StateSkeletonBar,
     parameters: {
         design: {

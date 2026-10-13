@@ -3,9 +3,11 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
+import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import { WorkspaceGate } from '@/modules/workspace/components/workspaceGate';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
+import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationWorkspace } from '../../navigations/navigationWorkspace';
@@ -41,11 +43,19 @@ export interface ILayoutWorkspaceProps {
  *
  * The account a page is scoped to is a route segment, not state, so there is nothing here to reset when the
  * workspace changes.
+ *
+ * The `workspaces` flag is checked here and not only on the pages: a layout renders around a page's 404, so
+ * without it a disabled feature would still show the navigation and the gate.
  */
 export const LayoutWorkspace: React.FC<ILayoutWorkspaceProps> = async (
     props,
 ) => {
     const { params, children } = props;
+
+    if (!(await featureFlags.isEnabled('workspaces'))) {
+        notFound();
+    }
+
     const { workspaceId } = await params;
 
     const queryClient = new QueryClient();

@@ -67,21 +67,40 @@ export interface IWorkspaceProposalListDefaultProps {
      * Whether any of the DAOs is still being read.
      */
     isDaosPending: boolean;
+    /**
+     * Whether the page is scoped to a single account, which the empty and error copy then names.
+     */
+    isAccountScoped?: boolean;
+    /**
+     * ID of the workspace, used to link each row to the proposal details page of its account.
+     */
+    workspaceId: string;
 }
 
 /**
  * Aggregated proposal list of a workspace, laid out like `DaoProposalListDefault` of the DAO pages and reusing its
  * rows, so plugin-specific items keep rendering their own details.
  *
- * Each row is tagged with the name of the DAO it belongs to, which the DAO pages never need. The name comes from
- * the metadata the endpoint embeds, while the link and the slug need the full DAO — see `useWorkspaceDaos`.
+ * Each row is tagged with the name of the DAO it belongs to, which the DAO pages never need — unless a single
+ * account is in view, where the tag would repeat the same name on every row. The name comes from the metadata the
+ * endpoint embeds, while the link and the slug need the full DAO — see `useWorkspaceDaos`.
  */
 export const WorkspaceProposalListDefault: React.FC<
     IWorkspaceProposalListDefaultProps
 > = (props) => {
-    const { accounts, pageSize, filters, daos, isDaosPending } = props;
+    const {
+        accounts,
+        pageSize,
+        filters,
+        daos,
+        isDaosPending,
+        isAccountScoped,
+        workspaceId,
+    } = props;
 
     const { t } = useTranslations();
+
+    const isSingleAccount = accounts.length === 1;
 
     const {
         onLoadMore,
@@ -89,11 +108,12 @@ export const WorkspaceProposalListDefault: React.FC<
         state,
         itemsCount,
         emptyState,
+        emptyFilteredState,
         errorState,
     } = useWorkspaceProposalListData({
         params: buildWorkspaceProposalListParams(accounts, pageSize, filters),
         isDaosPending,
-        enabled: accounts.length > 0,
+        isAccountScoped,
     });
 
     return (
@@ -105,6 +125,7 @@ export const WorkspaceProposalListDefault: React.FC<
             state={state}
         >
             <DataListContainer
+                emptyFilteredState={emptyFilteredState}
                 emptyState={emptyState}
                 errorState={errorState}
                 layoutClassName="grid grid-cols-1"
@@ -124,21 +145,33 @@ export const WorkspaceProposalListDefault: React.FC<
                         return null;
                     }
 
+                    const proposalSlug = proposalUtils.getProposalSlug(
+                        proposal,
+                        dao,
+                    );
+
+                    const href =
+                        proposalSlug == null
+                            ? undefined
+                            : workspaceUtils.getAccountScopeUrl(
+                                  workspaceId,
+                                  accountId,
+                                  `proposals/${proposalSlug}`,
+                              );
+
                     return (
                         <PluginSingleComponent
                             dao={dao}
                             Fallback={DaoProposalListDefaultItem}
+                            href={href}
                             key={proposal.id}
                             pluginId={proposal.pluginInterfaceType}
                             proposal={proposal}
-                            proposalSlug={proposalUtils.getProposalSlug(
-                                proposal,
-                                dao,
-                            )}
+                            proposalSlug={proposalSlug}
                             slotId={
                                 GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM
                             }
-                            tag={dao.name}
+                            tag={isSingleAccount ? undefined : dao.name}
                         />
                     );
                 })}

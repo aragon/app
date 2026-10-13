@@ -20,7 +20,7 @@ const defaultRender = (props: IProposalActionsItemProps) => {
 };
 
 const meta: Meta<typeof ProposalActions.Item> = {
-    title: 'Modules/Components/Proposal/ProposalActions/ProposalActions.Item',
+    title: 'Modules/Proposal/ProposalActions/ProposalActions.Item',
     component: ProposalActions.Item,
     parameters: {
         design: {

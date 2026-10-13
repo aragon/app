@@ -46,18 +46,19 @@ export const useWorkspaceDaos = (
 
                 if (result.data != null && id != null) {
                     const dao = result.data;
-                    const workspaceAccount = accounts.find(
-                        (account) => account.id === dao.id,
-                    );
-                    const workspaceAccountMetadata = workspaceAccount?.metadata;
+                    const workspaceAccountMetadata = accounts.find(
+                        (account) => account.id === id,
+                    )?.metadata;
 
-                    dao.avatar = workspaceAccountMetadata?.avatar ?? dao.avatar;
-                    dao.name = workspaceAccountMetadata?.name ?? dao.name;
-                    dao.description =
-                        workspaceAccountMetadata?.description ??
-                        dao.description;
-
-                    daos[id] = dao;
+                    // Copy instead of mutating: the DAO object is shared with the app-wide daoOptions cache.
+                    daos[id] = {
+                        ...dao,
+                        avatar: workspaceAccountMetadata?.avatar ?? dao.avatar,
+                        name: workspaceAccountMetadata?.name ?? dao.name,
+                        description:
+                            workspaceAccountMetadata?.description ??
+                            dao.description,
+                    };
                 }
             });
 
