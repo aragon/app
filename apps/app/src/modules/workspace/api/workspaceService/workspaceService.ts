@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/useAwait: async keeps the service contract of a real backend over the sync storage.
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import type { IWorkspace } from './domain';
@@ -31,76 +32,56 @@ export const defaultWorkspaceName = 'My workspace';
  * The registry always holds at least one workspace: the reads seed a default one when it is empty, so that every
  * consumer has a workspace to fall back to.
  */
-// TODO: rewrite the methods of this service as standard async functions (`async`, `throw`, `return`) instead of
-// wrapping results in `Promise.resolve` / `Promise.reject`, to be consistent with the other services of the repo.
 class WorkspaceService {
-    getWorkspace = (params: IGetWorkspaceParams): Promise<IWorkspace> => {
+    getWorkspace = async (params: IGetWorkspaceParams): Promise<IWorkspace> => {
         const { id } = params.urlParams;
 
-        let workspaces: Record<string, IWorkspace>;
-
-        try {
-            workspaces = this.getStoredWorkspacesOrDefault();
-        } catch (error: unknown) {
-            return Promise.reject(error);
-        }
-
-        const workspace = workspaces[id];
+        const workspace = this.getStoredWorkspacesOrDefault()[id];
 
         if (workspace == null) {
-            return Promise.reject(this.buildNotFoundError(id));
+            throw this.buildNotFoundError(id);
         }
 
-        return Promise.resolve(workspace);
+        return workspace;
     };
 
-    getWorkspaceList = (): Promise<IWorkspace[]> => {
-        try {
-            return Promise.resolve(
-                Object.values(this.getStoredWorkspacesOrDefault()),
-            );
-        } catch (error: unknown) {
-            return Promise.reject(error);
-        }
-    };
+    getWorkspaceList = async (): Promise<IWorkspace[]> =>
+        Object.values(this.getStoredWorkspacesOrDefault());
 
-    createWorkspace = (params: ICreateWorkspaceParams): Promise<IWorkspace> => {
+    createWorkspace = async (
+        params: ICreateWorkspaceParams,
+    ): Promise<IWorkspace> => {
         const { body } = params;
 
-        try {
-            const workspaces = this.getStoredWorkspaces();
-            const id = workspaceUtils.buildWorkspaceId(
-                body.name,
-                Object.keys(workspaces),
-            );
-            const workspace: IWorkspace = { ...body, id };
+        const workspaces = this.getStoredWorkspaces();
+        const id = workspaceUtils.buildWorkspaceId(
+            body.name,
+            Object.keys(workspaces),
+        );
+        const workspace: IWorkspace = { ...body, id };
 
-            this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
 
-            return Promise.resolve(workspace);
-        } catch (error: unknown) {
-            return Promise.reject(error);
-        }
+        return workspace;
     };
 
-    updateWorkspace = (params: IUpdateWorkspaceParams): Promise<IWorkspace> => {
+    updateWorkspace = async (
+        params: IUpdateWorkspaceParams,
+    ): Promise<IWorkspace> => {
         const { urlParams, body } = params;
         const { id } = urlParams;
 
-        try {
-            const workspaces = this.getStoredWorkspaces();
-            if (workspaces[id] == null) {
-                return Promise.reject(this.buildNotFoundError(id));
-            }
+        const workspaces = this.getStoredWorkspaces();
 
-            const workspace: IWorkspace = { ...body, id };
-
-            this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
-
-            return Promise.resolve(workspace);
-        } catch (error: unknown) {
-            return Promise.reject(error);
+        if (workspaces[id] == null) {
+            throw this.buildNotFoundError(id);
         }
+
+        const workspace: IWorkspace = { ...body, id };
+
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
+
+        return workspace;
     };
 
     /**
