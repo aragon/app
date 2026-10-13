@@ -7,7 +7,6 @@ import {
     ProposalActionChangeMembers,
     ProposalActionChangeSettings,
     ProposalActionTokenMint,
-    ProposalActionUpdateMetadata,
 } from '../proposalActionsList';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
 
@@ -32,10 +31,6 @@ export const ProposalActionsItemBasicView = <TAction extends IProposalAction = I
 
     if (proposalActionsItemUtils.isTokenMintAction(action)) {
         return <ProposalActionTokenMint action={action} {...commonProps} />;
-    }
-
-    if (proposalActionsItemUtils.isUpdateMetadataAction(action)) {
-        return <ProposalActionUpdateMetadata action={action} {...commonProps} />;
     }
 
     if (proposalActionsItemUtils.isChangeMembersAction(action)) {

@@ -5,7 +5,6 @@ import {
     type IProposalAction,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import {
     CrossChainControllerNestedActionsList,
@@ -13,18 +12,12 @@ import {
 } from './crossChainControllerNestedActionsList';
 
 describe('<CrossChainControllerNestedActionsList /> component', () => {
-    const normalizeDefaultActionSpy = jest.spyOn(
-        proposalActionUtils,
-        'normalizeDefaultAction',
-    );
-
     const getViewByActionTypeSpy = jest.spyOn(
         actionViewRegistry,
         'getViewByActionType',
     );
 
     afterEach(() => {
-        normalizeDefaultActionSpy.mockClear();
         getViewByActionTypeSpy.mockReset();
     });
 
@@ -92,47 +85,30 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         expect(screen.getByText('0xb')).toBeInTheDocument();
     });
 
-    it('runs each rendered action through the default normalization function', () => {
-        const rawActions = [generateAction()];
+    it.each([
+        ProposalActionType.TRANSFER,
+        ProposalActionType.TRANSFER_NATIVE,
+        ProposalActionType.METADATA_UPDATE,
+        ProposalActionType.METADATA_PLUGIN_UPDATE,
+    ])('renders the view registered for %s actions', async (type) => {
+        getViewByActionTypeSpy.mockReturnValue({
+            actionType: type,
+            componentDetails: () => 'action-view',
+        });
+        const action = generateAction({ type, data: '0x', value: '1' });
 
         render(
             createTestComponent({
-                rawTuple: [
-                    {
-                        to: '0xa0Ab554dEa45be64F12E3B0085DDC59852eFF9fc',
-                        value: '0',
-                        data: '0xd09de08a',
-                    },
-                ],
-                rawActions,
+                rawTuple: [{ to: action.to, value: '1', data: '0x' }],
+                rawActions: [action],
             }),
         );
 
-        expect(normalizeDefaultActionSpy).toHaveBeenCalledWith(rawActions[0]);
+        await userEvent.click(screen.getAllByRole('button')[0]);
+
+        expect(getViewByActionTypeSpy).toHaveBeenCalledWith(type);
+        expect(screen.getByText('action-view')).toBeInTheDocument();
     });
-
-    it.each([ProposalActionType.TRANSFER, ProposalActionType.TRANSFER_NATIVE])(
-        'renders the view registered for %s actions',
-        async (type) => {
-            getViewByActionTypeSpy.mockReturnValue({
-                actionType: type,
-                componentDetails: () => 'transfer-view',
-            });
-            const action = generateAction({ type, data: '0x', value: '1' });
-
-            render(
-                createTestComponent({
-                    rawTuple: [{ to: action.to, value: '1', data: '0x' }],
-                    rawActions: [action],
-                }),
-            );
-
-            await userEvent.click(screen.getAllByRole('button')[0]);
-
-            expect(getViewByActionTypeSpy).toHaveBeenCalledWith(type);
-            expect(screen.getByText('transfer-view')).toBeInTheDocument();
-        },
-    );
 
     it('does not resolve views by action type for other actions', () => {
         const action = generateAction({ type: 'Execute' });
