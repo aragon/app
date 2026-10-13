@@ -5,7 +5,7 @@ import { CardCollapsible } from './cardCollapsible';
  * CardCollapsible component that can wrap any content and visually collapse it for space-saving purposes.
  */
 const meta: Meta<typeof CardCollapsible> = {
-    title: 'Core/Components/Cards/CardCollapsible',
+    title: 'Core/Cards/CardCollapsible',
     component: CardCollapsible,
     parameters: {
         design: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { LinkBase } from './linkBase';
 
 const meta: Meta<typeof LinkBase> = {
-    title: 'Core/Components/Link/LinkBase',
+    title: 'Core/Link/LinkBase',
     component: LinkBase,
 };
 

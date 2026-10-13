@@ -4,7 +4,7 @@ import { Progress } from './progress';
 import type { IProgressProps } from './progress.api';
 
 const meta: Meta<typeof Progress> = {
-    title: 'Core/Components/Progress',
+    title: 'Core/Progress',
     component: Progress,
     parameters: {
         design: {

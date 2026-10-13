@@ -4,7 +4,7 @@ import { IconType } from '../../icon';
 import { AvatarIcon } from './avatarIcon';
 
 const meta: Meta<typeof AvatarIcon> = {
-    title: 'Core/Components/Avatars/AvatarIcon',
+    title: 'Core/Avatars/AvatarIcon',
     component: AvatarIcon,
     parameters: {
         design: {

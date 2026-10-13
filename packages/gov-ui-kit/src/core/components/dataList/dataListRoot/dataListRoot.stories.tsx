@@ -7,7 +7,7 @@ import { DataList, type IDataListContainerProps, type IDataListRootProps } from 
 import type { DataListState } from './dataListRoot';
 
 const meta: Meta<typeof DataList.Root> = {
-    title: 'Core/Components/DataList/DataList.Root',
+    title: 'Core/DataList/DataList.Root',
     component: DataList.Root,
     parameters: {
         design: {

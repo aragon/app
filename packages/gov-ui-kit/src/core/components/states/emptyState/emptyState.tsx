@@ -3,6 +3,14 @@ import { Button } from '../../button';
 import { IllustrationHuman, IllustrationObject } from '../../illustrations';
 import type { IEmptyStateProps } from './emptyState.api';
 
+/**
+ * Usage notes:
+ *
+ * - `primaryButton` renders in both stacked and horizontal layouts; `isStacked` changes the surrounding layout and
+ *   button sizes, not whether the action exists.
+ * - Choose the mutually exclusive `humanIllustration` (with required `body`/`expression`) or `objectIllustration`
+ *   (with `object`) shape; these values use exported TypeScript literal unions, not runtime enum objects.
+ */
 export const EmptyState: React.FC<IEmptyStateProps> = ({
     heading,
     description,

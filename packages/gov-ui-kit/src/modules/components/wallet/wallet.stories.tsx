@@ -1,13 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Wallet } from './wallet';
 
-/**
- * Our Wallet button implementation is intentionally minimal for full flexibility.
- * As a controlled component you can pass the user details and connectivity actions to the component.
- * This includes a global connected state, likely from your WAGMI provider.
- */
 const meta: Meta<typeof Wallet> = {
-    title: 'Modules/Components/Wallet/Wallet',
+    title: 'Modules/Wallet/Wallet',
     component: Wallet,
     parameters: {
         design: {

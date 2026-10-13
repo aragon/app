@@ -64,6 +64,21 @@ export interface IAddressInputProps
     hideControls?: boolean;
 }
 
+/**
+ * Usage notes:
+ *
+ * - The ENS/address toggle and paste controls call `onChange` with the replacement string, while clear calls it
+ *   with `undefined`; these updates are the controlled `value` channel, not `onAccept`.
+ * - When an unfocused valid address resolves to an ENS name, the component switches to ENS mode and invokes
+ *   `onChange` with that ENS name.
+ * - `onAccept` is withheld while either ENS lookup is fetching and runs only after those lookups settle, rather
+ *   than emitting a transient `undefined` during resolution.
+ * - With `enforceChecksum` (the default), a typed all-lowercase or all-uppercase address comes back through
+ *   `onChange` in checksum form. Only a mixed-case address with a wrong checksum shows the checksum alert, and
+ *   `onAccept` then receives `undefined`.
+ * - ENS names always resolve on mainnet, and only when the `GukModulesProvider` wagmi config includes mainnet with
+ *   an ENS universal resolver; otherwise ENS input is unsupported. `chainId` only picks the block-explorer link.
+ */
 export const AddressInput = forwardRef<HTMLTextAreaElement, IAddressInputProps>((props, ref) => {
     const {
         value = '',

@@ -24,6 +24,7 @@ const preview: Preview = {
                     ['Documentation'],
                     'Modules',
                     ['Documentation'],
+                    'Utilities',
                 ],
             },
         },

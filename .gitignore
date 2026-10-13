@@ -76,11 +76,3 @@ skills-lock.json
 .playwright-mcp
 .patches
 .omp
-
-# design-sync (claude.ai/design) — staged scripts, build output, machine state
-ds-bundle/
-.design-sync/.cache/
-.design-sync/learnings/
-.ds-sync/
-.design-sync/node_modules
-packages/gov-ui-kit/.design-sync-kit-styles.css
