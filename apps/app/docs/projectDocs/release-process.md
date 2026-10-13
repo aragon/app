@@ -144,7 +144,7 @@ Production will be rebuilt and deployed from the specified tag.
 ### What if the release is approved but new bugs are found?
 
 1. **Don't merge** the Release PR
-2. Create PR with fixes to release branch
+2. Create PR with fixes to release branch (no changeset needed — the release is already versioned)
 3. After fixes are merged — test on staging again
 4. Only then approve and merge the Release PR
 
