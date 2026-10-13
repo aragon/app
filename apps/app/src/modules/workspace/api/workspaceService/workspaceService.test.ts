@@ -149,6 +149,23 @@ describe('workspace service', () => {
             expect(getStoredWorkspaces()).toEqual({ first, second });
         });
 
+        it('rejects with a storage error when local storage rejects the write', async () => {
+            const setItemSpy = jest
+                .spyOn(Storage.prototype, 'setItem')
+                .mockImplementation(() => {
+                    throw new Error('QuotaExceededError');
+                });
+
+            await expect(
+                workspaceService.createWorkspace({ body: buildBody() }),
+            ).rejects.toMatchObject({
+                code: 'workspaceStorageError',
+                status: 500,
+            });
+
+            setItemSpy.mockRestore();
+        });
+
         it('does not seed the default workspace', async () => {
             const workspace = await workspaceService.createWorkspace({
                 body: buildBody(),
@@ -201,6 +218,29 @@ describe('workspace service', () => {
                 first: updated,
                 second,
             });
+        });
+
+        it('rejects with a storage error when local storage rejects the write', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const setItemSpy = jest
+                .spyOn(Storage.prototype, 'setItem')
+                .mockImplementation(() => {
+                    throw new Error('QuotaExceededError');
+                });
+
+            await expect(
+                workspaceService.updateWorkspace({
+                    urlParams: { id: created.id },
+                    body: buildBody({ name: 'Renamed' }),
+                }),
+            ).rejects.toMatchObject({
+                code: 'workspaceStorageError',
+                status: 500,
+            });
+
+            setItemSpy.mockRestore();
         });
 
         it('rejects with a not-found error for an unknown workspace', async () => {

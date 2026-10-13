@@ -75,14 +75,9 @@ class WorkspaceService {
             );
             const workspace: IWorkspace = { ...body, id };
 
-            const persistError = this.persistWorkspaces(
-                { ...workspaces, [id]: workspace },
-                id,
-            );
+            this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
 
-            return persistError != null
-                ? Promise.reject(persistError)
-                : Promise.resolve(workspace);
+            return Promise.resolve(workspace);
         } catch (error: unknown) {
             return Promise.reject(error);
         }
@@ -107,14 +102,9 @@ class WorkspaceService {
                 owner: currentWorkspace.owner,
             };
 
-            const persistError = this.persistWorkspaces(
-                { ...workspaces, [id]: workspace },
-                id,
-            );
+            this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
 
-            return persistError != null
-                ? Promise.reject(persistError)
-                : Promise.resolve(workspace);
+            return Promise.resolve(workspace);
         } catch (error: unknown) {
             return Promise.reject(error);
         }
@@ -132,14 +122,7 @@ class WorkspaceService {
 
         const defaultWorkspace = this.buildDefaultWorkspace();
         const seededWorkspaces = { [defaultWorkspace.id]: defaultWorkspace };
-        const persistError = this.persistWorkspaces(
-            seededWorkspaces,
-            defaultWorkspace.id,
-        );
-
-        if (persistError != null) {
-            throw persistError;
-        }
+        this.persistWorkspaces(seededWorkspaces, defaultWorkspace.id);
 
         return seededWorkspaces;
     };
@@ -190,6 +173,7 @@ class WorkspaceService {
      * Persists the given workspaces on local storage, replacing the stored ones.
      * @param workspaces - Every workspace of the registry.
      * @param id - ID of the workspace being written, used for the error message.
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when local storage rejects the write.
      */
     private persistWorkspaces = (
         workspaces: Record<string, IWorkspace>,
