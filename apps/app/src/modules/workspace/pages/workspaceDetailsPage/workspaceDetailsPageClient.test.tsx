@@ -157,7 +157,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             }),
         ).toHaveAttribute(
             'href',
-            `/workspace/${workspace.id}/edit?step=accounts`,
+            `/workspace/${workspace.id}/edit?step=ACCOUNTS`,
         );
     });
 

@@ -74,7 +74,7 @@ describe('<WorkspaceEditPage /> component', () => {
     it('opens the wizard on the step named by the step query parameter', async () => {
         render(
             await createTestComponent({
-                searchParams: Promise.resolve({ step: 'accounts' }),
+                searchParams: Promise.resolve({ step: 'ACCOUNTS' }),
             }),
         );
 

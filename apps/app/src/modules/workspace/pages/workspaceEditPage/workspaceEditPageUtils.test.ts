@@ -3,7 +3,6 @@ import {
     type IWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { WorkspaceWizardStep } from '../../components/workspaceWizard';
 import { workspaceEditPageUtils } from './workspaceEditPageUtils';
 
 describe('workspaceEditPage utils', () => {
@@ -73,30 +72,6 @@ describe('workspaceEditPage utils', () => {
                     url: expect.stringContaining('/ipfs/account-cid'),
                 },
             });
-        });
-    });
-
-    describe('resolveInitialStep', () => {
-        it('resolves the step named by the parameter, regardless of its case', () => {
-            expect(
-                workspaceEditPageUtils.resolveInitialStep('accounts'),
-            ).toEqual(WorkspaceWizardStep.ACCOUNTS);
-            expect(
-                workspaceEditPageUtils.resolveInitialStep('TARGETS'),
-            ).toEqual(WorkspaceWizardStep.TARGETS);
-        });
-
-        it('resolves no step when the parameter is missing, repeated or unknown', () => {
-            expect(workspaceEditPageUtils.resolveInitialStep()).toBeUndefined();
-            expect(
-                workspaceEditPageUtils.resolveInitialStep([
-                    'accounts',
-                    'targets',
-                ]),
-            ).toBeUndefined();
-            expect(
-                workspaceEditPageUtils.resolveInitialStep('unknown'),
-            ).toBeUndefined();
         });
     });
 });

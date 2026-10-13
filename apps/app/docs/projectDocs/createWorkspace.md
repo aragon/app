@@ -556,8 +556,9 @@ workspace holding no account.
 - Accounts are optional in both wizards (see [Accounts are optional](#accounts-are-optional)); an empty account
   list skips the account-type request.
 - Navigation is blocked while the form is dirty, as in every wizard.
-- `?step=<step>` (built by `workspaceUtils.getWorkspaceEditUrl`) opens the wizard on that step. The empty-accounts
-  button on the overview uses it to land on the accounts step; an unknown value opens the first step.
+- `?step=<step>` opens the wizard on that step, the `WorkspaceWizardStep` value as is (`?step=ACCOUNTS`).
+  `workspaceUtils.getWorkspaceEditUrl` writes it and `workspaceUtils.parseWorkspaceEditStep` reads it back; any
+  other value opens the first step. The empty-accounts button on the overview uses it to land on the accounts step.
 
 ## Feature flag
 

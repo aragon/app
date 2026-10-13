@@ -4,9 +4,11 @@ import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IPageSearchParams, IWorkspacePageParams } from '@/shared/types';
 import { WorkspaceGate } from '../../components/workspaceGate';
-import { workspaceEditStepParam } from '../../utils/workspaceUtils';
+import {
+    workspaceEditStepParam,
+    workspaceUtils,
+} from '../../utils/workspaceUtils';
 import { WorkspaceEditPageClient } from './workspaceEditPageClient';
-import { workspaceEditPageUtils } from './workspaceEditPageUtils';
 
 export interface IWorkspaceEditPageProps {
     /**
@@ -36,7 +38,7 @@ export const WorkspaceEditPage: React.FC<IWorkspaceEditPageProps> = async (
     }
 
     const { workspaceId } = await params;
-    const initialStep = workspaceEditPageUtils.resolveInitialStep(
+    const initialStep = workspaceUtils.parseWorkspaceEditStep(
         (await searchParams)?.[workspaceEditStepParam],
     );
 
