@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, Network } from '@/shared/api/daoService';
+import { featureFlags } from '@/shared/featureFlags';
 import {
     type ILayoutWorkspaceAccountProps,
     LayoutWorkspaceAccount,
@@ -29,13 +30,16 @@ describe('<LayoutWorkspaceAccount /> component', () => {
 
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
 
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue({});
+        isEnabledSpy.mockResolvedValue(true);
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
+        isEnabledSpy.mockReset();
         notFoundMock.mockClear();
     });
 
@@ -57,6 +61,17 @@ describe('<LayoutWorkspaceAccount /> component', () => {
         fetchQuerySpy.mock.calls.map(
             ([options]) => (options as { queryKey: unknown[] }).queryKey,
         );
+
+    // Nested layouts render in parallel, so the 404 of `LayoutWorkspace` above does not stop this one from running.
+    it('renders the 404 page without requesting the DAO when the workspaces flag is disabled', async () => {
+        isEnabledSpy.mockResolvedValue(false);
+
+        await expect(createTestComponent()).rejects.toThrow(
+            'NEXT_HTTP_ERROR_FALLBACK;404',
+        );
+        expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
+        expect(fetchQuerySpy).not.toHaveBeenCalled();
+    });
 
     it('renders the page below it', async () => {
         render(await createTestComponent());

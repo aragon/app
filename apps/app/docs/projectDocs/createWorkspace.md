@@ -605,24 +605,32 @@ The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/fe
 added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local`, `development` and `preview`; `false`
 by default, so staging and production are off — the registry is a `localStorage` mock, so it must not ship on.
 
-Three gates, one per entry point:
+Every route gate is the same server-side check — `await featureFlags.isEnabled('workspaces')`, else `notFound()`:
 
 | Entry point | Gate |
 | --- | --- |
-| `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
-| `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
+| `/create/workspace` | `LayoutWizardCreateWorkspace` and `createWorkspacePage` |
+| `/workspace/{workspaceId}/…` | `LayoutWorkspace` and every workspace page |
+| `/workspace/{workspaceId}/{accountId}/…` | `LayoutWorkspaceAccount`, on top of the above |
 | `/workspace/{workspaceId}/all/assets` and `/{accountId}/assets` | `workspaceAssetsPage` (server) — same, one page for both |
 | `/workspace/{workspaceId}/all/proposals` and `/{accountId}/proposals` | `workspaceProposalsPage` (server) — same, one page for both |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
 Notes:
 
-- `notFound()` must be imported from **`next/navigation-original`**, not `next/navigation`: the latter is aliased
-  to the client-hooks wrapper (`src/shared/lib/nextNavigation`), which cannot re-export server functions. See the
-  comment in `src/shared/utils/notFoundUtils/notFoundUtils.ts`.
-- The route gates are server-side, so a disabled feature is not reachable by typing the URL.
-- `/create/workspace` keeps its wizard layout around the 404 (the layout is a separate segment and still renders),
-  which leaves the user an exit button. Gate the layout too if that is not wanted.
+- The layouts are gated, not only the pages: a layout still renders around its page's 404, so with only the pages
+  gated a disabled feature would show the workspace navigation, the gate's error state and the wizard, and the
+  layouts would still prefetch from the backend. A 404 raised in `LayoutWorkspace` sits above
+  `workspace/[workspaceId]/not-found.tsx`, so it falls through to the root not-found page, without the workspace
+  navigation.
+- Nested layouts and pages render in parallel, so the 404 of a parent layout does not stop a child from running.
+  That is why `LayoutWorkspaceAccount` and the pages keep their own check. The flag snapshot is cached per request
+  (`React.cache`), so the repeated checks cost one read.
+- The redirects in `next.config.mjs` stay ungated — the flags are read at runtime, which the config cannot do — and
+  only fill in missing segments of URLs that now resolve to a 404.
+- `notFound()` must not be imported from `next/navigation`: that is aliased to the client-hooks wrapper
+  (`src/shared/lib/nextNavigation`), which cannot re-export server functions. See the comment in
+  `src/shared/utils/notFoundUtils/notFoundUtils.ts`.
 - `workspaceDialogsDefinitions` stays registered in `providersDialogs` unconditionally. The publish dialog can
   only be opened from the create wizard, which is itself gated, so registration alone exposes nothing.
 

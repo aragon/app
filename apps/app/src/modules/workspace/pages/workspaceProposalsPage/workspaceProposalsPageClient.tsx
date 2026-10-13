@@ -85,7 +85,8 @@ export const WorkspaceProposalsPageClient: React.FC<
             ? options.find((option) => option.account?.id === scopedAccount.id)
             : undefined;
 
-    const { daos } = useWorkspaceDaos(accountsToDisplay);
+    const { daos, isPending: isDaosPending } =
+        useWorkspaceDaos(accountsToDisplay);
 
     // The single reader of the selection: the list renders the tabs and owns the URL parameter, while the aside
     // card is handed the selected tab from here, so the two cannot describe different tabs.
@@ -177,7 +178,7 @@ export const WorkspaceProposalsPageClient: React.FC<
     return (
         <Page.Content>
             <Page.Main
-                action={action}
+                action={isDaosPending ? undefined : action}
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
                 <WorkspaceProposalList
