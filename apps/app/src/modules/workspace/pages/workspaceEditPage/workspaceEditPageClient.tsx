@@ -24,9 +24,7 @@ export interface IWorkspaceEditPageClientProps {
 }
 
 /**
- * Edit-workspace wizard, filled in from the stored workspace. It owns no loading or error state: `WorkspaceGate`
- * renders the page only once the workspace has resolved, so the query below is served from the cache the gate has
- * already filled and the form default values, read on mount, are always those of the workspace.
+ * Edit-workspace wizard, filled in from the stored workspace, which `WorkspaceGate` has loaded before this renders.
  */
 export const WorkspaceEditPageClient: React.FC<
     IWorkspaceEditPageClientProps

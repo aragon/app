@@ -17,8 +17,7 @@ export interface IWorkspaceWizardStepperStep extends IWizardStepperStep {
 }
 
 /**
- * Builds the steps of a workspace wizard, in the order the enum declares them. Targets are entered before accounts
- * so that accounts discovered from the targets can be offered on the accounts step later on.
+ * Builds the steps of a workspace wizard, in the order the enum declares them.
  * @param translationNamespace - Namespace of the wizard translations, e.g. `app.workspace.createWorkspacePage`.
  * @returns The steps, their `meta.name` being the untranslated key of the step name.
  */

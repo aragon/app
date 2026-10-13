@@ -84,7 +84,6 @@ export const createWorkspaceFormDefaultValues: Pick<
 > = {
     // Targets are optional, therefore the list starts empty.
     targets: [],
-    // Accounts are optional, but adding one is what most new workspaces start with, so the list starts with one
-    // removable row to make that the obvious path.
+    // Accounts are optional; one removable row makes adding one the obvious path.
     accounts: [createWorkspaceFormEmptyNetworkAddress],
 };

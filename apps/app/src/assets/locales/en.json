@@ -4293,7 +4293,6 @@
         }
       },
       "createWorkspacePage": {
-        "finalStep": "Create workspace",
         "steps": {
           "ACCOUNTS": {
             "description": "Add the accounts belonging to this workspace. Each one is identified by its network and address. This step is optional and accounts can be added later.",
@@ -4524,7 +4523,6 @@
         "edit": "Edit workspace"
       },
       "workspaceEditPage": {
-        "finalStep": "Save changes",
         "steps": {
           "ACCOUNTS": {
             "description": "Add or remove the accounts belonging to this workspace. Each one is identified by its network and address.",

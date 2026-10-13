@@ -116,7 +116,6 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         label: t(
                                             'app.workspace.workspaceDetailsPage.emptyAccounts.action',
                                         ),
-                                        // Opens the wizard straight on the step the button names.
                                         href: workspaceUtils.getWorkspaceEditUrl(
                                             workspaceId,
                                             WorkspaceWizardStep.ACCOUNTS,

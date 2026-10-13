@@ -14,8 +14,7 @@ import type {
 export const workspaceStorageKey = 'aragon-workspaces';
 
 /**
- * Name of the workspace seeded on an empty registry. It is stored data the user can rename, not UI copy, so it is
- * not translated.
+ * Name of the workspace seeded on an empty registry. Stored data the user can rename, so not translated.
  */
 export const defaultWorkspaceName = 'My workspace';
 
@@ -29,8 +28,7 @@ export const defaultWorkspaceName = 'My workspace';
  * Local storage is only available on the client, therefore every method rejects when called on the server. This is
  * why the workspace pages must not prefetch workspaces (see `docs/projectDocs/createWorkspace.md`).
  *
- * The registry always holds at least one workspace: the reads seed a default one when it is empty, so that every
- * consumer has a workspace to fall back to.
+ * The reads seed a default workspace when the registry is empty (see `createWorkspace.md` → Registry).
  */
 class WorkspaceService {
     getWorkspace = async (params: IGetWorkspaceParams): Promise<IWorkspace> => {
@@ -60,7 +58,7 @@ class WorkspaceService {
         );
         const workspace: IWorkspace = { ...body, id };
 
-        this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
+        this.persistWorkspaces({ ...workspaces, [id]: workspace });
 
         return workspace;
     };
@@ -79,17 +77,14 @@ class WorkspaceService {
 
         const workspace: IWorkspace = { ...body, id };
 
-        this.persistWorkspaces({ ...workspaces, [id]: workspace }, id);
+        this.persistWorkspaces({ ...workspaces, [id]: workspace });
 
         return workspace;
     };
 
     /**
-     * Returns the workspaces persisted on local storage, seeding the default workspace when there is none.
-     *
-     * Unreadable storage reads as empty (see `getStoredWorkspaces`), so seeding overwrites it, as `createWorkspace`
-     * already does. Accepted while the registry is a local stand-in: the service only ever writes valid JSON, so such
-     * data can only come from outside the app, and it is unusable either way.
+     * Returns the workspaces persisted on local storage, seeding the default workspace when there is none. Unreadable
+     * storage reads as empty and is overwritten (see `createWorkspace.md` → Registry).
      */
     private getStoredWorkspacesOrDefault = (): Record<string, IWorkspace> => {
         const workspaces = this.getStoredWorkspaces();
@@ -100,16 +95,14 @@ class WorkspaceService {
 
         const defaultWorkspace = this.buildDefaultWorkspace();
         const seededWorkspaces = { [defaultWorkspace.id]: defaultWorkspace };
-        this.persistWorkspaces(seededWorkspaces, defaultWorkspace.id);
+        this.persistWorkspaces(seededWorkspaces);
 
         return seededWorkspaces;
     };
 
     /**
-     * Builds the workspace seeded on an empty registry, with no accounts and no targets.
-     *
-     * Its ID carries a random suffix: every user gets a default workspace, so a plain slug would be the same for all
-     * of them and a link shared from one default workspace would silently open the recipient's own.
+     * Builds the workspace seeded on an empty registry. Its ID gets a random suffix so default workspaces of
+     * different users never share one.
      */
     private buildDefaultWorkspace = (): IWorkspace => ({
         id: `${workspaceUtils.slugify(defaultWorkspaceName)}-${crypto.randomUUID().slice(0, 8)}`,
@@ -149,28 +142,24 @@ class WorkspaceService {
     /**
      * Persists the given workspaces on local storage, replacing the stored ones.
      * @param workspaces - Every workspace of the registry.
-     * @param id - ID of the workspace being written, used for the error message.
      * @throws {AragonBackendServiceError} `workspaceStorageError` when local storage rejects the write.
      */
-    private persistWorkspaces = (
-        workspaces: Record<string, IWorkspace>,
-        id: string,
-    ) => {
+    private persistWorkspaces = (workspaces: Record<string, IWorkspace>) => {
         try {
             localStorage.setItem(
                 workspaceStorageKey,
                 JSON.stringify(workspaces),
             );
         } catch (error: unknown) {
-            throw this.buildStorageError(id, error);
+            throw this.buildStorageError(error);
         }
     };
 
     // `AragonBackendServiceError` takes no `cause`, so the original error is kept in the description instead.
-    private buildStorageError = (id: string, error: unknown) =>
+    private buildStorageError = (error: unknown) =>
         new AragonBackendServiceError(
             'workspaceStorageError',
-            `Unable to persist the workspace (id=${id}, error=${String(error)})`,
+            `Unable to persist the workspace registry (error=${String(error)})`,
             500,
         );
 

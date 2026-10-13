@@ -7,8 +7,7 @@ export const workspaceDialogsDefinitions: Record<
     WorkspaceDialogId,
     IDialogComponentDefinitions
 > = {
-    // Not `requiresWallet`: workspaces are stored locally, so creating or updating one involves no wallet (see
-    // `docs/projectDocs/createWorkspace.md` → Ownership).
+    // Not `requiresWallet`: workspaces are stored locally (see `createWorkspace.md` → Ownership).
     [WorkspaceDialogId.PUBLISH_WORKSPACE]: {
         Component: PublishWorkspaceDialog,
     },

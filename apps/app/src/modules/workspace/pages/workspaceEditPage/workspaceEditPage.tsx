@@ -22,11 +22,8 @@ export interface IWorkspaceEditPageProps {
 }
 
 /**
- * Edits the metadata, targets and accounts of a workspace through the steps of the create-workspace wizard.
- *
- * Nothing is prefetched: the page edits the workspace itself, which only exists in the local-storage registry and is
- * therefore resolved on the client (see `docs/projectDocs/createWorkspace.md`). The page sits under the wizard layout
- * rather than `LayoutWorkspace`, so it renders the `WorkspaceGate` that layout would otherwise provide.
+ * Edits a workspace with the workspace wizard. It sits outside `LayoutWorkspace`, so it renders its own
+ * `WorkspaceGate` (see `createWorkspace.md` → Edit workspace).
  */
 export const WorkspaceEditPage: React.FC<IWorkspaceEditPageProps> = async (
     props,

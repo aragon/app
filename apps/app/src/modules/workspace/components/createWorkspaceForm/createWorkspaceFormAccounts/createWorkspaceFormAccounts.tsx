@@ -37,8 +37,7 @@ export const CreateWorkspaceFormAccounts: React.FC<
             name: accountsFieldName,
         });
 
-    // The create wizard starts with one row from its default values, see `createWorkspaceFormDefaultValues`. Accounts
-    // are optional, so every row can be removed.
+    // Accounts are optional, so every row can be removed.
     const handleAddAccount = () =>
         append(createWorkspaceFormEmptyNetworkAddress);
 

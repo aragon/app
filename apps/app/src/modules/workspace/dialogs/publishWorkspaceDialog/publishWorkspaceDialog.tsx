@@ -24,7 +24,10 @@ import {
     useUpdateWorkspace,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
-import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
+import type {
+    ICreateWorkspaceFormAccount,
+    ICreateWorkspaceFormData,
+} from '../../components/createWorkspaceForm';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -57,10 +60,10 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         'PublishWorkspaceDialog: required parameters must be set.',
     );
 
-    const { values, workspaceId: updatedWorkspaceId } = location.params;
+    const { values, workspaceId } = location.params;
     const { name, description, avatar, accounts, targets } = values;
 
-    const isUpdate = updatedWorkspaceId != null;
+    const isUpdate = workspaceId != null;
     const mode = isUpdate ? 'update' : 'create';
 
     const { t } = useTranslations();
@@ -68,11 +71,14 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     const { setIsBlocked } = useBlockNavigationContext();
 
     const [status, setStatus] = useState<PublishWorkspaceStatus>('idle');
-    const [workspaceId, setWorkspaceId] = useState<string>();
 
     const { mutateAsync: pinFile } = usePinFile();
-    const { mutateAsync: createWorkspace } = useCreateWorkspace();
+    const { mutateAsync: createWorkspace, data: createdWorkspace } =
+        useCreateWorkspace();
     const { mutateAsync: updateWorkspace } = useUpdateWorkspace();
+
+    // An update keeps the ID of the workspace, a creation gets one assigned by the registry.
+    const savedWorkspaceId = workspaceId ?? createdWorkspace?.id;
     const queryClient = useQueryClient();
 
     // A newly selected file is pinned, while an avatar carried over from the stored workspace keeps its URI.
@@ -86,28 +92,29 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         return value?.url != null ? ipfsUtils.srcToUri(value.url) : undefined;
     };
 
+    // Resolves the type of every account in one call, the authoritative read right before the workspace is stored.
+    const resolveAccountInfos = async (
+        formAccounts: ICreateWorkspaceFormAccount[],
+    ) => {
+        if (formAccounts.length === 0) {
+            return [];
+        }
+
+        const accountRefs = formAccounts.map(({ network, address }) => ({
+            network,
+            address,
+        }));
+
+        return await queryClient.fetchQuery(
+            workspaceAccountsOptions({ body: { accounts: accountRefs } }),
+        );
+    };
+
     const handlePublishWorkspace = async () => {
         setStatus('pending');
 
         try {
-            // Resolve the type of every account in one call. The rows were resolved individually during validation,
-            // so this is the authoritative read right before the workspace is stored. A workspace may hold no
-            // account at all when updated, in which case there is nothing to resolve.
-            const accountInfos =
-                accounts.length > 0
-                    ? await queryClient.fetchQuery(
-                          workspaceAccountsOptions({
-                              body: {
-                                  accounts: accounts.map(
-                                      ({ network, address }) => ({
-                                          network,
-                                          address,
-                                      }),
-                                  ),
-                              },
-                          }),
-                      )
-                    : [];
+            const accountInfos = await resolveAccountInfos(accounts);
 
             const avatarUri = await resolveAvatarUri(avatar);
             const accountAvatars =
@@ -126,7 +133,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
             });
             const workspace = isUpdate
                 ? await updateWorkspace({
-                      urlParams: { id: updatedWorkspaceId },
+                      urlParams: { id: workspaceId },
                       body,
                   })
                 : await createWorkspace({ body });
@@ -142,7 +149,6 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                 }),
             ]);
 
-            setWorkspaceId(workspace.id);
             setStatus('success');
         } catch {
             setStatus('error');
@@ -164,7 +170,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         ? {
               label: t('app.workspace.publishWorkspaceDialog.button.success'),
               href: workspaceUtils.getAccountScopeUrl(
-                  workspaceId!,
+                  savedWorkspaceId!,
                   workspaceAllAccountsSegment,
                   'overview',
               ),

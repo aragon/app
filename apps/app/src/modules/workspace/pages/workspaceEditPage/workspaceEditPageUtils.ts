@@ -53,8 +53,7 @@ class WorkspaceEditPageUtils {
     };
 
     /**
-     * Builds the avatar input value of a stored avatar. It carries the URL alone, no file, which is what tells the
-     * publish dialog to keep the stored avatar rather than pin a new one.
+     * Builds the input value of a stored avatar: a URL with no file, so the publish dialog keeps it instead of pinning.
      */
     private buildAvatarValue = (
         avatar?: string | null,

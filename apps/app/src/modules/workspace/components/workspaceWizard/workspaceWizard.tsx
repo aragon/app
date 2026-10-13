@@ -16,8 +16,8 @@ import {
 
 export interface IWorkspaceWizardProps {
     /**
-     * Namespace of the wizard translations, holding `steps.{step}.{name,title,description}`, `finalStep` and
-     * `submitLabel`, e.g. `app.workspace.createWorkspacePage`.
+     * Namespace of the wizard translations, holding `steps.{step}.{name,title,description}` and `submitLabel`, e.g.
+     * `app.workspace.createWorkspacePage`.
      */
     translationNamespace: string;
     /**
@@ -68,6 +68,9 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
         [translationNamespace, t],
     );
 
+    // The final step is named after the submit action.
+    const submitLabel = t(`${translationNamespace}.submitLabel`);
+
     const handleSubmit = (values: ICreateWorkspaceFormData) => {
         plausibleAnalyticsUtils.track('wizard_submit', {
             flow: analyticsFlow,
@@ -82,11 +85,11 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
         <WizardPage.Container
             analytics={{ flow: analyticsFlow }}
             defaultValues={defaultValues}
-            finalStep={t(`${translationNamespace}.finalStep`)}
+            finalStep={submitLabel}
             initialActiveStep={initialActiveStep}
             initialSteps={steps}
             onSubmit={handleSubmit}
-            submitLabel={t(`${translationNamespace}.submitLabel`)}
+            submitLabel={submitLabel}
         >
             {steps.map((step) => (
                 <WizardPage.Step

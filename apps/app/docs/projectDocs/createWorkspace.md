@@ -91,11 +91,8 @@ Route `/create/workspace`, three steps:
 | 1     | `TARGETS`  | repeatable `{ network, address }` rows, may be empty            |
 | 2     | `ACCOUNTS` | repeatable `{ network, address, metadata? }` rows, optional |
 
-The wizard is `WorkspaceWizard` (`components/workspaceWizard/`), shared by the create and the edit flows. Its
-`WorkspaceWizardStep` enum fixes the steps and their order, and `buildWorkspaceWizardSteps(translationNamespace)`
-names them from the copy of the calling page — the only thing, with the default values, the submit action, the
-analytics flow and the step to open on, that differs between the two flows. Adding a step or a field is one change
-there. The page clients only render it inside `Page.Main` and open the publish dialog on submit.
+Both flows render `WorkspaceWizard` (`components/workspaceWizard/`); `WorkspaceWizardStep` fixes the steps, and each
+page passes its translation namespace, default values and submit action.
 
 Metadata is step 0 because naming the thing first reads as a creation flow and leaves the first screen as a text
 field rather than an address row. Targets precede Accounts for the discovery reason above.
@@ -158,16 +155,6 @@ Account rows additionally have a **collapsible metadata block** toggled by a but
 When any metadata field is filled, `metadata.name` is required (1096 types `name` as non-optional inside the
 block).
 
-### Accounts are optional
-
-A workspace may hold no account, in both the create and the edit wizard. Requiring one only at creation was a nudge,
-not an invariant: the edit wizard can remove the last account, the default workspace starts empty, workspaces are
-meant to grow by adding accounts (including from shared links), and accounts may later be discovered from targets.
-Every page already handles an empty workspace — lists skip their queries, the overview offers to add accounts.
-
-The create wizard still starts with one removable row, since adding an account is what most new workspaces begin
-with. The edit wizard shows the stored accounts as they are, so an empty workspace opens with no row.
-
 ### Validation
 
 - Addresses: format (`addressUtils.isAddress` plus `AddressInput`'s ENS resolution), then — **for accounts only** —
@@ -177,8 +164,7 @@ with. The edit wizard shows the stored accounts as they are, so an empty workspa
   target and an account. Same address on different networks is legal.
 - Changing a row's network re-triggers validation of that row's address field (`useFormContext().trigger`),
   otherwise a duplicate created by switching networks would slip through `mode: 'onTouched'`.
-- Accounts may be empty but start with one removable row; Targets may be empty and start empty. See
-  [Accounts are optional](#accounts-are-optional).
+- Accounts and Targets are both optional. Accounts start with one removable row, Targets start empty.
 - New rows default to `Network.ETHEREUM_SEPOLIA`, matching `createDaoFormNetwork`'s default.
 
 ## Shared `NetworkInput`
@@ -202,16 +188,13 @@ by `networkDefinitions[network].order`. Testnets are included and tagged, becaus
 
 ## Submit
 
-`createWorkspacePageClient.handleFormSubmit` tracks `wizard_submit` with `plausibleAnalyticsUtils`, then opens
-`WorkspaceDialogId.PUBLISH_WORKSPACE` with the form values. No wallet is needed and the dialog is not
-`requiresWallet` — see [Ownership](#ownership).
+Submitting opens `WorkspaceDialogId.PUBLISH_WORKSPACE` with the form values (`WorkspaceWizard` tracks
+`wizard_submit`).
 
 ### Ownership
 
-Workspaces have no owner, and creating or editing one needs no wallet. While the registry lives in `localStorage`,
-an owner would be written by the client and never verified, so it would protect nothing. Ownership belongs to the
-future registry: a workspace stays a local draft until it is published, and the registry then records and enforces
-who may edit it (see `workspaceAccess.md`).
+Workspaces have no owner and need no wallet: a client-written owner would protect nothing while the registry is
+local. Ownership belongs to the future registry, on publish (see `workspaceAccess.md`).
 
 `publishWorkspaceDialog` is **not** a `TransactionDialog` — there is no transaction. It is a plain gov-ui-kit
 `Dialog.Header` / `Dialog.Content` / `Dialog.Footer` with local `status` state (`idle | pending | error |
@@ -250,11 +233,9 @@ local storage for real requests is a single-method change:
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
 
-**The registry always holds at least one workspace.** `getWorkspace` and `getWorkspaceList` seed a default
-workspace when the registry is empty — "My workspace", no accounts and no targets. Its name is stored data the user can rename, so it is not translated. Its ID is the slug plus a random
-suffix (`my-workspace-1a2b3c4d`): every user gets one, and a plain `my-workspace` would make a link shared from one
-default workspace silently open the recipient's own. `createWorkspace` does not seed, so a user whose first
-workspace comes from the wizard gets that one alone.
+The reads seed an empty "My workspace" when the registry is empty (`createWorkspace` does not). Its ID gets a random
+suffix (`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage
+reads as empty and is overwritten by the seed — acceptable, as only outside tampering can produce it.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -309,9 +290,7 @@ src/app/workspace/[workspaceId]/
    └─ page.tsx                WorkspaceEditPage
 ```
 
-The route group mirrors the DAO routes, where the pages with the DAO navigation sit in `(daoPage)` and the wizards
-(`create/execute`, …) sit beside it under a wizard layout. A group adds no URL segment, so it only decides which
-layout a page renders under.
+The route group, as with `(daoPage)`, only decides the layout: `edit/` sits outside it to get the wizard layout.
 
 Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
 it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
@@ -541,24 +520,14 @@ the account.
 
 ## Edit workspace
 
-`/workspace/{workspaceId}/edit` edits a workspace with the same `WorkspaceWizard` as the create flow, under `LayoutWizardEditWorkspace`, whose exit leads back
-to the aggregated overview. It opens from the workspace selector ("Edit workspace") and from the overview of a
-workspace holding no account.
+`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the workspace
+selector or the empty-accounts state of the overview.
 
-- The page sits outside `(workspacePage)`, so it does not get `LayoutWorkspace`'s `WorkspaceGate` and renders one
-  itself. The wizard reads its default values on mount, which the gate guarantees are the stored workspace.
-
-- `workspaceEditPageUtils.buildFormValues` is the inverse of `publishWorkspaceDialogUtils.buildWorkspace`. A stored
-  avatar becomes an input value carrying a URL and no file.
-- Submitting opens `PublishWorkspaceDialog` in update mode (`workspaceId` param). Like creating, it needs no wallet
-  (see [Ownership](#ownership)). The dialog runs the create pipeline — resolve account types, pin avatars, build the body — but
-  only pins a *new* file: an avatar with a URL and no file keeps its stored URI.
-- Accounts are optional in both wizards (see [Accounts are optional](#accounts-are-optional)); an empty account
-  list skips the account-type request.
-- Navigation is blocked while the form is dirty, as in every wizard.
-- `?step=<step>` opens the wizard on that step, the `WorkspaceWizardStep` value as is (`?step=ACCOUNTS`).
-  `workspaceUtils.getWorkspaceEditUrl` writes it and `workspaceUtils.parseWorkspaceEditStep` reads it back; any
-  other value opens the first step. The empty-accounts button on the overview uses it to land on the accounts step.
+- Outside `(workspacePage)`, so it renders its own `WorkspaceGate`; the wizard reads its default values
+  (`workspaceEditPageUtils.buildFormValues`) on mount.
+- Submitting opens `PublishWorkspaceDialog` with a `workspaceId`. A stored avatar comes back as a URL with no file
+  and keeps its URI instead of being pinned again.
+- `?step=ACCOUNTS` opens a given step (`workspaceUtils.getWorkspaceEditUrl` / `parseWorkspaceEditStep`).
 
 ## Feature flag
 
@@ -764,5 +733,4 @@ Keep it that way when extending this.
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show
   different numbers for one DAO; the shared normaliser only removes the client-side source of drift.
-- Workspaces cannot be deleted, and anyone on the device can edit any of them — by design until a registry
-  enforces ownership (see [Ownership](#ownership)).
+- Workspaces cannot be deleted.
