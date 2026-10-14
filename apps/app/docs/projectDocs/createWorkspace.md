@@ -478,7 +478,7 @@ Four questions look like one and are not. Keeping them apart is what the predica
 
 | Question | Predicate | Where |
 | --- | --- | --- |
-| Would the row tag and the tab label repeat themselves? | one account in view | `workspaceProposalListDefault`, `useWorkspaceProposalTabs` |
+| Would the row tag and the tab label repeat themselves? | one account contributing them | `workspaceProposalListDefault`, `useWorkspaceProposalTabs`, `workspaceMemberList` |
 | How does the page present itself in its empty and error copy? | the route names an account (`isAccountScoped`) | `useWorkspaceProposalListData` |
 | What does the aside card describe? | the process the list is narrowed to, else the scope | `useWorkspaceProposalTabs`, `workspaceProposalsAsideCard` |
 | Is there exactly one DAO to subscribe to? | the DAO of a selected process, else the only account in view | `workspaceProposalsPageClient` |
@@ -516,6 +516,11 @@ exactly that process's proposals, so the card is accurate about what is on scree
 claims to be. Across several accounts the list keeps aggregating all of them unfiltered, so a lone visible process
 would describe only part of the screen: `activeTab` stays undefined there and the scope's own card stands.
 
+That only holds while the single account in view holds the single process. Across several accounts the list keeps
+aggregating all of them unfiltered, so one visible process describes only part of what is on screen and the
+aggregated card stands instead. `useWorkspaceMemberTabs` needs no such guard: a lone body earns a strip as soon as
+another account contributes members, so reaching its no-strip branch already means one account and one body.
+
 Three decisions worth keeping:
 
 - **The embedded `dao` is not an `IDao`.** The backend's `daoInfo` projection carries only `{ address, name,
@@ -539,7 +544,8 @@ scope, since a process tab names one account whether or not the route does:
 
 - `WorkspaceProcessProposalsAsideCard` — a process is selected. `DaoPluginInfo` on the tab's account, which is
   already a DAO ID.
-- `WorkspaceDaoProposalsAsideCard` — the route names a DAO account. The DAO page's `ProposalListStats`, read off
+- `WorkspaceDaoProposalsAsideCard` — the route names a DAO account and more than one process is in view. The DAO
+  page's `ProposalListStats`, read off
   the DAO's own endpoints, which is where the stats the aggregated card has to omit come from. It costs two
   requests of its own, so an account scope makes three proposal requests where the DAO page makes two: there the
   stats share the list's query key, which cannot happen across two endpoints. It runs **without** `onlyActive`,
@@ -584,6 +590,30 @@ Both proposals lists link into it. `workspaceProposalListDefault` builds
 the DAO pages are unaffected. The account comes from the proposal's own DAO, so a row of the aggregated list enters
 the scope of the account it belongs to rather than staying under `all`. A proposal whose plugin cannot be resolved
 has no slug, so it gets no href and the row renders unlinked.
+
+### Members page
+
+`/workspace/{workspaceId}/all/members` is the only route this page serves: the account-scoped one renders the DAO
+members page instead (`WorkspaceAccountMembersPage`), an account ID being a DAO ID. Safe accounts take part here,
+unlike proposals — their owners are members of the workspace — so the accounts in view are all of them, not just
+the DAOs.
+
+`useWorkspaceMemberTabs` is the counterpart of `useWorkspaceProposalTabs` and follows the same rules: one tab per
+visible body of every account, read by the list that renders the strip and by the page that hands the selected tab
+to the aside, derived from the URL alone so no two readers can disagree, with the list's `PluginFilterComponent`
+the single writer of `?members=`. Sub-plugins are included, as `DaoMemberListContainer` does: a body nested in a
+process holds members of its own. The strip's threshold differs from the proposals one — a single body earns a
+strip when another account contributes members without a tab (a Safe, an unreadable DAO, one whose bodies are all
+hidden), because the group tab then shows more than the lone body tab does.
+
+`WorkspaceMembersAsideCard` dispatches like its proposals equivalent, a selected body winning over the aggregate:
+
+- `WorkspaceBodyMembersAsideCard` — a body is selected, or a single body covers the whole list. `DaoPluginInfo`
+  with `type=BODY` on the tab's account, the swap `daoMembersPageClient` makes. That page also renders a `GOVERNANCE_MEMBER_PANEL` slot component below the
+  card; it is left out here, those panels being plugin-specific and written for the DAO page's own context.
+- `WorkspaceAllMembersAsideCard` — anything else. Total and account count, out of the response it shares with the
+  list. The total reads as a lower bound (`12+`) when the response is `partial`, since an unread account's members
+  are missing from it and the list flags the same gap.
 
 ### Overview page
 
