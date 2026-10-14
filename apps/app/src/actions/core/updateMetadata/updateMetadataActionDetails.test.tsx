@@ -209,6 +209,95 @@ describe('<UpdateMetadataActionDetails /> component', () => {
         expect(screen.getByText('Existing name')).toBeInTheDocument();
     });
 
+    it('renders DAO metadata with missing fields', async () => {
+        const action = {
+            ...generateProposalActionUpdateMetadata(),
+            proposedMetadata: { name: 'Proposed name' },
+            existingMetadata: {},
+        } as unknown as IProposalAction;
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        expect(screen.getByText('Proposed name')).toBeInTheDocument();
+        expect(screen.getByText(copyKey('logoTerm'))).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(cidToSrcSpy).toHaveBeenLastCalledWith(undefined);
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+
+        expect(screen.queryByText('Proposed name')).not.toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    });
+
+    it('renders the process key term with an empty value when only the existing plugin metadata has a process key', async () => {
+        const action = generateProposalActionUpdatePluginMetadata({
+            proposedMetadata: { name: 'Core' },
+            existingMetadata: { name: 'Core', processKey: 'COR' },
+        });
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        expect(screen.getByText(copyKey('processKeyTerm'))).toBeInTheDocument();
+        expect(screen.queryByText('COR')).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+
+        expect(screen.getByText('COR')).toBeInTheDocument();
+    });
+
+    it('renders the link URL when a link has no name', () => {
+        const action = generateProposalActionUpdateMetadata({
+            proposedMetadata: {
+                name: 'Proposed name',
+                description: 'Proposed description',
+                links: [{ name: '', url: 'https://unnamed.com' }],
+            },
+        });
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        expect(screen.getByRole('link')).toHaveAttribute(
+            'href',
+            'https://unnamed.com',
+        );
+        expect(screen.getByText('https://unnamed.com')).toBeInTheDocument();
+    });
+
+    it('renders every link when links share the same URL', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error');
+        const action = generateProposalActionUpdateMetadata({
+            proposedMetadata: {
+                name: 'Proposed name',
+                description: 'Proposed description',
+                links: [
+                    { name: 'Website', url: 'https://same.com' },
+                    { name: 'Docs', url: 'https://same.com' },
+                ],
+            },
+            existingMetadata: {
+                name: 'Existing name',
+                description: 'Existing description',
+                links: [{ name: 'Website', url: 'https://same.com' }],
+            },
+        });
+
+        render(createTestComponent({ action: buildAction(action) }));
+
+        expect(screen.getAllByRole('link')).toHaveLength(2);
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+        expect(screen.getAllByRole('link')).toHaveLength(1);
+
+        await userEvent.click(screen.getByText(copyKey('proposedToggle')));
+        expect(screen.getAllByRole('link')).toHaveLength(2);
+
+        const duplicateKeyWarnings = consoleErrorSpy.mock.calls.filter(
+            ([message]) =>
+                typeof message === 'string' && message.includes('same key'),
+        );
+        expect(duplicateKeyWarnings).toHaveLength(0);
+    });
+
     it('renders empty fields when the action metadata is null', async () => {
         const action = {
             ...generateProposalActionUpdatePluginMetadata(),

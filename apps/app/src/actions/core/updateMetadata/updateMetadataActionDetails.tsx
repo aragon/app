@@ -147,8 +147,8 @@ export const UpdateMetadataActionDetails: React.FC<
                     )}
                 >
                     <ul>
-                        {metadataToDisplay.links?.map((link) => (
-                            <li key={link.url}>
+                        {metadataToDisplay.links?.map((link, index) => (
+                            <li key={`${link.url}-${index.toString()}`}>
                                 <Link
                                     href={link.url}
                                     isExternal={true}
