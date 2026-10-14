@@ -1,11 +1,17 @@
 import { GukModulesProvider, ProposalActions } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { initChangeSettingsActionViews } from '@/actions/core/changeSettings';
 import { initUpdateMetadataActionViews } from '@/actions/core/updateMetadata';
 import { initTokenActionViews } from '@/actions/token';
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateTokenActionTokenMint } from '@/plugins/tokenPlugin/testUtils';
 import {
+    type IProposalActionChangeSettings,
+    ProposalActionType,
+} from '../../api/governanceService';
+import {
+    generateProposalAction,
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
 } from '../../testUtils';
@@ -16,6 +22,7 @@ import {
 
 describe('<ProposalActionsItem /> component', () => {
     beforeAll(() => {
+        initChangeSettingsActionViews();
         initUpdateMetadataActionViews();
         initTokenActionViews();
     });
@@ -114,5 +121,33 @@ describe('<ProposalActionsItem /> component', () => {
         );
         expect(screen.getByText(/PDC/)).toBeInTheDocument();
         expect(screen.queryByText(/voting power/i)).not.toBeInTheDocument();
+    });
+
+    it('renders the registered settings view for normalized change-settings actions', async () => {
+        const action: IProposalActionChangeSettings = {
+            ...generateProposalAction(target),
+            type: ProposalActionType.CHANGE_SETTINGS,
+            proposedSettings: [
+                { term: 'Minimum approval', definition: '3 of 7 members' },
+            ],
+            existingSettings: [
+                { term: 'Minimum approval', definition: '1 of 7 members' },
+            ],
+        };
+
+        render(createTestComponent({ action }));
+        await userEvent.click(screen.getAllByRole('button')[0]);
+
+        expect(screen.getByText('Minimum approval')).toBeInTheDocument();
+        expect(screen.getByText('3 of 7 members')).toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByText(
+                'app.actions.core.changeSettingsActionDetails.existingToggle',
+            ),
+        );
+
+        expect(screen.getByText('1 of 7 members')).toBeInTheDocument();
+        expect(screen.queryByText('3 of 7 members')).not.toBeInTheDocument();
     });
 });
