@@ -7,8 +7,8 @@ import {
     type IGetWorkspaceAssetListParams,
     type IWorkspaceAsset,
     useWorkspaceAssetList,
-    WorkspaceCoverageStatus,
 } from '../../api/workspaceQueryService';
+import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
 
 /**
  * Reads the aggregated assets of a workspace and shapes them for a `DataList`, mirroring `useAssetListData` of the
@@ -37,9 +37,8 @@ export const useWorkspaceAssetListData = (
 
     // `unverified` is the permanent state of every non-indexed account, so only an actual read failure is worth
     // warning about — see `docs/projectDocs/createWorkspace.md`.
-    const unavailableAccounts = coverage.filter(
-        (item) => item.status === WorkspaceCoverageStatus.UNAVAILABLE,
-    );
+    const unavailableAccounts =
+        workspaceCoverageUtils.getUnreadableAccounts(coverage);
 
     const state = dataListUtils.queryToDataListState({
         status,
