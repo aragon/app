@@ -6,22 +6,8 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "d3cd9543aedac16b2d5540964c02bcfe52e85110",
-            "dirty": [
-                "packages/gov-ui-kit/src/modules/assets/copy/modulesCopy.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.api.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.testUtils.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx"
-            ],
+            "commit": "fa86b7f41c704052e9126c46e6da488937401d6e",
+            "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
                 "js": [
