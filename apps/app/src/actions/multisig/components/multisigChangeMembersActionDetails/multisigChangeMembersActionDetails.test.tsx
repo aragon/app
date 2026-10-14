@@ -1,3 +1,4 @@
+import * as GovUiKit from '@aragon/gov-ui-kit';
 import {
     addressUtils,
     ChainEntityType,
@@ -87,7 +88,7 @@ describe('<MultisigChangeMembersActionDetails /> component', () => {
         const members = [
             {
                 address: '0xceB69F6342eCE283b2F5c9088Ff249B5d0Ae66ea',
-                name: 'Coinbase Prime',
+                ens: 'Coinbase Prime',
             },
             { address: '0x97fb9274ac39bB275AC76f56390e6713A2C417D9' },
         ];
@@ -114,7 +115,7 @@ describe('<MultisigChangeMembersActionDetails /> component', () => {
         const members = [
             {
                 address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-                name: 'ensname.eth',
+                ens: 'ensname.eth',
             },
             { address: '0x8C8D7C46219D9205f056f28fee5950aD564d7465' },
         ];
@@ -135,6 +136,40 @@ describe('<MultisigChangeMembersActionDetails /> component', () => {
             screen.getByText(`${copyKey('removedCount')} (count=2)`),
         ).toBeInTheDocument();
         expect(screen.queryByText(copyKey('added'))).not.toBeInTheDocument();
+    });
+
+    it('passes the ENS name and avatar sent by the backend to each member item', () => {
+        const memberStructureSpy = jest
+            .spyOn(GovUiKit.MemberDataListItem, 'Structure')
+            .mockReturnValue(null);
+        const members = [
+            {
+                address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
+                ens: 'dzepina.eth',
+                avatar: 'https://avatar.com/dzepina.png',
+            },
+            { address: '0x97fb9274ac39bB275AC76f56390e6713A2C417D9' },
+        ];
+
+        render(createTestComponent({ action: buildAction({ members }) }));
+
+        expect(memberStructureSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                address: members[0].address,
+                ensName: 'dzepina.eth',
+                avatarSrc: 'https://avatar.com/dzepina.png',
+            }),
+            undefined,
+        );
+        expect(memberStructureSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                address: members[1].address,
+                ensName: undefined,
+                avatarSrc: undefined,
+            }),
+            undefined,
+        );
+        memberStructureSpy.mockRestore();
     });
 
     it('links each member to the block explorer of the given chain', () => {

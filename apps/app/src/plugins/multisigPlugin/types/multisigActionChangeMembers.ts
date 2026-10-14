@@ -1,6 +1,20 @@
-import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { MultisigProposalActionType } from './enum';
+
+export interface IMultisigActionChangeMembersMember {
+    /**
+     * The address of the member.
+     */
+    address: string;
+    /**
+     * The ENS name of the member.
+     */
+    ens?: string;
+    /**
+     * The avatar URL of the member.
+     */
+    avatar?: string;
+}
 
 export interface IMultisigActionChangeMembers extends IProposalAction {
     /**
@@ -12,7 +26,7 @@ export interface IMultisigActionChangeMembers extends IProposalAction {
     /**
      * The members added or removed by the action.
      */
-    members: ICompositeAddress[];
+    members: IMultisigActionChangeMembersMember[];
     /**
      * The number of members of the plugin when the proposal was created.
      */

@@ -42,9 +42,9 @@ export const MultisigChangeMembersActionDetails: React.FC<
                 {members.map((member) => (
                     <MemberDataListItem.Structure
                         address={member.address}
-                        avatarSrc={member.avatarSrc}
+                        avatarSrc={member.avatar}
                         className="grow basis-60"
-                        ensName={member.name}
+                        ensName={member.ens}
                         href={buildEntityUrl({
                             type: ChainEntityType.ADDRESS,
                             id: member.address,
