@@ -51,7 +51,9 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
 ) => {
     const { workspaceId, accounts, pageSize } = props;
 
-    const { filterTabs, hasTabs } = useWorkspaceMemberTabs({ accounts });
+    const { filterTabs, hasTabs, activeTab } = useWorkspaceMemberTabs({
+        accounts,
+    });
 
     // The plugins the rows are built from: the bodies to pick a membership from, and the processes to name the one
     // the chosen body acts through. The bodies are read as `useWorkspaceMemberTabs` reads them, sub-plugins and
@@ -95,8 +97,10 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
         />
     );
 
+    // The tabs are only rendered if there is more than one, otherwise
+    // the list is rendered directly with the filters
     if (!hasTabs) {
-        return renderList();
+        return renderList(activeTab?.props.filters);
     }
 
     return (

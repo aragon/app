@@ -57,8 +57,9 @@ export interface IUseWorkspaceMemberTabsResult {
      */
     hasTabs: boolean;
     /**
-     * Body the aside describes: the tab the URL names, or the only body in view when there is no strip to choose
-     * from. Undefined while the group tab is active, while the plugins load, and when no body is in view.
+     * Body the aside describes, and the one the list is narrowed to: the tab the URL names, or the only body in
+     * view when there is no strip to choose from. Undefined while the group tab is active, while the plugins load,
+     * and when no body is in view.
      */
     activeTab?: IWorkspaceMemberTab;
 }
@@ -172,9 +173,7 @@ export const useWorkspaceMemberTabs = (
             return pluginTabs.find((tab) => tab.uniqueId === requestedTab);
         }
 
-        // No strip to choose from, so the list shows only this one body: it is what the page is about, and the
-        // aside describes it, as the DAO members page does for a DAO with a single body. Reached only when no
-        // other account contributes members either — that is what would have earned the lone body a strip.
+        // No strip to choose from, so the list is narrowed to this one body
         return pluginTabs[0];
     };
 

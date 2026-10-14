@@ -375,6 +375,56 @@ describe('<WorkspaceMemberList /> component', () => {
         );
     });
 
+    it('narrows the request to the only visible body when the CMS hides its sibling', async () => {
+        const address = nextAddress();
+        const account = buildAccount(address);
+
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                id: account.id,
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xVisible',
+                        name: 'Visible',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                    generateDaoPlugin({
+                        address: '0xHidden',
+                        name: 'Hidden',
+                        isBody: true,
+                        interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                    }),
+                ],
+            }),
+        );
+        useDaoOverridesMock.mockReturnValue({
+            data: {
+                [account.id]: { pluginsToHide: [{ address: '0xHidden' }] },
+            },
+            isPending: false,
+        } as never);
+
+        render(createTestComponent({ accounts: [account] }));
+
+        await waitFor(() =>
+            expect(getMemberListSpy).toHaveBeenCalledWith({
+                body: {
+                    accounts: [{ network, address }],
+                    filters: { network, governanceAddress: '0xVisible' },
+                    pagination: { pageSize: 18 },
+                },
+            }),
+        );
+
+        // One body is left to pick, so the strip would offer no choice the list does not already show.
+        expect(
+            screen.queryByTestId('plugin-filter-mock'),
+        ).not.toBeInTheDocument();
+    });
+
     // `DaoMemberListContainer` lists them too: a body nested in a process holds members of its own, and it sits on
     // a selected account, so the endpoint returns them.
     it('includes the bodies nested inside a process', async () => {
