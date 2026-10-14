@@ -5,10 +5,10 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "5adb008a956cc73743fb0b7b0b8f05f7e986db46678eb0e94a7b39f708b367f5",
-            "totalRecords": 414,
-            "entryCount": 149,
-            "uiEntryCount": 142,
+            "sha256": "9bc27b46db0fad375b773ec1761dd62771d09076bbf413fc839403c580549d15",
+            "totalRecords": 408,
+            "entryCount": 148,
+            "uiEntryCount": 141,
             "utilityEntryCount": 7,
             "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
         },
@@ -2285,7 +2285,7 @@
                 "package": "@aragon/gov-ui-kit",
                 "name": "ProposalActions"
             },
-            "description": "Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionWithdrawToken/TokenMint/ChangeMembers/ChangeSettings/UpdateMetadata) are standalone exports.",
+            "description": "Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionTokenMint/ChangeMembers/ChangeSettings) are standalone exports.",
             "useWhen": [
                 "Reviewing decoded proposal actions",
                 "Composing/editing proposal action sets in create flows"
@@ -2456,28 +2456,6 @@
                 "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx:5",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx:1"
-                ]
-            }
-        },
-        {
-            "id": "govkit:ProposalActionUpdateMetadata",
-            "kind": "component",
-            "name": "ProposalActionUpdateMetadata",
-            "import": {
-                "package": "@aragon/gov-ui-kit",
-                "name": "ProposalActionUpdateMetadata"
-            },
-            "description": "ProposalActionUpdateMetadata: update-metadata action view of the ProposalActions compound (Compound decoded proposal-actions list).",
-            "useWhen": [],
-            "alternatives": [],
-            "keyProps": [],
-            "usageNotes": [],
-            "constraints": [],
-            "composition": [],
-            "references": {
-                "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx:7",
-                "stories": [
-                    "kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx:1"
                 ]
             }
         },
@@ -4285,11 +4263,9 @@
             "values": [
                 "ADD_MEMBERS",
                 "REMOVE_MEMBERS",
-                "UPDATE_METADATA",
                 "TOKEN_MINT",
                 "CHANGE_SETTINGS_MULTISIG",
-                "CHANGE_SETTINGS_TOKENVOTE",
-                "UPDATE_PLUGIN_METADATA"
+                "CHANGE_SETTINGS_TOKENVOTE"
             ],
             "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts:7"
         },
@@ -4298,7 +4274,7 @@
             "values": [
                 "RAW_CALLDATA"
             ],
-            "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts:21"
+            "source": "kit:src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts:19"
         },
         {
             "name": "ProposalStatus",

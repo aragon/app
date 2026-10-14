@@ -3,7 +3,6 @@ import {
     generateProposalActionChangeMembers,
     generateProposalActionChangeSettings,
     generateProposalActionTokenMint,
-    generateProposalActionUpdateMetadata,
 } from '../proposalActionsList';
 import { generateProposalAction } from '../proposalActionsTestUtils';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
@@ -37,25 +36,6 @@ describe('ProposalActions utils', () => {
         });
     });
 
-    describe('isUpdateMetadataAction', () => {
-        it('returns true for UPDATE_METADATA action', () => {
-            const action = generateProposalActionUpdateMetadata();
-            expect(proposalActionsItemUtils.isUpdateMetadataAction(action)).toBeTruthy();
-        });
-
-        it('returns true for UPDATE_PLUGIN_METADATA action', () => {
-            const action = generateProposalActionUpdateMetadata({
-                type: ProposalActionType.UPDATE_PLUGIN_METADATA,
-            });
-            expect(proposalActionsItemUtils.isUpdateMetadataAction(action)).toBeTruthy();
-        });
-
-        it('returns false for other actions', () => {
-            const action = generateProposalActionChangeMembers();
-            expect(proposalActionsItemUtils.isUpdateMetadataAction(action)).toBeFalsy();
-        });
-    });
-
     describe('isTokenMintAction', () => {
         it('returns true for token mint action', () => {
             const action = generateProposalActionTokenMint();
@@ -63,7 +43,7 @@ describe('ProposalActions utils', () => {
         });
 
         it('returns false for other actions', () => {
-            const action = generateProposalActionUpdateMetadata();
+            const action = generateProposalActionChangeMembers();
             expect(proposalActionsItemUtils.isTokenMintAction(action)).toBeFalsy();
         });
     });

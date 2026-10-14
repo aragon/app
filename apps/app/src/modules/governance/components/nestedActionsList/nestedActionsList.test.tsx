@@ -95,6 +95,56 @@ describe('<NestedActionsList /> component', () => {
         expect(items[1]).toHaveTextContent('Bar');
     });
 
+    it('renders the decoded sub-actions when the outer tuple holds positional [to, value, data] entries', () => {
+        // Shape returned by the backend for the `_actions` parameter (APP-1347): proposal ADMIN-7 of the Sepolia QA
+        // fixture DAO, a createProposal action wrapping a DAO setMetadata call.
+        const dao = '0x29f2Ae55E58bC08f72bBc2a96B320FF654CeE090';
+        const setMetadataData =
+            '0xee57e36f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000035697066733a2f2f516d5070654244674179724e626b417a7964704157796370594867366d7a4a696263756e763944657962467748360000000000000000000000';
+        const rawActions = [
+            generateAction({
+                type: 'MetadataUpdate',
+                from: dao,
+                to: dao,
+                data: setMetadataData,
+            }),
+        ];
+
+        render(
+            createTestComponent({
+                outerParams: outerParams([[dao, '0', setMetadataData]]),
+                rawActions,
+            }),
+        );
+
+        expect(screen.getByTestId('nested-item')).toHaveTextContent(
+            'MetadataUpdate',
+        );
+    });
+
+    it('falls back to raw-calldata stubs carrying the tuple calls when positional entries do not match', () => {
+        render(
+            createTestComponent({
+                outerParams: outerParams([[firstTarget, '5', '0xabcd']]),
+                rawActions: [generateAction({ type: 'Foo', to: secondTarget })],
+            }),
+        );
+
+        expect(screen.getByTestId('nested-item')).toHaveTextContent(
+            'RAW_CALLDATA',
+        );
+        expect(normalizeActionsSpy).toHaveBeenCalledWith(
+            [
+                expect.objectContaining({
+                    to: firstTarget,
+                    value: '5',
+                    data: '0xabcd',
+                }),
+            ],
+            expect.anything(),
+        );
+    });
+
     it('falls back to raw-calldata stubs when decoded length disagrees with the outer tuple', () => {
         render(
             createTestComponent({
