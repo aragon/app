@@ -3,7 +3,7 @@ import type {
     IProposalActionComponentProps,
     ProposalActionComponent,
 } from '../proposalActionsDefinitions';
-import { ProposalActionChangeMembers, ProposalActionChangeSettings } from '../proposalActionsList';
+import { ProposalActionChangeMembers } from '../proposalActionsList';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
 
 export interface IProposalActionsItemBasicViewProps<TAction extends IProposalAction = IProposalAction>
@@ -27,10 +27,6 @@ export const ProposalActionsItemBasicView = <TAction extends IProposalAction = I
 
     if (proposalActionsItemUtils.isChangeMembersAction(action)) {
         return <ProposalActionChangeMembers action={action} {...commonProps} />;
-    }
-
-    if (proposalActionsItemUtils.isChangeSettingsAction(action)) {
-        return <ProposalActionChangeSettings action={action} {...commonProps} />;
     }
 
     return null;

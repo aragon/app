@@ -3,9 +3,12 @@ import {
     ProposalActionType as GukProposalActionType,
     IconType,
     type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
-    type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
 } from '@aragon/gov-ui-kit';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalAction,
+    type IProposalActionChangeSettings,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
@@ -162,7 +165,7 @@ class MultisigActionUtils {
 
     normalizeChangeSettingsAction = (
         params: INormalizeChangeSettingsParams,
-    ): IGukProposalActionChangeSettings => {
+    ): IProposalActionChangeSettings => {
         const { action, membersCount, t } = params;
         const { existingSettings, proposedSettings, ...otherValues } = action;
 
@@ -184,7 +187,7 @@ class MultisigActionUtils {
 
         return {
             ...otherValues,
-            type: GukProposalActionType.CHANGE_SETTINGS_MULTISIG,
+            type: ProposalActionType.CHANGE_SETTINGS,
             existingSettings: parsedExistingSettings,
             proposedSettings: parsedProposedSettings,
         };

@@ -2,6 +2,10 @@
   "app": {
     "actions": {
       "core": {
+        "changeSettingsActionDetails": {
+          "existingToggle": "Existing",
+          "proposedToggle": "Proposed"
+        },
         "createProposalActionDetails": {
           "metadataTitle": "Title",
           "metadataSummary": "Summary",

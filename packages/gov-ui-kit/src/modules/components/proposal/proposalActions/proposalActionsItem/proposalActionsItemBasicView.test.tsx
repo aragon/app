@@ -5,7 +5,6 @@ import { type IProposalActionsItemBasicViewProps, ProposalActionsItemBasicView }
 
 jest.mock('../proposalActionsList', () => ({
     ProposalActionChangeMembers: () => <div data-testid="change-members-mock" />,
-    ProposalActionChangeSettings: () => <div data-testid="change-settings-mock" />,
 }));
 
 describe('<ProposalActionsItemBasicView /> component', () => {
@@ -32,8 +31,6 @@ describe('<ProposalActionsItemBasicView /> component', () => {
     });
 
     it.each([
-        { type: ProposalActionType.CHANGE_SETTINGS_MULTISIG, testId: 'change-settings-mock' },
-        { type: ProposalActionType.CHANGE_SETTINGS_TOKENVOTE, testId: 'change-settings-mock' },
         { type: ProposalActionType.ADD_MEMBERS, testId: 'change-members-mock' },
         { type: ProposalActionType.REMOVE_MEMBERS, testId: 'change-members-mock' },
     ])('renders $type component when action is of $type type', ({ type, testId }) => {

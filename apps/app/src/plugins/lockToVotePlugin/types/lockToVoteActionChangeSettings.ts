@@ -1,12 +1,8 @@
-import type { IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { LockToVoteProposalActionType } from './enum';
 import type { ILockToVotePluginSettings } from './lockToVotePluginSettings';
 
-export interface ILockToVoteActionChangeSettings
-    extends Omit<
-        IGukProposalActionChangeSettings,
-        'type' | 'proposedSettings' | 'existingSettings'
-    > {
+export interface ILockToVoteActionChangeSettings extends IProposalAction {
     /**
      * The type of the proposal action.
      */

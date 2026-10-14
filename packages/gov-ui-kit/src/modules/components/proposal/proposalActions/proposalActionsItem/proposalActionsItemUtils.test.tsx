@@ -1,12 +1,12 @@
 import { ProposalActionType } from '../proposalActionsDefinitions';
-import { generateProposalActionChangeMembers, generateProposalActionChangeSettings } from '../proposalActionsList';
+import { generateProposalActionChangeMembers } from '../proposalActionsList';
 import { generateProposalAction } from '../proposalActionsTestUtils';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
 
 describe('ProposalActions utils', () => {
     describe('isActionSupported', () => {
         it('returns true if action is of any supported type', () => {
-            const action = generateProposalAction({ type: ProposalActionType.CHANGE_SETTINGS_MULTISIG });
+            const action = generateProposalAction({ type: ProposalActionType.ADD_MEMBERS });
             expect(proposalActionsItemUtils.isActionSupported(action)).toBeTruthy();
         });
 
@@ -27,26 +27,8 @@ describe('ProposalActions utils', () => {
         });
 
         it('returns false for other actions', () => {
-            const action = generateProposalActionChangeSettings();
+            const action = generateProposalAction({ type: 'OTHER_ACTION' });
             expect(proposalActionsItemUtils.isChangeMembersAction(action)).toBeFalsy();
-        });
-    });
-
-    describe('isChangeSettingsAction', () => {
-        it('returns true for change settings actions', () => {
-            const changeMultisig = generateProposalActionChangeSettings({
-                type: ProposalActionType.CHANGE_SETTINGS_MULTISIG,
-            });
-            const changeToken = generateProposalActionChangeSettings({
-                type: ProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
-            });
-            expect(proposalActionsItemUtils.isChangeSettingsAction(changeMultisig)).toBeTruthy();
-            expect(proposalActionsItemUtils.isChangeSettingsAction(changeToken)).toBeTruthy();
-        });
-
-        it('returns false for other actions', () => {
-            const action = generateProposalActionChangeMembers();
-            expect(proposalActionsItemUtils.isChangeSettingsAction(action)).toBeFalsy();
         });
     });
 });
