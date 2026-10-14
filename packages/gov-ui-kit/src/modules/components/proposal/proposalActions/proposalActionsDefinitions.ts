@@ -2,14 +2,6 @@ import type { ComponentType } from 'react';
 import type { IWeb3ComponentProps } from '../../../types';
 
 /**
- * Proposal action types for which the basic view is available.
- */
-export enum ProposalActionType {
-    ADD_MEMBERS = 'ADD_MEMBERS',
-    REMOVE_MEMBERS = 'REMOVE_MEMBERS',
-}
-
-/**
  * Proposal action types for which the basic view is NOT available.
  * This is not a list of all available types, but only the ones that are relevant in ui-kit context.
  */

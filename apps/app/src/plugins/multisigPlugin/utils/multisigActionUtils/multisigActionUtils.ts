@@ -1,9 +1,4 @@
-import {
-    addressUtils,
-    ProposalActionType as GukProposalActionType,
-    IconType,
-    type IProposalActionChangeMembers as IGukProposalActionChangeMembers,
-} from '@aragon/gov-ui-kit';
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import {
     type IProposalAction,
     type IProposalActionChangeSettings,
@@ -20,7 +15,6 @@ import { MultisigAddMembersAction } from '../../components/multisigActions/multi
 import { MultisigRemoveMembersAction } from '../../components/multisigActions/multisigRemoveMembersAction';
 import { MultisigUpdateSettingsAction } from '../../components/multisigActions/multisigUpdateSettingsAction';
 import {
-    type IMultisigActionChangeMembers,
     type IMultisigActionChangeSettings,
     type IMultisigPluginSettings,
     type IMultisigProposalAction,
@@ -138,30 +132,10 @@ class MultisigActionUtils {
         };
     };
 
-    isChangeMembersAction = (
-        action: IProposalAction | IMultisigProposalAction,
-    ): action is IMultisigActionChangeMembers =>
-        action.type === MultisigProposalActionType.MULTISIG_ADD_MEMBERS ||
-        action.type === MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS;
-
     isChangeSettingsAction = (
         action: IProposalAction | IMultisigProposalAction,
     ): action is IMultisigActionChangeSettings =>
         action.type === MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS;
-
-    normalizeChangeMembersAction = (
-        action: IMultisigActionChangeMembers,
-    ): IGukProposalActionChangeMembers => {
-        const { type, ...otherValues } = action;
-
-        return {
-            ...otherValues,
-            type:
-                type === MultisigProposalActionType.MULTISIG_ADD_MEMBERS
-                    ? GukProposalActionType.ADD_MEMBERS
-                    : GukProposalActionType.REMOVE_MEMBERS,
-        };
-    };
 
     normalizeChangeSettingsAction = (
         params: INormalizeChangeSettingsParams,

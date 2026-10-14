@@ -7,6 +7,7 @@ import {
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
+import { generateMultisigActionChangeMembers } from '../../testUtils';
 import { MultisigProposalActionType } from '../../types';
 import { multisigActionUtils } from '../../utils/multisigActionUtils';
 import { useMultisigNormalizeActions } from './useMultisigNormalizeActions';
@@ -16,10 +17,6 @@ describe('useMultisigNormalizeActions hook', () => {
     const normalizeChangeSettingsSpy = jest.spyOn(
         multisigActionUtils,
         'normalizeChangeSettingsAction',
-    );
-    const normalizeChangeMembersSpy = jest.spyOn(
-        multisigActionUtils,
-        'normalizeChangeMembersAction',
     );
 
     mockTranslations.setup();
@@ -53,7 +50,6 @@ describe('useMultisigNormalizeActions hook', () => {
     afterEach(() => {
         useMemberListSpy.mockReset();
         normalizeChangeSettingsSpy.mockReset();
-        normalizeChangeMembersSpy.mockReset();
     });
 
     it('normalizes a change-settings action with the members count of its target plugin', () => {
@@ -114,16 +110,24 @@ describe('useMultisigNormalizeActions hook', () => {
     it.each([
         MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
         MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
-    ])('normalizes %s actions as change-members actions', (type) => {
-        const action = generateProposalAction({ type });
-        const normalized = { normalized: true };
-        normalizeChangeMembersSpy.mockReturnValue(normalized as never);
+    ] as const)(
+        'passes %s actions through unchanged, as their view reads the raw action',
+        (type) => {
+            const action = generateMultisigActionChangeMembers({
+                type,
+                members: [{ address: '0x1' }],
+                currentMembers: 3,
+            });
 
-        const { result } = renderHook(() =>
-            useMultisigNormalizeActions({ actions: [action], daoId: 'dao-id' }),
-        );
+            const { result } = renderHook(() =>
+                useMultisigNormalizeActions({
+                    actions: [action],
+                    daoId: 'dao-id',
+                }),
+            );
 
-        expect(normalizeChangeMembersSpy).toHaveBeenCalledWith(action);
-        expect(result.current).toEqual([normalized]);
-    });
+            expect(normalizeChangeSettingsSpy).not.toHaveBeenCalled();
+            expect(result.current).toEqual([action]);
+        },
+    );
 });
