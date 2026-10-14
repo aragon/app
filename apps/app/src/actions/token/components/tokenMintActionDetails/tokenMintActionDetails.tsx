@@ -30,7 +30,7 @@ export const TokenMintActionDetails: React.FC<ITokenMintActionDetailsProps> = (
         id: address,
     });
 
-    // Subtract the raw balances before formatting, so large amounts keep their full precision.
+    // Subtract the raw balances before formatting, so the amount passed to the member item is exact.
     const mintedAmount = formatUnits(
         BigInt(newBalance) - BigInt(currentBalance),
         token.decimals,
