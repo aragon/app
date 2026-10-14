@@ -1,7 +1,7 @@
 import { DevTool } from '@hookform/devtools';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FormProvider, useForm } from 'react-hook-form';
-import { generateProposalActionTokenMint, type IProposalActionsItemProps, ProposalActions } from '../index';
+import { generateProposalActionChangeMembers, type IProposalActionsItemProps, ProposalActions } from '../index';
 import { generateProposalAction } from '../proposalActionsTestUtils';
 
 const defaultRender = (props: IProposalActionsItemProps) => {
@@ -124,33 +124,11 @@ export const Native: Story = {
     render: defaultRender,
     args: {
         index: 0,
-        action: generateProposalActionTokenMint({
-            to: '0x80CB2f4f9B403C4C418C597d96c95FE14FD344a6',
-            data: '0xfdbd7eb30f83e91c298b29ec98b25dccba03447d2805c35a3c5f14dac295a8610d165173',
-            receiver: {
-                address: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b',
-                name: 'ens.eth',
-                currentBalance: '500',
-                newBalance: '1500',
-            },
-            inputData: {
-                function: 'mint',
-                contract: 'Governance Token',
-                parameters: [
-                    {
-                        name: 'to',
-                        type: 'address',
-                        value: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b',
-                        notice: 'The receiver of the tokens',
-                    },
-                    {
-                        name: 'amount',
-                        type: 'uint256',
-                        value: '1000000000',
-                        notice: 'Amount of minted tokens',
-                    },
-                ],
-            },
+        action: generateProposalActionChangeMembers({
+            members: [
+                { address: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b', name: 'ens.eth' },
+                { address: '0x97fb9274ac39bB275AC76f56390e6713A2C417D9' },
+            ],
         }),
     },
 };

@@ -1210,17 +1210,6 @@ ProposalActionsRoot: compound root owning shared state/config of the ProposalAct
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.tsx:36`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1`
 
-### ProposalActionTokenMint
-
-`import { ProposalActionTokenMint } from '@aragon/gov-ui-kit';`
-
-ProposalActionTokenMint: token-mint action view of the ProposalActions compound (Compound decoded proposal-actions list).
-
-**References**
-
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx:5`
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx:1`
-
 ### ProposalDataListItem.Skeleton
 
 `import { ProposalDataListItem } from '@aragon/gov-ui-kit';`
@@ -2046,7 +2035,7 @@ DataList item structure for a member (avatar, address/ENS, delegate/token-voting
 
 `import { ProposalActions } from '@aragon/gov-ui-kit';`
 
-Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionTokenMint/ChangeMembers/ChangeSettings) are standalone exports.
+Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionChangeMembers/ChangeSettings) are standalone exports.
 
 **Usage notes**
 
@@ -2570,7 +2559,7 @@ Enum props take a member (`icon={IconType.PLUS}`); string-union props take the q
 
 ### ProposalActionType
 
-`ADD_MEMBERS`, `REMOVE_MEMBERS`, `TOKEN_MINT`, `CHANGE_SETTINGS_MULTISIG`, `CHANGE_SETTINGS_TOKENVOTE`
+`ADD_MEMBERS`, `REMOVE_MEMBERS`, `CHANGE_SETTINGS_MULTISIG`, `CHANGE_SETTINGS_TOKENVOTE`
 
 ### ProposalActionTypeNoBasicView
 

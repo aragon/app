@@ -2,6 +2,8 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initUpdateMetadataActionViews } from '@/actions/core/updateMetadata';
+import { initTokenActionViews } from '@/actions/token';
+import { generateToken } from '@/modules/finance/testUtils';
 import {
     type IProposalAction,
     ProposalActionType,
@@ -10,6 +12,8 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
 } from '@/modules/governance/testUtils';
+import { generateTokenActionTokenMint } from '@/plugins/tokenPlugin/testUtils';
+import { TokenProposalActionType } from '@/plugins/tokenPlugin/types';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import {
     CrossChainControllerNestedActionsList,
@@ -99,6 +103,7 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         ProposalActionType.TRANSFER_NATIVE,
         ProposalActionType.METADATA_UPDATE,
         ProposalActionType.METADATA_PLUGIN_UPDATE,
+        TokenProposalActionType.MINT,
     ])('renders the view registered for %s actions', async (type) => {
         getViewByActionTypeSpy.mockReturnValue({
             actionType: type,
@@ -215,6 +220,47 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
             expect(screen.getByText(copyKey('nameTerm'))).toBeInTheDocument();
             expect(screen.getByText(copyKey('linkTerm'))).toBeInTheDocument();
             expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+        });
+    });
+
+    describe('token mint integration', () => {
+        beforeAll(() => {
+            initTokenActionViews();
+        });
+
+        beforeEach(() => {
+            getViewByActionTypeSpy.mockImplementation(getViewByActionType);
+        });
+
+        it('renders the token mint view with the amount minted to the receiver', async () => {
+            const receiver = '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b';
+            const action = generateTokenActionTokenMint({
+                to: '0xa0Ab554dEa45be64F12E3B0085DDC59852eFF9fc',
+                data: '0x40c10f19',
+                token: generateToken({ symbol: 'PDC', decimals: 18 }),
+                receivers: {
+                    address: receiver,
+                    currentBalance: '1000000000000000000',
+                    newBalance: '2500000000000000000',
+                },
+            });
+
+            render(
+                createTestComponent({
+                    rawTuple: [
+                        { to: action.to, value: '0', data: action.data },
+                    ],
+                    rawActions: [action],
+                }),
+            );
+            await userEvent.click(screen.getAllByRole('button')[0]);
+
+            expect(await screen.findByText(/1\.5/)).toBeInTheDocument();
+            expect(screen.getByText(/PDC/)).toBeInTheDocument();
+            expect(screen.getByRole('link', { name: /1\.5/ })).toHaveAttribute(
+                'href',
+                `https://arbiscan.io/address/${receiver}`,
+            );
         });
     });
 

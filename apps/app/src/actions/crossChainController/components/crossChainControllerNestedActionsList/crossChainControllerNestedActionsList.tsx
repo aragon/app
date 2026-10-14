@@ -9,6 +9,7 @@ import {
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IRawActionTuple } from '@/modules/governance/types';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
+import { TokenProposalActionType } from '@/plugins/tokenPlugin/types';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 
 export interface ICrossChainControllerNestedActionsListProps {
@@ -35,6 +36,7 @@ const chainAgnosticActionTypes: string[] = [
     ProposalActionType.TRANSFER_NATIVE,
     ProposalActionType.METADATA_UPDATE,
     ProposalActionType.METADATA_PLUGIN_UPDATE,
+    TokenProposalActionType.MINT,
 ];
 
 /**
@@ -66,8 +68,8 @@ const getCustomActionView = (
  *
  * Views matched by function selector are the exception: they carry no `daoId`, so they resolve nothing from the
  * home chain and only decode what is chain-independent, such as a permission hash to its name. Token and native
- * transfers and metadata updates are resolved by action type for the same reason: their views render the decoded
- * action as is.
+ * transfers, metadata updates and token mints are resolved by action type for the same reason: their views render the
+ * decoded action as is.
  */
 export const CrossChainControllerNestedActionsList: React.FC<
     ICrossChainControllerNestedActionsListProps

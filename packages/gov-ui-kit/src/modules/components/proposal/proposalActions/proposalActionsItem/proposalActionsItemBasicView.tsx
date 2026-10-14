@@ -3,11 +3,7 @@ import type {
     IProposalActionComponentProps,
     ProposalActionComponent,
 } from '../proposalActionsDefinitions';
-import {
-    ProposalActionChangeMembers,
-    ProposalActionChangeSettings,
-    ProposalActionTokenMint,
-} from '../proposalActionsList';
+import { ProposalActionChangeMembers, ProposalActionChangeSettings } from '../proposalActionsList';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
 
 export interface IProposalActionsItemBasicViewProps<TAction extends IProposalAction = IProposalAction>
@@ -27,10 +23,6 @@ export const ProposalActionsItemBasicView = <TAction extends IProposalAction = I
 
     if (CustomComponent) {
         return <CustomComponent action={action} {...commonProps} />;
-    }
-
-    if (proposalActionsItemUtils.isTokenMintAction(action)) {
-        return <ProposalActionTokenMint action={action} {...commonProps} />;
     }
 
     if (proposalActionsItemUtils.isChangeMembersAction(action)) {

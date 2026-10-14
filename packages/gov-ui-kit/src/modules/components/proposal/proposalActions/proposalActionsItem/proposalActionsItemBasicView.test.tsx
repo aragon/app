@@ -6,7 +6,6 @@ import { type IProposalActionsItemBasicViewProps, ProposalActionsItemBasicView }
 jest.mock('../proposalActionsList', () => ({
     ProposalActionChangeMembers: () => <div data-testid="change-members-mock" />,
     ProposalActionChangeSettings: () => <div data-testid="change-settings-mock" />,
-    ProposalActionTokenMint: () => <div data-testid="token-mint-mock" />,
 }));
 
 describe('<ProposalActionsItemBasicView /> component', () => {
@@ -33,7 +32,6 @@ describe('<ProposalActionsItemBasicView /> component', () => {
     });
 
     it.each([
-        { type: ProposalActionType.TOKEN_MINT, testId: 'token-mint-mock' },
         { type: ProposalActionType.CHANGE_SETTINGS_MULTISIG, testId: 'change-settings-mock' },
         { type: ProposalActionType.CHANGE_SETTINGS_TOKENVOTE, testId: 'change-settings-mock' },
         { type: ProposalActionType.ADD_MEMBERS, testId: 'change-members-mock' },

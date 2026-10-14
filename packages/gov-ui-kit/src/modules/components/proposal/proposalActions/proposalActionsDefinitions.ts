@@ -7,7 +7,6 @@ import type { IWeb3ComponentProps } from '../../../types';
 export enum ProposalActionType {
     ADD_MEMBERS = 'ADD_MEMBERS',
     REMOVE_MEMBERS = 'REMOVE_MEMBERS',
-    TOKEN_MINT = 'TOKEN_MINT',
     CHANGE_SETTINGS_MULTISIG = 'CHANGE_SETTINGS_MULTISIG',
     CHANGE_SETTINGS_TOKENVOTE = 'CHANGE_SETTINGS_TOKENVOTE',
 }

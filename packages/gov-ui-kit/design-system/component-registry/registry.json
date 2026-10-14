@@ -6,21 +6,22 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "07d047e421b1c61a3293efd298bd539d69742849",
+            "commit": "05451c70ae2b460819ad49c4ba1ba328c5bdd28e",
             "dirty": [
                 "packages/gov-ui-kit/src/modules/assets/copy/modulesCopy.ts",
                 "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx",
                 "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.test.tsx",
                 "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.tsx",
                 "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.test.tsx",
                 "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.ts",
                 "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.api.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.testUtils.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx"
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/index.ts",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.api.ts",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.test.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.testUtils.ts",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx"
             ],
             "sourceVersion": "2.11.4",
             "entrypoints": {
@@ -3019,7 +3020,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "15e7b4327eab8ea1cca44f847930c31353178ddaaf5e00371cfcb83e5c675812"
+                "sha256": "d4a2cb90657b038f8300325b93296ec68280206ee3a51622a5ed6ce98fd672f7"
             },
             "props": [],
             "stories": [],
@@ -9377,51 +9378,6 @@
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.testUtils.ts",
                 "line": 5,
                 "sha256": "adf85d135268ef4a768f4d64980cc352dad035cf963a0446c996b455432fe6e0"
-            },
-            "props": [],
-            "stories": [],
-            "tests": [],
-            "docs": [],
-            "intent": {
-                "description": null,
-                "useWhen": [],
-                "constraints": [],
-                "related": [],
-                "ownership": {
-                    "package": "@aragon/gov-ui-kit",
-                    "domain": null,
-                    "maintainer": null
-                },
-                "evidence": [],
-                "evidenceStatus": [],
-                "review": {
-                    "state": "unreviewed",
-                    "by": null,
-                    "at": null
-                },
-                "stale": false
-            }
-        },
-        {
-            "id": "govkit:generateProposalActionTokenMint",
-            "name": "generateProposalActionTokenMint",
-            "kind": "non-component",
-            "exportNames": [
-                "generateProposalActionTokenMint"
-            ],
-            "exports": [
-                {
-                    "entrypoint": ".",
-                    "name": "generateProposalActionTokenMint",
-                    "isAlias": false
-                }
-            ],
-            "members": [],
-            "source": {
-                "repository": "kit",
-                "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.testUtils.ts",
-                "line": 5,
-                "sha256": "d85f5d9b6c0f196ff61e23f1e88a4bf63f372399b75641b8eb3fb97d0262849e"
             },
             "props": [],
             "stories": [],
@@ -17811,8 +17767,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "line": 65,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "line": 64,
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],
@@ -18036,8 +17992,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "line": 92,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "line": 91,
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],
@@ -18081,8 +18037,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "line": 46,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "line": 45,
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],
@@ -18126,8 +18082,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "line": 23,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "line": 22,
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],
@@ -18503,141 +18459,6 @@
                     "sha256": "65d8d2e9103f626ce39e162e29ed0544ebac85b86df19bd5a67bf29e9f0a4cc9"
                 }
             ],
-            "docs": [],
-            "intent": {
-                "description": null,
-                "useWhen": [],
-                "constraints": [],
-                "related": [],
-                "ownership": {
-                    "package": "@aragon/gov-ui-kit",
-                    "domain": null,
-                    "maintainer": null
-                },
-                "evidence": [],
-                "evidenceStatus": [],
-                "review": {
-                    "state": "unreviewed",
-                    "by": null,
-                    "at": null
-                },
-                "stale": false
-            }
-        },
-        {
-            "id": "govkit:IProposalActionTokenMint",
-            "name": "IProposalActionTokenMint",
-            "kind": "non-component",
-            "exportNames": [
-                "IProposalActionTokenMint"
-            ],
-            "exports": [
-                {
-                    "entrypoint": ".",
-                    "name": "IProposalActionTokenMint",
-                    "isAlias": false
-                }
-            ],
-            "members": [],
-            "source": {
-                "repository": "kit",
-                "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.api.ts",
-                "line": 19,
-                "sha256": "8074747cae6364614e0cf2fb30e61e1dd77f3c94c670c53990853ddf2be86b6c"
-            },
-            "props": [],
-            "stories": [],
-            "tests": [],
-            "docs": [],
-            "intent": {
-                "description": null,
-                "useWhen": [],
-                "constraints": [],
-                "related": [],
-                "ownership": {
-                    "package": "@aragon/gov-ui-kit",
-                    "domain": null,
-                    "maintainer": null
-                },
-                "evidence": [],
-                "evidenceStatus": [],
-                "review": {
-                    "state": "unreviewed",
-                    "by": null,
-                    "at": null
-                },
-                "stale": false
-            }
-        },
-        {
-            "id": "govkit:IProposalActionTokenMintMetadataReceiver",
-            "name": "IProposalActionTokenMintMetadataReceiver",
-            "kind": "non-component",
-            "exportNames": [
-                "IProposalActionTokenMintMetadataReceiver"
-            ],
-            "exports": [
-                {
-                    "entrypoint": ".",
-                    "name": "IProposalActionTokenMintMetadataReceiver",
-                    "isAlias": false
-                }
-            ],
-            "members": [],
-            "source": {
-                "repository": "kit",
-                "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.api.ts",
-                "line": 8,
-                "sha256": "8074747cae6364614e0cf2fb30e61e1dd77f3c94c670c53990853ddf2be86b6c"
-            },
-            "props": [],
-            "stories": [],
-            "tests": [],
-            "docs": [],
-            "intent": {
-                "description": null,
-                "useWhen": [],
-                "constraints": [],
-                "related": [],
-                "ownership": {
-                    "package": "@aragon/gov-ui-kit",
-                    "domain": null,
-                    "maintainer": null
-                },
-                "evidence": [],
-                "evidenceStatus": [],
-                "review": {
-                    "state": "unreviewed",
-                    "by": null,
-                    "at": null
-                },
-                "stale": false
-            }
-        },
-        {
-            "id": "govkit:IProposalActionTokenMintProps",
-            "name": "IProposalActionTokenMintProps",
-            "kind": "non-component",
-            "exportNames": [
-                "IProposalActionTokenMintProps"
-            ],
-            "exports": [
-                {
-                    "entrypoint": ".",
-                    "name": "IProposalActionTokenMintProps",
-                    "isAlias": false
-                }
-            ],
-            "members": [],
-            "source": {
-                "repository": "kit",
-                "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.api.ts",
-                "line": 34,
-                "sha256": "8074747cae6364614e0cf2fb30e61e1dd77f3c94c670c53990853ddf2be86b6c"
-            },
-            "props": [],
-            "stories": [],
-            "tests": [],
             "docs": [],
             "intent": {
                 "description": null,
@@ -22787,7 +22608,7 @@
                 "repository": "kit",
                 "path": "src/modules/assets/copy/modulesCopy.ts",
                 "line": 6,
-                "sha256": "364b3a0ddf354775fad245321865819eaa6d39cf0bc3738182c19ebd22615c69"
+                "sha256": "642d085e644089b0a43ba3e859359081e97d87386c501400536663626eea7d00"
             },
             "props": [],
             "stories": [],
@@ -22831,8 +22652,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/assets/copy/modulesCopy.ts",
-                "line": 224,
-                "sha256": "364b3a0ddf354775fad245321865819eaa6d39cf0bc3738182c19ebd22615c69"
+                "line": 217,
+                "sha256": "642d085e644089b0a43ba3e859359081e97d87386c501400536663626eea7d00"
             },
             "props": [],
             "stories": [],
@@ -23402,8 +23223,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "line": 104,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "line": 103,
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],
@@ -23554,7 +23375,7 @@
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx",
                             "line": 1,
-                            "sha256": "15c8969d86a88bc282b796ebc52b35d594c61f77cd9a2e920497501067dc629a"
+                            "sha256": "4d7183df018045702778ee953174875cd49954fa450ff34ffe27b61391fa78b0"
                         }
                     ],
                     "tests": [
@@ -23568,13 +23389,13 @@
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.test.tsx",
                             "line": 1,
-                            "sha256": "d8a6ae4277cf97ca9d441a02ab6435bb6cc1c9df780351d3cbeecf76334dfc08"
+                            "sha256": "4d8390e738b72e948c2802e78ea44e336fe9363233b4e6b6782e46b2b88cfda3"
                         },
                         {
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.test.tsx",
                             "line": 1,
-                            "sha256": "b9b41bfd9ff40c45758a62720e34be221906ca4f459089338093529c55f85d7a"
+                            "sha256": "813316cb97cd9a3c40805d94096203f0aee129689ff6690d5e9a1e80abe0bbad"
                         }
                     ],
                     "docs": []
@@ -23667,7 +23488,7 @@
                 "`editMode` requires a `react-hook-form` `FormProvider`; set `readOnly` when an item must render outside a provider without watching form values."
             ],
             "intent": {
-                "description": "Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionTokenMint/ChangeMembers/ChangeSettings) are standalone exports.",
+                "description": "Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionChangeMembers/ChangeSettings) are standalone exports.",
                 "useWhen": [
                     "Reviewing decoded proposal actions",
                     "Composing/editing proposal action sets in create flows"
@@ -23990,7 +23811,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx",
                     "line": 1,
-                    "sha256": "15c8969d86a88bc282b796ebc52b35d594c61f77cd9a2e920497501067dc629a"
+                    "sha256": "4d7183df018045702778ee953174875cd49954fa450ff34ffe27b61391fa78b0"
                 }
             ],
             "tests": [
@@ -24004,13 +23825,13 @@
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.test.tsx",
                     "line": 1,
-                    "sha256": "d8a6ae4277cf97ca9d441a02ab6435bb6cc1c9df780351d3cbeecf76334dfc08"
+                    "sha256": "4d8390e738b72e948c2802e78ea44e336fe9363233b4e6b6782e46b2b88cfda3"
                 },
                 {
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.test.tsx",
                     "line": 1,
-                    "sha256": "b9b41bfd9ff40c45758a62720e34be221906ca4f459089338093529c55f85d7a"
+                    "sha256": "813316cb97cd9a3c40805d94096203f0aee129689ff6690d5e9a1e80abe0bbad"
                 }
             ],
             "docs": [],
@@ -24265,100 +24086,6 @@
             }
         },
         {
-            "id": "govkit:ProposalActionTokenMint",
-            "name": "ProposalActionTokenMint",
-            "kind": "component",
-            "exportNames": [
-                "ProposalActionTokenMint"
-            ],
-            "exports": [
-                {
-                    "entrypoint": ".",
-                    "name": "ProposalActionTokenMint",
-                    "isAlias": false
-                }
-            ],
-            "members": [],
-            "source": {
-                "repository": "kit",
-                "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx",
-                "line": 5,
-                "sha256": "e8cbe352a141eac702445973bca46d93d95fa42753546b6d13a980f804e21744"
-            },
-            "props": [
-                {
-                    "repository": "kit",
-                    "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.api.ts",
-                    "line": 1,
-                    "sha256": "8074747cae6364614e0cf2fb30e61e1dd77f3c94c670c53990853ddf2be86b6c"
-                },
-                {
-                    "repository": "kit",
-                    "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.api.ts",
-                    "line": 34,
-                    "sha256": "8074747cae6364614e0cf2fb30e61e1dd77f3c94c670c53990853ddf2be86b6c"
-                }
-            ],
-            "stories": [
-                {
-                    "repository": "kit",
-                    "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx",
-                    "line": 1,
-                    "sha256": "e2f239a0f4381bdfe9101ce9bab66fd52d58cd1ebbec0c239d53e7092ab2f754"
-                }
-            ],
-            "tests": [
-                {
-                    "repository": "kit",
-                    "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.test.tsx",
-                    "line": 1,
-                    "sha256": "931df7ed2ecc283d1d02defb8a448a586fd1af4e86e5e7a9d763023622adcf9b"
-                }
-            ],
-            "docs": [],
-            "intent": {
-                "description": "ProposalActionTokenMint: token-mint action view of the ProposalActions compound (Compound decoded proposal-actions list).",
-                "useWhen": [],
-                "constraints": [
-                    "Review question (maintainer discussion): Can a non-OSx governance system represent this action faithfully through its current props and terminology? Identify protocol-specific assumptions separately from reusable action presentation before deciding package ownership."
-                ],
-                "related": [
-                    {
-                        "name": "ProposalActions",
-                        "distinction": "Member of the ProposalActions compound; inherits its selection intent."
-                    }
-                ],
-                "ownership": {
-                    "package": "@aragon/gov-ui-kit",
-                    "domain": "modules/governance",
-                    "maintainer": null
-                },
-                "evidence": [
-                    {
-                        "repository": "kit",
-                        "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx",
-                        "line": 5,
-                        "sha256": "e8cbe352a141eac702445973bca46d93d95fa42753546b6d13a980f804e21744"
-                    }
-                ],
-                "evidenceStatus": [
-                    {
-                        "repository": "kit",
-                        "path": "src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx",
-                        "status": "current",
-                        "expectedSha256": "e8cbe352a141eac702445973bca46d93d95fa42753546b6d13a980f804e21744",
-                        "actualSha256": "e8cbe352a141eac702445973bca46d93d95fa42753546b6d13a980f804e21744"
-                    }
-                ],
-                "review": {
-                    "state": "unreviewed",
-                    "by": null,
-                    "at": null
-                },
-                "stale": false
-            }
-        },
-        {
             "id": "govkit:ProposalActionType",
             "name": "ProposalActionType",
             "kind": "non-component",
@@ -24377,7 +24104,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
                 "line": 7,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],
@@ -24386,7 +24113,6 @@
             "values": [
                 "ADD_MEMBERS",
                 "REMOVE_MEMBERS",
-                "TOKEN_MINT",
                 "CHANGE_SETTINGS_MULTISIG",
                 "CHANGE_SETTINGS_TOKENVOTE"
             ],
@@ -24428,8 +24154,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "line": 19,
-                "sha256": "263a7f9dab45e4be18df56c7e6d46380511d0c1fbad346ceed42b2f025c989ea"
+                "line": 18,
+                "sha256": "ec683baa3838500fdfef4178eacd67db792b3af148f7ad55c19432a132cd4a7b"
             },
             "props": [],
             "stories": [],

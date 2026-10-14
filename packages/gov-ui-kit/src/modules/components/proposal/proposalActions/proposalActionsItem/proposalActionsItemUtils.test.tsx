@@ -1,9 +1,5 @@
 import { ProposalActionType } from '../proposalActionsDefinitions';
-import {
-    generateProposalActionChangeMembers,
-    generateProposalActionChangeSettings,
-    generateProposalActionTokenMint,
-} from '../proposalActionsList';
+import { generateProposalActionChangeMembers, generateProposalActionChangeSettings } from '../proposalActionsList';
 import { generateProposalAction } from '../proposalActionsTestUtils';
 import { proposalActionsItemUtils } from './proposalActionsItemUtils';
 
@@ -31,20 +27,8 @@ describe('ProposalActions utils', () => {
         });
 
         it('returns false for other actions', () => {
-            const action = generateProposalActionTokenMint();
+            const action = generateProposalActionChangeSettings();
             expect(proposalActionsItemUtils.isChangeMembersAction(action)).toBeFalsy();
-        });
-    });
-
-    describe('isTokenMintAction', () => {
-        it('returns true for token mint action', () => {
-            const action = generateProposalActionTokenMint();
-            expect(proposalActionsItemUtils.isTokenMintAction(action)).toBeTruthy();
-        });
-
-        it('returns false for other actions', () => {
-            const action = generateProposalActionChangeMembers();
-            expect(proposalActionsItemUtils.isTokenMintAction(action)).toBeFalsy();
         });
     });
 
@@ -61,7 +45,7 @@ describe('ProposalActions utils', () => {
         });
 
         it('returns false for other actions', () => {
-            const action = generateProposalActionTokenMint();
+            const action = generateProposalActionChangeMembers();
             expect(proposalActionsItemUtils.isChangeSettingsAction(action)).toBeFalsy();
         });
     });

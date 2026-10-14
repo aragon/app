@@ -3,9 +3,7 @@ import {
     ProposalActionType as GukProposalActionType,
     IconType,
     type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
-    type IProposalActionTokenMint as IGukProposalActionTokenMint,
 } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
@@ -18,7 +16,6 @@ import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTo
 import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
 import {
     type ITokenActionChangeSettings,
-    type ITokenActionTokenMint,
     type ITokenPluginSettings,
     TokenProposalActionType,
 } from '../../types';
@@ -136,33 +133,6 @@ class TokenActionUtils {
         action: IProposalAction | ITokenProposalAction,
     ): action is ITokenActionChangeSettings =>
         action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS;
-
-    isTokenMintAction = (
-        action: IProposalAction | ITokenProposalAction,
-    ): action is ITokenActionTokenMint =>
-        action.type === TokenProposalActionType.MINT;
-
-    normalizeTokenMintAction = (
-        action: ITokenActionTokenMint,
-    ): IGukProposalActionTokenMint => {
-        const { token, receivers, ...otherValues } = action;
-        const { currentBalance, newBalance, ...otherReceiverValues } =
-            receivers;
-
-        return {
-            ...otherValues,
-            type: GukProposalActionType.TOKEN_MINT,
-            tokenSymbol: token.symbol,
-            receiver: {
-                ...otherReceiverValues,
-                currentBalance: formatUnits(
-                    BigInt(currentBalance),
-                    token.decimals,
-                ),
-                newBalance: formatUnits(BigInt(newBalance), token.decimals),
-            },
-        };
-    };
 
     normalizeChangeSettingsAction = (
         params: INormalizeChangeSettingsParams,

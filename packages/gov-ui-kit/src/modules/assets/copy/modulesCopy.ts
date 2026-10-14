@@ -89,13 +89,6 @@ export const modulesCopy = {
         existingToggle: 'Existing',
         proposedToggle: 'Proposed',
     },
-    proposalActionsTokenMint: {
-        summaryHeading: 'Summary',
-        newTokensTerm: 'New tokens',
-        newHoldersTerm: 'New holders',
-        totalTokenSupplyTerm: 'Total token supply',
-        totalHoldersTerm: 'Total token holders',
-    },
     proposalDataListItemStatus: {
         voted: 'Voted',
         ago: 'ago',
