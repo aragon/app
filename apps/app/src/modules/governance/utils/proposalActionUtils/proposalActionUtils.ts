@@ -12,6 +12,33 @@ import type { INormalizeActionsParams, IRawActionTuple } from '../../types';
 
 class ProposalActionUtils {
     /**
+     * Parses the decoded value of an `Action[]` parameter (e.g. the `_actions` parameter of `createProposal`/`execute`)
+     * into raw action tuples. The backend returns each entry as a positional `[to, value, data]` array; object entries
+     * (`{ to, value, data }`) are accepted as well.
+     * @param value - Decoded parameter value.
+     * @returns The raw actions tuple, or an empty array when the value is not a list.
+     */
+    parseRawActionTuple = (value: unknown): IRawActionTuple[] => {
+        if (!Array.isArray(value)) {
+            return [];
+        }
+
+        return value.map((entry: unknown) => {
+            if (Array.isArray(entry)) {
+                const [to, actionValue, data] = entry as [
+                    string,
+                    string | number,
+                    string,
+                ];
+
+                return { to, value: String(actionValue), data };
+            }
+
+            return entry as IRawActionTuple;
+        });
+    };
+
+    /**
      * Builds raw-calldata stubs out of a raw actions tuple, used as a fallback view when the decoded sub-actions of a
      * wrapper action are missing or out of sync with the tuple.
      */
