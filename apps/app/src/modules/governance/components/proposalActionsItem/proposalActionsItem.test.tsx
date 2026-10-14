@@ -2,6 +2,9 @@ import { GukModulesProvider, ProposalActions } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { initUpdateMetadataActionViews } from '@/actions/core/updateMetadata';
+import { initTokenActionViews } from '@/actions/token';
+import { generateToken } from '@/modules/finance/testUtils';
+import { generateTokenActionTokenMint } from '@/plugins/tokenPlugin/testUtils';
 import {
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
@@ -14,6 +17,7 @@ import {
 describe('<ProposalActionsItem /> component', () => {
     beforeAll(() => {
         initUpdateMetadataActionViews();
+        initTokenActionViews();
     });
 
     const createTestComponent = (
@@ -86,5 +90,29 @@ describe('<ProposalActionsItem /> component', () => {
         expect(screen.queryByText(copyKey('logoTerm'))).not.toBeInTheDocument();
         expect(screen.getByText(copyKey('summaryTerm'))).toBeInTheDocument();
         expect(screen.getByText('CNL')).toBeInTheDocument();
+    });
+
+    it('renders the registered token mint view with the minted amount linked to the receiver', async () => {
+        const receiver = '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b';
+        const action = generateTokenActionTokenMint({
+            to: '0xa0Ab554dEa45be64F12E3B0085DDC59852eFF9fc',
+            token: generateToken({ symbol: 'PDC', decimals: 18 }),
+            receivers: {
+                address: receiver,
+                currentBalance: '1000000000000000000',
+                newBalance: '2500000000000000000',
+            },
+        });
+
+        render(createTestComponent({ action }));
+        await userEvent.click(screen.getAllByRole('button')[0]);
+
+        const receiverLink = await screen.findByRole('link', { name: /1\.5/ });
+        expect(receiverLink).toHaveAttribute(
+            'href',
+            `https://sepolia.etherscan.io/address/${receiver}`,
+        );
+        expect(screen.getByText(/PDC/)).toBeInTheDocument();
+        expect(screen.queryByText(/voting power/i)).not.toBeInTheDocument();
     });
 });

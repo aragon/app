@@ -22,7 +22,7 @@ export const TokenMintActionDetails: React.FC<ITokenMintActionDetailsProps> = (
     const { action, chainId } = props;
 
     const { token, receivers } = action as unknown as ITokenActionTokenMint;
-    const { address, currentBalance, newBalance } = receivers;
+    const { address, ens, currentBalance, newBalance } = receivers;
 
     const { buildEntityUrl } = useDaoChain({ chainId, daoId: action.daoId });
     const receiverUrl = buildEntityUrl({
@@ -41,6 +41,7 @@ export const TokenMintActionDetails: React.FC<ITokenMintActionDetailsProps> = (
             <MemberDataListItemStructure
                 address={address}
                 className="w-full"
+                ensName={ens}
                 hideLabelTokenVoting={true}
                 href={receiverUrl}
                 target="_blank"

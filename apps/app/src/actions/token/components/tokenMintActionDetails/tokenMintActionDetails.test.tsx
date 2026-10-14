@@ -181,6 +181,51 @@ describe('<TokenMintActionDetails /> component', () => {
         );
     });
 
+    it('resolves the block explorer from the DAO when no chain ID is given', () => {
+        render(createTestComponent({ chainId: undefined }));
+
+        expect(useDaoChainSpy).toHaveBeenCalledWith({
+            chainId: undefined,
+            daoId: 'dao-id',
+        });
+    });
+
+    it('renders the ENS name of the receiver when set', () => {
+        const receivers = {
+            address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
+            ens: 'dzepina.eth',
+            currentBalance: '0',
+            newBalance: '1',
+        };
+
+        render(createTestComponent({ action: buildAction({ receivers }) }));
+
+        expect(getMemberItemProps()).toEqual(
+            expect.objectContaining({ ensName: 'dzepina.eth' }),
+        );
+    });
+
+    it('renders the ENS name instead of the truncated address of the receiver', () => {
+        memberDataListItemStructureSpy.mockRestore();
+        const action = buildAction({
+            receivers: {
+                address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
+                ens: 'dzepina.eth',
+                currentBalance: '0',
+                newBalance: '17000000000000000000',
+            },
+        });
+
+        render(
+            <GukModulesProvider>
+                {createTestComponent({ action })}
+            </GukModulesProvider>,
+        );
+
+        expect(screen.getByText('dzepina.eth')).toBeInTheDocument();
+        expect(screen.queryByText('0x92e9…472F')).not.toBeInTheDocument();
+    });
+
     it('renders the minted amount and token symbol in the member item without the voting power label', () => {
         memberDataListItemStructureSpy.mockRestore();
         const action = buildAction({
