@@ -44,8 +44,9 @@ jobs:
       # committed build.css still matches a source compile before it can be published.
       - name: Check published CSS bundles
         run: pnpm css:check
+      # Release and hotfix branches are already versioned; fixes merged into them need no changeset.
       - name: Check changeset
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && !startsWith(github.base_ref, 'release/') && !startsWith(github.base_ref, 'hotfix/')
         run: pnpm changeset status --since origin/main
 
   deploy:

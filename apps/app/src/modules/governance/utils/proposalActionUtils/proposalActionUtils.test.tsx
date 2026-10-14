@@ -48,6 +48,38 @@ describe('proposalActionUtils', () => {
         });
     });
 
+    describe('parseRawActionTuple', () => {
+        const to = '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123';
+
+        it('parses positional [to, value, data] entries, the shape returned by the backend', () => {
+            expect(
+                proposalActionUtils.parseRawActionTuple([
+                    [to, '1000', '0xabc'],
+                ]),
+            ).toEqual([{ to, value: '1000', data: '0xabc' }]);
+        });
+
+        it('stringifies numeric values of positional entries', () => {
+            expect(
+                proposalActionUtils.parseRawActionTuple([[to, 0, '0x']]),
+            ).toEqual([{ to, value: '0', data: '0x' }]);
+        });
+
+        it('keeps object entries as they are', () => {
+            const entry = { to, value: '1', data: '0x' };
+            expect(proposalActionUtils.parseRawActionTuple([entry])).toEqual([
+                entry,
+            ]);
+        });
+
+        it('returns an empty array when the value is not a list', () => {
+            expect(proposalActionUtils.parseRawActionTuple(undefined)).toEqual(
+                [],
+            );
+            expect(proposalActionUtils.parseRawActionTuple('0x')).toEqual([]);
+        });
+    });
+
     describe('resolveNestedActions', () => {
         const rawTuple = [
             {

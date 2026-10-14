@@ -6,7 +6,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
-import type { IRawActionTuple } from '../../types';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import { ProposalActionsItem } from '../proposalActionsItem';
 
@@ -41,10 +40,9 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
         return null;
     }
 
-    const rawTuple =
-        (outerParams.find((param) => param.name === '_actions')?.value as
-            | IRawActionTuple[]
-            | undefined) ?? [];
+    const rawTuple = proposalActionUtils.parseRawActionTuple(
+        outerParams.find((param) => param.name === '_actions')?.value,
+    );
 
     const actionsToRender = proposalActionUtils.resolveNestedActions(
         rawActions,
