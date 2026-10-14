@@ -1221,17 +1221,6 @@ ProposalActionTokenMint: token-mint action view of the ProposalActions compound 
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx:5`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx:1`
 
-### ProposalActionUpdateMetadata
-
-`import { ProposalActionUpdateMetadata } from '@aragon/gov-ui-kit';`
-
-ProposalActionUpdateMetadata: update-metadata action view of the ProposalActions compound (Compound decoded proposal-actions list).
-
-**References**
-
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.tsx:7`
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionUpdateMetadata/proposalActionUpdateMetadata.stories.tsx:1`
-
 ### ProposalDataListItem.Skeleton
 
 `import { ProposalDataListItem } from '@aragon/gov-ui-kit';`
@@ -2057,7 +2046,7 @@ DataList item structure for a member (avatar, address/ENS, delegate/token-voting
 
 `import { ProposalActions } from '@aragon/gov-ui-kit';`
 
-Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionWithdrawToken/TokenMint/ChangeMembers/ChangeSettings/UpdateMetadata) are standalone exports.
+Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionTokenMint/ChangeMembers/ChangeSettings) are standalone exports.
 
 **Usage notes**
 
@@ -2581,7 +2570,7 @@ Enum props take a member (`icon={IconType.PLUS}`); string-union props take the q
 
 ### ProposalActionType
 
-`ADD_MEMBERS`, `REMOVE_MEMBERS`, `UPDATE_METADATA`, `TOKEN_MINT`, `CHANGE_SETTINGS_MULTISIG`, `CHANGE_SETTINGS_TOKENVOTE`, `UPDATE_PLUGIN_METADATA`
+`ADD_MEMBERS`, `REMOVE_MEMBERS`, `TOKEN_MINT`, `CHANGE_SETTINGS_MULTISIG`, `CHANGE_SETTINGS_TOKENVOTE`
 
 ### ProposalActionTypeNoBasicView
 

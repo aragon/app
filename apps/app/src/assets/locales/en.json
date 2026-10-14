@@ -63,6 +63,16 @@
           "riskWarning": "Permission changes are high risk and should be evaluated with a knowledge of the contracts involved.",
           "whereTerm": "Where",
           "whoTerm": "Who"
+        },
+        "updateMetadataActionDetails": {
+          "descriptionTerm": "Description",
+          "existingToggle": "Existing",
+          "linkTerm": "Links",
+          "logoTerm": "Logo",
+          "nameTerm": "Name",
+          "processKeyTerm": "Process Key",
+          "proposedToggle": "Proposed",
+          "summaryTerm": "Summary"
         }
       },
       "crossChainController": {
