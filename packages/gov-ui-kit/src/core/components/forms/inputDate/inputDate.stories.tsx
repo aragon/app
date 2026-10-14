@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { InputDate } from './inputDate';
 
 const meta: Meta<typeof InputDate> = {
-    title: 'Core/Components/Forms/InputDate',
+    title: 'Core/Forms/InputDate',
     component: InputDate,
     parameters: {
         design: {

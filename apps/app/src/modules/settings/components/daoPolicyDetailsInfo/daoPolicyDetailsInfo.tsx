@@ -19,6 +19,7 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoTargetUtils } from '@/shared/utils/daoTargetUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoPolicyDetailsClientUtils } from '../../pages/daoPolicyDetailsPage/daoPolicyDetailsClientUtils';
 
 export interface IDaoPolicyDetailsInfoProps {
@@ -62,6 +63,9 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
     });
 
     const policyName = daoPolicyDetailsClientUtils.getPolicyName(policy, t);
+    const contractName = daoUtils.parsePluginInterfaceType(
+        policy.strategy.type,
+    );
     const policyKey = policy.policyKey?.toUpperCase();
 
     const targetName =
@@ -118,7 +122,7 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
 
                 {/* Plugin address */}
                 <DefinitionList.Item
-                    description={`${policyName} v${policy.release}.${policy.build}`}
+                    description={`${contractName} v${policy.release}.${policy.build}`}
                     link={{
                         href: pluginLink,
                         isExternal: true,

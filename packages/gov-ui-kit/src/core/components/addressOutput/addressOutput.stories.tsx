@@ -6,7 +6,7 @@ import { Radio, RadioGroup } from '../forms';
 import { AddressOutput } from './addressOutput';
 
 const meta: Meta<typeof AddressOutput> = {
-    title: 'Core/Components/AddressOutput',
+    title: 'Core/AddressOutput',
     component: AddressOutput,
     argTypes: {
         address: {

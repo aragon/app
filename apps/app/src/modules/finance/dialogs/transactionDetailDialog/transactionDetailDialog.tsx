@@ -111,7 +111,7 @@ export const TransactionDetailDialog: React.FC<
     const executedByHelptext =
         sourcePlugin?.release && sourcePlugin?.build
             ? t('app.shared.daoPluginInfo.pluginVersionInfo', {
-                  name: sourcePluginName,
+                  name: daoUtils.getPluginContractName(sourcePlugin),
                   release: sourcePlugin.release,
                   build: sourcePlugin.build,
               })

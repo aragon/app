@@ -3,8 +3,9 @@ import {
     HydrationBoundary,
     QueryClient,
 } from '@tanstack/react-query';
-import { unstable_rethrow } from 'next/navigation-server';
+import { notFound, unstable_rethrow } from 'next/navigation-server';
 import type { ReactNode } from 'react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -35,13 +36,10 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
 
     const queryClient = new QueryClient();
 
+    // An unknown network is a 404, not an error state: the status is what crawlers and the
+    // bots behind nearly all of this traffic act on, and the DAO not-found page keeps the copy.
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
-        return (
-            <Page.Error
-                descriptionKey="app.application.layoutDao.error.invalidNetwork.description"
-                titleKey="app.application.layoutDao.error.invalidNetwork.title"
-            />
-        );
+        notFound();
     }
 
     try {
@@ -55,13 +53,17 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
         // A malformed DAO URL ends in notFound() inside resolveDaoId; let Next render the 404
         // page instead of turning it into the generic error state.
         unstable_rethrow(error);
+
+        // A DAO the backend rejects or does not know is the same 404 as a malformed URL.
+        if (
+            AragonBackendServiceError.isExpectedNotFoundError(error) ||
+            AragonBackendServiceError.isUnresolvableResourceError(error)
+        ) {
+            notFound();
+        }
+
         const parsedError = errorUtils.serialize(error);
-        return (
-            <Page.Error
-                error={parsedError}
-                errorNamespace="app.application.layoutDao.error"
-            />
-        );
+        return <Page.Error error={parsedError} />;
     }
 
     return (

@@ -121,12 +121,22 @@ describe('<WorkspaceProposalList /> component', () => {
         });
     });
 
+    // Each row renders its own anchor plus the publisher's. The publisher's still points at the DAO member page,
+    // which is deliberately deferred, so the row links are the ones that are not member links.
+    const rowLinks = () =>
+        screen
+            .getAllByRole('link')
+            .filter(
+                (link) => !link.getAttribute('href')?.includes('/members/'),
+            );
+
     const createTestComponent = (
         props?: Partial<IWorkspaceProposalListProps>,
     ) => {
         const completeProps: IWorkspaceProposalListProps = {
             accounts: [buildAccount(nextAddress())],
             pageSize: 10,
+            workspaceId: 'demo',
             ...props,
         };
 
@@ -223,6 +233,101 @@ describe('<WorkspaceProposalList /> component', () => {
         // The row itself lands, so the absence of the name is the tag being dropped rather than an empty list.
         expect(await screen.findByRole('link')).toBeInTheDocument();
         expect(screen.queryByText('Embedded DAO name')).not.toBeInTheDocument();
+    });
+
+    it('links each row into the scope of the account its proposal belongs to', async () => {
+        const firstAddress = nextAddress();
+        const secondAddress = nextAddress();
+        const firstAccount = buildAccount(firstAddress);
+        const secondAccount = buildAccount(secondAddress);
+
+        getProposalListSpy.mockResolvedValue(
+            buildResponse({
+                data: [
+                    buildProposal(firstAddress),
+                    buildProposal(secondAddress),
+                ],
+                metadata: {
+                    page: 1,
+                    pageSize: 10,
+                    totalPages: 1,
+                    totalRecords: 2,
+                },
+            }),
+        );
+        getDaoSpy.mockImplementation((params) =>
+            Promise.resolve(
+                params.urlParams.id === firstAccount.id
+                    ? generateDao({
+                          address: firstAddress,
+                          network,
+                          plugins: [
+                              generateDaoPlugin({
+                                  address: '0xPlugin',
+                                  slug: 'mul',
+                                  interfaceType: PluginInterfaceType.MULTISIG,
+                              }),
+                          ],
+                      })
+                    : generateDao({
+                          address: secondAddress,
+                          network,
+                          plugins: [
+                              generateDaoPlugin({
+                                  address: '0xPlugin',
+                                  slug: 'tok',
+                                  interfaceType:
+                                      PluginInterfaceType.TOKEN_VOTING,
+                              }),
+                          ],
+                      }),
+            ),
+        );
+
+        render(
+            createTestComponent({ accounts: [firstAccount, secondAccount] }),
+        );
+
+        await screen.findAllByRole('link');
+
+        expect(rowLinks().map((link) => link.getAttribute('href'))).toEqual([
+            `/workspace/demo/${firstAccount.id}/proposals/MUL-4`,
+            `/workspace/demo/${secondAccount.id}/proposals/TOK-4`,
+        ]);
+    });
+
+    it('leaves a row unlinked when its proposal has no slug', async () => {
+        const address = nextAddress();
+        getProposalListSpy.mockResolvedValue(
+            buildResponse({
+                data: [buildProposal(address, { title: 'Unlinkable' })],
+                metadata: {
+                    page: 1,
+                    pageSize: 10,
+                    totalPages: 1,
+                    totalRecords: 1,
+                },
+            }),
+        );
+        // The DAO resolves, but holds no plugin at the proposal's `pluginAddress`, so no slug can be built.
+        getDaoSpy.mockResolvedValue(
+            generateDao({
+                address,
+                network,
+                plugins: [
+                    generateDaoPlugin({
+                        address: '0xSomethingElse',
+                        slug: 'mul',
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                ],
+            }),
+        );
+
+        render(createTestComponent({ accounts: [buildAccount(address)] }));
+
+        expect(await screen.findByText('Unlinkable')).toBeInTheDocument();
+        expect(rowLinks()).toEqual([]);
     });
 
     it('drops a row whose DAO could not be read but keeps the rows that resolved', async () => {

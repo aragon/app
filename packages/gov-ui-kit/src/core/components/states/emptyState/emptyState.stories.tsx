@@ -3,7 +3,7 @@ import { IconType } from '../../icon';
 import { EmptyState } from './emptyState';
 
 const meta: Meta<typeof EmptyState> = {
-    title: 'Core/Components/States/EmptyState',
+    title: 'Core/States/EmptyState',
     component: EmptyState,
     parameters: {
         design: {

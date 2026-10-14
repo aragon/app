@@ -98,7 +98,9 @@ export const UpdateDaoContractsListDialog: React.FC<
                                     ) as IPluginInfo
                                 ).installVersion
                             }
-                            smartContractName={daoUtils.getPluginName(plugin)}
+                            smartContractName={daoUtils.getPluginContractName(
+                                plugin,
+                            )}
                         />
                     ))}
                 </div>

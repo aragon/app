@@ -282,6 +282,7 @@ src/app/workspace/[workspaceId]/
    ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
    ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
    ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
+   ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
    ├─ members/page.tsx     WorkspaceAccountMembersPage
    └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
@@ -564,6 +565,32 @@ not stacked and offers no back action, there being nothing underneath to go back
 single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
 called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
 
+#### Details page
+
+`/workspace/{workspaceId}/{accountId}/proposals/{proposalSlug}` is `WorkspaceProposalDetailsPage`, which renders
+`DaoProposalDetailsPage` unchanged behind `WorkspaceAccountGate` and only adapts the route parameters — the same
+shape `WorkspaceAccountMemberDetailsPage` uses. The adaptation is free: `resolveDaoId` returns
+`` `${network}-${addressOrEns}` `` for a plain address with no request, so the two halves `parseDaoId` splits out of
+`accountId` reconstruct that same `accountId`.
+
+Metadata is adapted rather than dropped. `generateProposalMetadata` cannot be re-exported as it stands — it
+destructures `{ proposalSlug, addressOrEns, network }`, which this route does not carry — so
+`workspaceMetadataUtils.generateProposalMetadata` parses `accountId` and delegates. It sits in
+`modules/workspace/utils/workspaceMetadataUtils/`, beside the module's other utils and matching
+`governanceMetadataUtils`, rather than in the route file: no `page.tsx` here is tested, and this adaptation is
+worth covering. Its card names the DAO rather than the workspace, which is correct: a proposal lives on the DAO.
+
+It carries the `workspaces` flag gate of its own. Next resolves metadata independently of the page, so the page's
+`notFound()` does not stop it: without the gate a probe of the URL would read the proposal and the DAO from the
+backend for a feature that does not exist yet, and could title the 404 document with a real proposal.
+
+Both proposals lists link into it. `workspaceProposalListDefault` builds
+``workspaceUtils.getAccountScopeUrl(workspaceId, accountId, `proposals/${slug}`)`` per row and passes it as the
+`href` of `DaoProposalListDefaultItem` / `SppProposalListItem`, which default to `proposalUtils.getProposalUrl` so
+the DAO pages are unaffected. The account comes from the proposal's own DAO, so a row of the aggregated list enters
+the scope of the account it belongs to rather than staying under `all`. A proposal whose plugin cannot be resolved
+has no slug, so it gets no href and the row renders unlinked.
+
 ### Members page
 
 `/workspace/{workspaceId}/all/members` is the only route this page serves: the account-scoped one renders the DAO
@@ -608,24 +635,32 @@ The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/fe
 added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local`, `development` and `preview`; `false`
 by default, so staging and production are off — the registry is a `localStorage` mock, so it must not ship on.
 
-Three gates, one per entry point:
+Every route gate is the same server-side check — `await featureFlags.isEnabled('workspaces')`, else `notFound()`:
 
 | Entry point | Gate |
 | --- | --- |
-| `/create/workspace` | `createWorkspacePage` (server) — `await featureFlags.isEnabled('workspaces')`, else `notFound()` |
-| `/workspace/{workspaceId}` | `workspaceDetailsPage` (server) — same |
+| `/create/workspace` | `LayoutWizardCreateWorkspace` and `createWorkspacePage` |
+| `/workspace/{workspaceId}/…` | `LayoutWorkspace` and every workspace page |
+| `/workspace/{workspaceId}/{accountId}/…` | `LayoutWorkspaceAccount`, on top of the above |
 | `/workspace/{workspaceId}/all/assets` and `/{accountId}/assets` | `workspaceAssetsPage` (server) — same, one page for both |
 | `/workspace/{workspaceId}/all/proposals` and `/{accountId}/proposals` | `workspaceProposalsPage` (server) — same, one page for both |
 | Explore CTA | `exploreDaosPageClient` (client) — `useFeatureFlags().isEnabled('workspaces')` |
 
 Notes:
 
-- `notFound()` must be imported from **`next/navigation-original`**, not `next/navigation`: the latter is aliased
-  to the client-hooks wrapper (`src/shared/lib/nextNavigation`), which cannot re-export server functions. See the
-  comment in `src/shared/utils/notFoundUtils/notFoundUtils.ts`.
-- The route gates are server-side, so a disabled feature is not reachable by typing the URL.
-- `/create/workspace` keeps its wizard layout around the 404 (the layout is a separate segment and still renders),
-  which leaves the user an exit button. Gate the layout too if that is not wanted.
+- The layouts are gated, not only the pages: a layout still renders around its page's 404, so with only the pages
+  gated a disabled feature would show the workspace navigation, the gate's error state and the wizard, and the
+  layouts would still prefetch from the backend. A 404 raised in `LayoutWorkspace` sits above
+  `workspace/[workspaceId]/not-found.tsx`, so it falls through to the root not-found page, without the workspace
+  navigation.
+- Nested layouts and pages render in parallel, so the 404 of a parent layout does not stop a child from running.
+  That is why `LayoutWorkspaceAccount` and the pages keep their own check. The flag snapshot is cached per request
+  (`React.cache`), so the repeated checks cost one read.
+- The redirects in `next.config.mjs` stay ungated — the flags are read at runtime, which the config cannot do — and
+  only fill in missing segments of URLs that now resolve to a 404.
+- `notFound()` must not be imported from `next/navigation`: that is aliased to the client-hooks wrapper
+  (`src/shared/lib/nextNavigation`), which cannot re-export server functions. See the comment in
+  `src/shared/utils/notFoundUtils/notFoundUtils.ts`.
 - `workspaceDialogsDefinitions` stays registered in `providersDialogs` unconditionally. The publish dialog can
   only be opened from the create wizard, which is itself gated, so registration alone exposes nothing.
 
@@ -795,6 +830,10 @@ Keep it that way when extending this.
   account ID in a shared link falls back to the aggregated selection and shows every account under a URL naming
   one, and a Safe — which never becomes an option — does the same. `workspaceUtils.findAccountById` is the fix, as
   on those two pages. The proposals page keeps the Safe fallback on purpose, a Safe having no proposals to show.
+- The workspace proposal details page is the DAO page as is, so the links inside it still leave the workspace: its
+  breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter, publisher and settings links of its
+  nested plugin components. Held back on purpose until the rest of the migration lands and every call site is
+  visible; the row links into the page are done.
 - The workspace proposals endpoint has no `onlyActive`, so an account scope counts the proposals of uninstalled
   plugins where the DAO proposals page does not. The list and its aside card agree with each other; the DAO page's
   own total for the same DAO can read lower.

@@ -3,7 +3,7 @@ import { SmartContractFunctionDataListItem } from '../../smartContractFunctionDa
 import type { SmartContractFunctionDataListItemStructure } from './smartContractFunctionDataListItemStructure';
 
 const meta: Meta<typeof SmartContractFunctionDataListItem.Structure> = {
-    title: 'Modules/Components/SmartContract/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.Structure',
+    title: 'Modules/SmartContract/SmartContractFunctionDataListItem/SmartContractFunctionDataListItem.Structure',
     component: SmartContractFunctionDataListItem.Structure,
     parameters: {
         design: {

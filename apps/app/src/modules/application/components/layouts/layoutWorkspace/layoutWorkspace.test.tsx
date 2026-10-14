@@ -1,10 +1,12 @@
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
 import type { IWorkspaceGateProps } from '@/modules/workspace/components/workspaceGate';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
+import { featureFlags } from '@/shared/featureFlags';
 import type { INavigationWorkspaceProps } from '../../navigations/navigationWorkspace';
 import { type ILayoutWorkspaceProps, LayoutWorkspace } from './layoutWorkspace';
 
@@ -13,6 +15,12 @@ jest.mock('@tanstack/react-query', () => ({
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
         <div data-testid="hydration-mock">{props.children}</div>
     ),
+}));
+
+jest.mock('next/navigation-server', () => ({
+    notFound: jest.fn(() => {
+        throw new Error('NEXT_HTTP_ERROR_FALLBACK;404');
+    }),
 }));
 
 jest.mock('../../navigations/navigationWorkspace', () => ({
@@ -33,14 +41,19 @@ jest.mock('@/modules/workspace/components/workspaceGate', () => ({
 describe('<LayoutWorkspace /> component', () => {
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
+    const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
 
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue({});
+        isEnabledSpy.mockResolvedValue(true);
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         fetchQuerySpy.mockReset();
+        isEnabledSpy.mockReset();
+        notFoundMock.mockClear();
     });
 
     // Query options carry a fresh queryFn per call, so the key is what identifies the read. `prefetchQuery` passes
@@ -60,6 +73,17 @@ describe('<LayoutWorkspace /> component', () => {
 
         return await LayoutWorkspace(completeProps);
     };
+
+    // The pages check the flag too, but this layout renders around their 404, navigation included.
+    it('renders the 404 page without reading anything when the workspaces flag is disabled', async () => {
+        isEnabledSpy.mockResolvedValue(false);
+
+        await expect(createTestComponent()).rejects.toThrow(
+            'NEXT_HTTP_ERROR_FALLBACK;404',
+        );
+        expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
+        expect(fetchQuerySpy).not.toHaveBeenCalled();
+    });
 
     it('renders the workspace navigation for the workspace of the url parameters', async () => {
         render(await createTestComponent());

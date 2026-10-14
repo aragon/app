@@ -138,6 +138,25 @@ class DaoUtils {
     };
 
     /**
+     * Returns the custom plugin name, falling back to its contract name.
+     */
+    getPluginName = (plugin: IDaoPlugin): string =>
+        plugin.name || this.getPluginContractName(plugin);
+
+    /**
+     * Returns the repository name for contract version labels, falling back to the interface type.
+     */
+    getPluginContractName = (
+        plugin: Pick<IDaoPlugin, 'subdomain' | 'interfaceType'>,
+    ): string => {
+        if (plugin.subdomain) {
+            return this.parsePluginSubdomain(plugin.subdomain);
+        }
+
+        return this.parsePluginInterfaceType(plugin.interfaceType);
+    };
+
+    /**
      * Identifier of a plugin inside a filter, i.e. the value its tab carries on the URL.
      *
      * Built here rather so that a server component resolves the same string the client wrote.
@@ -172,18 +191,6 @@ class DaoUtils {
                     ),
                 ),
         );
-
-    getPluginName = (plugin: IDaoPlugin): string => {
-        if (plugin.name) {
-            return plugin.name;
-        }
-
-        if (plugin.subdomain) {
-            return this.parsePluginSubdomain(plugin.subdomain);
-        }
-
-        return this.parsePluginInterfaceType(plugin.interfaceType);
-    };
 
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
         const {

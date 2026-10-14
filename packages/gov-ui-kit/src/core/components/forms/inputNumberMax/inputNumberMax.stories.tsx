@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { InputNumberMax } from './inputNumberMax';
 
 const meta: Meta<typeof InputNumberMax> = {
-    title: 'Core/Components/Forms/InputNumberMax',
+    title: 'Core/Forms/InputNumberMax',
     component: InputNumberMax,
     parameters: {
         design: {

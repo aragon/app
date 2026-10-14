@@ -2,14 +2,11 @@
 
 import {
     formatterUtils,
-    invariant,
     NumberFormat,
     Progress,
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
@@ -48,8 +45,8 @@ export const TokenProposalVotingSummary: React.FC<
         );
     }
 
-    const { supportThreshold, historicalTotalSupply } = proposal.settings;
-    const { symbol, decimals } = proposal.settings.token;
+    const { supportThreshold } = proposal.settings;
+    const { symbol } = proposal.settings.token;
 
     const status = tokenProposalUtils.getProposalStatus(proposal);
 
@@ -58,17 +55,6 @@ export const TokenProposalVotingSummary: React.FC<
     );
     const noVotes = Number(
         tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO),
-    );
-
-    const tokenTotalSupply = formatUnits(
-        bigIntUtils.safeParse(historicalTotalSupply),
-        decimals,
-    );
-    const totalSupplyNumber = Number(tokenTotalSupply);
-
-    invariant(
-        totalSupplyNumber > 0,
-        'TokenProposalVotingSummary: tokenTotalSupply must be a positive number',
     );
 
     const countableTotalVotes = yesVotes + noVotes;

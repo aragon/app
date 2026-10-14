@@ -61,10 +61,6 @@ class TokenSettingsUtils {
             historicalTotalSupply,
         } = settings;
 
-        const { symbol: tokenSymbol, totalSupply, decimals } = token;
-
-        const processedTotalSupply = historicalTotalSupply ?? totalSupply;
-
         const parsedSupportThreshold = this.ratioToPercentage(supportThreshold);
         const formattedApproveThreshold = formatterUtils.formatNumber(
             parsedSupportThreshold / 100,
@@ -72,6 +68,63 @@ class TokenSettingsUtils {
                 format: NumberFormat.PERCENTAGE_SHORT,
             },
         );
+        const thresholdSetting = {
+            term: t(
+                `app.plugins.token.tokenGovernanceSettings.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`,
+            ),
+            definition: t(
+                'app.plugins.token.tokenGovernanceSettings.threshold',
+                {
+                    threshold: formattedApproveThreshold,
+                },
+            ),
+        };
+
+        const duration = dateUtils.secondsToDuration(minDuration);
+        const durationSetting = {
+            term: t(
+                'app.plugins.token.tokenGovernanceSettings.minimumDuration',
+            ),
+            definition: t(
+                'app.plugins.token.tokenGovernanceSettings.duration',
+                {
+                    days: duration.days,
+                    hours: duration.hours,
+                    minutes: duration.minutes,
+                },
+            ),
+        };
+
+        const earlyExecutionSetting = {
+            term: t('app.plugins.token.tokenGovernanceSettings.earlyExecution'),
+            definition:
+                votingMode === DaoTokenVotingMode.EARLY_EXECUTION
+                    ? t('app.plugins.token.tokenGovernanceSettings.yes')
+                    : t('app.plugins.token.tokenGovernanceSettings.no'),
+        };
+
+        const voteChangeSetting = {
+            term: t('app.plugins.token.tokenGovernanceSettings.voteChange'),
+            definition:
+                votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
+                    ? t('app.plugins.token.tokenGovernanceSettings.yes')
+                    : t('app.plugins.token.tokenGovernanceSettings.no'),
+        };
+
+        // Sub-proposal settings of an SPP body can arrive without their token (not indexed
+        // yet); the rows that need it are left out rather than failing the whole panel.
+        if (token == null) {
+            return [
+                thresholdSetting,
+                durationSetting,
+                earlyExecutionSetting,
+                voteChangeSetting,
+            ];
+        }
+
+        const { symbol: tokenSymbol, totalSupply, decimals } = token;
+
+        const processedTotalSupply = historicalTotalSupply ?? totalSupply;
 
         const parsedMinParticipation = this.ratioToPercentage(minParticipation);
         const formattedMinParticipation = formatterUtils.formatNumber(
@@ -94,16 +147,19 @@ class TokenSettingsUtils {
                 format: NumberFormat.TOKEN_AMOUNT_SHORT,
             },
         );
-
-        const duration = dateUtils.secondsToDuration(minDuration);
-        const formattedDuration = t(
-            'app.plugins.token.tokenGovernanceSettings.duration',
-            {
-                days: duration.days,
-                hours: duration.hours,
-                minutes: duration.minutes,
-            },
-        );
+        const minParticipationSetting = {
+            term: t(
+                'app.plugins.token.tokenGovernanceSettings.minimumParticipation',
+            ),
+            definition: t(
+                'app.plugins.token.tokenGovernanceSettings.participation',
+                {
+                    participation: formattedMinParticipation,
+                    tokenValue: formattedMinParticipationToken,
+                    tokenSymbol,
+                },
+            ),
+        };
 
         const parsedMinVotingPower = formatUnits(
             bigIntUtils.safeParse(minProposerVotingPower),
@@ -115,66 +171,26 @@ class TokenSettingsUtils {
                 format: NumberFormat.TOKEN_AMOUNT_LONG,
             },
         );
+        const proposalThresholdSetting = {
+            term: t(
+                'app.plugins.token.tokenGovernanceSettings.proposalThreshold',
+            ),
+            definition: t(
+                'app.plugins.token.tokenGovernanceSettings.proposalAccess',
+                {
+                    balance: formattedProposerVotingPower,
+                    symbol: tokenSymbol,
+                },
+            ),
+        };
 
         return [
-            {
-                term: t(
-                    `app.plugins.token.tokenGovernanceSettings.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`,
-                ),
-                definition: t(
-                    'app.plugins.token.tokenGovernanceSettings.threshold',
-                    {
-                        threshold: formattedApproveThreshold,
-                    },
-                ),
-            },
-            {
-                term: t(
-                    'app.plugins.token.tokenGovernanceSettings.minimumParticipation',
-                ),
-                definition: t(
-                    'app.plugins.token.tokenGovernanceSettings.participation',
-                    {
-                        participation: formattedMinParticipation,
-                        tokenValue: formattedMinParticipationToken,
-                        tokenSymbol,
-                    },
-                ),
-            },
-            {
-                term: t(
-                    'app.plugins.token.tokenGovernanceSettings.minimumDuration',
-                ),
-                definition: formattedDuration,
-            },
-            {
-                term: t(
-                    'app.plugins.token.tokenGovernanceSettings.earlyExecution',
-                ),
-                definition:
-                    votingMode === DaoTokenVotingMode.EARLY_EXECUTION
-                        ? t('app.plugins.token.tokenGovernanceSettings.yes')
-                        : t('app.plugins.token.tokenGovernanceSettings.no'),
-            },
-            {
-                term: t('app.plugins.token.tokenGovernanceSettings.voteChange'),
-                definition:
-                    votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
-                        ? t('app.plugins.token.tokenGovernanceSettings.yes')
-                        : t('app.plugins.token.tokenGovernanceSettings.no'),
-            },
-            {
-                term: t(
-                    'app.plugins.token.tokenGovernanceSettings.proposalThreshold',
-                ),
-                definition: t(
-                    'app.plugins.token.tokenGovernanceSettings.proposalAccess',
-                    {
-                        balance: formattedProposerVotingPower,
-                        symbol: tokenSymbol,
-                    },
-                ),
-            },
+            thresholdSetting,
+            minParticipationSetting,
+            durationSetting,
+            earlyExecutionSetting,
+            voteChangeSetting,
+            proposalThresholdSetting,
         ];
     };
 }
