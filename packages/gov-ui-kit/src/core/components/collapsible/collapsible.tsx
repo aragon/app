@@ -17,6 +17,13 @@ import {
 /**
  * Collapsible component that can wrap any content and visually collapse it for space-saving purposes.
  *
+ * Usage notes:
+ *
+ * - The expand/collapse trigger is rendered only when measured content is taller than the collapsed height
+ *   (`collapsedPixels` or the calculated `collapsedLines` height); content that fits has no trigger.
+ * - With `showOverlay`, the gradient is shown only while overflowing content is closed, and the overlay-mode
+ *   trigger is a tertiary `Button`; without it, the trigger is a native button.
+ *
  * @param props - The component props
  * @param props.collapsedLines - Number of text lines to show while collapsed (default: 3)
  * @param props.collapsedPixels - Exact pixel height for the collapsible container that will override collapsedLines prop if defined

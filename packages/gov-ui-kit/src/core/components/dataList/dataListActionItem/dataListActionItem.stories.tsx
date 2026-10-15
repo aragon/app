@@ -3,7 +3,7 @@ import { IconType } from '../../icon';
 import { DataList } from '../index';
 
 const meta: Meta<typeof DataList.ActionItem> = {
-    title: 'Core/Components/DataList/DataList.ActionItem',
+    title: 'Core/DataList/DataList.ActionItem',
     component: DataList.ActionItem,
     parameters: {
         design: {

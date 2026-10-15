@@ -40,6 +40,14 @@ export interface IInputNumberProps
     onChange?: IUseNumberMaskProps['onChange'];
 }
 
+/**
+ * Usage notes:
+ *
+ * - `min` and `max` are enforced by the numeric mask and clamp values to the boundary; they do not produce an
+ *   out-of-range alert, so pass `alert` when that state needs to be shown.
+ * - `prefix` and `suffix` are escaped into the numeric mask and render as literal text, not as mask syntax or
+ *   markup.
+ */
 export const InputNumber = forwardRef<HTMLInputElement, IInputNumberProps>((props, ref) => {
     const {
         max = Number.MAX_SAFE_INTEGER,

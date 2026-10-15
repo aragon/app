@@ -13,6 +13,34 @@ describe('<PermissionDetailContent /> component', () => {
         initialiseConditionRegistry();
     });
 
+    it('uses the plugin version in the Where address detail', () => {
+        const whereAddress = '0x8888888888888888888888888888888888888888';
+        const row: IDaoPermission = {
+            permissionId: EXECUTE_PERMISSION_ID,
+            whoAddress: ANY_ADDR,
+            whereAddress,
+            conditionAddress: ALLOW_FLAG,
+        };
+
+        render(
+            <GukModulesProvider>
+                <PermissionDetailContent
+                    row={row}
+                    where={{
+                        address: whereAddress,
+                        label: 'Test',
+                        versionName: 'Staged Proposal Processor v1.1',
+                    }}
+                />
+            </GukModulesProvider>,
+        );
+
+        expect(
+            screen.getByText('Staged Proposal Processor v1.1'),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('Test')).not.toBeInTheDocument();
+    });
+
     it('switches to the condition breakdown for present-but-unregistered types', () => {
         const row: IDaoPermission = {
             permissionId: EXECUTE_PERMISSION_ID,

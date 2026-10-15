@@ -3,7 +3,7 @@ import { IconType } from '../icon';
 import { Button } from './button';
 
 const meta: Meta<typeof Button> = {
-    title: 'Core/Components/Button',
+    title: 'Core/Button',
     component: Button,
     argTypes: {
         href: { control: 'text' },

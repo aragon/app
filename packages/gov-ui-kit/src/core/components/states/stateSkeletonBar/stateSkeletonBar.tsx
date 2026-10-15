@@ -37,6 +37,13 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<StateSkeletonBarSize> =
     '2xl': { default: 'h-8', sm: 'sm:h-8', md: 'md:h-8', lg: 'lg:h-8', xl: 'xl:h-8', '2xl': '2xl:h-8' },
 };
 
+/**
+ * Usage notes:
+ *
+ * - The component renders an inline `<span>` without a display utility, so its width/height need a flex/grid parent
+ *   or an explicit `block`/`inline-block` class; a block parent alone does not change the span's display.
+ * - Defaults are `width={160}` and `size="md"` (`h-4`); `style.width` takes precedence over the `width` prop.
+ */
 export const StateSkeletonBar = forwardRef<HTMLDivElement, IStateSkeletonBarProps>((props, ref) => {
     const { className, responsiveSize, size = 'md', style, width = 160, ...otherProps } = props;
 

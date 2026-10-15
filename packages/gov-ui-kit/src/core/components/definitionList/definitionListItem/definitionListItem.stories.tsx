@@ -9,7 +9,7 @@ const ComponentWrapper = (Story: ComponentType) => (
 );
 
 const meta: Meta<typeof DefinitionList.Item> = {
-    title: 'Core/Components/DefinitionList/DefinitionList.Item',
+    title: 'Core/DefinitionList/DefinitionList.Item',
     component: DefinitionList.Item,
     decorators: ComponentWrapper,
     parameters: {

@@ -334,6 +334,18 @@
                     }
                 }
             }
+        },
+        {
+            "includes": [
+                "scripts/**/*.mjs"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
         }
     ],
     "assist": {

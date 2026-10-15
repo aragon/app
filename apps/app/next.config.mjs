@@ -79,8 +79,11 @@ const sentryConfig = {
 const nextConfig = {
     async redirects() {
         return [
+            // The network segment must have the `<chain>-<environment>` shape of a network slug:
+            // bots request `/dao/<daoId>/<page>`, which would otherwise match this rule and land
+            // on `/dao/<daoId>/<page>/dashboard` instead of the 404 an unmatched route gives.
             {
-                source: '/dao/:network/:addressOrEns',
+                source: '/dao/:network([a-z0-9]+-[a-z]+)/:addressOrEns',
                 destination: '/dao/:network/:addressOrEns/dashboard',
                 permanent: true,
             },

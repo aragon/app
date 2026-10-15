@@ -34,6 +34,7 @@ import {
     registerGuardrailsContractSuite,
     registerTmpCleanup,
     TMP_PREFIX,
+    writeRule,
 } from './inject-rules.test-helpers.mjs';
 
 registerTmpCleanup();
@@ -127,10 +128,12 @@ describe('collectRules', () => {
         rmSync(tmp, { recursive: true, force: true });
     });
 
-    it('discovers rule files with kind: rule', () => {
-        writeFileSync(
-            join(ruleDir, 'foo.md'),
-            '---\nname: foo\nglobs: src/foo/**\nkind: rule\n---\nfoo body',
+    it('discovers rule skills with kind: rule', () => {
+        writeRule(
+            ruleDir,
+            'foo',
+            'name: foo\nglobs: src/foo/**\nkind: rule',
+            'foo body',
         );
         const rules = collectRules({ repoRoot: tmp, ruleRoots: ['rules'] });
         assert.equal(rules.length, 1);
@@ -139,7 +142,7 @@ describe('collectRules', () => {
         assert.equal(rules[0].body.trim(), 'foo body');
     });
 
-    it('skips README.md', () => {
+    it('ignores a stray README.md at the rule-root level', () => {
         writeFileSync(
             join(ruleDir, 'README.md'),
             '---\nname: readme\nkind: rule\nglobs: **\n---\nx',
@@ -148,12 +151,12 @@ describe('collectRules', () => {
         assert.equal(rules.length, 0);
     });
 
-    it('skips files without kind: rule', () => {
-        writeFileSync(
-            join(ruleDir, 'cmd.md'),
-            '---\nname: cmd\nkind: command\nglobs: **\n---\nx',
-        );
-        writeFileSync(join(ruleDir, 'plain.md'), '# no frontmatter');
+    it('skips skills without kind: rule', () => {
+        // A SKILL.md without kind: rule is a workflow skill, not a rule.
+        writeRule(ruleDir, 'cmd', 'name: cmd\nkind: command\nglobs: **', 'x');
+        // A directory without SKILL.md is invisible to the loader.
+        mkdirSync(join(ruleDir, 'plain'));
+        writeFileSync(join(ruleDir, 'plain', 'notes.md'), '# no frontmatter');
         const rules = collectRules({ repoRoot: tmp, ruleRoots: ['rules'] });
         assert.equal(rules.length, 0);
     });
@@ -169,13 +172,17 @@ describe('collectRules', () => {
     it('merges across multiple rule roots', () => {
         const dir2 = join(tmp, 'local');
         mkdirSync(dir2);
-        writeFileSync(
-            join(ruleDir, 'shared.md'),
-            '---\nname: shared\nglobs: src/**\nkind: rule\n---\nshared',
+        writeRule(
+            ruleDir,
+            'shared',
+            'name: shared\nglobs: src/**\nkind: rule',
+            'shared',
         );
-        writeFileSync(
-            join(dir2, 'local.md'),
-            '---\nname: local\nglobs: src/**\nkind: rule\n---\nlocal',
+        writeRule(
+            dir2,
+            'local',
+            'name: local\nglobs: src/**\nkind: rule',
+            'local',
         );
         const rules = collectRules({
             repoRoot: tmp,
@@ -197,9 +204,11 @@ describe('buildRuleMatch', () => {
         tmp = mkdtempSync(join(tmpdir(), TMP_PREFIX));
         ruleDir = join(tmp, 'rules');
         mkdirSync(ruleDir);
-        writeFileSync(
-            join(ruleDir, 'q.md'),
-            '---\nname: q\nglobs: src/**/api/**\nkind: rule\n---\nquery rule body',
+        writeRule(
+            ruleDir,
+            'q',
+            'name: q\nglobs: src/**/api/**\nkind: rule',
+            'query rule body',
         );
         mkdirSync(join(tmp, 'src', 'shared', 'api'), { recursive: true });
     });

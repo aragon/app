@@ -6,7 +6,7 @@ import style from './index.css?raw';
 import { TextAreaRichText } from './textAreaRichText';
 
 const meta: Meta<typeof TextAreaRichText> = {
-    title: 'Core/Components/Forms/TextAreaRichText',
+    title: 'Core/Forms/TextAreaRichText',
     component: TextAreaRichText,
     parameters: {
         style,

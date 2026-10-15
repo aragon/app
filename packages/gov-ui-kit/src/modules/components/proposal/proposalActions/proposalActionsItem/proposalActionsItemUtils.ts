@@ -3,7 +3,6 @@ import type {
     IProposalActionChangeMembers,
     IProposalActionChangeSettings,
     IProposalActionTokenMint,
-    IProposalActionUpdateMetadata,
 } from '../proposalActionsList';
 
 class ProposalActionsItemUtils {
@@ -11,9 +10,6 @@ class ProposalActionsItemUtils {
 
     isChangeMembersAction = (action: Partial<IProposalAction>): action is IProposalActionChangeMembers =>
         action.type === ProposalActionType.ADD_MEMBERS || action.type === ProposalActionType.REMOVE_MEMBERS;
-
-    isUpdateMetadataAction = (action: Partial<IProposalAction>): action is IProposalActionUpdateMetadata =>
-        action.type === ProposalActionType.UPDATE_METADATA || action.type === ProposalActionType.UPDATE_PLUGIN_METADATA;
 
     isTokenMintAction = (action: Partial<IProposalAction>): action is IProposalActionTokenMint =>
         action.type === ProposalActionType.TOKEN_MINT;

@@ -33,6 +33,8 @@ export interface ICrossChainControllerNestedActionsListProps {
 const chainAgnosticActionTypes: string[] = [
     ProposalActionType.TRANSFER,
     ProposalActionType.TRANSFER_NATIVE,
+    ProposalActionType.METADATA_UPDATE,
+    ProposalActionType.METADATA_PLUGIN_UPDATE,
 ];
 
 /**
@@ -58,23 +60,24 @@ const getCustomActionView = (
 
 /**
  * Renders the actions forwarded to another chain by a cross-chain controller message. Unlike `NestedActionsList`,
- * actions are rendered with `ProposalActions.Item` directly and only go through the DAO-agnostic default
- * normalization, without a plugin-specific `CustomComponent`: the DAO's own network and installed plugins belong to
- * its home chain, not the destination chain the actions execute on, so resolving a plugin view for them would read
- * the wrong chain's state.
+ * actions are rendered with `ProposalActions.Item` directly, without plugin normalization or a plugin-specific
+ * `CustomComponent`: the DAO's own network and installed plugins belong to its home chain, not the destination chain
+ * the actions execute on, so resolving a plugin view for them would read the wrong chain's state.
  *
  * Views matched by function selector are the exception: they carry no `daoId`, so they resolve nothing from the
  * home chain and only decode what is chain-independent, such as a permission hash to its name. Token and native
- * transfers are resolved by action type for the same reason: their view renders the decoded action as is.
+ * transfers and metadata updates are resolved by action type for the same reason: their views render the decoded
+ * action as is.
  */
 export const CrossChainControllerNestedActionsList: React.FC<
     ICrossChainControllerNestedActionsListProps
 > = (props) => {
     const { rawTuple, rawActions, chainId } = props;
 
-    const actions = proposalActionUtils
-        .resolveNestedActions(rawActions, rawTuple)
-        .map((action) => proposalActionUtils.normalizeDefaultAction(action));
+    const actions = proposalActionUtils.resolveNestedActions(
+        rawActions,
+        rawTuple,
+    );
 
     if (actions.length === 0) {
         return null;

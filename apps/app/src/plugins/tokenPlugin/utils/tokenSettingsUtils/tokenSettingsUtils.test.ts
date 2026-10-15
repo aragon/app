@@ -2,7 +2,10 @@ import {
     generateTokenPluginSettings,
     generateTokenPluginSettingsToken,
 } from '@/plugins/tokenPlugin/testUtils';
-import { DaoTokenVotingMode } from '@/plugins/tokenPlugin/types';
+import {
+    DaoTokenVotingMode,
+    type ITokenPluginSettings,
+} from '@/plugins/tokenPlugin/types';
 import { mockTranslations } from '@/test/utils';
 import { tokenSettingsUtils } from './tokenSettingsUtils';
 
@@ -182,6 +185,24 @@ describe('tokenSettings utils', () => {
                     );
                 },
             );
+        });
+
+        it('leaves out the token-based rows when the settings carry no token', () => {
+            const settings = {
+                ...generateTokenPluginSettings(),
+                token: undefined,
+            } as unknown as ITokenPluginSettings;
+            const result = tokenSettingsUtils.parseSettings({
+                settings,
+                t: mockTranslations.tMock,
+            });
+
+            expect(result.map((setting) => setting.term)).toEqual([
+                'app.plugins.token.tokenGovernanceSettings.approvalThreshold',
+                'app.plugins.token.tokenGovernanceSettings.minimumDuration',
+                'app.plugins.token.tokenGovernanceSettings.earlyExecution',
+                'app.plugins.token.tokenGovernanceSettings.voteChange',
+            ]);
         });
     });
 });

@@ -49,6 +49,14 @@ const variantToClassNames: Record<ProgressVariant, string> = {
     critical: 'bg-critical-500',
 };
 
+/**
+ * Usage notes:
+ *
+ * - The progress track is wrapped in `w-full`, so it fills the containing block by default; the component's
+ *   `className` targets the inner progress root.
+ * - `value` and `indicator` are clamped to `1`–`100`, not `0`–`100`; a value of `0` still renders the minimum 1%
+ *   indicator.
+ */
 export const Progress: React.FC<IProgressProps> = (props) => {
     const {
         value,

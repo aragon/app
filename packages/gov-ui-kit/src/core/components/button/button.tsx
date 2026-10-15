@@ -176,6 +176,15 @@ const sizeToSpinnerSize: Record<ButtonSize, SpinnerSize> = {
     sm: 'sm',
 };
 
+/**
+ * Usage notes:
+ *
+ * - `isLoading` keeps the text label rendered and only replaces `iconLeft`/`iconRight` with a spinner — the label
+ *   does not disappear.
+ * - In the link form (`href` set), `disabled` is not forwarded as a native attribute: it sets `aria-disabled` and
+ *   calls `preventDefault()` on click, so navigation is blocked while still rendering an `<a>` (the same guard
+ *   applies while `isLoading`).
+ */
 export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonProps>((props, ref) => {
     const {
         variant = 'primary',

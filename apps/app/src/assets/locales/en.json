@@ -63,6 +63,16 @@
           "riskWarning": "Permission changes are high risk and should be evaluated with a knowledge of the contracts involved.",
           "whereTerm": "Where",
           "whoTerm": "Who"
+        },
+        "updateMetadataActionDetails": {
+          "descriptionTerm": "Description",
+          "existingToggle": "Existing",
+          "linkTerm": "Links",
+          "logoTerm": "Logo",
+          "nameTerm": "Name",
+          "processKeyTerm": "Process Key",
+          "proposedToggle": "Proposed",
+          "summaryTerm": "Summary"
         }
       },
       "crossChainController": {
@@ -427,26 +437,6 @@
           "termsOfService": "Terms of Service"
         }
       },
-      "layoutDao": {
-        "error": {
-          "invalidNetwork": {
-            "description": "We don’t support DAOs on that network.",
-            "title": "Invalid network"
-          },
-          "notFound": {
-            "description": "We couldn't find the DAO you're looking for.",
-            "title": "DAO not found"
-          }
-        }
-      },
-      "layoutWizard": {
-        "error": {
-          "notFound": {
-            "description": "We couldn't find the DAO you're looking for.",
-            "title": "DAO not found"
-          }
-        }
-      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
@@ -474,6 +464,11 @@
         "action": "Go to dashboard",
         "description": "We couldn't find the page you're looking for.",
         "title": "Page not found"
+      },
+      "notFoundDaoMissing": {
+        "action": "Explore DAOs",
+        "description": "We couldn't find the DAO you're looking for.",
+        "title": "DAO not found"
       },
       "supportChat": {
         "panel": {
@@ -4270,6 +4265,7 @@
         },
         "item": {
           "input": {
+            "accessibleName": "Member {{number}}",
             "error": {
               "alreadyInList": "Address has already been added.",
               "invalid": "Address is not valid."

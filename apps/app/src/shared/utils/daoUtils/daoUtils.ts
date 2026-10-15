@@ -153,6 +153,10 @@ class DaoUtils {
             : base;
     };
 
+    /**
+     * Returns the custom plugin name, falling back to its contract name. Safe plugins are named by
+     * their address because the backend leaves them unnamed and a DAO can hold several.
+     */
     getPluginName = (plugin: IDaoPlugin): string => {
         // A DAO can hold several Safes and the backend names none of them, so the address is the
         // only thing that tells two Safe tabs apart. Truncated here rather than through
@@ -166,10 +170,15 @@ class DaoUtils {
             return `Safe ${address}`;
         }
 
-        if (plugin.name) {
-            return plugin.name;
-        }
+        return plugin.name || this.getPluginContractName(plugin);
+    };
 
+    /**
+     * Returns the repository name for contract version labels, falling back to the interface type.
+     */
+    getPluginContractName = (
+        plugin: Pick<IDaoPlugin, 'subdomain' | 'interfaceType'>,
+    ): string => {
         if (plugin.subdomain) {
             return this.parsePluginSubdomain(plugin.subdomain);
         }

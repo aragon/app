@@ -89,16 +89,6 @@ export const modulesCopy = {
         existingToggle: 'Existing',
         proposedToggle: 'Proposed',
     },
-    proposalActionsUpdateMetadata: {
-        logoTerm: 'Logo',
-        nameTerm: 'Name',
-        linkTerm: 'Links',
-        descriptionTerm: 'Description',
-        summaryTerm: 'Summary',
-        processKeyTerm: 'Process Key',
-        existingToggle: 'Existing',
-        proposedToggle: 'Proposed',
-    },
     proposalActionsTokenMint: {
         summaryHeading: 'Summary',
         newTokensTerm: 'New tokens',

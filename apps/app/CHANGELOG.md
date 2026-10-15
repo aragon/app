@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.40.2
+
+### Patch Changes
+
+- [#1463](https://github.com/aragon/app/pull/1463) [`43ae31e`](https://github.com/aragon/app/commit/43ae31ea8515e53d972aa14094d715229b828031) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Answer malformed DAO URLs with a 404 instead of redirecting them to a dashboard, keep proposal, settings and gauge pages from failing on incomplete plugin data, and classify more wallet and browser noise in Sentry.
+
+- [#1443](https://github.com/aragon/app/pull/1443) [`122836b`](https://github.com/aragon/app/commit/122836bc9877436953d6eb2355f1d51400b9fa2a) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Add the Cross-chain Controller plugin and Chain ID Registry permissions to the keccak dictionary, so they read as names instead of truncated hashes wherever the app resolves a permission id: the permissions list and graph, the permission-management action cards, and the permission picker in the composer. Covers `CANCEL_MESSAGE`, `FORWARD_MESSAGE`, `RETRY_MESSAGE`, `MANAGE_CHAIN_ID_REGISTRY`, `MANAGE_CONTROLLER_CONFIG`, `UNPAUSE`, and `SWEEP`.
+
+- [#1449](https://github.com/aragon/app/pull/1449) [`2c28ae6`](https://github.com/aragon/app/commit/2c28ae66db1ca496314ff47f4c898e8009189a78) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (Next.js 16.3.7 with the GHSA-vcvr-r3jv-pc5j fix, framer-motion 13, Sentry 10.75, viem 2.57.1, assistant-ui 0.15.22, ai 7.0.123), add advisory floors for seroval, source-map-js and postcss-selector-parser, and bump pnpm to 11.28
+
+- [#1454](https://github.com/aragon/app/pull/1454) [`4549243`](https://github.com/aragon/app/commit/4549243e63b6056a24cbc0925041e4668e4d3997) Thanks [@evanaronson](https://github.com/evanaronson)! - Use plugin contract names in name-and-version labels across contract lists, plugin and policy details, transaction and permission details, and the upgrade flow.
+
+    Show plugin repository names and versions in permission graph subtitles and expanded permission details, with OSx badges on plugin graph nodes.
+
+- [#1433](https://github.com/aragon/app/pull/1433) [`bedbbf8`](https://github.com/aragon/app/commit/bedbbf876ce30609ff550c55bea887a4002a2a8b) Thanks [@milosh86](https://github.com/milosh86)! - Render token and native transfer actions through an app-owned detail view registered in the action view registry, replacing the gov-ui-kit `ProposalActionWithdrawToken` basic view.
+- Updated dependencies [[`2c28ae6`](https://github.com/aragon/app/commit/2c28ae66db1ca496314ff47f4c898e8009189a78)]:
+    - @aragon/assistant-chat@0.5.3
+
 ## 1.40.1
 
 ### Patch Changes
