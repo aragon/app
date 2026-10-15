@@ -607,6 +607,39 @@ describe('dao utils', () => {
             ).toEqual([plugins[1], plugins[3]]);
         });
 
+        it('includes process-only Safes without widening body selection for other processes', () => {
+            const processSafe = generateDaoPlugin({
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                isBody: false,
+            });
+            const processMultisig = generateDaoPlugin({
+                interfaceType: PluginInterfaceType.MULTISIG,
+                isProcess: true,
+            });
+            const bodyMultisig = generateDaoPlugin({
+                interfaceType: PluginInterfaceType.MULTISIG,
+                isBody: true,
+            });
+            const bodySafe = generateDaoPlugin({
+                interfaceType: PluginInterfaceType.SAFE,
+                isBody: true,
+            });
+            const dao = generateDao({
+                plugins: [processSafe, processMultisig, bodyMultisig, bodySafe],
+            });
+
+            expect(
+                daoUtils.getDaoPlugins(dao, {
+                    type: PluginType.BODY,
+                    includeProcessSafes: true,
+                }),
+            ).toEqual([processSafe, bodyMultisig, bodySafe]);
+            expect(
+                daoUtils.getDaoPlugins(dao, { type: PluginType.BODY }),
+            ).toEqual([bodyMultisig, bodySafe]);
+        });
+
         it('only returns the plugin with the specified interface type', () => {
             const plugins = [
                 generateDaoPlugin({ interfaceType: PluginInterfaceType.ADMIN }),

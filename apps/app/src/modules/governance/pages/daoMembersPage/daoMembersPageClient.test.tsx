@@ -130,13 +130,15 @@ describe('<DaoMembersPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders the aside for the selected body through the plugin-info slot', () => {
+    it('renders the aside for the selected execute-only Safe through the plugin-info slot', () => {
         const safeAddress = '0x2222222222222222222222222222222222222222';
         const daoAddress = '0x1111111111111111111111111111111111111111';
         const safePlugin = generateDaoPlugin({
             address: safeAddress,
             daoAddress,
             interfaceType: daoService.PluginInterfaceType.SAFE,
+            isProcess: true,
+            isBody: false,
             slug: 'safe',
         });
         useDaoPluginsSpy.mockReturnValue([

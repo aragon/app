@@ -79,6 +79,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
         type: PluginType.BODY,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        includeProcessSafes: true,
         visibleOnly: true,
     });
 

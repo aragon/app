@@ -52,6 +52,10 @@ export interface IGetDaoPluginsParams {
      */
     slug?: string;
     /**
+     * Includes Safe process plugins when filtering for body plugins.
+     */
+    includeProcessSafes?: boolean;
+    /**
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
@@ -192,6 +196,7 @@ class DaoUtils {
             pluginAddress,
             includeSubPlugins = false,
             includeLinkedAccounts = false,
+            includeProcessSafes = false,
             interfaceType,
             hasExecute,
             slug,
@@ -201,7 +206,7 @@ class DaoUtils {
         return dao?.plugins?.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
-                this.filterPluginByType(plugin, type) &&
+                this.filterPluginByType(plugin, type, includeProcessSafes) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
                 this.filterByLinkedAccounts(
                     dao?.linkedAccounts,
@@ -401,9 +406,17 @@ class DaoUtils {
         address == null ||
         plugin.address.toLowerCase() === address.toLowerCase();
 
-    private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
+    private filterPluginByType = (
+        plugin: IDaoPlugin,
+        type?: PluginType,
+        includeProcessSafes = false,
+    ) =>
         type == null ||
-        (type === PluginType.BODY && plugin.isBody) ||
+        (type === PluginType.BODY &&
+            (plugin.isBody ||
+                (includeProcessSafes &&
+                    plugin.isProcess &&
+                    plugin.interfaceType === PluginInterfaceType.SAFE))) ||
         (type === PluginType.PROCESS && plugin.isProcess);
 
     private filterBySubPlugin = (

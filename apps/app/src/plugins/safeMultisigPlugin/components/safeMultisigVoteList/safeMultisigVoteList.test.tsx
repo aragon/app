@@ -75,7 +75,8 @@ describe('<SafeMultisigVoteList /> component', () => {
                         address: pluginAddress,
                         daoAddress,
                         interfaceType: PluginInterfaceType.SAFE,
-                        isBody: true,
+                        isProcess: true,
+                        isBody: false,
                         slug: 'safe',
                     }),
                 }),
@@ -144,9 +145,44 @@ describe('<SafeMultisigVoteList /> component', () => {
         );
     });
 
-    // The members tab is addressed by the Safe's canonical body record. Without one there is no
-    // tab to open, so a link would lead to whichever body happened to sort first.
-    it('renders signers without a profile link when the DAO carries no Safe body', () => {
+    it('keeps a linked Safe owning DAO in the signer tab selector', () => {
+        const rootDaoAddress = '0x3333333333333333333333333333333333333333';
+        const linkedDaoAddress = '0x4444444444444444444444444444444444444444';
+        const body = '0x5555555555555555555555555555555555555555';
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                id: PluginInterfaceType.SAFE,
+                uniqueId: `${body}-safe-${linkedDaoAddress}`,
+                meta: generateDaoPlugin({
+                    address: body,
+                    daoAddress: linkedDaoAddress,
+                    interfaceType: PluginInterfaceType.SAFE,
+                    isProcess: true,
+                    isBody: false,
+                    slug: 'safe',
+                }),
+            }),
+        ]);
+
+        render(
+            createTestComponent({
+                proposal: generateSppProposal({
+                    network: Network.ETHEREUM_SEPOLIA,
+                    daoAddress: rootDaoAddress,
+                }),
+                body,
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `/dao/ethereum-sepolia/${rootDaoAddress}/members/${viewer}?members=${body}-safe-${linkedDaoAddress}`,
+        );
+    });
+
+    // The members tab is addressed by the Safe's canonical member source. Without one there is no
+    // tab to open, so a link would lead to whichever member source happened to sort first.
+    it('renders signers without a profile link when the DAO carries no Safe member source', () => {
         useDaoPluginsSpy.mockReturnValue([]);
 
         render(createTestComponent());

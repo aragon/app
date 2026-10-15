@@ -3,8 +3,8 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginSortUtils } from '@/shared/utils/pluginSortUtils';
 
 /**
- * A members tab: one body plugin, in the DAO that owns it. Safes are ordinary body plugins, so
- * every tab is backed by a canonical plugin record.
+ * A members tab: one member plugin, in the DAO that owns it. Safes may be process-only, so every
+ * tab is backed by a canonical plugin record.
  */
 export interface IDaoMemberSource {
     /** Registry id the member-list slot is resolved with. */
@@ -12,9 +12,9 @@ export interface IDaoMemberSource {
     /** Stable tab identity carried in the `members` URL parameter. */
     uniqueId: string;
     label: string;
-    /** Address of the body plugin whose members are listed. */
+    /** Address of the plugin whose members are listed. */
     address: string;
-    /** DAO owning the body plugin, which differs from the viewed DAO for linked accounts. */
+    /** DAO owning the plugin, which differs from the viewed DAO for linked accounts. */
     daoId: string;
     plugin: IDaoPlugin;
 }
@@ -37,7 +37,7 @@ class DaoMemberSourceUtils {
             props: {},
         }));
 
-        return pluginSortUtils
+        const memberSources = pluginSortUtils
             .sortByDisplayOrder(filterPlugins, { rootDaoAddress: dao.address })
             .map(({ id, label, meta: plugin, uniqueId }) => ({
                 id,
@@ -47,6 +47,15 @@ class DaoMemberSourceUtils {
                 daoId: daoUtils.resolvePluginDaoId(daoId, plugin, dao),
                 plugin,
             }));
+
+        const sourceById = new Map<string, IDaoMemberSource>(
+            memberSources.map((memberSource): [string, IDaoMemberSource] => [
+                memberSource.uniqueId,
+                memberSource,
+            ]),
+        );
+
+        return [...sourceById.values()];
     };
 
     getMemberUrlFromDaoId = (

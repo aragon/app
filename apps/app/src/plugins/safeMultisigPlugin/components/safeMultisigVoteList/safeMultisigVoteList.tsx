@@ -38,12 +38,13 @@ export const SafeMultisigVoteListView: React.FC<
     } = props;
     const { t } = useTranslations();
     const safeDaoId = `${network}-${daoAddress}`;
-    const safeBodyPlugin = useDaoPlugins({
+    const safePlugin = useDaoPlugins({
         daoId: safeDaoId,
         type: PluginType.BODY,
         pluginAddress: safeAddress,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        includeProcessSafes: true,
     })?.at(0);
     const voteIndicator: VoteIndicator = isVeto === true ? 'veto' : 'approve';
     const orderedSigners = [...signers].sort((a, b) => {
@@ -71,12 +72,12 @@ export const SafeMultisigVoteListView: React.FC<
                 {orderedSigners.map((signer) => (
                     <SafeMultisigVoteListItem
                         href={
-                            safeBodyPlugin == null
+                            safePlugin == null
                                 ? undefined
                                 : daoMemberSourceUtils.getMemberUrlFromDaoId(
                                       safeDaoId,
                                       signer,
-                                      safeBodyPlugin.uniqueId,
+                                      safePlugin.uniqueId,
                                   )
                         }
                         key={signer}
