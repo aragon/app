@@ -884,6 +884,14 @@ export const SafeProposalTransactionDialog: React.FC<
         t,
         isVeto,
     ]);
+    const handlePreparationError = useCallback(
+        (error: unknown) => {
+            setPrepareError(errorMessage(error));
+            fail('PREPARE_REVIEW', error);
+        },
+        [fail],
+    );
+
     const runPreparation = useCallback(() => {
         clearError();
         setPrepareError(undefined);
@@ -891,20 +899,20 @@ export const SafeProposalTransactionDialog: React.FC<
         track('transaction_start', 'prepare');
         const run = () => {
             void prepare()
-                .catch((prepareError) => {
-                    setPrepareError(errorMessage(prepareError));
-                    fail('PREPARE_REVIEW', prepareError);
-                })
+                .catch(handlePreparationError)
                 .finally(() => setIsPreparing(false));
         };
         if (recoveryState.status === 'none') {
-            withNetworkSwitch(run);
+            withNetworkSwitch(run, (switchError) => {
+                handlePreparationError(switchError);
+                setIsPreparing(false);
+            });
         } else {
             run();
         }
     }, [
         clearError,
-        fail,
+        handlePreparationError,
         prepare,
         recoveryState.status,
         track,

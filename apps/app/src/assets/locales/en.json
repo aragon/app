@@ -3279,10 +3279,10 @@
           "replacedDescription": "This one can no longer be executed and its confirmations are lost.",
           "reportGone": "This Safe transaction is no longer in the queue — it was executed or removed while this page was open. Nothing was signed.",
           "review": {
-            "bundledExecution": "Your confirmation may reach the Safe's threshold. Signing is free. Once Safe records your confirmation, choose Execute to approve a separate onchain transaction that costs gas. Execution availability is checked again before that action.",
+            "bundledExecution": "Confirm one transaction in your wallet to add your confirmation and execute this Safe transaction. This costs network gas.",
             "executionOnly": "This transaction already carries every signature it needs, so your wallet will ask once, to execute it onchain, which costs gas.",
             "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
-            "reportOnly": "Reports this body's result for \"{{proposal}}\" to the governance process. Signing is free and does not execute anything by itself.",
+            "reportOnly": "Reports this body's result for \"{{proposal}}\" to the governance process.",
             "mixedConfirm": "Sign Safe transaction",
             "unrecognised": "This Safe transaction does not contain a result report for this stage that Aragon can read. Review every call below before authorising it.",
             "oppositeResult": "This Safe transaction reports the opposite result to the one you selected. Review every call below before authorising it.",
