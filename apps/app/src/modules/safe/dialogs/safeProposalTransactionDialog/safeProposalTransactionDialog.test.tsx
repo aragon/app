@@ -325,6 +325,7 @@ const SafeConfirmationObserver = () => {
 };
 
 const actionLabels = {
+    loading: 'app.safe.safeProposalTransactionDialog.actions.loading',
     signSubmit: 'app.safe.safeProposalTransactionDialog.actions.sign_submit',
     execute: 'app.safe.safeProposalTransactionDialog.actions.execute',
     resume: 'app.safe.safeProposalTransactionDialog.actions.resume',
@@ -966,6 +967,48 @@ describe('SafeProposalTransactionDialog', () => {
         });
         await clickPrimary(actionLabels.retry);
         await waitForSignStep();
+    });
+
+    it('offers Retry after a rejected network switch and prepares on retry', async () => {
+        let switchAttempt = 0;
+        let rejectSwitch: ((error: unknown) => void) | undefined;
+        useNetworkSwitchSpy.mockReturnValue({
+            requiredChainId: chainId,
+            isCrossNetworkTransaction: true,
+            networkName: 'Sepolia',
+            switchChainStatus: 'pending',
+            withNetworkSwitch: (onSend, onError) => {
+                if (switchAttempt++ === 0) {
+                    rejectSwitch = onError;
+                    return;
+                }
+                onSend();
+            },
+        });
+
+        renderDialog();
+        await waitFor(() => {
+            expect(
+                screen.getByRole('button', { name: actionLabels.loading }),
+            ).toBeDisabled();
+        });
+        expect(getSafeNextNonceSpy).not.toHaveBeenCalled();
+
+        act(() => {
+            rejectSwitch?.(new Error('User rejected the network switch'));
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText('User rejected the network switch'),
+            ).toBeInTheDocument();
+            expect(
+                screen.getByRole('button', { name: actionLabels.retry }),
+            ).toBeEnabled();
+        });
+
+        await clickPrimary(actionLabels.retry);
+        await waitForSignStep();
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
     });
 
     it('does not show execution success from a submitted hash alone', async () => {
