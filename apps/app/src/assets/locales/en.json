@@ -396,6 +396,18 @@
             }
           }
         }
+      },
+      "multisig": {
+        "multisigChangeMembersActionDetails": {
+          "added": "Added",
+          "addedCount": "+{{count}} members",
+          "blockNote": "At the block in which the proposal was created",
+          "existingCount": "{{count}} members",
+          "existingMembers": "Existing members",
+          "removed": "Removed",
+          "removedCount": "-{{count}} members",
+          "summary": "Summary"
+        }
       }
     },
     "application": {

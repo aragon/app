@@ -107,6 +107,59 @@ describe('<ChangeSettingsActionDetails /> component', () => {
         expect(screen.getByText('2')).toBeInTheDocument();
     });
 
+    it('swaps only the definitions when both sides share the same terms, including unchanged settings', async () => {
+        const action = buildAction({
+            existingSettings: [
+                { term: 'Approval threshold', definition: '> 50%' },
+                {
+                    term: 'Minimum participation',
+                    definition: '≥ 15% (≥ 300.5K UNI)',
+                },
+                {
+                    term: 'Minimum duration',
+                    definition: '3 days, 0 hours, 0 minutes',
+                },
+            ],
+            proposedSettings: [
+                { term: 'Approval threshold', definition: '> 55%' },
+                {
+                    term: 'Minimum participation',
+                    definition: '≥ 15% (≥ 300.5K UNI)',
+                },
+                {
+                    term: 'Minimum duration',
+                    definition: '1 days, 12 hours, 0 minutes',
+                },
+            ],
+        });
+        const terms = () =>
+            screen.getAllByRole('term').map((term) => term.textContent);
+        const expectedTerms = [
+            'Approval threshold',
+            'Minimum participation',
+            'Minimum duration',
+        ];
+
+        render(createTestComponent({ action }));
+
+        expect(terms()).toEqual(expectedTerms);
+        expect(screen.getByText('> 55%')).toBeInTheDocument();
+        expect(screen.getByText('≥ 15% (≥ 300.5K UNI)')).toBeInTheDocument();
+        expect(
+            screen.getByText('1 days, 12 hours, 0 minutes'),
+        ).toBeInTheDocument();
+
+        await userEvent.click(screen.getByText(copyKey('existingToggle')));
+
+        expect(terms()).toEqual(expectedTerms);
+        expect(screen.getByText('> 50%')).toBeInTheDocument();
+        expect(screen.getByText('≥ 15% (≥ 300.5K UNI)')).toBeInTheDocument();
+        expect(
+            screen.getByText('3 days, 0 hours, 0 minutes'),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('> 55%')).not.toBeInTheDocument();
+    });
+
     it('renders no settings when the lists are empty', () => {
         render(createTestComponent());
         expect(screen.queryByRole('term')).not.toBeInTheDocument();

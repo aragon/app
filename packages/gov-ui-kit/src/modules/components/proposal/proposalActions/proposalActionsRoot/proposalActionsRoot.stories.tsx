@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { Button } from '../../../../../core';
-import { generateProposalActionChangeMembers, ProposalActions, ProposalActionType } from '../index';
+import { ProposalActions } from '../index';
+import { generateProposalAction } from '../proposalActionsTestUtils';
 
 const meta: Meta<typeof ProposalActions.Root> = {
     title: 'Modules/Proposal/ProposalActions/ProposalActions.Root',
@@ -27,17 +28,14 @@ export const Default: Story = {
         <ProposalActions.Root {...props}>
             <ProposalActions.Container emptyStateDescription="Proposal has no actions">
                 <ProposalActions.Item
-                    action={generateProposalActionChangeMembers({
-                        inputData: { function: 'addMembers', contract: 'Multisig', parameters: [] },
-                        members: [{ address: '0xC8da4C1d9BB59DD32ac39A925933188b7c66c311' }],
+                    action={generateProposalAction({
+                        inputData: { function: 'addAddresses', contract: 'Multisig', parameters: [] },
                         to: '0x96208a79d4f3386922ebEc815EF1C0d02b48Eb70',
                     })}
                 />
                 <ProposalActions.Item
-                    action={generateProposalActionChangeMembers({
-                        type: ProposalActionType.REMOVE_MEMBERS,
-                        inputData: { function: 'removeMembers', contract: 'Multisig', parameters: [] },
-                        members: [{ address: '0x0150627b84a0C8257AB28cD0E1F71E81c7aafe3d' }],
+                    action={generateProposalAction({
+                        inputData: { function: 'removeAddresses', contract: 'Multisig', parameters: [] },
                         to: '0x96208a79d4f3386922ebEc815EF1C0d02b48Eb70',
                     })}
                 />
@@ -62,17 +60,15 @@ export const Controlled: Story = {
         const actions = [
             {
                 id: actionIds[0],
-                ...generateProposalActionChangeMembers({
-                    inputData: { function: 'removeMembers', contract: 'Multisig', parameters: [] },
-                    members: [{ address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' }],
+                ...generateProposalAction({
+                    inputData: { function: 'removeAddresses', contract: 'Multisig', parameters: [] },
                     to: '0x5283D291DBCF85356A21bA090E6db59121208b44',
                 }),
             },
             {
                 id: actionIds[1],
-                ...generateProposalActionChangeMembers({
-                    inputData: { function: 'addMembers', contract: 'Multisig', parameters: [] },
-                    members: [{ address: '0x6cC5F688a315f3dC28A7781717a9A798a59fDA7b' }],
+                ...generateProposalAction({
+                    inputData: { function: 'addAddresses', contract: 'Multisig', parameters: [] },
                     to: '0x5283D291DBCF85356A21bA090E6db59121208b44',
                 }),
             },
