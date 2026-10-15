@@ -90,6 +90,7 @@ const useConfirmSpy = jest.spyOn(safeServiceApi, 'useConfirmSafeTransaction');
 const getSafeInfoSpy = jest.spyOn(safeServiceApi.safeService, 'getSafeInfo');
 
 const useDaoSpy = jest.spyOn(daoServiceApi, 'useDao');
+const actualUseTransactionStatus = transactionServiceApi.useTransactionStatus;
 const useTransactionStatusSpy = jest.spyOn(
     transactionServiceApi,
     'useTransactionStatus',
@@ -112,6 +113,10 @@ const usePublicClientSpy = jest.spyOn(Wagmi, 'usePublicClient');
 const decodeTransactionsSpy = jest.spyOn(
     smartContractServiceApi.smartContractService,
     'decodeTransactionsLight',
+);
+const getTransactionStatusSpy = jest.spyOn(
+    transactionServiceApi.transactionService,
+    'getTransactionStatus',
 );
 
 let safeInfo: ISafeInfoResponse;
@@ -1148,6 +1153,79 @@ describe('SafeProposalTransactionDialog', () => {
             screen.queryByText('invalidation failed'),
         ).not.toBeInTheDocument();
     });
+    it('routes completed execution through the enabled indexing query before completion', async () => {
+        const onExecuted = jest.fn();
+        let resolveStatus!: (status: {
+            isProcessed: boolean;
+            slug: string;
+        }) => void;
+        const statusResponse = new Promise<{
+            isProcessed: boolean;
+            slug: string;
+        }>((resolve) => {
+            resolveStatus = resolve;
+        });
+        useTransactionStatusSpy.mockImplementation(actualUseTransactionStatus);
+        getTransactionStatusSpy.mockImplementation(() => statusResponse);
+        protocolKit.getThreshold.mockResolvedValue(1);
+        protocolKit.getOwners.mockResolvedValue([owner]);
+        safeInfo.threshold = 1;
+        serviceTransaction = makeTransaction({
+            confirmations: [
+                generateSafeConfirmation({
+                    owner,
+                    signature: signatureData,
+                }),
+            ],
+            confirmationsRequired: 1,
+        });
+        jest.mocked(WagmiActions.waitForTransactionReceipt).mockResolvedValue(
+            receiptWithLogs([
+                safeExecutionLog(),
+                reportLog({
+                    data: encodeAbiParameters([{ type: 'bool' }], [true]),
+                }),
+            ]),
+        );
+
+        renderDialog({
+            pendingTransaction: serviceTransaction,
+            onExecuted,
+        });
+        await waitForExecuteStep();
+        await clickPrimary(actionLabels.execute);
+        await waitFor(() =>
+            expect(WagmiActions.waitForTransactionReceipt).toHaveBeenCalled(),
+        );
+        await waitFor(() =>
+            expect(getTransactionStatusSpy).toHaveBeenCalledTimes(1),
+        );
+
+        expect(
+            screen.getByRole('button', { name: actionLabels.execute }),
+        ).toBeDisabled();
+        expect(
+            screen.queryByText(
+                'app.safe.safeProposalTransactionDialog.completion',
+            ),
+        ).not.toBeInTheDocument();
+
+        await act(async () => {
+            resolveStatus({ isProcessed: true, slug: 'safe-proposal' });
+            await statusResponse;
+        });
+        await waitFor(() =>
+            expect(
+                screen.getByRole('button', {
+                    name: 'app.safe.safeProposalTransactionDialog.completion',
+                }),
+            ).toBeEnabled(),
+        );
+        await waitFor(() =>
+            expect(onExecuted).toHaveBeenCalledWith(submittedHash),
+        );
+    });
+
     it('refuses to sign when the reviewed envelope hash changes', async () => {
         const mismatch = `0x${'9'.repeat(64)}` as Hex;
         protocolKit.getTransactionHash.mockResolvedValue(safeTxHash);

@@ -1561,7 +1561,7 @@ export const SafeProposalTransactionDialog: React.FC<
         runPreparation();
     }, [clearError, fail, prepared, reconcile, runPreparation, t]);
 
-    const activeStep = stepper.activeStep;
+    const { activeStep, updateActiveStep } = stepper;
     const requiresReview =
         (walletChanged || planDiverged) &&
         prepared != null &&
@@ -1570,13 +1570,17 @@ export const SafeProposalTransactionDialog: React.FC<
     const numberedSteps = plan ?? [];
 
     useEffect(() => {
+        if (isComplete) {
+            return;
+        }
+
         const timeout = setTimeout(() => {
             if (flowStep != null && numberedSteps.includes(flowStep)) {
-                stepper.updateActiveStep(flowStep);
+                updateActiveStep(flowStep);
             }
         }, 0);
         return () => clearTimeout(timeout);
-    }, [flowStep, numberedSteps, stepper]);
+    }, [flowStep, isComplete, numberedSteps, updateActiveStep]);
 
     const executionUnavailable =
         isComplete &&

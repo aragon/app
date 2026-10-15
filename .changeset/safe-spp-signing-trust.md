@@ -17,3 +17,5 @@ Open “View in Safe” in the Safe web app and show queued-nonce warnings befor
 Use the Safe voting dropdown to select the primary button's mode. Selecting approve-only or veto-only changes the button without starting a transaction; the primary button starts the selected action.
 
 Name the proposal occupying the Safe's current nonce in the queued-behind warning, linking to it wherever it lives. A Safe can be shared by anything, so a transaction with no Aragon correlation keeps the plain nonce warning.
+
+Advance verified Safe executions into indexing and refresh the proposal result when indexing completes, instead of leaving the dialog on Execute.
