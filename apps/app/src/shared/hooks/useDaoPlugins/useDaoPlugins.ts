@@ -1,7 +1,7 @@
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import {
     type IDaoPlugin,
-    PluginInterfaceType,
+    type PluginInterfaceType,
     useDao,
 } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
@@ -132,10 +132,7 @@ const buildFilterPlugins = (
 
     const processedPlugins = filteredPlugins.map((plugin) => ({
         id: plugin.interfaceType,
-        uniqueId:
-            plugin.interfaceType === PluginInterfaceType.SAFE
-                ? `${plugin.address}-${plugin.slug}-${plugin.daoAddress ?? rootDaoAddress}`
-                : `${plugin.address}-${plugin.slug}`,
+        uniqueId: daoUtils.getPluginTabId(plugin, rootDaoAddress),
         label: daoUtils.getPluginName(plugin),
         meta: plugin,
         props: {},

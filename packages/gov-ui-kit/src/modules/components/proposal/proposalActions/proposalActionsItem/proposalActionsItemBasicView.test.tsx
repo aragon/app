@@ -7,7 +7,6 @@ jest.mock('../proposalActionsList', () => ({
     ProposalActionChangeMembers: () => <div data-testid="change-members-mock" />,
     ProposalActionChangeSettings: () => <div data-testid="change-settings-mock" />,
     ProposalActionTokenMint: () => <div data-testid="token-mint-mock" />,
-    ProposalActionUpdateMetadata: () => <div data-testid="update-metadata-mock" />,
 }));
 
 describe('<ProposalActionsItemBasicView /> component', () => {
@@ -39,8 +38,6 @@ describe('<ProposalActionsItemBasicView /> component', () => {
         { type: ProposalActionType.CHANGE_SETTINGS_TOKENVOTE, testId: 'change-settings-mock' },
         { type: ProposalActionType.ADD_MEMBERS, testId: 'change-members-mock' },
         { type: ProposalActionType.REMOVE_MEMBERS, testId: 'change-members-mock' },
-        { type: ProposalActionType.UPDATE_METADATA, testId: 'update-metadata-mock' },
-        { type: ProposalActionType.UPDATE_PLUGIN_METADATA, testId: 'update-metadata-mock' },
     ])('renders $type component when action is of $type type', ({ type, testId }) => {
         const action = generateProposalAction({ type });
         render(createTestComponent({ action }));

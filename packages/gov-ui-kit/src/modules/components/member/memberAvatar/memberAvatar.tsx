@@ -23,6 +23,15 @@ export interface IMemberAvatarProps extends Omit<IAvatarProps, 'fallback'>, IWeb
     avatarSrc?: string;
 }
 
+/**
+ * Usage notes:
+ *
+ * - Render it inside `GukModulesProvider`: its three wagmi ENS hooks are always mounted and need the provider's
+ *   wagmi and React Query context. Passing `avatarSrc` disables every ENS query but does not remove that
+ *   requirement.
+ * - If the image is unavailable after lookup, its fallback is a deterministic blockies identicon seeded from the
+ *   resolved address, generated only client-side (not during SSR).
+ */
 export const MemberAvatar: React.FC<IMemberAvatarProps> = (props) => {
     const { ensName, address, avatarSrc, chainId = mainnet.id, wagmiConfig, ...otherProps } = props;
 

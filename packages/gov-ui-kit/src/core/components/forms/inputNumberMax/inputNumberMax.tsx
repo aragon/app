@@ -16,6 +16,14 @@ export interface IInputNumberMaxProps extends Omit<IInputComponentProps, 'maxLen
     onChange?: IUseNumberMaskProps['onChange'];
 }
 
+/**
+ * Usage notes:
+ *
+ * - `max` is required, clamps values through the numeric mask, and also supplies the value used by the max-value
+ *   button; it does not produce an out-of-range alert, so pass `alert` for that state.
+ * - `InputNumberMax` does not expose `prefix` or `suffix`; use `InputNumber` when literal numeric affixes are
+ *   needed.
+ */
 export const InputNumberMax: React.FC<IInputNumberMaxProps> = (props) => {
     const { max, onChange, ...otherProps } = props;
     const { containerProps, inputProps } = useInputProps(otherProps);

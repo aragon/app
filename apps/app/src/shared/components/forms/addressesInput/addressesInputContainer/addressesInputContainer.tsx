@@ -11,6 +11,7 @@ import {
     type ComponentProps,
     cloneElement,
     isValidElement,
+    useId,
 } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -86,6 +87,31 @@ const hasNestedValue = (value: unknown): boolean => {
     return true;
 };
 
+/**
+ * Renders a managed list of address rows for a react-hook-form field array.
+ *
+ * Ownership: this component owns the `useFieldArray` for `name` (or
+ * `fieldPrefix.name`). It appends, removes, resets and clears rows itself and
+ * re-keys each child with the RHF field id (the caller's `useWatch` does not
+ * expose those ids, so without this the list drifts out of sync on removal).
+ *
+ * Callers MUST NOT open a second `useFieldArray` on the same `name`: the
+ * container would overwrite its keys and the caller's add/remove would not
+ * match what is rendered. Instead render one row per entry from a read-only
+ * `useWatch` on the same `name`, keyed by index, letting this container drive
+ * all mutations (see `ManageMembershipAddressList`):
+ *
+ * ```tsx
+ * const rows = useWatch({ name, defaultValue: [] });
+ * return (
+ *     <AddressesInput.Container name={name}>
+ *         {rows.map((row, index) => (
+ *             <AddressesInput.Item key={index} index={index} />
+ *         ))}
+ *     </AddressesInput.Container>
+ * );
+ * ```
+ */
 export const AddressesInputContainer: React.FC<
     IAddressesInputContainerProps
 > = (props) => {
@@ -102,6 +128,8 @@ export const AddressesInputContainer: React.FC<
 
     const { t } = useTranslations();
     const { formState } = useFormContext();
+    const addressesInputId = useId();
+    const addressesLabelId = `${addressesInputId}-label`;
 
     const membersFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -157,6 +185,7 @@ export const AddressesInputContainer: React.FC<
 
     const contextValue = {
         fieldName: membersFieldName,
+        inputIdPrefix: addressesInputId,
         onRemoveMember: handleRemoveMember,
     };
     const watchedMembers = useWatch<AddressListInputBaseForm>({
@@ -173,9 +202,6 @@ export const AddressesInputContainer: React.FC<
         (member) => (member?.address ?? '').trim() !== '',
     );
 
-    // This is needed because in the parent we are using, useWatch, but this hook
-    // does not expose the RHF IDs of the fields, which results in the lists being
-    // out of sync when removing items, so here we append the key to each child element
     const childrenWithKeys = Children.map(children, (child, index) => {
         if (isValidElement(child) && index < membersField.length) {
             const fieldId = membersField[index].id;
@@ -194,11 +220,26 @@ export const AddressesInputContainer: React.FC<
                 <InputContainer
                     className="gap-3"
                     helpText={helpText}
-                    id="addresses"
-                    label={label}
+                    id={
+                        membersField.length > 0
+                            ? `${addressesInputId}-0`
+                            : undefined
+                    }
+                    label={
+                        label == null ? undefined : (
+                            <span id={addressesLabelId}>{label}</span>
+                        )
+                    }
                     useCustomWrapper={true}
                 >
-                    {childrenWithKeys}
+                    <fieldset
+                        aria-labelledby={
+                            label == null ? undefined : addressesLabelId
+                        }
+                        className="m-0 flex min-w-0 flex-col gap-3 border-0 p-0"
+                    >
+                        {childrenWithKeys}
+                    </fieldset>
                 </InputContainer>
                 <div className="flex w-full justify-between">
                     <Button

@@ -80,7 +80,7 @@ export const PermissionNodeDetailPanel: React.FC<
                         )}
                     </div>
                     <p className="truncate text-neutral-500 text-sm">
-                        {t(getPermissionNodeTypeKey(node))}
+                        {node.versionName ?? t(getPermissionNodeTypeKey(node))}
                     </p>
                 </div>
                 <div onPointerDown={(event) => event.stopPropagation()}>

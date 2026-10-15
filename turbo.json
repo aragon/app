@@ -43,6 +43,7 @@
         "biome.json",
         ".design-sync/**"
     ],
+    "agentGuidance": false,
     "tasks": {
         "dev": {
             "cache": false,

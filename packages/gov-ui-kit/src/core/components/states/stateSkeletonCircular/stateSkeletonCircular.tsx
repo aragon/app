@@ -60,6 +60,13 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<StateSkeletonCircularSi
     },
 };
 
+/**
+ * Usage notes:
+ *
+ * - The component renders an inline `<span>` without a display utility, so its size needs a flex/grid parent or an
+ *   explicit `block`/`inline-block` class; a block parent alone does not change the span's display.
+ * - The default is `size="md"` (`size-8`); all size choices use the exported `StateSkeletonCircularSize` union.
+ */
 export const StateSkeletonCircular = forwardRef<HTMLDivElement, IStateSkeletonCircularProps>((props, ref) => {
     const { className, responsiveSize, size = 'md', ...otherProps } = props;
 

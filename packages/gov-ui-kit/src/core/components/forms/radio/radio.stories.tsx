@@ -3,7 +3,7 @@ import { RadioGroup } from '../radioGroup';
 import { Radio } from './radio';
 
 const meta: Meta<typeof Radio> = {
-    title: 'Core/Components/Forms/Radio',
+    title: 'Core/Forms/Radio',
     component: Radio,
     parameters: {
         design: {

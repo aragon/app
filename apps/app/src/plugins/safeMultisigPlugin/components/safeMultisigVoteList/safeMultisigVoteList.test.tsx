@@ -64,18 +64,23 @@ describe('<SafeMultisigVoteList /> component', () => {
         useEnsAvatarSpy.mockReturnValue(
             unresolved as unknown as ReturnType<typeof ensModule.useEnsAvatar>,
         );
-        useDaoPluginsSpy.mockImplementation(({ pluginAddress }) => [
-            generateFilterComponentPlugin({
-                id: PluginInterfaceType.SAFE,
-                uniqueId: `${pluginAddress ?? ''}-safe`,
-                meta: generateDaoPlugin({
-                    address: pluginAddress,
-                    interfaceType: PluginInterfaceType.SAFE,
-                    isBody: true,
-                    slug: 'safe',
+        useDaoPluginsSpy.mockImplementation(({ pluginAddress, daoId }) => {
+            const daoAddress = daoId.slice(daoId.lastIndexOf('-') + 1);
+
+            return [
+                generateFilterComponentPlugin({
+                    id: PluginInterfaceType.SAFE,
+                    uniqueId: `${pluginAddress ?? ''}-safe-${daoAddress}`,
+                    meta: generateDaoPlugin({
+                        address: pluginAddress,
+                        daoAddress,
+                        interfaceType: PluginInterfaceType.SAFE,
+                        isBody: true,
+                        slug: 'safe',
+                    }),
                 }),
-            }),
-        ]);
+            ];
+        });
     });
 
     afterEach(() => {
@@ -135,7 +140,7 @@ describe('<SafeMultisigVoteList /> component', () => {
 
         expect(screen.getAllByRole('link')[0]).toHaveAttribute(
             'href',
-            `/dao/ethereum-mainnet/${daoAddress}/members/${viewer}?members=${body}-safe`,
+            `/dao/ethereum-mainnet/${daoAddress}/members/${viewer}?members=${body}-safe-${daoAddress}`,
         );
     });
 

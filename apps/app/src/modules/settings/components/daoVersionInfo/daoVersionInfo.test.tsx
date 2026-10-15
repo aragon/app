@@ -40,8 +40,9 @@ describe('<DaoVersionInfo /> component', () => {
         expect(screen.getByText(/daoVersionInfo.osLabel/)).toBeInTheDocument();
     });
 
-    it('renders the correct values', () => {
+    it('shows the custom name as the term and the contract name beside the version', () => {
         const plugin = generateDaoPlugin({
+            name: 'Test',
             release: '1',
             build: '3',
             subdomain: 'multisig',
@@ -54,6 +55,7 @@ describe('<DaoVersionInfo /> component', () => {
 
         render(createTestComponent({ dao }));
 
+        expect(screen.getByText('Test')).toBeInTheDocument();
         expect(
             screen.getByText(/daoVersionInfo.osValue \(version=1.3.0\)/),
         ).toBeInTheDocument();

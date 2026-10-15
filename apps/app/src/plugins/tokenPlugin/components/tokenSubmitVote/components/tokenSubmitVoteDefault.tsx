@@ -58,12 +58,14 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
     const { address } = useWalletAccount();
 
     const latestVote = useUserVote<ITokenVote>({ proposal, network });
-    const { meta: plugin } = useDaoPlugins({
+    // Unset while the DAO query has not resolved (e.g. a backend outage): the vote has
+    // nothing to check permissions against until it does.
+    const plugin = useDaoPlugins({
         daoId,
         pluginAddress,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
-    })![0];
+    })?.[0]?.meta;
 
     const { buildEntityUrl } = useDaoChain({ network });
     const latestVoteTxHref = buildEntityUrl({
@@ -77,6 +79,10 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
     );
 
     const openTransactionDialog = () => {
+        if (plugin == null) {
+            return;
+        }
+
         const voteLabel = voteOptionToIndicator[selectedOption ?? ''];
         const voteLabelDescription =
             voteLabel === 'abstain'
@@ -127,6 +133,10 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
             setShowOptions(false);
         }
     }, [canSubmitVote]);
+
+    if (plugin == null) {
+        return null;
+    }
 
     return (
         <div className="flex flex-col gap-4">

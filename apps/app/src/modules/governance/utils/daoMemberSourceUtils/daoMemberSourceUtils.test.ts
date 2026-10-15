@@ -78,8 +78,38 @@ describe('daoMemberSourceUtils', () => {
             }),
         ]);
 
-        expect(source.uniqueId).toEqual(`${address}-safe`);
+        expect(source.uniqueId).toEqual(`${address}-safe-${rootDaoAddress}`);
         expect(source.id).toEqual(PluginInterfaceType.SAFE);
+    });
+
+    // Two linked DAOs can hold the same Safe contract; they are separate tabs.
+    it('keeps separate tabs for one Safe shared by two linked DAOs', () => {
+        const safeAddress = '0x7777777777777777777777777777777777777777';
+        const sources = resolve([
+            generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isBody: true,
+                slug: 'safe',
+            }),
+            generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: linkedDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isBody: true,
+                slug: 'safe',
+            }),
+        ]);
+
+        expect(sources.map(({ uniqueId }) => uniqueId)).toEqual([
+            `${safeAddress}-safe-${rootDaoAddress}`,
+            `${safeAddress}-safe-${linkedDaoAddress}`,
+        ]);
+        expect(sources[0].daoId).toEqual(daoId);
+        expect(sources[1].daoId).toEqual(
+            `${Network.ETHEREUM_MAINNET}-${linkedDaoAddress}`,
+        );
     });
 
     it('orders root-DAO bodies before linked-account bodies', () => {

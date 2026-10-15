@@ -248,15 +248,21 @@ class PrepareDaoContractsUpdateDialogUtils {
             pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo
         ).installVersion;
 
-        const pluginName = daoUtils.getPluginName(plugin);
-        const updatedVersion = `${pluginName} ${release.toString()}.${build.toString()}`;
-        const currentVersion = `${pluginName} ${currentRelease}.${currentBuild}`;
+        const pluginName = daoUtils
+            .getPluginName(plugin)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;');
+        const contractName = daoUtils.getPluginContractName(plugin);
+        const updatedVersion = `${contractName} v${release.toString()}.${build.toString()}`;
+        const currentVersion = `${contractName} v${currentRelease}.${currentBuild}`;
 
         return `
             <li>
-                <strong>${updatedVersion}</strong>
+                <strong>${pluginName}</strong>
                 <ul>
                     <li><strong>Current version</strong>: ${currentVersion}</li>
+                    <li><strong>New version</strong>: ${updatedVersion}</li>
                     <li><strong>Upgrade description</strong>: ${description}</li>
                     <li><a href="${releaseNotes}" target="_blank" rel="noopener noreferrer">View release notes</a></li>
                 </ul>

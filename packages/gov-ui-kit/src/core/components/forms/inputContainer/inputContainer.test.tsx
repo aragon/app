@@ -23,6 +23,12 @@ describe('<InputContainer /> component', () => {
         expect(screen.getByLabelText(label)).toBeInTheDocument();
     });
 
+    it('renders a label without a target when no id is given', () => {
+        const label = 'input-label';
+        render(createTestComponent({ label, id: undefined }));
+        expect(screen.getByText(label).closest('label')).not.toHaveAttribute('for');
+    });
+
     it('renders the optional tag when the label is set and isOptional prop is set to true', () => {
         const label = 'label-test';
         const isOptional = true;

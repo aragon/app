@@ -137,6 +137,26 @@ class DaoUtils {
             : addressUtils.truncateAddress(dao.address);
     };
 
+    /**
+     * Stable identity of a plugin tab, carried in URL filter parameters.
+     *
+     * A Safe is not installed, so two linked DAOs can share one Safe contract and produce the same
+     * address and slug. Those are separate tabs, so a Safe is additionally keyed by the DAO that
+     * holds it. Every surface that builds plugin tabs has to agree on this, or a tab selected in a
+     * list cannot be found again by the aside or the detail page.
+     */
+    getPluginTabId = (plugin: IDaoPlugin, rootDaoAddress?: string): string => {
+        const base = `${plugin.address}-${plugin.slug}`;
+
+        return plugin.interfaceType === PluginInterfaceType.SAFE
+            ? `${base}-${plugin.daoAddress ?? rootDaoAddress}`
+            : base;
+    };
+
+    /**
+     * Returns the custom plugin name, falling back to its contract name. Safe plugins are named by
+     * their address because the backend leaves them unnamed and a DAO can hold several.
+     */
     getPluginName = (plugin: IDaoPlugin): string => {
         // A DAO can hold several Safes and the backend names none of them, so the address is the
         // only thing that tells two Safe tabs apart. Truncated here rather than through
@@ -150,10 +170,15 @@ class DaoUtils {
             return `Safe ${address}`;
         }
 
-        if (plugin.name) {
-            return plugin.name;
-        }
+        return plugin.name || this.getPluginContractName(plugin);
+    };
 
+    /**
+     * Returns the repository name for contract version labels, falling back to the interface type.
+     */
+    getPluginContractName = (
+        plugin: Pick<IDaoPlugin, 'subdomain' | 'interfaceType'>,
+    ): string => {
         if (plugin.subdomain) {
             return this.parsePluginSubdomain(plugin.subdomain);
         }

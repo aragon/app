@@ -85,8 +85,15 @@ export const useFilterUrlParam = (
         [initialValue, updateActiveFilter],
     );
 
-    // Remove tab parameter on URL when hook is unmounted
-    useEffect(() => () => updateActiveFilter('', true), [updateActiveFilter]);
+    // Only clean up this page's filter; navigation may carry it into the next page.
+    useEffect(() => {
+        const mountPathname = window.location.pathname;
+        return () => {
+            if (window.location.pathname === mountPathname) {
+                updateActiveFilter('', true);
+            }
+        };
+    }, [updateActiveFilter]);
 
     const processedActiveFilter = isValid ? activeFilter : validValues?.[0];
 

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertInline } from './alertInline';
 
 const meta: Meta<typeof AlertInline> = {
-    title: 'Core/Components/Alerts/AlertInline',
+    title: 'Core/Alerts/AlertInline',
     component: AlertInline,
     parameters: {
         design: {

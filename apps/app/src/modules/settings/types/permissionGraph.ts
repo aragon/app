@@ -9,6 +9,7 @@ export interface IPermissionGraphNode {
     id: string;
     kind: PermissionNodeKind;
     label: string;
+    versionName?: string;
     tag?: string;
     layer?: IPermissionEntityRef['layer'];
     status?: IPermissionEntityRef['status'];

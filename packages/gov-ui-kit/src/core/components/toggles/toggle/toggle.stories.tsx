@@ -4,7 +4,7 @@ import { ToggleGroup } from '../toggleGroup';
 import { type IToggleProps, Toggle } from './toggle';
 
 const meta: Meta<typeof Toggle> = {
-    title: 'Core/Components/Toggles/Toggle',
+    title: 'Core/Toggles/Toggle',
     component: Toggle,
     argTypes: {
         disabled: { control: 'boolean' },

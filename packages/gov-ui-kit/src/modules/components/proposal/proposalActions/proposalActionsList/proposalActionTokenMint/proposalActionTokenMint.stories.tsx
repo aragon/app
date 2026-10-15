@@ -3,7 +3,7 @@ import { ProposalActionTokenMint } from './proposalActionTokenMint';
 import { generateProposalActionTokenMint } from './proposalActionTokenMint.testUtils';
 
 const meta: Meta<typeof ProposalActionTokenMint> = {
-    title: 'Modules/Components/Proposal/ProposalActions/Actions/TokenMint',
+    title: 'Modules/Proposal/ProposalActions/Actions/TokenMint',
     component: ProposalActionTokenMint,
     parameters: {
         design: {

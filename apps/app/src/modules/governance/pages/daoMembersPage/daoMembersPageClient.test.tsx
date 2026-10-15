@@ -132,20 +132,24 @@ describe('<DaoMembersPageClient /> component', () => {
 
     it('renders the aside for the selected body through the plugin-info slot', () => {
         const safeAddress = '0x2222222222222222222222222222222222222222';
+        const daoAddress = '0x1111111111111111111111111111111111111111';
         const safePlugin = generateDaoPlugin({
             address: safeAddress,
+            daoAddress,
             interfaceType: daoService.PluginInterfaceType.SAFE,
             slug: 'safe',
         });
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin({
                 id: daoService.PluginInterfaceType.SAFE,
-                uniqueId: `${safeAddress}-safe`,
+                uniqueId: `${safeAddress}-safe-${daoAddress}`,
                 meta: safePlugin,
             }),
         ]);
         useSearchParamsMock.mockReturnValue(
-            createSearchParams({ members: `${safeAddress}-safe` }) as never,
+            createSearchParams({
+                members: `${safeAddress}-safe-${daoAddress}`,
+            }) as never,
         );
 
         render(createTestComponent());
