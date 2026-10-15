@@ -73,22 +73,6 @@ export const modulesCopy = {
             numberRange: (label: string, type: string) => `${label} is out of range for ${type}.`,
         },
     },
-    proposalActionChangeMembers: {
-        summary: 'Summary',
-        added: 'Added',
-        removed: 'Removed',
-        members: 'members',
-        adjustMemberCount: {
-            addMembers: 'Add members',
-            removeMembers: 'Remove members',
-        },
-        existingMembers: 'Existing members',
-        blockNote: 'At the block in which the proposal was created',
-    },
-    proposalActionsChangeSettings: {
-        existingToggle: 'Existing',
-        proposedToggle: 'Proposed',
-    },
     proposalDataListItemStatus: {
         voted: 'Voted',
         ago: 'ago',

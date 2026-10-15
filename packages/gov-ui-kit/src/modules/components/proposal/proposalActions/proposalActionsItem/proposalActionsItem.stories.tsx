@@ -1,8 +1,20 @@
 import { DevTool } from '@hookform/devtools';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FormProvider, useForm } from 'react-hook-form';
-import { generateProposalActionChangeMembers, type IProposalActionsItemProps, ProposalActions } from '../index';
+import { DefinitionList } from '../../../../../core';
+import { type IProposalActionComponentProps, type IProposalActionsItemProps, ProposalActions } from '../index';
 import { generateProposalAction } from '../proposalActionsTestUtils';
+
+const CustomActionView = (props: IProposalActionComponentProps) => {
+    const { action } = props;
+
+    return (
+        <DefinitionList.Container className="w-full">
+            <DefinitionList.Item term="Function">{action.inputData?.function}</DefinitionList.Item>
+            <DefinitionList.Item term="Target">{action.to}</DefinitionList.Item>
+        </DefinitionList.Container>
+    );
+};
 
 const defaultRender = (props: IProposalActionsItemProps) => {
     const methods = useForm({ mode: 'onTouched', defaultValues: props.action });
@@ -118,17 +130,22 @@ export const Unverified: Story = {
 };
 
 /**
- * For supported/native actions, the ProposalActions.Item component renders the related BASIC view by default.
+ * When a `CustomComponent` is passed, the ProposalActions.Item component renders it as the BASIC view by default.
  */
-export const Native: Story = {
+export const CustomView: Story = {
     render: defaultRender,
     args: {
         index: 0,
-        action: generateProposalActionChangeMembers({
-            members: [
-                { address: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b', name: 'ens.eth' },
-                { address: '0x97fb9274ac39bB275AC76f56390e6713A2C417D9' },
-            ],
+        CustomComponent: CustomActionView,
+        action: generateProposalAction({
+            to: '0x96208a79d4f3386922ebEc815EF1C0d02b48Eb70',
+            inputData: {
+                function: 'addAddresses',
+                contract: 'Multisig',
+                parameters: [
+                    { name: '_members', type: 'address[]', value: ['0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b'] },
+                ],
+            },
         }),
     },
 };

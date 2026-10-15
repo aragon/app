@@ -1,11 +1,20 @@
 import { GukModulesProvider, ProposalActions } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { initChangeSettingsActionViews } from '@/actions/core/changeSettings';
 import { initUpdateMetadataActionViews } from '@/actions/core/updateMetadata';
+import { initMultisigActionViews } from '@/actions/multisig';
 import { initTokenActionViews } from '@/actions/token';
 import { generateToken } from '@/modules/finance/testUtils';
+import { generateMultisigActionChangeMembers } from '@/plugins/multisigPlugin/testUtils';
+import { MultisigProposalActionType } from '@/plugins/multisigPlugin/types';
 import { generateTokenActionTokenMint } from '@/plugins/tokenPlugin/testUtils';
 import {
+    type IProposalActionChangeSettings,
+    ProposalActionType,
+} from '../../api/governanceService';
+import {
+    generateProposalAction,
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
 } from '../../testUtils';
@@ -16,7 +25,9 @@ import {
 
 describe('<ProposalActionsItem /> component', () => {
     beforeAll(() => {
+        initChangeSettingsActionViews();
         initUpdateMetadataActionViews();
+        initMultisigActionViews();
         initTokenActionViews();
     });
 
@@ -115,4 +126,72 @@ describe('<ProposalActionsItem /> component', () => {
         expect(screen.getByText(/PDC/)).toBeInTheDocument();
         expect(screen.queryByText(/voting power/i)).not.toBeInTheDocument();
     });
+
+    it('renders the registered settings view for normalized change-settings actions', async () => {
+        const action: IProposalActionChangeSettings = {
+            ...generateProposalAction(target),
+            type: ProposalActionType.CHANGE_SETTINGS,
+            proposedSettings: [
+                { term: 'Minimum approval', definition: '3 of 7 members' },
+            ],
+            existingSettings: [
+                { term: 'Minimum approval', definition: '1 of 7 members' },
+            ],
+        };
+
+        render(createTestComponent({ action }));
+        await userEvent.click(screen.getAllByRole('button')[0]);
+
+        expect(screen.getByText('Minimum approval')).toBeInTheDocument();
+        expect(screen.getByText('3 of 7 members')).toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByText(
+                'app.actions.core.changeSettingsActionDetails.existingToggle',
+            ),
+        );
+
+        expect(screen.getByText('1 of 7 members')).toBeInTheDocument();
+        expect(screen.queryByText('3 of 7 members')).not.toBeInTheDocument();
+    });
+
+    // Removals once rendered as additions (APP-1160): each type must resolve to the view with its own summary.
+    it.each([
+        {
+            type: MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
+            term: 'added',
+            otherTerm: 'removed',
+        },
+        {
+            type: MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
+            term: 'removed',
+            otherTerm: 'added',
+        },
+    ] as const)(
+        'renders the registered members view for $type actions',
+        async ({ type, term, otherTerm }) => {
+            const membersCopyKey = (key: string) =>
+                `app.actions.multisig.multisigChangeMembersActionDetails.${key}`;
+            const action = generateMultisigActionChangeMembers({
+                ...target,
+                type,
+                members: [
+                    {
+                        address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
+                        ens: 'dzepina.eth',
+                    },
+                ],
+                currentMembers: 7,
+            });
+
+            render(createTestComponent({ action }));
+            await userEvent.click(screen.getAllByRole('button')[0]);
+
+            expect(await screen.findByText('dzepina.eth')).toBeInTheDocument();
+            expect(screen.getByText(membersCopyKey(term))).toBeInTheDocument();
+            expect(
+                screen.queryByText(membersCopyKey(otherTerm)),
+            ).not.toBeInTheDocument();
+        },
+    );
 });

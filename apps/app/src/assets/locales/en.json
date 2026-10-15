@@ -2,6 +2,10 @@
   "app": {
     "actions": {
       "core": {
+        "changeSettingsActionDetails": {
+          "existingToggle": "Existing",
+          "proposedToggle": "Proposed"
+        },
         "createProposalActionDetails": {
           "metadataTitle": "Title",
           "metadataSummary": "Summary",
@@ -391,6 +395,18 @@
               "helpText": "After this time recipients will not be able to claim."
             }
           }
+        }
+      },
+      "multisig": {
+        "multisigChangeMembersActionDetails": {
+          "added": "Added",
+          "addedCount": "+{{count}} members",
+          "blockNote": "At the block in which the proposal was created",
+          "existingCount": "{{count}} members",
+          "existingMembers": "Existing members",
+          "removed": "Removed",
+          "removedCount": "-{{count}} members",
+          "summary": "Summary"
         }
       }
     },
