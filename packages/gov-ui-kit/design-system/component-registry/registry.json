@@ -6,27 +6,8 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "51e54b4f858d11dc4ca14d2a12a86faabd3138d6",
-            "dirty": [
-                "packages/gov-ui-kit/src/modules/assets/copy/modulesCopy.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsDefinitions.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemBasicView.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItemUtils.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/index.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.api.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.test.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.testUtils.ts",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx"
-            ],
+            "commit": "dff9e732d931b24cb673822320ac310d093c5214",
+            "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
                 "js": [

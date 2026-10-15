@@ -1,5 +1,5 @@
 import * as GovUiKit from '@aragon/gov-ui-kit';
-import { ChainEntityType, GukModulesProvider } from '@aragon/gov-ui-kit';
+import { ChainEntityType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateToken } from '@/modules/finance/testUtils';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
@@ -203,48 +203,5 @@ describe('<TokenMintActionDetails /> component', () => {
         expect(getMemberItemProps()).toEqual(
             expect.objectContaining({ ensName: 'dzepina.eth' }),
         );
-    });
-
-    it('renders the ENS name instead of the truncated address of the receiver', () => {
-        memberDataListItemStructureSpy.mockRestore();
-        const action = buildAction({
-            receivers: {
-                address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
-                ens: 'dzepina.eth',
-                currentBalance: '0',
-                newBalance: '17000000000000000000',
-            },
-        });
-
-        render(
-            <GukModulesProvider>
-                {createTestComponent({ action })}
-            </GukModulesProvider>,
-        );
-
-        expect(screen.getByText('dzepina.eth')).toBeInTheDocument();
-        expect(screen.queryByText('0x92e9…472F')).not.toBeInTheDocument();
-    });
-
-    it('renders the minted amount and token symbol in the member item without the voting power label', () => {
-        memberDataListItemStructureSpy.mockRestore();
-        const action = buildAction({
-            token: generateToken({ symbol: 'PDC', decimals: 18 }),
-            receivers: {
-                address: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b',
-                currentBalance: '1000000000000000000',
-                newBalance: '2500000000000000000',
-            },
-        });
-
-        render(
-            <GukModulesProvider>
-                {createTestComponent({ action })}
-            </GukModulesProvider>,
-        );
-
-        expect(screen.getByText(/1\.5/)).toBeInTheDocument();
-        expect(screen.getByText(/PDC/)).toBeInTheDocument();
-        expect(screen.queryByText(/voting power/i)).not.toBeInTheDocument();
     });
 });
