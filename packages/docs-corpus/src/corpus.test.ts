@@ -1,5 +1,10 @@
 import path from 'node:path';
-import { cleanBody, loadCorpus, rewriteLinks } from './corpus';
+import {
+    cleanBody,
+    loadCorpus,
+    resolvePublicLink,
+    rewriteLinks,
+} from './corpus';
 
 // Jest runs from the workspace root (its rootDir), which is what the paths below assume.
 const fixtureRoot = path.resolve('src/test/fixtures/docsCorpus');
@@ -134,6 +139,45 @@ describe('loadCorpus', () => {
         expect(body).toContain('\nStage diagram\n');
         expect(body).not.toContain('stage-diagram.png');
         expect(body).toContain('[not a link](./kept-verbatim.md)');
+    });
+
+    it('hands every destination to the resolver with the page and the published set', async () => {
+        // A site-shaped resolver: a page of the base at the site's address when the mode
+        // publishes it, the public rule otherwise.
+        const { documents } = await loadCorpus({
+            rootDir: fixtureRoot,
+            mode: 'drafts',
+            resolveLink: (url, context) => {
+                const [target = '', fragment] = url.split('#');
+                const suffix = fragment == null ? '' : `#${fragment}`;
+
+                if (target === '') {
+                    return suffix;
+                }
+
+                const resolved = path.posix.join(
+                    path.posix.dirname(context.path),
+                    target,
+                );
+
+                return context.publishedPaths.has(resolved)
+                    ? `/help/${resolved.replace(/\.md$/, '')}${suffix}`
+                    : resolvePublicLink(url, context);
+            },
+        });
+        const body =
+            documents.find(
+                (document) => document.path === 'governance/process.md',
+            )?.body ?? '';
+
+        expect(body).toContain('[account](/help/accounts/account)');
+        expect(body).toContain('[how a stage advances](#bodies)');
+        // stage.md is not in the fixture, so the mode does not publish it: text only.
+        expect(body).toContain('one or more stages (stage). Each');
+        expect(body).not.toContain('stage.md');
+        expect(body).toContain(
+            '[plugin](https://github.com/aragon/protocol-doc/blob/main/framework/plugins.md#what-a-plugin-is)',
+        );
     });
 
     it('names the area after the folder index heading, or the folder itself without one', async () => {

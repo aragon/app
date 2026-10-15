@@ -1,0 +1,41 @@
+{
+    "name": "@aragon/docs-corpus",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Loader of the Aragon platform knowledge base (aragon/platform-doc): fetch, published-page filter and link rules shared by the assistant and the docs site",
+    "homepage": "https://github.com/aragon/app#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
+    "license": "GPL-3.0",
+    "author": "Aragon Association",
+    "sideEffects": false,
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=origin/main",
+        "test:coverage": "jest --coverage",
+        "test:watch": "jest --watch",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "mdast-util-from-markdown": "catalog:",
+        "yaml": "catalog:"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "catalog:",
+        "@types/jest": "catalog:",
+        "@types/mdast": "catalog:",
+        "@types/node": "catalog:",
+        "jest": "catalog:",
+        "ts-jest": "catalog:",
+        "typescript": "catalog:"
+    },
+    "engines": {
+        "node": ">=24.16.0"
+    }
+}

@@ -29,6 +29,7 @@ app:
 assistant:
   - "apps/assistant/**"
   - "packages/assistant-contracts/**"
+  - "packages/docs-corpus/**"
   - ".github/workflows/assistant-*.yml"
   - ".github/workflows/shared-deploy.yml"
   - ".github/filters.yml"

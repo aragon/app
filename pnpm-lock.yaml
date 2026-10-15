@@ -482,6 +482,9 @@ importers:
       '@aragon/assistant-contracts':
         specifier: workspace:*
         version: link:../../packages/assistant-contracts
+      '@aragon/docs-corpus':
+        specifier: workspace:*
+        version: link:../../packages/docs-corpus
       '@linear/sdk':
         specifier: 'catalog:'
         version: 97.0.0(graphql@16.14.1)
@@ -537,18 +540,12 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/mdast':
-        specifier: 'catalog:'
-        version: 4.0.4
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.0
       jest:
         specifier: 'catalog:'
         version: 30.4.2(@types/node@24.19.0)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)
-      mdast-util-from-markdown:
-        specifier: 'catalog:'
-        version: 2.0.3(supports-color@8.1.1)
       ts-jest:
         specifier: 'catalog:'
         version: 29.4.14(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@30.4.1(supports-color@8.1.1))(@jest/types@30.5.1)(babel-jest@30.4.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.2)(jest-util@30.5.1)(jest@30.4.2(@types/node@24.19.0)(babel-plugin-macros@3.1.0)(supports-color@8.1.1))(typescript@5.9.3)
@@ -561,9 +558,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      yaml:
-        specifier: 'catalog:'
-        version: 2.9.1
 
   packages/aragon-domain:
     dependencies:
@@ -732,6 +726,37 @@ importers:
       tsup:
         specifier: 'catalog:'
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(supports-color@8.1.1)(tsx@4.23.15)(typescript@5.9.3)(yaml@2.9.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/docs-corpus:
+    dependencies:
+      mdast-util-from-markdown:
+        specifier: 'catalog:'
+        version: 2.0.3(supports-color@8.1.1)
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 'catalog:'
+        version: 2.5.14
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/mdast':
+        specifier: 'catalog:'
+        version: 4.0.4
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.4.2(@types/node@24.19.0)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)
+      ts-jest:
+        specifier: 'catalog:'
+        version: 29.4.14(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@30.4.1(supports-color@8.1.1))(@jest/types@30.5.1)(babel-jest@30.4.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.2)(jest-util@30.5.1)(jest@30.4.2(@types/node@24.19.0)(babel-plugin-macros@3.1.0)(supports-color@8.1.1))(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

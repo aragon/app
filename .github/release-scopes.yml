@@ -9,7 +9,8 @@
 # the tag that deploys the widget is the one that versions it. @aragon/assistant-contracts is
 # genuinely shared (bundled by both the app and the assistant service) and can live in only one
 # scope; it stays with its domain owner, the assistant — an app deploy may therefore ship
-# contracts changes whose changeset is consumed by the next assistant release.
+# contracts changes whose changeset is consumed by the next assistant release. @aragon/docs-corpus
+# (the knowledge-base loader, shared with the docs site) stays with the assistant the same way.
 # @aragon/gov-ui-kit and @aragon/aragon-domain are the exception: only the app bundles them, but
 # both are published to npm, so each owns a scope, tags and flows of its own.
 
@@ -23,6 +24,7 @@ aragon-domain:
 assistant:
   - "@aragon/assistant"
   - "@aragon/assistant-contracts"
+  - "@aragon/docs-corpus"
 
 gov-ui-kit:
   - "@aragon/gov-ui-kit"
