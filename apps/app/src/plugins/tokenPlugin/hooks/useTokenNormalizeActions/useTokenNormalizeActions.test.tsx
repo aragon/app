@@ -1,6 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { generateProposalAction } from '@/modules/governance/testUtils';
-import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
+import {
+    generateTokenActionTokenMint,
+    generateTokenPluginSettings,
+} from '@/plugins/tokenPlugin/testUtils';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
@@ -67,7 +70,18 @@ describe('useTokenNormalizeActions hook', () => {
         expect(result.current).toEqual([action]);
     });
 
-    it('passes through actions that are neither mint nor change-settings', () => {
+    it('passes mint actions through unchanged, as their view reads the raw action', () => {
+        const action = generateTokenActionTokenMint();
+        useDaoPluginsMock.mockReturnValue([] as never);
+
+        const { result } = renderHook(() =>
+            useTokenNormalizeActions({ actions: [action], daoId: 'test' }),
+        );
+
+        expect(result.current).toEqual([action]);
+    });
+
+    it('passes through actions that are not change-settings', () => {
         const action = generateProposalAction({ type: 'custom-action' });
         useDaoPluginsMock.mockReturnValue([] as never);
 

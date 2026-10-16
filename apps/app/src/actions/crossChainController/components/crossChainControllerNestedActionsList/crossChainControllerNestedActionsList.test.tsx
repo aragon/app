@@ -10,6 +10,7 @@ import {
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
 } from '@/modules/governance/testUtils';
+import { TokenProposalActionType } from '@/plugins/tokenPlugin/types';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import {
     CrossChainControllerNestedActionsList,
@@ -119,18 +120,24 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         expect(screen.getByText('action-view')).toBeInTheDocument();
     });
 
-    it('does not resolve views by action type for other actions', () => {
-        const action = generateAction({ type: 'Execute' });
+    // Forwarded token mints are intentionally rendered with the generic decoded/raw views.
+    it.each(['Execute', TokenProposalActionType.MINT])(
+        'does not resolve views by action type for %s actions',
+        (type) => {
+            const action = generateAction({ type });
 
-        render(
-            createTestComponent({
-                rawTuple: [{ to: action.to, value: '0', data: action.data }],
-                rawActions: [action],
-            }),
-        );
+            render(
+                createTestComponent({
+                    rawTuple: [
+                        { to: action.to, value: '0', data: action.data },
+                    ],
+                    rawActions: [action],
+                }),
+            );
 
-        expect(getViewByActionTypeSpy).not.toHaveBeenCalled();
-    });
+            expect(getViewByActionTypeSpy).not.toHaveBeenCalled();
+        },
+    );
 
     describe('metadata update integration', () => {
         beforeAll(() => {
