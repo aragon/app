@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel/dispatchPanel';
 import { Network } from '@/shared/api/daoService';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import {
@@ -27,12 +28,20 @@ jest.mock('./workspaceDaoTransactionsAsideCard', () => ({
     )),
 }));
 
+jest.mock(
+    '@/modules/capitalFlow/components/dispatchPanel/dispatchPanel',
+    () => ({
+        DispatchPanel: jest.fn(() => <div data-testid="dispatch-panel-mock" />),
+    }),
+);
+
 describe('<WorkspaceTransactionsAsideCard /> component', () => {
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const safeAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
 
     const allCardMock = WorkspaceAllTransactionsAsideCard as jest.Mock;
     const daoCardMock = WorkspaceDaoTransactionsAsideCard as jest.Mock;
+    const dispatchPanelMock = DispatchPanel as jest.Mock;
 
     const useFeatureFlagsSpy = jest.spyOn(
         featureFlagsProvider,
@@ -61,6 +70,13 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         isAllAccounts: false,
     };
 
+    const safeOption: IWorkspaceAccountOption = {
+        id: safeAccount.id,
+        label: 'Grants Safe',
+        account: safeAccount,
+        isAllAccounts: false,
+    };
+
     const allAccountsOption: IWorkspaceAccountOption = {
         id: 'all',
         label: 'All accounts',
@@ -78,6 +94,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
     afterEach(() => {
         allCardMock.mockClear();
         daoCardMock.mockClear();
+        dispatchPanelMock.mockClear();
         useFeatureFlagsSpy.mockReset();
     });
 
@@ -140,19 +157,11 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         });
     });
 
-    // Not reachable through `useWorkspaceAccountOptions`, which makes an option of DAO accounts alone — this covers
-    // the branch for the account type that gains an option before it gains a card. Such a type wants the option's
-    // label as the card title, which is why the totals card keeps taking one.
-    it('falls back to the aggregated card for account types with no card of their own', () => {
+    it('titles the aggregated card with the label of a selected Safe', () => {
         render(
             createTestComponent({
                 accounts: [safeAccount],
-                activeOption: {
-                    id: safeAccount.id,
-                    label: 'Grants Safe',
-                    account: safeAccount,
-                    isAllAccounts: false,
-                },
+                activeOption: safeOption,
             }),
         );
 
@@ -161,6 +170,49 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         expect(lastAllCardProps()).toEqual({
             accounts: [safeAccount],
             pageSize: 20,
+            title: 'Grants Safe',
+        });
+    });
+
+    describe('dispatch panel', () => {
+        const enableAutomation = () =>
+            useFeatureFlagsSpy.mockReturnValue({
+                snapshot: [],
+                isEnabled: (flag) => flag === 'capitalFlowAutomation',
+                setOverride: jest.fn(),
+            });
+
+        it('renders no dispatch panel for a Safe account', () => {
+            enableAutomation();
+            render(
+                createTestComponent({
+                    accounts: [safeAccount],
+                    activeOption: safeOption,
+                }),
+            );
+
+            expect(
+                screen.queryByTestId('dispatch-panel-mock'),
+            ).not.toBeInTheDocument();
+            expect(dispatchPanelMock).not.toHaveBeenCalled();
+        });
+
+        it('renders the dispatch panel for a DAO account', () => {
+            enableAutomation();
+            render(
+                createTestComponent({
+                    accounts: [daoAccount],
+                    activeOption: daoOption,
+                }),
+            );
+
+            expect(
+                screen.getByTestId('dispatch-panel-mock'),
+            ).toBeInTheDocument();
+            expect(dispatchPanelMock.mock.calls.at(-1)?.[0]).toEqual({
+                daoAddress,
+                network: daoAccount.network,
+            });
         });
     });
 });
