@@ -37,7 +37,6 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             description: 'A test workspace',
             avatar: null,
             links: [],
-            owner: targetAddress,
             accounts: [
                 {
                     id: `${Network.ETHEREUM_SEPOLIA}-${address}`,
@@ -141,6 +140,34 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         expect(
             await screen.findByText(/workspaceDetailsPage\.section\.targets$/),
         ).toBeInTheDocument();
+    });
+
+    it('links a workspace with no account to its edit wizard to add some', async () => {
+        const workspace = buildWorkspace({ accounts: [] });
+        renderWorkspace(workspace);
+
+        expect(
+            await screen.findByText(
+                /workspaceDetailsPage\.emptyAccounts\.heading$/,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: /workspaceDetailsPage\.emptyAccounts\.action$/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/${workspace.id}/edit?step=ACCOUNTS`,
+        );
+    });
+
+    it('hides the empty accounts state when the workspace has accounts', async () => {
+        renderWorkspace(buildWorkspace());
+
+        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
+        expect(
+            screen.queryByText(/workspaceDetailsPage\.emptyAccounts\.heading$/),
+        ).not.toBeInTheDocument();
     });
 
     it('does not resolve accounts for a workspace that has none', async () => {

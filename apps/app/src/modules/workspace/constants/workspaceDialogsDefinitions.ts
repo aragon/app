@@ -7,9 +7,9 @@ export const workspaceDialogsDefinitions: Record<
     WorkspaceDialogId,
     IDialogComponentDefinitions
 > = {
+    // Not `requiresWallet`: workspaces are stored locally (see `createWorkspace.md` → Ownership).
     [WorkspaceDialogId.PUBLISH_WORKSPACE]: {
         Component: PublishWorkspaceDialog,
-        requiresWallet: true,
     },
     // Deliberately not `requiresWallet`: picking an account and a process comes before connecting, exactly as on
     // the DAO pages, where neither SELECT_PLUGIN nor PERMISSION_CHECK is flagged and `usePermissionCheckGuard`

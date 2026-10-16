@@ -12,7 +12,7 @@ import type {
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
 describe('publishWorkspaceDialog utils', () => {
-    const owner = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
+    const targetAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
     const accountAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
 
     const buildAccount = (
@@ -51,13 +51,14 @@ describe('publishWorkspaceDialog utils', () => {
         it('maps the form values to the workspace to be persisted', () => {
             const values = buildValues({
                 resources: [{ name: 'Website', url: 'https://aragon.org' }],
-                targets: [{ address: owner, network: Network.CITREA_MAINNET }],
+                targets: [
+                    { address: targetAddress, network: Network.CITREA_MAINNET },
+                ],
             });
 
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
                 values,
-                owner,
-                accountAvatarCids: [undefined],
+                accountAvatarUris: [undefined],
                 accountInfos,
             });
 
@@ -66,7 +67,6 @@ describe('publishWorkspaceDialog utils', () => {
                 description: 'A demo workspace',
                 avatar: null,
                 links: [{ name: 'Website', url: 'https://aragon.org' }],
-                owner,
                 accounts: [
                     {
                         id: `ethereum-sepolia-${accountAddress}`,
@@ -76,16 +76,17 @@ describe('publishWorkspaceDialog utils', () => {
                         metadata: undefined,
                     },
                 ],
-                targets: [{ address: owner, network: Network.CITREA_MAINNET }],
+                targets: [
+                    { address: targetAddress, network: Network.CITREA_MAINNET },
+                ],
             });
         });
 
-        it('sets the workspace avatar as an IPFS URI when pinned', () => {
+        it('sets the workspace avatar URI', () => {
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
                 values: buildValues(),
-                owner,
-                avatarCid: 'workspace-cid',
-                accountAvatarCids: [undefined],
+                avatarUri: 'ipfs://workspace-cid',
+                accountAvatarUris: [undefined],
                 accountInfos,
             });
 
@@ -106,8 +107,7 @@ describe('publishWorkspaceDialog utils', () => {
 
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
                 values,
-                owner,
-                accountAvatarCids: ['account-cid'],
+                accountAvatarUris: ['ipfs://account-cid'],
                 accountInfos,
             });
 
@@ -127,8 +127,7 @@ describe('publishWorkspaceDialog utils', () => {
 
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
                 values,
-                owner,
-                accountAvatarCids: [undefined],
+                accountAvatarUris: [undefined],
                 accountInfos,
             });
 
@@ -146,8 +145,7 @@ describe('publishWorkspaceDialog utils', () => {
 
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
                 values,
-                owner,
-                accountAvatarCids: [undefined],
+                accountAvatarUris: [undefined],
                 accountInfos,
             });
 
@@ -159,8 +157,7 @@ describe('publishWorkspaceDialog utils', () => {
         it('stores the type resolved by the accounts API', () => {
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
                 values: buildValues(),
-                owner,
-                accountAvatarCids: [undefined],
+                accountAvatarUris: [undefined],
                 accountInfos: [
                     buildAccountInfo({ type: WorkspaceAccountInfoType.SAFE }),
                 ],
@@ -175,8 +172,7 @@ describe('publishWorkspaceDialog utils', () => {
             expect(() =>
                 publishWorkspaceDialogUtils.buildWorkspace({
                     values: buildValues(),
-                    owner,
-                    accountAvatarCids: [undefined],
+                    accountAvatarUris: [undefined],
                     accountInfos: [],
                 }),
             ).toThrow(/unable to resolve the type of the account/);
@@ -186,8 +182,7 @@ describe('publishWorkspaceDialog utils', () => {
             expect(() =>
                 publishWorkspaceDialogUtils.buildWorkspace({
                     values: buildValues(),
-                    owner,
-                    accountAvatarCids: [undefined],
+                    accountAvatarUris: [undefined],
                     accountInfos: [
                         buildAccountInfo({
                             type: WorkspaceAccountInfoType.UNKNOWN,
@@ -199,9 +194,10 @@ describe('publishWorkspaceDialog utils', () => {
         });
     });
 
-    describe('getAccountAvatarFiles', () => {
-        it('returns one entry per account, undefined when there is nothing to pin', () => {
+    describe('getAccountAvatars', () => {
+        it('returns one entry per account, undefined when there is no avatar to store', () => {
             const file = new File([], 'avatar.png');
+            const storedAvatar = { url: 'https://gateway/ipfs/account-cid' };
             const accounts = [
                 buildAccount(),
                 buildAccount({
@@ -212,7 +208,14 @@ describe('publishWorkspaceDialog utils', () => {
                     },
                 }),
                 buildAccount({
-                    // Unnamed metadata is not stored, therefore its avatar must not be pinned.
+                    metadata: {
+                        name: 'Stored',
+                        description: '',
+                        avatar: storedAvatar,
+                    },
+                }),
+                buildAccount({
+                    // Unnamed metadata is not stored, therefore its avatar must not be stored either.
                     metadata: {
                         name: '',
                         description: '',
@@ -222,9 +225,14 @@ describe('publishWorkspaceDialog utils', () => {
             ];
 
             const result =
-                publishWorkspaceDialogUtils.getAccountAvatarFiles(accounts);
+                publishWorkspaceDialogUtils.getAccountAvatars(accounts);
 
-            expect(result).toEqual([undefined, file, undefined]);
+            expect(result).toEqual([
+                undefined,
+                { file, url: 'blob:avatar' },
+                storedAvatar,
+                undefined,
+            ]);
         });
     });
 });

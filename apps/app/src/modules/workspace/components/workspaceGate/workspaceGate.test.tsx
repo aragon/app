@@ -5,8 +5,6 @@ import { type IWorkspace, workspaceService } from '../../api/workspaceService';
 import { type IWorkspaceGateProps, WorkspaceGate } from './workspaceGate';
 
 describe('<WorkspaceGate /> component', () => {
-    const owner = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
-
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
 
     // The gate only cares whether the workspace resolves, not what it holds.
@@ -16,7 +14,6 @@ describe('<WorkspaceGate /> component', () => {
         description: '',
         avatar: null,
         links: [],
-        owner,
         accounts: [],
         targets: [],
     });

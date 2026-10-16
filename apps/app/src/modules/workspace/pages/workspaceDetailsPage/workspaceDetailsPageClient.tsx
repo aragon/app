@@ -4,7 +4,7 @@ import {
     AddressOutput,
     Card,
     DaoAvatar,
-    DefinitionList,
+    EmptyState,
     Link,
 } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
@@ -14,6 +14,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceDetailsPageClientProps {
@@ -65,7 +66,7 @@ export const WorkspaceDetailsPageClient: React.FC<
         return null;
     }
 
-    const { name, description, avatar, links, targets, owner } = workspace;
+    const { name, description, avatar, links, targets } = workspace;
 
     return (
         <>
@@ -101,6 +102,28 @@ export const WorkspaceDetailsPageClient: React.FC<
                             'app.workspace.workspaceDetailsPage.section.accounts',
                         )}
                     >
+                        {accounts.length === 0 && (
+                            <Card className="border border-neutral-100 py-10">
+                                <EmptyState
+                                    description={t(
+                                        'app.workspace.workspaceDetailsPage.emptyAccounts.description',
+                                    )}
+                                    heading={t(
+                                        'app.workspace.workspaceDetailsPage.emptyAccounts.heading',
+                                    )}
+                                    objectIllustration={{ object: 'BUILD' }}
+                                    primaryButton={{
+                                        label: t(
+                                            'app.workspace.workspaceDetailsPage.emptyAccounts.action',
+                                        ),
+                                        href: workspaceUtils.getWorkspaceEditUrl(
+                                            workspaceId,
+                                            WorkspaceWizardStep.ACCOUNTS,
+                                        ),
+                                    }}
+                                />
+                            </Card>
+                        )}
                         <div className="flex flex-col gap-3 md:gap-2">
                             {accounts.map((account) => (
                                 <WorkspaceAccountItem
@@ -147,21 +170,6 @@ export const WorkspaceDetailsPageClient: React.FC<
                     )}
                 </Page.Main>
                 <Page.Aside>
-                    <Page.AsideCard
-                        title={t(
-                            'app.workspace.workspaceDetailsPage.aside.details',
-                        )}
-                    >
-                        <DefinitionList.Container>
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.workspace.workspaceDetailsPage.aside.owner',
-                                )}
-                            >
-                                <AddressOutput address={owner} />
-                            </DefinitionList.Item>
-                        </DefinitionList.Container>
-                    </Page.AsideCard>
                     {links.length > 0 && (
                         <Page.AsideCard
                             title={t(

@@ -9,9 +9,11 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
     workspaceAllAccountsSegment,
+    workspaceEditStepParam,
     workspaceUtils,
 } from './workspaceUtils';
 
@@ -108,6 +110,50 @@ describe('workspace utils', () => {
             expect(workspaceUtils.getWorkspaceUrl('demo', 'assets')).toEqual(
                 '/workspace/demo/assets',
             );
+        });
+    });
+
+    describe('getWorkspaceEditUrl', () => {
+        it('builds the url of the edit wizard', () => {
+            expect(workspaceUtils.getWorkspaceEditUrl('demo')).toEqual(
+                '/workspace/demo/edit',
+            );
+        });
+
+        it('opens the wizard on the given step', () => {
+            expect(
+                workspaceUtils.getWorkspaceEditUrl(
+                    'demo',
+                    WorkspaceWizardStep.ACCOUNTS,
+                ),
+            ).toEqual('/workspace/demo/edit?step=ACCOUNTS');
+        });
+    });
+
+    describe('parseWorkspaceEditStep', () => {
+        it('reads back the step written by getWorkspaceEditUrl', () => {
+            const url = workspaceUtils.getWorkspaceEditUrl(
+                'demo',
+                WorkspaceWizardStep.TARGETS,
+            );
+            const stepParam = new URL(
+                url,
+                'https://app.aragon.org',
+            ).searchParams.get(workspaceEditStepParam);
+
+            expect(
+                workspaceUtils.parseWorkspaceEditStep(stepParam ?? undefined),
+            ).toEqual(WorkspaceWizardStep.TARGETS);
+        });
+
+        it('reads no step when the parameter is missing, repeated or unknown', () => {
+            expect(workspaceUtils.parseWorkspaceEditStep()).toBeUndefined();
+            expect(
+                workspaceUtils.parseWorkspaceEditStep(['ACCOUNTS', 'TARGETS']),
+            ).toBeUndefined();
+            expect(
+                workspaceUtils.parseWorkspaceEditStep('accounts'),
+            ).toBeUndefined();
         });
     });
 

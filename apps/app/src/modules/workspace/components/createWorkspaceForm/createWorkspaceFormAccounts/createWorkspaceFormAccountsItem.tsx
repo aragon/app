@@ -18,16 +18,12 @@ export interface ICreateWorkspaceFormAccountsItemProps {
      * Callback to remove the account from the list.
      */
     remove: (index: number) => void;
-    /**
-     * Disables the remove action when set to true, used to enforce at least one account.
-     */
-    disableRemove?: boolean;
 }
 
 export const CreateWorkspaceFormAccountsItem: React.FC<
     ICreateWorkspaceFormAccountsItemProps
 > = (props) => {
-    const { name, index, remove, disableRemove } = props;
+    const { name, index, remove } = props;
 
     const { t } = useTranslations();
 
@@ -70,10 +66,7 @@ export const CreateWorkspaceFormAccountsItem: React.FC<
                         }
                         size="md"
                     >
-                        <Dropdown.Item
-                            disabled={disableRemove}
-                            onClick={() => remove(index)}
-                        >
+                        <Dropdown.Item onClick={() => remove(index)}>
                             {t(
                                 'app.workspace.createWorkspaceForm.accounts.remove',
                             )}

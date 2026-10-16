@@ -19,7 +19,8 @@ export interface IWorkspaceSelectorProps {
 }
 
 /**
- * Workspace switcher of the workspace navigation, listing every workspace plus a link to create a new one.
+ * Workspace switcher of the workspace navigation, listing every workspace plus links to edit the current workspace
+ * and to create a new one.
  */
 export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { workspaceId } = props;
@@ -92,6 +93,13 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                     </span>
                 </Dropdown.Item>
             ))}
+            <Dropdown.Item
+                href={workspaceUtils.getWorkspaceEditUrl(workspaceId)}
+                icon={IconType.SETTINGS}
+                iconPosition="left"
+            >
+                {t('app.workspace.workspaceSelector.edit')}
+            </Dropdown.Item>
             <Dropdown.Item
                 icon={IconType.PLUS}
                 iconPosition="left"

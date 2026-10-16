@@ -1,4 +1,4 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { Network } from '@/shared/api/daoService';
@@ -52,6 +52,24 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
                 /createWorkspaceForm.address.placeholder/,
             ),
         ).toHaveLength(1);
+    });
+
+    const openRowMenu = () =>
+        userEvent.click(screen.getByTestId(IconType.DOTS_VERTICAL));
+
+    it('allows removing the only account row, accounts being optional', async () => {
+        render(createTestComponent());
+
+        await openRowMenu();
+        await userEvent.click(
+            screen.getByText(/createWorkspaceForm.accounts.remove/),
+        );
+
+        expect(
+            screen.queryByPlaceholderText(
+                /createWorkspaceForm.address.placeholder/,
+            ),
+        ).not.toBeInTheDocument();
     });
 
     it('appends an account row on add', async () => {

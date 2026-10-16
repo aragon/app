@@ -45,7 +45,6 @@ describe('useWorkspaceAccountOptions hook', () => {
         description: '',
         avatar: null,
         links: [],
-        owner: daoAddress,
         accounts: [daoAccount, safeAccount],
         targets: [],
         ...workspace,
