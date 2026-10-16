@@ -4,8 +4,8 @@ import { userEvent } from '@testing-library/user-event';
 import * as blockNavigationContext from '@/shared/components/blockNavigationContext';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import { type IWorkspaceWizardProps, WorkspaceWizard } from './workspaceWizard';
-import { WorkspaceWizardStep } from './workspaceWizardDefinitions';
 
 describe('<WorkspaceWizard /> component', () => {
     const trackSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');

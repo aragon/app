@@ -5,14 +5,12 @@ import type { UseFormProps } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     CreateWorkspaceForm,
     type ICreateWorkspaceFormData,
 } from '../createWorkspaceForm';
-import {
-    buildWorkspaceWizardSteps,
-    WorkspaceWizardStep,
-} from './workspaceWizardDefinitions';
+import { buildWorkspaceWizardSteps } from './workspaceWizardDefinitions';
 
 export interface IWorkspaceWizardProps {
     /**

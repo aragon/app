@@ -9,7 +9,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { WorkspaceWizardStep } from '../../components/workspaceWizard';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
     workspaceAllAccountsSegment,

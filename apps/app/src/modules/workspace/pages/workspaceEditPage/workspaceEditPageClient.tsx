@@ -4,11 +4,9 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useWorkspace } from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
-import {
-    WorkspaceWizard,
-    type WorkspaceWizardStep,
-} from '../../components/workspaceWizard';
+import { WorkspaceWizard } from '../../components/workspaceWizard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
+import type { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import type { IPublishWorkspaceDialogParams } from '../../dialogs/publishWorkspaceDialog';
 import { workspaceEditPageUtils } from './workspaceEditPageUtils';
 

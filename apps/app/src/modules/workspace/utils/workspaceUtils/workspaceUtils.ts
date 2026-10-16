@@ -12,8 +12,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-// Imported from the definitions rather than the barrel, which would pull the wizard component into these utils.
-import { WorkspaceWizardStep } from '../../components/workspaceWizard/workspaceWizardDefinitions';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 
 /**
  * A network and address pair, i.e. what identifies a workspace account or target.

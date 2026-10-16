@@ -7,8 +7,8 @@ import * as blockNavigationContext from '@/shared/components/blockNavigationCont
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import { type IWorkspace, workspaceService } from '../../api/workspaceService';
-import { WorkspaceWizardStep } from '../../components/workspaceWizard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceEditPageClientProps,
     WorkspaceEditPageClient,

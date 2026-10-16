@@ -1,10 +1,5 @@
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
-
-export enum WorkspaceWizardStep {
-    METADATA = 'METADATA',
-    TARGETS = 'TARGETS',
-    ACCOUNTS = 'ACCOUNTS',
-}
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 
 /**
  * Step of a workspace wizard, its ID narrowed to the steps the wizard knows.

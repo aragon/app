@@ -14,7 +14,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
-import { WorkspaceWizardStep } from '../../components/workspaceWizard';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceDetailsPageClientProps {

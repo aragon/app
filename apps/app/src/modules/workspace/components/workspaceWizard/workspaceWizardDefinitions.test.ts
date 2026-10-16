@@ -1,7 +1,5 @@
-import {
-    buildWorkspaceWizardSteps,
-    WorkspaceWizardStep,
-} from './workspaceWizardDefinitions';
+import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import { buildWorkspaceWizardSteps } from './workspaceWizardDefinitions';
 
 describe('workspaceWizard definitions', () => {
     describe('buildWorkspaceWizardSteps', () => {
