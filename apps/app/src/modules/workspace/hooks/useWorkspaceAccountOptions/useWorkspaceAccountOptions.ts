@@ -6,7 +6,6 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     useWorkspace,
-    WorkspaceAccountType,
 } from '../../api/workspaceService';
 import {
     workspaceAllAccountsSegment,
@@ -59,12 +58,21 @@ export interface IUseWorkspaceAccountOptionsResult {
  * in sync: the URL is the selection. That is a hook and not a context because both reads below go through React
  * Query, whose cache already shares them across every component on the page.
  *
- * `activeOption` is deliberately allowed to be undefined while `accountId` is set: the URL can name an account the
- * workspace does not hold, and what is being *looked at* is not the same question as what can be *switched to*.
- * Callers that need to render the account itself should use `accountId`, not `activeOption`.
+ * Every account of the workspace becomes an option, DAO and Safe alike, so a Safe can be scoped to like a DAO.
  *
- * Only DAO accounts become options. The aggregated option still covers every account, so a Safe's balances are
- * visible there, but a Safe has no option of its own.
+ * `activeOption` is the aggregated option for the aggregated segment, and is deliberately allowed to be undefined
+ * while `accountId` is set: the URL can name an account the workspace does not hold, and what is being *looked at*
+ * is not the same question as what can be *switched to*.
+ *
+ * The two are not interchangeable. `accountId` is the raw route segment and is what a link is built from, which is
+ * all `NavigationWorkspace` and this hook's own option URLs use it for. `activeOption` is the resolved account, and
+ * is what a page narrows its request to or hands to an aside card. Resolving the segment a second time inside a
+ * page is the thing this hook exists to prevent: two resolvers drift, and the selector's trigger label and its
+ * checkmark disagreed on a lowercased URL until the last of them was removed.
+ *
+ * The account segment is resolved through `workspaceUtils.findAccountById` rather than by comparing ID strings:
+ * stored IDs are checksummed by `buildAccountId` while `LayoutWorkspaceAccount` accepts any casing, so a lowercased
+ * URL must still land on the same account instead of silently widening to the whole workspace.
  */
 export const useWorkspaceAccountOptions =
     (): IUseWorkspaceAccountOptionsResult => {
@@ -94,19 +102,19 @@ export const useWorkspaceAccountOptions =
             { enabled: accountRefs.length > 0 },
         );
 
+        const isAllAccounts = accountId === workspaceAllAccountsSegment;
+
         const options = useMemo<IWorkspaceAccountOption[]>(() => {
-            const accountOptions = (accounts ?? [])
-                .filter((account) => account.type === WorkspaceAccountType.DAO)
-                .map((account) => ({
-                    id: account.id,
-                    // Same precedence as the workspace overview rows, so an option and its row never disagree.
-                    label: workspaceUtils.getAccountLabel(
-                        account,
-                        workspaceUtils.findAccountInfo(accountInfos, account),
-                    ),
+            const accountOptions = (accounts ?? []).map((account) => ({
+                id: account.id,
+                // Same precedence as the workspace overview rows, so an option and its row never disagree.
+                label: workspaceUtils.getAccountLabel(
                     account,
-                    isAllAccounts: false,
-                }));
+                    workspaceUtils.findAccountInfo(accountInfos, account),
+                ),
+                account,
+                isAllAccounts: false,
+            }));
 
             return [
                 {
@@ -120,10 +128,23 @@ export const useWorkspaceAccountOptions =
             ];
         }, [accounts, accountInfos, t]);
 
+        const activeAccount = workspaceUtils.findAccountById(
+            accounts ?? [],
+            accountId,
+        );
+
+        const activeOption = isAllAccounts
+            ? options.find((option) => option.isAllAccounts)
+            : activeAccount != null
+              ? options.find(
+                    (option) => option.account?.id === activeAccount.id,
+                )
+              : undefined;
+
         return {
             options,
             accountId,
-            activeOption: options.find((option) => option.id === accountId),
-            isAllAccounts: accountId === workspaceAllAccountsSegment,
+            activeOption,
+            isAllAccounts,
         };
     };

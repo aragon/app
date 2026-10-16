@@ -29,6 +29,7 @@ import {
 } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
+import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 enum WorkspaceTransactionListTypeFilter {
@@ -199,9 +200,14 @@ export const WorkspaceTransactionList: React.FC<
     const transactions = data?.pages.flatMap((page) => page.data);
     const metadata = data?.pages[0].metadata;
 
-    // The list is incomplete as soon as one account of one loaded page could not be read in full. Saying so is what
-    // stops a short list from reading as the complete history.
-    const isPartial = data?.pages.some((page) => page.partial) ?? false;
+    // The list is incomplete as soon as one account of one loaded page could not be read at all. Saying so is what
+    // stops a short list from reading as the complete history. A `partial` account — read, but not exhaustively —
+    // is deliberately not warned about here: it is carried by the count alone, which `hasIncompleteCount` marks as
+    // a lower bound on the aside card.
+    const isPartial =
+        data?.pages.some((page) =>
+            workspaceCoverageUtils.hasUnreadableAccounts(page.coverage),
+        ) ?? false;
     const isSingleAccount = accounts.length === 1;
 
     const partialMessage = isSingleAccount

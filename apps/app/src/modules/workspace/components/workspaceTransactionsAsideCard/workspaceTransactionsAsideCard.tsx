@@ -35,9 +35,10 @@ export interface IWorkspaceTransactionsAsideCardProps {
  * the same card as the DAO transactions page, the aggregated view shows the workspace totals. A new account type is
  * added by branching on it here.
  *
- * Only DAO accounts become options today (`useWorkspaceAccountOptions`), so the aggregated branch is reached only
- * when no account is selected and the totals card is left to title itself. An account type that gains an option
- * before it gains a card of its own should pass `activeOption.label` down as that card's title.
+ * The aggregated branch is also the Safe branch: a Safe is an option (`useWorkspaceAccountOptions`) with no card of
+ * its own, so it gets the totals card, titled by the option's label. With no account selected, or the aggregated
+ * option, no title is passed and the card titles itself. The dispatch panel is DAO-only: it takes the account
+ * address as a DAO address.
  */
 export const WorkspaceTransactionsAsideCard: React.FC<
     IWorkspaceTransactionsAsideCardProps
@@ -52,6 +53,9 @@ export const WorkspaceTransactionsAsideCard: React.FC<
     const isDaoAccountSelected =
         activeOption != null && account?.type === WorkspaceAccountType.DAO;
 
+    const title =
+        activeOption?.isAllAccounts === false ? activeOption.label : undefined;
+
     return (
         <>
             {isDaoAccountSelected ? (
@@ -64,9 +68,10 @@ export const WorkspaceTransactionsAsideCard: React.FC<
                 <WorkspaceAllTransactionsAsideCard
                     accounts={accounts}
                     pageSize={pageSize}
+                    title={title}
                 />
             )}
-            {isAutomationEnabled && account != null && (
+            {isAutomationEnabled && isDaoAccountSelected && (
                 <DispatchPanel
                     daoAddress={account.address}
                     network={account.network}

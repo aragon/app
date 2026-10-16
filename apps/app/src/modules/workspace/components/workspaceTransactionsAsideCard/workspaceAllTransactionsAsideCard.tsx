@@ -6,6 +6,7 @@ import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspaceTransactions } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
+import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
 import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
 
 export interface IWorkspaceAllTransactionsAsideCardProps {
@@ -73,7 +74,9 @@ export const WorkspaceAllTransactionsAsideCard: React.FC<
             ),
             // Unread accounts are missing from the count, so it is only a lower bound.
             value:
-                firstPage?.partial && transactionsCount != null
+                workspaceCoverageUtils.hasIncompleteCount(
+                    firstPage?.coverage,
+                ) && transactionsCount != null
                     ? `${formattedCount}+`
                     : formattedCount,
         },

@@ -50,6 +50,7 @@ describe('<WorkspaceAllTransactionsAsideCard /> component', () => {
     const mockTransactions = (options?: {
         totalRecords?: number;
         blockTimestamp?: number;
+        coverageStatus?: workspaceQueryService.WorkspaceCoverageStatus;
         partial?: boolean;
     }) =>
         useWorkspaceTransactionsSpy.mockReturnValue(
@@ -67,6 +68,20 @@ describe('<WorkspaceAllTransactionsAsideCard /> component', () => {
                                       ]
                                     : [],
                             partial: options?.partial ?? false,
+                            coverage: options?.coverageStatus
+                                ? [
+                                      {
+                                          account: {
+                                              network: safeAccount.network,
+                                              address: safeAccount.address,
+                                          },
+                                          resource: 'transactions',
+                                          source: workspaceQueryService
+                                              .WorkspaceCoverageSource.SAFE,
+                                          status: options.coverageStatus,
+                                      },
+                                  ]
+                                : [],
                             metadata: generatePaginatedResponseMetadata({
                                 totalRecords: options?.totalRecords ?? 0,
                             }),
@@ -202,8 +217,25 @@ describe('<WorkspaceAllTransactionsAsideCard /> component', () => {
         expect(screen.getAllByText('-')).toHaveLength(2);
     });
 
-    it('marks the count as a lower bound when the selection is partial', () => {
-        mockTransactions({ totalRecords: 12, partial: true });
+    it('renders an exact count when the only non-available coverage is unverified', () => {
+        mockTransactions({
+            totalRecords: 12,
+            coverageStatus:
+                workspaceQueryService.WorkspaceCoverageStatus.UNVERIFIED,
+            partial: true,
+        });
+        render(createTestComponent());
+
+        expect(screen.getByText('12')).toBeInTheDocument();
+        expect(screen.queryByText('12+')).not.toBeInTheDocument();
+    });
+
+    it('renders a lower-bound count when a source holds more than was read', () => {
+        mockTransactions({
+            totalRecords: 12,
+            coverageStatus:
+                workspaceQueryService.WorkspaceCoverageStatus.PARTIAL,
+        });
         render(createTestComponent());
 
         expect(screen.getByText('12+')).toBeInTheDocument();

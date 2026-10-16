@@ -97,6 +97,13 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         isAllAccounts: false,
     });
 
+    const buildSafeOption = (safeAddress: string): IWorkspaceAccountOption => ({
+        id: `ethereum-sepolia-${safeAddress}`,
+        label: 'Treasury Safe',
+        account: buildSafeAccount(safeAddress),
+        isAllAccounts: false,
+    });
+
     /**
      * Mocks the hook as the aggregated route does, the overrides standing in for an account-scoped route.
      */
@@ -205,19 +212,39 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         await expectAssetsRequestedFor([buildDaoAccount(daoAddress)]);
     });
 
-    // A Safe is a scope but never an option, so narrowing by the option would show the whole workspace here.
-    it('reads the workspace assets API for a Safe account scope, with that account only', async () => {
+    it('narrows the assets to the Safe the route names', async () => {
         const { component, safeAddress } = createTestComponent(
             undefined,
             ({ safeAddress: address }) => ({
                 accountId: `ethereum-sepolia-${address}`,
-                activeOption: undefined,
+                activeOption: buildSafeOption(address),
                 isAllAccounts: false,
             }),
         );
         render(component);
 
         await expectAssetsRequestedFor([buildSafeAccount(safeAddress)]);
+    });
+
+    it('hands the Safe option to the aside card', async () => {
+        const { component, safeAddress } = createTestComponent(
+            undefined,
+            ({ safeAddress: address }) => ({
+                accountId: `ethereum-sepolia-${address}`,
+                activeOption: buildSafeOption(address),
+                isAllAccounts: false,
+            }),
+        );
+        render(component);
+
+        await waitFor(() =>
+            expect(assetsAsideCardSpy).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    activeOption: buildSafeOption(safeAddress),
+                }),
+                undefined,
+            ),
+        );
     });
 
     // Viewing an account the workspace does not hold is not supported yet, so the route falls back to every

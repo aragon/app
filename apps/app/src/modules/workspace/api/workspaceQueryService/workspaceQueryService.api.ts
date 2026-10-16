@@ -189,8 +189,8 @@ export interface IWorkspaceProposalListFilters {
 
 export interface IGetWorkspaceProposalListBody {
     /**
-     * Accounts to aggregate. Only DAO accounts are sent: Safe accounts have no indexed proposals, they only
-     * contribute to the queued-transaction block this page does not render.
+     * Accounts to aggregate. Only DAO accounts are sent: Safe proposals are not implemented yet (see "Safe support by
+     * route" in `docs/projectDocs/createWorkspace.md`).
      */
     accounts: IWorkspaceAccountRef[];
     /**

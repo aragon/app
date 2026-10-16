@@ -38,6 +38,8 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
 
     const { t } = useTranslations();
 
+    const isSingleAccount = accounts.length === 1;
+
     const {
         onLoadMore,
         assetList,
@@ -48,10 +50,8 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
         errorState,
     } = useWorkspaceAssetListData(
         { body: { accounts, pagination: { pageSize } } },
-        { enabled: accounts.length > 0 },
+        { enabled: accounts.length > 0, isSingleAccount },
     );
-
-    const isSingleAccount = accounts.length === 1;
 
     // A selection with no account keeps the query disabled, and a disabled query reads as pending, which would
     // otherwise leave the list loading forever instead of showing its empty state.

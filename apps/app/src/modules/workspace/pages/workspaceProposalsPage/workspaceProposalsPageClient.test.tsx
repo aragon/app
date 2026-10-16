@@ -162,11 +162,16 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
             ).TelegramSubscriptionCard as jest.Mock
         ).mock.calls.at(-1)?.[0] as { daoId: string } | undefined;
 
+    // The list mock is module scoped, so calls from earlier tests would otherwise count: it is cleared between
+    // tests like the other mocks, which is what lets a test assert the list was never rendered.
+    const proposalListMock = jest.requireMock(
+        '../../components/workspaceProposalList',
+    ).WorkspaceProposalList as jest.Mock;
+
     const lastListProps = () =>
-        (
-            jest.requireMock('../../components/workspaceProposalList')
-                .WorkspaceProposalList as jest.Mock
-        ).mock.calls.at(-1)?.[0] as IWorkspaceProposalListProps | undefined;
+        proposalListMock.mock.calls.at(-1)?.[0] as
+            | IWorkspaceProposalListProps
+            | undefined;
 
     const lastAsideCardProps = () =>
         (
@@ -194,6 +199,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         useWorkspaceAccountOptionsSpy.mockReset();
         useWorkspaceProposalTabsSpy.mockReset();
         openMock.mockClear();
+        proposalListMock.mockClear();
     });
 
     const createTestComponent = (
@@ -355,24 +361,25 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         );
     });
 
-    // Only a DAO has proposals, so the route of a Safe shows every DAO account instead of nothing. A known gap of
-    // the navigation pinned here rather than left to be discovered — see the "Known gaps" of createWorkspace.md.
-    it('falls back to every DAO account on the route of a Safe', async () => {
-        mockAccountOptions({
-            accountId: `${Network.ETHEREUM_SEPOLIA}-${safeAddress}`,
-            activeOption: undefined,
-            isAllAccounts: false,
-        });
+    it('still aggregates every DAO account on the all-accounts route', async () => {
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({
+                accounts: [daoAccount, otherDaoAccount, safeAccount],
+            }),
+        );
         render(createTestComponent());
 
         await waitFor(() =>
-            expect(lastListProps()?.accounts).toEqual([daoAccount]),
+            expect(lastListProps()?.accounts).toEqual([
+                daoAccount,
+                otherDaoAccount,
+            ]),
         );
         expect(lastListProps()?.isAccountScoped).toBeFalsy();
     });
 
-    // `LayoutWorkspaceAccount` accepts any casing, while an account option is matched on the exact ID string, so
-    // resolving the scope off the option alone would widen a shared link to the whole workspace.
+    // `LayoutWorkspaceAccount` accepts any casing and the hook resolves it to the option of the account, so a
+    // lowercased shared link narrows the page like the checksummed one.
     it('narrows to the account of a lowercased route ID', async () => {
         getWorkspaceSpy.mockResolvedValue(
             buildWorkspace({ accounts: [daoAccount, otherDaoAccount] }),
@@ -380,7 +387,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         mockAccountOptions({
             options: [allAccountsOption, daoOption],
             accountId: daoOption.id.toLowerCase(),
-            activeOption: undefined,
+            activeOption: daoOption,
             isAllAccounts: false,
         });
         render(createTestComponent());

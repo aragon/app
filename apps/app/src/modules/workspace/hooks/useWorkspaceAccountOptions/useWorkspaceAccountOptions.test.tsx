@@ -1,3 +1,4 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
@@ -82,19 +83,50 @@ describe('useWorkspaceAccountOptions hook', () => {
         return renderHook(() => useWorkspaceAccountOptions(), { wrapper });
     };
 
-    it('offers the aggregated option first, followed by the DAO accounts only', async () => {
+    it('offers the aggregated option first, followed by every account of the workspace', async () => {
         const { result } = renderTestHook();
 
-        await waitFor(() => expect(result.current.options).toHaveLength(2));
-        const [allOption, daoOption] = result.current.options;
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
+        const [allOption, daoOption, safeOption] = result.current.options;
         expect(allOption.isAllAccounts).toBeTruthy();
         expect(daoOption.id).toEqual(daoAccount.id);
-        // A Safe contributes to the aggregated option but has none of its own.
-        expect(
-            result.current.options.some(
-                (option) => option.id === safeAccount.id,
-            ),
-        ).toBeFalsy();
+        expect(safeOption.id).toEqual(safeAccount.id);
+    });
+
+    it('builds an option for a Safe account', async () => {
+        const { result } = renderTestHook();
+
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
+        const safeOption = result.current.options.find(
+            (option) => option.id === safeAccount.id,
+        );
+        expect(safeOption?.account?.type).toEqual(WorkspaceAccountType.SAFE);
+        expect(safeOption?.isAllAccounts).toBeFalsy();
+    });
+
+    it('labels a Safe by its registry name', async () => {
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({
+                accounts: [
+                    daoAccount,
+                    { ...safeAccount, metadata: { name: 'Treasury Safe' } },
+                ],
+            }),
+        );
+        const { result } = renderTestHook();
+
+        await waitFor(() =>
+            expect(result.current.options[2]?.label).toEqual('Treasury Safe'),
+        );
+    });
+
+    it('labels an unnamed Safe by its truncated address', async () => {
+        const { result } = renderTestHook();
+
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
+        expect(result.current.options[2].label).toEqual(
+            addressUtils.truncateAddress(safeAddress),
+        );
     });
 
     it('labels a DAO account with the name resolved by the accounts API', async () => {
@@ -108,7 +140,7 @@ describe('useWorkspaceAccountOptions hook', () => {
     it('reads the aggregated segment of the route as every account', async () => {
         const { result } = renderTestHook();
 
-        await waitFor(() => expect(result.current.options).toHaveLength(2));
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
         expect(result.current.accountId).toEqual('all');
         expect(result.current.isAllAccounts).toBeTruthy();
         expect(result.current.activeOption?.isAllAccounts).toBeTruthy();
@@ -127,26 +159,61 @@ describe('useWorkspaceAccountOptions hook', () => {
         expect(result.current.isAllAccounts).toBeFalsy();
     });
 
+    it('resolves the aggregated option for the all-accounts segment', async () => {
+        const { result } = renderTestHook();
+
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
+        expect(result.current.activeOption?.isAllAccounts).toBeTruthy();
+        expect(result.current.activeOption?.account).toBeUndefined();
+    });
+
+    it('resolves the active option of a Safe account', async () => {
+        useParamsSpy.mockReturnValue({
+            workspaceId: 'demo',
+            accountId: safeAccount.id,
+        });
+        const { result } = renderTestHook();
+
+        await waitFor(() =>
+            expect(result.current.activeOption?.id).toEqual(safeAccount.id),
+        );
+    });
+
+    // `LayoutWorkspaceAccount` accepts any casing while stored IDs are checksummed, so this must not widen to "none".
+    it('resolves the active option for a lowercased account segment', async () => {
+        const lowercased = `${Network.ETHEREUM_SEPOLIA}-${safeAddress.toLowerCase()}`;
+        useParamsSpy.mockReturnValue({
+            workspaceId: 'demo',
+            accountId: lowercased,
+        });
+        const { result } = renderTestHook();
+
+        await waitFor(() =>
+            expect(result.current.activeOption?.id).toEqual(safeAccount.id),
+        );
+        expect(result.current.accountId).toEqual(lowercased);
+    });
+
     it('aggregates on a route with no account segment', async () => {
         useParamsSpy.mockReturnValue({ workspaceId: 'demo' });
         const { result } = renderTestHook();
 
-        await waitFor(() => expect(result.current.options).toHaveLength(2));
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
         expect(result.current.accountId).toEqual('all');
         expect(result.current.isAllAccounts).toBeTruthy();
     });
 
     // What is being looked at is not the same question as what can be switched to: the route can name an account
     // the workspace does not hold, and that must not silently read as the aggregated option.
-    it('reports no active option for an account the workspace does not hold, keeping the route account', async () => {
-        const foreignAccountId = `${Network.ETHEREUM_SEPOLIA}-${safeAddress}`;
+    it('resolves no active option for an account the workspace does not hold, keeping the route account', async () => {
+        const foreignAccountId = `${Network.ETHEREUM_SEPOLIA}-0x1111111111111111111111111111111111111111`;
         useParamsSpy.mockReturnValue({
             workspaceId: 'demo',
             accountId: foreignAccountId,
         });
         const { result } = renderTestHook();
 
-        await waitFor(() => expect(result.current.options).toHaveLength(2));
+        await waitFor(() => expect(result.current.options).toHaveLength(3));
         expect(result.current.accountId).toEqual(foreignAccountId);
         expect(result.current.activeOption).toBeUndefined();
         expect(result.current.isAllAccounts).toBeFalsy();
