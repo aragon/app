@@ -1,7 +1,9 @@
 # The "Assistant Development" workflow deploys the assistant service to dev.assistant.aragon.org on
 # every merge to main that touches the assistant or its shared contracts (see .github/filters.yml),
-# and on manual dispatch — how a knowledge-base change reaches dev: the build fetches the current
-# aragon/platform-doc, no commit here is involved, so the paths filter is bypassed.
+# when aragon/platform-doc reports a change (repository_dispatch `docs-updated`, sent by its own
+# workflow on every push to `development`) and on manual dispatch — the two ways a knowledge-base
+# change reaches dev: the build fetches the current aragon/platform-doc, no commit here is involved,
+# so the paths filter is bypassed.
 # Repo-wide checks (type-check, lint, tests) run in app-development.yml via the Turbo fan-out; the
 # dev app (dev.app.aragon.org) points at dev.assistant.aragon.org, so it picks the deploy up live.
 
@@ -11,6 +13,9 @@ on:
   push:
     branches:
       - main
+  repository_dispatch:
+    types:
+      - docs-updated
   workflow_dispatch:
 
 concurrency:
@@ -42,18 +47,22 @@ jobs:
 
   deploy:
     needs: changes
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.assistant == 'true') }}
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    if: ${{ !cancelled() && (github.event_name != 'push' || needs.changes.outputs.assistant == 'true') }}
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: "dev.assistant.aragon.org"
-      env: "development"
-      workspace: "apps/assistant"
-      vault-prefix: "kv_assistant"
-      docs-repo-token: true
-      patch-root-directory: false
+      env: development
+      domain: dev.assistant.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/assistant
+      op-infra-vault: kv_assistant_infra
+      op-env-vault: kv_assistant_development
+      setup-command: pnpm run setup development
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
       # dev.assistant is an aliased preview deployment, so VERCEL_ENV reports 'preview' at
       # runtime — ASSISTANT_ENV pins the actual environment for src/lib/env.ts.
       runtime-env: "ASSISTANT_ENV=development"
       runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"
       upload-sentry-source-maps: true
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

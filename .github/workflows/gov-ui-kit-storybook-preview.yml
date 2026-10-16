@@ -45,23 +45,24 @@ jobs:
   deploy:
     needs: changes
     if: ${{ needs.changes.outputs.changed == 'true' }}
-    uses: ./.github/workflows/shared-storybook-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: preview
+      vercel-scope: aragon-app
+      workspace: packages/gov-ui-kit
+      op-infra-vault: kv_gov-ui-kit_infra
+      # The Vercel project has no Root Directory configured in the dashboard yet.
+      patch-root-directory: true
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   comment:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/gh-ensure-pr-comment
-
       - name: Comment preview PR
-        uses: ./.github/actions/gh-ensure-pr-comment
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
         with:
           message: "📚 **Storybook Preview:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})"
           tag: storybook-preview-url

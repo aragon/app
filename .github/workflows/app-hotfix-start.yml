@@ -3,6 +3,10 @@
 # If hotfix HEAD equals the base release tag, downstream jobs are skipped.
 # Order: unit tests → staging deploy → git tag (not gated on E2E) → smoke E2E parallel with tag.
 # Prod: run App Production workflow_dispatch with the hotfix tag.
+#
+# A hotfix is repo-specific and stays here; it composes the shared aragon/github-templates modules
+# (leaf steps, deploy-vercel, e2e) and opens its own Slack thread, which the deploy and the smoke
+# results join.
 
 name: App Hotfix Start
 
@@ -55,33 +59,26 @@ jobs:
             echo "mode=fresh" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Load secrets
-        id: load-secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
         with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
-          GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
-          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions
-            .github/workflows/scripts/slackNotify.js
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+            GPG_PRIVATE_KEY=op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+            GPG_PASSPHRASE=op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+            SLACK_BOT_TOKEN=op://kv_app_infra/SLACK_BOT_TOKEN/credential
+            SLACK_CHANNEL_ID=op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: aragon/github-templates/steps/setup@main
         with:
-          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
-          fetch-depth: 0
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          fetch-depth: "0"
           ref: main
+          install: "false"
 
       - name: Resolve base tag and branch
         id: ctx
@@ -124,16 +121,16 @@ jobs:
 
       - name: Ensure hotfix branch from tag
         if: steps.meta.outputs.mode == 'fresh'
-        uses: ./.github/actions/git-ensure-branch
+        uses: aragon/github-templates/steps/git-ensure-branch@main
         with:
           branch: ${{ steps.ctx.outputs.branch }}
-          base_ref: ${{ steps.ctx.outputs.tag }}
+          base-ref: ${{ steps.ctx.outputs.tag }}
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
         with:
-          gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
-          passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
+          gpg_private_key: ${{ fromJSON(steps.op.outputs.secrets).GPG_PRIVATE_KEY }}
+          passphrase: ${{ fromJSON(steps.op.outputs.secrets).GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
 
@@ -206,11 +203,11 @@ jobs:
 
       - name: Notify Slack — Hotfix Started
         id: notify
-        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN
-        uses: ./.github/actions/slack-notify
+        continue-on-error: true
+        uses: aragon/github-templates/steps/slack-notify@main
         with:
-          slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
+          slack-bot-token: ${{ fromJSON(steps.op.outputs.secrets).SLACK_BOT_TOKEN }}
+          slack-channel-id: ${{ fromJSON(steps.op.outputs.secrets).SLACK_CHANNEL_ID }}
           message: |
             🩹 *Hotfix Started*
             *Base Tag:* `${{ steps.ctx.outputs.tag }}`
@@ -224,147 +221,78 @@ jobs:
     if: ${{ needs.start.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: .github/actions/setup
-
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: aragon/github-templates/steps/setup@main
         with:
           ref: ${{ needs.start.outputs.hotfix-sha }}
-          fetch-depth: 0
-
+          fetch-depth: "0"
       - name: Check types
         run: pnpm type-check
-
       - name: Check linter with formatter
         run: pnpm lint:check
-
       - name: Run tests with coverage
         run: pnpm test:coverage
 
   deploy:
     needs: [start, test]
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: 'stg.app.aragon.org'
-      env: 'staging'
+      env: staging
       ref: ${{ needs.start.outputs.hotfix-sha }}
+      domain: stg.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_staging
+      setup-command: pnpm run setup staging
+      patch-root-directory: true
+      version: ${{ needs.start.outputs.hotfix-tag }}
+      slack-thread-ts: ${{ needs.start.outputs.slack-ts }}
+      next-steps: |
+        The hotfix tag `${{ needs.start.outputs.hotfix-tag }}` is pushed now (smoke does not gate it).
+        Confirm staging → run *App Production* with that tag.
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   push-hotfix-tag:
     needs: [start, deploy]
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
         with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Checkout
         uses: actions/checkout@v7.0.1
         with:
           ref: ${{ needs.start.outputs.hotfix-sha }}
-          token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
           fetch-depth: 1
 
       - name: Create and push hotfix tag
-        env:
-          TAG: ${{ needs.start.outputs.hotfix-tag }}
-          SHA: ${{ needs.start.outputs.hotfix-sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          git tag "$TAG" "$SHA"
-          git push origin "refs/tags/$TAG"
+        uses: aragon/github-templates/steps/gh-ensure-tag@main
+        with:
+          tag: ${{ needs.start.outputs.hotfix-tag }}
+          sha: ${{ needs.start.outputs.hotfix-sha }}
 
   e2e:
-    needs: deploy
-    uses: ./.github/workflows/shared-e2e.yml
-    secrets: inherit
+    needs: [start, deploy]
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: https://stg.app.aragon.org
       environment: staging
-
-  notify-staging:
-    needs: [start, deploy]
-    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack — Staging Deployed
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.start.outputs.slack-ts
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.start.outputs.slack-ts }}
-          message: |
-            ✅ *Hotfix deployed to staging*
-            *Hotfix tag:* `${{ needs.start.outputs.hotfix-tag }}` *(pushed after deploy; smoke is non-blocking)*
-            *Staging:* <https://stg.app.aragon.org|stg.app.aragon.org>
-
-            Smoke E2E is running in parallel…
-
-  e2e-notify:
-    needs: [start, e2e]
-    if: ${{ always() && needs.e2e.result != 'skipped' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack — E2E results
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.start.outputs.slack-ts
-        env:
-          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.start.outputs.slack-ts }}
-          message: |
-            ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *staging* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *staging* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *staging* failed' || '⏹️ Smoke tests on *staging* were cancelled' }}
-            ${{ needs.e2e.outputs.summary }}
-            <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html|View report>
-
-            ${{ format('Hotfix tag `{0}` is pushed after a successful deploy (smoke does not gate the tag). Confirm staging → run *App Production*.', needs.start.outputs.hotfix-tag) }}
+      working-directory: apps/app
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-ts: ${{ needs.start.outputs.slack-ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

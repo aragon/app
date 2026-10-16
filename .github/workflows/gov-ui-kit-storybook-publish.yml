@@ -2,7 +2,9 @@
 # every merge to main that touches the kit (see .github/filters.yml). The paths filter matters here:
 # without it every app-only commit would rebuild and redeploy the Storybook.
 #
-# Repo-wide checks (type-check, lint, tests) run in app-development.yml via the Turbo fan-out.
+# The Storybook is a production Vercel build (`prod: true`, aliased to the domain) that runs under
+# the `development` GitHub environment: it is not a release and must not wait for the production
+# approval. Repo-wide checks (type-check, lint, tests) run in app-development.yml.
 
 name: Gov UI Kit Storybook Publish
 
@@ -42,7 +44,15 @@ jobs:
   deploy:
     needs: changes
     if: ${{ needs.changes.outputs.changed == 'true' }}
-    uses: ./.github/workflows/shared-storybook-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: "uikit.aragon.org"
+      env: development
+      prod: true
+      domain: uikit.aragon.org
+      vercel-scope: aragon-app
+      workspace: packages/gov-ui-kit
+      op-infra-vault: kv_gov-ui-kit_infra
+      # The Vercel project has no Root Directory configured in the dashboard yet.
+      patch-root-directory: true
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

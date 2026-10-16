@@ -16,9 +16,13 @@ package's own `CHANGELOG.md` stays the per-change record.
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Release Start  │───▶│ Approve & Merge │───▶│  Tag & GitHub   │───▶│   npm publish   │
-│    (manual)     │    │    (manual)     │    │ Release  (auto) │    │ (needs approval)│
+│ (Tuesday/manual)│    │    (manual)     │    │ Release  (auto) │    │ (needs approval)│
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
+
+The flow is `aragon-domain-release.yml` plus `aragon-domain-publish.yml`, thin callers of the
+reusable workflows of `aragon/github-templates`. Every release is one Slack thread in the releases
+channel, the same shape as the app's.
 
 ## Release a version
 
@@ -27,24 +31,27 @@ name **only** `@aragon/aragon-domain` — a changeset may never mix release scop
 both the app and the domain (the usual Envio slice) needs **two** changeset files, one per scope.
 `pnpm validate:changesets` enforces this as part of `pnpm test`.
 
-**2. Dispatch the release.** Actions → **Aragon Domain Release Start** → Run workflow. Optionally
-pass a `base_commit`; it defaults to `main` HEAD. There is no schedule.
+**2. Start the release.** It starts by itself every Tuesday at 15:17 UTC (packages start on
+Tuesday, apps on Monday) and green-skips when there are no pending domain changesets or a domain
+release PR is already open. By hand: Actions → **Aragon Domain Release** → Run workflow, optionally
+with a `base_commit` (defaults to `main` HEAD).
 
-It versions the `aragon-domain` release scope, pushes `release/aragon-domain/YYYY-MM-DD_HH-mm`, and
-opens a `Release @aragon/aragon-domain@x.y.z` PR. If there are no pending changesets it exits
-without leaving a branch or PR behind.
+It versions the `aragon-domain` release scope, pushes `release/aragon-domain/YYYY-MM-DD_HH-mm`,
+opens a `Release @aragon/aragon-domain@x.y.z` PR and starts the Slack thread with the summary.
+Every push to the PR refreshes the summary and runs the checks.
 
-**3. Approve and merge.** Merging is the release act. On merge,
-`aragon-domain-release-pr-finalize.yml` tags the merge commit `@aragon/aragon-domain@x.y.z` and
-creates the GitHub Release with the changelog as its notes.
+**3. Approve and merge.** Merging is the release act. On merge, the finalize job tags the merge
+commit `@aragon/aragon-domain@x.y.z` and creates the GitHub Release with the changelog as its
+notes; the thread hears both.
 
-Do not add new changesets to an open release branch — the finalize workflow blocks on it. Cancel
-the release (close the PR) and start a new one instead.
+Do not add new changesets to an open release branch — the finalize job blocks on it. Cancel the
+release (close the PR) and start a new one instead; the thread and the head message say so.
 
 **4. Approve the publish.** Publishing the GitHub Release triggers `aragon-domain-publish.yml`,
-which waits for an approval on the `npm-publish` environment (reviewers: `@aragon/app-team`). Once
-approved it builds the package and publishes it to npm as `latest`, with a signed provenance
-attestation.
+which waits for an approval on the `npm-publish` environment (reviewers: `@aragon/app-team`) — the
+thread gets the "waiting for approval" ping with the link. Once approved it builds the package and
+publishes it to npm as `latest`, with a signed provenance attestation; the thread gets the result
+and the head message flips to Completed.
 
 Tags from the standalone repo (`v0.2.0`…`v0.4.0`) and their GitHub Releases stay in the archived
 `aragon/aragon-domain`; releases from this repo use the `@aragon/aragon-domain@x.y.z` scheme.
@@ -86,7 +93,7 @@ release means the deployed indexer and the mappers disagree.
 
 | Vault | Used for |
 |---|---|
-| `kv_app_infra` | `ARABOT_PAT` (GitHub API), `arabot-1_SIGN_CERTS` (GPG signing of the release commit) |
+| `kv_app_infra` | `ARABOT_PAT` (GitHub API), `arabot-1_SIGN_CERTS` (GPG signing of the release commit), the Slack and Linear items shared with the app flow |
 | `kv_app_<env>` | `NEXT_SECRET_ENVIO_GRAPHQL_ENDPOINT` / `NEXT_SECRET_ENVIO_API_TOKEN` for the contract test, the items the deployed app reads |
 
 ## Related

@@ -1,0 +1,209 @@
+# The "App Release" workflow is the app's release PR lifecycle, on the shared aragon/github-templates
+# modules: a start every Monday (or by hand) cuts release/app/<timestamp> with the changesets bump
+# of the "app" release scope and opens the "Release @aragon/app@x.y.z" PR with its Slack thread; every
+# push to that PR refreshes the summary, runs the checks and lands on staging, with the smoke and BV
+# results in the thread; merging the PR tags the staging-tested head and publishes the GitHub
+# Release, which starts the production deploy (app-production.yml); closing it without a merge
+# cancels the release. Linear mirrors the release in the "App front-end" pipeline.
+#
+# A scheduled start green-skips when an app release PR is already open or there is nothing to
+# release. The cron is fixed in UTC (15:07 = 17:07 CEST / 16:07 CET), off the top of the hour
+# because GitHub delays or drops schedules queued at :00.
+#
+# The `test` and `deploy` job names are required status checks of the main ruleset — keep them.
+
+name: App Release
+
+on:
+  schedule:
+    - cron: "7 15 * * 1"
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: "Commit SHA to start the release from (default: main HEAD)"
+        required: false
+        type: string
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# One run per PR: a push supersedes the previous run (its checks, staging deploy and suites would
+# otherwise keep going against a staging the next run re-aliases). The close runs (finalize,
+# cancel) get a group of their own, so they are never cancelled.
+concurrency:
+  group: app-release-${{ github.event.pull_request.number || github.run_id }}${{ github.event.action == 'closed' && '-closed' || '' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+
+jobs:
+  start:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    uses: aragon/github-templates/.github/workflows/release-start.yml@main
+    with:
+      engine: changesets
+      base-ref: ${{ inputs.base_commit || 'main' }}
+      package-dir: apps/app
+      tag-prefix: "@aragon/app@"
+      scope: app
+      release-branch-prefix: release/app/
+      branch-suffix: timestamp
+      commit-message: "Release {tag}"
+      summary-path-filter: app
+      on-active-release: ${{ github.event_name == 'schedule' && 'skip' || 'fail' }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-gpg-key-path: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+      op-gpg-passphrase-path: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+      op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  refresh:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/app/')
+    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@main
+    with:
+      release-branch-prefix: release/app/
+      tag-prefix: "@aragon/app@"
+      summary-path-filter: app
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  test:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/app/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: "0"
+      - name: Check types
+        run: pnpm type-check
+      - name: Check linter with formatter
+        run: pnpm lint:check
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+  # Every push lands on staging, announced in the release thread (found through the PR body).
+  # Staging has no required reviewers, so there is no gate message.
+  deploy:
+    needs: test
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: staging
+      ref: ${{ github.event.pull_request.head.sha }}
+      domain: stg.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_staging
+      setup-command: pnpm run setup staging
+      patch-root-directory: true
+      slack-thread-pr-number: ${{ github.event.pull_request.number }}
+      next-steps: |
+        Ready for testing 🧪
+        • Found bugs? Create a PR with fixes to `${{ github.event.pull_request.head.ref }}`
+        • All good? Approve the PR and merge → the production deploy starts automatically
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  e2e:
+    needs: deploy
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    with:
+      deployment-url: https://stg.app.aragon.org
+      environment: staging
+      working-directory: apps/app
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-pr-number: ${{ github.event.pull_request.number }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # Build verification drives MetaMask through Synpress: the wallet comes from 1Password, the
+  # extension needs a display (xvfb) and the onboarding cache is rebuilt only when its inputs change.
+  bv:
+    needs: deploy
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    with:
+      deployment-url: https://stg.app.aragon.org
+      environment: staging
+      mode: bv
+      working-directory: apps/app
+      timeout-minutes: 30
+      use-xvfb: true
+      env-secret-refs: |
+        E2E_FE_MM_WALLET_PASSWORD=op://kv_app_infra/E2E_FE_MM_WALLET/password
+        E2E_FE_MM_WALLET_SECRET_RECOVERY_PHRASE=op://kv_app_infra/E2E_FE_MM_WALLET/secret recovery phrase
+      extra-cache-path: apps/app/.cache-synpress
+      extra-cache-key-files: |
+        apps/app/e2e/setup/wallet.setup.ts
+        apps/app/package.json
+      pre-test-command: '[ "$EXTRA_CACHE_HIT" = "true" ] || pnpm e2e:bv:wallet-cache'
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-pr-number: ${{ github.event.pull_request.number }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # Tags the staging-TESTED head commit, not the merge commit. The scoped changesets guard only
+  # trips on app-scope changesets added after the version bump; other lineages' changesets live in
+  # .changeset/ continuously and are released by their own flows.
+  finalize:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.head.ref, 'release/app/')
+    uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
+    with:
+      sha: ${{ github.event.pull_request.head.sha }}
+      pr-body: ${{ github.event.pull_request.body }}
+      package-dir: apps/app
+      tag-prefix: "@aragon/app@"
+      changesets-guard: app
+      after-release-note: "Production build & deploy will start automatically."
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  cancel:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.merged == false
+      && startsWith(github.event.pull_request.head.ref, 'release/app/')
+    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@main
+    with:
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

@@ -4,7 +4,9 @@ name: Aragon Domain Publish
 # REGISTRATION — renaming this file breaks publishing, and it fails as what looks like an auth
 # error. The publish steps run INLINE here (no reusable workflow) so the workflow identity in the
 # OIDC token always matches the registered publisher; npm rejects the token exchange with a 404 if
-# a reusable/called workflow runs the publish instead.
+# a reusable/called workflow runs the publish instead. The ceremony around it is shared: the
+# release thread gets the "waiting for approval" ping beside the gated job, the result after it,
+# and the head message flipped to Completed.
 #
 #   - release event           -> stable publish (`latest`), gated by the npm-publish approval
 #   - manual workflow_dispatch -> snapshot publish (snapshot-<run-id> tag)
@@ -22,6 +24,24 @@ permissions:
   contents: read
 
 jobs:
+  # Sibling of `release`, never in its `needs`: announces the approval without holding it.
+  notify-gate:
+    if: >
+      github.event_name == 'release' &&
+      startsWith(github.event.release.tag_name, '@aragon/aragon-domain@')
+    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    with:
+      kind: gate
+      env: npm
+      action: publish
+      version: ${{ github.event.release.tag_name }}
+      thread-release-tag: ${{ github.event.release.tag_name }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
   release:
     # The repo publishes releases for several packages (@aragon/app@*, @aragon/gov-ui-kit@*, …), and
     # they all raise `release: published`. Without this prefix guard every app release would try
@@ -35,15 +55,8 @@ jobs:
     # must be approved before this job runs.
     environment: npm-publish
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/setup
-
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: aragon/github-templates/steps/setup@main
         with:
           # Build from the tag, never from a branch: the job waits on the npm-publish approval, so
           # anything merged to main in the meantime would otherwise be published under the tagged
@@ -62,34 +75,59 @@ jobs:
         # --provenance emits a signed build-provenance attestation.
         run: pnpm --filter @aragon/aragon-domain publish --access public --no-git-checks --provenance
 
+  notify-result:
+    needs: [notify-gate, release]
+    if: >
+      always() && github.event_name == 'release' &&
+      startsWith(github.event.release.tag_name, '@aragon/aragon-domain@')
+    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    with:
+      kind: result
+      env: npm
+      action: publish
+      version: ${{ github.event.release.tag_name }}
+      result: ${{ needs.release.result }}
+      url: https://www.npmjs.com/package/@aragon/aragon-domain
+      thread-ts: ${{ needs.notify-gate.outputs.ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  complete:
+    needs: release
+    uses: aragon/github-templates/.github/workflows/release-complete.yml@main
+    with:
+      tag: ${{ github.event.release.tag_name }}
+      env: npm
+      url: https://www.npmjs.com/package/@aragon/aragon-domain
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
   snapshot:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     # Same gate as the `release` job: a snapshot is a real publish to npm.
     environment: npm-publish
     steps:
-      - name: Load secrets
-        id: load-secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
         with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
-
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/setup
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: aragon/github-templates/steps/setup@main
         with:
           # Full history so `changeset status --since origin/main` can diff.
-          fetch-depth: 0
-          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          fetch-depth: "0"
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
           # See the note in the release job — required for OIDC publishing.
           registry-url: ""
 
@@ -110,7 +148,7 @@ jobs:
       - name: Update version
         run: pnpm changeset version --snapshot
         env:
-          GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          GITHUB_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
 
       - name: Get package version
         id: package-version
