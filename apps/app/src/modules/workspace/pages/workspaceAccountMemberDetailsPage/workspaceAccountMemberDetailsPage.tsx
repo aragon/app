@@ -92,6 +92,13 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
 
     const member = memberList?.data[0];
 
+    // This lookup runs above `WorkspaceAccountGate`, so it decides for a Safe too: the `memberDetails` placeholder
+    // is only reachable because `partial` is permanently true for an `unverified` account, which every Safe is, so
+    // the redirect below never fires for one.
+    // Whoever points this at `workspaceCoverageUtils` (the `members` row of the seam register) must first move this
+    // lookup and its redirect below the gate, or guard it to the accounts the gate admits: with `partial` no longer
+    // standing in for "not indexed", a Safe would read as a complete lookup holding no member, every Safe
+    // member-details URL would redirect to the members list and the placeholder would become dead copy.
     const isCompleteLookup = memberList != null && !memberList.partial;
     if (isCompleteLookup && member == null) {
         return (
