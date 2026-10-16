@@ -150,5 +150,30 @@ describe('workspaceCoverage utils', () => {
                 true,
             );
         });
+
+        it('reports a complete count for an available entry', () => {
+            const coverage = [
+                buildCoverage({ status: WorkspaceCoverageStatus.AVAILABLE }),
+            ];
+            expect(workspaceCoverageUtils.hasIncompleteCount(coverage)).toBe(
+                false,
+            );
+        });
+
+        // An unsupported source holds no rows to count, so the count is not a lower bound of anything.
+        it('reports a complete count for an unsupported entry', () => {
+            const coverage = [
+                buildCoverage({ status: WorkspaceCoverageStatus.UNSUPPORTED }),
+            ];
+            expect(workspaceCoverageUtils.hasIncompleteCount(coverage)).toBe(
+                false,
+            );
+        });
+
+        it('reports a complete count for undefined coverage', () => {
+            expect(workspaceCoverageUtils.hasIncompleteCount(undefined)).toBe(
+                false,
+            );
+        });
     });
 });

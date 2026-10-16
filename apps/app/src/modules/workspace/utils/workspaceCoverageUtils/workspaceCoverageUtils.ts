@@ -10,7 +10,8 @@ class WorkspaceCoverageUtils {
      *
      * Only `unavailable` is a read failure. `unverified` is the permanent state of every Safe account (and of any
      * non-indexed address), so counting it would warn forever. `partial` does not mean a read failed either, and
-     * `unsupported` is deliberately excluded, matching the rule the asset list already ships.
+     * `unsupported` is deliberately excluded too: an unsupported source holds no rows to begin with, so nothing is
+     * missing from the list the caller is warning about.
      */
     getUnreadableAccounts = (
         coverage?: IWorkspaceCoverage[],
@@ -32,7 +33,8 @@ class WorkspaceCoverageUtils {
      *
      * `unavailable` accounts are missing from the count, and `partial` means the source holds more than was read,
      * so both make the count a lower bound. `unverified` does not: it says the history is not guaranteed complete,
-     * not that something was left unread.
+     * not that something was left unread. Nor does `unsupported`, for the reason above — a source that holds no
+     * rows cannot be keeping any out of the count.
      */
     hasIncompleteCount = (coverage?: IWorkspaceCoverage[]): boolean =>
         coverage?.some(

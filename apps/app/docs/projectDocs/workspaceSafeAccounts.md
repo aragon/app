@@ -15,25 +15,38 @@ Companion notes: [`createWorkspace.md`](./createWorkspace.md) (the implementatio
   `safe-biz-logic` and contributes nothing of its own.
 - **Confidence markers:** claims about the backend response shape are marked *(backend — confirm)* where they come
   from the doc comments in `workspaceQueryService/` rather than from a response I observed.
+- **Status:** the first slice of this inventory has landed (Safes as account options, the shared coverage rule, a
+  type-aware gate with a placeholder, the proposals-page fix); the implementation is recorded in
+  [`createWorkspace.md`](./createWorkspace.md). Sections B1-B7 and F describe the state *before* it and carry a
+  status note where it has moved. **Section D was checked against the sandbox backend and two of its rows were
+  false** — see there.
 
 ## TL;DR
+
+> **Superseded since this was written:** items 2, 3 and 4 below describe the code before the first slice landed and
+> are no longer true as stated (item 2's fail-open proposals page, item 3's "never an option", item 4's live
+> coverage problem). Each carries its own tag. Items 1 and 6 stand. **Item 5 stands as a design question and not as
+> a statement of fact:** the backend does not aggregate Safe assets or transactions (verified, section D), and the
+> `pending` block its second half rests on has never been observed either — it is qualified in place below.
 
 1. **Nothing is missing at the registry, create-flow or data-model layer.** A Safe is already resolvable, storable,
    taggable and avatar-able. `WorkspaceAccountType.SAFE` already exists and is already written by
    `publishWorkspaceDialog`. Creation is done.
-2. **The account-scoped route tree is where it breaks.** Four of the six account pages resolve a DAO and fail
+2. *(Superseded: the gate is type-aware and the proposals page renders a placeholder.)* **The account-scoped route tree is where it breaks.** Four of the six account pages resolve a DAO and fail
    closed (`WorkspaceAccountGate`); the proposals page fails *open*, silently widening to every DAO account under a
-   URL naming a Safe. Assets and transactions genuinely work.
-3. **A Safe never becomes an account option**, so the selector, every aside-card router and every "which account"
+   URL naming a Safe. The assets and transactions *pages* work (they render, and describe a selected Safe); whether the endpoints behind them return any Safe *data* is a separate question, and on sandbox they do not (section D).
+3. *(Superseded: a Safe is now an account option.)* **A Safe never becomes an account option**, so the selector, every aside-card router and every "which account"
    branch routes a Safe into the aggregated fallback. Twelve distinct call sites.
-4. **`coverage`/`partial` semantics are the subtlest problem.** `unverified` is the permanent state of every Safe
+4. *(Superseded for assets and transactions; members still deferred, see B2.)* **`coverage`/`partial` semantics are the subtlest problem.** `unverified` is the permanent state of every Safe
    and it sets `partial: true`. Assets deliberately filters it out; **transactions, members and the member-details
    redirect do not**, so adding one Safe to a workspace turns on a permanent "this list is incomplete" warning and
    makes every count read `N+`.
 5. **"Safes have proposals" is a design decision, not a port.** `app-1165` defines a Safe proposal *relative to a
    DAO* — a Safe transaction whose payload is `DAO.execute(...)`. A workspace Safe account has no DAO behind it, so
-   that definition does not transfer. Meanwhile the workspace proposals endpoint already returns a `pending` block
-   of queued Safe transactions that the app models as nothing. See [The proposals question](#the-proposals-question).
+   that definition does not transfer. Meanwhile the workspace proposals endpoint is *said* to return a `pending`
+   block of queued Safe transactions that the app models as nothing — asserted from the client's doc comments,
+   never observed, and the index-only cause that emptied `query/{assets,transactions}` for Safes may well apply
+   here too (section D). Do not build on it. See [The proposals question](#the-proposals-question).
 6. **The three branches collide on 12 files**, including a rename (`buildPluginUniqueId` → `getPluginTabId`) that
    the workspace member list calls, and the `SelectPluginDialog` params block that both branches extend.
 
@@ -44,7 +57,7 @@ Three layers answer "what is this account", and only the first two know a Safe e
 | Layer | Knows Safe? | Where |
 | --- | --- | --- |
 | **Registry** — `IWorkspaceAccount { id, type, address, network, metadata? }` | yes, `type: SAFE` | `api/workspaceService/` (localStorage) |
-| **Workspace query API** — `POST /v2/workspaces/query/{accounts,assets,transactions,proposals,members}` | yes, per-account `coverage` with a `safe` source | `api/workspaceQueryService/` |
+| **Workspace query API** — `POST /v2/workspaces/query/{accounts,assets,transactions,proposals,members}` | yes, per-account `coverage` with a `safe` source in the types; **verified on sandbox, that source never appears for assets or transactions** (section D) | `api/workspaceQueryService/` |
 | **DAO API** — `GET /daos/{daoId}`, plugins, permissions, member lists | no. A Safe has no DAO | `shared/api/daoService` |
 
 The account scope is a path segment, `{network}-{address}`, deliberately identical to a DAO ID
@@ -63,9 +76,9 @@ Worth stating so it is not rebuilt.
 | `publishWorkspaceDialogUtils.buildAccount` | Re-resolves every account at submit and `invariant`s rather than guessing a type |
 | `WorkspaceAccountItem` (overview rows) | DAO/Safe branch on avatar and tag, links into the workspace-scoped account route |
 | `WorkspaceSelectAccountDialogItem` | Same DAO/Safe branch; the transactions flow already *lists* Safe rows (dimmed, "not eligible") |
-| `WorkspaceAssetList` / `useWorkspaceAssetListData` | Reads the aggregation endpoint for every scope, so a Safe's balances are correct in both the aggregated and the account scope; `unverified` deliberately not warned about |
-| `WorkspaceTransactionList` | Same, rows and paging are correct for a Safe |
-| `WorkspaceMemberList` | Safe **owners** are already in the aggregated list — the members endpoint returns them with `role: owner` and `governance.type: 'safe'` |
+| `WorkspaceAssetList` / `useWorkspaceAssetListData` | Reads the aggregation endpoint for every scope, so a Safe needs no second data path and no list of its own; `unverified` deliberately not warned about. That is the *client* being Safe-complete — what the endpoint returns for a Safe is zero rows (**verified**, section D), so the list is correct and empty |
+| `WorkspaceTransactionList` | Same shape and the same caveat: rows and paging are correct for a Safe, over a response that holds none of its transfers |
+| `WorkspaceMemberList` | Safe **owners** are in the aggregated list — the members endpoint returns them with `role: owner` and `governance.type: 'safe'` *(backend — confirm: unverified, and in question; assets and transactions proved index-only for Safes and the same cause probably applies, see D)* |
 | Account-scope URL shape | `next.config.mjs` matches the account segment on `[^/]+-0x[0-9a-fA-F]{40}`, which a Safe address satisfies. No routing change needed |
 
 ## B. Touch-point inventory
@@ -99,13 +112,24 @@ layout resolves the type through `POST /v2/workspaces/query/accounts`, which tak
 and needs no registry read. That is the one new server read the whole feature costs, and it replaces the
 "DAO or nothing" prefetch rather than adding to it.
 
-**Open sub-question the TODO flags and nobody has answered:** a DAO page rendered under a layout that withholds
+> **Status.** The gate is type-aware and renders a placeholder for an available Safe on these four routes. It was
+> deliberately *not* merged into `LayoutWorkspaceAccount`, and the sub-question below is answered: a layout cannot
+> withhold a page, so the page's `notFound()` does unwind past it to `app/workspace/[workspaceId]/not-found.tsx` and
+> discards the layout's output. The reasoning is in the gate's doc comment and in `createWorkspace.md`.
+
+**Open sub-question the TODO flags and nobody has answered** *(answered by the note above)*: a DAO page rendered under a layout that withholds
 its children can still surface its own `notFound()` over the layout's error state (`DaoMembersPage` redirects
 when a DAO has no visible body). Verify before moving the gate up.
 
 ### B2. `coverage` / `partial` semantics — *lies*
 
 The highest-value finding, because it is invisible until a Safe is added and then it is permanent.
+
+> **Status.** Fixed for assets, transactions and the aggregated transactions aside card, through the shared
+> `workspaceCoverageUtils` (`hasUnreadableAccounts`, `hasIncompleteCount`, `getUnreadableAccounts`), the first
+> option below. The three members call sites in the table (`workspaceMemberListDefault`,
+> `workspaceMembersAsideCard`, `workspaceAccountMemberDetailsPage`) still read the blunt flag and are **knowingly
+> deferred**: they matter once Safe owners reach the members page, not before.
 
 `WorkspaceCoverageStatus.UNVERIFIED` is documented as "the permanent state of every Safe account, not a failure",
 and `IWorkspaceQueryResponse.partial` is "true when any coverage entry is not available". Therefore **any
@@ -153,10 +177,18 @@ Downstream of the same fallback:
 
 See [The proposals question](#the-proposals-question) for what "Safe proposals" should even mean.
 
-### B4. Members — *breaks*, with one correct half
+> **Status.** The misleading screen is resolved: a Safe's proposals route now renders a "not available yet"
+> placeholder and sends no proposal request, so it no longer answers for a Safe with the totals of every DAO. What
+> stays open is everything above the placeholder — the P1/P2/P3 question of what a Safe proposal *is*, and so what
+> the placeholder is eventually replaced by.
 
-The aggregated list is already right: Safe owners appear, tagged by their `governance.address` (the Safe itself).
-Two gaps:
+### B4. Members — *breaks*, and its "correct half" is unverified
+
+The aggregated list was read as already right: Safe owners appear, tagged by their `governance.address` (the Safe
+itself). **That premise is unverified and now in question.** It comes from doc comments, not from a response, and
+`query/assets` and `query/transactions` turned out to return nothing for Safes because a Safe is not indexed;
+`query/members` probably shares that cause, but nobody has checked (see D). Do not build on it until someone has.
+The two gaps below hold either way, but they only matter if owners reach the list at all.
 
 1. **Rows link nowhere useful.** `workspaceMemberListDefault.tsx:265` builds `memberPageAccountIds` from DAO
    accounts only, so a member who holds *only* Safe memberships gets `accountId == null` and the row degrades to
@@ -164,7 +196,7 @@ Two gaps:
    pages land".
 2. **No Safe tab.** `WorkspaceMemberList` builds tabs from `useWorkspacePlugins({ type: PluginType.BODY })`,
    which reads DAO plugins. A Safe account contributes no tab — correctly handled today (`hasAccountWithoutTab`
-   keeps the group tab meaningful), but a Safe account's owners are unfilterable.
+   keeps the group tab meaningful), but a Safe account's owners would be unfilterable (if they reach the list at all, see the premise above).
 
 The account-scoped page (`WorkspaceAccountMembersPage`) is `DaoMembersPage` behind the gate, and its own doc
 comment already names the shape of the fix: *"A workspace holds more than DAOs… a DAO has the members of its
@@ -173,7 +205,8 @@ branching here."*
 
 ### B5. Transactions — *degrades*
 
-Reads correctly; the write path does not exist.
+The read path renders correctly; the write path does not exist. (What `query/transactions` *returns* for a Safe is
+section D's problem, not this one: zero rows, verified.)
 
 - `useWorkspaceAccountsExecutePermission.ts:49` carries an explicit `TODO(APP-1140)`: Safes are excluded from the
   `hasPermission` batch and therefore always report `false`. A Safe has no `PermissionManager`; eligibility is
@@ -189,12 +222,20 @@ Reads correctly; the write path does not exist.
 - `WorkspaceTransactionsAsideCard` passes `account.address` to `DispatchPanel` as `daoAddress`. Unreachable today
   (Safes are never options) but it is a landmine the moment they are.
 
+> **Status.** The two blind spots and the landmine are closed: the option resolves by network and address, and
+> `DispatchPanel` renders only beside a DAO card. The write path stays shut by construction and is pinned by tests
+> (no create destination, a dimmed dialog row, no navigation on pick). The create-transaction and eligibility work
+> itself is untouched.
+
 ### B6. Assets — *degrades* (cosmetic only)
 
-The only page that is substantively right. One gap: `WorkspaceAssetsAsideCard` has no Safe branch, so a Safe
+The only page that is substantively right — in its client. The *(cosmetic only)* verdict is about the rendering and
+not about the data: `query/assets` returns nothing for a Safe (verified, section D), which no amount of client work
+fixes. *(Landed: the card is titled with the Safe's label.)* One gap on the client side:
+`WorkspaceAssetsAsideCard` has no Safe branch, so a Safe
 scope falls back to `WorkspaceAllAssetsAsideCard` with a generic heading. The list beside it is correctly narrowed
-to the Safe; only the card's title is wrong. `createWorkspace.md` says it plainly: "A Safe card slots in as one
-more branch."
+to the Safe; of the client-side problems only the card's title is wrong. `createWorkspace.md` says it plainly:
+"A Safe card slots in as one more branch."
 
 Also note `WorkspaceDaoAssetsAsideCard` reads `dao.metrics.tvlUSD` while the aggregated card sums
 `totalAmountUsd` from the response — two different quantities. A Safe card should sum the response, matching the
@@ -216,6 +257,13 @@ aggregated card rather than inventing a third number.
 Making a Safe an option is the single change that un-degrades the most surfaces at once. It is also the change
 that *activates* B5's `DispatchPanel` landmine and the aside-card fallbacks — so it should land with the per-type
 cards, not before.
+
+> **Status.** Landed, with that advice deliberately split. The option exists and the selector renders it, but no
+> per-type card was written: the fallback totals card, **titled by the option**, stands in for it, which retires the
+> nameless-pill and generic-heading problems without a card that would have nothing Safe-specific to show. The
+> landmine was defused in the same change rather than by the cards. `scopedOption` is gone with the other
+> per-page route lookups, `useWorkspaceAccountOptions` being the single resolver. The selector's DAO branch still
+> reads the DAO's own avatar rather than the account's metadata; that is unchanged and intentional.
 
 ### B8. Plugin tab identity — *breaks on the merge*
 
@@ -286,7 +334,7 @@ three candidate models:
 | --- | --- | --- | --- |
 | **P1. Account-native queue** | its queued + executed multisig transactions, nonce-ordered | low — `SafePendingTransactionList` and `useSafeDaoProposals`' paging already exist | high: it is exactly what the Safe holds |
 | **P2. Reuse the DAO-anchored notion** | only transactions that are `DAO.execute` on some DAO | nil new code | a standalone Safe would show an empty list, which reads as "no governance" |
-| **P3. Backend `pending` block** | whatever `POST /v2/workspaces/query/proposals` returns in `pending` | low on the client — **the data is already being returned and thrown away** | depends on what the backend puts there |
+| **P3. Backend `pending` block** | whatever `POST /v2/workspaces/query/proposals` returns in `pending` | low on the client — **asserted from doc comments, not observed: that the data is already returned and thrown away** (unverified; the other workspace endpoints returned nothing for Safes, see D) | depends on what the backend puts there |
 
 **P1 and P3 are probably the same thing seen from two sides, and that is the most actionable finding in this
 note.** `workspaceProposalListResponse.ts` documents that the proposals endpoint already returns "a `pending`
@@ -313,7 +361,8 @@ the aggregated list probably has to be a different row kind, not an `IProposal` 
 
 **Recommendation:** decide P1 vs P3 by asking the backend one question — *does `pending` cover a Safe passed
 directly in `accounts`, or only Safes reached through a selected DAO's process?* The answer decides whether the
-workspace proposals page gains a second data source or just stops discarding a field it already receives.
+workspace proposals page gains a second data source or just stops discarding a field it is documented to receive
+and has never been observed receiving.
 
 ## C. What the Safe branches already give us
 
@@ -339,10 +388,13 @@ Safe pages are mostly a *re-slicing* of that one page across the five sections r
 **Two caveats on reuse:**
 
 1. **Double-sourced balances.** `SafeBalanceList` reads the Safe transaction service directly; the workspace
-   assets page reads the aggregation endpoint (whose Safe source is `WorkspaceCoverageSource.SAFE`). Rendering
-   both in one workspace guarantees drift — the aggregated total and the Safe card could disagree, exactly the
-   failure `assetUtils.normalizeAsset` was extracted to prevent between the DAO and workspace asset lists. A
-   workspace Safe assets view should read the **workspace** endpoint, as the DAO assets card does not.
+   assets page reads the aggregation endpoint (whose Safe source, `WorkspaceCoverageSource.SAFE`, exists in the
+   types but never appeared in a sandbox response — section D). Rendering both in one workspace would guarantee
+   drift — the aggregated total and the Safe card could disagree, exactly the
+   failure `assetUtils.normalizeAsset` was extracted to prevent between the DAO and workspace asset lists. Today
+   the drift is prospective rather than live: the aggregated side returns nothing for a Safe, so the Safe card
+   would be the only number on screen. The rule survives the finding — a workspace Safe assets view should read
+   the **workspace** endpoint, as the DAO assets card does not — it just has nothing to read yet.
 2. **`SafeAccountPage` is explicitly read-only** ("Describe the Safe account page as an overview rather than an
    interactive view", "Make the Safe account queue a read-only view with proposal-context actions"). Signing and
    execution were deliberately kept in *proposal* context. A workspace Safe account that can create transactions
@@ -350,20 +402,43 @@ Safe pages are mostly a *re-slicing* of that one page across the five sections r
 
 ## D. Backend: available vs blocked
 
-From the client contracts on this branch. *(All marked confirm — these are read off doc comments and types.)*
+From the client contracts on this branch. *(All marked confirm — these are read off doc comments and types, except
+the rows marked **verified**, which were checked against the sandbox backend, `https://sandbox.backend.aragonservices.in`,
+while landing the first slice.)*
 
 | Capability | Status |
 | --- | --- |
 | Resolve an address to `dao` / `safe` / `unknown` | **available**, `POST query/accounts`, no registry read needed |
-| Full Safe configuration at resolve time | **available but unmodelled** — "The response `safe` field (full Safe configuration) is intentionally not modelled: nothing in the create flow needs it." A type-aware layout or an overview header may want it, and it would be free |
-| Safe balances, aggregated with DAOs | **available**, `query/assets`, source `safe` |
-| Safe transfers, aggregated | **available**, `query/transactions` |
-| Safe owners as members | **available**, `query/members`, `role: owner`, `governance.type: 'safe'`, filterable by `governanceAddress` |
-| Queued Safe transactions | **available in the proposals response's `pending` block, unmodelled.** Scope for directly-selected Safes is the open question |
+| Full Safe configuration at resolve time | **available but unmodelled** (**verified**: `type: "safe"`, `status: "available"` and a full `safe` block — owners, `threshold`, `version`, `nonce`, `modules`, `guard`, `meta.source: "chain"`) — "The response `safe` field (full Safe configuration) is intentionally not modelled: nothing in the create flow needs it." A type-aware layout or an overview header may want it, and it would be free |
+| Safe balances, aggregated with DAOs | **not available** *(verified, was listed available)*. `query/assets` returns zero rows for Sepolia Safes that hold balances; coverage is `source: "index"`, `status: "unverified"`, `partial: true`, and source `safe` never appears. See the evidence below |
+| Safe transfers, aggregated | **not available** *(verified, was listed available)*. `query/transactions`: same result for Safes with transfers, same coverage |
+| Safe owners as members | **unverified (backend — confirm)**, read off doc comments only: `query/members`, `role: owner`, `governance.type: 'safe'`, filterable by `governanceAddress`. `query/assets` and `query/transactions` turned out index-only for Safes, and the same cause probably applies here; this has **not** been checked. If it does, section A's "Safe owners are already in the aggregated list" and B4's "the aggregated list is already right" are false and a Safe members page is blocked on backend work, not on a scope choice |
+| Queued Safe transactions | **unverified (backend — confirm), said to be in the proposals response's `pending` block, unmodelled; not observed, and the index-only cause of the assets/transactions result may apply.** Scope for directly-selected Safes is the open question |
 | Executed Safe transaction history | **not in the workspace API.** Only the Safe transaction service has it (`getSafeTransactionHistory`), which means a client-side read per Safe — the thing the aggregation endpoints exist to avoid |
 | A Safe's Aragon-side name/avatar | **never.** "The endpoint names DAOs only (`name: dao.name ?? null`) and returns no logo" — naming a Safe is what `IWorkspaceAccount.metadata` is for, which is why that field exists |
 | A coverage flag that excludes `unverified` | **not available** — hence B2 |
 | Safes discovered from `targets` | **not available.** Target-based account discovery is out of scope in v1; targets are opaque `{network, address}` pairs. This is the obvious way a user would *find* the Safes to add |
+
+**What the sandbox check found.** The two rows above were the premise of the whole aggregation, and they carried a
+*(backend — confirm)* marker only because nobody had called the endpoints. Calling them is what falsified them, so
+the marker did its job and should stay on every row still read off a doc comment.
+
+- For real Sepolia Safes that demonstrably hold balances and transfers, `POST /v2/workspaces/query/{assets,transactions}`
+  return **zero rows**, with coverage `source: "index"`, `status: "unverified"`, `partial: true`. The accounts endpoint
+  reports the same Safes as `indexed: false`, and the backend does not fall back to the Safe transaction service for
+  these two resources.
+- **Control:** six indexed DAOs sent with the identical request body each returned five rows, `source: "index"`,
+  `available`, `partial: false`. The request shape is not at fault.
+- `query/accounts` *does* reach Safe infrastructure. Safe **resolution** works; Safe **data aggregation** does not
+  exist. The `members` and `pending` rows are still unverified.
+- **Caveat:** sandbox only. Staging and production may be configured differently, and this says nothing about a
+  local `aragon-gateway`.
+- **Consequence the repository owner accepted:** until the backend aggregates Safe data, a selected Safe shows an
+  empty list and 0 / $0 totals, silently. A distinct "Safe accounts aren't aggregated yet" message and reverting to
+  the blunt warning were both considered and declined.
+- **An adjacent, independent bug:** `query/accounts` fails the *entire* request with 404 `{"code":"safeNotFound"}`
+  when any address is neither an indexed DAO nor a Safe, contradicting the per-entry `status: "unsupported"` the
+  client types are built around. It affects the create form today. Recorded in `createWorkspace.md`.
 
 Local development note from `createWorkspace.md` that applies to all Safe work: "Safe accounts need
 `aragon-gateway` running — without it every non-DAO address comes back `unavailable`."
@@ -417,13 +492,22 @@ lands before this branch changes which side absorbs the conflicts, not the total
 
 Each step is independently shippable and leaves the feature coherent.
 
+> **What landed.** The plan above was not followed step by step. Steps 1 and 2 landed together with the selector
+> half of step 5, and the proposals page was closed with a placeholder: a Safe is now an account option, the
+> coverage rule is shared, and the gate is type-aware. Step 2's "move it into `LayoutWorkspaceAccount`" was
+> examined and **declined** (a layout cannot branch per section and cannot withhold a page; see B1). Step 3
+> (overview), step 4 (members and row links), the per-type cards of step 5, step 6, step 7 and step 8 are deferred;
+> the sections they would fill render the "not available yet" placeholder in the meantime. Step 0 is still open, and
+> a new blocker sits ahead of all the data-bearing steps: the backend does not yet aggregate Safe assets and
+> transactions (section D), so the first of them to ship will want the backend change first.
+
 | # | Step | Why first |
 | --- | --- | --- |
 | 0 | **Answer the `pending` scope question** with the backend | It is the only thing that changes the shape of the proposals work, and it is one question |
 | 1 | **Fix `coverage`/`partial`** — shared coverage policy, four call sites | Independent of everything else, fixes live misinformation, and the policy already exists in `useWorkspaceAssetListData` |
 | 2 | **Make the gate type-aware** and move it into `LayoutWorkspaceAccount` | Unblocks every Safe page. The `notFound()`-over-error check is the only unknown |
 | 3 | **Safe account overview** by delegating to `SafeAccountPage`, as the DAO branch delegates to `DaoDashboardPage` | Turns the first error state into a real page; highest visible payoff per line |
-| 4 | **Safe members page + Safe row links**, reading `query/members` filtered to the Safe | The data is already there; grows `memberPageAccountIds` and closes the external-link degradation |
+| 4 | **Safe members page + Safe row links**, reading `query/members` filtered to the Safe | The data was assumed to be there, **unverified**: `query/members` has not been checked for Safes and `query/assets`/`query/transactions` proved index-only (D). Confirm with the backend first; grows `memberPageAccountIds` and closes the external-link degradation |
 | 5 | **Make a Safe an account option** + the three per-type aside cards (assets, transactions, members) | Un-degrades the selector and the asides at once. Must land *with* the cards, and must handle the `DispatchPanel` `daoAddress` landmine |
 | 6 | **Safe eligibility and transaction creation** (`useSafeInfo().owners`, a Safe create destination) | Independent of proposals; the write path |
 | 7 | **Safe proposals** per the step-0 answer, plus a DAO-free details route | Largest and most design-dependent |
@@ -434,7 +518,8 @@ the TODO two files already carry, and 8 fixes a tab-ID disagreement that exists 
 
 ## Open questions for the team
 
-1. **Does the `pending` block of `query/proposals` cover a Safe passed directly in `accounts`?** (Blocks step 0.)
+1. **Does `query/proposals` return a `pending` block at all** — nobody here has observed one — **and does it cover
+   a Safe passed directly in `accounts`?** (Blocks step 0.)
 2. **What is a Safe account's "proposal"** — its whole queue, or only Aragon-correlated transactions? P1 vs P2
    above. This is a product question, not a technical one.
 3. **Read-only or interactive?** `SafeAccountPage` was deliberately made read-only with signing kept in proposal

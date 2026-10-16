@@ -7,7 +7,6 @@ import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAssetListData } from '../../hooks/useWorkspaceAssetListData';
-import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAssetsPageClientProps {
     /**
@@ -38,14 +37,12 @@ export const WorkspaceAssetsPageClient: React.FC<
         urlParams: { id: workspaceId },
     });
 
-    const { accountId, activeOption } = useWorkspaceAccountOptions();
+    const { activeOption } = useWorkspaceAccountOptions();
 
     const accounts = workspace?.accounts ?? [];
 
     // Every account of the workspace, or just the one the route names.
-    // The account is read from the route rather than the activeOption
-    // because the latter does not yet take into account Safe accounts.
-    const account = workspaceUtils.findAccountById(accounts, accountId);
+    const account = activeOption?.account;
 
     const accountsToDisplay = (account != null ? [account] : accounts).map(
         ({ network, address }) => ({
