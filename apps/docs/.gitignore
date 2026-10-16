@@ -1,0 +1,9 @@
+/.vercel
+/.env*
+# The per-environment configs are sources, not local env files (the root ignores .env*.local).
+!/config/.env*
+# Knowledge base checkout, fetched by `pnpm prepare:content`
+/.docs-corpus/
+# Pages, markdown copies and llms files, written by `pnpm prepare:content`
+/content/
+/public/

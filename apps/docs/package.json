@@ -1,0 +1,53 @@
+{
+    "name": "@aragon/docs",
+    "private": true,
+    "description": "Public site of the Aragon platform knowledge base (app.aragon.org/help), built from aragon/platform-doc through @aragon/docs-corpus",
+    "homepage": "https://github.com/aragon/app#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
+    "license": "GPL-3.0",
+    "author": "Aragon Association",
+    "scripts": {
+        "build": "pnpm run prepare:content && next build && pnpm run check:output",
+        "check:output": "tsx src/content/checkOutput.ts",
+        "dev": "pnpm run setup local && pnpm run prepare:content && next dev",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "prepare:content": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local src/content/prepareContent.ts",
+        "setup": "./scripts/setupEnv.sh",
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=origin/main",
+        "test:coverage": "jest --coverage",
+        "test:watch": "jest --watch",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@aragon/docs-corpus": "workspace:*",
+        "fumadocs-core": "16.15.17",
+        "fumadocs-mdx": "15.4.5",
+        "fumadocs-ui": "16.15.17",
+        "next": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "zod": "catalog:"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "catalog:",
+        "@tailwindcss/postcss": "catalog:",
+        "@types/jest": "catalog:",
+        "@types/mdx": "^2.0.13",
+        "@types/node": "catalog:",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "jest": "catalog:",
+        "tailwindcss": "catalog:",
+        "ts-jest": "catalog:",
+        "tsx": "catalog:",
+        "typescript": "catalog:"
+    },
+    "engines": {
+        "node": ">=24.16.0"
+    }
+}
