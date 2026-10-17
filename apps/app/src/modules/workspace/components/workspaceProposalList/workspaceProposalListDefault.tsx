@@ -1,0 +1,182 @@
+'use client';
+
+import {
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+    ProposalDataListItem,
+} from '@aragon/gov-ui-kit';
+import { DaoProposalListDefaultItem } from '@/modules/governance/components/daoProposalList';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
+import type { IDao } from '@/shared/api/daoService';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import type {
+    IGetWorkspaceProposalListParams,
+    IWorkspaceProposalListFilters,
+} from '../../api/workspaceQueryService';
+import type { IWorkspaceAccount } from '../../api/workspaceService';
+import { useWorkspaceProposalListData } from '../../hooks/useWorkspaceProposalListData';
+import { workspaceUtils } from '../../utils/workspaceUtils';
+
+/**
+ * Builds the parameters of the aggregated proposal list request.
+ *
+ * Shared with the aside card, which reads the totals out of the same response: the two only stay on a single
+ * request as long as they build the very same body, since that is what the query key is made of. The `filters` key
+ * is therefore only set when filters are passed.
+ * @param accounts - DAO accounts to aggregate the proposals of.
+ * @param pageSize - Number of proposals to read per page.
+ * @param filters - Filters narrowing the proposals inside the accounts.
+ * @returns The parameters of the workspace proposal list request.
+ */
+export const buildWorkspaceProposalListParams = (
+    accounts: IWorkspaceAccount[],
+    pageSize: number,
+    filters?: IWorkspaceProposalListFilters,
+): IGetWorkspaceProposalListParams => ({
+    body: {
+        accounts: accounts.map(({ network, address }) => ({
+            network,
+            address,
+        })),
+        ...(filters != null && { filters }),
+        pagination: { pageSize },
+    },
+});
+
+export interface IWorkspaceProposalListDefaultProps {
+    /**
+     * DAO accounts to aggregate the proposals of.
+     */
+    accounts: IWorkspaceAccount[];
+    /**
+     * Number of proposals to read per page.
+     */
+    pageSize: number;
+    /**
+     * Filters narrowing the proposals inside the accounts.
+     */
+    filters?: IWorkspaceProposalListFilters;
+    /**
+     * Resolved DAOs of the accounts, keyed by account ID.
+     */
+    daos: Record<string, IDao>;
+    /**
+     * Whether any of the DAOs is still being read.
+     */
+    isDaosPending: boolean;
+    /**
+     * Whether the page is scoped to a single account, which the empty and error copy then names.
+     */
+    isAccountScoped?: boolean;
+    /**
+     * ID of the workspace, used to link each row to the proposal details page of its account.
+     */
+    workspaceId: string;
+}
+
+/**
+ * Aggregated proposal list of a workspace, laid out like `DaoProposalListDefault` of the DAO pages and reusing its
+ * rows, so plugin-specific items keep rendering their own details.
+ *
+ * Each row is tagged with the name of the DAO it belongs to, which the DAO pages never need — unless a single
+ * account is in view, where the tag would repeat the same name on every row. The name comes from the metadata the
+ * endpoint embeds, while the link and the slug need the full DAO — see `useWorkspaceDaos`.
+ */
+export const WorkspaceProposalListDefault: React.FC<
+    IWorkspaceProposalListDefaultProps
+> = (props) => {
+    const {
+        accounts,
+        pageSize,
+        filters,
+        daos,
+        isDaosPending,
+        isAccountScoped,
+        workspaceId,
+    } = props;
+
+    const { t } = useTranslations();
+
+    const isSingleAccount = accounts.length === 1;
+
+    const {
+        onLoadMore,
+        proposalList,
+        state,
+        itemsCount,
+        emptyState,
+        emptyFilteredState,
+        errorState,
+    } = useWorkspaceProposalListData({
+        params: buildWorkspaceProposalListParams(accounts, pageSize, filters),
+        isDaosPending,
+        isAccountScoped,
+    });
+
+    return (
+        <DataListRoot
+            entityLabel={t('app.workspace.workspaceProposalList.entity')}
+            itemsCount={itemsCount}
+            onLoadMore={onLoadMore}
+            pageSize={pageSize}
+            state={state}
+        >
+            <DataListContainer
+                emptyFilteredState={emptyFilteredState}
+                emptyState={emptyState}
+                errorState={errorState}
+                layoutClassName="grid grid-cols-1"
+                SkeletonElement={ProposalDataListItem.Skeleton}
+            >
+                {proposalList.map((proposal) => {
+                    const accountId = workspaceUtils.buildAccountId({
+                        network: proposal.network,
+                        address: proposal.daoAddress,
+                    });
+                    const dao = daos[accountId];
+
+                    // The rows wait for the DAOs, so a missing one means its read failed. The item components
+                    // require a DAO for the link and the publisher, so the row is dropped rather than rendered
+                    // half-broken.
+                    if (dao == null) {
+                        return null;
+                    }
+
+                    const proposalSlug = proposalUtils.getProposalSlug(
+                        proposal,
+                        dao,
+                    );
+
+                    const href =
+                        proposalSlug == null
+                            ? undefined
+                            : workspaceUtils.getAccountScopeUrl(
+                                  workspaceId,
+                                  accountId,
+                                  `proposals/${proposalSlug}`,
+                              );
+
+                    return (
+                        <PluginSingleComponent
+                            dao={dao}
+                            Fallback={DaoProposalListDefaultItem}
+                            href={href}
+                            key={proposal.id}
+                            pluginId={proposal.pluginInterfaceType}
+                            proposal={proposal}
+                            proposalSlug={proposalSlug}
+                            slotId={
+                                GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM
+                            }
+                            tag={isSingleAccount ? undefined : dao.name}
+                        />
+                    );
+                })}
+            </DataListContainer>
+            <DataListPagination />
+        </DataListRoot>
+    );
+};

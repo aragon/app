@@ -1,8 +1,9 @@
-import { type Hex, keccak256, toBytes } from 'viem';
+import type { Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { permissionManagerAbi } from '@/shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
 
@@ -24,8 +25,8 @@ export interface IUseDaoExecutePermissionResult {
     isLoading: boolean;
 }
 
-const executePermissionId = keccak256(
-    toBytes(permissionTransactionUtils.permissionIds.executePermission),
+const executePermissionId = permissionNameUtils.getPermissionId(
+    permissionTransactionUtils.permissionIds.executePermission,
 );
 
 /**

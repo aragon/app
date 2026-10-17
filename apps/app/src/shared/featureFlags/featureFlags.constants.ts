@@ -177,4 +177,16 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             'Lets the membership BFF serve token-voting member lists from the aragon-domain (Envio indexer) instead of the legacy backend on indexed networks. Resolved server-side only. Off everywhere by default; enable per environment through the CMS override or the local override cookie.',
         defaultValue: false,
     },
+    {
+        key: 'workspaces',
+        name: 'Workspaces',
+        description:
+            'Enables the workspace feature: the create-workspace wizard, the workspace pages and the explore call to action. Workspaces are backed by a mocked local-storage registry, so this must stay off outside development.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
 ];

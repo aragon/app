@@ -6,6 +6,7 @@ import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/creat
 import { financeDialogsDefinitions } from '@/modules/finance/constants/financeDialogsDefinitions';
 import { governanceDialogsDefinitions } from '@/modules/governance/constants/governanceDialogsDefinitions';
 import { settingsDialogDefinitions } from '@/modules/settings/constants/settingsDialogDefinitions';
+import { workspaceDialogsDefinitions } from '@/modules/workspace/constants/workspaceDialogsDefinitions';
 import { pluginDialogsDefinitions } from '@/plugins';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 
@@ -14,6 +15,7 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...governanceDialogsDefinitions,
     ...financeDialogsDefinitions,
     ...createDaoDialogsDefinitions,
+    ...workspaceDialogsDefinitions,
     ...pluginDialogsDefinitions,
     ...settingsDialogDefinitions,
     ...capitalFlowDialogsDefinitions,
