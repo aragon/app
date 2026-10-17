@@ -25,6 +25,10 @@ import {
 } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import {
+    daoMemberSourceUtils,
+    type IDaoMemberSource,
+} from '../../utils/daoMemberSourceUtils';
 
 export interface IDaoMemberListDefaultProps<
     TSettings extends IPluginSettings = IPluginSettings,
@@ -34,9 +38,13 @@ export interface IDaoMemberListDefaultProps<
      */
     initialParams: IGetMemberListParams;
     /**
-     * DAO plugin to display to members for.
+     * Installed plugin used by slot-based member lists.
      */
-    plugin: IDaoPlugin<TSettings>;
+    plugin?: IDaoPlugin<TSettings>;
+    /**
+     * Member source selected by the members-page filter.
+     */
+    memberSource?: IDaoMemberSource;
     /**
      * Overrides the custom layout classes when set.
      */
@@ -61,6 +69,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const {
         initialParams,
         plugin,
+        memberSource,
         hidePagination,
         children,
         onMemberClick,
@@ -75,14 +84,22 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     // The parent DAO is server-side prefetched → always a cache hit.
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // For linked account plugins the API call must target the linked account's own daoId so the
-    // backend queries the correct DAO.
     const apiParams = useMemo(() => {
-        const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
-
-        if (resolvedDaoId === daoId) {
-            return initialParams;
+        if (memberSource != null) {
+            return {
+                ...initialParams,
+                queryParams: {
+                    ...initialParams.queryParams,
+                    daoId: memberSource.daoId,
+                    pluginAddress: memberSource.address,
+                },
+            };
         }
+
+        const resolvedDaoId =
+            plugin != null
+                ? daoUtils.resolvePluginDaoId(daoId, plugin, dao)
+                : daoId;
 
         return {
             ...initialParams,
@@ -91,7 +108,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
                 daoId: resolvedDaoId,
             },
         };
-    }, [initialParams, plugin, dao, daoId]);
+    }, [initialParams, plugin, memberSource, dao, daoId]);
 
     const {
         onLoadMore,
@@ -103,15 +120,24 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         memberList,
     } = useMemberListData(apiParams);
 
+    const pluginAddress =
+        memberSource?.address ??
+        plugin?.address ??
+        initialParams.queryParams.pluginAddress;
     const { data: memberExists } = useMemberExists(
         {
             urlParams: {
                 memberAddress: connectedAddress ?? '',
-                pluginAddress: plugin.address,
+                pluginAddress,
             },
             queryParams: { network: dao?.network as Network },
         },
-        { enabled: connectedAddress != null && dao?.network != null },
+        {
+            enabled:
+                connectedAddress != null &&
+                dao?.network != null &&
+                pluginAddress != null,
+        },
     );
 
     const isMember = memberExists?.status === true;
@@ -161,7 +187,11 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const getMemberLink = (member: IMember): string | undefined =>
         onMemberClick != null
             ? undefined
-            : daoUtils.getDaoUrl(dao, `members/${member.address}`);
+            : daoMemberSourceUtils.getMemberUrl(
+                  dao,
+                  member.address,
+                  memberSource?.uniqueId,
+              );
 
     return (
         <DataListRoot

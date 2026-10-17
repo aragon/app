@@ -4,7 +4,7 @@ import {
     formatterUtils,
     type IDefinitionSetting,
 } from '@aragon/gov-ui-kit';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useDaoChain } from '../useDaoChain';
@@ -63,7 +63,10 @@ export const useDaoPluginInfo = (
         id: transactionHash,
     });
 
-    const name = daoUtils.getPluginContractName(plugin.meta);
+    const name =
+        plugin.meta.interfaceType === PluginInterfaceType.SAFE
+            ? daoUtils.getPluginName(plugin.meta)
+            : daoUtils.getPluginContractName(plugin.meta);
     const pluginLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
         id: address,
@@ -72,11 +75,14 @@ export const useDaoPluginInfo = (
     return [
         {
             term: t('app.shared.daoPluginInfo.plugin'),
-            description: t('app.shared.daoPluginInfo.pluginVersionInfo', {
-                name,
-                release,
-                build,
-            }),
+            description:
+                plugin.meta.interfaceType === PluginInterfaceType.SAFE
+                    ? name
+                    : t('app.shared.daoPluginInfo.pluginVersionInfo', {
+                          name,
+                          release,
+                          build,
+                      }),
             link: {
                 href: pluginLink,
                 isExternal: true,

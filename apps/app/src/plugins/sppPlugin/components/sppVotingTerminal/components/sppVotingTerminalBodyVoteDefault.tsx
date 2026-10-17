@@ -1,14 +1,15 @@
-import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    addressUtils,
+    Button,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
 import type { ISppReportProposalResultDialogParams } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog';
-import {
-    type ISppProposal,
-    type ISppStage,
-    VotingBodyBrandIdentity,
-} from '@/plugins/sppPlugin/types';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -27,10 +28,6 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
      */
     externalAddress: string;
     /**
-     * Branded identity of the external body, used to tailor the help text.
-     */
-    brandId?: VotingBodyBrandIdentity;
-    /**
      * Stage on which the body is setup.
      */
     stage: ISppStage;
@@ -44,7 +41,7 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
 export const SppVotingTerminalBodyVoteDefault: React.FC<
     ISppVotingTerminalBodyVoteDefaultProps
 > = (props) => {
-    const { daoId, proposal, externalAddress, brandId, stage, isVeto } = props;
+    const { daoId, proposal, externalAddress, stage, isVeto } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -96,10 +93,16 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<
     const handleVoteClick = () =>
         checkWalletConnection({ onSuccess: checkPermissions });
 
-    const isSafe = brandId === VotingBodyBrandIdentity.SAFE;
-
     return (
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-6">
+            {!voted && (
+                <AlertInline
+                    message={t(
+                        'app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText',
+                    )}
+                    variant="info"
+                />
+            )}
             <Button
                 className="w-full md:w-fit"
                 iconLeft={voted ? IconType.CHECKMARK : undefined}
@@ -111,15 +114,6 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<
                     `app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`,
                 )}
             </Button>
-            {!voted && (
-                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
-                    {t(
-                        `app.plugins.spp.sppVotingTerminalBodyVoteDefault.${
-                            isSafe ? 'helpTextSafe' : 'helpText'
-                        }`,
-                    )}
-                </p>
-            )}
         </div>
     );
 };

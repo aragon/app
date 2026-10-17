@@ -1,0 +1,1 @@
+export { useSafeMultisigGovernanceSettings } from './useSafeMultisigGovernanceSettings';

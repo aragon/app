@@ -1,4 +1,8 @@
-import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    type IDefinitionSetting,
+    ProposalVoting,
+} from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
@@ -12,10 +16,16 @@ import type {
     ISppSubProposal,
 } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import {
+    type PluginId,
+    pluginRegistryUtils,
+} from '@/shared/utils/pluginRegistryUtils';
 import { SppVotingTerminalBodyBreakdownDefault } from './sppVotingTerminalBodyBreakdownDefault';
 import { SppVotingTerminalBodyVoteDefault } from './sppVotingTerminalBodyVoteDefault';
 
@@ -24,6 +34,10 @@ export interface ISppVotingTerminalBodyContentProps {
      * The plugin that the stage belongs to.
      */
     plugin: ISppStagePlugin;
+    /** Runtime-resolved identity shared by all slots in this body. */
+    bodyPluginId: PluginId;
+    /** The settled Safe report was not found after a successful history scan. */
+    isHistoryMissing: boolean;
     /**
      * ID of the related DAO.
      */
@@ -51,9 +65,51 @@ const votesPerPage = 6;
 export const SppVotingTerminalBodyContent: React.FC<
     ISppVotingTerminalBodyContentProps
 > = (props) => {
-    const { plugin, daoId, subProposal, stage, proposal, children } = props;
+    const {
+        plugin,
+        bodyPluginId,
+        isHistoryMissing,
+        daoId,
+        subProposal,
+        stage,
+        proposal,
+        children,
+    } = props;
+    const { t } = useTranslations();
 
-    const canVote = sppStageUtils.canBodyVote(proposal, stage, plugin);
+    const { network } = daoUtils.parseDaoId(daoId);
+
+    /**
+     * Whether this body type can still be asked to act after its voting window closed. Asked of the
+     * registry, because it is a property of the body and not of the stage: a body that votes through
+     * an external queue has no say in when that queue clears, and `reportProposalResult` carries no
+     * deadline - it records while the stage is the proposal's current one.
+     *
+     * What is then offered is the body's own call. It knows whether anything is pending and whether
+     * the stage can still advance, so it can explain an expired stage instead of showing an action.
+     */
+    const votesAfterWindow =
+        pluginRegistryUtils.getSlotFunction<undefined, boolean>({
+            slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+            pluginId: bodyPluginId,
+        })?.(undefined) === true;
+
+    const canActLate =
+        votesAfterWindow &&
+        stage.stageIndex === proposal.stageIndex &&
+        !proposal.executed.status;
+
+    const canVote =
+        sppStageUtils.canBodyVote(proposal, stage, plugin) || canActLate;
+    const showAction =
+        !isHistoryMissing &&
+        (canVote ||
+            (bodyPluginId === PluginInterfaceType.SAFE &&
+                sppStageUtils.getBodyResult(
+                    proposal,
+                    plugin.address,
+                    stage.stageIndex,
+                ) != null));
 
     const isExternalBody = plugin.interfaceType == null;
     // Approve/veto is a per-body property: a single stage can mix approving and
@@ -72,9 +128,13 @@ export const SppVotingTerminalBodyContent: React.FC<
             settings: pluginSettings,
             isVeto,
             pluginAddress: plugin.address,
+            // A native body's settings are snapshotted on the sub-proposal above; a body read live
+            // has to recover its own, so hand it the decision these settings are being read for.
+            proposal,
+            stage,
         },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.interfaceType ?? 'external',
+        pluginId: bodyPluginId,
         fallback: useSppGovernanceSettingsDefault,
     });
 
@@ -83,7 +143,6 @@ export const SppVotingTerminalBodyContent: React.FC<
         address: plugin.address,
         settings,
     });
-    const { network } = daoUtils.parseDaoId(daoId);
 
     const voteListParams = {
         queryParams: {
@@ -116,9 +175,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                         canVote={canVote}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}
                         isVeto={isVeto}
-                        pluginId={
-                            isExternalBody ? 'external' : plugin.interfaceType
-                        }
+                        pluginId={bodyPluginId}
                         proposal={isExternalBody ? proposal : subProposal}
                         slotId={
                             GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN
@@ -126,13 +183,16 @@ export const SppVotingTerminalBodyContent: React.FC<
                         stage={stage}
                     >
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
-                            {canVote && (
+                            {isHistoryMissing && (
+                                <AlertInline
+                                    message={t(
+                                        'app.plugins.spp.sppVotingTerminalBodyContent.historyMissing',
+                                    )}
+                                    variant="info"
+                                />
+                            )}
+                            {showAction && (
                                 <PluginSingleComponent
-                                    brandId={
-                                        isExternalBody
-                                            ? plugin.brandId
-                                            : undefined
-                                    }
                                     daoId={daoId}
                                     externalAddress={
                                         isExternalBody
@@ -141,11 +201,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                                     }
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                     isVeto={isVeto}
-                                    pluginId={
-                                        isExternalBody
-                                            ? 'external'
-                                            : plugin.interfaceType
-                                    }
+                                    pluginId={bodyPluginId}
                                     proposal={
                                         isExternalBody
                                             ? proposal
@@ -160,13 +216,27 @@ export const SppVotingTerminalBodyContent: React.FC<
                             {children}
                         </div>
                     </PluginSingleComponent>
-                    {processedSubProposal && (
+                    {/* An indexed sub-proposal has indexed votes; a body without one can still have
+                        its own notion of votes, so the slot answers for it. Nothing registered means
+                        no votes to show, and the tab-policy slot has already hidden the tab. */}
+                    {processedSubProposal != null ? (
                         <ProposalVoting.Votes>
                             <VoteList
                                 daoId={daoId}
                                 initialParams={voteListParams}
                                 isVeto={isVeto}
                                 pluginAddress={plugin.address}
+                            />
+                        </ProposalVoting.Votes>
+                    ) : (
+                        <ProposalVoting.Votes>
+                            <PluginSingleComponent
+                                body={plugin.address}
+                                isVeto={isVeto}
+                                pluginId={bodyPluginId}
+                                proposal={proposal}
+                                slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+                                stage={stage}
                             />
                         </ProposalVoting.Votes>
                     )}
