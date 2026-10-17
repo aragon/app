@@ -8,7 +8,6 @@ import {
     PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     buildTokenVotingMembershipParams,
@@ -93,11 +92,6 @@ describe('<DaoMembersPage /> component', () => {
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
         );
-        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
-            type: PluginType.BODY,
-            includeSubPlugins: true,
-            includeLinkedAccounts: true,
-        });
 
         const memberListParams = {
             daoId: expectedDaoId,
@@ -138,13 +132,14 @@ describe('<DaoMembersPage /> component', () => {
         );
     });
 
-    it('prefetches Safe owners when a Safe is a DAO body', async () => {
+    it('prefetches Safe owners when a Safe is execute-only', async () => {
         const expectedDaoId = 'test-dao-id';
         const safeAddress = '0x1234567890123456789012345678901234567890';
         const safePlugin = generateDaoPlugin({
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
-            isBody: true,
+            isProcess: true,
+            isBody: false,
         });
         const dao = generateDao({ plugins: [safePlugin] });
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);

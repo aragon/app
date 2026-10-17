@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
@@ -79,9 +79,14 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
     };
     const proposalListParams = { queryParams: proposalListQueryParams };
 
-    await queryClient.prefetchInfiniteQuery(
-        proposalListOptions({ queryParams: proposalListQueryParams }),
-    );
+    if (
+        processPlugins.length > 1 ||
+        processPlugins[0].interfaceType !== PluginInterfaceType.SAFE
+    ) {
+        await queryClient.prefetchInfiniteQuery(
+            proposalListOptions({ queryParams: proposalListQueryParams }),
+        );
+    }
 
     return (
         <Page.Container queryClient={queryClient}>

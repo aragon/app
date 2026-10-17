@@ -1,6 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as executePermissionGuard from '@/modules/governance/hooks/useExecutePermissionCheckGuard';
+import { SafeDialogId } from '@/modules/safe/constants/safeDialogId';
+import { Network } from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
@@ -30,6 +32,7 @@ jest.mock('@/shared/components/wizards/wizardPage', () => {
                 analytics,
                 children,
                 onSubmit,
+                submitLabel,
             }: {
                 analytics?: {
                     flow: string;
@@ -37,6 +40,7 @@ jest.mock('@/shared/components/wizards/wizardPage', () => {
                 };
                 children: React.ReactNode;
                 onSubmit: (values: typeof executeFormValues) => void;
+                submitLabel?: string;
             }) => {
                 if (analytics != null) {
                     plausibleAnalyticsUtils.track('wizard_start', {
@@ -53,7 +57,9 @@ jest.mock('@/shared/components/wizards/wizardPage', () => {
                         }}
                     >
                         {children}
-                        <button data-testid="submit" type="submit" />
+                        <button data-testid="submit" type="submit">
+                            {submitLabel}
+                        </button>
                     </form>
                 );
             },
@@ -114,6 +120,38 @@ describe('<CreateExecuteActionsPageClient /> component', () => {
                 daoId: 'dao-id',
                 actions: executeFormValues.actions,
                 prepareActions: {},
+            },
+        });
+    });
+    it('opens the native Safe dialog and labels submit as proposal creation', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        const safeProcess = {
+            daoAddress: '0xdao',
+            network: Network.ETHEREUM_MAINNET,
+            safeAddress: '0xsafe',
+        };
+
+        render(
+            <CreateExecuteActionsPageClient
+                daoId="dao-id"
+                safeProcess={safeProcess}
+            />,
+        );
+
+        expect(screen.getByTestId('submit')).toHaveTextContent(
+            'app.governance.createExecuteActionsPage.safeSubmitLabel',
+        );
+
+        await userEvent.click(screen.getByTestId('submit'));
+
+        expect(open).toHaveBeenCalledWith(SafeDialogId.NATIVE_TRANSACTION, {
+            params: {
+                actions: executeFormValues.actions,
+                daoAddress: safeProcess.daoAddress,
+                network: safeProcess.network,
+                prepareActions: {},
+                safeAddress: safeProcess.safeAddress,
             },
         });
     });

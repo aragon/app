@@ -105,6 +105,24 @@ describe('<NavigationDao /> component', () => {
         );
     };
 
+    it('shows members when a Safe process is also reported as a body', () => {
+        hasSupportedPluginsSpy.mockReturnValue(true);
+        const dao = generateDao({
+            plugins: [
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.SAFE,
+                    isBody: true,
+                    isProcess: true,
+                }),
+            ],
+        });
+        render(createTestComponent({ dao }));
+
+        expect(
+            screen.getByRole('link', { name: /navigationDao.link.members/ }),
+        ).toBeInTheDocument();
+    });
+
     it('renders the dao avatar and name', () => {
         const dao = generateDao({ avatar: 'ipfs://avatar-cid', name: 'MyDao' });
         cidToSrcSpy.mockReturnValue(dao.avatar!);

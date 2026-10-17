@@ -6,7 +6,11 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -51,8 +55,15 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
             name: daoProposalsPageFilterParam,
         });
 
-    const buildProposalUrl = (plugin: IDaoPlugin) =>
-        daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
+    const buildProposalUrl = (plugin: IDaoPlugin) => {
+        const proposalPath = `create/${plugin.address}/proposal`;
+
+        if (daoUtils.isLinkedAccountPlugin(plugin, dao)) {
+            return `/dao/${dao!.network}/${plugin.daoAddress}/${proposalPath}`;
+        }
+
+        return daoUtils.getDaoUrl(dao, proposalPath)!;
+    };
 
     const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) => {
         const targetPlugin = plugin ?? activePlugin?.meta;
@@ -91,16 +102,23 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
         );
     }
 
-    const handlePluginSelected = (plugin: IDaoPlugin) =>
+    const handlePluginSelected = (plugin: IDaoPlugin) => {
+        if (plugin.interfaceType === PluginInterfaceType.SAFE) {
+            handlePermissionGuardSuccess(plugin);
+            return;
+        }
+
         createProposalGuard({
             plugin,
             onSuccess: () => handlePermissionGuardSuccess(plugin),
         });
+    };
 
     const openSelectPluginDialog = () => {
         const initialPlugin =
             activePlugin.id === pluginGroupFilter.id ? undefined : activePlugin;
         const params: ISelectPluginDialogParams = {
+            allowNativeSafe: true,
             daoId,
             initialPlugin,
             onPluginSelected: handlePluginSelected,
@@ -108,9 +126,11 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
+    const canCreateActiveProposal =
+        activePlugin.id === PluginInterfaceType.SAFE || canCreateProposal;
     const defaultActionProps = {
-        onClick: canCreateProposal ? undefined : createProposalGuard,
-        href: canCreateProposal
+        onClick: canCreateActiveProposal ? undefined : createProposalGuard,
+        href: canCreateActiveProposal
             ? buildProposalUrl(activePlugin.meta)
             : undefined,
     };

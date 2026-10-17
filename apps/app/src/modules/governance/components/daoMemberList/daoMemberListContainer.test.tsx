@@ -81,12 +81,13 @@ describe('<DaoMemberListContainer /> component', () => {
         );
     });
 
-    it('renders a Safe body as an ordinary member tab', () => {
+    it('renders an execute-only Safe as an ordinary member tab', () => {
         const safeAddress = '0x1234567890123456789012345678901234567890';
         const safePlugin = generateDaoPlugin({
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
-            isBody: true,
+            isProcess: true,
+            isBody: false,
             slug: 'safe',
         });
         useDaoPluginsSpy.mockReturnValue([

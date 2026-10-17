@@ -63,6 +63,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
             type: PluginType.BODY,
             includeSubPlugins: true,
             includeLinkedAccounts: true,
+            includeProcessSafes: true,
         }) ?? [];
 
     const plugins = daoVisibilityUtils.filterHiddenPlugins(

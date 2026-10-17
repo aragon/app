@@ -7,7 +7,11 @@ import {
     Network,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateLinkedAccount,
+} from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { memberOptions } from '../../api/governanceService';
 import {
@@ -111,7 +115,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
         );
     });
 
-    it('prefetches the member of the body selected by the members URL parameter', async () => {
+    it('prefetches the member of the Safe selected by the members URL parameter', async () => {
         const expectedDaoId = 'test-dao-id';
         const safeAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
         const multisigPlugin = generateDaoPlugin({
@@ -123,7 +127,8 @@ describe('<DaoMemberDetailsPage /> component', () => {
         const safePlugin = generateDaoPlugin({
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
-            isBody: true,
+            isProcess: true,
+            isBody: false,
             slug: 'safe',
         });
         const daoAddress = '0x3333333333333333333333333333333333333333';
@@ -147,6 +152,56 @@ describe('<DaoMemberDetailsPage /> component', () => {
                 urlParams: { address: validAddress },
                 queryParams: {
                     daoId: expectedDaoId,
+                    pluginAddress: safeAddress,
+                },
+            }).queryKey,
+        );
+    });
+
+    it('keeps a linked execute-only Safe scoped to its owning DAO on reload', async () => {
+        const rootDaoAddress = '0x3333333333333333333333333333333333333333';
+        const linkedDaoAddress = '0x4444444444444444444444444444444444444444';
+        const safeAddress = '0x5555555555555555555555555555555555555555';
+        const expectedDaoId = `${Network.ETHEREUM_SEPOLIA}-${rootDaoAddress}`;
+        const memberDaoId = `${Network.ETHEREUM_SEPOLIA}-${linkedDaoAddress}`;
+        const dao = generateDao({
+            address: rootDaoAddress,
+            network: Network.ETHEREUM_SEPOLIA,
+            linkedAccounts: [
+                generateLinkedAccount({ address: linkedDaoAddress }),
+            ],
+            plugins: [
+                generateDaoPlugin({
+                    address: safeAddress,
+                    daoAddress: linkedDaoAddress,
+                    interfaceType: PluginInterfaceType.SAFE,
+                    isProcess: true,
+                    isBody: false,
+                    slug: 'safe',
+                }),
+            ],
+        });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        getDaoSpy.mockResolvedValue(dao);
+
+        render(
+            await createTestComponent({
+                params: Promise.resolve({
+                    address: validAddress,
+                    addressOrEns: rootDaoAddress,
+                    network: Network.ETHEREUM_SEPOLIA,
+                }),
+                searchParams: Promise.resolve({
+                    members: `${safeAddress}-safe-${linkedDaoAddress}`,
+                }),
+            }),
+        );
+
+        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
+            memberOptions({
+                urlParams: { address: validAddress },
+                queryParams: {
+                    daoId: memberDaoId,
                     pluginAddress: safeAddress,
                 },
             }).queryKey,

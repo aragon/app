@@ -51,6 +51,25 @@ describe('daoMemberSourceUtils', () => {
         expect(source.address).toEqual(safeAddress);
     });
 
+    it('maps an execute-only Safe to a canonical member source', () => {
+        const safeAddress = '0x8888888888888888888888888888888888888888';
+        const [source] = resolve([
+            generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                isBody: false,
+                slug: 'safe',
+            }),
+        ]);
+
+        expect(source.uniqueId).toEqual(
+            `${safeAddress}-safe-${rootDaoAddress}`,
+        );
+        expect(source.daoId).toEqual(daoId);
+    });
+
     it('keeps a root-DAO body on the viewed DAO', () => {
         const [source] = resolve([
             generateDaoPlugin({
@@ -109,6 +128,31 @@ describe('daoMemberSourceUtils', () => {
         expect(sources[0].daoId).toEqual(daoId);
         expect(sources[1].daoId).toEqual(
             `${Network.ETHEREUM_MAINNET}-${linkedDaoAddress}`,
+        );
+    });
+
+    it('deduplicates body and process Safe records for one owning DAO', () => {
+        const safeAddress = '0x9999999999999999999999999999999999999999';
+        const sources = resolve([
+            generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isBody: true,
+                slug: 'safe',
+            }),
+            generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                slug: 'safe',
+            }),
+        ]);
+
+        expect(sources).toHaveLength(1);
+        expect(sources[0].uniqueId).toEqual(
+            `${safeAddress}-safe-${rootDaoAddress}`,
         );
     });
 
