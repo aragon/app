@@ -1,11 +1,31 @@
+import { notFound } from 'next/navigation-server';
 import type { ReactElement } from 'react';
 import * as layoutWizard from '@/modules/application/components/layouts/layoutWizard';
+import { featureFlags } from '@/shared/featureFlags';
 import {
     type ILayoutWizardEditWorkspaceProps,
     LayoutWizardEditWorkspace,
 } from './layoutWizardEditWorkspace';
 
+jest.mock('next/navigation-server', () => ({
+    notFound: jest.fn(() => {
+        throw new Error('NEXT_HTTP_ERROR_FALLBACK;404');
+    }),
+}));
+
 describe('<LayoutWizardEditWorkspace /> component', () => {
+    const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
+    const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
+
+    beforeEach(() => {
+        isEnabledSpy.mockResolvedValue(true);
+    });
+
+    afterEach(() => {
+        isEnabledSpy.mockReset();
+        notFoundMock.mockClear();
+    });
+
     const createTestComponent = async (
         props?: Partial<ILayoutWizardEditWorkspaceProps>,
     ) => {
@@ -24,6 +44,7 @@ describe('<LayoutWizardEditWorkspace /> component', () => {
     it('renders the wizard layout exiting to the overview of the workspace', async () => {
         const layout = await createTestComponent();
 
+        expect(notFoundMock).not.toHaveBeenCalled();
         expect(layout.type).toBe(layoutWizard.LayoutWizard);
         expect(layout.props).toEqual(
             expect.objectContaining({
@@ -38,5 +59,14 @@ describe('<LayoutWizardEditWorkspace /> component', () => {
         const layout = await createTestComponent({ children });
 
         expect(layout.props).toEqual(expect.objectContaining({ children }));
+    });
+
+    it('renders the 404 page instead of the wizard when the workspaces flag is disabled', async () => {
+        isEnabledSpy.mockResolvedValue(false);
+
+        await expect(createTestComponent()).rejects.toThrow(
+            'NEXT_HTTP_ERROR_FALLBACK;404',
+        );
+        expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
     });
 });
