@@ -1,5 +1,21 @@
 # @aragon/app
 
+## 1.40.3
+
+### Patch Changes
+
+- [#1480](https://github.com/aragon/app/pull/1480) [`af8f6d5`](https://github.com/aragon/app/commit/af8f6d52d213dd6a23bb52972c7f3fab3a667325) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Associate the address list label with its first member input and name the list as a group, with each member input named by its position.
+
+- [#1490](https://github.com/aragon/app/pull/1490) [`4d776b9`](https://github.com/aragon/app/commit/4d776b9d74f844647955c5db460132fe9784c5d8) Thanks [@milosh86](https://github.com/milosh86)! - Fix nested actions of create-proposal and execute actions rendering as unknown raw calldata instead of their decoded view
+
+- [#1492](https://github.com/aragon/app/pull/1492) [`07b1292`](https://github.com/aragon/app/commit/07b1292ca190bc41d787e6f14e858bc6ff5ec14c) Thanks [@milosh86](https://github.com/milosh86)! - Render multisig add-members and remove-members actions through an app-owned detail view registered in the action view registry, replacing the gov-ui-kit `ProposalActionChangeMembers` basic view. The view reads the multisig action directly, so the multisig plugin no longer converts it to the kit action type. Members are now shown with the ENS name and avatar sent by the backend.
+
+- [#1492](https://github.com/aragon/app/pull/1492) [`07b1292`](https://github.com/aragon/app/commit/07b1292ca190bc41d787e6f14e858bc6ff5ec14c) Thanks [@milosh86](https://github.com/milosh86)! - Render multisig, token and lock-to-vote settings changes through an app-owned detail view registered in the action view registry, replacing the gov-ui-kit `ProposalActionChangeSettings` basic view. The plugins still convert the settings into term/definition lists, now typed as the app's `IProposalActionChangeSettings`.
+
+- [#1492](https://github.com/aragon/app/pull/1492) [`07b1292`](https://github.com/aragon/app/commit/07b1292ca190bc41d787e6f14e858bc6ff5ec14c) Thanks [@milosh86](https://github.com/milosh86)! - Render token mint actions through an app-owned detail view registered in the action view registry, replacing the gov-ui-kit `ProposalActionTokenMint` basic view. The minted amount is now computed from the raw balances before they are formatted, and the receiver is shown by their ENS name when they have one.
+
+- [#1489](https://github.com/aragon/app/pull/1489) [`05451c7`](https://github.com/aragon/app/commit/05451c70ae2b460819ad49c4ba1ba328c5bdd28e) Thanks [@milosh86](https://github.com/milosh86)! - Render DAO and plugin metadata update actions through an app-owned detail view registered in the action view registry, replacing the gov-ui-kit `ProposalActionUpdateMetadata` basic view.
+
 ## 1.40.2
 
 ### Patch Changes
