@@ -3845,7 +3845,8 @@
           "waitingForTurn": "Fully signed. It executes once the Safe reaches this nonce; nonce {{currentNonce}} is next.",
           "queuedOn": "Queued {{date}}"
         },
-        "stale": "This queue could not be re-read from the Safe service, so it may be out of date. Last updated {{date}}."
+        "stale": "This queue could not be re-read from the Safe service, so it may be out of date.",
+        "staleWithTimestamp": "This queue could not be re-read from the Safe service, so it may be out of date. Last updated {{date}}."
       },
       "safeSettings": {
         "currentNonce": "Current Safe nonce",

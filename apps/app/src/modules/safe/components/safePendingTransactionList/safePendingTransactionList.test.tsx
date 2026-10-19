@@ -223,6 +223,28 @@ describe('<SafePendingTransactionList /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('omits the timestamp when a stale queue has no fetch time', () => {
+        useTranslationsSpy = jest
+            .spyOn(translationsProvider, 'useTranslations')
+            .mockReturnValue({ t: translationUtils.t(en) });
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess<ISafeQueueResponse, Error>({
+                data: generateSafeQueueResponse({
+                    count: 1,
+                    results: [generateSafeTransaction({ nonce: '11' })],
+                    meta: { source: 'cache', fetchedAt: '', stale: true },
+                }),
+            }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'This queue could not be re-read from the Safe service, so it may be out of date.',
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('renders an empty state when the queue is empty', () => {
         render(createTestComponent());
 
