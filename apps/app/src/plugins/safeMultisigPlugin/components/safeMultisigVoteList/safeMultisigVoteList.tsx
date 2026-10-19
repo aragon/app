@@ -10,10 +10,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
-import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import type {
     ISafeMultisigVoteListProps,
@@ -38,6 +38,8 @@ export const SafeMultisigVoteListView: React.FC<
     } = props;
     const { t } = useTranslations();
     const safeDaoId = `${network}-${daoAddress}`;
+    const { address: safeDaoAddress, network: safeDaoNetwork } =
+        daoUtils.parseDaoId(safeDaoId);
     const safePlugin = useDaoPlugins({
         daoId: safeDaoId,
         type: PluginType.BODY,
@@ -74,9 +76,8 @@ export const SafeMultisigVoteListView: React.FC<
                         href={
                             safePlugin == null
                                 ? undefined
-                                : daoMemberSourceUtils.getMemberUrlFromDaoId(
-                                      safeDaoId,
-                                      signer,
+                                : daoUtils.withMemberTab(
+                                      `/dao/${safeDaoNetwork}/${safeDaoAddress}/members/${signer}`,
                                       safePlugin.uniqueId,
                                   )
                         }

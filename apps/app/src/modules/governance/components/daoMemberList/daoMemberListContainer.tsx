@@ -1,37 +1,26 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { type ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
+
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { useDao } from '@/shared/api/daoService';
 import {
     type IFilterComponentPlugin,
     type IPluginFilterComponentProps,
     PluginFilterComponent,
 } from '@/shared/components/pluginFilterComponent';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import {
-    daoMemberSourceUtils,
-    type IDaoMemberSource,
-} from '../../utils/daoMemberSourceUtils';
 import { DaoMemberListDefault } from './daoMemberListDefault';
 
 export const featuredDelegatesTabId = 'featured-delegates';
 
-// The featured-delegates tab is synthetic and carries its plugin directly; every other tab is a
-// member source resolved from a canonical body record.
-type DaoMemberListFilterMeta = IDaoMemberSource | IDaoPlugin;
-type DaoMemberListFilterPlugin =
-    IFilterComponentPlugin<DaoMemberListFilterMeta>;
-
 export interface IDaoMemberListContainerProps
     extends Pick<
-        IPluginFilterComponentProps<DaoMemberListFilterMeta>,
+        IPluginFilterComponentProps<IDaoPlugin>,
         'value' | 'onValueChange'
     > {
     /**
@@ -52,7 +41,7 @@ export interface IDaoMemberListContainerProps
     /**
      * Optional synthetic tab prepended before real plugin tabs (e.g. Featured delegates).
      */
-    featuredDelegatesTab?: DaoMemberListFilterPlugin;
+    featuredDelegatesTab?: IFilterComponentPlugin<IDaoPlugin>;
 }
 
 export const daoMemberListFilterParam = 'members';
@@ -65,81 +54,69 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
         value,
         onValueChange,
         featuredDelegatesTab,
-        ...contentProps
+        ...otherProps
     } = props;
 
     const searchParams = useSearchParams();
     const urlParam = searchParams.get(daoMemberListFilterParam);
 
-    const { data: dao } = useDao({
-        urlParams: { id: initialParams.queryParams.daoId },
-    });
-    const bodyPlugins = useDaoPlugins({
-        daoId: initialParams.queryParams.daoId,
-        type: PluginType.BODY,
-        includeSubPlugins: true,
-        includeLinkedAccounts: true,
-        includeProcessSafes: true,
-        visibleOnly: true,
-    });
-
-    const memberSources = useMemo(() => {
-        if (dao == null || bodyPlugins == null) {
-            return [];
-        }
-
-        return daoMemberSourceUtils.resolve({
-            dao,
+    const { activePlugin, setActivePlugin, plugins } =
+        useDaoPluginFilterUrlParam({
             daoId: initialParams.queryParams.daoId,
-            bodyPlugins: bodyPlugins.map(({ meta }) => meta),
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+            includeLinkedAccounts: true,
+            includeProcessSafes: true,
+            visibleOnly: true,
+            name: daoMemberListFilterParam,
+            enableUrlUpdate: onValueChange == null,
+            fallbackValue:
+                featuredDelegatesTab != null
+                    ? featuredDelegatesTabId
+                    : undefined,
         });
-    }, [bodyPlugins, dao, initialParams.queryParams.daoId]);
 
-    const processedPlugins: DaoMemberListFilterPlugin[] = memberSources.map(
-        (memberSource) => ({
-            id: memberSource.id,
-            uniqueId: memberSource.uniqueId,
-            label: memberSource.label,
-            meta: memberSource,
-            props: {},
-            renderContent: () => (
-                <PluginSingleComponent
-                    Fallback={DaoMemberListDefault}
-                    initialParams={{
-                        ...initialParams,
-                        queryParams: {
-                            ...initialParams.queryParams,
-                            pluginAddress: memberSource.address,
-                        },
-                    }}
-                    memberSource={memberSource}
-                    plugin={memberSource.plugin}
-                    pluginId={memberSource.id}
-                    slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
-                    {...contentProps}
-                />
-            ),
-        }),
-    );
+    const processedPlugins = plugins?.map((plugin) => {
+        const pluginInitialParams = {
+            ...initialParams,
+            queryParams: {
+                ...initialParams.queryParams,
+                pluginAddress: plugin.meta.address,
+            },
+        };
 
-    const allPlugins: DaoMemberListFilterPlugin[] =
+        return {
+            ...plugin,
+            props: {
+                initialParams: pluginInitialParams,
+                memberSourceId: plugin.uniqueId,
+                plugin: plugin.meta,
+            },
+        };
+    });
+
+    const allPlugins: IFilterComponentPlugin<IDaoPlugin>[] | undefined =
         featuredDelegatesTab != null
-            ? [featuredDelegatesTab, ...processedPlugins]
+            ? [featuredDelegatesTab, ...(processedPlugins ?? [])]
             : processedPlugins;
 
-    const resolvedValue =
+    // Pre-select the featured delegates tab when the URL param is absent or set to it.
+    const resolvedValue: IFilterComponentPlugin<IDaoPlugin> | undefined =
         value ??
         (featuredDelegatesTab != null &&
         (urlParam == null || urlParam === featuredDelegatesTabId)
             ? featuredDelegatesTab
-            : undefined);
+            : activePlugin);
 
     return (
         <PluginFilterComponent
-            onValueChange={onValueChange}
+            Fallback={DaoMemberListDefault}
+            onValueChange={onValueChange ?? setActivePlugin}
             plugins={allPlugins}
             searchParamName={daoMemberListFilterParam}
+            slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
             value={resolvedValue}
+            {...otherProps}
         />
     );
 };

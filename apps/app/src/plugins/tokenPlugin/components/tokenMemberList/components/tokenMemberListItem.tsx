@@ -2,9 +2,9 @@ import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
-import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ITokenMemberListPluginSettings } from '../tokenMemberListBase';
 
 export interface ITokenMemberListItemProps {
@@ -54,9 +54,8 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
             className="min-w-0"
             delegationCount={member.delegationCount}
             ensName={displayName ?? undefined}
-            href={daoMemberSourceUtils.getMemberUrl(
-                dao,
-                member.address,
+            href={daoUtils.withMemberTab(
+                daoUtils.getDaoUrl(dao, `members/${member.address}`),
                 memberSourceId,
             )}
             isDelegate={isDelegate}

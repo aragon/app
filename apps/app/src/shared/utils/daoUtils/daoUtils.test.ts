@@ -45,41 +45,6 @@ describe('dao utils', () => {
         getPluginsSpy.mockReset();
     });
 
-    describe('hasPluginBody', () => {
-        it('returns true when dao has a body the app can render', () => {
-            const dao = generateDao({
-                plugins: [
-                    generateDaoPlugin({
-                        interfaceType: PluginInterfaceType.MULTISIG,
-                        isBody: true,
-                    }),
-                ],
-            });
-            expect(daoUtils.hasPluginBody(dao)).toBeTruthy();
-        });
-
-        it('returns false when the only bodies have an unknown interface type', () => {
-            const dao = generateDao({
-                plugins: [
-                    generateDaoPlugin({
-                        interfaceType: PluginInterfaceType.MULTISIG,
-                        isProcess: true,
-                        isBody: false,
-                    }),
-                    generateDaoPlugin({
-                        interfaceType: PluginInterfaceType.UNKNOWN,
-                        isBody: true,
-                    }),
-                ],
-            });
-            expect(daoUtils.hasPluginBody(dao)).toBeFalsy();
-        });
-
-        it('returns false when dao is not defined', () => {
-            expect(daoUtils.hasPluginBody()).toBeFalsy();
-        });
-    });
-
     describe('hasSupportedPlugins', () => {
         it('returns true when dao has supported plugins', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(true);
@@ -609,24 +574,41 @@ describe('dao utils', () => {
 
         it('includes process-only Safes without widening body selection for other processes', () => {
             const processSafe = generateDaoPlugin({
+                address: '0x1000000000000000000000000000000000000001',
                 interfaceType: PluginInterfaceType.SAFE,
                 isProcess: true,
                 isBody: false,
             });
             const processMultisig = generateDaoPlugin({
+                address: '0x1000000000000000000000000000000000000002',
                 interfaceType: PluginInterfaceType.MULTISIG,
                 isProcess: true,
             });
             const bodyMultisig = generateDaoPlugin({
+                address: '0x1000000000000000000000000000000000000003',
                 interfaceType: PluginInterfaceType.MULTISIG,
                 isBody: true,
             });
             const bodySafe = generateDaoPlugin({
+                address: '0x1000000000000000000000000000000000000004',
                 interfaceType: PluginInterfaceType.SAFE,
                 isBody: true,
             });
+            const unsupportedSafe = generateDaoPlugin({
+                address: '0x1000000000000000000000000000000000000005',
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                isBody: false,
+                isSupported: false,
+            });
             const dao = generateDao({
-                plugins: [processSafe, processMultisig, bodyMultisig, bodySafe],
+                plugins: [
+                    processSafe,
+                    processMultisig,
+                    bodyMultisig,
+                    bodySafe,
+                    unsupportedSafe,
+                ],
             });
 
             expect(
@@ -638,6 +620,78 @@ describe('dao utils', () => {
             expect(
                 daoUtils.getDaoPlugins(dao, { type: PluginType.BODY }),
             ).toEqual([bodyMultisig, bodySafe]);
+        });
+
+        it('deduplicates body and process records by member tab identity', () => {
+            const safeAddress = '0x2000000000000000000000000000000000000001';
+            const bodySafe = generateDaoPlugin({
+                address: safeAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isBody: true,
+                slug: 'safe',
+            });
+            const processSafe = generateDaoPlugin({
+                address: safeAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                isBody: false,
+                slug: 'safe',
+            });
+            const dao = generateDao({
+                plugins: [bodySafe, processSafe],
+            });
+
+            expect(
+                daoUtils.getDaoPlugins(dao, {
+                    type: PluginType.BODY,
+                    includeProcessSafes: true,
+                }),
+            ).toEqual([bodySafe]);
+        });
+
+        it('keeps the same Safe distinct when it belongs to different DAOs', () => {
+            const rootDaoAddress = '0x3000000000000000000000000000000000000001';
+            const linkedDaoAddress =
+                '0x3000000000000000000000000000000000000002';
+            const safeAddress = '0x3000000000000000000000000000000000000003';
+            const rootSafe = generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                isBody: false,
+                slug: 'safe',
+            });
+            const linkedSafe = generateDaoPlugin({
+                address: safeAddress,
+                daoAddress: linkedDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                isProcess: true,
+                isBody: false,
+                slug: 'safe',
+            });
+            const dao = generateDao({
+                address: rootDaoAddress,
+                linkedAccounts: [
+                    generateLinkedAccount({ address: linkedDaoAddress }),
+                ],
+                plugins: [rootSafe, linkedSafe],
+            });
+
+            expect(
+                daoUtils
+                    .getDaoPlugins(dao, {
+                        type: PluginType.BODY,
+                        includeProcessSafes: true,
+                        includeLinkedAccounts: true,
+                    })
+                    ?.map((plugin) =>
+                        daoUtils.getPluginTabId(plugin, dao.address),
+                    ),
+            ).toEqual([
+                `${safeAddress}-safe-${rootDaoAddress}`,
+                `${safeAddress}-safe-${linkedDaoAddress}`,
+            ]);
         });
 
         it('only returns the plugin with the specified interface type', () => {
@@ -1248,6 +1302,19 @@ describe('dao utils', () => {
 
         it('returns undefined when dao parameter is not defined', () => {
             expect(daoUtils.getDaoUrl(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('withMemberTab', () => {
+        it('appends the encoded selected members tab to a URL', () => {
+            expect(
+                daoUtils.withMemberTab(
+                    '/dao/ethereum-mainnet/0x123/members/0x456',
+                    'safe/body',
+                ),
+            ).toBe(
+                '/dao/ethereum-mainnet/0x123/members/0x456?members=safe%2Fbody',
+            );
         });
     });
 });

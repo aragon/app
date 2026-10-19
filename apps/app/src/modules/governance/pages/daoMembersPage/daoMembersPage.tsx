@@ -14,7 +14,6 @@ import {
     memberListOptions,
 } from '../../api/governanceService';
 import { tokenVotingMembershipOptionsServer } from '../../api/tokenVotingMembershipService/queries/useTokenVotingMembership/useTokenVotingMembership.server';
-import { daoMemberSourceUtils } from '../../utils/daoMemberSourceUtils';
 import { DaoMembersPageClient } from './daoMembersPageClient';
 
 export interface IDaoMembersPageProps {
@@ -71,21 +70,15 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
         daoOverride,
     );
 
-    const memberSources = daoMemberSourceUtils.resolve({
-        dao,
-        daoId,
-        bodyPlugins: plugins,
-    });
-
-    if (!memberSources.length) {
+    if (!plugins.length) {
         const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
         return <RedirectToUrl url={daoUrl} />;
     }
 
-    const memberSource = memberSources[0];
+    const bodyPlugin = plugins[0];
     const memberListQueryParams = {
-        daoId: memberSource.daoId,
-        pluginAddress: memberSource.address,
+        daoId: daoUtils.resolvePluginDaoId(daoId, bodyPlugin, dao),
+        pluginAddress: bodyPlugin.address,
         pageSize: daoMembersCount,
     };
     const memberListParams = {
@@ -98,12 +91,12 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     // Token-voting and lock-to-vote lists consume the token-voting membership
     // query, which the BFF serves from the aragon-domain or the legacy
     // backend. Every other plugin uses the generic member list.
-    if (isTokenMemberListPlugin(memberSource.plugin)) {
+    if (isTokenMemberListPlugin(bodyPlugin)) {
         await queryClient.prefetchInfiniteQuery(
             tokenVotingMembershipOptionsServer(
                 buildTokenVotingMembershipParams(
                     memberListParams,
-                    memberSource.plugin,
+                    bodyPlugin,
                     dao,
                 ),
             ),

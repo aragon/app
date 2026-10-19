@@ -34,7 +34,6 @@ import { type IMember, useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { DelegationSection } from '../../components/delegationSection';
 import { VoteList } from '../../components/voteList';
-import { daoMemberSourceUtils } from '../../utils/daoMemberSourceUtils';
 
 export interface IDaoMemberDetailsPageClientProps {
     /**
@@ -201,10 +200,10 @@ export const DaoMemberDetailsPageClient: React.FC<
 
     const pageBreadcrumbs = [
         {
-            href:
-                memberSourceId != null
-                    ? daoMemberSourceUtils.getMemberListUrl(dao, memberSourceId)
-                    : daoUtils.getDaoUrl(dao, 'members'),
+            href: daoUtils.withMemberTab(
+                daoUtils.getDaoUrl(dao, 'members'),
+                memberSourceId,
+            ),
             label: t(
                 'app.governance.daoMemberDetailsPage.header.breadcrumb.members',
             ),

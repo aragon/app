@@ -1,53 +1,128 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import { useSearchParams } from 'next/navigation';
+import * as wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
+import type { IMember } from '@/modules/governance/api/governanceService';
+import * as governanceService from '@/modules/governance/api/governanceService';
+import { generateMember } from '@/modules/governance/testUtils';
+import * as cmsService from '@/shared/api/cmsService';
 import * as daoService from '@/shared/api/daoService';
-import { PluginInterfaceType } from '@/shared/api/daoService';
-import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
     generateDaoPlugin,
-    generateFilterComponentPlugin,
+    generatePaginatedResponse,
+    generatePaginatedResponseMetadata,
+    generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { ReactQueryWrapper } from '@/shared/testUtils/reactQueryWrapper';
 import {
     DaoMemberListContainer,
     type IDaoMemberListContainerProps,
 } from './daoMemberListContainer';
 
-jest.mock('@/shared/components/pluginFilterComponent', () => ({
-    PluginFilterComponent: (props: { plugins: IFilterComponentPlugin[] }) => (
-        <div
-            data-labels={props.plugins.map(({ label }) => label).join(',')}
-            data-testid="plugin-filter-mock"
-        >
-            {props.plugins[0]?.renderContent?.()}
-        </div>
-    ),
-}));
-
-jest.mock('@/shared/components/pluginSingleComponent', () => ({
-    PluginSingleComponent: (props: { pluginId: string; slotId: string }) => (
-        <div
-            data-pluginid={props.pluginId}
-            data-slotid={props.slotId}
-            data-testid="plugin-component-mock"
-        />
-    ),
+jest.mock('next/navigation', () => ({
+    useSearchParams: jest.fn(),
 }));
 
 describe('<DaoMemberListContainer /> component', () => {
-    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const useSearchParamsMock = jest.mocked(useSearchParams);
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useDaoOverridesSpy = jest.spyOn(cmsService, 'useDaoOverrides');
+    const useMemberListSpy = jest.spyOn(governanceService, 'useMemberList');
+    const useMemberExistsSpy = jest.spyOn(governanceService, 'useMemberExists');
+    const useMemberSpy = jest.spyOn(governanceService, 'useMember');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
+
+    const daoAddress = '0x1111111111111111111111111111111111111111';
+    const safeAddress = '0x1234567890123456789012345678901234567890';
+    const memberAddress = '0x2222222222222222222222222222222222222222';
+    const safeTabLabel = 'Safe 0x1234…7890';
+
+    const createDao = () =>
+        generateDao({
+            address: daoAddress,
+            plugins: [
+                generateDaoPlugin({
+                    address: '0x3333333333333333333333333333333333333333',
+                    interfaceType: daoService.PluginInterfaceType.TOKEN_VOTING,
+                    isBody: true,
+                    name: 'Token voting',
+                    slug: 'token-voting',
+                }),
+                generateDaoPlugin({
+                    address: safeAddress,
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                    isBody: false,
+                    isProcess: true,
+                    slug: 'safe',
+                }),
+            ],
+        });
+
     beforeEach(() => {
+        const members = [generateMember({ address: memberAddress })];
+        const membersResponse = generatePaginatedResponse({
+            data: members,
+            metadata: generatePaginatedResponseMetadata({
+                pageSize: 10,
+                totalRecords: members.length,
+            }),
+        });
+
         useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao() }),
+            generateReactQueryResultSuccess({ data: createDao() }),
+        );
+        useDaoOverridesSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: {} }),
+        );
+        useMemberListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [membersResponse], pageParams: [] },
+            }),
+        );
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: false } }),
+        );
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: undefined as unknown as IMember,
+            }),
+        );
+        useConnectionSpy.mockReturnValue({
+            address: undefined,
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ensModule.IUseEnsNameReturn);
+        useEnsAvatarSpy.mockReturnValue({
+            ...generateReactQueryResultSuccess({ data: null }),
+            queryKey: [],
+        });
+        useSearchParamsMock.mockReturnValue(new URLSearchParams() as never);
+        window.history.replaceState(
+            null,
+            '',
+            `/dao/ethereum-mainnet/${daoAddress}/members`,
         );
     });
 
     afterEach(() => {
-        useDaoPluginsSpy.mockReset();
         useDaoSpy.mockReset();
+        useDaoOverridesSpy.mockReset();
+        useMemberListSpy.mockReset();
+        useMemberExistsSpy.mockReset();
+        useMemberSpy.mockReset();
+        useConnectionSpy.mockReset();
+        useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
+        useSearchParamsMock.mockReset();
     });
 
     const createTestComponent = (
@@ -58,54 +133,32 @@ describe('<DaoMemberListContainer /> component', () => {
             ...props,
         };
 
-        return <DaoMemberListContainer {...completeProps} />;
+        return (
+            <FeatureFlagsProvider>
+                <ReactQueryWrapper>
+                    <GukModulesProvider>
+                        <DaoMemberListContainer {...completeProps} />
+                    </GukModulesProvider>
+                </ReactQueryWrapper>
+            </FeatureFlagsProvider>
+        );
     };
 
-    it('renders a plugin tab component with the body plugins and the dao-member-list slot it', () => {
-        const daoPlugin = generateDaoPlugin({ address: '0x1239478' });
-        const plugins = [
-            generateFilterComponentPlugin({ id: 'token', meta: daoPlugin }),
-        ];
-        useDaoPluginsSpy.mockReturnValue(plugins);
-
+    it('renders and selects an execute-only Safe member tab', async () => {
         render(createTestComponent());
 
-        const pluginComponent = screen.getByTestId('plugin-component-mock');
-        expect(pluginComponent).toBeInTheDocument();
+        const safeTab = screen.getByRole('radio', { name: safeTabLabel });
+        expect(safeTab).toBeInTheDocument();
 
-        expect(pluginComponent.dataset.slotid).toEqual(
-            GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
-        );
-        expect(pluginComponent.dataset.pluginid).toEqual(
-            daoPlugin.interfaceType,
-        );
-    });
+        await userEvent.click(safeTab);
 
-    it('renders an execute-only Safe as an ordinary member tab', () => {
-        const safeAddress = '0x1234567890123456789012345678901234567890';
-        const safePlugin = generateDaoPlugin({
-            address: safeAddress,
-            interfaceType: PluginInterfaceType.SAFE,
-            isProcess: true,
-            isBody: false,
-            slug: 'safe',
-        });
-        useDaoPluginsSpy.mockReturnValue([
-            generateFilterComponentPlugin({
-                id: PluginInterfaceType.SAFE,
-                meta: safePlugin,
-            }),
-        ]);
+        const memberSourceId = `${safeAddress}-safe-${daoAddress}`;
+        const memberHref = `/dao/ethereum-mainnet/${daoAddress}/members/${memberAddress}?members=${memberSourceId}`;
+        const memberLink = screen
+            .getAllByRole('link')
+            .find((link) => link.getAttribute('href') === memberHref);
 
-        render(createTestComponent());
-
-        expect(
-            screen
-                .getByTestId('plugin-filter-mock')
-                .getAttribute('data-labels'),
-        ).toEqual('Safe 0x1234…7890');
-        expect(
-            screen.getByTestId('plugin-component-mock').dataset.pluginid,
-        ).toEqual(PluginInterfaceType.SAFE);
+        expect(window.location.search).toBe(`?members=${memberSourceId}`);
+        expect(memberLink).toBeDefined();
     });
 });

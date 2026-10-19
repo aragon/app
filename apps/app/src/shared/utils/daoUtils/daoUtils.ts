@@ -93,10 +93,6 @@ const supportedInterfaceTypes = new Set<string>(
 );
 
 class DaoUtils {
-    hasPluginBody = (dao?: IDao): boolean =>
-        dao?.plugins?.some((p) => p.isBody && this.isSupportedPlugin(p)) ??
-        false;
-
     /**
      * Checks if the DAO has at least one plugin the app can render. Plugins the
      * backend cannot resolve or flags as unsupported are dropped first, so this
@@ -203,7 +199,7 @@ class DaoUtils {
             includeUnsupported = false,
         } = params ?? {};
 
-        return dao?.plugins?.filter(
+        const plugins = dao?.plugins?.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type, includeProcessSafes) &&
@@ -218,6 +214,28 @@ class DaoUtils {
                 this.filterBySlug(plugin, slug) &&
                 this.filterBySupported(plugin, includeUnsupported),
         );
+
+        if (
+            type !== PluginType.BODY ||
+            !includeProcessSafes ||
+            plugins == null
+        ) {
+            return plugins;
+        }
+
+        const seenPluginTabs = new Set<string>();
+
+        return plugins.filter((plugin) => {
+            const pluginTabId = this.getPluginTabId(plugin, dao?.address);
+
+            if (seenPluginTabs.has(pluginTabId)) {
+                return false;
+            }
+
+            seenPluginTabs.add(pluginTabId);
+
+            return true;
+        });
     };
 
     /**
@@ -401,6 +419,17 @@ class DaoUtils {
 
         return fullPath;
     };
+
+    /**
+     * Preserves the selected member tab when navigating to a member route.
+     */
+    withMemberTab = (
+        url: string | undefined,
+        memberSourceId?: string,
+    ): string | undefined =>
+        url == null || memberSourceId == null
+            ? url
+            : `${url}?members=${encodeURIComponent(memberSourceId)}`;
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
         address == null ||

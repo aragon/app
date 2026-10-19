@@ -2,7 +2,7 @@ import { IconType } from '@aragon/gov-ui-kit';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import type { IDao } from '@/shared/api/daoService';
 import type { INavigationLink } from '@/shared/components/navigation';
-import type { IPluginInfo } from '@/shared/types';
+import { type IPluginInfo, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 
@@ -82,8 +82,13 @@ class NavigationDaoUtils {
         context: NavigationDaoContext,
     ): INavigationLink[] => {
         const isSupported = daoUtils.hasSupportedPlugins(dao);
-        const hasBodyPlugin = daoUtils.hasPluginBody(dao);
-
+        const hasMemberPlugins =
+            (daoUtils.getDaoPlugins(dao, {
+                type: PluginType.BODY,
+                includeSubPlugins: true,
+                includeLinkedAccounts: true,
+                includeProcessSafes: true,
+            })?.length ?? 0) > 0;
         const isPageContext = context === 'page';
 
         return [
@@ -112,7 +117,7 @@ class NavigationDaoUtils {
                 label: 'app.application.navigationDao.link.members',
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
-                hidden: !(isSupported && hasBodyPlugin),
+                hidden: !(isSupported && hasMemberPlugins),
                 order: 300,
             },
             {

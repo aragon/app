@@ -1,7 +1,6 @@
 'use client';
 
 import { Button, IconType } from '@aragon/gov-ui-kit';
-import { useSearchParams } from 'next/navigation';
 import { AssetList } from '@/modules/finance/components/assetList';
 import {
     DaoMemberList,
@@ -45,12 +44,23 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
     const { dao, featuredDelegates } = props;
 
     const { t } = useTranslations();
-    const searchParams = useSearchParams();
 
     const featuredDelegatesInfo = useFeaturedDelegatesPlugin({
         daoId: dao.id,
         featuredDelegates,
     });
+
+    const { activePlugin: membersPlugin, setActivePlugin: setMembersPlugin } =
+        useDaoPluginFilterUrlParam({
+            daoId: dao.id,
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+            includeLinkedAccounts: true,
+            visibleOnly: true,
+            name: daoDashboardPageMembersFilterParam,
+            // Don't pollute the URL with a plugin address when featured delegates are shown.
+            enableUrlUpdate: !featuredDelegatesInfo.hasFeaturedDelegates,
+        });
 
     const {
         activePlugin: proposalsPlugin,
@@ -84,11 +94,8 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
 
     const membersTabParam = featuredDelegatesInfo.hasFeaturedDelegates
         ? featuredDelegatesTabId
-        : searchParams.get(daoDashboardPageMembersFilterParam);
-    const membersPageUrl =
-        membersTabParam != null
-            ? `${daoUrl}/members?${daoMembersPageFilterParam}=${encodeURIComponent(membersTabParam)}`
-            : `${daoUrl}/members`;
+        : (membersPlugin?.uniqueId ?? '');
+    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersTabParam}`;
     const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.uniqueId ?? ''}`;
 
     const membersTitle = featuredDelegatesInfo.hasFeaturedDelegates
@@ -153,6 +160,8 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
                         <DaoMemberList.Container
                             hidePagination={true}
                             initialParams={memberListParams}
+                            onValueChange={setMembersPlugin}
+                            value={membersPlugin}
                         >
                             {viewAllMembersButton}
                         </DaoMemberList.Container>
