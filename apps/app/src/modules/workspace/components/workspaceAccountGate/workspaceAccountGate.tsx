@@ -5,18 +5,19 @@ import { WorkspaceAccountGateError } from './workspaceAccountGateError';
 
 export interface IWorkspaceAccountGateProps {
     /**
-     * ID of the account the page below is scoped to, which doubles as the ID of its DAO.
+     * ID of the account the page below is scoped to, which for a DAO account doubles as the ID of its DAO.
      */
     accountId: string;
     /**
-     * Children rendered once the DAO of the account has resolved.
+     * Children rendered once the DAO record of the account can be read.
      */
     children?: ReactNode;
 }
 
 /**
- * Renders the page of one workspace account only when the DAO of that account can be read, the counterpart of
- * `WorkspaceGate` one level down.
+ * Renders the page of one workspace account only when the DAO record of that account can be read, the counterpart
+ * of `WorkspaceGate` one level down. Anything else — a Safe, an address the backend does not index, a DAO whose
+ * record cannot be fetched — gets the error state.
  *
  * The pages below are DAO pages, and a DAO page assumes a resolved DAO: it reads it with `useDao` and renders
  * whatever it can from `undefined` otherwise. Under the DAO routes that assumption holds because the DAO layout
@@ -25,16 +26,22 @@ export interface IWorkspaceAccountGateProps {
  * which resolves rather than throws, so that the sections needing no DAO keep working. Owning the failure here is
  * what keeps a half-rendered DAO page from standing in for an error state.
  *
- * The DAO is read on the server, so the outcome is settled before anything reaches the client: no client-side
- * loading state, and no client refetch of a DAO that already failed to load. The read is the same GET request
- * `LayoutWorkspaceAccount` makes within the same render, which Next.js memoizes, so it reaches the backend once.
+ * A Safe therefore fails here, deliberately and for now: every section is meant to grow a Safe counterpart, and
+ * until one exists the honest answer is the error state rather than a page that cannot describe the account. Which
+ * sections already serve a Safe and which do not is tracked in one place — see "Safe support by route" in
+ * `docs/projectDocs/createWorkspace.md`. The gate asks nothing about the account type: the DAO read answers, since
+ * an account with no DAO record is exactly an account these pages cannot serve.
  *
- * TODO: once Safe accounts are implemented, merge this gate into `LayoutWorkspaceAccount` instead of wrapping every
- * account-level page. The gate has to learn the account type first: it currently renders an error for anything that
- * is not a DAO, which in the layout would also block the sections a Safe can serve (assets, transactions). The merge
- * replaces the layout's DAO `prefetchQuery` with this `fetchQuery`, renders the error state in place of `children`,
- * and drops the wrapper from the pages. Before merging, check that a DAO page rendered under a layout that withholds
- * its children cannot surface its own `notFound()` (e.g. `DaoMembersPage`) over the gate's error state.
+ * The read happens on the server, so the outcome is settled before anything reaches the client: no client-side
+ * loading state, and no client refetch of a DAO that already failed to load. `httpService` uses native `fetch`, so
+ * Next.js memoizes this GET against the layout's prefetch within one render and it reaches the backend once.
+ *
+ * The gate deliberately stays a per-page wrapper instead of moving into `LayoutWorkspaceAccount`, although both sit
+ * on the same route scope: a layout cannot withhold a page. Layout and page render in parallel, so the page
+ * executes even when the layout renders something else in place of its children. `DaoMembersPage` reads its DAO
+ * through `notFoundUtils.fetchOrNotFound`, which calls `notFound()` for an unresolvable resource — which is exactly
+ * what `GET /daos/{safeAddress}` is. The nearest boundary, `app/workspace/[workspaceId]/not-found.tsx`, sits above
+ * `[accountId]`, so that 404 would discard the account layout and anything it rendered in place of its children.
  */
 export const WorkspaceAccountGate: React.FC<
     IWorkspaceAccountGateProps

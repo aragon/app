@@ -4,8 +4,9 @@ import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import safeWallet from '@/assets/images/safeWallet.png';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { useWorkspace } from '../../api/workspaceService';
+import { useWorkspace, WorkspaceAccountType } from '../../api/workspaceService';
 import {
     type IWorkspaceAccountOption,
     useWorkspaceAccountOptions,
@@ -48,7 +49,7 @@ export const WorkspaceAccountSelector: React.FC<
 
     const pathname = usePathname();
 
-    const { options, accountId, activeOption } = useWorkspaceAccountOptions();
+    const { options, activeOption } = useWorkspaceAccountOptions();
 
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
@@ -79,11 +80,22 @@ export const WorkspaceAccountSelector: React.FC<
     }
 
     const getOptionAvatar = (option?: IWorkspaceAccountOption) => {
-        const avatar = option?.isAllAccounts
-            ? workspace?.avatar
-            : daos[option?.account?.id ?? '']?.avatar;
+        if (option?.isAllAccounts) {
+            return ipfsUtils.cidToSrc(workspace?.avatar);
+        }
 
-        return ipfsUtils.cidToSrc(avatar);
+        switch (option?.account?.type) {
+            case WorkspaceAccountType.SAFE:
+                return (
+                    ipfsUtils.cidToSrc(option.account?.metadata?.avatar) ??
+                    safeWallet.src
+                );
+            case WorkspaceAccountType.DAO:
+                return ipfsUtils.cidToSrc(daos[option.account.id]?.avatar);
+
+            default:
+                return ipfsUtils.cidToSrc(option?.account?.metadata?.avatar);
+        }
     };
 
     return (
@@ -122,12 +134,12 @@ export const WorkspaceAccountSelector: React.FC<
                 <Dropdown.Item
                     href={url}
                     icon={
-                        option.id === accountId
+                        option.id === activeOption?.id
                             ? IconType.CHECKMARK
                             : IconType.CHEVRON_RIGHT
                     }
                     key={option.id}
-                    selected={option.id === accountId}
+                    selected={option.id === activeOption?.id}
                 >
                     {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing content is
                      * allowed here. */}

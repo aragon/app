@@ -3,6 +3,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
+import safeWallet from '@/assets/images/safeWallet.png';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
@@ -20,7 +21,26 @@ import {
     WorkspaceAccountSelector,
 } from './workspaceAccountSelector';
 
+// The test file transform exports images as a bare file name, which has no `src`; mock it as Next.js would.
+jest.mock('@/assets/images/safeWallet.png', () => ({
+    __esModule: true,
+    default: { src: '/assets/safeWallet.png' },
+}));
+
 describe('<WorkspaceAccountSelector /> component', () => {
+    // The avatar only mounts its image once the browser reports it as loaded, which jsdom never does.
+    const imageSpies: jest.SpyInstance[] = [];
+    const stubImageLoading = () => {
+        imageSpies.push(
+            jest
+                .spyOn(HTMLImageElement.prototype, 'complete', 'get')
+                .mockReturnValue(true),
+            jest
+                .spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get')
+                .mockReturnValue(1),
+        );
+    };
+
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
@@ -64,6 +84,22 @@ describe('<WorkspaceAccountSelector /> component', () => {
         isAllAccounts: false,
     };
 
+    const safeAddress = '0x1234567890123456789012345678901234567890';
+
+    const safeAccount: IWorkspaceAccount = {
+        id: `${Network.ETHEREUM_SEPOLIA}-${safeAddress}`,
+        type: WorkspaceAccountType.SAFE,
+        address: safeAddress,
+        network: Network.ETHEREUM_SEPOLIA,
+    };
+
+    const safeOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption = {
+        id: safeAccount.id,
+        label: 'Treasury Safe',
+        account: safeAccount,
+        isAllAccounts: false,
+    };
+
     const mockAccountOptions = (
         result?: Partial<useWorkspaceAccountOptionsHook.IUseWorkspaceAccountOptionsResult>,
     ) =>
@@ -90,6 +126,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     });
 
     afterEach(() => {
+        imageSpies.splice(0).forEach((spy) => spy.mockRestore());
         getWorkspaceSpy.mockReset();
         getDaoSpy.mockReset();
         getMemberListSpy.mockReset();
@@ -213,5 +250,61 @@ describe('<WorkspaceAccountSelector /> component', () => {
         const { container } = render(createTestComponent());
 
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('renders a Safe option with the Safe wallet avatar', async () => {
+        stubImageLoading();
+        mockAccountOptions({ options: [allAccountsOption, safeOption] });
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const item = await screen.findByRole('menuitem', {
+            name: /Treasury Safe/,
+        });
+        expect(await within(item).findByRole('img')).toHaveAttribute(
+            'src',
+            safeWallet.src,
+        );
+    });
+
+    it('prefers the stored avatar of a Safe option', async () => {
+        stubImageLoading();
+        const safeWithAvatar = {
+            ...safeOption,
+            account: {
+                ...safeAccount,
+                metadata: { name: 'Treasury Safe', avatar: 'safe-cid' },
+            },
+        };
+        mockAccountOptions({ options: [allAccountsOption, safeWithAvatar] });
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const item = await screen.findByRole('menuitem', {
+            name: /Treasury Safe/,
+        });
+        expect(await within(item).findByRole('img')).toHaveAttribute(
+            'src',
+            'https://ipfs/safe-cid',
+        );
+    });
+
+    it('renders the selector for a workspace holding one Safe, with the Safe avatar on the trigger', async () => {
+        stubImageLoading();
+        mockAccountOptions({
+            options: [allAccountsOption, safeOption],
+            accountId: safeOption.id,
+            activeOption: safeOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        const trigger = screen.getByRole('button', { name: /Treasury Safe/ });
+        expect(await within(trigger).findByRole('img')).toHaveAttribute(
+            'src',
+            safeWallet.src,
+        );
     });
 });

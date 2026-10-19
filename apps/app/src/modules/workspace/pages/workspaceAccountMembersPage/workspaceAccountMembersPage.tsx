@@ -26,7 +26,8 @@ export interface IWorkspaceAccountMembersPageProps {
  * so the only adaptation is the shape of the route parameters. Another account type is added by branching here.
  *
  * Only what the DAO page has no notion of is owned here: the workspaces feature flag, and an account that is not a
- * DAO, which `WorkspaceAccountGate` turns into an error state until that branch exists.
+ * DAO — `WorkspaceAccountGate` fails the route for anything whose DAO record cannot be read, a Safe included, until
+ * the Safe branch is served here — see "Safe support by route" in `docs/projectDocs/createWorkspace.md`.
  */
 export const WorkspaceAccountMembersPage: React.FC<
     IWorkspaceAccountMembersPageProps

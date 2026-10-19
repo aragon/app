@@ -7,8 +7,21 @@ import {
     type IGetWorkspaceAssetListParams,
     type IWorkspaceAsset,
     useWorkspaceAssetList,
-    WorkspaceCoverageStatus,
 } from '../../api/workspaceQueryService';
+import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
+
+export interface IUseWorkspaceAssetListDataOptions {
+    /**
+     * Whether the asset query runs. A selection holding no account keeps it disabled.
+     */
+    enabled?: boolean;
+    /**
+     * Whether a single account is in view, which the empty copy then names instead of the accounts of the
+     * workspace. Resolved by the caller, which also renders the `unavailable` copy off the same flag, so the two
+     * cannot describe different selections.
+     */
+    isSingleAccount?: boolean;
+}
 
 /**
  * Reads the aggregated assets of a workspace and shapes them for a `DataList`, mirroring `useAssetListData` of the
@@ -17,12 +30,14 @@ import {
  */
 export const useWorkspaceAssetListData = (
     params: IGetWorkspaceAssetListParams,
-    options?: { enabled?: boolean },
+    options?: IUseWorkspaceAssetListDataOptions,
 ) => {
     const { t } = useTranslations();
 
+    const { enabled, isSingleAccount } = options ?? {};
+
     const { data, status, fetchStatus, isFetchingNextPage, fetchNextPage } =
-        useWorkspaceAssetList(params, { enabled: options?.enabled });
+        useWorkspaceAssetList(params, { enabled });
 
     const assetList: IWorkspaceAsset[] = [];
 
@@ -33,12 +48,11 @@ export const useWorkspaceAssetListData = (
     }
 
     const firstPage = data?.pages[0];
-    const coverage = firstPage?.coverage ?? [];
 
-    // `unverified` is the permanent state of every non-indexed account, so only an actual read failure is worth
-    // warning about — see `docs/projectDocs/createWorkspace.md`.
-    const unavailableAccounts = coverage.filter(
-        (item) => item.status === WorkspaceCoverageStatus.UNAVAILABLE,
+    // Named for the copy it drives (`workspaceAssetList.unavailable.*`); `workspaceCoverageUtils` owns which
+    // statuses count as unreadable, and why.
+    const unavailableAccounts = workspaceCoverageUtils.getUnreadableAccounts(
+        firstPage?.coverage,
     );
 
     const state = dataListUtils.queryToDataListState({
@@ -56,13 +70,24 @@ export const useWorkspaceAssetListData = (
 
     const hasUnavailableAccounts = unavailableAccounts.length > 0;
 
-    // An empty page with a failed source means "unknown", not "no assets".
+    // An empty page with a failed source means "unknown", not "no assets". With every source read, the copy still
+    // does not claim the accounts hold nothing: the aggregation returns no row for sources it does not cover yet,
+    // a Safe among them (see `docs/projectDocs/createWorkspace.md`), so it only says what the list will show once
+    // the assets are available — the same promise the transaction list makes, named per scope the same way.
+    const emptyDescriptionKey = () => {
+        if (hasUnavailableAccounts) {
+            return 'unknownDescription';
+        }
+
+        return isSingleAccount ? 'descriptionSingle' : 'description';
+    };
+
     const emptyState = {
         heading: t(
             `app.workspace.workspaceAssetList.emptyState.${hasUnavailableAccounts ? 'unknownHeading' : 'heading'}`,
         ),
         description: t(
-            `app.workspace.workspaceAssetList.emptyState.${hasUnavailableAccounts ? 'unknownDescription' : 'description'}`,
+            `app.workspace.workspaceAssetList.emptyState.${emptyDescriptionKey()}`,
         ),
     };
 

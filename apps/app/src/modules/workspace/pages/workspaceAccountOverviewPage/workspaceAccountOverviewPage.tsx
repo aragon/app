@@ -24,8 +24,9 @@ export interface IWorkspaceAccountOverviewPageProps {
  * the route parameters. `resolveDaoId` rebuilds the very ID this page was given — it reaches the network only for an
  * ENS name, which an account ID never is.
  *
- * Only what the dashboard has no notion of is owned here: the workspaces feature flag, and an account whose DAO
- * cannot be read, which `WorkspaceAccountGate` turns into an error state.
+ * Only what the dashboard has no notion of is owned here: the workspaces feature flag, and an account that is not a
+ * DAO the backend can serve — `WorkspaceAccountGate` fails the route for an account whose DAO record cannot
+ * be read, a Safe included — see "Safe support by route" in `docs/projectDocs/createWorkspace.md`.
  */
 export const WorkspaceAccountOverviewPage: React.FC<
     IWorkspaceAccountOverviewPageProps

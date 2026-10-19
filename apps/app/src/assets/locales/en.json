@@ -4352,12 +4352,13 @@
       "workspaceAccountGate": {
         "error": {
           "description": "This account could not be loaded. Please try again later or open another account.",
-          "heading": "Dashboard could not be loaded"
+          "heading": "This account could not be loaded"
         }
       },
       "workspaceAssetList": {
         "emptyState": {
-          "description": "The accounts of this workspace hold no assets yet.",
+          "description": "This will show the assets of every account in this workspace when available.",
+          "descriptionSingle": "This will show the assets of this account when available.",
           "heading": "No assets",
           "unknownDescription": "Some accounts could not be read, so their assets are missing from this list. Try again in a moment.",
           "unknownHeading": "Assets could not be loaded"

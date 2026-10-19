@@ -102,6 +102,13 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         isAllAccounts: false,
     };
 
+    const safeOption: IWorkspaceAccountOption = {
+        id: safeAccount.id,
+        label: 'Grants Safe',
+        account: safeAccount,
+        isAllAccounts: false,
+    };
+
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
         id: 'test-workspace',
         name: 'Test Workspace',
@@ -492,6 +499,102 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         await waitFor(() =>
             expect(lastListProps()?.accounts).toEqual([daoAccount]),
         );
+        expect(
+            screen.queryByRole('link', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('narrows the list and the aside card to the selected Safe account', async () => {
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+            accountId: safeAccount.id,
+            activeOption: safeOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([safeAccount]),
+        );
+        await waitFor(() =>
+            expect(lastAsideCardProps()).toEqual({
+                accounts: [safeAccount],
+                pageSize: 20,
+                activeOption: safeOption,
+            }),
+        );
+    });
+
+    // Write path pins: a Safe has no create destination yet (`getDaoUrl` names a DAO page only), so creating from one
+    // stays closed even when the wallet holds the permission. Opening it is a deliberate later change, not a fix.
+    it('renders no create action for a Safe account', async () => {
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+            accountId: safeAccount.id,
+            activeOption: safeOption,
+            isAllAccounts: false,
+        });
+        mockExecutePermissions({ [safeAccount.id]: true });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([safeAccount]),
+        );
+        expect(
+            screen.queryByRole('link', { name: createActionName }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('lists a Safe as disabled in the selection even when the wallet holds the permission', async () => {
+        mockExecutePermissions({
+            [daoAccount.id]: true,
+            [safeAccount.id]: true,
+        });
+        render(createTestComponent());
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: createActionName }),
+        );
+
+        expect(lastDialogParams()?.disabledAccountIds).toEqual([
+            safeAccount.id,
+        ]);
+    });
+
+    it('does not navigate when a Safe is picked from the selection', async () => {
+        mockExecutePermissions({ [daoAccount.id]: true });
+        render(createTestComponent());
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: createActionName }),
+        );
+        lastDialogParams()?.onAccountSelected(safeAccount);
+
+        expect(pushMock).not.toHaveBeenCalled();
+        expect(closeMock).not.toHaveBeenCalled();
+    });
+
+    // No DAO to read and no destination to build: the page must stay readable and offer nothing to create.
+    it('describes the Safe accounts in the aside and offers no create action for a workspace holding only Safes', async () => {
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({ accounts: [safeAccount] }),
+        );
+        mockAccountOptions({ options: [allAccountsOption] });
+        useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: false });
+        mockExecutePermissions({ [safeAccount.id]: true });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastAsideCardProps()?.accounts).toEqual([safeAccount]),
+        );
+        expect(screen.getByTestId('list-mock')).toBeInTheDocument();
+        expect(lastAsideCardProps()?.activeOption).toEqual(allAccountsOption);
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByRole('link', { name: createActionName }),
         ).not.toBeInTheDocument();

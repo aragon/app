@@ -73,7 +73,9 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         );
     };
 
-    it('renders the aggregated card titled with the option label when all accounts are selected', () => {
+    // The aggregated option carries a label of its own, but it describes the workspace rather than an account, so
+    // the card titles itself as its transactions twin does.
+    it('treats the aggregated option like no selection', () => {
         const metadata = generatePaginatedResponseMetadata();
         render(
             createTestComponent({ activeOption: allAccountsOption, metadata }),
@@ -81,7 +83,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
 
         expect(screen.getByTestId('all-assets-mock')).toBeInTheDocument();
         expect(allAssetsCardSpy).toHaveBeenLastCalledWith(
-            { metadata, title: allAccountsOption.label },
+            { metadata, title: undefined },
             undefined,
         );
     });

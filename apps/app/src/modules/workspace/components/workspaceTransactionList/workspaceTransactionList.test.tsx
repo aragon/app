@@ -14,7 +14,11 @@ import {
     ReactQueryWrapper,
 } from '@/shared/testUtils';
 import * as workspaceQueryService from '../../api/workspaceQueryService';
-import { WorkspaceTransactionType } from '../../api/workspaceQueryService';
+import {
+    WorkspaceCoverageSource,
+    WorkspaceCoverageStatus,
+    WorkspaceTransactionType,
+} from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
@@ -53,9 +57,24 @@ describe('<WorkspaceTransactionList /> component', () => {
     // Rows of each transaction type, used to decide which toggles the component may render.
     let typeAvailability = { received: 1, sent: 1, executions: 1 };
 
+    const buildCoverage = (
+        status: workspaceQueryService.WorkspaceCoverageStatus,
+    ) => [
+        {
+            account: { network: account.network, address: account.address },
+            resource: 'transactions',
+            source: WorkspaceCoverageSource.SAFE,
+            status,
+        },
+    ];
+
     const buildResult = (
         transactions: workspaceQueryService.IWorkspaceTransaction[],
-        options?: { totalRecords?: number; partial?: boolean },
+        options?: {
+            totalRecords?: number;
+            coverageStatus?: WorkspaceCoverageStatus;
+            partial?: boolean;
+        },
     ) =>
         generateReactQueryInfiniteResultSuccess({
             data: {
@@ -63,6 +82,9 @@ describe('<WorkspaceTransactionList /> component', () => {
                     generateWorkspaceQueryResponse({
                         data: transactions,
                         partial: options?.partial ?? false,
+                        coverage: options?.coverageStatus
+                            ? buildCoverage(options.coverageStatus)
+                            : [],
                         metadata: generatePaginatedResponseMetadata({
                             page: 1,
                             totalPages: 1,
@@ -85,7 +107,10 @@ describe('<WorkspaceTransactionList /> component', () => {
         transactions: workspaceQueryService.IWorkspaceTransaction[] = [
             generateWorkspaceTransaction({ account }),
         ],
-        options?: { partial?: boolean },
+        options?: {
+            coverageStatus?: WorkspaceCoverageStatus;
+            partial?: boolean;
+        },
     ) => {
         useWorkspaceTransactionsSpy.mockImplementation((params) => {
             const isProbe = params.body.pagination?.pageSize === 1;
@@ -203,9 +228,29 @@ describe('<WorkspaceTransactionList /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('warns that the list is incomplete when the response is partial', () => {
+    it('renders no partial warning when a Safe reports unverified coverage', () => {
         mockTransactions([generateWorkspaceTransaction({ account })], {
+            coverageStatus: WorkspaceCoverageStatus.UNVERIFIED,
             partial: true,
+        });
+
+        render(createTestComponent({ accounts: [buildAccount()] }));
+
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceTransactionList.partialSingle',
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceTransactionList.partial',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('warns that the list is incomplete when an account could not be read', () => {
+        mockTransactions([generateWorkspaceTransaction({ account })], {
+            coverageStatus: WorkspaceCoverageStatus.UNAVAILABLE,
         });
 
         render(
@@ -228,7 +273,7 @@ describe('<WorkspaceTransactionList /> component', () => {
     // A single-account view is the account, so saying "some accounts" would only raise the question of which one.
     it('warns about the account itself when it is the only one of the selection', () => {
         mockTransactions([generateWorkspaceTransaction({ account })], {
-            partial: true,
+            coverageStatus: WorkspaceCoverageStatus.UNAVAILABLE,
         });
 
         render(createTestComponent({ accounts: [buildAccount()] }));

@@ -42,11 +42,9 @@ export const WorkspaceAssetsAsideCard: React.FC<
         );
     }
 
+    const title =
+        activeOption?.isAllAccounts === false ? activeOption.label : undefined;
+
     // Safe accounts have no card of their own yet, so they fall back to the plain totals of the selection.
-    return (
-        <WorkspaceAllAssetsAsideCard
-            metadata={metadata}
-            title={activeOption?.label}
-        />
-    );
+    return <WorkspaceAllAssetsAsideCard metadata={metadata} title={title} />;
 };

@@ -23,7 +23,6 @@ import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspac
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { useWorkspaceProposalTabs } from '../../hooks/useWorkspaceProposalTabs';
-import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceProposalsPageClientProps {
     /**
@@ -42,6 +41,12 @@ export interface IWorkspaceProposalsPageClientProps {
  * One page serves both scopes, as the assets and transactions pages do: every scope reads the same workspace
  * proposals endpoint, so a single account sums into the aggregated view.
  * The plugin tabs and the aside card follow from that selection on their own.
+ *
+ * A Safe never reaches this client on an account-scoped route: `WorkspaceProposalsPage` wraps that route in
+ * `WorkspaceAccountGate`, so the narrowing below only ever sees a DAO or the aggregated selection. That gate is
+ * load-bearing precisely because the narrowing fails open — it falls back to every DAO account when the route's
+ * account is not a DAO, which would answer for a Safe with the proposals of all of them. See "Safe support by
+ * route" in `docs/projectDocs/createWorkspace.md`.
  */
 export const WorkspaceProposalsPageClient: React.FC<
     IWorkspaceProposalsPageClientProps
@@ -51,6 +56,8 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const router = useRouter();
+
+    const { activeOption } = useWorkspaceAccountOptions();
 
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
@@ -62,28 +69,19 @@ export const WorkspaceProposalsPageClient: React.FC<
             account.type === WorkspaceAccountType.DAO,
     );
 
-    const { accountId, options, activeOption } = useWorkspaceAccountOptions();
-
-    // Resolved from the route rather than from `activeOption`, which is matched on the exact ID string: a shared
-    // link carrying a lowercased address would otherwise widen the page to every account under a URL naming one.
-    const routeAccount = workspaceUtils.findAccountById(accounts, accountId);
-
-    // Only a DAO has proposals, so the route of a Safe falls back to every DAO account, as the transactions page
-    // does. A Safe never becomes an account option either, so the aside falls back with it.
+    // `activeOption` resolves the route account by network and address, so any casing of the ID lands on its account.
+    // A route naming no account of the workspace leaves it undefined, which keeps the aggregated view.
+    //
+    // TEMPORARY narrowing: a non-DAO account falls back to every DAO account, which is why the account-scoped
+    // route is gated in `WorkspaceProposalsPage`. When Safe proposals land, keep the route's account whatever its
+    // type and drop that gate wrap — both halves together, or the route widens silently instead of failing.
     const scopedAccount =
-        routeAccount?.type === WorkspaceAccountType.DAO
-            ? routeAccount
+        activeOption?.account?.type === WorkspaceAccountType.DAO
+            ? activeOption.account
             : undefined;
 
     const accountsToDisplay =
         scopedAccount != null ? [scopedAccount] : daoAccounts;
-
-    // The option of the scoped account, which titles the aside card. Looked up by the resolved account rather than
-    // read off `activeOption`, so a lowercased address in the URL still names its account on the aside.
-    const scopedOption =
-        scopedAccount != null
-            ? options.find((option) => option.account?.id === scopedAccount.id)
-            : undefined;
 
     const { daos, isPending: isDaosPending } =
         useWorkspaceDaos(accountsToDisplay);
@@ -191,7 +189,7 @@ export const WorkspaceProposalsPageClient: React.FC<
             <Page.Aside>
                 <WorkspaceProposalsAsideCard
                     accounts={accountsToDisplay}
-                    activeOption={scopedOption ?? activeOption}
+                    activeOption={activeOption}
                     activeTab={activeTab}
                     pageSize={pageSize}
                 />

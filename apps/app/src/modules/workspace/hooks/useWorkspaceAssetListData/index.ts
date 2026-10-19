@@ -1,1 +1,4 @@
-export { useWorkspaceAssetListData } from './useWorkspaceAssetListData';
+export {
+    type IUseWorkspaceAssetListDataOptions,
+    useWorkspaceAssetListData,
+} from './useWorkspaceAssetListData';
