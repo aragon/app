@@ -1,8 +1,8 @@
 import { Dialog, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as useWalletAccountHook from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
+import * as ipfsMutations from '@/shared/api/ipfsService/mutations';
 import * as blockNavigationContext from '@/shared/components/blockNavigationContext';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
@@ -11,7 +11,11 @@ import {
     WorkspaceAccountInfoType,
     workspaceQueryService,
 } from '../../api/workspaceQueryService';
-import { workspaceService } from '../../api/workspaceService';
+import {
+    type IWorkspace,
+    workspaceService,
+    workspaceStorageKey,
+} from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
 import {
     type IPublishWorkspaceDialogProps,
@@ -27,11 +31,9 @@ describe('<PublishWorkspaceDialog /> component', () => {
         'useBlockNavigationContext',
     );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-    const useWalletAccountSpy = jest.spyOn(
-        useWalletAccountHook,
-        'useWalletAccount',
-    );
     const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+    const usePinFileSpy = jest.spyOn(ipfsMutations, 'usePinFile');
+    const pinFileSpy = jest.fn();
 
     // Re-created on every test so that the spy calls through to the real registry by default.
     let createWorkspaceSpy: jest.SpyInstance<
@@ -57,19 +59,18 @@ describe('<PublishWorkspaceDialog /> component', () => {
                 indexed: true,
             },
         ]);
-        useWalletAccountSpy.mockReturnValue({
-            address: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
-            chainId: 1,
-            isConnecting: false,
-            isReconnecting: false,
-        });
+        usePinFileSpy.mockReturnValue({
+            mutateAsync: pinFileSpy,
+        } as unknown as ReturnType<typeof ipfsMutations.usePinFile>);
+        pinFileSpy.mockResolvedValue({ IpfsHash: 'pinned-cid' });
     });
 
     afterEach(() => {
         useBlockNavigationContextSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useWalletAccountSpy.mockReset();
         getAccountsSpy.mockReset();
+        usePinFileSpy.mockReset();
+        pinFileSpy.mockReset();
         createWorkspaceSpy.mockRestore();
         setIsBlockedSpy.mockClear();
         closeSpy.mockClear();
@@ -116,7 +117,7 @@ describe('<PublishWorkspaceDialog /> component', () => {
 
     const getSubmitButton = () =>
         screen.getByRole('button', {
-            name: /publishWorkspaceDialog.button.submit/,
+            name: /publishWorkspaceDialog.create.submit/,
         });
 
     it('does not unblock the navigation before the workspace is created', () => {
@@ -140,6 +141,29 @@ describe('<PublishWorkspaceDialog /> component', () => {
             '/workspace/demo-workspace/all/overview',
         );
         expect(setIsBlockedSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('creates a workspace holding no account without resolving account types', async () => {
+        render(
+            createTestComponent({
+                location: {
+                    id: 'PUBLISH_WORKSPACE',
+                    params: { values: buildValues({ accounts: [] }) },
+                },
+            }),
+        );
+
+        await userEvent.click(getSubmitButton());
+        await screen.findByRole('link', {
+            name: /publishWorkspaceDialog.button.success/,
+        });
+
+        expect(getAccountsSpy).not.toHaveBeenCalled();
+        await expect(
+            workspaceService.getWorkspace({
+                urlParams: { id: 'demo-workspace' },
+            }),
+        ).resolves.toMatchObject({ accounts: [] });
     });
 
     it('closes the dialog when navigating to the created workspace', async () => {
@@ -169,5 +193,116 @@ describe('<PublishWorkspaceDialog /> component', () => {
             ).toBeInTheDocument(),
         );
         expect(setIsBlockedSpy).not.toHaveBeenCalledWith(false);
+    });
+
+    describe('update mode', () => {
+        const storedWorkspace: IWorkspace = {
+            id: 'demo-workspace',
+            name: 'Demo Workspace',
+            description: '',
+            avatar: 'ipfs://stored-cid',
+            links: [],
+            accounts: [],
+            targets: [],
+        };
+
+        const createUpdateComponent = (
+            values?: Partial<ICreateWorkspaceFormData>,
+        ) =>
+            createTestComponent({
+                location: {
+                    id: 'PUBLISH_WORKSPACE',
+                    params: {
+                        values: buildValues(values),
+                        workspaceId: storedWorkspace.id,
+                    },
+                },
+            });
+
+        const getUpdateButton = () =>
+            screen.getByRole('button', {
+                name: /publishWorkspaceDialog.update.submit/,
+            });
+
+        beforeEach(() => {
+            localStorage.setItem(
+                workspaceStorageKey,
+                JSON.stringify({ [storedWorkspace.id]: storedWorkspace }),
+            );
+        });
+
+        it('updates the stored workspace', async () => {
+            render(createUpdateComponent({ name: 'Renamed' }));
+
+            await userEvent.click(getUpdateButton());
+
+            const successLink = await screen.findByRole('link', {
+                name: /publishWorkspaceDialog.button.success/,
+            });
+            expect(successLink).toHaveAttribute(
+                'href',
+                '/workspace/demo-workspace/all/overview',
+            );
+            await expect(
+                workspaceService.getWorkspace({
+                    urlParams: { id: storedWorkspace.id },
+                }),
+            ).resolves.toMatchObject({ name: 'Renamed' });
+        });
+
+        it('keeps a stored avatar without pinning it again', async () => {
+            render(
+                createUpdateComponent({
+                    accounts: [],
+                    avatar: {
+                        url: 'https://aragon-1.mypinata.cloud/ipfs/stored-cid?img-width=256&img-height=256',
+                    },
+                }),
+            );
+
+            await userEvent.click(getUpdateButton());
+            await screen.findByRole('link', {
+                name: /publishWorkspaceDialog.button.success/,
+            });
+
+            expect(pinFileSpy).not.toHaveBeenCalled();
+            await expect(
+                workspaceService.getWorkspace({
+                    urlParams: { id: storedWorkspace.id },
+                }),
+            ).resolves.toMatchObject({ avatar: 'ipfs://stored-cid' });
+        });
+
+        it('pins a newly selected avatar', async () => {
+            const file = new File([], 'avatar.png');
+            render(
+                createUpdateComponent({
+                    avatar: { file, url: 'blob:avatar' },
+                }),
+            );
+
+            await userEvent.click(getUpdateButton());
+            await screen.findByRole('link', {
+                name: /publishWorkspaceDialog.button.success/,
+            });
+
+            expect(pinFileSpy).toHaveBeenCalledWith({ body: file });
+            await expect(
+                workspaceService.getWorkspace({
+                    urlParams: { id: storedWorkspace.id },
+                }),
+            ).resolves.toMatchObject({ avatar: 'ipfs://pinned-cid' });
+        });
+
+        it('resolves no account type when the workspace holds no account', async () => {
+            render(createUpdateComponent({ accounts: [] }));
+
+            await userEvent.click(getUpdateButton());
+            await screen.findByRole('link', {
+                name: /publishWorkspaceDialog.button.success/,
+            });
+
+            expect(getAccountsSpy).not.toHaveBeenCalled();
+        });
     });
 });

@@ -24,10 +24,6 @@ export interface IWorkspace {
      */
     links: IResource[];
     /**
-     * Address that created the workspace.
-     */
-    owner: string;
-    /**
      * Accounts belonging to the workspace. Ordered as they should be displayed on the account filters.
      */
     accounts: IWorkspaceAccount[];

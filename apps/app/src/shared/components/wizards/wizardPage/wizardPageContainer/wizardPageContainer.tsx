@@ -26,6 +26,7 @@ export const WizardPageContainer = <
         submitLabel,
         submitHelpText,
         initialSteps,
+        initialActiveStep,
         defaultValues,
         finalStep,
         analytics,
@@ -38,6 +39,7 @@ export const WizardPageContainer = <
         <Wizard.Root
             analytics={analytics}
             defaultValues={defaultValues}
+            initialActiveStep={initialActiveStep}
             initialSteps={initialSteps}
             submitHelpText={submitHelpText}
             submitLabel={submitLabel}

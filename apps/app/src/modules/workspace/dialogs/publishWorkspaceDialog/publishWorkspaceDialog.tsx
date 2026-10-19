@@ -5,11 +5,11 @@ import {
     Avatar,
     Dialog,
     Heading,
+    type IInputFileAvatarValue,
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { usePinFile } from '@/shared/api/ipfsService/mutations';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import {
@@ -17,12 +17,17 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { workspaceAccountsOptions } from '../../api/workspaceQueryService';
 import {
     useCreateWorkspace,
+    useUpdateWorkspace,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
-import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
+import type {
+    ICreateWorkspaceFormAccount,
+    ICreateWorkspaceFormData,
+} from '../../components/createWorkspaceForm';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -34,6 +39,10 @@ export interface IPublishWorkspaceDialogParams {
      * Values of the create-workspace form.
      */
     values: ICreateWorkspaceFormData;
+    /**
+     * ID of the workspace to update with the form values. A new workspace is created when not set.
+     */
+    workspaceId?: string;
 }
 
 export interface IPublishWorkspaceDialogProps
@@ -51,75 +60,95 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         'PublishWorkspaceDialog: required parameters must be set.',
     );
 
-    const { address } = useWalletAccount();
-    invariant(
-        address != null,
-        'PublishWorkspaceDialog: user must be connected.',
-    );
-
-    const { values } = location.params;
+    const { values, workspaceId } = location.params;
     const { name, description, avatar, accounts, targets } = values;
+
+    const isUpdate = workspaceId != null;
+    const mode = isUpdate ? 'update' : 'create';
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
     const { setIsBlocked } = useBlockNavigationContext();
 
     const [status, setStatus] = useState<PublishWorkspaceStatus>('idle');
-    const [workspaceId, setWorkspaceId] = useState<string>();
 
     const { mutateAsync: pinFile } = usePinFile();
-    const { mutateAsync: createWorkspace } = useCreateWorkspace();
+    const { mutateAsync: createWorkspace, data: createdWorkspace } =
+        useCreateWorkspace();
+    const { mutateAsync: updateWorkspace } = useUpdateWorkspace();
+
+    // An update keeps the ID of the workspace, a creation gets one assigned by the registry.
+    const savedWorkspaceId = workspaceId ?? createdWorkspace?.id;
     const queryClient = useQueryClient();
 
-    const pinAvatar = async (file?: File) => {
-        if (file == null) {
-            return undefined;
+    // A newly selected file is pinned, while an avatar carried over from the stored workspace keeps its URI.
+    const resolveAvatarUri = async (value?: IInputFileAvatarValue) => {
+        if (value?.file != null) {
+            const { IpfsHash } = await pinFile({ body: value.file });
+
+            return ipfsUtils.cidToUri(IpfsHash);
         }
 
-        const { IpfsHash } = await pinFile({ body: file });
-
-        return IpfsHash;
+        return value?.url != null ? ipfsUtils.srcToUri(value.url) : undefined;
     };
 
-    const handleCreateWorkspace = async () => {
+    // Resolves the type of every account in one call, the authoritative read right before the workspace is stored.
+    const resolveAccountInfos = async (
+        formAccounts: ICreateWorkspaceFormAccount[],
+    ) => {
+        if (formAccounts.length === 0) {
+            return [];
+        }
+
+        const accountRefs = formAccounts.map(({ network, address }) => ({
+            network,
+            address,
+        }));
+
+        return await queryClient.fetchQuery(
+            workspaceAccountsOptions({ body: { accounts: accountRefs } }),
+        );
+    };
+
+    const handlePublishWorkspace = async () => {
         setStatus('pending');
 
         try {
-            // Resolve the type of every account in one call. The rows were resolved individually during validation,
-            // so this is the authoritative read right before the workspace is stored.
-            const accountInfos = await queryClient.fetchQuery(
-                workspaceAccountsOptions({
-                    body: {
-                        accounts: accounts.map(({ network, address }) => ({
-                            network,
-                            address,
-                        })),
-                    },
-                }),
-            );
+            const accountInfos = await resolveAccountInfos(accounts);
 
-            const avatarCid = await pinAvatar(avatar?.file);
-            const accountAvatarFiles =
-                publishWorkspaceDialogUtils.getAccountAvatarFiles(accounts);
-            const accountAvatarCids: (string | undefined)[] = [];
+            const avatarUri = await resolveAvatarUri(avatar);
+            const accountAvatars =
+                publishWorkspaceDialogUtils.getAccountAvatars(accounts);
+            const accountAvatarUris: (string | undefined)[] = [];
 
-            for (const file of accountAvatarFiles) {
-                accountAvatarCids.push(await pinAvatar(file));
+            for (const accountAvatar of accountAvatars) {
+                accountAvatarUris.push(await resolveAvatarUri(accountAvatar));
             }
 
             const body = publishWorkspaceDialogUtils.buildWorkspace({
                 values,
-                owner: address,
-                avatarCid,
-                accountAvatarCids,
+                avatarUri,
+                accountAvatarUris,
                 accountInfos,
             });
-            const workspace = await createWorkspace({ body });
-            await queryClient.invalidateQueries({
-                queryKey: workspaceServiceKeys.workspaceList(),
-            });
+            const workspace = isUpdate
+                ? await updateWorkspace({
+                      urlParams: { id: workspaceId },
+                      body,
+                  })
+                : await createWorkspace({ body });
 
-            setWorkspaceId(workspace.id);
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: workspaceServiceKeys.workspaceList(),
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: workspaceServiceKeys.workspace({
+                        urlParams: { id: workspace.id },
+                    }),
+                }),
+            ]);
+
             setStatus('success');
         } catch {
             setStatus('error');
@@ -128,9 +157,9 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
 
     const isSuccess = status === 'success';
 
-    // The create-workspace wizard blocks navigation while its form is dirty, which makes the shared Link wrapper
-    // ask the user to confirm leaving the page. Once the workspace is created, navigating away is the intended
-    // outcome, therefore navigation is unblocked before the success link is rendered.
+    // The workspace forms block navigation while dirty, which makes the shared Link wrapper ask the user to confirm
+    // leaving the page. Once the workspace is stored, navigating away is the intended outcome, therefore navigation
+    // is unblocked before the success link is rendered.
     useEffect(() => {
         if (isSuccess) {
             setIsBlocked(false);
@@ -141,7 +170,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         ? {
               label: t('app.workspace.publishWorkspaceDialog.button.success'),
               href: workspaceUtils.getAccountScopeUrl(
-                  workspaceId!,
+                  savedWorkspaceId!,
                   workspaceAllAccountsSegment,
                   'overview',
               ),
@@ -149,16 +178,18 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
           }
         : {
               label: t(
-                  `app.workspace.publishWorkspaceDialog.button.${status === 'error' ? 'retry' : 'submit'}`,
+                  status === 'error'
+                      ? 'app.workspace.publishWorkspaceDialog.button.retry'
+                      : `app.workspace.publishWorkspaceDialog.${mode}.submit`,
               ),
               isLoading: status === 'pending',
-              onClick: () => void handleCreateWorkspace(),
+              onClick: () => void handlePublishWorkspace(),
           };
 
     return (
         <>
             <Dialog.Header
-                title={t('app.workspace.publishWorkspaceDialog.title')}
+                title={t(`app.workspace.publishWorkspaceDialog.${mode}.title`)}
             />
             <Dialog.Content className="flex flex-col gap-4 px-6 pt-4 pb-6">
                 <div className="flex items-center gap-3">
@@ -183,19 +214,19 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                 {status === 'error' && (
                     <AlertCard
                         message={t(
-                            'app.workspace.publishWorkspaceDialog.error.title',
+                            `app.workspace.publishWorkspaceDialog.${mode}.error.title`,
                         )}
                         variant="critical"
                     >
                         {t(
-                            'app.workspace.publishWorkspaceDialog.error.description',
+                            `app.workspace.publishWorkspaceDialog.${mode}.error.description`,
                         )}
                     </AlertCard>
                 )}
                 {isSuccess && (
                     <AlertCard
                         message={t(
-                            'app.workspace.publishWorkspaceDialog.success.title',
+                            `app.workspace.publishWorkspaceDialog.${mode}.success`,
                         )}
                         variant="success"
                     />

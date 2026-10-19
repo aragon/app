@@ -37,7 +37,7 @@ export const CreateWorkspaceFormAccounts: React.FC<
             name: accountsFieldName,
         });
 
-    // The first account row comes from the form default values, see `createWorkspaceFormDefaultValues`.
+    // Accounts are optional, so every row can be removed.
     const handleAddAccount = () =>
         append(createWorkspaceFormEmptyNetworkAddress);
 
@@ -49,12 +49,12 @@ export const CreateWorkspaceFormAccounts: React.FC<
                     'app.workspace.createWorkspaceForm.accounts.helpText',
                 )}
                 id="workspaceAccounts"
+                isOptional={true}
                 label={t('app.workspace.createWorkspaceForm.accounts.label')}
                 useCustomWrapper={true}
             >
                 {fields.map((field, index) => (
                     <CreateWorkspaceFormAccountsItem
-                        disableRemove={fields.length === 1}
                         index={index}
                         key={field.id}
                         name={accountsFieldName}

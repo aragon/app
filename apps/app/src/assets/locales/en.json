@@ -4293,10 +4293,9 @@
         }
       },
       "createWorkspacePage": {
-        "finalStep": "Create workspace",
         "steps": {
           "ACCOUNTS": {
-            "description": "Add the accounts belonging to this workspace. Each one is identified by its network and address.",
+            "description": "Add the accounts belonging to this workspace. Each one is identified by its network and address. This step is optional and accounts can be added later.",
             "name": "Add accounts",
             "title": "Add accounts"
           },
@@ -4316,21 +4315,33 @@
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
+      "layoutWizardEditWorkspace": {
+        "name": "Edit workspace"
+      },
       "publishWorkspaceDialog": {
         "button": {
           "retry": "Try again",
-          "submit": "Create workspace",
           "success": "View workspace"
         },
-        "error": {
-          "description": "The workspace could not be created. Check your connection and try again.",
-          "title": "Unable to create the workspace"
-        },
-        "success": {
-          "title": "Workspace created"
+        "create": {
+          "error": {
+            "description": "The workspace could not be created. Check your connection and try again.",
+            "title": "Unable to create the workspace"
+          },
+          "submit": "Create workspace",
+          "success": "Workspace created",
+          "title": "Create workspace"
         },
         "summary": "{{accounts}} accounts · {{targets}} targets",
-        "title": "Create workspace"
+        "update": {
+          "error": {
+            "description": "The changes could not be saved. Check your connection and try again.",
+            "title": "Unable to save the workspace"
+          },
+          "submit": "Save changes",
+          "success": "Workspace updated",
+          "title": "Save workspace"
+        }
       },
       "workspaceAccountItem": {
         "type": {
@@ -4375,9 +4386,12 @@
       },
       "workspaceDetailsPage": {
         "aside": {
-          "details": "Details",
-          "owner": "Owner",
           "resources": "Resources"
+        },
+        "emptyAccounts": {
+          "action": "Add accounts",
+          "description": "This workspace has no accounts yet. Add the DAOs and Safes it should bring together.",
+          "heading": "No accounts yet"
         },
         "section": {
           "accounts": "Accounts",
@@ -4511,7 +4525,28 @@
         "allAccounts": "All accounts"
       },
       "workspaceSelector": {
-        "create": "Create workspace"
+        "create": "Create workspace",
+        "edit": "Edit workspace"
+      },
+      "workspaceEditPage": {
+        "steps": {
+          "ACCOUNTS": {
+            "description": "Add or remove the accounts belonging to this workspace. Each one is identified by its network and address.",
+            "name": "Edit accounts",
+            "title": "Edit accounts"
+          },
+          "METADATA": {
+            "description": "Update how your workspace is described to visitors.",
+            "name": "Edit details",
+            "title": "Edit details"
+          },
+          "TARGETS": {
+            "description": "Add or remove the addresses this workspace relates to. This step is optional and can be left empty.",
+            "name": "Edit targets",
+            "title": "Edit targets"
+          }
+        },
+        "submitLabel": "Save changes"
       }
     }
   }
