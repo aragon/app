@@ -194,7 +194,7 @@ Submitting opens `WorkspaceDialogId.PUBLISH_WORKSPACE` with the form values (`Wo
 ### Ownership
 
 Workspaces have no owner and need no wallet: a client-written owner would protect nothing while the registry is
-local. Ownership belongs to the future registry, on publish (see `workspaceAccess.md`).
+local. Ownership belongs to the future registry, on publish.
 
 `publishWorkspaceDialog` is **not** a `TransactionDialog` — there is no transaction. It is a plain gov-ui-kit
 `Dialog.Header` / `Dialog.Content` / `Dialog.Footer` with local `status` state (`idle | pending | error |

@@ -6,7 +6,6 @@ there today, and separate what the app already has from what is genuinely missin
 
 Companion notes: [`createWorkspace.md`](./createWorkspace.md) (the implementation of record),
 [`workspaceRouting.md`](./workspaceRouting.md) (the account-scope ADR),
-[`workspaceAccess.md`](./workspaceAccess.md) (registry/auth, orthogonal to this).
 
 - **Read on:** `app-1140-v1-of-workspaces-supporting-multiple-daos` @ `a64853af3`, plus
   `safe-biz-logic` ([#1397](https://github.com/aragon/app/pull/1397), open) and
