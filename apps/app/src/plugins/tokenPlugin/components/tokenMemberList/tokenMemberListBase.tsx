@@ -61,7 +61,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         layoutClassNames,
         plugin,
         onboardingCard,
-        memberSource,
+        memberSourceId,
         enableDelegation,
         children,
     } = props;
@@ -179,7 +179,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
                         }
                         key={member.address}
                         member={member}
-                        memberSourceId={memberSource?.uniqueId}
+                        memberSourceId={memberSourceId}
                         plugin={plugin}
                     />
                 ))}

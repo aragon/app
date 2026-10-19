@@ -10,10 +10,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
-import { daoMemberSourceUtils } from '@/modules/governance/utils/daoMemberSourceUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
 
@@ -40,6 +40,9 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
     // Owner links point at the Safe's own members tab, identified by the canonical Safe body
     // record. A Safe the DAO does not carry as a body has no tab to open, so the row is not a link.
     const safeDaoId = `${network}-${proposal.daoAddress}`;
+
+    const { address: safeDaoAddress, network: safeDaoNetwork } =
+        daoUtils.parseDaoId(safeDaoId);
     const safeBodyPlugin = useDaoPlugins({
         daoId: safeDaoId,
         type: PluginType.BODY,
@@ -81,9 +84,8 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
                         href={
                             safeBodyPlugin == null
                                 ? undefined
-                                : daoMemberSourceUtils.getMemberUrlFromDaoId(
-                                      safeDaoId,
-                                      signer,
+                                : daoUtils.withMemberTab(
+                                      `/dao/${safeDaoNetwork}/${safeDaoAddress}/members/${signer}`,
                                       safeBodyPlugin.uniqueId,
                                   )
                         }

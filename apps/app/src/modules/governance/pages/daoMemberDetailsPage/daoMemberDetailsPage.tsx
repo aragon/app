@@ -10,7 +10,6 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { memberOptions } from '../../api/governanceService';
 import type { IDaoMemberPageParams } from '../../types';
-import { daoMemberSourceUtils } from '../../utils/daoMemberSourceUtils';
 import { DaoMemberDetailsPageClient } from './daoMemberDetailsPageClient';
 
 export interface IDaoMemberDetailsPageProps {
@@ -53,12 +52,12 @@ export const DaoMemberDetailsPage: React.FC<
     const address = getAddress(rawAddress);
 
     if (address !== rawAddress) {
-        const selectedSourceQuery =
-            selectedSourceId != null
-                ? `?members=${encodeURIComponent(selectedSourceId)}`
-                : '';
-        const canonicalUrl = `/dao/${network}/${addressOrEns}/members/${address}${selectedSourceQuery}`;
-        return <RedirectToUrl url={canonicalUrl} />;
+        const canonicalUrl = `/dao/${network}/${addressOrEns}/members/${address}`;
+        return (
+            <RedirectToUrl
+                url={daoUtils.withMemberTab(canonicalUrl, selectedSourceId)!}
+            />
+        );
     }
 
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
@@ -79,32 +78,29 @@ export const DaoMemberDetailsPage: React.FC<
         allBodyPlugins,
         daoOverride,
     );
-    const memberSources = daoMemberSourceUtils.resolve({
-        dao,
-        daoId,
-        bodyPlugins: visibleBodyPlugins,
-    });
-    const memberSource =
-        memberSources.find(({ uniqueId }) => uniqueId === selectedSourceId) ??
-        memberSources[0];
+    const bodyPlugin =
+        visibleBodyPlugins.find(
+            (plugin) =>
+                daoUtils.getPluginTabId(plugin, dao.address) ===
+                selectedSourceId,
+        ) ?? visibleBodyPlugins[0];
 
-    if (memberSource == null) {
+    if (bodyPlugin == null) {
         const membersUrl = daoUtils.getDaoUrl(dao, 'members')!;
         return <RedirectToUrl url={membersUrl} />;
     }
 
     // A body need not carry settings at all (a Safe has none), so this stays optional.
     const token = (
-        memberSource.plugin.settings as unknown as
-            | Record<string, unknown>
-            | undefined
+        bodyPlugin.settings as unknown as Record<string, unknown> | undefined
     )?.token;
     const tokenInfo = token as { address: string; network: string } | undefined;
+    const memberDaoId = daoUtils.resolvePluginDaoId(daoId, bodyPlugin, dao);
 
     const memberUrlParams = { address };
     const memberQueryParams = {
-        daoId: memberSource.daoId,
-        pluginAddress: memberSource.address,
+        daoId: memberDaoId,
+        pluginAddress: bodyPlugin.address,
         tokenAddress: tokenInfo?.address,
         network: tokenInfo?.network,
     };
@@ -122,10 +118,13 @@ export const DaoMemberDetailsPage: React.FC<
             <DaoMemberDetailsPageClient
                 address={address}
                 daoId={daoId}
-                memberDaoId={memberSource.daoId}
-                memberSourceId={memberSource.uniqueId}
+                memberDaoId={memberDaoId}
+                memberSourceId={daoUtils.getPluginTabId(
+                    bodyPlugin,
+                    dao.address,
+                )}
                 network={tokenInfo?.network}
-                pluginAddress={memberSource.address}
+                pluginAddress={bodyPlugin.address}
                 tokenAddress={tokenInfo?.address}
             />
         </Page.Container>

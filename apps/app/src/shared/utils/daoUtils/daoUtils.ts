@@ -397,6 +397,15 @@ class DaoUtils {
         return fullPath;
     };
 
+    /** Member links keep the selected members tab so the member page resolves against the body the member was listed under. */
+    withMemberTab = (
+        url: string | undefined,
+        memberSourceId?: string,
+    ): string | undefined =>
+        url == null || memberSourceId == null
+            ? url
+            : `${url}?members=${encodeURIComponent(memberSourceId)}`;
+
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
         address == null ||
         plugin.address.toLowerCase() === address.toLowerCase();
