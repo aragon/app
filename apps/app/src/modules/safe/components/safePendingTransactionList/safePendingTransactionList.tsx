@@ -14,6 +14,7 @@ import {
     useSafePendingTransactions,
 } from '@/shared/api/safeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { safeDataListUtils } from '../../utils/safeDataListUtils';
 import { SafePendingTransactionListItem } from './safePendingTransactionListItem';
 
@@ -56,6 +57,7 @@ export const SafePendingTransactionList: React.FC<
     const { network, address, currentNonce, safeVersion, threshold } = props;
 
     const { t } = useTranslations();
+    const isMounted = useIsMounted();
 
     const {
         data: pendingTransactions,
@@ -107,20 +109,26 @@ export const SafePendingTransactionList: React.FC<
         isLoading: isLoading || currentNonce == null,
     });
     const staleFetchedAt =
-        pendingTransactions?.meta.stale === true
-            ? (formatterUtils.formatDate(pendingTransactions.meta.fetchedAt, {
+        pendingTransactions?.meta.stale === true &&
+        isMounted &&
+        pendingTransactions.meta.fetchedAt.length > 0
+            ? formatterUtils.formatDate(pendingTransactions.meta.fetchedAt, {
                   format: DateFormat.YEAR_MONTH_DAY_TIME,
-              }) ?? pendingTransactions.meta.fetchedAt)
+              })
             : undefined;
+    const staleMessage =
+        staleFetchedAt == null
+            ? t('app.safe.safePendingTransactionList.stale')
+            : t('app.safe.safePendingTransactionList.staleWithTimestamp', {
+                  date: staleFetchedAt,
+              });
 
     return (
         <>
             {pendingTransactions?.meta.stale === true && (
                 <AlertInline
                     className="mb-4"
-                    message={t('app.safe.safePendingTransactionList.stale', {
-                        date: staleFetchedAt,
-                    })}
+                    message={staleMessage}
                     variant="warning"
                 />
             )}
