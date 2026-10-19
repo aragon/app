@@ -5,6 +5,8 @@ import {
     DataListContainer,
     DataListPagination,
     DataListRoot,
+    DateFormat,
+    formatterUtils,
 } from '@aragon/gov-ui-kit';
 import type { Network } from '@/shared/api/daoService';
 import {
@@ -104,13 +106,21 @@ export const SafePendingTransactionList: React.FC<
         isError,
         isLoading: isLoading || currentNonce == null,
     });
+    const staleFetchedAt =
+        pendingTransactions?.meta.stale === true
+            ? (formatterUtils.formatDate(pendingTransactions.meta.fetchedAt, {
+                  format: DateFormat.YEAR_MONTH_DAY_TIME,
+              }) ?? pendingTransactions.meta.fetchedAt)
+            : undefined;
 
     return (
         <>
             {pendingTransactions?.meta.stale === true && (
                 <AlertInline
                     className="mb-4"
-                    message={t('app.safe.safePendingTransactionList.stale')}
+                    message={t('app.safe.safePendingTransactionList.stale', {
+                        date: staleFetchedAt,
+                    })}
                     variant="warning"
                 />
             )}

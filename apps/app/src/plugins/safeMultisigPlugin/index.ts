@@ -1,5 +1,6 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
+import { useSppExternalPermissionCheckProposalCreation } from '@/plugins/sppPlugin/hooks/useSppExternalPermissionCheckProposalCreation';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
@@ -47,6 +48,11 @@ export const initialiseSafeMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
             pluginId: safePlugin.id,
             function: () => true,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            pluginId: safePlugin.id,
+            function: useSppExternalPermissionCheckProposalCreation,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,

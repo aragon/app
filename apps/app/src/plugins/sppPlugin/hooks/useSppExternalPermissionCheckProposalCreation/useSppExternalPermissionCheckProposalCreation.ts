@@ -12,8 +12,8 @@ export interface IUseSppExternalPermissionCheckProposalCreationParams
     extends IPermissionCheckGuardParams {}
 
 /**
- * Fallback for the GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION slot used for external SPP bodies,
- * which are not DAO plugins and therefore have no registered slot function.
+ * Permission check for Safe SPP stage descriptors. Registered for the canonical Safe plugin and
+ * used as the fallback for external SPP bodies that have no registered slot function.
  *
  * A Safe body can create proposals only when a SafeOwnerCondition was wired at process creation,
  * surfaced as `proposalCreationConditionAddress` on the stage body. When set, the body contributes a

@@ -249,12 +249,23 @@ describe('useSppPermissionCheckProposalCreation', () => {
         },
     ];
 
-    const createStageBodySafeFixture = () => ({
-        address: `0x${'b'.repeat(40)}`,
-        params: createSafeTestParams({
+    const createStageBodySafeFixture = () => {
+        const address = `0x${'b'.repeat(40)}`;
+        const params = createSafeTestParams({
+            address,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
-        }),
-    });
+        });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({
+                    address,
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                }),
+            }),
+        ]);
+
+        return { address, params };
+    };
 
     const createExternalProposerSafeFixture = () => {
         const address = `0x${'e'.repeat(40)}`;
@@ -313,11 +324,27 @@ describe('useSppPermissionCheckProposalCreation', () => {
         expect(result.current.settings).toEqual([]);
     });
 
-    it('ignores non-Safe external bodies', () => {
+    it('ignores a non-Safe external body that shares an installed plugin address', () => {
+        const address = `0x${'b'.repeat(40)}`;
         const params = createSafeTestParams({
+            address,
             brandId: VotingBodyBrandIdentity.EOA,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
         });
+        const installedMeta = generateDaoPlugin({ address });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: installedMeta }),
+        ]);
+        const installedGuardResult = generateGuardResult({
+            isRestricted: true,
+            settings: [[{ term: 'Members', definition: 'Listed only' }]],
+        });
+        getSlotFunctionSpy.mockImplementation(((slotParams: {
+            pluginId: string;
+        }) =>
+            slotParams.pluginId === installedMeta.interfaceType
+                ? () => installedGuardResult
+                : undefined) as never);
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderGuard(params);

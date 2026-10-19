@@ -1,7 +1,13 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    DateFormat,
+    formatterUtils,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import en from '@/assets/locales/en.json';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import * as governanceServiceApi from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
@@ -18,6 +24,7 @@ import type {
 import * as safeServiceApi from '@/shared/api/safeService';
 import { useSafePendingTransactions } from '@/shared/api/safeService/queries/useSafePendingTransactions/useSafePendingTransactions';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as translationsProvider from '@/shared/components/translationsProvider';
 import {
     generateDao,
     generateDaoPlugin,
@@ -27,6 +34,7 @@ import {
     generateSafeQueueResponse,
     generateSafeTransaction,
 } from '@/shared/testUtils';
+import { translationUtils } from '@/shared/utils/translationsUtils';
 import { SafeDialogId } from '../../constants';
 import {
     type ISafePendingTransactionListProps,
@@ -45,6 +53,7 @@ describe('<SafePendingTransactionList /> component', () => {
         'useProposalBySlug',
     );
     const openDialog = jest.fn();
+    let useTranslationsSpy: jest.SpyInstance | undefined;
 
     const generateResponse = (results: ISafeMultisigTransaction[]) =>
         generateReactQueryResultSuccess<ISafeQueueResponse, Error>({
@@ -70,6 +79,8 @@ describe('<SafePendingTransactionList /> component', () => {
         useSafePendingTransactionsSpy.mockReset();
         useDialogContextSpy.mockReset();
         useProposalBySlugSpy.mockReset();
+        useTranslationsSpy?.mockRestore();
+        useTranslationsSpy = undefined;
         openDialog.mockReset();
     });
 
@@ -186,20 +197,29 @@ describe('<SafePendingTransactionList /> component', () => {
         ).toHaveLength(2);
     });
 
-    it('says the queue may be out of date when the response is served stale', () => {
+    it('shows when a stale queue was fetched', () => {
+        const fetchedAt = '2026-10-19T13:45:00.000Z';
+        const formattedFetchedAt = formatterUtils.formatDate(fetchedAt, {
+            format: DateFormat.YEAR_MONTH_DAY_TIME,
+        });
+        useTranslationsSpy = jest
+            .spyOn(translationsProvider, 'useTranslations')
+            .mockReturnValue({ t: translationUtils.t(en) });
         useSafePendingTransactionsSpy.mockReturnValue(
             generateReactQueryResultSuccess<ISafeQueueResponse, Error>({
                 data: generateSafeQueueResponse({
                     count: 1,
                     results: [generateSafeTransaction({ nonce: '11' })],
-                    meta: { source: 'cache', fetchedAt: '', stale: true },
+                    meta: { source: 'cache', fetchedAt, stale: true },
                 }),
             }),
         );
         render(createTestComponent());
 
         expect(
-            screen.getByText('app.safe.safePendingTransactionList.stale'),
+            screen.getByText(
+                `This queue could not be re-read from the Safe service, so it may be out of date. Last updated ${formattedFetchedAt}.`,
+            ),
         ).toBeInTheDocument();
     });
 
