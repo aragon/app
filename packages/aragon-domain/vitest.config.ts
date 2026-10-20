@@ -16,7 +16,7 @@ export default defineConfig({
         exclude: [...configDefaults.exclude, 'test/contract/**'],
         coverage: {
             provider: 'v8',
-            reporter: ['text', 'text-summary', 'html', 'lcov'],
+            reporter: ['text', 'text-summary', 'html', 'lcov', 'json'],
             include: ['src/**/*.ts'],
             exclude: [
                 'src/**/*.test.ts',
