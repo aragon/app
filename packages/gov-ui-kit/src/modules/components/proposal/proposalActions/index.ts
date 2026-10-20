@@ -4,6 +4,16 @@ import { ProposalActionsItem } from './proposalActionsItem';
 import { ProposalActionsItemSkeleton } from './proposalActionsItemSkeleton';
 import { ProposalActionsRoot } from './proposalActionsRoot';
 
+/**
+ * Usage notes:
+ *
+ * - Each `ProposalActions.Item` action must include `from`, `to`, `data`, `value`, `type`, and nullable
+ *   `inputData`. The kit has no built-in action views: pass a `CustomComponent` to render an action's basic view.
+ * - Render `ProposalActions.Item` as a child of `ProposalActions.Container`: the container injects each item's
+ *   zero-based `index`, and an item rendered without it throws.
+ * - `editMode` requires a `react-hook-form` `FormProvider`; set `readOnly` when an item must render outside a
+ *   provider without watching form values.
+ */
 export const ProposalActions = {
     Root: ProposalActionsRoot,
     Container: ProposalActionsContainer,
@@ -17,5 +27,4 @@ export * from './proposalActionsDefinitions';
 export * from './proposalActionsFooter';
 export * from './proposalActionsItem';
 export * from './proposalActionsItemSkeleton';
-export * from './proposalActionsList';
 export * from './proposalActionsRoot';

@@ -36,6 +36,14 @@ export interface IToggleGroupBaseProps<TMulti extends boolean>
 
 export type IToggleGroupProps = IToggleGroupBaseProps<true> | IToggleGroupBaseProps<false>;
 
+/**
+ * Usage notes:
+ *
+ * - `isMultiSelect` is required: with `false`, `value`/`defaultValue`/`onChange` use `string | undefined`; with
+ *   `true`, they use `string[] | undefined`.
+ * - Selection is controlled by the group; each `Toggle` child contributes a `value`, while the group owns
+ *   `value`/`defaultValue` and `onChange`.
+ */
 export const ToggleGroup = (props: IToggleGroupProps) => {
     const {
         variant = 'fixed',

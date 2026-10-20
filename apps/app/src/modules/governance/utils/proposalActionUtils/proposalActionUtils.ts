@@ -1,28 +1,43 @@
 import {
     addressUtils,
-    ProposalActionType as GukProposalActionType,
     type IProposalAction as IGukProposalAction,
-    type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata,
-    type IProposalActionUpdateMetadataDaoMetadata,
-    type IProposalActionUpdateMetadataDaoMetadataLink,
     ProposalActionTypeNoBasicView,
 } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, type Hex, toFunctionSelector } from 'viem';
-import {
-    type IProposalAction,
-    type IProposalActionUpdateMetadata,
-    type IProposalActionUpdateMetadataObject,
-    type IProposalActionUpdatePluginMetadata,
-    type IProposalActionUpdatePluginMetadataObject,
-    ProposalActionType,
-} from '@/modules/governance/api/governanceService';
-import type { IDao, IResource } from '@/shared/api/daoService';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import type { IDao } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { INormalizeActionsParams, IRawActionTuple } from '../../types';
 
 class ProposalActionUtils {
+    /**
+     * Parses the decoded value of an `Action[]` parameter (e.g. the `_actions` parameter of `createProposal`/`execute`)
+     * into raw action tuples. The backend returns each entry as a positional `[to, value, data]` array; object entries
+     * (`{ to, value, data }`) are accepted as well.
+     * @param value - Decoded parameter value.
+     * @returns The raw actions tuple, or an empty array when the value is not a list.
+     */
+    parseRawActionTuple = (value: unknown): IRawActionTuple[] => {
+        if (!Array.isArray(value)) {
+            return [];
+        }
+
+        return value.map((entry: unknown) => {
+            if (Array.isArray(entry)) {
+                const [to, actionValue, data] = entry as [
+                    string,
+                    string | number,
+                    string,
+                ];
+
+                return { to, value: String(actionValue), data };
+            }
+
+            return entry as IRawActionTuple;
+        });
+    };
+
     /**
      * Builds raw-calldata stubs out of a raw actions tuple, used as a fallback view when the decoded sub-actions of a
      * wrapper action are missing or out of sync with the tuple.
@@ -102,78 +117,12 @@ class ProposalActionUtils {
             IProposalAction[]
         >(GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS);
 
-        const pluginNormalizedActions = normalizeFunctions.reduce(
+        return normalizeFunctions.reduce(
             (current, normalizeFunction) =>
                 normalizeFunction({ actions: current, daoId: dao.id }),
             actions,
         );
-
-        return pluginNormalizedActions.map((action) =>
-            this.normalizeDefaultAction(action),
-        );
     };
-
-    normalizeDefaultAction = (action: IProposalAction): IGukProposalAction => {
-        if (this.isUpdateMetadataAction(action)) {
-            return this.normalizeUpdateMetaDataAction(action);
-        }
-
-        return action;
-    };
-
-    normalizeUpdateMetaDataAction = (
-        action:
-            | IProposalActionUpdateMetadata
-            | IProposalActionUpdatePluginMetadata,
-    ): IGukProposalActionUpdateMetadata => {
-        const { type, proposedMetadata, existingMetadata, ...otherValues } =
-            action;
-
-        const isPluginMetadata =
-            type === ProposalActionType.METADATA_PLUGIN_UPDATE;
-        const processedType = isPluginMetadata
-            ? GukProposalActionType.UPDATE_PLUGIN_METADATA
-            : GukProposalActionType.UPDATE_METADATA;
-
-        return {
-            ...otherValues,
-            type: processedType,
-            proposedMetadata: this.normalizeActionMetadata(proposedMetadata),
-            existingMetadata: this.normalizeActionMetadata(existingMetadata),
-        };
-    };
-
-    normalizeActionMetadata = (
-        metadata:
-            | IProposalActionUpdateMetadataObject
-            | IProposalActionUpdatePluginMetadataObject,
-    ): IProposalActionUpdateMetadataDaoMetadata => ({
-        ...metadata,
-        name: metadata.name ?? '',
-        description: metadata.description ?? '',
-        links: this.normalizeActionMetadataLinks(metadata.links),
-        avatar: this.normalizeActionMetadataAvatar(metadata),
-    });
-
-    normalizeActionMetadataAvatar = (
-        metadata:
-            | IProposalActionUpdateMetadataObject
-            | IProposalActionUpdatePluginMetadataObject,
-    ): string | undefined =>
-        'avatar' in metadata && metadata.avatar != null
-            ? ipfsUtils.cidToSrc(metadata.avatar)
-            : undefined;
-
-    normalizeActionMetadataLinks = (
-        links: IResource[] = [],
-    ): IProposalActionUpdateMetadataDaoMetadataLink[] =>
-        links.map(({ name, url }) => ({ label: name, href: url }));
-
-    isUpdateMetadataAction = (
-        action: Partial<IProposalAction>,
-    ): action is IProposalActionUpdateMetadata =>
-        action.type === ProposalActionType.METADATA_UPDATE ||
-        action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
 
     actionToFunctionSelector = (action: IProposalAction): Hex | undefined => {
         const { inputData, data } = action;

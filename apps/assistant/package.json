@@ -26,6 +26,7 @@
     },
     "dependencies": {
         "@aragon/assistant-contracts": "workspace:*",
+        "@aragon/docs-corpus": "workspace:*",
         "@linear/sdk": "catalog:",
         "@orama/orama": "catalog:",
         "@sentry/hono": "catalog:",
@@ -46,15 +47,12 @@
         "@hono/node-server": "catalog:",
         "@sentry/cli": "catalog:",
         "@types/jest": "catalog:",
-        "@types/mdast": "catalog:",
         "@types/node": "catalog:",
         "jest": "catalog:",
-        "mdast-util-from-markdown": "catalog:",
         "ts-jest": "catalog:",
         "tsup": "catalog:",
         "tsx": "catalog:",
-        "typescript": "catalog:",
-        "yaml": "catalog:"
+        "typescript": "catalog:"
     },
     "engines": {
         "node": ">=24.16.0"

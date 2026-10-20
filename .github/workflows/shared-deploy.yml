@@ -3,8 +3,9 @@
 # If a custom domain is specified, it assigns the deployment URL to that domain.
 # The workflow is workspace-agnostic: `workspace` selects the directory to deploy and `vault-prefix` selects the
 # 1Password vaults (`<vault-prefix>_infra` for Vercel credentials, `<vault-prefix>_<env>` for app secrets).
-# The assistant build also reads the private aragon/platform-doc repository (its knowledge base); the token for
-# that comes from the shared infrastructure vault and exists at build time only.
+# A build that reads the private aragon/platform-doc repository (the knowledge base behind the assistant and the docs
+# site) asks for the token with `docs-repo-token`; it comes from the shared infrastructure vault and exists at build
+# time only.
 
 name: Shared Deploy
 
@@ -52,6 +53,11 @@ on:
         type: string
       upload-sentry-source-maps:
         description: "Upload source maps using SENTRY_AUTH_TOKEN, SENTRY_ORG and SENTRY_PROJECT from the infrastructure vault"
+        required: false
+        type: boolean
+        default: false
+      docs-repo-token:
+        description: "Give the build the bot token that reads aragon/platform-doc (the knowledge base), build-time only"
         required: false
         type: boolean
         default: false
@@ -143,12 +149,12 @@ jobs:
           jq '.settings.rootDirectory = "${{ inputs.workspace }}"' .vercel/project.json > .vercel/project.json.tmp
           mv .vercel/project.json.tmp .vercel/project.json
 
-      # The assistant fetches aragon/platform-doc (private) while building its documentation index;
-      # the bot's PAT from the infrastructure vault reaches that build as DOCS_REPO_TOKEN. Build-time
+      # A build that fetches aragon/platform-doc (private) — the assistant's documentation index, the
+      # docs site — gets the bot's PAT from the infrastructure vault as DOCS_REPO_TOKEN. Build-time
       # only: it is never lifted into the deployment's runtime env vars.
       - name: Load docs repository token
         id: docs-token
-        if: inputs.workspace == 'apps/assistant'
+        if: inputs.docs-repo-token
         uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false

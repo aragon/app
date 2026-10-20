@@ -6,6 +6,8 @@ import { initGaugeRegistrarActionViews } from './gaugeRegistrar';
 import { gaugeRegistrarDialogsDefinitions } from './gaugeRegistrar/constants/gaugeRegistrarDialogsDefinitions';
 import { initGaugeVoterActionViews } from './gaugeVoter';
 import { gaugeVoterDialogsDefinitions } from './gaugeVoter/constants/gaugeVoterDialogsDefinitions';
+import { initMultisigActionViews } from './multisig';
+import { initTokenActionViews } from './token';
 
 export const initActionViewRegistry = () => {
     initCoreActionViews();
@@ -13,6 +15,8 @@ export const initActionViewRegistry = () => {
     initGaugeRegistrarActionViews();
     initGaugeVoterActionViews();
     initCapitalDistributorActionViews();
+    initMultisigActionViews();
+    initTokenActionViews();
 };
 
 export const actionsDialogsDefinitions = {

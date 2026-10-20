@@ -126,7 +126,7 @@ jobs:
 
       - name: Upload HTML report
         id: upload-report
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         if: always()
         with:
           name: playwright-bv-report-${{ inputs.environment }}
@@ -148,7 +148,7 @@ jobs:
           echo "| **HTML Report** | [View report](https://${ARTIFACT_VIEWER_HOST}/${{ github.repository }}/${{ steps.upload-report.outputs.artifact-id }}/index.html) |" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload traces on failure
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
         with:
           name: playwright-bv-traces-${{ inputs.environment }}

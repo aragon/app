@@ -5,6 +5,14 @@ import { type IInputComponentProps, InputContainer } from '../inputContainer';
 
 export interface ITextAreaProps extends IInputComponentProps<HTMLTextAreaElement> {}
 
+/**
+ * Usage notes:
+ *
+ * - When `maxLength` is set, an uncontrolled `defaultValue` does not initialize the character counter: it starts at
+ *   `0` and updates after an input change; controlled `value` changes synchronize it immediately.
+ * - The field wrapper is configured to grow and scroll, while the `<textarea>` starts with a `min-h-40` minimum
+ *   height; size the surrounding layout rather than assuming a fixed-height field.
+ */
 export const TextArea = forwardRef<HTMLTextAreaElement, ITextAreaProps>((props, ref) => {
     const { containerProps, inputProps } = useInputProps(props);
 

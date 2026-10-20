@@ -45,6 +45,7 @@ jobs:
       ref: ${{ github.event.release.tag_name || inputs.tag }}
       workspace: "apps/assistant"
       vault-prefix: "kv_assistant"
+      docs-repo-token: true
       patch-root-directory: false
       # VERCEL_ENV=production maps correctly at runtime; only the secrets need lifting.
       runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"

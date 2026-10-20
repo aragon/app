@@ -10,7 +10,6 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const cli = join(root, 'apps/app/node_modules/@tailwindcss/cli/dist/index.mjs');
 const entries = [
     'apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css',
-    '.design-sync/tailwind-entry.css',
 ];
 const overrideDeclarations = [
     ['--guk-avatar-container-position', 'relative'],

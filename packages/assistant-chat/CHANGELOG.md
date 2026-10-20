@@ -1,5 +1,11 @@
 # @aragon/assistant-chat
 
+## 0.5.3
+
+### Patch Changes
+
+- [#1449](https://github.com/aragon/app/pull/1449) [`2c28ae6`](https://github.com/aragon/app/commit/2c28ae66db1ca496314ff47f4c898e8009189a78) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (Next.js 16.3.7 with the GHSA-vcvr-r3jv-pc5j fix, framer-motion 13, Sentry 10.75, viem 2.57.1, assistant-ui 0.15.22, ai 7.0.123), add advisory floors for seroval, source-map-js and postcss-selector-parser, and bump pnpm to 11.28
+
 ## 0.5.2
 
 ### Patch Changes

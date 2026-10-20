@@ -43,7 +43,8 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
 
     const { getFieldState, trigger } = useFormContext();
 
-    const { fieldName, onRemoveMember } = useAddressesInputContext();
+    const { fieldName, inputIdPrefix, onRemoveMember } =
+        useAddressesInputContext();
 
     const membersField = useWatch<AddressListInputBaseForm>({
         name: fieldName,
@@ -97,9 +98,14 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
         <Card className="w-full shrink-0 border border-neutral-100 p-4 shadow-neutral-sm">
             <div className="flex w-full min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-2">
                 <AddressInput
+                    aria-label={t(
+                        'app.shared.addressesInput.item.input.accessibleName',
+                        { number: index + 1 },
+                    )}
                     chainId={chainId}
                     className="w-full min-w-0"
                     disabled={disabled}
+                    id={`${inputIdPrefix}-${index.toString()}`}
                     onAccept={handleAddressAccept}
                     onChange={setAddressInput}
                     placeholder={t(
@@ -127,7 +133,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
                     size="sm"
                     variant="tertiary"
                 >
-                    Remove
+                    {t('app.shared.addressesInput.item.remove')}
                 </Button>
             </div>
         </Card>

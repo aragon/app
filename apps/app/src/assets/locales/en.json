@@ -2,6 +2,10 @@
   "app": {
     "actions": {
       "core": {
+        "changeSettingsActionDetails": {
+          "existingToggle": "Existing",
+          "proposedToggle": "Proposed"
+        },
         "createProposalActionDetails": {
           "metadataTitle": "Title",
           "metadataSummary": "Summary",
@@ -63,6 +67,16 @@
           "riskWarning": "Permission changes are high risk and should be evaluated with a knowledge of the contracts involved.",
           "whereTerm": "Where",
           "whoTerm": "Who"
+        },
+        "updateMetadataActionDetails": {
+          "descriptionTerm": "Description",
+          "existingToggle": "Existing",
+          "linkTerm": "Links",
+          "logoTerm": "Logo",
+          "nameTerm": "Name",
+          "processKeyTerm": "Process Key",
+          "proposedToggle": "Proposed",
+          "summaryTerm": "Summary"
         }
       },
       "crossChainController": {
@@ -381,6 +395,18 @@
               "helpText": "After this time recipients will not be able to claim."
             }
           }
+        }
+      },
+      "multisig": {
+        "multisigChangeMembersActionDetails": {
+          "added": "Added",
+          "addedCount": "+{{count}} members",
+          "blockNote": "At the block in which the proposal was created",
+          "existingCount": "{{count}} members",
+          "existingMembers": "Existing members",
+          "removed": "Removed",
+          "removedCount": "-{{count}} members",
+          "summary": "Summary"
         }
       }
     },
@@ -4020,6 +4046,7 @@
         },
         "item": {
           "input": {
+            "accessibleName": "Member {{number}}",
             "error": {
               "alreadyInList": "Address has already been added.",
               "invalid": "Address is not valid."
