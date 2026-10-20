@@ -32,6 +32,9 @@ export const resolveServerRpcUrl = (network: Network): string | undefined => {
 
     const override = process.env[`NEXT_SECRET_RPC_OVERRIDE_${chainId}`];
     if (override) {
+        // An override can point at a keyed staging endpoint: have error reports scrub the whole URL.
+        monitoringUtils.registerSecret(override);
+
         return override;
     }
 
@@ -61,6 +64,9 @@ export const resolveServerRpcUrl = (network: Network): string | undefined => {
 
         return rpcUrls.default.http[0];
     }
+
+    // The key becomes part of a URL that can surface in telemetry: have error reports scrub it.
+    monitoringUtils.registerSecret(rpcKey);
 
     return `${privateRpcConfig.rpcUrl}${rpcKey}`;
 };

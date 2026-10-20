@@ -1,3 +1,5 @@
+import { monitoringUtils } from '../monitoringUtils';
+
 export interface ISerializedError {
     name?: string;
     message?: string;
@@ -22,9 +24,15 @@ class ErrorUtils {
      * "Converting circular structure to JSON" errors when the error
      * contains DOM element references (e.g., from React hydration errors
      * or Next.js metadata API errors).
+     *
+     * Server errors serialized here often cross to client components (`Page.Error`), and an
+     * upstream error can embed a secret: viem prints the keyed RPC URL in its message, stack and
+     * cause chain. The registered secrets are therefore redacted from the result.
      */
     serialize = (error: unknown): ISerializedError =>
-        this.serializeInternal(error, new WeakSet<object>(), 0);
+        monitoringUtils.redactSecrets(
+            this.serializeInternal(error, new WeakSet<object>(), 0),
+        );
 
     private serializeInternal = (
         error: unknown,

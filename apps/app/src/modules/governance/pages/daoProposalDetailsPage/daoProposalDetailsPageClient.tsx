@@ -10,7 +10,6 @@ import {
     formatterUtils,
     type IProposalActionsFooterDropdownItem,
     ProposalActions,
-    ProposalActionTypeNoBasicView,
     ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
@@ -177,22 +176,11 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
-    const processedActionData = actionData;
-
-    const hasActionDecodeMismatch =
-        processedActionData?.rawActions != null &&
-        processedActionData.rawActions.length !==
-            processedActionData.actions.length;
-    const proposalActions = hasActionDecodeMismatch
-        ? (processedActionData?.rawActions?.map((rawAction) => ({
-              from: creator.address,
-              to: rawAction.to,
-              data: rawAction.data,
-              value: rawAction.value,
-              type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
-              inputData: null,
-          })) ?? [])
-        : (processedActionData?.actions ?? []);
+    const proposalActions = proposalActionUtils.resolveActions(
+        actionData?.actions ?? [],
+        actionData?.rawActions,
+        creator.address,
+    );
 
     const normalizedProposalActions = proposalActionUtils.normalizeActions(
         proposalActions,

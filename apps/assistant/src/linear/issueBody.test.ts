@@ -76,11 +76,11 @@ describe('buildIssueDescription', () => {
             files: [],
         });
 
-        // Extracted fields render quoted line by line — no heading, mention, collapsible or
-        // checklist marker of the user content ever starts a line in the Description section.
-        for (const line of injection.split('\n')) {
-            expect(description).toContain(`> ${line}`);
-        }
+        // Extracted fields render quoted and escaped line by line — no heading, mention,
+        // collapsible or checklist marker of the user content renders, inside the quote or out.
+        expect(description).toContain(
+            '> \\# Fake heading\n> @aragon-team urgent\n> +++ Collapse\n> - \\[ \\] task',
+        );
         // The raw transcript renders as inert fenced data with an explicit provenance note for
         // any automation reading the ticket later.
         expect(description).toContain('untrusted end-user input');
@@ -99,6 +99,117 @@ describe('buildIssueDescription', () => {
 
         // Three backticks inside → the wrapping fence uses four, so the content cannot close it.
         expect(description).toContain('````text');
+    });
+
+    it('escapes the contact and attachment filenames so they cannot inject markdown', () => {
+        const description = buildIssueDescription({
+            sessionId,
+            fields: {
+                ...fields,
+                contact: 'me@example.com\n## Injected heading',
+            },
+            appContext,
+            messages: [buildUserMessage('hello')],
+            files: [
+                {
+                    assetUrl: 'https://uploads.linear.app/shot.png',
+                    filename: 'shot](https://evil.example)[.png',
+                },
+            ],
+        });
+
+        expect(description).not.toMatch(/^## Injected heading/m);
+        expect(description).toContain(
+            '- **Contact:** me@example.com \\#\\# Injected heading',
+        );
+        expect(description).not.toContain('](https://evil.example)');
+        expect(description).toContain(
+            '- [shot\\]\\(https://evil.example\\)\\[.png](https://uploads.linear.app/shot.png)',
+        );
+    });
+
+    it('quotes every line of the description and steps, whatever its line ending', () => {
+        const description = buildIssueDescription({
+            sessionId,
+            fields: {
+                ...fields,
+                description: 'Voting fails.\r# Injected heading\r\n- [ ] task',
+                stepsToReproduce: ['Open the proposal\r## Injected step'],
+            },
+            appContext,
+            messages: [buildUserMessage('hello')],
+            files: [],
+        });
+
+        expect(description).not.toContain('\r');
+        expect(description).toContain(
+            '> Voting fails.\n> \\# Injected heading\n> - \\[ \\] task',
+        );
+        expect(description).toContain(
+            '> 1. Open the proposal\n> \\#\\# Injected step',
+        );
+    });
+
+    it('escapes the quoted description so markdown cannot render inside the quote', () => {
+        const description = buildIssueDescription({
+            sessionId,
+            fields: {
+                ...fields,
+                description:
+                    'Reset at [this link](https://evil.example), ask @[Kevin](user-uuid) for `help`',
+            },
+            appContext,
+            messages: [buildUserMessage('hello')],
+            files: [],
+        });
+
+        expect(description).not.toContain('](https://evil.example)');
+        expect(description).toContain(
+            '> Reset at \\[this link\\]\\(https://evil.example\\), ask @\\[Kevin\\]\\(user-uuid\\) for \\`help\\`',
+        );
+    });
+
+    it('escapes the client-posted app context so it cannot inject markdown', () => {
+        const description = buildIssueDescription({
+            sessionId,
+            fields,
+            appContext: {
+                route: '/dao [replay](https://evil.example/r)',
+                appVersion: '1.0.0 ![](https://evil.example/p.png)',
+                daoAddress: '<img src="https://evil.example/i.png">',
+                network: 'base-mainnet',
+                walletAddress: '0xabc` [w](https://evil.example/w) x',
+                recentTransactions: [
+                    {
+                        type: '[t](https://evil.example/t)',
+                        status: '<b>ok</b>',
+                        hash: '0x1` [h](https://evil.example/h)',
+                    },
+                ],
+            },
+            messages: [buildUserMessage('hello')],
+            files: [],
+        });
+
+        expect(description).toContain(
+            '- **Route:** /dao \\[replay\\]\\(https://evil.example/r\\)',
+        );
+        expect(description).toContain(
+            '- **App version:** 1.0.0 !\\[\\]\\(https://evil.example/p.png\\)',
+        );
+        expect(description).toContain(
+            '- **DAO:** \\<img src="https://evil.example/i.png"\\>',
+        );
+        expect(description).toContain(
+            '- **Wallet:** 0xabc\\` \\[w\\]\\(https://evil.example/w\\) x',
+        );
+        // Values inside code spans get a delimiter longer than their own backtick runs.
+        expect(description).toContain(
+            '- **Sentry:** search ``user.id:0xabc` [w](https://evil.example/w) x``',
+        );
+        expect(description).toContain(
+            '- \\[t\\]\\(https://evil.example/t\\) — \\<b\\>ok\\</b\\> ``0x1` [h](https://evil.example/h)``',
+        );
     });
 
     it('renders the reproduction steps as a numbered quoted list', () => {

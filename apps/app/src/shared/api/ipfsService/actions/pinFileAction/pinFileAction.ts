@@ -12,9 +12,14 @@ export const pinFileAction = async ({
 }: IPinFileParams): Promise<IPinResult> =>
     monitoringUtils.serverActionWrapper('pinFileAction', async () => {
         await botIdUtils.assertHuman('pin');
+        await ipfsService.validateFile(file);
 
         const formData = new FormData();
         formData.append('file', file, file.name);
+        formData.append(
+            'pinataMetadata',
+            JSON.stringify(ipfsService.buildPinMetadata()),
+        );
         const headers = { Authorization: `Bearer ${ipfsService.jwt}` };
         const options = { headers, method: 'POST' };
         const result = await ipfsService.request<IPinResult>(
