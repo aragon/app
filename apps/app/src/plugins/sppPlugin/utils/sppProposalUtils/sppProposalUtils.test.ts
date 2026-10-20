@@ -2,11 +2,13 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { PluginInterfaceType } from '@/shared/api/daoService';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import {
     generateSppPluginSettings,
     generateSppProposal,
     generateSppStage,
+    generateSppStagePlugin,
 } from '../../testUtils';
 import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
@@ -38,6 +40,10 @@ describe('SppProposalUtils', () => {
         'getStageMaxAdvance',
     );
     const canStageAdvanceSpy = jest.spyOn(sppStageUtils, 'canStageAdvance');
+    const getSlotFunctionSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotFunction',
+    );
 
     afterEach(() => {
         getProposalStatusSpy.mockReset();
@@ -45,6 +51,7 @@ describe('SppProposalUtils', () => {
         getStageEndDateSpy.mockReset();
         getStageMaxAdvanceSpy.mockReset();
         canStageAdvanceSpy.mockReset();
+        getSlotFunctionSpy.mockReset();
     });
 
     const generateProposalWithStage = (
@@ -146,6 +153,11 @@ describe('SppProposalUtils', () => {
                         maxAdvance: 3_155_760_000,
                         approvalThreshold: 1,
                         vetoThreshold: 0,
+                        plugins: [
+                            generateSppStagePlugin({
+                                interfaceType: PluginInterfaceType.SAFE,
+                            }),
+                        ],
                     }),
                 ],
             });
@@ -161,6 +173,7 @@ describe('SppProposalUtils', () => {
             getStageEndDateSpy.mockImplementation(real.stageEndDate);
             getStageMaxAdvanceSpy.mockImplementation(real.stageMaxAdvance);
             canStageAdvanceSpy.mockImplementation(real.canStageAdvance);
+            getSlotFunctionSpy.mockReturnValue(() => true);
 
             expect(sppProposalUtils.getProposalStatus(proposal)).toBe(
                 ProposalStatus.ACTIVE,

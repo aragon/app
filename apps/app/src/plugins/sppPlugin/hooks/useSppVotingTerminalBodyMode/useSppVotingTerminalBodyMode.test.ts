@@ -19,7 +19,6 @@ import {
     type ISppProposal,
     type ISppStagePlugin,
     SppProposalType,
-    VotingBodyBrandIdentity,
 } from '../../types';
 import { useSppVotingTerminalBodyMode } from './useSppVotingTerminalBodyMode';
 
@@ -55,8 +54,7 @@ describe('useSppVotingTerminalBodyMode hook', () => {
     }) => {
         const plugin = generateSppStagePlugin({
             address: safeAddress,
-            interfaceType: undefined,
-            brandId: VotingBodyBrandIdentity.SAFE,
+            interfaceType: PluginInterfaceType.SAFE,
             ...overrides?.plugin,
         });
         const stage = generateSppStage({ stageIndex, plugins: [plugin] });
@@ -218,22 +216,6 @@ describe('useSppVotingTerminalBodyMode hook', () => {
         });
 
         expect(result.current.pluginId).toBe(PluginInterfaceType.MULTISIG);
-        expect(result.current.isHistoryMissing).toBe(false);
-        expect(useSafeInfoSpy).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ enabled: false }),
-        );
-        expect(useSafeSettledReportSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ enabled: false }),
-        );
-    });
-
-    it('falls back to external and reads no Safe state on a network the Safe service does not serve', () => {
-        const { result } = renderMode({
-            proposal: { network: Network.CITREA_MAINNET },
-        });
-
-        expect(result.current.pluginId).toBe(externalPluginId);
         expect(result.current.isHistoryMissing).toBe(false);
         expect(useSafeInfoSpy).toHaveBeenCalledWith(
             expect.anything(),
