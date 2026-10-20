@@ -75,6 +75,8 @@ The root only carries workspace-wide tasks (turbo fan-out) and root infra:
 ```sh
 pnpm dev          # Dev servers of all workspaces (turbo)
 pnpm test         # Jest/Vitest across workspaces (turbo)
+pnpm test:coverage  # Same with coverage, merged into coverage/ at the root (lcov + lcov-report/)
+pnpm coverage:report  # Re-merge the workspace coverage already on disk
 pnpm lint         # Biome check --write (auto-fix)
 pnpm lint:check   # Biome check (CI mode)
 pnpm type-check   # TypeScript check across workspaces
