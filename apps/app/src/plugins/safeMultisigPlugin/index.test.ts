@@ -1,10 +1,10 @@
 import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { Network } from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { useSppExternalPermissionCheckProposalCreation } from '../sppPlugin/hooks/useSppExternalPermissionCheckProposalCreation';
 import { generateSppStagePlugin } from '../sppPlugin/testUtils';
-import { VotingBodyBrandIdentity } from '../sppPlugin/types';
 import { sppStageUtils } from '../sppPlugin/utils/sppStageUtils';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
@@ -16,16 +16,15 @@ import { initialiseSafeMultisigPlugin } from './index';
 
 describe('safeMultisigPlugin registrations', () => {
     const safeBody = generateSppStagePlugin({
-        interfaceType: undefined,
-        brandId: VotingBodyBrandIdentity.SAFE,
+        interfaceType: PluginInterfaceType.SAFE,
     });
 
     beforeAll(() => {
         initialiseSafeMultisigPlugin();
     });
 
-    // A slot registered under an id the resolver never produces fails silently: the body simply
-    // renders through the generic external fallback. Pair the two rather than trusting either.
+    // A slot registered under an id the resolver never produces fails silently. Pair the
+    // canonical body resolver with each registration rather than trusting either.
     it.each([
         {
             slotId: SettingsSlotId.SETTINGS_PLUGIN_INFO,
@@ -47,19 +46,13 @@ describe('safeMultisigPlugin registrations', () => {
             slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
             component: SafeMultisigVoteList,
         },
-    ])(
-        'serves $slotId for a Safe body on a supported network',
-        ({ slotId, component }) => {
-            const pluginId = sppStageUtils.getBodyPluginId(
-                safeBody,
-                Network.ETHEREUM_SEPOLIA,
-            );
+    ])('serves $slotId for a canonical Safe body', ({ slotId, component }) => {
+        const pluginId = sppStageUtils.getBodyPluginId(safeBody);
 
-            expect(
-                pluginRegistryUtils.getSlotComponent({ slotId, pluginId }),
-            ).toEqual(component);
-        },
-    );
+        expect(
+            pluginRegistryUtils.getSlotComponent({ slotId, pluginId }),
+        ).toEqual(component);
+    });
 
     // The Votes tab exists for a Safe body only because this function answers for it; unregistered,
     // the shared chrome falls back to hiding Votes and the tab silently disappears.
@@ -69,10 +62,7 @@ describe('safeMultisigPlugin registrations', () => {
             ProposalVotingTab[]
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
-            pluginId: sppStageUtils.getBodyPluginId(
-                safeBody,
-                Network.ETHEREUM_SEPOLIA,
-            ),
+            pluginId: sppStageUtils.getBodyPluginId(safeBody),
         });
 
         expect(getHiddenTabs?.(undefined)).toEqual([]);
@@ -83,26 +73,32 @@ describe('safeMultisigPlugin registrations', () => {
     it('answers the vote-permission slot with the Safe ownership check', () => {
         const checkPermission = pluginRegistryUtils.getSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
-            pluginId: sppStageUtils.getBodyPluginId(
-                safeBody,
-                Network.ETHEREUM_SEPOLIA,
-            ),
+            pluginId: sppStageUtils.getBodyPluginId(safeBody),
         });
 
         expect(checkPermission).toEqual(useSafeMultisigVotePermissionCheck);
     });
 
-    it('leaves a Safe on an unserved network to the external fallbacks', () => {
-        const pluginId = sppStageUtils.getBodyPluginId(
-            safeBody,
-            Network.CITREA_MAINNET,
-        );
+    it('routes Safe proposal creation through the SPP condition check', () => {
+        const checkPermission = pluginRegistryUtils.getSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            pluginId: sppStageUtils.getBodyPluginId(safeBody),
+        });
 
-        expect(
-            pluginRegistryUtils.getSlotComponent({
-                slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY,
-                pluginId,
-            }),
-        ).toBeUndefined();
+        expect(checkPermission).toEqual(
+            useSppExternalPermissionCheckProposalCreation,
+        );
+    });
+
+    it('allows Safe bodies to report after the voting window', () => {
+        const votesAfterWindow = pluginRegistryUtils.getSlotFunction<
+            undefined,
+            boolean
+        >({
+            slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+            pluginId: sppStageUtils.getBodyPluginId(safeBody),
+        });
+
+        expect(votesAfterWindow?.(undefined)).toBe(true);
     });
 });

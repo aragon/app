@@ -1,9 +1,7 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import { type Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     type PluginId,
     pluginRegistryUtils,
@@ -14,32 +12,15 @@ import {
     type ISppStagePlugin,
     type ISppSubProposal,
     SppProposalType,
-    VotingBodyBrandIdentity,
 } from '../../types';
 
 class SppStageUtils {
     /**
-     * Resolves the plugin id a stage body is rendered through. Installed bodies use their own
-     * interface type; external bodies fall back to the generic external id unless they are a Safe
-     * on a chain the Safe transaction service covers, which resolves to the canonical Safe identity.
-     * Networks without a transaction service therefore keep rendering through the external
-     * fallbacks with no extra branching.
+     * Resolves the plugin id a stage body is rendered through. Canonical bodies use their backend
+     * interface type; external bodies use the generic fallback.
      */
-    getBodyPluginId = (
-        plugin: ISppStagePlugin,
-        network?: Network,
-    ): PluginId => {
-        if (plugin.interfaceType != null) {
-            return plugin.interfaceType;
-        }
-
-        const isSupportedSafe =
-            plugin.brandId === VotingBodyBrandIdentity.SAFE &&
-            network != null &&
-            safeShortNameFromNetwork(network) != null;
-
-        return isSupportedSafe ? PluginInterfaceType.SAFE : externalPluginId;
-    };
+    getBodyPluginId = (plugin: ISppStagePlugin): PluginId =>
+        plugin.interfaceType ?? externalPluginId;
 
     getStageStatus = (
         proposal: ISppProposal,
@@ -86,11 +67,14 @@ class SppStageUtils {
             ? endsInFuture
             : endsInFuture && (!approvalReached || isSignalling);
 
-        // Actionability is not this function's answer: defer to the same predicate the advance
-        // action uses, so the label cannot claim an advance the action correctly blocks. Deriving
-        // it here separately dropped the `minAdvance` floor (nonce-map defect #12).
+        // Approval makes the live stage advanceable immediately; the action itself remains
+        // disabled until minAdvance through `canStageAdvance`, preserving the timelock countdown.
         const isAdvanceable =
-            !isLastStage && this.canStageAdvance(proposal, stage);
+            !isLastStage &&
+            approvalReached &&
+            !isSignalling &&
+            stageIndex === currentStage &&
+            isWithinMaxAdvance;
 
         const isExpired =
             !executed.status &&
@@ -120,15 +104,18 @@ class SppStageUtils {
         }
 
         if (!approvalReached) {
-            // An unmet threshold after voting close is not yet met, not rejected: a late approval
-            // still counts while the stage can advance, and a body's signature would still change
-            // the outcome (nonce-map defect #2). Scoped to the live stage of an unexecuted
-            // proposal: a stage the proposal already left, or one under an executed proposal, has
-            // a settled result and must not reopen as active.
+            const bodyReportsAfterWindow = stage.plugins.some(
+                (plugin) =>
+                    pluginRegistryUtils.getSlotFunction<undefined, boolean>({
+                        slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+                        pluginId: this.getBodyPluginId(plugin),
+                    })?.(undefined) === true,
+            );
             const isAwaitingLateResult =
                 stageIndex === currentStage &&
                 !executed.status &&
-                isWithinMaxAdvance;
+                isWithinMaxAdvance &&
+                bodyReportsAfterWindow;
 
             return isAwaitingLateResult
                 ? ProposalStatus.ACTIVE
@@ -344,7 +331,7 @@ class SppStageUtils {
             boolean
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-            pluginId: this.getBodyPluginId(plugin, proposal.network),
+            pluginId: this.getBodyPluginId(plugin),
         });
 
         const subProposal = this.getBodySubProposal(

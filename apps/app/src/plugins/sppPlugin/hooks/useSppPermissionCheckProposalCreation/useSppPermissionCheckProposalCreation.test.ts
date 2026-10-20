@@ -197,33 +197,30 @@ describe('useSppPermissionCheckProposalCreation', () => {
     });
 
     const createSafeTestParams = (
-        safeBody?: Partial<
-            Parameters<typeof generateSppStagePlugin>[0] & {
-                brandId: VotingBodyBrandIdentity;
-                proposalCreationConditionAddress?: string;
-            }
-        >,
+        safeBody?: Partial<Parameters<typeof generateSppStagePlugin>[0]>,
     ) => {
+        const body = generateSppStagePlugin({
+            address: `0x${'b'.repeat(40)}`,
+            interfaceType: daoService.PluginInterfaceType.SAFE,
+            ...safeBody,
+        });
         const sppPlugin = generateDaoPlugin({
             address: `0x${'a'.repeat(40)}`,
             settings: generateSppPluginSettings({
-                stages: [
-                    generateSppStage({
-                        plugins: [
-                            generateSppStagePlugin({
-                                address: `0x${'b'.repeat(40)}`,
-                                interfaceType: undefined,
-                                brandId: VotingBodyBrandIdentity.SAFE,
-                                ...safeBody,
-                            }),
-                        ],
-                    }),
-                ],
+                stages: [generateSppStage({ plugins: [body] })],
             }),
         });
 
-        // External bodies are not DAO plugins, so no meta matches by address.
-        useDaoPluginsSpy.mockReturnValue([]);
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({
+                    address: body.address,
+                    interfaceType: daoService.PluginInterfaceType.SAFE,
+                    proposalCreationConditionAddress:
+                        body.proposalCreationConditionAddress,
+                }),
+            }),
+        ]);
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
@@ -255,14 +252,6 @@ describe('useSppPermissionCheckProposalCreation', () => {
             address,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
         });
-        useDaoPluginsSpy.mockReturnValue([
-            generateFilterComponentPlugin({
-                meta: generateDaoPlugin({
-                    address,
-                    interfaceType: daoService.PluginInterfaceType.SAFE,
-                }),
-            }),
-        ]);
 
         return { address, params };
     };
@@ -328,6 +317,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const address = `0x${'b'.repeat(40)}`;
         const params = createSafeTestParams({
             address,
+            interfaceType: undefined,
             brandId: VotingBodyBrandIdentity.EOA,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
         });
@@ -368,8 +358,8 @@ describe('useSppPermissionCheckProposalCreation', () => {
                             }),
                             generateSppStagePlugin({
                                 address: safeAddress,
-                                interfaceType: undefined,
-                                brandId: VotingBodyBrandIdentity.SAFE,
+                                interfaceType:
+                                    daoService.PluginInterfaceType.SAFE,
                                 proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
                             }),
                         ],
@@ -405,16 +395,18 @@ describe('useSppPermissionCheckProposalCreation', () => {
 
     it.each([
         {
-            name: 'combines an installed internal body with an external Safe body in the same process',
+            name: 'combines an installed internal body with a canonical Safe body in the same process',
             safeAddress: `0x${'2'.repeat(40)}`,
             buildSppPlugin: buildStageBodySafeSppPlugin,
+            hasCanonicalSafeBody: true,
         },
         {
             name: 'appends external proposer Safe groups after stage-body groups',
             safeAddress: `0x${'e'.repeat(40)}`,
             buildSppPlugin: buildExternalProposerSafeSppPlugin,
+            hasCanonicalSafeBody: false,
         },
-    ])('$name', ({ safeAddress, buildSppPlugin }) => {
+    ])('$name', ({ safeAddress, buildSppPlugin, hasCanonicalSafeBody }) => {
         const internalAddress = `0x${'1'.repeat(40)}`;
 
         const internalMeta = generateDaoPlugin({ address: internalAddress });
@@ -430,14 +422,25 @@ describe('useSppPermissionCheckProposalCreation', () => {
 
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin({ meta: internalMeta }),
+            ...(hasCanonicalSafeBody
+                ? [
+                      generateFilterComponentPlugin({
+                          meta: generateDaoPlugin({
+                              address: safeAddress,
+                              interfaceType:
+                                  daoService.PluginInterfaceType.SAFE,
+                              proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+                          }),
+                      }),
+                  ]
+                : []),
         ]);
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
 
-        // Only the internal body resolves to a slot function; the external Safe
-        // (stage body or external proposer) falls through to the fallback hook
-        // (pluginId 'external').
+        // The internal body resolves to its own guard. Canonical and external Safe bodies use
+        // the Safe-compatible permission hook with their proposal-creation condition.
         getSlotFunctionSpy.mockImplementation(((slotParams: {
             pluginId: string;
         }) =>

@@ -1,7 +1,7 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import { Network, PluginInterfaceType } from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import {
@@ -31,26 +31,14 @@ describe('SppStageUtils', () => {
                 plugin: generateSppStagePlugin({
                     interfaceType: PluginInterfaceType.MULTISIG,
                 }),
-                network: Network.ETHEREUM_MAINNET,
                 expected: PluginInterfaceType.MULTISIG,
             },
             {
-                label: 'a Safe on a supported network',
+                label: 'a canonical Safe body',
                 plugin: generateSppStagePlugin({
-                    interfaceType: undefined,
-                    brandId: VotingBodyBrandIdentity.SAFE,
+                    interfaceType: PluginInterfaceType.SAFE,
                 }),
-                network: Network.ETHEREUM_MAINNET,
                 expected: PluginInterfaceType.SAFE,
-            },
-            {
-                label: 'a Safe on an unsupported network',
-                plugin: generateSppStagePlugin({
-                    interfaceType: undefined,
-                    brandId: VotingBodyBrandIdentity.SAFE,
-                }),
-                network: Network.CITREA_MAINNET,
-                expected: externalPluginId,
             },
             {
                 label: 'a generic external body',
@@ -58,13 +46,10 @@ describe('SppStageUtils', () => {
                     interfaceType: undefined,
                     brandId: VotingBodyBrandIdentity.OTHER,
                 }),
-                network: Network.ETHEREUM_MAINNET,
                 expected: externalPluginId,
             },
-        ])('resolves $label to $expected', ({ plugin, network, expected }) => {
-            expect(sppStageUtils.getBodyPluginId(plugin, network)).toEqual(
-                expected,
-            );
+        ])('resolves $label to $expected', ({ plugin, expected }) => {
+            expect(sppStageUtils.getBodyPluginId(plugin)).toEqual(expected);
         });
     });
 
@@ -569,7 +554,7 @@ describe('SppStageUtils', () => {
             );
         });
 
-        it('does not report advanceable while the minAdvance floor blocks the advance action', () => {
+        it('reports advanceable while minAdvance keeps the action disabled', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 });
             const minAdvance = DateTime.fromISO(now).plus({ days: 1 });
@@ -594,11 +579,8 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
 
-            // The stage's threshold is met, so the stage reads ACCEPTED - but `canStageAdvance`
-            // refuses until `minAdvance` passes, and the label must not claim an advance the
-            // action blocks.
             expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
-                ProposalStatus.ACCEPTED,
+                ProposalStatus.ADVANCEABLE,
             );
             expect(sppStageUtils.canStageAdvance(proposal, stages[1])).toBe(
                 false,
@@ -619,7 +601,18 @@ describe('SppStageUtils', () => {
             );
         });
 
-        it('does not report rejected while a late approval can still advance the stage', () => {
+        it.each([
+            {
+                label: 'keeps a stage active for a body that reports after the voting window',
+                votesAfterWindow: true,
+                expected: ProposalStatus.ACTIVE,
+            },
+            {
+                label: 'rejects a stage whose body cannot report after the voting window',
+                votesAfterWindow: false,
+                expected: ProposalStatus.REJECTED,
+            },
+        ])('$label', ({ expected, votesAfterWindow }) => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 3 });
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
@@ -627,7 +620,14 @@ describe('SppStageUtils', () => {
             const maxAdvance = DateTime.fromISO(now).plus({ days: 2 });
 
             const stages = [
-                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({
+                    stageIndex: 0,
+                    plugins: [
+                        generateSppStagePlugin({
+                            interfaceType: PluginInterfaceType.SAFE,
+                        }),
+                    ],
+                }),
                 generateSppStage({ stageIndex: 1 }),
             ];
             const proposal = generateSppProposal({
@@ -641,13 +641,13 @@ describe('SppStageUtils', () => {
             getStageMinAdvanceSpy.mockReturnValue(minAdvance);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(false);
+            getSlotFunctionSpy.mockReturnValue(
+                votesAfterWindow ? () => true : undefined,
+            );
             timeUtils.setTime(now);
 
-            // Voting has closed with the threshold unmet, but a report landing before
-            // `maxAdvance` still counts - telling an owner the proposal is dead while their
-            // signature would change the outcome is the harm here.
             expect(sppStageUtils.getStageStatus(proposal, stages[0])).toBe(
-                ProposalStatus.ACTIVE,
+                expected,
             );
         });
 

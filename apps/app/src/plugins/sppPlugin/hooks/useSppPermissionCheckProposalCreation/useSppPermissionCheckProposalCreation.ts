@@ -6,11 +6,7 @@ import type {
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import {
-    type IDaoPlugin,
-    PluginInterfaceType,
-    useDao,
-} from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppPluginSettings, ISppStagePlugin } from '../../types';
@@ -62,14 +58,15 @@ export const useSppPermissionCheckProposalCreation = (
     const sppPlugins = [...stageBodies, ...externalProposers];
 
     const pluginProposalCreationGuardResults = sppPlugins.map((sppPlugin) => {
-        const canResolvePlugin =
-            sppPlugin.interfaceType != null ||
-            sppPlugin.brandId === VotingBodyBrandIdentity.SAFE;
-        const subPlugin = canResolvePlugin
-            ? daoPlugins.find(({ meta }) =>
-                  addressUtils.isAddressEqual(meta.address, sppPlugin.address),
-              )
-            : undefined;
+        const subPlugin =
+            sppPlugin.interfaceType != null
+                ? daoPlugins.find(({ meta }) =>
+                      addressUtils.isAddressEqual(
+                          meta.address,
+                          sppPlugin.address,
+                      ),
+                  )
+                : undefined;
 
         // Internal bodies not installed on the DAO can't be resolved, so skip them.
         if (subPlugin == null && sppPlugin.interfaceType != null) {
@@ -77,12 +74,7 @@ export const useSppPermissionCheckProposalCreation = (
         }
 
         const pluginId = subPlugin?.meta.interfaceType ?? externalPluginId;
-        // Safe eligibility comes from the SPP stage condition, not the canonical DAO plugin record.
-        const bodyPlugin = (
-            pluginId === PluginInterfaceType.SAFE
-                ? sppPlugin
-                : (subPlugin?.meta ?? sppPlugin)
-        ) as IDaoPlugin;
+        const bodyPlugin = (subPlugin?.meta ?? sppPlugin) as IDaoPlugin;
         const permissionCheck =
             pluginRegistryUtils.getSlotFunction<
                 IPermissionCheckGuardParams,

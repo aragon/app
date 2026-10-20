@@ -3,17 +3,16 @@ import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
+import { type IDaoPlugin, PluginInterfaceType } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import type { ISppStagePluginExternal } from '../../types';
 import { VotingBodyBrandIdentity } from '../../types';
 
 export interface IUseSppExternalPermissionCheckProposalCreationParams
     extends IPermissionCheckGuardParams {}
 
 /**
- * Permission check for Safe SPP stage descriptors. Registered for the canonical Safe plugin and
- * used as the fallback for external SPP bodies that have no registered slot function.
+ * Permission check for canonical and external Safe SPP stage descriptors.
  *
  * A Safe body can create proposals only when a SafeOwnerCondition was wired at process creation,
  * surfaced as `proposalCreationConditionAddress` on the stage body. When set, the body contributes a
@@ -25,19 +24,19 @@ export const useSppExternalPermissionCheckProposalCreation = (
     const { plugin, daoId } = params;
 
     const { t } = useTranslations();
-
-    const externalBody = plugin as unknown as ISppStagePluginExternal;
-
+    const body = plugin as IDaoPlugin & {
+        brandId?: VotingBodyBrandIdentity;
+    };
     const isSafeProposalCreator =
-        externalBody.brandId === VotingBodyBrandIdentity.SAFE &&
-        externalBody.proposalCreationConditionAddress != null;
+        (body.interfaceType === PluginInterfaceType.SAFE ||
+            body.brandId === VotingBodyBrandIdentity.SAFE) &&
+        body.proposalCreationConditionAddress != null;
 
     const { buildEntityUrl } = useDaoChain({ daoId });
     const addressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
-        id: externalBody.address,
+        id: body.address,
     });
-
     if (!isSafeProposalCreator) {
         return undefined;
     }
@@ -52,9 +51,7 @@ export const useSppExternalPermissionCheckProposalCreation = (
                     term: t(
                         'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
                     ),
-                    definition: addressUtils.truncateAddress(
-                        externalBody.address,
-                    ),
+                    definition: addressUtils.truncateAddress(body.address),
                     link: {
                         href: addressLink,
                         isExternal: true,
