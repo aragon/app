@@ -18,13 +18,11 @@ import { SafeServiceError } from './safeServiceError';
  *
  * - **writes** — proposing and confirming carry a per-owner signature, so they are pass-through by
  *   nature and must never be cached;
- * - **balances** — Aragon already owns balances end to end via `/v2/assets`, but that is fed by
- *   `aragon-transfers`, which indexes DAO addresses rather than arbitrary Safes. Cutting over needs
- *   that verified against a running stack, which belongs to the Safe-as-account work (APP-1096)
- *   along with the account page that is its only consumer.
+ * - **balances** — `/v2/assets` indexes DAO addresses rather than arbitrary Safes, so the Safe
+ *   account page still reads balances from the Safe transaction service.
  *
- * This file, the `/api/safe` route and `proxySafeUtils` are deleted together once APP-1096 resolves
- * balances and the writes are given a backend endpoint.
+ * This file, the `/api/safe` route and `proxySafeUtils` are deleted together once balances and
+ * signature-bearing writes have backend endpoints.
  */
 class SafeTransactionService extends HttpService {
     private basePaths = {

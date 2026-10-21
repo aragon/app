@@ -1,5 +1,7 @@
 import { revalidateTag } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
+// biome-ignore lint/style/noRestrictedImports: this route handler cannot import the gov-ui-kit client shim.
+import { isAddress } from 'viem';
 import { SafeServiceErrorCode } from '@/shared/api/safeService/domain';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
@@ -47,7 +49,6 @@ interface ISafeErrorResponseParams {
     retryAfter?: number;
 }
 
-const safeAddressPattern = /^0x[a-fA-F0-9]{40}$/;
 const safeTransactionHashPattern = /^0x[a-fA-F0-9]{64}$/;
 
 export class ProxySafeUtils {
@@ -353,7 +354,7 @@ export class ProxySafeUtils {
         const chainTag = `safe:${chainId}`;
         const address = path[1] === 'safes' ? path[2] : undefined;
 
-        if (address == null || !safeAddressPattern.test(address)) {
+        if (address == null || !isAddress(address, { strict: false })) {
             return [chainTag];
         }
 
@@ -374,7 +375,7 @@ export class ProxySafeUtils {
                 path.length === 4 &&
                 path[0] === 'v1' &&
                 path[1] === 'safes' &&
-                safeAddressPattern.test(path[2]) &&
+                isAddress(path[2], { strict: false }) &&
                 path[3] === 'balances'
             );
         }
@@ -385,7 +386,7 @@ export class ProxySafeUtils {
             path.length === 4 &&
             path[0] === 'v1' &&
             path[1] === 'safes' &&
-            safeAddressPattern.test(path[2]) &&
+            isAddress(path[2], { strict: false }) &&
             path[3] === 'multisig-transactions';
         const isConfirmationPath =
             path.length === 4 &&

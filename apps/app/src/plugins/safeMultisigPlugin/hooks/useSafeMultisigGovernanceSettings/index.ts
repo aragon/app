@@ -1,1 +1,4 @@
-export { useSafeMultisigGovernanceSettings } from './useSafeMultisigGovernanceSettings';
+export {
+    type IUseSafeMultisigGovernanceSettingsParams,
+    useSafeMultisigGovernanceSettings,
+} from './useSafeMultisigGovernanceSettings';

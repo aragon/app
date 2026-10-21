@@ -61,6 +61,12 @@ export interface ISppVotingTerminalBodyContentProps {
     children?: ReactNode;
 }
 
+interface ISppBodyGovernanceSettingsParams
+    extends IUseGovernanceSettingsParams {
+    proposal: ISppProposal;
+    stage: ISppStage;
+}
+
 const votesPerPage = 6;
 
 export const SppVotingTerminalBodyContent: React.FC<
@@ -121,7 +127,7 @@ export const SppVotingTerminalBodyContent: React.FC<
         ? {}
         : (subProposal?.settings ?? plugin.settings);
     const settings = useSlotSingleFunction<
-        IUseGovernanceSettingsParams,
+        ISppBodyGovernanceSettingsParams,
         IDefinitionSetting[]
     >({
         params: {
