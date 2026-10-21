@@ -21,9 +21,32 @@ const signersPerPage = 6;
 
 const translationKey = 'app.plugins.safeMultisig.safeMultisigVoteList';
 
+type SafeMultisigProposalVoteListProps = ISafeMultisigVoteListProps &
+    Required<Pick<ISafeMultisigVoteListProps, 'body' | 'proposal' | 'stage'>>;
+
 export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
     props,
 ) => {
+    const { body, proposal, stage } = props;
+
+    // The shared vote-list slot also renders on member pages, where no proposal exists.
+    if (body == null || proposal == null || stage == null) {
+        return null;
+    }
+
+    return (
+        <SafeMultisigProposalVoteList
+            {...props}
+            body={body}
+            proposal={proposal}
+            stage={stage}
+        />
+    );
+};
+
+const SafeMultisigProposalVoteList: React.FC<
+    SafeMultisigProposalVoteListProps
+> = (props) => {
     const { proposal, body, stage, isVeto } = props;
     const network = proposal.network;
 

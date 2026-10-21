@@ -7,7 +7,11 @@ import {
 } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { useEnsName } from '@/modules/ens';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
-import { SppProposalType } from '@/plugins/sppPlugin/types';
+import {
+    type ISppProposal,
+    type ISppStage,
+    SppProposalType,
+} from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useSafeInfo } from '@/shared/api/safeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -15,8 +19,14 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { safeMultisigSettingsUtils } from '../../utils/safeMultisigSettingsUtils';
 import { useSafeSettledReport } from '../useSafeSettledReport';
 
+export interface IUseSafeMultisigGovernanceSettingsParams
+    extends IUseGovernanceSettingsParams {
+    proposal?: ISppProposal;
+    stage?: ISppStage;
+}
+
 export const useSafeMultisigGovernanceSettings = (
-    params: IUseGovernanceSettingsParams,
+    params: IUseSafeMultisigGovernanceSettingsParams,
 ): IDefinitionSetting[] => {
     const { daoId, pluginAddress, proposal, stage } = params;
     const { t } = useTranslations();
