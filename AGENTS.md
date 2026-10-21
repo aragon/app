@@ -1,6 +1,6 @@
 # Aragon App monorepo
 
-pnpm workspaces + Turborepo monorepo. Node >=24.16, pnpm. The main package is `apps/app` (`@aragon/app`) — a Next.js 16 + React 19 + TypeScript plugin-based DAO governance platform.
+pnpm workspaces + Turborepo monorepo. Node >=24.22.1, pnpm. The main package is `apps/app` (`@aragon/app`) — a Next.js 16 + React 19 + TypeScript plugin-based DAO governance platform.
 
 This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGENTS.md` so Claude Code picks up the same content. Personal/IC-local agent context lives under `.agents/local/` and `.claude/` (both gitignored) and **supplements** — never replaces — what's here.
 

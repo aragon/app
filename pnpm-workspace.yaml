@@ -105,7 +105,7 @@ sideEffectsCache: true
 preferFrozenLockfile: true
 dedupePeerDependents: true
 ignoreScripts: true
-nodeVersion: 24.16.0
+nodeVersion: 24.22.1
 engineStrict: true
 
 # pnpm package extensions
