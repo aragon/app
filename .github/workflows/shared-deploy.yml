@@ -87,6 +87,28 @@ jobs:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_infra"
 
+      # Project-scoped tokens can only reach their own project: `--scope` (resolves the user and the
+      # team), `vercel pull` on CLI 58.4.4 (looks up the owner team) and `vercel alias` (loads the
+      # user) all fail with them. Classic and team tokens keep the CLI path unchanged; project tokens
+      # take the REST fallbacks in the pull and alias steps, linked by VERCEL_ORG_ID/VERCEL_PROJECT_ID.
+      - name: Detect Vercel token scope
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $VERCEL_TOKEN" https://api.vercel.com/v2/user)
+          case "$status" in
+            200)
+              echo "VERCEL_PROJECT_TOKEN=false" >> "$GITHUB_ENV"
+              echo "VERCEL_SCOPE_ARGS=--scope $VERCEL_SCOPE" >> "$GITHUB_ENV"
+              ;;
+            403|404)
+              echo "VERCEL_PROJECT_TOKEN=true" >> "$GITHUB_ENV"
+              echo "VERCEL_SCOPE_ARGS=" >> "$GITHUB_ENV"
+              ;;
+            *)
+              echo "::error::Unexpected HTTP $status from the Vercel API while detecting the token scope" >&2
+              exit 1
+              ;;
+          esac
+
       - name: Checkout actions
         uses: actions/checkout@v7.0.1
         with:
@@ -134,7 +156,25 @@ jobs:
       # pnpm workspace root as the build root (pnpm symlinks point outside the workspace); project
       # linking comes from VERCEL_ORG_ID/VERCEL_PROJECT_ID (1Password), independent of cwd.
       - name: Pull Vercel project settings
-        run: pnpm vercel pull --yes --environment=${{ (inputs.env == 'production' && 'production') || 'preview' }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+        env:
+          VERCEL_TARGET: ${{ (inputs.env == 'production' && 'production') || 'preview' }}
+        run: |
+          set -o pipefail
+          if [ "$VERCEL_PROJECT_TOKEN" != "true" ]; then
+            pnpm vercel pull --yes --environment="$VERCEL_TARGET" --token=${{ env.VERCEL_TOKEN }} ${{ env.VERCEL_SCOPE_ARGS }}
+            exit 0
+          fi
+          # The two files `vercel pull` writes, fetched from the same project-level endpoints.
+          auth="Authorization: Bearer $VERCEL_TOKEN"
+          mkdir -p .vercel
+          curl -fsS -H "$auth" "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_ORG_ID" \
+            | jq --arg orgId "$VERCEL_ORG_ID" '{projectId: .id, orgId: $orgId, projectName: .name,
+                settings: {createdAt, framework, devCommand, installCommand, buildCommand,
+                  outputDirectory, rootDirectory, directoryListing, nodeVersion}}' > .vercel/project.json
+          curl -fsS -H "$auth" "https://api.vercel.com/v3/env/pull/$VERCEL_PROJECT_ID/$VERCEL_TARGET?teamId=$VERCEL_ORG_ID" \
+            | jq -r '"# Created by Vercel CLI", (.env | to_entries | sort_by(.key) | .[]
+                | select(.key | IN("VERCEL_ANALYTICS_ID", "VERCEL_SPEED_INSIGHTS_ID", "VERCEL_WEB_ANALYTICS_ID") | not)
+                | "\(.key)=\"\(.value // "" | gsub("\n"; "\\n") | gsub("\r"; "\\r"))\"")' > ".vercel/.env.$VERCEL_TARGET.local"
 
       # TEMPORARY workaround for apps/app: its Vercel project has no Root Directory configured
       # (pre-monorepo branches still run the CLI from the repo root where the app used to live).
@@ -165,7 +205,7 @@ jobs:
       - name: Bundle Vercel application
         env:
           DOCS_REPO_TOKEN: ${{ steps.docs-token.outputs.DOCS_REPO_TOKEN }}
-        run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+        run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} ${{ env.VERCEL_SCOPE_ARGS }}
 
       - name: Upload source maps to Sentry
         if: inputs.upload-sentry-source-maps
@@ -208,7 +248,7 @@ jobs:
               runtime_args+=(-e "${key}=${value}")
             fi
           done
-          pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} "${runtime_args[@]}" --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+          pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} "${runtime_args[@]}" --yes --token=${{ env.VERCEL_TOKEN }} ${{ env.VERCEL_SCOPE_ARGS }} > deployment-url.txt
 
       # `vercel deploy` writes progress to stderr and the URL to stdout — take the last line so an
       # extra line can never turn the output into a malformed multi-line entry, and stop here if
@@ -225,7 +265,24 @@ jobs:
 
       - name: Set deployment alias
         if: inputs.domain != ''
-        run: pnpm vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+        env:
+          DEPLOYMENT_URL: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
+          DOMAIN: ${{ inputs.domain }}
+        run: |
+          if [ "$VERCEL_PROJECT_TOKEN" != "true" ]; then
+            pnpm vercel alias "$DEPLOYMENT_URL" "$DOMAIN" --token=${{ env.VERCEL_TOKEN }} ${{ env.VERCEL_SCOPE_ARGS }}
+            exit 0
+          fi
+          # The request `vercel alias` makes; like the CLI, 409 (alias already assigned) is a success.
+          status=$(curl -sS -o alias-response.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $VERCEL_TOKEN" -H "Content-Type: application/json" \
+            -d "{\"alias\":\"$DOMAIN\"}" \
+            "https://api.vercel.com/v2/deployments/${DEPLOYMENT_URL#https://}/aliases?teamId=$VERCEL_ORG_ID")
+          if [ "$status" != "200" ] && [ "$status" != "409" ]; then
+            echo "::error::Assigning $DOMAIN failed with HTTP $status: $(cat alias-response.json)" >&2
+            exit 1
+          fi
+          echo "https://$DOMAIN now points to $DEPLOYMENT_URL"
 
   # The runner drops a job output whose value contains a masked substring ("Skip output ... since it
   # may contain secret"), so a successful deploy can still hand callers an empty URL — a broken PR
