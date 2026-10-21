@@ -19,6 +19,7 @@ import {
     type ISppProposal,
     type ISppStagePlugin,
     SppProposalType,
+    VotingBodyBrandIdentity,
 } from '../../types';
 import { useSppVotingTerminalBodyMode } from './useSppVotingTerminalBodyMode';
 
@@ -77,6 +78,21 @@ describe('useSppVotingTerminalBodyMode hook', () => {
             useSppVotingTerminalBodyMode({ plugin, proposal, stage }),
         );
     };
+
+    it('uses the native Safe flow for a branded stage body on a supported network', () => {
+        const { result } = renderMode({
+            plugin: {
+                interfaceType: undefined,
+                brandId: VotingBodyBrandIdentity.SAFE,
+            },
+        });
+
+        expect(result.current.pluginId).toBe(PluginInterfaceType.SAFE);
+        expect(useSafeInfoSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: true }),
+        );
+    });
 
     it('keeps every slot on the Safe body when a settled report is recovered', () => {
         useSafeSettledReportSpy.mockReturnValue({

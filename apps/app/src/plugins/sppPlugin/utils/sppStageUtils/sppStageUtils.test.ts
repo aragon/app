@@ -1,7 +1,7 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import { PluginInterfaceType } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
 import {
@@ -41,6 +41,15 @@ describe('SppStageUtils', () => {
                 expected: PluginInterfaceType.SAFE,
             },
             {
+                label: 'a branded Safe body on a supported network',
+                network: Network.ETHEREUM_SEPOLIA,
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.SAFE,
+                }),
+                expected: PluginInterfaceType.SAFE,
+            },
+            {
                 label: 'a generic external body',
                 plugin: generateSppStagePlugin({
                     interfaceType: undefined,
@@ -48,8 +57,10 @@ describe('SppStageUtils', () => {
                 }),
                 expected: externalPluginId,
             },
-        ])('resolves $label to $expected', ({ plugin, expected }) => {
-            expect(sppStageUtils.getBodyPluginId(plugin)).toEqual(expected);
+        ])('resolves $label to $expected', ({ plugin, network, expected }) => {
+            expect(sppStageUtils.getBodyPluginId(plugin, network)).toEqual(
+                expected,
+            );
         });
     });
 

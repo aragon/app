@@ -1,7 +1,9 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import { type Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     type PluginId,
     pluginRegistryUtils,
@@ -12,15 +14,30 @@ import {
     type ISppStagePlugin,
     type ISppSubProposal,
     SppProposalType,
+    VotingBodyBrandIdentity,
 } from '../../types';
 
 class SppStageUtils {
     /**
      * Resolves the plugin id a stage body is rendered through. Canonical bodies use their backend
-     * interface type; external bodies use the generic fallback.
+     * interface type. Branded Safe bodies use the native flow where the Safe service is available;
+     * other external bodies use the generic fallback.
      */
-    getBodyPluginId = (plugin: ISppStagePlugin): PluginId =>
-        plugin.interfaceType ?? externalPluginId;
+    getBodyPluginId = (
+        plugin: ISppStagePlugin,
+        network?: Network,
+    ): PluginId => {
+        if (plugin.interfaceType != null) {
+            return plugin.interfaceType;
+        }
+
+        const isSupportedSafe =
+            plugin.brandId === VotingBodyBrandIdentity.SAFE &&
+            network != null &&
+            safeShortNameFromNetwork(network) != null;
+
+        return isSupportedSafe ? PluginInterfaceType.SAFE : externalPluginId;
+    };
 
     getStageStatus = (
         proposal: ISppProposal,
@@ -108,7 +125,10 @@ class SppStageUtils {
                 (plugin) =>
                     pluginRegistryUtils.getSlotFunction<undefined, boolean>({
                         slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
-                        pluginId: this.getBodyPluginId(plugin),
+                        pluginId: this.getBodyPluginId(
+                            plugin,
+                            proposal.network,
+                        ),
                     })?.(undefined) === true,
             );
             const isAwaitingLateResult =
@@ -331,7 +351,7 @@ class SppStageUtils {
             boolean
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-            pluginId: this.getBodyPluginId(plugin),
+            pluginId: this.getBodyPluginId(plugin, proposal.network),
         });
 
         const subProposal = this.getBodySubProposal(
