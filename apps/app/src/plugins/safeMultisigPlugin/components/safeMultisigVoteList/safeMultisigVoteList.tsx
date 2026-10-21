@@ -10,6 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
+import { VoteListFallback } from '@/modules/governance/components/voteList/voteListFallback';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
@@ -31,7 +32,7 @@ export const SafeMultisigVoteList: React.FC<ISafeMultisigVoteListProps> = (
 
     // The shared vote-list slot also renders on member pages, where no proposal exists.
     if (body == null || proposal == null || stage == null) {
-        return null;
+        return <VoteListFallback />;
     }
 
     return (

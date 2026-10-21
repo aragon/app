@@ -107,19 +107,21 @@ describe('<SafeMultisigVoteList /> component', () => {
         );
     };
 
-    it('does not render proposal confirmations in the member activity context', () => {
+    it('renders the generic empty state in the member activity context', () => {
         const memberActivityProps = {
             daoId: 'ethereum-mainnet-0x1111111111111111111111111111111111111111',
             initialParams: { queryParams: {} },
         } as unknown as ISafeMultisigVoteListProps;
 
-        const { container } = render(
+        render(
             <GukModulesProvider>
                 <SafeMultisigVoteList {...memberActivityProps} />
             </GukModulesProvider>,
         );
 
-        expect(container).toBeEmptyDOMElement();
+        expect(
+            screen.getByText('app.governance.voteList.empty.title'),
+        ).toBeInTheDocument();
     });
 
     it('lists the connected owner first so a viewer sees their own signature', () => {
