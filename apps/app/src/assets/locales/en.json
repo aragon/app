@@ -3114,7 +3114,7 @@
         },
         "meta": {
           "setup": {
-            "description": "Voting requires locking non-governance ERC20 tokens",
+            "description": "Temporarily lock ERC-20 tokens to vote, even after a proposal opens.",
             "name": "Lock to vote"
           }
         },
