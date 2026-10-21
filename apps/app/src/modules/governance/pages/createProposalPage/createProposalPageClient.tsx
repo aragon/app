@@ -61,6 +61,8 @@ export const CreateProposalPageClient: React.FC<
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
+    // Linked-account data can expose the same Safe as separate body and process associations.
+    // Native creation is valid only for the process association owned by the DAO in this route.
     const plugin = processPlugins?.find(({ meta }) => {
         if (meta.interfaceType !== PluginInterfaceType.SAFE) {
             return true;

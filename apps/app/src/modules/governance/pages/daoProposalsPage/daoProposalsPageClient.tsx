@@ -6,11 +6,7 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import {
-    type IDaoPlugin,
-    PluginInterfaceType,
-    useDao,
-} from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -103,11 +99,6 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
     }
 
     const handlePluginSelected = (plugin: IDaoPlugin) => {
-        if (plugin.interfaceType === PluginInterfaceType.SAFE) {
-            handlePermissionGuardSuccess(plugin);
-            return;
-        }
-
         createProposalGuard({
             plugin,
             onSuccess: () => handlePermissionGuardSuccess(plugin),
@@ -126,8 +117,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
-    const canCreateActiveProposal =
-        activePlugin.id === PluginInterfaceType.SAFE || canCreateProposal;
+    const canCreateActiveProposal = canCreateProposal;
     const defaultActionProps = {
         onClick: canCreateActiveProposal ? undefined : createProposalGuard,
         href: canCreateActiveProposal

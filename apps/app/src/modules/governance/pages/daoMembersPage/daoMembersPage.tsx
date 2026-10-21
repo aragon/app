@@ -76,16 +76,18 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     }
 
     const bodyPlugin = plugins[0];
-    const memberListQueryParams = {
-        daoId: daoUtils.resolvePluginDaoId(daoId, bodyPlugin, dao),
-        pluginAddress: bodyPlugin.address,
-        pageSize: daoMembersCount,
-    };
+    // The client keeps the route DAO as its navigation/filter context. The generic member API,
+    // however, must query the DAO that owns a linked plugin.
     const memberListParams = {
         queryParams: {
-            ...memberListQueryParams,
             daoId,
+            pluginAddress: bodyPlugin.address,
+            pageSize: daoMembersCount,
         },
+    };
+    const memberListQueryParams = {
+        ...memberListParams.queryParams,
+        daoId: daoUtils.resolvePluginDaoId(daoId, bodyPlugin, dao),
     };
 
     // Token-voting and lock-to-vote lists consume the token-voting membership

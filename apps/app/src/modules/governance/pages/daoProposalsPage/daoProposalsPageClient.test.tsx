@@ -177,6 +177,7 @@ describe('<DaoProposalsPageClient /> component', () => {
 
     it('allows native Safe alongside SPP in the proposal chooser', async () => {
         const open = jest.fn();
+        const check = jest.fn();
         const nativeSafe = generateFilterComponentPlugin({
             id: 'safe',
             uniqueId: 'safe-1',
@@ -195,7 +196,7 @@ describe('<DaoProposalsPageClient /> component', () => {
         useDaoPluginsSpy.mockReturnValue([nativeSafe, spp]);
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         usePermissionCheckGuardSpy.mockReturnValue({
-            check: jest.fn(),
+            check,
             result: true,
         });
 
@@ -211,6 +212,12 @@ describe('<DaoProposalsPageClient /> component', () => {
                 allowNativeSafe: true,
                 daoId: 'test-id',
             }),
+        });
+        const selectPluginParams = open.mock.calls[0][1].params;
+        selectPluginParams.onPluginSelected(nativeSafe.meta);
+        expect(check).toHaveBeenCalledWith({
+            plugin: nativeSafe.meta,
+            onSuccess: expect.any(Function),
         });
     });
 

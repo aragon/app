@@ -28,6 +28,7 @@ describe('SppStageUtils', () => {
         it.each([
             {
                 label: 'an installed body',
+                network: Network.ETHEREUM_MAINNET,
                 plugin: generateSppStagePlugin({
                     interfaceType: PluginInterfaceType.MULTISIG,
                 }),
@@ -35,6 +36,7 @@ describe('SppStageUtils', () => {
             },
             {
                 label: 'a canonical Safe body',
+                network: Network.ETHEREUM_MAINNET,
                 plugin: generateSppStagePlugin({
                     interfaceType: PluginInterfaceType.SAFE,
                 }),
@@ -50,7 +52,17 @@ describe('SppStageUtils', () => {
                 expected: PluginInterfaceType.SAFE,
             },
             {
+                label: 'a branded Safe body on an unsupported network',
+                network: Network.CITREA_MAINNET,
+                plugin: generateSppStagePlugin({
+                    interfaceType: undefined,
+                    brandId: VotingBodyBrandIdentity.SAFE,
+                }),
+                expected: externalPluginId,
+            },
+            {
                 label: 'a generic external body',
+                network: Network.ETHEREUM_MAINNET,
                 plugin: generateSppStagePlugin({
                     interfaceType: undefined,
                     brandId: VotingBodyBrandIdentity.OTHER,

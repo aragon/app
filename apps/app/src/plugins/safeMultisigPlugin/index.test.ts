@@ -1,7 +1,7 @@
 import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
-import { PluginInterfaceType } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { generateSppStagePlugin } from '../sppPlugin/testUtils';
 import { sppStageUtils } from '../sppPlugin/utils/sppStageUtils';
@@ -57,7 +57,10 @@ describe('safeMultisigPlugin registrations', () => {
             component: SafeMultisigVoteList,
         },
     ])('serves $slotId for a canonical Safe body', ({ slotId, component }) => {
-        const pluginId = sppStageUtils.getBodyPluginId(safeBody);
+        const pluginId = sppStageUtils.getBodyPluginId(
+            safeBody,
+            Network.ETHEREUM_MAINNET,
+        );
 
         expect(
             pluginRegistryUtils.getSlotComponent({ slotId, pluginId }),
@@ -72,7 +75,10 @@ describe('safeMultisigPlugin registrations', () => {
             ProposalVotingTab[]
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
-            pluginId: sppStageUtils.getBodyPluginId(safeBody),
+            pluginId: sppStageUtils.getBodyPluginId(
+                safeBody,
+                Network.ETHEREUM_MAINNET,
+            ),
         });
 
         expect(getHiddenTabs?.(undefined)).toEqual([]);
@@ -83,7 +89,10 @@ describe('safeMultisigPlugin registrations', () => {
     it('answers the vote-permission slot with the Safe ownership check', () => {
         const checkPermission = pluginRegistryUtils.getSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_VOTE_SUBMISSION,
-            pluginId: sppStageUtils.getBodyPluginId(safeBody),
+            pluginId: sppStageUtils.getBodyPluginId(
+                safeBody,
+                Network.ETHEREUM_MAINNET,
+            ),
         });
 
         expect(checkPermission).toEqual(useSafeMultisigVotePermissionCheck);
@@ -92,7 +101,10 @@ describe('safeMultisigPlugin registrations', () => {
     it('routes native Safe proposal creation through the process permission check', () => {
         const checkPermission = pluginRegistryUtils.getSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-            pluginId: sppStageUtils.getBodyPluginId(safeBody),
+            pluginId: sppStageUtils.getBodyPluginId(
+                safeBody,
+                Network.ETHEREUM_MAINNET,
+            ),
         });
 
         expect(checkPermission).toEqual(
@@ -106,7 +118,10 @@ describe('safeMultisigPlugin registrations', () => {
             boolean
         >({
             slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
-            pluginId: sppStageUtils.getBodyPluginId(safeBody),
+            pluginId: sppStageUtils.getBodyPluginId(
+                safeBody,
+                Network.ETHEREUM_MAINNET,
+            ),
         });
 
         expect(votesAfterWindow?.(undefined)).toBe(true);

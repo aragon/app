@@ -23,17 +23,13 @@ class SppStageUtils {
      * interface type. Branded Safe bodies use the native flow where the Safe service is available;
      * other external bodies use the generic fallback.
      */
-    getBodyPluginId = (
-        plugin: ISppStagePlugin,
-        network?: Network,
-    ): PluginId => {
+    getBodyPluginId = (plugin: ISppStagePlugin, network: Network): PluginId => {
         if (plugin.interfaceType != null) {
             return plugin.interfaceType;
         }
 
         const isSupportedSafe =
             plugin.brandId === VotingBodyBrandIdentity.SAFE &&
-            network != null &&
             safeShortNameFromNetwork(network) != null;
 
         return isSupportedSafe ? PluginInterfaceType.SAFE : externalPluginId;
