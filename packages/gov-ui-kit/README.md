@@ -26,7 +26,7 @@ Storybook reflects the latest design tokens, styles, and components, so should b
 The UI Kit lives in the [aragon/app](https://github.com/aragon/app) monorepo, so Node, pnpm and the git hooks are
 owned by the repo root — this package has no `.nvmrc`, `packageManager` or setup step of its own.
 
-1. Use the Node.js version pinned in the repo root's [`.nvmrc`](../../.nvmrc) (Node >= 24.16). With
+1. Use the Node.js version pinned in the repo root's [`.nvmrc`](../../.nvmrc) (Node >= 24.22.1). With
    [nvm](https://github.com/nvm-sh/nvm), from the repo root:
 
 ```bash
