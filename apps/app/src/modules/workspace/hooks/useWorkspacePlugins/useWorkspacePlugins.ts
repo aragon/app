@@ -61,15 +61,6 @@ export interface IUseWorkspacePluginsReturn {
      */
     isDaosPending: boolean;
     /**
-     * Whether the visibility overrides are still being read, ignoring the DAOs. The narrow counterpart of
-     * {@link IUseWorkspacePluginsReturn.isDaosPending}, kept for symmetry and currently unused.
-     *
-     * Not the flag to gate tabs on, nor anything else built out of {@link IUseWorkspacePluginsReturn.plugins}: the
-     * overrides arrive hydrated from `LayoutWorkspace`, so this is already false while the DAOs are still loading
-     * and the plugin list is still incomplete. Use {@link IUseWorkspacePluginsReturn.isPending} for that.
-     */
-    isPluginsPending: boolean;
-    /**
      * Plugins grouped by DAO, in the order of the accounts. DAOs that could not be read are left out.
      */
     plugins: IWorkspaceDaoPlugins[];
@@ -116,7 +107,6 @@ export const useWorkspacePlugins = (
         daos,
         plugins,
         isDaosPending,
-        isPluginsPending: isOverridesPending,
         isPending: isDaosPending || isOverridesPending,
     };
 };

@@ -751,8 +751,9 @@ selector or the empty-accounts state of the overview.
 ## Feature flag
 
 The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/featureFlags.constants.ts`, key
-added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local` and `preview`; `false`
-by default, so development, staging and production are off — the registry is a `localStorage` mock, so it must not ship on.
+added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local` only; `false` by default, so preview,
+development, staging and production are off — the registry is a `localStorage` mock, so it must not ship on, and
+preview points at the development backend, which has no workspace endpoints yet.
 
 Every route gate is the same server-side check — `await featureFlags.isEnabled('workspaces')`, else `notFound()`:
 

@@ -68,8 +68,8 @@ export const LayoutWorkspaceAccount: React.FC<
 
     const queryClient = new QueryClient();
 
-    // TODO: once Safe accounts are implemented, `WorkspaceAccountGate` moves here and its `fetchQuery` replaces this
-    // DAO prefetch — see the TODO on the gate for what has to hold first.
+    // TODO: once Safe accounts are implemented, `WorkspaceAccountGate` can move here and its `fetchQuery` replace this
+    // DAO prefetch, provided no page below fails the route on an unreadable DAO any more (see the gate's JSDoc).
     await queryClient.prefetchQuery(
         daoOptions({ urlParams: { id: accountId } }),
     );

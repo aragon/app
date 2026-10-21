@@ -61,7 +61,6 @@ describe('useWorkspaceMemberTabs hook', () => {
             daos: {},
             isPending,
             isDaosPending: isPending,
-            isPluginsPending: false,
             plugins,
         });
 

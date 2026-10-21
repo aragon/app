@@ -4437,10 +4437,6 @@
           "title": "Workspace failed to load"
         }
       },
-      "workspaceInfoAside": {
-        "accounts": "Accounts",
-        "owner": "Owner"
-      },
       "workspaceMemberList": {
         "emptyState": {
           "description": "The accounts of this workspace have no members yet.",

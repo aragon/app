@@ -55,7 +55,6 @@ describe('useWorkspaceProposalTabs hook', () => {
             daos: {},
             isPending,
             isDaosPending: isPending,
-            isPluginsPending: false,
             plugins,
         });
 
@@ -242,7 +241,6 @@ describe('useWorkspaceProposalTabs hook', () => {
             daos: {},
             isPending: true,
             isDaosPending: false,
-            isPluginsPending: true,
             plugins: [buildGroup(daoAddress)],
         });
         urlWithTab(`${network}-0xMultisig-mul`);
