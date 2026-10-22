@@ -17,12 +17,26 @@ export interface IDaoMemberDetailsPageProps {
      * DAO member page parameters.
      */
     params: Promise<IDaoMemberPageParams>;
+    /**
+     * Body plugin to read the membership under, defaulting to the first visible body of the DAO. Either its filter
+     * identifier — what the `vote` search parameter of the page carries — or its plain address.
+     *
+     * Membership is plugin-scoped, so the plugin decides which voting power and token balance the page reports. The
+     * `/dao/…` route does not name one — it has no way to — and takes the default; a caller that knows the
+     * governance the member actually belongs to passes it, so the page does not report a body the member is not in.
+     */
+    bodyPluginId?: string;
 }
 
+/**
+ * TODO: the fallbacks below build `/dao/…` URLs, which drop a reader who arrived through
+ * `WorkspaceAccountMemberDetailsPage` out of the workspace — see the TODO on `DaoMembersPage`, where the three
+ * exits are listed and fixed together.
+ */
 export const DaoMemberDetailsPage: React.FC<
     IDaoMemberDetailsPageProps
 > = async (props) => {
-    const { params } = props;
+    const { params, bodyPluginId } = props;
     const { address: rawAddress, addressOrEns, network } = await params;
 
     if (!isAddress(rawAddress, { strict: false })) {
@@ -63,7 +77,17 @@ export const DaoMemberDetailsPage: React.FC<
         allBodyPlugins,
         daoOverride,
     );
-    const bodyPlugin = visibleBodyPlugins[0];
+
+    const normalizedBodyPluginId = bodyPluginId?.toLowerCase();
+
+    // Falls back to the first body rather than failing on an invalid value like hidden body
+    const bodyPlugin =
+        visibleBodyPlugins.find(
+            (plugin) =>
+                plugin.address.toLowerCase() === normalizedBodyPluginId ||
+                daoUtils.buildPluginUniqueId(plugin).toLowerCase() ===
+                    normalizedBodyPluginId,
+        ) ?? visibleBodyPlugins[0];
 
     if (bodyPlugin == null) {
         const membersUrl = daoUtils.getDaoUrl(dao, 'members')!;

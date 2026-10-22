@@ -1,18 +1,21 @@
 import { render, screen } from '@testing-library/react';
+import { GukCoreProvider, type IGukCoreContext } from '../../gukCoreProvider';
 import { IconType } from '../../icon';
 import { DropdownContainer } from '../dropdownContainer/dropdownContainer';
 import { DropdownItem, type IDropdownItemProps } from './dropdownItem';
 
 describe('<Dropdown.Item /> component', () => {
-    const createTestComponent = (props?: Partial<IDropdownItemProps>) => {
+    const createTestComponent = (props?: Partial<IDropdownItemProps>, context?: Partial<IGukCoreContext>) => {
         const completeProps = {
             ...props,
         };
 
         return (
-            <DropdownContainer open={true}>
-                <DropdownItem {...completeProps} />
-            </DropdownContainer>
+            <GukCoreProvider values={context}>
+                <DropdownContainer open={true}>
+                    <DropdownItem {...completeProps} />
+                </DropdownContainer>
+            </GukCoreProvider>
         );
     };
 
@@ -39,6 +42,15 @@ describe('<Dropdown.Item /> component', () => {
         const link = screen.getByRole<HTMLAnchorElement>('menuitem');
         expect(link).toBeInTheDocument();
         expect(link.href).toEqual(href);
+    });
+
+    it('renders the link through the link component set on the GukCoreProvider', () => {
+        const Link = (props: object) => <a data-link="custom" {...props} />;
+        const href = '/test';
+        render(createTestComponent({ href }, { Link }));
+        const link = screen.getByRole<HTMLAnchorElement>('menuitem');
+        expect(link).toHaveAttribute('data-link', 'custom');
+        expect(link).toHaveAttribute('href', href);
     });
 
     it('renders a link icon when the href property is set', () => {

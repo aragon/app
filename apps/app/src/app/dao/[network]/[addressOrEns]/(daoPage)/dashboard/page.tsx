@@ -1,3 +1,5 @@
-import { DaoDashboardPage } from '@/modules/dashboard/pages/daoDashboardPage';
+// Imported from the page file (not the module barrel): the RSC pulls in
+// server-only prefetch code that must stay out of the barrel's client graph.
+import { DaoDashboardPage } from '@/modules/dashboard/pages/daoDashboardPage/daoDashboardPage';
 
 export default DaoDashboardPage;

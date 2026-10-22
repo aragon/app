@@ -38,6 +38,11 @@ describe('<DaoMembersPageClient /> component', () => {
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
         ]);
+        useFeaturedDelegatesPluginSpy.mockReturnValue({
+            hasFeaturedDelegates: false,
+            featuredDelegatesConfig: undefined,
+            featuredDelegatesPlugin: undefined,
+        });
     });
 
     afterEach(() => {
@@ -51,7 +56,7 @@ describe('<DaoMembersPageClient /> component', () => {
     ) => {
         const completeProps: IDaoMembersPageClientProps = {
             initialParams: {
-                queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
+                queryParams: { daoId: 'test-id' },
             },
             featuredDelegates: [],
             ...props,
