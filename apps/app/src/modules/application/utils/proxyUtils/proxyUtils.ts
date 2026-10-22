@@ -25,32 +25,21 @@ class ProxyUtils {
         nonce: string,
         env: string,
     ): string[] => {
-        const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 
         // Hosts allowed to embed THIS app in an iframe → frame-ancestors.
-        // Currently only Common Ground (one-off experiment).
-        const iframeEmbedders = ['https://app.cg', 'https://app.safe.global'];
-        const iframeEmbeddersNonProd: string[] = [];
+        // Common Ground (one-off experiment) and the Safe app.
+        const frameAncestors = ['https://app.cg', 'https://app.safe.global'];
 
-        // Third-party iframes THIS app is allowed to render → frame-src.
-        // WalletConnect's verify.walletconnect.org is loaded as a child iframe
-        // by the WC SDK to attest origin/session when the user scans the QR.
-        const embeddableHosts = ['https://verify.walletconnect.org'];
-        const embeddableHostsNonProd = ['https://vercel.live'];
+        // Iframes THIS app is allowed to render → frame-src. WalletConnect's verify.walletconnect.org is loaded
+        // as a child iframe by the WC SDK to attest origin/session when the user scans the QR; 'self' covers the
+        // same-origin iframe the Vercel BotID challenge opens in deep-analysis mode.
+        const frameSrc = ["'self'", 'https://verify.walletconnect.org'];
 
-        const scriptSrc = isProd
-            ? `'strict-dynamic'`
-            : isLocal
-              ? `'unsafe-eval'`
-              : 'https://vercel.live';
-        const frameAncestors = isProd
-            ? iframeEmbedders.join(' ')
-            : [...iframeEmbedders, ...iframeEmbeddersNonProd].join(' ');
-        const frameSrc = isProd
-            ? embeddableHosts.join(' ')
-            : [...embeddableHosts, ...embeddableHostsNonProd].join(' ');
-        const fontSrc = isProd ? '' : ' https://vercel.live';
+        // 'strict-dynamic' trusts the scripts our nonce'd bundles create, which the BotID challenge relies on,
+        // and drops host allowlists, which is why the Vercel toolbar injected on previews is not allowed either.
+        // Local development keeps 'unsafe-eval' for the dev bundles; BotID is not initialised there.
+        const scriptSrc = isLocal ? `'unsafe-eval'` : `'strict-dynamic'`;
 
         const policies = [
             "default-src 'self'",
@@ -58,12 +47,12 @@ class ProxyUtils {
             `style-src 'self' https://fonts.googleapis.com 'unsafe-inline'`,
             'img-src * blob: data:',
             'connect-src *',
-            `font-src 'self' https://fonts.gstatic.com${fontSrc}`,
+            `font-src 'self' https://fonts.gstatic.com`,
             "object-src 'self'",
             "base-uri 'self'",
             "form-action 'self'",
-            `frame-ancestors ${frameAncestors}`,
-            `frame-src ${frameSrc}`,
+            `frame-ancestors ${frameAncestors.join(' ')}`,
+            `frame-src ${frameSrc.join(' ')}`,
             'upgrade-insecure-requests',
         ];
 

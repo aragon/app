@@ -14,6 +14,10 @@ on:
         description: "Environment name (preview, development, staging, production) — used for artifact naming"
         required: true
         type: string
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN:
+        description: "1Password service account — reads kv_app_infra / E2E_BYPASS_TOKEN (Vercel WAF bypass for the automated browser)"
+        required: true
     outputs:
       result:
         description: "Playwright smoke outcome (passed, flaky, failed, cancelled)"
@@ -48,6 +52,14 @@ jobs:
           sparse-checkout: |
             .github/actions/setup
             .github/actions/parse-playwright-results
+
+      - name: Load E2E bypass token from 1Password
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          E2E_BYPASS_TOKEN: op://kv_app_infra/E2E_BYPASS_TOKEN/credential
 
       - name: Setup
         uses: ./.github/actions/setup

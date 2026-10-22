@@ -57,6 +57,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           E2E_FE_MM_WALLET_PASSWORD: op://kv_app_infra/E2E_FE_MM_WALLET/password
           E2E_FE_MM_WALLET_SECRET_RECOVERY_PHRASE: "op://kv_app_infra/E2E_FE_MM_WALLET/secret recovery phrase"
+          E2E_BYPASS_TOKEN: op://kv_app_infra/E2E_BYPASS_TOKEN/credential
 
       - name: Setup
         uses: ./.github/actions/setup

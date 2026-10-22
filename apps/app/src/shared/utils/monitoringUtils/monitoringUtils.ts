@@ -76,6 +76,7 @@ class MonitoringUtils {
         "session topic doesn't exist", // WalletConnect: stale session
         'No matching key. session topic', // WalletConnect: stale session
         'Failed to disconnect', // AppKit: disconnect with an already-gone wallet session
+        'BotIdUtils: automated request rejected', // Server action refused by BotID; the warning event logged by botIdUtils is the monitored signal
     ];
 
     /**

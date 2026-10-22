@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { botIdUtils } from '@/shared/utils/botIdUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 import {
@@ -28,6 +29,13 @@ export class ProxyRpcUtils {
     }
 
     request = async (request: NextRequest, { params }: IRpcRequestOptions) => {
+        if (await botIdUtils.isBot('rpc', { onError: 'allow' })) {
+            return NextResponse.json(
+                { error: 'Access denied' },
+                { status: 403 },
+            );
+        }
+
         const { chainId } = await params;
 
         const rpcEndpoint = this.chainIdToRpcEndpoint(chainId);

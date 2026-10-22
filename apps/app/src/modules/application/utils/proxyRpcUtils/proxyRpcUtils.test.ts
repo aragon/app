@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 
+import { checkBotId } from 'botid/server';
 import { NextResponse } from 'next/server';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -100,6 +101,21 @@ describe('proxyRpc utils', () => {
     });
 
     describe('request', () => {
+        it('rejects an automated request with 403 without calling the rpc endpoint', async () => {
+            const checkBotIdMock = checkBotId as jest.Mock;
+            checkBotIdMock.mockResolvedValueOnce({ isBot: true });
+            const testClass = createTestClass();
+            await testClass.request(
+                generateNextRequest(),
+                createTestOptions('1'),
+            );
+            expect(fetchSpy).not.toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                { error: 'Access denied' },
+                { status: 403 },
+            );
+        });
+
         it('returns error when network definitions are not found for chain id', async () => {
             const testClass = createTestClass();
             await testClass.request(
