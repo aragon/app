@@ -32,6 +32,10 @@ export const lockToVotePlugin: IPluginInfo = {
         [Network.MONAD_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.ROBINHOOD_MAINNET]:
             '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
+        [Network.BNB_MAINNET]: '0xb6f734392D9F1F904bcD78C1ff76a70BB69B5822',
+        [Network.BNB_TESTNET]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
+        [Network.ETHEREUM_HOODI]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
+        [Network.BASE_SEPOLIA]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
     },
     setup: {
         nameKey: 'app.plugins.lockToVote.meta.setup.name',

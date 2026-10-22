@@ -13,4 +13,8 @@ export enum Network {
     KATANA_MAINNET = 'katana-mainnet',
     MONAD_MAINNET = 'monad-mainnet',
     ROBINHOOD_MAINNET = 'robinhood-mainnet',
+    BNB_MAINNET = 'bnb-mainnet',
+    BNB_TESTNET = 'bnb-testnet',
+    ETHEREUM_HOODI = 'ethereum-hoodi',
+    BASE_SEPOLIA = 'base-sepolia',
 }

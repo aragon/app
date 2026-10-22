@@ -33,5 +33,9 @@ export const adminPlugin: IPluginInfo = {
         [Network.MONAD_MAINNET]: '0x5B126edff0dbdD983068c3E5e1b68324aBAfFB46',
         [Network.ROBINHOOD_MAINNET]:
             '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
+        [Network.BNB_MAINNET]: '0xaE395b710B0d4Ab9a0645589D3E8Af15235e6597',
+        [Network.BNB_TESTNET]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
+        [Network.ETHEREUM_HOODI]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
+        [Network.BASE_SEPOLIA]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
     },
 };
