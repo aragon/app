@@ -7,7 +7,16 @@ export interface ILinearGateway {
         title: string;
         description: string;
         labelName: string;
-    }) => Promise<{ issueId: string; identifier: string }>;
+    }) => Promise<{ issueId: string; identifier: string; url: string }>;
+    // Files the engineering issue for a support ticket into the engineering team's triage and
+    // makes the ticket its sub-issue: closing the engineering issue closes the ticket (Linear's
+    // sub-issue auto-close), and several tickets about one bug can be re-parented onto one
+    // issue. Resolves to undefined when no triage team is configured.
+    createTriageParent: (input: {
+        childIssueId: string;
+        title: string;
+        description: string;
+    }) => Promise<{ identifier: string } | undefined>;
     uploadFile: (input: {
         filename: string;
         contentType: string;
@@ -37,6 +46,21 @@ export const createLinearGateway = (): ILinearGateway => {
         return labelIdsByName;
     };
 
+    // The triage team's Triage status, resolved once per cold start. Passed explicitly: an issue
+    // the API creates lands in Triage only when the key's user is outside the team.
+    const triageTeamId = env.linearTriageTeamId();
+    let triageStateId: Promise<string | undefined> | undefined;
+    const getTriageStateId = (teamIdToResolve: string) => {
+        triageStateId ??= (async () => {
+            const team = await client.team(teamIdToResolve);
+            const states = await team.states();
+
+            return states.nodes.find((state) => state.type === 'triage')?.id;
+        })();
+
+        return triageStateId;
+    };
+
     return {
         createIssue: async ({ title, description, labelName }) => {
             const labelIds = await getLabelIds();
@@ -57,7 +81,36 @@ export const createLinearGateway = (): ILinearGateway => {
             return {
                 issueId: issue.id,
                 identifier: issue.identifier,
+                url: issue.url,
             };
+        },
+        createTriageParent: async ({ childIssueId, title, description }) => {
+            if (triageTeamId == null) {
+                return undefined;
+            }
+
+            const stateId = await getTriageStateId(triageTeamId);
+            const payload = await client.createIssue({
+                teamId: triageTeamId,
+                stateId,
+                title,
+                description,
+            });
+            const issue = await payload.issue;
+
+            if (!(payload.success && issue != null)) {
+                throw new Error('Linear triage parent creation failed');
+            }
+
+            const update = await client.updateIssue(childIssueId, {
+                parentId: issue.id,
+            });
+
+            if (!update.success) {
+                throw new Error('Linear sub-issue link failed');
+            }
+
+            return { identifier: issue.identifier };
         },
         uploadFile: async ({ filename, contentType, size, data }) => {
             const payload = await client.fileUpload(

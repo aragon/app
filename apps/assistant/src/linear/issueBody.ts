@@ -147,3 +147,12 @@ ${renderContextRows(appContext, sessionId)}`,
 
     return sections.join('\n\n');
 };
+
+// The engineering issue carries the whole support ticket body (the engineer reads it in place)
+// under a lead line that links the support ticket it is the parent of.
+export const buildTriageParentDescription = (input: {
+    sourceIdentifier: string;
+    sourceUrl: string;
+    description: string;
+}): string =>
+    `**${issueTexts.triageParentSource}:** [${input.sourceIdentifier}](${input.sourceUrl})\n\n${input.description}`;

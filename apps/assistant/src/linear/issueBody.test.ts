@@ -6,6 +6,7 @@ import type {
 import {
     buildIssueDescription,
     buildIssueTitle,
+    buildTriageParentDescription,
     issueLabelByIntent,
 } from './issueBody';
 
@@ -161,6 +162,20 @@ describe('buildIssueDescription', () => {
         expect(description).toContain('## Recent transactions');
         expect(description).toContain('- vote — SUBMITTED `0xdeadbeef`');
         expect(description).toContain('- transaction — FAILED');
+    });
+});
+
+describe('buildTriageParentDescription', () => {
+    it('leads with a link to the support ticket and keeps its body whole', () => {
+        const description = buildTriageParentDescription({
+            sourceIdentifier: 'SUPP-6',
+            sourceUrl: 'https://linear.app/aragon/issue/SUPP-6/x',
+            description: '## Request\n\n- **Intent:** bug',
+        });
+
+        expect(description).toEqual(
+            '**Support ticket:** [SUPP-6](https://linear.app/aragon/issue/SUPP-6/x)\n\n## Request\n\n- **Intent:** bug',
+        );
     });
 });
 

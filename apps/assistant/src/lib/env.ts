@@ -44,6 +44,8 @@ export const env = {
         process.env.LINEAR_API_KEY || undefined,
     linearTeamId: (): string | undefined =>
         process.env.LINEAR_TEAM_ID || undefined,
+    linearTriageTeamId: (): string | undefined =>
+        process.env.LINEAR_TRIAGE_TEAM_ID || undefined,
     sentryDsn: (): string | undefined => process.env.SENTRY_DSN || undefined,
     blobReadWriteToken: (): string | undefined =>
         process.env.BLOB_READ_WRITE_TOKEN || undefined,

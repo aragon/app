@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/hono/node';
 export type IAssistantStep =
     | 'respond'
     | 'createTicket'
+    | 'createTriageParent'
     | 'confirmFile'
     | 'removeFile'
     | 'transferFiles'

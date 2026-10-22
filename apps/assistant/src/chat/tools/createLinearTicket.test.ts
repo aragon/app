@@ -94,6 +94,34 @@ describe('createSessionTicket', () => {
         );
     });
 
+    it('files the engineering issue into the triage with the ticket as its sub-issue', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+
+        await run(deps, 'call-1');
+
+        expect(deps.linear.createTriageParentCalls).toHaveLength(1);
+        const parent = deps.linear.createTriageParentCalls[0];
+        expect(parent?.childIssueId).toEqual('issue-1');
+        expect(parent?.title).toEqual('Voting transaction reverts');
+        expect(parent?.description).toContain(
+            '**Support ticket:** [SUP-1](https://linear.app/test/issue/SUP-1)',
+        );
+        expect(parent?.description).toContain(
+            deps.linear.createIssueCalls[0]?.description,
+        );
+    });
+
+    it('keeps the ticket when the engineering issue fails', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        deps.linear.failNextTriageParent = true;
+
+        const result = await run(deps, 'call-1');
+
+        expect(result).toEqual({ identifier: 'SUP-1' });
+        expect(deps.linear.createTriageParentCalls).toHaveLength(0);
+        expect(await deps.sessionStore.getTicketCount(sessionId)).toEqual(1);
+    });
+
     it('releases the claim on a Linear failure so a retry of the same call succeeds', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         deps.linear.failNextCreate = true;

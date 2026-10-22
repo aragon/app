@@ -14,6 +14,7 @@ import type { ISessionFile } from '../../lib/sessionStore';
 import {
     buildIssueDescription,
     buildIssueTitle,
+    buildTriageParentDescription,
     type IIssueAttachment,
     issueLabelByIntent,
 } from '../../linear/issueBody';
@@ -71,6 +72,43 @@ const transferFilesToLinear = async (
     });
 
     return attachments;
+};
+
+// Best effort: the support ticket already exists and is what the user is told about; an
+// engineering issue that fails to reach the triage is reported, not surfaced as a failed ticket.
+const fileTriageParent = async (
+    deps: IAppDependencies,
+    sessionId: string,
+    issue: { issueId: string; identifier: string; url: string },
+    title: string,
+    description: string,
+) => {
+    const startTime = Date.now();
+    try {
+        const parent = await deps.getLinear().createTriageParent({
+            childIssueId: issue.issueId,
+            title,
+            description: buildTriageParentDescription({
+                sourceIdentifier: issue.identifier,
+                sourceUrl: issue.url,
+                description,
+            }),
+        });
+
+        if (parent != null) {
+            observability.logStep({
+                sessionId,
+                step: 'createTriageParent',
+                latencyMs: Date.now() - startTime,
+                issueId: issue.issueId,
+            });
+        }
+    } catch (error) {
+        observability.logError(error, {
+            sessionId,
+            step: 'createTriageParent',
+        });
+    }
 };
 
 // Best effort: the ticket is already created, leftovers are swept by the cleanup cron.
@@ -136,15 +174,17 @@ export const createSessionTicket = async (
     try {
         const files = await sessionStore.listFiles(sessionId);
         const attachments = await transferFilesToLinear(deps, sessionId, files);
+        const title = buildIssueTitle(fields);
+        const description = buildIssueDescription({
+            sessionId,
+            fields,
+            appContext,
+            messages,
+            files: attachments,
+        });
         const issue = await deps.getLinear().createIssue({
-            title: buildIssueTitle(fields),
-            description: buildIssueDescription({
-                sessionId,
-                fields,
-                appContext,
-                messages,
-                files: attachments,
-            }),
+            title,
+            description,
             labelName: issueLabelByIntent[fields.intent],
         });
 
@@ -152,6 +192,7 @@ export const createSessionTicket = async (
             identifier: issue.identifier,
         };
         await sessionStore.storeTicket(sessionId, toolCallId, ticket);
+        await fileTriageParent(deps, sessionId, issue, title, description);
         await cleanupSessionFiles(deps, sessionId, files);
         observability.logStep({
             sessionId,

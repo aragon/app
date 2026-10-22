@@ -19,15 +19,23 @@ export interface ITestLinearGateway extends ILinearGateway {
         description: string;
         labelName: string;
     }>;
+    createTriageParentCalls: Array<{
+        childIssueId: string;
+        title: string;
+        description: string;
+    }>;
     uploadFileCalls: Array<{ filename: string; contentType: string }>;
     failNextCreate: boolean;
+    failNextTriageParent: boolean;
 }
 
 export const createTestLinearGateway = (): ITestLinearGateway => {
     const gateway: ITestLinearGateway = {
         createIssueCalls: [],
+        createTriageParentCalls: [],
         uploadFileCalls: [],
         failNextCreate: false,
+        failNextTriageParent: false,
         createIssue: (input) => {
             if (gateway.failNextCreate) {
                 gateway.failNextCreate = false;
@@ -35,10 +43,24 @@ export const createTestLinearGateway = (): ITestLinearGateway => {
                 return Promise.reject(new Error('Linear is down'));
             }
             gateway.createIssueCalls.push(input);
+            const count = gateway.createIssueCalls.length;
 
             return Promise.resolve({
-                issueId: `issue-${gateway.createIssueCalls.length}`,
-                identifier: `SUP-${gateway.createIssueCalls.length}`,
+                issueId: `issue-${count}`,
+                identifier: `SUP-${count}`,
+                url: `https://linear.app/test/issue/SUP-${count}`,
+            });
+        },
+        createTriageParent: (input) => {
+            if (gateway.failNextTriageParent) {
+                gateway.failNextTriageParent = false;
+
+                return Promise.reject(new Error('Linear is down'));
+            }
+            gateway.createTriageParentCalls.push(input);
+
+            return Promise.resolve({
+                identifier: `ENG-${gateway.createTriageParentCalls.length}`,
             });
         },
         uploadFile: (input) => {
