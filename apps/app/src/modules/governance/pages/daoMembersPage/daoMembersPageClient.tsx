@@ -82,6 +82,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         type: PluginType.BODY,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        includeProcessSafes: true,
         visibleOnly: true,
     });
     // The container resolves an absent or unknown `members` value to its first tab, which is the

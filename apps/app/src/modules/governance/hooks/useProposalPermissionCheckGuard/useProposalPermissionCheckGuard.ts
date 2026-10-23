@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -20,14 +21,25 @@ export interface IUseProposalPermissionCheckGuardParams {
      * @default dashboard
      */
     redirectTab?: 'dashboard' | 'proposals' | 'settings';
+    /**
+     * Runs the creation guard. Disable for read-only destinations.
+     * @default true
+     */
+    enabled?: boolean;
 }
 
 export const useProposalPermissionCheckGuard = (
     params: IUseProposalPermissionCheckGuardParams,
 ) => {
-    const { daoId, pluginAddress, redirectTab = 'dashboard' } = params;
+    const {
+        daoId,
+        pluginAddress,
+        redirectTab = 'dashboard',
+        enabled = true,
+    } = params;
 
     const router = useRouter();
+    const { address: walletAddress } = useWalletAccount();
 
     // The plugin is undefined when the DAO is not loaded yet or the plugin address is
     // unknown (e.g. a stale link to an uninstalled process) — the guard is skipped then.
@@ -48,20 +60,36 @@ export const useProposalPermissionCheckGuard = (
         [router, redirectTab],
     );
 
-    const { check: createProposalGuard, result: canCreateProposal } =
-        usePermissionCheckGuard({
-            permissionNamespace: 'proposal',
-            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-            onError: handlePermissionCheckError,
-            plugin,
-            daoId,
-        });
+    const {
+        check: createProposalGuard,
+        result: canCreateProposal,
+        isLoading: isPermissionCheckLoading,
+    } = usePermissionCheckGuard({
+        permissionNamespace: 'proposal',
+        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+        onError: handlePermissionCheckError,
+        plugin,
+        daoId,
+    });
 
-    // Use ref to track if the guard has already been called
     const hasCalledGuardRef = useRef(false);
+    const previousWalletAddressRef = useRef(walletAddress);
+    const previousPluginAddressRef = useRef(plugin?.address);
 
     useEffect(() => {
+        const hasWalletChanged =
+            previousWalletAddressRef.current !== walletAddress;
+        const hasPluginChanged =
+            previousPluginAddressRef.current !== plugin?.address;
+
+        if (hasWalletChanged || hasPluginChanged) {
+            hasCalledGuardRef.current = false;
+            previousWalletAddressRef.current = walletAddress;
+            previousPluginAddressRef.current = plugin?.address;
+        }
+
         if (
+            enabled &&
             plugin != null &&
             !canCreateProposal &&
             !hasCalledGuardRef.current
@@ -69,5 +97,17 @@ export const useProposalPermissionCheckGuard = (
             hasCalledGuardRef.current = true;
             createProposalGuard();
         }
-    }, [plugin, canCreateProposal, createProposalGuard]);
+    }, [
+        enabled,
+        plugin,
+        plugin?.address,
+        canCreateProposal,
+        createProposalGuard,
+        walletAddress,
+    ]);
+
+    return {
+        canCreateProposal,
+        isLoading: isPermissionCheckLoading,
+    };
 };

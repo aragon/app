@@ -2,7 +2,13 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { daoOptions, Network } from '@/shared/api/daoService';
+import { safeDaoProposalsOptions } from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
+import {
+    daoOptions,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
+import { safeInfoOptions } from '@/shared/api/safeService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -99,6 +105,40 @@ describe('<DaoProposalsPage /> component', () => {
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,
+        );
+    });
+
+    it('prefetches Safe info and proposals for a single Safe process', async () => {
+        const safeAddress = '0x1234567890123456789012345678901234567890';
+        const linkedDaoAddress = '0x9876543210987654321098765432109876543210';
+        const dao = generateDao({
+            network: Network.ETHEREUM_SEPOLIA,
+        });
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            daoAddress: linkedDaoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isProcess: true,
+        });
+        fetchQuerySpy.mockResolvedValueOnce(dao).mockResolvedValue({});
+        getDaoPluginsSpy.mockReturnValue([safePlugin]);
+
+        render(await createTestComponent());
+
+        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            safeInfoOptions({
+                urlParams: {
+                    network: dao.network,
+                    address: safeAddress,
+                },
+            }).queryKey,
+        );
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            safeDaoProposalsOptions({
+                network: dao.network,
+                safeAddress,
+                daoAddress: linkedDaoAddress,
+            }).queryKey,
         );
     });
 

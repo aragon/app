@@ -13,46 +13,42 @@ import type { ReactNode } from 'react';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 
-/** Confirmation progress for a Safe acting as a staged proposal body. */
-export interface ISafeMultisigProposalVotingBreakdownProps {
-    /** Staged proposal containing the Safe body's decision. */
-    proposal: ISppProposal;
-    /** Address of the Safe body. */
-    body: string;
-    /** Stage whose report is displayed. */
-    stage: ISppStage;
-    /** Whether the body reports a veto rather than an approval. */
+/** Props for the shared, SPP-independent Safe approval breakdown. */
+export interface ISafeMultisigProposalVotingBreakdownViewProps {
+    /** Number of confirmations on the transaction being displayed. */
+    approvalsAmount: number;
+    /** Confirmations required by that transaction. */
+    minApprovals: number;
+    /** Number of current Safe owners. */
+    membersCount?: number;
+    /** Whether the transaction has executed and represents settled history. */
+    isSettled?: boolean;
+    /** Whether the Safe is reporting a veto rather than an approval. */
     isVeto?: boolean;
-    /** Actions and stage status displayed below the breakdown. */
+    /** Actions and status displayed below the breakdown. */
     children?: ReactNode;
 }
 
 /**
- * Breakdown of a Safe body, using the current owner count as the denominator.
+ * Confirmation progress shared by the SPP Safe body and native Safe transactions.
  *
- * A recovered report supplies the historical approvals and threshold. The live Safe supplies the
- * current approvals and threshold, while the neutral variant keeps reaching that threshold from
- * being presented as a settled result.
+ * Unexecuted confirmations stay neutral even when threshold is reached: reaching the threshold
+ * makes a Safe transaction executable, not a settled governance result.
  */
-export const SafeMultisigProposalVotingBreakdown: React.FC<
-    ISafeMultisigProposalVotingBreakdownProps
+export const SafeMultisigProposalVotingBreakdownView: React.FC<
+    ISafeMultisigProposalVotingBreakdownViewProps
 > = (props) => {
-    const { proposal, body, stage, isVeto, children } = props;
-    const { copy } = useGukModulesContext();
     const {
-        safeInfo,
         approvalsAmount,
-        minApprovals,
+        children,
+        isSettled = false,
+        isVeto = false,
         membersCount,
-        settledReport,
-    } = useSafeMultisigBodyState({
-        network: proposal.network,
-        address: body,
-        proposal,
-        stage,
-    });
+        minApprovals,
+    } = props;
+    const { copy } = useGukModulesContext();
 
-    if (safeInfo == null || membersCount == null || membersCount <= 0) {
+    if (membersCount == null || membersCount <= 0) {
         return (
             <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
                 <div className="rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:px-6 md:py-6">
@@ -66,13 +62,13 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         );
     }
 
-    if (settledReport != null) {
+    if (isSettled) {
         return (
             <ProposalVoting.BreakdownMultisig
-                approvalsAmount={settledReport.transaction.confirmations.length}
+                approvalsAmount={approvalsAmount}
                 isVeto={isVeto}
                 membersCount={membersCount}
-                minApprovals={settledReport.transaction.confirmationsRequired}
+                minApprovals={minApprovals}
             >
                 {children}
             </ProposalVoting.BreakdownMultisig>
@@ -108,5 +104,60 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             </ProposalVoting.Progress.Container>
             {children}
         </Tabs.Content>
+    );
+};
+
+/** Confirmation progress for a Safe acting as a staged proposal body. */
+export interface ISafeMultisigProposalVotingBreakdownProps {
+    /** Staged proposal containing the Safe body's decision. */
+    proposal: ISppProposal;
+    /** Address of the Safe body. */
+    body: string;
+    /** Stage whose report is displayed. */
+    stage: ISppStage;
+    /** Whether the body reports a veto rather than an approval. */
+    isVeto?: boolean;
+    /** Actions and stage status displayed below the breakdown. */
+    children?: ReactNode;
+}
+
+/**
+ * SPP adapter for the shared Safe approval breakdown.
+ *
+ * The adapter owns SPP reads; the rendered terminal stays independent from SPP data so native Safe
+ * transactions can use the exact same presentation.
+ */
+export const SafeMultisigProposalVotingBreakdown: React.FC<
+    ISafeMultisigProposalVotingBreakdownProps
+> = (props) => {
+    const { proposal, body, stage, isVeto, children } = props;
+    const {
+        safeInfo,
+        approvalsAmount,
+        minApprovals,
+        membersCount,
+        settledReport,
+    } = useSafeMultisigBodyState({
+        network: proposal.network,
+        address: body,
+        proposal,
+        stage,
+    });
+
+    return (
+        <SafeMultisigProposalVotingBreakdownView
+            approvalsAmount={
+                settledReport?.transaction.confirmations.length ??
+                approvalsAmount
+            }
+            isSettled={settledReport != null}
+            isVeto={isVeto}
+            membersCount={safeInfo == null ? undefined : membersCount}
+            minApprovals={
+                settledReport?.transaction.confirmationsRequired ?? minApprovals
+            }
+        >
+            {children}
+        </SafeMultisigProposalVotingBreakdownView>
     );
 };

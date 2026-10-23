@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 import * as useSimulateProposalModule from '@/modules/governance/hooks/useSimulateProposal';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
 import * as daoService from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
@@ -417,6 +418,13 @@ describe('useSppPermissionCheckProposalCreation', () => {
             isRestricted: true,
             settings: internalSettings,
         });
+        const safeProcessSettings = [
+            [{ term: 'Members', definition: 'Safe owner with Execute' }],
+        ];
+        const safeProcessGuardResult = generateGuardResult({
+            isRestricted: true,
+            settings: safeProcessSettings,
+        });
 
         const sppPlugin = buildSppPlugin(internalAddress, safeAddress);
 
@@ -430,6 +438,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
                               interfaceType:
                                   daoService.PluginInterfaceType.SAFE,
                               proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+                              isProcess: true,
                           }),
                       }),
                   ]
@@ -439,14 +448,18 @@ describe('useSppPermissionCheckProposalCreation', () => {
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
 
-        // The internal body resolves to its own guard. Canonical and external Safe bodies use
-        // the Safe-compatible permission hook with their proposal-creation condition.
+        // The Safe process guard is registered under the same canonical id. SPP stage bodies must
+        // still use their stage condition rather than leaking the process guard into these settings.
         getSlotFunctionSpy.mockImplementation(((slotParams: {
             pluginId: string;
-        }) =>
-            slotParams.pluginId === internalMeta.interfaceType
-                ? () => internalGuardResult
-                : undefined) as never);
+        }) => {
+            if (slotParams.pluginId === internalMeta.interfaceType) {
+                return () => internalGuardResult;
+            }
+            if (slotParams.pluginId === PluginInterfaceType.SAFE) {
+                return () => safeProcessGuardResult;
+            }
+        }) as never);
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const params = { daoId: 'dao-test', plugin: sppPlugin };
@@ -455,6 +468,51 @@ describe('useSppPermissionCheckProposalCreation', () => {
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([
             ...internalSettings,
+            buildExpectedSafeGroup(safeAddress),
+        ]);
+    });
+
+    it('keeps a same-address Safe body external when the DAO also has a Safe process', () => {
+        const safeAddress = `0x${'b'.repeat(40)}`;
+        const nativeSafeProcess = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isProcess: true,
+            isBody: true,
+        });
+        const sppPlugin = generateDaoPlugin({
+            address: `0x${'a'.repeat(40)}`,
+            settings: generateSppPluginSettings({
+                stages: [
+                    generateSppStage({
+                        plugins: [
+                            generateSppStagePlugin({
+                                address: safeAddress,
+                                interfaceType: undefined,
+                                brandId: VotingBodyBrandIdentity.SAFE,
+                                proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+        });
+
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: nativeSafeProcess }),
+        ]);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
+
+        const { result } = renderGuard({
+            daoId: 'dao-test',
+            plugin: sppPlugin,
+        });
+
+        expect(getSlotFunctionSpy).not.toHaveBeenCalled();
+        expect(result.current.settings).toEqual([
             buildExpectedSafeGroup(safeAddress),
         ]);
     });

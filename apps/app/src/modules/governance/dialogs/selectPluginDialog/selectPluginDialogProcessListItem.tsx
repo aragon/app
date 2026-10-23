@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import {
     type IProcessDataListItemProps,
     ProcessDataListItem,
 } from '@/shared/components/processDataListItem';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { useSimulateProposalCreation } from '../../hooks/useSimulateProposal';
 
 export type ISelectPluginDialogProcessListItemProps =
@@ -10,35 +12,33 @@ export type ISelectPluginDialogProcessListItemProps =
         /**
          * Unique ID of the process, reported alongside the eligibility result.
          */
-        pluginId: string;
+        uniqueId: string;
         /**
          * Called with the proposal creation eligibility result once it is ready.
          */
-        onEligibilityResult: (pluginId: string, isEligible: boolean) => void;
+        onEligibilityResult: (uniqueId: string, isEligible: boolean) => void;
     };
 
-export const SelectPluginDialogProcessListItem: React.FC<
+const SelectPluginDialogDefaultProcessListItem: React.FC<
     ISelectPluginDialogProcessListItemProps
 > = (props) => {
-    const { process, dao, pluginId, onEligibilityResult, ...otherProps } =
+    const { process, dao, uniqueId, onEligibilityResult, ...otherProps } =
         props;
 
     const { result, isLoading } = useSimulateProposalCreation({
-        plugin: process,
         network: dao?.network,
+        plugin: process,
     });
     const simulationFailed = result === 'failure';
 
     // Fail open on inconclusive simulations (request error or simulation
     // disabled): only a concrete revert marks the process as not eligible, so
-    // users are not blocked when the permission check itself cannot run. This is
-    // just an UX improvement, not a line of defense. Create proposal guard would
-    // catch it in rare cases when simulation cannot be run for any reason.
+    // users are not blocked when the simulation request itself cannot run.
     useEffect(() => {
         if (!isLoading) {
-            onEligibilityResult(pluginId, !simulationFailed);
+            onEligibilityResult(uniqueId, !simulationFailed);
         }
-    }, [isLoading, simulationFailed, pluginId, onEligibilityResult]);
+    }, [isLoading, onEligibilityResult, simulationFailed, uniqueId]);
 
     return (
         <ProcessDataListItem
@@ -50,3 +50,14 @@ export const SelectPluginDialogProcessListItem: React.FC<
         />
     );
 };
+
+export const SelectPluginDialogProcessListItem: React.FC<
+    ISelectPluginDialogProcessListItemProps
+> = (props) => (
+    <PluginSingleComponent
+        {...props}
+        Fallback={SelectPluginDialogDefaultProcessListItem}
+        pluginId={props.process.interfaceType}
+        slotId={GovernanceSlotId.GOVERNANCE_SELECT_PLUGIN_PROCESS_LIST_ITEM}
+    />
+);

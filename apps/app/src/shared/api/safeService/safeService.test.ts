@@ -4,6 +4,7 @@ import {
     generateSafeMeta,
     generateSafeTransaction,
 } from '@/shared/testUtils';
+import { SafeStoredTransactionState } from './domain';
 import { safeService } from './safeService';
 
 describe('safe service', () => {
@@ -110,6 +111,88 @@ describe('safe service', () => {
             },
         );
         expect(result).toEqual(nextNonce);
+    });
+    it('reads stored transactions with state and offset query parameters', async () => {
+        const stored = {
+            count: 1,
+            next: '20',
+            previous: null,
+            results: [
+                {
+                    ...generateSafeTransaction({ nonce: '12' }),
+                    state: SafeStoredTransactionState.LIVE,
+                },
+            ],
+            meta: {
+                source: 'store' as const,
+                fetchedAt: null,
+                stale: false,
+                partial: false,
+            },
+        };
+        requestSpy.mockResolvedValue(stored);
+
+        const result = await safeService.getSafeStoredTransactions({
+            urlParams,
+            queryParams: {
+                limit: 10,
+                offset: '10',
+                state: SafeStoredTransactionState.SUPERSEDED,
+                to: safeAddress,
+            },
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            safeService['urls'].safeStoredTransactions,
+            {
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: safeAddress,
+                },
+                queryParams: {
+                    limit: 10,
+                    offset: '10',
+                    state: SafeStoredTransactionState.SUPERSEDED,
+                    to: safeAddress,
+                },
+            },
+        );
+        expect(result).toEqual(stored);
+    });
+
+    it('reads decoded actions with a lowercased Safe transaction hash', async () => {
+        const safeTxHash = `0x${'AB'.repeat(32)}`;
+        const actions = {
+            decoding: false,
+            actions: [
+                {
+                    from: safeAddress,
+                    to: safeAddress,
+                    value: '0',
+                    data: '0x',
+                    type: 'RAW',
+                    inputData: null,
+                },
+            ],
+            rawActions: [{ to: safeAddress, value: '0', data: '0x' }],
+        };
+        requestSpy.mockResolvedValue(actions);
+
+        const result = await safeService.getSafeTransactionActions({
+            urlParams: { ...urlParams, safeTxHash },
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            safeService['urls'].safeTransactionActions,
+            {
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: safeAddress,
+                    safeTxHash: safeTxHash.toLowerCase(),
+                },
+            },
+        );
+        expect(result).toEqual(actions);
     });
 
     it.each([

@@ -1,6 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
+import { safeDaoProposalsOptions } from '@/plugins/safeMultisigPlugin/hooks/useSafeDaoProposals';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
-import { daoOptions } from '@/shared/api/daoService';
+import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
+import { safeInfoOptions } from '@/shared/api/safeService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
@@ -79,9 +81,36 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
     };
     const proposalListParams = { queryParams: proposalListQueryParams };
 
-    await queryClient.prefetchInfiniteQuery(
-        proposalListOptions({ queryParams: proposalListQueryParams }),
-    );
+    const processPlugin = processPlugins[0];
+    const isSingleSafe =
+        processPlugins.length === 1 &&
+        processPlugin.interfaceType === PluginInterfaceType.SAFE;
+
+    if (isSingleSafe) {
+        const safeParams = {
+            network: dao.network,
+            safeAddress: processPlugin.address,
+            daoAddress: processPlugin.daoAddress ?? dao.address,
+        };
+
+        await Promise.all([
+            queryClient.prefetchQuery(
+                safeInfoOptions({
+                    urlParams: {
+                        network: safeParams.network,
+                        address: safeParams.safeAddress,
+                    },
+                }),
+            ),
+            queryClient.prefetchInfiniteQuery(
+                safeDaoProposalsOptions(safeParams),
+            ),
+        ]);
+    } else {
+        await queryClient.prefetchInfiniteQuery(
+            proposalListOptions({ queryParams: proposalListQueryParams }),
+        );
+    }
 
     return (
         <Page.Container queryClient={queryClient}>

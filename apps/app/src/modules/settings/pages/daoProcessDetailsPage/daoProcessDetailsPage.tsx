@@ -1,7 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
+import { SafeProcessDetails } from '@/plugins/safeMultisigPlugin/components/safeProcessDetails';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
-import { daoService } from '@/shared/api/daoService';
+import { daoService, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { PluginType } from '@/shared/types';
@@ -65,6 +66,16 @@ export const DaoProcessDetailsPage: React.FC<
                 error={parsedError}
                 errorNamespace={errorNamespace}
             />
+        );
+    }
+
+    const plugin = plugins[0];
+
+    if (plugin.interfaceType === PluginInterfaceType.SAFE) {
+        return (
+            <Page.Container>
+                <SafeProcessDetails dao={dao} plugin={plugin} />
+            </Page.Container>
         );
     }
 

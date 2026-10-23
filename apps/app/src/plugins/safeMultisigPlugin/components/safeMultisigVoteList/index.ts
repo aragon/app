@@ -1,2 +1,8 @@
-export { SafeMultisigVoteList } from './safeMultisigVoteList';
-export type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
+export {
+    SafeMultisigVoteList,
+    SafeMultisigVoteListView,
+} from './safeMultisigVoteList';
+export type {
+    ISafeMultisigVoteListProps,
+    ISafeMultisigVoteListViewProps,
+} from './safeMultisigVoteList.api';
