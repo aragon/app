@@ -2,7 +2,7 @@ export const generateRequest = (request?: Partial<Request>): Request => ({
     cache: 'default',
     credentials: 'omit',
     destination: '',
-    headers: {} as Headers,
+    headers: new Headers(),
     integrity: '',
     method: '',
     mode: 'cors',

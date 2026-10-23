@@ -106,12 +106,18 @@ describe('<TokenMemberListItem /> component', () => {
             generateReactQueryResultSuccess({ data: dao }),
         );
 
-        render(createTestComponent({ member, plugin }));
+        render(
+            createTestComponent({
+                member,
+                plugin,
+                memberSourceId: 'safe/body',
+            }),
+        );
         expect(
             screen.getByRole('heading', { name: /47.93M Voting Power/ }),
         ).toBeInTheDocument();
         expect(screen.getByRole('link').getAttribute('href')).toEqual(
-            `/dao/${daoNetwork}/${daoAddress}/members/${member.address}`,
+            `/dao/${daoNetwork}/${daoAddress}/members/${member.address}?members=safe%2Fbody`,
         );
     });
 });
