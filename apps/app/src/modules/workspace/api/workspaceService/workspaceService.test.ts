@@ -58,44 +58,23 @@ describe('workspace service', () => {
             expect(workspace).toEqual(created);
         });
 
-        it('seeds the default workspace on an empty registry, even when the requested one is unknown', async () => {
+        it('does not seed the default workspace on an empty registry', async () => {
             await expect(
                 workspaceService.getWorkspace({
                     urlParams: { id: 'unknown' },
                 }),
             ).rejects.toMatchObject({ status: 404 });
 
-            expect(Object.values(getStoredWorkspaces())).toEqual([
-                expect.objectContaining({ name: defaultWorkspaceName }),
-            ]);
+            expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
         });
     });
 
     describe('getWorkspaceList', () => {
-        it('seeds and persists the default workspace when no workspace is persisted', async () => {
-            const workspaces = await workspaceService.getWorkspaceList();
-
-            expect(workspaces).toEqual([
-                {
-                    id: expect.stringMatching(/^my-workspace-[0-9a-f]{8}$/),
-                    name: defaultWorkspaceName,
-                    description: '',
-                    avatar: null,
-                    links: [],
-                    accounts: [],
-                    targets: [],
-                },
-            ]);
-            expect(getStoredWorkspaces()).toEqual({
-                [workspaces[0].id]: workspaces[0],
-            });
-        });
-
-        it('seeds the default workspace only once', async () => {
-            const [first] = await workspaceService.getWorkspaceList();
-            const [second] = await workspaceService.getWorkspaceList();
-
-            expect(second).toEqual(first);
+        it('resolves an empty list without seeding when no workspace is persisted', async () => {
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual(
+                [],
+            );
+            expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
         });
 
         it('resolves the workspaces persisted on local storage', async () => {
@@ -110,6 +89,62 @@ describe('workspace service', () => {
                 first,
                 second,
             ]);
+        });
+    });
+
+    describe('getOrCreateDefaultWorkspace', () => {
+        it('seeds and persists the default workspace when no workspace is persisted', async () => {
+            const workspace =
+                await workspaceService.getOrCreateDefaultWorkspace();
+
+            expect(workspace).toEqual({
+                id: expect.stringMatching(/^my-workspace-[0-9a-f]{8}$/),
+                name: defaultWorkspaceName,
+                description: '',
+                avatar: null,
+                links: [],
+                accounts: [],
+                targets: [],
+            });
+            expect(getStoredWorkspaces()).toEqual({
+                [workspace.id]: workspace,
+            });
+        });
+
+        it('seeds the default workspace only once', async () => {
+            const first = await workspaceService.getOrCreateDefaultWorkspace();
+            const second = await workspaceService.getOrCreateDefaultWorkspace();
+
+            expect(second).toEqual(first);
+            expect(Object.keys(getStoredWorkspaces())).toHaveLength(1);
+        });
+
+        it('resolves the first persisted workspace without seeding', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Second' }),
+            });
+
+            await expect(
+                workspaceService.getOrCreateDefaultWorkspace(),
+            ).resolves.toEqual(first);
+            expect(Object.keys(getStoredWorkspaces())).toHaveLength(2);
+        });
+
+        it('rejects with a storage error when local storage rejects the write', async () => {
+            const setItemSpy = jest
+                .spyOn(Storage.prototype, 'setItem')
+                .mockImplementation(() => {
+                    throw new Error('QuotaExceededError');
+                });
+
+            await expect(
+                workspaceService.getOrCreateDefaultWorkspace(),
+            ).rejects.toMatchObject({ code: 'workspaceStorageError' });
+
+            setItemSpy.mockRestore();
         });
     });
 

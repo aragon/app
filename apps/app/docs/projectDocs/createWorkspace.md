@@ -223,6 +223,8 @@ local storage for real requests is a single-method change:
 - `getWorkspace({ urlParams: { id } })` → the stored workspace; rejects with `notFoundCode` / 404 when absent.
 - `getWorkspaceList()` → every stored workspace, read by the workspace switcher through `useWorkspaceList`. The
   publish dialog invalidates it after creating a workspace so the new one is listed straight away.
+- `getOrCreateDefaultWorkspace()` → the first stored workspace, or the default one, seeded and persisted when the
+  registry is empty. Called by the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
@@ -233,9 +235,19 @@ local storage for real requests is a single-method change:
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
 
-The reads seed an empty "My workspace" when the registry is empty (`createWorkspace` does not). Its ID gets a random
-suffix (`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage
-reads as empty and is overwritten by the seed — acceptable, as only outside tampering can produce it.
+The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
+`getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an
+explicit call because a read that writes makes the default appear depending on which page a user opened first, and
+lets two tabs reading an empty registry seed two different workspaces. It is also the shape a backend registry would
+take: a get-or-create (bootstrap) call, not a GET with a side effect. The seed's ID gets a random suffix
+(`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage reads as
+empty and is overwritten on the next write — acceptable, as only outside tampering can produce it.
+
+The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it
+must not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, invalidates the workspace list
+(a list read before the seed is cached as empty) and `router.replace`s to the workspace's aggregated overview, so
+Back does not land on the redirect again. Running it twice (Strict Mode) is harmless: the second call finds the
+workspace the first one seeded.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -272,6 +284,8 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 - **add** the workspace route tree, every section scoped to an account:
 
 ```
+src/app/workspace/
+├─ page.tsx                   WorkspaceEntryPage: opens the first workspace, seeding the default one
 src/app/workspace/[workspaceId]/
 ├─ (workspacePage)/           route group: every page with the workspace navigation
 │  ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
@@ -760,6 +774,7 @@ Every route gate is the same server-side check — `await featureFlags.isEnabled
 | Entry point | Gate |
 | --- | --- |
 | `/create/workspace` | `LayoutWizardCreateWorkspace` and `createWorkspacePage` |
+| `/workspace` | `workspaceEntryPage` |
 | `/workspace/{workspaceId}/…` | `LayoutWorkspace` and every workspace page |
 | `/workspace/{workspaceId}/{accountId}/…` | `LayoutWorkspaceAccount`, on top of the above |
 | `/workspace/{workspaceId}/all/assets` and `/{accountId}/assets` | `workspaceAssetsPage` (server) — same, one page for both |
@@ -871,6 +886,7 @@ src/modules/workspace/
 │   ├── queries/useWorkspace/{useWorkspace.ts,index.ts}
 │   ├── queries/index.ts
 │   ├── mutations/useCreateWorkspace/{useCreateWorkspace.ts,index.ts}
+│   ├── mutations/useGetOrCreateDefaultWorkspace/{useGetOrCreateDefaultWorkspace.ts,index.ts}
 │   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
 │   ├── mutations/index.ts
 │   ├── {workspaceService.ts,workspaceService.api.ts,workspaceServiceKeys.ts,workspaceService.test.ts,index.ts}
@@ -888,6 +904,7 @@ src/modules/workspace/
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,index.ts}
+├── pages/workspaceEntryPage/{workspaceEntryPage.tsx,workspaceEntryPageClient.tsx,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
 ├── hooks/useWorkspaceAccountOptions/{useWorkspaceAccountOptions.ts,index.ts}
 ├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
@@ -909,6 +926,7 @@ src/modules/application/components/layouts/layoutWorkspace/{layoutWorkspace.tsx,
 src/modules/application/components/navigations/navigationWorkspace/{navigationWorkspace.tsx,navigationWorkspaceUtils.ts,index.ts}
 src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
+src/app/workspace/page.tsx
 src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
 ```
 
@@ -935,7 +953,7 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
 | `api/workspaceQueryService/` vs 1096's `api/workspaceFinanceService/` | 1096 splits the query API per resource; this keeps one service for the whole `query/*` surface |
-| `constants/workspaceMocks.ts` | removed on this branch: the registry has no seed workspace |
+| `constants/workspaceMocks.ts` | removed on this branch: the registry has no mock workspaces; the only seed is the empty default workspace of `getOrCreateDefaultWorkspace` |
 | `index.ts` | both export from the module root — additive |
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |

@@ -4696,6 +4696,12 @@
           "title": "Workspace failed to load"
         }
       },
+      "workspaceEntryPage": {
+        "error": {
+          "description": "Something went wrong while opening your workspace. Please try again later.",
+          "title": "Workspace failed to open"
+        }
+      },
       "workspaceMemberList": {
         "emptyState": {
           "description": "The accounts of this workspace have no members yet.",
