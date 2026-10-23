@@ -432,7 +432,8 @@ selected option is X"*, and there is no honest value for it when X is not an opt
 Two pieces replace the old provider:
 
 - **`WorkspaceGate`**, in `LayoutWorkspace`, owns the workspace loading lifecycle — a spinner while it loads, an
-  error when it fails — so every page below can assume a loaded workspace.
+  error when it fails — so every page below can assume a loaded workspace. See "Workspace not found" below for
+  the states it renders for a workspace the registry does not hold.
 - **`useWorkspaceAccountOptions`** returns the options to switch to plus the `accountId` from the route, read with
   `useParams()`. It is a hook and not a context because both of its reads go through React Query, whose cache
   already shares them. Note `activeOption` may be undefined while `accountId` is set: what is being *looked at* is
@@ -751,6 +752,29 @@ when the lookup fails. Names are resolved with one batched `useWorkspaceAccounts
 not store the DAO name — and the account metadata name wins over it, being what the workspace owner chose to call
 the account.
 
+### Workspace not found
+
+The registry lives on one device, so a shared `/workspace/{id}/…` link usually names a workspace the reader does
+not have. `WorkspaceGate` splits `AragonBackendServiceError.notFoundCode` from every other failure, which keeps the
+generic `Page.Error`, and branches on the account segment read with `useParams()`:
+
+| Link | `resolveAccountScope(accountId)` | State |
+| --- | --- | --- |
+| Pure workspace link (`all/…`, the edit wizard, an invalid account segment) | `all` | `WorkspaceGateNotFound`: "Go to my workspaces" (the `/workspace` entry route) and "Create workspace" |
+| Account link (`{accountId}/…`, deeper segments included) | the account ID | `WorkspaceGateAccountPrompt`: open the same page in one of the reader's workspaces |
+
+- Both render in the gate rather than through `notFound()`: `NotFoundBase` is generic ("Explore DAOs"), and the
+  check runs on the client, so the status stays 200 either way.
+- The prompt labels the account with the accounts-API name, falling back to the truncated address, and lists
+  `useWorkspaceList` as a radio group, the first workspace preselected. Confirm `router.replace`s to
+  `workspaceUtils.getWorkspaceSwapUrl(pathname, id, query)`: only the workspace segment changes, so the section,
+  deeper segments and query string stay, and Back does not land on the dead link again.
+- The list can be empty, as reads never seed (see Registry). The prompt then offers the default workspace as a
+  pending option ("My workspace (new)") and only calls `getOrCreateDefaultWorkspace` on confirm, then invalidates
+  the list and redirects.
+- The redirect lands on an account the chosen workspace may not hold; that is "Viewing an account the workspace does
+  not hold" under Known gaps.
+
 ## Edit workspace
 
 `/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the workspace
@@ -898,6 +922,7 @@ src/modules/workspace/
 │   ├── createWorkspaceFormAccounts/{createWorkspaceFormAccounts.tsx,createWorkspaceFormAccountsItem.tsx,index.ts}
 │   └── index.ts
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
+├── components/workspaceGate/{workspaceGate.tsx,workspaceGateNotFound.tsx,workspaceGateAccountPrompt.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}

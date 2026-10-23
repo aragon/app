@@ -4696,6 +4696,24 @@
           "title": "Workspace failed to load"
         }
       },
+      "workspaceGateNotFound": {
+        "description": "This workspace isn't on this device. Workspaces are saved in the browser they were created in, so a link from someone else or another device won't open here.",
+        "heading": "Workspace not found",
+        "action": {
+          "create": "Create workspace",
+          "open": "Go to my workspaces"
+        }
+      },
+      "workspaceGateAccountPrompt": {
+        "description": "Open {{account}} in one of your workspaces instead?",
+        "heading": "This workspace isn't on this device",
+        "label": "Workspace",
+        "newWorkspace": "{{name}} (new)",
+        "action": {
+          "confirm": "Open",
+          "create": "Create workspace"
+        }
+      },
       "workspaceEntryPage": {
         "error": {
           "description": "Something went wrong while opening your workspace. Please try again later.",

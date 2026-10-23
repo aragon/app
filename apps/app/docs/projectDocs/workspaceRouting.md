@@ -76,7 +76,7 @@ One URL is one state. The path says **what** the page shows. The query string is
   2026-09-30).
 - When an account-owned entity, such as a proposal, is opened from the `all` scope, switch the scope to its account.
 - Decide how to handle accounts that are not part of the workspace.
-- Decide how to handle links with workspace ID which is not found locally or in user's registry. Redirect to first available workspace? Show 404 Not found?
+- **Resolved** (see [Resolved](#resolved)). Decide how to handle links with workspace ID which is not found locally or in user's registry. Redirect to first available workspace? Show 404 Not found?
   - How to share links related to specific accounts? Users should see any account data even if it's not in their workspace, plus, we should show an option to add that account to a selected user's workspace.
 - Do we need account type as URL param? How to get the type of account (based on network-address) if workspace is not present locally?
   - **Proposed: no.** The type is a fact about the address, not about the view. Putting it in the URL adds a second
@@ -87,3 +87,9 @@ One URL is one state. The path says **what** the page shows. The query string is
     today's "DAO or nothing" `daoOptions` prefetch. It then branches: DAO pages for `dao`, Safe pages for `safe`
     once they exist, and `notFound()` for `unknown`. Cost: one extra request per account-scoped server render.
 - Decide how best to re-introduce ENS support back into URLs.
+
+## Resolved
+
+- Links with a workspace ID not found locally: `WorkspaceGate` renders a "Workspace not found" state for a pure
+  workspace link, and offers to open the same page in one of the reader's workspaces for an account link. No
+  redirect without asking and no 404 page. Details: `createWorkspace.md` → Workspace not found.

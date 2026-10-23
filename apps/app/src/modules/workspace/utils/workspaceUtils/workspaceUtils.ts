@@ -204,6 +204,39 @@ class WorkspaceUtils {
     };
 
     /**
+     * URL of the current page in another workspace: only the workspace segment changes, so the account, the section,
+     * every deeper segment and the query string are kept.
+     *
+     * Opens a link to a workspace the reader does not have (e.g. shared from another device) in one they do have,
+     * on the same page.
+     *
+     * @param pathname - Pathname of a workspace page, `/workspace/{workspaceId}/…`.
+     * @param workspaceId - ID of the workspace to open the page in.
+     * @param query - Optional query string of the current URL, without the leading `?`.
+     * @returns The URL of the same page in the given workspace, or the workspace URL when the pathname is not a
+     * workspace page.
+     */
+    getWorkspaceSwapUrl = (
+        pathname: string,
+        workspaceId: string,
+        query?: string,
+    ): string => {
+        const [base, , ...pathSegments] = pathname
+            .split('/')
+            .filter((segment) => segment !== '');
+
+        if (base !== 'workspace') {
+            return this.getWorkspaceUrl(workspaceId);
+        }
+
+        const path =
+            pathSegments.length > 0 ? pathSegments.join('/') : undefined;
+        const url = this.getWorkspaceUrl(workspaceId, path);
+
+        return query != null && query !== '' ? `${url}?${query}` : url;
+    };
+
+    /**
      * Slugifies the given value into a URL-safe workspace ID candidate.
      * @param value - Value to slugify, e.g. the workspace name.
      * @returns The slugified value, or a generic fallback when the value has no slug-safe character.

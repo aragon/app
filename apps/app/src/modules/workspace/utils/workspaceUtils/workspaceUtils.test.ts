@@ -188,6 +188,60 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('getWorkspaceSwapUrl', () => {
+        it.each([
+            {
+                pathname: '/workspace/demo/all/overview',
+                expected: '/workspace/mine/all/overview',
+            },
+            {
+                pathname:
+                    '/workspace/demo/ethereum-sepolia-0x123/members/0xabc',
+                expected:
+                    '/workspace/mine/ethereum-sepolia-0x123/members/0xabc',
+            },
+            {
+                pathname: '/workspace/demo/edit',
+                expected: '/workspace/mine/edit',
+            },
+            { pathname: '/workspace/demo', expected: '/workspace/mine' },
+            {
+                pathname: '/workspace/demo/all/assets/',
+                expected: '/workspace/mine/all/assets',
+            },
+            {
+                pathname: '/dao/ethereum-mainnet/0x123/proposals',
+                expected: '/workspace/mine',
+            },
+        ])('swaps the workspace of "$pathname"', ({ pathname, expected }) => {
+            expect(
+                workspaceUtils.getWorkspaceSwapUrl(pathname, 'mine'),
+            ).toEqual(expected);
+        });
+
+        it('keeps the query string', () => {
+            expect(
+                workspaceUtils.getWorkspaceSwapUrl(
+                    '/workspace/demo/ethereum-sepolia-0x123/proposals',
+                    'mine',
+                    'status=active&page=2',
+                ),
+            ).toEqual(
+                '/workspace/mine/ethereum-sepolia-0x123/proposals?status=active&page=2',
+            );
+        });
+
+        it('appends no separator for an empty query string', () => {
+            expect(
+                workspaceUtils.getWorkspaceSwapUrl(
+                    '/workspace/demo/all/overview',
+                    'mine',
+                    '',
+                ),
+            ).toEqual('/workspace/mine/all/overview');
+        });
+    });
+
     describe('getAccountScopeSection', () => {
         it.each([
             {
