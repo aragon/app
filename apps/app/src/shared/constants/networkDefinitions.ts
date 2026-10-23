@@ -401,7 +401,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/bsc-testnet/',
         },
-        order: 15,
+        order: 17,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -420,7 +420,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hoodi/',
         },
-        order: 16,
+        order: 15,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -439,7 +439,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/base-sepolia/',
         },
-        order: 17,
+        order: 16,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
