@@ -377,7 +377,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.ETHEREUM_SEPOLIA]: {
         ...sepolia,
         name: 'Ethereum Sepolia',
-        logo: '/networks/ethereum.svg',
+        logo: '/networks/sepolia.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://eth-sepolia.g.alchemy.com/v2/',
@@ -396,7 +396,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BNB_TESTNET]: {
         ...bscTestnet,
         name: 'BNB Smart Chain Testnet',
-        logo: '/networks/bnb.svg',
+        logo: '/networks/bnb_testnet.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/bsc-testnet/',
@@ -415,7 +415,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.ETHEREUM_HOODI]: {
         ...hoodi,
         name: 'Ethereum Hoodi',
-        logo: '/networks/ethereum.svg',
+        logo: '/networks/hoodi.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hoodi/',
@@ -434,7 +434,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BASE_SEPOLIA]: {
         ...baseSepolia,
         name: 'Base Sepolia',
-        logo: '/networks/base.svg',
+        logo: '/networks/base_sepolia.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/base-sepolia/',
