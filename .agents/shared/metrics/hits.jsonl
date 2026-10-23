@@ -261,3 +261,12 @@
 {"ts":"2026-10-22T12:06:20.171Z","tool":"Edit","file":"apps/app/src/shared/utils/networkUtils/networkUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-10-22T12:06:21.229Z","tool":"Edit","file":"apps/app/src/modules/ens/constants/ensDelegateKey.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-10-22T12:06:22.294Z","tool":"Edit","file":"apps/app/src/modules/ens/constants/ensDelegateKey.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-10-22T10:58:02.368Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/actions/pinJsonAction/pinJsonAction.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-10-22T10:58:02.368Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/actions/pinJsonAction/pinJsonAction.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-10-22T12:24:23.312Z","tool":"Write","file":"apps/app/src/shared/utils/botIdUtils/botIdUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-10-22T12:24:24.361Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/actions/pinJsonAction/pinJsonAction.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-10-22T12:24:25.411Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/actions/pinFileAction/pinFileAction.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-10-22T12:24:28.546Z","tool":"Edit","file":"apps/app/src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-10-23T10:10:35.550Z","tool":"Write","file":"apps/app/src/shared/utils/botIdUtils/botIdUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-10-23T11:26:47.877Z","tool":"Edit","file":"apps/app/src/shared/utils/botIdUtils/botIdUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-10-23T11:28:47.330Z","tool":"Edit","file":"apps/app/src/shared/utils/botIdUtils/botIdUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}

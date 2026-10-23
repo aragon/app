@@ -1,10 +1,24 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { botIdUtils } from '@/shared/utils/botIdUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 
 export class ProxyBackendUtils {
     private proxyUrl = '/api/backend';
 
     request = async (request: NextRequest) => {
+        // Writes (simulations, dispatches) spend paid upstream services, reads are public on the backend anyway.
+        const isPost = request.method.toUpperCase() === 'POST';
+
+        if (
+            isPost &&
+            (await botIdUtils.isBot('backend', { onError: 'allow' }))
+        ) {
+            return NextResponse.json(
+                { error: 'Access denied' },
+                { status: 403 },
+            );
+        }
+
         const url = this.buildBackendUrl(request);
         const requestOptions = await this.buildRequestOptions(request);
 

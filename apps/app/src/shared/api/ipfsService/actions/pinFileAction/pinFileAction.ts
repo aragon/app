@@ -1,5 +1,6 @@
 'use server';
 
+import { botIdUtils } from '@/shared/utils/botIdUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import 'server-only';
 import type { IPinResult } from '../../domain';
@@ -10,6 +11,8 @@ export const pinFileAction = async ({
     body: file,
 }: IPinFileParams): Promise<IPinResult> =>
     monitoringUtils.serverActionWrapper('pinFileAction', async () => {
+        await botIdUtils.assertHuman('pin');
+
         const formData = new FormData();
         formData.append('file', file, file.name);
         const headers = { Authorization: `Bearer ${ipfsService.jwt}` };

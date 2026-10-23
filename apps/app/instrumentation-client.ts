@@ -3,10 +3,28 @@ import {
     replayIntegration,
     thirdPartyErrorFilterIntegration,
 } from '@sentry/nextjs';
+import { initBotId } from 'botid/client/core';
 import { analyticsUtils } from '@/shared/utils/analyticsUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 
 analyticsUtils.init();
+
+// Attach the Vercel BotID challenge to every POST: server actions post to the page they run on and the backend
+// and RPC relays live under /api. The server decides where the check is enforced (see botIdUtils). The check
+// level is pinned to basic on both sides: deep analysis is billed per checkBotId() call and the RPC relay runs
+// one per request. Skipped in local development, where checkBotId() always passes and the challenge only trips
+// the dev CSP.
+if (process.env.NEXT_PUBLIC_ENV !== 'local') {
+    initBotId({
+        protect: [
+            {
+                path: '/*',
+                method: 'POST',
+                advancedOptions: { checkLevel: 'basic' },
+            },
+        ],
+    });
+}
 
 Sentry.init({
     ...monitoringUtils.getBaseConfig(),

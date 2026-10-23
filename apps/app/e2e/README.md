@@ -166,6 +166,14 @@ Runs automatically on every PR via `shared-e2e.yml`:
 
 E2E results are **non-blocking** for PR merge — failures are reported in comments and Slack but do not prevent merging.
 
+### WAF bypass
+
+Vercel BotID classifies Playwright and Synpress as bots, and the WAF rate-limits POSTs per IP. Both configs send
+`x-aragon-e2e-bypass: $E2E_BYPASS_TOKEN` when the variable is set; the "E2E bypass" firewall rule of the
+`app-next` project lets requests with that header through. The token lives in 1Password (`kv_app_infra` →
+`E2E_BYPASS_TOKEN`) and reaches CI through the workflows' secret loading. Without it, flows that pin to IPFS,
+simulate or read the chain through `/api/rpc` get 403 from the deployment.
+
 ### Build verification
 
 Runs on staging deploys via `shared-bv.yml` (see [BV section](#build-verification-bv) above).
