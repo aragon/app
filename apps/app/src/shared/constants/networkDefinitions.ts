@@ -137,7 +137,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
         },
-        order: 6,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -175,7 +175,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
         },
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -194,7 +194,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
         },
-        order: 8,
+        order: 9,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -213,7 +213,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
         },
-        order: 7,
+        order: 8,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -232,7 +232,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/katana/',
         },
-        order: 9,
+        order: 10,
         protocolVersion: latestProtocolVersion,
         beta: false,
         tenderlySupport: true,
@@ -248,7 +248,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...citrea,
         name: 'Citrea',
         logo: '/networks/citrea.svg',
-        order: 11,
+        order: 12,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -267,7 +267,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://zksync-mainnet.g.alchemy.com/v2/',
         },
-        order: 10,
+        order: 11,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -286,7 +286,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ANKR,
             rpcUrl: 'https://rpc.ankr.com/chiliz/',
         },
-        order: 12,
+        order: 13,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -305,7 +305,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hemi/',
         },
-        order: 13,
+        order: 14,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -324,7 +324,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/monad/',
         },
-        order: 3,
+        order: 4,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -342,7 +342,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/robinhood/',
         },
-        order: 4,
+        order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -361,7 +361,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/bsc/',
         },
-        order: 14,
+        order: 3,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
