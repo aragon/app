@@ -29,9 +29,13 @@ describe('network utils', () => {
             expect(result).toContain(Network.KATANA_MAINNET);
             expect(result).toContain(Network.MONAD_MAINNET);
             expect(result).toContain(Network.ROBINHOOD_MAINNET);
+            expect(result).toContain(Network.BNB_MAINNET);
 
             // Should not include testnet networks
             expect(result).not.toContain(Network.ETHEREUM_SEPOLIA);
+            expect(result).not.toContain(Network.BNB_TESTNET);
+            expect(result).not.toContain(Network.ETHEREUM_HOODI);
+            expect(result).not.toContain(Network.BASE_SEPOLIA);
         });
     });
 });
