@@ -6,7 +6,7 @@
   "changelog": ["@changesets/changelog-github", { "repo": "aragon/app" }],
   "commit": false,
   "fixed": [],
-  "ignore": [],
+  "ignore": ["@aragon/docs"],
   "linked": [],
   "privatePackages": { "version": true, "tag": false },
   "updateInternalDependencies": "patch"
