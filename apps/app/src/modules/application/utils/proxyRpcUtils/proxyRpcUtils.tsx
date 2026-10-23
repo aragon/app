@@ -48,12 +48,7 @@ export class ProxyRpcUtils {
             );
         }
 
-        const monitoringContext = {
-            chainId,
-            rpcEndpoint,
-            requestMethod: request.method,
-            requestOptions,
-        };
+        const monitoringContext = this.buildMonitoringContext(chainId, request);
 
         try {
             const result = await fetch(rpcEndpoint, requestOptions);
@@ -143,6 +138,18 @@ export class ProxyRpcUtils {
             (network) =>
                 networkDefinitions[network as Network].id === Number(chainId),
         );
+
+    // The resolved endpoint embeds the provider key, so failure telemetry carries the chain and
+    // provider instead of the endpoint or the forwarded request.
+    private buildMonitoringContext = (chainId: string, request: Request) => {
+        const network = this.chainIdToNetwork(chainId);
+        const rpcProvider =
+            network != null
+                ? networkDefinitions[network].privateRpcConfig?.rpcProvider
+                : undefined;
+
+        return { chainId, network, rpcProvider, requestMethod: request.method };
+    };
 
     // Return type extended to include Node-specific 'duplex' property used for streamed requests.
     private buildRequestOptions = (

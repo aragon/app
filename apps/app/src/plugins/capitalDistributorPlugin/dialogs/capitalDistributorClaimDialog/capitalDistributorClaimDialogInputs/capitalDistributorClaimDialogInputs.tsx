@@ -34,13 +34,41 @@ export const CapitalDistributorClaimDialogInputs: React.FC<
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddresses?.[network]?.some(
-            (address) => addressUtils.isAddressEqual(address, value),
+        if (!plugin.enableOfacCheck) {
+            return true;
+        }
+
+        // Fail closed: a recipient is only cleared against a loaded, well-formed sanctions list. A list
+        // whose entries are not addresses, or one that names no address at all, matches nobody and
+        // would clear everyone.
+        // A sanctioned EVM address is the same key on every chain, and the CMS file does not list
+        // every network, so the recipient is checked against the lists of all networks.
+        const sanctionedLists =
+            sanctionedAddresses == null
+                ? []
+                : Object.values(sanctionedAddresses);
+        const sanctionedEntries: unknown[] = sanctionedLists.every((list) =>
+            Array.isArray(list),
+        )
+            ? sanctionedLists.flat()
+            : [];
+        const isAddressEntry = (entry: unknown): entry is string =>
+            typeof entry === 'string' && addressUtils.isAddress(entry);
+        if (
+            sanctionedEntries.length === 0 ||
+            !sanctionedEntries.every(isAddressEntry)
+        ) {
+            return 'app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.error.ofacUnavailable';
+        }
+
+        const isSanctionedAddress = sanctionedEntries.some((sanctioned) =>
+            addressUtils.isAddressEqual(sanctioned, value),
         );
 
-        if (plugin.enableOfacCheck && isSanctionedAddress) {
+        if (isSanctionedAddress) {
             const context = {
                 pluginAddress: plugin.address,
+                network,
                 userAddress: address,
                 recipient: value,
             };

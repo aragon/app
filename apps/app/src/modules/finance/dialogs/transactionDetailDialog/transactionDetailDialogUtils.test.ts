@@ -53,21 +53,23 @@ describe('transactionDetailDialogUtils', () => {
     });
 
     describe('getTransactionActions', () => {
-        it('returns decoded actions when all actions were decoded', () => {
-            const action = {
-                from: '0xfrom',
-                to: '0xto',
-                data: '0x',
-                value: '0',
-                type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
-                inputData: null,
-            };
+        const to = '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123';
 
+        const action = {
+            from: '0xfrom',
+            to,
+            data: '0x',
+            value: '0',
+            type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
+            inputData: null,
+        };
+
+        it('returns decoded actions when they match the raw calldata', () => {
             expect(
                 getTransactionActions(
                     generateActionData({
                         actions: [action],
-                        rawActions: [{ to: '0xto', data: '0x', value: '0' }],
+                        rawActions: [{ to, data: '0x', value: '0' }],
                     }),
                     '0xexecutor',
                 ),
@@ -79,18 +81,37 @@ describe('transactionDetailDialogUtils', () => {
                 getTransactionActions(
                     generateActionData({
                         decoding: true,
-                        rawActions: [
-                            { to: '0xto', data: '0x1234', value: '5' },
-                        ],
+                        rawActions: [{ to, data: '0x1234', value: '5' }],
                     }),
                     '0xexecutor',
                 ),
             ).toEqual([
                 {
                     from: '0xexecutor',
-                    to: '0xto',
+                    to,
                     data: '0x1234',
                     value: '5',
+                    type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
+                    inputData: null,
+                },
+            ]);
+        });
+
+        it('falls back to raw calldata when a decoded action differs from its raw counterpart', () => {
+            expect(
+                getTransactionActions(
+                    generateActionData({
+                        actions: [action],
+                        rawActions: [{ to, data: '0x', value: '100' }],
+                    }),
+                    '0xexecutor',
+                ),
+            ).toEqual([
+                {
+                    from: '0xexecutor',
+                    to,
+                    data: '0x',
+                    value: '100',
                     type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
                     inputData: null,
                 },

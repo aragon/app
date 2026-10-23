@@ -59,6 +59,52 @@ describe('monitoring utils', () => {
             ).toBeNull();
         });
 
+        it('masks registered secrets wherever they appear in the event', () => {
+            monitoringUtils.registerSecret('secret-alchemy_key');
+            const keyedUrl =
+                'https://eth-mainnet.g.alchemy.com/v2/secret-alchemy_key';
+            const event = {
+                exception: { values: [{ value: `fetch failed: ${keyedUrl}` }] },
+                extra: {
+                    rpcEndpoint: keyedUrl,
+                    nested: [{ url: `${keyedUrl}?retry=1` }],
+                },
+                breadcrumbs: [{ category: 'http', data: { url: keyedUrl } }],
+            } as never;
+
+            const result = monitoringUtils.beforeSend(event);
+
+            expect(JSON.stringify(result)).not.toContain('secret-alchemy_key');
+            expect(result?.extra?.nested).toEqual([
+                {
+                    url: 'https://eth-mainnet.g.alchemy.com/v2/[redacted]?retry=1',
+                },
+            ]);
+            expect(result?.breadcrumbs?.[0].data?.url).toEqual(
+                'https://eth-mainnet.g.alchemy.com/v2/[redacted]',
+            );
+        });
+
+        it('masks secrets registered through another copy of the module', () => {
+            // Next bundles the module once per layer: the copy that reads the key is not the copy
+            // whose hooks Sentry runs.
+            let registering: typeof monitoringUtils | undefined;
+            jest.isolateModules(() => {
+                registering =
+                    jest.requireActual<typeof import('./monitoringUtils')>(
+                        './monitoringUtils',
+                    ).monitoringUtils;
+            });
+            expect(registering).not.toBe(monitoringUtils);
+
+            registering?.registerSecret('other-layer-key');
+            const result = monitoringUtils.beforeSend(
+                buildEvent('URL: https://rpc.example/v2/other-layer-key'),
+            );
+
+            expect(JSON.stringify(result)).not.toContain('other-layer-key');
+        });
+
         it('keeps a genuine cyclic error (no __reactFiber) so we never miss our own bug', () => {
             const result = monitoringUtils.beforeSend(
                 buildEvent('TypeError: Converting circular structure to JSON'),
@@ -204,6 +250,30 @@ describe('monitoring utils', () => {
             const result = monitoringUtils.beforeSend(event);
             expect(result).not.toBeNull();
             expect(result?.tags?.noise_class).toEqual('expected');
+        });
+    });
+
+    describe('beforeSendTransaction', () => {
+        it('masks registered secrets in span data', () => {
+            monitoringUtils.registerSecret('drpc-secret');
+            const event = {
+                type: 'transaction',
+                spans: [
+                    {
+                        data: {
+                            'http.url':
+                                'https://lb.drpc.live/katana/drpc-secret',
+                        },
+                    },
+                ],
+            } as never;
+
+            const result = monitoringUtils.beforeSendTransaction(event);
+
+            expect(JSON.stringify(result)).not.toContain('drpc-secret');
+            expect(result.spans?.[0].data?.['http.url']).toEqual(
+                'https://lb.drpc.live/katana/[redacted]',
+            );
         });
     });
 

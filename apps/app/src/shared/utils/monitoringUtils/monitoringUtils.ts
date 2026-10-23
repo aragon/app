@@ -4,6 +4,7 @@ import type {
     Event,
     EventHint,
     ScopeContext,
+    TransactionEvent,
 } from '@sentry/core';
 import {
     captureException,
@@ -54,6 +55,10 @@ export type SentryNoiseClass =
     | 'infra'
     | 'security-probe'
     | 'internal-broken-link';
+
+// Process-wide home of the secrets registry, see `MonitoringUtils.secrets`.
+const secretsKey = Symbol.for('aragon.monitoringUtils.secrets');
+const secretsHost = globalThis as unknown as Record<symbol, Set<string>>;
 
 class MonitoringUtils {
     /**
@@ -162,6 +167,7 @@ class MonitoringUtils {
         | 'environment'
         | 'release'
         | 'beforeSend'
+        | 'beforeSendTransaction'
     > => ({
         enabled: this.isEnabled(),
         dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -169,6 +175,7 @@ class MonitoringUtils {
         environment: process.env.NEXT_PUBLIC_ENV,
         release: process.env.version,
         beforeSend: this.beforeSend,
+        beforeSendTransaction: this.beforeSendTransaction,
     });
 
     /**
@@ -198,8 +205,12 @@ class MonitoringUtils {
             }
         }
 
-        return event;
+        return this.redactSecrets(event);
     };
+
+    // Outgoing-request spans carry the upstream URL, so transactions are scrubbed like errors.
+    beforeSendTransaction = (event: TransactionEvent): TransactionEvent =>
+        this.redactSecrets(event);
 
     logError = (error: unknown, params?: ILogErrorParams) => {
         const { context } = params ?? {};
@@ -364,6 +375,62 @@ class MonitoringUtils {
             typeof code === 'number' &&
             this.expectedProviderErrorCodes.includes(code)
         );
+    };
+
+    /**
+     * Values that must never reach Sentry, registered by the code that reads them (the RPC
+     * proxy's provider keys). A keyed URL reaches events through more than one door: error
+     * context, the `url` of a parsed response, breadcrumbs and spans of outgoing requests. Every
+     * string of an outgoing event is therefore scrubbed of the registered values.
+     *
+     * The set is shared through `globalThis`: Next bundles this module once per layer
+     * (instrumentation, route handlers, RSC, SSR), and `Sentry.init` holds the hooks of the
+     * instrumentation copy while the keys are registered from the others.
+     */
+    private secrets = (secretsHost[secretsKey] ??= new Set<string>());
+
+    registerSecret = (secret: string | undefined) => {
+        if (secret) {
+            this.secrets.add(secret);
+        }
+    };
+
+    /**
+     * Replaces the registered secrets in every string of plain data (Sentry events, serialized
+     * errors handed to client components).
+     */
+    redactSecrets = <TValue>(value: TValue): TValue =>
+        this.secrets.size === 0 ? value : (this.redactStrings(value) as TValue);
+
+    // Walks plain data only: class instances in the event metadata are left untouched.
+    private redactStrings = (value: unknown): unknown => {
+        if (typeof value === 'string') {
+            let redacted = value;
+            for (const secret of this.secrets) {
+                redacted = redacted.replaceAll(secret, '[redacted]');
+            }
+
+            return redacted;
+        }
+
+        if (Array.isArray(value)) {
+            return value.map((item) => this.redactStrings(item));
+        }
+
+        if (
+            value != null &&
+            typeof value === 'object' &&
+            Object.getPrototypeOf(value) === Object.prototype
+        ) {
+            return Object.fromEntries(
+                Object.entries(value).map(([key, item]) => [
+                    key,
+                    this.redactStrings(item),
+                ]),
+            );
+        }
+
+        return value;
     };
 
     private getSerializedMessage = (value: unknown): string => {

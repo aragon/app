@@ -12,9 +12,13 @@ export const pinJsonAction = async ({
 }: IPinJsonParams): Promise<IPinResult> =>
     monitoringUtils.serverActionWrapper('pinJsonAction', async () => {
         await botIdUtils.assertHuman('pin');
+        ipfsService.validateJson(bodyParam);
 
         const headers = { Authorization: `Bearer ${ipfsService.jwt}` };
-        const body = { pinataContent: bodyParam };
+        const body = {
+            pinataContent: bodyParam,
+            pinataMetadata: ipfsService.buildPinMetadata(),
+        };
         const options = { headers, method: 'POST' };
         const result = await ipfsService.request<IPinResult>(
             ipfsService.urls.pinJson,
