@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { type DefaultValues, FormProvider, useForm } from 'react-hook-form';
 
 export interface IFormWrapperProps {
+    /**
+     * Initial values of the form.
+     */
+    defaultValues?: DefaultValues<Record<string, unknown>>;
     /**
      * Children of the component.
      */
@@ -9,9 +13,9 @@ export interface IFormWrapperProps {
 }
 
 export const FormWrapper: React.FC<IFormWrapperProps> = (props) => {
-    const { children } = props;
+    const { defaultValues, children } = props;
 
-    const formMethods = useForm();
+    const formMethods = useForm({ defaultValues });
 
     return <FormProvider {...formMethods}>{children}</FormProvider>;
 };

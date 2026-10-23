@@ -1121,9 +1121,7 @@
             "mainnets": "Mainnets",
             "testnets": "Testnets"
           },
-          "showAll": {
-            "testnets": "Show all testnets"
-          },
+          "showAllTestnets": "Show all testnets",
           "showFewer": "Show fewer",
           "tag": {
             "beta": "Beta",

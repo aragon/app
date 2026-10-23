@@ -1,75 +1,79 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
 import { Network } from '@/shared/api/daoService';
-import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { FormWrapper } from '@/shared/testUtils';
 import { CreateDaoFormNetwork } from './createDaoFormNetwork';
 
 describe('<CreateDaoFormNetwork /> component', () => {
-    let form: UseFormReturn<ICreateDaoFormData>;
+    const createTestComponent = (defaultValues?: { network?: Network }) => (
+        <FormWrapper defaultValues={defaultValues}>
+            <CreateDaoFormNetwork />
+        </FormWrapper>
+    );
 
-    const TestForm = (props: { network?: Network }) => {
-        form = useForm<ICreateDaoFormData>({
-            defaultValues: { network: props.network },
-        });
+    const mainnetsCount = Object.values(networkDefinitions).filter(
+        ({ testnet }) => !testnet,
+    ).length;
 
-        return (
-            <FormProvider {...form}>
-                <CreateDaoFormNetwork />
-            </FormProvider>
-        );
-    };
+    it('renders every mainnet and only the first testnet until expanded', () => {
+        render(createTestComponent());
 
-    it('keeps undisclosed testnets out of keyboard selection', async () => {
-        const user = userEvent.setup();
-        render(<TestForm />);
-
-        await user.click(
+        expect(screen.getAllByRole('radio')).toHaveLength(mainnetsCount + 1);
+        expect(
             screen.getByRole('radio', { name: 'Ethereum Sepolia' }),
-        );
-        await user.keyboard('{ArrowDown>}');
-
-        await waitFor(() => {
-            expect(form.getValues('network')).toBe(Network.ETHEREUM_MAINNET);
-        });
-        await user.keyboard('{/ArrowDown}');
+        ).toBeInTheDocument();
         expect(
             screen.queryByRole('radio', { name: 'Ethereum Hoodi' }),
         ).not.toBeInTheDocument();
         expect(
-            screen.queryByRole('radio', { name: 'Base Sepolia' }),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByRole('radio', { name: 'BNB Smart Chain Testnet' }),
-        ).not.toBeInTheDocument();
+            screen.getByRole('button', { name: /network.showAllTestnets/ }),
+        ).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('selects the first mainnet when navigating down from the last visible testnet', async () => {
+        const user = userEvent.setup();
+        render(createTestComponent());
+
+        await user.click(
+            screen.getByRole('radio', { name: 'Ethereum Sepolia' }),
+        );
+        // Radix moves roving focus in a timeout and only checks the focused item while the arrow key is still held
+        await user.keyboard('{ArrowDown>}');
+
+        await waitFor(() => {
+            expect(
+                screen.getByRole('radio', { name: 'Ethereum' }),
+            ).toBeChecked();
+        });
+        await user.keyboard('{/ArrowDown}');
     });
 
     it('keeps the selected testnet visible when the other testnets are collapsed', async () => {
         const user = userEvent.setup();
-        render(<TestForm />);
+        render(createTestComponent());
 
         await user.click(
-            screen.getByRole('button', { name: /network.showAll.testnets/ }),
+            screen.getByRole('button', { name: /network.showAllTestnets/ }),
         );
         expect(
             screen.getByRole('radio', { name: 'Base Sepolia' }),
-        ).toBeVisible();
+        ).toBeInTheDocument();
         expect(
             screen.getByRole('radio', { name: 'BNB Smart Chain Testnet' }),
-        ).toBeVisible();
+        ).toBeInTheDocument();
 
         await user.click(screen.getByRole('radio', { name: 'Ethereum Hoodi' }));
         await user.click(
             screen.getByRole('button', { name: /network.showFewer/ }),
         );
 
-        expect(form.getValues('network')).toBe(Network.ETHEREUM_HOODI);
         expect(
             screen.getByRole('radio', { name: 'Ethereum Hoodi' }),
-        ).toBeVisible();
+        ).toBeChecked();
         expect(
             screen.getByRole('radio', { name: 'Ethereum Sepolia' }),
-        ).toBeVisible();
+        ).toBeInTheDocument();
         expect(
             screen.queryByRole('radio', { name: 'Base Sepolia' }),
         ).not.toBeInTheDocument();
@@ -79,11 +83,10 @@ describe('<CreateDaoFormNetwork /> component', () => {
     });
 
     it('shows a previously selected testnet when returning to the network step', () => {
-        render(<TestForm network={Network.BASE_SEPOLIA} />);
+        render(createTestComponent({ network: Network.BASE_SEPOLIA }));
 
-        expect(form.getValues('network')).toBe(Network.BASE_SEPOLIA);
         expect(
             screen.getByRole('radio', { name: 'Base Sepolia' }),
-        ).toBeVisible();
+        ).toBeChecked();
     });
 });

@@ -1,6 +1,6 @@
 import {
+    Button,
     Heading,
-    Icon,
     IconType,
     RadioCard,
     RadioGroup,
@@ -35,7 +35,7 @@ export const CreateDaoFormNetwork: React.FC<
         ICreateDaoFormData,
         'network'
     >('network', {
-        rules: { required: true },
+        label: t('app.createDao.createDaoForm.network.label'),
         defaultValue: Network.ETHEREUM_SEPOLIA,
     });
 
@@ -44,7 +44,7 @@ export const CreateDaoFormNetwork: React.FC<
         label: t('app.createDao.createDaoForm.network.tag.disabled'),
     };
     const betaTag = {
-        variant: 'info' as const,
+        variant: 'primary' as const,
         label: t('app.createDao.createDaoForm.network.tag.beta'),
     };
 
@@ -86,7 +86,7 @@ export const CreateDaoFormNetwork: React.FC<
                             'app.createDao.createDaoForm.network.section.mainnets',
                         )}
                     </Heading>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-y-2 md:gap-y-3">
                         {mainnets.map(renderNetwork)}
                     </div>
                 </div>
@@ -96,34 +96,34 @@ export const CreateDaoFormNetwork: React.FC<
                             'app.createDao.createDaoForm.network.section.testnets',
                         )}
                     </Heading>
-                    <div className="flex flex-col gap-3" id={testnetListId}>
+                    <div
+                        className="flex flex-col gap-y-2 md:gap-y-3"
+                        id={testnetListId}
+                    >
                         {displayedTestnets.map(renderNetwork)}
                     </div>
                     {testnets.length > visibleTestnets && (
-                        <button
+                        <Button
                             aria-controls={testnetListId}
                             aria-expanded={showAllTestnets}
-                            className="group flex cursor-pointer items-center self-start text-primary-400 hover:text-primary-600 active:text-primary-800"
+                            className="self-start"
+                            iconRight={
+                                showAllTestnets
+                                    ? IconType.CHEVRON_UP
+                                    : IconType.CHEVRON_DOWN
+                            }
                             onClick={() =>
                                 setShowAllTestnets((expanded) => !expanded)
                             }
-                            type="button"
+                            size="sm"
+                            variant="tertiary"
                         >
                             {t(
                                 showAllTestnets
                                     ? 'app.createDao.createDaoForm.network.showFewer'
-                                    : 'app.createDao.createDaoForm.network.showAll.testnets',
+                                    : 'app.createDao.createDaoForm.network.showAllTestnets',
                             )}
-                            <Icon
-                                className="ml-2 text-primary-300 group-hover:text-primary-500 group-active:text-primary-700"
-                                icon={
-                                    showAllTestnets
-                                        ? IconType.CHEVRON_UP
-                                        : IconType.CHEVRON_DOWN
-                                }
-                                size="sm"
-                            />
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
