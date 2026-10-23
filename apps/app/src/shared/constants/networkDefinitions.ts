@@ -132,7 +132,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.POLYGON_MAINNET]: {
         ...polygon,
         name: 'Polygon',
-        logo: '/networks/polygon.png',
+        logo: '/networks/polygon.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
@@ -151,7 +151,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BASE_MAINNET]: {
         ...base,
         name: 'Base',
-        logo: '/networks/base.png',
+        logo: '/networks/base.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://base-mainnet.g.alchemy.com/v2/',
@@ -208,7 +208,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.AVAX_MAINNET]: {
         ...avalanche,
         name: 'Avalanche',
-        logo: '/networks/avalanche.png',
+        logo: '/networks/avalanche.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
@@ -227,7 +227,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.KATANA_MAINNET]: {
         ...katana,
         name: 'Katana',
-        logo: '/networks/katana.jpg',
+        logo: '/networks/katana.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/katana/',
@@ -262,7 +262,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.ZKSYNC_MAINNET]: {
         ...zksync,
         name: 'zkSync',
-        logo: '/networks/zksync.png',
+        logo: '/networks/zksync.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://zksync-mainnet.g.alchemy.com/v2/',
@@ -281,7 +281,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.CHILIZ_MAINNET]: {
         ...chiliz,
         name: 'Chiliz',
-        logo: '/networks/chiliz.png',
+        logo: '/networks/chiliz.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ANKR,
             rpcUrl: 'https://rpc.ankr.com/chiliz/',
@@ -337,7 +337,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.ROBINHOOD_MAINNET]: {
         ...robinhood,
-        logo: '/networks/robinhood.jpg',
+        logo: '/networks/robinhood.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/robinhood/',
@@ -356,7 +356,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BNB_MAINNET]: {
         ...bsc,
         name: 'BNB Smart Chain',
-        logo: '/networks/bnb.png',
+        logo: '/networks/bnb.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/bsc/',
@@ -396,7 +396,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BNB_TESTNET]: {
         ...bscTestnet,
         name: 'BNB Smart Chain Testnet',
-        logo: '/networks/bnb.png',
+        logo: '/networks/bnb.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/bsc-testnet/',
@@ -434,7 +434,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BASE_SEPOLIA]: {
         ...baseSepolia,
         name: 'Base Sepolia',
-        logo: '/networks/base.png',
+        logo: '/networks/base.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/base-sepolia/',
