@@ -1,8 +1,11 @@
 # Central package→release-scope mapper: each scope lists the packages one release flow versions
-# together (the `scope` input of the changeset-version action names an entry here). A changeset
+# together (the `scope` input of the shared release-start workflow names an entry here). A changeset
 # must never mix packages from different scopes — `changeset version --ignore` refuses mixed
-# changesets, which breaks every scoped flow. CI enforces this via `pnpm validate:changesets`.
-# When a new workspace lands, add it to a scope HERE — flows and validation read this file.
+# changesets, which breaks every scoped flow. The first package of a scope is the one whose version
+# names the release and whose tag deploys it, so every changeset in the scope must bump it — a
+# bump of a bundled package alone would cut a release whose tag already exists. CI enforces both
+# via `pnpm validate:changesets`. When a new workspace lands, add it to a scope HERE — flows and
+# validation read this file.
 #
 # A package belongs to the scope whose release deploys it: @aragon/assistant-chat ships inside
 # the app bundle (only @aragon/app consumes it), so the app release consumes its changesets and

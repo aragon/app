@@ -1,5 +1,6 @@
-# The "App Staging" workflow is manually triggered to deploy the application to the staging environment. It builds the
-# staging version of the application and deploys it for testing before releasing to production.
+# The "App Staging" workflow deploys main (or the dispatched ref) to staging by hand, outside a
+# release, and runs the smoke and BV suites against it. The deploy opens its own Slack thread,
+# which the test results join.
 
 name: App Staging
 
@@ -14,98 +15,60 @@ permissions:
   contents: read
 
 jobs:
-  notify-start:
-    runs-on: ubuntu-latest
-    outputs:
-      slack-ts: ${{ steps.notify.outputs.ts }}
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack - Staging Deploy Started
-        id: notify
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          message: |
-            ⏳ *Staging deploy started* (manual)
-            *Triggered by:* ${{ github.actor }}
-
   deploy:
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: "stg.app.aragon.org"
-      env: "staging"
+      env: staging
+      domain: stg.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_staging
+      setup-command: pnpm run setup staging
+      patch-root-directory: true
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   e2e:
     needs: deploy
-    uses: ./.github/workflows/shared-e2e.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: https://stg.app.aragon.org
       environment: staging
+      working-directory: apps/app
+      env-secret-refs: |
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-ts: ${{ needs.deploy.outputs.slack-ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   bv:
     needs: deploy
-    uses: ./.github/workflows/shared-bv.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: https://stg.app.aragon.org
       environment: staging
-
-  e2e-notify:
-    needs: [notify-start, e2e, bv]
-    if: ${{ always() && (needs.e2e.result != 'skipped' || needs.bv.result != 'skipped') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack — E2E results
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
-        env:
-          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
-          message: |
-            ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *staging* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *staging* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *staging* failed' || '⏹️ Smoke tests on *staging* were cancelled' }}
-            ${{ needs.e2e.outputs.summary }}
-            ${{ needs.bv.outputs.result == 'passed' && '✅ BV tests on *staging* passed' || needs.bv.outputs.result == 'flaky' && '⚠️ BV tests on *staging* completed with flaky tests' || needs.bv.outputs.result == 'failed' && '❌ BV tests on *staging* failed' || '⏹️ BV tests on *staging* were cancelled' }}
-            ${{ needs.bv.outputs.summary }}
-            <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html|View smoke report>  |  <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.bv.outputs.report_artifact_id }}/index.html|View BV report>
+      mode: bv
+      working-directory: apps/app
+      timeout-minutes: 30
+      use-xvfb: true
+      env-secret-refs: |
+        E2E_FE_MM_WALLET_PASSWORD=op://kv_app_infra/E2E_FE_MM_WALLET/password
+        E2E_FE_MM_WALLET_SECRET_RECOVERY_PHRASE=op://kv_app_infra/E2E_FE_MM_WALLET/secret recovery phrase
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      extra-cache-path: apps/app/.cache-synpress
+      extra-cache-key-files: |
+        apps/app/e2e/setup/wallet.setup.ts
+        apps/app/package.json
+      pre-test-command: '[ "$EXTRA_CACHE_HIT" = "true" ] || pnpm e2e:bv:wallet-cache'
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-ts: ${{ needs.deploy.outputs.slack-ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

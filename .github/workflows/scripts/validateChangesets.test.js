@@ -44,6 +44,23 @@ test('accepts changesets that stay within one release scope', () => {
     }
 });
 
+test('rejects a changeset that skips the package versioning its release scope', () => {
+    const { directory, changesetDir, scopesPath } = createFixture({
+        'widget-change.md': ['@aragon/assistant-chat'],
+    });
+
+    try {
+        const errors = validateChangesets({ changesetDir, scopesPath });
+        assert.equal(errors.length, 1);
+        assert.match(
+            errors[0],
+            /widget-change\.md: bumps @aragon\/assistant-chat without @aragon\/assistant/,
+        );
+    } finally {
+        fs.rmSync(directory, { recursive: true, force: true });
+    }
+});
+
 test('rejects a changeset mixing packages from different release scopes', () => {
     const { directory, changesetDir, scopesPath } = createFixture({
         'mixed-change.md': ['@aragon/app', '@aragon/assistant-chat'],

@@ -42,17 +42,17 @@ jobs:
       # with the "Protection Bypass for Automation" secret of the assistant Vercel project.
       # continue-on-error: a missing vault item degrades to today's behavior (403 on every
       # scenario) instead of failing the job earlier with a different error.
-      - name: Load secrets
-        id: secrets
+      - name: Resolve 1Password secrets
+        id: op
         continue-on-error: true
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        uses: aragon/github-templates/steps/credential-retrieval@main
         with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          VERCEL_AUTOMATION_BYPASS_SECRET: op://kv_assistant_infra/VERCEL_AUTOMATION_BYPASS_SECRET/credential
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            VERCEL_AUTOMATION_BYPASS_SECRET=op://kv_assistant_infra/VERCEL_AUTOMATION_BYPASS_SECRET/credential
 
       - name: Run LLM smoke scenarios
         env:
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ steps.secrets.outputs.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ fromJSON(steps.op.outputs.secrets || '{}').VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
         run: node apps/assistant/scripts/llmSmoke.mjs "${{ inputs.url || 'https://dev.assistant.aragon.org' }}"

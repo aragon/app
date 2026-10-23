@@ -1,9 +1,9 @@
-# The "App Preview" workflow runs on every pull request. It deploys a preview environment to Vercel, comments the
-# deployment URL on the pull request, and runs E2E smoke tests against the preview.
-# When the PR touches the assistant service (see .github/filters.yml), the assistant preview is deployed FIRST and
-# the app preview is built against it (NEXT_PUBLIC_ASSISTANT_URL override) — the assistant cannot be tested without
-# the app, so the two previews are chained. PRs that do not touch the assistant use dev.assistant.aragon.org
-# (the default in the app env config).
+# The "App Preview" workflow runs on every pull request. It deploys a preview environment to Vercel,
+# comments the deployment URL on the pull request, and runs E2E smoke tests against the preview.
+# When the PR touches the assistant service (see .github/filters.yml), the assistant preview is
+# deployed FIRST and the app preview is built against it (NEXT_PUBLIC_ASSISTANT_URL override) — the
+# assistant cannot be tested without the app, so the two previews are chained. PRs that do not touch
+# the assistant use dev.assistant.aragon.org (the default in the app env config).
 # Build verification (BV/Synpress) tests run only on staging as part of the release process.
 
 name: App Preview
@@ -47,41 +47,45 @@ jobs:
   deploy-assistant:
     needs: changes
     if: ${{ needs.changes.outputs.assistant == 'true' }}
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      env: "preview"
-      workspace: "apps/assistant"
-      vault-prefix: "kv_assistant"
-      docs-repo-token: true
-      patch-root-directory: false
+      env: preview
+      vercel-scope: aragon-app
+      workspace: apps/assistant
+      op-infra-vault: kv_assistant_infra
+      op-env-vault: kv_assistant_preview
+      setup-command: pnpm run setup preview
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
       # Serverless functions only see runtime env vars (the .env file is build-time only).
       runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"
       upload-sentry-source-maps: true
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   deploy:
     needs: [changes, deploy-assistant]
     if: ${{ !cancelled() && needs.changes.result == 'success' && (needs.deploy-assistant.result == 'success' || needs.deploy-assistant.result == 'skipped') }}
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      env: "preview"
+      env: preview
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_preview
+      setup-command: pnpm run setup preview
+      patch-root-directory: true
       env-overrides: ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('NEXT_PUBLIC_ASSISTANT_URL={0}', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   comment:
     runs-on: ubuntu-latest
     needs: [deploy-assistant, deploy]
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/gh-ensure-pr-comment
-
       - name: Comment preview PR
-        uses: ./.github/actions/gh-ensure-pr-comment
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
         with:
           message: |
             🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})
@@ -92,28 +96,26 @@ jobs:
   e2e:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    uses: ./.github/workflows/shared-e2e.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: ${{ needs.deploy.outputs.deploymentUrl }}
       environment: preview
+      working-directory: apps/app
+      env-secret-refs: |
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   e2e-comment:
     needs: [deploy, e2e]
     if: ${{ always() && needs.deploy.result == 'success' && needs.e2e.result != 'skipped' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/gh-ensure-pr-comment
-
       - name: Comment E2E results
         env:
           ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
-        uses: ./.github/actions/gh-ensure-pr-comment
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
         with:
           tag: e2e-results
           message: |
