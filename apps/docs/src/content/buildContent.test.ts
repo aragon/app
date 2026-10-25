@@ -218,21 +218,32 @@ describe('renderContentFiles', () => {
     });
 
     it('writes the sidebar order of every folder, the rest of the folder after it', () => {
+        // The top level follows sidebarEntries, not the order of the root index.
         expect(JSON.parse(contentOf('meta.json') ?? '')).toEqual({
             title: 'Aragon Platform',
             pages: [
                 'index',
                 'value-proposition',
-                'governance',
                 'accounts',
+                'governance',
                 '...',
             ],
         });
         expect(JSON.parse(contentOf('accounts/meta.json') ?? '')).toEqual({
             title: 'Accounts',
-            icon: 'Landmark',
+            icon: 'APP_DASHBOARD',
             pages: ['safe', 'account', '...'],
         });
+    });
+
+    it('gives the root pages their sidebar label and icon, and the area pages neither', () => {
+        expect(contentOf('index.md')).toContain(
+            'sidebarTitle: "Home"\nicon: "HOME"\n',
+        );
+        expect(contentOf('value-proposition.md')).toContain(
+            'sidebarTitle: "Why Aragon?"\nicon: "INFO"\n',
+        );
+        expect(contentOf('accounts/account.md')).not.toContain('icon');
     });
 });
 
