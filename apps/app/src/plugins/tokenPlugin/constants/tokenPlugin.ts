@@ -37,6 +37,7 @@ export const tokenPlugin: IPluginInfo = {
         [Network.BNB_TESTNET]: '0x47Be4F36D9dc1450Eddf0d995768b6CC0C938348',
         [Network.ETHEREUM_HOODI]: '0x47Be4F36D9dc1450Eddf0d995768b6CC0C938348',
         [Network.BASE_SEPOLIA]: '0x47Be4F36D9dc1450Eddf0d995768b6CC0C938348',
+        [Network.POLYGON_AMOY]: '0x47Be4F36D9dc1450Eddf0d995768b6CC0C938348',
     },
     setup: {
         nameKey: 'app.plugins.token.meta.setup.name',

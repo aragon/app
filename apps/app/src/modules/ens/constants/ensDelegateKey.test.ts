@@ -32,6 +32,7 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
         { network: Network.BNB_TESTNET },
         { network: Network.ETHEREUM_HOODI },
         { network: Network.BASE_SEPOLIA },
+        { network: Network.POLYGON_AMOY },
     ])(
         'maps testnet $network to the generic "test" namespace',
         ({ network }) => {

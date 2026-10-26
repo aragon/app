@@ -37,6 +37,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.BNB_TESTNET]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
         [Network.ETHEREUM_HOODI]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
         [Network.BASE_SEPOLIA]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
+        [Network.POLYGON_AMOY]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
     },
     setup: {
         nameKey: 'app.plugins.multisig.meta.setup.name',

@@ -30,5 +30,6 @@ export const crossChainControllerPlugin: IPluginInfo = {
         [Network.BNB_TESTNET]: '0xa0A3493102588c58b200b22104525a24d973711d',
         [Network.ETHEREUM_HOODI]: '0xa0A3493102588c58b200b22104525a24d973711d',
         [Network.BASE_SEPOLIA]: '0xa0A3493102588c58b200b22104525a24d973711d',
+        [Network.POLYGON_AMOY]: '0xa0A3493102588c58b200b22104525a24d973711d',
     },
 };

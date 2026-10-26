@@ -36,6 +36,7 @@ describe('network utils', () => {
             expect(result).not.toContain(Network.BNB_TESTNET);
             expect(result).not.toContain(Network.ETHEREUM_HOODI);
             expect(result).not.toContain(Network.BASE_SEPOLIA);
+            expect(result).not.toContain(Network.POLYGON_AMOY);
         });
     });
 });

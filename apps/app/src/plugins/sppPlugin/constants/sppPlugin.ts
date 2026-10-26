@@ -36,5 +36,6 @@ export const sppPlugin: IPluginInfo = {
         [Network.BNB_TESTNET]: '0x3FdEEa38BCa0e60aF380834623C8f297ba615386',
         [Network.ETHEREUM_HOODI]: '0x3FdEEa38BCa0e60aF380834623C8f297ba615386',
         [Network.BASE_SEPOLIA]: '0x3FdEEa38BCa0e60aF380834623C8f297ba615386',
+        [Network.POLYGON_AMOY]: '0x3FdEEa38BCa0e60aF380834623C8f297ba615386',
     },
 };

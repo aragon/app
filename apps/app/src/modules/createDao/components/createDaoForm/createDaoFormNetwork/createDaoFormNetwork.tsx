@@ -35,7 +35,6 @@ export const CreateDaoFormNetwork: React.FC<
         ICreateDaoFormData,
         'network'
     >('network', {
-        label: t('app.createDao.createDaoForm.network.label'),
         defaultValue: Network.ETHEREUM_SEPOLIA,
     });
 

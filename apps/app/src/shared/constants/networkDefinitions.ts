@@ -15,6 +15,7 @@ import {
     monad,
     optimism,
     polygon,
+    polygonAmoy,
     robinhood,
     sepolia,
     zksync,
@@ -416,6 +417,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...hoodi,
         name: 'Ethereum Hoodi',
         logo: '/networks/hoodi.svg',
+        // Wallets receive this URL on add-chain. The viem default (ethpandaops) rate-limits them.
+        rpcUrls: { default: { http: ['https://hoodi.drpc.org'] } },
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hoodi/',
@@ -440,6 +443,25 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcUrl: 'https://lb.drpc.live/base-sepolia/',
         },
         order: 16,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0xbe0ac805395e9CeAc1f445CDe380B23b86fA3742',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
+        },
+    },
+    [Network.POLYGON_AMOY]: {
+        ...polygonAmoy,
+        name: 'Polygon Amoy',
+        logo: '/networks/polygon_amoy.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/polygon-amoy/',
+        },
+        order: 18,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
