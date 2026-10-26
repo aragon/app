@@ -6,13 +6,14 @@ import {
     DocsPage,
     DocsTitle,
     MarkdownCopyButton,
+    PageLastUpdate,
     ViewOptionsPopover,
 } from 'fumadocs-ui/layouts/docs/page';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PagePager } from '../../components/pagePager';
-import { draftNotice, toCanonicalUrl, toMarkdownPath } from '../../lib/site';
+import { draftNotice, toCanonicalUrl, toMarkdownRoute } from '../../lib/site';
 import { source } from '../../lib/source';
 
 interface IPageProps {
@@ -32,7 +33,7 @@ export default async function Page({ params }: IPageProps) {
     }
 
     const Body = page.data.body;
-    const markdownPath = toMarkdownPath(page.url);
+    const markdownPath = toMarkdownRoute(page.url);
     const { previous, next } = findNeighbour(source.getPageTree(), page.url);
 
     return (
@@ -45,7 +46,7 @@ export default async function Page({ params }: IPageProps) {
                 {page.data.title}
             </DocsTitle>
             {/* The markdown copy of the page, which the build publishes next to it: copy it, or open
-                it in an assistant. */}
+                it in an assistant. The actions add the base path themselves. */}
             <div className="flex flex-row items-center gap-2">
                 <MarkdownCopyButton
                     className={pageActionClassName}
@@ -70,6 +71,13 @@ export default async function Page({ params }: IPageProps) {
                 )}
                 <Body components={defaultMdxComponents} />
             </DocsBody>
+            {/* The date of the page's last change in the knowledge base (prepareContent.ts). */}
+            {page.data.lastModified != null && (
+                <PageLastUpdate
+                    className="text-neutral-500"
+                    date={new Date(page.data.lastModified)}
+                />
+            )}
             <PagePager
                 next={next && { name: next.name, url: next.url }}
                 previous={

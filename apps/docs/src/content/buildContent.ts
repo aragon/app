@@ -15,6 +15,8 @@ import {
     siteDescription,
     siteTitle,
     toCanonicalUrl,
+    toMarkdownFile,
+    toMarkdownUrl,
 } from '../lib/site';
 
 // Turns the published pages of the knowledge base into the files the site is built from: one
@@ -24,16 +26,23 @@ import {
 
 export interface ISitePage {
     /**
-     * Corpus-relative path (accounts/account.md), also the path of the public markdown copy.
+     * Corpus-relative path (accounts/account.md).
      */
     path: string;
     /**
      * Site route without the base path (/accounts/account); Next adds the base path to links.
+     * It also names the public markdown copy (toMarkdownFile), so a landing page's copy sits
+     * next to its route (/accounts → accounts.md), where the page actions look for it.
      */
     route: string;
     title: string;
     description?: string;
     draft: boolean;
+    /**
+     * Date of the last change of the page in the knowledge base (ISO 8601), when its checkout has
+     * the history.
+     */
+    lastModified?: string;
     /**
      * Page markdown with its links resolved to site routes.
      */
@@ -90,6 +99,16 @@ const dirOf = (corpusPath: string): string => {
     return dir === '.' ? '' : dir;
 };
 
+// A destination the author percent-encoded is compared decoded; one with a stray `%` (not an
+// escape) is compared as written, like every other mistake of the corpus.
+const decodePath = (value: string): string => {
+    try {
+        return decodeURI(value);
+    } catch {
+        return value;
+    }
+};
+
 // Corpus path and fragment a relative link points at, resolved from the page it is on; a link
 // starting with `/` is resolved from the corpus root.
 const resolveLinkTarget = (
@@ -103,7 +122,7 @@ const resolveLinkTarget = (
         ? target.slice(1)
         : path.posix.join(path.posix.dirname(fromPath), target);
 
-    return { path: path.posix.normalize(decodeURI(resolved)), fragment };
+    return { path: path.posix.normalize(decodePath(resolved)), fragment };
 };
 
 // A page is on the site when the mode publishes it; a folder's index page when the folder has
@@ -209,12 +228,16 @@ const orderPages = (pages: ISitePage[], linkedPaths: string[]): ISitePage[] => {
     return [...linked, ...rest];
 };
 
-const toSitePage = (document: ICorpusDocument): ISitePage => ({
+const toSitePage = (
+    document: ICorpusDocument,
+    lastModified: ReadonlyMap<string, string>,
+): ISitePage => ({
     path: document.path,
     route: toRoute(document.path),
     title: document.title,
     description: document.summary,
     draft: document.status === 'draft',
+    lastModified: lastModified.get(document.path),
     body: document.body,
 });
 
@@ -224,10 +247,13 @@ const toSitePage = (document: ICorpusDocument): ISitePage => ({
  * follow the order its index links to them, the areas the order the root index links to their
  * landing pages, and pages an index does not link to come after, by path. `indexSources` holds
  * the raw index.md files of the corpus by path; a folder without one has no landing page.
+ * `lastModified` dates the corpus files by their last change (readLastModified of the loader);
+ * a page it does not date shows no date.
  */
 export const buildSite = (
     documents: ICorpusDocument[],
     indexSources: ReadonlyMap<string, string>,
+    lastModified: ReadonlyMap<string, string> = new Map(),
 ): ISite => {
     const publishedPaths: ReadonlySet<string> = new Set(
         documents.map((document) => document.path),
@@ -240,7 +266,9 @@ export const buildSite = (
         const folderDocuments = documents.filter(
             (document) => dirOf(document.path) === dir,
         );
-        const pages = folderDocuments.map(toSitePage);
+        const pages = folderDocuments.map((document) =>
+            toSitePage(document, lastModified),
+        );
         // The loader read the area title from the same index.md, or humanized the directory.
         const title =
             (source == null ? undefined : readTitle(source)) ??
@@ -259,6 +287,7 @@ export const buildSite = (
                           route: toRoute(indexPath),
                           title,
                           draft: false,
+                          lastModified: lastModified.get(indexPath),
                           body: cleanBody(
                               source.replace(frontmatterPattern, ''),
                               (url) => resolveSiteLink(url, context),
@@ -346,6 +375,7 @@ const toContentFile = (page: ISitePage, entry?: ISidebarEntry): IFile => ({
         title: page.title,
         description: page.description,
         draft: page.draft || undefined,
+        lastModified: page.lastModified,
         sidebarTitle: entry?.label,
         icon: entry?.icon,
     })}${page.body}\n`,
@@ -415,12 +445,13 @@ const renderMarkdown = (page: ISitePage): string => {
 const renderLlmsEntry = (page: ISitePage): string => {
     const summary = page.description == null ? '' : `: ${page.description}`;
 
-    return `- [${page.title}](${toCanonicalUrl(page.route)}.md)${summary}`;
+    return `- [${page.title}](${toMarkdownUrl(page.route)})${summary}`;
 };
 
 /**
  * The files of the public directory: a markdown copy of every page next to its HTML
- * (/accounts/account.md), the llms.txt index and the llms-full.txt concatenation.
+ * (/accounts/account.md, /accounts.md for a landing page), the llms.txt index and the
+ * llms-full.txt concatenation.
  */
 export const renderPublicFiles = (site: ISite): IFile[] => {
     const folders = [site.root, ...site.areas];
@@ -448,7 +479,7 @@ export const renderPublicFiles = (site: ISite): IFile[] => {
 
     return [
         ...pages.map((page) => ({
-            path: page.path,
+            path: toMarkdownFile(page.route),
             content: renderMarkdown(page),
         })),
         { path: 'llms.txt', content: `${index.join('\n')}\n` },

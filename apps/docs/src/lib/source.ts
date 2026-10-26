@@ -8,12 +8,14 @@ import { Icon } from '../components/kit';
 
 // The content directory is written by `pnpm prepare:content` (src/content/prepareContent.ts) from
 // the knowledge base; nothing in it is authored here. `draft` marks a page still under review,
-// `sidebarTitle` a sidebar label shorter than the page title.
+// `lastModified` dates its last change in the knowledge base (ISO 8601), `sidebarTitle` is a
+// sidebar label shorter than the page title.
 const docs = defineDocs({
     dir: 'content/docs',
     docs: {
         schema: pageSchema.extend({
             draft: z.boolean().optional(),
+            lastModified: z.string().optional(),
             sidebarTitle: z.string().optional(),
         }),
     },

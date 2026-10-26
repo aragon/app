@@ -4,6 +4,7 @@ import {
     type DocsEnvironment,
     docsCorpusModes,
     loadCorpus,
+    readLastModified,
     resolveCorpus,
 } from '@aragon/docs-corpus';
 import {
@@ -116,7 +117,10 @@ const run = async () => {
             path.posix.dirname(document.path).replace(/^\.$/, ''),
         ),
     );
-    const site = buildSite(documents, indexSources);
+    // The pages' "last updated": the checkout's log, which a fetch brings along and a local
+    // checkout has; a directory without one dates nothing.
+    const lastModified = readLastModified(corpus.rootDir);
+    const site = buildSite(documents, indexSources, lastModified);
     const contentFiles = renderContentFiles(site);
     await writeFiles(contentDir, contentFiles);
     await writeFiles(publicDir, renderPublicFiles(site));
@@ -130,7 +134,7 @@ const run = async () => {
         .join(', ');
 
     log(
-        `built mode=${mode}: ${String(documents.length)} pages, ${String(indexSources.size)} index pages, ${String(site.areas.length)} areas (corpus ${corpus.commit ?? 'unknown'})`,
+        `built mode=${mode}: ${String(documents.length)} pages, ${String(indexSources.size)} index pages, ${String(site.areas.length)} areas (corpus ${corpus.commit ?? 'unknown'}, ${lastModified.size === 0 ? 'no page dates: not a git checkout' : `page dates from ${String(lastModified.size)} dated files`})`,
     );
     log(`skipped ${String(skipped.length)} files: ${skippedSummary || 'none'}`);
 };

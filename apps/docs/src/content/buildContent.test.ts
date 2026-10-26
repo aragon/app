@@ -87,6 +87,15 @@ describe('resolveSiteLink', () => {
         ).toBe('/');
     });
 
+    it('compares a percent-encoded destination decoded and a malformed one as written', () => {
+        expect(
+            resolveSiteLink('./%73afe.md', contextOf('accounts/account.md')),
+        ).toBe('/accounts/safe');
+        expect(
+            resolveSiteLink('./100%.md', contextOf('accounts/account.md')),
+        ).toBeNull();
+    });
+
     it('drops links to pages the site does not publish', () => {
         expect(
             resolveSiteLink(
@@ -193,6 +202,25 @@ describe('buildSite', () => {
         });
     });
 
+    it('dates the pages and the landing pages by the corpus log, when it has them', () => {
+        const dated = buildSite(
+            documents,
+            indexSources,
+            new Map([
+                ['accounts/account.md', '2026-02-03T04:05:06+00:00'],
+                ['accounts/index.md', '2026-01-02T03:04:05+00:00'],
+            ]),
+        );
+        const accounts = dated.areas[1];
+
+        expect(accounts?.index?.lastModified).toBe('2026-01-02T03:04:05+00:00');
+        expect(accounts?.pages.map((page) => page.lastModified)).toEqual([
+            undefined,
+            '2026-02-03T04:05:06+00:00',
+        ]);
+        expect(site.areas[1]?.pages[1]?.lastModified).toBeUndefined();
+    });
+
     it('marks the pages under review', () => {
         expect(site.areas[0]?.pages[0]).toMatchObject({
             path: 'governance/process.md',
@@ -256,9 +284,12 @@ describe('renderPublicFiles', () => {
         expect(contentOf('governance/process.md')).toBe(
             '# Governance: process\n\n> This page is a draft: the Aragon team is still reviewing it.\n\nDecides for the [account](https://app.aragon.org/help/accounts/account).\n',
         );
-        expect(contentOf('accounts/index.md')).toContain(
+        // A landing page's copy sits next to its route, where the page actions look for it.
+        expect(contentOf('accounts.md')).toContain(
             '[Safe](https://app.aragon.org/help/accounts/safe)',
         );
+        expect(contentOf('index.md')).toContain('# Aragon Platform');
+        expect(contentOf('accounts/index.md')).toBeUndefined();
     });
 
     it('indexes the pages by area in llms.txt and concatenates them in llms-full.txt', () => {

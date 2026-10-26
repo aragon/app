@@ -28,9 +28,24 @@ export const toCanonicalUrl = (route: string): string =>
     route === '/' ? siteUrl : `${siteUrl}${route}`;
 
 /**
- * Path of the markdown copy of a page, which the build writes next to it (`/accounts/account` →
- * `/help/accounts/account.md`, the home page → `/help/index.md`): what the page actions copy and
- * hand to an assistant.
+ * Route of the markdown copy of a page, which the build writes next to it (`/accounts/account` →
+ * `/accounts/account.md`, a landing page `/accounts` → `/accounts.md`, the home page →
+ * `/index.md`). Without the base path, like every route: the Fumadocs page actions prefix it
+ * with the base path Next exposes to them (import.meta.env.BASE_URL), both to fetch the copy and
+ * to open it.
  */
-export const toMarkdownPath = (route: string): string =>
-    route === '/' ? `${basePath}/index.md` : `${basePath}${route}.md`;
+export const toMarkdownRoute = (route: string): string =>
+    route === '/' ? '/index.md' : `${route}.md`;
+
+/**
+ * The markdown copy inside the public directory, where the build writes it (`/accounts` →
+ * `accounts.md`).
+ */
+export const toMarkdownFile = (route: string): string =>
+    toMarkdownRoute(route).slice(1);
+
+/**
+ * Public URL of the markdown copy (`/accounts` → `https://app.aragon.org/help/accounts.md`).
+ */
+export const toMarkdownUrl = (route: string): string =>
+    `${siteUrl}${toMarkdownRoute(route)}`;
