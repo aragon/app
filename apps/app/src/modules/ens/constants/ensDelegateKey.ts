@@ -40,6 +40,7 @@ export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.BNB_TESTNET]: 'test',
     [Network.ETHEREUM_HOODI]: 'test',
     [Network.BASE_SEPOLIA]: 'test',
+    [Network.POLYGON_AMOY]: 'test',
 };
 
 export interface IBuildEnsDelegateKeyParams {

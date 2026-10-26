@@ -6,7 +6,7 @@
 
 - [#1507](https://github.com/aragon/app/pull/1507) [`df34a4e`](https://github.com/aragon/app/commit/df34a4ed6ca8396aa22d1adfeddb4b9c20ed855e) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Reject requests that fail the Vercel BotID check on the IPFS pin actions and on POST requests to the backend and RPC relays.
 
-- [#1508](https://github.com/aragon/app/pull/1508) [`5d45ef1`](https://github.com/aragon/app/commit/5d45ef15c6b4a09b8d783eb85aca51b8f4b98316) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add support for BNB Smart Chain and the BNB Smart Chain Testnet, Ethereum Hoodi and Base Sepolia testnets.
+- [#1508](https://github.com/aragon/app/pull/1508) [`5d45ef1`](https://github.com/aragon/app/commit/5d45ef15c6b4a09b8d783eb85aca51b8f4b98316) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add support for BNB Smart Chain and the BNB Smart Chain Testnet, Ethereum Hoodi, Base Sepolia and Polygon Amoy testnets.
 
 ### Patch Changes
 

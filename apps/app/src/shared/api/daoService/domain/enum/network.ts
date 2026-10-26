@@ -17,4 +17,5 @@ export enum Network {
     BNB_TESTNET = 'bnb-testnet',
     ETHEREUM_HOODI = 'ethereum-hoodi',
     BASE_SEPOLIA = 'base-sepolia',
+    POLYGON_AMOY = 'polygon-amoy',
 }

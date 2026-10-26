@@ -36,6 +36,7 @@ export const lockToVotePlugin: IPluginInfo = {
         [Network.BNB_TESTNET]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
         [Network.ETHEREUM_HOODI]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
         [Network.BASE_SEPOLIA]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
+        [Network.POLYGON_AMOY]: '0x96911f8aADd4015B6d494e5e824eA06bd89BeF9b',
     },
     setup: {
         nameKey: 'app.plugins.lockToVote.meta.setup.name',

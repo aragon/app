@@ -37,5 +37,6 @@ export const adminPlugin: IPluginInfo = {
         [Network.BNB_TESTNET]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
         [Network.ETHEREUM_HOODI]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
         [Network.BASE_SEPOLIA]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
+        [Network.POLYGON_AMOY]: '0xaCabbFcAB008c304447d5Aae02b43c748d6c0a50',
     },
 };
