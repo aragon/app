@@ -1,5 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -12,6 +13,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 
 /**
@@ -371,6 +373,42 @@ class WorkspaceUtils {
         };
 
         return typeMap[accountInfo.type];
+    };
+
+    /**
+     * Reads the outcome of a single-account lookup of the workspace accounts API as one state, so that every reader
+     * of such a lookup — `WorkspaceAccountGate` on the server, `useWorkspaceAccountOptions` on the client — agrees
+     * on what the address is. The DAO and Safe states follow `getAccountType`.
+     *
+     * The endpoint answers an address that is neither an indexed DAO nor a Safe with a 404 for the whole request
+     * rather than with an `unsupported` entry (see Known gaps in `docs/projectDocs/createWorkspace.md`). With a
+     * single account in the request that 404 can only be about it, so it reads as not found too.
+     * @param accountInfo - The only entry of the lookup, undefined while it is pending or when it failed.
+     * @param error - Error the lookup failed with, if any.
+     * @returns The state of the account, or undefined when the lookup is pending or failed for another reason.
+     */
+    resolveAccountState = (
+        accountInfo?: IWorkspaceAccountInfo,
+        error?: unknown,
+    ): WorkspaceAccountState | undefined => {
+        if (
+            AragonBackendServiceError.isNotFoundError(error) ||
+            accountInfo?.status === WorkspaceAccountInfoStatus.UNSUPPORTED
+        ) {
+            return WorkspaceAccountState.NOT_FOUND;
+        }
+
+        if (accountInfo?.status === WorkspaceAccountInfoStatus.UNAVAILABLE) {
+            return WorkspaceAccountState.UNAVAILABLE;
+        }
+
+        const stateMap: Record<WorkspaceAccountType, WorkspaceAccountState> = {
+            [WorkspaceAccountType.DAO]: WorkspaceAccountState.DAO,
+            [WorkspaceAccountType.SAFE]: WorkspaceAccountState.SAFE,
+        };
+        const accountType = this.getAccountType(accountInfo);
+
+        return accountType != null ? stateMap[accountType] : undefined;
     };
 
     /**

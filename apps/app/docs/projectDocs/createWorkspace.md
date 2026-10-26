@@ -678,8 +678,8 @@ has no slug, so it gets no href and the row renders unlinked.
 ### Safe support by route
 
 Every route is meant to grow a Safe counterpart. Until one exists, the route **fails** rather than standing in for
-the account with a placeholder or with another account's data: `WorkspaceAccountGate` renders its error state, and
-that is the deliberate answer, not an oversight. This table is the list — update it in the same change that adds or
+the account with a placeholder or with another account's data: `WorkspaceAccountGate` renders its Safe state,
+which links to the sections that do serve a Safe, and that is the deliberate answer, not an oversight. This table is the list — update it in the same change that adds or
 removes support.
 
 Flipping a row to **implemented** is not only a new branch; it also means retiring whatever makes that route fail
@@ -701,11 +701,11 @@ today, and the two differ by route:
 | `/{workspaceId}/all/overview` | **implemented** | the workspace overview lists accounts of both types |
 | `/{accountId}/assets` | **implemented** | the list and the aside card describe the Safe |
 | `/{accountId}/transactions` | **implemented**, read-only | the list and the aside card describe the Safe; no create action, and the dispatch panel is DAO-only |
-| `/{accountId}/overview` | not yet | the gate's error state |
-| `/{accountId}/members` | not yet | the gate's error state |
-| `/{accountId}/members/{address}` | not yet | the gate's error state |
-| `/{accountId}/proposals` | not yet | the gate's error state |
-| `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's error state |
+| `/{accountId}/overview` | not yet | the gate's Safe state |
+| `/{accountId}/members` | not yet | the gate's Safe state |
+| `/{accountId}/members/{address}` | not yet | the gate's Safe state |
+| `/{accountId}/proposals` | not yet | the gate's Safe state |
+| `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's Safe state |
 
 Two consequences worth stating, because both are deliberate:
 
@@ -722,15 +722,28 @@ Two consequences worth stating, because both are deliberate:
   aggregated route stays ungated either way: it names no account, so there is nothing to resolve and nothing to
   mislead about.
 
-`WorkspaceAccountGate` itself asks nothing about the account type. It reads the DAO record and renders the error
-state when that read fails, which is exactly the set of accounts these pages cannot serve — a Safe among them. It
-is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
+`WorkspaceAccountGate` reads the DAO record, and a failed read is exactly the set of accounts these pages cannot
+serve — a Safe among them. The read alone cannot say why it failed (a Safe and an address that is neither a DAO nor
+a Safe both 404), and the account may be one the workspace does not hold, so only then does the gate look the
+address up with a single-account `query/accounts` request and pick a state through
+`workspaceUtils.resolveAccountState`, the same rule the external option of `useWorkspaceAccountOptions` builds on.
+The states render inline (`WorkspaceAccountGateError`), never through `notFound()`, for the reason below:
+
+| Lookup | `WorkspaceAccountState` | State |
+| --- | --- | --- |
+| Safe, available | `SAFE` | "Not available for Safe accounts yet", linking to the account's assets and transactions |
+| `unsupported`, or the whole-request 404 (see Known gaps) | `NOT_FOUND` | "Account not found", linking to every account |
+| `unavailable` | `UNAVAILABLE` | "Couldn't verify this account", retrying with `router.refresh()` |
+| DAO, available (the DAO read failed for another reason) | `DAO` | the generic error |
+| The lookup itself fails | undefined | the generic error |
+
+It is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
 because layout and page render in parallel, so a page's `notFound()` — `DaoMembersPage` raises one for the DAO a
 Safe lacks — unwinds to `app/workspace/[workspaceId]/not-found.tsx`, which sits above `[accountId]` and discards
 the layout's output along with the page's. Its doc comment records the reasoning where the next reader will look.
 
-The cost is one `query/accounts` POST on each of the four gated routes (a POST is not memoised the way the DAO GET
-is), and none on assets and transactions.
+The cost is one `query/accounts` POST on a gated route whose DAO cannot be read (a POST is not memoised the way the
+DAO GET is), none for a DAO that loads, and none on assets and transactions.
 
 ### Members page
 
@@ -1035,8 +1048,8 @@ Keep it that way when extending this.
   contradicts the per-entry `status: "unsupported"` that `IWorkspaceAccountInfo` and
   `workspaceUtils.validateAccountInfo` are built around. It predates and is independent of the Safe aggregation
   work, and it affects the create form today, so one such address in the list probably fails the validation of the others (inferred from the whole-request 404, not exercised in the form), with
-  the error state rather than `error.unsupportedAccount`. `WorkspaceAccountGate` is written around it, falling back
-  to the DAO read when the lookup throws.
+  the error state rather than `error.unsupportedAccount`. `WorkspaceAccountGate` is written around it: its lookup
+  names a single account, so `workspaceUtils.resolveAccountState` reads that 404 as `NOT_FOUND`.
 - The workspace proposal details page is the DAO page as is, so the links inside it still leave the workspace: its
   breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter, publisher and settings links of its
   nested plugin components. Held back on purpose until the rest of the migration lands and every call site is

@@ -1,4 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
 import {
     type IWorkspaceAccountInfo,
@@ -9,6 +10,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
@@ -412,6 +414,65 @@ describe('workspace utils', () => {
 
         it('returns undefined when there is no account info', () => {
             expect(workspaceUtils.getAccountType(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('resolveAccountState', () => {
+        it.each([
+            [WorkspaceAccountInfoType.DAO, WorkspaceAccountState.DAO],
+            [WorkspaceAccountInfoType.SAFE, WorkspaceAccountState.SAFE],
+        ])('reads an available %s as the %s state', (type, expected) => {
+            expect(
+                workspaceUtils.resolveAccountState(buildAccountInfo({ type })),
+            ).toEqual(expected);
+        });
+
+        it('reads an unsupported address as not found', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNSUPPORTED,
+            });
+
+            expect(workspaceUtils.resolveAccountState(accountInfo)).toEqual(
+                WorkspaceAccountState.NOT_FOUND,
+            );
+        });
+
+        // The endpoint 404s the whole request for an unplaceable address, which for one address means that address.
+        it('reads a not-found lookup error as not found', () => {
+            const error = new AragonBackendServiceError(
+                AragonBackendServiceError.notFoundCode,
+                'Resource not found',
+                404,
+            );
+
+            expect(
+                workspaceUtils.resolveAccountState(undefined, error),
+            ).toEqual(WorkspaceAccountState.NOT_FOUND);
+        });
+
+        it('reads an unavailable source as unavailable', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+            });
+
+            expect(workspaceUtils.resolveAccountState(accountInfo)).toEqual(
+                WorkspaceAccountState.UNAVAILABLE,
+            );
+        });
+
+        it('returns undefined for any other lookup error', () => {
+            expect(
+                workspaceUtils.resolveAccountState(
+                    undefined,
+                    new Error('Internal server error'),
+                ),
+            ).toBeUndefined();
+        });
+
+        it('returns undefined while the lookup is pending', () => {
+            expect(workspaceUtils.resolveAccountState()).toBeUndefined();
         });
     });
 
