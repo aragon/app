@@ -9,6 +9,7 @@ import {
     resolvePublicLink,
     rewriteLinks,
 } from '@aragon/docs-corpus';
+import type { IconType } from '@aragon/gov-ui-kit';
 import {
     draftNotice,
     siteDescription,
@@ -300,25 +301,55 @@ const renderFrontmatter = (
     return `---\n${lines.join('\n')}\n---\n\n`;
 };
 
-const toContentFile = (page: ISitePage): IFile => ({
+export interface ISidebarEntry {
+    /**
+     * Root page slug (`value-proposition`, `index` for the home page) or area directory.
+     */
+    name: string;
+    /**
+     * Sidebar label when it differs from the page title.
+     */
+    label?: string;
+    /**
+     * gov-ui-kit icon name, resolved by the loader in src/lib/source.ts.
+     */
+    icon: `${IconType}`;
+}
+
+// The top level of the sidebar, in order: the root pages and the areas, each with its gov-ui-kit
+// icon. Root pages and areas not listed here follow, in the order the root index gives them.
+export const sidebarEntries: readonly ISidebarEntry[] = [
+    { name: 'index', label: 'Home', icon: 'HOME' },
+    { name: 'value-proposition', label: 'Why Aragon?', icon: 'INFO' },
+    { name: 'application', icon: 'APP_EXPLORE' },
+    { name: 'accounts', icon: 'APP_DASHBOARD' },
+    { name: 'access-control', icon: 'BLOCKCHAIN_SMARTCONTRACT' },
+    { name: 'governance', icon: 'APP_PROPOSALS' },
+    { name: 'treasury', icon: 'APP_ASSETS' },
+    { name: 'osx-and-the-platform', label: 'Aragon OSx', icon: 'SLASH' },
+    { name: 'guides', icon: 'HELP' },
+];
+
+const sidebarEntryOf = (name: string): ISidebarEntry | undefined =>
+    sidebarEntries.find((entry) => entry.name === name);
+
+const sidebarRankOf = (name: string): number => {
+    const rank = sidebarEntries.findIndex((entry) => entry.name === name);
+
+    return rank === -1 ? sidebarEntries.length : rank;
+};
+
+// A root page carries its sidebar label and icon in its frontmatter; pages in an area show neither.
+const toContentFile = (page: ISitePage, entry?: ISidebarEntry): IFile => ({
     path: page.path,
     content: `${renderFrontmatter({
         title: page.title,
         description: page.description,
         draft: page.draft || undefined,
+        sidebarTitle: entry?.label,
+        icon: entry?.icon,
     })}${page.body}\n`,
 });
-
-// The sidebar icon of an area (a Lucide icon name, resolved by the loader in src/lib/source.ts),
-// the way docs.aragon.org marks its sections; an area without one shows none.
-export const areaIcons: Readonly<Record<string, string>> = {
-    guides: 'BookOpen',
-    accounts: 'Landmark',
-    governance: 'Vote',
-    treasury: 'Coins',
-    application: 'LayoutGrid',
-    'access-control': 'KeyRound',
-};
 
 // The sidebar order of a folder: its pages in order, then whatever else is in the folder.
 const toMetaFile = (folder: ISiteFolder, items: string[]): IFile => ({
@@ -326,7 +357,7 @@ const toMetaFile = (folder: ISiteFolder, items: string[]): IFile => ({
     content: `${JSON.stringify(
         {
             title: folder.title,
-            icon: areaIcons[folder.dir],
+            icon: sidebarEntryOf(folder.dir)?.icon,
             pages: [...items, '...'],
         },
         null,
@@ -339,20 +370,28 @@ const toMetaFile = (folder: ISiteFolder, items: string[]): IFile => ({
  * page, a meta.json per folder.
  */
 export const renderContentFiles = (site: ISite): IFile[] => {
-    const folders = [site.root, ...site.areas];
-    const pages = folders.flatMap((folder) => [
-        ...(folder.index == null ? [] : [folder.index]),
-        ...folder.pages,
+    const rootPages = [
+        ...(site.root.index == null ? [] : [site.root.index]),
+        ...site.root.pages,
+    ];
+    const areaPages = site.areas.flatMap((area) => [
+        ...(area.index == null ? [] : [area.index]),
+        ...area.pages,
     ]);
+    // The home page and the root pages sit next to the areas; sidebarEntries orders them together
+    // (a stable sort, so the unlisted ones keep the order of the root index).
+    const rootItems = [
+        ...rootPages.map((page) => slugOf(page.path)),
+        ...site.areas.map((area) => area.dir),
+    ].sort((a, b) => sidebarRankOf(a) - sidebarRankOf(b));
 
-    // The home page opens the root folder's list; an area's landing page is its folder entry.
+    // An area's landing page is its folder entry.
     return [
-        ...pages.map(toContentFile),
-        toMetaFile(site.root, [
-            ...(site.root.index == null ? [] : ['index']),
-            ...site.root.pages.map((page) => slugOf(page.path)),
-            ...site.areas.map((area) => area.dir),
-        ]),
+        ...rootPages.map((page) =>
+            toContentFile(page, sidebarEntryOf(slugOf(page.path))),
+        ),
+        ...areaPages.map((page) => toContentFile(page)),
+        toMetaFile(site.root, rootItems),
         ...site.areas.map((area) =>
             toMetaFile(
                 area,
