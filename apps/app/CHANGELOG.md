@@ -1,5 +1,11 @@
 # @aragon/app
 
+## 1.42.0
+
+### Minor Changes
+
+- [#1502](https://github.com/aragon/app/pull/1502) [`15a7aff`](https://github.com/aragon/app/commit/15a7aff7d6497653e16ff839b43bfe8d215f446c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Keep RPC provider keys out of Sentry and out of the proposal page error state, render raw calldata whenever a decoded proposal action disagrees with it, fail the capital distributor OFAC check closed while the sanctions list is missing, screening recipients against the lists of every network, and pin to IPFS only JSON objects and PNG, GIF or JPEG images within the avatar size limit, tagging every pin with the app source and environment.
+
 ## 1.41.0
 
 ### Minor Changes
