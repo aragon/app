@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 // biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
 import { isAddress } from 'viem';
+import { WorkspaceExternalAccountBanner } from '@/modules/workspace/components/workspaceExternalAccountBanner';
 import { daoOptions } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
@@ -38,6 +39,9 @@ export interface ILayoutWorkspaceAccountProps {
  * workspace holds Safe accounts as well as DAOs, and a Safe has no DAO to read. The sections that need one render
  * their own not-found state; the ones that do not — assets, transactions — work from the workspace query endpoints
  * regardless.
+ *
+ * `WorkspaceExternalAccountBanner` sits above every section, the way `BannerDao` does in `LayoutDao`: it renders only
+ * when the route names an account the workspace does not hold, and offers to add it.
  *
  * The `workspaces` flag is checked again here, although `LayoutWorkspace` above already checks it: nested layouts
  * render in parallel, so the parent's 404 does not stop this layout from requesting the DAO.
@@ -76,6 +80,7 @@ export const LayoutWorkspaceAccount: React.FC<
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
+            <WorkspaceExternalAccountBanner />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

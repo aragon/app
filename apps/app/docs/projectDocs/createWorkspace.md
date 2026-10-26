@@ -467,6 +467,19 @@ synthesized once the type is known because `IWorkspaceAccount.type` is required 
 until then the label is the truncated address. The selector reads the DAOs of every option rather than of the
 workspace accounts, so an external DAO gets its avatar too.
 
+`WorkspaceExternalAccountBanner`, rendered by `LayoutWorkspaceAccount` above every section the way `BannerDao` is by
+`LayoutDao`, offers to add the external account: "Add to this workspace", and "Add to another workspace" as a
+dropdown of the other workspaces that do not hold it yet (hidden when there is none). Both append the external
+option's own `account` — checksummed ID, resolved type — through `updateWorkspace`, then invalidate the workspace
+list and the target workspace. They stay disabled until that account exists, i.e. until the accounts API places the
+address as a DAO or a Safe, the same accounts `validateAccountInfo` lets the create form add.
+
+- Added to this workspace: the page stays. After the invalidation the account is held, the option stops being
+  external and the banner goes.
+- Added to another workspace: the same page opens there (`router.push` to `workspaceUtils.getWorkspaceSwapUrl`,
+  section and query string kept), so Back returns to where the account was added from.
+- A failed write (local storage full) replaces the banner message with an error and keeps the actions.
+
 `WorkspaceSelector`, the workspace avatar pill, switches workspace: a dropdown of every stored workspace plus a
 "Create workspace" item. Picking one opens its aggregated overview, since account IDs belong to the previous
 workspace. The pill used to open the navigation dialog, so the dialog now opens from the menu button, placed first
@@ -956,6 +969,7 @@ src/modules/workspace/
 │   └── index.ts
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/workspaceGate/{workspaceGate.tsx,workspaceGateNotFound.tsx,workspaceGateAccountPrompt.tsx,index.ts}
+├── components/workspaceExternalAccountBanner/{workspaceExternalAccountBanner.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
@@ -1057,8 +1071,6 @@ Keep it that way when extending this.
 - The workspace proposals endpoint has no `onlyActive`, so an account scope counts the proposals of uninstalled
   plugins where the DAO proposals page does not. The list and its aside card agree with each other; the DAO page's
   own total for the same DAO can read lower.
-- An account the workspace does not hold can be viewed (an external option, see "External accounts" under Account
-  scope) but not yet added to a workspace.
 - The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show

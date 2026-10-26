@@ -4852,6 +4852,12 @@
       "workspaceAccountSelector": {
         "notInWorkspace": "Not in this workspace"
       },
+      "workspaceExternalAccountBanner": {
+        "addToCurrent": "Add to this workspace",
+        "addToOther": "Add to another workspace",
+        "error": "The account could not be added to the workspace. Please try again.",
+        "message": "{{account}} isn't part of {{workspace}}."
+      },
       "workspaceSelector": {
         "create": "Create workspace",
         "edit": "Edit workspace"
