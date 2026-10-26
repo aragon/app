@@ -1,18 +1,17 @@
 # The "Assistant LLM Smoke" workflow runs a few real conversations (real models, real Linear
-# team of the target environment) against a deployed assistant instance. It is deliberately
-# NON-BLOCKING: it is not a required check anywhere — a red run is a signal to look at prompt or
-# pipeline drift, not a merge gate. Tickets land in the Linear team configured for the target
-# environment (a test team everywhere except production).
-#
-# Triggers: nightly, after every development deploy, and manually against any URL.
+# team of the target environment) against the assistant that was just deployed:
+# dev.assistant.aragon.org after a development deploy, assistant.aragon.org after a production
+# deploy, and by hand against any URL. It is deliberately NON-BLOCKING: it is not a required
+# check anywhere — a red run is a signal to look at prompt or pipeline drift, not a merge gate —
+# and a failure is posted to the Slack alerts channel. Tickets land in the Linear team of the
+# target environment (a test team everywhere except production), so against production the
+# ticket scenario stops at the draft and creates nothing.
 
 name: Assistant LLM Smoke
 
 on:
-  schedule:
-    - cron: "0 3 * * *"
   workflow_run:
-    workflows: ["Assistant Development"]
+    workflows: ["Assistant Development", "Assistant Production"]
     types: [completed]
   workflow_dispatch:
     inputs:
@@ -23,17 +22,52 @@ on:
 
 permissions:
   contents: read
+  # The jobs of the deploy run, to tell a deploy from a green skip.
+  actions: read
 
 jobs:
   smoke:
-    # For post-deploy runs only fire when the deploy actually succeeded.
+    # For post-deploy runs only fire when the deploy workflow succeeded.
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.target.outputs.url }}
     steps:
+      # A deploy workflow that green-skipped its deploy (a push to main that left the assistant
+      # untouched, a release of another workspace) changed nothing to smoke. Against production
+      # the ticket scenario must not file in the real support team.
+      - name: Resolve the target
+        id: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          SOURCE: ${{ github.event.workflow_run.name }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+          INPUT_URL: ${{ inputs.url }}
+        run: |
+          set -euo pipefail
+          deployed=true
+          url="${INPUT_URL:-https://dev.assistant.aragon.org}"
+          if [ "$EVENT" = "workflow_run" ]; then
+            deployed=$(gh api "repos/${{ github.repository }}/actions/runs/${SOURCE_RUN_ID}/jobs?per_page=100" \
+              --jq 'any(.jobs[]; .name == "deploy / deploy" and .conclusion == "success")')
+            [ "$SOURCE" = "Assistant Production" ] && url=https://assistant.aragon.org
+          fi
+          create_tickets=true
+          [ "${url#https://assistant.aragon.org}" != "$url" ] && create_tickets=false
+          echo "${SOURCE:-$EVENT}: deployed=${deployed} url=${url} create_tickets=${create_tickets}"
+          {
+            echo "deployed=${deployed}"
+            echo "url=${url}"
+            echo "create_tickets=${create_tickets}"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Checkout
+        if: steps.target.outputs.deployed == 'true'
         uses: actions/checkout@v7.0.1
 
       - name: Setup node
+        if: steps.target.outputs.deployed == 'true'
         uses: actions/setup-node@v7.1.0
         with:
           node-version-file: .nvmrc
@@ -43,6 +77,7 @@ jobs:
       # continue-on-error: a missing vault item degrades to today's behavior (403 on every
       # scenario) instead of failing the job earlier with a different error.
       - name: Resolve 1Password secrets
+        if: steps.target.outputs.deployed == 'true'
         id: op
         continue-on-error: true
         uses: aragon/github-templates/steps/credential-retrieval@main
@@ -53,6 +88,22 @@ jobs:
             VERCEL_AUTOMATION_BYPASS_SECRET=op://kv_assistant_infra/VERCEL_AUTOMATION_BYPASS_SECRET/credential
 
       - name: Run LLM smoke scenarios
+        if: steps.target.outputs.deployed == 'true'
         env:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ fromJSON(steps.op.outputs.secrets || '{}').VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
-        run: node apps/assistant/scripts/llmSmoke.mjs "${{ inputs.url || 'https://dev.assistant.aragon.org' }}"
+          ASSISTANT_SMOKE_CREATE_TICKETS: ${{ steps.target.outputs.create_tickets }}
+          URL: ${{ steps.target.outputs.url }}
+        run: node apps/assistant/scripts/llmSmoke.mjs "$URL"
+
+  # The smoke gates nothing, so a red run is told where someone reads it: the alerts channel.
+  notify-failure:
+    needs: smoke
+    if: ${{ failure() }}
+    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    with:
+      kind: failure
+      subject: "Assistant LLM smoke on ${{ needs.smoke.outputs.url }}"
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_ALERTS_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
