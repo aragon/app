@@ -26,6 +26,8 @@ jobs:
         uses: aragon/github-templates/steps/setup@main
         with:
           fetch-depth: "0"
+      - name: Check workflow job guards
+        uses: aragon/github-templates/steps/workflow-guards@main
       - name: Check types
         run: pnpm type-check
       - name: Check linter with formatter
