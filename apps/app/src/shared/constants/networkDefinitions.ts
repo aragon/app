@@ -417,6 +417,8 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...hoodi,
         name: 'Ethereum Hoodi',
         logo: '/networks/hoodi.svg',
+        // Wallets receive this URL on add-chain. The viem default (ethpandaops) rate-limits them.
+        rpcUrls: { default: { http: ['https://hoodi.drpc.org'] } },
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hoodi/',
