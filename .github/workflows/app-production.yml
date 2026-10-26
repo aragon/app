@@ -61,8 +61,11 @@ jobs:
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
+  # `validate` is skipped on release events, and a job with a skipped job anywhere in its `needs`
+  # chain is skipped too unless its `if` replaces the default success() check.
   e2e:
     needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: https://app.aragon.org
@@ -80,7 +83,7 @@ jobs:
   # A manual deploy of an older tag is not a release completing.
   complete:
     needs: deploy
-    if: github.event_name == 'release'
+    if: ${{ !cancelled() && needs.deploy.result == 'success' && github.event_name == 'release' }}
     uses: aragon/github-templates/.github/workflows/release-complete.yml@main
     with:
       tag: ${{ github.event.release.tag_name }}
