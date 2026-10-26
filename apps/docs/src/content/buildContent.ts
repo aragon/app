@@ -9,6 +9,7 @@ import {
     resolvePublicLink,
     rewriteLinks,
 } from '@aragon/docs-corpus';
+import type { IconType } from '@aragon/gov-ui-kit';
 import {
     draftNotice,
     siteDescription,
@@ -310,9 +311,9 @@ export interface ISidebarEntry {
      */
     label?: string;
     /**
-     * gov-ui-kit icon name (IconType), resolved by the loader in src/lib/source.ts.
+     * gov-ui-kit icon name, resolved by the loader in src/lib/source.ts.
      */
-    icon: string;
+    icon: `${IconType}`;
 }
 
 // The top level of the sidebar, in order: the root pages and the areas, each with its gov-ui-kit

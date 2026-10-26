@@ -74,6 +74,12 @@ body {
     @apply bg-neutral-0 text-neutral-800;
 }
 
+/* The height of the site header (src/components/siteHeader.tsx: py-5 around the 40px button); the
+   docs layout offsets its sticky sidebar and table of contents by it. */
+:root {
+    --fd-banner-height: 80px;
+}
+
 /*
  * Sidebar as in the Help Center design: white, a hairline on its side, the kit search field on
  * top, 16px entries in neutral-700 with neutral-500 kit icons, the selected page in primary on
@@ -275,8 +281,8 @@ figure.shiki {
     border-radius: var(--radius-lg);
 }
 
-/* The draft callout: a white card, the warning color as its accent. */
-.prose [style*="--callout-color"] {
+/* The draft callout (src/app/[[...slug]]/page.tsx): a white card, the warning color as its accent. */
+.prose .draft-callout {
     border-color: var(--color-neutral-100);
     border-radius: var(--radius-lg);
     background-color: var(--color-neutral-0);

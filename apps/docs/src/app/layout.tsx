@@ -2,7 +2,7 @@ import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import type { Metadata } from 'next';
 import { Roboto_Mono } from 'next/font/google';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { KitProvider } from '../components/kit';
 import { SiteFooter } from '../components/siteFooter';
 import { SiteHeader } from '../components/siteHeader';
@@ -28,13 +28,9 @@ const search = {
     options: { type: 'static' as const, api: `${basePath}/api/search` },
 };
 
-// The height of the site header (py-5 around the 40px button), which the docs layout offsets its
-// sticky sidebar and table of contents by.
-const bannerHeight = { '--fd-banner-height': '80px' } as CSSProperties;
-
 export default function Layout({ children }: { children: ReactNode }) {
     return (
-        <html className={robotoMono.variable} lang="en" style={bannerHeight}>
+        <html className={robotoMono.variable} lang="en">
             <body className="flex min-h-screen flex-col">
                 {/* Light only, like the gov-ui-kit: no theme switch, no stored preference. */}
                 <RootProvider search={search} theme={{ enabled: false }}>

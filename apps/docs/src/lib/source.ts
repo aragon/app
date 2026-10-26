@@ -1,9 +1,10 @@
+import type { IconType } from '@aragon/gov-ui-kit';
 import { type LoaderPlugin, loader } from 'fumadocs-core/source';
 import { pageSchema } from 'fumadocs-core/source/schema';
 import { defineDocs } from 'fumadocs-mdx/macro';
 import { createElement, type ReactNode } from 'react';
 import { z } from 'zod';
-import { KitIcon } from '../components/kit';
+import { Icon } from '../components/kit';
 
 // The content directory is written by `pnpm prepare:content` (src/content/prepareContent.ts) from
 // the knowledge base; nothing in it is authored here. `draft` marks a page still under review,
@@ -20,7 +21,7 @@ const docs = defineDocs({
 
 const toIcon = (icon: ReactNode): ReactNode =>
     typeof icon === 'string'
-        ? createElement(KitIcon, { name: icon, size: 'sm' })
+        ? createElement(Icon, { icon: icon as IconType, size: 'sm' })
         : icon;
 
 // The sidebar entries of the top level (sidebarEntries in src/content/buildContent.ts): the

@@ -60,7 +60,11 @@ export default async function Page({ params }: IPageProps) {
             <DocsDescription>{page.data.description}</DocsDescription>
             <DocsBody>
                 {page.data.draft && (
-                    <Callout title="Draft" type="warn">
+                    <Callout
+                        className="draft-callout"
+                        title="Draft"
+                        type="warn"
+                    >
                         {draftNotice}
                     </Callout>
                 )}
