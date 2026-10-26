@@ -48,7 +48,7 @@ describe('botId utils', () => {
             ['no-challenge', {}],
             ['rejected', { 'x-is-human': '{"b":0,"d":0}' }],
         ])(
-            'returns true and logs a warning tagged with the source and the %s stage',
+            'returns true and logs an expected info event tagged with the source and the %s stage',
             async (stage, requestHeaders) => {
                 checkBotIdMock.mockResolvedValue({ isBot: true });
                 mockRequestHeaders(requestHeaders);
@@ -58,7 +58,8 @@ describe('botId utils', () => {
                 expect(logMessageSpy).toHaveBeenCalledWith(
                     'BotId: automated request rejected',
                     {
-                        level: 'warning',
+                        level: 'info',
+                        noiseClass: 'expected',
                         context: { source: 'backend', stage },
                     },
                 );

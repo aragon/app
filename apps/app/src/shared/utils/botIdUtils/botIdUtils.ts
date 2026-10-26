@@ -25,6 +25,8 @@ export interface IBotIdCheckOptions {
 class BotIdUtils {
     /**
      * Message of the Sentry event logged on every rejection; the "BotID rejections" metric monitor counts it.
+     * The event is informational: logged at info level and tagged `noise_class: expected`, which keeps it out
+     * of the issue alerts (new issue, issue frequency). The metric monitor is the only alerting path.
      */
     private readonly rejectionMessage = 'BotId: automated request rejected';
 
@@ -38,8 +40,8 @@ class BotIdUtils {
     };
 
     /**
-     * Returns true when Vercel BotID classifies the request as automated, and logs a warning tagged with the
-     * source and stage so rejections can be counted. Browsers that ran the client challenge (see
+     * Returns true when Vercel BotID classifies the request as automated, and logs an info event tagged with
+     * the source and stage so rejections can be counted. Browsers that ran the client challenge (see
      * instrumentation-client.ts) pass, curl-style requests and headless tools fail. Always false in local
      * development, where BotID is bypassed. A failure of the check itself is logged as an error and resolved by
      * `onError`.
@@ -62,7 +64,8 @@ class BotIdUtils {
 
         if (isBot) {
             monitoringUtils.logMessage(this.rejectionMessage, {
-                level: 'warning',
+                level: 'info',
+                noiseClass: 'expected',
                 context: { source, stage: await this.getStage() },
             });
         }
