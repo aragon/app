@@ -1,15 +1,31 @@
 # The "Assistant LLM Smoke" workflow runs a few real conversations (real models, real Linear
-# team of the target environment) against the assistant that was just deployed:
-# dev.assistant.aragon.org after a development deploy, assistant.aragon.org after a production
-# deploy, and by hand against any URL. It is deliberately NON-BLOCKING: it is not a required
-# check anywhere — a red run is a signal to look at prompt or pipeline drift, not a merge gate —
-# and a failure is posted to the Slack alerts channel. Tickets land in the Linear team of the
-# target environment (a test team everywhere except production), so against production the
-# ticket scenario stops at the draft and creates nothing.
+# team of the target environment) against a deployed assistant. It runs on the release PR
+# (called from assistant-release.yml against dev.assistant.aragon.org, which serves main — the
+# release content — since the assistant has no staging), after a development deploy, after a
+# production deploy, and by hand against any URL. It is deliberately NON-BLOCKING: it is not a
+# required check anywhere — a red run is a signal to look at prompt or pipeline drift, not a
+# merge gate. The result is posted to the release thread when there is one (the release PR, a
+# production deploy), and a failure to the Slack alerts channel always. Tickets land in the
+# Linear team of the target environment (a test team everywhere except production), so against
+# production the ticket scenario stops at the draft and creates nothing.
 
 name: Assistant LLM Smoke
 
 on:
+  workflow_call:
+    inputs:
+      url:
+        description: "Assistant base URL to smoke"
+        required: true
+        type: string
+      thread-pr-number:
+        description: "Release PR whose body carries the Slack thread marker (0 = none)"
+        required: false
+        type: number
+        default: 0
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN:
+        required: true
   workflow_run:
     workflows: ["Assistant Development", "Assistant Production"]
     types: [completed]
@@ -32,10 +48,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       url: ${{ steps.target.outputs.url }}
+      host: ${{ steps.target.outputs.host }}
+      deployed: ${{ steps.target.outputs.deployed }}
+      release-tag: ${{ steps.target.outputs.release_tag }}
     steps:
       # A deploy workflow that green-skipped its deploy (a push to main that left the assistant
-      # untouched, a release of another workspace) changed nothing to smoke. Against production
-      # the ticket scenario must not file in the real support team.
+      # untouched, a release of another workspace) changed nothing to smoke. A production deploy
+      # run is triggered by the GitHub Release, so its head branch is the release tag — the key to
+      # the release thread. Against production the ticket scenario must not file in the real
+      # support team.
       - name: Resolve the target
         id: target
         env:
@@ -43,23 +64,32 @@ jobs:
           EVENT: ${{ github.event_name }}
           SOURCE: ${{ github.event.workflow_run.name }}
           SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+          SOURCE_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
           INPUT_URL: ${{ inputs.url }}
         run: |
           set -euo pipefail
           deployed=true
+          release_tag=""
           url="${INPUT_URL:-https://dev.assistant.aragon.org}"
           if [ "$EVENT" = "workflow_run" ]; then
             deployed=$(gh api "repos/${{ github.repository }}/actions/runs/${SOURCE_RUN_ID}/jobs?per_page=100" \
               --jq 'any(.jobs[]; .name == "deploy / deploy" and .conclusion == "success")')
-            [ "$SOURCE" = "Assistant Production" ] && url=https://assistant.aragon.org
+            if [ "$SOURCE" = "Assistant Production" ]; then
+              url=https://assistant.aragon.org
+              case "$SOURCE_HEAD_BRANCH" in @aragon/assistant@*) release_tag="$SOURCE_HEAD_BRANCH" ;; esac
+            fi
           fi
+          host="${url#https://}"
+          host="${host%%/*}"
           create_tickets=true
-          [ "${url#https://assistant.aragon.org}" != "$url" ] && create_tickets=false
-          echo "${SOURCE:-$EVENT}: deployed=${deployed} url=${url} create_tickets=${create_tickets}"
+          [ "$host" = "assistant.aragon.org" ] && create_tickets=false
+          echo "${SOURCE:-$EVENT}: deployed=${deployed} url=${url} create_tickets=${create_tickets} release_tag=${release_tag:-none}"
           {
             echo "deployed=${deployed}"
             echo "url=${url}"
+            echo "host=${host}"
             echo "create_tickets=${create_tickets}"
+            echo "release_tag=${release_tag}"
           } >> "$GITHUB_OUTPUT"
 
       - name: Checkout
@@ -95,7 +125,28 @@ jobs:
           URL: ${{ steps.target.outputs.url }}
         run: node apps/assistant/scripts/llmSmoke.mjs "$URL"
 
-  # The smoke gates nothing, so a red run is told where someone reads it: the alerts channel.
+  # The result goes to the release thread it belongs to: the release PR's (called from the
+  # release workflow) or the deployed release's (a production deploy). The PAT reads the PR body
+  # for the marker; the job token of the calling workflow cannot.
+  notify-result:
+    needs: smoke
+    if: ${{ !cancelled() && needs.smoke.outputs.deployed == 'true' && ((inputs.thread-pr-number || 0) != 0 || needs.smoke.outputs.release-tag != '') }}
+    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    with:
+      kind: tests
+      suite: LLM smoke
+      env: ${{ needs.smoke.outputs.host }}
+      result: ${{ needs.smoke.result == 'success' && 'passed' || 'failed' }}
+      report-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      thread-pr-number: ${{ inputs.thread-pr-number || 0 }}
+      thread-release-tag: ${{ needs.smoke.outputs.release-tag }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # The smoke gates nothing, so a red run is also told where someone reads it: the alerts channel.
   notify-failure:
     needs: smoke
     if: ${{ failure() }}
