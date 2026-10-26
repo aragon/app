@@ -1,3 +1,4 @@
+import { monitoringUtils } from '../monitoringUtils';
 import { errorUtils } from './errorUtils';
 
 describe('errorUtils', () => {
@@ -56,6 +57,29 @@ describe('errorUtils', () => {
 
             expect(result.cause).toBeDefined();
             expect(result.cause?.message).toBe('cause error');
+        });
+
+        it('redacts registered secrets from the message, stack and cause chain', () => {
+            monitoringUtils.registerSecret('serialize-secret-key');
+            const keyedUrl = 'https://rpc.example/v2/serialize-secret-key';
+            const error = new Error(
+                `HTTP request failed.\n\nURL: ${keyedUrl}`,
+                {
+                    cause: new Error(`URL: ${keyedUrl}`),
+                },
+            );
+
+            const result = errorUtils.serialize(error);
+
+            expect(JSON.stringify(result)).not.toContain(
+                'serialize-secret-key',
+            );
+            expect(result.message).toBe(
+                'HTTP request failed.\n\nURL: https://rpc.example/v2/[redacted]',
+            );
+            expect(result.cause?.message).toBe(
+                'URL: https://rpc.example/v2/[redacted]',
+            );
         });
 
         it('ignores non-serializable properties', () => {

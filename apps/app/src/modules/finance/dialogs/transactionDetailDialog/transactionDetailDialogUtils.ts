@@ -1,6 +1,6 @@
-import { ProposalActionTypeNoBasicView } from '@aragon/gov-ui-kit';
 import type { ITransactionActionsResult } from '@/modules/finance/api/financeService';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 
 const actionDecodingRefetchInterval = 2000;
 const maxActionDecodingRequests = 10;
@@ -23,25 +23,11 @@ export const getTransactionActionsRefetchInterval = (
 export const getTransactionActions = (
     actionData: ITransactionActionsResult | undefined,
     fromAddress: string,
-): IProposalAction[] => {
-    if (actionData == null) {
-        return [];
-    }
-
-    const { rawActions } = actionData;
-    const hasActionDecodeMismatch =
-        rawActions != null && rawActions.length !== actionData.actions.length;
-
-    if (!hasActionDecodeMismatch) {
-        return actionData.actions;
-    }
-
-    return rawActions.map((rawAction) => ({
-        from: fromAddress,
-        to: rawAction.to,
-        data: rawAction.data,
-        value: rawAction.value,
-        type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
-        inputData: null,
-    }));
-};
+): IProposalAction[] =>
+    actionData == null
+        ? []
+        : proposalActionUtils.resolveActions(
+              actionData.actions,
+              actionData.rawActions,
+              fromAddress,
+          );

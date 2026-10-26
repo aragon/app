@@ -28,6 +28,19 @@ if (globalThis.structuredClone == null) {
     });
 }
 
+// jsdom does not implement Blob.arrayBuffer, which the IPFS service relies on
+// when checking the content of a pinned file.
+if (typeof Blob !== 'undefined' && Blob.prototype.arrayBuffer == null) {
+    Blob.prototype.arrayBuffer = function (this: Blob) {
+        return new Promise<ArrayBuffer>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as ArrayBuffer);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsArrayBuffer(this);
+        });
+    };
+}
+
 // Mock ResizeObserver functionality
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),
