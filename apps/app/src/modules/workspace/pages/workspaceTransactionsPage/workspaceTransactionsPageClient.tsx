@@ -44,17 +44,18 @@ export const WorkspaceTransactionsPageClient: React.FC<
     const { open, close } = useDialogContext();
     const router = useRouter();
 
-    const { data: workspace, isPending: isWorkspacePending } = useWorkspace({
+    const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
     });
 
-    const { activeOption } = useWorkspaceAccountOptions();
-
-    const accounts = workspace?.accounts ?? [];
+    // Every account of the workspace, or just the one the route names, held by the workspace or not.
+    const {
+        activeOption,
+        scopedAccounts: accountsToDisplay,
+        isPending: isScopePending,
+    } = useWorkspaceAccountOptions();
 
     const selectedAccount = activeOption?.account;
-    const accountsToDisplay =
-        selectedAccount != null ? [selectedAccount] : accounts;
 
     const { daos, isPending: isDaosPending } =
         useWorkspaceDaos(accountsToDisplay);
@@ -125,7 +126,7 @@ export const WorkspaceTransactionsPageClient: React.FC<
             >
                 <WorkspaceTransactionList
                     accounts={accountsToDisplay}
-                    isPending={isWorkspacePending}
+                    isPending={isScopePending}
                     pageSize={pageSize}
                 />
             </Page.Main>

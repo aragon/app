@@ -2,17 +2,12 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAssetListData } from '../../hooks/useWorkspaceAssetListData';
 
 export interface IWorkspaceAssetsPageClientProps {
-    /**
-     * ID of the workspace.
-     */
-    workspaceId: string;
     /**
      * Number of assets to read per page.
      */
@@ -29,27 +24,18 @@ export interface IWorkspaceAssetsPageClientProps {
 export const WorkspaceAssetsPageClient: React.FC<
     IWorkspaceAssetsPageClientProps
 > = (props) => {
-    const { workspaceId, pageSize } = props;
+    const { pageSize } = props;
 
     const { t } = useTranslations();
 
-    const { data: workspace, isPending: isWorkspacePending } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
+    // Every account of the workspace, or just the one the route names, held by the workspace or not.
+    const { activeOption, scopedAccounts, isPending } =
+        useWorkspaceAccountOptions();
 
-    const { activeOption } = useWorkspaceAccountOptions();
-
-    const accounts = workspace?.accounts ?? [];
-
-    // Every account of the workspace, or just the one the route names.
-    const account = activeOption?.account;
-
-    const accountsToDisplay = (account != null ? [account] : accounts).map(
-        ({ network, address }) => ({
-            network,
-            address,
-        }),
-    );
+    const accountsToDisplay = scopedAccounts.map(({ network, address }) => ({
+        network,
+        address,
+    }));
 
     // Totals of the selection. Shares its key with the list's own query, so this adds no extra request.
     const { metadata } = useWorkspaceAssetListData(
@@ -64,7 +50,7 @@ export const WorkspaceAssetsPageClient: React.FC<
             >
                 <WorkspaceAssetList
                     accounts={accountsToDisplay}
-                    isPending={isWorkspacePending}
+                    isPending={isPending}
                     pageSize={pageSize}
                 />
             </Page.Main>

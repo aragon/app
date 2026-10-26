@@ -8,6 +8,7 @@ import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
     type IWorkspaceAccount,
+    useWorkspace,
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
@@ -87,6 +88,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     const buildDaoOption = (daoAddress: string): IWorkspaceAccountOption => ({
@@ -94,6 +96,7 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         label: 'Demo DAO',
         account: buildDaoAccount(daoAddress),
         isAllAccounts: false,
+        isExternal: false,
     });
 
     const buildSafeOption = (safeAddress: string): IWorkspaceAccountOption => ({
@@ -101,21 +104,41 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         label: 'Treasury Safe',
         account: buildSafeAccount(safeAddress),
         isAllAccounts: false,
+        isExternal: false,
     });
 
     /**
-     * Mocks the hook as the aggregated route does, the overrides standing in for an account-scoped route.
+     * Mocks the hook as the aggregated route does, the overrides standing in for an account-scoped route. The scoped
+     * accounts are derived like the hook does: every account of the workspace the test resolves on the aggregated
+     * scope, the account of the active option otherwise.
      */
     const mockAccountOptions = (
         daoAddress: string,
         overrides?: Partial<IUseWorkspaceAccountOptionsResult>,
     ) =>
-        useWorkspaceAccountOptionsSpy.mockReturnValue({
-            options: [allAccountsOption, buildDaoOption(daoAddress)],
-            accountId: allAccountsOption.id,
-            activeOption: allAccountsOption,
-            isAllAccounts: true,
-            ...overrides,
+        useWorkspaceAccountOptionsSpy.mockImplementation(() => {
+            const { data: workspace } = useWorkspace({
+                urlParams: { id: 'test-workspace' },
+            });
+            const activeOption =
+                overrides != null && 'activeOption' in overrides
+                    ? overrides.activeOption
+                    : allAccountsOption;
+            const isAllAccounts = overrides?.isAllAccounts ?? true;
+
+            return {
+                options: [allAccountsOption, buildDaoOption(daoAddress)],
+                accountId: allAccountsOption.id,
+                activeOption,
+                isAllAccounts,
+                scopedAccounts: isAllAccounts
+                    ? (workspace?.accounts ?? [])
+                    : activeOption?.account != null
+                      ? [activeOption.account]
+                      : [],
+                isPending: workspace == null,
+                ...overrides,
+            };
         });
 
     const expectAssetsRequestedFor = async (accounts: IWorkspaceAccount[]) =>
@@ -169,7 +192,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         mockAccountOptions(addresses.daoAddress, accountOptions?.(addresses));
 
         const completeProps: IWorkspaceAssetsPageClientProps = {
-            workspaceId: `test-workspace-${testIndex.toString()}`,
             pageSize: 20,
             ...props,
         };
@@ -246,23 +268,44 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
         );
     });
 
-    // Viewing an account the workspace does not hold is not supported yet, so the route falls back to every
-    // account rather than to an empty list.
-    it('reads every account when the route names an account the workspace does not hold', async () => {
-        const { component, daoAddress, safeAddress } = createTestComponent(
-            undefined,
-            () => ({
-                accountId: `ethereum-sepolia-${nextAddresses().daoAddress}`,
-                activeOption: undefined,
-                isAllAccounts: false,
-            }),
-        );
+    it('narrows the assets to an account the workspace does not hold', async () => {
+        const externalAccount = buildDaoAccount(nextAddresses().daoAddress);
+        const externalOption: IWorkspaceAccountOption = {
+            id: externalAccount.id,
+            label: 'External DAO',
+            account: externalAccount,
+            isAllAccounts: false,
+            isExternal: true,
+        };
+        const { component } = createTestComponent(undefined, () => ({
+            accountId: externalAccount.id,
+            activeOption: externalOption,
+            isAllAccounts: false,
+        }));
         render(component);
 
-        await expectAssetsRequestedFor([
-            buildDaoAccount(daoAddress),
-            buildSafeAccount(safeAddress),
-        ]);
+        await expectAssetsRequestedFor([externalAccount]);
+    });
+
+    // The type of an external account is still being resolved, so there is no account to narrow to yet. The page
+    // must not widen to every account of the workspace in the meantime.
+    it('reads no assets while the account the route names is being resolved', async () => {
+        const externalAccountId = `ethereum-sepolia-${nextAddresses().daoAddress}`;
+        const { component } = createTestComponent(undefined, () => ({
+            accountId: externalAccountId,
+            activeOption: {
+                id: externalAccountId,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+            },
+            isAllAccounts: false,
+            isPending: true,
+        }));
+        render(component);
+
+        await waitFor(() => expect(assetsAsideCardSpy).toHaveBeenCalled());
+        expect(getWorkspaceAssetsSpy).not.toHaveBeenCalled();
     });
 
     it('hands the active option to the aside', async () => {

@@ -3,9 +3,11 @@ import { QueryClient } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
 import type { ReactNode } from 'react';
+import { getAddress } from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
+    type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
     workspaceQueryService,
@@ -202,20 +204,186 @@ describe('useWorkspaceAccountOptions hook', () => {
         expect(result.current.isAllAccounts).toBeTruthy();
     });
 
-    // What is being looked at is not the same question as what can be switched to: the route can name an account
-    // the workspace does not hold, and that must not silently read as the aggregated option.
-    it('resolves no active option for an account the workspace does not hold, keeping the route account', async () => {
-        const foreignAccountId = `${Network.ETHEREUM_SEPOLIA}-0x1111111111111111111111111111111111111111`;
-        useParamsSpy.mockReturnValue({
-            workspaceId: 'demo',
-            accountId: foreignAccountId,
-        });
-        const { result } = renderTestHook();
+    describe('external account', () => {
+        // Lowercased, as a shared link may carry it: the synthesized account is still checksummed.
+        const externalAddress = '0x1111111111111111111111111111111111111111';
+        const externalAccountId = `${Network.ETHEREUM_SEPOLIA}-${externalAddress}`;
 
-        await waitFor(() => expect(result.current.options).toHaveLength(3));
-        expect(result.current.accountId).toEqual(foreignAccountId);
-        expect(result.current.activeOption).toBeUndefined();
-        expect(result.current.isAllAccounts).toBeFalsy();
+        const buildExternalInfo = (
+            info?: Partial<IWorkspaceAccountInfo>,
+        ): IWorkspaceAccountInfo => ({
+            network: Network.ETHEREUM_SEPOLIA,
+            address: externalAddress,
+            type: WorkspaceAccountInfoType.DAO,
+            status: WorkspaceAccountInfoStatus.AVAILABLE,
+            indexed: true,
+            name: 'External DAO',
+            ...info,
+        });
+
+        // Resolves the workspace accounts as the outer `beforeEach` does, and the external one as given.
+        const mockExternalLookup = (
+            externalInfo?: Promise<IWorkspaceAccountInfo[]>,
+        ) =>
+            getAccountsSpy.mockImplementation((params) =>
+                params.body.accounts.some(
+                    ({ address }) => address === externalAddress,
+                )
+                    ? (externalInfo ?? new Promise(() => undefined))
+                    : Promise.resolve([]),
+            );
+
+        beforeEach(() => {
+            useParamsSpy.mockReturnValue({
+                workspaceId: 'demo',
+                accountId: externalAccountId,
+            });
+        });
+
+        // What is being looked at is not the same question as what can be switched to: an account the workspace
+        // does not hold becomes an option of its own instead of silently reading as the aggregated one.
+        it('adds an external option for an account the workspace does not hold, last', async () => {
+            mockExternalLookup(Promise.resolve([buildExternalInfo()]));
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.options).toHaveLength(4));
+            expect(result.current.options[3]).toEqual(
+                expect.objectContaining({
+                    id: externalAccountId,
+                    isExternal: true,
+                    isAllAccounts: false,
+                }),
+            );
+            expect(result.current.activeOption?.isExternal).toBeTruthy();
+            expect(result.current.accountId).toEqual(externalAccountId);
+            expect(result.current.isAllAccounts).toBeFalsy();
+        });
+
+        it('resolves the external account with a single-account lookup', async () => {
+            mockExternalLookup(Promise.resolve([buildExternalInfo()]));
+            renderTestHook();
+
+            await waitFor(() =>
+                expect(getAccountsSpy).toHaveBeenCalledWith({
+                    body: {
+                        accounts: [
+                            {
+                                network: Network.ETHEREUM_SEPOLIA,
+                                address: externalAddress,
+                            },
+                        ],
+                    },
+                }),
+            );
+        });
+
+        it('scopes to nothing, labelled by the truncated address, while the lookup is pending', async () => {
+            mockExternalLookup();
+            const { result } = renderTestHook();
+
+            await waitFor(() =>
+                expect(result.current.activeOption?.isExternal).toBeTruthy(),
+            );
+            expect(result.current.activeOption?.label).toEqual(
+                addressUtils.truncateAddress(externalAddress),
+            );
+            expect(result.current.activeOption?.account).toBeUndefined();
+            expect(result.current.scopedAccounts).toEqual([]);
+            expect(result.current.isPending).toBeTruthy();
+        });
+
+        it('synthesizes a checksummed DAO account named by the lookup', async () => {
+            mockExternalLookup(Promise.resolve([buildExternalInfo()]));
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.isPending).toBeFalsy());
+            const expectedAccount: IWorkspaceAccount = {
+                id: `${Network.ETHEREUM_SEPOLIA}-${getAddress(externalAddress)}`,
+                type: WorkspaceAccountType.DAO,
+                network: Network.ETHEREUM_SEPOLIA,
+                address: externalAddress,
+            };
+            expect(result.current.activeOption?.account).toEqual(
+                expectedAccount,
+            );
+            expect(result.current.activeOption?.label).toEqual('External DAO');
+            expect(result.current.scopedAccounts).toEqual([expectedAccount]);
+        });
+
+        it('synthesizes a Safe account', async () => {
+            mockExternalLookup(
+                Promise.resolve([
+                    buildExternalInfo({
+                        type: WorkspaceAccountInfoType.SAFE,
+                        indexed: false,
+                        name: null,
+                    }),
+                ]),
+            );
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.isPending).toBeFalsy());
+            expect(result.current.activeOption?.account?.type).toEqual(
+                WorkspaceAccountType.SAFE,
+            );
+        });
+
+        it.each([
+            { status: WorkspaceAccountInfoStatus.UNSUPPORTED },
+            { status: WorkspaceAccountInfoStatus.UNAVAILABLE },
+        ])(
+            'scopes to nothing rather than to every account when the lookup resolves no type ($status)',
+            async ({ status }) => {
+                mockExternalLookup(
+                    Promise.resolve([
+                        buildExternalInfo({
+                            type: WorkspaceAccountInfoType.UNKNOWN,
+                            status,
+                        }),
+                    ]),
+                );
+                const { result } = renderTestHook();
+
+                await waitFor(() =>
+                    expect(result.current.isPending).toBeFalsy(),
+                );
+                expect(result.current.activeOption?.isExternal).toBeTruthy();
+                expect(result.current.activeOption?.account).toBeUndefined();
+                expect(result.current.scopedAccounts).toEqual([]);
+            },
+        );
+    });
+
+    describe('scopedAccounts', () => {
+        it('holds every account of the workspace on the aggregated scope', async () => {
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.isPending).toBeFalsy());
+            expect(result.current.scopedAccounts).toEqual([
+                daoAccount,
+                safeAccount,
+            ]);
+        });
+
+        it('holds the account of the route for an account the workspace holds', async () => {
+            useParamsSpy.mockReturnValue({
+                workspaceId: 'demo',
+                accountId: safeAccount.id,
+            });
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.isPending).toBeFalsy());
+            expect(result.current.scopedAccounts).toEqual([safeAccount]);
+            expect(result.current.activeOption?.isExternal).toBeFalsy();
+        });
+
+        it('is pending while the workspace loads', () => {
+            getWorkspaceSpy.mockReturnValue(new Promise(() => undefined));
+            const { result } = renderTestHook();
+
+            expect(result.current.isPending).toBeTruthy();
+            expect(result.current.scopedAccounts).toEqual([]);
+        });
     });
 
     it('does not resolve account names for a workspace that has none', async () => {

@@ -360,8 +360,7 @@ sees these two routes, and it costs them no extra request.
 accounts, an account over just that one. The page only decides which accounts to send:
 
 ```ts
-const { activeOption } = useWorkspaceAccountOptions();
-const displayedAccounts = activeOption?.account != null ? [activeOption.account] : accounts;
+const { scopedAccounts, isPending } = useWorkspaceAccountOptions();
 ```
 
 Going through one endpoint throughout keeps the single accounts summing to the aggregated view, since both come out
@@ -376,8 +375,9 @@ Two properties of that lookup are load-bearing:
   string, because a stored ID is checksummed while a URL may carry any casing. The assets, transactions and
   proposals pages used to resolve the route themselves precisely because the option could not be trusted for that;
   the blind spot is now closed in the one place instead of three.
-- **Anything the lookup does not resolve reads as every account**: the aggregated segment, and — until viewing one
-  is supported — an account the workspace does not hold.
+- **Only the aggregated segment reads as every account.** Pages take `scopedAccounts` from the hook instead of
+  deriving the selection themselves, and it is never widened: an account the hook cannot (yet) name scopes the page
+  to nothing (see "External accounts" under Account scope).
 
 A workspace holding no account keeps the query disabled, and a disabled query reads as pending, so
 `WorkspaceAssetList` resolves the state itself rather than leaving the list on skeletons forever.
@@ -436,8 +436,9 @@ Two pieces replace the old provider:
   the states it renders for a workspace the registry does not hold.
 - **`useWorkspaceAccountOptions`** returns the options to switch to plus the `accountId` from the route, read with
   `useParams()`. It is a hook and not a context because both of its reads go through React Query, whose cache
-  already shares them. Note `activeOption` may be undefined while `accountId` is set: what is being *looked at* is
-  not the same question as what can be *switched to*.
+  already shares them. An account the URL names but the workspace does not hold is an external option rather than
+  an undefined `activeOption` (see "External accounts" below), so what is being *looked at* never silently reads as
+  the aggregated scope.
 
 Every account becomes an option, a Safe included. `activeOption` is resolved from the route through
 `workspaceUtils.findAccountById`, so a lowercased address on a shared link still lands on its account instead of
@@ -447,6 +448,24 @@ address` as its label. Its DAO branch reaches the same precedence by another rou
 `metadata.avatar ?? dao.avatar` into every DAO it returns, so both branches prefer the owner's chosen avatar and
 fall back — a Safe to the wallet logo, a DAO to its own. The Safe branch exists only because a Safe has no DAO to
 carry its metadata.
+
+#### External accounts
+
+An account the workspace does not hold — a shared link opened in another workspace (`WorkspaceGateAccountPrompt`),
+or a slug collision landing on the reader's own workspace — becomes an **external** option (`isExternal: true`),
+listed last and marked "Not in this workspace" in the selector:
+
+| External account | `activeOption.account` | `scopedAccounts` | `isPending` |
+| --- | --- | --- | --- |
+| Lookup pending | undefined | `[]` | `true` |
+| Resolved to a DAO or a Safe | synthesized, checksummed `id` | `[account]` | `false` |
+| Resolved to no type (`unsupported`, `unavailable`) | undefined | `[]` | `false` |
+
+Its type and name come from a single-account `POST /v2/workspaces/query/accounts` lookup — the same query key
+`WorkspaceGateAccountPrompt` reads, so after the prompt's redirect it is already cached. The account is only
+synthesized once the type is known because `IWorkspaceAccount.type` is required and every consumer branches on it;
+until then the label is the truncated address. The selector reads the DAOs of every option rather than of the
+workspace accounts, so an external DAO gets its avatar too.
 
 `WorkspaceSelector`, the workspace avatar pill, switches workspace: a dropdown of every stored workspace plus a
 "Create workspace" item. Picking one opens its aggregated overview, since account IDs belong to the previous
@@ -532,8 +551,9 @@ explicit and never expands a DAO into its linked accounts.
 
 #### The scope
 
-`workspaceProposalsPageClient` reads `activeOption`, which resolves the route's account by network and address and
-so accepts any casing, as `LayoutWorkspaceAccount` does. Only a DAO account becomes the scope; a Safe is caught
+`workspaceProposalsPageClient` reads `scopedAccounts`, which the hook resolves from the route's account by network
+and address and so accepts any casing, as `LayoutWorkspaceAccount` does, and keeps its DAO accounts. Only a DAO
+account becomes the scope; a Safe is caught
 before the content renders (the placeholder above), so the DAO narrowing below is never asked about one.
 
 Four questions look like one and are not. Keeping them apart is what the predicates below are for:
@@ -669,7 +689,7 @@ today, and the two differ by route:
   needs a DAO record. What changes is that the page gains a Safe branch *before* the gate.
 - **`/{accountId}/proposals`** — the gate wrap in `WorkspaceProposalsPage` must be **deleted**, together with the
   DAO-only narrowing in `workspaceProposalsPageClient`. Both halves in one change: removing the gate alone sends the
-  route back to answering for a Safe with every DAO account's proposals, and changing the narrowing alone leaves a
+  route back to answering for a Safe with an empty list, and changing the narrowing alone leaves a
   gate failing a route that works. Both sites are marked `TEMPORARY` in the code.
 
 | Route | Safe support | What a Safe gets today |
@@ -772,8 +792,8 @@ generic `Page.Error`, and branches on the account segment read with `useParams()
 - The list can be empty, as reads never seed (see Registry). The prompt then offers the default workspace as a
   pending option ("My workspace (new)") and only calls `getOrCreateDefaultWorkspace` on confirm, then invalidates
   the list and redirects.
-- The redirect lands on an account the chosen workspace may not hold; that is "Viewing an account the workspace does
-  not hold" under Known gaps.
+- The redirect lands on an account the chosen workspace may not hold, which renders as an external option (see
+  "External accounts" under Account scope).
 
 ## Edit workspace
 
@@ -1017,11 +1037,6 @@ Keep it that way when extending this.
   work, and it affects the create form today, so one such address in the list probably fails the validation of the others (inferred from the whole-request 404, not exercised in the form), with
   the error state rather than `error.unsupportedAccount`. `WorkspaceAccountGate` is written around it, falling back
   to the DAO read when the lookup throws.
-- **A URL naming an account the workspace does not hold still widens the page.** Every account type resolves to an
-  option now and a lowercased address resolves too, so what remains is an account that is not in the workspace
-  at all: the assets, transactions and proposals pages read it as the aggregated selection and show every account
-  under a URL naming one. Properly, it should show that account and offer adding it to the workspace from the
-  selector — the next gap.
 - The workspace proposal details page is the DAO page as is, so the links inside it still leave the workspace: its
   breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter, publisher and settings links of its
   nested plugin components. Held back on purpose until the rest of the migration lands and every call site is
@@ -1029,8 +1044,8 @@ Keep it that way when extending this.
 - The workspace proposals endpoint has no `onlyActive`, so an account scope counts the proposals of uninstalled
   plugins where the DAO proposals page does not. The list and its aside card agree with each other; the DAO page's
   own total for the same DAO can read lower.
-- Viewing an account the workspace does not hold is not supported (see above). The intended behaviour is to show it
-  and offer adding it to the workspace, from the account selector.
+- An account the workspace does not hold can be viewed (an external option, see "External accounts" under Account
+  scope) but not yet added to a workspace.
 - The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show

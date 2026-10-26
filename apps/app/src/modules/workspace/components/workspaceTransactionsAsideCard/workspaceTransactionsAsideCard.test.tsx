@@ -68,6 +68,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         label: 'Demo DAO',
         account: daoAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const safeOption: IWorkspaceAccountOption = {
@@ -75,12 +76,14 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         label: 'Grants Safe',
         account: safeAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const allAccountsOption: IWorkspaceAccountOption = {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     beforeEach(() => {

@@ -4831,6 +4831,9 @@
       "useWorkspaceAccountOptions": {
         "allAccounts": "All accounts"
       },
+      "workspaceAccountSelector": {
+        "notInWorkspace": "Not in this workspace"
+      },
       "workspaceSelector": {
         "create": "Create workspace",
         "edit": "Edit workspace"

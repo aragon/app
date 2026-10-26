@@ -1,7 +1,9 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -30,6 +32,11 @@ export interface IWorkspaceAccountOption {
      * Whether this is the option aggregating every account of the workspace.
      */
     isAllAccounts: boolean;
+    /**
+     * Whether the account is named by the URL only, i.e. not held by the workspace. Its `account` is synthesized
+     * from the accounts API and stays undefined until the API resolves the address to a DAO or a Safe.
+     */
+    isExternal: boolean;
 }
 
 export interface IUseWorkspaceAccountOptionsResult {
@@ -42,13 +49,24 @@ export interface IUseWorkspaceAccountOptionsResult {
      */
     accountId: string;
     /**
-     * Option the URL names, undefined when the workspace holds no account with that ID.
+     * Option the URL names: the aggregated one, an account of the workspace, or an external option for an account
+     * the workspace does not hold. Undefined while the workspace loads and for a segment that is not an account ID.
      */
     activeOption?: IWorkspaceAccountOption;
     /**
      * Whether the URL aggregates every account of the workspace.
      */
     isAllAccounts: boolean;
+    /**
+     * Accounts the page is scoped to: every account of the workspace on the aggregated scope, otherwise the account
+     * of `activeOption`. Empty when that account is not known (yet), never widened to the whole workspace.
+     */
+    scopedAccounts: IWorkspaceAccount[];
+    /**
+     * Whether the scope is still being resolved: the workspace is loading, or the accounts API is resolving the
+     * external account.
+     */
+    isPending: boolean;
 }
 
 /**
@@ -60,30 +78,29 @@ export interface IUseWorkspaceAccountOptionsResult {
  *
  * Every account of the workspace becomes an option, DAO and Safe alike, so a Safe can be scoped to like a DAO.
  *
- * `activeOption` is the aggregated option for the aggregated segment, and is deliberately allowed to be undefined
- * while `accountId` is set: the URL can name an account the workspace does not hold, and what is being *looked at*
- * is not the same question as what can be *switched to*.
+ * The URL can name an account the workspace does not hold, e.g. after opening a shared link in another workspace.
+ * That account becomes an **external** option rather than an undefined `activeOption`, which every page would read as
+ * the aggregated scope: its type and name come from the accounts API (the same single-account query
+ * `WorkspaceGateAccountPrompt` reads, so it is usually cached), and its `account` is only set once the type is known,
+ * as every consumer branches on it. Pages read `scopedAccounts` instead of re-deriving the selection, so an external
+ * account that is pending or unresolvable narrows the page to nothing rather than widening it to every account.
  *
- * The two are not interchangeable. `accountId` is the raw route segment and is what a link is built from, which is
- * all `NavigationWorkspace` and this hook's own option URLs use it for. `activeOption` is the resolved account, and
- * is what a page narrows its request to or hands to an aside card. Resolving the segment a second time inside a
- * page is the thing this hook exists to prevent: two resolvers drift, and the selector's trigger label and its
- * checkmark disagreed on a lowercased URL until the last of them was removed.
+ * `accountId` and `activeOption` are not interchangeable. `accountId` is the raw route segment, read only to build
+ * links (`NavigationWorkspace`). `activeOption` is the resolved account, handed to the selector and the aside cards,
+ * while pages narrow their requests by `scopedAccounts`. No page resolves the segment again: two resolvers drift.
  *
  * The account segment is resolved through `workspaceUtils.findAccountById` rather than by comparing ID strings:
- * stored IDs are checksummed by `buildAccountId` while `LayoutWorkspaceAccount` accepts any casing, so a lowercased
- * URL must still land on the same account instead of silently widening to the whole workspace.
+ * stored IDs are checksummed by `buildAccountId` while `LayoutWorkspaceAccount` accepts any casing.
  */
 export const useWorkspaceAccountOptions =
     (): IUseWorkspaceAccountOptionsResult => {
         const { t } = useTranslations();
 
-        // Both are route parameters, so no path parsing is needed. `accountId` is absent on the routes that are not
-        // account-scoped, which read as the aggregated segment.
+        // `accountId` is absent on the routes that are not account-scoped, which read as the aggregated segment.
         const { workspaceId, accountId = workspaceAllAccountsSegment } =
             useParams<Partial<IWorkspaceAccountPageParams>>();
 
-        const { data: workspace } = useWorkspace(
+        const { data: workspace, isPending: isWorkspacePending } = useWorkspace(
             { urlParams: { id: workspaceId ?? '' } },
             { enabled: workspaceId != null },
         );
@@ -104,6 +121,32 @@ export const useWorkspaceAccountOptions =
 
         const isAllAccounts = accountId === workspaceAllAccountsSegment;
 
+        const activeAccount = workspaceUtils.findAccountById(
+            accounts ?? [],
+            accountId,
+        );
+
+        // A valid account ID the loaded workspace does not hold.
+        const isExternal =
+            accounts != null &&
+            activeAccount == null &&
+            workspaceUtils.resolveAccountScope(accountId) === accountId &&
+            !isAllAccounts;
+
+        const externalRef = useMemo(
+            () => (isExternal ? daoUtils.parseDaoId(accountId) : undefined),
+            [isExternal, accountId],
+        );
+        const { data: externalInfos, isPending: isExternalInfosPending } =
+            useWorkspaceAccounts(
+                {
+                    body: {
+                        accounts: externalRef != null ? [externalRef] : [],
+                    },
+                },
+                { enabled: externalRef != null },
+            );
+
         const options = useMemo<IWorkspaceAccountOption[]>(() => {
             const accountOptions = (accounts ?? []).map((account) => ({
                 id: account.id,
@@ -114,37 +157,69 @@ export const useWorkspaceAccountOptions =
                 ),
                 account,
                 isAllAccounts: false,
+                isExternal: false,
             }));
 
-            return [
-                {
-                    id: workspaceAllAccountsSegment,
-                    label: t(
-                        'app.workspace.useWorkspaceAccountOptions.allAccounts',
-                    ),
-                    isAllAccounts: true,
-                },
-                ...accountOptions,
-            ];
-        }, [accounts, accountInfos, t]);
+            const allAccountsOption = {
+                id: workspaceAllAccountsSegment,
+                label: t(
+                    'app.workspace.useWorkspaceAccountOptions.allAccounts',
+                ),
+                isAllAccounts: true,
+                isExternal: false,
+            };
 
-        const activeAccount = workspaceUtils.findAccountById(
-            accounts ?? [],
-            accountId,
+            if (externalRef == null) {
+                return [allAccountsOption, ...accountOptions];
+            }
+
+            const externalInfo = externalInfos?.[0];
+
+            const externalType = workspaceUtils.getAccountType(externalInfo);
+            const externalAccount: IWorkspaceAccount | undefined =
+                externalInfo != null && externalType != null
+                    ? {
+                          id: workspaceUtils.buildAccountId(externalInfo),
+                          type: externalType,
+                          network: externalInfo.network,
+                          address: externalInfo.address,
+                      }
+                    : undefined;
+
+            const externalOption = {
+                // The route segment as is, so the option links to the page being looked at.
+                id: accountId,
+                label:
+                    externalInfo?.name ??
+                    addressUtils.truncateAddress(externalRef.address),
+                account: externalAccount,
+                isAllAccounts: false,
+                isExternal: true,
+            };
+
+            return [allAccountsOption, ...accountOptions, externalOption];
+        }, [accounts, accountInfos, accountId, externalRef, externalInfos, t]);
+
+        const activeOptionId = activeAccount?.id ?? accountId;
+        const activeOption = options.find(
+            (option) => option.id === activeOptionId,
         );
 
-        const activeOption = isAllAccounts
-            ? options.find((option) => option.isAllAccounts)
-            : activeAccount != null
-              ? options.find(
-                    (option) => option.account?.id === activeAccount.id,
-                )
-              : undefined;
+        const scopedAccounts = isAllAccounts
+            ? (accounts ?? [])
+            : activeOption?.account != null
+              ? [activeOption.account]
+              : [];
+
+        const isPending =
+            isWorkspacePending || (isExternal && isExternalInfosPending);
 
         return {
             options,
             accountId,
             activeOption,
             isAllAccounts,
+            scopedAccounts,
+            isPending,
         };
     };

@@ -13,7 +13,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IWorkspaceAccount,
-    useWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import { WorkspaceProposalList } from '../../components/workspaceProposalList';
@@ -57,31 +56,23 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { open, close } = useDialogContext();
     const router = useRouter();
 
-    const { activeOption } = useWorkspaceAccountOptions();
+    // `scopedAccounts` holds every account of the workspace, or just the one the route names, held by the workspace
+    // or not. `activeOption` resolves the route account by network and address, so any casing of the ID lands on it.
+    const { activeOption, scopedAccounts } = useWorkspaceAccountOptions();
 
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
-
-    const accounts = workspace?.accounts ?? [];
-    const daoAccounts = accounts.filter(
+    // TEMPORARY narrowing: only DAO accounts have proposals, so a Safe scope narrows to nothing, which is why the
+    // account-scoped route is gated in `WorkspaceProposalsPage`. When Safe proposals land, keep the route's account
+    // whatever its type and drop that gate wrap — both halves together, or the route answers for a Safe with an
+    // empty list instead of failing.
+    const accountsToDisplay = scopedAccounts.filter(
         (account: IWorkspaceAccount) =>
             account.type === WorkspaceAccountType.DAO,
     );
 
-    // `activeOption` resolves the route account by network and address, so any casing of the ID lands on its account.
-    // A route naming no account of the workspace leaves it undefined, which keeps the aggregated view.
-    //
-    // TEMPORARY narrowing: a non-DAO account falls back to every DAO account, which is why the account-scoped
-    // route is gated in `WorkspaceProposalsPage`. When Safe proposals land, keep the route's account whatever its
-    // type and drop that gate wrap — both halves together, or the route widens silently instead of failing.
     const scopedAccount =
-        activeOption?.account?.type === WorkspaceAccountType.DAO
-            ? activeOption.account
+        activeOption?.isAllAccounts === false
+            ? accountsToDisplay[0]
             : undefined;
-
-    const accountsToDisplay =
-        scopedAccount != null ? [scopedAccount] : daoAccounts;
 
     const { daos, isPending: isDaosPending } =
         useWorkspaceDaos(accountsToDisplay);
@@ -157,7 +148,7 @@ export const WorkspaceProposalsPageClient: React.FC<
         }
 
         const params: IWorkspaceSelectAccountDialogParams = {
-            accounts: daoAccounts,
+            accounts: accountsToDisplay,
             onAccountSelected: (account) =>
                 openSelectPluginDialog(account, true),
             variant: 'proposal',
