@@ -16,7 +16,8 @@ export enum WorkspaceAccountState {
      */
     NOT_FOUND = 'NOT_FOUND',
     /**
-     * The source behind the address could not be read right now (rate limit, timeout). Transient.
+     * The source behind the address, or the lookup itself, could not be read right now (rate limit, timeout).
+     * Transient.
      */
     UNAVAILABLE = 'UNAVAILABLE',
 }

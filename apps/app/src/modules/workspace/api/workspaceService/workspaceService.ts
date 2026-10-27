@@ -3,6 +3,7 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import type { IWorkspace } from './domain';
 import type {
+    IAddWorkspaceAccountParams,
     ICreateWorkspaceParams,
     IGetWorkspaceParams,
     IUpdateWorkspaceParams,
@@ -92,6 +93,46 @@ class WorkspaceService {
         }
 
         const workspace: IWorkspace = { ...body, id };
+
+        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+
+        return workspace;
+    };
+
+    /**
+     * Appends an account to a stored workspace, reading and writing the registry in one step rather than taking the
+     * whole workspace from the caller, so a change stored since the caller read it (e.g. from another tab) is kept.
+     * An account the workspace already holds is not added twice.
+     *
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored, `workspaceStorageError`
+     * when local storage rejects to write.
+     */
+    addWorkspaceAccount = async (
+        params: IAddWorkspaceAccountParams,
+    ): Promise<IWorkspace> => {
+        const { urlParams, body } = params;
+        const { id } = urlParams;
+        const { account } = body;
+
+        const workspaces = this.getStoredWorkspaces();
+        const storedWorkspace = workspaces[id];
+
+        if (storedWorkspace == null) {
+            throw this.buildNotFoundError(id);
+        }
+
+        const isHeld = storedWorkspace.accounts.some((storedAccount) =>
+            workspaceUtils.isSameNetworkAddress(storedAccount, account),
+        );
+
+        if (isHeld) {
+            return storedWorkspace;
+        }
+
+        const workspace: IWorkspace = {
+            ...storedWorkspace,
+            accounts: [...storedWorkspace.accounts, account],
+        };
 
         this.persistWorkspaces({ ...workspaces, [id]: workspace });
 

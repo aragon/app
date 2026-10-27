@@ -8,7 +8,9 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     useWorkspace,
+    WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -37,6 +39,11 @@ export interface IWorkspaceAccountOption {
      * from the accounts API and stays undefined until the API resolves the address to a DAO or a Safe.
      */
     isExternal: boolean;
+    /**
+     * What the accounts API says an external account is (`workspaceUtils.resolveAccountState`), undefined while the
+     * lookup is pending, when it placed nothing, and for every other option.
+     */
+    accountState?: WorkspaceAccountState;
 }
 
 export interface IUseWorkspaceAccountOptionsResult {
@@ -67,7 +74,21 @@ export interface IUseWorkspaceAccountOptionsResult {
      * external account.
      */
     isPending: boolean;
+    /**
+     * Looks the external account up again, e.g. after the API could not verify it.
+     */
+    refetchExternalAccount: () => void;
 }
+
+/**
+ * Stored type of the account of each state that can be added to a workspace.
+ */
+const accountStateTypes: Partial<
+    Record<WorkspaceAccountState, WorkspaceAccountType>
+> = {
+    [WorkspaceAccountState.DAO]: WorkspaceAccountType.DAO,
+    [WorkspaceAccountState.SAFE]: WorkspaceAccountType.SAFE,
+};
 
 /**
  * Accounts of the workspace the reader can switch to, plus the account the URL is scoped to.
@@ -137,15 +158,19 @@ export const useWorkspaceAccountOptions =
             () => (isExternal ? daoUtils.parseDaoId(accountId) : undefined),
             [isExternal, accountId],
         );
-        const { data: externalInfos, isPending: isExternalInfosPending } =
-            useWorkspaceAccounts(
-                {
-                    body: {
-                        accounts: externalRef != null ? [externalRef] : [],
-                    },
+        const {
+            data: externalInfos,
+            error: externalInfosError,
+            isPending: isExternalInfosPending,
+            refetch: refetchExternalInfos,
+        } = useWorkspaceAccounts(
+            {
+                body: {
+                    accounts: externalRef != null ? [externalRef] : [],
                 },
-                { enabled: externalRef != null },
-            );
+            },
+            { enabled: externalRef != null },
+        );
 
         const options = useMemo<IWorkspaceAccountOption[]>(() => {
             const accountOptions = (accounts ?? []).map((account) => ({
@@ -173,9 +198,18 @@ export const useWorkspaceAccountOptions =
                 return [allAccountsOption, ...accountOptions];
             }
 
+            // The lookup names a single account, so its only entry is that account.
             const externalInfo = externalInfos?.[0];
 
-            const externalType = workspaceUtils.getAccountType(externalInfo);
+            // The same rule as `WorkspaceAccountGate`, so the server and the client agree on what the account is.
+            const accountState = workspaceUtils.resolveAccountState(
+                externalInfo,
+                externalInfosError,
+            );
+            const externalType =
+                accountState != null
+                    ? accountStateTypes[accountState]
+                    : undefined;
             const externalAccount: IWorkspaceAccount | undefined =
                 externalInfo != null && externalType != null
                     ? {
@@ -195,10 +229,19 @@ export const useWorkspaceAccountOptions =
                 account: externalAccount,
                 isAllAccounts: false,
                 isExternal: true,
+                accountState,
             };
 
             return [allAccountsOption, ...accountOptions, externalOption];
-        }, [accounts, accountInfos, accountId, externalRef, externalInfos, t]);
+        }, [
+            accounts,
+            accountInfos,
+            accountId,
+            externalRef,
+            externalInfos,
+            externalInfosError,
+            t,
+        ]);
 
         const activeOptionId = activeAccount?.id ?? accountId;
         const activeOption = options.find(
@@ -214,6 +257,10 @@ export const useWorkspaceAccountOptions =
         const isPending =
             isWorkspacePending || (isExternal && isExternalInfosPending);
 
+        const refetchExternalAccount = () => {
+            void refetchExternalInfos();
+        };
+
         return {
             options,
             accountId,
@@ -221,5 +268,6 @@ export const useWorkspaceAccountOptions =
             isAllAccounts,
             scopedAccounts,
             isPending,
+            refetchExternalAccount,
         };
     };

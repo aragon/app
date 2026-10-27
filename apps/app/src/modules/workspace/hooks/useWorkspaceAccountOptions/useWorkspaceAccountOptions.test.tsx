@@ -1,9 +1,11 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
 import type { ReactNode } from 'react';
 import { getAddress } from 'viem';
+import { queryClientConfig } from '@/modules/application/constants/reactQuery';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -18,6 +20,7 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { useWorkspaceAccountOptions } from './useWorkspaceAccountOptions';
 
 describe('useWorkspaceAccountOptions hook', () => {
@@ -76,7 +79,8 @@ describe('useWorkspaceAccountOptions hook', () => {
 
     const renderTestHook = () => {
         const wrapper = ({ children }: { children: ReactNode }) => (
-            <ReactQueryWrapper client={new QueryClient()}>
+            // The app config, so a failed lookup settles without retries as it does in the app.
+            <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
                 {children}
             </ReactQueryWrapper>
         );
@@ -222,14 +226,15 @@ describe('useWorkspaceAccountOptions hook', () => {
         });
 
         // Resolves the workspace accounts as the outer `beforeEach` does, and the external one as given.
+        // Takes a factory so that a rejected lookup is only created once the hook asks for it.
         const mockExternalLookup = (
-            externalInfo?: Promise<IWorkspaceAccountInfo[]>,
+            lookup?: () => Promise<IWorkspaceAccountInfo[]>,
         ) =>
             getAccountsSpy.mockImplementation((params) =>
                 params.body.accounts.some(
                     ({ address }) => address === externalAddress,
                 )
-                    ? (externalInfo ?? new Promise(() => undefined))
+                    ? (lookup?.() ?? new Promise(() => undefined))
                     : Promise.resolve([]),
             );
 
@@ -243,7 +248,7 @@ describe('useWorkspaceAccountOptions hook', () => {
         // What is being looked at is not the same question as what can be switched to: an account the workspace
         // does not hold becomes an option of its own instead of silently reading as the aggregated one.
         it('adds an external option for an account the workspace does not hold, last', async () => {
-            mockExternalLookup(Promise.resolve([buildExternalInfo()]));
+            mockExternalLookup(() => Promise.resolve([buildExternalInfo()]));
             const { result } = renderTestHook();
 
             await waitFor(() => expect(result.current.options).toHaveLength(4));
@@ -260,7 +265,7 @@ describe('useWorkspaceAccountOptions hook', () => {
         });
 
         it('resolves the external account with a single-account lookup', async () => {
-            mockExternalLookup(Promise.resolve([buildExternalInfo()]));
+            mockExternalLookup(() => Promise.resolve([buildExternalInfo()]));
             renderTestHook();
 
             await waitFor(() =>
@@ -293,7 +298,7 @@ describe('useWorkspaceAccountOptions hook', () => {
         });
 
         it('synthesizes a checksummed DAO account named by the lookup', async () => {
-            mockExternalLookup(Promise.resolve([buildExternalInfo()]));
+            mockExternalLookup(() => Promise.resolve([buildExternalInfo()]));
             const { result } = renderTestHook();
 
             await waitFor(() => expect(result.current.isPending).toBeFalsy());
@@ -311,7 +316,7 @@ describe('useWorkspaceAccountOptions hook', () => {
         });
 
         it('synthesizes a Safe account', async () => {
-            mockExternalLookup(
+            mockExternalLookup(() =>
                 Promise.resolve([
                     buildExternalInfo({
                         type: WorkspaceAccountInfoType.SAFE,
@@ -329,29 +334,100 @@ describe('useWorkspaceAccountOptions hook', () => {
         });
 
         it.each([
-            { status: WorkspaceAccountInfoStatus.UNSUPPORTED },
-            { status: WorkspaceAccountInfoStatus.UNAVAILABLE },
-        ])(
-            'scopes to nothing rather than to every account when the lookup resolves no type ($status)',
-            async ({ status }) => {
-                mockExternalLookup(
+            {
+                outcome: 'an unsupported address',
+                lookup: () =>
                     Promise.resolve([
                         buildExternalInfo({
                             type: WorkspaceAccountInfoType.UNKNOWN,
-                            status,
+                            status: WorkspaceAccountInfoStatus.UNSUPPORTED,
                         }),
                     ]),
-                );
+                expected: WorkspaceAccountState.NOT_FOUND,
+            },
+            {
+                // The endpoint 404s the whole request for an address that is neither a DAO nor a Safe.
+                outcome: 'a not-found lookup',
+                lookup: () =>
+                    Promise.reject(
+                        new AragonBackendServiceError(
+                            AragonBackendServiceError.notFoundCode,
+                            'Resource not found',
+                            404,
+                        ),
+                    ),
+                expected: WorkspaceAccountState.NOT_FOUND,
+            },
+            {
+                outcome: 'an unavailable source',
+                lookup: () =>
+                    Promise.resolve([
+                        buildExternalInfo({
+                            type: WorkspaceAccountInfoType.UNKNOWN,
+                            status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+                        }),
+                    ]),
+                expected: WorkspaceAccountState.UNAVAILABLE,
+            },
+            {
+                outcome: 'a failed lookup',
+                lookup: () =>
+                    Promise.reject(new Error('Internal server error')),
+                expected: WorkspaceAccountState.UNAVAILABLE,
+            },
+        ])(
+            'scopes to nothing rather than to every account for $outcome, in the $expected state',
+            async ({ lookup, expected }) => {
+                mockExternalLookup(lookup);
                 const { result } = renderTestHook();
 
                 await waitFor(() =>
                     expect(result.current.isPending).toBeFalsy(),
                 );
                 expect(result.current.activeOption?.isExternal).toBeTruthy();
+                expect(result.current.activeOption?.accountState).toEqual(
+                    expected,
+                );
                 expect(result.current.activeOption?.account).toBeUndefined();
                 expect(result.current.scopedAccounts).toEqual([]);
             },
         );
+
+        it('reads the state of a resolved account', async () => {
+            mockExternalLookup(() => Promise.resolve([buildExternalInfo()]));
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.isPending).toBeFalsy());
+            expect(result.current.activeOption?.accountState).toEqual(
+                WorkspaceAccountState.DAO,
+            );
+        });
+
+        it('looks the external account up again on refetch', async () => {
+            mockExternalLookup(() =>
+                Promise.resolve([
+                    buildExternalInfo({
+                        type: WorkspaceAccountInfoType.UNKNOWN,
+                        status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+                    }),
+                ]),
+            );
+            const { result } = renderTestHook();
+
+            await waitFor(() => expect(result.current.isPending).toBeFalsy());
+            const lookupCount = getAccountsSpy.mock.calls.length;
+            mockExternalLookup(() => Promise.resolve([buildExternalInfo()]));
+            act(() => result.current.refetchExternalAccount());
+
+            await waitFor(() =>
+                expect(result.current.activeOption?.accountState).toEqual(
+                    WorkspaceAccountState.DAO,
+                ),
+            );
+            expect(getAccountsSpy.mock.calls.length).toBeGreaterThan(
+                lookupCount,
+            );
+        });
     });
 
     describe('scopedAccounts', () => {

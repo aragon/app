@@ -22,6 +22,7 @@ import type * as workspaceTransactionList from '../../components/workspaceTransa
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import type * as workspaceTransactionsAsideCard from '../../components/workspaceTransactionsAsideCard';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import type {
@@ -154,6 +155,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
                       ? [activeOption.account]
                       : [],
                 isPending: workspace == null,
+                refetchExternalAccount: jest.fn(),
                 ...result,
             };
         });
@@ -643,5 +645,34 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         expect(
             screen.queryByRole('link', { name: createActionName }),
         ).not.toBeInTheDocument();
+    });
+
+    // There is nothing to list for an account the lookup cannot place, so the page says what the account is instead.
+    it('renders the state of an external account the lookup cannot place', async () => {
+        const useParamsSpy = jest
+            .spyOn(NextNavigation, 'useParams')
+            .mockReturnValue({ workspaceId: 'demo', accountId: daoAccount.id });
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: {
+                id: daoAccount.id,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+                accountState: WorkspaceAccountState.NOT_FOUND,
+            },
+            isAllAccounts: false,
+            isPending: false,
+        });
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(
+                /workspaceAccountStateCard\.notFound\.heading$/,
+            ),
+        ).toBeInTheDocument();
+        expect(listMock).not.toHaveBeenCalled();
+        expect(asideCardMock).not.toHaveBeenCalled();
+        useParamsSpy.mockRestore();
     });
 });

@@ -382,10 +382,12 @@ class WorkspaceUtils {
      *
      * The endpoint answers an address that is neither an indexed DAO nor a Safe with a 404 for the whole request
      * rather than with an `unsupported` entry (see Known gaps in `docs/projectDocs/createWorkspace.md`). With a
-     * single account in the request that 404 can only be about it, so it reads as not found too.
+     * single account in the request that 404 can only be about it, so it reads as not found too. Any other failure
+     * of the lookup is transient as far as the reader can tell, so it reads as unavailable and gets a retry, unless
+     * an earlier result still places the account.
      * @param accountInfo - The only entry of the lookup, undefined while it is pending or when it failed.
      * @param error - Error the lookup failed with, if any.
-     * @returns The state of the account, or undefined when the lookup is pending or failed for another reason.
+     * @returns The state of the account, or undefined while the lookup is pending or when it placed nothing.
      */
     resolveAccountState = (
         accountInfo?: IWorkspaceAccountInfo,
@@ -408,7 +410,11 @@ class WorkspaceUtils {
         };
         const accountType = this.getAccountType(accountInfo);
 
-        return accountType != null ? stateMap[accountType] : undefined;
+        if (accountType != null) {
+            return stateMap[accountType];
+        }
+
+        return error != null ? WorkspaceAccountState.UNAVAILABLE : undefined;
     };
 
     /**

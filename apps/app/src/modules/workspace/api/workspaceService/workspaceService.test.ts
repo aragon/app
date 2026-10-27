@@ -1,5 +1,5 @@
 import { Network } from '@/shared/api/daoService';
-import { WorkspaceAccountType } from './domain';
+import { type IWorkspaceAccount, WorkspaceAccountType } from './domain';
 import {
     defaultWorkspaceName,
     workspaceService,
@@ -273,6 +273,102 @@ describe('workspace service', () => {
                 workspaceService.updateWorkspace({
                     urlParams: { id: 'unknown' },
                     body: buildBody(),
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+    });
+
+    describe('addWorkspaceAccount', () => {
+        const safeAccount: IWorkspaceAccount = {
+            id: 'ethereum-sepolia-0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
+            type: WorkspaceAccountType.SAFE,
+            address: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
+            network: Network.ETHEREUM_SEPOLIA,
+        };
+
+        it('appends the account to the stored workspace', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+
+            const workspace = await workspaceService.addWorkspaceAccount({
+                urlParams: { id: created.id },
+                body: { account: safeAccount },
+            });
+
+            expect(workspace).toEqual({
+                ...created,
+                accounts: [...created.accounts, safeAccount],
+            });
+            expect(getStoredWorkspaces()).toEqual({ [created.id]: workspace });
+        });
+
+        // The caller passes only the account, so a change stored after it read the workspace is not overwritten.
+        it('keeps the changes stored since the caller read the workspace', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            await workspaceService.updateWorkspace({
+                urlParams: { id: created.id },
+                body: buildBody({ name: 'Renamed in another tab' }),
+            });
+
+            const workspace = await workspaceService.addWorkspaceAccount({
+                urlParams: { id: created.id },
+                body: { account: safeAccount },
+            });
+
+            expect(workspace.name).toEqual('Renamed in another tab');
+        });
+
+        it('does not add an account the workspace already holds, whatever its casing', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const [heldAccount] = created.accounts;
+
+            const workspace = await workspaceService.addWorkspaceAccount({
+                urlParams: { id: created.id },
+                body: {
+                    account: {
+                        ...heldAccount,
+                        address: heldAccount.address.toLowerCase(),
+                    },
+                },
+            });
+
+            expect(workspace).toEqual(created);
+            expect(getStoredWorkspaces()).toEqual({ [created.id]: created });
+        });
+
+        it('rejects with a storage error when local storage rejects the write', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const setItemSpy = jest
+                .spyOn(Storage.prototype, 'setItem')
+                .mockImplementation(() => {
+                    throw new Error('QuotaExceededError');
+                });
+
+            await expect(
+                workspaceService.addWorkspaceAccount({
+                    urlParams: { id: created.id },
+                    body: { account: safeAccount },
+                }),
+            ).rejects.toMatchObject({
+                code: 'workspaceStorageError',
+                status: 500,
+            });
+
+            setItemSpy.mockRestore();
+        });
+
+        it('rejects with a not-found error for an unknown workspace', async () => {
+            await expect(
+                workspaceService.addWorkspaceAccount({
+                    urlParams: { id: 'unknown' },
+                    body: { account: safeAccount },
                 }),
             ).rejects.toMatchObject({ status: 404 });
         });

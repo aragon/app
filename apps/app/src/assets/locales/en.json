@@ -4635,7 +4635,7 @@
           "safe": "Safe"
         }
       },
-      "workspaceAccountGate": {
+      "workspaceAccountStateCard": {
         "error": {
           "description": "This account could not be loaded. Please try again later or open another account.",
           "heading": "This account could not be loaded"

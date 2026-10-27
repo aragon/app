@@ -13,6 +13,7 @@ import {
     workspaceService,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import type {
     IUseWorkspaceAccountOptionsResult,
     IWorkspaceAccountOption,
@@ -25,7 +26,11 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
         workspaceService,
         'getWorkspaceList',
     );
-    const updateWorkspaceSpy = jest.spyOn(workspaceService, 'updateWorkspace');
+    const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
+    const addWorkspaceAccountSpy = jest.spyOn(
+        workspaceService,
+        'addWorkspaceAccount',
+    );
     const useWorkspaceAccountOptionsSpy = jest.spyOn(
         useWorkspaceAccountOptionsModule,
         'useWorkspaceAccountOptions',
@@ -95,6 +100,7 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
             isAllAccounts: false,
             scopedAccounts: [externalAccount],
             isPending: false,
+            refetchExternalAccount: jest.fn(),
             ...result,
         });
 
@@ -104,8 +110,9 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
             otherWorkspace,
             holdingWorkspace,
         ]);
-        updateWorkspaceSpy.mockImplementation(({ urlParams, body }) =>
-            Promise.resolve({ ...body, id: urlParams.id }),
+        getWorkspaceSpy.mockResolvedValue(currentWorkspace);
+        addWorkspaceAccountSpy.mockImplementation(({ urlParams }) =>
+            Promise.resolve(buildWorkspace({ id: urlParams.id })),
         );
         mockAccountOptions();
         useParamsSpy.mockReturnValue({
@@ -127,7 +134,8 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
 
     afterEach(() => {
         getWorkspaceListSpy.mockReset();
-        updateWorkspaceSpy.mockReset();
+        getWorkspaceSpy.mockReset();
+        addWorkspaceAccountSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
         useParamsSpy.mockReset();
         useRouterSpy.mockReset();
@@ -166,6 +174,19 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
         ).toBeInTheDocument();
     });
 
+    // The workspace is loaded by the gate, while the list only feeds the other workspaces and may still be loading.
+    it('names the current workspace and offers to add to it before the list loads', async () => {
+        getWorkspaceListSpy.mockReturnValue(new Promise(() => undefined));
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(
+                'app.workspace.workspaceExternalAccountBanner.message (account=External DAO,workspace=Current Workspace)',
+            ),
+        ).toBeInTheDocument();
+        expect(await getAddToCurrentButton()).toBeEnabled();
+    });
+
     it('appends the account to the current workspace and stays on the page', async () => {
         const queryClient = new QueryClient();
         const invalidateQueriesSpy = jest.spyOn(
@@ -183,11 +204,9 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
                 }),
             }),
         );
-        expect(updateWorkspaceSpy).toHaveBeenCalledWith({
+        expect(addWorkspaceAccountSpy).toHaveBeenCalledWith({
             urlParams: { id: currentWorkspace.id },
-            body: expect.objectContaining({
-                accounts: [heldAccount, externalAccount],
-            }),
+            body: { account: externalAccount },
         });
         expect(invalidateQueriesSpy).toHaveBeenCalledWith({
             queryKey: workspaceServiceKeys.workspaceList(),
@@ -222,9 +241,9 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
                 `/workspace/${otherWorkspace.id}/${externalAccount.id}/assets?page=2`,
             ),
         );
-        expect(updateWorkspaceSpy).toHaveBeenCalledWith({
+        expect(addWorkspaceAccountSpy).toHaveBeenCalledWith({
             urlParams: { id: otherWorkspace.id },
-            body: expect.objectContaining({ accounts: [externalAccount] }),
+            body: { account: externalAccount },
         });
     });
 
@@ -255,7 +274,9 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
     });
 
     it('says so when the account cannot be added', async () => {
-        updateWorkspaceSpy.mockRejectedValue(new Error('QuotaExceededError'));
+        addWorkspaceAccountSpy.mockRejectedValue(
+            new Error('QuotaExceededError'),
+        );
         render(createTestComponent());
 
         await userEvent.click(await getAddToCurrentButton());
@@ -266,5 +287,19 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
             ),
         ).toBeInTheDocument();
         expect(pushMock).not.toHaveBeenCalled();
+    });
+
+    // The address can never be added, and the page already says it is not found.
+    it('renders nothing for an account that is neither a DAO nor a Safe', () => {
+        mockAccountOptions({
+            activeOption: {
+                ...externalOption,
+                account: undefined,
+                accountState: WorkspaceAccountState.NOT_FOUND,
+            },
+        });
+        const { container } = render(createTestComponent());
+
+        expect(container).toBeEmptyDOMElement();
     });
 });

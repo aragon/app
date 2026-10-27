@@ -42,39 +42,7 @@ describe('<WorkspaceAccountGateError /> component', () => {
         );
     };
 
-    it.each([
-        { scenario: 'no account state', accountState: undefined },
-        { scenario: 'a DAO', accountState: WorkspaceAccountState.DAO },
-    ])('renders the generic error for $scenario', ({ accountState }) => {
-        render(createTestComponent({ accountState }));
-
-        expect(
-            screen.getByText(/workspaceAccountGate\.error\.heading$/),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/workspaceAccountGate\.error\.description$/),
-        ).toBeInTheDocument();
-        expect(screen.queryByRole('link')).not.toBeInTheDocument();
-        expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    });
-
-    it('points a Safe to the sections that serve it', () => {
-        render(
-            createTestComponent({ accountState: WorkspaceAccountState.SAFE }),
-        );
-
-        expect(
-            screen.getByText(/workspaceAccountGate\.safe\.heading$/),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole('link', { name: /safe\.action\.assets$/ }),
-        ).toHaveAttribute('href', `/workspace/demo/${accountId}/assets`);
-        expect(
-            screen.getByRole('link', { name: /safe\.action\.transactions$/ }),
-        ).toHaveAttribute('href', `/workspace/demo/${accountId}/transactions`);
-    });
-
-    it('renders the not-found state with a way back to every account', () => {
+    it('renders the state of the account it is given', () => {
         render(
             createTestComponent({
                 accountState: WorkspaceAccountState.NOT_FOUND,
@@ -82,23 +50,17 @@ describe('<WorkspaceAccountGateError /> component', () => {
         );
 
         expect(
-            screen.getByText(/workspaceAccountGate\.notFound\.heading$/),
+            screen.getByText(/workspaceAccountStateCard\.notFound\.heading$/),
         ).toBeInTheDocument();
-        expect(
-            screen.getByRole('link', { name: /notFound\.action$/ }),
-        ).toHaveAttribute('href', '/workspace/demo/all/overview');
     });
 
-    it('offers a retry when the account could not be verified', async () => {
+    // The gate looks the account up on the server, so retrying re-renders the route rather than refetching.
+    it('retries by refreshing the route', async () => {
         render(
             createTestComponent({
                 accountState: WorkspaceAccountState.UNAVAILABLE,
             }),
         );
-
-        expect(
-            screen.getByText(/workspaceAccountGate\.unavailable\.heading$/),
-        ).toBeInTheDocument();
 
         await userEvent.click(
             screen.getByRole('button', { name: /unavailable\.action$/ }),

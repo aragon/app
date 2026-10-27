@@ -462,13 +462,23 @@ describe('workspace utils', () => {
             );
         });
 
-        it('returns undefined for any other lookup error', () => {
+        it('reads any other lookup error as unavailable, so the reader can retry', () => {
             expect(
                 workspaceUtils.resolveAccountState(
                     undefined,
                     new Error('Internal server error'),
                 ),
-            ).toBeUndefined();
+            ).toEqual(WorkspaceAccountState.UNAVAILABLE);
+        });
+
+        // React Query keeps the last data next to the error of a failed refetch.
+        it('keeps the state of an earlier result when a refetch fails', () => {
+            expect(
+                workspaceUtils.resolveAccountState(
+                    buildAccountInfo({ type: WorkspaceAccountInfoType.DAO }),
+                    new Error('Internal server error'),
+                ),
+            ).toEqual(WorkspaceAccountState.DAO);
         });
 
         it('returns undefined while the lookup is pending', () => {

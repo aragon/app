@@ -9,6 +9,7 @@ import {
     type IWorkspaceAccount,
     useWorkspace,
 } from '../../api/workspaceService';
+import { WorkspaceAccountStateCard } from '../../components/workspaceAccountStateCard';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
@@ -53,7 +54,15 @@ export const WorkspaceTransactionsPageClient: React.FC<
         activeOption,
         scopedAccounts: accountsToDisplay,
         isPending: isScopePending,
+        refetchExternalAccount,
     } = useWorkspaceAccountOptions();
+
+    // An account the workspace does not hold that the lookup could not place as a DAO or a Safe: there is nothing to
+    // list, so the page says what the account is instead of an empty list.
+    const isUnresolvedExternal =
+        activeOption?.isExternal === true &&
+        activeOption.account == null &&
+        !isScopePending;
 
     const selectedAccount = activeOption?.account;
 
@@ -117,6 +126,23 @@ export const WorkspaceTransactionsPageClient: React.FC<
         : undefined;
 
     const action = selectedAccount != null ? scopedAction : aggregatedAction;
+
+    if (isUnresolvedExternal) {
+        return (
+            <Page.Content>
+                <Page.Main
+                    title={t(
+                        'app.workspace.workspaceTransactionsPage.main.title',
+                    )}
+                >
+                    <WorkspaceAccountStateCard
+                        accountState={activeOption.accountState}
+                        onRetry={refetchExternalAccount}
+                    />
+                </Page.Main>
+            </Page.Content>
+        );
+    }
 
     return (
         <Page.Content>

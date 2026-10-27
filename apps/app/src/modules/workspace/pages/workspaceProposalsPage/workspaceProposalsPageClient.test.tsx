@@ -2,6 +2,7 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as NextNavigation from 'next/navigation';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { daoService, type IDao, Network } from '@/shared/api/daoService';
@@ -20,6 +21,7 @@ import {
 } from '../../api/workspaceService';
 import type { IWorkspaceProposalListProps } from '../../components/workspaceProposalList';
 import type { IWorkspaceProposalsAsideCardProps } from '../../components/workspaceProposalsAsideCard';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type {
     IUseWorkspaceAccountOptionsResult,
@@ -152,6 +154,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
                       ? [activeOption.account]
                       : [],
                 isPending: workspace == null,
+                refetchExternalAccount: jest.fn(),
                 ...result,
             };
         });
@@ -442,6 +445,39 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         render(createTestComponent());
 
         await waitFor(() => expect(lastListProps()?.accounts).toEqual([]));
+        // The list loads rather than reading an empty selection as a workspace with no proposals.
+        expect(lastListProps()?.isPending).toBeTruthy();
+    });
+
+    // The gate only proves on the server that the DAO loads; the client lookup is a request of its own.
+    it('renders the state of an external account the lookup cannot place, with a retry', async () => {
+        const useParamsSpy = jest
+            .spyOn(NextNavigation, 'useParams')
+            .mockReturnValue({ workspaceId: 'demo' });
+        const refetchExternalAccountMock = jest.fn();
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: {
+                id: daoAccount.id,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+                accountState: WorkspaceAccountState.UNAVAILABLE,
+            },
+            isAllAccounts: false,
+            isPending: false,
+            refetchExternalAccount: refetchExternalAccountMock,
+        });
+        render(createTestComponent());
+
+        await userEvent.click(
+            await screen.findByRole('button', { name: /unavailable\.action$/ }),
+        );
+
+        expect(refetchExternalAccountMock).toHaveBeenCalled();
+        expect(proposalListMock).not.toHaveBeenCalled();
+        expect(screen.queryByTestId('aside-card-mock')).not.toBeInTheDocument();
+        useParamsSpy.mockRestore();
     });
 
     it('narrows to the account of a lowercased route ID', async () => {

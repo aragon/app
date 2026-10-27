@@ -231,6 +231,10 @@ local storage for real requests is a single-method change:
 - `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
   stored workspace, keeping its ID (so its URLs keep working); rejects with
   `notFoundCode` / 404 when absent. Called by the publish dialog in update mode.
+- `addWorkspaceAccount({ urlParams: { id }, body: { account } })` → appends one account to the stored workspace,
+  reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
+  caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
+  `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
 
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
@@ -455,22 +459,31 @@ An account the workspace does not hold — a shared link opened in another works
 or a slug collision landing on the reader's own workspace — becomes an **external** option (`isExternal: true`),
 listed last and marked "Not in this workspace" in the selector:
 
-| External account | `activeOption.account` | `scopedAccounts` | `isPending` |
-| --- | --- | --- | --- |
-| Lookup pending | undefined | `[]` | `true` |
-| Resolved to a DAO or a Safe | synthesized, checksummed `id` | `[account]` | `false` |
-| Resolved to no type (`unsupported`, `unavailable`) | undefined | `[]` | `false` |
+| External account | `activeOption.accountState` | `activeOption.account` | `scopedAccounts` | `isPending` |
+| --- | --- | --- | --- | --- |
+| Lookup pending | undefined | undefined | `[]` | `true` |
+| A DAO or a Safe | `DAO` / `SAFE` | synthesized, checksummed `id` | `[account]` | `false` |
+| `unsupported`, or the whole-request 404 | `NOT_FOUND` | undefined | `[]` | `false` |
+| `unavailable`, or the lookup fails otherwise | `UNAVAILABLE` | undefined | `[]` | `false` |
 
 Its type and name come from a single-account `POST /v2/workspaces/query/accounts` lookup — the same query key
 `WorkspaceGateAccountPrompt` reads, so after the prompt's redirect it is already cached. The account is only
 synthesized once the type is known because `IWorkspaceAccount.type` is required and every consumer branches on it;
-until then the label is the truncated address. The selector reads the DAOs of every option rather than of the
-workspace accounts, so an external DAO gets its avatar too.
+until then the label is the truncated address. The state comes from `workspaceUtils.resolveAccountState`, the rule
+`WorkspaceAccountGate` reads on the server, so the client and the server agree on what the account is. The selector
+reads the DAOs of every option rather than of the workspace accounts, so an external DAO gets its avatar too.
+
+An external account that is no longer pending and has no `account` has nothing to list, so the assets,
+transactions and proposals pages render `WorkspaceAccountStateCard` in place of the list and the aside: the same
+card the gate renders, with the retry refetching the lookup (`refetchExternalAccount`) instead of refreshing the
+route. The proposals page needs it despite its gate, which only proves on the server that the DAO loads: the client
+lookup is a request of its own and can still fail. While the lookup is pending, each list stays in its loading
+state (`isPending`) rather than showing its empty state.
 
 `WorkspaceExternalAccountBanner`, rendered by `LayoutWorkspaceAccount` above every section the way `BannerDao` is by
 `LayoutDao`, offers to add the external account: "Add to this workspace", and "Add to another workspace" as a
 dropdown of the other workspaces that do not hold it yet (hidden when there is none). Both append the external
-option's own `account` — checksummed ID, resolved type — through `updateWorkspace`, then invalidate the workspace
+option's own `account` — checksummed ID, resolved type — through `addWorkspaceAccount`, then invalidate the workspace
 list and the target workspace. They stay disabled until that account exists, i.e. until the accounts API places the
 address as a DAO or a Safe, the same accounts `validateAccountInfo` lets the create form add.
 
@@ -479,6 +492,8 @@ address as a DAO or a Safe, the same accounts `validateAccountInfo` lets the cre
 - Added to another workspace: the same page opens there (`router.push` to `workspaceUtils.getWorkspaceSwapUrl`,
   section and query string kept), so Back returns to where the account was added from.
 - A failed write (local storage full) replaces the banner message with an error and keeps the actions.
+- An account in the `NOT_FOUND` state gets no banner: it can never be added, and the page already says it is not
+  found.
 
 `WorkspaceSelector`, the workspace avatar pill, switches workspace: a dropdown of every stored workspace plus a
 "Create workspace" item. Picking one opens its aggregated overview, since account IDs belong to the previous
@@ -739,16 +754,16 @@ Two consequences worth stating, because both are deliberate:
 serve — a Safe among them. The read alone cannot say why it failed (a Safe and an address that is neither a DAO nor
 a Safe both 404), and the account may be one the workspace does not hold, so only then does the gate look the
 address up with a single-account `query/accounts` request and pick a state through
-`workspaceUtils.resolveAccountState`, the same rule the external option of `useWorkspaceAccountOptions` builds on.
-The states render inline (`WorkspaceAccountGateError`), never through `notFound()`, for the reason below:
+`workspaceUtils.resolveAccountState`, the same rule the external option of `useWorkspaceAccountOptions` reads.
+The states render inline (`WorkspaceAccountGateError`, the page frame around `WorkspaceAccountStateCard`), never
+through `notFound()`, for the reason below:
 
 | Lookup | `WorkspaceAccountState` | State |
 | --- | --- | --- |
 | Safe, available | `SAFE` | "Not available for Safe accounts yet", linking to the account's assets and transactions |
 | `unsupported`, or the whole-request 404 (see Known gaps) | `NOT_FOUND` | "Account not found", linking to every account |
-| `unavailable` | `UNAVAILABLE` | "Couldn't verify this account", retrying with `router.refresh()` |
+| `unavailable`, or the lookup itself fails | `UNAVAILABLE` | "Couldn't verify this account", retrying with `router.refresh()` |
 | DAO, available (the DAO read failed for another reason) | `DAO` | the generic error |
-| The lookup itself fails | undefined | the generic error |
 
 It is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
 because layout and page render in parallel, so a page's `notFound()` — `DaoMembersPage` raises one for the DAO a
@@ -955,6 +970,7 @@ src/modules/workspace/
 │   ├── domain/enum/{workspaceAccountType.ts,index.ts}
 │   ├── queries/useWorkspace/{useWorkspace.ts,index.ts}
 │   ├── queries/index.ts
+│   ├── mutations/useAddWorkspaceAccount/{useAddWorkspaceAccount.ts,index.ts}
 │   ├── mutations/useCreateWorkspace/{useCreateWorkspace.ts,index.ts}
 │   ├── mutations/useGetOrCreateDefaultWorkspace/{useGetOrCreateDefaultWorkspace.ts,index.ts}
 │   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
@@ -970,6 +986,7 @@ src/modules/workspace/
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
 ├── components/workspaceGate/{workspaceGate.tsx,workspaceGateNotFound.tsx,workspaceGateAccountPrompt.tsx,index.ts}
 ├── components/workspaceExternalAccountBanner/{workspaceExternalAccountBanner.tsx,index.ts}
+├── components/workspaceAccountStateCard/{workspaceAccountStateCard.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}

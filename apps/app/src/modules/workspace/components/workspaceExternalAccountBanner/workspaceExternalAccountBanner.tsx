@@ -13,10 +13,12 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import {
     type IWorkspace,
-    useUpdateWorkspace,
+    useAddWorkspaceAccount,
+    useWorkspace,
     useWorkspaceList,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -28,7 +30,8 @@ export interface IWorkspaceExternalAccountBannerProps {}
  *
  * The account added is the external option's own, synthesized from the accounts API with a checksummed ID and its
  * resolved type, so the actions stay disabled until the API has placed the address as a DAO or a Safe — the same
- * accounts `workspaceUtils.validateAccountInfo` lets the create form add.
+ * accounts `workspaceUtils.validateAccountInfo` lets the create form add. It is appended through
+ * `addWorkspaceAccount`, which reads the stored workspace itself, so a cached copy never overwrites a newer one.
  *
  * Adding to this workspace stays on the page: once the workspace is invalidated the account is held, so the option
  * stops being external and the banner goes. Adding to another workspace opens the same page there.
@@ -45,20 +48,27 @@ export const WorkspaceExternalAccountBanner: React.FC<
     const { workspaceId } =
         useParams<Pick<IWorkspaceAccountPageParams, 'workspaceId'>>();
     const { activeOption, accountId } = useWorkspaceAccountOptions();
+    // Loaded by `WorkspaceGate` before any page renders, unlike the list, which only feeds the other workspaces.
+    const { data: currentWorkspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
     const { data: workspaces = [] } = useWorkspaceList();
 
     const {
-        mutate: updateWorkspace,
+        mutate: addWorkspaceAccount,
         isPending: isUpdating,
         isError,
-    } = useUpdateWorkspace();
+    } = useAddWorkspaceAccount();
 
-    if (!activeOption?.isExternal) {
+    // An address that is neither a DAO nor a Safe can never be added, and the page already says it is not found.
+    if (
+        !activeOption?.isExternal ||
+        activeOption.accountState === WorkspaceAccountState.NOT_FOUND
+    ) {
         return null;
     }
 
     const account = activeOption.account;
-    const currentWorkspace = workspaces.find(({ id }) => id === workspaceId);
     const otherWorkspaces = workspaces.filter(
         (workspace) =>
             workspace.id !== workspaceId &&
@@ -89,26 +99,18 @@ export const WorkspaceExternalAccountBanner: React.FC<
         }
     };
 
-    const addToWorkspace = (target: IWorkspace) => {
+    const addToWorkspace = (targetId: string) => {
         if (account == null) {
             return;
         }
 
-        const { id, ...body } = target;
-        updateWorkspace(
-            {
-                urlParams: { id },
-                body: { ...body, accounts: [...body.accounts, account] },
-            },
+        addWorkspaceAccount(
+            { urlParams: { id: targetId }, body: { account } },
             { onSuccess: handleAdded },
         );
     };
 
-    const handleAddToCurrent = () => {
-        if (currentWorkspace != null) {
-            addToWorkspace(currentWorkspace);
-        }
-    };
+    const handleAddToCurrent = () => addToWorkspace(workspaceId);
 
     const isDisabled = account == null || isUpdating;
     const translationNamespace = 'app.workspace.workspaceExternalAccountBanner';
@@ -143,7 +145,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
                         {otherWorkspaces.map((workspace) => (
                             <Dropdown.Item
                                 key={workspace.id}
-                                onSelect={() => addToWorkspace(workspace)}
+                                onSelect={() => addToWorkspace(workspace.id)}
                             >
                                 {workspace.name}
                             </Dropdown.Item>

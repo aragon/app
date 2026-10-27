@@ -191,13 +191,17 @@ describe('<WorkspaceAccountGate /> component', () => {
             ).toBeInTheDocument();
         });
 
-        it('renders the generic error when the lookup fails otherwise', async () => {
+        it('renders the unavailable state when the lookup fails otherwise', async () => {
             getAccountsSpy.mockRejectedValue(
                 new Error('Internal server error'),
             );
             render(await createTestComponent());
 
-            expect(screen.getByText('gate error: unknown')).toBeInTheDocument();
+            expect(
+                screen.getByText(
+                    `gate error: ${WorkspaceAccountState.UNAVAILABLE}`,
+                ),
+            ).toBeInTheDocument();
         });
     });
 });

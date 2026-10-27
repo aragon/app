@@ -2,6 +2,7 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { WorkspaceAccountStateCard } from '../../components/workspaceAccountStateCard';
 import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceAssetsAsideCard } from '../../components/workspaceAssetsAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
@@ -29,8 +30,15 @@ export const WorkspaceAssetsPageClient: React.FC<
     const { t } = useTranslations();
 
     // Every account of the workspace, or just the one the route names, held by the workspace or not.
-    const { activeOption, scopedAccounts, isPending } =
+    const { activeOption, scopedAccounts, isPending, refetchExternalAccount } =
         useWorkspaceAccountOptions();
+
+    // An account the workspace does not hold that the lookup could not place as a DAO or a Safe: there is nothing to
+    // list, so the page says what the account is instead of an empty list.
+    const isUnresolvedExternal =
+        activeOption?.isExternal === true &&
+        activeOption.account == null &&
+        !isPending;
 
     const accountsToDisplay = scopedAccounts.map(({ network, address }) => ({
         network,
@@ -42,6 +50,21 @@ export const WorkspaceAssetsPageClient: React.FC<
         { body: { accounts: accountsToDisplay, pagination: { pageSize } } },
         { enabled: accountsToDisplay.length > 0 },
     );
+
+    if (isUnresolvedExternal) {
+        return (
+            <Page.Content>
+                <Page.Main
+                    title={t('app.workspace.workspaceAssetsPage.main.title')}
+                >
+                    <WorkspaceAccountStateCard
+                        accountState={activeOption.accountState}
+                        onRetry={refetchExternalAccount}
+                    />
+                </Page.Main>
+            </Page.Content>
+        );
+    }
 
     return (
         <Page.Content>
