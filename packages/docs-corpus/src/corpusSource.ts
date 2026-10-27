@@ -98,7 +98,7 @@ const isShallow = (dir: string, env: NodeJS.ProcessEnv): boolean =>
     runGit(['-C', dir, 'rev-parse', '--is-shallow-repository'], env) === 'true';
 
 /**
- * Brings `targetDir` to the head of `ref` in the repository: a fresh directory and an earlier
+ * Brings `targetDir` to `ref` in the repository, a branch (its head) or a commit: a fresh directory and an earlier
  * checkout go through the same three commands (reinitializing a repository is a no-op). A
  * failure leaves the directory as it was.
  */

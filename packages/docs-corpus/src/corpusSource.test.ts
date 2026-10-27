@@ -117,6 +117,22 @@ describe('corpusSource', () => {
             expect(existsSync(path.join(targetDir, 'page.md'))).toBe(false);
         });
 
+        it('fetches a pinned commit instead of the branch head', async () => {
+            const pinned = git(originDir, 'rev-parse', 'HEAD');
+            await writeFile(path.join(originDir, 'new.md'), '# New\n');
+            git(originDir, 'add', '.');
+            git(originDir, 'commit', '-q', '-m', 'second');
+
+            const result = syncCorpus({
+                repoUrl: originUrl,
+                ref: pinned,
+                targetDir,
+            });
+
+            expect(result.commit).toBe(pinned);
+            expect(existsSync(path.join(targetDir, 'new.md'))).toBe(false);
+        });
+
         it('completes the history of a checkout an earlier build fetched shallow', async () => {
             await writeFile(path.join(originDir, 'new.md'), '# New\n');
             git(originDir, 'add', '.');

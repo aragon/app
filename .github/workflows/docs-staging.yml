@@ -1,0 +1,140 @@
+# The "Docs Staging" workflow redeploys staging by hand from the branch it is dispatched on, with the
+# newest knowledge base: a docs release branch to bring the pages validated since the last push to
+# its PR onto staging (production then publishes them, see docs-release.yml), main to look at what
+# the next release would carry. Like every staging deploy, it records the knowledge-base commit it
+# built as the `docs/corpus` status of the deployed commit and runs the smoke suite. On a release
+# branch the results join the release thread; elsewhere the deploy opens its own thread. A commit a
+# docs tag points at is refused: its status pins the pages that release tested, and production and
+# rollback rebuild them from it (a release branch left after its merge, a hotfix branch).
+
+name: Docs Staging
+
+on:
+  workflow_dispatch: {}
+
+# Shares the release PR's staging, so the last deploy wins either way.
+concurrency:
+  group: docs-staging-deployment
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      commit: ${{ steps.head.outputs.commit }}
+      pr-number: ${{ steps.pr.outputs.number }}
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Refuse a commit a docs tag points at
+        env:
+          SHA: ${{ github.sha }}
+          SERVER: ${{ github.server_url }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Lightweight tags list the commit itself, annotated ones their peeled `^{}` entry.
+          tag="$(git ls-remote --tags "$SERVER/$REPO.git" 'refs/tags/@aragon/docs@*' \
+            | awk -v sha="$SHA" '$1 == sha { sub("^refs/tags/", "", $2); sub("\\^\\{\\}$", "", $2); print $2; exit }')"
+          if [ -n "$tag" ]; then
+            echo "::error::$SHA is tagged $tag: its docs/corpus status pins the pages that release tested. Dispatch Docs Staging on an untagged commit, or Docs Production / Docs Rollback with the tag." >&2
+            exit 1
+          fi
+
+      - name: Resolve the head of the knowledge base
+        id: head
+        env:
+          GH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+        run: |
+          set -euo pipefail
+          commit="$(gh api repos/aragon/platform-doc/commits/development --jq .sha)"
+          echo "Knowledge base: aragon/platform-doc@$commit"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Find the release PR of the branch
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          number=0
+          case "$BRANCH" in
+            release/docs/*)
+              number="$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // 0')"
+              ;;
+          esac
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: context
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: staging
+      ref: ${{ github.sha }}
+      domain: stg.platform-doc.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/docs
+      op-infra-vault: kv_docs_infra
+      op-env-vault: kv_docs_staging
+      setup-command: pnpm run setup staging
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.context.outputs.commit }}
+      slack-thread-pr-number: ${{ fromJSON(needs.context.outputs.pr-number) }}
+      next-steps: "Redeployed with knowledge base `${{ needs.context.outputs.commit }}`."
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  pin:
+    needs: [context, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Record the knowledge-base commit on the deployed commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          CORPUS: ${{ needs.context.outputs.commit }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/statuses/$SHA" \
+            -f state=success \
+            -f context=docs/corpus \
+            -f description="$CORPUS" \
+            -f target_url="https://github.com/aragon/platform-doc/commit/$CORPUS" \
+            --silent
+
+  e2e:
+    needs: deploy
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    with:
+      deployment-url: https://stg.platform-doc.aragon.org
+      environment: staging
+      working-directory: apps/docs
+      test-command: E2E_DOCS_MODE=ready pnpm e2e:smoke
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-ts: ${{ needs.deploy.outputs.slack-ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

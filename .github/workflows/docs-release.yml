@@ -1,0 +1,319 @@
+# The "Docs Release" workflow is the docs site's release PR lifecycle, on the shared
+# aragon/github-templates modules: a start every Wednesday (or by hand) cuts release/docs/<timestamp>
+# with the changesets bump of the "docs" release scope and opens the "Release @aragon/docs@x.y.z"
+# PR with its Slack thread; every push to that PR refreshes the summary, runs the checks and lands
+# on staging (stg.platform-doc.aragon.org, the validated pages only), with the smoke results in the
+# thread; merging the PR tags the staging-tested head and publishes the GitHub Release, which starts
+# the production deploy (docs-production.yml); closing it without a merge cancels the release.
+#
+# The pages come from aragon/platform-doc, outside this repository, so the tag alone does not fix
+# them. Every staging deploy builds the newest knowledge base and records the commit it built on
+# the deployed commit as the `docs/corpus` commit status; production builds the commit the status
+# of the tag names, the pages the release tested. Docs Staging (docs-staging.yml) redeploys the
+# release branch with the pages validated since its last push.
+#
+# Pages validated in the knowledge base change no file here, so no changeset describes them: the
+# start compares the site the knowledge base publishes now with the one the latest docs tag
+# published and, when pages differ, adds a patch changeset that lists them, so a release cuts for
+# new pages alone and its changelog names them.
+#
+# A scheduled start green-skips when a docs release PR is already open or there is nothing to
+# release. The cron is fixed in UTC, off the top of the hour and after the assistant start (15:17).
+#
+# The `test` and `deploy` job names are required status checks of the main ruleset — keep them.
+
+name: Docs Release
+
+on:
+  schedule:
+    - cron: "27 15 * * 3"
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: "Commit SHA to start the release from (default: main HEAD)"
+        required: false
+        type: string
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# One run per PR: a push supersedes the previous run (its checks, staging deploy and smoke would
+# otherwise keep going against a staging the next run re-aliases). The close runs (finalize,
+# cancel) get a group of their own, so they are never cancelled.
+concurrency:
+  group: docs-release-${{ github.event.pull_request.number || github.run_id }}${{ github.event.action == 'closed' && '-closed' || '' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+
+jobs:
+  content:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: read
+    outputs:
+      changeset: ${{ steps.changeset.outputs.content }}
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          ref: ${{ inputs.base_commit || 'main' }}
+          fetch-depth: "0"
+
+      - name: Find the pages of the latest release
+        id: base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag="$(git tag --list '@aragon/docs@*' --sort=-creatordate | head -1)"
+          commit=""
+          if [ -n "$tag" ]; then
+            commit="$(gh api "repos/$REPO/commits/$(git rev-parse "$tag^{commit}")/status" --jq '.statuses[] | select(.context == "docs/corpus") | .description')"
+          fi
+          echo "Latest release: ${tag:-none}, knowledge base ${commit:-none}"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Compare the published pages with the newest knowledge base
+        working-directory: apps/docs
+        env:
+          GH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          DOCS_REPO_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          BASE: ${{ steps.base.outputs.commit }}
+        run: |
+          set -euo pipefail
+          head="$(gh api repos/aragon/platform-doc/commits/development --jq .sha)"
+          pnpm -s content:diff "$BASE" "$head" > "$RUNNER_TEMP/content-diff.json"
+          cat "$RUNNER_TEMP/content-diff.json"
+
+      - name: Compose the changeset
+        id: changeset
+        run: |
+          set -euo pipefail
+          diff="$RUNNER_TEMP/content-diff.json"
+          if [ "$(jq '[.added, .changed, .removed] | map(length) | add' "$diff")" = "0" ]; then
+            echo "No page changed since the latest release."
+            exit 0
+          fi
+          {
+            echo 'content<<CHANGESET_EOF'
+            printf -- '---\n"@aragon/docs": patch\n---\n\n'
+            jq -r '"Publish the pages the knowledge base changed since the previous release: \(.added | length) added, \(.changed | length) changed, \(.removed | length) removed."' "$diff"
+            echo
+            jq -r 'def url: if . == "/" then "/help" else "/help" + . end;
+              (.added[] | "- Added `\(url)`"), (.changed[] | "- Changed `\(url)`"), (.removed[] | "- Removed `\(url)`")' "$diff"
+            echo 'CHANGESET_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+  # A failed comparison does not hold the release back: it starts on the changesets alone.
+  start:
+    needs: content
+    if: ${{ !cancelled() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+    uses: aragon/github-templates/.github/workflows/release-start.yml@main
+    with:
+      engine: changesets
+      base-ref: ${{ inputs.base_commit || 'main' }}
+      package-dir: apps/docs
+      tag-prefix: "@aragon/docs@"
+      scope: docs
+      release-branch-prefix: release/docs/
+      branch-suffix: timestamp
+      commit-message: "Release {tag}"
+      summary-path-filter: docs
+      on-active-release: ${{ github.event_name == 'schedule' && 'skip' || 'fail' }}
+      extra-changeset: ${{ needs.content.outputs.changeset }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-gpg-key-path: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+      op-gpg-passphrase-path: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  refresh:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/docs/')
+    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@main
+    with:
+      release-branch-prefix: release/docs/
+      tag-prefix: "@aragon/docs@"
+      summary-path-filter: docs
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  test:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/docs/')
+    runs-on: ubuntu-latest
+    # Runs the PR head's scripts on a read-only token; pushes and tags go through ARABOT_PAT.
+    permissions:
+      contents: read
+    steps:
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: "0"
+      - name: Check types
+        run: pnpm type-check
+      - name: Check linter with formatter
+        run: pnpm lint:check
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+  # Every staging deploy takes the newest knowledge base.
+  corpus:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      commit: ${{ steps.head.outputs.commit }}
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Resolve the head of the knowledge base
+        id: head
+        env:
+          GH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+        run: |
+          set -euo pipefail
+          commit="$(gh api repos/aragon/platform-doc/commits/development --jq .sha)"
+          echo "Knowledge base: aragon/platform-doc@$commit"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+  # Every push lands on staging, announced in the release thread (found through the PR body).
+  # Staging has no required reviewers, so there is no gate message.
+  deploy:
+    needs: [test, corpus]
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: staging
+      ref: ${{ github.event.pull_request.head.sha }}
+      domain: stg.platform-doc.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/docs
+      op-infra-vault: kv_docs_infra
+      op-env-vault: kv_docs_staging
+      setup-command: pnpm run setup staging
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.corpus.outputs.commit }}
+      slack-thread-pr-number: ${{ github.event.pull_request.number }}
+      next-steps: |
+        Ready for testing 🧪 (knowledge base `${{ needs.corpus.outputs.commit }}`)
+        • Found bugs? Create a PR with fixes to `${{ github.event.pull_request.head.ref }}`
+        • All good? Approve the PR and merge → the production deploy starts automatically
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # Only a head that reached staging carries the status: production refuses a tag without it.
+  pin:
+    needs: [corpus, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Record the knowledge-base commit on the release head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          CORPUS: ${{ needs.corpus.outputs.commit }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/statuses/$SHA" \
+            -f state=success \
+            -f context=docs/corpus \
+            -f description="$CORPUS" \
+            -f target_url="https://github.com/aragon/platform-doc/commit/$CORPUS" \
+            --silent
+
+  e2e:
+    needs: deploy
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    with:
+      deployment-url: https://stg.platform-doc.aragon.org
+      environment: staging
+      working-directory: apps/docs
+      test-command: E2E_DOCS_MODE=ready pnpm e2e:smoke
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-pr-number: ${{ github.event.pull_request.number }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # Tags the staging-TESTED head commit, not the merge commit: it is the commit that carries the
+  # `docs/corpus` status. The scoped changesets guard only trips on docs-scope changesets added
+  # after the version bump; other lineages' changesets live in .changeset/ continuously and are
+  # released by their own flows.
+  finalize:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.head.ref, 'release/docs/')
+    uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
+    with:
+      sha: ${{ github.event.pull_request.head.sha }}
+      pr-body: ${{ github.event.pull_request.body }}
+      package-dir: apps/docs
+      tag-prefix: "@aragon/docs@"
+      changesets-guard: docs
+      after-release-note: "Production deploy to platform-doc.aragon.org will start automatically."
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  cancel:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.merged == false
+      && startsWith(github.event.pull_request.head.ref, 'release/docs/')
+    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@main
+    with:
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

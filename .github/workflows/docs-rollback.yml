@@ -1,0 +1,87 @@
+# The "Docs Rollback" workflow rebuilds and deploys an earlier docs tag to production, with the
+# knowledge-base commit that release tested (its `docs/corpus` status, see docs-release.yml), behind
+# the same production approval as a release deploy.
+
+name: Docs Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to roll back to (e.g. @aragon/docs@0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: read
+    outputs:
+      commit: ${{ steps.pin.outputs.commit }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is in main
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if ! git branch -r --contains "$TAG" | grep -q "origin/main"; then
+            echo "::error::Tag $TAG is not reachable from main" >&2
+            exit 1
+          fi
+
+      - name: Read the knowledge-base commit the release tested
+        id: pin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse "$TAG^{commit}")"
+          commit="$(gh api "repos/$REPO/commits/$sha/status" --jq '.statuses[] | select(.context == "docs/corpus") | .description')"
+          if ! [[ "$commit" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::$TAG carries no docs/corpus status: it never reached staging" >&2
+            exit 1
+          fi
+          echo "Knowledge base: aragon/platform-doc@$commit"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+  # Same production group as docs-production.yml's deploy job: a rollback supersedes a release
+  # deploy still waiting for its approval, and vice versa.
+  deploy:
+    needs: validate
+    concurrency:
+      group: docs-production-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: production
+      ref: ${{ inputs.tag }}
+      domain: platform-doc.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/docs
+      op-infra-vault: kv_docs_infra
+      op-env-vault: kv_docs_production
+      setup-command: pnpm run setup production
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.validate.outputs.commit }}
+      version: ${{ inputs.tag }}
+      gated: true
+      next-steps: "Rolled back. The next release ships from main as usual."
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
