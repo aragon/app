@@ -155,7 +155,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
                       ? [activeOption.account]
                       : [],
                 isPending: workspace == null,
-                refetchExternalAccount: jest.fn(),
                 ...result,
             };
         });

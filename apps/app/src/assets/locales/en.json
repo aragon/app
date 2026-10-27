@@ -4654,7 +4654,6 @@
           "heading": "Not available for Safe accounts yet"
         },
         "unavailable": {
-          "action": "Try again",
           "description": "We couldn't verify this account right now. Please try again in a moment.",
           "heading": "Couldn't verify this account"
         }

@@ -81,7 +81,6 @@ describe('<WorkspaceMembersPageClient /> component', () => {
             isAllAccounts: true,
             scopedAccounts: workspace.accounts,
             isPending: false,
-            refetchExternalAccount: jest.fn(),
         });
     });
 

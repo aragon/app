@@ -1,7 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
@@ -140,7 +139,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
                       ? [activeOption.account]
                       : [],
                 isPending: workspace == null,
-                refetchExternalAccount: jest.fn(),
                 ...overrides,
             };
         });
@@ -351,11 +349,10 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
     });
 
     // There is nothing to list for an account the lookup cannot place, so the page says what the account is instead.
-    it('renders the state of an external account the lookup cannot place, with a retry', async () => {
+    it('renders the state of an external account the lookup cannot place, without a retry', async () => {
         const useParamsSpy = jest
             .spyOn(NextNavigation, 'useParams')
             .mockReturnValue({ workspaceId: 'demo' });
-        const refetchExternalAccountMock = jest.fn();
         const externalAccountId = `ethereum-sepolia-${nextAddresses().daoAddress}`;
         const { component } = createTestComponent(undefined, () => ({
             accountId: externalAccountId,
@@ -368,15 +365,15 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
             },
             isAllAccounts: false,
             isPending: false,
-            refetchExternalAccount: refetchExternalAccountMock,
         }));
         render(component);
 
-        await userEvent.click(
-            await screen.findByRole('button', { name: /unavailable\.action$/ }),
-        );
-
-        expect(refetchExternalAccountMock).toHaveBeenCalled();
+        expect(
+            await screen.findByText(/unavailable\.heading$/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: /unavailable\.action$/ }),
+        ).not.toBeInTheDocument();
         expect(assetsAsideCardSpy).not.toHaveBeenCalled();
         expect(getWorkspaceAssetsSpy).not.toHaveBeenCalled();
         useParamsSpy.mockRestore();

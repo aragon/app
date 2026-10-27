@@ -154,7 +154,6 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
                       ? [activeOption.account]
                       : [],
                 isPending: workspace == null,
-                refetchExternalAccount: jest.fn(),
                 ...result,
             };
         });
@@ -450,11 +449,10 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
     });
 
     // The gate only proves on the server that the DAO loads; the client lookup is a request of its own.
-    it('renders the state of an external account the lookup cannot place, with a retry', async () => {
+    it('renders the state of an external account the lookup cannot place, without a retry', async () => {
         const useParamsSpy = jest
             .spyOn(NextNavigation, 'useParams')
             .mockReturnValue({ workspaceId: 'demo' });
-        const refetchExternalAccountMock = jest.fn();
         mockAccountOptions({
             accountId: daoAccount.id,
             activeOption: {
@@ -466,15 +464,15 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
             },
             isAllAccounts: false,
             isPending: false,
-            refetchExternalAccount: refetchExternalAccountMock,
         });
         render(createTestComponent());
 
-        await userEvent.click(
-            await screen.findByRole('button', { name: /unavailable\.action$/ }),
-        );
-
-        expect(refetchExternalAccountMock).toHaveBeenCalled();
+        expect(
+            await screen.findByText(/unavailable\.heading$/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: /unavailable\.action$/ }),
+        ).not.toBeInTheDocument();
         expect(proposalListMock).not.toHaveBeenCalled();
         expect(screen.queryByTestId('aside-card-mock')).not.toBeInTheDocument();
         useParamsSpy.mockRestore();

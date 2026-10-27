@@ -475,8 +475,7 @@ reads the DAOs of every option rather than of the workspace accounts, so an exte
 
 An external account that is no longer pending and has no `account` has nothing to list, so the assets,
 transactions and proposals pages render `WorkspaceAccountStateCard` in place of the list and the aside: the same
-card the gate renders, with the retry refetching the lookup (`refetchExternalAccount`) instead of refreshing the
-route. The proposals page needs it despite its gate, which only proves on the server that the DAO loads: the client
+card the gate renders. The proposals page needs it despite its gate, which only proves on the server that the DAO loads: the client
 lookup is a request of its own and can still fail. While the lookup is pending, each list stays in its loading
 state (`isPending`) rather than showing its empty state.
 
@@ -762,7 +761,7 @@ through `notFound()`, for the reason below:
 | --- | --- | --- |
 | Safe, available | `SAFE` | "Not available for Safe accounts yet", linking to the account's assets and transactions |
 | `unsupported`, or the whole-request 404 (see Known gaps) | `NOT_FOUND` | "Account not found", linking to every account |
-| `unavailable`, or the lookup itself fails | `UNAVAILABLE` | "Couldn't verify this account", retrying with `router.refresh()` |
+| `unavailable`, or the lookup itself fails | `UNAVAILABLE` | "Couldn't verify this account", no action: reloading the page retries the lookup |
 | DAO, available (the DAO read failed for another reason) | `DAO` | the generic error |
 
 It is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
@@ -932,7 +931,8 @@ its initial; naming a Safe is what the optional account metadata is for.
 The row lookup follows the `manageMembershipAddressList` precedent: a React Query hook (`useWorkspaceAccounts`)
 gated with `enabled` on a well-formed address, a synchronous validator reading its data, and an effect that
 re-`trigger`s the field once the lookup resolves. `staleTime` is 5 minutes because resolving a non-DAO address costs
-one upstream Safe call — the API docs say explicitly not to poll it.
+a gateway round trip and on-chain reads (`getCode`, then the Safe's state) — not a Safe Transaction Service call,
+so it spends none of the hourly Safe API budget — and the backend caches only a resolved Safe, never a miss.
 
 At submit, `publishWorkspaceDialog` re-resolves **all** accounts in one batched `fetchQuery` and
 `buildWorkspace` reads each account's type from it. An account that no longer resolves throws an `invariant` rather

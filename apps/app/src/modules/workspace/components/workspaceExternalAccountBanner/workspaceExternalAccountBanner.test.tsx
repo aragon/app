@@ -100,7 +100,6 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
             isAllAccounts: false,
             scopedAccounts: [externalAccount],
             isPending: false,
-            refetchExternalAccount: jest.fn(),
             ...result,
         });
 

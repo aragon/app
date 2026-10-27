@@ -66,7 +66,6 @@ export const WorkspaceProposalsPageClient: React.FC<
         activeOption,
         scopedAccounts,
         isPending: isScopePending,
-        refetchExternalAccount,
     } = useWorkspaceAccountOptions();
 
     // An account the workspace does not hold that the lookup could not place as a DAO or a Safe: there is nothing to
@@ -188,7 +187,6 @@ export const WorkspaceProposalsPageClient: React.FC<
                 >
                     <WorkspaceAccountStateCard
                         accountState={activeOption.accountState}
-                        onRetry={refetchExternalAccount}
                     />
                 </Page.Main>
             </Page.Content>

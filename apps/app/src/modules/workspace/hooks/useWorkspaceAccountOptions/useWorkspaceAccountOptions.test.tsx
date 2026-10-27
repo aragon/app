@@ -1,6 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
 import type { ReactNode } from 'react';
 import { getAddress } from 'viem';
@@ -400,32 +400,6 @@ describe('useWorkspaceAccountOptions hook', () => {
             await waitFor(() => expect(result.current.isPending).toBeFalsy());
             expect(result.current.activeOption?.accountState).toEqual(
                 WorkspaceAccountState.DAO,
-            );
-        });
-
-        it('looks the external account up again on refetch', async () => {
-            mockExternalLookup(() =>
-                Promise.resolve([
-                    buildExternalInfo({
-                        type: WorkspaceAccountInfoType.UNKNOWN,
-                        status: WorkspaceAccountInfoStatus.UNAVAILABLE,
-                    }),
-                ]),
-            );
-            const { result } = renderTestHook();
-
-            await waitFor(() => expect(result.current.isPending).toBeFalsy());
-            const lookupCount = getAccountsSpy.mock.calls.length;
-            mockExternalLookup(() => Promise.resolve([buildExternalInfo()]));
-            act(() => result.current.refetchExternalAccount());
-
-            await waitFor(() =>
-                expect(result.current.activeOption?.accountState).toEqual(
-                    WorkspaceAccountState.DAO,
-                ),
-            );
-            expect(getAccountsSpy.mock.calls.length).toBeGreaterThan(
-                lookupCount,
             );
         });
     });

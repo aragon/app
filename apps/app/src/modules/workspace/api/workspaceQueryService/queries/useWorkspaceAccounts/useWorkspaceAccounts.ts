@@ -6,8 +6,9 @@ import type { IGetWorkspaceAccountsParams } from '../../workspaceQueryService.ap
 import { workspaceQueryServiceKeys } from '../../workspaceQueryServiceKeys';
 
 /**
- * Resolving an address that is not an indexed DAO costs one upstream Safe call, so the result is kept fresh for
- * five minutes to avoid re-resolving the same account while the user edits the form.
+ * Resolving an address that is not an indexed DAO costs a gateway round trip and on-chain reads on the backend (not
+ * a Safe Transaction Service call), and only a resolved Safe is cached there, so the result is kept fresh for five
+ * minutes to avoid re-resolving the same account while the user edits the form.
  */
 const accountsStaleTime = 5 * 60 * 1000;
 

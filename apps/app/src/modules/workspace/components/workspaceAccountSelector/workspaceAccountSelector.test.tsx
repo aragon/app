@@ -113,7 +113,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
             isAllAccounts: true,
             scopedAccounts: [],
             isPending: false,
-            refetchExternalAccount: jest.fn(),
             ...result,
         });
 

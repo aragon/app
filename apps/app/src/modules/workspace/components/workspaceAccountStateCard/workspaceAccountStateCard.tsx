@@ -21,10 +21,6 @@ export interface IWorkspaceAccountStateCardProps {
      * DAO state and undefined both get the generic error.
      */
     accountState?: WorkspaceAccountState;
-    /**
-     * Retries the lookup of the account, offered when it could not be verified.
-     */
-    onRetry: () => void;
 }
 
 interface IWorkspaceAccountStateCardState {
@@ -51,17 +47,17 @@ const translationNamespace = 'app.workspace.workspaceAccountStateCard';
 /**
  * Card standing in for the content of an account-scoped workspace page that cannot serve the account, picked by what
  * the account is (`workspaceUtils.resolveAccountState`): a Safe is pointed to the sections that serve it, an address
- * that is neither a DAO nor a Safe is not found, a lookup that could not be verified offers a retry, and anything
- * else is the generic error.
+ * that is neither a DAO nor a Safe is not found, a lookup that could not be verified asks the user to try again
+ * later (reloading the page retries it), and anything else is the generic error.
  *
- * Rendered by `WorkspaceAccountGate` for the DAO-only sections, and by the assets and transactions pages for an
+ * Rendered by `WorkspaceAccountGate` for the DAO-only sections, and by the assets, transactions and proposals pages for an
  * account the workspace does not hold that the lookup could not place. The workspace and account IDs are read from
  * the route, which every caller sits under.
  */
 export const WorkspaceAccountStateCard: React.FC<
     IWorkspaceAccountStateCardProps
 > = (props) => {
-    const { accountState, onRetry } = props;
+    const { accountState } = props;
 
     const { t } = useTranslations();
     const { workspaceId, accountId } =
@@ -107,10 +103,6 @@ export const WorkspaceAccountStateCard: React.FC<
         [WorkspaceAccountState.UNAVAILABLE]: {
             namespace: 'unavailable',
             illustration: 'WARNING',
-            primaryButton: {
-                label: t(`${translationNamespace}.unavailable.action`),
-                onClick: onRetry,
-            },
         },
     };
 

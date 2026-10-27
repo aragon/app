@@ -30,7 +30,7 @@ export const WorkspaceAssetsPageClient: React.FC<
     const { t } = useTranslations();
 
     // Every account of the workspace, or just the one the route names, held by the workspace or not.
-    const { activeOption, scopedAccounts, isPending, refetchExternalAccount } =
+    const { activeOption, scopedAccounts, isPending } =
         useWorkspaceAccountOptions();
 
     // An account the workspace does not hold that the lookup could not place as a DAO or a Safe: there is nothing to
@@ -59,7 +59,6 @@ export const WorkspaceAssetsPageClient: React.FC<
                 >
                     <WorkspaceAccountStateCard
                         accountState={activeOption.accountState}
-                        onRetry={refetchExternalAccount}
                     />
                 </Page.Main>
             </Page.Content>

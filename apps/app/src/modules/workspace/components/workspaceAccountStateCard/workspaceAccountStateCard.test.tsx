@@ -1,6 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import { Network } from '@/shared/api/daoService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
@@ -11,7 +10,6 @@ import {
 
 describe('<WorkspaceAccountStateCard /> component', () => {
     const useParamsSpy = jest.spyOn(NextNavigation, 'useParams');
-    const retryMock = jest.fn();
 
     const accountId = `${Network.ETHEREUM_SEPOLIA}-0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419`;
 
@@ -21,16 +19,12 @@ describe('<WorkspaceAccountStateCard /> component', () => {
 
     afterEach(() => {
         useParamsSpy.mockReset();
-        retryMock.mockReset();
     });
 
     const createTestComponent = (
         props?: Partial<IWorkspaceAccountStateCardProps>,
     ) => {
-        const completeProps: IWorkspaceAccountStateCardProps = {
-            onRetry: retryMock,
-            ...props,
-        };
+        const completeProps: IWorkspaceAccountStateCardProps = { ...props };
 
         return (
             <GukModulesProvider>
@@ -86,7 +80,7 @@ describe('<WorkspaceAccountStateCard /> component', () => {
         ).toHaveAttribute('href', '/workspace/demo/all/overview');
     });
 
-    it('offers a retry when the account could not be verified', async () => {
+    it('asks to try again later when the account could not be verified', () => {
         render(
             createTestComponent({
                 accountState: WorkspaceAccountState.UNAVAILABLE,
@@ -98,11 +92,7 @@ describe('<WorkspaceAccountStateCard /> component', () => {
                 /workspaceAccountStateCard\.unavailable\.heading$/,
             ),
         ).toBeInTheDocument();
-
-        await userEvent.click(
-            screen.getByRole('button', { name: /unavailable\.action$/ }),
-        );
-
-        expect(retryMock).toHaveBeenCalled();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 });

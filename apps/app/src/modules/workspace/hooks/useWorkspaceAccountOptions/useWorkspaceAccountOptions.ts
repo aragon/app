@@ -74,10 +74,6 @@ export interface IUseWorkspaceAccountOptionsResult {
      * external account.
      */
     isPending: boolean;
-    /**
-     * Looks the external account up again, e.g. after the API could not verify it.
-     */
-    refetchExternalAccount: () => void;
 }
 
 /**
@@ -162,7 +158,6 @@ export const useWorkspaceAccountOptions =
             data: externalInfos,
             error: externalInfosError,
             isPending: isExternalInfosPending,
-            refetch: refetchExternalInfos,
         } = useWorkspaceAccounts(
             {
                 body: {
@@ -257,10 +252,6 @@ export const useWorkspaceAccountOptions =
         const isPending =
             isWorkspacePending || (isExternal && isExternalInfosPending);
 
-        const refetchExternalAccount = () => {
-            void refetchExternalInfos();
-        };
-
         return {
             options,
             accountId,
@@ -268,6 +259,5 @@ export const useWorkspaceAccountOptions =
             isAllAccounts,
             scopedAccounts,
             isPending,
-            refetchExternalAccount,
         };
     };
