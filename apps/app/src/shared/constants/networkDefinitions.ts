@@ -262,6 +262,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.ZKSYNC_MAINNET]: {
         ...zksync,
+        blockExplorers: {
+            default: {
+                ...zksync.blockExplorers.default,
+                url: 'https://explorer.zksync.io',
+            },
+        },
         name: 'zkSync',
         logo: '/networks/zksync.svg',
         privateRpcConfig: {
