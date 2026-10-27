@@ -1,5 +1,17 @@
 # @aragon/app
 
+## 1.42.0
+
+### Minor Changes
+
+- [#1502](https://github.com/aragon/app/pull/1502) [`15a7aff`](https://github.com/aragon/app/commit/15a7aff7d6497653e16ff839b43bfe8d215f446c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Keep RPC provider keys out of Sentry and out of the proposal page error state, render raw calldata whenever a decoded proposal action disagrees with it, fail the capital distributor OFAC check closed while the sanctions list is missing, screening recipients against the lists of every network, and pin to IPFS only JSON objects and PNG, GIF or JPEG images within the avatar size limit, tagging every pin with the app source and environment.
+
+### Patch Changes
+
+- [#1525](https://github.com/aragon/app/pull/1525) [`73fa5ea`](https://github.com/aragon/app/commit/73fa5eae03a3b02e54271b08314317be2ff2e09e) Thanks [@harryburger](https://github.com/harryburger)! - Fix zkSync explorer links having a double slash.
+
+- [#1521](https://github.com/aragon/app/pull/1521) [`8cc2fb2`](https://github.com/aragon/app/commit/8cc2fb2a459a81b3a3c77d04f108b81d973f9e6d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Log the BotID rejection as an informational Sentry event (info level, `noise_class: expected`) so it feeds the "BotID rejections" metric monitor without raising issue alerts.
+
 ## 1.41.0
 
 ### Minor Changes
