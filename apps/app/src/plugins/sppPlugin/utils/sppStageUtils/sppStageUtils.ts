@@ -1,7 +1,11 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import {
+    type PluginId,
+    pluginRegistryUtils,
+} from '@/shared/utils/pluginRegistryUtils';
 import {
     type ISppProposal,
     type ISppStage,
@@ -11,6 +15,13 @@ import {
 } from '../../types';
 
 class SppStageUtils {
+    /**
+     * Resolves the plugin id a stage body is rendered through. Canonical bodies use their backend
+     * interface type; external bodies use the generic fallback.
+     */
+    getBodyPluginId = (plugin: ISppStagePlugin): PluginId =>
+        plugin.interfaceType ?? externalPluginId;
+
     getStageStatus = (
         proposal: ISppProposal,
         stage: ISppStage,
@@ -34,7 +45,15 @@ class SppStageUtils {
 
         const approvalReached = this.isApprovalReached(proposal, stage);
         const isSignalling = this.isSignalingProposal(proposal, stage);
-        const isVetoed = this.isVetoReached(proposal, stage);
+        // A veto decides a stage only while the proposal has neither left that stage nor
+        // executed. `reportProposalResult` accepts a result for an earlier stage, and that write
+        // does not roll progression back - so a late veto is recorded history, not this stage's
+        // verdict. Without the guard a stage the proposal advanced past, or a final stage of an
+        // executed proposal, renders VETOED and claims an authority the record does not carry.
+        const isVetoed =
+            this.isVetoReached(proposal, stage) &&
+            stageIndex >= currentStage &&
+            !executed.status;
         const isUnreached = this.isStageUnreached(proposal, stageIndex);
 
         const startsInFuture = startDate != null && now < startDate;
@@ -48,12 +67,14 @@ class SppStageUtils {
             ? endsInFuture
             : endsInFuture && (!approvalReached || isSignalling);
 
+        // Approval makes the live stage advanceable immediately; the action itself remains
+        // disabled until minAdvance through `canStageAdvance`, preserving the timelock countdown.
         const isAdvanceable =
-            stageIndex === currentStage &&
+            !isLastStage &&
             approvalReached &&
-            isWithinMaxAdvance &&
             !isSignalling &&
-            !isLastStage;
+            stageIndex === currentStage &&
+            isWithinMaxAdvance;
 
         const isExpired =
             !executed.status &&
@@ -83,7 +104,22 @@ class SppStageUtils {
         }
 
         if (!approvalReached) {
-            return ProposalStatus.REJECTED;
+            const bodyReportsAfterWindow = stage.plugins.some(
+                (plugin) =>
+                    pluginRegistryUtils.getSlotFunction<undefined, boolean>({
+                        slotId: GovernanceSlotId.GOVERNANCE_BODY_VOTES_AFTER_WINDOW,
+                        pluginId: this.getBodyPluginId(plugin),
+                    })?.(undefined) === true,
+            );
+            const isAwaitingLateResult =
+                stageIndex === currentStage &&
+                !executed.status &&
+                isWithinMaxAdvance &&
+                bodyReportsAfterWindow;
+
+            return isAwaitingLateResult
+                ? ProposalStatus.ACTIVE
+                : ProposalStatus.REJECTED;
         }
 
         if (isExpired) {
@@ -124,8 +160,14 @@ class SppStageUtils {
     ): boolean => {
         const status = this.getStageStatus(proposal, stage);
 
-        // While the stage is active any of its bodies may still vote.
-        if (status === ProposalStatus.ACTIVE) {
+        // While the stage is active and its voting window is open, any of its bodies may still
+        // vote. The window check matters because a stage now also reads ACTIVE between voting
+        // close and `maxAdvance`, where a late report is still useful but an ordinary body's
+        // onchain vote would revert - only bodies wired to the late-report slot act there.
+        if (
+            status === ProposalStatus.ACTIVE &&
+            this.isVotingWindowOpen(proposal, stage)
+        ) {
             return true;
         }
 
@@ -152,6 +194,21 @@ class SppStageUtils {
         return (
             hasPendingVeto &&
             isCurrentStage &&
+            endDate != null &&
+            DateTime.now() < endDate
+        );
+    };
+
+    // Whether the stage's own voting window is still open. Separate from `isVetoWindowOpen`, which
+    // additionally requires an unmet veto requirement.
+    isVotingWindowOpen = (
+        proposal: ISppProposal,
+        stage: ISppStage,
+    ): boolean => {
+        const endDate = this.getStageEndDate(proposal, stage);
+
+        return (
+            stage.stageIndex === proposal.stageIndex &&
             endDate != null &&
             DateTime.now() < endDate
         );
@@ -268,13 +325,13 @@ class SppStageUtils {
         plugin: ISppStagePlugin,
         stageIndex: number,
     ): boolean => {
-        const { address, interfaceType } = plugin;
+        const { address } = plugin;
         const getSucceededStatus = pluginRegistryUtils.getSlotFunction<
             ISppSubProposal,
             boolean
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-            pluginId: interfaceType ?? 'external',
+            pluginId: this.getBodyPluginId(plugin),
         });
 
         const subProposal = this.getBodySubProposal(

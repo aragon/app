@@ -120,7 +120,7 @@ describe('dao utils', () => {
             listContainsRegisteredPluginsSpy.mockReturnValue(false);
             const daoPlugins = [
                 generateDaoPlugin({
-                    interfaceType: 'safe' as PluginInterfaceType,
+                    interfaceType: 'futureBody' as PluginInterfaceType,
                 }),
             ];
             const dao = generateDao({ plugins: daoPlugins });
@@ -159,7 +159,7 @@ describe('dao utils', () => {
 
         it('returns false for interface types the app does not know', () => {
             const plugin = generateDaoPlugin({
-                interfaceType: 'safe' as PluginInterfaceType,
+                interfaceType: 'futureBody' as PluginInterfaceType,
                 isSupported: true,
             });
             expect(daoUtils.isSupportedPlugin(plugin)).toBeFalsy();
@@ -218,6 +218,18 @@ describe('dao utils', () => {
     });
 
     describe('getPluginName', () => {
+        // The backend names no Safe, so without the address every Safe tab in a DAO reads the same.
+        it('names a Safe by its truncated address', () => {
+            const plugin = generateDaoPlugin({
+                address: '0x1234567890123456789012345678901234567890',
+                interfaceType: PluginInterfaceType.SAFE,
+                name: undefined,
+                subdomain: undefined,
+            });
+
+            expect(daoUtils.getPluginName(plugin)).toEqual('Safe 0x1234…7890');
+        });
+
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';
             const plugin = generateDaoPlugin({ name });
@@ -722,7 +734,7 @@ describe('dao utils', () => {
         it('drops plugins with an interface type the app does not know by default', () => {
             const plugins = [
                 generateDaoPlugin({
-                    interfaceType: 'safe' as PluginInterfaceType,
+                    interfaceType: 'futureBody' as PluginInterfaceType,
                     isSupported: true,
                 }),
                 generateDaoPlugin({
@@ -866,6 +878,24 @@ describe('dao utils', () => {
     });
 
     describe('getAvailablePluginUpdates', () => {
+        // A Safe is registered for its slots only, with no repository or install version. Matching
+        // it on an undefined subdomain would otherwise compare its version against undefined.
+        it('does not offer repository updates for a Safe', () => {
+            getPluginsSpy.mockReturnValue([
+                { id: PluginInterfaceType.SAFE, name: 'Safe' },
+            ]);
+            const dao = generateDao({
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.SAFE,
+                        subdomain: undefined,
+                    }),
+                ],
+            });
+
+            expect(daoUtils.getAvailablePluginUpdates(dao)).toEqual([]);
+        });
+
         it('returns the list of plugins that can be updated', () => {
             const plugins = [
                 generateDaoPlugin({
@@ -1185,6 +1215,104 @@ describe('dao utils', () => {
 
         it('returns undefined when dao parameter is not defined', () => {
             expect(daoUtils.getDaoUrl(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('withMemberTab', () => {
+        it('appends the encoded selected members tab to a URL', () => {
+            expect(
+                daoUtils.withMemberTab(
+                    '/dao/ethereum-mainnet/0x123/members/0x456',
+                    'safe/body',
+                ),
+            ).toBe(
+                '/dao/ethereum-mainnet/0x123/members/0x456?members=safe%2Fbody',
+            );
+        });
+    });
+
+    describe('resolvePluginDaoId', () => {
+        const rootDaoAddress = '0x1111111111111111111111111111111111111111';
+        const linkedDaoAddress = '0x2222222222222222222222222222222222222222';
+        const daoId = `${Network.ETHEREUM_MAINNET}-${rootDaoAddress}`;
+        const dao = generateDao({
+            address: rootDaoAddress,
+            network: Network.ETHEREUM_MAINNET,
+            linkedAccounts: [
+                generateLinkedAccount({ address: linkedDaoAddress }),
+            ],
+        });
+
+        // The member list is queried against the DAO that owns the body. A Safe shared by two
+        // linked DAOs would otherwise read members from whichever DAO the page was opened on.
+        it('scopes a linked-account body to the DAO that owns it', () => {
+            const plugin = generateDaoPlugin({
+                address: '0x3333333333333333333333333333333333333333',
+                daoAddress: linkedDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                slug: 'safe',
+            });
+
+            expect(daoUtils.resolvePluginDaoId(daoId, plugin, dao)).toEqual(
+                `${Network.ETHEREUM_MAINNET}-${linkedDaoAddress}`,
+            );
+        });
+
+        it('keeps a root-DAO body on the viewed DAO', () => {
+            const plugin = generateDaoPlugin({
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.MULTISIG,
+                slug: 'multisig',
+            });
+
+            expect(daoUtils.resolvePluginDaoId(daoId, plugin, dao)).toEqual(
+                daoId,
+            );
+        });
+    });
+
+    describe('getPluginTabId', () => {
+        const rootDaoAddress = '0x1111111111111111111111111111111111111111';
+        const linkedDaoAddress = '0x2222222222222222222222222222222222222222';
+
+        // The tab id travels in the `members` URL parameter, so it has to stay stable and match
+        // what useDaoPlugins builds for the same plugin.
+        it('identifies a plugin by its address and slug', () => {
+            const address = '0x4444444444444444444444444444444444444444';
+            const plugin = generateDaoPlugin({
+                address,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.MULTISIG,
+                slug: 'multisig',
+            });
+
+            expect(daoUtils.getPluginTabId(plugin, rootDaoAddress)).toEqual(
+                `${address}-multisig`,
+            );
+        });
+
+        // Two linked DAOs can hold the same Safe contract; they stay separate tabs.
+        it('keeps one Safe contract on separate tabs per owning DAO', () => {
+            const address = '0x7777777777777777777777777777777777777777';
+            const rootSafe = generateDaoPlugin({
+                address,
+                daoAddress: rootDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                slug: 'safe',
+            });
+            const linkedSafe = generateDaoPlugin({
+                address,
+                daoAddress: linkedDaoAddress,
+                interfaceType: PluginInterfaceType.SAFE,
+                slug: 'safe',
+            });
+
+            expect(daoUtils.getPluginTabId(rootSafe, rootDaoAddress)).toEqual(
+                `${address}-safe-${rootDaoAddress}`,
+            );
+            expect(daoUtils.getPluginTabId(linkedSafe, rootDaoAddress)).toEqual(
+                `${address}-safe-${linkedDaoAddress}`,
+            );
         });
     });
 });

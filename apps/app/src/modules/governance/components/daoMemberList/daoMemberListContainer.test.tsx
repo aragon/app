@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
@@ -58,5 +59,27 @@ describe('<DaoMemberListContainer /> component', () => {
             GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
         );
         expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
+    });
+
+    it('renders a Safe body as an ordinary member tab', () => {
+        const safeAddress = '0x1234567890123456789012345678901234567890';
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+            slug: 'safe',
+        });
+        const safeTab = generateFilterComponentPlugin({
+            id: PluginInterfaceType.SAFE,
+            meta: safePlugin,
+        });
+        useDaoPluginsSpy.mockReturnValue([safeTab]);
+
+        render(createTestComponent());
+
+        expect(screen.getByTestId('plugin-component-mock')).toHaveAttribute(
+            'data-plugins',
+            PluginInterfaceType.SAFE,
+        );
     });
 });

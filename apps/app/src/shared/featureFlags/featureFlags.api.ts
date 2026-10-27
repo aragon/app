@@ -22,6 +22,7 @@ export type FeatureFlagKey =
     | 'supportChatDocs'
     | 'helpCenter'
     | 'telegramSubscription'
+    | 'safeAccountPage'
     | 'domainMemberList';
 
 /**

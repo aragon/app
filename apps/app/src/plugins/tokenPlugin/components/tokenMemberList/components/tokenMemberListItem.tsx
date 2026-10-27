@@ -21,6 +21,10 @@ export interface ITokenMemberListItemProps {
      */
     plugin: IDaoPlugin<ITokenMemberListPluginSettings>;
     /**
+     * Selected member source to preserve on the details route.
+     */
+    memberSourceId?: string;
+    /**
      * Whether the member is the current user's delegate.
      */
     isDelegate?: boolean;
@@ -29,7 +33,7 @@ export interface ITokenMemberListItemProps {
 export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
     props,
 ) => {
-    const { member, plugin, daoId, isDelegate } = props;
+    const { member, plugin, daoId, isDelegate, memberSourceId } = props;
 
     const tokenDecimals = plugin.settings.token.decimals;
     const parsedVotingPower = formatUnits(
@@ -50,7 +54,10 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
             className="min-w-0"
             delegationCount={member.delegationCount}
             ensName={displayName ?? undefined}
-            href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
+            href={daoUtils.withMemberTab(
+                daoUtils.getDaoUrl(dao, `members/${member.address}`),
+                memberSourceId,
+            )}
             isDelegate={isDelegate}
             key={member.address}
             tokenAmount={parsedVotingPower}
