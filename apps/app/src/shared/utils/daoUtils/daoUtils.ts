@@ -52,6 +52,10 @@ export interface IGetDaoPluginsParams {
      */
     slug?: string;
     /**
+     * Includes Safe process plugins when filtering for body plugins.
+     */
+    includeProcessSafes?: boolean;
+    /**
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
@@ -89,10 +93,6 @@ const supportedInterfaceTypes = new Set<string>(
 );
 
 class DaoUtils {
-    hasPluginBody = (dao?: IDao): boolean =>
-        dao?.plugins?.some((p) => p.isBody && this.isSupportedPlugin(p)) ??
-        false;
-
     /**
      * Checks if the DAO has at least one plugin the app can render. Plugins the
      * backend cannot resolve or flags as unsupported are dropped first, so this
@@ -192,16 +192,17 @@ class DaoUtils {
             pluginAddress,
             includeSubPlugins = false,
             includeLinkedAccounts = false,
+            includeProcessSafes = false,
             interfaceType,
             hasExecute,
             slug,
             includeUnsupported = false,
         } = params ?? {};
 
-        return dao?.plugins?.filter(
+        const plugins = dao?.plugins?.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
-                this.filterPluginByType(plugin, type) &&
+                this.filterPluginByType(plugin, type, includeProcessSafes) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
                 this.filterByLinkedAccounts(
                     dao?.linkedAccounts,
@@ -213,6 +214,28 @@ class DaoUtils {
                 this.filterBySlug(plugin, slug) &&
                 this.filterBySupported(plugin, includeUnsupported),
         );
+
+        if (
+            type !== PluginType.BODY ||
+            !includeProcessSafes ||
+            plugins == null
+        ) {
+            return plugins;
+        }
+
+        const seenPluginTabs = new Set<string>();
+
+        return plugins.filter((plugin) => {
+            const pluginTabId = this.getPluginTabId(plugin, dao?.address);
+
+            if (seenPluginTabs.has(pluginTabId)) {
+                return false;
+            }
+
+            seenPluginTabs.add(pluginTabId);
+
+            return true;
+        });
     };
 
     /**
@@ -397,7 +420,9 @@ class DaoUtils {
         return fullPath;
     };
 
-    /** Member links keep the selected members tab so the member page resolves against the body the member was listed under. */
+    /**
+     * Preserves the selected member tab when navigating to a member route.
+     */
     withMemberTab = (
         url: string | undefined,
         memberSourceId?: string,
@@ -410,9 +435,17 @@ class DaoUtils {
         address == null ||
         plugin.address.toLowerCase() === address.toLowerCase();
 
-    private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
+    private filterPluginByType = (
+        plugin: IDaoPlugin,
+        type?: PluginType,
+        includeProcessSafes = false,
+    ) =>
         type == null ||
-        (type === PluginType.BODY && plugin.isBody) ||
+        (type === PluginType.BODY &&
+            (plugin.isBody ||
+                (includeProcessSafes &&
+                    plugin.isProcess &&
+                    plugin.interfaceType === PluginInterfaceType.SAFE))) ||
         (type === PluginType.PROCESS && plugin.isProcess);
 
     private filterBySubPlugin = (

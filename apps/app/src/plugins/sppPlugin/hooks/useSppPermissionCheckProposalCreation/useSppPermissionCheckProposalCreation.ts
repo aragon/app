@@ -5,8 +5,11 @@ import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
-import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppPluginSettings, ISppStagePlugin } from '../../types';
@@ -58,8 +61,15 @@ export const useSppPermissionCheckProposalCreation = (
     const sppPlugins = [...stageBodies, ...externalProposers];
 
     const pluginProposalCreationGuardResults = sppPlugins.map((sppPlugin) => {
+        // In this stacked branch the unified Safe slot creates native Safe processes. SPP Safe
+        // bodies must keep using their stage's SafeOwnerCondition instead of that process guard,
+        // including when the same Safe is installed as both a body and a process.
+        const usesStageCondition =
+            sppPlugin.interfaceType === PluginInterfaceType.SAFE ||
+            ('brandId' in sppPlugin &&
+                sppPlugin.brandId === VotingBodyBrandIdentity.SAFE);
         const subPlugin =
-            sppPlugin.interfaceType != null
+            !usesStageCondition && sppPlugin.interfaceType != null
                 ? daoPlugins.find(({ meta }) =>
                       addressUtils.isAddressEqual(
                           meta.address,
@@ -69,20 +79,28 @@ export const useSppPermissionCheckProposalCreation = (
                 : undefined;
 
         // Internal bodies not installed on the DAO can't be resolved, so skip them.
-        if (subPlugin == null && sppPlugin.interfaceType != null) {
+        if (
+            subPlugin == null &&
+            sppPlugin.interfaceType != null &&
+            !usesStageCondition
+        ) {
             return undefined;
         }
 
-        const pluginId = subPlugin?.meta.interfaceType ?? externalPluginId;
+        // Installed bodies delegate to their own permission-check slot. Safe stage descriptors and
+        // external proposers use the condition the SPP process was created with.
         const bodyPlugin = (subPlugin?.meta ?? sppPlugin) as IDaoPlugin;
         const permissionCheck =
-            pluginRegistryUtils.getSlotFunction<
-                IPermissionCheckGuardParams,
-                IPermissionCheckGuardResult
-            >({
-                slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-                pluginId,
-            }) ?? useSppExternalPermissionCheckProposalCreation;
+            usesStageCondition || subPlugin == null
+                ? useSppExternalPermissionCheckProposalCreation
+                : (pluginRegistryUtils.getSlotFunction<
+                      IPermissionCheckGuardParams,
+                      IPermissionCheckGuardResult
+                  >({
+                      slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+                      pluginId: subPlugin.meta.interfaceType,
+                  }) ?? useSppExternalPermissionCheckProposalCreation);
+
         return permissionCheck({
             plugin: bodyPlugin,
             daoId,

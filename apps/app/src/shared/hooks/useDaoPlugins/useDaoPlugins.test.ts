@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { createElement, type PropsWithChildren } from 'react';
 import * as daoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
@@ -25,6 +26,52 @@ describe('useDaoPlugins hook', () => {
         useDaoSpy.mockReset();
         getDaoPluginsSpy.mockReset();
         useDaoOverridesMock.mockReturnValue({ data: undefined });
+    });
+
+    it('keeps separate process tabs for the same Safe on different DAOs', () => {
+        const plugins = [
+            generateDaoPlugin({
+                interfaceType: PluginInterfaceType.SAFE,
+                address: '0x123',
+                slug: 'safe',
+                daoAddress: '0xaaa',
+            }),
+            generateDaoPlugin({
+                interfaceType: PluginInterfaceType.SAFE,
+                address: '0x123',
+                slug: 'safe',
+                daoAddress: '0xbbb',
+            }),
+        ];
+        const dao = generateDao({ address: '0xaaa', plugins });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        const wrapper = ({ children }: PropsWithChildren) =>
+            createElement(FeatureFlagsProvider, {
+                initialSnapshot: [
+                    {
+                        key: 'linkedAccount',
+                        name: 'Linked accounts',
+                        description: '',
+                        enabled: true,
+                    },
+                ],
+                children,
+            });
+        const { result } = renderHook(
+            () => useDaoPlugins({ daoId: dao.id, includeLinkedAccounts: true }),
+            { wrapper },
+        );
+
+        expect(result.current?.map(({ meta }) => meta.daoAddress)).toEqual([
+            '0xaaa',
+            '0xbbb',
+        ]);
+        expect(result.current?.[0].uniqueId).not.toEqual(
+            result.current?.[1].uniqueId,
+        );
     });
 
     it('retrieves the DAO plugins and returns them as tab-plugins', () => {

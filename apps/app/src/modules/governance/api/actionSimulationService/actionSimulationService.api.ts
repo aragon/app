@@ -46,8 +46,8 @@ export interface ISimulateProposalActionsParams
 
 export interface ISimulateDirectExecuteActionsBody {
     /**
-     * Address of the connected wallet (EOA) that calls `DAO.execute` and that the actions are
-     * therefore simulated from.
+     * Address that calls `DAO.execute` and that the actions are therefore simulated from. This is
+     * the connected wallet for direct execution and the native Safe for Safe-backed execution.
      */
     from: string;
     /**

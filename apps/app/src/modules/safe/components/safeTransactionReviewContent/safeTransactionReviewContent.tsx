@@ -22,6 +22,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { safeCalldataUtils } from '../../utils/safeCalldataUtils';
 import {
     type ISafeCall,
+    isSafeMultiSendDelegateCall,
     maxSafeBatchDepth,
     SafeBatchStatus,
     SafeHashVerification,
@@ -131,17 +132,6 @@ const collectCalls = (
             status === SafeBatchStatus.COMPLETE &&
             collected.every((entry) => entry.isComplete),
     };
-};
-
-/**
- * Canonical MultiSend and MultiSendCallOnly deployments for Safe 1.3.0 and 1.4.1, lowercased for
- * comparison. Deterministic across the standard EVM chains this app supports.
- */
-const knownDelegateTargets: Record<string, true> = {
-    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
-    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
-    '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
-    '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
 };
 
 /**
@@ -273,7 +263,7 @@ export const SafeTransactionReviewContent: React.FC<
      */
     const delegateCalls = calls.filter(({ call }) => call.operation === 1);
     const hasUnrecognisedDelegateTarget = delegateCalls.some(
-        ({ call }) => knownDelegateTargets[call.to.toLowerCase()] !== true,
+        ({ call }) => !isSafeMultiSendDelegateCall(call),
     );
 
     /**

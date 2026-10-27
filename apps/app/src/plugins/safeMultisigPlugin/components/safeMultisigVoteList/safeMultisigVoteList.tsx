@@ -16,11 +16,82 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
-import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
+import type {
+    ISafeMultisigVoteListProps,
+    ISafeMultisigVoteListViewProps,
+} from './safeMultisigVoteList.api';
 
 const signersPerPage = 6;
 
 const translationKey = 'app.plugins.safeMultisig.safeMultisigVoteList';
+
+export const SafeMultisigVoteListView: React.FC<
+    ISafeMultisigVoteListViewProps
+> = (props) => {
+    const {
+        connectedAddress,
+        daoAddress,
+        isLoading = false,
+        isVeto,
+        network,
+        safeAddress,
+        signers,
+    } = props;
+    const { t } = useTranslations();
+    const safeDaoId = `${network}-${daoAddress}`;
+    const { address: safeDaoAddress, network: safeDaoNetwork } =
+        daoUtils.parseDaoId(safeDaoId);
+    const safePlugin = useDaoPlugins({
+        daoId: safeDaoId,
+        type: PluginType.BODY,
+        pluginAddress: safeAddress,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+        includeProcessSafes: true,
+    })?.at(0);
+    const voteIndicator: VoteIndicator = isVeto === true ? 'veto' : 'approve';
+    const orderedSigners = [...signers].sort((a, b) => {
+        const aIsViewer = addressUtils.isAddressEqual(a, connectedAddress);
+        const bIsViewer = addressUtils.isAddressEqual(b, connectedAddress);
+
+        return Number(bIsViewer) - Number(aIsViewer);
+    });
+
+    return (
+        <DataListRoot
+            entityLabel={t(`${translationKey}.entity`)}
+            itemsCount={orderedSigners.length}
+            pageSize={signersPerPage}
+            state={isLoading ? 'initialLoading' : 'idle'}
+        >
+            <DataListContainer
+                emptyState={{
+                    heading: t(`${translationKey}.empty.heading`),
+                    description: t(`${translationKey}.empty.description`),
+                    objectIllustration: { object: 'USERS' },
+                }}
+                SkeletonElement={VoteDataListItem.Skeleton}
+            >
+                {orderedSigners.map((signer) => (
+                    <SafeMultisigVoteListItem
+                        href={
+                            safePlugin == null
+                                ? undefined
+                                : daoUtils.withMemberTab(
+                                      `/dao/${safeDaoNetwork}/${safeDaoAddress}/members/${signer}`,
+                                      safePlugin.uniqueId,
+                                  )
+                        }
+                        key={signer}
+                        signer={signer}
+                        voteIndicator={voteIndicator}
+                    />
+                ))}
+            </DataListContainer>
+            <DataListPagination />
+        </DataListRoot>
+    );
+};
 
 type SafeMultisigProposalVoteListProps = ISafeMultisigVoteListProps &
     Required<Pick<ISafeMultisigVoteListProps, 'body' | 'proposal' | 'stage'>>;
@@ -49,78 +120,24 @@ const SafeMultisigProposalVoteList: React.FC<
     SafeMultisigProposalVoteListProps
 > = (props) => {
     const { proposal, body, stage, isVeto } = props;
-    const network = proposal.network;
-
-    const { t } = useTranslations();
     const { address: connectedAddress } = useWalletAccount();
-
     const { safeInfo, signers } = useSafeMultisigBodyState({
-        network,
+        network: proposal.network,
         address: body,
         proposal,
         stage,
     });
 
-    // Owner links point at the Safe's own members tab, identified by the canonical Safe body
-    // record. A Safe the DAO does not carry as a body has no tab to open, so the row is not a link.
-    const safeDaoId = `${network}-${proposal.daoAddress}`;
-
-    const { address: safeDaoAddress, network: safeDaoNetwork } =
-        daoUtils.parseDaoId(safeDaoId);
-    const safeBodyPlugin = useDaoPlugins({
-        daoId: safeDaoId,
-        type: PluginType.BODY,
-        pluginAddress: body,
-        includeSubPlugins: true,
-        includeLinkedAccounts: true,
-    })?.at(0);
-
-    // A Safe confirmation is only ever agreement: an owner signs or does not, so there is no
-    // against-indicator to render here.
-    const voteIndicator: VoteIndicator = isVeto === true ? 'veto' : 'approve';
-    const state = safeInfo == null ? 'initialLoading' : 'idle';
-
-    // The owner reading the card cares first about whether their own signature is on the report.
-    const orderedSigners = [...signers].sort((a, b) => {
-        const aIsViewer = addressUtils.isAddressEqual(a, connectedAddress);
-        const bIsViewer = addressUtils.isAddressEqual(b, connectedAddress);
-
-        return Number(bIsViewer) - Number(aIsViewer);
-    });
-
     return (
-        <DataListRoot
-            entityLabel={t(`${translationKey}.entity`)}
-            itemsCount={orderedSigners.length}
-            pageSize={signersPerPage}
-            state={state}
-        >
-            <DataListContainer
-                emptyState={{
-                    heading: t(`${translationKey}.empty.heading`),
-                    description: t(`${translationKey}.empty.description`),
-                    objectIllustration: { object: 'USERS' },
-                }}
-                SkeletonElement={VoteDataListItem.Skeleton}
-            >
-                {orderedSigners.map((signer) => (
-                    <SafeMultisigVoteListItem
-                        href={
-                            safeBodyPlugin == null
-                                ? undefined
-                                : daoUtils.withMemberTab(
-                                      `/dao/${safeDaoNetwork}/${safeDaoAddress}/members/${signer}`,
-                                      safeBodyPlugin.uniqueId,
-                                  )
-                        }
-                        key={signer}
-                        signer={signer}
-                        voteIndicator={voteIndicator}
-                    />
-                ))}
-            </DataListContainer>
-            <DataListPagination />
-        </DataListRoot>
+        <SafeMultisigVoteListView
+            connectedAddress={connectedAddress}
+            daoAddress={proposal.daoAddress}
+            isLoading={safeInfo == null}
+            isVeto={isVeto}
+            network={proposal.network}
+            safeAddress={body}
+            signers={signers}
+        />
     );
 };
 

@@ -48,13 +48,11 @@ describe('<ProposalVotingStatus /> component', () => {
         expect(screen.getByTestId('statePingAnimation')).toBeInTheDocument();
     });
 
-    it('handles undefined end date when state is active', () => {
-        const status = ProposalStatus.ACTIVE;
-        const endDate = undefined;
-        render(createTestComponent({ status, endDate }));
-        expect(screen.getByText('-')).toBeInTheDocument();
-        expect(screen.getByText('left to vote')).toBeInTheDocument();
-        expect(screen.getByTestId('statePingAnimation')).toBeInTheDocument();
+    it('shows active status without inventing a countdown when no deadline exists', () => {
+        render(createTestComponent({ status: ProposalStatus.ACTIVE, endDate: undefined }));
+        expect(screen.getByText('Active')).toBeInTheDocument();
+        expect(screen.queryByText('left to vote')).not.toBeInTheDocument();
+        expect(screen.queryByText('-')).not.toBeInTheDocument();
     });
 
     it('correctly renders the accepted state', () => {
