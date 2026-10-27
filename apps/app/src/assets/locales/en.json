@@ -1129,15 +1129,17 @@
           }
         },
         "network": {
-          "ethereum-sepolia": {
-            "description": "We recommend launching a test DAO your first time."
-          },
           "helpText": "The chain you choose is where your tokens and assets are stored.",
           "label": "Select chain",
+          "section": {
+            "mainnets": "Mainnets",
+            "testnets": "Testnets"
+          },
+          "showAllTestnets": "Show all testnets",
+          "showFewer": "Show fewer",
           "tag": {
             "beta": "Beta",
-            "disabled": "Soon",
-            "testnet": "Testnet"
+            "disabled": "Soon"
           }
         }
       },
@@ -2591,7 +2593,8 @@
           "inputs": {
             "recipient": {
               "error": {
-                "ofac": "This address is restricted and can't be used."
+                "ofac": "This address is restricted and can't be used.",
+                "ofacUnavailable": "Can't verify this address right now, try again in a moment."
               },
               "helpText": "The address where the payout will be sent.",
               "label": "Recipient"

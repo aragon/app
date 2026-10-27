@@ -11,6 +11,9 @@ class IpfsUtils {
 
     private ipfsPrefix = 'ipfs://';
 
+    // CID segment of a gateway URL such as https://ipfs.eth.aragon.network/ipfs/<cid>/
+    private gatewayCidPattern = /^https?:\/\/[^/]+\/ipfs\/([^/?#]+)/;
+
     cidToSrc = (
         cid?: string | null,
         options?: ICidToSrcOptions,
@@ -18,9 +21,7 @@ class IpfsUtils {
         const { size = 256 } = options ?? {};
 
         const processedSize = size.toString();
-        const processedCid = cid?.startsWith(this.ipfsPrefix)
-            ? cid.replace(this.ipfsPrefix, '')
-            : cid;
+        const processedCid = cid != null ? this.toCid(cid) : cid;
 
         const params = new URLSearchParams({
             'img-width': processedSize,
@@ -30,6 +31,15 @@ class IpfsUtils {
         return processedCid != null
             ? `${this.ipfsGateway}/ipfs/${processedCid}?${params.toString()}`
             : undefined;
+    };
+
+    // Metadata stores the image as a bare CID, an ipfs:// URI or a full gateway URL.
+    private toCid = (value: string): string => {
+        if (value.startsWith(this.ipfsPrefix)) {
+            return value.replace(this.ipfsPrefix, '');
+        }
+
+        return this.gatewayCidPattern.exec(value)?.[1] ?? value;
     };
 
     isUri = (value: string) => value.startsWith(this.ipfsPrefix);

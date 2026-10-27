@@ -1,5 +1,8 @@
-# App Production — deploys to production when a GitHub Release is published.
-# Also supports manual trigger for hotfixes.
+# The "App Production" workflow deploys the app to production when a GitHub Release on an
+# @aragon/app@* tag is published (app-release.yml finalize), and by hand for a hotfix tag or a
+# re-deploy. The `production` environment requires an approval from @aragon/app-team: the deploy
+# pauses there, and the release thread gets the "waiting for approval" ping, the result, the smoke
+# tests and finally the head message flipped to Completed with the Linear release closed.
 
 name: App Production
 
@@ -13,304 +16,82 @@ on:
   release:
     types: [published]
 
-concurrency:
-  group: production-deployment
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
 jobs:
   validate:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Validate tag exists
+        env:
+          TAG: ${{ inputs.tag }}
         run: |
-          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/${{ inputs.tag }}" || \
-            (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
+          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/$TAG" || \
+            (echo "::error::Tag '$TAG' does not exist" && exit 1)
 
-  # On release events, only react to app tags (@aragon/app@…) — other workspaces
-  # (future apps/packages) publish their own releases with their own prefixes.
-  notify-start:
+  # The repo publishes releases for several workspaces; only app tags deploy the app. The
+  # production group sits on this job, not the workflow: a run skipped by the tag guard must not
+  # cancel a deploy (or a rollback) waiting for its approval.
+  deploy:
     needs: validate
     if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/app@')) }}
-    runs-on: ubuntu-latest
-    outputs:
-      slack-ts: ${{ steps.set-ts.outputs.ts }}
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/extract-slack-ts
-            .github/actions/slack-notify
-
-      - name: Get release body via API
-        id: release
-        if: github.event_name == 'release'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name }}
-        run: |
-          set -euo pipefail
-          BODY="$(gh release view "$TAG" --json body -q .body 2>/dev/null || echo "")"
-          {
-            echo 'body<<RELEASE_BODY_EOF'
-            echo "$BODY"
-            echo 'RELEASE_BODY_EOF'
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Extract Slack TS from release body
-        id: ts
-        if: github.event_name == 'release'
-        uses: ./.github/actions/extract-slack-ts
-        with:
-          body: ${{ steps.release.outputs.body }}
-
-      - name: Notify Slack - Production Deploy Started (in release thread)
-        id: notify-thread
-        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ steps.ts.outputs.ts }}
-          message: |
-            🚀 *Production build & deploy started...*
-            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
-
-      - name: Notify Slack - Production Deploy Started (new message)
-        id: notify-new
-        if: ${{ !steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN }}
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          message: |
-            🚀 *Production deploy started*
-            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
-            *Triggered by:* ${{ github.actor }}
-
-      - name: Set final TS output
-        id: set-ts
-        shell: bash
-        run: |
-          TS="${{ steps.ts.outputs.ts || steps.notify-new.outputs.ts }}"
-          echo "ts=$TS" >> "$GITHUB_OUTPUT"
-
-  # CI Gate ping — runs in PARALLEL with `deploy` (NOT in its needs), so a skip
-  # here can never block the deploy. The actual pause is the `production`
-  # Environment's Required-reviewers rule on the deploy job (configure it in repo
-  # Settings → Environments → production). Until that's set, prod won't pause and
-  # this message is informational; once set, the gate works with the team ping + link.
-  notify-gate:
-    needs: [validate, notify-start]
-    if: ${{ !cancelled() && needs.notify-start.outputs.slack-ts != '' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack — waiting for CI Gate
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN != ''
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
-          message: |
-            ⏸️ *Waiting CI Gate — deploy to production* ${{ steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
-            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
-            Approve the deploy: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|here>
-
-  deploy:
-    needs: [validate, notify-start]
-    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/app@')) }}
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: "app.aragon.org"
-      env: "production"
+      env: production
       ref: ${{ github.event.release.tag_name || inputs.tag }}
+      domain: app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_production
+      setup-command: pnpm run setup production
+      patch-root-directory: true
+      version: ${{ github.event.release.tag_name || inputs.tag }}
+      gated: true
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      next-steps: "If there are issues with the release, use hotfix or rollback."
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
-  linear-release:
-    needs: deploy
-    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
-
-      - name: Checkout
-        if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
-        uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ github.event.release.tag_name || inputs.tag }}
-          fetch-depth: 0
-
-      - name: Linear — complete release
-        if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
-        continue-on-error: true
-        uses: linear/linear-release-action@30f9ae77461ec29f07fffe0c52edd1909bfbb6f5 # v0.17.1 (https://github.com/linear/linear-release-action/releases/tag/v0.17.1)
-        with:
-          access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
-          command: complete
-          version: ${{ github.event.release.tag_name || inputs.tag }}
-
+  # `validate` is skipped on release events, and a job with a skipped job anywhere in its `needs`
+  # chain is skipped too unless its `if` replaces the default success() check.
   e2e:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    uses: ./.github/workflows/shared-e2e.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: https://app.aragon.org
       environment: production
+      working-directory: apps/app
+      env-secret-refs: |
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
-  e2e-notify:
-    needs: [notify-start, e2e]
-    if: ${{ always() && needs.e2e.result != 'skipped' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack — E2E results
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
-        env:
-          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
-          message: |
-            ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *production* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *production* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *production* failed' || '⏹️ Smoke tests on *production* were cancelled' }}
-            ${{ needs.e2e.outputs.summary }}
-            <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html|View report>
-
-  notify:
-    needs: [notify-start, deploy]
-    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Load secrets
-        id: secrets
-        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
-        with:
-          export-env: false
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
-          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
-          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
-
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/workflows/scripts/slackNotify.js
-            .github/actions/slack-notify
-
-      - name: Notify Slack
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
-          message: |
-            🎉 *Production Deployed!*
-
-            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
-            *Production:* <https://app.aragon.org|app.aragon.org>
-
-            If there are issues with the release, use hotfix or rollback.
-
-      # Mark the lifecycle complete in the head message itself (chat.update).
-      # Re-reads the changelog from the release body (minus the slack_ts marker)
-      # so the rich head is preserved while the status flips to Completed.
-      - name: Build changelog block for head message
-        id: changelog
-        env:
-          GH_TOKEN: ${{ github.token }}
-          EVENT_NAME: ${{ github.event_name }}
-          TAG: ${{ github.event.release.tag_name }}
-        run: |
-          set -euo pipefail
-          # Only release events carry a changelog; manual workflow_dispatch has
-          # none. Emit a SELF-SEPARATING block (leading blank line) only when
-          # there's content, so the head message has no dangling empty section
-          # on dispatch.
-          BODY=""
-          if [ "$EVENT_NAME" = "release" ]; then
-            BODY="$(gh release view "$TAG" --json body -q .body 2>/dev/null | sed '/<!-- slack_ts:/d' || echo "")"
-          fi
-          {
-            echo 'text<<CHANGELOG_EOF'
-            if [ -n "$(printf '%s' "$BODY" | tr -d '[:space:]')" ]; then
-              printf '\n\n%s\n' "$BODY"
-            fi
-            echo 'CHANGELOG_EOF'
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Update head message — Completed (production)
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          update_ts: ${{ needs.notify-start.outputs.slack-ts }}
-          message: |
-            🎉 *Release ${{ github.event.release.tag_name || inputs.tag }} — Completed (production)* ✅ ${{ steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
-            *Production:* <https://app.aragon.org|app.aragon.org>${{ steps.changelog.outputs.text }}
+  # A manual deploy of an older tag is not a release completing.
+  complete:
+    needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' && github.event_name == 'release' }}
+    uses: aragon/github-templates/.github/workflows/release-complete.yml@main
+    with:
+      tag: ${{ github.event.release.tag_name }}
+      env: production
+      url: https://app.aragon.org
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

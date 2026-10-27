@@ -2,15 +2,20 @@
  * @jest-environment node
  */
 
+import { checkBotId } from 'botid/server';
 import { NextResponse } from 'next/server';
 import { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import {
+    networkDefinitions,
+    RpcProvider,
+} from '@/shared/constants/networkDefinitions';
 import {
     generateNextRequest,
     generateRequest,
     generateResponse,
 } from '@/shared/testUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { responseUtils } from '@/shared/utils/responseUtils';
 import { testLogger } from '@/test/utils';
 import { type IRpcRequestOptions, ProxyRpcUtils } from './proxyRpcUtils';
 
@@ -100,6 +105,21 @@ describe('proxyRpc utils', () => {
     });
 
     describe('request', () => {
+        it('rejects an automated request with 403 without calling the rpc endpoint', async () => {
+            const checkBotIdMock = checkBotId as jest.Mock;
+            checkBotIdMock.mockResolvedValueOnce({ isBot: true });
+            const testClass = createTestClass();
+            await testClass.request(
+                generateNextRequest(),
+                createTestOptions('1'),
+            );
+            expect(fetchSpy).not.toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                { error: 'Access denied' },
+                { status: 403 },
+            );
+        });
+
         it('returns error when network definitions are not found for chain id', async () => {
             const testClass = createTestClass();
             await testClass.request(
@@ -128,6 +148,79 @@ describe('proxyRpc utils', () => {
             expect(fetchReturn.json).toHaveBeenCalled();
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
         });
+
+        describe('failure telemetry', () => {
+            const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
+            const safeJsonParseSpy = jest.spyOn(
+                responseUtils,
+                'safeJsonParseForResponse',
+            );
+            const alchemyKey = 'secret-alchemy-key';
+
+            beforeEach(() => {
+                logErrorSpy.mockImplementation(() => undefined);
+            });
+
+            afterEach(() => {
+                logErrorSpy.mockReset();
+                safeJsonParseSpy.mockReset();
+            });
+
+            afterAll(() => {
+                logErrorSpy.mockRestore();
+                safeJsonParseSpy.mockRestore();
+            });
+
+            const failures = [
+                {
+                    name: 'the endpoint returns an error status',
+                    setup: () =>
+                        fetchSpy.mockResolvedValue(
+                            generateResponse({ ok: false, status: 502 }),
+                        ),
+                },
+                {
+                    name: 'the endpoint response cannot be parsed',
+                    setup: () => {
+                        fetchSpy.mockResolvedValue(generateResponse());
+                        safeJsonParseSpy.mockRejectedValue(
+                            new Error('Converting circular structure'),
+                        );
+                    },
+                },
+                {
+                    name: 'the endpoint cannot be reached',
+                    setup: () =>
+                        fetchSpy.mockRejectedValue(new Error('fetch failed')),
+                },
+            ];
+
+            it.each(failures)(
+                'logs the chain and provider but never the keyed endpoint when $name',
+                async ({ setup }) => {
+                    const testClass = createTestClass({ alchemyKey });
+                    setup();
+
+                    await testClass.request(
+                        generateNextRequest(),
+                        createTestOptions('1'),
+                    );
+
+                    expect(logErrorSpy).toHaveBeenCalledTimes(1);
+                    const { context } = logErrorSpy.mock.calls[0][1]!;
+                    expect(context).toEqual(
+                        expect.objectContaining({
+                            chainId: '1',
+                            network: Network.ETHEREUM_MAINNET,
+                            rpcProvider: RpcProvider.ALCHEMY,
+                        }),
+                    );
+                    expect(context).not.toHaveProperty('rpcEndpoint');
+                    expect(context).not.toHaveProperty('requestOptions');
+                    expect(JSON.stringify(context)).not.toContain(alchemyKey);
+                },
+            );
+        });
     });
 
     describe('chainIdToRpcEndpoint', () => {
@@ -140,6 +233,34 @@ describe('proxyRpc utils', () => {
             const expectedUrl = `${ethereumMainnet.privateRpcConfig!.rpcUrl}${alchemyKey}`;
 
             expect(testClass['chainIdToRpcEndpoint']('1')).toEqual(expectedUrl);
+        });
+
+        it('registers the provider key so that error reports scrub it', () => {
+            const registerSecretSpy = jest.spyOn(
+                monitoringUtils,
+                'registerSecret',
+            );
+            const alchemyKey = 'test-alchemy-key';
+            const testClass = createTestClass({ alchemyKey });
+
+            testClass['chainIdToRpcEndpoint']('1');
+
+            expect(registerSecretSpy).toHaveBeenCalledWith(alchemyKey);
+            registerSecretSpy.mockRestore();
+        });
+
+        it('routes the chain to the override endpoint and registers it so that error reports scrub it', () => {
+            const registerSecretSpy = jest.spyOn(
+                monitoringUtils,
+                'registerSecret',
+            );
+            const override = 'https://staging.rpc.example/v2/staging-key';
+            process.env.NEXT_SECRET_RPC_OVERRIDE_1 = override;
+            const testClass = createTestClass();
+
+            expect(testClass['chainIdToRpcEndpoint']('1')).toEqual(override);
+            expect(registerSecretSpy).toHaveBeenCalledWith(override);
+            registerSecretSpy.mockRestore();
         });
 
         it('returns the private rpc endpoint with ankr rpc key when configured', () => {

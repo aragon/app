@@ -166,6 +166,136 @@ describe('proposalActionUtils', () => {
             },
         );
     });
+
+    describe('resolveActions', () => {
+        const rawActions = [
+            {
+                to: '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123',
+                value: '100',
+                data: '0xdeadbeef',
+            },
+            {
+                to: '0x1111111111111111111111111111111111111111',
+                value: '0',
+                data: '0x',
+            },
+        ];
+
+        const actions = rawActions.map((entry) =>
+            generateProposalAction({
+                ...entry,
+                type: ProposalActionType.TRANSFER,
+            }),
+        );
+
+        const expectedStubs = rawActions.map((entry) => ({
+            ...entry,
+            from: '0xsender',
+            type: 'RAW_CALLDATA',
+            inputData: null,
+        }));
+
+        it('returns the decoded actions when no raw tuple is available', () => {
+            expect(
+                proposalActionUtils.resolveActions(
+                    actions,
+                    undefined,
+                    '0xsender',
+                ),
+            ).toEqual(actions);
+        });
+
+        it('keeps the decoded actions when every entry matches the raw tuple', () => {
+            expect(
+                proposalActionUtils.resolveActions(
+                    actions,
+                    rawActions,
+                    '0xsender',
+                ),
+            ).toEqual(actions);
+        });
+
+        it('falls back to raw stubs attributed to the sender when the counts disagree', () => {
+            expect(
+                proposalActionUtils.resolveActions(
+                    actions.slice(0, 1),
+                    rawActions,
+                    '0xsender',
+                ),
+            ).toEqual(expectedStubs);
+        });
+
+        it('falls back to raw stubs when a same-count decoded action names another target or value', () => {
+            const tampered = [
+                actions[0],
+                generateProposalAction({
+                    ...actions[1],
+                    to: '0x2222222222222222222222222222222222222222',
+                    value: '100',
+                }),
+            ];
+
+            expect(
+                proposalActionUtils.resolveActions(
+                    tampered,
+                    rawActions,
+                    '0xsender',
+                ),
+            ).toEqual(expectedStubs);
+        });
+
+        describe('decoded function', () => {
+            const transferData = `${toFunctionSelector('transfer(address,uint256)')}00`;
+            const transferRawActions = [
+                { ...rawActions[0], data: transferData },
+                rawActions[1],
+            ];
+            const parameters = [
+                { name: 'to', type: 'address', value: '' },
+                { name: 'amount', type: 'uint256', value: '' },
+            ];
+            const buildTransferActions = (functionName: string) => [
+                generateProposalAction({
+                    ...actions[0],
+                    data: transferData,
+                    inputData: {
+                        function: functionName,
+                        contract: 'Token',
+                        parameters,
+                    },
+                }),
+                actions[1],
+            ];
+
+            it('keeps a decoded action whose function is the one the calldata selects', () => {
+                const decoded = buildTransferActions('transfer');
+
+                expect(
+                    proposalActionUtils.resolveActions(
+                        decoded,
+                        transferRawActions,
+                        '0xsender',
+                    ),
+                ).toEqual(decoded);
+            });
+
+            it('falls back to raw stubs when a decoded action names a function the calldata does not select', () => {
+                const decoded = buildTransferActions('approve');
+
+                expect(
+                    proposalActionUtils.resolveActions(
+                        decoded,
+                        transferRawActions,
+                        '0xsender',
+                    ),
+                ).toEqual([
+                    { ...expectedStubs[0], data: transferData },
+                    expectedStubs[1],
+                ]);
+            });
+        });
+    });
+
     describe('actionToFunctionSelector', () => {
         const grantInputData = {
             function: 'grant',

@@ -9,10 +9,10 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 0
 
+  # The release and deploy flows call aragon/github-templates `@main` while the shared modules
+  # settle; once they are pinned to a commit, this is what bumps the pin.
   - package-ecosystem: "github-actions"
-    directories:
-      - "/"
-      - "/.github/actions/*/action.yaml"
+    directory: "/"
     schedule:
       interval: "weekly"
     # Same 7-day quarantine as pnpm's minimumReleaseAge.

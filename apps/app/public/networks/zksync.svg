@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 250 250">
+  <title>ZKsync logo</title>
+  <rect width="250" height="250" fill="#262B33"/>
+  <g fill="#FFFFFF">
+    <path d="M87.5 75 37.5 125 87.5 175V137.5L137.5 100H87.5Z"/>
+    <path d="M212.5 125 162.5 75V112.5L112.5 150H162.5V175Z"/>
+  </g>
+</svg>

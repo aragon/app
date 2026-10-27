@@ -1,7 +1,8 @@
 # Assistant Production — deploys the assistant service to assistant.aragon.org when an
-# @aragon/assistant@* GitHub Release is published (created by assistant-release-finalize.yml).
-# Also supports manual re-deploys of an existing tag (rollback = dispatch an older tag, or use
-# Vercel instant rollback).
+# @aragon/assistant@* GitHub Release is published (assistant-release.yml finalize), and by hand for
+# a re-deploy of an existing tag (rollback = dispatch an older tag, or use Vercel instant rollback).
+# The `production` environment requires an approval from @aragon/app-team; the release thread gets
+# the "waiting for approval" ping, the result and the head message flipped to Completed.
 
 name: Assistant Production
 
@@ -15,38 +16,67 @@ on:
   release:
     types: [published]
 
-concurrency:
-  group: assistant-production-deployment
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
 jobs:
   validate:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Validate tag exists
+        env:
+          TAG: ${{ inputs.tag }}
         run: |
-          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/${{ inputs.tag }}" || \
-            (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
+          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/$TAG" || \
+            (echo "::error::Tag '$TAG' does not exist" && exit 1)
 
-  # On release events, only react to assistant tags (@aragon/assistant@…) — other workspaces
-  # publish their own releases with their own prefixes.
+  # On release events, only react to assistant tags — other workspaces publish their own releases.
+  # The production group sits on this job, not the workflow: a run skipped by the tag guard must
+  # not cancel a deploy waiting for its approval.
   deploy:
     needs: validate
     if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/assistant@')) }}
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    concurrency:
+      group: assistant-production-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: "assistant.aragon.org"
-      env: "production"
+      env: production
       ref: ${{ github.event.release.tag_name || inputs.tag }}
-      workspace: "apps/assistant"
-      vault-prefix: "kv_assistant"
-      docs-repo-token: true
-      patch-root-directory: false
+      domain: assistant.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/assistant
+      op-infra-vault: kv_assistant_infra
+      op-env-vault: kv_assistant_production
+      setup-command: pnpm run setup production
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
       # VERCEL_ENV=production maps correctly at runtime; only the secrets need lifting.
       runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"
       upload-sentry-source-maps: true
+      version: ${{ github.event.release.tag_name || inputs.tag }}
+      gated: true
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # `validate` is skipped on release events; without the explicit guard the skipped ancestor
+  # skips this job too (same as app-production.yml).
+  complete:
+    needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' && github.event_name == 'release' }}
+    uses: aragon/github-templates/.github/workflows/release-complete.yml@main
+    with:
+      tag: ${{ github.event.release.tag_name }}
+      env: production
+      url: https://assistant.aragon.org
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY_ASSISTANT/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

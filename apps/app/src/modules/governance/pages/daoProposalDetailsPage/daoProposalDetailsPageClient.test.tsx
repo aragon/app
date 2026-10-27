@@ -392,7 +392,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const createProposalAction = {
             type: 'CreateProposal',
             from: '0x0',
-            to: '0xaaa',
+            to: '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123',
             data: '0x',
             value: '0',
             inputData: {
@@ -418,7 +418,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                     actions: [createProposalAction],
                     rawActions: [
                         {
-                            to: '0xaaa',
+                            to: '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123',
                             value: '0',
                             data: '0x',
                         },
@@ -432,6 +432,33 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const items = screen.getAllByTestId('proposal-actions-item');
         expect(items).toHaveLength(1);
         expect(items[0]).toHaveTextContent('CreateProposal');
+    });
+
+    it('renders raw calldata instead of a decoded action that disagrees with the raw tuple', () => {
+        const to = '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123';
+        const decodedAction = {
+            type: 'Transfer',
+            from: '0x0',
+            to,
+            data: '0x',
+            value: '0',
+            inputData: null,
+        };
+        useProposalActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: {
+                    decoding: false,
+                    actions: [decodedAction],
+                    rawActions: [{ to, value: '100', data: '0x' }],
+                },
+            }),
+        );
+
+        render(createTestComponent());
+
+        const items = screen.getAllByTestId('proposal-actions-item');
+        expect(items).toHaveLength(1);
+        expect(items[0]).toHaveTextContent('RAW_CALLDATA');
     });
 
     describe('Action simulation behavior', () => {

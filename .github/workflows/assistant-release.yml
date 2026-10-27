@@ -1,0 +1,137 @@
+# The "Assistant Release" workflow is the assistant's release PR lifecycle, on the shared
+# aragon/github-templates modules: a start every Monday (or by hand) cuts release/assistant/<timestamp>
+# with the changesets bump of the "assistant" release scope (the service plus its version-only
+# packages) and opens the "Release @aragon/assistant@x.y.z" PR with its Slack thread; every push to
+# that PR refreshes the summary and runs the checks; merging tags the merge commit and publishes the
+# GitHub Release, which starts the production deploy (assistant-production.yml); closing it without
+# a merge cancels the release. Linear mirrors the release in the "Assistant" pipeline.
+#
+# The merge commit is tagged (unlike the app, which tags the staging-tested head): the assistant
+# release PR has no staging ceremony, and production builds from the tag, which must include the
+# merge. A scheduled start green-skips when a release PR is open or there is nothing to release.
+
+name: Assistant Release
+
+on:
+  schedule:
+    - cron: "17 15 * * 1"
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: "Commit SHA to start the release from (default: main HEAD)"
+        required: false
+        type: string
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# One run per PR: a push supersedes the previous run; the close runs (finalize, cancel) get a
+# group of their own, so they are never cancelled.
+concurrency:
+  group: assistant-release-${{ github.event.pull_request.number || github.run_id }}${{ github.event.action == 'closed' && '-closed' || '' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+
+jobs:
+  start:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    uses: aragon/github-templates/.github/workflows/release-start.yml@main
+    with:
+      engine: changesets
+      base-ref: ${{ inputs.base_commit || 'main' }}
+      package-dir: apps/assistant
+      tag-prefix: "@aragon/assistant@"
+      scope: assistant
+      release-branch-prefix: release/assistant/
+      branch-suffix: timestamp
+      commit-message: "Release {tag}"
+      summary-path-filter: assistant
+      on-active-release: ${{ github.event_name == 'schedule' && 'skip' || 'fail' }}
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-gpg-key-path: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+      op-gpg-passphrase-path: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+      op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY_ASSISTANT/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  refresh:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@main
+    with:
+      release-branch-prefix: release/assistant/
+      tag-prefix: "@aragon/assistant@"
+      summary-path-filter: assistant
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  test:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    runs-on: ubuntu-latest
+    # Runs the PR head's scripts on a read-only token; pushes and tags go through ARABOT_PAT.
+    permissions:
+      contents: read
+    steps:
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: "0"
+      - name: Check types
+        run: pnpm type-check
+      - name: Check linter with formatter
+        run: pnpm lint:check
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+  finalize:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
+    with:
+      sha: ${{ github.event.pull_request.merge_commit_sha }}
+      pr-body: ${{ github.event.pull_request.body }}
+      package-dir: apps/assistant
+      tag-prefix: "@aragon/assistant@"
+      changesets-guard: assistant
+      after-release-note: "Production deploy to assistant.aragon.org will start automatically."
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  cancel:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.merged == false
+      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@main
+    with:
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+      op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY_ASSISTANT/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

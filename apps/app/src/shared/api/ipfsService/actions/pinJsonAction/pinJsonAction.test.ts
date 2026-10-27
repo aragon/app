@@ -1,16 +1,28 @@
+import { checkBotId } from 'botid/server';
 import { ipfsService } from '../../ipfsService';
 import { pinJsonAction } from './pinJsonAction';
 
-describe('usePinJson action', () => {
+describe('pinJsonAction', () => {
     const requestSpy = jest.spyOn(ipfsService, 'request');
+    const checkBotIdMock = checkBotId as jest.Mock;
 
     afterEach(() => {
         requestSpy.mockReset();
+        checkBotIdMock.mockClear();
     });
 
-    it('triggers the IPFS request with correct params', async () => {
+    it('rejects an automated request without reaching Pinata', async () => {
+        checkBotIdMock.mockResolvedValueOnce({ isBot: true });
+        await expect(pinJsonAction({ body: {} })).rejects.toThrow();
+        expect(requestSpy).not.toHaveBeenCalled();
+    });
+
+    it('pins the content with the app pin metadata', async () => {
         const body = { key: 'value' };
-        const expectedBody = { pinataContent: body };
+        const expectedBody = {
+            pinataContent: body,
+            pinataMetadata: ipfsService.buildPinMetadata(),
+        };
         const expectedOptions = {
             headers: {
                 Authorization: expect.stringContaining('Bearer') as unknown,
@@ -24,4 +36,14 @@ describe('usePinJson action', () => {
             expectedOptions,
         );
     });
+
+    it.each([null, 'text', 1, ['item']])(
+        'rejects %p without reaching Pinata',
+        async (body) => {
+            await expect(
+                pinJsonAction({ body: body as unknown as object }),
+            ).rejects.toThrow();
+            expect(requestSpy).not.toHaveBeenCalled();
+        },
+    );
 });

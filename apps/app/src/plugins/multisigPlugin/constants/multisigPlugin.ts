@@ -33,6 +33,11 @@ export const multisigPlugin: IPluginInfo = {
         [Network.MONAD_MAINNET]: '0x8B20406bC399c1B5c9439D9BbE2B685d27CE35Bc',
         [Network.ROBINHOOD_MAINNET]:
             '0x360c1e84963afD63893C92945345331EBf5D08bb',
+        [Network.BNB_MAINNET]: '0xa43885B8FD00bEAEEc51A38aFC24A746eB20A2B5',
+        [Network.BNB_TESTNET]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
+        [Network.ETHEREUM_HOODI]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
+        [Network.BASE_SEPOLIA]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
+        [Network.POLYGON_AMOY]: '0x360c1e84963afD63893C92945345331EBf5D08bb',
     },
     setup: {
         nameKey: 'app.plugins.multisig.meta.setup.name',

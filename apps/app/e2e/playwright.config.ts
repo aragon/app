@@ -2,6 +2,13 @@ import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
 
+// Shared secret of the "E2E bypass" Vercel WAF rule: lets the headless browser past the rate limits and
+// the BotID check (BotID classifies automation as a bot). Unset locally, where neither applies.
+const bypassToken = process.env.E2E_BYPASS_TOKEN;
+const extraHTTPHeaders = bypassToken
+    ? { 'x-aragon-e2e-bypass': bypassToken }
+    : undefined;
+
 export default defineConfig({
     testDir: './tests/smoke',
     outputDir: './test-results',
@@ -26,6 +33,7 @@ export default defineConfig({
     expect: { timeout: process.env.CI ? 15_000 : 10_000 },
     use: {
         baseURL,
+        extraHTTPHeaders,
         actionTimeout: 15_000,
         navigationTimeout: 30_000,
         trace: 'retain-on-failure',

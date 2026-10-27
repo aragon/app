@@ -43,6 +43,16 @@ const validateChangesets = ({ changesetDir, scopesPath }) => {
             return `${file}: mixes release scopes (${usedScopes.join(', ')}) — split it into one changeset per scope, changesets refuses mixed changesets under --ignore.`;
         }
 
+        // The scope's first package is the one whose version names the release and whose tag
+        // deploys it. A changeset bumping only a package it bundles leaves that version untouched:
+        // the release is cut, finalize finds the tag already taken and nothing deploys.
+        if (usedScopes.length === 1) {
+            const [lead] = scopes[usedScopes[0]];
+            if (!packages.includes(lead)) {
+                return `${file}: bumps ${packages.join(', ')} without ${lead} — the ${usedScopes[0]} release is versioned by ${lead}, add it to the changeset (its bump is what ships the change).`;
+            }
+        }
+
         return [];
     });
 };

@@ -35,7 +35,12 @@ export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.KATANA_MAINNET]: 'katana',
     [Network.MONAD_MAINNET]: 'monad',
     [Network.ROBINHOOD_MAINNET]: 'robinhoodchain',
+    [Network.BNB_MAINNET]: 'bnb',
     [Network.ETHEREUM_SEPOLIA]: 'test',
+    [Network.BNB_TESTNET]: 'test',
+    [Network.ETHEREUM_HOODI]: 'test',
+    [Network.BASE_SEPOLIA]: 'test',
+    [Network.POLYGON_AMOY]: 'test',
 };
 
 export interface IBuildEnsDelegateKeyParams {
