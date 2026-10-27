@@ -159,6 +159,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
+        key: 'helpCenter',
+        name: 'Help center',
+        description:
+            'Serves the knowledge-base site at /help (the proxy rewrites it to the site deployment) and lets the support chat link to its pages.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
+    {
         key: 'telegramSubscription',
         name: 'Telegram subscription',
         description:
@@ -167,6 +179,17 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         environments: {
             local: true,
             development: true,
+            preview: true,
+        },
+    },
+    {
+        key: 'safeAccountPage',
+        name: 'Safe account page',
+        description:
+            'Enables the Safe account page and links to queued Safe transactions.',
+        defaultValue: false,
+        environments: {
+            local: true,
             preview: true,
         },
     },

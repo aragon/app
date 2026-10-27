@@ -2,17 +2,33 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { PluginInterfaceType } from '@/shared/api/daoService';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import {
     generateSppPluginSettings,
     generateSppProposal,
     generateSppStage,
+    generateSppStagePlugin,
 } from '../../testUtils';
 import type { ISppProposal } from '../../types';
 import { sppStageUtils } from '../sppStageUtils/sppStageUtils';
 import { sppProposalUtils } from './sppProposalUtils';
 
 describe('SppProposalUtils', () => {
+    /**
+     * Every spy below is `mockReset` between tests, so a stubbed stage util answers `undefined`
+     * rather than the real rule - fine for the param assertions this file is built on, useless for
+     * asserting the status a user reads. The originals are captured so one regression case can run
+     * the whole composition for real.
+     */
+    const real = {
+        composeStatus: proposalStatusUtils.getProposalStatus,
+        stageStatus: sppStageUtils.getStageStatus,
+        stageEndDate: sppStageUtils.getStageEndDate,
+        stageMaxAdvance: sppStageUtils.getStageMaxAdvance,
+        canStageAdvance: sppStageUtils.canStageAdvance,
+    };
+
     const getProposalStatusSpy = jest.spyOn(
         proposalStatusUtils,
         'getProposalStatus',
@@ -24,6 +40,10 @@ describe('SppProposalUtils', () => {
         'getStageMaxAdvance',
     );
     const canStageAdvanceSpy = jest.spyOn(sppStageUtils, 'canStageAdvance');
+    const getSlotFunctionSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotFunction',
+    );
 
     afterEach(() => {
         getProposalStatusSpy.mockReset();
@@ -31,6 +51,7 @@ describe('SppProposalUtils', () => {
         getStageEndDateSpy.mockReset();
         getStageMaxAdvanceSpy.mockReset();
         canStageAdvanceSpy.mockReset();
+        getSlotFunctionSpy.mockReset();
     });
 
     const generateProposalWithStage = (
@@ -111,6 +132,51 @@ describe('SppProposalUtils', () => {
             );
             expect(getProposalStatusSpy).toHaveBeenCalledWith(
                 expect.objectContaining({ endDate }),
+            );
+        });
+
+        /**
+         * SF-3 as the backend served it: one stage whose 7-day voting window closed three weeks
+         * ago, `maxAdvance` a century out, no body succeeded. `getStageStatus` calls that stage
+         * ACTIVE because a late result still decides it, and the card offers the vote - while the
+         * proposal header read REJECTED off the closed voting window. Real stage rules here: with
+         * the stage status stubbed this would only prove the plumbing.
+         */
+        it('reads as active while its last stage can still be answered', () => {
+            const startDate = DateTime.now().minus({ days: 28 }).toSeconds();
+            const settings = generateSppPluginSettings({
+                stages: [
+                    generateSppStage({
+                        stageIndex: 0,
+                        voteDuration: 604_800,
+                        minAdvance: 0,
+                        maxAdvance: 3_155_760_000,
+                        approvalThreshold: 1,
+                        vetoThreshold: 0,
+                        plugins: [
+                            generateSppStagePlugin({
+                                interfaceType: PluginInterfaceType.SAFE,
+                            }),
+                        ],
+                    }),
+                ],
+            });
+            const proposal = generateSppProposal({
+                settings,
+                startDate,
+                lastStageTransition: startDate,
+                stageIndex: 0,
+                hasActions: true,
+            });
+            getProposalStatusSpy.mockImplementation(real.composeStatus);
+            getStageStatusSpy.mockImplementation(real.stageStatus);
+            getStageEndDateSpy.mockImplementation(real.stageEndDate);
+            getStageMaxAdvanceSpy.mockImplementation(real.stageMaxAdvance);
+            canStageAdvanceSpy.mockImplementation(real.canStageAdvance);
+            getSlotFunctionSpy.mockReturnValue(() => true);
+
+            expect(sppProposalUtils.getProposalStatus(proposal)).toBe(
+                ProposalStatus.ACTIVE,
             );
         });
 

@@ -3,7 +3,9 @@
 # When the PR touches the assistant service (see .github/filters.yml), the assistant preview is
 # deployed FIRST and the app preview is built against it (NEXT_PUBLIC_ASSISTANT_URL override) — the
 # assistant cannot be tested without the app, so the two previews are chained. PRs that do not touch
-# the assistant use dev.assistant.aragon.org (the default in the app env config).
+# the assistant use dev.assistant.aragon.org (the default in the app env config). When the PR touches
+# the docs site (apps/docs), a preview of the site is deployed first as well and the app preview serves
+# it at /help (NEXT_PUBLIC_DOCS_URL override); other PRs serve dev.platform-doc.aragon.org.
 # Build verification (BV/Synpress) tests run only on staging as part of the release process.
 
 name: App Preview
@@ -29,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       assistant: ${{ steps.filter.outputs.assistant }}
+      docs: ${{ steps.filter.outputs.docs }}
     steps:
       # File-based `filters:` is read from disk by paths-filter, so the file must be checked out.
       - name: Checkout filters
@@ -63,9 +66,25 @@ jobs:
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
+  deploy-docs:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs == 'true' }}
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: preview
+      vercel-scope: aragon-app
+      workspace: apps/docs
+      op-infra-vault: kv_docs_infra
+      op-env-vault: kv_docs_preview
+      setup-command: pnpm run setup preview
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
   deploy:
-    needs: [changes, deploy-assistant]
-    if: ${{ !cancelled() && needs.changes.result == 'success' && (needs.deploy-assistant.result == 'success' || needs.deploy-assistant.result == 'skipped') }}
+    needs: [changes, deploy-assistant, deploy-docs]
+    if: ${{ !cancelled() && needs.changes.result == 'success' && (needs.deploy-assistant.result == 'success' || needs.deploy-assistant.result == 'skipped') && (needs.deploy-docs.result == 'success' || needs.deploy-docs.result == 'skipped') }}
     uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
       env: preview
@@ -75,13 +94,15 @@ jobs:
       op-env-vault: kv_app_preview
       setup-command: pnpm run setup preview
       patch-root-directory: true
-      env-overrides: ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('NEXT_PUBLIC_ASSISTANT_URL={0}', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
+      env-overrides: |
+        ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('NEXT_PUBLIC_ASSISTANT_URL={0}', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
+        ${{ needs.deploy-docs.outputs.deploymentUrl != '' && format('NEXT_PUBLIC_DOCS_URL={0}', needs.deploy-docs.outputs.deploymentUrl) || '' }}
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   comment:
     runs-on: ubuntu-latest
-    needs: [deploy-assistant, deploy]
+    needs: [deploy-assistant, deploy-docs, deploy]
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     steps:
       - name: Comment preview PR
@@ -90,6 +111,7 @@ jobs:
           message: |
             🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})
             ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('🤖 **Assistant Preview:** [View Here]({0}) (app preview points at it)', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
+            ${{ needs.deploy-docs.outputs.deploymentUrl != '' && format('📚 **Docs Preview:** [View Here]({0}/help)', needs.deploy-docs.outputs.deploymentUrl) || '' }}
           tag: preview-url
           token: ${{ secrets.GITHUB_TOKEN }}
 

@@ -4,7 +4,7 @@ export interface ISerializedError {
     name?: string;
     message?: string;
     stack?: string;
-    code?: string;
+    code?: string | number;
     status?: number;
     description?: string;
     cause?: ISerializedError;
@@ -69,7 +69,7 @@ class ErrorUtils {
         }
 
         // Copy custom error properties (e.g., from AragonBackendServiceError)
-        if (typeof err.code === 'string') {
+        if (typeof err.code === 'string' || typeof err.code === 'number') {
             result.code = err.code;
         }
         if (typeof err.status === 'number') {

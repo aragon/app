@@ -38,6 +38,10 @@ export interface IDaoMemberListDefaultProps<
      */
     plugin: IDaoPlugin<TSettings>;
     /**
+     * Selected members tab to preserve on member links.
+     */
+    memberSourceId?: string;
+    /**
      * Overrides the custom layout classes when set.
      */
     layoutClassNames?: string;
@@ -61,6 +65,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const {
         initialParams,
         plugin,
+        memberSourceId,
         hidePagination,
         children,
         onMemberClick,
@@ -161,7 +166,10 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const getMemberLink = (member: IMember): string | undefined =>
         onMemberClick != null
             ? undefined
-            : daoUtils.getDaoUrl(dao, `members/${member.address}`);
+            : daoUtils.withMemberTab(
+                  daoUtils.getDaoUrl(dao, `members/${member.address}`),
+                  memberSourceId,
+              );
 
     return (
         <DataListRoot

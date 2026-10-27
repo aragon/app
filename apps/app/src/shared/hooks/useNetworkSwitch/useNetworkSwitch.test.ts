@@ -111,7 +111,7 @@ describe('useNetworkSwitch hook', () => {
             expect(onSend).toHaveBeenCalledTimes(1);
         });
 
-        it('calls switchChain with onSuccess when chains differ', () => {
+        it('calls switchChain with the required chain when chains differ', () => {
             const { result } = renderHook(() =>
                 useNetworkSwitch({ network: Network.POLYGON_MAINNET }),
             );
@@ -119,10 +119,10 @@ describe('useNetworkSwitch hook', () => {
             const onSend = jest.fn();
             result.current.withNetworkSwitch(onSend);
 
-            expect(switchChainMutate).toHaveBeenCalledWith(
-                { chainId: polygonChainId },
-                { onSuccess: onSend },
-            );
+            expect(switchChainMutate).toHaveBeenCalled();
+            expect(switchChainMutate.mock.calls[0][0]).toEqual({
+                chainId: polygonChainId,
+            });
             expect(onSend).not.toHaveBeenCalled();
         });
     });

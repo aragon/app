@@ -23,6 +23,7 @@ export {
     type IGitEnvParams,
     type ISyncCorpusParams,
     readGitHead,
+    readLastModified,
     syncCorpus,
 } from './corpusSource';
 export {

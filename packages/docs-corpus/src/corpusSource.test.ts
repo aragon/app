@@ -3,10 +3,15 @@ import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { buildGitEnv, readGitHead, syncCorpus } from './corpusSource';
+import {
+    buildGitEnv,
+    readGitHead,
+    readLastModified,
+    syncCorpus,
+} from './corpusSource';
 
 // A throwaway repository stands in for aragon/platform-doc; `file://` is the local transport
-// that supports the shallow fetch the sync relies on.
+// that supports the fetch options the sync relies on.
 const git = (dir: string, ...args: string[]): string =>
     execFileSync(
         'git',
@@ -23,6 +28,35 @@ const git = (dir: string, ...args: string[]): string =>
         ],
         { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
     ).trim();
+
+// A commit at the given date, so that the pages get distinct dates to be told apart by.
+const commitAt = (dir: string, date: string, message: string) =>
+    execFileSync(
+        'git',
+        [
+            '-C',
+            dir,
+            '-c',
+            'user.name=test',
+            '-c',
+            'user.email=test@example.com',
+            '-c',
+            'commit.gpgsign=false',
+            'commit',
+            '-q',
+            '-m',
+            message,
+        ],
+        {
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'pipe'],
+            env: {
+                ...process.env,
+                GIT_AUTHOR_DATE: date,
+                GIT_COMMITTER_DATE: date,
+            },
+        },
+    );
 
 describe('corpusSource', () => {
     let workDir: string;
@@ -83,6 +117,32 @@ describe('corpusSource', () => {
             expect(existsSync(path.join(targetDir, 'page.md'))).toBe(false);
         });
 
+        it('completes the history of a checkout an earlier build fetched shallow', async () => {
+            await writeFile(path.join(originDir, 'new.md'), '# New\n');
+            git(originDir, 'add', '.');
+            git(originDir, 'commit', '-q', '-m', 'second');
+            execFileSync('git', ['init', '-q', targetDir]);
+            git(
+                targetDir,
+                'fetch',
+                '-q',
+                '--depth=1',
+                originUrl,
+                'development',
+            );
+            git(targetDir, 'reset', '-q', '--hard', 'FETCH_HEAD');
+            expect(git(targetDir, 'rev-parse', '--is-shallow-repository')).toBe(
+                'true',
+            );
+
+            syncCorpus({ repoUrl: originUrl, ref: 'development', targetDir });
+
+            expect(git(targetDir, 'rev-parse', '--is-shallow-repository')).toBe(
+                'false',
+            );
+            expect(git(targetDir, 'rev-list', '--count', 'HEAD')).toBe('2');
+        });
+
         it('leaves the checkout as it was when the repository cannot be reached', () => {
             const before = syncCorpus({
                 repoUrl: originUrl,
@@ -109,6 +169,32 @@ describe('corpusSource', () => {
 
             expect(readGitHead(plainDir)).toBeUndefined();
             expect(readGitHead(path.join(workDir, 'missing'))).toBeUndefined();
+        });
+    });
+
+    describe('readLastModified', () => {
+        it('dates every file by the commit that last touched it, after a fetch as well', async () => {
+            await mkdir(path.join(originDir, 'area'));
+            await writeFile(path.join(originDir, 'area/page.md'), '# Area\n');
+            git(originDir, 'add', '.');
+            commitAt(originDir, '2026-01-02T03:04:05Z', 'area');
+            await writeFile(path.join(originDir, 'page.md'), '# Page 2\n');
+            git(originDir, 'add', '.');
+            commitAt(originDir, '2026-02-03T04:05:06Z', 'edit');
+
+            syncCorpus({ repoUrl: originUrl, ref: 'development', targetDir });
+
+            const dates = readLastModified(targetDir);
+            expect(dates.get('page.md')).toMatch(/^2026-02-03T/);
+            expect(dates.get('area/page.md')).toMatch(/^2026-01-02T/);
+            expect(dates.size).toBe(2);
+        });
+
+        it('is empty for a directory that is not a repository', async () => {
+            const plainDir = path.join(workDir, 'plain');
+            await mkdir(plainDir);
+
+            expect(readLastModified(plainDir).size).toBe(0);
         });
     });
 

@@ -1,0 +1,1 @@
+export { useConfirmSafeTransaction } from './useConfirmSafeTransaction';

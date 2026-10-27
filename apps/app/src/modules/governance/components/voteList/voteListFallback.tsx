@@ -1,7 +1,7 @@
-import { CardEmptyState, type IEmptyStateProps } from '@aragon/gov-ui-kit';
+import { CardEmptyState } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-export const VoteListFallback: React.FC<IEmptyStateProps> = () => {
+export const VoteListFallback: React.FC = () => {
     const { t } = useTranslations();
 
     return (
