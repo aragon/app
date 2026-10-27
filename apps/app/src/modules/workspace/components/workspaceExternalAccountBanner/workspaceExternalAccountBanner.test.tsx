@@ -257,22 +257,6 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    // The account is only known once the accounts API has placed the address as a DAO or a Safe.
-    it('disables the actions while the account is not resolved', async () => {
-        mockAccountOptions({
-            activeOption: { ...externalOption, account: undefined },
-        });
-        render(createTestComponent());
-
-        // Waits for the list, which renders the dropdown, so the workspaces are known when the buttons are checked.
-        expect(
-            await screen.findByRole('button', { name: /addToOther$/ }),
-        ).toBeDisabled();
-        expect(
-            screen.getByRole('button', { name: /addToCurrent$/ }),
-        ).toBeDisabled();
-    });
-
     it('says so when the account cannot be added', async () => {
         addWorkspaceAccountSpy.mockRejectedValue(
             new Error('QuotaExceededError'),
@@ -289,17 +273,34 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
         expect(pushMock).not.toHaveBeenCalled();
     });
 
-    // The address can never be added, and the page already says it is not found.
-    it('renders nothing for an account that is neither a DAO nor a Safe', () => {
-        mockAccountOptions({
-            activeOption: {
-                ...externalOption,
-                account: undefined,
-                accountState: WorkspaceAccountState.NOT_FOUND,
-            },
-        });
-        const { container } = render(createTestComponent());
+    // The account is only known once the accounts API has placed the address as a DAO or a Safe, so the banner
+    // never shows actions it cannot enable.
+    it.each([
+        { case: 'the lookup is pending', isPending: true },
+        {
+            case: 'the address is neither a DAO nor a Safe',
+            accountState: WorkspaceAccountState.NOT_FOUND,
+        },
+        {
+            case: 'the lookup is unavailable',
+            accountState: WorkspaceAccountState.UNAVAILABLE,
+        },
+        { case: 'the lookup placed nothing' },
+    ])(
+        'renders nothing while the account is not resolved because $case',
+        ({ isPending = false, accountState }) => {
+            mockAccountOptions({
+                activeOption: {
+                    ...externalOption,
+                    account: undefined,
+                    accountState,
+                },
+                scopedAccounts: [],
+                isPending,
+            });
+            const { container } = render(createTestComponent());
 
-        expect(container).toBeEmptyDOMElement();
-    });
+            expect(container).toBeEmptyDOMElement();
+        },
+    );
 });

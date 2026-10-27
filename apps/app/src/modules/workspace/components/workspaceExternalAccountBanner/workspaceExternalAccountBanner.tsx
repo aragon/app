@@ -18,7 +18,6 @@ import {
     useWorkspaceList,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
-import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -29,7 +28,7 @@ export interface IWorkspaceExternalAccountBannerProps {}
  * external option of `useWorkspaceAccountOptions`), offering to add it to this workspace or to another one.
  *
  * The account added is the external option's own, synthesized from the accounts API with a checksummed ID and its
- * resolved type, so the actions stay disabled until the API has placed the address as a DAO or a Safe — the same
+ * resolved type, so the banner only shows once the API has placed the address as a DAO or a Safe — the same
  * accounts `workspaceUtils.validateAccountInfo` lets the create form add. It is appended through
  * `addWorkspaceAccount`, which reads the stored workspace itself, so a cached copy never overwrites a newer one.
  *
@@ -60,15 +59,14 @@ export const WorkspaceExternalAccountBanner: React.FC<
         isError,
     } = useAddWorkspaceAccount();
 
-    // An address that is neither a DAO nor a Safe can never be added, and the page already says it is not found.
-    if (
-        !activeOption?.isExternal ||
-        activeOption.accountState === WorkspaceAccountState.NOT_FOUND
-    ) {
+    const account = activeOption?.account;
+
+    // Until the API places the address as a DAO or a Safe there is nothing to add: the lookup is pending, the
+    // address is not found or unavailable (both said by the page), or the lookup placed nothing.
+    if (!activeOption?.isExternal || account == null) {
         return null;
     }
 
-    const account = activeOption.account;
     const otherWorkspaces = workspaces.filter(
         (workspace) =>
             workspace.id !== workspaceId &&
@@ -99,20 +97,14 @@ export const WorkspaceExternalAccountBanner: React.FC<
         }
     };
 
-    const addToWorkspace = (targetId: string) => {
-        if (account == null) {
-            return;
-        }
-
+    const addToWorkspace = (targetId: string) =>
         addWorkspaceAccount(
             { urlParams: { id: targetId }, body: { account } },
             { onSuccess: handleAdded },
         );
-    };
 
     const handleAddToCurrent = () => addToWorkspace(workspaceId);
 
-    const isDisabled = account == null || isUpdating;
     const translationNamespace = 'app.workspace.workspaceExternalAccountBanner';
 
     const message = isError
@@ -126,7 +118,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
         <Banner message={message}>
             <div className="flex flex-col gap-3 md:flex-row">
                 <Button
-                    disabled={isDisabled || currentWorkspace == null}
+                    disabled={isUpdating || currentWorkspace == null}
                     iconLeft={IconType.PLUS}
                     isLoading={isUpdating}
                     onClick={handleAddToCurrent}
@@ -137,7 +129,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
                 </Button>
                 {otherWorkspaces.length > 0 && (
                     <Dropdown.Container
-                        disabled={isDisabled}
+                        disabled={isUpdating}
                         label={t(`${translationNamespace}.addToOther`)}
                         size="sm"
                         variant="tertiary"
