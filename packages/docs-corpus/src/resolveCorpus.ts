@@ -24,7 +24,7 @@ export interface IResolveCorpusParams {
 
 /**
  * Where a build reads the knowledge base from: the directory DOCS_CORPUS_DIR names, as-is and
- * unfetched, otherwise a shallow fetch of aragon/platform-doc into the cache directory — with
+ * unfetched, otherwise a fetch of aragon/platform-doc into the cache directory — with
  * DOCS_REPO_TOKEN when it is set, the git credentials of the machine otherwise. A failed fetch
  * throws in CI (CI=true): a deployment must carry the current documentation. A developer machine
  * keeps the cached checkout of an earlier build, and without one gets undefined — what a build

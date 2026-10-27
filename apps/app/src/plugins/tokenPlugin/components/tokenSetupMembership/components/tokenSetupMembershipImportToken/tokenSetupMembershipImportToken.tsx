@@ -13,6 +13,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { useHelpCenterLink } from '@/shared/hooks/useHelpCenterLink';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { useGovernanceToken } from '../../hooks/useGovernanceToken';
 
@@ -34,6 +35,13 @@ export const TokenSetupMembershipImportToken: React.FC<
 > = (props) => {
     const { formPrefix, daoId } = props;
     const { t } = useTranslations();
+    // What importing a token takes, on the help center; the developer portal's guide while the
+    // help center is off.
+    const importGuideUrl = useHelpCenterLink({
+        path: '/guides/choose-token-voting-power-mechanism#yes-check-its-voting-capabilities',
+        fallback:
+            'https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html',
+    });
 
     const tokenFormPrefix = `${formPrefix}.token`;
     const { setValue } = useFormContext();
@@ -201,7 +209,7 @@ export const TokenSetupMembershipImportToken: React.FC<
                             )}
                         </div>
                         <Link
-                            href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
+                            href={importGuideUrl}
                             isExternal={true}
                             variant="neutral"
                         >

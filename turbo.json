@@ -11,6 +11,7 @@
         "CI",
         "CRON_SECRET",
         "DOCS_CORPUS_DIR",
+        "DOCS_ENV",
         "DOCS_REPO_TOKEN",
         "LINEAR_API_KEY",
         "LINEAR_TEAM_ID",

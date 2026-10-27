@@ -3,8 +3,9 @@ import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 
 // The knowledge base is a private repository the index build fetches on demand — it is not
-// vendored into this one. One shallow fetch by URL: nothing about the remote is written to the
-// checkout's configuration, and syncing an existing checkout just moves it to the current head.
+// vendored into this one. One fetch by URL of the branch with its history (the dates of the pages
+// come from the log): nothing about the remote is written to the checkout's configuration, and
+// syncing an existing checkout just moves it to the current head.
 
 export const docsRepository = {
     name: 'aragon/platform-doc',
@@ -12,7 +13,7 @@ export const docsRepository = {
     ref: 'development',
 } as const;
 
-// Generous for a shallow fetch of a few megabytes; a hung network call still fails the build.
+// Generous for a fetch of a few megabytes; a hung network call still fails the build.
 const gitTimeoutMs = 120_000;
 
 export interface IGitEnvParams {
@@ -91,6 +92,11 @@ const runGit = (args: string[], env: NodeJS.ProcessEnv): string => {
     }
 };
 
+// A checkout an earlier build fetched with `--depth=1` has no history to date the pages with:
+// the next fetch completes it.
+const isShallow = (dir: string, env: NodeJS.ProcessEnv): boolean =>
+    runGit(['-C', dir, 'rev-parse', '--is-shallow-repository'], env) === 'true';
+
 /**
  * Brings `targetDir` to the head of `ref` in the repository: a fresh directory and an earlier
  * checkout go through the same three commands (reinitializing a repository is a no-op). A
@@ -108,9 +114,9 @@ export const syncCorpus = (params: ISyncCorpusParams): ICorpusSource => {
             targetDir,
             'fetch',
             '-q',
-            '--depth=1',
             '--no-tags',
             '--recurse-submodules=no',
+            ...(isShallow(targetDir, env) ? ['--unshallow'] : []),
             repoUrl,
             ref,
         ],
@@ -153,4 +159,46 @@ export const readGitHead = (dir: string): string | undefined => {
     } catch {
         return undefined;
     }
+};
+
+const isoDatePattern = /^\d{4}-\d{2}-\d{2}T/;
+
+/**
+ * When each file of the repository rooted at `dir` last changed: its path (POSIX, relative to the
+ * root) to the committer date of the last commit that touched it, as git prints it (ISO 8601).
+ * One log walk, newest first, so each path keeps the first date it appears with. Empty when the
+ * directory is not a repository or has no commit yet.
+ */
+export const readLastModified = (dir: string): Map<string, string> => {
+    const dates = new Map<string, string>();
+
+    if (readGitHead(dir) == null) {
+        return dates;
+    }
+
+    const log = runGit(
+        [
+            '-C',
+            dir,
+            '-c',
+            'core.quotePath=false',
+            'log',
+            '--format=%cI',
+            '--name-only',
+            '--',
+            '.',
+        ],
+        baseGitEnv(),
+    );
+    let date: string | undefined;
+
+    for (const line of log.split('\n')) {
+        if (isoDatePattern.test(line)) {
+            date = line;
+        } else if (line !== '' && date != null && !dates.has(line)) {
+            dates.set(line, date);
+        }
+    }
+
+    return dates;
 };
