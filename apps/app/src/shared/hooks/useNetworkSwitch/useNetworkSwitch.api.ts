@@ -15,6 +15,9 @@ export interface IUseNetworkSwitchReturn {
     networkName: string;
     /** Status of the chain-switch mutation. */
     switchChainStatus: TransactionStatusState;
-    /** Wraps a callback so that, if a chain switch is needed, it switches first and calls the callback on success. If no switch is needed, calls the callback directly. */
-    withNetworkSwitch: (onSend: () => void) => void;
+    /** Wraps a callback so that, if a chain switch is needed, it switches first and calls the callback on success. If no switch is needed, calls the callback directly. `onError` runs if a needed switch is rejected or fails, so callers can exit loading state. */
+    withNetworkSwitch: (
+        onSend: () => void,
+        onError?: (error: unknown) => void,
+    ) => void;
 }

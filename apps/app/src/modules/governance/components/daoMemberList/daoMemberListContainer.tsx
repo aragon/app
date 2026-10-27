@@ -86,7 +86,11 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
 
         return {
             ...plugin,
-            props: { initialParams: pluginInitialParams, plugin: plugin.meta },
+            props: {
+                initialParams: pluginInitialParams,
+                memberSourceId: plugin.uniqueId,
+                plugin: plugin.meta,
+            },
         };
     });
 

@@ -22,11 +22,11 @@ export const useNetworkSwitch = (
         walletChainId != null && walletChainId !== requiredChainId;
 
     const withNetworkSwitch = useCallback(
-        (onSend: () => void) => {
+        (onSend: () => void, onError?: (error: unknown) => void) => {
             if (isCrossNetworkTransaction) {
                 switchChain(
                     { chainId: requiredChainId },
-                    { onSuccess: onSend },
+                    { onSuccess: onSend, onError },
                 );
             } else {
                 onSend();

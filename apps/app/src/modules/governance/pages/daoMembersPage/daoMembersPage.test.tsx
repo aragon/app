@@ -138,6 +138,32 @@ describe('<DaoMembersPage /> component', () => {
         );
     });
 
+    it('prefetches Safe owners when a Safe is a DAO body', async () => {
+        const expectedDaoId = 'test-dao-id';
+        const safeAddress = '0x1234567890123456789012345678901234567890';
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+        });
+        const dao = generateDao({ plugins: [safePlugin] });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockReturnValue([safePlugin]);
+
+        render(await createTestComponent());
+
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            memberListOptions({
+                queryParams: {
+                    daoId: expectedDaoId,
+                    pageSize: daoMembersCount,
+                    pluginAddress: safeAddress,
+                },
+            }).queryKey,
+        );
+    });
+
     it('renders the page client component', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();

@@ -2,8 +2,8 @@ import * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
 import type { IPermissionCheckGuardParams } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import * as daoService from '@/shared/api/daoService';
+import { type IDaoPlugin, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     generateDao,
     generateReactQueryResultSuccess,
@@ -47,12 +47,21 @@ describe('useSppExternalPermissionCheckProposalCreation', () => {
         daoId: 'dao-test',
     });
 
-    it('returns a Safe settings group when the body can create proposals', () => {
+    it.each([
+        {
+            label: 'an external Safe body',
+            plugin: { brandId: VotingBodyBrandIdentity.SAFE },
+        },
+        {
+            label: 'a canonical Safe body',
+            plugin: { interfaceType: PluginInterfaceType.SAFE },
+        },
+    ])('returns a Safe settings group for $label', ({ plugin }) => {
         const safeAddress = `0x${'b'.repeat(40)}`;
         const params = createParams({
             address: safeAddress,
-            brandId: VotingBodyBrandIdentity.SAFE,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+            ...plugin,
         });
 
         const { result } = renderHook(() =>

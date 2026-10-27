@@ -1,0 +1,1 @@
+export { SafePluginInfo } from './safePluginInfo';

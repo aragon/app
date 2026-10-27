@@ -1,6 +1,7 @@
-import { keccak256, stringToHex } from 'viem';
+import { type Hex, isHex, keccak256, stringToHex } from 'viem';
 import { getTransactionReceipt, sendTransaction } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
+import { isRecord } from '@/shared/api/safeService/domain/safeDomainUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import {
     type IPendingTransactionFilter,
@@ -19,14 +20,60 @@ const STORAGE_KEY = 'aragon.pendingTransactions';
 const submittedRecordTtl = 24 * 60 * 60 * 1000;
 
 // Guard each stored entry's shape so one corrupt record can't throw and drop the whole hydrate pass.
+// Recovery records are stricter because they are caller-managed and must retain enough chain identity
+// to reconcile without ever falling back to a blind resend.
 const isStoredState = (value: unknown): value is IPendingTransactionState => {
-    if (value == null || typeof value !== 'object' || !('status' in value)) {
+    if (
+        value == null ||
+        typeof value !== 'object' ||
+        Array.isArray(value) ||
+        !('status' in value)
+    ) {
         return false;
     }
-    const { status } = value;
+
+    const state = value as Record<string, unknown>;
+    const status = state.status;
+    if (
+        typeof status !== 'string' ||
+        !(Object.values(PendingTransactionStatus) as string[]).includes(status)
+    ) {
+        return false;
+    }
+
+    if (!('recovery' in state)) {
+        return true;
+    }
+
+    const recovery = state.recovery;
+    if (
+        recovery == null ||
+        typeof recovery !== 'object' ||
+        Array.isArray(recovery)
+    ) {
+        return false;
+    }
+
+    const hasRecoverySubmissionCore =
+        typeof state.chainId === 'number' &&
+        Number.isSafeInteger(state.chainId) &&
+        state.chainId > 0 &&
+        typeof state.submittedAt === 'number' &&
+        Number.isFinite(state.submittedAt) &&
+        state.submittedAt >= 0;
+
+    if (
+        status === PendingTransactionStatus.FAILED ||
+        !hasRecoverySubmissionCore
+    ) {
+        return false;
+    }
+
     return (
-        typeof status === 'string' &&
-        (Object.values(PendingTransactionStatus) as string[]).includes(status)
+        status !== PendingTransactionStatus.SUBMITTED ||
+        (typeof state.hash === 'string' &&
+            isHex(state.hash) &&
+            state.hash.length === 66)
     );
 };
 
@@ -41,9 +88,10 @@ export const buildIntentId = (parts: unknown): string =>
     );
 
 // Owns in-flight wallet sends keyed by intentId, via wagmi's core sendTransaction (not the hook) so
-// the sign/reject promise outlives the dialog. Only SUBMITTED (broadcast, has a hash) records are
-// mirrored to sessionStorage — a PENDING send can't be resumed without its live promise, so it is not
-// persisted, and on reload persisted records are reconciled against the chain so settled ones self-clear.
+// the sign/reject promise outlives the dialog. SUBMITTED records and caller-managed uncertain PENDING
+// records are mirrored to sessionStorage; a generic PENDING send can't be resumed without its live
+// promise, so it is not persisted. Generic persisted records self-clear after receipt reconciliation;
+// caller-managed recovery records stay until their owning flow explicitly acknowledges them.
 export class PendingTransactionManager {
     private states = new Map<string, IPendingTransactionState>();
     private listeners = new Set<PendingTransactionListener>();
@@ -94,6 +142,58 @@ export class PendingTransactionManager {
             .catch((error: unknown) =>
                 apply({ status: PendingTransactionStatus.FAILED, error }),
             );
+    };
+
+    /**
+     * Mirrors a hash that was broadcast by a caller-owned flow. Unlike `send`, this never submits
+     * anything and deliberately keeps no request that could be used for a blind resend.
+     */
+    registerSubmitted = (
+        intentId: string,
+        submission: {
+            hash: Hex;
+            chainId: number;
+            submittedAt?: number;
+        },
+        meta?: IPendingTransactionMeta,
+    ): void => {
+        this.attempts.set(intentId, (this.attempts.get(intentId) ?? 0) + 1);
+        this.requests.delete(intentId);
+        if (meta != null) {
+            this.metas.set(intentId, meta);
+        }
+        this.update(intentId, {
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: submission.hash,
+            submittedAt: submission.submittedAt ?? Date.now(),
+            chainId: submission.chainId,
+        });
+    };
+
+    /**
+     * Records an ambiguous caller-owned send without a hash. The recovery context makes the record
+     * durable, while the missing hash forces the owning flow to resolve the outcome before retrying.
+     * This never submits anything and deliberately keeps no request that could be used for a blind
+     * resend.
+     */
+    registerSubmissionUncertain = (
+        intentId: string,
+        submission: {
+            chainId: number;
+            submittedAt?: number;
+        },
+        meta: IPendingTransactionMeta & {
+            recovery: Record<string, unknown>;
+        },
+    ): void => {
+        this.attempts.set(intentId, (this.attempts.get(intentId) ?? 0) + 1);
+        this.requests.delete(intentId);
+        this.metas.set(intentId, meta);
+        this.update(intentId, {
+            status: PendingTransactionStatus.PENDING,
+            submittedAt: submission.submittedAt ?? Date.now(),
+            chainId: submission.chainId,
+        });
     };
 
     get = (intentId: string): IPendingTransactionState | undefined =>
@@ -172,10 +272,12 @@ export class PendingTransactionManager {
         }
     };
 
-    // Persist SUBMITTED records only: they carry a hash, so they can be resumed and reconciled after a
-    // reload. A PENDING send has no hash and its live promise is gone on reload, so persisting it would
-    // only create a dead ghost. JSON.stringify drops undefined fields, so records without meta stay
-    // `{ status, hash, submittedAt, chainId }`. The promise and error aren't serializable and are omitted.
+    // Persist SUBMITTED records and caller-managed PENDING recovery records. SUBMITTED records carry a
+    // hash, so they can be resumed and reconciled after a reload. A generic PENDING send has no hash
+    // and its live promise is gone on reload, so persisting it would only create a dead ghost.
+    // JSON.stringify drops undefined fields, so records without meta stay
+    // `{ status, hash, submittedAt, chainId }`. Caller-managed `recovery` context is persisted as-is;
+    // its Safe-specific fields are validated by the consuming flow before use.
     private persist = (): void => {
         if (typeof sessionStorage === 'undefined') {
             return;
@@ -185,15 +287,35 @@ export class PendingTransactionManager {
                 [...this.states]
                     .filter(
                         ([, state]) =>
-                            state.status === PendingTransactionStatus.SUBMITTED,
+                            state.status ===
+                                PendingTransactionStatus.SUBMITTED ||
+                            (state.status ===
+                                PendingTransactionStatus.PENDING &&
+                                state.recovery != null),
                     )
                     .map(
                         ([
                             id,
-                            { status, hash, submittedAt, chainId, type, scope },
+                            {
+                                status,
+                                hash,
+                                submittedAt,
+                                chainId,
+                                type,
+                                scope,
+                                recovery,
+                            },
                         ]) => [
                             id,
-                            { status, hash, submittedAt, chainId, type, scope },
+                            {
+                                status,
+                                hash,
+                                submittedAt,
+                                chainId,
+                                type,
+                                scope,
+                                recovery,
+                            },
                         ],
                     ),
             );
@@ -209,28 +331,41 @@ export class PendingTransactionManager {
         }
         try {
             const raw = sessionStorage.getItem(STORAGE_KEY);
-            const stored: unknown = raw ? JSON.parse(raw) : {};
-            if (stored == null || typeof stored !== 'object') {
-                return;
-            }
+            const parsed: unknown = raw ? JSON.parse(raw) : {};
+            const stored: Record<string, unknown> = isRecord(parsed)
+                ? parsed
+                : {};
             for (const [id, state] of Object.entries(stored)) {
-                // Only SUBMITTED records are persisted/restorable; ignore anything else defensively.
-                // Expired records (or timestamp-less ones from before it was persisted) are dropped
-                // so a dead transaction cannot haunt resume flows and duplicate warnings forever.
-                if (
-                    isStoredState(state) &&
+                if (!isStoredState(state)) {
+                    continue;
+                }
+
+                const isCallerManagedRecovery = state.recovery != null;
+                const canRestoreSubmitted =
                     state.status === PendingTransactionStatus.SUBMITTED &&
                     state.submittedAt != null &&
-                    Date.now() - state.submittedAt <= submittedRecordTtl
+                    (isCallerManagedRecovery ||
+                        Date.now() - state.submittedAt <= submittedRecordTtl);
+                const canRestoreUncertain =
+                    state.status === PendingTransactionStatus.PENDING &&
+                    isCallerManagedRecovery;
+
+                if (!canRestoreSubmitted && !canRestoreUncertain) {
+                    continue;
+                }
+
+                this.states.set(id, state);
+                // Repopulate all metadata so resumed updates keep their identity and recovery.
+                if (
+                    state.type != null ||
+                    state.scope != null ||
+                    state.recovery != null
                 ) {
-                    this.states.set(id, state);
-                    // Repopulate meta so a resumed action's later updates keep its type/scope.
-                    if (state.type != null || state.scope != null) {
-                        this.metas.set(id, {
-                            type: state.type,
-                            scope: state.scope,
-                        });
-                    }
+                    this.metas.set(id, {
+                        type: state.type,
+                        scope: state.scope,
+                        recovery: state.recovery,
+                    });
                 }
             }
         } catch {
@@ -238,20 +373,24 @@ export class PendingTransactionManager {
         }
         // Rewrite the mirror so records dropped above are removed from storage as well.
         this.persist();
-        // A persisted SUBMITTED tx may already have mined while the tab was gone; reconcile so settled
-        // ones self-clear instead of lingering as stale duplicate warnings.
+        // Persisted SUBMITTED records may already have mined while the tab was gone; reconcile so
+        // settled generic records self-clear instead of lingering as stale duplicate warnings.
         this.reconcile();
     };
 
-    // Fire-and-forget: drop any hydrated SUBMITTED whose transaction is already mined. A still-pending
-    // (receipt-not-found) tx is kept — it is genuinely in flight. Best-effort; a brief race where a
-    // consumer reads a soon-to-be-cleared record is acceptable. The lookup is pinned to the record's
-    // broadcast chain — the wallet's current chain may be a different one after a reload.
+    // Fire-and-forget: drop any hydrated generic SUBMITTED whose transaction is already mined. A
+    // still-pending (receipt-not-found) tx is kept — it is genuinely in flight. Caller-managed
+    // recovery records, including uncertain PENDING submissions, are intentionally skipped; their
+    // owner must classify and acknowledge them explicitly.
+    // Best-effort; a brief race where a consumer reads a soon-to-be-cleared record is acceptable. The
+    // lookup is pinned to the record's broadcast chain — the wallet's current chain may be a different
+    // one after a reload.
     private reconcile = (): void => {
         for (const [id, state] of this.states) {
             if (
                 state.status !== PendingTransactionStatus.SUBMITTED ||
-                state.hash == null
+                state.hash == null ||
+                state.recovery != null
             ) {
                 continue;
             }
