@@ -5,7 +5,8 @@
 # production deploy, and by hand against any URL. It is deliberately NON-BLOCKING: it is not a
 # required check anywhere — a red run is a signal to look at prompt or pipeline drift, not a
 # merge gate. The result is posted to the release thread when there is one (the release PR, a
-# production deploy), and a failure to the Slack alerts channel always. Tickets land in the
+# production deploy), as a comment on the release PR, and a failure to the Slack alerts channel
+# always. Tickets land in the
 # Linear team of the target environment (a test team everywhere except production), so against
 # production the ticket scenario stops at the draft and creates nothing.
 
@@ -51,6 +52,7 @@ jobs:
       host: ${{ steps.target.outputs.host }}
       deployed: ${{ steps.target.outputs.deployed }}
       release-tag: ${{ steps.target.outputs.release_tag }}
+      scenarios: ${{ steps.scenarios.outputs.lines }}
     steps:
       # A deploy workflow that green-skipped its deploy (a push to main that left the assistant
       # untouched, a release of another workspace) changed nothing to smoke. A production deploy
@@ -123,7 +125,20 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ fromJSON(steps.op.outputs.secrets || '{}').VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
           ASSISTANT_SMOKE_CREATE_TICKETS: ${{ steps.target.outputs.create_tickets }}
           URL: ${{ steps.target.outputs.url }}
-        run: node apps/assistant/scripts/llmSmoke.mjs "$URL"
+        run: |
+          set -o pipefail
+          node apps/assistant/scripts/llmSmoke.mjs "$URL" | tee smoke.log
+
+      # One line per scenario for the PR comment, whatever the outcome.
+      - name: Collect the scenario results
+        if: ${{ !cancelled() && steps.target.outputs.deployed == 'true' }}
+        id: scenarios
+        run: |
+          {
+            echo 'lines<<SCENARIOS'
+            [ -f smoke.log ] && grep -E '^(OK|FAIL) ' smoke.log | cut -c1-300 | sed -E 's/^OK /- ✅ /; s/^FAIL /- ❌ /' || true
+            echo 'SCENARIOS'
+          } >> "$GITHUB_OUTPUT"
 
   # The result goes to the release thread it belongs to: the release PR's (called from the
   # release workflow) or the deployed release's (a production deploy). The PAT reads the PR body
@@ -145,6 +160,28 @@ jobs:
       op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # On the release PR the result is also a comment, where the checks list buries it among the
+  # skipped jobs of the other workspaces' release workflows. One comment per PR, edited on rerun.
+  comment:
+    needs: smoke
+    if: ${{ !cancelled() && needs.smoke.outputs.deployed == 'true' && (inputs.thread-pr-number || 0) != 0 }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment the result
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
+        with:
+          tag: llm-smoke
+          pr-number: ${{ inputs.thread-pr-number }}
+          token: ${{ github.token }}
+          message: |
+            **LLM smoke on ${{ needs.smoke.outputs.host }}: ${{ needs.smoke.result == 'success' && '✅ passed' || '❌ failed' }}**
+
+            ${{ needs.smoke.outputs.scenarios }}
+
+            [View run #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   # The smoke gates nothing, so a red run is also told where someone reads it: the alerts channel.
   notify-failure:

@@ -18,12 +18,13 @@ on:
       - docs-updated
   workflow_dispatch:
 
-# Queued, never cancelled: the paths filter below only sees the commits of its own push, so a
-# cancelled deploy of an assistant change is not redone by the next push, and dev.assistant stays
-# on the previous build without any red run.
+# Every push is deployed in order, none cancelled or replaced while pending: the paths filter
+# below only sees the commits of its own push, so a dropped deploy of an assistant change is not
+# redone by the next push, and dev.assistant stays on the previous build without any red run.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
+  queue: max
 
 permissions:
   contents: read

@@ -105,16 +105,19 @@ jobs:
         run: pnpm test:coverage
 
   # Not a required check: a red smoke is a signal to read the conversations, not a merge gate.
-  # The result lands in the release thread, a failure also in the alerts channel.
+  # The result lands in the release thread and as a PR comment, a failure also in the alerts
+  # channel.
   smoke:
     if: >
       github.event_name == 'pull_request'
       && github.event.action != 'closed'
       && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
-    # The called workflow asks for `actions: read`, which must be granted here.
+    # What the called workflow asks for: `actions: read` for the deploy-run lookup,
+    # `pull-requests: write` for the result comment.
     permissions:
       contents: read
       actions: read
+      pull-requests: write
     uses: ./.github/workflows/assistant-llm-smoke.yml
     with:
       url: https://dev.assistant.aragon.org
