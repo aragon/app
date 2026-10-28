@@ -2,16 +2,17 @@
 # aragon/github-templates modules: a start every Monday (or by hand) cuts release/assistant/<timestamp>
 # with the changesets bump of the "assistant" release scope (the service plus its version-only
 # packages) and opens the "Release @aragon/assistant@x.y.z" PR with its Slack thread; every push to
-# that PR refreshes the summary, runs the checks and the LLM smoke; merging tags the merge commit
-# and publishes the GitHub Release, which starts the production deploy (assistant-production.yml);
+# that PR refreshes the summary, runs the checks and the LLM smoke; merging tags the PR head and
+# publishes the GitHub Release, which starts the production deploy (assistant-production.yml);
 # closing it without a merge cancels the release. Linear mirrors the release in the "Assistant"
 # pipeline.
 #
-# The merge commit is tagged (unlike the app, which tags the staging-tested head): the assistant
-# release PR has no staging ceremony, and production builds from the tag, which must include the
-# merge. The release content is smoked where it already runs: dev.assistant.aragon.org serves
-# main, which the release branch only bumps. A scheduled start green-skips when a release PR is
-# open or there is nothing to release.
+# The PR head is tagged, as in every release flow: it is the commit the checks ran on, and the
+# merge commit would also carry whatever landed on main while the PR was open (an in-scope
+# changeset merged in the meantime tripped the finalize guard of 0.3.1). Release PRs are merged
+# with a merge commit so the head stays in main's history. The release content is smoked where it
+# already runs: dev.assistant.aragon.org serves main, which the release branch only bumps. A
+# scheduled start green-skips when a release PR is open or there is nothing to release.
 
 name: Assistant Release
 
@@ -132,7 +133,7 @@ jobs:
       && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
     uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
     with:
-      sha: ${{ github.event.pull_request.merge_commit_sha }}
+      sha: ${{ github.event.pull_request.head.sha }}
       pr-body: ${{ github.event.pull_request.body }}
       package-dir: apps/assistant
       tag-prefix: "@aragon/assistant@"

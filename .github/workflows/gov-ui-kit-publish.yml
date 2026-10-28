@@ -65,7 +65,7 @@ jobs:
           # so the gap between tagging and building is unbounded — anything merged to main in the
           # meantime would otherwise be published under the tagged version, with --provenance
           # attesting the wrong commit. The tag carries the version bump by construction: finalize
-          # tags the release PR's merge commit, which is where `changeset version` landed.
+          # tags the release PR head, which carries the `changeset version` commit.
           ref: ${{ github.event.release.tag_name }}
           # MUST stay empty (also the setup action's default). A registry-url makes
           # actions/setup-node write a user-level .npmrc with `_authToken=${NODE_AUTH_TOKEN}` —
