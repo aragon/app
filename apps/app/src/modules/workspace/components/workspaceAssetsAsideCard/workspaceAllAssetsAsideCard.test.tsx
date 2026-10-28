@@ -10,10 +10,7 @@ describe('<WorkspaceAllAssetsAsideCard /> component', () => {
     const createTestComponent = (
         props?: Partial<IWorkspaceAllAssetsAsideCardProps>,
     ) => {
-        const completeProps: IWorkspaceAllAssetsAsideCardProps = {
-            title: 'All assets',
-            ...props,
-        };
+        const completeProps: IWorkspaceAllAssetsAsideCardProps = { ...props };
 
         return (
             <GukModulesProvider>
@@ -68,8 +65,8 @@ describe('<WorkspaceAllAssetsAsideCard /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('titles the card generically when given no title', () => {
-        render(createTestComponent({ title: undefined }));
+    it('titles the card generically', () => {
+        render(createTestComponent());
 
         expect(
             screen.getByText(/workspaceAllAssetsAsideCard\.allAssets$/),

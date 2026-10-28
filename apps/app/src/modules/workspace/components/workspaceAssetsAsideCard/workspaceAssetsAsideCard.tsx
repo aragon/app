@@ -5,6 +5,7 @@ import { WorkspaceAccountType } from '../../api/workspaceService';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import { WorkspaceAllAssetsAsideCard } from './workspaceAllAssetsAsideCard';
 import { WorkspaceDaoAssetsAsideCard } from './workspaceDaoAssetsAsideCard';
+import { WorkspaceSafeAssetsAsideCard } from './workspaceSafeAssetsAsideCard';
 
 export interface IWorkspaceAssetsAsideCardProps {
     /**
@@ -22,29 +23,32 @@ export interface IWorkspaceAssetsAsideCardProps {
  * Aside card of the workspace assets page, picking the card matching the selected account.
  *
  * Each account type describes itself differently, so the card of a type is its own component: a DAO account shows
- * the same card as the DAO assets page, the aggregated option shows the workspace totals. A new account type is
- * added by branching on it here.
+ * the same card as the DAO assets page, a Safe account shows the Safe card, the aggregated option shows the workspace
+ * totals. A new account type is added as a case here.
  */
 export const WorkspaceAssetsAsideCard: React.FC<
     IWorkspaceAssetsAsideCardProps
 > = (props) => {
     const { activeOption, metadata } = props;
 
-    const account = activeOption?.account;
-
-    if (activeOption != null && account?.type === WorkspaceAccountType.DAO) {
-        return (
-            <WorkspaceDaoAssetsAsideCard
-                account={account}
-                label={activeOption.label}
-                metadata={metadata}
-            />
-        );
+    switch (activeOption?.account?.type) {
+        case WorkspaceAccountType.DAO:
+            return (
+                <WorkspaceDaoAssetsAsideCard
+                    account={activeOption.account}
+                    label={activeOption.label}
+                    metadata={metadata}
+                />
+            );
+        case WorkspaceAccountType.SAFE:
+            return (
+                <WorkspaceSafeAssetsAsideCard
+                    account={activeOption.account}
+                    label={activeOption.label}
+                    metadata={metadata}
+                />
+            );
+        default:
+            return <WorkspaceAllAssetsAsideCard metadata={metadata} />;
     }
-
-    const title =
-        activeOption?.isAllAccounts === false ? activeOption.label : undefined;
-
-    // Safe accounts have no card of their own yet, so they fall back to the plain totals of the selection.
-    return <WorkspaceAllAssetsAsideCard metadata={metadata} title={title} />;
 };
