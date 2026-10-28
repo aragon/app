@@ -46,7 +46,7 @@ export const SppVotingTerminalBodySummary: React.FC<
         >
             <PluginSingleComponent
                 body={isExternal ? plugin.address : undefined}
-                canVote={sppStageUtils.canBodyVote(proposal, stage, plugin)}
+                canVote={sppStageUtils.canBodyVote(proposal, stage)}
                 Fallback={SppVotingTerminalMultiBodySummaryDefault}
                 isExecuted={proposal.executed.status}
                 isVeto={sppStageUtils.isVetoBody(plugin)}
