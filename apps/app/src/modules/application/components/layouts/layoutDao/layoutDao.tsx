@@ -9,6 +9,7 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { featureFlags } from '@/shared/featureFlags';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { errorUtils } from '@/shared/utils/errorUtils';
@@ -17,6 +18,7 @@ import { BannerDao } from '../../bannerDao';
 import { DaoOnboardingWatchers } from '../../daoOnboardingWatchers';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationDao } from '../../navigations/navigationDao';
+import { LayoutSidebar } from '../layoutSidebar';
 
 export interface ILayoutDaoProps {
     /**
@@ -31,7 +33,12 @@ export interface ILayoutDaoProps {
 
 export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     const { params, children } = props;
-    const daoPageParams = await params;
+    const [daoPageParams, withSidebar] = await Promise.all([
+        params,
+        // The side navigation ships with workspaces and mirrors their navigation on the DAO pages. Resolved on the
+        // server so the page never paints the navigation bar first.
+        featureFlags.isEnabled('workspaces'),
+    ]);
     let dao: IDao;
 
     const queryClient = new QueryClient();
@@ -66,12 +73,28 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
         return <Page.Error error={parsedError} />;
     }
 
-    return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationDao dao={dao} />
+    const content = (
+        <>
             <BannerDao dao={dao} />
             <DaoOnboardingWatchers dao={dao} />
             <ErrorBoundary>{children}</ErrorBoundary>
+        </>
+    );
+
+    return (
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            {withSidebar ? (
+                <LayoutSidebar
+                    navigation={<NavigationDao dao={dao} withSidebar={true} />}
+                >
+                    {content}
+                </LayoutSidebar>
+            ) : (
+                <>
+                    <NavigationDao dao={dao} />
+                    {content}
+                </>
+            )}
         </HydrationBoundary>
     );
 };

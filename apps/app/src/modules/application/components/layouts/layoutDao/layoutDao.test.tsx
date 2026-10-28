@@ -4,8 +4,10 @@ import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOptions, Network } from '@/shared/api/daoService';
+import { featureFlags } from '@/shared/featureFlags';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { testLogger } from '@/test/utils';
+import type { INavigationDaoProps } from '../../navigations/navigationDao';
 import { type ILayoutDaoProps, LayoutDao } from './layoutDao';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -20,8 +22,17 @@ jest.mock('@tanstack/react-query', () => ({
     ),
 }));
 
+jest.mock('../../supportChat', () => ({
+    SupportChatLauncher: () => <div data-testid="support-chat-launcher-mock" />,
+}));
+
 jest.mock('../../navigations/navigationDao', () => ({
-    NavigationDao: () => <div data-testid="navigation-dao-mock" />,
+    NavigationDao: (props: INavigationDaoProps) => (
+        <div
+            data-sidebar={props.withSidebar === true}
+            data-testid="navigation-dao-mock"
+        />
+    ),
 }));
 
 jest.mock('../../bannerDao', () => ({
@@ -37,12 +48,14 @@ describe('<LayoutDao /> component', () => {
     const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
+    const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
 
     beforeEach(() => {
         consoleErrorSpy.mockImplementation(jest.fn());
         fetchQuerySpy.mockImplementation(jest.fn());
         prefetchQuerySpy.mockImplementation(jest.fn());
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
+        isEnabledSpy.mockResolvedValue(false);
     });
 
     afterEach(() => {
@@ -50,6 +63,7 @@ describe('<LayoutDao /> component', () => {
         prefetchQuerySpy.mockReset();
         consoleErrorSpy.mockReset();
         resolveDaoIdSpy.mockReset();
+        isEnabledSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
@@ -70,6 +84,44 @@ describe('<LayoutDao /> component', () => {
         render(await createTestComponent({ children }));
         expect(screen.getByTestId('navigation-dao-mock')).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
+    });
+
+    it('renders the navigation bar above the page when the workspaces flag is disabled', async () => {
+        const { container } = render(
+            await createTestComponent({ children: 'test-children' }),
+        );
+
+        expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
+        expect(screen.getByTestId('navigation-dao-mock')).toHaveAttribute(
+            'data-sidebar',
+            'false',
+        );
+        expect(
+            container.querySelector('[data-app-sidebar]'),
+        ).not.toBeInTheDocument();
+    });
+
+    it('lays the page out beside the sidebar when the workspaces flag is enabled', async () => {
+        isEnabledSpy.mockResolvedValue(true);
+        const { container } = render(
+            await createTestComponent({ children: 'test-children' }),
+        );
+
+        const sidebarLayout = container.querySelector('[data-app-sidebar]');
+        expect(screen.getByTestId('navigation-dao-mock')).toHaveAttribute(
+            'data-sidebar',
+            'true',
+        );
+        expect(sidebarLayout).toContainElement(
+            screen.getByTestId('navigation-dao-mock'),
+        );
+        expect(sidebarLayout).toContainElement(
+            screen.getByTestId('banner-mock'),
+        );
+        expect(sidebarLayout).toHaveTextContent('test-children');
+        expect(sidebarLayout).toContainElement(
+            screen.getByTestId('support-chat-launcher-mock'),
+        );
     });
 
     it('prefetches the DAO from the given slug', async () => {

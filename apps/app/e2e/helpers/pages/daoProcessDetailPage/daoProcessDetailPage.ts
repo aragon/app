@@ -4,7 +4,9 @@ export class DaoProcessDetailPage {
     constructor(private readonly page: PlaywrightPage) {}
 
     readonly settingsBreadcrumb = () =>
-        this.page.getByRole('link', { name: 'Settings' });
+        this.page
+            .getByRole('navigation', { name: 'breadcrumbs' })
+            .getByRole('link', { name: 'Settings' });
 
     readonly governanceProcessSection = () =>
         this.page.getByRole('heading', { name: 'Governance process' });
