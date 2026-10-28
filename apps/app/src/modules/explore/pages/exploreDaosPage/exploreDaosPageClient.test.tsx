@@ -6,6 +6,7 @@ import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialog
 import * as CmsService from '@/shared/api/cmsService';
 import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import {
     generateDialogContext,
     generateReactQueryInfiniteResultSuccess,
@@ -31,6 +32,10 @@ describe('<ExploreDaosPageClient /> component', () => {
         'useDialogContext',
     );
     const useFeaturedDaosSpy = jest.spyOn(CmsService, 'useFeaturedDaos');
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
     const trackEventSpy = jest.spyOn(analyticsUtils, 'trackEvent');
 
     beforeEach(() => {
@@ -40,6 +45,11 @@ describe('<ExploreDaosPageClient /> component', () => {
             generateReactQueryInfiniteResultSuccess({ data: [] }),
         );
         trackEventSpy.mockImplementation(() => undefined);
+        useFeatureFlagsSpy.mockReturnValue({
+            snapshot: [],
+            isEnabled: () => false,
+            setOverride: jest.fn(),
+        });
     });
 
     afterEach(() => {
@@ -47,6 +57,7 @@ describe('<ExploreDaosPageClient /> component', () => {
         useDialogContextSpy.mockReset();
         useFeaturedDaosSpy.mockReset();
         trackEventSpy.mockReset();
+        useFeatureFlagsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -69,6 +80,38 @@ describe('<ExploreDaosPageClient /> component', () => {
     it('renders the list of DAOs', () => {
         render(createTestComponent());
         expect(screen.getByTestId('dao-list-mock')).toBeInTheDocument();
+    });
+
+    it('hides the create workspace call to action when the workspaces feature is disabled', () => {
+        useFeatureFlagsSpy.mockReturnValue({
+            snapshot: [],
+            isEnabled: () => false,
+            setOverride: jest.fn(),
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.explore.exploreDaosPage.createWorkspace.actionLabel',
+            }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('displays the create workspace call to action when the workspaces feature is enabled', () => {
+        useFeatureFlagsSpy.mockReturnValue({
+            snapshot: [],
+            isEnabled: (key) => key === 'workspaces',
+            setOverride: jest.fn(),
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: 'app.explore.exploreDaosPage.createWorkspace.actionLabel',
+            }),
+        ).toBeInTheDocument();
     });
 
     it('opens the create DAO dialog without firing the seed click event', async () => {

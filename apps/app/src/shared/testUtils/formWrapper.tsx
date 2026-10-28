@@ -1,11 +1,17 @@
 import type { ReactNode } from 'react';
-import { type DefaultValues, FormProvider, useForm } from 'react-hook-form';
+import {
+    type FieldValues,
+    FormProvider,
+    type UseFormProps,
+    useForm,
+} from 'react-hook-form';
 
 export interface IFormWrapperProps {
     /**
-     * Initial values of the form.
+     * Default values of the form, needed to test components reading values seeded by their host form
+     * (e.g. field-arrays initialised through the form default values).
      */
-    defaultValues?: DefaultValues<Record<string, unknown>>;
+    defaultValues?: UseFormProps<FieldValues>['defaultValues'];
     /**
      * Children of the component.
      */
