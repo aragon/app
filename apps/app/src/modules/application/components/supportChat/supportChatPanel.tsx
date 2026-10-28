@@ -17,6 +17,7 @@ import { useSupportChatContext } from './supportChatContext';
 // The shell measures the browser window (`screen-lg`), not the `app` container the regular
 // breakpoint variants query (see layoutRoot/breakpoints.css): docking is a window decision, and
 // the CSS has to agree with the `matchMedia` query below, which only ever sees the window.
+// The 500px floor is also baked into `screen-docked-md` (layoutRoot/breakpoints.css): update both together.
 const panelWidthClassName = 'screen-lg:w-[clamp(500px,30vw,640px)]';
 
 // Viewport `lg` breakpoint: above it the panel is an in-flow column, below it a fullscreen drawer.

@@ -501,6 +501,10 @@
         "title": "DAO not found"
       },
       "supportChat": {
+        "launcher": {
+          "close": "Close support chat",
+          "label": "Ask Aragon"
+        },
         "panel": {
           "label": "Support chat"
         },
