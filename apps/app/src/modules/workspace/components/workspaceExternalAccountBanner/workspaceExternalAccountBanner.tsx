@@ -26,14 +26,6 @@ export interface IWorkspaceExternalAccountBannerProps {}
 /**
  * Banner of the account-scoped workspace pages when the route names an account the workspace does not hold (an
  * external option of `useWorkspaceAccountOptions`), offering to add it to this workspace or to another one.
- *
- * The account added is the external option's own, synthesized from the accounts API with a checksummed ID and its
- * resolved type, so the banner only shows once the API has placed the address as a DAO or a Safe — the same
- * accounts `workspaceUtils.validateAccountInfo` lets the create form add. It is appended through
- * `addWorkspaceAccount`, which reads the stored workspace itself, so a cached copy never overwrites a newer one.
- *
- * Adding to this workspace stays on the page: once the workspace is invalidated the account is held, so the option
- * stops being external and the banner goes. Adding to another workspace opens the same page there.
  */
 export const WorkspaceExternalAccountBanner: React.FC<
     IWorkspaceExternalAccountBannerProps
@@ -47,7 +39,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
     const { workspaceId } =
         useParams<Pick<IWorkspaceAccountPageParams, 'workspaceId'>>();
     const { activeOption, accountId } = useWorkspaceAccountOptions();
-    // Loaded by `WorkspaceGate` before any page renders, unlike the list, which only feeds the other workspaces.
+
     const { data: currentWorkspace } = useWorkspace({
         urlParams: { id: workspaceId },
     });
@@ -61,8 +53,8 @@ export const WorkspaceExternalAccountBanner: React.FC<
 
     const account = activeOption?.account;
 
-    // Until the API places the address as a DAO or a Safe there is nothing to add: the lookup is pending, the
-    // address is not found or unavailable (both said by the page), or the lookup placed nothing.
+    // Until the API resolves the address as a DAO or a Safe there is nothing to add: the lookup is pending, the
+    // address is not found or unavailable (both said by the page), or the lookup resolved nothing.
     if (!activeOption?.isExternal || account == null) {
         return null;
     }
