@@ -185,9 +185,9 @@ describe('<WorkspaceAllTransactionsAsideCard /> component', () => {
     });
 
     it('titles the card with the given title', () => {
-        render(createTestComponent({ title: 'Grants Safe' }));
+        render(createTestComponent({ title: 'Demo DAO' }));
 
-        expect(screen.getByText('Grants Safe')).toBeInTheDocument();
+        expect(screen.getByText('Demo DAO')).toBeInTheDocument();
         expect(
             screen.queryByText(
                 /workspaceTransactionsAsideCard\.allTransactions$/,
