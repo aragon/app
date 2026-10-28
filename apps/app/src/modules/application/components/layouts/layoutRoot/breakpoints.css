@@ -65,6 +65,12 @@
 @custom-variant screen-xl (@media (width >= 80rem));
 @custom-variant screen-2xl (@media (width >= 96rem));
 
+/* Window from which the app column beside the docked support chat reaches `md`: 48rem plus the
+   panel's 500px (31.25rem) floor width, which it keeps until far past this threshold (see
+   supportChatPanel.tsx). For panel surfaces that line up with the column's `md` layout, such as
+   the chat header matching the navigation bar height; keep in step with the panel width. */
+@custom-variant screen-docked-md (@media (width >= 79.25rem));
+
 @custom-variant screen-max-2xl (@media (width < 96rem));
 @custom-variant screen-max-xl (@media (width < 80rem));
 @custom-variant screen-max-lg (@media (width < 64rem));
