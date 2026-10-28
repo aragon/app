@@ -5,10 +5,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    type IWorkspaceAccount,
-    useWorkspace,
-} from '../../api/workspaceService';
+import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { WorkspaceAccountStateCard } from '../../components/workspaceAccountStateCard';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
@@ -19,10 +16,6 @@ import { useWorkspaceAccountsExecutePermission } from '../../hooks/useWorkspaceA
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 
 export interface IWorkspaceTransactionsPageClientProps {
-    /**
-     * ID of the workspace to display the transactions of.
-     */
-    workspaceId: string;
     /**
      * Number of transactions to read per page.
      */
@@ -39,15 +32,11 @@ export interface IWorkspaceTransactionsPageClientProps {
 export const WorkspaceTransactionsPageClient: React.FC<
     IWorkspaceTransactionsPageClientProps
 > = (props) => {
-    const { workspaceId, pageSize } = props;
+    const { pageSize } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const router = useRouter();
-
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
 
     // Every account of the workspace, or just the one the route names, held by the workspace or not.
     const {
@@ -155,13 +144,11 @@ export const WorkspaceTransactionsPageClient: React.FC<
                 />
             </Page.Main>
             <Page.Aside>
-                {workspace != null && (
-                    <WorkspaceTransactionsAsideCard
-                        accounts={accountsToDisplay}
-                        activeOption={activeOption}
-                        pageSize={pageSize}
-                    />
-                )}
+                <WorkspaceTransactionsAsideCard
+                    accounts={accountsToDisplay}
+                    activeOption={activeOption}
+                    pageSize={pageSize}
+                />
             </Page.Aside>
         </Page.Content>
     );

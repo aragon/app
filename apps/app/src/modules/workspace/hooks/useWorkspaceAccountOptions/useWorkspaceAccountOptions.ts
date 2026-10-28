@@ -8,9 +8,8 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     useWorkspace,
-    WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
+import type { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -75,16 +74,6 @@ export interface IUseWorkspaceAccountOptionsResult {
      */
     isPending: boolean;
 }
-
-/**
- * Stored type of the account of each state that can be added to a workspace.
- */
-const accountStateTypes: Partial<
-    Record<WorkspaceAccountState, WorkspaceAccountType>
-> = {
-    [WorkspaceAccountState.DAO]: WorkspaceAccountType.DAO,
-    [WorkspaceAccountState.SAFE]: WorkspaceAccountType.SAFE,
-};
 
 /**
  * Accounts of the workspace the reader can switch to, plus the account the URL is scoped to.
@@ -201,10 +190,7 @@ export const useWorkspaceAccountOptions =
                 externalInfo,
                 externalInfosError,
             );
-            const externalType =
-                accountState != null
-                    ? accountStateTypes[accountState]
-                    : undefined;
+            const externalType = workspaceUtils.getAccountType(externalInfo);
             const externalAccount: IWorkspaceAccount | undefined =
                 externalInfo != null && externalType != null
                     ? {

@@ -234,16 +234,12 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         pushMock.mockClear();
     });
 
-    let testIndex = 0;
-
     // The query client must sit inside the gov-ui-kit provider: that provider carries a query client of its own,
     // which would otherwise shadow this one and share its cache with every other test of this file.
     const createTestComponent = (
         props?: Partial<IWorkspaceTransactionsPageClientProps>,
     ) => {
-        testIndex += 1;
         const completeProps: IWorkspaceTransactionsPageClientProps = {
-            workspaceId: `test-workspace-${testIndex.toString()}`,
             pageSize: 20,
             ...props,
         };
