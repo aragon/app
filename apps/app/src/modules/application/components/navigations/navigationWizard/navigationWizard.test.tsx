@@ -29,6 +29,7 @@ jest.mock('@aragon/gov-ui-kit', () => ({
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
+    useSearchParams: jest.fn(),
 }));
 
 jest.mock('../../supportChat', () => ({
@@ -38,6 +39,7 @@ jest.mock('../../supportChat', () => ({
 describe('<NavigationWizard /> component', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const useSearchParamsSpy = jest.spyOn(NextNavigation, 'useSearchParams');
     const useDialogContextSpy = jest.spyOn(
         useDialogContext,
         'useDialogContext',
@@ -49,12 +51,20 @@ describe('<NavigationWizard /> component', () => {
     );
     const confirmSpy = jest.spyOn(window, 'confirm');
 
+    const setSearchParams = (params?: Record<string, string>) =>
+        useSearchParamsSpy.mockReturnValue(
+            new URLSearchParams(params) as ReturnType<
+                typeof NextNavigation.useSearchParams
+            >,
+        );
+
     beforeEach(() => {
         cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
         useRouterSpy.mockReturnValue({
             push: jest.fn(),
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
+        setSearchParams();
         useConnectionSpy.mockReturnValue({
             address: '0x123',
         } as unknown as wagmi.UseConnectionReturnType);
@@ -66,6 +76,7 @@ describe('<NavigationWizard /> component', () => {
     afterEach(() => {
         cidToSrcSpy.mockReset();
         useRouterSpy.mockReset();
+        useSearchParamsSpy.mockReset();
         useConnectionSpy.mockReset();
         useWalletConnectedSpy.mockReset();
         useDialogContextSpy.mockReset();
@@ -84,6 +95,33 @@ describe('<NavigationWizard /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    it('exits to the exit path by default', () => {
+        render(
+            createTestComponent({
+                exitPath: '/explore' as INavigationWizardProps['exitPath'],
+            }),
+        );
+        expect(screen.getByRole('link')).toHaveAttribute('href', '/explore');
+    });
+
+    it('exits to the page it was opened from when the URL names one', () => {
+        setSearchParams({ returnTo: '/workspace/demo/all/proposals' });
+        render(createTestComponent());
+        expect(screen.getByRole('link')).toHaveAttribute(
+            'href',
+            '/workspace/demo/all/proposals',
+        );
+    });
+
+    it.each(['https://evil.example', '//evil.example', '/\\evil.example'])(
+        'ignores a return path leaving the app (%s)',
+        (returnTo) => {
+            setSearchParams({ returnTo });
+            render(createTestComponent());
+            expect(screen.getByRole('link')).toHaveAttribute('href', '/');
+        },
+    );
 
     it('renders the DAO avatar and name when data is fetched', () => {
         const dao = generateDao({

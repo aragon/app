@@ -10,6 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Route } from 'next';
+import { useSearchParams } from 'next/navigation';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
@@ -43,11 +44,21 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      */
     targetDaoAddress?: string;
     /**
-     * Exit path to redirect to when exiting the wizard.
+     * Exit path to redirect to when exiting the wizard, unless the URL carries a `returnTo` path (see
+     * `wizardReturnToParam`).
      */
     exitPath: Route;
 }
 
+/**
+ * Query parameter naming the page a wizard was opened from, so its exit returns there, e.g. the workspace a new one is
+ * created from.
+ */
+export const wizardReturnToParam = 'returnTo';
+
+// Only paths inside the app are honoured: `//host` and `/\host` resolve to another origin.
+const isAppPath = (path: string | null): path is Route =>
+    path != null && /^\/(?![/\\])/.test(path);
 /**
  * Resolves the display DAO info based on target address.
  * Returns the linked account if targeting a linked account, otherwise returns the parent DAO.
@@ -80,6 +91,9 @@ const resolveDisplayDao = (
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, dao, targetDaoAddress, exitPath } = props;
+
+    const returnTo = useSearchParams().get(wizardReturnToParam);
+    const exitHref = isAppPath(returnTo) ? returnTo : exitPath;
 
     const { address } = useWalletAccount();
     const { data: displayName } = useEnsName(address, {
@@ -120,7 +134,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
             trailing={<SupportChatTrigger />}
         >
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <Link className={linkClassName} href={exitPath}>
+                <Link className={linkClassName} href={exitHref}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-0.5">
