@@ -75,6 +75,24 @@ test('rejects a changeset mixing packages from different release scopes', () => 
     }
 });
 
+test('rejects a changesets config that ignores packages', () => {
+    const { directory, changesetDir, scopesPath } = createFixture({
+        'app-change.md': ['@aragon/app'],
+    });
+    fs.writeFileSync(
+        path.join(changesetDir, 'config.json'),
+        JSON.stringify({ ignore: ['@aragon/docs'] }),
+    );
+
+    try {
+        const errors = validateChangesets({ changesetDir, scopesPath });
+        assert.equal(errors.length, 1);
+        assert.match(errors[0], /config\.json: "ignore" must stay empty/);
+    } finally {
+        fs.rmSync(directory, { recursive: true, force: true });
+    }
+});
+
 test('rejects a changeset naming a package outside every release scope', () => {
     const { directory, changesetDir, scopesPath } = createFixture({
         'unknown-change.md': ['@aragon/new-package'],

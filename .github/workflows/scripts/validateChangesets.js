@@ -8,6 +8,16 @@ const { readReleaseScopes } = require('./releaseScopes');
 // CI (`pnpm validate:changesets`, part of `pnpm test`) so the mix surfaces on the PR that adds
 // it, not when a release later fails to start.
 
+// The `ignore` list of the changesets config has to stay empty for the same reason: changesets
+// refuses `--ignore` flags next to it, so a non-empty list fails every release start. Packages
+// outside every scope (`@aragon/docs`) are already ignored by every flow.
+const readConfigIgnore = (changesetDir) => {
+    const configPath = path.join(changesetDir, 'config.json');
+    return fs.existsSync(configPath)
+        ? (JSON.parse(fs.readFileSync(configPath, 'utf8')).ignore ?? [])
+        : [];
+};
+
 // A changeset's frontmatter names the bumped packages, e.g. `"@aragon/app": minor`.
 const parseChangesetPackages = (content) => {
     const frontmatter = content.match(/^---\n([\s\S]*?)\n---/);
@@ -26,7 +36,14 @@ const validateChangesets = ({ changesetDir, scopesPath }) => {
         .readdirSync(changesetDir)
         .filter((file) => file.endsWith('.md') && file !== 'README.md');
 
-    return changesets.flatMap((file) => {
+    const configErrors =
+        readConfigIgnore(changesetDir).length > 0
+            ? [
+                  'config.json: "ignore" must stay empty — the release flows pass every package outside their scope as `changeset version --ignore`, which changesets refuses next to a config ignore list.',
+              ]
+            : [];
+
+    const changesetErrors = changesets.flatMap((file) => {
         const packages = parseChangesetPackages(
             fs.readFileSync(path.join(changesetDir, file), 'utf8'),
         );
@@ -55,6 +72,8 @@ const validateChangesets = ({ changesetDir, scopesPath }) => {
 
         return [];
     });
+
+    return [...configErrors, ...changesetErrors];
 };
 
 module.exports = { parseChangesetPackages, validateChangesets };
