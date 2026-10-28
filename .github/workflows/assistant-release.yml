@@ -2,13 +2,16 @@
 # aragon/github-templates modules: a start every Monday (or by hand) cuts release/assistant/<timestamp>
 # with the changesets bump of the "assistant" release scope (the service plus its version-only
 # packages) and opens the "Release @aragon/assistant@x.y.z" PR with its Slack thread; every push to
-# that PR refreshes the summary and runs the checks; merging tags the merge commit and publishes the
-# GitHub Release, which starts the production deploy (assistant-production.yml); closing it without
-# a merge cancels the release. Linear mirrors the release in the "Assistant" pipeline.
+# that PR refreshes the summary, runs the checks and the LLM smoke; merging tags the merge commit
+# and publishes the GitHub Release, which starts the production deploy (assistant-production.yml);
+# closing it without a merge cancels the release. Linear mirrors the release in the "Assistant"
+# pipeline.
 #
 # The merge commit is tagged (unlike the app, which tags the staging-tested head): the assistant
 # release PR has no staging ceremony, and production builds from the tag, which must include the
-# merge. A scheduled start green-skips when a release PR is open or there is nothing to release.
+# merge. The release content is smoked where it already runs: dev.assistant.aragon.org serves
+# main, which the release branch only bumps. A scheduled start green-skips when a release PR is
+# open or there is nothing to release.
 
 name: Assistant Release
 
@@ -100,6 +103,27 @@ jobs:
         run: pnpm lint:check
       - name: Run tests with coverage
         run: pnpm test:coverage
+
+  # Not a required check: a red smoke is a signal to read the conversations, not a merge gate.
+  # The result lands in the release thread and as a PR comment, a failure also in the alerts
+  # channel.
+  smoke:
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    # What the called workflow asks for: `actions: read` for the deploy-run lookup,
+    # `pull-requests: write` for the result comment.
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    uses: ./.github/workflows/assistant-llm-smoke.yml
+    with:
+      url: https://dev.assistant.aragon.org
+      thread-pr-number: ${{ github.event.pull_request.number }}
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   finalize:
     if: >
