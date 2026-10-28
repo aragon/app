@@ -49,6 +49,9 @@ therefore measure the **application column**, not the browser — see
 - A decision shared between the column and a portalled surface cannot be expressed in CSS — the two
   measure different things. Measure the element inside the column and hand the result to the
   portal: `NavigationDao` lists the bar's inline links in its dialog only while they have no width.
+- Page layouts with the side navigation go through `LayoutSidebar`: the navigation stays outside the
+  content column, so its `lg:` switch measures the whole app column, and the content column declares
+  its own `app` container so the page lays out against the width left beside the sidebar.
 - Tailwind's built-in container variants (`@sm:` … `@7xl:`, a different scale) query the nearest
   container of *any* name, which inside the app is the application column unless the component
   declares its own `@container`. Only use them together with such a declaration.

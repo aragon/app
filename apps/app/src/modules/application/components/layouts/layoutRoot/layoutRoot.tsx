@@ -83,14 +83,15 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                         panel measures the browser window through `screen-*` variants. */}
                     <SupportChatContextProvider>
                         <div className="flex grow flex-row">
-                            <div className="@container/app flex min-w-0 grow flex-col">
+                            <div className="@container/app group/app flex min-w-0 grow flex-col">
                                 <ErrorBoundary>
                                     <div className="flex grow flex-col">
                                         {children}
                                     </div>
                                     {isDebugPanelEnabled && <DebugPanelLazy />}
                                 </ErrorBoundary>
-                                <Footer />
+                                {/* The sidebar carries the footer content while it is shown (see LayoutSidebar). */}
+                                <Footer className="lg:group-has-[[data-app-sidebar]]/app:hidden" />
                             </div>
                             <SupportChatPanel />
                         </div>

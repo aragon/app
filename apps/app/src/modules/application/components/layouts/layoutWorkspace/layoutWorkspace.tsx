@@ -11,6 +11,7 @@ import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspacePageParams } from '@/shared/types';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationWorkspace } from '../../navigations/navigationWorkspace';
+import { LayoutSidebar } from '../layoutSidebar';
 
 export interface ILayoutWorkspaceProps {
     /**
@@ -24,7 +25,7 @@ export interface ILayoutWorkspaceProps {
 }
 
 /**
- * Layout of the workspace pages: the workspace navigation bar plus the page itself.
+ * Layout of the workspace pages: the workspace navigation (sidebar from `lg`, bar below it) plus the page itself.
  *
  * The workspace itself is not fetched here. Its registry is backed by local storage for now, so it cannot be read during a
  * server render — `WorkspaceGate` loads it on the client and holds the pages back until it resolves (see
@@ -63,10 +64,13 @@ export const LayoutWorkspace: React.FC<ILayoutWorkspaceProps> = async (
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
-            <NavigationWorkspace workspaceId={workspaceId} />
-            <WorkspaceGate workspaceId={workspaceId}>
-                <ErrorBoundary>{children}</ErrorBoundary>
-            </WorkspaceGate>
+            <LayoutSidebar
+                navigation={<NavigationWorkspace workspaceId={workspaceId} />}
+            >
+                <WorkspaceGate workspaceId={workspaceId}>
+                    <ErrorBoundary>{children}</ErrorBoundary>
+                </WorkspaceGate>
+            </LayoutSidebar>
         </HydrationBoundary>
     );
 };

@@ -23,6 +23,10 @@ jest.mock('next/navigation-server', () => ({
     }),
 }));
 
+jest.mock('../../supportChat', () => ({
+    SupportChatLauncher: () => <div data-testid="support-chat-launcher-mock" />,
+}));
+
 jest.mock('../../navigations/navigationWorkspace', () => ({
     NavigationWorkspace: (props: INavigationWorkspaceProps) => (
         <div data-testid="navigation-workspace-mock">{props.workspaceId}</div>

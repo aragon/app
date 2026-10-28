@@ -19,6 +19,7 @@ describe('<WorkspaceSelector /> component', () => {
         'getWorkspaceList',
     );
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const pushMock = jest.fn();
 
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
@@ -47,12 +48,14 @@ describe('<WorkspaceSelector /> component', () => {
         useRouterSpy.mockReturnValue({
             push: pushMock,
         } as unknown as AppRouterInstance);
+        usePathnameSpy.mockReturnValue('/workspace/first/all/proposals');
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         getWorkspaceListSpy.mockReset();
         useRouterSpy.mockReset();
+        usePathnameSpy.mockReset();
         pushMock.mockReset();
     });
 
@@ -84,29 +87,16 @@ describe('<WorkspaceSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('lists every workspace followed by the edit and create workspace items', async () => {
+    it('lists every workspace followed by the create workspace item', async () => {
         render(createTestComponent());
 
         await openDropdown();
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(4);
+        expect(items).toHaveLength(3);
         expect(items[0]).toHaveTextContent('First Workspace');
         expect(items[1]).toHaveTextContent('Second Workspace');
-        expect(items[2]).toHaveTextContent(/workspaceSelector\.edit$/);
-        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
-    });
-
-    it('links the edit item to the edit wizard of the current workspace', async () => {
-        render(createTestComponent());
-
-        await openDropdown();
-
-        expect(
-            await screen.findByRole('menuitem', {
-                name: /workspaceSelector\.edit$/,
-            }),
-        ).toHaveAttribute('href', '/workspace/first/edit');
+        expect(items[2]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
     it('opens the overview of the selected workspace', async () => {
@@ -118,7 +108,7 @@ describe('<WorkspaceSelector /> component', () => {
         expect(pushMock).toHaveBeenCalledWith('/workspace/second/all/overview');
     });
 
-    it('opens the create workspace wizard', async () => {
+    it('opens the create workspace wizard with the current page to return to', async () => {
         render(createTestComponent());
 
         await openDropdown();
@@ -126,6 +116,8 @@ describe('<WorkspaceSelector /> component', () => {
             await screen.findByText(/workspaceSelector\.create$/),
         );
 
-        expect(pushMock).toHaveBeenCalledWith('/create/workspace');
+        expect(pushMock).toHaveBeenCalledWith(
+            '/create/workspace?returnTo=%2Fworkspace%2Ffirst%2Fall%2Fproposals',
+        );
     });
 });

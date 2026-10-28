@@ -25,7 +25,9 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWalletAccount } from '../../../hooks/useWalletAccount';
+import { FooterSidebar } from '../../footer';
 import { SupportChatTrigger } from '../../supportChat';
+import { NavigationSidebarAccount } from '../navigationSidebarAccount';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
 
@@ -34,16 +36,23 @@ export interface INavigationDaoProps extends INavigationContainerProps {
      * DAO to display the data for.
      */
     dao: IDao;
+    /**
+     * Renders the sidebar from the `lg` breakpoint instead of the navigation bar, which then only shows below it.
+     * Render the navigation as the `navigation` of `LayoutSidebar` when set.
+     */
+    withSidebar?: boolean;
 }
 
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
-    const { dao, containerClasses, ...otherProps } = props;
+    const { dao, withSidebar, className, containerClasses, ...otherProps } =
+        props;
     const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     // Zero width = the bar is collapsed (`hidden lg:flex`). The dialog renders outside the app
-    // column and can't use that breakpoint, so it follows the measured links.
+    // column and can't use that breakpoint, so it follows the measured links. With the sidebar the bar
+    // never shows its links, so it stays collapsed and the dialog and sidebar list every link.
     const linksRef = useRef<HTMLDivElement>(null);
     const [isBarCollapsed, setIsBarCollapsed] = useState(true);
 
@@ -109,63 +118,93 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
-    return (
-        <Navigation.Container
-            containerClasses={classNames(
-                'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
-                containerClasses,
-            )}
-            trailing={<SupportChatTrigger />}
-            {...otherProps}
-        >
-            <div className="flex items-center justify-between gap-1">
-                <NavigationDaoHome
-                    dao={dao}
-                    onClick={() => setIsDialogOpen(true)}
+    const openDialog = () => setIsDialogOpen(true);
+
+    // Heads the dialog and the sidebar, which list the same links: the sidebar shows it in place of a button opening
+    // the dialog.
+    const daoSummary = (
+        <>
+            <DaoAvatar
+                name={daoDisplayName}
+                responsiveSize={{ sm: 'xl' }}
+                size="lg"
+                src={daoAvatar}
+            />
+            <div className="flex flex-col gap-1.5 font-normal leading-tight">
+                <p className="truncate text-lg text-neutral-800 sm:text-xl">
+                    {daoDisplayName}
+                </p>
+                <AddressOutput
+                    address={dao.address}
+                    className="w-full text-neutral-500 text-sm sm:text-base"
+                    copy={false}
+                    href={addressLink}
+                    isExternal={true}
                 />
-                <Navigation.Links
-                    className="hidden lg:flex"
-                    links={pageLinks}
-                    ref={linksRef}
-                />
-                <div className="flex items-center gap-x-2 lg:gap-x-3">
-                    <Wallet onClick={handleWalletClick} user={walletUser} />
-                    <Navigation.Trigger
-                        className="md:hidden"
-                        onClick={() => setIsDialogOpen(true)}
-                    />
-                </div>
             </div>
-            <Navigation.Dialog
-                hiddenDescription={t(
-                    'app.application.navigationDao.a11y.description',
+        </>
+    );
+
+    return (
+        <>
+            {withSidebar && (
+                <Navigation.Sidebar
+                    footer={
+                        <>
+                            <NavigationSidebarAccount
+                                onClick={handleWalletClick}
+                                user={walletUser}
+                            />
+                            <FooterSidebar />
+                        </>
+                    }
+                    header={
+                        <div className="flex flex-col gap-3 px-4 pt-2">
+                            {daoSummary}
+                        </div>
+                    }
+                    links={dialogLinks}
+                />
+            )}
+            <Navigation.Container
+                className={classNames({ 'lg:hidden': withSidebar }, className)}
+                containerClasses={classNames(
+                    'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
+                    containerClasses,
                 )}
-                hiddenTitle={t('app.application.navigationDao.a11y.title')}
-                links={dialogLinks}
-                onOpenChange={setIsDialogOpen}
-                open={isDialogOpen}
+                // On the sidebar layout the floating launcher (LayoutSidebar) is the chat entry point.
+                trailing={withSidebar ? undefined : <SupportChatTrigger />}
+                {...otherProps}
             >
-                <div className="flex flex-col gap-3 px-8">
-                    <DaoAvatar
-                        name={daoDisplayName}
-                        responsiveSize={{ sm: 'xl' }}
-                        size="lg"
-                        src={daoAvatar}
-                    />
-                    <div className="flex flex-col gap-1.5 font-normal leading-tight">
-                        <p className="truncate text-lg text-neutral-800 sm:text-xl">
-                            {daoDisplayName}
-                        </p>
-                        <AddressOutput
-                            address={dao.address}
-                            className="w-full text-neutral-500 text-sm sm:text-base"
-                            copy={false}
-                            href={addressLink}
-                            isExternal={true}
+                <div className="flex items-center justify-between gap-1">
+                    <NavigationDaoHome dao={dao} onClick={openDialog} />
+                    {!withSidebar && (
+                        <Navigation.Links
+                            className="hidden lg:flex"
+                            links={pageLinks}
+                            ref={linksRef}
+                        />
+                    )}
+                    <div className="flex items-center gap-x-2 lg:gap-x-3">
+                        <Wallet onClick={handleWalletClick} user={walletUser} />
+                        <Navigation.Trigger
+                            className="md:hidden"
+                            onClick={openDialog}
                         />
                     </div>
                 </div>
-            </Navigation.Dialog>
-        </Navigation.Container>
+                <Navigation.Dialog
+                    hiddenDescription={t(
+                        'app.application.navigationDao.a11y.description',
+                    )}
+                    hiddenTitle={t('app.application.navigationDao.a11y.title')}
+                    links={dialogLinks}
+                    onOpenChange={setIsDialogOpen}
+                    open={isDialogOpen}
+                >
+                    <div className="flex flex-col gap-3 px-8">{daoSummary}</div>
+                </Navigation.Dialog>
+            </Navigation.Container>
+        </>
     );
 };

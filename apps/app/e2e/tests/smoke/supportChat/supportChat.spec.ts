@@ -28,7 +28,11 @@ const setSupportChatFlag = async (
     await context.addCookies([
         {
             name: featureFlagCookieName,
-            value: encodeURIComponent(JSON.stringify({ supportChat: enabled })),
+            // The spec drives the navigation bar, which the `workspaces` flag replaces with the sidebar from `lg`:
+            // pin it off so the spec holds where the flag defaults on (local).
+            value: encodeURIComponent(
+                JSON.stringify({ supportChat: enabled, workspaces: false }),
+            ),
             url: baseURL,
         },
     ]);
@@ -385,8 +389,12 @@ test.describe('Support chat', () => {
     // A container declaration on `body` would stop body-level scroll locks (the gov-ui-kit dialogs
     // lock through react-remove-scroll) from reaching the viewport and clamp the page to the top.
     test('keeps the page in place behind a dialog opened from a scrolled position', async ({
+        baseURL,
+        context,
         page,
     }) => {
+        // The dialog is opened from the navigation bar, which the `workspaces` flag replaces with the sidebar.
+        await setSupportChatFlag(context, baseURL!, false);
         const [dao] = getDaosWithFeature('multisig');
         await new DaoDashboardPage({
             page,
@@ -435,8 +443,8 @@ test.describe('Support chat', () => {
         }).navigate();
 
         await page.evaluate(() => window.scrollTo(0, window.innerHeight));
-        // A point in the page gutter where every element up to the body is transparent, so the
-        // pixel is the canvas itself.
+        // A point in a page gutter where every element up to the body is transparent, so the pixel is the canvas
+        // itself. Both edges are tried: the side navigation covers the left one when the `workspaces` flag is on.
         const point = await page.evaluate(() => {
             const isTransparent = (element: Element | null) => {
                 for (
@@ -455,11 +463,12 @@ test.describe('Support chat', () => {
 
                 return true;
             };
-            const x = 2;
-            for (const factor of [0.5, 0.25, 0.75]) {
-                const y = Math.round(window.innerHeight * factor);
-                if (isTransparent(document.elementFromPoint(x, y))) {
-                    return { x, y };
+            for (const x of [2, window.innerWidth - 2]) {
+                for (const factor of [0.5, 0.25, 0.75]) {
+                    const y = Math.round(window.innerHeight * factor);
+                    if (isTransparent(document.elementFromPoint(x, y))) {
+                        return { x, y };
+                    }
                 }
             }
 
