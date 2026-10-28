@@ -86,14 +86,14 @@ The scheduled run green-skips when there are no pending changesets for the `app`
 **Action:**
 
 1. Approve the Release PR (at least 1 approval from CODEOWNERS)
-2. Merge it into `main`
+2. Merge it into `main` with a **merge commit** (not squash): the tag goes on the PR head, which must stay in `main`'s history
 
 **Merging is the release act** — everything after this is automatic.
 
 **What happens automatically on merge** (`app-release.yml`, finalize):
 1. Guard: the release branch must carry no new app-scope changesets (see the FAQ below)
 2. 🏷️ Slack: "PR merged! Creating tag and GitHub Release..."
-3. Git tag `@aragon/app@<version>` is created on the staging-tested head SHA
+3. Git tag `@aragon/app@<version>` is created on the staging-tested head SHA (never on the merge commit, which would also carry whatever landed on `main` while the PR was open — the same rule applies to the assistant, gov-ui-kit and aragon-domain flows)
 4. GitHub Release is created with the changelog as its notes
 5. 📦 Slack: "GitHub Release created" with the link
 
