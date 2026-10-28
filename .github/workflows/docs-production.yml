@@ -1,31 +1,71 @@
-# The "Docs Production" workflow deploys the knowledge-base site (apps/docs) to production, by hand
-# only: a manual dispatch of main, or of the given ref. It publishes the knowledge base as it stands,
-# without a change in this repository. The site has no versioned releases: the build fetches the
-# pages the product owner validated and deploys them from main.
+# The "Docs Production" workflow deploys the docs site to production (platform-doc.aragon.org, the
+# origin the app's /help rewrite points at) when a GitHub Release on an @aragon/docs@* tag is
+# published (docs-release.yml finalize), and by hand for a hotfix tag or a re-deploy. It builds the
+# tag with the knowledge-base commit its staging deploy recorded (the `docs/corpus` status of the
+# tagged commit, see docs-release.yml), so production publishes the pages the release tested; a tag
+# without the status never reached staging and is refused. The `production` environment requires
+# an approval from @aragon/app-team: the deploy pauses there, and the release thread gets the
+# "waiting for approval" ping, the result, the smoke tests and finally the head message flipped to
+# Completed.
 
 name: Docs Production
 
 on:
   workflow_dispatch:
     inputs:
-      ref:
-        description: "Branch, tag or SHA to deploy (default: main)"
-        required: false
+      tag:
+        description: "Release tag to deploy (e.g. @aragon/docs@0.1.0)"
+        required: true
         type: string
-
-concurrency:
-  group: docs-production-deployment
-  cancel-in-progress: true
+  release:
+    types: [published]
 
 permissions:
   contents: read
 
 jobs:
+  # The repo publishes releases for several workspaces; only docs tags deploy the site.
+  corpus:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, '@aragon/docs@')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: read
+    outputs:
+      commit: ${{ steps.pin.outputs.commit }}
+    steps:
+      - name: Read the knowledge-base commit the release tested
+        id: pin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SERVER: ${{ github.server_url }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          set -euo pipefail
+          # The tagged commit: the tag's own entry for a lightweight tag, its peeled one (^{}, listed
+          # last) for an annotated tag.
+          sha="$(git ls-remote "$SERVER/$REPO.git" "refs/tags/$TAG" "refs/tags/$TAG^{}" | awk 'END { print $1 }')"
+          [ -n "$sha" ] || { echo "::error::Tag '$TAG' does not exist" >&2; exit 1; }
+          commit="$(gh api "repos/$REPO/commits/$sha/status" --jq '.statuses[] | select(.context == "docs/corpus") | .description')"
+          if ! [[ "$commit" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::$TAG carries no docs/corpus status: it never reached staging" >&2
+            exit 1
+          fi
+          echo "Knowledge base: aragon/platform-doc@$commit"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+  # The production group sits on this job, not the workflow: a run skipped by the tag guard must
+  # not cancel a deploy (or a rollback) waiting for its approval.
   deploy:
+    needs: corpus
+    concurrency:
+      group: docs-production-deployment
+      cancel-in-progress: true
     uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
       env: production
-      ref: ${{ inputs.ref || 'main' }}
+      ref: ${{ github.event.release.tag_name || inputs.tag }}
       domain: platform-doc.aragon.org
       vercel-scope: aragon-app
       workspace: apps/docs
@@ -34,5 +74,43 @@ jobs:
       setup-command: pnpm run setup production
       # The build reads the private aragon/platform-doc knowledge base; build-time only.
       op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.corpus.outputs.commit }}
+      version: ${{ github.event.release.tag_name || inputs.tag }}
+      gated: true
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      next-steps: "If there are issues with the release, use hotfix or rollback."
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  e2e:
+    needs: deploy
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    with:
+      deployment-url: https://platform-doc.aragon.org
+      environment: production
+      working-directory: apps/docs
+      test-command: E2E_DOCS_MODE=ready pnpm e2e:smoke
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # A manual deploy of an older tag is not a release completing.
+  complete:
+    needs: deploy
+    if: github.event_name == 'release'
+    uses: aragon/github-templates/.github/workflows/release-complete.yml@main
+    with:
+      tag: ${{ github.event.release.tag_name }}
+      env: production
+      url: https://platform-doc.aragon.org
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+      op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

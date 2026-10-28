@@ -1,19 +1,17 @@
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
     type DocsEnvironment,
     docsCorpusModes,
-    loadCorpus,
     readLastModified,
     resolveCorpus,
 } from '@aragon/docs-corpus';
 import {
-    buildSite,
     type IFile,
     renderContentFiles,
     renderPublicFiles,
-    resolveSiteLink,
 } from './buildContent';
+import { loadSite } from './loadSite';
 
 // Build-time entry (`pnpm prepare:content`, before `next build` and before the dev server):
 // fetches the knowledge base (aragon/platform-doc, branch development) into the git-ignored
@@ -38,6 +36,7 @@ const environments: readonly DocsEnvironment[] = [
     'local',
     'development',
     'preview',
+    'staging',
     'production',
 ];
 
@@ -51,28 +50,6 @@ const readEnvironment = (): DocsEnvironment => {
     }
 
     return value as DocsEnvironment;
-};
-
-// The raw index.md of the root and of every folder with a published page, where it exists.
-const readIndexSources = async (
-    rootDir: string,
-    dirs: Iterable<string>,
-): Promise<Map<string, string>> => {
-    const sources = new Map<string, string>();
-
-    for (const dir of new Set(['', ...dirs])) {
-        const indexPath = dir === '' ? 'index.md' : `${dir}/index.md`;
-        const source = await readFile(
-            path.join(rootDir, indexPath),
-            'utf8',
-        ).catch(() => undefined);
-
-        if (source != null) {
-            sources.set(indexPath, source);
-        }
-    }
-
-    return sources;
 };
 
 const writeFiles = async (dir: string, files: IFile[]) => {
@@ -99,10 +76,13 @@ const run = async () => {
         );
     }
 
-    const { documents, skipped } = await loadCorpus({
+    // The pages' "last updated": the checkout's log, which a fetch brings along and a local
+    // checkout has; a directory without one dates nothing.
+    const lastModified = readLastModified(corpus.rootDir);
+    const { site, documents, skipped, indexSources } = await loadSite({
         rootDir: corpus.rootDir,
         mode,
-        resolveLink: resolveSiteLink,
+        lastModified,
     });
 
     if (documents.length === 0) {
@@ -111,16 +91,6 @@ const run = async () => {
         );
     }
 
-    const indexSources = await readIndexSources(
-        corpus.rootDir,
-        documents.map((document) =>
-            path.posix.dirname(document.path).replace(/^\.$/, ''),
-        ),
-    );
-    // The pages' "last updated": the checkout's log, which a fetch brings along and a local
-    // checkout has; a directory without one dates nothing.
-    const lastModified = readLastModified(corpus.rootDir);
-    const site = buildSite(documents, indexSources, lastModified);
     const contentFiles = renderContentFiles(site);
     await writeFiles(contentDir, contentFiles);
     await writeFiles(publicDir, renderPublicFiles(site));

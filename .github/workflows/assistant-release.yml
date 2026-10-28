@@ -1,5 +1,5 @@
 # The "Assistant Release" workflow is the assistant's release PR lifecycle, on the shared
-# aragon/github-templates modules: a start every Monday (or by hand) cuts release/assistant/<timestamp>
+# aragon/github-templates modules: a start every Wednesday (or by hand) cuts release/assistant/<timestamp>
 # with the changesets bump of the "assistant" release scope (the service plus its version-only
 # packages) and opens the "Release @aragon/assistant@x.y.z" PR with its Slack thread; every push to
 # that PR refreshes the summary, runs the checks and the LLM smoke; merging tags the merge commit
@@ -17,7 +17,7 @@ name: Assistant Release
 
 on:
   schedule:
-    - cron: "17 15 * * 1"
+    - cron: "17 15 * * 3"
   workflow_dispatch:
     inputs:
       base_commit:

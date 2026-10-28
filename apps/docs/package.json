@@ -1,5 +1,6 @@
 {
     "name": "@aragon/docs",
+    "version": "0.0.0",
     "private": true,
     "description": "Public site of the Aragon platform knowledge base (app.aragon.org/help), built from aragon/platform-doc through @aragon/docs-corpus",
     "homepage": "https://github.com/aragon/app#readme",
@@ -12,7 +13,11 @@
     "scripts": {
         "build": "pnpm run prepare:content && next build && pnpm run check:output && pnpm run nest:output",
         "check:output": "tsx src/content/checkOutput.ts",
+        "content:diff": "tsx src/content/diffContent.ts",
         "dev": "pnpm run setup local && pnpm run prepare:content && next dev --port 3001",
+        "e2e": "playwright test --config e2e/playwright.config.ts",
+        "e2e:install": "playwright install --with-deps chromium",
+        "e2e:smoke": "playwright test --config e2e/playwright.config.ts e2e/tests/smoke",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "nest:output": "tsx src/content/nestOutput.ts",
@@ -37,6 +42,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "catalog:",
+        "@playwright/test": "^1.63.0",
         "@tailwindcss/postcss": "catalog:",
         "@types/jest": "catalog:",
         "@types/mdast": "catalog:",
