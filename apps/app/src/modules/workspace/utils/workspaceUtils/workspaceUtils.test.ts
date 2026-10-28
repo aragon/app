@@ -481,6 +481,21 @@ describe('workspace utils', () => {
             ).toEqual(WorkspaceAccountState.DAO);
         });
 
+        it('keeps the state of an earlier result when a refetch fails with a not-found error', () => {
+            const error = new AragonBackendServiceError(
+                AragonBackendServiceError.notFoundCode,
+                'Resource not found',
+                404,
+            );
+
+            expect(
+                workspaceUtils.resolveAccountState(
+                    buildAccountInfo({ type: WorkspaceAccountInfoType.SAFE }),
+                    error,
+                ),
+            ).toEqual(WorkspaceAccountState.SAFE);
+        });
+
         it('returns undefined while the lookup is pending', () => {
             expect(workspaceUtils.resolveAccountState()).toBeUndefined();
         });

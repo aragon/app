@@ -383,8 +383,10 @@ class WorkspaceUtils {
      * The endpoint answers an address that is neither an indexed DAO nor a Safe with a 404 for the whole request
      * rather than with an `unsupported` entry (see Known gaps in `docs/projectDocs/createWorkspace.md`). With a
      * single account in the request that 404 can only be about it, so it reads as not found too. Any other failure
-     * of the lookup is transient as far as the reader can tell, so it reads as unavailable and gets a retry, unless
-     * an earlier result still places the account.
+     * of the lookup is transient as far as the reader can tell, so it reads as unavailable and gets a retry.
+     *
+     * An earlier result that places the account wins over any later failure, a 404 included: React Query keeps the
+     * last data next to the error of a failed refetch, and a DAO or a Safe does not stop being one.
      * @param accountInfo - The only entry of the lookup, undefined while it is pending or when it failed.
      * @param error - Error the lookup failed with, if any.
      * @returns The state of the account, or undefined while the lookup is pending or when it placed nothing.
@@ -393,6 +395,16 @@ class WorkspaceUtils {
         accountInfo?: IWorkspaceAccountInfo,
         error?: unknown,
     ): WorkspaceAccountState | undefined => {
+        const stateMap: Record<WorkspaceAccountType, WorkspaceAccountState> = {
+            [WorkspaceAccountType.DAO]: WorkspaceAccountState.DAO,
+            [WorkspaceAccountType.SAFE]: WorkspaceAccountState.SAFE,
+        };
+        const accountType = this.getAccountType(accountInfo);
+
+        if (accountType != null) {
+            return stateMap[accountType];
+        }
+
         if (
             AragonBackendServiceError.isNotFoundError(error) ||
             accountInfo?.status === WorkspaceAccountInfoStatus.UNSUPPORTED
@@ -402,16 +414,6 @@ class WorkspaceUtils {
 
         if (accountInfo?.status === WorkspaceAccountInfoStatus.UNAVAILABLE) {
             return WorkspaceAccountState.UNAVAILABLE;
-        }
-
-        const stateMap: Record<WorkspaceAccountType, WorkspaceAccountState> = {
-            [WorkspaceAccountType.DAO]: WorkspaceAccountState.DAO,
-            [WorkspaceAccountType.SAFE]: WorkspaceAccountState.SAFE,
-        };
-        const accountType = this.getAccountType(accountInfo);
-
-        if (accountType != null) {
-            return stateMap[accountType];
         }
 
         return error != null ? WorkspaceAccountState.UNAVAILABLE : undefined;
