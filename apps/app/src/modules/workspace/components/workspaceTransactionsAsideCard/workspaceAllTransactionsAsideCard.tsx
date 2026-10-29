@@ -1,13 +1,10 @@
 'use client';
 
-import { DateFormat, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWorkspaceTransactions } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
-import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
-import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
+import { useWorkspaceTransactionStats } from './useWorkspaceTransactionStats';
 
 export interface IWorkspaceAllTransactionsAsideCardProps {
     /**
@@ -20,7 +17,7 @@ export interface IWorkspaceAllTransactionsAsideCardProps {
      */
     pageSize: number;
     /**
-     * Title of the card, defaulting to the generic aggregated-view title.
+     * Title of the card, defaulting to the generic aggregated-view title. Set by the DAO card's fallback.
      */
     title?: string;
 }
@@ -28,8 +25,7 @@ export interface IWorkspaceAllTransactionsAsideCardProps {
 /**
  * Stats of the aggregated transaction view, displayed on the aside of the workspace transactions page.
  *
- * Also serves the account types that have no card of their own — a Safe, today — which is why the accounts it
- * reads are passed in rather than derived: the selection is resolved once by the page.
+ * Also the fallback of the DAO card while its DAO is unread, which is why it takes its accounts and title as props.
  */
 export const WorkspaceAllTransactionsAsideCard: React.FC<
     IWorkspaceAllTransactionsAsideCardProps
@@ -38,55 +34,7 @@ export const WorkspaceAllTransactionsAsideCard: React.FC<
 
     const { t } = useTranslations();
 
-    // Unfiltered first page of the list: it carries the total count, the most recent transaction and the partial
-    // flag. Shares its key with the list's own "all" query, so it only adds a request while another type is
-    // selected.
-    const { data: transactions } = useWorkspaceTransactions(
-        buildWorkspaceTransactionListParams(
-            accounts.map(({ network, address }) => ({ network, address })),
-            pageSize,
-        ),
-        { enabled: accounts.length > 0 },
-    );
-
-    const firstPage = transactions?.pages[0];
-    const transactionsCount = firstPage?.metadata.totalRecords;
-    const lastActivity = firstPage?.data[0]?.blockTimestamp;
-
-    const formattedCount =
-        transactionsCount != null
-            ? (formatterUtils.formatNumber(transactionsCount, {
-                  format: NumberFormat.GENERIC_SHORT,
-              }) ?? '-')
-            : '-';
-
-    const formattedLastActivity =
-        lastActivity != null
-            ? (formatterUtils.formatDate(lastActivity * 1000, {
-                  format: DateFormat.RELATIVE,
-              }) ?? '-')
-            : '-';
-
-    const stats = [
-        {
-            label: t(
-                'app.workspace.workspaceTransactionsAsideCard.transactions',
-            ),
-            // Unread accounts are missing from the count, so it is only a lower bound.
-            value:
-                workspaceCoverageUtils.hasIncompleteCount(
-                    firstPage?.coverage,
-                ) && transactionsCount != null
-                    ? `${formattedCount}+`
-                    : formattedCount,
-        },
-        {
-            label: t(
-                'app.workspace.workspaceTransactionsAsideCard.lastActivity',
-            ),
-            value: formattedLastActivity,
-        },
-    ];
+    const stats = useWorkspaceTransactionStats(accounts, pageSize);
 
     const cardTitle =
         title ??
