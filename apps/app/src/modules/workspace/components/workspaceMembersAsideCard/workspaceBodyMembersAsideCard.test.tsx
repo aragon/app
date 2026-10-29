@@ -1,10 +1,12 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as daoPluginInfo from '@/modules/settings/components/daoPluginInfo';
+import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { Network } from '@/shared/api/daoService';
+import * as pluginSingleComponent from '@/shared/components/pluginSingleComponent';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
-import type { IWorkspaceMemberTab } from '../../hooks/useWorkspaceMemberTabs';
+import type { IWorkspaceBodyMemberTab } from '../../hooks/useWorkspaceMemberTabs';
 import {
     type IWorkspaceBodyMembersAsideCardProps,
     WorkspaceBodyMembersAsideCard,
@@ -12,12 +14,17 @@ import {
 
 describe('<WorkspaceBodyMembersAsideCard /> component', () => {
     const daoPluginInfoSpy = jest.spyOn(daoPluginInfo, 'DaoPluginInfo');
+    const pluginSingleComponentSpy = jest.spyOn(
+        pluginSingleComponent,
+        'PluginSingleComponent',
+    );
 
     const accountId = `${Network.ETHEREUM_SEPOLIA}-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5`;
     const plugin = generateDaoPlugin({ address: '0xMultisig', slug: 'mul' });
 
-    const buildTab = (tab?: Partial<IWorkspaceMemberTab>) =>
+    const buildTab = (tab?: Partial<IWorkspaceBodyMemberTab>) =>
         ({
+            kind: 'body',
             accountId,
             id: 'multisig',
             uniqueId: `${Network.ETHEREUM_SEPOLIA}-0xMultisig-mul`,
@@ -25,15 +32,19 @@ describe('<WorkspaceBodyMembersAsideCard /> component', () => {
             meta: plugin,
             props: {},
             ...tab,
-        }) as IWorkspaceMemberTab;
+        }) as IWorkspaceBodyMemberTab;
 
     beforeEach(() => {
+        pluginSingleComponentSpy.mockImplementation(() => (
+            <div data-testid="plugin-slot-mock" />
+        ));
         daoPluginInfoSpy.mockImplementation(() => (
             <div data-testid="plugin-info-mock" />
         ));
     });
 
     afterEach(() => {
+        pluginSingleComponentSpy.mockReset();
         daoPluginInfoSpy.mockReset();
     });
 
@@ -52,13 +63,20 @@ describe('<WorkspaceBodyMembersAsideCard /> component', () => {
         );
     };
 
-    // An account ID is already the DAO ID, so the component reads the DAO pages' own query.
-    it('describes the body of the tab under the account it is installed on', () => {
+    // An account ID is already the DAO ID, so the slot component reads the DAO pages' own query.
+    it('renders the plugin-info slot of the body with the generic info as fallback', () => {
         render(createTestComponent());
 
-        expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
-        expect(daoPluginInfoSpy).toHaveBeenLastCalledWith(
-            { daoId: accountId, plugin, type: PluginType.BODY },
+        expect(screen.getByTestId('plugin-slot-mock')).toBeInTheDocument();
+        expect(pluginSingleComponentSpy).toHaveBeenLastCalledWith(
+            {
+                slotId: SettingsSlotId.SETTINGS_PLUGIN_INFO,
+                pluginId: 'multisig',
+                plugin,
+                daoId: accountId,
+                type: PluginType.BODY,
+                Fallback: daoPluginInfo.DaoPluginInfo,
+            },
             undefined,
         );
     });

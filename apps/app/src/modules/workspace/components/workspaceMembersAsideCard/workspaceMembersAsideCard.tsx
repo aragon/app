@@ -5,6 +5,7 @@ import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOpt
 import type { IWorkspaceMemberTab } from '../../hooks/useWorkspaceMemberTabs';
 import { WorkspaceAllMembersAsideCard } from './workspaceAllMembersAsideCard';
 import { WorkspaceBodyMembersAsideCard } from './workspaceBodyMembersAsideCard';
+import { WorkspaceSafeMembersAsideCard } from './workspaceSafeMembersAsideCard';
 
 export interface IWorkspaceMembersAsideCardProps {
     /**
@@ -12,7 +13,7 @@ export interface IWorkspaceMembersAsideCardProps {
      */
     activeOption?: IWorkspaceAccountOption;
     /**
-     * Body tab selected on the page, which the card describes in preference to the aggregate. Comes from the page
+     * Body or Safe tab selected on the page, which the card describes in preference to the aggregate. Comes from the page
      * rather than from `useWorkspaceMemberTabs` here, so the card cannot name a different tab than the list does.
      */
     activeTab?: IWorkspaceMemberTab;
@@ -30,14 +31,23 @@ export interface IWorkspaceMembersAsideCardProps {
 /**
  * Aside card of the workspace members page, picking the card matching what the list beside it shows.
  *
- * A selected body wins over the aggregate: it narrows the list to one body of one account, so the card describes
- * that body — the swap `daoMembersPageClient` makes, and the same shape `WorkspaceProposalsAsideCard` has for a
+ * A selected tab wins over the aggregate: it narrows the list to one body of one account, or to a Safe account, so
+ * the card describes that body or Safe — for a body, the swap `daoMembersPageClient` makes, and the same shape `WorkspaceProposalsAsideCard` has for a
  * selected process.
  */
 export const WorkspaceMembersAsideCard: React.FC<
     IWorkspaceMembersAsideCardProps
 > = (props) => {
     const { activeOption, activeTab, accounts, pageSize } = props;
+
+    if (activeTab?.kind === 'safe') {
+        return (
+            <WorkspaceSafeMembersAsideCard
+                account={activeTab.meta}
+                label={activeTab.label}
+            />
+        );
+    }
 
     if (activeTab != null) {
         return <WorkspaceBodyMembersAsideCard tab={activeTab} />;
