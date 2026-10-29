@@ -3,6 +3,7 @@
 import {
     addressUtils,
     Button,
+    type ICompositeAddress,
     Icon,
     IconType,
     MemberAvatar,
@@ -13,7 +14,7 @@ export interface INavigationSidebarAccountProps {
     /**
      * Connected user, undefined while no wallet is connected.
      */
-    user?: { address: string; name?: string };
+    user?: ICompositeAddress;
     /**
      * Opens the user dialog when connected, the connect-wallet dialog otherwise.
      */

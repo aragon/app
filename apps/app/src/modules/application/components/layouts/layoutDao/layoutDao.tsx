@@ -35,8 +35,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     const { params, children } = props;
     const [daoPageParams, withSidebar] = await Promise.all([
         params,
-        // The side navigation ships with workspaces and mirrors their navigation on the DAO pages. Resolved on the
-        // server so the page never paints the navigation bar first.
+        // Resolved on the server so the page never paints the navigation bar first.
         featureFlags.isEnabled('workspaces'),
     ]);
     let dao: IDao;

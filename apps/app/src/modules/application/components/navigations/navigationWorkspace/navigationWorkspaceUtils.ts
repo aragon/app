@@ -1,8 +1,5 @@
 import { IconType } from '@aragon/gov-ui-kit';
-import {
-    workspaceDaoAccountSections,
-    workspaceUtils,
-} from '@/modules/workspace/utils/workspaceUtils';
+import { workspaceUtils } from '@/modules/workspace/utils/workspaceUtils';
 import type { INavigationLink } from '@/shared/components/navigation';
 
 class NavigationWorkspaceUtils {
@@ -32,7 +29,6 @@ class NavigationWorkspaceUtils {
         isDaoAccount = false,
     ): INavigationLink[] => {
         const scope = workspaceUtils.resolveAccountScope(accountId);
-        const [permissions, settings] = workspaceDaoAccountSections;
 
         return [
             {
@@ -90,7 +86,7 @@ class NavigationWorkspaceUtils {
                 link: workspaceUtils.getAccountScopeUrl(
                     workspaceId,
                     scope,
-                    permissions,
+                    'permissions',
                 ),
                 icon: IconType.APP_PERMISSIONS,
                 order: 600,
@@ -101,7 +97,7 @@ class NavigationWorkspaceUtils {
                 link: workspaceUtils.getAccountScopeUrl(
                     workspaceId,
                     scope,
-                    settings,
+                    'settings',
                 ),
                 icon: IconType.SETTINGS,
                 order: 700,

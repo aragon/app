@@ -100,8 +100,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                     <ExploreSection
                         title={t('app.explore.exploreDaosPage.section.cta')}
                     >
-                        {/* Two by two from md, as a full row squeezes their text and buttons: four cards stay so
-                            until xl, three fit a row from lg. */}
                         <div
                             className={classNames(
                                 'grid grid-cols-1 gap-4 self-stretch md:grid-cols-2 lg:gap-8',

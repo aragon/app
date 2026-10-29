@@ -120,8 +120,6 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const openDialog = () => setIsDialogOpen(true);
 
-    // Heads the dialog and the sidebar, which list the same links: the sidebar shows it in place of a button opening
-    // the dialog.
     const daoSummary = (
         <>
             <DaoAvatar

@@ -74,14 +74,14 @@ export const WorkspaceAccountSelector: React.FC<
 
     const section =
         workspaceUtils.getAccountScopeSection(pathname) ?? fallbackSection;
+    // Permissions and settings exist for a DAO account alone: any other option opens on the overview.
+    const isDaoOnlySection = (
+        workspaceDaoAccountSections as readonly string[]
+    ).includes(section);
 
     const optionLinks = useMemo(
         () =>
             options.map((option) => {
-                // Permissions and settings exist for a DAO account alone: any other option opens on the overview.
-                const isDaoOnlySection = (
-                    workspaceDaoAccountSections as readonly string[]
-                ).includes(section);
                 const optionSection =
                     isDaoOnlySection &&
                     option.account?.type !== WorkspaceAccountType.DAO
@@ -97,7 +97,7 @@ export const WorkspaceAccountSelector: React.FC<
                     ),
                 };
             }),
-        [options, workspaceId, section],
+        [options, workspaceId, section, isDaoOnlySection],
     );
 
     // Exiting the wizard lands back on the page the account was added from.

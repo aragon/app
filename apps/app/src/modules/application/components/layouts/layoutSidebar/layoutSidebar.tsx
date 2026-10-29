@@ -23,8 +23,7 @@ export interface ILayoutSidebarProps {
  * beside the support chat panel.
  *
  * `data-app-sidebar` is read by `LayoutRoot`, which moves the footer into the sidebar while it is shown, so it is only
- * set while there is a navigation. The floating
- * support chat launcher closes the page column, pinned to the bottom of the window.
+ * set while there is a navigation.
  */
 export const LayoutSidebar: React.FC<ILayoutSidebarProps> = (props) => {
     const { navigation, children } = props;
