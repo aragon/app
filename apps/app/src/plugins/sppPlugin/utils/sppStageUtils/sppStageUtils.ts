@@ -153,10 +153,24 @@ class SppStageUtils {
     // early advance lets the stage move on, but until it does the remaining bodies can still
     // record their preference. The window check matters because a stage also reads ACTIVE between
     // voting close and `maxAdvance`, where an ordinary body's onchain vote would revert - only
-    // bodies wired to the late-report slot act there. An executed proposal takes no more votes.
-    canBodyVote = (proposal: ISppProposal, stage: ISppStage): boolean => {
+    // bodies wired to the late-report slot act there. An executed proposal takes no more votes, and
+    // neither does a body whose sub-proposal already reported its result: reporting is the execution
+    // of that sub-proposal, so its remaining members could only cast a vote that reverts. Bodies
+    // without a sub-proposal (external addresses, Safes) report directly and keep their action.
+    canBodyVote = (
+        proposal: ISppProposal,
+        stage: ISppStage,
+        plugin: ISppStagePlugin,
+    ): boolean => {
+        const { address } = plugin;
+        const { stageIndex } = stage;
+        const hasReportedViaSubProposal =
+            this.getBodySubProposal(proposal, address, stageIndex) != null &&
+            this.getBodyResult(proposal, address, stageIndex) != null;
+
         if (
             proposal.executed.status ||
+            hasReportedViaSubProposal ||
             !this.isVotingWindowOpen(proposal, stage)
         ) {
             return false;

@@ -1201,6 +1201,9 @@ describe('SppStageUtils', () => {
         const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
         const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
         const now = '2023-01-01T12:00:00.000Z';
+        const body = generateSppStagePlugin({
+            address: '0x1111111111111111111111111111111111111111',
+        });
 
         beforeEach(() => {
             timeUtils.setTime(now);
@@ -1230,7 +1233,9 @@ describe('SppStageUtils', () => {
                 const stage = generateSppStage({ stageIndex: 0 });
                 const proposal = generateSppProposal({ stageIndex: 0 });
 
-                expect(sppStageUtils.canBodyVote(proposal, stage)).toBeTruthy();
+                expect(
+                    sppStageUtils.canBodyVote(proposal, stage, body),
+                ).toBeTruthy();
             },
         );
 
@@ -1245,7 +1250,9 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal();
 
-            expect(sppStageUtils.canBodyVote(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
         });
 
         it('stops voting on an advanceable stage once its voting window has closed', () => {
@@ -1256,7 +1263,9 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({ stageIndex: 0 });
 
-            expect(sppStageUtils.canBodyVote(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
         });
 
         it('does not allow voting on a stage that is no longer the active one', () => {
@@ -1267,7 +1276,9 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({ stageIndex: 1 });
 
-            expect(sppStageUtils.canBodyVote(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
         });
 
         it('does not allow voting once the proposal is executed, even while the voting window is open', () => {
@@ -1281,7 +1292,63 @@ describe('SppStageUtils', () => {
                 executed: { status: true },
             });
 
-            expect(sppStageUtils.canBodyVote(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
+        });
+
+        it('does not allow voting on a body whose sub-proposal already reported its result', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                stageIndex: 0,
+                subProposals: [
+                    generateSppSubProposal({
+                        pluginAddress: body.address,
+                        stageIndex: 0,
+                    }),
+                ],
+                results: [
+                    {
+                        pluginAddress: body.address,
+                        stage: 0,
+                        resultType: SppProposalType.APPROVAL,
+                    },
+                ],
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
+        });
+
+        it('keeps the action of a body without a sub-proposal after it reported its result', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            const stage = generateSppStage({ stageIndex: 0 });
+            const externalBody = generateSppStagePlugin({
+                address: '0x2222222222222222222222222222222222222222',
+                interfaceType: undefined,
+            });
+            const proposal = generateSppProposal({
+                stageIndex: 0,
+                results: [
+                    {
+                        pluginAddress: externalBody.address,
+                        stage: 0,
+                        resultType: SppProposalType.APPROVAL,
+                    },
+                ],
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, externalBody),
+            ).toBeTruthy();
         });
 
         it.each([
@@ -1296,7 +1363,9 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({ stageIndex: 0 });
 
-            expect(sppStageUtils.canBodyVote(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
         });
     });
 

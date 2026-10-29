@@ -105,7 +105,8 @@ export const SppVotingTerminalBodyContent: React.FC<
         stage.stageIndex === proposal.stageIndex &&
         !proposal.executed.status;
 
-    const canVote = sppStageUtils.canBodyVote(proposal, stage) || canActLate;
+    const canVote =
+        sppStageUtils.canBodyVote(proposal, stage, plugin) || canActLate;
     const showAction =
         !isHistoryMissing &&
         (canVote ||
