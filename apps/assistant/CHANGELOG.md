@@ -1,5 +1,15 @@
 # @aragon/assistant
 
+## 0.3.2
+
+### Patch Changes
+
+- [#1474](https://github.com/aragon/app/pull/1474) [`903e5c2`](https://github.com/aragon/app/commit/903e5c2e35d854b4778f2848ef469532fb0f2b70) Thanks [@tyhonchik](https://github.com/tyhonchik)! - `docsLinks` joins the chat features: the host says whether answers may link to the pages of the help center. The assistant reads it with the citations of APP-1229; until then it names no page.
+
+- [#1529](https://github.com/aragon/app/pull/1529) [`142ec69`](https://github.com/aragon/app/commit/142ec694d065dbc21c075e58cada6757fe82ec16) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (@linear/sdk 98, tsup 9, Sentry 10.76, ai 7.0.146, hono 4.13.13)
+- Updated dependencies [[`903e5c2`](https://github.com/aragon/app/commit/903e5c2e35d854b4778f2848ef469532fb0f2b70)]:
+    - @aragon/assistant-contracts@0.3.1
+
 ## 0.3.1
 
 ### Patch Changes

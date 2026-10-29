@@ -14,6 +14,7 @@
 # scope; it stays with its domain owner, the assistant — an app deploy may therefore ship
 # contracts changes whose changeset is consumed by the next assistant release. @aragon/docs-corpus
 # (the knowledge-base loader, shared with the docs site) stays with the assistant the same way.
+# @aragon/docs, the docs site, is a deployable app of its own and owns a scope.
 # @aragon/gov-ui-kit and @aragon/aragon-domain are the exception: only the app bundles them, but
 # both are published to npm, so each owns a scope, tags and flows of its own.
 
@@ -28,6 +29,9 @@ assistant:
   - "@aragon/assistant"
   - "@aragon/assistant-contracts"
   - "@aragon/docs-corpus"
+
+docs:
+  - "@aragon/docs"
 
 gov-ui-kit:
   - "@aragon/gov-ui-kit"

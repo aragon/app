@@ -32,8 +32,9 @@ assistant:
   - ".github/workflows/assistant-*.yml"
   - ".github/filters.yml"
 
-# Gates the docs site deploys (dev on push, preview on PRs). A knowledge-base change reaches the
-# site through a repository_dispatch from aragon/platform-doc, not through a commit here.
+# Gates the docs site deploys (dev on push, preview on PRs) and scopes its release notes. A
+# knowledge-base change reaches the site through a repository_dispatch from aragon/platform-doc,
+# not through a commit here.
 docs:
   - "apps/docs/**"
   - "packages/docs-corpus/**"

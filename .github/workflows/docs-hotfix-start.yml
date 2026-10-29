@@ -1,0 +1,362 @@
+# Hotfix Start — branch from a docs release tag (@aragon/docs@X.Y.Z) with optional cherry-picks from
+# main; like every staging deploy, it builds the newest knowledge base, so a hotfix without
+# cherry-picks publishes the pages validated since the base release.
+# Supports resuming an existing hotfix branch via existing_hotfix_branch input.
+# If neither the code nor the pages differ from the tag HEAD carries (the base release on a fresh
+# branch, the last hotfix tag on a resume), downstream jobs are skipped.
+# Order: unit tests → staging deploy → `docs/corpus` status + git tag (not gated on E2E) → smoke
+# E2E parallel with the tag.
+# Prod: run Docs Production workflow_dispatch with the hotfix tag; it builds the knowledge-base
+# commit the status records (see docs-release.yml).
+#
+# A hotfix is repo-specific and stays here; it composes the shared aragon/github-templates modules
+# (leaf steps, deploy-vercel, e2e) and opens its own Slack thread, which the deploy and the smoke
+# results join.
+
+name: Docs Hotfix Start
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_tag:
+        description: >
+          Release tag to branch from (e.g. @aragon/docs@1.2.0). Leave empty for the latest docs tag.
+          Only needed when resuming a branch whose name doesn't match hotfix/docs/X.Y.Z_….
+        required: false
+        type: string
+      commits:
+        description: >
+          SHAs on main to cherry-pick (comma/space/newline separated).
+          Empty = no cherry-picks. First run copies the release tag; resume uses pushed commits.
+        required: false
+        type: string
+      existing_hotfix_branch:
+        description: >
+          Continue an existing hotfix branch (after local commits/push).
+          Empty = create hotfix/docs/<version>_<timestamp> from base_tag or the latest docs tag.
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  statuses: write
+
+jobs:
+  start:
+    runs-on: ubuntu-latest
+    outputs:
+      hotfix-tag: ${{ steps.tag.outputs.name }}
+      hotfix-sha: ${{ steps.push.outputs.sha }}
+      corpus-commit: ${{ steps.corpus.outputs.commit }}
+      slack-ts: ${{ steps.notify.outputs.ts }}
+      skip: ${{ steps.delta.outputs.skip }}
+    steps:
+      - name: Determine mode
+        id: meta
+        env:
+          INPUT_BRANCH: ${{ inputs.existing_hotfix_branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="$(printf '%s' "$INPUT_BRANCH" | xargs 2>/dev/null || true)"
+          if [ -n "$BRANCH" ]; then
+            echo "mode=resume"   >> "$GITHUB_OUTPUT"
+            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=fresh" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+            GPG_PRIVATE_KEY=op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+            GPG_PASSPHRASE=op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+            SLACK_BOT_TOKEN=op://kv_app_infra/SLACK_BOT_TOKEN/credential
+            SLACK_CHANNEL_ID=op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          fetch-depth: "0"
+          ref: main
+          install: "false"
+
+      - name: Resolve base tag and branch
+        id: ctx
+        env:
+          MODE: ${{ steps.meta.outputs.mode }}
+          RESUME_BRANCH: ${{ steps.meta.outputs.branch }}
+          INPUT_TAG: ${{ inputs.base_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force >/dev/null 2>&1 || true
+          TAG_PREFIX="@aragon/docs@"
+
+          # --- resolve tag (docs tags only; other workspaces have their own prefix) ---
+          if [ -n "$INPUT_TAG" ]; then
+            case "$INPUT_TAG" in
+              "$TAG_PREFIX"*) TAG="$INPUT_TAG" ;;
+              *) echo "::error::base_tag must be a full docs tag (e.g. ${TAG_PREFIX}1.2.0)."; exit 1 ;;
+            esac
+          elif [ "$MODE" = "resume" ]; then
+            rest="${RESUME_BRANCH#hotfix/docs/}"
+            [ "$rest" = "$RESUME_BRANCH" ] && { echo "::error::Branch must start with hotfix/docs/ or provide base_tag."; exit 1; }
+            VERSION="${rest%%_*}"
+            [ -z "$VERSION" ] || [ "$VERSION" = "$rest" ] && { echo "::error::Cannot parse version from branch name; provide base_tag."; exit 1; }
+            TAG="${TAG_PREFIX}${VERSION}"
+          else
+            TAG="$(git describe --tags --abbrev=0 --match "${TAG_PREFIX}*" 2>/dev/null || true)"
+            [ -z "$TAG" ] && { echo "::error::No ${TAG_PREFIX}* tags found — provide base_tag."; exit 1; }
+          fi
+
+          # --- resolve branch (version only in the name; the docs prefix is implied) ---
+          if [ "$MODE" = "resume" ]; then
+            BRANCH="$RESUME_BRANCH"
+          else
+            BRANCH="hotfix/docs/${TAG#"$TAG_PREFIX"}_$(date +'%Y-%m-%d_%H-%M')"
+          fi
+
+          echo "tag=$TAG"       >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure hotfix branch from tag
+        if: steps.meta.outputs.mode == 'fresh'
+        uses: aragon/github-templates/steps/git-ensure-branch@main
+        with:
+          branch: ${{ steps.ctx.outputs.branch }}
+          base-ref: ${{ steps.ctx.outputs.tag }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
+        with:
+          gpg_private_key: ${{ fromJSON(steps.op.outputs.secrets).GPG_PRIVATE_KEY }}
+          passphrase: ${{ fromJSON(steps.op.outputs.secrets).GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Checkout hotfix branch
+        env:
+          BRANCH: ${{ steps.ctx.outputs.branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "$BRANCH"
+          git checkout "$BRANCH"
+
+      - name: Cherry-pick commits from main
+        env:
+          RAW_COMMITS: ${{ inputs.commits }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          COMMITS="$(printf '%s' "$RAW_COMMITS" | tr ', ' '\n\n' | sed '/^$/d')"
+          [ -z "$COMMITS" ] && exit 0
+
+          git fetch origin main --force >/dev/null 2>&1 || true
+          echo "Cherry-picking:"
+          echo "$COMMITS"
+          while IFS= read -r sha; do
+            [ -z "$sha" ] && continue
+            git cherry-pick -x "$sha"
+          done <<< "$COMMITS"
+
+      # The newest knowledge base, next to the pages HEAD already published: the `docs/corpus`
+      # status of the docs tag HEAD carries (the base tag on a fresh branch, the last hotfix tag on
+      # a resume without new cherry-picks). An untagged HEAD published nothing yet.
+      - name: Resolve the knowledge-base commit
+        id: corpus
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARABOT_PAT: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_TAG="$(git tag --points-at HEAD --list '@aragon/docs@*' | sort -V | tail -1)"
+          HEAD_CORPUS=""
+          if [ -n "$HEAD_TAG" ]; then
+            HEAD_CORPUS="$(gh api "repos/$REPO/commits/$(git rev-parse HEAD)/status" --jq '.statuses[] | select(.context == "docs/corpus") | .description')"
+          fi
+          COMMIT="$(GH_TOKEN="$ARABOT_PAT" gh api repos/aragon/platform-doc/commits/development --jq .sha)"
+          echo "Knowledge base: aragon/platform-doc@$COMMIT (HEAD: ${HEAD_TAG:-untagged}, its pages: ${HEAD_CORPUS:-none})"
+          {
+            echo "commit=$COMMIT"
+            echo "head-tag=$HEAD_TAG"
+            echo "head-corpus=$HEAD_CORPUS"
+          } >> "$GITHUB_OUTPUT"
+
+      # The status that pins the pages sits on a commit, and a tagged commit keeps the pages its tag
+      # published (production and rollback rebuild them from it): newer pages on a tagged HEAD get a
+      # commit of their own to be recorded on. A fresh cherry-pick is untagged and takes the status itself.
+      - name: Commit a pages-only hotfix
+        env:
+          COMMIT: ${{ steps.corpus.outputs.commit }}
+          HEAD_TAG: ${{ steps.corpus.outputs.head-tag }}
+          HEAD_CORPUS: ${{ steps.corpus.outputs.head-corpus }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$HEAD_TAG" ] && [ "$COMMIT" != "$HEAD_CORPUS" ]; then
+            git commit -q --allow-empty -m "Publish aragon/platform-doc@${COMMIT:0:9} on $HEAD_TAG"
+          fi
+
+      - name: Push hotfix branch
+        id: push
+        env:
+          BRANCH: ${{ steps.ctx.outputs.branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:$BRANCH"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # A HEAD still tagged after the step above carries no new code and no new pages.
+      - name: Check for changes vs the tagged pages
+        id: delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$(git tag --points-at HEAD --list '@aragon/docs@*')" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Hotfix HEAD is already tagged with these pages — nothing to verify."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Determine next hotfix tag
+        id: tag
+        env:
+          BASE_TAG: ${{ steps.ctx.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          LAST="$(git tag --list "${BASE_TAG}-hotfix.*" | sort -V | tail -1 || true)"
+          if [ -z "$LAST" ]; then
+            NEXT=1
+          else
+            NEXT=$(( ${LAST##*.} + 1 ))
+          fi
+          echo "name=${BASE_TAG}-hotfix.${NEXT}" >> "$GITHUB_OUTPUT"
+
+      - name: Notify Slack — Hotfix Started
+        id: notify
+        continue-on-error: true
+        uses: aragon/github-templates/steps/slack-notify@main
+        with:
+          slack-bot-token: ${{ fromJSON(steps.op.outputs.secrets).SLACK_BOT_TOKEN }}
+          slack-channel-id: ${{ fromJSON(steps.op.outputs.secrets).SLACK_CHANNEL_ID }}
+          message: |
+            🩹 *Hotfix Started*
+            *Base Tag:* `${{ steps.ctx.outputs.tag }}`
+            ${{ steps.delta.outputs.skip == 'true' && format('*Hotfix tag:* not created — branch HEAD is already tagged `{0}` with these pages', steps.corpus.outputs.head-tag) || format('*Planned hotfix tag:* `{0}` *(after successful staging deploy)*', steps.tag.outputs.name) }}
+            *Branch:* `${{ steps.ctx.outputs.branch }}`
+            *Knowledge base:* `${{ steps.corpus.outputs.commit }}`
+
+            ${{ steps.delta.outputs.skip == 'true' && '🔁 *Skipping* unit tests, staging deploy, git tag, and E2E (nothing new vs the tagged HEAD).' || 'Unit tests → staging deploy → tag push; smoke E2E runs after deploy *(non-blocking for the tag)*. Review smoke before *Docs Production*.' }}
+
+  test:
+    needs: start
+    if: ${{ needs.start.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@main
+        with:
+          ref: ${{ needs.start.outputs.hotfix-sha }}
+          fetch-depth: "0"
+      - name: Check types
+        run: pnpm type-check
+      - name: Check linter with formatter
+        run: pnpm lint:check
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+  deploy:
+    needs: [start, test]
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    with:
+      env: staging
+      ref: ${{ needs.start.outputs.hotfix-sha }}
+      domain: stg.platform-doc.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/docs
+      op-infra-vault: kv_docs_infra
+      op-env-vault: kv_docs_staging
+      setup-command: pnpm run setup staging
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.start.outputs.corpus-commit }}
+      version: ${{ needs.start.outputs.hotfix-tag }}
+      slack-thread-ts: ${{ needs.start.outputs.slack-ts }}
+      next-steps: |
+        The hotfix tag `${{ needs.start.outputs.hotfix-tag }}` is pushed now (smoke does not gate it), with knowledge base `${{ needs.start.outputs.corpus-commit }}`.
+        Confirm staging → run *Docs Production* with that tag.
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  push-hotfix-tag:
+    needs: [start, deploy]
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ needs.start.outputs.hotfix-sha }}
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          fetch-depth: 1
+
+      # What Docs Production builds the tag with (see docs-release.yml).
+      - name: Record the knowledge-base commit on the hotfix head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ needs.start.outputs.hotfix-sha }}
+          CORPUS: ${{ needs.start.outputs.corpus-commit }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/statuses/$SHA" \
+            -f state=success \
+            -f context=docs/corpus \
+            -f description="$CORPUS" \
+            -f target_url="https://github.com/aragon/platform-doc/commit/$CORPUS" \
+            --silent
+
+      - name: Create and push hotfix tag
+        uses: aragon/github-templates/steps/gh-ensure-tag@main
+        with:
+          tag: ${{ needs.start.outputs.hotfix-tag }}
+          sha: ${{ needs.start.outputs.hotfix-sha }}
+
+  e2e:
+    needs: [start, deploy]
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    with:
+      deployment-url: https://stg.platform-doc.aragon.org
+      environment: staging
+      working-directory: apps/docs
+      test-command: E2E_DOCS_MODE=ready pnpm e2e:smoke
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-ts: ${{ needs.start.outputs.slack-ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

@@ -4,7 +4,8 @@ This document describes the release process for Aragon App.
 
 The flows are the reusable workflows of [`aragon/github-templates`](https://github.com/aragon/github-templates) (see its `docs/release-design.md`), called from thin workflows in this repository. This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of `release-start`). Other workspaces release through their own flows, each following the same shape:
 
-- **Assistant** — `assistant-release.yml` → merge → production deploy (`assistant-production.yml`). Starts every Monday.
+- **Assistant** — `assistant-release.yml` → merge → production deploy (`assistant-production.yml`). Starts every Wednesday.
+- **Docs site** — `docs-release.yml` → staging (`stg.platform-doc.aragon.org`) with smoke tests → merge → production deploy (`docs-production.yml`), plus `docs-hotfix-start.yml` and `docs-rollback.yml`: the app's shape, see `apps/docs/README.md`. Starts every Wednesday.
 - **Gov UI Kit** — `gov-ui-kit-release.yml` → merge → an **npm publish** rather than a deploy; see `packages/gov-ui-kit/RELEASING.md`. Starts every Tuesday.
 - **Aragon Domain** — `aragon-domain-release.yml` → merge → an **npm publish**, same as the kit; see `packages/aragon-domain/RELEASING.md`. Starts every Tuesday.
 
@@ -17,6 +18,7 @@ changesets-native format `<package-name>@<version>`:
 
 - App releases: tag `@aragon/app@1.17.0`, branch `release/app/YYYY-MM-DD_HH-mm`, hotfix branch `hotfix/app/<version>_<timestamp>`, hotfix tag `@aragon/app@1.17.0-hotfix.1`.
 - Assistant releases: tag `@aragon/assistant@0.2.0`, branch `release/assistant/YYYY-MM-DD_HH-mm`.
+- Docs site releases: tag `@aragon/docs@0.1.0`, branch `release/docs/YYYY-MM-DD_HH-mm`, hotfix branch `hotfix/docs/<version>_<timestamp>`, hotfix tag `@aragon/docs@0.1.0-hotfix.1`.
 - Gov UI Kit releases: tag `@aragon/gov-ui-kit@2.12.0`, branch `release/gov-ui-kit/YYYY-MM-DD_HH-mm`. Tags from before the monorepo migration keep the standalone repo's `vX.Y.Z` scheme and stay in the archived `aragon/gov-ui-kit`.
 - Aragon Domain releases: tag `@aragon/aragon-domain@0.5.0`, branch `release/aragon-domain/YYYY-MM-DD_HH-mm`. The standalone repo's `v0.2.0`…`v0.4.0` tags stay in the archived `aragon/aragon-domain`.
 - Future released workspaces follow the same pattern with their own prefix and their own `<pkg>-release.yml` copy.
@@ -84,14 +86,14 @@ The scheduled run green-skips when there are no pending changesets for the `app`
 **Action:**
 
 1. Approve the Release PR (at least 1 approval from CODEOWNERS)
-2. Merge it into `main`
+2. Merge it into `main` with a **merge commit** (not squash): the tag goes on the PR head, which must stay in `main`'s history
 
 **Merging is the release act** — everything after this is automatic.
 
 **What happens automatically on merge** (`app-release.yml`, finalize):
 1. Guard: the release branch must carry no new app-scope changesets (see the FAQ below)
 2. 🏷️ Slack: "PR merged! Creating tag and GitHub Release..."
-3. Git tag `@aragon/app@<version>` is created on the staging-tested head SHA
+3. Git tag `@aragon/app@<version>` is created on the staging-tested head SHA (never on the merge commit, which would also carry whatever landed on `main` while the PR was open — the same rule applies to the assistant, gov-ui-kit and aragon-domain flows)
 4. GitHub Release is created with the changelog as its notes
 5. 📦 Slack: "GitHub Release created" with the link
 
