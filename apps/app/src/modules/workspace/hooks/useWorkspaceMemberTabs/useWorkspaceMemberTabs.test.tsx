@@ -338,6 +338,14 @@ describe('useWorkspaceMemberTabs hook', () => {
             `${network}-${safeAddress}-safe-${daoAddress}`,
         );
         expect(tabs[1].uniqueId).toEqual(`${network}-${safeAddress}-safe`);
+        // Both tabs send the same filters; only the body tab names the DAO account its rows link into.
+        expect(tabs[0].props).toEqual({
+            filters: { network, governanceAddress: safeAddress },
+            bodyAccountId: `${network}-${daoAddress}`,
+        });
+        expect(tabs[1].props).toEqual({
+            filters: { network, governanceAddress: safeAddress },
+        });
     });
 
     it('gives a Safe that is only a body one tab', () => {

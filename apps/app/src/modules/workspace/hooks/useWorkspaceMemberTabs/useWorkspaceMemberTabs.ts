@@ -29,6 +29,11 @@ export interface IWorkspaceMemberTabProps {
      * Filters narrowing the members to the body of the tab.
      */
     filters?: IWorkspaceMemberListFilters;
+    /**
+     * ID of the DAO account whose body the tab narrows the list to. Set on body tabs only: a Safe body and the Safe
+     * account of the same Safe send the same filters, and only this tells their rows apart.
+     */
+    bodyAccountId?: string;
 }
 
 /**
@@ -198,6 +203,7 @@ export const useWorkspaceMemberTabs = (
                         network: dao.network,
                         governanceAddress: plugin.address,
                     },
+                    bodyAccountId: daoPlugins.accountId,
                 },
             }),
         );

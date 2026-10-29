@@ -744,7 +744,12 @@ that body's tab. The two link differently, by decision:
   proposals) that a standalone Safe does not have. `/{accountId}/members/{address}` on a Safe redirects to its
   members page.
 - **Member of a Safe body of a DAO** — opens `DaoMemberDetailsPage` on that body, like a member of any other body.
-  Member links name the body by its tab ID (`getPluginTabId`), the only body ID on the member routes.
+  Member links name the body by its tab ID (`getPluginTabId`), the only body ID on the member routes. The backend
+  reports a Safe's owners under the Safe account only, never under the DAO holding it as a body, and the Safe body
+  tab and the Safe account tab send the same filters. The body tab therefore names its DAO account
+  (`bodyAccountId`), and only under it does `WorkspaceMemberListDefault` read a Safe-account membership as a
+  membership of that body. On the Safe account's tab and on the group tab the same owner is the owner of a
+  standalone Safe, and links to the block explorer.
 
 **Later:** a Safe owner may get an in-app page, either a dedicated Safe member page or `DaoMemberDetailsPage` made
 agnostic of the account type (DAO or Safe), keeping only the sections that apply to the account. Either one would

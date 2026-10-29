@@ -3,7 +3,6 @@
 import { daoMemberListFilterParam } from '@/modules/governance/components/daoMemberList';
 import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { PluginType } from '@/shared/types';
-import type { IWorkspaceMemberListFilters } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import {
     type IWorkspaceMemberTabMeta,
@@ -88,10 +87,11 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
         ]),
     );
 
-    const renderList = (filters?: IWorkspaceMemberListFilters) => (
+    const renderList = (tabProps?: IWorkspaceMemberTabProps) => (
         <WorkspaceMemberListDefault
             accounts={accounts}
-            filters={filters}
+            bodyAccountId={tabProps?.bodyAccountId}
+            filters={tabProps?.filters}
             pageSize={pageSize}
             visiblePluginsByAccountId={visiblePluginsByAccountId}
             workspaceId={workspaceId}
@@ -101,7 +101,7 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
     // The tabs are only rendered if there is more than one, otherwise
     // the list is rendered directly with the filters
     if (!hasTabs) {
-        return renderList(activeTab?.props.filters);
+        return renderList(activeTab?.props);
     }
 
     return (
@@ -110,7 +110,7 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
             IWorkspaceMemberTabProps
         >
             plugins={filterTabs}
-            renderContent={(plugin) => renderList(plugin.props.filters)}
+            renderContent={(plugin) => renderList(plugin.props)}
             searchParamName={daoMemberListFilterParam}
         />
     );

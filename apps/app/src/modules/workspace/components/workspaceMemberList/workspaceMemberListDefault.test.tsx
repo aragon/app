@@ -272,6 +272,87 @@ describe('<WorkspaceMemberListDefault /> component', () => {
         expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
+    /**
+     * Mocks a member owning the Safe account of the workspace, the only membership the backend reports for it.
+     */
+    const mockSafeOwner = () =>
+        mockMembers([
+            generateWorkspaceMember({
+                network: Network.ETHEREUM_SEPOLIA,
+                address: memberAddress,
+                memberships: [
+                    generateWorkspaceMembership({
+                        account: {
+                            network: Network.ETHEREUM_SEPOLIA,
+                            address: safeAddress,
+                        },
+                        governance: { address: safeAddress, type: 'safe' },
+                    }),
+                ],
+            }),
+        ]);
+
+    const safeBody = generateDaoPlugin({
+        address: safeAddress,
+        slug: 'safe',
+        interfaceType: PluginInterfaceType.SAFE,
+        daoAddress,
+        isBody: true,
+    });
+    const safeFilters = {
+        network: Network.ETHEREUM_SEPOLIA,
+        governanceAddress: safeAddress,
+    };
+
+    // The backend reports a Safe's owners under the Safe account only, so under the tab of a DAO's Safe body they come
+    // in as Safe-account memberships. There they are members of that body, and open the DAO's member page on it.
+    it('links an owner listed under the Safe body tab of a DAO to the member page of that body', () => {
+        mockSafeOwner();
+        render(
+            createTestComponent({
+                bodyAccountId: daoAccount.id,
+                filters: safeFilters,
+                visiblePluginsByAccountId: buildPlugins([body, safeBody]),
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${encodeURIComponent(`${safeAddress}-safe-${daoAddress}`)}`,
+        );
+    });
+
+    // The Safe account's own tab sends the same filters as the Safe body tab, but lists the owners of a standalone
+    // Safe: they keep linking to the block explorer even though a DAO in view holds the same Safe as a body.
+    it('links an owner listed under the Safe account tab to the block explorer', () => {
+        mockSafeOwner();
+        render(
+            createTestComponent({
+                filters: safeFilters,
+                visiblePluginsByAccountId: buildPlugins([body, safeBody]),
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `https://explorer.test/address/${memberAddress}`,
+        );
+    });
+
+    it('links an owner of a Safe to the block explorer on the group tab', () => {
+        mockSafeOwner();
+        render(
+            createTestComponent({
+                visiblePluginsByAccountId: buildPlugins([body, safeBody]),
+            }),
+        );
+
+        expect(screen.getAllByRole('link')[0]).toHaveAttribute(
+            'href',
+            `https://explorer.test/address/${memberAddress}`,
+        );
+    });
+
     // The DAO member page redirects any non-checksummed address to the `/dao/…` route, which would leave the
     // workspace.
     it('links to the checksummed address of the member', () => {
