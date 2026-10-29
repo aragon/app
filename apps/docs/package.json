@@ -1,6 +1,6 @@
 {
     "name": "@aragon/docs",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "private": true,
     "description": "Public site of the Aragon platform knowledge base (app.aragon.org/help), built from aragon/platform-doc through @aragon/docs-corpus",
     "homepage": "https://github.com/aragon/app#readme",
