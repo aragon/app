@@ -43,9 +43,17 @@ export const WorkspaceMembersPageClient: React.FC<
 
     const { activeOption } = useWorkspaceAccountOptions();
 
+    // An account-scoped route reads only its account; the aggregated one, or a route naming no known account, reads
+    // every account of the workspace.
+    const selectedAccount = activeOption?.account;
+    const accountsToDisplay =
+        selectedAccount != null ? [selectedAccount] : accounts;
+
     // The single reader of the selection: the list renders the tabs and owns the URL parameter, while the aside
     // card is handed the selected tab from here, so the two cannot describe different tabs.
-    const { activeTab } = useWorkspaceMemberTabs({ accounts });
+    const { activeTab } = useWorkspaceMemberTabs({
+        accounts: accountsToDisplay,
+    });
 
     return (
         <Page.Content>
@@ -53,14 +61,14 @@ export const WorkspaceMembersPageClient: React.FC<
                 title={t('app.workspace.workspaceMembersPage.main.title')}
             >
                 <WorkspaceMemberList
-                    accounts={accounts}
+                    accounts={accountsToDisplay}
                     pageSize={pageSize}
                     workspaceId={workspaceId}
                 />
             </Page.Main>
             <Page.Aside>
                 <WorkspaceMembersAsideCard
-                    accounts={accounts}
+                    accounts={accountsToDisplay}
                     activeOption={activeOption}
                     activeTab={activeTab}
                     pageSize={pageSize}

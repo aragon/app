@@ -263,9 +263,9 @@ export const WorkspaceMemberListDefault: React.FC<
         : 'idle';
 
     // Accounts whose member page the app can serve. Membership is not a DAO notion — a Safe owner is a member of
-    // the workspace too — but the account-scoped member route resolves an account by reading its DAO, so only DAO
-    // accounts have a page to open today. This set is what grows when Safe account pages land; see the doc comment
-    // of `WorkspaceAccountGate` for what a Safe gets instead.
+    // the workspace too — but the member details page reads a DAO, so only DAO accounts have a page to open. Safe
+    // owners link to the block explorer instead, by decision (see "Safe member details" in
+    // `docs/projectDocs/createWorkspace.md`).
     const memberPageAccountIds = new Set(
         accounts
             .filter((account) => account.type === WorkspaceAccountType.DAO)

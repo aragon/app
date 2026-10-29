@@ -14,6 +14,7 @@ import { WorkspaceMemberList } from '../../components/workspaceMemberList';
 import { WorkspaceMembersAsideCard } from '../../components/workspaceMembersAsideCard';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAccountOptionsModule from '../../hooks/useWorkspaceAccountOptions';
+import * as useWorkspaceMemberTabsModule from '../../hooks/useWorkspaceMemberTabs';
 import {
     type IWorkspaceMembersPageClientProps,
     WorkspaceMembersPageClient,
@@ -39,6 +40,11 @@ describe('<WorkspaceMembersPageClient /> component', () => {
     const useWorkspaceAccountOptionsSpy = jest.spyOn(
         useWorkspaceAccountOptionsModule,
         'useWorkspaceAccountOptions',
+    );
+
+    const useWorkspaceMemberTabsSpy = jest.spyOn(
+        useWorkspaceMemberTabsModule,
+        'useWorkspaceMemberTabs',
     );
 
     const allAccountsOption: IWorkspaceAccountOption = {
@@ -147,5 +153,72 @@ describe('<WorkspaceMembersPageClient /> component', () => {
                 undefined,
             ),
         );
+    });
+
+    const safeOption: IWorkspaceAccountOption = {
+        id: safeAccount.id,
+        label: 'Safe',
+        account: safeAccount,
+        isAllAccounts: false,
+    };
+
+    const mockSafeSelected = () =>
+        useWorkspaceAccountOptionsSpy.mockReturnValue({
+            options: [allAccountsOption, safeOption],
+            accountId: safeAccount.id,
+            activeOption: safeOption,
+            isAllAccounts: false,
+        });
+
+    it('reads only the selected account when an account option is active', async () => {
+        mockSafeSelected();
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(memberListMock).toHaveBeenLastCalledWith(
+                expect.objectContaining({ accounts: [safeAccount] }),
+                undefined,
+            ),
+        );
+        expect(asideCardMock).toHaveBeenLastCalledWith(
+            expect.objectContaining({ accounts: [safeAccount] }),
+            undefined,
+        );
+        expect(useWorkspaceMemberTabsSpy).toHaveBeenLastCalledWith({
+            accounts: [safeAccount],
+        });
+    });
+
+    it('reads every account for the aggregated option', async () => {
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(memberListMock).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    accounts: [daoAccount, safeAccount],
+                }),
+                undefined,
+            ),
+        );
+        expect(asideCardMock).toHaveBeenLastCalledWith(
+            expect.objectContaining({ accounts: [daoAccount, safeAccount] }),
+            undefined,
+        );
+    });
+
+    // activeOption is resolved synchronously from the same cached workspace as the page, so it never lags behind
+    // the data: under an account route the whole workspace is never requested, not even on the first render.
+    it('never requests the whole workspace under an account route', async () => {
+        mockSafeSelected();
+        render(createTestComponent());
+
+        await waitFor(() => expect(memberListMock).toHaveBeenCalled());
+        await waitFor(() => expect(getWorkspaceSpy).toHaveBeenCalled());
+
+        expect(
+            memberListMock.mock.calls.every(
+                ([props]) => props.accounts.length === 1,
+            ),
+        ).toBe(true);
     });
 });
