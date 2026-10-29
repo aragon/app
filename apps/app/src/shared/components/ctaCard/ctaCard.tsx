@@ -123,7 +123,6 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                     {description}
                 </p>
             </div>
-            {/* Pinned to the bottom, so the actions of cards side by side line up whatever their text length. */}
             <div className="mt-auto flex flex-col gap-3 md:flex-row">
                 <Button
                     className="w-full md:w-auto"

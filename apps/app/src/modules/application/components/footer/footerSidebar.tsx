@@ -7,8 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
 import { footerLinks, type IFooterLink } from './footerLinks';
 
-// The side navigation has no room for the full link set: Explore is one click away through the
-// DAO or workspace selector, and the short Terms label keeps the row on one line.
+// Explore is one click away through the DAO or workspace selector.
 const sidebarLinks = footerLinks
     .filter(({ label }) => label !== 'explore')
     .map(

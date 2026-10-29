@@ -34,9 +34,7 @@ export const SupportChatLauncher: React.FC = () => {
     if (!isEnabled('supportChat') || isOpen) {
         return null;
     }
-    // Enters once the closing panel has slid away (its width transition runs 300ms): the
-    // `starting:` styles apply on mount, so the delayed fade also plays on page load. The fade sits
-    // on the wrapper so the button's hover colour change keeps no delay.
+    // delay-300 waits out the closing panel's 300ms width transition (supportChatPanel).
     return (
         <div className="sticky bottom-6 z-10 h-0 starting:translate-y-2 self-end starting:opacity-0 transition-[opacity,translate] delay-300 duration-200 ease-out motion-reduce:transition-none">
             <button
