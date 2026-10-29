@@ -272,6 +272,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                     >
                         <VoteList
                             daoId={daoId}
+                            defaultPluginId={memberSourceId}
                             initialParams={votesByMemberParams}
                         />
                     </Page.MainSection>

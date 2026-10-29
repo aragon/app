@@ -2,7 +2,11 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
-import { type IDaoPlugin, Network } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
 import * as useDaoChainHook from '@/shared/hooks/useDaoChain';
 import {
     generateDaoPlugin,
@@ -10,7 +14,6 @@ import {
     generateReactQueryInfiniteResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import * as workspaceQueryService from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -39,7 +42,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
         address: governanceAddress,
         isBody: true,
     });
-    const bodyId = daoUtils.buildPluginUniqueId(body);
+    const bodyId = `${body.address}-${body.slug}`;
 
     /**
      * The plugin map the list is handed in production, where the bodies of an account are known.
@@ -48,7 +51,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
         bodies: IDaoPlugin[],
         processes: IDaoPlugin[] = [],
     ): Record<string, IWorkspaceAccountPlugins> => ({
-        [daoAccount.id]: { bodies, processes },
+        [daoAccount.id]: { daoAddress, bodies, processes },
     });
 
     const daoAccount: IWorkspaceAccount = {
@@ -336,7 +339,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
 
         expect(screen.getAllByRole('link')[0]).toHaveAttribute(
             'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${daoUtils.buildPluginUniqueId(tokenBody)}`,
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${tokenBody.address}-${tokenBody.slug}`,
         );
     });
 
@@ -376,7 +379,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
             isBody: true,
             isProcess: true,
         });
-        const id = daoUtils.buildPluginUniqueId(basicBody);
+        const id = `${basicBody.address}-${basicBody.slug}`;
 
         expect(
             renderMemberOfBody(
@@ -412,7 +415,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
             ),
         ).toHaveAttribute(
             'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${daoUtils.buildPluginUniqueId(stageBody)}&proposals=${daoUtils.buildPluginUniqueId(process)}`,
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${stageBody.address}-${stageBody.slug}&proposals=${process.address}-${process.slug}`,
         );
     });
 
@@ -444,7 +447,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
             ),
         ).toHaveAttribute(
             'href',
-            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${daoUtils.buildPluginUniqueId(stageBody)}&proposals=${daoUtils.buildPluginUniqueId(process)}`,
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${stageBody.address}-${stageBody.slug}&proposals=${process.address}-${process.slug}`,
         );
     });
 
@@ -453,7 +456,7 @@ describe('<WorkspaceMemberListDefault /> component', () => {
     it('names no process while the processes of the account are unknown', () => {
         expect(
             renderMemberOfBody(governanceAddress, {
-                [daoAccount.id]: { bodies: [body] },
+                [daoAccount.id]: { daoAddress, bodies: [body] },
             }),
         ).toHaveAttribute(
             'href',
@@ -469,6 +472,93 @@ describe('<WorkspaceMemberListDefault /> component', () => {
         ).toHaveAttribute(
             'href',
             `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${bodyId}`,
+        );
+    });
+
+    // The vote and proposal lists of the member page carry `getPluginTabId` values, which name a Safe by its DAO
+    // too: a row writing anything else is rejected by the list and opens on the first body of the DAO instead.
+    it('links a Safe body member with the tab ID of the Safe', () => {
+        const safeBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000E0',
+            slug: 'safe',
+            interfaceType: PluginInterfaceType.SAFE,
+            daoAddress,
+            isBody: true,
+            isProcess: true,
+        });
+        const id = encodeURIComponent(
+            `${safeBody.address}-${safeBody.slug}-${daoAddress}`,
+        );
+
+        expect(
+            renderMemberOfBody(
+                safeBody.address,
+                buildPlugins([safeBody], [safeBody]),
+            ),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${id}&proposals=${id}`,
+        );
+    });
+
+    // A Safe plugin the backend returns without its DAO is named by the account the membership belongs to, as the
+    // lists of the member page name it by the DAO they render.
+    it('names a Safe body without a DAO address by the DAO of the account', () => {
+        const safeBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000E1',
+            slug: 'safe',
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+        });
+
+        expect(
+            renderMemberOfBody(safeBody.address, buildPlugins([safeBody])),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${safeBody.address}-${safeBody.slug}-${daoAddress}`,
+        );
+    });
+
+    // The lists of the member page build their tab IDs from the address of the DAO they read and match them
+    // case-sensitively, so a row naming the Safe by the workspace casing of the account would be rejected and the
+    // page would open on the first body of the DAO.
+    it('names a Safe body without a DAO address by the address of the resolved DAO', () => {
+        const resolvedDaoAddress = daoAddress.toLowerCase();
+        const safeBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000E3',
+            slug: 'safe',
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+        });
+
+        expect(
+            renderMemberOfBody(safeBody.address, {
+                [daoAccount.id]: {
+                    daoAddress: resolvedDaoAddress,
+                    bodies: [safeBody],
+                    processes: [],
+                },
+            }),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${safeBody.address}-${safeBody.slug}-${resolvedDaoAddress}`,
+        );
+    });
+
+    it('links other bodies with their address and slug', () => {
+        const tokenBody = generateDaoPlugin({
+            address: '0x00000000000000000000000000000000000000E2',
+            slug: 'token-voting',
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+            daoAddress,
+            isBody: true,
+        });
+
+        expect(
+            renderMemberOfBody(tokenBody.address, buildPlugins([tokenBody])),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${daoAccount.id}/members/${memberAddress}?vote=${tokenBody.address}-token-voting`,
         );
     });
 

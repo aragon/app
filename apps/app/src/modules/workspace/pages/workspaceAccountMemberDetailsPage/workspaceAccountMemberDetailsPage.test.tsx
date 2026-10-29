@@ -112,6 +112,16 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
+    /**
+     * The search parameters the DAO member page was last handed, through which the body it reads is named.
+     */
+    const readHandedSearchParams = () =>
+        (
+            daoMemberDetailsPageMock.mock.calls.at(-1)?.[0] as
+                | { searchParams?: Promise<unknown> }
+                | undefined
+        )?.searchParams;
+
     it('renders the DAO member page of the account behind the account gate', async () => {
         render(await createTestComponent());
 
@@ -157,10 +167,9 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
     it('hands the member page the governance of the membership', async () => {
         render(await createTestComponent());
 
-        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginId: governanceAddress }),
-            undefined,
-        );
+        await expect(readHandedSearchParams()).resolves.toEqual({
+            members: governanceAddress,
+        });
     });
 
     // The rule the account selector applies when switching account, applied here to a stale or hand-edited URL.
@@ -184,10 +193,9 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         expect(
             screen.getByTestId('dao-member-details-mock'),
         ).toBeInTheDocument();
-        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginId: undefined }),
-            undefined,
-        );
+        await expect(readHandedSearchParams()).resolves.toEqual({
+            members: undefined,
+        });
     });
 
     // An empty answer only means "a member of nothing" when the account behind it could be read. A partial one is
@@ -202,10 +210,9 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         expect(
             screen.getByTestId('dao-member-details-mock'),
         ).toBeInTheDocument();
-        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginId: undefined }),
-            undefined,
-        );
+        await expect(readHandedSearchParams()).resolves.toEqual({
+            members: undefined,
+        });
     });
 
     // The rows of the member lists name the body they stood for, which is the whole question the lookup answers. It
@@ -219,10 +226,9 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         );
 
         expect(getMemberListSpy).not.toHaveBeenCalled();
-        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginId: linkedBody }),
-            undefined,
-        );
+        await expect(readHandedSearchParams()).resolves.toEqual({
+            members: linkedBody,
+        });
     });
 
     // A URL that names a body opts out of the lookup, and therefore out of the redirect that goes with it. The DAO
@@ -257,10 +263,9 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         );
 
         expect(getMemberListSpy).toHaveBeenCalled();
-        expect(daoMemberDetailsPageMock).toHaveBeenCalledWith(
-            expect.objectContaining({ bodyPluginId: governanceAddress }),
-            undefined,
-        );
+        await expect(readHandedSearchParams()).resolves.toEqual({
+            members: governanceAddress,
+        });
     });
 
     it('renders the 404 page when the workspaces feature is disabled', async () => {

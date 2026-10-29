@@ -37,8 +37,8 @@ export const daoMembersCount = 18;
  *
  * The fix is to make the base URL of these pages a parameter rather than always `daoUtils.getDaoUrl`, so the
  * workspace pages can pass their own account-scoped base. Alternatively, the utility can be updated to serve
- * workspace-scoped URLS as well for now. Either way the shape already exists: `DaoMemberDetailsPage` takes a
- * `bodyPluginId` prop for the other thing only the workspace knows.
+ * workspace-scoped URLS as well for now. Either way the shape already exists: the workspace hands
+ * `DaoMemberDetailsPage` the body through the `members` search parameter.
  */
 
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {

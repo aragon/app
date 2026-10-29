@@ -78,9 +78,10 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
 
     // Only the accounts whose plugins are known are listed
     const visiblePluginsByAccountId = Object.fromEntries(
-        bodyPlugins.map(({ accountId, plugins: daoPlugins }) => [
+        bodyPlugins.map(({ accountId, dao, plugins: daoPlugins }) => [
             accountId,
             {
+                daoAddress: dao.address,
                 bodies: daoPlugins,
                 processes: processesByAccountId.get(accountId),
             },
