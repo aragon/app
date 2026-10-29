@@ -28,9 +28,8 @@ export interface INavigationSidebarProps extends ComponentProps<'nav'> {
 
 /**
  * Side navigation of the application from the `lg` breakpoint, hidden below it where the navigation bar and its
- * dialog take over. Render it beside the page content through `LayoutSidebar`, which keeps the content measuring its
- * own width rather than the width of the sidebar plus the content. It opens with the way back to the explore page,
- * above the header, so that link does not read as one of the sections.
+ * dialog take over. Render it beside the page content through `LayoutSidebar`. The way back to the explore page sits
+ * above the header so it does not read as one of the sections.
  */
 export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
     const { links, secondaryLinks, header, footer, className, ...otherProps } =
@@ -41,7 +40,7 @@ export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
     return (
         <nav
             className={classNames(
-                'sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 self-start overflow-y-auto border-neutral-100 border-r bg-neutral-0 px-3 py-4 lg:flex',
+                'sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 self-start overflow-y-auto border-neutral-100 border-r bg-neutral-0 px-3 py-4 shadow-[8px_0_24px_-16px_rgba(50,63,75,0.18)] lg:flex',
                 className,
             )}
             {...otherProps}

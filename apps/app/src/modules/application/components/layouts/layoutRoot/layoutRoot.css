@@ -8,3 +8,8 @@
 
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";
+
+/* Not in GovKit yet; the design's neutral-25, halfway between neutral-50 and white. */
+@theme {
+    --color-neutral-25: #fafbfd;
+}
