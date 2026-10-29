@@ -2,7 +2,7 @@
 # aragon/github-templates modules: a start every Tuesday (or by hand) cuts release/gov-ui-kit/<timestamp>
 # with the changesets bump of the "gov-ui-kit" release scope and opens the "Release
 # @aragon/gov-ui-kit@x.y.z" PR with its Slack thread; every push refreshes the summary and runs the
-# checks; merging tags the merge commit and publishes the GitHub Release, which starts the npm
+# checks; merging tags the PR head and publishes the GitHub Release, which starts the npm
 # publish (gov-ui-kit-publish.yml) behind its approval; closing without a merge cancels the release.
 #
 # Packages start their train on Tuesday, apps on Monday. A scheduled start green-skips when a kit
@@ -101,8 +101,9 @@ jobs:
       - name: Check published CSS bundles
         run: pnpm css:check
 
-  # The merge commit is tagged: there is no staging ceremony, and the published package must
-  # include the merge. Creating the release is what triggers gov-ui-kit-publish.yml.
+  # The PR head is tagged (the commit the checks ran on), never the merge commit, which would also
+  # carry whatever landed on main while the PR was open. Release PRs are merged with a merge
+  # commit so the head stays in main's history. Creating the release triggers gov-ui-kit-publish.yml.
   finalize:
     if: >
       github.event_name == 'pull_request'
@@ -110,7 +111,7 @@ jobs:
       && startsWith(github.event.pull_request.head.ref, 'release/gov-ui-kit/')
     uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
     with:
-      sha: ${{ github.event.pull_request.merge_commit_sha }}
+      sha: ${{ github.event.pull_request.head.sha }}
       pr-body: ${{ github.event.pull_request.body }}
       package-dir: packages/gov-ui-kit
       tag-prefix: "@aragon/gov-ui-kit@"

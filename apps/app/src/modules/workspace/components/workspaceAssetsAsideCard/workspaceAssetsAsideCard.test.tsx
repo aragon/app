@@ -13,6 +13,7 @@ import {
     WorkspaceAssetsAsideCard,
 } from './workspaceAssetsAsideCard';
 import * as workspaceDaoAssetsAsideCard from './workspaceDaoAssetsAsideCard';
+import * as workspaceSafeAssetsAsideCard from './workspaceSafeAssetsAsideCard';
 
 describe('<WorkspaceAssetsAsideCard /> component', () => {
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
@@ -25,6 +26,10 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
     const daoAssetsCardSpy = jest.spyOn(
         workspaceDaoAssetsAsideCard,
         'WorkspaceDaoAssetsAsideCard',
+    );
+    const safeAssetsCardSpy = jest.spyOn(
+        workspaceSafeAssetsAsideCard,
+        'WorkspaceSafeAssetsAsideCard',
     );
 
     const daoAccount: IWorkspaceAccount = {
@@ -55,11 +60,15 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         daoAssetsCardSpy.mockImplementation(() => (
             <div data-testid="dao-assets-mock" />
         ));
+        safeAssetsCardSpy.mockImplementation(() => (
+            <div data-testid="safe-assets-mock" />
+        ));
     });
 
     afterEach(() => {
         allAssetsCardSpy.mockReset();
         daoAssetsCardSpy.mockReset();
+        safeAssetsCardSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -84,7 +93,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
 
         expect(screen.getByTestId('all-assets-mock')).toBeInTheDocument();
         expect(allAssetsCardSpy).toHaveBeenLastCalledWith(
-            { metadata, title: undefined },
+            { metadata },
             undefined,
         );
     });
@@ -94,7 +103,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
 
         expect(screen.getByTestId('all-assets-mock')).toBeInTheDocument();
         expect(allAssetsCardSpy).toHaveBeenLastCalledWith(
-            { metadata: undefined, title: undefined },
+            { metadata: undefined },
             undefined,
         );
     });
@@ -118,7 +127,8 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         );
     });
 
-    it('falls back to the aggregated card for account types with no card of their own', () => {
+    it('renders the Safe card when the selected account is a Safe', () => {
+        const metadata = generatePaginatedResponseMetadata();
         const activeOption: IWorkspaceAccountOption = {
             id: safeAccount.id,
             label: 'Demo Safe',
@@ -126,9 +136,14 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
             isAllAccounts: false,
             isExternal: false,
         };
-        render(createTestComponent({ activeOption }));
+        render(createTestComponent({ activeOption, metadata }));
 
-        expect(screen.getByTestId('all-assets-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('safe-assets-mock')).toBeInTheDocument();
+        expect(screen.queryByTestId('all-assets-mock')).not.toBeInTheDocument();
         expect(screen.queryByTestId('dao-assets-mock')).not.toBeInTheDocument();
+        expect(safeAssetsCardSpy).toHaveBeenLastCalledWith(
+            { account: safeAccount, label: 'Demo Safe', metadata },
+            undefined,
+        );
     });
 });

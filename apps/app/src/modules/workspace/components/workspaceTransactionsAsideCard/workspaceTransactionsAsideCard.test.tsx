@@ -11,6 +11,8 @@ import type * as allCardModule from './workspaceAllTransactionsAsideCard';
 import { WorkspaceAllTransactionsAsideCard } from './workspaceAllTransactionsAsideCard';
 import type * as daoCardModule from './workspaceDaoTransactionsAsideCard';
 import { WorkspaceDaoTransactionsAsideCard } from './workspaceDaoTransactionsAsideCard';
+import type * as safeCardModule from './workspaceSafeTransactionsAsideCard';
+import { WorkspaceSafeTransactionsAsideCard } from './workspaceSafeTransactionsAsideCard';
 import {
     type IWorkspaceTransactionsAsideCardProps,
     WorkspaceTransactionsAsideCard,
@@ -28,6 +30,12 @@ jest.mock('./workspaceDaoTransactionsAsideCard', () => ({
     )),
 }));
 
+jest.mock('./workspaceSafeTransactionsAsideCard', () => ({
+    WorkspaceSafeTransactionsAsideCard: jest.fn(() => (
+        <div data-testid="safe-card-mock" />
+    )),
+}));
+
 jest.mock(
     '@/modules/capitalFlow/components/dispatchPanel/dispatchPanel',
     () => ({
@@ -41,6 +49,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
 
     const allCardMock = WorkspaceAllTransactionsAsideCard as jest.Mock;
     const daoCardMock = WorkspaceDaoTransactionsAsideCard as jest.Mock;
+    const safeCardMock = WorkspaceSafeTransactionsAsideCard as jest.Mock;
     const dispatchPanelMock = DispatchPanel as jest.Mock;
 
     const useFeatureFlagsSpy = jest.spyOn(
@@ -97,6 +106,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
     afterEach(() => {
         allCardMock.mockClear();
         daoCardMock.mockClear();
+        safeCardMock.mockClear();
         dispatchPanelMock.mockClear();
         useFeatureFlagsSpy.mockReset();
     });
@@ -109,6 +119,11 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
     const lastDaoCardProps = () =>
         daoCardMock.mock.calls.at(-1)?.[0] as
             | daoCardModule.IWorkspaceDaoTransactionsAsideCardProps
+            | undefined;
+
+    const lastSafeCardProps = () =>
+        safeCardMock.mock.calls.at(-1)?.[0] as
+            | safeCardModule.IWorkspaceSafeTransactionsAsideCardProps
             | undefined;
 
     const createTestComponent = (
@@ -160,7 +175,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
         });
     });
 
-    it('titles the aggregated card with the label of a selected Safe', () => {
+    it('renders the Safe card when the selected account is a Safe', () => {
         render(
             createTestComponent({
                 accounts: [safeAccount],
@@ -168,12 +183,13 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
             }),
         );
 
-        expect(screen.getByTestId('all-card-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('safe-card-mock')).toBeInTheDocument();
+        expect(screen.queryByTestId('all-card-mock')).not.toBeInTheDocument();
         expect(screen.queryByTestId('dao-card-mock')).not.toBeInTheDocument();
-        expect(lastAllCardProps()).toEqual({
-            accounts: [safeAccount],
+        expect(lastSafeCardProps()).toEqual({
+            account: safeAccount,
+            label: 'Grants Safe',
             pageSize: 20,
-            title: 'Grants Safe',
         });
     });
 
