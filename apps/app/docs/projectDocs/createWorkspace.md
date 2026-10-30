@@ -761,14 +761,22 @@ Safe lacks — unwinds to `app/workspace/[workspaceId]/not-found.tsx`, which sit
 the layout's output along with the page's. Its doc comment records the reasoning where the next reader will look.
 
 The Safe branch of the members routes reads the account through `workspaceAccountInfoUtils.getAccountInfo`, a
-`query/accounts` lookup made once per request
+single-account `query/accounts` lookup made on the server, once per request. It asks the accounts API what the
+address is, not whether the workspace holds it, so an external Safe takes the Safe branch too. A failed lookup
+returns `undefined` and the route falls back to the DAO branch, where the gate settles it.
 
 ### Members page
 
 `/workspace/{workspaceId}/all/members` is the aggregated route; the account-scoped one renders this page for a Safe
 account, narrowed to that account, and the DAO members page (`WorkspaceAccountMembersPage`) otherwise, an account ID
 being a DAO ID. The accounts in view are all of them, not just the DAOs, since Safe accounts take part here, unlike
-proposals, their owners being members of the workspace. That premise is **verified on sandbox, 2026-10-28**:
+proposals, their owners being members of the workspace.
+
+`WorkspaceMembersPageClient` reads no workspace of its own: the list, the tabs and the aside all take
+`scopedAccounts` from `useWorkspaceAccountOptions`, as the assets, transactions and proposals pages do. A Safe the
+workspace does not hold is therefore scoped to that Safe alone once the external lookup resolves; it used to fall
+back to every account of the workspace, listing the whole workspace under a URL naming one Safe. Unlike those pages,
+the members page does not yet read `isPending` or render `WorkspaceAccountStateCard` (see Known gaps). That premise is **verified on sandbox, 2026-10-28**:
 `query/members` returns the owners of a Safe account with `source: "safe"`. Sandbox only, like the other findings.
 
 `useWorkspaceMemberTabs` is the counterpart of `useWorkspaceProposalTabs` and follows the same rules: one tab per
@@ -784,7 +792,9 @@ hidden), because the group tab then shows more than the lone body tab does.
 over the aggregate:
 
 - `WorkspaceSafeMembersAsideCard` — a Safe account tab. `SafeSettingsDetails`: the Safe (address, Safe app link,
-  version), Threshold and Current nonce rows of the Safe body card, with no stats, description or Octav link.
+  version), Threshold and Current nonce rows of the Safe body card, with no stats, description or Octav link. Titled
+  by the tab's label, which is the option's label (`metadata.name ?? accounts-API name ?? truncated address`), so an
+  unnamed Safe is titled by its truncated address with no "Safe" prefix.
 - `WorkspaceBodyMembersAsideCard` — a body is selected, or a single body covers the whole list. The
   `SETTINGS_PLUGIN_INFO` slot of the tab's body, with `DaoPluginInfo` (`type=BODY`, on the tab's account) as the
   fallback, the swap `daoMembersPageClient` makes. That page also renders a `GOVERNANCE_MEMBER_PANEL` slot component below the
@@ -1098,6 +1108,12 @@ Keep it that way when extending this.
   The owners of a Safe are only ever reported on the Safe account, so with the Safe not a workspace account the
   DAO's Safe body tab is empty. When the Safe is also an account its owners do appear, but only as Safe-account
   memberships, which link to the block explorer even under the DAO's Safe body tab. Pending a backend fix.
+- **The Safe members page has no external-account states.** `WorkspaceMembersPageClient` reads `scopedAccounts` but
+  not `isPending`, and does not render `WorkspaceAccountStateCard`. For a Safe the workspace does not hold, the list
+  shows its empty state while the client lookup is pending (an empty selection keeps the query disabled, which the
+  list reads as idle rather than loading), and stays empty if that lookup then fails. The server lookup that routed
+  the page to the Safe branch makes the failure unlikely, but the client request is a separate one, as on the
+  proposals page.
 - **`query/accounts` fails the whole request when one address is unplaceable.** An address that is neither an
   indexed DAO nor a Safe makes the endpoint answer 404 `{"code":"safeNotFound"}` for the *entire* batch, which
   contradicts the per-entry `status: "unsupported"` that `IWorkspaceAccountInfo` and

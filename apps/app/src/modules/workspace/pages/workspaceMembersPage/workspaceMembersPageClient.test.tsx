@@ -163,6 +163,7 @@ describe('<WorkspaceMembersPageClient /> component', () => {
         label: 'Safe',
         account: safeAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const mockSafeSelected = () =>
@@ -171,6 +172,8 @@ describe('<WorkspaceMembersPageClient /> component', () => {
             accountId: safeAccount.id,
             activeOption: safeOption,
             isAllAccounts: false,
+            scopedAccounts: [safeAccount],
+            isPending: false,
         });
 
     it('reads only the selected account when an account option is active', async () => {
@@ -209,14 +212,13 @@ describe('<WorkspaceMembersPageClient /> component', () => {
         );
     });
 
-    // activeOption is resolved synchronously from the same cached workspace as the page, so it never lags behind
-    // the data: under an account route the whole workspace is never requested, not even on the first render.
+    // The page reads no workspace of its own: the accounts come from `scopedAccounts` alone, so under an account
+    // route the whole workspace is never requested, not even on the first render.
     it('never requests the whole workspace under an account route', async () => {
         mockSafeSelected();
         render(createTestComponent());
 
         await waitFor(() => expect(memberListMock).toHaveBeenCalled());
-        await waitFor(() => expect(getWorkspaceSpy).toHaveBeenCalled());
 
         expect(
             memberListMock.mock.calls.every(
