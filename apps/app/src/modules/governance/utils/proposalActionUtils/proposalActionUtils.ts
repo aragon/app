@@ -1,14 +1,10 @@
 import {
     addressUtils,
-    type IProposalAction as IGukProposalAction,
     ProposalActionTypeNoBasicView,
 } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, type Hex, toFunctionSelector } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IDao } from '@/shared/api/daoService';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
-import type { INormalizeActionsParams, IRawActionTuple } from '../../types';
+import type { IRawActionTuple } from '../../types';
 
 class ProposalActionUtils {
     /**
@@ -150,24 +146,6 @@ class ProposalActionUtils {
         subActions: IProposalAction[] | undefined,
         rawTuple: IRawActionTuple[],
     ): IProposalAction[] => this.resolveActions(subActions ?? [], rawTuple);
-
-    normalizeActions = (
-        actions: IProposalAction[],
-        dao: IDao,
-    ): IGukProposalAction[] => {
-        // Use all registered normalization functions to make sure we render the native action correctly even if a DAO
-        // does not have the related plugin (e.g. a Multisig DAO updating the settings of a Token-based DAO)
-        const normalizeFunctions = pluginRegistryUtils.getSlotFunctions<
-            INormalizeActionsParams,
-            IProposalAction[]
-        >(GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS);
-
-        return normalizeFunctions.reduce(
-            (current, normalizeFunction) =>
-                normalizeFunction({ actions: current, daoId: dao.id }),
-            actions,
-        );
-    };
 
     actionToFunctionSelector = (action: IProposalAction): Hex | undefined => {
         const { inputData, data } = action;

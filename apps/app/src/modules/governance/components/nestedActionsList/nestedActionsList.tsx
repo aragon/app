@@ -4,8 +4,8 @@ import {
     type IProposalActionInputDataParameter,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useDao } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
+import { useNormalizedProposalActions } from '../../hooks/useNormalizedProposalActions';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import { ProposalActionsItem } from '../proposalActionsItem';
 
@@ -34,12 +34,6 @@ export interface INestedActionsListProps {
 export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
     const { outerParams, rawActions, daoId, chainId } = props;
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
-    if (dao == null) {
-        return null;
-    }
-
     const rawTuple = proposalActionUtils.parseRawActionTuple(
         outerParams.find((param) => param.name === '_actions')?.value,
     );
@@ -49,14 +43,14 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
         rawTuple,
     );
 
-    if (actionsToRender.length === 0) {
+    const normalizedActions = useNormalizedProposalActions({
+        actions: actionsToRender,
+        daoId,
+    });
+
+    if (normalizedActions.length === 0) {
         return null;
     }
-
-    const normalizedActions = proposalActionUtils.normalizeActions(
-        actionsToRender,
-        dao,
-    );
 
     return (
         <ProposalActions.Root actionsCount={normalizedActions.length}>

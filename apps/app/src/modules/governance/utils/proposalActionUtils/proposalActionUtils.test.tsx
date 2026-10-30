@@ -1,53 +1,9 @@
 import { toFunctionSelector } from 'viem';
 import { generateProposalAction } from '@/modules/governance/testUtils';
-import { generateDao } from '@/shared/testUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
 describe('proposalActionUtils', () => {
-    const getSlotFunctionsSpy = jest.spyOn(
-        pluginRegistryUtils,
-        'getSlotFunctions',
-    );
-
-    afterEach(() => {
-        getSlotFunctionsSpy.mockReset();
-    });
-
-    describe('normalizeActions', () => {
-        it('retrieves and triggers all plugin-specific normalization functions to normalize the proposal actions', () => {
-            const dao = generateDao({ id: 'test' });
-            const actions = [generateProposalAction()];
-            const normalizationFunctionOne = jest.fn(() => actions);
-            const normalizationFunctionTwo = jest.fn(() => actions);
-            getSlotFunctionsSpy.mockReturnValue([
-                normalizationFunctionOne,
-                normalizationFunctionTwo,
-            ]);
-            proposalActionUtils.normalizeActions(actions, dao);
-            const expectedParams = { actions, daoId: dao.id };
-            expect(normalizationFunctionOne).toHaveBeenCalledWith(
-                expectedParams,
-            );
-            expect(normalizationFunctionTwo).toHaveBeenCalledWith(
-                expectedParams,
-            );
-        });
-
-        it('returns the result of the plugin-specific normalization functions', () => {
-            const normalizedActions = [
-                generateProposalAction({ type: '1' }),
-                generateProposalAction({ type: '2' }),
-            ];
-            const pluginNormalizationFunction = () => normalizedActions;
-            getSlotFunctionsSpy.mockReturnValue([pluginNormalizationFunction]);
-            expect(
-                proposalActionUtils.normalizeActions([], generateDao()),
-            ).toEqual(normalizedActions);
-        });
-    });
-
     describe('parseRawActionTuple', () => {
         const to = '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123';
 

@@ -1,13 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
-import * as daoService from '@/shared/api/daoService';
-import {
-    generateDao,
-    generateReactQueryResultSuccess,
-    generateReactQueryResultSuccessWithData,
-} from '@/shared/testUtils';
+import * as UseNormalizedProposalActions from '../../hooks/useNormalizedProposalActions';
 import {
     type INestedActionsListProps,
     NestedActionsList,
@@ -20,22 +14,19 @@ jest.mock('../proposalActionsItem', () => ({
 }));
 
 describe('<NestedActionsList /> component', () => {
-    const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const normalizeActionsSpy = jest.spyOn(
-        proposalActionUtils,
-        'normalizeActions',
+    const useNormalizedProposalActionsSpy = jest.spyOn(
+        UseNormalizedProposalActions,
+        'useNormalizedProposalActions',
     );
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao() }),
+        useNormalizedProposalActionsSpy.mockImplementation(
+            ({ actions }) => actions,
         );
-        normalizeActionsSpy.mockImplementation((actions) => actions);
     });
 
     afterEach(() => {
-        useDaoSpy.mockReset();
-        normalizeActionsSpy.mockReset();
+        useNormalizedProposalActionsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INestedActionsListProps>) => {
@@ -133,16 +124,16 @@ describe('<NestedActionsList /> component', () => {
         expect(screen.getByTestId('nested-item')).toHaveTextContent(
             'RAW_CALLDATA',
         );
-        expect(normalizeActionsSpy).toHaveBeenCalledWith(
-            [
+        expect(useNormalizedProposalActionsSpy).toHaveBeenCalledWith({
+            actions: [
                 expect.objectContaining({
                     to: firstTarget,
                     value: '5',
                     data: '0xabcd',
                 }),
             ],
-            expect.anything(),
-        );
+            daoId: 'dao-id',
+        });
     });
 
     it('falls back to raw-calldata stubs when decoded length disagrees with the outer tuple', () => {
@@ -177,23 +168,6 @@ describe('<NestedActionsList /> component', () => {
         expect(screen.getByTestId('nested-item')).toHaveTextContent(
             'RAW_CALLDATA',
         );
-    });
-
-    it('renders nothing while the DAO is loading', () => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccessWithData(
-                undefined,
-            ) as unknown as ReturnType<typeof daoService.useDao>,
-        );
-        const { container } = render(
-            createTestComponent({
-                outerParams: outerParams([
-                    { to: firstTarget, value: '0', data: '0x' },
-                ]),
-                rawActions: [generateAction({ to: firstTarget })],
-            }),
-        );
-        expect(container).toBeEmptyDOMElement();
     });
 
     it('renders nothing when both rawActions and the outer tuple are empty', () => {
