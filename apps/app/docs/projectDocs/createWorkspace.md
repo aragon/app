@@ -322,10 +322,19 @@ differences, all forced by this branch:
 contained in the layout component. When a real registry lands, the fetch/hydrate shape of 1096 becomes correct
 again and this layout should adopt it.
 
-`navigationWorkspaceUtils.buildLinks` builds every link through `workspaceUtils.getAccountScopeUrl`, scoped to the
-account on the route, at orders 100-500: Overview, Proposals, Members, Assets, Transactions. It lists them all,
+`navigationWorkspaceUtils.buildLinks` builds the section links through `workspaceUtils.getAccountScopeUrl`, scoped to
+the account on the route, at orders 100-500: Overview, Proposals, Members, Assets, Transactions. It lists them all,
 including the ones that have no account-scoped route yet — so under an account scope those links lead to the
-section-not-found page until the route lands.
+section-not-found page until the route lands. Permissions and Settings follow at orders 600-700 for a DAO account
+only (`workspaceDaoAccountSections`): they are hidden for the aggregated scope and for a Safe, and appear once the
+workspace read tells the account type. Their pages, `WorkspaceAccountPermissionsPage` and
+`WorkspaceAccountSettingsPage`, render the DAO pages as is behind `WorkspaceAccountGate`, like the members page; the
+links inside them (plugin settings details, automations) still lead to the `/dao/…` routes. Switching account from
+either section lands any option that is not a DAO account on its overview instead.
+
+`navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Edit workspace, to the
+edit wizard — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
+The account selector closes with an Add account item opening the edit wizard on its Accounts step.
 
 ### Assets page
 
@@ -671,12 +680,16 @@ today, and the two differ by route:
 | `/{accountId}/members/{address}` | not yet | the gate's error state |
 | `/{accountId}/proposals` | not yet | the gate's error state |
 | `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's error state |
+| `/{accountId}/permissions` | not applicable | DAO only: no link for a Safe; the URL gets the gate's error state |
+| `/{accountId}/settings` | not applicable | DAO only: no link for a Safe; the URL gets the gate's error state |
 
 Two consequences worth stating, because both are deliberate:
 
 - **A Safe is a selectable account option on every section**, so the selector can lead a reader to a route that
   fails. That is preferred over hiding the option per section: the account exists, and a failure says so plainly
-  while a missing option says nothing at all.
+  while a missing option says nothing at all. The DAO-only sections (`workspaceDaoAccountSections`: permissions,
+  settings) are the exception: a Safe will never have them, so there the Safe option — and the aggregated one — stays
+  listed but links to its overview rather than to a route that can only fail.
 - **`/{accountId}/proposals` is gated even though the page needs no DAO.** The aggregated proposals page is shared
   by both scopes and narrows to DAO accounts, so for a Safe it would answer a URL naming one account with the
   proposals of every DAO account of the workspace — the narrowing fails open. `WorkspaceProposalsPage` therefore

@@ -175,6 +175,12 @@
         },
         {
             "sourceFile": "src/theme/tokens/primitives/colors.css",
+            "sourceVariable": "--color-neutral-25",
+            "sourceValue": "#fafbfd",
+            "token": "color.neutral.25"
+        },
+        {
+            "sourceFile": "src/theme/tokens/primitives/colors.css",
             "sourceVariable": "--color-neutral-50",
             "sourceValue": "#f5f7fa",
             "token": "color.neutral.50"

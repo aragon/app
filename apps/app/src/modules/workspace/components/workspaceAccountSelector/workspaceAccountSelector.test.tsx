@@ -1,4 +1,4 @@
-import { GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -160,7 +160,35 @@ describe('<WorkspaceAccountSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('lists every option with its avatar, using the workspace avatar for the aggregated option', async () => {
+    it('counts the workspace accounts under the aggregated option', () => {
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/workspaceAccountSelector\.accounts/),
+        ).toBeInTheDocument();
+    });
+
+    it('displays the address of the active account under its name', () => {
+        mockAccountOptions({ activeOption: daoOption, isAllAccounts: false });
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(addressUtils.truncateAddress(daoAddress)),
+        ).toBeInTheDocument();
+    });
+
+    it('displays the address once for an account labelled by its address', () => {
+        const truncatedAddress = addressUtils.truncateAddress(daoAddress);
+        mockAccountOptions({
+            activeOption: { ...daoOption, label: truncatedAddress },
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
+    });
+
+    it('lists every option with its avatar, using the workspace avatar for the aggregated option, then the add account item', async () => {
         render(createTestComponent());
 
         await waitFor(() =>
@@ -169,11 +197,60 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(screen.getByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(2);
+        expect(items).toHaveLength(3);
         expect(items[0]).toHaveTextContent('All accounts');
         expect(items[1]).toHaveTextContent('Demo DAO');
+        expect(items[2]).toHaveTextContent(
+            /workspaceAccountSelector\.addAccount$/,
+        );
         expect(cidToSrcSpy).toHaveBeenCalledWith('workspace-cid');
     });
+
+    it('opens the accounts step of the edit wizard from the add account item, returning to the current page', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        expect(
+            await screen.findByRole('menuitem', {
+                name: /workspaceAccountSelector\.addAccount$/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/workspace/test-workspace/edit?step=ACCOUNTS&returnTo=%2Fworkspace%2Ftest-workspace%2Fall%2Fproposals',
+        );
+    });
+
+    it.each(['permissions', 'settings'])(
+        'links the options without %s to their overview',
+        async (section) => {
+            usePathnameSpy.mockReturnValue(
+                `/workspace/test-workspace/${daoAccount.id}/${section}`,
+            );
+            mockAccountOptions({
+                options: [allAccountsOption, daoOption, safeOption],
+                activeOption: daoOption,
+                isAllAccounts: false,
+            });
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const [all, dao, safe] = await screen.findAllByRole('menuitem');
+            expect(all).toHaveAttribute(
+                'href',
+                '/workspace/test-workspace/all/overview',
+            );
+            expect(dao).toHaveAttribute(
+                'href',
+                `/workspace/test-workspace/${daoAccount.id}/${section}`,
+            );
+            expect(safe).toHaveAttribute(
+                'href',
+                `/workspace/test-workspace/${safeAccount.id}/overview`,
+            );
+        },
+    );
 
     it('renders every option as a link to the current section of its own account scope', async () => {
         render(createTestComponent());
@@ -245,11 +322,26 @@ describe('<WorkspaceAccountSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders nothing when there is no option to choose between', () => {
+    it('renders nothing until the workspace is read', () => {
+        getWorkspaceSpy.mockReturnValue(new Promise(() => undefined));
         mockAccountOptions({ options: [allAccountsOption] });
         const { container } = render(createTestComponent());
 
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('offers to add an account to a workspace holding none', async () => {
+        getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
+        mockAccountOptions({ options: [allAccountsOption] });
+        render(createTestComponent());
+
+        await userEvent.click(await screen.findByRole('button'));
+
+        const items = await screen.findAllByRole('menuitem');
+        expect(items.map((item) => item.textContent)).toEqual([
+            'All accounts',
+            expect.stringMatching(/workspaceAccountSelector\.addAccount$/),
+        ]);
     });
 
     it('renders a Safe option with the Safe wallet avatar', async () => {

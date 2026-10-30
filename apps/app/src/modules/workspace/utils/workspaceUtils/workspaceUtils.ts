@@ -43,6 +43,12 @@ const fallbackWorkspaceSlug = 'workspace';
 export const workspaceAllAccountsSegment = 'all';
 
 /**
+ * Sections served for a DAO account alone, `/workspace/{workspaceId}/{accountId}/{section}`: the aggregated scope and
+ * a Safe have neither, so switching to one of those from these sections lands on the overview instead.
+ */
+export const workspaceDaoAccountSections = ['permissions', 'settings'] as const;
+
+/**
  * Query parameter opening the edit wizard of a workspace on a given step, e.g. `?step=ACCOUNTS`.
  */
 export const workspaceEditStepParam = 'step';

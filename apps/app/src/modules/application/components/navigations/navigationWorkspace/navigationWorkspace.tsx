@@ -1,12 +1,13 @@
 'use client';
 
-import { DaoAvatar, Wallet } from '@aragon/gov-ui-kit';
+import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
-import { useWorkspace } from '@/modules/workspace/api/workspaceService';
+import { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
 import { useWorkspaceAccountOptions } from '@/modules/workspace/hooks/useWorkspaceAccountOptions';
@@ -17,9 +18,9 @@ import {
 } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWalletAccount } from '../../../hooks/useWalletAccount';
-import { SupportChatTrigger } from '../../supportChat';
+import { FooterSidebar } from '../../footer';
+import { NavigationSidebarAccount } from '../navigationSidebarAccount';
 import { navigationWorkspaceUtils } from './navigationWorkspaceUtils';
 
 export interface INavigationWorkspaceProps extends INavigationContainerProps {
@@ -30,22 +31,25 @@ export interface INavigationWorkspaceProps extends INavigationContainerProps {
 }
 
 /**
- * Navigation bar of the workspace pages.
+ * Navigation of the workspace pages: the sidebar from the `lg` breakpoint, the navigation bar and its dialog below it.
+ * Render it as the `navigation` of `LayoutSidebar`. The workspace and account selectors head the sidebar and, below
+ * `lg`, the dialog: the bar only carries the dialog trigger and the wallet.
  *
- * Unlike the DAO navigation, the workspace is resolved here on the client instead of being passed down from the
- * layout: the workspace registry is backed by local storage and cannot be read during a server render (see
- * `docs/projectDocs/createWorkspace.md`).
- *
- * It renders without waiting for that read. Every section link is built from the workspace ID on the route, so the
- * bar is navigable from the first paint on a cold load; the workspace name, avatar and account count are the only
- * things that arrive with the read, and they are absent until it resolves.
+ * Every section link is built from the workspace ID on the route, so the navigation is usable from the first paint on
+ * a cold load, before the workspace registry (local storage, see `docs/projectDocs/createWorkspace.md`) is read.
  */
 export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     props,
 ) => {
-    const { workspaceId, containerClasses, ...otherProps } = props;
+    const { workspaceId, className, containerClasses, ...otherProps } = props;
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    // The dialog stays open on the pathname it was opened on: picking a workspace or account from its selectors is a
+    // navigation, which closes it.
+    const pathname = usePathname();
+    const [dialogPathname, setDialogPathname] = useState<string>();
+    const isDialogOpen = dialogPathname === pathname;
+    const handleDialogOpenChange = (isOpen: boolean) =>
+        setDialogPathname(isOpen ? pathname : undefined);
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
@@ -57,13 +61,9 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     const effectiveIsConnected = isMounted && isConnected && address != null;
     const { open } = useDialogContext();
 
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
-
     // The links stay scoped to the account being looked at, so a tab change keeps the reader on it. The hook reads
     // the account from the route, which is where it lives, and falls back to the aggregated segment.
-    const { accountId } = useWorkspaceAccountOptions();
+    const { accountId, activeOption } = useWorkspaceAccountOptions();
 
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected
@@ -77,72 +77,70 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ? { address, name: displayName ?? undefined }
             : undefined;
 
-    const workspaceAvatar = ipfsUtils.cidToSrc(workspace?.avatar);
-
-    // Built from the route, so the links are complete on the first paint: only the name, avatar and account count
-    // below wait for the workspace itself.
+    // Built from the route, so the section links are complete on the first paint; the DAO-only ones (permissions,
+    // settings) wait for the workspace read that tells a DAO account from a Safe.
     const links = navigationWorkspaceUtils.buildLinks(
         workspaceId,
-        'page',
         accountId,
+        activeOption?.account?.type === WorkspaceAccountType.DAO,
     );
-    const dialogLinks = navigationWorkspaceUtils.buildLinks(
-        workspaceId,
-        'dialog',
-        accountId,
-    );
+    const workspaceLinks =
+        navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId);
 
     return (
-        <Navigation.Container
-            containerClasses={classNames(
-                'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
-                containerClasses,
-            )}
-            trailing={<SupportChatTrigger />}
-            {...otherProps}
-        >
-            <div className="flex items-center justify-between gap-1">
-                <div className="flex min-w-0 items-center gap-2">
+        <>
+            <Navigation.Sidebar
+                footer={
+                    <>
+                        <NavigationSidebarAccount
+                            onClick={handleWalletClick}
+                            user={walletUser}
+                        />
+                        <FooterSidebar />
+                    </>
+                }
+                header={
+                    <>
+                        <WorkspaceSelector workspaceId={workspaceId} />
+                        <WorkspaceAccountSelector workspaceId={workspaceId} />
+                    </>
+                }
+                links={links}
+                secondaryLinks={workspaceLinks}
+            />
+            <Navigation.Container
+                className={classNames('lg:hidden', className)}
+                containerClasses={classNames(
+                    'flex flex-col gap-2 py-3 md:py-5',
+                    containerClasses,
+                )}
+                {...otherProps}
+            >
+                <div className="flex items-center justify-between gap-1">
                     <Navigation.Trigger
                         className="shrink-0"
-                        onClick={() => setIsDialogOpen(true)}
+                        onClick={() => handleDialogOpenChange(true)}
                     />
-                    <WorkspaceSelector workspaceId={workspaceId} />
-                    <WorkspaceAccountSelector workspaceId={workspaceId} />
+                    <Wallet onClick={handleWalletClick} user={walletUser} />
                 </div>
-                <Navigation.Links className="hidden lg:flex" links={links} />
-                <Wallet onClick={handleWalletClick} user={walletUser} />
-            </div>
-            <Navigation.Dialog
-                hiddenDescription={t(
-                    'app.application.navigationWorkspace.a11y.description',
-                )}
-                hiddenTitle={t(
-                    'app.application.navigationWorkspace.a11y.title',
-                )}
-                links={dialogLinks}
-                onOpenChange={setIsDialogOpen}
-                open={isDialogOpen}
-            >
-                <div className="flex flex-col gap-3 px-8">
-                    <DaoAvatar
-                        name={workspace?.name}
-                        responsiveSize={{ sm: 'xl' }}
-                        size="lg"
-                        src={workspaceAvatar}
-                    />
-                    <div className="flex flex-col gap-1.5 font-normal leading-tight">
-                        <p className="truncate text-lg text-neutral-800 sm:text-xl">
-                            {workspace?.name}
-                        </p>
-                        <p className="truncate text-neutral-500 text-sm sm:text-base">
-                            {t('app.application.navigationWorkspace.accounts', {
-                                count: workspace?.accounts.length ?? 0,
-                            })}
-                        </p>
+                <Navigation.Dialog
+                    hiddenDescription={t(
+                        'app.application.navigationWorkspace.a11y.description',
+                    )}
+                    hiddenTitle={t(
+                        'app.application.navigationWorkspace.a11y.title',
+                    )}
+                    links={links}
+                    onOpenChange={handleDialogOpenChange}
+                    open={isDialogOpen}
+                    secondaryLinks={workspaceLinks}
+                >
+                    <div className="flex flex-col gap-2 px-4">
+                        <WorkspaceSelector workspaceId={workspaceId} />
+                        <WorkspaceAccountSelector workspaceId={workspaceId} />
                     </div>
-                </div>
-            </Navigation.Dialog>
-        </Navigation.Container>
+                </Navigation.Dialog>
+            </Navigation.Container>
+        </>
     );
 };

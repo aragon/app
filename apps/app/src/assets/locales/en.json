@@ -450,6 +450,7 @@
           "help": "Support",
           "learn": "Learn",
           "privacy": "Privacy",
+          "terms": "Terms",
           "termsOfService": "Terms of Service"
         }
       },
@@ -471,16 +472,21 @@
           "transactions": "Transactions"
         }
       },
+      "navigationSidebarAccount": {
+        "connect": "Connect"
+      },
       "navigationWorkspace": {
         "a11y": {
           "description": "Navigate between the pages of this workspace",
           "title": "Workspace navigation"
         },
-        "accounts": "{{count}} accounts",
         "link": {
+          "accountSettings": "Settings",
           "assets": "Assets",
+          "edit": "Edit workspace",
           "members": "Members",
           "overview": "Overview",
+          "permissions": "Permissions",
           "proposals": "Proposals",
           "transactions": "Transactions"
         }
@@ -501,6 +507,10 @@
         "title": "DAO not found"
       },
       "supportChat": {
+        "launcher": {
+          "close": "Close support chat",
+          "label": "Ask Aragon"
+        },
         "panel": {
           "label": "Support chat"
         },
@@ -4807,9 +4817,12 @@
       "useWorkspaceAccountOptions": {
         "allAccounts": "All accounts"
       },
+      "workspaceAccountSelector": {
+        "accounts": "{{count}} accounts",
+        "addAccount": "Add account"
+      },
       "workspaceSelector": {
-        "create": "Create workspace",
-        "edit": "Edit workspace"
+        "create": "Create workspace"
       },
       "workspaceEditPage": {
         "steps": {

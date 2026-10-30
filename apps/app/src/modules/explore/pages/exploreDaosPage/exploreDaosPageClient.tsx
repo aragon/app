@@ -100,9 +100,15 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                     <ExploreSection
                         title={t('app.explore.exploreDaosPage.section.cta')}
                     >
-                        <div className="flex flex-col gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
+                        <div
+                            className={classNames(
+                                'grid grid-cols-1 gap-4 self-stretch md:grid-cols-2 lg:gap-8',
+                                isEnabled('workspaces')
+                                    ? 'xl:grid-cols-4'
+                                    : 'lg:grid-cols-3',
+                            )}
+                        >
                             <CtaCard
-                                className="flex-1"
                                 description={t(
                                     'app.explore.exploreDaosPage.enterpriseService.subtitle',
                                 )}
@@ -123,7 +129,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                 )}
                             />
                             <CtaCard
-                                className="flex-1"
                                 description={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.subtitle',
                                 )}
@@ -146,7 +151,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                             />
                             {isEnabled('workspaces') && (
                                 <CtaCard
-                                    className="flex-1"
                                     description={t(
                                         'app.explore.exploreDaosPage.createWorkspace.subtitle',
                                     )}
@@ -167,7 +171,6 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                 />
                             )}
                             <CtaCard
-                                className="flex-1"
                                 description={t(
                                     'app.explore.exploreDaosPage.doItYourself.subtitle',
                                 )}
