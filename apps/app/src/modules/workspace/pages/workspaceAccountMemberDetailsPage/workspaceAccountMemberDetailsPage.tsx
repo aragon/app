@@ -1,6 +1,6 @@
 // The `next/navigation` alias points to the client-hooks wrapper, which cannot re-export server functions.
 import { notFound } from 'next/navigation-original';
-import { voteListFilterParam } from '@/modules/governance/components/voteList';
+import { voteListFilterParam } from '@/modules/governance/components/voteList/voteListConstants';
 import { DaoMemberDetailsPage } from '@/modules/governance/pages/daoMemberDetailsPage/daoMemberDetailsPage';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { featureFlags } from '@/shared/featureFlags';
@@ -118,12 +118,12 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
     return (
         <WorkspaceAccountGate accountId={accountId}>
             <DaoMemberDetailsPage
-                bodyPluginId={bodyPluginId}
                 params={Promise.resolve({
                     network,
                     addressOrEns: address,
                     address: memberAddress,
                 })}
+                searchParams={Promise.resolve({ members: bodyPluginId })}
             />
         </WorkspaceAccountGate>
     );

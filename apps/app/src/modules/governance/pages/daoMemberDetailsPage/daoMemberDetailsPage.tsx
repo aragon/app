@@ -18,18 +18,15 @@ export interface IDaoMemberDetailsPageProps {
      */
     params: Promise<IDaoMemberPageParams>;
     /**
-     * Member source selected on the members page.
+     * Search parameters of the page. `members` names the body plugin to read the membership under, defaulting to the
+     * first visible body of the DAO: either its tab ID (`daoUtils.getPluginTabId`) or its plain address, matched
+     * case-insensitively.
+     *
+     * Membership is plugin-scoped, so the body decides which voting power and token balance the page reports. The
+     * `/dao/…` links carry it on the URL (`daoUtils.withMemberTab`); the workspace route passes the body it resolved
+     * the same way, so the page does not report a body the member is not in.
      */
     searchParams?: Promise<Record<string, string | string[] | undefined>>;
-    /**
-     * Body plugin to read the membership under, defaulting to the first visible body of the DAO. Either its filter
-     * identifier — what the `vote` search parameter of the page carries — or its plain address.
-     *
-     * Membership is plugin-scoped, so the plugin decides which voting power and token balance the page reports. The
-     * `/dao/…` route does not name one — it has no way to — and takes the default; a caller that knows the
-     * governance the member actually belongs to passes it, so the page does not report a body the member is not in.
-     */
-    bodyPluginId?: string;
 }
 
 /**
@@ -40,15 +37,11 @@ export interface IDaoMemberDetailsPageProps {
 export const DaoMemberDetailsPage: React.FC<
     IDaoMemberDetailsPageProps
 > = async (props) => {
-    const { params, searchParams, bodyPluginId } = props;
+    const { params, searchParams } = props;
     const pageParams = await params;
-    const memberSearchParams: Record<string, string | string[] | undefined> =
-        searchParams != null ? await searchParams : {};
     const { address: rawAddress, addressOrEns, network } = pageParams;
-    const selectedSourceParam = memberSearchParams.members;
-    const selectedSourceId = Array.isArray(selectedSourceParam)
-        ? selectedSourceParam[0]
-        : selectedSourceParam;
+    const { members } = (await searchParams) ?? {};
+    const bodyPluginId = Array.isArray(members) ? members[0] : members;
 
     if (!isAddress(rawAddress, { strict: false })) {
         const errorNamespace = 'app.governance.daoMemberDetailsPage.error';
@@ -69,7 +62,7 @@ export const DaoMemberDetailsPage: React.FC<
         const canonicalUrl = `/dao/${network}/${addressOrEns}/members/${address}`;
         return (
             <RedirectToUrl
-                url={daoUtils.withMemberTab(canonicalUrl, selectedSourceId)!}
+                url={daoUtils.withMemberTab(canonicalUrl, bodyPluginId)!}
             />
         );
     }
@@ -93,26 +86,15 @@ export const DaoMemberDetailsPage: React.FC<
         daoOverride,
     );
 
-    // TODO: reconcile bodyPluginId and search params approach
-    const bodyPluginBySourceId = visibleBodyPlugins.find(
-        (plugin) =>
-            daoUtils.getPluginTabId(plugin, dao.address) === selectedSourceId,
-    );
-
-    const normalizedBodyPluginId = bodyPluginId?.toLowerCase();
+    const requestedId = bodyPluginId?.toLowerCase();
 
     // Falls back to the first body rather than failing on an invalid value like hidden body
-    const bodyPluginByBodyPluginId = visibleBodyPlugins.find(
-        (plugin) =>
-            plugin.address.toLowerCase() === normalizedBodyPluginId ||
-            daoUtils.buildPluginUniqueId(plugin).toLowerCase() ===
-                normalizedBodyPluginId,
-    );
-
     const bodyPlugin =
-        bodyPluginByBodyPluginId ??
-        bodyPluginBySourceId ??
-        visibleBodyPlugins[0];
+        visibleBodyPlugins.find(
+            (plugin) =>
+                daoUtils.getPluginTabId(plugin, dao.address).toLowerCase() ===
+                    requestedId || plugin.address.toLowerCase() === requestedId,
+        ) ?? visibleBodyPlugins[0];
 
     if (bodyPlugin == null) {
         const membersUrl = daoUtils.getDaoUrl(dao, 'members')!;

@@ -61,6 +61,10 @@ export const buildWorkspaceMemberListParams = (
  */
 export interface IWorkspaceAccountPlugins {
     /**
+     * Address of the DAO the plugins were read from
+     */
+    daoAddress: string;
+    /**
      * Bodies of the account, sub-plugins included.
      */
     bodies: IDaoPlugin[];
@@ -310,12 +314,17 @@ export const WorkspaceMemberListDefault: React.FC<
                               visiblePlugins.processes,
                           );
 
+                // The tab IDs the vote and proposal lists of the member page carry, which name a Safe by its DAO
+                // too. The lists build them from the DAO they render, so the rows use the address of that same DAO
+                // as read from the DAO API rather than the account address, whose casing may differ.
+                const rootDaoAddress = visiblePlugins.daoAddress;
+
                 const processId =
                     process == null
                         ? undefined
-                        : daoUtils.buildPluginUniqueId(process);
+                        : daoUtils.getPluginTabId(process, rootDaoAddress);
 
-                const bodyId = daoUtils.buildPluginUniqueId(body);
+                const bodyId = daoUtils.getPluginTabId(body, rootDaoAddress);
 
                 return [
                     {

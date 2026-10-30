@@ -187,18 +187,6 @@ class DaoUtils {
     };
 
     /**
-     * Identifier of a plugin inside a filter, i.e. the value its tab carries on the URL.
-     * TODO: Reconcile with getPluginTabId
-     *
-     * Built here rather so that a server component resolves the same string the client wrote.
-     * @param plugin - Plugin to identify.
-     * @returns The filter identifier of the plugin.
-     */
-    buildPluginUniqueId = (
-        plugin: Pick<IDaoPlugin, 'address' | 'slug'>,
-    ): string => `${plugin.address}-${plugin.slug}`;
-
-    /**
      * The process a governance body acts through, out of the given processes.
      *
      * The first match wins. A body configured into two processes

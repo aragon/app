@@ -217,21 +217,6 @@ describe('dao utils', () => {
         });
     });
 
-    describe('buildPluginUniqueId', () => {
-        // The value the plugin filters carry on the URL. A server component resolves it without the client hook
-        // that writes it, so both sides must build the very same string.
-        it('identifies a plugin by its address and slug', () => {
-            const plugin = generateDaoPlugin({
-                address: '0x1234',
-                slug: 'multisig',
-            });
-
-            expect(daoUtils.buildPluginUniqueId(plugin)).toEqual(
-                '0x1234-multisig',
-            );
-        });
-    });
-
     describe('findPluginProcess', () => {
         // Real 20-byte addresses: the comparison validates the shape before comparing, so a placeholder would
         // never match and the test would pass for the wrong reason.

@@ -6,6 +6,7 @@ import { PluginType } from '@/shared/types';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetVoteListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { voteListFilterParam } from './voteListConstants';
 import { VoteListFallback } from './voteListFallback';
 
 export interface IVoteListProps {
@@ -25,12 +26,16 @@ export interface IVoteListProps {
      * Defines if the voting is to veto or not.
      */
     isVeto?: boolean;
+    /**
+     * Unique ID (plugin tab ID) of the plugin to open on when the URL names none. A valid `vote` URL parameter takes
+     * precedence, and the user can still switch tabs.
+     */
+    defaultPluginId?: string;
 }
 
-export const voteListFilterParam = 'vote';
-
 export const VoteList: React.FC<IVoteListProps> = (props) => {
-    const { initialParams, daoId, pluginAddress, isVeto } = props;
+    const { initialParams, daoId, pluginAddress, isVeto, defaultPluginId } =
+        props;
 
     const processPlugins = useDaoPlugins({
         daoId,
@@ -58,6 +63,9 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
             plugins={processedPlugins}
             searchParamName={voteListFilterParam}
             slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+            value={processedPlugins?.find(
+                (plugin) => plugin.uniqueId === defaultPluginId,
+            )}
         />
     );
 };

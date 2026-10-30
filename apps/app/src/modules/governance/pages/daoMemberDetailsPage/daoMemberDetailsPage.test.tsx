@@ -111,48 +111,6 @@ describe('<DaoMemberDetailsPage /> component', () => {
         );
     });
 
-    it('prefetches the member of the body selected by the members URL parameter', async () => {
-        const expectedDaoId = 'test-dao-id';
-        const safeAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-        const multisigPlugin = generateDaoPlugin({
-            address: '0x1111111111111111111111111111111111111111',
-            interfaceType: PluginInterfaceType.MULTISIG,
-            isBody: true,
-            slug: 'multisig',
-        });
-        const safePlugin = generateDaoPlugin({
-            address: safeAddress,
-            interfaceType: PluginInterfaceType.SAFE,
-            isBody: true,
-            slug: 'safe',
-        });
-        const daoAddress = '0x3333333333333333333333333333333333333333';
-        const dao = generateDao({
-            address: daoAddress,
-            plugins: [multisigPlugin, safePlugin],
-        });
-        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
-        getDaoSpy.mockResolvedValue(dao);
-
-        render(
-            await createTestComponent({
-                searchParams: Promise.resolve({
-                    members: `${safeAddress}-safe-${daoAddress}`,
-                }),
-            }),
-        );
-
-        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
-            memberOptions({
-                urlParams: { address: validAddress },
-                queryParams: {
-                    daoId: expectedDaoId,
-                    pluginAddress: safeAddress,
-                },
-            }).queryKey,
-        );
-    });
-
     it('renders the page client component', async () => {
         render(await createTestComponent());
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
@@ -166,16 +124,29 @@ describe('<DaoMemberDetailsPage /> component', () => {
             address: secondBodyAddress,
             interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
+            slug: 'multisig',
         });
+        // Mixed casing, as the backend returns checksummed addresses, so that the lowercase match is exercised.
+        const safeBodyAddress = '0xAbCdEfAbCdEfAbCdEfAbCdEfAbCdEfAbCdEfAbCd';
+        const safeDaoAddress = '0x3333333333333333333333333333333333333333';
+        const safeBody = generateDaoPlugin({
+            address: safeBodyAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isBody: true,
+            slug: 'safe',
+        });
+        // The tab ID of the Safe: a Safe body is named by its DAO as well, here the root DAO of the page.
+        const safeTabId = `${safeBodyAddress}-safe-${safeDaoAddress}`;
 
         /**
-         * Mocks a DAO with two visible bodies and returns the plugin address the member read was made under.
+         * Mocks a DAO with three visible bodies and returns the plugin address the member read was made under.
          */
         const renderAndReadPluginAddress = async (
             props?: Partial<IDaoMemberDetailsPageProps>,
         ) => {
             getDaoSpy.mockResolvedValue(
                 generateDao({
+                    address: safeDaoAddress,
                     plugins: [
                         generateDaoPlugin({
                             address: firstBodyAddress,
@@ -183,6 +154,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
                             isBody: true,
                         }),
                         secondBody,
+                        safeBody,
                     ],
                 }),
             );
@@ -201,29 +173,40 @@ describe('<DaoMemberDetailsPage /> component', () => {
                 queryParams: { daoId: 'test-dao-id', pluginAddress },
             }).queryKey;
 
-        // Membership is plugin-scoped, so reading the member under the wrong body reports no voting power and no
-        // token balance for a member that has both.
-        it('reads the membership under the named body plugin', async () => {
+        // The links into this page name the body with the tab ID its own filters carry on the URL, so that one value
+        // picks both the body reported here and the body the vote list opens on. A Safe's tab ID names its DAO too.
+        it('resolves the body from a tab ID', async () => {
             const queryKey = await renderAndReadPluginAddress({
-                bodyPluginId: secondBodyAddress,
+                searchParams: Promise.resolve({ members: safeTabId }),
+            });
+
+            expect(queryKey).toEqual(expectedQueryKey(safeBodyAddress));
+        });
+
+        // The workspace falls back to the governance address of the membership when the URL names no body.
+        it('resolves the body from a plain address', async () => {
+            const queryKey = await renderAndReadPluginAddress({
+                searchParams: Promise.resolve({ members: secondBodyAddress }),
             });
 
             expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
+        });
+
+        it('matches a lowercased body ID', async () => {
+            const queryKey = await renderAndReadPluginAddress({
+                searchParams: Promise.resolve({
+                    members: safeTabId.toLowerCase(),
+                }),
+            });
+
+            expect(queryKey).toEqual(expectedQueryKey(safeBodyAddress));
         });
 
         it('matches the named body plugin regardless of the address casing', async () => {
             const queryKey = await renderAndReadPluginAddress({
-                bodyPluginId: secondBodyAddress.toUpperCase(),
-            });
-
-            expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
-        });
-
-        // The links into this page name the body with the identifier its own filters carry on the URL, so that one
-        // value picks both the body reported here and the body the vote list opens on.
-        it('matches the named body plugin by its filter identifier', async () => {
-            const queryKey = await renderAndReadPluginAddress({
-                bodyPluginId: daoUtils.buildPluginUniqueId(secondBody),
+                searchParams: Promise.resolve({
+                    members: secondBodyAddress.toUpperCase(),
+                }),
             });
 
             expect(queryKey).toEqual(expectedQueryKey(secondBodyAddress));
@@ -232,7 +215,9 @@ describe('<DaoMemberDetailsPage /> component', () => {
         // A governance that has since been hidden, or that belongs to another DAO, degrades to the default page.
         it('falls back to the first visible body when the value names none', async () => {
             const queryKey = await renderAndReadPluginAddress({
-                bodyPluginId: '0x3333333333333333333333333333333333333333',
+                searchParams: Promise.resolve({
+                    members: '0x3333333333333333333333333333333333333333',
+                }),
             });
 
             expect(queryKey).toEqual(expectedQueryKey(firstBodyAddress));

@@ -13,11 +13,13 @@ jest.mock('@/shared/components/pluginFilterComponent', () => ({
     PluginFilterComponent: (props: {
         slotId: string;
         plugins: IPluginFilterComponentProps[];
+        value?: { uniqueId: string };
     }) => (
         <div
             data-plugins={props.plugins[0].id}
             data-slotid={props.slotId}
             data-testid="plugin-component-mock"
+            data-value={props.value?.uniqueId}
         />
     ),
 }));
@@ -57,5 +59,43 @@ describe('<VoteList /> component', () => {
             GovernanceSlotId.GOVERNANCE_VOTE_LIST,
         );
         expect(pluginComponent.dataset.plugins).toEqual(plugins[0].id);
+    });
+
+    it('opens on the default plugin when the URL names none', () => {
+        const plugins = [
+            generateFilterComponentPlugin({
+                id: 'a',
+                uniqueId: 'tab-a',
+                meta: generateDaoPlugin({ address: '0xa' }),
+            }),
+            generateFilterComponentPlugin({
+                id: 'b',
+                uniqueId: 'tab-b',
+                meta: generateDaoPlugin({ address: '0xb' }),
+            }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
+        render(createTestComponent({ defaultPluginId: 'tab-b' }));
+
+        expect(
+            screen.getByTestId('plugin-component-mock').dataset.value,
+        ).toEqual('tab-b');
+    });
+
+    it('passes no value without a default plugin', () => {
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                id: 'a',
+                uniqueId: 'tab-a',
+                meta: generateDaoPlugin({ address: '0xa' }),
+            }),
+        ]);
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByTestId('plugin-component-mock').dataset.value,
+        ).toBeUndefined();
     });
 });
