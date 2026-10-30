@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       base_commit:
-        description: "Commit SHA to start the release from (default: main HEAD)"
+        description: "Commit SHA to start the app and kit releases from (default: the commit the run is on)"
         required: false
         type: string
   pull_request:
@@ -66,8 +66,28 @@ jobs:
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
-  kit-release:
+  # The kit release sweep runs only when kit changesets are pending. Otherwise the shared start
+  # posts a weekly "skipped" note whose "Run workflow" link points here (github.workflow_ref is the
+  # top-level caller's), and running App Release by hand starts an app release.
+  kit-changes:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      pending: ${{ steps.check.outputs.pending }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.base_commit || github.sha }}
+          sparse-checkout: .changeset
+      - id: check
+        run: |
+          if grep -qsE "^[\"']?@aragon/gov-ui-kit[\"']?:" .changeset/*.md; then echo "pending=true" >> "$GITHUB_OUTPUT"; fi
+
+  kit-release:
+    needs: kit-changes
+    if: needs.kit-changes.outputs.pending == 'true'
     uses: ./.github/workflows/gov-ui-kit-release.yml
     with:
       # Same sha as `start`, so the app and kit releases cut from one commit.

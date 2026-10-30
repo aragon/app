@@ -31,7 +31,8 @@ node --test packages/gov-ui-kit/design-system/component-registry/*.test.mjs
 ## CI
 
 "Check GovKit component registry" in `.github/workflows/app-development.yml` builds the kit and
-runs both `check` commands on every PR that matches the `gov-ui-kit` filter in
-`.github/filters.yml`, and skips the rest. A kit change in an app feature PR therefore needs the
-refresh above in the same PR; the design-system sync reads these files from `main`. `check`
-ignores the recorded commit, dirty list and kit version, so release PRs never stale it.
+runs both `check` commands on every PR, not only kit PRs: `build.css` is hashed and compiled by
+the Tailwind pinned in the root catalog, so a dependency-only PR can stale it too. A kit change in
+an app feature PR therefore needs the refresh above in the same PR; the design-system sync reads
+these files from `main`. `check` ignores the recorded commit, dirty list and kit version, so
+release PRs never stale it.

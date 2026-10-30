@@ -34,14 +34,15 @@ name **only** `@aragon/gov-ui-kit` — a changeset may never mix release scopes,
 both the app and the kit needs **two** changeset files, one per scope. `pnpm validate:changesets`
 enforces this as part of `pnpm test`, and the "Check GovKit changeset" step of
 `app-development.yml` fails a PR that changes kit source (stories and tests aside) without adding
-a kit changeset — app feature PRs included. The same PR refreshes the component registry
-(`design-system/component-registry/README.md`); "Check GovKit component registry" fails otherwise.
+a kit changeset of its own (editing an existing one doesn't count) — app feature PRs included.
+The same PR refreshes the component registry (`design-system/component-registry/README.md`);
+"Check GovKit component registry" fails otherwise.
 
 **2. Start the release.** The kit has no schedule of its own: every App Release start (Monday
-cron or by hand) calls this flow from the same commit, so each app release sweeps the pending kit
-changesets into a kit release. It green-skips when there are none or a kit release PR is already
-open. By hand: Actions → **Gov UI Kit Release** → Run workflow, optionally with a `base_commit`
-(defaults to `main` HEAD); a manual run fails if a kit release PR is already open.
+cron or by hand) checks for pending kit changesets and, if there are any, calls this flow from the
+same commit, so each app release sweeps them into a kit release. It green-skips when a kit release
+PR is already open. By hand: Actions → **Gov UI Kit Release** → Run workflow, optionally with a
+`base_commit` (defaults to `main` HEAD); a manual run fails if a kit release PR is already open.
 
 It versions the `gov-ui-kit` release scope, pushes `release/gov-ui-kit/YYYY-MM-DD_HH-mm`, opens a
 `Release @aragon/gov-ui-kit@x.y.z` PR and starts the Slack thread with the summary. Every push to

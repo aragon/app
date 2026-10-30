@@ -1,7 +1,7 @@
 ---
 name: gov-ui-kit-changes
 description: A GovKit source change is a release of its own — a kit-only changeset and a refreshed component registry in the same PR, even inside an app feature PR.
-globs: packages/gov-ui-kit/src/**
+globs: packages/gov-ui-kit/src/**, packages/gov-ui-kit/index.css
 kind: rule
 ---
 
@@ -17,7 +17,7 @@ kind: rule
 
 ## In the same PR
 
-- **A kit changeset**, frontmatter naming only `"@aragon/gov-ui-kit"`, whenever `src/**` changes outside `*.stories.tsx` / `*.test.ts(x)`. An app changeset does not cover it: the app ships the change, but it never reaches npm. App and kit changes need **two** changeset files (one per scope); a mixed file breaks every scoped release flow. "Check GovKit changeset" fails without it.
+- **A new kit changeset**, frontmatter naming only `"@aragon/gov-ui-kit"`, whenever `src/**` changes outside `*.stories.tsx` / `*.test.ts(x)`. Editing an existing unreleased kit changeset doesn't count; add another file. An app changeset does not cover it: the app ships the change, but it never reaches npm. App and kit changes need **two** changeset files (one per scope); a mixed file breaks every scoped release flow. "Check GovKit changeset" fails without it.
 - **A registry refresh** whenever any file under `packages/gov-ui-kit/` changes (stories and tests included — the registry hashes them). Build the kit, run `registry.mjs extract` and `selection-guide.mjs generate`, then commit `registry.json`, `selection-guide.json` and `../selection-guide.md`. "Check GovKit component registry" fails without it, and the Claude design-system sync reads these files from `main`.
 
 ## Non-obvious
