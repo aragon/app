@@ -5,10 +5,8 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    type IWorkspaceAccount,
-    useWorkspace,
-} from '../../api/workspaceService';
+import type { IWorkspaceAccount } from '../../api/workspaceService';
+import { WorkspaceAccountStateCard } from '../../components/workspaceAccountStateCard';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
@@ -18,10 +16,6 @@ import { useWorkspaceAccountsExecutePermission } from '../../hooks/useWorkspaceA
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 
 export interface IWorkspaceTransactionsPageClientProps {
-    /**
-     * ID of the workspace to display the transactions of.
-     */
-    workspaceId: string;
     /**
      * Number of transactions to read per page.
      */
@@ -38,23 +32,27 @@ export interface IWorkspaceTransactionsPageClientProps {
 export const WorkspaceTransactionsPageClient: React.FC<
     IWorkspaceTransactionsPageClientProps
 > = (props) => {
-    const { workspaceId, pageSize } = props;
+    const { pageSize } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const router = useRouter();
 
-    const { data: workspace, isPending: isWorkspacePending } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
+    // Every account of the workspace, or just the one the route names, held by the workspace or not.
+    const {
+        activeOption,
+        scopedAccounts: accountsToDisplay,
+        isPending: isScopePending,
+    } = useWorkspaceAccountOptions();
 
-    const { activeOption } = useWorkspaceAccountOptions();
-
-    const accounts = workspace?.accounts ?? [];
+    // An account the workspace does not hold that the lookup could not place as a DAO or a Safe: there is nothing to
+    // list, so the page says what the account is instead of an empty list.
+    const isUnresolvedExternal =
+        activeOption?.isExternal === true &&
+        activeOption.account == null &&
+        !isScopePending;
 
     const selectedAccount = activeOption?.account;
-    const accountsToDisplay =
-        selectedAccount != null ? [selectedAccount] : accounts;
 
     const { daos, isPending: isDaosPending } =
         useWorkspaceDaos(accountsToDisplay);
@@ -117,6 +115,22 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const action = selectedAccount != null ? scopedAction : aggregatedAction;
 
+    if (isUnresolvedExternal) {
+        return (
+            <Page.Content>
+                <Page.Main
+                    title={t(
+                        'app.workspace.workspaceTransactionsPage.main.title',
+                    )}
+                >
+                    <WorkspaceAccountStateCard
+                        accountState={activeOption.accountState}
+                    />
+                </Page.Main>
+            </Page.Content>
+        );
+    }
+
     return (
         <Page.Content>
             <Page.Main
@@ -125,12 +139,12 @@ export const WorkspaceTransactionsPageClient: React.FC<
             >
                 <WorkspaceTransactionList
                     accounts={accountsToDisplay}
-                    isPending={isWorkspacePending}
+                    isPending={isScopePending}
                     pageSize={pageSize}
                 />
             </Page.Main>
             <Page.Aside>
-                {workspace != null && (
+                {!isScopePending && (
                     <WorkspaceTransactionsAsideCard
                         accounts={accountsToDisplay}
                         activeOption={activeOption}

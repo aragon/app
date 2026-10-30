@@ -24,8 +24,10 @@ export interface IResolveCorpusParams {
 
 /**
  * Where a build reads the knowledge base from: the directory DOCS_CORPUS_DIR names, as-is and
- * unfetched, otherwise a fetch of aragon/platform-doc into the cache directory — with
- * DOCS_REPO_TOKEN when it is set, the git credentials of the machine otherwise. A failed fetch
+ * unfetched, otherwise a fetch of aragon/platform-doc into the cache directory — of the commit
+ * DOCS_CORPUS_REF names when it is set (a release pins the pages it tested), of the head of the
+ * base's branch otherwise, with DOCS_REPO_TOKEN when it is set, the git credentials of the
+ * machine otherwise. A failed fetch
  * throws in CI (CI=true): a deployment must carry the current documentation. A developer machine
  * keeps the cached checkout of an earlier build, and without one gets undefined — what a build
  * without a corpus does is the caller's call.
@@ -47,8 +49,10 @@ export const resolveCorpus = (
     }
 
     const token = process.env.DOCS_REPO_TOKEN ?? '';
+    const pinnedRef = process.env.DOCS_CORPUS_REF ?? '';
+    const ref = pinnedRef === '' ? docsRepository.ref : pinnedRef;
     const cacheLabel = `${path.relative(workspaceDir, cacheDir)}/`;
-    const source = `${docsRepository.name}@${docsRepository.ref}`;
+    const source = `${docsRepository.name}@${ref}`;
     log(
         `corpus: fetching ${source} into ${cacheLabel} (${token === '' ? 'git credentials of this machine' : 'DOCS_REPO_TOKEN'})`,
     );
@@ -56,7 +60,7 @@ export const resolveCorpus = (
     try {
         return syncCorpus({
             repoUrl: docsRepository.url,
-            ref: docsRepository.ref,
+            ref,
             targetDir: cacheDir,
             token: token === '' ? undefined : token,
         });

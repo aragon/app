@@ -47,6 +47,7 @@ describe('<WorkspaceMembersAsideCard /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     const bodyTab = {

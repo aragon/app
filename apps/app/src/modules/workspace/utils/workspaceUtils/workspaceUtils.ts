@@ -1,5 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -12,6 +13,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 
 /**
@@ -204,6 +206,39 @@ class WorkspaceUtils {
     };
 
     /**
+     * URL of the current page in another workspace: only the workspace segment changes, so the account, the section,
+     * every deeper segment and the query string are kept.
+     *
+     * Opens a link to a workspace the reader does not have (e.g. shared from another device) in one they do have,
+     * on the same page.
+     *
+     * @param pathname - Pathname of a workspace page, `/workspace/{workspaceId}/…`.
+     * @param workspaceId - ID of the workspace to open the page in.
+     * @param query - Optional query string of the current URL, without the leading `?`.
+     * @returns The URL of the same page in the given workspace, or the workspace URL when the pathname is not a
+     * workspace page.
+     */
+    getWorkspaceSwapUrl = (
+        pathname: string,
+        workspaceId: string,
+        query?: string,
+    ): string => {
+        const [base, , ...pathSegments] = pathname
+            .split('/')
+            .filter((segment) => segment !== '');
+
+        if (base !== 'workspace') {
+            return this.getWorkspaceUrl(workspaceId);
+        }
+
+        const path =
+            pathSegments.length > 0 ? pathSegments.join('/') : undefined;
+        const url = this.getWorkspaceUrl(workspaceId, path);
+
+        return query != null && query !== '' ? `${url}?${query}` : url;
+    };
+
+    /**
      * Slugifies the given value into a URL-safe workspace ID candidate.
      * @param value - Value to slugify, e.g. the workspace name.
      * @returns The slugified value, or a generic fallback when the value has no slug-safe character.
@@ -338,6 +373,50 @@ class WorkspaceUtils {
         };
 
         return typeMap[accountInfo.type];
+    };
+
+    /**
+     * Reads the outcome of a single-account lookup of the workspace accounts API as one state, so that every reader
+     * of such a lookup — `WorkspaceAccountGate` on the server, `useWorkspaceAccountOptions` on the client — agrees
+     * on what the address is. The DAO and Safe states follow `getAccountType`.
+     *
+     * The endpoint answers an address that is neither an indexed DAO nor a Safe with a 404 for the whole request
+     * rather than with an `unsupported` entry (see Known gaps in `docs/projectDocs/createWorkspace.md`). With a
+     * single account in the request that 404 can only be about it, so it reads as not found too. Any other failure
+     * of the lookup is transient as far as the reader can tell, so it reads as unavailable and gets a retry.
+     *
+     * An earlier result that places the account wins over any later failure, a 404 included: React Query keeps the
+     * last data next to the error of a failed refetch, and a DAO or a Safe does not stop being one.
+     * @param accountInfo - The only entry of the lookup, undefined while it is pending or when it failed.
+     * @param error - Error the lookup failed with, if any.
+     * @returns The state of the account, or undefined while the lookup is pending or when it placed nothing.
+     */
+    resolveAccountState = (
+        accountInfo?: IWorkspaceAccountInfo,
+        error?: unknown,
+    ): WorkspaceAccountState | undefined => {
+        const stateMap: Record<WorkspaceAccountType, WorkspaceAccountState> = {
+            [WorkspaceAccountType.DAO]: WorkspaceAccountState.DAO,
+            [WorkspaceAccountType.SAFE]: WorkspaceAccountState.SAFE,
+        };
+        const accountType = this.getAccountType(accountInfo);
+
+        if (accountType != null) {
+            return stateMap[accountType];
+        }
+
+        if (
+            AragonBackendServiceError.isNotFoundError(error) ||
+            accountInfo?.status === WorkspaceAccountInfoStatus.UNSUPPORTED
+        ) {
+            return WorkspaceAccountState.NOT_FOUND;
+        }
+
+        if (accountInfo?.status === WorkspaceAccountInfoStatus.UNAVAILABLE) {
+            return WorkspaceAccountState.UNAVAILABLE;
+        }
+
+        return error != null ? WorkspaceAccountState.UNAVAILABLE : undefined;
     };
 
     /**

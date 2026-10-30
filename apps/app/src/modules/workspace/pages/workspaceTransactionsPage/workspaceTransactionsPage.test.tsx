@@ -45,17 +45,14 @@ describe('<WorkspaceTransactionsPage /> component', () => {
         return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
-    it('passes the workspace id to the client when the workspaces feature is enabled', async () => {
+    it('renders the client when the workspaces feature is enabled', async () => {
         render(await createTestComponent());
 
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
         expect(notFoundMock).not.toHaveBeenCalled();
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
         expect(WorkspaceTransactionsPageClient).toHaveBeenCalledWith(
-            expect.objectContaining({
-                workspaceId: 'demo',
-                pageSize: 20,
-            }),
+            expect.objectContaining({ pageSize: 20 }),
             undefined,
         );
     });

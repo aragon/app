@@ -3,6 +3,7 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import type { IWorkspace } from './domain';
 import type {
+    IAddWorkspaceAccountParams,
     ICreateWorkspaceParams,
     IGetWorkspaceParams,
     IUpdateWorkspaceParams,
@@ -27,14 +28,12 @@ export const defaultWorkspaceName = 'My workspace';
  *
  * Local storage is only available on the client, therefore every method rejects when called on the server. This is
  * why the workspace pages must not prefetch workspaces (see `docs/projectDocs/createWorkspace.md`).
- *
- * The reads seed a default workspace when the registry is empty (see `createWorkspace.md` → Registry).
  */
 class WorkspaceService {
     getWorkspace = async (params: IGetWorkspaceParams): Promise<IWorkspace> => {
         const { id } = params.urlParams;
 
-        const workspace = this.getStoredWorkspacesOrDefault()[id];
+        const workspace = this.getStoredWorkspaces()[id];
 
         if (workspace == null) {
             throw this.buildNotFoundError(id);
@@ -44,7 +43,25 @@ class WorkspaceService {
     };
 
     getWorkspaceList = async (): Promise<IWorkspace[]> =>
-        Object.values(this.getStoredWorkspacesOrDefault());
+        Object.values(this.getStoredWorkspaces());
+
+    /**
+     * Returns the first stored workspace, seeding and persisting the default one when the registry is empty.
+     *
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when local storage rejects to write.
+     */
+    getOrCreateDefaultWorkspace = async (): Promise<IWorkspace> => {
+        const [firstWorkspace] = Object.values(this.getStoredWorkspaces());
+
+        if (firstWorkspace != null) {
+            return firstWorkspace;
+        }
+
+        const defaultWorkspace = this.buildDefaultWorkspace();
+        this.persistWorkspaces({ [defaultWorkspace.id]: defaultWorkspace });
+
+        return defaultWorkspace;
+    };
 
     createWorkspace = async (
         params: ICreateWorkspaceParams,
@@ -83,21 +100,43 @@ class WorkspaceService {
     };
 
     /**
-     * Returns the workspaces persisted on local storage, seeding the default workspace when there is none. Unreadable
-     * storage reads as empty and is overwritten (see `createWorkspace.md` → Registry).
+     * Appends an account to a stored workspace, reading and writing the registry in one step rather than taking the
+     * whole workspace from the caller, so a change stored since the caller read it (e.g. from another tab) is kept.
+     * An account the workspace already holds is not added twice.
+     *
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored, `workspaceStorageError`
+     * when local storage rejects to write.
      */
-    private getStoredWorkspacesOrDefault = (): Record<string, IWorkspace> => {
-        const workspaces = this.getStoredWorkspaces();
+    addWorkspaceAccount = async (
+        params: IAddWorkspaceAccountParams,
+    ): Promise<IWorkspace> => {
+        const { urlParams, body } = params;
+        const { id } = urlParams;
+        const { account } = body;
 
-        if (Object.keys(workspaces).length > 0) {
-            return workspaces;
+        const workspaces = this.getStoredWorkspaces();
+        const storedWorkspace = workspaces[id];
+
+        if (storedWorkspace == null) {
+            throw this.buildNotFoundError(id);
         }
 
-        const defaultWorkspace = this.buildDefaultWorkspace();
-        const seededWorkspaces = { [defaultWorkspace.id]: defaultWorkspace };
-        this.persistWorkspaces(seededWorkspaces);
+        const isHeld = storedWorkspace.accounts.some((storedAccount) =>
+            workspaceUtils.isSameNetworkAddress(storedAccount, account),
+        );
 
-        return seededWorkspaces;
+        if (isHeld) {
+            return storedWorkspace;
+        }
+
+        const workspace: IWorkspace = {
+            ...storedWorkspace,
+            accounts: [...storedWorkspace.accounts, account],
+        };
+
+        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+
+        return workspace;
     };
 
     /**

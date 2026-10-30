@@ -11,9 +11,13 @@ const config = createNodeConfig({
         'src/lib/source.ts',
         // Build-time CLIs: they run against the real knowledge base and the build output.
         'src/content/prepareContent.ts',
+        'src/content/diffContent.ts',
         'src/content/checkOutput.ts',
     ],
 });
+
+// The Playwright specs run against a deployment (`pnpm e2e:smoke`), not under jest.
+config.testPathIgnorePatterns = ['/node_modules/', '/e2e/'];
 
 // The corpus loader ships as TypeScript source.
 config.moduleNameMapper = {

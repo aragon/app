@@ -52,6 +52,17 @@ describe('useWorkspaceProposalListData hook', () => {
         expect(getProposalListSpy).not.toHaveBeenCalled();
     });
 
+    // An account still being resolved is not an empty selection, so it must not read as one.
+    it('stays loading while the accounts are being resolved', () => {
+        const { result } = renderTestHook({
+            params: buildRequestParams([]),
+            isPending: true,
+        });
+
+        expect(result.current.state).toEqual('initialLoading');
+        expect(getProposalListSpy).not.toHaveBeenCalled();
+    });
+
     it('stays loading while the DAOs of the rows are pending', async () => {
         getProposalListSpy.mockResolvedValue(generateWorkspaceQueryResponse());
         const { result } = renderTestHook({ isDaosPending: true });

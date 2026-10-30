@@ -47,7 +47,7 @@ describe('<WorkspaceAssetsPage /> component', () => {
         return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
-    it('renders the assets page and passes the workspace id to the client when the feature is enabled', async () => {
+    it('renders the assets page when the feature is enabled', async () => {
         isEnabledSpy.mockResolvedValue(true);
 
         render(await createTestComponent());
@@ -56,14 +56,14 @@ describe('<WorkspaceAssetsPage /> component', () => {
         expect(notFoundMock).not.toHaveBeenCalled();
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
         expect(WorkspaceAssetsPageClient).toHaveBeenCalledWith(
-            { workspaceId: 'demo', pageSize: workspaceAssetsCount },
+            { pageSize: workspaceAssetsCount },
             undefined,
         );
     });
 
     // The page serves the account-scoped route too, and the scope is resolved on the client: the aggregated route
     // spells the account as a static segment, so there is no account parameter for the server to read there.
-    it('passes nothing but the workspace id under an account-scoped route', async () => {
+    it('passes nothing but the page size under an account-scoped route', async () => {
         render(
             await createTestComponent({
                 params: Promise.resolve({
@@ -75,7 +75,7 @@ describe('<WorkspaceAssetsPage /> component', () => {
         );
 
         expect(WorkspaceAssetsPageClient).toHaveBeenCalledWith(
-            { workspaceId: 'demo', pageSize: workspaceAssetsCount },
+            { pageSize: workspaceAssetsCount },
             undefined,
         );
     });

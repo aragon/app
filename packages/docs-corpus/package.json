@@ -1,6 +1,6 @@
 {
     "name": "@aragon/docs-corpus",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "private": true,
     "description": "Loader of the Aragon platform knowledge base (aragon/platform-doc): fetch, published-page filter and link rules shared by the assistant and the docs site",
     "homepage": "https://github.com/aragon/app#readme",

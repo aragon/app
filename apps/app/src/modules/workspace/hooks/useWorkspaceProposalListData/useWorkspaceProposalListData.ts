@@ -19,6 +19,10 @@ export interface IUseWorkspaceProposalListDataParams {
      */
     isDaosPending: boolean;
     /**
+     * Keeps the list in its loading state while the accounts are still being resolved.
+     */
+    isPending?: boolean;
+    /**
      * Whether the page is scoped to a single account, which the empty and error copy then names instead of the
      * workspace it belongs to.
      */
@@ -35,7 +39,12 @@ export interface IUseWorkspaceProposalListDataParams {
 export const useWorkspaceProposalListData = (
     params: IUseWorkspaceProposalListDataParams,
 ) => {
-    const { params: requestParams, isDaosPending, isAccountScoped } = params;
+    const {
+        params: requestParams,
+        isDaosPending,
+        isPending,
+        isAccountScoped,
+    } = params;
 
     const { t } = useTranslations();
 
@@ -61,6 +70,10 @@ export const useWorkspaceProposalListData = (
     // DAOs land, so an untitled proposal never renders blank and then pops in with its slug, and no row is
     // briefly unlinkable.
     const listState = () => {
+        if (isPending) {
+            return 'initialLoading';
+        }
+
         if (!hasAccounts) {
             return 'idle';
         }

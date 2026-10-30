@@ -2,6 +2,7 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as NextNavigation from 'next/navigation';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { daoService, type IDao, Network } from '@/shared/api/daoService';
@@ -14,11 +15,13 @@ import {
 import {
     type IWorkspace,
     type IWorkspaceAccount,
+    useWorkspace,
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
 import type { IWorkspaceProposalListProps } from '../../components/workspaceProposalList';
 import type { IWorkspaceProposalsAsideCardProps } from '../../components/workspaceProposalsAsideCard';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type {
     IUseWorkspaceAccountOptionsResult,
@@ -92,6 +95,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     const daoOption: IWorkspaceAccountOption = {
@@ -99,6 +103,7 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         label: 'Demo DAO',
         account: daoAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     /**
@@ -126,12 +131,31 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
     const mockAccountOptions = (
         result?: Partial<IUseWorkspaceAccountOptionsResult>,
     ) =>
-        useWorkspaceAccountOptionsSpy.mockReturnValue({
-            options: [allAccountsOption],
-            accountId: allAccountsOption.id,
-            activeOption: allAccountsOption,
-            isAllAccounts: true,
-            ...result,
+        useWorkspaceAccountOptionsSpy.mockImplementation(() => {
+            // The page reads its accounts from the hook, derived here like the hook does: every account of the
+            // workspace the test resolves on the aggregated scope, the account of the active option otherwise.
+            const { data: workspace } = useWorkspace({
+                urlParams: { id: 'demo' },
+            });
+            const activeOption =
+                result != null && 'activeOption' in result
+                    ? result.activeOption
+                    : allAccountsOption;
+            const isAllAccounts = result?.isAllAccounts ?? true;
+
+            return {
+                options: [allAccountsOption],
+                accountId: allAccountsOption.id,
+                activeOption,
+                isAllAccounts,
+                scopedAccounts: isAllAccounts
+                    ? (workspace?.accounts ?? [])
+                    : activeOption?.account != null
+                      ? [activeOption.account]
+                      : [],
+                isPending: workspace == null,
+                ...result,
+            };
         });
 
     /**
@@ -379,6 +403,81 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
 
     // `LayoutWorkspaceAccount` accepts any casing and the hook resolves it to the option of the account, so a
     // lowercased shared link narrows the page like the checksummed one.
+    it('narrows to a DAO account the workspace does not hold', async () => {
+        const externalOption: IWorkspaceAccountOption = {
+            ...daoOption,
+            isExternal: true,
+        };
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({ accounts: [otherDaoAccount] }),
+        );
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: externalOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(lastListProps()?.accounts).toEqual([daoAccount]),
+        );
+        expect(lastListProps()?.isAccountScoped).toBeTruthy();
+    });
+
+    // Until the type of an external account is resolved there is no account to narrow to, and the page must not
+    // widen to every DAO account of the workspace in the meantime.
+    it('lists no account while the account the route names is being resolved', async () => {
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({ accounts: [daoAccount, otherDaoAccount] }),
+        );
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: {
+                id: daoAccount.id,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+            },
+            isAllAccounts: false,
+            isPending: true,
+        });
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toEqual([]));
+        // The list loads rather than reading an empty selection as a workspace with no proposals.
+        expect(lastListProps()?.isPending).toBeTruthy();
+    });
+
+    // The gate only proves on the server that the DAO loads; the client lookup is a request of its own.
+    it('renders the state of an external account the lookup cannot place, without a retry', async () => {
+        const useParamsSpy = jest
+            .spyOn(NextNavigation, 'useParams')
+            .mockReturnValue({ workspaceId: 'demo' });
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: {
+                id: daoAccount.id,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+                accountState: WorkspaceAccountState.UNAVAILABLE,
+            },
+            isAllAccounts: false,
+            isPending: false,
+        });
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(/unavailable\.heading$/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: /unavailable\.action$/ }),
+        ).not.toBeInTheDocument();
+        expect(proposalListMock).not.toHaveBeenCalled();
+        expect(screen.queryByTestId('aside-card-mock')).not.toBeInTheDocument();
+        useParamsSpy.mockRestore();
+    });
+
     it('narrows to the account of a lowercased route ID', async () => {
         getWorkspaceSpy.mockResolvedValue(
             buildWorkspace({ accounts: [daoAccount, otherDaoAccount] }),
