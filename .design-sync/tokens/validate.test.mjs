@@ -28,7 +28,7 @@ const kitRoot = join(appRoot, 'node_modules/@aragon/gov-ui-kit');
 test('checked-in tokens match the consumed GovKit CSS and app overrides', () => {
     assert.equal(
         validateTokens(tokens, baseline, { appRoot, kitRoot }).tokens,
-        131,
+        132,
     );
 });
 
