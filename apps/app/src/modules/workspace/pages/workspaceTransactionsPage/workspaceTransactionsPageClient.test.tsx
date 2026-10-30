@@ -311,8 +311,9 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     });
 
     // Until the type of an external account is resolved there is no account to narrow to, and the page must not
-    // widen to every account of the workspace in the meantime.
-    it('lists no account while the account the route names is being resolved', async () => {
+    // widen to every account of the workspace in the meantime. The aside card waits too, so the aggregated card
+    // does not flash before the card of the account.
+    it('lists no account and renders no aside card while the account the route names is being resolved', async () => {
         mockAccountOptions({
             accountId: daoAccount.id,
             activeOption: {
@@ -328,6 +329,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
 
         await waitFor(() => expect(lastListProps()?.accounts).toEqual([]));
         expect(lastListProps()?.isPending).toBeTruthy();
+        expect(asideCardMock).not.toHaveBeenCalled();
     });
 
     // The card describes what the list shows, so both narrow from the same option rather than each resolving it.

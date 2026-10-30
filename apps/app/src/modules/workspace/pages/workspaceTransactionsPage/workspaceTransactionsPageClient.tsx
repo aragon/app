@@ -144,11 +144,13 @@ export const WorkspaceTransactionsPageClient: React.FC<
                 />
             </Page.Main>
             <Page.Aside>
-                <WorkspaceTransactionsAsideCard
-                    accounts={accountsToDisplay}
-                    activeOption={activeOption}
-                    pageSize={pageSize}
-                />
+                {!isScopePending && (
+                    <WorkspaceTransactionsAsideCard
+                        accounts={accountsToDisplay}
+                        activeOption={activeOption}
+                        pageSize={pageSize}
+                    />
+                )}
             </Page.Aside>
         </Page.Content>
     );
