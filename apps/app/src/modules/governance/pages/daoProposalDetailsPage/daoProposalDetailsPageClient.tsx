@@ -138,6 +138,19 @@ export const DaoProposalDetailsPageClient: React.FC<
     // render them only after mount to avoid a hydration mismatch.
     const isMounted = useIsMounted();
 
+    const proposalActions = proposalActionUtils.resolveActions(
+        actionData?.actions ?? [],
+        actionData?.rawActions,
+        proposal?.creator.address,
+    );
+
+    // Runs plugin hooks, so it stays above the early return: the DAO can resolve after the first render (e.g. when
+    // its query was already in the cache before the server state got hydrated).
+    const normalizedProposalActions = proposalActionUtils.normalizeActions(
+        proposalActions,
+        daoId,
+    );
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -176,16 +189,6 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
-    const proposalActions = proposalActionUtils.resolveActions(
-        actionData?.actions ?? [],
-        actionData?.rawActions,
-        creator.address,
-    );
-
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(
-        proposalActions,
-        dao,
-    );
     const formattedCreationDate = isMounted
         ? formatterUtils.formatDate(blockTimestamp * 1000, {
               format: DateFormat.YEAR_MONTH_DAY,

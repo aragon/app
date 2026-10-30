@@ -5,7 +5,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { type AbiStateMutability, type Hex, toFunctionSelector } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IDao } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { INormalizeActionsParams, IRawActionTuple } from '../../types';
@@ -151,9 +150,15 @@ class ProposalActionUtils {
         rawTuple: IRawActionTuple[],
     ): IProposalAction[] => this.resolveActions(subActions ?? [], rawTuple);
 
+    /**
+     * Normalizes the actions through every registered plugin normalization function.
+     *
+     * The normalization functions are hooks (e.g. `useMultisigNormalizeActions`), so this must be called on every
+     * render of the calling component, before any early return — otherwise the hook count changes between renders.
+     */
     normalizeActions = (
         actions: IProposalAction[],
-        dao: IDao,
+        daoId: string,
     ): IGukProposalAction[] => {
         // Use all registered normalization functions to make sure we render the native action correctly even if a DAO
         // does not have the related plugin (e.g. a Multisig DAO updating the settings of a Token-based DAO)
@@ -164,7 +169,7 @@ class ProposalActionUtils {
 
         return normalizeFunctions.reduce(
             (current, normalizeFunction) =>
-                normalizeFunction({ actions: current, daoId: dao.id }),
+                normalizeFunction({ actions: current, daoId }),
             actions,
         );
     };

@@ -2,12 +2,6 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
-import * as daoService from '@/shared/api/daoService';
-import {
-    generateDao,
-    generateReactQueryResultSuccess,
-    generateReactQueryResultSuccessWithData,
-} from '@/shared/testUtils';
 import {
     type INestedActionsListProps,
     NestedActionsList,
@@ -20,21 +14,16 @@ jest.mock('../proposalActionsItem', () => ({
 }));
 
 describe('<NestedActionsList /> component', () => {
-    const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const normalizeActionsSpy = jest.spyOn(
         proposalActionUtils,
         'normalizeActions',
     );
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao() }),
-        );
         normalizeActionsSpy.mockImplementation((actions) => actions);
     });
 
     afterEach(() => {
-        useDaoSpy.mockReset();
         normalizeActionsSpy.mockReset();
     });
 
@@ -141,7 +130,7 @@ describe('<NestedActionsList /> component', () => {
                     data: '0xabcd',
                 }),
             ],
-            expect.anything(),
+            'dao-id',
         );
     });
 
@@ -179,27 +168,12 @@ describe('<NestedActionsList /> component', () => {
         );
     });
 
-    it('renders nothing while the DAO is loading', () => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccessWithData(
-                undefined,
-            ) as unknown as ReturnType<typeof daoService.useDao>,
-        );
-        const { container } = render(
-            createTestComponent({
-                outerParams: outerParams([
-                    { to: firstTarget, value: '0', data: '0x' },
-                ]),
-                rawActions: [generateAction({ to: firstTarget })],
-            }),
-        );
-        expect(container).toBeEmptyDOMElement();
-    });
-
-    it('renders nothing when both rawActions and the outer tuple are empty', () => {
+    it('renders nothing when both rawActions and the outer tuple are empty, still running the normalization', () => {
         const { container } = render(
             createTestComponent({ outerParams: [], rawActions: undefined }),
         );
         expect(container).toBeEmptyDOMElement();
+        // The normalization runs plugin hooks, so skipping it on an empty render would change the hook count.
+        expect(normalizeActionsSpy).toHaveBeenCalledWith([], 'dao-id');
     });
 });

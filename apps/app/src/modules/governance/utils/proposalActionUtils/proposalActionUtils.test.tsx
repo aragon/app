@@ -1,6 +1,5 @@
 import { toFunctionSelector } from 'viem';
 import { generateProposalAction } from '@/modules/governance/testUtils';
-import { generateDao } from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
@@ -17,7 +16,7 @@ describe('proposalActionUtils', () => {
 
     describe('normalizeActions', () => {
         it('retrieves and triggers all plugin-specific normalization functions to normalize the proposal actions', () => {
-            const dao = generateDao({ id: 'test' });
+            const daoId = 'test';
             const actions = [generateProposalAction()];
             const normalizationFunctionOne = jest.fn(() => actions);
             const normalizationFunctionTwo = jest.fn(() => actions);
@@ -25,8 +24,8 @@ describe('proposalActionUtils', () => {
                 normalizationFunctionOne,
                 normalizationFunctionTwo,
             ]);
-            proposalActionUtils.normalizeActions(actions, dao);
-            const expectedParams = { actions, daoId: dao.id };
+            proposalActionUtils.normalizeActions(actions, daoId);
+            const expectedParams = { actions, daoId };
             expect(normalizationFunctionOne).toHaveBeenCalledWith(
                 expectedParams,
             );
@@ -42,9 +41,9 @@ describe('proposalActionUtils', () => {
             ];
             const pluginNormalizationFunction = () => normalizedActions;
             getSlotFunctionsSpy.mockReturnValue([pluginNormalizationFunction]);
-            expect(
-                proposalActionUtils.normalizeActions([], generateDao()),
-            ).toEqual(normalizedActions);
+            expect(proposalActionUtils.normalizeActions([], 'dao-id')).toEqual(
+                normalizedActions,
+            );
         });
     });
 

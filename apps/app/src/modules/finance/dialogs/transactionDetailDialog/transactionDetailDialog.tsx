@@ -84,7 +84,7 @@ export const TransactionDetailDialog: React.FC<
     const actions = getTransactionActions(actionData, transaction.fromAddress);
     const normalizedActions = proposalActionUtils.normalizeActions(
         actions,
-        dao,
+        dao.id,
     );
 
     const chainId = networkDefinitions[transaction.network].id;

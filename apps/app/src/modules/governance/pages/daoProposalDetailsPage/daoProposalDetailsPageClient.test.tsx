@@ -7,6 +7,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import {
     DaoProposalDetailsPageClient,
     type IDaoProposalDetailsPageClientProps,
@@ -16,6 +17,7 @@ import {
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
@@ -24,6 +26,7 @@ import {
     generateDao,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
+    generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
@@ -75,6 +78,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         proposalActionsImportExportUtils,
         'downloadActionsAsJSON',
     );
+    const normalizeActionsSpy = jest.spyOn(
+        proposalActionUtils,
+        'normalizeActions',
+    );
 
     const mockInvalidateQueries = jest.fn();
     const mockQueryClient = { invalidateQueries: mockInvalidateQueries };
@@ -96,6 +103,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 data: generateSimulationResult(),
             }),
         );
+        normalizeActionsSpy.mockImplementation((actions) => actions);
         (useQueryClient as jest.Mock).mockReturnValue(mockQueryClient);
     });
 
@@ -105,6 +113,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         downloadActionsAsJSONSpy.mockReset();
+        normalizeActionsSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useLastSimulationSpy.mockReset();
         mockInvalidateQueries.mockReset();
@@ -254,6 +263,32 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         );
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
+    });
+
+    it('renders the proposal when the DAO resolves after the first render', () => {
+        // The plugin normalization functions are hooks: one is stood in for here, so a render that skips the
+        // normalization would change the hook count and throw.
+        normalizeActionsSpy.mockImplementation((actions) => {
+            useState();
+            return actions;
+        });
+        const proposal = generateProposal({ title: 'late-dao-title' });
+        useProposalSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: proposal }),
+        );
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData(
+                undefined,
+            ) as unknown as ReturnType<typeof DaoService.useDao>,
+        );
+        const { container, rerender } = render(createTestComponent());
+        expect(container).toBeEmptyDOMElement();
+
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
+        rerender(createTestComponent());
+        expect(screen.getByText('late-dao-title')).toBeInTheDocument();
     });
 
     it('renders the proposal description when defined on a collapsible component', () => {
