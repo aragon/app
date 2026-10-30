@@ -41,10 +41,11 @@ docs:
   - ".github/workflows/docs-*.yml"
   - ".github/filters.yml"
 
-# Gates the Storybook deploys and scopes the kit's release notes. Deliberately narrow: adding
-# shared build inputs such as pnpm-lock.yaml here would redeploy the Storybook on every unrelated
-# dependency change. The kit's commits also reach app release notes through the `app` filter
-# above, which already lists its path.
+# Gates the Storybook deploys and the component registry check of PRs (app-development.yml), and
+# scopes the kit's release notes. Deliberately narrow: adding shared build inputs such as
+# pnpm-lock.yaml here would redeploy the Storybook on every unrelated dependency change (the
+# registry only hashes files under packages/gov-ui-kit). The kit's commits also reach app release
+# notes through the `app` filter above, which already lists its path.
 gov-ui-kit:
   - "packages/gov-ui-kit/**"
   - ".github/workflows/gov-ui-kit-*.yml"

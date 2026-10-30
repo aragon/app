@@ -744,7 +744,7 @@ DropdownItem: individual item element of the Dropdown compound (Compound dropdow
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:47`
+- `kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:48`
 - `kit:src/core/components/dropdown/dropdownItem/dropdownItem.stories.tsx:1`
 
 ### EmptyState

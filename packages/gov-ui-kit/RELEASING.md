@@ -19,7 +19,7 @@ changeset here is the only place a kit change gets described in prose.
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Release Start  │───▶│ Approve & Merge │───▶│  Tag & GitHub   │───▶│   npm publish   │
-│ (Tuesday/manual)│    │    (manual)     │    │ Release  (auto) │    │ (needs approval)│
+│(app start/hand) │    │    (manual)     │    │ Release  (auto) │    │ (needs approval)│
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -32,12 +32,16 @@ the same shape as the app's.
 **1. Write a changeset.** Required whenever `src/**` changes (`.changeset/config.json`). It must
 name **only** `@aragon/gov-ui-kit` — a changeset may never mix release scopes, so a PR touching
 both the app and the kit needs **two** changeset files, one per scope. `pnpm validate:changesets`
-enforces this as part of `pnpm test`.
+enforces this as part of `pnpm test`, and the "Check GovKit changeset" step of
+`app-development.yml` fails a PR that changes kit source (stories and tests aside) without adding
+a kit changeset — app feature PRs included. The same PR refreshes the component registry
+(`design-system/component-registry/README.md`); "Check GovKit component registry" fails otherwise.
 
-**2. Start the release.** It starts by itself every Tuesday at 15:07 UTC (packages start on
-Tuesday, apps on Monday) and green-skips when there are no pending kit changesets or a kit release
-PR is already open. By hand: Actions → **Gov UI Kit Release** → Run workflow, optionally with a
-`base_commit` (defaults to `main` HEAD).
+**2. Start the release.** The kit has no schedule of its own: every App Release start (Monday
+cron or by hand) calls this flow from the same commit, so each app release sweeps the pending kit
+changesets into a kit release. It green-skips when there are none or a kit release PR is already
+open. By hand: Actions → **Gov UI Kit Release** → Run workflow, optionally with a `base_commit`
+(defaults to `main` HEAD); a manual run fails if a kit release PR is already open.
 
 It versions the `gov-ui-kit` release scope, pushes `release/gov-ui-kit/YYYY-MM-DD_HH-mm`, opens a
 `Release @aragon/gov-ui-kit@x.y.z` PR and starts the Slack thread with the summary. Every push to

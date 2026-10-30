@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "6bc200f87d3af71d9de09439e8fcacc1ae93f6141820214d46e0ea8ff24b84bd",
+            "sha256": "15be71c2252e0fb07fcdd1afdc6a53a1b9a7d338b72aa5671f0465fd14de49a9",
             "totalRecords": 394,
             "entryCount": 145,
             "uiEntryCount": 138,
@@ -1561,7 +1561,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:47",
+                "source": "kit:src/core/components/dropdown/dropdownItem/dropdownItem.tsx:48",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownItem/dropdownItem.stories.tsx:1"
                 ]

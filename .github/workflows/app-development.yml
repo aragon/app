@@ -16,6 +16,8 @@ concurrency:
 
 permissions:
   contents: read
+  # paths-filter lists a PR's changed files through the API.
+  pull-requests: read
 
 jobs:
   test:
@@ -40,10 +42,39 @@ jobs:
       # committed build.css still matches a source compile before it can be published.
       - name: Check published CSS bundles
         run: pnpm css:check
+      # The kit's named filter in .github/filters.yml covers every file the registry hashes (kit
+      # source, stories, tests, build.css, index.css).
+      - name: Detect GovKit changes
+        id: kit
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v3.0.2 (https://github.com/dorny/paths-filter/releases/tag/v3.0.2)
+        with:
+          filters: .github/filters.yml
+      # The design system syncs from these files; an unrefreshed registry blocks the sync. PR-only:
+      # every kit change reaches main through a PR, and a docs artifact never blocks the dev deploy.
+      - name: Check GovKit component registry
+        if: steps.kit.outputs['gov-ui-kit'] == 'true'
+        run: |
+          pnpm --filter @aragon/gov-ui-kit build
+          node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
+          node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
       # Release and hotfix branches are already versioned; fixes merged into them need no changeset.
       - name: Check changeset
         if: github.event_name == 'pull_request' && !startsWith(github.base_ref, 'release/') && !startsWith(github.base_ref, 'hotfix/')
         run: pnpm changeset status --since origin/main
+      # `changeset status` passes on any changeset, so an app changeset could cover kit source changes
+      # that then never ship to npm. Kit source changes carry their own kit changeset, also inside an
+      # app feature PR. The scope mirrors `changedFilePatterns` (src/**) minus stories and tests,
+      # which never reach npm.
+      - name: Check GovKit changeset
+        if: github.event_name == 'pull_request' && !startsWith(github.base_ref, 'release/') && !startsWith(github.base_ref, 'hotfix/')
+        run: |
+          if git diff --quiet origin/main...HEAD -- packages/gov-ui-kit/src ':!*.stories.tsx' ':!*.test.ts' ':!*.test.tsx'; then exit 0; fi
+          added=$(git diff --name-only --diff-filter=A origin/main...HEAD -- '.changeset/*.md')
+          if [ -z "$added" ] || ! printf '%s\n' "$added" | xargs grep -qE "^[\"']?@aragon/gov-ui-kit[\"']?:"; then
+            echo "::error::GovKit source changed: add a changeset for '@aragon/gov-ui-kit' (pnpm changeset), separate from any app changeset."
+            exit 1
+          fi
 
   deploy:
     needs: test
