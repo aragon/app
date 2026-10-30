@@ -148,37 +148,38 @@ class SppStageUtils {
         );
     };
 
-    // Whether a body can still submit its result. Approving bodies vote only
-    // while the stage is ACTIVE. A vetoing body can veto for the whole window
-    // even after approvals land (stage ADVANCEABLE, or last stage ACCEPTED), as
-    // long as the stage is still the live one and its window is open — so a
-    // mixed last stage isn't left un-vetoable.
+    // Whether a body can still submit its result. Any body of the live stage may vote while its
+    // voting window is open, also after approvals land (stage ADVANCEABLE, or last stage ACCEPTED):
+    // early advance lets the stage move on, but until it does the remaining bodies can still
+    // record their preference. The window check matters because a stage also reads ACTIVE between
+    // voting close and `maxAdvance`, where an ordinary body's onchain vote would revert - only
+    // bodies wired to the late-report slot act there. An executed proposal takes no more votes, and
+    // neither does a body whose sub-proposal already reported its result: reporting is the execution
+    // of that sub-proposal, so its remaining members could only cast a vote that reverts. Bodies
+    // without a sub-proposal (external addresses, Safes) report directly and keep their action.
     canBodyVote = (
         proposal: ISppProposal,
         stage: ISppStage,
         plugin: ISppStagePlugin,
     ): boolean => {
-        const status = this.getStageStatus(proposal, stage);
+        const { address } = plugin;
+        const { stageIndex } = stage;
+        const hasReportedViaSubProposal =
+            this.getBodySubProposal(proposal, address, stageIndex) != null &&
+            this.getBodyResult(proposal, address, stageIndex) != null;
 
-        // While the stage is active and its voting window is open, any of its bodies may still
-        // vote. The window check matters because a stage now also reads ACTIVE between voting
-        // close and `maxAdvance`, where a late report is still useful but an ordinary body's
-        // onchain vote would revert - only bodies wired to the late-report slot act there.
         if (
-            status === ProposalStatus.ACTIVE &&
-            this.isVotingWindowOpen(proposal, stage)
+            proposal.executed.status ||
+            hasReportedViaSubProposal ||
+            !this.isVotingWindowOpen(proposal, stage)
         ) {
-            return true;
+            return false;
         }
 
-        // Beyond ACTIVE only a vetoing body may still act: approving bodies are
-        // done once the threshold is met.
-        const canStillBlock =
-            this.isVetoBody(plugin) &&
-            (status === ProposalStatus.ADVANCEABLE ||
-                status === ProposalStatus.ACCEPTED);
+        const { ACTIVE, ADVANCEABLE, ACCEPTED } = ProposalStatus;
+        const status = this.getStageStatus(proposal, stage);
 
-        return canStillBlock && this.isVetoWindowOpen(proposal, stage);
+        return [ACTIVE, ADVANCEABLE, ACCEPTED].includes(status);
     };
 
     // Whether the stage's veto condition is still live: it carries an unmet

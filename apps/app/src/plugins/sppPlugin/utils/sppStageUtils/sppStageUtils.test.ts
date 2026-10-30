@@ -1200,6 +1200,14 @@ describe('SppStageUtils', () => {
     describe('canBodyVote', () => {
         const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
         const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+        const now = '2023-01-01T12:00:00.000Z';
+        const body = generateSppStagePlugin({
+            address: '0x1111111111111111111111111111111111111111',
+        });
+
+        beforeEach(() => {
+            timeUtils.setTime(now);
+        });
 
         afterEach(() => {
             getStageStatusSpy.mockReset();
@@ -1211,146 +1219,152 @@ describe('SppStageUtils', () => {
             getStageEndDateSpy.mockRestore();
         });
 
-        it('allows any body to vote while the stage is active and its voting window is open', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
-            getStageEndDateSpy.mockReturnValue(
-                DateTime.fromISO(now).plus({ days: 1 }),
-            );
-            timeUtils.setTime(now);
-            const stage = generateSppStage();
-            const proposal = generateSppProposal();
-            const approveBody = generateSppStagePlugin({
-                proposalType: SppProposalType.APPROVAL,
-            });
-            const vetoBody = generateSppStagePlugin({
-                proposalType: SppProposalType.VETO,
-            });
+        it.each([
+            ProposalStatus.ACTIVE,
+            ProposalStatus.ADVANCEABLE,
+            ProposalStatus.ACCEPTED,
+        ])(
+            'allows the bodies of the live stage to vote while the stage is %s and its voting window is open',
+            (status) => {
+                getStageStatusSpy.mockReturnValue(status);
+                getStageEndDateSpy.mockReturnValue(
+                    DateTime.fromISO(now).plus({ days: 1 }),
+                );
+                const stage = generateSppStage({ stageIndex: 0 });
+                const proposal = generateSppProposal({ stageIndex: 0 });
 
-            expect(
-                sppStageUtils.canBodyVote(proposal, stage, approveBody),
-            ).toBeTruthy();
-            expect(
-                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
-            ).toBeTruthy();
-        });
+                expect(
+                    sppStageUtils.canBodyVote(proposal, stage, body),
+                ).toBeTruthy();
+            },
+        );
 
-        it('stops an approving body voting once the window closed, even though the stage still reads active for a late report', () => {
+        it('stops voting once the window closed, even though the stage still reads active for a late report', () => {
             // Between voting close and `maxAdvance` the stage stays ACTIVE so a late report still
             // counts, but an ordinary body's onchain vote would revert there. Only bodies wired to
             // the late-report slot may act, and that path is gated separately.
-            const now = '2023-01-01T12:00:00.000Z';
             getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
             getStageEndDateSpy.mockReturnValue(
                 DateTime.fromISO(now).minus({ hours: 1 }),
             );
-            timeUtils.setTime(now);
             const stage = generateSppStage();
             const proposal = generateSppProposal();
-            const approveBody = generateSppStagePlugin({
-                proposalType: SppProposalType.APPROVAL,
-            });
 
             expect(
-                sppStageUtils.canBodyVote(proposal, stage, approveBody),
+                sppStageUtils.canBodyVote(proposal, stage, body),
             ).toBeFalsy();
         });
 
-        it('lets a vetoing body veto while the stage is advanceable and the voting window is still open', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
-            getStageEndDateSpy.mockReturnValue(
-                DateTime.fromISO(now).plus({ days: 1 }),
-            );
-            timeUtils.setTime(now);
-            const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({ stageIndex: 0 });
-            const vetoBody = generateSppStagePlugin({
-                proposalType: SppProposalType.VETO,
-            });
-
-            expect(
-                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
-            ).toBeTruthy();
-        });
-
-        it('lets a vetoing body veto on the last stage (accepted) while the window is still open', () => {
-            const now = '2023-01-01T12:00:00.000Z';
-            getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
-            getStageEndDateSpy.mockReturnValue(
-                DateTime.fromISO(now).plus({ days: 1 }),
-            );
-            timeUtils.setTime(now);
-            const stage = generateSppStage({ stageIndex: 1 });
-            const proposal = generateSppProposal({ stageIndex: 1 });
-            const vetoBody = generateSppStagePlugin({
-                proposalType: SppProposalType.VETO,
-            });
-
-            expect(
-                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
-            ).toBeTruthy();
-        });
-
-        it('stops a vetoing body once the voting window has closed', () => {
-            const now = '2023-01-01T12:00:00.000Z';
+        it('stops voting on an advanceable stage once its voting window has closed', () => {
             getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
             getStageEndDateSpy.mockReturnValue(
                 DateTime.fromISO(now).minus({ minutes: 1 }),
             );
-            timeUtils.setTime(now);
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({ stageIndex: 0 });
-            const vetoBody = generateSppStagePlugin({
-                proposalType: SppProposalType.VETO,
-            });
 
             expect(
-                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+                sppStageUtils.canBodyVote(proposal, stage, body),
             ).toBeFalsy();
         });
 
-        it('does not let a vetoing body veto a stage that is no longer the active one', () => {
-            const now = '2023-01-01T12:00:00.000Z';
+        it('does not allow voting on a stage that is no longer the active one', () => {
             getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
             getStageEndDateSpy.mockReturnValue(
                 DateTime.fromISO(now).plus({ days: 1 }),
             );
-            timeUtils.setTime(now);
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({ stageIndex: 1 });
-            const vetoBody = generateSppStagePlugin({
-                proposalType: SppProposalType.VETO,
-            });
 
             expect(
-                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+                sppStageUtils.canBodyVote(proposal, stage, body),
             ).toBeFalsy();
         });
 
-        it('does not let an approving body vote once the stage is advanceable', () => {
+        it('does not allow voting once the proposal is executed, even while the voting window is open', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                stageIndex: 0,
+                executed: { status: true },
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, body),
+            ).toBeFalsy();
+        });
+
+        it('does not allow voting on a body whose sub-proposal already reported its result', () => {
             getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
-            const stage = generateSppStage();
-            const proposal = generateSppProposal();
-            const approveBody = generateSppStagePlugin({
-                proposalType: SppProposalType.APPROVAL,
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({
+                stageIndex: 0,
+                subProposals: [
+                    generateSppSubProposal({
+                        pluginAddress: body.address,
+                        stageIndex: 0,
+                    }),
+                ],
+                results: [
+                    {
+                        pluginAddress: body.address,
+                        stage: 0,
+                        resultType: SppProposalType.APPROVAL,
+                    },
+                ],
             });
 
             expect(
-                sppStageUtils.canBodyVote(proposal, stage, approveBody),
+                sppStageUtils.canBodyVote(proposal, stage, body),
             ).toBeFalsy();
         });
 
-        it('does not allow a vetoing body to veto for a non-votable stage status', () => {
-            getStageStatusSpy.mockReturnValue(ProposalStatus.REJECTED);
+        it('keeps the action of a body without a sub-proposal after it reported its result', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            const stage = generateSppStage({ stageIndex: 0 });
+            const externalBody = generateSppStagePlugin({
+                address: '0x2222222222222222222222222222222222222222',
+                interfaceType: undefined,
+            });
+            const proposal = generateSppProposal({
+                stageIndex: 0,
+                results: [
+                    {
+                        pluginAddress: externalBody.address,
+                        stage: 0,
+                        resultType: SppProposalType.APPROVAL,
+                    },
+                ],
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, externalBody),
+            ).toBeTruthy();
+        });
+
+        it.each([
+            ProposalStatus.REJECTED,
+            ProposalStatus.VETOED,
+            ProposalStatus.EXPIRED,
+        ])('does not allow voting when the stage is %s', (status) => {
+            getStageStatusSpy.mockReturnValue(status);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
             const stage = generateSppStage({ stageIndex: 0 });
             const proposal = generateSppProposal({ stageIndex: 0 });
-            const vetoBody = generateSppStagePlugin({
-                proposalType: SppProposalType.VETO,
-            });
 
             expect(
-                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+                sppStageUtils.canBodyVote(proposal, stage, body),
             ).toBeFalsy();
         });
     });
