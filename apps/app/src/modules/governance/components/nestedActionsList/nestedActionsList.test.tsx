@@ -1,7 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
+import * as UseNormalizedProposalActions from '../../hooks/useNormalizedProposalActions';
 import {
     type INestedActionsListProps,
     NestedActionsList,
@@ -14,17 +14,19 @@ jest.mock('../proposalActionsItem', () => ({
 }));
 
 describe('<NestedActionsList /> component', () => {
-    const normalizeActionsSpy = jest.spyOn(
-        proposalActionUtils,
-        'normalizeActions',
+    const useNormalizedProposalActionsSpy = jest.spyOn(
+        UseNormalizedProposalActions,
+        'useNormalizedProposalActions',
     );
 
     beforeEach(() => {
-        normalizeActionsSpy.mockImplementation((actions) => actions);
+        useNormalizedProposalActionsSpy.mockImplementation(
+            ({ actions }) => actions,
+        );
     });
 
     afterEach(() => {
-        normalizeActionsSpy.mockReset();
+        useNormalizedProposalActionsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INestedActionsListProps>) => {
@@ -122,16 +124,16 @@ describe('<NestedActionsList /> component', () => {
         expect(screen.getByTestId('nested-item')).toHaveTextContent(
             'RAW_CALLDATA',
         );
-        expect(normalizeActionsSpy).toHaveBeenCalledWith(
-            [
+        expect(useNormalizedProposalActionsSpy).toHaveBeenCalledWith({
+            actions: [
                 expect.objectContaining({
                     to: firstTarget,
                     value: '5',
                     data: '0xabcd',
                 }),
             ],
-            'dao-id',
-        );
+            daoId: 'dao-id',
+        });
     });
 
     it('falls back to raw-calldata stubs when decoded length disagrees with the outer tuple', () => {
@@ -168,12 +170,10 @@ describe('<NestedActionsList /> component', () => {
         );
     });
 
-    it('renders nothing when both rawActions and the outer tuple are empty, still running the normalization', () => {
+    it('renders nothing when both rawActions and the outer tuple are empty', () => {
         const { container } = render(
             createTestComponent({ outerParams: [], rawActions: undefined }),
         );
         expect(container).toBeEmptyDOMElement();
-        // The normalization runs plugin hooks, so skipping it on an empty render would change the hook count.
-        expect(normalizeActionsSpy).toHaveBeenCalledWith([], 'dao-id');
     });
 });

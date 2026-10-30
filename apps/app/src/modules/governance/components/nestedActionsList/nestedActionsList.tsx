@@ -5,6 +5,7 @@ import {
     ProposalActions,
 } from '@aragon/gov-ui-kit';
 import type { IProposalAction } from '../../api/governanceService';
+import { useNormalizedProposalActions } from '../../hooks/useNormalizedProposalActions';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import { ProposalActionsItem } from '../proposalActionsItem';
 
@@ -42,11 +43,10 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
         rawTuple,
     );
 
-    // Runs plugin hooks, so it stays above the early return.
-    const normalizedActions = proposalActionUtils.normalizeActions(
-        actionsToRender,
+    const normalizedActions = useNormalizedProposalActions({
+        actions: actionsToRender,
         daoId,
-    );
+    });
 
     if (normalizedActions.length === 0) {
         return null;

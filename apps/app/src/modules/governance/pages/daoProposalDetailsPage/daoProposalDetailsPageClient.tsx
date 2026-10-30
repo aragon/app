@@ -44,6 +44,7 @@ import {
 import { ProposalActionsItem } from '../../components/proposalActionsItem';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useNormalizedProposalActions } from '../../hooks/useNormalizedProposalActions';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import {
     ProposalMetadataStatus,
@@ -144,12 +145,10 @@ export const DaoProposalDetailsPageClient: React.FC<
         proposal?.creator.address,
     );
 
-    // Runs plugin hooks, so it stays above the early return: the DAO can resolve after the first render (e.g. when
-    // its query was already in the cache before the server state got hydrated).
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(
-        proposalActions,
+    const normalizedProposalActions = useNormalizedProposalActions({
+        actions: proposalActions,
         daoId,
-    );
+    });
 
     if (proposal == null || dao == null) {
         return null;

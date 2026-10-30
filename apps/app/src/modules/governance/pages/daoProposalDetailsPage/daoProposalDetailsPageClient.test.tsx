@@ -17,7 +17,6 @@ import {
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
@@ -31,6 +30,7 @@ import {
 import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import * as UseNormalizedProposalActions from '../../hooks/useNormalizedProposalActions';
 
 jest.mock('@tanstack/react-query', () => {
     const actual = jest.requireActual<typeof ReactQuery>(
@@ -78,9 +78,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         proposalActionsImportExportUtils,
         'downloadActionsAsJSON',
     );
-    const normalizeActionsSpy = jest.spyOn(
-        proposalActionUtils,
-        'normalizeActions',
+    const useNormalizedProposalActionsSpy = jest.spyOn(
+        UseNormalizedProposalActions,
+        'useNormalizedProposalActions',
     );
 
     const mockInvalidateQueries = jest.fn();
@@ -103,7 +103,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 data: generateSimulationResult(),
             }),
         );
-        normalizeActionsSpy.mockImplementation((actions) => actions);
+        useNormalizedProposalActionsSpy.mockImplementation(
+            ({ actions }) => actions,
+        );
         (useQueryClient as jest.Mock).mockReturnValue(mockQueryClient);
     });
 
@@ -113,7 +115,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         downloadActionsAsJSONSpy.mockReset();
-        normalizeActionsSpy.mockReset();
+        useNormalizedProposalActionsSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useLastSimulationSpy.mockReset();
         mockInvalidateQueries.mockReset();
@@ -268,7 +270,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('renders the proposal when the DAO resolves after the first render', () => {
         // The plugin normalization functions are hooks: one is stood in for here, so a render that skips the
         // normalization would change the hook count and throw.
-        normalizeActionsSpy.mockImplementation((actions) => {
+        useNormalizedProposalActionsSpy.mockImplementation(({ actions }) => {
             useState();
             return actions;
         });

@@ -1,52 +1,9 @@
 import { toFunctionSelector } from 'viem';
 import { generateProposalAction } from '@/modules/governance/testUtils';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ProposalActionType } from '../../api/governanceService';
 import { proposalActionUtils } from './proposalActionUtils';
 
 describe('proposalActionUtils', () => {
-    const getSlotFunctionsSpy = jest.spyOn(
-        pluginRegistryUtils,
-        'getSlotFunctions',
-    );
-
-    afterEach(() => {
-        getSlotFunctionsSpy.mockReset();
-    });
-
-    describe('normalizeActions', () => {
-        it('retrieves and triggers all plugin-specific normalization functions to normalize the proposal actions', () => {
-            const daoId = 'test';
-            const actions = [generateProposalAction()];
-            const normalizationFunctionOne = jest.fn(() => actions);
-            const normalizationFunctionTwo = jest.fn(() => actions);
-            getSlotFunctionsSpy.mockReturnValue([
-                normalizationFunctionOne,
-                normalizationFunctionTwo,
-            ]);
-            proposalActionUtils.normalizeActions(actions, daoId);
-            const expectedParams = { actions, daoId };
-            expect(normalizationFunctionOne).toHaveBeenCalledWith(
-                expectedParams,
-            );
-            expect(normalizationFunctionTwo).toHaveBeenCalledWith(
-                expectedParams,
-            );
-        });
-
-        it('returns the result of the plugin-specific normalization functions', () => {
-            const normalizedActions = [
-                generateProposalAction({ type: '1' }),
-                generateProposalAction({ type: '2' }),
-            ];
-            const pluginNormalizationFunction = () => normalizedActions;
-            getSlotFunctionsSpy.mockReturnValue([pluginNormalizationFunction]);
-            expect(proposalActionUtils.normalizeActions([], 'dao-id')).toEqual(
-                normalizedActions,
-            );
-        });
-    });
-
     describe('parseRawActionTuple', () => {
         const to = '0xE5e5f0c2e1B5F1b8f2C0a1D3a4B5c6D7e8F90123';
 

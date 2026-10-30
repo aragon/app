@@ -15,8 +15,8 @@ import {
 } from '@/modules/finance/api/financeService';
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { ProposalActionsItem } from '@/modules/governance/components/proposalActionsItem';
+import { useNormalizedProposalActions } from '@/modules/governance/hooks/useNormalizedProposalActions';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import type { IDao } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
@@ -82,10 +82,10 @@ export const TransactionDetailDialog: React.FC<
     );
 
     const actions = getTransactionActions(actionData, transaction.fromAddress);
-    const normalizedActions = proposalActionUtils.normalizeActions(
+    const normalizedActions = useNormalizedProposalActions({
         actions,
-        dao.id,
-    );
+        daoId: dao.id,
+    });
 
     const chainId = networkDefinitions[transaction.network].id;
     const actionCount =
