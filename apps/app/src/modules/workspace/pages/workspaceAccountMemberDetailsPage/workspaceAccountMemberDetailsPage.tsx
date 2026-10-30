@@ -11,9 +11,11 @@ import type {
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IWorkspaceAccountRef,
+    WorkspaceAccountInfoType,
     workspaceQueryService,
 } from '../../api/workspaceQueryService';
 import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 interface IGetAccountMemberParams extends IWorkspaceAccountRef {
@@ -64,9 +66,14 @@ export interface IWorkspaceAccountMemberDetailsPageProps {
 /**
  * Details of one member of one account of a workspace.
  *
- * Like `WorkspaceAccountMembersPage`, only the DAO branch exists so far: the DAO member page is rendered as is and
- * only the shape of the route parameters is adapted. Its address-validation fallbacks (invalid address,
- * non-checksummed redirect) build `/dao/…` URLs, so the links to this page always carry the checksummed address.
+ * A Safe has no member page of its own: its owners are listed on the members page, so a Safe account redirects
+ * there, before the member lookup and before `WorkspaceAccountGate` (which fails the route for anything whose DAO
+ * record cannot be read). The account type comes from the workspace accounts API; a failed lookup falls back to the
+ * DAO branch.
+ *
+ * The DAO branch is unchanged: the DAO member page is rendered as is and only the shape of the route parameters is
+ * adapted. Its address-validation fallbacks (invalid address, non-checksummed redirect) build `/dao/…` URLs, so the
+ * links to this page always carry the checksummed address.
  */
 export const WorkspaceAccountMemberDetailsPage: React.FC<
     IWorkspaceAccountMemberDetailsPageProps
@@ -80,6 +87,23 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
     const { workspaceId, accountId, address: memberAddress } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
 
+    const accountInfo = await workspaceAccountInfoUtils.getAccountInfo({
+        network,
+        address,
+    });
+
+    if (accountInfo?.type === WorkspaceAccountInfoType.SAFE) {
+        return (
+            <RedirectToUrl
+                url={workspaceUtils.getAccountScopeUrl(
+                    workspaceId,
+                    accountId,
+                    'members',
+                )}
+            />
+        );
+    }
+
     const memberSearchParams = (await searchParams) ?? {};
     const bodyParam = memberSearchParams[voteListFilterParam];
     const linkedBodyId = typeof bodyParam === 'string' ? bodyParam : undefined;
@@ -92,13 +116,8 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
 
     const member = memberList?.data[0];
 
-    // This lookup runs above `WorkspaceAccountGate`, so it decides for a Safe too: the `memberDetails` placeholder
-    // is only reachable because `partial` is permanently true for an `unverified` account, which every Safe is, so
-    // the redirect below never fires for one.
-    // Whoever points this at `workspaceCoverageUtils` (the `members` row of the seam register) must first move this
-    // lookup and its redirect below the gate, or guard it to the accounts the gate admits: with `partial` no longer
-    // standing in for "not indexed", a Safe would read as a complete lookup holding no member, every Safe
-    // member-details URL would redirect to the members list and the placeholder would become dead copy.
+    // A Safe never gets here: it was redirected above. A complete lookup holding no member is a stale or hand-edited
+    // URL for a DAO account, and goes back to the members list; a partial one is no answer and degrades like a failure.
     const isCompleteLookup = memberList != null && !memberList.partial;
     if (isCompleteLookup && member == null) {
         return (

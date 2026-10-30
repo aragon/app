@@ -215,6 +215,11 @@ export interface IWorkspaceMemberListDefaultProps {
      * Visible governance plugins of every account keyed by account ID.
      */
     visiblePluginsByAccountId?: Record<string, IWorkspaceAccountPlugins>;
+    /**
+     * ID of the DAO account whose body the list is narrowed to, when it is narrowed to one through its tab. Lets the
+     * rows of a Safe body, which the backend reports under the Safe account, link to the member page of that body.
+     */
+    bodyAccountId?: string;
 }
 
 /**
@@ -233,6 +238,7 @@ export const WorkspaceMemberListDefault: React.FC<
         pageSize,
         filters,
         visiblePluginsByAccountId,
+        bodyAccountId,
     } = props;
 
     const { t } = useTranslations();
@@ -263,14 +269,60 @@ export const WorkspaceMemberListDefault: React.FC<
         : 'idle';
 
     // Accounts whose member page the app can serve. Membership is not a DAO notion — a Safe owner is a member of
-    // the workspace too — but the account-scoped member route resolves an account by reading its DAO, so only DAO
-    // accounts have a page to open today. This set is what grows when Safe account pages land; see the doc comment
-    // of `WorkspaceAccountGate` for what a Safe gets instead.
+    // the workspace too — but the member details page reads a DAO, so only DAO accounts have a page to open. Safe
+    // owners link to the block explorer instead, by decision (see "Safe member details" in
+    // `docs/projectDocs/createWorkspace.md`).
     const memberPageAccountIds = new Set(
         accounts
             .filter((account) => account.type === WorkspaceAccountType.DAO)
             .map((account) => account.id),
     );
+
+    /**
+     * Targets of a membership held on a body of a DAO account: none when the body is hidden, one otherwise.
+     */
+    const buildBodyTargets = (
+        accountId: string,
+        bodyAddress: string,
+    ): IWorkspaceMemberTarget[] => {
+        const visiblePlugins = visiblePluginsByAccountId?.[accountId];
+
+        // The plugins of the account are not known — the DAO read failed, or has not resolved yet.
+        // The membership is kept and linked without naming a governance.
+        if (visiblePlugins == null) {
+            return [{ accountId, bodyAddress }];
+        }
+
+        const body = visiblePlugins.bodies.find((plugin) =>
+            addressUtils.isAddressEqual(plugin.address, bodyAddress),
+        );
+
+        // The body is hidden (through the CMS overrides).
+        // Member should not be linked to the Member Details page for the account.
+        if (body == null) {
+            return [];
+        }
+
+        // The process the body acts through, so the proposals of the member page open on the same governance.
+        const process =
+            visiblePlugins.processes == null
+                ? undefined
+                : daoUtils.findPluginProcess(body, visiblePlugins.processes);
+
+        // The tab IDs the vote and proposal lists of the member page carry, which name a Safe by its DAO too. The
+        // lists build them from the DAO they render, so the rows use the address of that same DAO as read from the
+        // DAO API rather than the account address, whose casing may differ.
+        const rootDaoAddress = visiblePlugins.daoAddress;
+
+        const processId =
+            process == null
+                ? undefined
+                : daoUtils.getPluginTabId(process, rootDaoAddress);
+
+        const bodyId = daoUtils.getPluginTabId(body, rootDaoAddress);
+
+        return [{ accountId, bodyAddress, bodyId, processId }];
+    };
 
     const getMemberTarget = (
         member: IWorkspaceMember,
@@ -280,60 +332,30 @@ export const WorkspaceMemberListDefault: React.FC<
                 const accountId = workspaceUtils.buildAccountId(
                     membership.account,
                 );
-                const bodyAddress = membership.governance.address;
 
-                if (!memberPageAccountIds.has(accountId)) {
-                    return [];
-                }
-
-                const visiblePlugins = visiblePluginsByAccountId?.[accountId];
-
-                // The plugins of the account are not known — the DAO read failed, or has not resolved yet.
-                // The membership is kept and linked without naming a governance.
-                if (visiblePlugins == null) {
-                    return [{ accountId, bodyAddress }];
-                }
-
-                const body = visiblePlugins.bodies.find((plugin) =>
-                    addressUtils.isAddressEqual(plugin.address, bodyAddress),
-                );
-
-                // The body is hidden (through the CMS overrides).
-                // Member should not be linked to the Member Details page for the account.
-                if (body == null) {
-                    return [];
-                }
-
-                // The process the body acts through, so the proposals of the member page open on the same
-                // governance.
-                const process =
-                    visiblePlugins.processes == null
-                        ? undefined
-                        : daoUtils.findPluginProcess(
-                              body,
-                              visiblePlugins.processes,
-                          );
-
-                // The tab IDs the vote and proposal lists of the member page carry, which name a Safe by its DAO
-                // too. The lists build them from the DAO they render, so the rows use the address of that same DAO
-                // as read from the DAO API rather than the account address, whose casing may differ.
-                const rootDaoAddress = visiblePlugins.daoAddress;
-
-                const processId =
-                    process == null
-                        ? undefined
-                        : daoUtils.getPluginTabId(process, rootDaoAddress);
-
-                const bodyId = daoUtils.getPluginTabId(body, rootDaoAddress);
-
-                return [
-                    {
+                if (memberPageAccountIds.has(accountId)) {
+                    return buildBodyTargets(
                         accountId,
-                        bodyAddress,
-                        bodyId,
-                        processId,
-                    },
-                ];
+                        membership.governance.address,
+                    );
+                }
+
+                // The backend reports a Safe's owners under the Safe account only, never under the DAO holding it
+                // as a body, so under the tab of that body the owners come in as Safe-account memberships. There
+                // they are members of the body, and open its member page. Anywhere else — the Safe account's own
+                // tab, the group tab — they are owners of a standalone Safe, and link to the block explorer.
+                const safeAddress = membership.account.address;
+                const isListedSafeBody =
+                    bodyAccountId != null &&
+                    filters?.governanceAddress != null &&
+                    addressUtils.isAddressEqual(
+                        safeAddress,
+                        filters.governanceAddress,
+                    );
+
+                return isListedSafeBody
+                    ? buildBodyTargets(bodyAccountId, safeAddress)
+                    : [];
             },
         );
 

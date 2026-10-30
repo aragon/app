@@ -4,14 +4,21 @@ import { notFound } from 'next/navigation-original';
 import type { ReactNode } from 'react';
 import { DaoMemberDetailsPage } from '@/modules/governance/pages/daoMemberDetailsPage/daoMemberDetailsPage';
 import { Network } from '@/shared/api/daoService';
+import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { featureFlags } from '@/shared/featureFlags';
-import { workspaceQueryService } from '../../api/workspaceQueryService';
+import {
+    type IWorkspaceAccountInfo,
+    WorkspaceAccountInfoType,
+    workspaceQueryService,
+} from '../../api/workspaceQueryService';
 import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
 import {
     generateWorkspaceMember,
     generateWorkspaceMembership,
     generateWorkspaceQueryResponse,
 } from '../../testUtils';
+import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspaceAccountMemberDetailsPageProps,
     WorkspaceAccountMemberDetailsPage,
@@ -53,6 +60,10 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
     const getMemberListSpy = jest.spyOn(workspaceQueryService, 'getMemberList');
+    const getAccountInfoSpy = jest.spyOn(
+        workspaceAccountInfoUtils,
+        'getAccountInfo',
+    );
     const daoMemberDetailsPageMock = DaoMemberDetailsPage as jest.Mock;
     const accountGateMock = WorkspaceAccountGate as jest.Mock;
 
@@ -84,12 +95,18 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
 
     beforeEach(() => {
         isEnabledSpy.mockResolvedValue(true);
+        getAccountInfoSpy.mockResolvedValue({
+            network: Network.ETHEREUM_SEPOLIA,
+            address,
+            type: WorkspaceAccountInfoType.DAO,
+        } as IWorkspaceAccountInfo);
         mockMembership();
     });
 
     afterEach(() => {
         isEnabledSpy.mockReset();
         getMemberListSpy.mockReset();
+        getAccountInfoSpy.mockReset();
         notFoundMock.mockClear();
         daoMemberDetailsPageMock.mockClear();
         accountGateMock.mockClear();
@@ -265,6 +282,54 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         expect(getMemberListSpy).toHaveBeenCalled();
         await expect(readHandedSearchParams()).resolves.toEqual({
             members: governanceAddress,
+        });
+    });
+
+    describe('Safe account', () => {
+        const safeMembersUrl = workspaceUtils.getAccountScopeUrl(
+            'demo',
+            accountId,
+            'members',
+        );
+
+        beforeEach(() => {
+            getAccountInfoSpy.mockResolvedValue({
+                network: Network.ETHEREUM_SEPOLIA,
+                address,
+                type: WorkspaceAccountInfoType.SAFE,
+            } as IWorkspaceAccountInfo);
+        });
+
+        it('redirects a Safe account to its members page', async () => {
+            render(await createTestComponent());
+
+            expect(RedirectToUrl).toHaveBeenCalledWith(
+                { url: safeMembersUrl },
+                undefined,
+            );
+            expect(accountGateMock).not.toHaveBeenCalled();
+            expect(daoMemberDetailsPageMock).not.toHaveBeenCalled();
+        });
+
+        it('does not look the member up for a Safe account', async () => {
+            render(await createTestComponent());
+
+            expect(getMemberListSpy).not.toHaveBeenCalled();
+        });
+
+        it('drops the body parameter when redirecting a Safe account', async () => {
+            render(
+                await createTestComponent({
+                    searchParams: Promise.resolve({ vote: 'x' }),
+                }),
+            );
+
+            expect(screen.getByTestId('redirect-mock')).toHaveTextContent(
+                safeMembersUrl,
+            );
+            expect(
+                screen.getByTestId('redirect-mock').textContent,
+            ).not.toContain('?');
         });
     });
 

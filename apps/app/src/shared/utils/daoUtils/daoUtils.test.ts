@@ -1400,5 +1400,56 @@ describe('dao utils', () => {
                 `${address}-safe-${linkedDaoAddress}`,
             );
         });
+
+        it('keys a Safe by its DAO when one is known', () => {
+            const address = '0x8888888888888888888888888888888888888888';
+
+            expect(
+                daoUtils.getPluginTabId(
+                    {
+                        address,
+                        slug: 'safe',
+                        interfaceType: PluginInterfaceType.SAFE,
+                        daoAddress: linkedDaoAddress,
+                    },
+                    rootDaoAddress,
+                ),
+            ).toEqual(`${address}-safe-${linkedDaoAddress}`);
+            expect(
+                daoUtils.getPluginTabId(
+                    {
+                        address,
+                        slug: 'safe',
+                        interfaceType: PluginInterfaceType.SAFE,
+                    },
+                    rootDaoAddress,
+                ),
+            ).toEqual(`${address}-safe-${rootDaoAddress}`);
+        });
+
+        // A Safe workspace account belongs to no DAO, so it is keyed by its address and slug alone.
+        it('omits the DAO of a Safe that has none', () => {
+            const address = '0x9999999999999999999999999999999999999999';
+
+            expect(
+                daoUtils.getPluginTabId({
+                    address,
+                    slug: 'safe',
+                    interfaceType: PluginInterfaceType.SAFE,
+                }),
+            ).toEqual(`${address}-safe`);
+        });
+
+        it('ignores the DAO of a plugin that is not a Safe', () => {
+            const address = '0x5555555555555555555555555555555555555555';
+
+            expect(
+                daoUtils.getPluginTabId({
+                    address,
+                    slug: 'tokenvoting',
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                }),
+            ).toEqual(`${address}-tokenvoting`);
+        });
     });
 });

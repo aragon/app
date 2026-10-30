@@ -1,12 +1,11 @@
 'use client';
 
 import { daoMemberListFilterParam } from '@/modules/governance/components/daoMemberList';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { PluginType } from '@/shared/types';
-import type { IWorkspaceMemberListFilters } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import {
+    type IWorkspaceMemberTabMeta,
     type IWorkspaceMemberTabProps,
     useWorkspaceMemberTabs,
 } from '../../hooks/useWorkspaceMemberTabs';
@@ -30,7 +29,7 @@ export interface IWorkspaceMemberListProps {
 
 /**
  * Aggregated member list of a workspace, filtered by tabs corresponding to the governance bodies of the accounts:
- * one "all" tab followed by one tab for every visible body of every account
+ * one "all" tab followed by one tab for every visible body of every account and one for every Safe account.
  *
  * The strip's entries come from `useWorkspaceMemberTabs`, group tab included, and the page reads the same hook to
  * hand the selected body to the aside card, so the card beside the list describes whatever the list is filtered
@@ -88,10 +87,11 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
         ]),
     );
 
-    const renderList = (filters?: IWorkspaceMemberListFilters) => (
+    const renderList = (tabProps?: IWorkspaceMemberTabProps) => (
         <WorkspaceMemberListDefault
             accounts={accounts}
-            filters={filters}
+            bodyAccountId={tabProps?.bodyAccountId}
+            filters={tabProps?.filters}
             pageSize={pageSize}
             visiblePluginsByAccountId={visiblePluginsByAccountId}
             workspaceId={workspaceId}
@@ -101,13 +101,16 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
     // The tabs are only rendered if there is more than one, otherwise
     // the list is rendered directly with the filters
     if (!hasTabs) {
-        return renderList(activeTab?.props.filters);
+        return renderList(activeTab?.props);
     }
 
     return (
-        <PluginFilterComponent<IDaoPlugin, IWorkspaceMemberTabProps>
+        <PluginFilterComponent<
+            IWorkspaceMemberTabMeta,
+            IWorkspaceMemberTabProps
+        >
             plugins={filterTabs}
-            renderContent={(plugin) => renderList(plugin.props.filters)}
+            renderContent={(plugin) => renderList(plugin.props)}
             searchParamName={daoMemberListFilterParam}
         />
     );

@@ -7,13 +7,17 @@ import {
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
-import type { IWorkspaceMemberTab } from '../../hooks/useWorkspaceMemberTabs';
+import type {
+    IWorkspaceMemberTab,
+    IWorkspaceSafeMemberTab,
+} from '../../hooks/useWorkspaceMemberTabs';
 import * as workspaceAllMembersAsideCard from './workspaceAllMembersAsideCard';
 import * as workspaceBodyMembersAsideCard from './workspaceBodyMembersAsideCard';
 import {
     type IWorkspaceMembersAsideCardProps,
     WorkspaceMembersAsideCard,
 } from './workspaceMembersAsideCard';
+import * as workspaceSafeMembersAsideCard from './workspaceSafeMembersAsideCard';
 
 describe('<WorkspaceMembersAsideCard /> component', () => {
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
@@ -25,6 +29,11 @@ describe('<WorkspaceMembersAsideCard /> component', () => {
     const bodyMembersCardSpy = jest.spyOn(
         workspaceBodyMembersAsideCard,
         'WorkspaceBodyMembersAsideCard',
+    );
+
+    const safeMembersCardSpy = jest.spyOn(
+        workspaceSafeMembersAsideCard,
+        'WorkspaceSafeMembersAsideCard',
     );
 
     const daoAccount: IWorkspaceAccount = {
@@ -42,6 +51,7 @@ describe('<WorkspaceMembersAsideCard /> component', () => {
     };
 
     const bodyTab = {
+        kind: 'body',
         accountId: daoAccount.id,
         id: 'multisig',
         uniqueId: `${Network.ETHEREUM_SEPOLIA}-0xMultisig-mul`,
@@ -50,7 +60,27 @@ describe('<WorkspaceMembersAsideCard /> component', () => {
         props: {},
     } as IWorkspaceMemberTab;
 
+    const safeAccount: IWorkspaceAccount = {
+        id: `${Network.ETHEREUM_SEPOLIA}-0xSafe`,
+        type: WorkspaceAccountType.SAFE,
+        address: '0xSafe',
+        network: Network.ETHEREUM_SEPOLIA,
+    };
+
+    const safeTab: IWorkspaceSafeMemberTab = {
+        kind: 'safe',
+        accountId: safeAccount.id,
+        id: 'safe',
+        uniqueId: `${Network.ETHEREUM_SEPOLIA}-0xSafe-safe`,
+        label: 'Grants Safe',
+        meta: safeAccount,
+        props: {},
+    } as IWorkspaceSafeMemberTab;
+
     beforeEach(() => {
+        safeMembersCardSpy.mockImplementation(() => (
+            <div data-testid="safe-members-mock" />
+        ));
         allMembersCardSpy.mockImplementation(() => (
             <div data-testid="all-members-mock" />
         ));
@@ -60,6 +90,7 @@ describe('<WorkspaceMembersAsideCard /> component', () => {
     });
 
     afterEach(() => {
+        safeMembersCardSpy.mockReset();
         allMembersCardSpy.mockReset();
         bodyMembersCardSpy.mockReset();
     });
@@ -109,6 +140,27 @@ describe('<WorkspaceMembersAsideCard /> component', () => {
         ).not.toBeInTheDocument();
         expect(bodyMembersCardSpy).toHaveBeenLastCalledWith(
             { tab: bodyTab },
+            undefined,
+        );
+    });
+
+    it('renders the Safe card for a Safe tab', () => {
+        render(
+            createTestComponent({
+                activeOption: allAccountsOption,
+                activeTab: safeTab,
+            }),
+        );
+
+        expect(screen.getByTestId('safe-members-mock')).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('all-members-mock'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('body-members-mock'),
+        ).not.toBeInTheDocument();
+        expect(safeMembersCardSpy).toHaveBeenLastCalledWith(
+            { account: safeAccount, label: 'Grants Safe' },
             undefined,
         );
     });

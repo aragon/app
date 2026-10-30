@@ -3,14 +3,23 @@ import { useSearchParams } from 'next/navigation';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginGroupFilter } from '@/shared/hooks/useDaoPlugins';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import * as workspaceQueryServiceModule from '../../api/workspaceQueryService';
+import {
+    type IWorkspaceAccountInfo,
+    WorkspaceAccountInfoStatus,
+    WorkspaceAccountInfoType,
+} from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 import type { IWorkspaceDaoPlugins } from '../useWorkspacePlugins';
 import * as useWorkspacePluginsModule from '../useWorkspacePlugins';
 import {
     type IUseWorkspaceMemberTabsResult,
+    type IWorkspaceMemberTab,
     useWorkspaceMemberTabs,
 } from './useWorkspaceMemberTabs';
 
@@ -26,20 +35,39 @@ describe('useWorkspaceMemberTabs hook', () => {
         useWorkspacePluginsModule,
         'useWorkspacePlugins',
     );
+    const useWorkspaceAccountsSpy = jest.spyOn(
+        workspaceQueryServiceModule,
+        'useWorkspaceAccounts',
+    );
 
     const network = Network.ETHEREUM_SEPOLIA;
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const safeAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
+    // Not in the mocked plugins, as `useWorkspacePlugins` leaves out a DAO it could not read.
+    const unreadableAddress = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
 
     const buildAccount = (
         address: string,
         type = WorkspaceAccountType.DAO,
+        accountNetwork = network,
     ): IWorkspaceAccount => ({
-        id: `${network}-${address}`,
+        id: `${accountNetwork}-${address}`,
         type,
-        network,
+        network: accountNetwork,
         address,
     });
+
+    const buildSafeAccount = (
+        address = safeAddress,
+        accountNetwork = network,
+    ) => buildAccount(address, WorkspaceAccountType.SAFE, accountNetwork);
+
+    const mockAccountInfos = (accountInfos?: IWorkspaceAccountInfo[]) =>
+        useWorkspaceAccountsSpy.mockReturnValue({
+            data: accountInfos,
+        } as ReturnType<
+            typeof workspaceQueryServiceModule.useWorkspaceAccounts
+        >);
 
     const multisig = generateDaoPlugin({
         address: '0xMultisig',
@@ -85,19 +113,21 @@ describe('useWorkspaceMemberTabs hook', () => {
             new URLSearchParams() as ReturnType<typeof useSearchParams>,
         );
         mockPlugins([buildGroup(daoAddress)]);
+        mockAccountInfos();
     });
 
     afterEach(() => {
         useWorkspacePluginsSpy.mockReset();
+        useWorkspaceAccountsSpy.mockReset();
         useSearchParamsMock.mockReset();
     });
 
     const renderTabs = (accounts = [buildAccount(daoAddress)]) =>
         renderHook(() => useWorkspaceMemberTabs({ accounts }));
 
-    // The group tab is always the first entry of the strip, so the body tabs are what follows it.
+    // The group tab is always the first entry of the strip, so the body and Safe tabs are what follows it.
     const bodyTabs = (result: IUseWorkspaceMemberTabsResult) =>
-        result.filterTabs.slice(1);
+        result.filterTabs.slice(1) as IWorkspaceMemberTab[];
 
     // It stands for no body, which is what makes the aside fall back to the aggregate while it is active.
     it('opens the strip with a group tab naming no body', () => {
@@ -133,11 +163,11 @@ describe('useWorkspaceMemberTabs hook', () => {
         ]);
     });
 
-    // A Safe contributes members without a tab, which does not make the one DAO's name worth repeating.
+    // An unreadable DAO contributes members without a tab, which does not make the one DAO's name worth repeating.
     it('labels the tabs with the body alone when the other account contributes none', () => {
         const { result } = renderTabs([
             buildAccount(daoAddress),
-            buildAccount(safeAddress, WorkspaceAccountType.SAFE),
+            buildAccount(unreadableAddress),
         ]);
 
         expect(bodyTabs(result.current).map((tab) => tab.label)).toEqual([
@@ -187,17 +217,184 @@ describe('useWorkspaceMemberTabs hook', () => {
         expect(result.current.activeTab?.meta).toEqual(multisig);
     });
 
-    // A Safe's owners still reach the list, so the group tab shows more than the lone body tab does.
-    it('reports a strip for a lone body when another account contributes members', () => {
+    // The unreadable DAO's members still reach the list, so the group tab shows more than the lone body tab does.
+    it('still shows the strip for a lone body beside an unreadable DAO', () => {
         mockPlugins([buildGroup(daoAddress, [multisig])]);
         urlWithTab(`${network}-0xMultisig-mul`);
         const { result } = renderTabs([
             buildAccount(daoAddress),
-            buildAccount(safeAddress, WorkspaceAccountType.SAFE),
+            buildAccount(unreadableAddress),
         ]);
 
+        expect(bodyTabs(result.current)).toHaveLength(1);
         expect(result.current.hasTabs).toBeTruthy();
         expect(result.current.activeTab?.meta).toEqual(multisig);
+    });
+
+    it('prefixes body tab IDs with the network', () => {
+        const { result } = renderTabs();
+        const [tokenVotingTab, multisigTab] = bodyTabs(result.current);
+
+        expect(tokenVotingTab.uniqueId).toEqual(
+            `${network}-${daoUtils.getPluginTabId(tokenVoting, daoAddress)}`,
+        );
+        expect(multisigTab.uniqueId).toEqual(
+            `${network}-${daoUtils.getPluginTabId(multisig, daoAddress)}`,
+        );
+    });
+
+    it('adds a tab for a Safe account after the DAO body tabs', () => {
+        const safeAccount = buildSafeAccount();
+        const { result } = renderTabs([buildAccount(daoAddress), safeAccount]);
+        const tabs = bodyTabs(result.current);
+
+        expect(tabs).toHaveLength(3);
+        expect(tabs[2]).toEqual(
+            expect.objectContaining({
+                kind: 'safe',
+                accountId: safeAccount.id,
+                id: PluginInterfaceType.SAFE,
+                uniqueId: `${network}-${safeAddress}-safe`,
+                meta: safeAccount,
+                props: {
+                    filters: { network, governanceAddress: safeAddress },
+                },
+            }),
+        );
+        expect(result.current.hasTabs).toBeTruthy();
+    });
+
+    // Same labelling as the account selector, so the tab and the option of one Safe never disagree.
+    it('labels a Safe tab as the account selector does', () => {
+        const safeAccount = buildSafeAccount();
+        const safeInfo: IWorkspaceAccountInfo = {
+            network,
+            address: safeAddress,
+            type: WorkspaceAccountInfoType.SAFE,
+            status: WorkspaceAccountInfoStatus.AVAILABLE,
+            indexed: false,
+            name: 'Treasury',
+        };
+        mockAccountInfos([safeInfo]);
+        const { result } = renderTabs([buildAccount(daoAddress), safeAccount]);
+
+        expect(bodyTabs(result.current)[2].label).toEqual('Treasury');
+        expect(bodyTabs(result.current)[2].label).toEqual(
+            workspaceUtils.getAccountLabel(safeAccount, safeInfo),
+        );
+    });
+
+    it('labels a Safe tab with its truncated address while its info is unknown', () => {
+        const safeAccount = buildSafeAccount();
+        const { result } = renderTabs([buildAccount(daoAddress), safeAccount]);
+
+        expect(bodyTabs(result.current)[2].label).toEqual(
+            workspaceUtils.getAccountLabel(safeAccount),
+        );
+    });
+
+    it('emits the tabs in the order of the accounts', () => {
+        const { result } = renderTabs([
+            buildSafeAccount(),
+            buildAccount(daoAddress),
+        ]);
+
+        expect(bodyTabs(result.current).map((tab) => tab.kind)).toEqual([
+            'safe',
+            'body',
+            'body',
+        ]);
+    });
+
+    // A Safe tab is a tab of its own, so the DAO's name is worth naming on its body tabs.
+    it('labels the body tabs with the DAO when a Safe account also has a tab', () => {
+        const { result } = renderTabs([
+            buildAccount(daoAddress),
+            buildSafeAccount(),
+        ]);
+
+        expect(bodyTabs(result.current)[0].label).toEqual(
+            'app.workspace.workspaceMemberList.pluginTab (dao=Demo DAO,plugin=Token holders)',
+        );
+    });
+
+    it('gives a Safe that is an account and a body two tabs', () => {
+        const safeBody = generateDaoPlugin({
+            address: safeAddress,
+            slug: 'safe',
+            isBody: true,
+            daoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+        });
+        mockPlugins([buildGroup(daoAddress, [safeBody])]);
+        const { result } = renderTabs([
+            buildAccount(daoAddress),
+            buildSafeAccount(),
+        ]);
+        const tabs = bodyTabs(result.current);
+
+        expect(tabs.map((tab) => tab.kind)).toEqual(['body', 'safe']);
+        expect(tabs[0].uniqueId).toEqual(
+            `${network}-${safeAddress}-safe-${daoAddress}`,
+        );
+        expect(tabs[1].uniqueId).toEqual(`${network}-${safeAddress}-safe`);
+        // Both tabs send the same filters; only the body tab names the DAO account its rows link into.
+        expect(tabs[0].props).toEqual({
+            filters: { network, governanceAddress: safeAddress },
+            bodyAccountId: `${network}-${daoAddress}`,
+        });
+        expect(tabs[1].props).toEqual({
+            filters: { network, governanceAddress: safeAddress },
+        });
+    });
+
+    it('gives a Safe that is only a body one tab', () => {
+        const safeBody = generateDaoPlugin({
+            address: safeAddress,
+            slug: 'safe',
+            isBody: true,
+            daoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+        });
+        mockPlugins([buildGroup(daoAddress, [multisig, safeBody])]);
+        const { result } = renderTabs();
+        const safeTabs = bodyTabs(result.current).filter(
+            (tab) => tab.id === PluginInterfaceType.SAFE,
+        );
+
+        expect(safeTabs).toHaveLength(1);
+        expect(safeTabs[0].kind).toEqual('body');
+    });
+
+    // As for a lone body: the group tab would show exactly what the Safe tab does.
+    it('makes the lone Safe tab active without a strip', () => {
+        mockPlugins([]);
+        const { result } = renderTabs([buildSafeAccount()]);
+
+        expect(result.current.hasTabs).toBeFalsy();
+        expect(result.current.activeTab?.kind).toEqual('safe');
+    });
+
+    it('tells the same Safe on two networks apart', () => {
+        mockPlugins([]);
+        const { result } = renderTabs([
+            buildSafeAccount(safeAddress, Network.ETHEREUM_SEPOLIA),
+            buildSafeAccount(safeAddress, Network.BASE_MAINNET),
+        ]);
+        const [first, second] = bodyTabs(result.current);
+
+        expect(first.uniqueId).not.toEqual(second.uniqueId);
+        expect(result.current.hasTabs).toBeTruthy();
+    });
+
+    it('resolves the Safe tab named by the URL', () => {
+        urlWithTab(`${network}-${safeAddress}-safe`);
+        const { result } = renderTabs([
+            buildAccount(daoAddress),
+            buildSafeAccount(),
+        ]);
+
+        expect(result.current.activeTab?.kind).toEqual('safe');
     });
 
     it('reports no active tab while the plugins are still being read', () => {
