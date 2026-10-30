@@ -4635,10 +4635,27 @@
           "safe": "Safe"
         }
       },
-      "workspaceAccountGate": {
+      "workspaceAccountStateCard": {
         "error": {
           "description": "This account could not be loaded. Please try again later or open another account.",
           "heading": "This account could not be loaded"
+        },
+        "notFound": {
+          "action": "Go to all accounts",
+          "description": "This address is neither a DAO nor a Safe on this network.",
+          "heading": "Account not found"
+        },
+        "safe": {
+          "action": {
+            "assets": "View assets",
+            "transactions": "View transactions"
+          },
+          "description": "This page isn't available for Safe accounts yet. You can view the assets and transactions of this Safe.",
+          "heading": "Not available for Safe accounts yet"
+        },
+        "unavailable": {
+          "description": "We couldn't verify this account right now. Please try again in a moment.",
+          "heading": "Couldn't verify this account"
         }
       },
       "workspaceAssetList": {
@@ -4694,6 +4711,30 @@
         "error": {
           "description": "Something went wrong while loading the workspace. Please try again later.",
           "title": "Workspace failed to load"
+        }
+      },
+      "workspaceGateNotFound": {
+        "description": "This workspace isn't on this device. Workspaces are saved in the browser they were created in, so a link from someone else or another device won't open here.",
+        "heading": "Workspace not found",
+        "action": {
+          "create": "Create workspace",
+          "open": "Go to my workspaces"
+        }
+      },
+      "workspaceGateAccountPrompt": {
+        "description": "Open {{account}} in one of your workspaces instead?",
+        "heading": "This workspace isn't on this device",
+        "label": "Workspace",
+        "newWorkspace": "{{name}} (new)",
+        "action": {
+          "confirm": "Open",
+          "create": "Create workspace"
+        }
+      },
+      "workspaceEntryPage": {
+        "error": {
+          "description": "Something went wrong while opening your workspace. Please try again later.",
+          "title": "Workspace failed to open"
         }
       },
       "workspaceMemberList": {
@@ -4806,6 +4847,15 @@
       },
       "useWorkspaceAccountOptions": {
         "allAccounts": "All accounts"
+      },
+      "workspaceAccountSelector": {
+        "notInWorkspace": "Not in this workspace"
+      },
+      "workspaceExternalAccountBanner": {
+        "addToCurrent": "Add to this workspace",
+        "addToOther": "Add to another workspace",
+        "error": "The account could not be added to the workspace. Please try again.",
+        "message": "{{account}} isn't part of {{workspace}}."
       },
       "workspaceSelector": {
         "create": "Create workspace",

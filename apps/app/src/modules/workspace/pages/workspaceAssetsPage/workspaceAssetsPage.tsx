@@ -34,23 +34,16 @@ export const workspaceAssetsCount = 20;
  * Nothing is prefetched: the asset queries need the account list, which only exists in the local-storage registry
  * and is therefore resolved on the client (see `docs/projectDocs/createWorkspace.md`).
  */
-export const WorkspaceAssetsPage: React.FC<IWorkspaceAssetsPageProps> = async (
-    props,
-) => {
-    const { params } = props;
-
+export const WorkspaceAssetsPage: React.FC<
+    IWorkspaceAssetsPageProps
+> = async () => {
     if (!(await featureFlags.isEnabled('workspaces'))) {
         notFound();
     }
 
-    const { workspaceId } = await params;
-
     return (
         <Page.Container>
-            <WorkspaceAssetsPageClient
-                pageSize={workspaceAssetsCount}
-                workspaceId={workspaceId}
-            />
+            <WorkspaceAssetsPageClient pageSize={workspaceAssetsCount} />
         </Page.Container>
     );
 };

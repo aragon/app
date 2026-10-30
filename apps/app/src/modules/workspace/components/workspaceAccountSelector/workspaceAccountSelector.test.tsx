@@ -75,6 +75,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
             id: 'all',
             label: 'All accounts',
             isAllAccounts: true,
+            isExternal: false,
         };
 
     const daoOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption = {
@@ -82,6 +83,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         label: 'Demo DAO',
         account: daoAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const safeAddress = '0x1234567890123456789012345678901234567890';
@@ -98,6 +100,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         label: 'Treasury Safe',
         account: safeAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const mockAccountOptions = (
@@ -108,6 +111,8 @@ describe('<WorkspaceAccountSelector /> component', () => {
             accountId: allAccountsOption.id,
             activeOption: allAccountsOption,
             isAllAccounts: true,
+            scopedAccounts: [],
+            isPending: false,
             ...result,
         });
 
@@ -306,5 +311,81 @@ describe('<WorkspaceAccountSelector /> component', () => {
             'src',
             safeWallet.src,
         );
+    });
+
+    describe('external option', () => {
+        const externalAddress = '0x1111111111111111111111111111111111111111';
+
+        const externalAccount: IWorkspaceAccount = {
+            id: `${Network.ETHEREUM_SEPOLIA}-${externalAddress}`,
+            type: WorkspaceAccountType.DAO,
+            address: externalAddress,
+            network: Network.ETHEREUM_SEPOLIA,
+        };
+
+        const externalOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption =
+            {
+                id: externalAccount.id,
+                label: 'External DAO',
+                account: externalAccount,
+                isAllAccounts: false,
+                isExternal: true,
+            };
+
+        beforeEach(() => {
+            mockAccountOptions({
+                options: [allAccountsOption, daoOption, externalOption],
+                accountId: externalOption.id,
+                activeOption: externalOption,
+                isAllAccounts: false,
+            });
+        });
+
+        it('marks only the external option as not part of the workspace', async () => {
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const externalItem = await screen.findByRole('menuitem', {
+                name: /External DAO/,
+            });
+            expect(
+                within(externalItem).getByText(/notInWorkspace$/),
+            ).toBeInTheDocument();
+            expect(externalItem).toHaveAttribute(
+                'href',
+                `/workspace/test-workspace/${externalAccount.id}/proposals`,
+            );
+            expect(
+                within(
+                    screen.getByRole('menuitem', { name: /Demo DAO/ }),
+                ).queryByText(/notInWorkspace$/),
+            ).not.toBeInTheDocument();
+        });
+
+        it('reads the avatar of an external DAO account', async () => {
+            stubImageLoading();
+            getDaoSpy.mockImplementation(({ urlParams }) =>
+                Promise.resolve(
+                    generateDao({
+                        id: urlParams.id,
+                        avatar:
+                            urlParams.id === externalAccount.id
+                                ? 'external-cid'
+                                : 'dao-cid',
+                    }),
+                ),
+            );
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const externalItem = await screen.findByRole('menuitem', {
+                name: /External DAO/,
+            });
+            expect(
+                await within(externalItem).findByRole('img'),
+            ).toHaveAttribute('src', 'https://ipfs/external-cid');
+        });
     });
 });

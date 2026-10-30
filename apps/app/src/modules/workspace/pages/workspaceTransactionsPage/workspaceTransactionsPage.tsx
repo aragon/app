@@ -35,20 +35,15 @@ export const workspaceTransactionsCount = 20;
  */
 export const WorkspaceTransactionsPage: React.FC<
     IWorkspaceTransactionsPageProps
-> = async (props) => {
-    const { params } = props;
-
+> = async () => {
     if (!(await featureFlags.isEnabled('workspaces'))) {
         notFound();
     }
-
-    const { workspaceId } = await params;
 
     return (
         <Page.Container>
             <WorkspaceTransactionsPageClient
                 pageSize={workspaceTransactionsCount}
-                workspaceId={workspaceId}
             />
         </Page.Container>
     );

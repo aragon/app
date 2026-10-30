@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import safeWallet from '@/assets/images/safeWallet.png';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspace, WorkspaceAccountType } from '../../api/workspaceService';
 import {
@@ -47,6 +48,7 @@ export const WorkspaceAccountSelector: React.FC<
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const { t } = useTranslations();
     const pathname = usePathname();
 
     const { options, activeOption } = useWorkspaceAccountOptions();
@@ -55,8 +57,13 @@ export const WorkspaceAccountSelector: React.FC<
         urlParams: { id: workspaceId },
     });
 
-    // The registry stores no avatar for DAO accounts, so it is read from the DAOs, which are cached app-wide.
-    const { daos } = useWorkspaceDaos(workspace?.accounts);
+    // The registry stores no avatar for DAO accounts, so it is read from the DAOs, which are cached app-wide. Read
+    // for every option rather than the workspace accounts, so an external DAO account gets its avatar too.
+    const optionAccounts = useMemo(
+        () => options.flatMap((option) => option.account ?? []),
+        [options],
+    );
+    const { daos } = useWorkspaceDaos(optionAccounts);
 
     const section =
         workspaceUtils.getAccountScopeSection(pathname) ?? fallbackSection;
@@ -151,6 +158,13 @@ export const WorkspaceAccountSelector: React.FC<
                             src={getOptionAvatar(option)}
                         />
                         <span className="truncate">{option.label}</span>
+                        {option.isExternal && (
+                            <span className="shrink-0 text-neutral-500 text-sm">
+                                {t(
+                                    'app.workspace.workspaceAccountSelector.notInWorkspace',
+                                )}
+                            </span>
+                        )}
                     </span>
                 </Dropdown.Item>
             ))}
