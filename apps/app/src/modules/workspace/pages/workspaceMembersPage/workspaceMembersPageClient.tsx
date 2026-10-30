@@ -2,7 +2,6 @@
 
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceMemberList } from '../../components/workspaceMemberList';
 import { WorkspaceMembersAsideCard } from '../../components/workspaceMembersAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
@@ -35,19 +34,8 @@ export const WorkspaceMembersPageClient: React.FC<
 
     const { t } = useTranslations();
 
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
-
-    const accounts = workspace?.accounts ?? [];
-
-    const { activeOption } = useWorkspaceAccountOptions();
-
-    // An account-scoped route reads only its account; the aggregated one, or a route naming no known account, reads
-    // every account of the workspace.
-    const selectedAccount = activeOption?.account;
-    const accountsToDisplay =
-        selectedAccount != null ? [selectedAccount] : accounts;
+    const { activeOption, scopedAccounts: accountsToDisplay } =
+        useWorkspaceAccountOptions();
 
     // The single reader of the selection: the list renders the tabs and owns the URL parameter, while the aside
     // card is handed the selected tab from here, so the two cannot describe different tabs.
