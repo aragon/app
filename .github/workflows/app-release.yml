@@ -8,7 +8,9 @@
 #
 # A scheduled start green-skips when an app release PR is already open or there is nothing to
 # release. The cron is fixed in UTC (15:07 = 17:07 CEST / 16:07 CET), off the top of the hour
-# because GitHub delays or drops schedules queued at :00.
+# because GitHub delays or drops schedules queued at :00. Every start also sweeps the pending
+# @aragon/gov-ui-kit changesets into a kit release from the same commit (`kit-release`), the
+# kit's only automatic start.
 #
 # The `test` and `deploy` job names are required status checks of the main ruleset — keep them.
 
@@ -20,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       base_commit:
-        description: "Commit SHA to start the release from (default: main HEAD)"
+        description: "Commit SHA to start the app and kit releases from (default: the commit the run is on)"
         required: false
         type: string
   pull_request:
@@ -44,7 +46,7 @@ jobs:
     uses: aragon/github-templates/.github/workflows/release-start.yml@main
     with:
       engine: changesets
-      base-ref: ${{ inputs.base_commit || 'main' }}
+      base-ref: ${{ inputs.base_commit || github.sha }}
       package-dir: apps/app
       tag-prefix: "@aragon/app@"
       scope: app
@@ -61,6 +63,36 @@ jobs:
       op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
       op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
       op-linear-pipeline-key-path: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # The kit release sweep runs only when kit changesets are pending. Otherwise the shared start
+  # posts a weekly "skipped" note whose "Run workflow" link points here (github.workflow_ref is the
+  # top-level caller's), and running App Release by hand starts an app release.
+  kit-changes:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      pending: ${{ steps.check.outputs.pending }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.base_commit || github.sha }}
+          sparse-checkout: .changeset
+      - id: check
+        run: |
+          if grep -qsE "^[\"']?@aragon/gov-ui-kit[\"']?:" .changeset/*.md; then echo "pending=true" >> "$GITHUB_OUTPUT"; fi
+
+  kit-release:
+    needs: kit-changes
+    if: needs.kit-changes.outputs.pending == 'true'
+    uses: ./.github/workflows/gov-ui-kit-release.yml
+    with:
+      # Same sha as `start`, so the app and kit releases cut from one commit.
+      base_commit: ${{ inputs.base_commit || github.sha }}
+      sweep: true
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 

@@ -865,16 +865,19 @@ function main(argv = process.argv.slice(2)) {
         validateRegistry(current);
         const regenerated = buildRegistry({ preserveCurated: true });
         // Staleness is a property of the recorded SOURCES, not of HEAD. The
-        // commit and dirty list are provenance, and they move whenever
-        // anything is committed - including committing the registry itself -
-        // so comparing them would make `check` fail on every commit. Component
-        // records carry a sha256 per referenced file, so real source drift
-        // still fails below.
+        // commit, dirty list and source version are provenance: commit and
+        // dirty move whenever anything is committed - including committing the
+        // registry itself - and the version moves with every kit release PR,
+        // which never re-extracts. Comparing them would fail `check` on main
+        // for no source change. Component records carry a sha256 per
+        // referenced file, so real source drift still fails below.
         const sources = (registry) => ({
             ...registry,
             provenance: Object.fromEntries(
                 Object.entries(registry.provenance ?? {}).map(([key, value]) =>
-                    key === 'kit' ? [key, { ...value, commit: undefined, dirty: undefined }] : [key, value],
+                    key === 'kit'
+                        ? [key, { ...value, commit: undefined, dirty: undefined, sourceVersion: undefined }]
+                        : [key, value],
                 ),
             ),
         });

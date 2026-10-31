@@ -27,3 +27,12 @@ node --test packages/gov-ui-kit/design-system/component-registry/*.test.mjs
 - A removed export fails extraction until its record is deleted from `registry.json`.
 - Entries holding `Review question (maintainer discussion):` constraints stay out of the guide.
 - Roots default to `packages/gov-ui-kit`; override with `GOVKIT_KIT_ROOT`.
+
+## CI
+
+"Check GovKit component registry" in `.github/workflows/app-development.yml` builds the kit and
+runs both `check` commands on every PR, not only kit PRs: `build.css` is hashed and compiled by
+the Tailwind pinned in the root catalog, so a dependency-only PR can stale it too. A kit change in
+an app feature PR therefore needs the refresh above in the same PR; the design-system sync reads
+these files from `main`. `check` ignores the recorded commit, dirty list and kit version, so
+release PRs never stale it.
