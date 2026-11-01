@@ -18,7 +18,7 @@ kind: rule
 ## In the same PR
 
 - **A new kit changeset**, frontmatter naming only `"@aragon/gov-ui-kit"`, whenever `src/**` changes outside `*.stories.tsx` / `*.test.ts(x)`. Editing an existing unreleased kit changeset doesn't count; add another file. An app changeset does not cover it: the app ships the change, but it never reaches npm. App and kit changes need **two** changeset files (one per scope); a mixed file breaks every scoped release flow. "Check GovKit changeset" fails without it.
-- **A registry refresh** whenever any file under `packages/gov-ui-kit/` changes (stories and tests included — the registry hashes them). Build the kit, run `registry.mjs extract` and `selection-guide.mjs generate`, then commit `registry.json`, `selection-guide.json` and `../selection-guide.md`. "Check GovKit component registry" fails without it, and the Claude design-system sync reads these files from `main`.
+- **A registry refresh** whenever a file the registry cites changes: kit source, stories, tests, docs and the CSS entry points (`index.css`, `build.css`). Config such as `rollup.config.mjs` doesn't stale it; `registry.mjs check` after a kit build is the deciding step. To refresh, run `registry.mjs extract` and `selection-guide.mjs generate`, then commit `registry.json`, `selection-guide.json` and `../selection-guide.md`. "Check GovKit component registry" fails without it, and the Claude design-system sync reads these files from `main`.
 
 ## Non-obvious
 

@@ -28,7 +28,7 @@ The validator reads the installed `apps/app/node_modules/@aragon/gov-ui-kit` pac
 GOVKIT_KIT_ROOT=/path/to/gov-ui-kit pnpm tokens:validate
 ```
 
-`source.mjs` follows the primitive CSS imports, parses them with the app's PostCSS dependency, and converts the supported values for comparison. Validation checks the package version, full token inventory, types, values, alias targets and cycles, retained CSS, and app overrides. It rejects unsupported new value syntax instead of silently skipping it. Editing both JSON snapshots cannot conceal a difference from CSS.
+`source.mjs` follows the primitive CSS imports, parses them with the app's PostCSS dependency, and converts the supported values for comparison. Validation checks the package name, full token inventory, types, values, alias targets and cycles, retained CSS, and app overrides. It does not pin the package version: kit release PRs bump it without touching tokens, and any real token change still fails the value checks. It rejects unsupported new value syntax instead of silently skipping it. Editing both JSON snapshots cannot conceal a difference from CSS.
 
 Captured App overrides must be direct custom-property declarations in a top-level `:root` rule. Top-level comments, `@import`, and `@source` directives are allowed; other rules and at-rules, conditional or nested scopes, non-custom declarations, and `!important` are rejected. Primitive `@theme` blocks must have no parameters. Declarations extracted as primitive values, namespace resets, or App overrides cannot use `!important`, because those records do not preserve importance. Utilities and font faces retain their full CSS, including nested rules and importance, and remain subject to baseline comparison.
 

@@ -83,7 +83,8 @@ jobs:
           sparse-checkout: .changeset
       - id: check
         run: |
-          if grep -qsE "^[\"']?@aragon/gov-ui-kit[\"']?:" .changeset/*.md; then echo "pending=true" >> "$GITHUB_OUTPUT"; fi
+          # Frontmatter only, so a body line can't name the kit.
+          if awk 'FNR==1{n=0} /^---$/{n++; next} n==1' .changeset/*.md 2>/dev/null | grep -qE "^[\"']?@aragon/gov-ui-kit[\"']?:"; then echo "pending=true" >> "$GITHUB_OUTPUT"; fi
 
   kit-release:
     needs: kit-changes

@@ -43,11 +43,11 @@ jobs:
       # The design system syncs from these files; an unrefreshed registry blocks the sync. Every PR,
       # not just kit ones: build.css is a Tailwind compile whose version is pinned in the root
       # catalog, so a dependency-only PR can stale the registry too. PR-only: every change reaches
-      # main through a PR, and a docs artifact never blocks the dev deploy.
+      # main through a PR, and a docs artifact never blocks the dev deploy. The kit build it reads
+      # comes from `css:check` above, whose Turbo task depends on `build`.
       - name: Check GovKit component registry
         if: github.event_name == 'pull_request'
         run: |
-          pnpm --filter @aragon/gov-ui-kit build
           node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
           node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
       # Release and hotfix branches are already versioned; fixes merged into them need no changeset.
@@ -65,7 +65,8 @@ jobs:
           # Added, not modified: touching an existing kit changeset would pass without describing this
           # change. A second change in the same release window gets its own changeset file.
           added=$(git diff --name-only --diff-filter=A origin/main...HEAD -- '.changeset/*.md')
-          if [ -z "$added" ] || ! printf '%s\n' "$added" | xargs grep -qE "^[\"']?@aragon/gov-ui-kit[\"']?:"; then
+          # Frontmatter only, so a body line can't name the kit.
+          if [ -z "$added" ] || ! printf '%s\n' "$added" | xargs awk 'FNR==1{n=0} /^---$/{n++; next} n==1' | grep -qE "^[\"']?@aragon/gov-ui-kit[\"']?:"; then
             echo "::error::GovKit source changed: add a changeset for '@aragon/gov-ui-kit' (pnpm changeset), separate from any app changeset."
             exit 1
           fi
