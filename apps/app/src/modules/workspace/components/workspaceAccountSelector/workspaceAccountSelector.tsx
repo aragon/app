@@ -189,7 +189,7 @@ export const WorkspaceAccountSelector: React.FC<
                     icon={
                         option.id === activeOption?.id
                             ? IconType.CHECKMARK
-                            : IconType.CHEVRON_RIGHT
+                            : undefined
                     }
                     key={option.id}
                     selected={option.id === activeOption?.id}
@@ -203,7 +203,20 @@ export const WorkspaceAccountSelector: React.FC<
                             size="sm"
                             src={getOptionAvatar(option)}
                         />
-                        <span className="truncate">{option.label}</span>
+                        <span className="flex min-w-0 flex-col leading-tight">
+                            <span className="truncate">{option.label}</span>
+                            {option.account != null &&
+                                option.label !==
+                                    addressUtils.truncateAddress(
+                                        option.account.address,
+                                    ) && (
+                                    <span className="truncate text-neutral-500 text-sm">
+                                        {addressUtils.truncateAddress(
+                                            option.account.address,
+                                        )}
+                                    </span>
+                                )}
+                        </span>
                         {option.isExternal && (
                             <span className="shrink-0 text-neutral-500 text-sm">
                                 {t(

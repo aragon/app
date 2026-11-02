@@ -19,9 +19,9 @@ describe('navigationWorkspace utils', () => {
             expect(visibleLinks(links)).toEqual([
                 `/workspace/demo/${accountId}/overview`,
                 `/workspace/demo/${accountId}/proposals`,
-                `/workspace/demo/${accountId}/members`,
-                `/workspace/demo/${accountId}/assets`,
                 `/workspace/demo/${accountId}/transactions`,
+                `/workspace/demo/${accountId}/assets`,
+                `/workspace/demo/${accountId}/members`,
             ]);
         });
 
@@ -47,9 +47,9 @@ describe('navigationWorkspace utils', () => {
             expect(visibleLinks(links)).toEqual([
                 '/workspace/demo/all/overview',
                 '/workspace/demo/all/proposals',
-                '/workspace/demo/all/members',
-                '/workspace/demo/all/assets',
                 '/workspace/demo/all/transactions',
+                '/workspace/demo/all/assets',
+                '/workspace/demo/all/members',
             ]);
         });
     });

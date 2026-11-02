@@ -483,9 +483,9 @@
         "link": {
           "accountSettings": "Settings",
           "assets": "Assets",
+          "dashboard": "Dashboard",
           "edit": "Edit workspace",
           "members": "Members",
-          "overview": "Overview",
           "permissions": "Permissions",
           "proposals": "Proposals",
           "transactions": "Transactions"

@@ -1,8 +1,5 @@
-import { Icon, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
-import { Link } from '@/shared/components/link';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import type { INavigationLink } from '../navigationLinks';
 import { NavigationLinks } from '../navigationLinks';
 
@@ -28,15 +25,11 @@ export interface INavigationSidebarProps extends ComponentProps<'nav'> {
 
 /**
  * Side navigation of the application from the `lg` breakpoint, hidden below it where the navigation bar and its
- * dialog take over. Render it beside the page content through `LayoutSidebar`. The way back to the explore page sits
- * above the header so it does not read as one of the sections.
+ * dialog take over. Render it beside the page content through `LayoutSidebar`.
  */
 export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
     const { links, secondaryLinks, header, footer, className, ...otherProps } =
         props;
-
-    const { t } = useTranslations();
-
     return (
         <nav
             className={classNames(
@@ -45,18 +38,9 @@ export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
             )}
             {...otherProps}
         >
-            <div className="flex flex-col gap-4">
-                <Link
-                    className="focus-ring-primary flex items-center gap-1 self-start rounded-md px-1 text-neutral-500 text-sm transition-colors hover:text-neutral-800"
-                    href="/"
-                >
-                    <Icon icon={IconType.CHEVRON_LEFT} size="sm" />
-                    {t('app.application.navigationDao.dialog.explore')}
-                </Link>
-                {header != null && (
-                    <div className="flex flex-col gap-2">{header}</div>
-                )}
-            </div>
+            {header != null && (
+                <div className="flex flex-col gap-2">{header}</div>
+            )}
             <div className="flex flex-col gap-4">
                 <NavigationLinks links={links} variant="column" />
                 {secondaryLinks != null && (

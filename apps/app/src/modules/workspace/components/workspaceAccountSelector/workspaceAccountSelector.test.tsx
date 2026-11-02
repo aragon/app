@@ -308,7 +308,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(getMemberListSpy).not.toHaveBeenCalled();
     });
 
-    it('checks the option named by the URL and marks the others with a chevron', async () => {
+    it('checks only the option named by the URL and shows each account address below its name', async () => {
         mockAccountOptions({
             accountId: daoOption.id,
             activeOption: daoOption,
@@ -323,7 +323,14 @@ describe('<WorkspaceAccountSelector /> component', () => {
             within(items[1] as HTMLElement).getByTestId(IconType.CHECKMARK),
         ).toBeInTheDocument();
         expect(
-            within(items[0] as HTMLElement).getByTestId(IconType.CHEVRON_RIGHT),
+            within(items[0] as HTMLElement).queryByTestId(
+                IconType.CHEVRON_RIGHT,
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            within(items[1] as HTMLElement).getByText(
+                addressUtils.truncateAddress(daoOption.account!.address),
+            ),
         ).toBeInTheDocument();
     });
 

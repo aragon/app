@@ -113,7 +113,7 @@ class NavigationDaoUtils {
                 link: `${baseUrl}/members`,
                 icon: IconType.APP_MEMBERS,
                 hidden: !(isSupported && hasBodyPlugin),
-                order: 300,
+                order: 500,
             },
             {
                 label: 'app.application.navigationDao.link.assets',
@@ -125,7 +125,7 @@ class NavigationDaoUtils {
                 label: 'app.application.navigationDao.link.transactions',
                 link: `${baseUrl}/transactions`,
                 icon: IconType.APP_TRANSACTIONS,
-                order: 500,
+                order: 300,
             },
             {
                 label: 'app.application.navigationDao.link.settings',

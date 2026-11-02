@@ -32,7 +32,7 @@ class NavigationWorkspaceUtils {
 
         return [
             {
-                label: 'app.application.navigationWorkspace.link.overview',
+                label: 'app.application.navigationWorkspace.link.dashboard',
                 link: workspaceUtils.getAccountScopeUrl(
                     workspaceId,
                     scope,
@@ -52,13 +52,13 @@ class NavigationWorkspaceUtils {
                 order: 200,
             },
             {
-                label: 'app.application.navigationWorkspace.link.members',
+                label: 'app.application.navigationWorkspace.link.transactions',
                 link: workspaceUtils.getAccountScopeUrl(
                     workspaceId,
                     scope,
-                    'members',
+                    'transactions',
                 ),
-                icon: IconType.APP_MEMBERS,
+                icon: IconType.APP_TRANSACTIONS,
                 order: 300,
             },
             {
@@ -72,13 +72,13 @@ class NavigationWorkspaceUtils {
                 order: 400,
             },
             {
-                label: 'app.application.navigationWorkspace.link.transactions',
+                label: 'app.application.navigationWorkspace.link.members',
                 link: workspaceUtils.getAccountScopeUrl(
                     workspaceId,
                     scope,
-                    'transactions',
+                    'members',
                 ),
-                icon: IconType.APP_TRANSACTIONS,
+                icon: IconType.APP_MEMBERS,
                 order: 500,
             },
             {

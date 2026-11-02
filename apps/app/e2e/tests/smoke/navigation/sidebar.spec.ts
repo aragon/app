@@ -42,9 +42,8 @@ test.describe('Sidebar navigation', () => {
                     sidebar.getByRole('link', { name, exact: true }),
                 ).toBeVisible();
             }
-            await expect(sidebar.getByText('Governed on')).toBeVisible();
             await expect(
-                sidebar.getByRole('link', { name: 'Explore all DAOs' }),
+                sidebar.getByRole('link', { name: /Governed on/ }),
             ).toHaveAttribute('href', '/');
             // The DAO heads the sidebar as it heads the dialog, rather than as a button opening that same dialog.
             await expect(
