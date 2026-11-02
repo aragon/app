@@ -53,10 +53,17 @@ describe('<Dropdown.Item /> component', () => {
         expect(link).toHaveAttribute('href', href);
     });
 
-    it('renders a link icon when the href property is set', () => {
-        const href = '/test';
-        render(createTestComponent({ href }));
+    it('renders the external link icon only for a link opening in a new tab', () => {
+        const { rerender } = render(createTestComponent({ href: '/test' }));
+        expect(screen.queryByTestId(IconType.LINK_EXTERNAL)).not.toBeInTheDocument();
+
+        rerender(createTestComponent({ href: 'https://www.test.com', target: '_blank' }));
         expect(screen.getByTestId(IconType.LINK_EXTERNAL)).toBeInTheDocument();
+    });
+
+    it('renders the checkmark for a selected link opening in the same tab', () => {
+        render(createTestComponent({ href: '/test', selected: true }));
+        expect(screen.getByTestId(IconType.CHECKMARK)).toBeInTheDocument();
     });
 
     it('renders the specified icon when the menu item is a link', () => {

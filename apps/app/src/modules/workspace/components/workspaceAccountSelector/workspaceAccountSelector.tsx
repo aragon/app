@@ -186,11 +186,6 @@ export const WorkspaceAccountSelector: React.FC<
             {optionLinks.map(({ option, url }) => (
                 <Dropdown.Item
                     href={url}
-                    icon={
-                        option.id === activeOption?.id
-                            ? IconType.CHECKMARK
-                            : undefined
-                    }
                     key={option.id}
                     selected={option.id === activeOption?.id}
                 >
