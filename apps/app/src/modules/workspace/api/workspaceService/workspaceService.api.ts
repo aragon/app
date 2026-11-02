@@ -3,7 +3,7 @@ import type {
     IRequestUrlBodyParams,
     IRequestUrlParams,
 } from '@/shared/api/httpService';
-import type { IWorkspace } from './domain';
+import type { IWorkspace, IWorkspaceAccount } from './domain';
 
 export interface IGetWorkspaceUrlParams {
     /**
@@ -32,4 +32,20 @@ export interface IUpdateWorkspaceParams
     extends IRequestUrlBodyParams<
         IGetWorkspaceUrlParams,
         IUpdateWorkspaceBody
+    > {}
+
+/**
+ * Body of the add-workspace-account request.
+ */
+export interface IAddWorkspaceAccountBody {
+    /**
+     * Account to append to the workspace.
+     */
+    account: IWorkspaceAccount;
+}
+
+export interface IAddWorkspaceAccountParams
+    extends IRequestUrlBodyParams<
+        IGetWorkspaceUrlParams,
+        IAddWorkspaceAccountBody
     > {}

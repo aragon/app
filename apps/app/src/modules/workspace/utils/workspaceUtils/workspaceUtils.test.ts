@@ -1,4 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
 import {
     type IWorkspaceAccountInfo,
@@ -9,6 +10,7 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
@@ -188,6 +190,60 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('getWorkspaceSwapUrl', () => {
+        it.each([
+            {
+                pathname: '/workspace/demo/all/overview',
+                expected: '/workspace/mine/all/overview',
+            },
+            {
+                pathname:
+                    '/workspace/demo/ethereum-sepolia-0x123/members/0xabc',
+                expected:
+                    '/workspace/mine/ethereum-sepolia-0x123/members/0xabc',
+            },
+            {
+                pathname: '/workspace/demo/edit',
+                expected: '/workspace/mine/edit',
+            },
+            { pathname: '/workspace/demo', expected: '/workspace/mine' },
+            {
+                pathname: '/workspace/demo/all/assets/',
+                expected: '/workspace/mine/all/assets',
+            },
+            {
+                pathname: '/dao/ethereum-mainnet/0x123/proposals',
+                expected: '/workspace/mine',
+            },
+        ])('swaps the workspace of "$pathname"', ({ pathname, expected }) => {
+            expect(
+                workspaceUtils.getWorkspaceSwapUrl(pathname, 'mine'),
+            ).toEqual(expected);
+        });
+
+        it('keeps the query string', () => {
+            expect(
+                workspaceUtils.getWorkspaceSwapUrl(
+                    '/workspace/demo/ethereum-sepolia-0x123/proposals',
+                    'mine',
+                    'status=active&page=2',
+                ),
+            ).toEqual(
+                '/workspace/mine/ethereum-sepolia-0x123/proposals?status=active&page=2',
+            );
+        });
+
+        it('appends no separator for an empty query string', () => {
+            expect(
+                workspaceUtils.getWorkspaceSwapUrl(
+                    '/workspace/demo/all/overview',
+                    'mine',
+                    '',
+                ),
+            ).toEqual('/workspace/mine/all/overview');
+        });
+    });
+
     describe('getAccountScopeSection', () => {
         it.each([
             {
@@ -358,6 +414,90 @@ describe('workspace utils', () => {
 
         it('returns undefined when there is no account info', () => {
             expect(workspaceUtils.getAccountType(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('resolveAccountState', () => {
+        it.each([
+            [WorkspaceAccountInfoType.DAO, WorkspaceAccountState.DAO],
+            [WorkspaceAccountInfoType.SAFE, WorkspaceAccountState.SAFE],
+        ])('reads an available %s as the %s state', (type, expected) => {
+            expect(
+                workspaceUtils.resolveAccountState(buildAccountInfo({ type })),
+            ).toEqual(expected);
+        });
+
+        it('reads an unsupported address as not found', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNSUPPORTED,
+            });
+
+            expect(workspaceUtils.resolveAccountState(accountInfo)).toEqual(
+                WorkspaceAccountState.NOT_FOUND,
+            );
+        });
+
+        // The endpoint 404s the whole request for an unplaceable address, which for one address means that address.
+        it('reads a not-found lookup error as not found', () => {
+            const error = new AragonBackendServiceError(
+                AragonBackendServiceError.notFoundCode,
+                'Resource not found',
+                404,
+            );
+
+            expect(
+                workspaceUtils.resolveAccountState(undefined, error),
+            ).toEqual(WorkspaceAccountState.NOT_FOUND);
+        });
+
+        it('reads an unavailable source as unavailable', () => {
+            const accountInfo = buildAccountInfo({
+                type: WorkspaceAccountInfoType.UNKNOWN,
+                status: WorkspaceAccountInfoStatus.UNAVAILABLE,
+            });
+
+            expect(workspaceUtils.resolveAccountState(accountInfo)).toEqual(
+                WorkspaceAccountState.UNAVAILABLE,
+            );
+        });
+
+        it('reads any other lookup error as unavailable, so the reader can retry', () => {
+            expect(
+                workspaceUtils.resolveAccountState(
+                    undefined,
+                    new Error('Internal server error'),
+                ),
+            ).toEqual(WorkspaceAccountState.UNAVAILABLE);
+        });
+
+        // React Query keeps the last data next to the error of a failed refetch.
+        it('keeps the state of an earlier result when a refetch fails', () => {
+            expect(
+                workspaceUtils.resolveAccountState(
+                    buildAccountInfo({ type: WorkspaceAccountInfoType.DAO }),
+                    new Error('Internal server error'),
+                ),
+            ).toEqual(WorkspaceAccountState.DAO);
+        });
+
+        it('keeps the state of an earlier result when a refetch fails with a not-found error', () => {
+            const error = new AragonBackendServiceError(
+                AragonBackendServiceError.notFoundCode,
+                'Resource not found',
+                404,
+            );
+
+            expect(
+                workspaceUtils.resolveAccountState(
+                    buildAccountInfo({ type: WorkspaceAccountInfoType.SAFE }),
+                    error,
+                ),
+            ).toEqual(WorkspaceAccountState.SAFE);
+        });
+
+        it('returns undefined while the lookup is pending', () => {
+            expect(workspaceUtils.resolveAccountState()).toBeUndefined();
         });
     });
 

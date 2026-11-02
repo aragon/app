@@ -1,31 +1,30 @@
 'use client';
 
-import { Card, EmptyState } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
-import { useTranslations } from '@/shared/components/translationsProvider';
+import type { WorkspaceAccountState } from '../../constants/workspaceAccountState';
+import { WorkspaceAccountStateCard } from '../workspaceAccountStateCard';
+
+export interface IWorkspaceAccountGateErrorProps {
+    /**
+     * What the accounts API says the account is, undefined when it could not tell.
+     */
+    accountState?: WorkspaceAccountState;
+}
 
 /**
- * Error state rendered by `WorkspaceAccountGate` in place of the page when the DAO of the account cannot be read.
- * A client component of its own because translations are only available client side.
+ * Page rendered by `WorkspaceAccountGate` in place of the page when the DAO of the account cannot be read: the state
+ * of the account (`WorkspaceAccountStateCard`) in the page frame.
  */
-export const WorkspaceAccountGateError: React.FC = () => {
-    const { t } = useTranslations();
+export const WorkspaceAccountGateError: React.FC<
+    IWorkspaceAccountGateErrorProps
+> = (props) => {
+    const { accountState } = props;
 
     return (
         <Page.Container>
             <Page.Content>
                 <Page.Main>
-                    <Card className="border border-neutral-100 py-10">
-                        <EmptyState
-                            description={t(
-                                'app.workspace.workspaceAccountGate.error.description',
-                            )}
-                            heading={t(
-                                'app.workspace.workspaceAccountGate.error.heading',
-                            )}
-                            objectIllustration={{ object: 'WARNING' }}
-                        />
-                    </Card>
+                    <WorkspaceAccountStateCard accountState={accountState} />
                 </Page.Main>
             </Page.Content>
         </Page.Container>

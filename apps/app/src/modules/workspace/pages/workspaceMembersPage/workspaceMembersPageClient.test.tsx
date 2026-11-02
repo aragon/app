@@ -45,6 +45,7 @@ describe('<WorkspaceMembersPageClient /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     const daoAccount: IWorkspaceAccount = {
@@ -78,6 +79,8 @@ describe('<WorkspaceMembersPageClient /> component', () => {
             accountId: allAccountsOption.id,
             activeOption: allAccountsOption,
             isAllAccounts: true,
+            scopedAccounts: workspace.accounts,
+            isPending: false,
         });
     });
 

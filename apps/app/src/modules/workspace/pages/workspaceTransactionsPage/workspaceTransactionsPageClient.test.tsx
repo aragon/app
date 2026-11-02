@@ -14,6 +14,7 @@ import {
 import {
     type IWorkspace,
     type IWorkspaceAccount,
+    useWorkspace,
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
@@ -21,6 +22,7 @@ import type * as workspaceTransactionList from '../../components/workspaceTransa
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import type * as workspaceTransactionsAsideCard from '../../components/workspaceTransactionsAsideCard';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
+import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import type {
@@ -93,6 +95,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     const daoOption: IWorkspaceAccountOption = {
@@ -100,6 +103,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         label: 'Demo DAO',
         account: daoAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const safeOption: IWorkspaceAccountOption = {
@@ -107,6 +111,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         label: 'Grants Safe',
         account: safeAccount,
         isAllAccounts: false,
+        isExternal: false,
     };
 
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
@@ -127,12 +132,31 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     const mockAccountOptions = (
         result?: Partial<IUseWorkspaceAccountOptionsResult>,
     ) =>
-        useWorkspaceAccountOptionsSpy.mockReturnValue({
-            options: [allAccountsOption, daoOption],
-            accountId: allAccountsOption.id,
-            activeOption: allAccountsOption,
-            isAllAccounts: true,
-            ...result,
+        useWorkspaceAccountOptionsSpy.mockImplementation(() => {
+            // The page reads its accounts from the hook, derived here like the hook does: every account of the
+            // workspace the test resolves on the aggregated scope, the account of the active option otherwise.
+            const { data: workspace } = useWorkspace({
+                urlParams: { id: 'demo' },
+            });
+            const activeOption =
+                result != null && 'activeOption' in result
+                    ? result.activeOption
+                    : allAccountsOption;
+            const isAllAccounts = result?.isAllAccounts ?? true;
+
+            return {
+                options: [allAccountsOption, daoOption],
+                accountId: allAccountsOption.id,
+                activeOption,
+                isAllAccounts,
+                scopedAccounts: isAllAccounts
+                    ? (workspace?.accounts ?? [])
+                    : activeOption?.account != null
+                      ? [activeOption.account]
+                      : [],
+                isPending: workspace == null,
+                ...result,
+            };
         });
 
     /**
@@ -210,16 +234,12 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         pushMock.mockClear();
     });
 
-    let testIndex = 0;
-
     // The query client must sit inside the gov-ui-kit provider: that provider carries a query client of its own,
     // which would otherwise shadow this one and share its cache with every other test of this file.
     const createTestComponent = (
         props?: Partial<IWorkspaceTransactionsPageClientProps>,
     ) => {
-        testIndex += 1;
         const completeProps: IWorkspaceTransactionsPageClientProps = {
-            workspaceId: `test-workspace-${testIndex.toString()}`,
             pageSize: 20,
             ...props,
         };
@@ -270,22 +290,46 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         );
     });
 
-    // Only DAO accounts become options, so the route of a Safe keeps the aggregated selection. A known gap, see
-    // `docs/projectDocs/createWorkspace.md`.
-    it('falls back to every account on the route of an account that is not an option', async () => {
+    it('narrows the list to an account the workspace does not hold', async () => {
+        const externalOption: IWorkspaceAccountOption = {
+            ...daoOption,
+            isExternal: true,
+        };
+        getWorkspaceSpy.mockResolvedValue(
+            buildWorkspace({ accounts: [safeAccount] }),
+        );
         mockAccountOptions({
-            accountId: safeAccount.id,
-            activeOption: undefined,
+            accountId: daoAccount.id,
+            activeOption: externalOption,
             isAllAccounts: false,
         });
         render(createTestComponent());
 
         await waitFor(() =>
-            expect(lastListProps()?.accounts).toEqual([
-                daoAccount,
-                safeAccount,
-            ]),
+            expect(lastListProps()?.accounts).toEqual([daoAccount]),
         );
+    });
+
+    // Until the type of an external account is resolved there is no account to narrow to, and the page must not
+    // widen to every account of the workspace in the meantime. The aside card waits too, so the aggregated card
+    // does not flash before the card of the account.
+    it('lists no account and renders no aside card while the account the route names is being resolved', async () => {
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: {
+                id: daoAccount.id,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+            },
+            isAllAccounts: false,
+            isPending: true,
+        });
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toEqual([]));
+        expect(lastListProps()?.isPending).toBeTruthy();
+        expect(asideCardMock).not.toHaveBeenCalled();
     });
 
     // The card describes what the list shows, so both narrow from the same option rather than each resolving it.
@@ -598,5 +642,34 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         expect(
             screen.queryByRole('link', { name: createActionName }),
         ).not.toBeInTheDocument();
+    });
+
+    // There is nothing to list for an account the lookup cannot place, so the page says what the account is instead.
+    it('renders the state of an external account the lookup cannot place', async () => {
+        const useParamsSpy = jest
+            .spyOn(NextNavigation, 'useParams')
+            .mockReturnValue({ workspaceId: 'demo', accountId: daoAccount.id });
+        mockAccountOptions({
+            accountId: daoAccount.id,
+            activeOption: {
+                id: daoAccount.id,
+                label: '0x…',
+                isAllAccounts: false,
+                isExternal: true,
+                accountState: WorkspaceAccountState.NOT_FOUND,
+            },
+            isAllAccounts: false,
+            isPending: false,
+        });
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(
+                /workspaceAccountStateCard\.notFound\.heading$/,
+            ),
+        ).toBeInTheDocument();
+        expect(listMock).not.toHaveBeenCalled();
+        expect(asideCardMock).not.toHaveBeenCalled();
+        useParamsSpy.mockRestore();
     });
 });

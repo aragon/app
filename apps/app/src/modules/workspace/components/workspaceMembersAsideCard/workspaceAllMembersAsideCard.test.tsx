@@ -43,6 +43,7 @@ describe('<WorkspaceAllMembersAsideCard /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     const mockMembers = (options?: {

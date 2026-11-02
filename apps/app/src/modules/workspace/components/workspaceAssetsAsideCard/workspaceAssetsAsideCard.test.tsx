@@ -50,6 +50,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         id: 'all',
         label: 'All accounts',
         isAllAccounts: true,
+        isExternal: false,
     };
 
     beforeEach(() => {
@@ -114,6 +115,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
             label: 'Demo DAO',
             account: daoAccount,
             isAllAccounts: false,
+            isExternal: false,
         };
         render(createTestComponent({ activeOption, metadata }));
 
@@ -132,6 +134,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
             label: 'Demo Safe',
             account: safeAccount,
             isAllAccounts: false,
+            isExternal: false,
         };
         render(createTestComponent({ activeOption, metadata }));
 

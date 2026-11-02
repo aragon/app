@@ -22,6 +22,10 @@ export interface IWorkspaceProposalListProps {
      */
     pageSize: number;
     /**
+     * Keeps the list in its loading state while the accounts are still being resolved.
+     */
+    isPending?: boolean;
+    /**
      * Whether the page is scoped to a single account, which the empty and error copy then names.
      */
     isAccountScoped?: boolean;
@@ -45,7 +49,8 @@ export interface IWorkspaceProposalListProps {
 export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
     props,
 ) => {
-    const { accounts, pageSize, isAccountScoped, workspaceId } = props;
+    const { accounts, pageSize, isPending, isAccountScoped, workspaceId } =
+        props;
 
     const { filterTabs, hasTabs } = useWorkspaceProposalTabs({ accounts });
 
@@ -61,6 +66,7 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
             filters={filters}
             isAccountScoped={isAccountScoped}
             isDaosPending={isDaosPending}
+            isPending={isPending}
             pageSize={pageSize}
             workspaceId={workspaceId}
         />

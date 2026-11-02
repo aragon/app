@@ -223,19 +223,35 @@ local storage for real requests is a single-method change:
 - `getWorkspace({ urlParams: { id } })` → the stored workspace; rejects with `notFoundCode` / 404 when absent.
 - `getWorkspaceList()` → every stored workspace, read by the workspace switcher through `useWorkspaceList`. The
   publish dialog invalidates it after creating a workspace so the new one is listed straight away.
+- `getOrCreateDefaultWorkspace()` → the first stored workspace, or the default one, seeded and persisted when the
+  registry is empty. Called by the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
 - `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
   stored workspace, keeping its ID (so its URLs keep working); rejects with
   `notFoundCode` / 404 when absent. Called by the publish dialog in update mode.
+- `addWorkspaceAccount({ urlParams: { id }, body: { account } })` → appends one account to the stored workspace,
+  reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
+  caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
+  `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
 
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
 
-The reads seed an empty "My workspace" when the registry is empty (`createWorkspace` does not). Its ID gets a random
-suffix (`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage
-reads as empty and is overwritten by the seed — acceptable, as only outside tampering can produce it.
+The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
+`getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an
+explicit call because a read that writes makes the default appear depending on which page a user opened first, and
+lets two tabs reading an empty registry seed two different workspaces. It is also the shape a backend registry would
+take: a get-or-create (bootstrap) call, not a GET with a side effect. The seed's ID gets a random suffix
+(`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage reads as
+empty and is overwritten on the next write — acceptable, as only outside tampering can produce it.
+
+The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it
+must not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, invalidates the workspace list
+(a list read before the seed is cached as empty) and `router.replace`s to the workspace's aggregated overview, so
+Back does not land on the redirect again. Running it twice (Strict Mode) is harmless: the second call finds the
+workspace the first one seeded.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -272,6 +288,8 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 - **add** the workspace route tree, every section scoped to an account:
 
 ```
+src/app/workspace/
+├─ page.tsx                   WorkspaceEntryPage: opens the first workspace, seeding the default one
 src/app/workspace/[workspaceId]/
 ├─ (workspacePage)/           route group: every page with the workspace navigation
 │  ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
@@ -346,8 +364,7 @@ sees these two routes, and it costs them no extra request.
 accounts, an account over just that one. The page only decides which accounts to send:
 
 ```ts
-const { activeOption } = useWorkspaceAccountOptions();
-const displayedAccounts = activeOption?.account != null ? [activeOption.account] : accounts;
+const { scopedAccounts, isPending } = useWorkspaceAccountOptions();
 ```
 
 Going through one endpoint throughout keeps the single accounts summing to the aggregated view, since both come out
@@ -362,8 +379,9 @@ Two properties of that lookup are load-bearing:
   string, because a stored ID is checksummed while a URL may carry any casing. The assets, transactions and
   proposals pages used to resolve the route themselves precisely because the option could not be trusted for that;
   the blind spot is now closed in the one place instead of three.
-- **Anything the lookup does not resolve reads as every account**: the aggregated segment, and — until viewing one
-  is supported — an account the workspace does not hold.
+- **Only the aggregated segment reads as every account.** Pages take `scopedAccounts` from the hook instead of
+  deriving the selection themselves, and it is never widened: an account the hook cannot (yet) name scopes the page
+  to nothing (see "External accounts" under Account scope).
 
 A workspace holding no account keeps the query disabled, and a disabled query reads as pending, so
 `WorkspaceAssetList` resolves the state itself rather than leaving the list on skeletons forever.
@@ -418,11 +436,13 @@ selected option is X"*, and there is no honest value for it when X is not an opt
 Two pieces replace the old provider:
 
 - **`WorkspaceGate`**, in `LayoutWorkspace`, owns the workspace loading lifecycle — a spinner while it loads, an
-  error when it fails — so every page below can assume a loaded workspace.
+  error when it fails — so every page below can assume a loaded workspace. See "Workspace not found" below for
+  the states it renders for a workspace the registry does not hold.
 - **`useWorkspaceAccountOptions`** returns the options to switch to plus the `accountId` from the route, read with
   `useParams()`. It is a hook and not a context because both of its reads go through React Query, whose cache
-  already shares them. Note `activeOption` may be undefined while `accountId` is set: what is being *looked at* is
-  not the same question as what can be *switched to*.
+  already shares them. An account the URL names but the workspace does not hold is an external option rather than
+  an undefined `activeOption` (see "External accounts" below), so what is being *looked at* never silently reads as
+  the aggregated scope.
 
 Every account becomes an option, a Safe included. `activeOption` is resolved from the route through
 `workspaceUtils.findAccountById`, so a lowercased address on a shared link still lands on its account instead of
@@ -432,6 +452,47 @@ address` as its label. Its DAO branch reaches the same precedence by another rou
 `metadata.avatar ?? dao.avatar` into every DAO it returns, so both branches prefer the owner's chosen avatar and
 fall back — a Safe to the wallet logo, a DAO to its own. The Safe branch exists only because a Safe has no DAO to
 carry its metadata.
+
+#### External accounts
+
+An account the workspace does not hold — a shared link opened in another workspace (`WorkspaceGateAccountPrompt`),
+or a slug collision landing on the reader's own workspace — becomes an **external** option (`isExternal: true`),
+listed last and marked "Not in this workspace" in the selector:
+
+| External account | `activeOption.accountState` | `activeOption.account` | `scopedAccounts` | `isPending` |
+| --- | --- | --- | --- | --- |
+| Lookup pending | undefined | undefined | `[]` | `true` |
+| A DAO or a Safe | `DAO` / `SAFE` | synthesized, checksummed `id` | `[account]` | `false` |
+| `unsupported`, or the whole-request 404 | `NOT_FOUND` | undefined | `[]` | `false` |
+| `unavailable`, or the lookup fails otherwise | `UNAVAILABLE` | undefined | `[]` | `false` |
+
+Its type and name come from a single-account `POST /v2/workspaces/query/accounts` lookup — the same query key
+`WorkspaceGateAccountPrompt` reads, so after the prompt's redirect it is already cached. The account is only
+synthesized once the type is known because `IWorkspaceAccount.type` is required and every consumer branches on it;
+until then the label is the truncated address. The state comes from `workspaceUtils.resolveAccountState`, the rule
+`WorkspaceAccountGate` reads on the server, so the client and the server agree on what the account is. The selector
+reads the DAOs of every option rather than of the workspace accounts, so an external DAO gets its avatar too.
+
+An external account that is no longer pending and has no `account` has nothing to list, so the assets,
+transactions and proposals pages render `WorkspaceAccountStateCard` in place of the list and the aside: the same
+card the gate renders. The proposals page needs it despite its gate, which only proves on the server that the DAO loads: the client
+lookup is a request of its own and can still fail. While the lookup is pending, each list stays in its loading
+state (`isPending`) rather than showing its empty state.
+
+`WorkspaceExternalAccountBanner`, rendered by `LayoutWorkspaceAccount` above every section the way `BannerDao` is by
+`LayoutDao`, offers to add the external account: "Add to this workspace", and "Add to another workspace" as a
+dropdown of the other workspaces that do not hold it yet (hidden when there is none). Both append the external
+option's own `account` — checksummed ID, resolved type — through `addWorkspaceAccount`, then invalidate the workspace
+list and the target workspace. They stay disabled until that account exists, i.e. until the accounts API places the
+address as a DAO or a Safe, the same accounts `validateAccountInfo` lets the create form add.
+
+- Added to this workspace: the page stays. After the invalidation the account is held, the option stops being
+  external and the banner goes.
+- Added to another workspace: the same page opens there (`router.push` to `workspaceUtils.getWorkspaceSwapUrl`,
+  section and query string kept), so Back returns to where the account was added from.
+- A failed write (local storage full) replaces the banner message with an error and keeps the actions.
+- An account in the `NOT_FOUND` state gets no banner: it can never be added, and the page already says it is not
+  found.
 
 `WorkspaceSelector`, the workspace avatar pill, switches workspace: a dropdown of every stored workspace plus a
 "Create workspace" item. Picking one opens its aggregated overview, since account IDs belong to the previous
@@ -517,8 +578,9 @@ explicit and never expands a DAO into its linked accounts.
 
 #### The scope
 
-`workspaceProposalsPageClient` reads `activeOption`, which resolves the route's account by network and address and
-so accepts any casing, as `LayoutWorkspaceAccount` does. Only a DAO account becomes the scope; a Safe is caught
+`workspaceProposalsPageClient` reads `scopedAccounts`, which the hook resolves from the route's account by network
+and address and so accepts any casing, as `LayoutWorkspaceAccount` does, and keeps its DAO accounts. Only a DAO
+account becomes the scope; a Safe is caught
 before the content renders (the placeholder above), so the DAO narrowing below is never asked about one.
 
 Four questions look like one and are not. Keeping them apart is what the predicates below are for:
@@ -643,8 +705,8 @@ has no slug, so it gets no href and the row renders unlinked.
 ### Safe support by route
 
 Every route is meant to grow a Safe counterpart. Until one exists, the route **fails** rather than standing in for
-the account with a placeholder or with another account's data: `WorkspaceAccountGate` renders its error state, and
-that is the deliberate answer, not an oversight. This table is the list — update it in the same change that adds or
+the account with a placeholder or with another account's data: `WorkspaceAccountGate` renders its Safe state,
+which links to the sections that do serve a Safe, and that is the deliberate answer, not an oversight. This table is the list — update it in the same change that adds or
 removes support.
 
 Flipping a row to **implemented** is not only a new branch; it also means retiring whatever makes that route fail
@@ -654,7 +716,7 @@ today, and the two differ by route:
   needs a DAO record. What changes is that the page gains a Safe branch *before* the gate.
 - **`/{accountId}/proposals`** — the gate wrap in `WorkspaceProposalsPage` must be **deleted**, together with the
   DAO-only narrowing in `workspaceProposalsPageClient`. Both halves in one change: removing the gate alone sends the
-  route back to answering for a Safe with every DAO account's proposals, and changing the narrowing alone leaves a
+  route back to answering for a Safe with an empty list, and changing the narrowing alone leaves a
   gate failing a route that works. Both sites are marked `TEMPORARY` in the code.
 
 | Route | Safe support | What a Safe gets today |
@@ -666,11 +728,11 @@ today, and the two differ by route:
 | `/{workspaceId}/all/overview` | **implemented** | the workspace overview lists accounts of both types |
 | `/{accountId}/assets` | **implemented** | the list and the aside card describe the Safe |
 | `/{accountId}/transactions` | **implemented**, read-only | the list and the aside card describe the Safe; no create action, and the dispatch panel is DAO-only |
-| `/{accountId}/overview` | not yet | the gate's error state |
-| `/{accountId}/members` | not yet | the gate's error state |
-| `/{accountId}/members/{address}` | not yet | the gate's error state |
-| `/{accountId}/proposals` | not yet | the gate's error state |
-| `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's error state |
+| `/{accountId}/overview` | not yet | the gate's Safe state |
+| `/{accountId}/members` | not yet | the gate's Safe state |
+| `/{accountId}/members/{address}` | not yet | the gate's Safe state |
+| `/{accountId}/proposals` | not yet | the gate's Safe state |
+| `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's Safe state |
 
 Two consequences worth stating, because both are deliberate:
 
@@ -687,15 +749,28 @@ Two consequences worth stating, because both are deliberate:
   aggregated route stays ungated either way: it names no account, so there is nothing to resolve and nothing to
   mislead about.
 
-`WorkspaceAccountGate` itself asks nothing about the account type. It reads the DAO record and renders the error
-state when that read fails, which is exactly the set of accounts these pages cannot serve — a Safe among them. It
-is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
+`WorkspaceAccountGate` reads the DAO record, and a failed read is exactly the set of accounts these pages cannot
+serve — a Safe among them. The read alone cannot say why it failed (a Safe and an address that is neither a DAO nor
+a Safe both 404), and the account may be one the workspace does not hold, so only then does the gate look the
+address up with a single-account `query/accounts` request and pick a state through
+`workspaceUtils.resolveAccountState`, the same rule the external option of `useWorkspaceAccountOptions` reads.
+The states render inline (`WorkspaceAccountGateError`, the page frame around `WorkspaceAccountStateCard`), never
+through `notFound()`, for the reason below:
+
+| Lookup | `WorkspaceAccountState` | State |
+| --- | --- | --- |
+| Safe, available | `SAFE` | "Not available for Safe accounts yet", linking to the account's assets and transactions |
+| `unsupported`, or the whole-request 404 (see Known gaps) | `NOT_FOUND` | "Account not found", linking to every account |
+| `unavailable`, or the lookup itself fails | `UNAVAILABLE` | "Couldn't verify this account", no action: reloading the page retries the lookup |
+| DAO, available (the DAO read failed for another reason) | `DAO` | the generic error |
+
+It is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
 because layout and page render in parallel, so a page's `notFound()` — `DaoMembersPage` raises one for the DAO a
 Safe lacks — unwinds to `app/workspace/[workspaceId]/not-found.tsx`, which sits above `[accountId]` and discards
 the layout's output along with the page's. Its doc comment records the reasoning where the next reader will look.
 
-The cost is one `query/accounts` POST on each of the four gated routes (a POST is not memoised the way the DAO GET
-is), and none on assets and transactions.
+The cost is one `query/accounts` POST on a gated route whose DAO cannot be read (a POST is not memoised the way the
+DAO GET is), none for a DAO that loads, and none on assets and transactions.
 
 ### Members page
 
@@ -737,6 +812,29 @@ when the lookup fails. Names are resolved with one batched `useWorkspaceAccounts
 not store the DAO name — and the account metadata name wins over it, being what the workspace owner chose to call
 the account.
 
+### Workspace not found
+
+The registry lives on one device, so a shared `/workspace/{id}/…` link usually names a workspace the reader does
+not have. `WorkspaceGate` splits `AragonBackendServiceError.notFoundCode` from every other failure, which keeps the
+generic `Page.Error`, and branches on the account segment read with `useParams()`:
+
+| Link | `resolveAccountScope(accountId)` | State |
+| --- | --- | --- |
+| Pure workspace link (`all/…`, the edit wizard, an invalid account segment) | `all` | `WorkspaceGateNotFound`: "Go to my workspaces" (the `/workspace` entry route) and "Create workspace" |
+| Account link (`{accountId}/…`, deeper segments included) | the account ID | `WorkspaceGateAccountPrompt`: open the same page in one of the reader's workspaces |
+
+- Both render in the gate rather than through `notFound()`: `NotFoundBase` is generic ("Explore DAOs"), and the
+  check runs on the client, so the status stays 200 either way.
+- The prompt labels the account with the accounts-API name, falling back to the truncated address, and lists
+  `useWorkspaceList` as a radio group, the first workspace preselected. Confirm `router.replace`s to
+  `workspaceUtils.getWorkspaceSwapUrl(pathname, id, query)`: only the workspace segment changes, so the section,
+  deeper segments and query string stay, and Back does not land on the dead link again.
+- The list can be empty, as reads never seed (see Registry). The prompt then offers the default workspace as a
+  pending option ("My workspace (new)") and only calls `getOrCreateDefaultWorkspace` on confirm, then invalidates
+  the list and redirects.
+- The redirect lands on an account the chosen workspace may not hold, which renders as an external option (see
+  "External accounts" under Account scope).
+
 ## Edit workspace
 
 `/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the workspace
@@ -760,6 +858,7 @@ Every route gate is the same server-side check — `await featureFlags.isEnabled
 | Entry point | Gate |
 | --- | --- |
 | `/create/workspace` | `LayoutWizardCreateWorkspace` and `createWorkspacePage` |
+| `/workspace` | `workspaceEntryPage` |
 | `/workspace/{workspaceId}/…` | `LayoutWorkspace` and every workspace page |
 | `/workspace/{workspaceId}/{accountId}/…` | `LayoutWorkspaceAccount`, on top of the above |
 | `/workspace/{workspaceId}/all/assets` and `/{accountId}/assets` | `workspaceAssetsPage` (server) — same, one page for both |
@@ -832,7 +931,8 @@ its initial; naming a Safe is what the optional account metadata is for.
 The row lookup follows the `manageMembershipAddressList` precedent: a React Query hook (`useWorkspaceAccounts`)
 gated with `enabled` on a well-formed address, a synchronous validator reading its data, and an effect that
 re-`trigger`s the field once the lookup resolves. `staleTime` is 5 minutes because resolving a non-DAO address costs
-one upstream Safe call — the API docs say explicitly not to poll it.
+a gateway round trip and on-chain reads (`getCode`, then the Safe's state) — not a Safe Transaction Service call,
+so it spends none of the hourly Safe API budget — and the backend caches only a resolved Safe, never a miss.
 
 At submit, `publishWorkspaceDialog` re-resolves **all** accounts in one batched `fetchQuery` and
 `buildWorkspace` reads each account's type from it. An account that no longer resolves throws an `invariant` rather
@@ -870,7 +970,9 @@ src/modules/workspace/
 │   ├── domain/enum/{workspaceAccountType.ts,index.ts}
 │   ├── queries/useWorkspace/{useWorkspace.ts,index.ts}
 │   ├── queries/index.ts
+│   ├── mutations/useAddWorkspaceAccount/{useAddWorkspaceAccount.ts,index.ts}
 │   ├── mutations/useCreateWorkspace/{useCreateWorkspace.ts,index.ts}
+│   ├── mutations/useGetOrCreateDefaultWorkspace/{useGetOrCreateDefaultWorkspace.ts,index.ts}
 │   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
 │   ├── mutations/index.ts
 │   ├── {workspaceService.ts,workspaceService.api.ts,workspaceServiceKeys.ts,workspaceService.test.ts,index.ts}
@@ -882,12 +984,16 @@ src/modules/workspace/
 │   ├── createWorkspaceFormAccounts/{createWorkspaceFormAccounts.tsx,createWorkspaceFormAccountsItem.tsx,index.ts}
 │   └── index.ts
 ├── components/workspaceAccountItem/{workspaceAccountItem.tsx,index.ts}
+├── components/workspaceGate/{workspaceGate.tsx,workspaceGateNotFound.tsx,workspaceGateAccountPrompt.tsx,index.ts}
+├── components/workspaceExternalAccountBanner/{workspaceExternalAccountBanner.tsx,index.ts}
+├── components/workspaceAccountStateCard/{workspaceAccountStateCard.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,index.ts}
+├── pages/workspaceEntryPage/{workspaceEntryPage.tsx,workspaceEntryPageClient.tsx,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
 ├── hooks/useWorkspaceAccountOptions/{useWorkspaceAccountOptions.ts,index.ts}
 ├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
@@ -909,6 +1015,7 @@ src/modules/application/components/layouts/layoutWorkspace/{layoutWorkspace.tsx,
 src/modules/application/components/navigations/navigationWorkspace/{navigationWorkspace.tsx,navigationWorkspaceUtils.ts,index.ts}
 src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
+src/app/workspace/page.tsx
 src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
 ```
 
@@ -935,7 +1042,7 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
 | `api/workspaceQueryService/` vs 1096's `api/workspaceFinanceService/` | 1096 splits the query API per resource; this keeps one service for the whole `query/*` surface |
-| `constants/workspaceMocks.ts` | removed on this branch: the registry has no seed workspace |
+| `constants/workspaceMocks.ts` | removed on this branch: the registry has no mock workspaces; the only seed is the empty default workspace of `getOrCreateDefaultWorkspace` |
 | `index.ts` | both export from the module root — additive |
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
@@ -972,13 +1079,8 @@ Keep it that way when extending this.
   contradicts the per-entry `status: "unsupported"` that `IWorkspaceAccountInfo` and
   `workspaceUtils.validateAccountInfo` are built around. It predates and is independent of the Safe aggregation
   work, and it affects the create form today, so one such address in the list probably fails the validation of the others (inferred from the whole-request 404, not exercised in the form), with
-  the error state rather than `error.unsupportedAccount`. `WorkspaceAccountGate` is written around it, falling back
-  to the DAO read when the lookup throws.
-- **A URL naming an account the workspace does not hold still widens the page.** Every account type resolves to an
-  option now and a lowercased address resolves too, so what remains is an account that is not in the workspace
-  at all: the assets, transactions and proposals pages read it as the aggregated selection and show every account
-  under a URL naming one. Properly, it should show that account and offer adding it to the workspace from the
-  selector — the next gap.
+  the error state rather than `error.unsupportedAccount`. `WorkspaceAccountGate` is written around it: its lookup
+  names a single account, so `workspaceUtils.resolveAccountState` reads that 404 as `NOT_FOUND`.
 - The workspace proposal details page is the DAO page as is, so the links inside it still leave the workspace: its
   breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter, publisher and settings links of its
   nested plugin components. Held back on purpose until the rest of the migration lands and every call site is
@@ -986,8 +1088,6 @@ Keep it that way when extending this.
 - The workspace proposals endpoint has no `onlyActive`, so an account scope counts the proposals of uninstalled
   plugins where the DAO proposals page does not. The list and its aside card agree with each other; the DAO page's
   own total for the same DAO can read lower.
-- Viewing an account the workspace does not hold is not supported (see above). The intended behaviour is to show it
-  and offer adding it to the workspace, from the account selector.
 - The All tab merges before paging, so page 1 is the 20 largest holdings across accounts — a quiet account may only
   appear on a later page. That is the API's design.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show

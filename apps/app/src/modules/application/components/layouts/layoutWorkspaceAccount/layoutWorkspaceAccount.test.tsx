@@ -3,6 +3,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
+import * as workspaceExternalAccountBannerModule from '@/modules/workspace/components/workspaceExternalAccountBanner';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, Network } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
@@ -31,15 +32,22 @@ describe('<LayoutWorkspaceAccount /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
+    // Stubbed: the banner reads the workspace on the client, which belongs to its own tests.
+    const externalAccountBannerSpy = jest.spyOn(
+        workspaceExternalAccountBannerModule,
+        'WorkspaceExternalAccountBanner',
+    );
 
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue({});
         isEnabledSpy.mockResolvedValue(true);
+        externalAccountBannerSpy.mockImplementation(() => null);
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
         isEnabledSpy.mockReset();
+        externalAccountBannerSpy.mockReset();
         notFoundMock.mockClear();
     });
 
@@ -144,5 +152,11 @@ describe('<LayoutWorkspaceAccount /> component', () => {
         render(await createTestComponent());
 
         expect(screen.getByTestId('page-mock')).toBeInTheDocument();
+    });
+
+    it('renders the banner of an account the workspace does not hold above the page', async () => {
+        render(await createTestComponent());
+
+        expect(externalAccountBannerSpy).toHaveBeenCalled();
     });
 });
