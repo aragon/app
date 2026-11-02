@@ -6,7 +6,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "dff9e732d931b24cb673822320ac310d093c5214",
+            "commit": "41eb62498f3b3d348a33b9df5ab30ae204bb1384",
             "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
@@ -8585,15 +8585,15 @@
                     "source": {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                        "line": 47,
-                        "sha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                        "line": 48,
+                        "sha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                            "line": 6,
-                            "sha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                            "line": 7,
+                            "sha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
                         }
                     ],
                     "stories": [
@@ -8609,7 +8609,7 @@
                             "repository": "kit",
                             "path": "src/core/components/dropdown/dropdownItem/dropdownItem.test.tsx",
                             "line": 1,
-                            "sha256": "9eed251f18a0e3057621eca0e40bcfb602cf46f941669f93d62bfc02c7c5fbaa"
+                            "sha256": "5b87a4074b97303508468370351cf89375446ca1bf74d77e0cffa3f0fc46f9b1"
                         }
                     ],
                     "docs": []
@@ -8813,15 +8813,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                "line": 47,
-                "sha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                "line": 48,
+                "sha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                    "line": 6,
-                    "sha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                    "line": 7,
+                    "sha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
                 }
             ],
             "stories": [
@@ -8837,7 +8837,7 @@
                     "repository": "kit",
                     "path": "src/core/components/dropdown/dropdownItem/dropdownItem.test.tsx",
                     "line": 1,
-                    "sha256": "9eed251f18a0e3057621eca0e40bcfb602cf46f941669f93d62bfc02c7c5fbaa"
+                    "sha256": "5b87a4074b97303508468370351cf89375446ca1bf74d77e0cffa3f0fc46f9b1"
                 }
             ],
             "docs": [],
@@ -8860,8 +8860,8 @@
                     {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                        "line": 47,
-                        "sha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                        "line": 48,
+                        "sha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
                     }
                 ],
                 "evidenceStatus": [
@@ -8869,8 +8869,8 @@
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
                         "status": "current",
-                        "expectedSha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6",
-                        "actualSha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                        "expectedSha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6",
+                        "actualSha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
                     }
                 ],
                 "review": {
@@ -13759,8 +13759,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                "line": 6,
-                "sha256": "6b910e854e840fe0dea778a2e06627bc5ec0eb4ac4dd9e720b94045823d692e6"
+                "line": 7,
+                "sha256": "64efc287ea05fc6df0cdebdda063b67176bf5dfc8d1000313bab89f6d2163ed6"
             },
             "props": [],
             "stories": [
@@ -13776,7 +13776,7 @@
                     "repository": "kit",
                     "path": "src/core/components/dropdown/dropdownItem/dropdownItem.test.tsx",
                     "line": 1,
-                    "sha256": "9eed251f18a0e3057621eca0e40bcfb602cf46f941669f93d62bfc02c7c5fbaa"
+                    "sha256": "5b87a4074b97303508468370351cf89375446ca1bf74d77e0cffa3f0fc46f9b1"
                 }
             ],
             "docs": [],
@@ -18852,7 +18852,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                 "line": 13,
-                "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
             },
             "props": [],
             "stories": [],
@@ -18904,7 +18904,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                 "line": 24,
-                "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
             },
             "props": [],
             "stories": [],
@@ -25394,14 +25394,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                         "line": 60,
-                        "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                        "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                             "line": 24,
-                            "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                            "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
                         }
                     ],
                     "stories": [],
@@ -25587,14 +25587,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                 "line": 60,
-                "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                     "line": 24,
-                    "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                    "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
                 }
             ],
             "stories": [],
@@ -25627,7 +25627,7 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                         "line": 60,
-                        "sha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                        "sha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
                     }
                 ],
                 "evidenceStatus": [
@@ -25635,8 +25635,8 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                         "status": "current",
-                        "expectedSha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f",
-                        "actualSha256": "9c7238629825ca79d9b15a5d1ec600d630b230e5661f442087e3b9fb3de0104f"
+                        "expectedSha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e",
+                        "actualSha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e"
                     }
                 ],
                 "review": {
