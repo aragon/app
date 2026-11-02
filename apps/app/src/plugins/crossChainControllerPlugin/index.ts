@@ -1,7 +1,7 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { crossChainControllerPlugin } from './constants/crossChainControllerPlugin';
-import { useCrossChainControllerActions } from './hooks/useCrossChainControllerActions';
+import { crossChainControllerActionUtils } from './utils/crossChainControllerActionUtils';
 
 export const initialiseCrossChainControllerPlugin = () => {
     pluginRegistryUtils
@@ -12,6 +12,7 @@ export const initialiseCrossChainControllerPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: crossChainControllerPlugin.id,
-            function: useCrossChainControllerActions,
+            function:
+                crossChainControllerActionUtils.getCrossChainControllerActions,
         });
 };

@@ -72,7 +72,10 @@ export const CreateProposalFormActions: React.FC<
     const { isPinning, hasPinErrors, handleDownloadActions } =
         useDownloadProposalActions({ daoId });
 
-    const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
+    const { pluginComponents } = actionComposerUtils.getDaoPluginActions(
+        dao,
+        t,
+    );
     const { components: permissionActionComponents } =
         actionComposerUtils.getDaoPermissionActions({
             t,

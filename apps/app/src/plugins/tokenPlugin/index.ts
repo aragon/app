@@ -14,12 +14,12 @@ import { TokenSetupMembership } from './components/tokenSetupMembership';
 import { TokenSubmitVote } from './components/tokenSubmitVote';
 import { TokenVoteList } from './components/tokenVoteList';
 import { tokenPlugin } from './constants/tokenPlugin';
-import { useTokenActions } from './hooks/useTokenActions';
 import { useTokenGovernanceSettings } from './hooks/useTokenGovernanceSettings';
 import { useTokenMemberStats } from './hooks/useTokenMemberStats';
 import { useTokenNormalizeActions } from './hooks/useTokenNormalizeActions';
 import { useTokenPermissionCheckProposalCreation } from './hooks/useTokenPermissionCheckProposalCreation';
 import { useTokenPermissionCheckVoteSubmission } from './hooks/useTokenPermissionCheckVoteSubmission';
+import { tokenActionUtils } from './utils/tokenActionUtils';
 import { tokenBodyUtils } from './utils/tokenBodyUtils';
 import { tokenPluginUtils } from './utils/tokenPluginUtils';
 import { tokenProposalUtils } from './utils/tokenProposalUtils';
@@ -89,7 +89,7 @@ export const initialiseTokenPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: tokenPlugin.id,
-            function: useTokenActions,
+            function: tokenActionUtils.getTokenActions,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,

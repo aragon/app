@@ -88,7 +88,10 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
         { enabled: dao != null },
     );
 
-    const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
+    const { pluginComponents } = actionComposerUtils.getDaoPluginActions(
+        dao,
+        t,
+    );
     const { components: permissionActionComponents } =
         actionComposerUtils.getDaoPermissionActions({
             t,
