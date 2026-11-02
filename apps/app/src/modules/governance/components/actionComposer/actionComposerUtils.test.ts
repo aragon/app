@@ -334,13 +334,17 @@ describe('actionComposerUtils', () => {
     });
 
     describe('getDaoPluginActions', () => {
-        const getSlotFunctionSpy = jest.spyOn(
-            pluginRegistryUtils,
-            'getSlotFunction',
-        );
+        let getSlotFunctionSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            getSlotFunctionSpy = jest.spyOn(
+                pluginRegistryUtils,
+                'getSlotFunction',
+            );
+        });
 
         afterEach(() => {
-            getSlotFunctionSpy.mockReset();
+            getSlotFunctionSpy.mockRestore();
         });
 
         it('calls the plugin actions slot function of each plugin with the plugin and the translation function', () => {
