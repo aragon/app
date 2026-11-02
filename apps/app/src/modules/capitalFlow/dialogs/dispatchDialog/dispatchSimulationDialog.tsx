@@ -173,7 +173,7 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {error && !isLoading && (
                         <Card
-                            className="flex flex-col gap-3 border border-critical-200 bg-critical-50 p-4"
+                            className="flex flex-col gap-3 border-critical-200! bg-critical-50 p-4"
                             role="alert"
                         >
                             <div className="flex items-start gap-3">

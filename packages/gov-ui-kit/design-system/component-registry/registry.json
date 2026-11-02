@@ -6,7 +6,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "41eb62498f3b3d348a33b9df5ab30ae204bb1384",
+            "commit": "9c6ab5127c3d31c608bc8c33e65843e1b3158a4d",
             "dirty": [],
             "sourceVersion": "2.11.4",
             "entrypoints": {
@@ -3005,7 +3005,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "89459ac4310a71db2bfda949a3e9db927be22bb4eb445f4cdc8971bb7cdb7a25"
+                "sha256": "f9b62d3567f6a00f67968a1c27e4367341a3ca31bee7453fb00309dec237f1c8"
             },
             "props": [],
             "stories": [],
@@ -3398,15 +3398,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/cards/card/card.tsx",
-                "line": 12,
-                "sha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                "line": 13,
+                "sha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/cards/card/card.tsx",
                     "line": 4,
-                    "sha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                    "sha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
                 }
             ],
             "stories": [
@@ -3427,10 +3427,10 @@
             ],
             "docs": [],
             "usageNotes": [
-                "`Card` styles only its surface (rounding, neutral background, shadow): it adds no padding and no border. Add spacing through `className` or the content inside."
+                "`Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`)."
             ],
             "intent": {
-                "description": "Basic surface container (border/padding) for grouping content.",
+                "description": "Basic surface container (rounding, background, hairline border, shadow; no padding) for grouping content.",
                 "useWhen": [
                     "Grouping related content on a surface"
                 ],
@@ -3458,14 +3458,14 @@
                     {
                         "repository": "kit",
                         "path": "src/core/components/cards/card/card.tsx",
-                        "line": 12,
-                        "sha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                        "line": 13,
+                        "sha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/cards/card/card.tsx",
                         "line": 4,
-                        "sha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                        "sha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
                     },
                     {
                         "repository": "kit",
@@ -3479,15 +3479,15 @@
                         "repository": "kit",
                         "path": "src/core/components/cards/card/card.tsx",
                         "status": "current",
-                        "expectedSha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae",
-                        "actualSha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                        "expectedSha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0",
+                        "actualSha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/cards/card/card.tsx",
                         "status": "current",
-                        "expectedSha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae",
-                        "actualSha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                        "expectedSha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0",
+                        "actualSha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
                     },
                     {
                         "repository": "kit",
@@ -11342,7 +11342,7 @@
                 "repository": "kit",
                 "path": "src/core/components/cards/card/card.tsx",
                 "line": 4,
-                "sha256": "ebd909a92b83eb7c9e5f4c24fb589f94aa03e7fcc753750754cbe60aae8f4bae"
+                "sha256": "4ad31610e37886c4b87fb920cb6fa9245ef4d1dadd3964214cb0d5e022ac0be0"
             },
             "props": [],
             "stories": [

@@ -198,7 +198,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
                 </div>
             )}
             {showOptions && (
-                <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
+                <Card className="p-6 shadow-neutral-sm">
                     <TokenVotingOptions
                         isVeto={isVeto}
                         onChange={setSelectedOption}

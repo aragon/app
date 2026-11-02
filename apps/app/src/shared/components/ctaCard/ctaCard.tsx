@@ -90,11 +90,8 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
     return (
         <Card
             className={classNames(
-                'relative flex flex-col gap-4 border p-4 md:gap-6 md:p-6',
-                {
-                    'border-primary-200 shadow-primary': isPrimary,
-                    'border-neutral-100': !isPrimary,
-                },
+                'relative flex flex-col gap-4 p-4 md:gap-6 md:p-6',
+                { 'border-primary-200 shadow-primary': isPrimary },
                 className,
             )}
         >

@@ -321,11 +321,11 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 `import { Card } from '@aragon/gov-ui-kit';`
 
-Basic surface container (border/padding) for grouping content.
+Basic surface container (rounding, background, hairline border, shadow; no padding) for grouping content.
 
 **Usage notes**
 
-- `Card` styles only its surface (rounding, neutral background, shadow): it adds no padding and no border. Add spacing through `className` or the content inside.
+- `Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`).
 
 **Use when**
 
@@ -333,7 +333,7 @@ Basic surface container (border/padding) for grouping content.
 
 **References**
 
-- `kit:src/core/components/cards/card/card.tsx:12`
+- `kit:src/core/components/cards/card/card.tsx:13`
 - `kit:src/core/components/cards/card/card.stories.tsx:1`
 
 ### CardCollapsible

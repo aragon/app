@@ -54,7 +54,7 @@ export const SetupStageExpirationField: React.FC<
                 onCheckedChanged={handleToggleExpiration}
             />
             {displayExpiration && (
-                <Card className="border border-neutral-100">
+                <Card className="">
                     <AdvancedDateInputDuration
                         field="stageExpiration"
                         infoDisplay="inline"

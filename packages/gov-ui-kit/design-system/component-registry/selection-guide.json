@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "15be71c2252e0fb07fcdd1afdc6a53a1b9a7d338b72aa5671f0465fd14de49a9",
+            "sha256": "5dc36927396823ee831158f8a8e05b9d110a2ed9104e5f34d7f25b48a270a6cb",
             "totalRecords": 394,
             "entryCount": 145,
             "uiEntryCount": 138,
@@ -616,19 +616,19 @@
                 "package": "@aragon/gov-ui-kit",
                 "name": "Card"
             },
-            "description": "Basic surface container (border/padding) for grouping content.",
+            "description": "Basic surface container (rounding, background, hairline border, shadow; no padding) for grouping content.",
             "useWhen": [
                 "Grouping related content on a surface"
             ],
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "`Card` styles only its surface (rounding, neutral background, shadow): it adds no padding and no border. Add spacing through `className` or the content inside."
+                "`Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`)."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/card/card.tsx:12",
+                "source": "kit:src/core/components/cards/card/card.tsx:13",
                 "stories": [
                     "kit:src/core/components/cards/card/card.stories.tsx:1"
                 ]
