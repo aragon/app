@@ -1,3 +1,5 @@
+'use client';
+
 import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
