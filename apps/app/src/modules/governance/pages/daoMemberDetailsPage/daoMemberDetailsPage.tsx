@@ -18,23 +18,30 @@ export interface IDaoMemberDetailsPageProps {
      */
     params: Promise<IDaoMemberPageParams>;
     /**
-     * Member source selected on the members page.
+     * Search parameters of the page. `members` names the body plugin to read the membership under, defaulting to the
+     * first visible body of the DAO: either its tab ID (`daoUtils.getPluginTabId`) or its plain address, matched
+     * case-insensitively.
+     *
+     * Membership is plugin-scoped, so the body decides which voting power and token balance the page reports. The
+     * `/dao/…` links carry it on the URL (`daoUtils.withMemberTab`); the workspace route passes the body it resolved
+     * the same way, so the page does not report a body the member is not in.
      */
     searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
+/**
+ * TODO: the fallbacks below build `/dao/…` URLs, which drop a reader who arrived through
+ * `WorkspaceAccountMemberDetailsPage` out of the workspace — see the TODO on `DaoMembersPage`, where the three
+ * exits are listed and fixed together.
+ */
 export const DaoMemberDetailsPage: React.FC<
     IDaoMemberDetailsPageProps
 > = async (props) => {
     const { params, searchParams } = props;
     const pageParams = await params;
-    const memberSearchParams: Record<string, string | string[] | undefined> =
-        searchParams != null ? await searchParams : {};
     const { address: rawAddress, addressOrEns, network } = pageParams;
-    const selectedSourceParam = memberSearchParams.members;
-    const selectedSourceId = Array.isArray(selectedSourceParam)
-        ? selectedSourceParam[0]
-        : selectedSourceParam;
+    const { members } = (await searchParams) ?? {};
+    const bodyPluginId = Array.isArray(members) ? members[0] : members;
 
     if (!isAddress(rawAddress, { strict: false })) {
         const errorNamespace = 'app.governance.daoMemberDetailsPage.error';
@@ -55,7 +62,7 @@ export const DaoMemberDetailsPage: React.FC<
         const canonicalUrl = `/dao/${network}/${addressOrEns}/members/${address}`;
         return (
             <RedirectToUrl
-                url={daoUtils.withMemberTab(canonicalUrl, selectedSourceId)!}
+                url={daoUtils.withMemberTab(canonicalUrl, bodyPluginId)!}
             />
         );
     }
@@ -79,11 +86,15 @@ export const DaoMemberDetailsPage: React.FC<
         allBodyPlugins,
         daoOverride,
     );
+
+    const requestedId = bodyPluginId?.toLowerCase();
+
+    // Falls back to the first body rather than failing on an invalid value like hidden body
     const bodyPlugin =
         visibleBodyPlugins.find(
             (plugin) =>
-                daoUtils.getPluginTabId(plugin, dao.address) ===
-                selectedSourceId,
+                daoUtils.getPluginTabId(plugin, dao.address).toLowerCase() ===
+                    requestedId || plugin.address.toLowerCase() === requestedId,
         ) ?? visibleBodyPlugins[0];
 
     if (bodyPlugin == null) {

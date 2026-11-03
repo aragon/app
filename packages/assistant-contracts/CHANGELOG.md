@@ -1,5 +1,11 @@
 # @aragon/assistant-contracts
 
+## 0.3.1
+
+### Patch Changes
+
+- [#1474](https://github.com/aragon/app/pull/1474) [`903e5c2`](https://github.com/aragon/app/commit/903e5c2e35d854b4778f2848ef469532fb0f2b70) Thanks [@tyhonchik](https://github.com/tyhonchik)! - `docsLinks` joins the chat features: the host says whether answers may link to the pages of the help center. The assistant reads it with the citations of APP-1229; until then it names no page.
+
 ## 0.3.0
 
 ### Minor Changes

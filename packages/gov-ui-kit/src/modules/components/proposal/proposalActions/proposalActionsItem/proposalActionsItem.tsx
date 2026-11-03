@@ -15,8 +15,6 @@ import {
 } from '../proposalActionsDecoder';
 import { type IProposalAction, ProposalActionTypeNoBasicView } from '../proposalActionsDefinitions';
 import type { IProposalActionsItemProps, ProposalActionsItemViewMode } from './proposalActionsItem.api';
-import { ProposalActionsItemBasicView } from './proposalActionsItemBasicView';
-import { proposalActionsItemUtils } from './proposalActionsItemUtils';
 
 // Safe wrapper around useWatch to avoid throwing when no FormProvider/control is available.
 const useWatchSafe = (control: Control | undefined, name?: string): string | undefined => {
@@ -39,8 +37,8 @@ const useWatchSafe = (control: Control | undefined, name?: string): string | und
 };
 
 /**
- * The `<ProposalActions.Item />` component supports multiple view modes depending if the action supports a basic view
- * and if the parameters for the actions are defined.
+ * The `<ProposalActions.Item />` component supports multiple view modes depending if a `CustomComponent` is passed to
+ * render the basic view and if the parameters for the actions are defined.
  * **_NOTE:_** The component must be used inside a `<FormProvider />` component from `react-hook-form` when used in `editMode`.
  */
 export const ProposalActionsItem = <TAction extends IProposalAction = IProposalAction>(
@@ -78,9 +76,9 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
 
     const itemRef = useRef<HTMLDivElement>(null);
     const shouldScrollRef = useRef(false);
-    const supportsBasicView = CustomComponent != null || proposalActionsItemUtils.isActionSupported(action);
+    const supportsBasicView = CustomComponent != null;
 
-    // View mode support depends on action type and ABI availability. Important cases:
+    // View mode support depends on the CustomComponent (the only source of a basic view) and ABI availability. Important cases:
     // - Actions with a basic view: decoded and raw views enabled in "watch" mode (no edits)
     // - Actions without a basic view (ABI is NOT present): decoded view disabled; raw view in edit mode
     // - Actions without a basic view (ABI is present): decoded view enabled in edit mode; raw view in watch mode
@@ -244,14 +242,8 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
                             {copy.proposalActionsItem.nativeSendDescription(formattedValue, currencySymbol)}
                         </AlertCard>
                     )}
-                    {activeViewMode === 'BASIC' && (
-                        <ProposalActionsItemBasicView
-                            action={action}
-                            CustomComponent={CustomComponent}
-                            chainId={chainId}
-                            index={index}
-                            {...web3Props}
-                        />
+                    {activeViewMode === 'BASIC' && CustomComponent != null && (
+                        <CustomComponent action={action} chainId={chainId} index={index} {...web3Props} />
                     )}
                     {activeViewMode === ProposalActionsDecoderView.DECODED && (
                         <ProposalActionsDecoder

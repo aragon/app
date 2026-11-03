@@ -25,9 +25,6 @@ export const useTokenNormalizeActions = (
         }) ?? [];
 
     return actions.map((action) => {
-        if (tokenActionUtils.isTokenMintAction(action)) {
-            return tokenActionUtils.normalizeTokenMintAction(action);
-        }
         if (tokenActionUtils.isChangeSettingsAction(action)) {
             const plugin = daoPlugins.find(({ meta }) =>
                 addressUtils.isAddressEqual(action.to, meta.address),

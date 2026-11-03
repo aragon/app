@@ -61,6 +61,8 @@ export type IChatMessage = z.infer<typeof chatMessageSchema>;
 export const chatFeaturesSchema = z.object({
     // Answer product questions from the documentation; off, the assistant only collects tickets.
     docsSearch: z.boolean().optional(),
+    // Point answers at the pages of the help center (/help in the app); off, answers name no page.
+    docsLinks: z.boolean().optional(),
 });
 
 export type IChatFeatures = z.infer<typeof chatFeaturesSchema>;

@@ -1,6 +1,6 @@
 # Aragon App monorepo
 
-pnpm workspaces + Turborepo. Node >=24.16 (see `.nvmrc`), pnpm (see `packageManager` in `package.json`).
+pnpm workspaces + Turborepo. Node >=24.22.1 (see `.nvmrc`), pnpm (see `packageManager` in `package.json`).
 
 ## Workspaces
 

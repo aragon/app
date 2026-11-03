@@ -1,5 +1,6 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import {
@@ -48,6 +49,38 @@ describe('<SppProposalListItem /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    const rowLink = () =>
+        screen
+            .getAllByRole('link')
+            .find((link) => !link.getAttribute('href')?.includes('/members/'));
+
+    // The workspace proposals list passes the account-scoped workspace URL so a row keeps the reader inside it.
+    it('links the row to the given href', () => {
+        render(
+            createTestComponent({
+                href: '/workspace/demo/eth-0xAbc/proposals/SPP-1',
+            }),
+        );
+
+        expect(rowLink()).toHaveAttribute(
+            'href',
+            '/workspace/demo/eth-0xAbc/proposals/SPP-1',
+        );
+    });
+
+    it('falls back to the DAO proposal URL when no href is given', () => {
+        render(createTestComponent());
+
+        const expectedHref = proposalUtils.getProposalUrl(
+            generateSppProposal(),
+            defaultDao,
+        );
+
+        // A DAO-route URL rather than a workspace one, and the row uses exactly it.
+        expect(expectedHref).toMatch(/^\/dao\/.+\/proposals\/SPP-1$/);
+        expect(rowLink()).toHaveAttribute('href', expectedHref);
+    });
 
     it('renders the SPP proposal', () => {
         const proposal = generateSppProposal({ title: 'SPP Proposal' });

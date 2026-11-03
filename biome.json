@@ -14,7 +14,8 @@
             "!.turbo",
             "!**/*.svg",
             "!apps/assistant/src/docs/generated/*.js",
-            "!apps/assistant/.docs-corpus"
+            "!apps/assistant/.docs-corpus",
+            "!apps/docs/.source"
         ]
     },
     "formatter": {

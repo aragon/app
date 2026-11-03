@@ -9,6 +9,7 @@
     "license": "GPL-3.0",
     "scripts": {
         "build": "turbo run build",
+        "coverage:report": "node scripts/report-coverage.mjs",
         "css:check": "turbo run css:check",
         "dev": "turbo run dev",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
@@ -18,12 +19,12 @@
         "lint:check": "turbo run lint:check",
         "prepare": "husky",
         "skills:sync": "node scripts/sync-skills.mjs",
-        "test": "pnpm validate:changesets && pnpm test:release-summary && pnpm test:tokens && turbo run test",
+        "test": "pnpm validate:changesets && pnpm test:changesets && pnpm test:tokens && turbo run test",
         "test:changed": "turbo run test:changed",
-        "test:coverage": "pnpm validate:changesets && pnpm test:release-summary && pnpm test:tokens && turbo run test:coverage",
+        "test:changesets": "node --test '.github/workflows/scripts/*.test.js'",
+        "test:coverage": "pnpm validate:changesets && pnpm test:changesets && pnpm test:tokens && turbo run test:coverage && pnpm coverage:report",
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
         "test:hooks": "pnpm test:guardrails && pnpm test:skills",
-        "test:release-summary": "node --test '.github/workflows/scripts/*.test.js'",
         "test:skills": "node --test scripts/sync-skills.test.mjs",
         "test:tokens": "node --test .design-sync/tokens/validate.test.mjs .design-sync/tokens/generate.test.mjs .design-sync/consumer-parity.test.mjs",
         "tokens:generate": "node .design-sync/tokens/generate.mjs",
@@ -37,7 +38,9 @@
         "@changesets/cli": "catalog:",
         "ajv": "catalog:",
         "husky": "catalog:",
+        "istanbul-lib-coverage": "^3.2.2",
         "lint-staged": "catalog:",
+        "nyc": "^18.0.0",
         "skills": "1.5.20",
         "turbo": "catalog:",
         "ultracite": "catalog:",
@@ -46,6 +49,6 @@
     },
     "packageManager": "pnpm@11.28.2+sha512.755ce2fe3c05bfd7bb412b42aff3c5c55cd38c529c6eca810475497ae36746c571e4b6e1814e6e7e4b97d7ee864b8a0e44673c3b297a50e0ac28771c5ce15d27",
     "engines": {
-        "node": ">=24.16.0"
+        "node": ">=24.22.1"
     }
 }

@@ -26,6 +26,7 @@ import {
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { timeUtils } from '@/test/utils';
 import * as governanceService from '../../api/governanceService';
+import { VoteList } from '../../components/voteList';
 import { generateMember } from '../../testUtils';
 import {
     DaoMemberDetailsPageClient,
@@ -483,5 +484,19 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             },
         );
         expect(screen.getByText(firstActivityDate!)).toBeInTheDocument();
+    });
+
+    it('opens the vote list on the body of the member', () => {
+        (VoteList as jest.Mock).mockClear();
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateMember() }),
+        );
+
+        render(createTestComponent({ memberSourceId: 'x' }));
+
+        expect(VoteList).toHaveBeenCalledWith(
+            expect.objectContaining({ defaultPluginId: 'x' }),
+            undefined,
+        );
     });
 });

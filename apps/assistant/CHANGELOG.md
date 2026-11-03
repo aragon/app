@@ -1,5 +1,27 @@
 # @aragon/assistant
 
+## 0.3.2
+
+### Patch Changes
+
+- [#1474](https://github.com/aragon/app/pull/1474) [`903e5c2`](https://github.com/aragon/app/commit/903e5c2e35d854b4778f2848ef469532fb0f2b70) Thanks [@tyhonchik](https://github.com/tyhonchik)! - `docsLinks` joins the chat features: the host says whether answers may link to the pages of the help center. The assistant reads it with the citations of APP-1229; until then it names no page.
+
+- [#1529](https://github.com/aragon/app/pull/1529) [`142ec69`](https://github.com/aragon/app/commit/142ec694d065dbc21c075e58cada6757fe82ec16) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (@linear/sdk 98, tsup 9, Sentry 10.76, ai 7.0.146, hono 4.13.13)
+- Updated dependencies [[`903e5c2`](https://github.com/aragon/app/commit/903e5c2e35d854b4778f2848ef469532fb0f2b70)]:
+    - @aragon/assistant-contracts@0.3.1
+
+## 0.3.1
+
+### Patch Changes
+
+- [#1473](https://github.com/aragon/app/pull/1473) [`5637f3b`](https://github.com/aragon/app/commit/5637f3ba6f1ba176ff9268b3676dbfdbb98dd845) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Move the knowledge-base loader (the fetch of aragon/platform-doc, the published-page filter and the link rules) into `@aragon/docs-corpus`, a source-only workspace package the docs site will share with the assistant, so both publish the same pages. The assistant's documentation index is built from it unchanged; the per-environment corpus modes of both consumers now sit in one table there.
+
+- [#1502](https://github.com/aragon/app/pull/1502) [`15a7aff`](https://github.com/aragon/app/commit/15a7aff7d6497653e16ff839b43bfe8d215f446c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Escape the contact, attachment filenames and app context in Linear ticket bodies, and quote every line of the description whatever its line ending.
+
+- [#1449](https://github.com/aragon/app/pull/1449) [`2c28ae6`](https://github.com/aragon/app/commit/2c28ae66db1ca496314ff47f4c898e8009189a78) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (@linear/sdk 97, Sentry 10.75, ai 7.0.123, hono 4.13.12, sharp 0.35.5)
+- Updated dependencies [[`5637f3b`](https://github.com/aragon/app/commit/5637f3ba6f1ba176ff9268b3676dbfdbb98dd845)]:
+    - @aragon/docs-corpus@0.1.0
+
 ## 0.3.0
 
 ### Minor Changes

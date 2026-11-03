@@ -39,7 +39,7 @@ describe('<SetupBodyDialogSelect /> component', () => {
 
         expect(
             screen.getByText(
-                'Voting requires locking non-governance ERC20 tokens',
+                'Temporarily lock ERC-20 tokens to vote, even after a proposal opens.',
             ),
         ).toBeInTheDocument();
         expect(screen.getByRole('radio')).toBeEnabled();

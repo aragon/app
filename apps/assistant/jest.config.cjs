@@ -18,12 +18,15 @@ const config = createNodeConfig({
 // Silences the observability stdout/stderr transport so test output stays readable.
 config.setupFilesAfterEnv = ['<rootDir>/src/test/setup.ts'];
 
-// Resolve contracts to TypeScript source so jest does not depend on a prior `dist/` build, and
-// the generated documentation index (git-ignored, built by `pnpm build:docs-index`) to a small
-// fixture so tests never depend on a prior index build either.
+// Resolve the workspace packages to TypeScript source (the contracts so jest does not depend on
+// a prior `dist/` build, the corpus loader because it ships as source), and the generated
+// documentation index (git-ignored, built by `pnpm build:docs-index`) to a small fixture so
+// tests never depend on a prior index build either.
 config.moduleNameMapper = {
     '^@aragon/assistant-contracts$':
         '<rootDir>/../../packages/assistant-contracts/src/index.ts',
+    '^@aragon/docs-corpus$':
+        '<rootDir>/../../packages/docs-corpus/src/index.ts',
     '^\\.\\/generated\\/docsIndex$':
         '<rootDir>/src/test/fixtures/docsIndexFixture.ts',
 };

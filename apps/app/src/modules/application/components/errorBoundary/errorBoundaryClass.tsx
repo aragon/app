@@ -1,3 +1,5 @@
+// The `next/navigation` alias points to the client-hooks wrapper, which does not re-export this helper.
+import { unstable_rethrow } from 'next/navigation-original';
 import { Component, type ReactNode } from 'react';
 import { ErrorFeedback } from '@/shared/components/errorFeedback';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
@@ -38,6 +40,12 @@ export class ErrorBoundaryClass extends Component<
     }
 
     static getDerivedStateFromError(error: Error): IErrorBoundaryClassState {
+        // `notFound()` and `redirect()` work by throwing, and Next has boundaries of its own waiting for them.
+        // Catching those here would show the error state instead of the not-found page or the redirect, so they
+        // are handed straight back; `unstable_rethrow` rethrows only Next's own control flow and returns for a
+        // real error.
+        unstable_rethrow(error);
+
         // Update state so the next render will show the fallback UI.
         return { hasError: true, error };
     }

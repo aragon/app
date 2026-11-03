@@ -70,7 +70,7 @@ node e2e/scripts/openCachedBrowser.mjs
 
 ### CI
 
-BV tests run automatically on **staging deploys** via `shared-bv.yml`. They:
+BV tests run automatically on **staging deploys** via the `e2e.yml` reusable workflow of `aragon/github-templates` in `mode: bv` (called from `app-release.yml` and `app-staging.yml`). They:
 
 1. Restore cached Synpress wallet (or build from scratch)
 2. Patch MetaMask manifest (disable Side Panel for Playwright compatibility)
@@ -156,7 +156,7 @@ test('explore page renders DAO list', async ({ page }) => {
 
 ### Smoke tests
 
-Runs automatically on every PR via `shared-e2e.yml`:
+Runs automatically on every PR via the `e2e.yml` reusable workflow of `aragon/github-templates` (called from `app-preview.yml`, and against the other environments from the development, release and production flows):
 
 1. Vercel deploys → `E2E_BASE_URL`
 2. Warmup request ensures the deployment is alive
@@ -166,8 +166,16 @@ Runs automatically on every PR via `shared-e2e.yml`:
 
 E2E results are **non-blocking** for PR merge — failures are reported in comments and Slack but do not prevent merging.
 
+### WAF bypass
+
+Vercel BotID classifies Playwright and Synpress as bots, and the WAF rate-limits POSTs per IP. Both configs send
+`x-aragon-e2e-bypass: $E2E_BYPASS_TOKEN` when the variable is set; the "E2E bypass" firewall rule of the
+`app-next` project lets requests with that header through. The token lives in 1Password (`kv_app_infra` →
+`E2E_BYPASS_TOKEN`) and reaches CI through the `env-secret-refs` input of every `e2e.yml` call. Without it, flows that pin to IPFS,
+simulate or read the chain through `/api/rpc` get 403 from the deployment.
+
 ### Build verification
 
-Runs on staging deploys via `shared-bv.yml` (see [BV section](#build-verification-bv) above).
+Runs on staging deploys via the same reusable workflow in `mode: bv` (see [BV section](#build-verification-bv) above). On a release PR both suites report into the release's Slack thread.
 
 Runners are ephemeral (`ubuntu-latest`) — no state leaks between runs. Artifacts are stored in GitHub Actions storage and auto-deleted after the retention period.

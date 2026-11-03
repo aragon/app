@@ -35,6 +35,10 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
      */
     initialSteps?: IWizardStepperStep[];
     /**
+     * ID of the step the wizard opens on, defaults to the first step.
+     */
+    initialActiveStep?: string;
+    /**
      * Label for the submit button at the end of the wizard.
      */
     submitLabel: string;
@@ -65,6 +69,7 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(
 ) => {
     const {
         initialSteps,
+        initialActiveStep,
         children,
         submitLabel,
         defaultValues,
@@ -79,7 +84,7 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(
     });
     const { formState, reset, control } = formMethods;
 
-    const wizardStepper = useStepper({ initialSteps });
+    const wizardStepper = useStepper({ initialSteps, initialActiveStep });
     const previousStepRef = useRef<
         | {
               id?: string;

@@ -1,5 +1,8 @@
 export * from './enum';
-export type { IMultisigActionChangeMembers } from './multisigActionChangeMembers';
+export type {
+    IMultisigActionChangeMembers,
+    IMultisigActionChangeMembersMember,
+} from './multisigActionChangeMembers';
 export type { IMultisigActionChangeSettings } from './multisigActionChangeSettings';
 export type { IMultisigPluginSettings } from './multisigPluginSettings';
 export type { IMultisigProposal } from './multisigProposal';

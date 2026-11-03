@@ -17,6 +17,21 @@ describe('ipfs utils', () => {
             );
         });
 
+        it('converts a gateway URL into a src on the app gateway', () => {
+            const cid = 'QmVyy3ci7F2zHG6JUJ1XbcwLKuxWrQ6hqNvSnjmDmdYJzP';
+            const src = `https://ipfs.eth.aragon.network/ipfs/${cid}/`;
+            expect(ipfsUtils.cidToSrc(src)).toContain(
+                `${ipfsUtils['ipfsGateway']}/ipfs/${cid}?`,
+            );
+        });
+
+        it('keeps a URL without an ipfs path as is', () => {
+            const url = 'https://example.org/logo.png';
+            expect(ipfsUtils.cidToSrc(url)).toContain(
+                `${ipfsUtils['ipfsGateway']}/ipfs/${url}`,
+            );
+        });
+
         it('returns undefined when cid is null or undefined', () => {
             expect(ipfsUtils.cidToSrc(null)).toBeUndefined();
             expect(ipfsUtils.cidToSrc(undefined)).toBeUndefined();

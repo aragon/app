@@ -1,0 +1,4 @@
+export enum WorkspaceDialogId {
+    PUBLISH_WORKSPACE = 'PUBLISH_WORKSPACE',
+    SELECT_ACCOUNT = 'WORKSPACE_SELECT_ACCOUNT',
+}

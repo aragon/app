@@ -78,7 +78,7 @@ describe('<DaoMembersPageClient /> component', () => {
     ) => {
         const completeProps: IDaoMembersPageClientProps = {
             initialParams: {
-                queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
+                queryParams: { daoId: 'test-id' },
             },
             featuredDelegates: [],
             ...props,

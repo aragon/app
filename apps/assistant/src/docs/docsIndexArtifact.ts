@@ -1,4 +1,4 @@
-import type { IDocsCorpusMode } from './corpus';
+import type { IDocsCorpusMode } from '@aragon/docs-corpus';
 
 // The documentation index as it ships inside the service bundle: built at build time from the
 // knowledge base (see buildDocsIndex.ts), re-inserted into Orama on first use at runtime

@@ -9,7 +9,6 @@ import {
     formatterUtils,
     type IProposalActionsFooterDropdownItem,
     ProposalActions,
-    ProposalActionTypeNoBasicView,
     ProposalStatus,
     proposalStatusToTagVariant,
     useGukModulesContext,
@@ -44,6 +43,7 @@ import { ProposalActionsItem } from '../../components/proposalActionsItem';
 import { ProposalDetailsAside } from '../../components/proposalDetailsAside';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useNormalizedProposalActions } from '../../hooks/useNormalizedProposalActions';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import {
     ProposalMetadataStatus,
@@ -138,6 +138,17 @@ export const DaoProposalDetailsPageClient: React.FC<
     // render them only after mount to avoid a hydration mismatch.
     const isMounted = useIsMounted();
 
+    const proposalActions = proposalActionUtils.resolveActions(
+        actionData?.actions ?? [],
+        actionData?.rawActions,
+        proposal?.creator.address,
+    );
+
+    const normalizedProposalActions = useNormalizedProposalActions({
+        actions: proposalActions,
+        daoId,
+    });
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -176,27 +187,6 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
-    const processedActionData = actionData;
-
-    const hasActionDecodeMismatch =
-        processedActionData?.rawActions != null &&
-        processedActionData.rawActions.length !==
-            processedActionData.actions.length;
-    const proposalActions = hasActionDecodeMismatch
-        ? (processedActionData?.rawActions?.map((rawAction) => ({
-              from: creator.address,
-              to: rawAction.to,
-              data: rawAction.data,
-              value: rawAction.value,
-              type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
-              inputData: null,
-          })) ?? [])
-        : (processedActionData?.actions ?? []);
-
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(
-        proposalActions,
-        dao,
-    );
     const formattedCreationDate = isMounted
         ? formatterUtils.formatDate(blockTimestamp * 1000, {
               format: DateFormat.YEAR_MONTH_DAY,

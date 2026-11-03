@@ -30,9 +30,6 @@ export const useMultisigNormalizeActions = (
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 0;
 
     return actions.map((action) => {
-        if (multisigActionUtils.isChangeMembersAction(action)) {
-            return multisigActionUtils.normalizeChangeMembersAction(action);
-        }
         if (multisigActionUtils.isChangeSettingsAction(action)) {
             return multisigActionUtils.normalizeChangeSettingsAction({
                 action,

@@ -1,4 +1,4 @@
-export { featureFlags } from './featureFlags';
+export { createFeatureFlags, featureFlags } from './featureFlags';
 export type {
     FeatureFlagDefinition,
     FeatureFlagKey,

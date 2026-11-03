@@ -26,12 +26,30 @@ export interface IDaoProposalListDefaultItemProps<
      * item renders without a link.
      */
     proposalSlug?: string;
+    /**
+     * Optional tag displayed on the item. Unused on the DAO pages, where every
+     * proposal belongs to the same DAO; the workspace proposal list uses it to
+     * name the DAO a row comes from.
+     */
+    tag?: string;
+    /**
+     * URL the row links to. Unused on the DAO pages, which build it from the
+     * DAO; the workspace proposal list passes the account-scoped workspace URL
+     * so that a row keeps the reader inside the workspace.
+     *
+     * TODO: Investigate this when doing the overall refactor of the link generation
+     * within the context of workspaces. A better approach might be to modify the
+     * underlying `getProposalUrl` to accept a context parameter,
+     * which would allow it to generate the correct URL based on whether it's being called
+     * from a DAO page or a workspace page.
+     */
+    href?: string;
 }
 
 export const DaoProposalListDefaultItem: React.FC<
     IDaoProposalListDefaultItemProps
 > = (props) => {
-    const { proposal, dao, proposalSlug } = props;
+    const { proposal, dao, proposalSlug, tag, href } = props;
 
     const {
         id,
@@ -54,7 +72,7 @@ export const DaoProposalListDefaultItem: React.FC<
     const proposalDate = (executed.blockTimestamp ?? endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
 
-    const proposalHref = proposalUtils.getProposalUrl(proposal, dao);
+    const proposalHref = href ?? proposalUtils.getProposalUrl(proposal, dao);
 
     const publisherHref = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const { data: publisherEnsName } = useEnsName(creator.address);
@@ -74,6 +92,7 @@ export const DaoProposalListDefaultItem: React.FC<
             }}
             status={proposalStatus}
             summary={summary}
+            tag={tag}
             title={proposal.title}
             voted={userVote != null}
         >

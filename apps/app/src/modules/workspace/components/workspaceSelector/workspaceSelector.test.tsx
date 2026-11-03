@@ -1,0 +1,131 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { QueryClient } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
+import { queryClientConfig } from '@/modules/application/constants/reactQuery';
+import { ReactQueryWrapper } from '@/shared/testUtils';
+import { type IWorkspace, workspaceService } from '../../api/workspaceService';
+import {
+    type IWorkspaceSelectorProps,
+    WorkspaceSelector,
+} from './workspaceSelector';
+
+describe('<WorkspaceSelector /> component', () => {
+    const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
+    const getWorkspaceListSpy = jest.spyOn(
+        workspaceService,
+        'getWorkspaceList',
+    );
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const pushMock = jest.fn();
+
+    const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
+        id: 'first',
+        name: 'First Workspace',
+        description: '',
+        avatar: null,
+        links: [],
+        accounts: [],
+        targets: [],
+        ...workspace,
+    });
+
+    const firstWorkspace = buildWorkspace();
+    const secondWorkspace = buildWorkspace({
+        id: 'second',
+        name: 'Second Workspace',
+    });
+
+    beforeEach(() => {
+        getWorkspaceSpy.mockResolvedValue(firstWorkspace);
+        getWorkspaceListSpy.mockResolvedValue([
+            firstWorkspace,
+            secondWorkspace,
+        ]);
+        useRouterSpy.mockReturnValue({
+            push: pushMock,
+        } as unknown as AppRouterInstance);
+    });
+
+    afterEach(() => {
+        getWorkspaceSpy.mockReset();
+        getWorkspaceListSpy.mockReset();
+        useRouterSpy.mockReset();
+        pushMock.mockReset();
+    });
+
+    const createTestComponent = (props?: Partial<IWorkspaceSelectorProps>) => {
+        const completeProps: IWorkspaceSelectorProps = {
+            workspaceId: firstWorkspace.id,
+            ...props,
+        };
+
+        return (
+            <GukModulesProvider>
+                <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
+                    <WorkspaceSelector {...completeProps} />
+                </ReactQueryWrapper>
+            </GukModulesProvider>
+        );
+    };
+
+    const openDropdown = async () =>
+        userEvent.click(
+            await screen.findByRole('button', { name: /First Workspace/ }),
+        );
+
+    it('displays the current workspace on the trigger', async () => {
+        render(createTestComponent());
+
+        expect(
+            await screen.findByRole('button', { name: /First Workspace/ }),
+        ).toBeInTheDocument();
+    });
+
+    it('lists every workspace followed by the edit and create workspace items', async () => {
+        render(createTestComponent());
+
+        await openDropdown();
+
+        const items = await screen.findAllByRole('menuitem');
+        expect(items).toHaveLength(4);
+        expect(items[0]).toHaveTextContent('First Workspace');
+        expect(items[1]).toHaveTextContent('Second Workspace');
+        expect(items[2]).toHaveTextContent(/workspaceSelector\.edit$/);
+        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
+    });
+
+    it('links the edit item to the edit wizard of the current workspace', async () => {
+        render(createTestComponent());
+
+        await openDropdown();
+
+        expect(
+            await screen.findByRole('menuitem', {
+                name: /workspaceSelector\.edit$/,
+            }),
+        ).toHaveAttribute('href', '/workspace/first/edit');
+    });
+
+    it('opens the overview of the selected workspace', async () => {
+        render(createTestComponent());
+
+        await openDropdown();
+        await userEvent.click(await screen.findByText('Second Workspace'));
+
+        expect(pushMock).toHaveBeenCalledWith('/workspace/second/all/overview');
+    });
+
+    it('opens the create workspace wizard', async () => {
+        render(createTestComponent());
+
+        await openDropdown();
+        await userEvent.click(
+            await screen.findByText(/workspaceSelector\.create$/),
+        );
+
+        expect(pushMock).toHaveBeenCalledWith('/create/workspace');
+    });
+});

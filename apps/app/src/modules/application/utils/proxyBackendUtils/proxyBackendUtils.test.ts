@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 
+import { checkBotId } from 'botid/server';
 import type { NextURL } from 'next/dist/server/web/next-url';
 import { type NextRequest, NextResponse } from 'next/server';
 import { generateNextRequest, generateResponse } from '@/shared/testUtils';
@@ -11,18 +12,48 @@ describe('proxyBackend utils', () => {
     const originalEnv = process.env;
     const fetchSpy = jest.spyOn(global, 'fetch');
     const nextResponseJsonSpy = jest.spyOn(NextResponse, 'json');
+    const checkBotIdMock = checkBotId as jest.Mock;
 
     beforeEach(() => {
         fetchSpy.mockResolvedValue(generateResponse());
+        checkBotIdMock.mockResolvedValue({ isBot: false });
     });
 
     afterEach(() => {
         fetchSpy.mockReset();
         nextResponseJsonSpy.mockReset();
+        checkBotIdMock.mockReset();
         process.env = originalEnv;
     });
 
     describe('request', () => {
+        it('rejects an automated POST request with 403 without calling the backend', async () => {
+            checkBotIdMock.mockResolvedValue({ isBot: true });
+            const mockNextResponse = {} as NextResponse;
+            nextResponseJsonSpy.mockReturnValue(mockNextResponse);
+
+            const result = await proxyBackendUtils.request(
+                generateNextRequest({ url: 'http://test.com', method: 'POST' }),
+            );
+
+            expect(fetchSpy).not.toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                { error: 'Access denied' },
+                { status: 403 },
+            );
+            expect(result).toEqual(mockNextResponse);
+        });
+
+        it('forwards an automated GET request, the backend reads are public', async () => {
+            checkBotIdMock.mockResolvedValue({ isBot: true });
+
+            await proxyBackendUtils.request(
+                generateNextRequest({ url: 'http://test.com', method: 'GET' }),
+            );
+
+            expect(fetchSpy).toHaveBeenCalled();
+        });
+
         it('calls the backend, parses JSON when content-type is application/json, and returns it', async () => {
             const parsedResponse = { result: 'test' };
             const headers = new Headers({ 'content-type': 'application/json' });

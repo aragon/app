@@ -186,6 +186,31 @@ class DaoUtils {
         return this.parsePluginInterfaceType(plugin.interfaceType);
     };
 
+    /**
+     * The process a governance body acts through, out of the given processes.
+     *
+     * The first match wins. A body configured into two processes
+     * resolves to the first plugin based on the plugin order of the DAO
+     * @param body - Body to find the process of.
+     * @param processes - Processes to look through, e.g. the processes of the DAO the body is installed on.
+     * @returns The process the body acts through, or undefined when it belongs to none.
+     */
+    findPluginProcess = (
+        body: IDaoPlugin,
+        processes: IDaoPlugin[],
+    ): IDaoPlugin | undefined =>
+        processes.find(
+            (process) =>
+                this.isSameAddress(process.address, body.address) ||
+                (body.parentPlugin != null &&
+                    this.isSameAddress(process.address, body.parentPlugin)) ||
+                process.subPlugins?.some((group) =>
+                    group.addresses.some((address) =>
+                        this.isSameAddress(address, body.address),
+                    ),
+                ),
+        );
+
     getDaoPlugins = (dao?: IDao, params?: IGetDaoPluginsParams) => {
         const {
             type,

@@ -1,5 +1,6 @@
 'use server';
 
+import { botIdUtils } from '@/shared/utils/botIdUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import 'server-only';
 import type { IPinResult } from '../../domain';
@@ -10,8 +11,14 @@ export const pinJsonAction = async ({
     body: bodyParam,
 }: IPinJsonParams): Promise<IPinResult> =>
     monitoringUtils.serverActionWrapper('pinJsonAction', async () => {
+        await botIdUtils.assertHuman('pin');
+        ipfsService.validateJson(bodyParam);
+
         const headers = { Authorization: `Bearer ${ipfsService.jwt}` };
-        const body = { pinataContent: bodyParam };
+        const body = {
+            pinataContent: bodyParam,
+            pinataMetadata: ipfsService.buildPinMetadata(),
+        };
         const options = { headers, method: 'POST' };
         const result = await ipfsService.request<IPinResult>(
             ipfsService.urls.pinJson,

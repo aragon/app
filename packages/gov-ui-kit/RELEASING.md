@@ -19,9 +19,13 @@ changeset here is the only place a kit change gets described in prose.
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Release Start  │───▶│ Approve & Merge │───▶│  Tag & GitHub   │───▶│   npm publish   │
-│    (manual)     │    │    (manual)     │    │ Release  (auto) │    │ (needs approval)│
+│ (Tuesday/manual)│    │    (manual)     │    │ Release  (auto) │    │ (needs approval)│
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
+
+The flow is `gov-ui-kit-release.yml` plus `gov-ui-kit-publish.yml`, thin callers of the reusable
+workflows of `aragon/github-templates`. Every release is one Slack thread in the releases channel,
+the same shape as the app's.
 
 ## Release a version
 
@@ -30,25 +34,27 @@ name **only** `@aragon/gov-ui-kit` — a changeset may never mix release scopes,
 both the app and the kit needs **two** changeset files, one per scope. `pnpm validate:changesets`
 enforces this as part of `pnpm test`.
 
-**2. Dispatch the release.** Actions → **Gov UI Kit Release Start** → Run workflow. Optionally pass
-a `base_commit`; it defaults to `main` HEAD. There is no schedule: a library release is a
-deliberate act, unlike the app's weekly train.
+**2. Start the release.** It starts by itself every Tuesday at 15:07 UTC (packages start on
+Tuesday, apps on Monday) and green-skips when there are no pending kit changesets or a kit release
+PR is already open. By hand: Actions → **Gov UI Kit Release** → Run workflow, optionally with a
+`base_commit` (defaults to `main` HEAD).
 
-It versions the `gov-ui-kit` release scope, pushes `release/gov-ui-kit/YYYY-MM-DD_HH-mm`, and opens
-a `Release @aragon/gov-ui-kit@x.y.z` PR. If there are no pending changesets it exits without
-leaving a branch or PR behind.
+It versions the `gov-ui-kit` release scope, pushes `release/gov-ui-kit/YYYY-MM-DD_HH-mm`, opens a
+`Release @aragon/gov-ui-kit@x.y.z` PR and starts the Slack thread with the summary. Every push to
+the PR refreshes the summary and runs the checks.
 
-**3. Approve and merge.** Merging is the release act. On merge, `gov-ui-kit-release-pr-finalize.yml`
-tags the merge commit `@aragon/gov-ui-kit@x.y.z` and creates the GitHub Release with the changelog
-as its notes.
+**3. Approve and merge.** Merging is the release act. On merge, the finalize job tags the merge
+commit `@aragon/gov-ui-kit@x.y.z` and creates the GitHub Release with the changelog as its notes;
+the thread hears both.
 
-Do not add new changesets to an open release branch — the finalize workflow blocks on it. Cancel
-the release (close the PR) and start a new one instead.
+Do not add new changesets to an open release branch — the finalize job blocks on it. Cancel the
+release (close the PR) and start a new one instead; the thread and the head message say so.
 
 **4. Approve the publish.** Publishing the GitHub Release triggers `gov-ui-kit-publish.yml`, which
-waits for an approval on the `npm-publish` environment (reviewers: `@aragon/app-team`). Once
-approved it builds the package and publishes it to npm as `latest`, with a signed provenance
-attestation.
+waits for an approval on the `npm-publish` environment (reviewers: `@aragon/app-team`) — the
+thread gets the "waiting for approval" ping with the link. Once approved it builds the package and
+publishes it to npm as `latest`, with a signed provenance attestation; the thread gets the result
+and the head message flips to Completed.
 
 ## Publish a snapshot
 
@@ -104,14 +110,16 @@ Note the preset sets `ignorePackageJsonScript: true`, so Vercel deliberately run
 rather than this package's `build:storybook` script. The two are equivalent today; keep them so, or
 the deployed Storybook and `pnpm build:storybook` can diverge.
 
-The project's **Root Directory** is still a dashboard setting — until it is set there,
-`shared-storybook-deploy.yml` patches it in with `patch-root-directory: true`.
+The project's **Root Directory** is still a dashboard setting — until it is set there, the
+Storybook workflows call `deploy-vercel.yml` with `patch-root-directory: true`. The published
+Storybook is a production Vercel build run under the `development` GitHub environment: it is not a
+release and must not wait for the production approval.
 
 ## Secrets
 
 | Vault | Used for |
 |---|---|
-| `kv_app_infra` | `ARABOT_PAT` (GitHub API), `arabot-1_SIGN_CERTS` (GPG signing of the release commit) |
+| `kv_app_infra` | `ARABOT_PAT` (GitHub API), `arabot-1_SIGN_CERTS` (GPG signing of the release commit), the Slack and Linear items shared with the app flow |
 | `kv_gov-ui-kit_infra` | Vercel credentials for the Storybook deploys |
 
 ## Related

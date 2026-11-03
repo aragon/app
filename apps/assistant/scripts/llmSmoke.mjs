@@ -8,6 +8,8 @@
 //
 // Usage: node scripts/llmSmoke.mjs [baseUrl]
 // The base URL defaults to ASSISTANT_SMOKE_URL or https://dev.assistant.aragon.org.
+// ASSISTANT_SMOKE_CREATE_TICKETS=false stops the ticket scenario at the draft: against production
+// the Linear team is the real support team, which must not receive smoke tickets.
 
 import { randomUUID } from 'node:crypto';
 
@@ -28,6 +30,8 @@ const bypassHeaders = bypassSecret
     : {};
 
 const createTicketToolName = 'createLinearTicket';
+
+const createTickets = process.env.ASSISTANT_SMOKE_CREATE_TICKETS !== 'false';
 
 const failures = [];
 
@@ -255,7 +259,9 @@ await runScenario(
 );
 
 await runScenario(
-    'bug report drafts a reviewable ticket and creates it on approval',
+    createTickets
+        ? 'bug report drafts a reviewable ticket and creates it on approval'
+        : 'bug report drafts a reviewable ticket',
     async () => {
         const sessionId = randomUUID();
         const { messages, turn } = await converseUntilDraft(
@@ -271,6 +277,11 @@ await runScenario(
             );
         }
         logStep(`draft: intent=${input.intent} title=${input.title}`);
+
+        if (!createTickets) {
+            logStep('ticket creation is off for this target, draft only');
+            return;
+        }
 
         const resume = await approveDraft(sessionId, messages, turn);
         const output = resume.toolOutput?.output;

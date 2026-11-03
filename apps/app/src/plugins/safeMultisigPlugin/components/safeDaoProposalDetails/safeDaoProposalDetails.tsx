@@ -21,7 +21,7 @@ import { useEnsName } from '@/modules/ens';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { ProposalActionsItem } from '@/modules/governance/components/proposalActionsItem';
 import { ProposalDetailsAside } from '@/modules/governance/components/proposalDetailsAside';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
+import { useNormalizedProposalActions } from '@/modules/governance/hooks/useNormalizedProposalActions';
 import { SafeDialogId } from '@/modules/safe/constants/safeDialogId';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types';
@@ -511,10 +511,10 @@ const SafeDaoProposalActions: React.FC<ISafeDaoProposalActionsProps> = ({
     daoId,
 }) => {
     const { chainId } = useDaoChain({ network: dao.network });
-    const normalizedActions = proposalActionUtils.normalizeActions(
+    const normalizedActions = useNormalizedProposalActions({
         actions,
-        dao,
-    );
+        daoId: dao.id,
+    });
 
     return (
         <ProposalActions.Root actionsCount={normalizedActions.length}>

@@ -19,6 +19,7 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
         { network: Network.KATANA_MAINNET, expected: 'katana' },
         { network: Network.MONAD_MAINNET, expected: 'monad' },
         { network: Network.ROBINHOOD_MAINNET, expected: 'robinhoodchain' },
+        { network: Network.BNB_MAINNET, expected: 'bnb' },
     ])(
         'maps mainnet $network to canonical EIP-3770 shortname "$expected"',
         ({ network, expected }) => {
@@ -26,7 +27,13 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
         },
     );
 
-    it.each([{ network: Network.ETHEREUM_SEPOLIA }])(
+    it.each([
+        { network: Network.ETHEREUM_SEPOLIA },
+        { network: Network.BNB_TESTNET },
+        { network: Network.ETHEREUM_HOODI },
+        { network: Network.BASE_SEPOLIA },
+        { network: Network.POLYGON_AMOY },
+    ])(
         'maps testnet $network to the generic "test" namespace',
         ({ network }) => {
             expect(NETWORK_EIP3770_SHORTNAME[network]).toBe('test');

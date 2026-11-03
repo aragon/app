@@ -5,7 +5,13 @@ import type {
     ITicketIntent,
 } from '@aragon/assistant-contracts';
 import { issueTexts } from '../chat/prompts/issueTexts';
-import { fenceUserText, quoteUserText, toTranscript } from '../chat/transcript';
+import {
+    codeUserText,
+    fenceUserText,
+    inlineUserText,
+    quoteUserText,
+    toTranscript,
+} from '../chat/transcript';
 
 // A file that already moved into Linear storage (transfer happens during issue creation).
 export interface IIssueAttachment {
@@ -25,8 +31,12 @@ export const issueLabelByIntent: Record<ITicketIntent, string> = {
 export const buildIssueTitle = (fields: ICreateTicketToolInput): string =>
     fields.title.trim() || issueTexts.fallbackTitle;
 
+const inlineContextValue = (value: string | undefined) =>
+    value == null ? value : inlineUserText(value);
+
 // A bullet list rather than a markdown table: Linear renders two-column tables cramped and
-// narrow, while list rows use the full ticket width.
+// narrow, while list rows use the full ticket width. The app context is posted by the client, so
+// its values are escaped like any other user text.
 const renderContextRows = (
     appContext: IAppContext,
     sessionId: string,
@@ -36,18 +46,18 @@ const renderContextRows = (
         // The chat session identifier ties the ticket to the service logs (Vercel Logs and
         // Sentry Logs both index it) and to the Upstash session keys.
         [contextLabels.session, `\`${sessionId}\``],
-        [contextLabels.route, appContext.route],
-        [contextLabels.appVersion, appContext.appVersion],
-        [contextLabels.dao, appContext.daoAddress],
-        [contextLabels.network, appContext.network],
+        [contextLabels.route, inlineContextValue(appContext.route)],
+        [contextLabels.appVersion, inlineContextValue(appContext.appVersion)],
+        [contextLabels.dao, inlineContextValue(appContext.daoAddress)],
+        [contextLabels.network, inlineContextValue(appContext.network)],
         [contextLabels.chainId, appContext.chainId?.toString()],
-        [contextLabels.wallet, appContext.walletAddress],
+        [contextLabels.wallet, inlineContextValue(appContext.walletAddress)],
         // The wallet address is the Sentry `user.id`, so support can jump straight to the session
         // replay and error events for this user.
         [
             contextLabels.sentry,
             appContext.walletAddress
-                ? `search \`user.id:${appContext.walletAddress}\``
+                ? `search ${codeUserText(`user.id:${appContext.walletAddress}`)}`
                 : undefined,
         ],
     ];
@@ -69,18 +79,24 @@ const renderRecentTransactions = (appContext: IAppContext): string | null => {
     const items = transactions
         .map((transaction) => {
             const label =
-                transaction.type ?? issueTexts.defaultTransactionLabel;
-            const hash = transaction.hash ? ` \`${transaction.hash}\`` : '';
+                transaction.type == null
+                    ? issueTexts.defaultTransactionLabel
+                    : inlineUserText(transaction.type);
+            const status = inlineUserText(transaction.status);
+            const hash = transaction.hash
+                ? ` ${codeUserText(transaction.hash)}`
+                : '';
 
-            return `- ${label} — ${transaction.status}${hash}`;
+            return `- ${label} — ${status}${hash}`;
         })
         .join('\n');
 
     return `## ${issueTexts.sections.recentTransactions}\n\n${items}`;
 };
 
-// User-authored content only ever appears inside quoted blocks so it cannot inject headings,
-// mentions, checklists or collapsible markers into the ticket structure.
+// User-authored and client-posted content is escaped wherever it is rendered, and the extracted
+// fields are quoted on top of that, so it cannot inject headings, mentions, links, checklists or
+// collapsible markers into the ticket structure. The verbatim transcript is fenced instead.
 export const buildIssueDescription = (input: {
     sessionId: string;
     fields: ICreateTicketToolInput;
@@ -96,7 +112,7 @@ export const buildIssueDescription = (input: {
         `## ${issueTexts.sections.request}
 
 - **${issueTexts.fieldLabels.intent}:** ${fields.intent}
-- **${issueTexts.fieldLabels.contact}:** ${fields.contact || issueTexts.emptyValue}
+- **${issueTexts.fieldLabels.contact}:** ${fields.contact ? inlineUserText(fields.contact) : issueTexts.emptyValue}
 ${renderContextRows(appContext, sessionId)}`,
     );
 
@@ -125,7 +141,10 @@ ${renderContextRows(appContext, sessionId)}`,
 
     if (files.length > 0) {
         const attachments = files
-            .map((file) => `- [${file.filename}](${file.assetUrl})`)
+            .map(
+                (file) =>
+                    `- [${inlineUserText(file.filename)}](${file.assetUrl})`,
+            )
             .join('\n');
         sections.push(
             `## ${issueTexts.sections.attachments}\n\n${attachments}`,

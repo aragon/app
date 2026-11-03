@@ -1,0 +1,14 @@
+{
+    "framework": "nextjs",
+    "buildCommand": "pnpm build",
+    "routes": [
+        {
+            "handle": "error"
+        },
+        {
+            "src": "/help/(.*)",
+            "status": 404,
+            "dest": "/help/404"
+        }
+    ]
+}

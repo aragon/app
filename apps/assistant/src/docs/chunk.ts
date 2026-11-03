@@ -1,4 +1,8 @@
-import { type ICorpusDocument, isFenceLine, parseHeading } from './corpus';
+import {
+    type ICorpusDocument,
+    isFenceLine,
+    parseHeading,
+} from '@aragon/docs-corpus';
 
 export interface IDocChunk {
     /**

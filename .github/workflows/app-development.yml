@@ -1,6 +1,6 @@
-# The "App Development" workflow runs on pull requests and pushes to the main branch. It builds a development version
-# of the application, runs checks (type checking, linting, tests, etc.), and deploys the application only for pushes to
-# the main branch.
+# The "App Development" workflow runs the repo-wide checks (type checking, linting, tests, the
+# published CSS bundle, changesets) on pull requests and pushes to main, and deploys main to
+# dev.app.aragon.org. Release PRs run the same checks in app-release.yml instead.
 
 name: App Development
 
@@ -22,16 +22,12 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout actions
-        uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/setup
       - name: Setup
-        uses: ./.github/actions/setup
+        uses: aragon/github-templates/steps/setup@main
         with:
-          fetch-depth: 0
+          fetch-depth: "0"
+      - name: Check workflow job guards
+        uses: aragon/github-templates/steps/workflow-guards@main
       - name: Check types
         run: pnpm type-check
       - name: Check linter with formatter
@@ -52,17 +48,29 @@ jobs:
   deploy:
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/shared-deploy.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
     with:
-      domain: "dev.app.aragon.org"
-      env: "development"
+      env: development
+      domain: dev.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_development
+      setup-command: pnpm run setup development
+      patch-root-directory: true
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
   e2e:
     needs: deploy
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/shared-e2e.yml
-    secrets: inherit
+    uses: aragon/github-templates/.github/workflows/e2e.yml@main
     with:
       deployment-url: https://dev.app.aragon.org
       environment: development
+      working-directory: apps/app
+      env-secret-refs: |
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

@@ -3,14 +3,19 @@ import {
     arbitrum,
     avalanche,
     base,
+    baseSepolia,
+    bsc,
+    bscTestnet,
     chiliz,
     citrea,
     hemi,
+    hoodi,
     katana,
     mainnet,
     monad,
     optimism,
     polygon,
+    polygonAmoy,
     robinhood,
     sepolia,
     zksync,
@@ -109,7 +114,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.ETHEREUM_MAINNET]: {
         ...mainnet,
         name: 'Ethereum',
-        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+        logo: '/networks/ethereum.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://eth-mainnet.g.alchemy.com/v2/',
@@ -128,12 +133,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.POLYGON_MAINNET]: {
         ...polygon,
         name: 'Polygon',
-        logo: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
+        logo: '/networks/polygon.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
         },
-        order: 6,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -147,7 +152,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.BASE_MAINNET]: {
         ...base,
         name: 'Base',
-        logo: 'https://mirror-media.imgix.net/publication-images/cgqxxPdUFBDjgKna_dDir.png?h=250&w=250',
+        logo: '/networks/base.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://base-mainnet.g.alchemy.com/v2/',
@@ -166,12 +171,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.ARBITRUM_MAINNET]: {
         ...arbitrum,
         name: 'Arbitrum',
-        logo: 'https://docs.arbitrum.io/img/logo.svg',
+        logo: '/networks/arbitrum.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
         },
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -185,12 +190,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.OPTIMISM_MAINNET]: {
         ...optimism,
         name: 'Optimism',
-        logo: 'https://altcoinsbox.com/wp-content/uploads/2023/03/optimism-logo.svg',
+        logo: '/networks/optimism.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
         },
-        order: 8,
+        order: 9,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -204,12 +209,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.AVAX_MAINNET]: {
         ...avalanche,
         name: 'Avalanche',
-        logo: 'https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png',
+        logo: '/networks/avalanche.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
         },
-        order: 7,
+        order: 8,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -223,12 +228,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.KATANA_MAINNET]: {
         ...katana,
         name: 'Katana',
-        logo: 'https://assets.coingecko.com/asset_platforms/images/32239/large/katana.jpg',
+        logo: '/networks/katana.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/katana/',
         },
-        order: 9,
+        order: 10,
         protocolVersion: latestProtocolVersion,
         beta: false,
         tenderlySupport: true,
@@ -244,7 +249,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...citrea,
         name: 'Citrea',
         logo: '/networks/citrea.svg',
-        order: 11,
+        order: 12,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -257,13 +262,19 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.ZKSYNC_MAINNET]: {
         ...zksync,
+        blockExplorers: {
+            default: {
+                ...zksync.blockExplorers.default,
+                url: 'https://explorer.zksync.io',
+            },
+        },
         name: 'zkSync',
-        logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
+        logo: '/networks/zksync.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://zksync-mainnet.g.alchemy.com/v2/',
         },
-        order: 10,
+        order: 11,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -277,12 +288,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     [Network.CHILIZ_MAINNET]: {
         ...chiliz,
         name: 'Chiliz',
-        logo: 'https://assets.coingecko.com/coins/images/8834/large/CHZ_Token_updated.png',
+        logo: '/networks/chiliz.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ANKR,
             rpcUrl: 'https://rpc.ankr.com/chiliz/',
         },
-        order: 12,
+        order: 13,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -301,7 +312,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hemi/',
         },
-        order: 13,
+        order: 14,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -320,7 +331,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/monad/',
         },
-        order: 3,
+        order: 4,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -333,12 +344,12 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
     },
     [Network.ROBINHOOD_MAINNET]: {
         ...robinhood,
-        logo: '/networks/robinhood.jpg',
+        logo: '/networks/robinhood.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/robinhood/',
         },
-        order: 4,
+        order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -349,12 +360,31 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
         },
     },
+    [Network.BNB_MAINNET]: {
+        ...bsc,
+        name: 'BNB Smart Chain',
+        logo: '/networks/bnb.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/bsc/',
+        },
+        order: 3,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0x0D9A4098271Af5B0CEaF65e395A9097272565a58',
+            daoFactory: '0x8D53E6c8379CE927a975Cb36c0883681a139A50a',
+            pluginSetupProcessor: '0x2E138899d4Fc8a306F2c42256dB9F73B29e2582a',
+            globalExecutor: '0xd94b2c12fBD1371d157c8c8fcC51080Fb630D95A',
+            conditionFactory: '0xdAe329E97A386DBab3A52836d33c8d5A8403566C',
+        },
+    },
 
     // Testnets
     [Network.ETHEREUM_SEPOLIA]: {
         ...sepolia,
         name: 'Ethereum Sepolia',
-        logo: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+        logo: '/networks/sepolia.svg',
         privateRpcConfig: {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://eth-sepolia.g.alchemy.com/v2/',
@@ -368,6 +398,84 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
             globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
             conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
+        },
+    },
+    [Network.BNB_TESTNET]: {
+        ...bscTestnet,
+        name: 'BNB Smart Chain Testnet',
+        logo: '/networks/bnb_testnet.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/bsc-testnet/',
+        },
+        order: 17,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0xbe0ac805395e9CeAc1f445CDe380B23b86fA3742',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
+        },
+    },
+    [Network.ETHEREUM_HOODI]: {
+        ...hoodi,
+        name: 'Ethereum Hoodi',
+        logo: '/networks/hoodi.svg',
+        // Wallets receive this URL on add-chain. The viem default (ethpandaops) rate-limits them.
+        rpcUrls: { default: { http: ['https://hoodi.drpc.org'] } },
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/hoodi/',
+        },
+        order: 15,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0xbe0ac805395e9CeAc1f445CDe380B23b86fA3742',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
+        },
+    },
+    [Network.BASE_SEPOLIA]: {
+        ...baseSepolia,
+        name: 'Base Sepolia',
+        logo: '/networks/base_sepolia.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/base-sepolia/',
+        },
+        order: 16,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0xbe0ac805395e9CeAc1f445CDe380B23b86fA3742',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
+        },
+    },
+    [Network.POLYGON_AMOY]: {
+        ...polygonAmoy,
+        name: 'Polygon Amoy',
+        logo: '/networks/polygon_amoy.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/polygon-amoy/',
+        },
+        order: 18,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: true,
+        addresses: {
+            dao: '0xbe0ac805395e9CeAc1f445CDe380B23b86fA3742',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
         },
     },
 };

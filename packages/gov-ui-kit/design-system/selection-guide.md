@@ -1133,28 +1133,6 @@ Linear progress bar with value, size/variant and an optional threshold indicator
 - `kit:src/core/components/progress/progress.tsx:60`
 - `kit:src/core/components/progress/progress.stories.tsx:1`
 
-### ProposalActionChangeMembers
-
-`import { ProposalActionChangeMembers } from '@aragon/gov-ui-kit';`
-
-ProposalActionChangeMembers: change-members action view of the ProposalActions compound (Compound decoded proposal-actions list).
-
-**References**
-
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.tsx:8`
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeMembers/proposalActionChangeMembers.stories.tsx:1`
-
-### ProposalActionChangeSettings
-
-`import { ProposalActionChangeSettings } from '@aragon/gov-ui-kit';`
-
-ProposalActionChangeSettings: change-settings action view of the ProposalActions compound (Compound decoded proposal-actions list).
-
-**References**
-
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.tsx:6`
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionChangeSettings/proposalActionChangeSettings.stories.tsx:1`
-
 ### ProposalActions.Container
 
 `import { ProposalActions } from '@aragon/gov-ui-kit';`
@@ -1185,7 +1163,7 @@ ProposalActionsItem: individual item element of the ProposalActions compound (Co
 
 **References**
 
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx:46`
+- `kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx:44`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.stories.tsx:1`
 
 ### ProposalActions.ItemSkeleton
@@ -1209,17 +1187,6 @@ ProposalActionsRoot: compound root owning shared state/config of the ProposalAct
 
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.tsx:36`
 - `kit:src/modules/components/proposal/proposalActions/proposalActionsRoot/proposalActionsRoot.stories.tsx:1`
-
-### ProposalActionTokenMint
-
-`import { ProposalActionTokenMint } from '@aragon/gov-ui-kit';`
-
-ProposalActionTokenMint: token-mint action view of the ProposalActions compound (Compound decoded proposal-actions list).
-
-**References**
-
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.tsx:5`
-- `kit:src/modules/components/proposal/proposalActions/proposalActionsList/proposalActionTokenMint/proposalActionTokenMint.stories.tsx:1`
 
 ### ProposalDataListItem.Skeleton
 
@@ -2046,11 +2013,11 @@ DataList item structure for a member (avatar, address/ENS, delegate/token-voting
 
 `import { ProposalActions } from '@aragon/gov-ui-kit';`
 
-Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; typed action views (ProposalActionTokenMint/ChangeMembers/ChangeSettings) are standalone exports.
+Compound decoded proposal-actions list (ProposalActions.Root/Container/Item/ItemSkeleton/Footer) for reviewing and composing on-chain actions; the kit has no built-in action views, so consumers render an action's basic view through `CustomComponent`.
 
 **Usage notes**
 
-- Each `ProposalActions.Item` action must include `from`, `to`, `data`, `value`, `type`, and nullable `inputData`; use the exported `ProposalActionType` enum for action types with a basic view.
+- Each `ProposalActions.Item` action must include `from`, `to`, `data`, `value`, `type`, and nullable `inputData`. The kit has no built-in action views: pass a `CustomComponent` to render an action's basic view.
 - Render `ProposalActions.Item` as a child of `ProposalActions.Container`: the container injects each item's zero-based `index`, and an item rendered without it throws.
 - `editMode` requires a `react-hook-form` `FormProvider`; set `readOnly` when an item must render outside a provider without watching form values.
 
@@ -2567,10 +2534,6 @@ Enum props take a member (`icon={IconType.PLUS}`); string-union props take the q
 ### ProgressVariant
 
 `'primary'`, `'neutral'`, `'success'`, `'critical'`
-
-### ProposalActionType
-
-`ADD_MEMBERS`, `REMOVE_MEMBERS`, `TOKEN_MINT`, `CHANGE_SETTINGS_MULTISIG`, `CHANGE_SETTINGS_TOKENVOTE`
 
 ### ProposalActionTypeNoBasicView
 

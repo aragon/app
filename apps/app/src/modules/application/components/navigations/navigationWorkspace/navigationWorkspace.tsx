@@ -1,0 +1,148 @@
+'use client';
+
+import { DaoAvatar, Wallet } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import { useState } from 'react';
+import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
+import { useEnsName } from '@/modules/ens';
+import { useWorkspace } from '@/modules/workspace/api/workspaceService';
+import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
+import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
+import { useWorkspaceAccountOptions } from '@/modules/workspace/hooks/useWorkspaceAccountOptions';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type INavigationContainerProps,
+    Navigation,
+} from '@/shared/components/navigation';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { useWalletAccount } from '../../../hooks/useWalletAccount';
+import { SupportChatTrigger } from '../../supportChat';
+import { navigationWorkspaceUtils } from './navigationWorkspaceUtils';
+
+export interface INavigationWorkspaceProps extends INavigationContainerProps {
+    /**
+     * ID of the workspace to display the data for.
+     */
+    workspaceId: string;
+}
+
+/**
+ * Navigation bar of the workspace pages.
+ *
+ * Unlike the DAO navigation, the workspace is resolved here on the client instead of being passed down from the
+ * layout: the workspace registry is backed by local storage and cannot be read during a server render (see
+ * `docs/projectDocs/createWorkspace.md`).
+ *
+ * It renders without waiting for that read. Every section link is built from the workspace ID on the route, so the
+ * bar is navigable from the first paint on a cold load; the workspace name, avatar and account count are the only
+ * things that arrive with the read, and they are absent until it resolves.
+ */
+export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
+    props,
+) => {
+    const { workspaceId, containerClasses, ...otherProps } = props;
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const { t } = useTranslations();
+    const { address } = useWalletAccount();
+    const { data: displayName } = useEnsName(address, {
+        stripAragonRegistrySuffix: true,
+    });
+    const isConnected = useWalletConnected();
+    const isMounted = useIsMounted();
+    const effectiveIsConnected = isMounted && isConnected && address != null;
+    const { open } = useDialogContext();
+
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
+
+    // The links stay scoped to the account being looked at, so a tab change keeps the reader on it. The hook reads
+    // the account from the route, which is where it lives, and falls back to the aggregated segment.
+    const { accountId } = useWorkspaceAccountOptions();
+
+    const handleWalletClick = () => {
+        const dialog = effectiveIsConnected
+            ? ApplicationDialogId.USER
+            : ApplicationDialogId.CONNECT_WALLET;
+        open(dialog);
+    };
+
+    const walletUser =
+        isMounted && address != null
+            ? { address, name: displayName ?? undefined }
+            : undefined;
+
+    const workspaceAvatar = ipfsUtils.cidToSrc(workspace?.avatar);
+
+    // Built from the route, so the links are complete on the first paint: only the name, avatar and account count
+    // below wait for the workspace itself.
+    const links = navigationWorkspaceUtils.buildLinks(
+        workspaceId,
+        'page',
+        accountId,
+    );
+    const dialogLinks = navigationWorkspaceUtils.buildLinks(
+        workspaceId,
+        'dialog',
+        accountId,
+    );
+
+    return (
+        <Navigation.Container
+            containerClasses={classNames(
+                'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
+                containerClasses,
+            )}
+            trailing={<SupportChatTrigger />}
+            {...otherProps}
+        >
+            <div className="flex items-center justify-between gap-1">
+                <div className="flex min-w-0 items-center gap-2">
+                    <Navigation.Trigger
+                        className="shrink-0"
+                        onClick={() => setIsDialogOpen(true)}
+                    />
+                    <WorkspaceSelector workspaceId={workspaceId} />
+                    <WorkspaceAccountSelector workspaceId={workspaceId} />
+                </div>
+                <Navigation.Links className="hidden lg:flex" links={links} />
+                <Wallet onClick={handleWalletClick} user={walletUser} />
+            </div>
+            <Navigation.Dialog
+                hiddenDescription={t(
+                    'app.application.navigationWorkspace.a11y.description',
+                )}
+                hiddenTitle={t(
+                    'app.application.navigationWorkspace.a11y.title',
+                )}
+                links={dialogLinks}
+                onOpenChange={setIsDialogOpen}
+                open={isDialogOpen}
+            >
+                <div className="flex flex-col gap-3 px-8">
+                    <DaoAvatar
+                        name={workspace?.name}
+                        responsiveSize={{ sm: 'xl' }}
+                        size="lg"
+                        src={workspaceAvatar}
+                    />
+                    <div className="flex flex-col gap-1.5 font-normal leading-tight">
+                        <p className="truncate text-lg text-neutral-800 sm:text-xl">
+                            {workspace?.name}
+                        </p>
+                        <p className="truncate text-neutral-500 text-sm sm:text-base">
+                            {t('app.application.navigationWorkspace.accounts', {
+                                count: workspace?.accounts.length ?? 0,
+                            })}
+                        </p>
+                    </div>
+                </div>
+            </Navigation.Dialog>
+        </Navigation.Container>
+    );
+};

@@ -3,6 +3,7 @@
 import { Heading } from '@aragon/gov-ui-kit';
 import { CtaCard } from '@/shared/components/ctaCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useHelpCenterLink } from '@/shared/hooks/useHelpCenterLink';
 
 export interface IAdminOnboardingProps {
     /**
@@ -19,6 +20,12 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
     const { displayName, onAddGovernance } = props;
 
     const { t } = useTranslations();
+
+    // The governance area of the help center, the developer portal while the help center is off.
+    const docsUrl = useHelpCenterLink({
+        path: '/governance',
+        fallback: 'https://docs.aragon.org',
+    });
 
     return (
         <div className="flex flex-col gap-8">
@@ -78,7 +85,7 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                         label: t(
                             'app.dashboard.dashboardOnboarding.admin.free.viewDocs',
                         ),
-                        href: 'https://docs.aragon.org',
+                        href: docsUrl,
                     }}
                     title={t(
                         'app.dashboard.dashboardOnboarding.admin.free.title',

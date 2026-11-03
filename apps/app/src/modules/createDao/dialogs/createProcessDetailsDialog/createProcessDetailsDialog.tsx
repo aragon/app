@@ -6,6 +6,7 @@ import {
     type IWizardDetailsDialogStep,
     WizardDetailsDialog,
 } from '@/shared/components/wizardDetailsDialog';
+import { useHelpCenterLink } from '@/shared/hooks/useHelpCenterLink';
 
 export interface ICreateProcessDetailsDialogParams {
     /**
@@ -39,6 +40,14 @@ export const CreateProcessDetailsDialog: React.FC<
 
     const { t } = useTranslations();
 
+    // Staged governance processes on the help center, the SPP page of the developer portal while
+    // the help center is off.
+    const infoLink = useHelpCenterLink({
+        path: '/governance/process#staged-governance-processes',
+        fallback:
+            'https://docs.aragon.org/spp/1.x/index.html#staged_governance_processes',
+    });
+
     const steps: IWizardDetailsDialogStep[] = [
         {
             label: t('app.createDao.createProcessDetailsDialog.steps.describe'),
@@ -71,7 +80,7 @@ export const CreateProcessDetailsDialog: React.FC<
                 'app.createDao.createProcessDetailsDialog.description',
             )}
             dialogId={id}
-            infoLink="https://docs.aragon.org/spp/1.x/index.html#staged_governance_processes"
+            infoLink={infoLink}
             onActionClick={onActionClick}
             steps={steps}
             title={t('app.createDao.createProcessDetailsDialog.title')}

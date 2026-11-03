@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { botIdUtils } from '@/shared/utils/botIdUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 import {
@@ -28,6 +29,13 @@ export class ProxyRpcUtils {
     }
 
     request = async (request: NextRequest, { params }: IRpcRequestOptions) => {
+        if (await botIdUtils.isBot('rpc', { onError: 'allow' })) {
+            return NextResponse.json(
+                { error: 'Access denied' },
+                { status: 403 },
+            );
+        }
+
         const { chainId } = await params;
 
         const rpcEndpoint = this.chainIdToRpcEndpoint(chainId);
@@ -40,12 +48,7 @@ export class ProxyRpcUtils {
             );
         }
 
-        const monitoringContext = {
-            chainId,
-            rpcEndpoint,
-            requestMethod: request.method,
-            requestOptions,
-        };
+        const monitoringContext = this.buildMonitoringContext(chainId, request);
 
         try {
             const result = await fetch(rpcEndpoint, requestOptions);
@@ -135,6 +138,18 @@ export class ProxyRpcUtils {
             (network) =>
                 networkDefinitions[network as Network].id === Number(chainId),
         );
+
+    // The resolved endpoint embeds the provider key, so failure telemetry carries the chain and
+    // provider instead of the endpoint or the forwarded request.
+    private buildMonitoringContext = (chainId: string, request: Request) => {
+        const network = this.chainIdToNetwork(chainId);
+        const rpcProvider =
+            network != null
+                ? networkDefinitions[network].privateRpcConfig?.rpcProvider
+                : undefined;
+
+        return { chainId, network, rpcProvider, requestMethod: request.method };
+    };
 
     // Return type extended to include Node-specific 'duplex' property used for streamed requests.
     private buildRequestOptions = (

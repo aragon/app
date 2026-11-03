@@ -11,7 +11,8 @@ const assistantUrl = process.env.NEXT_PUBLIC_ASSISTANT_URL ?? '';
 
 // The trigger opens the chat whenever the feature flag is on: no availability gate in front of
 // the panel, service failures surface inside the widget with the support email one click away.
-// What the chat may do is a flag too: supportChatDocs lets it answer from the documentation.
+// What the chat may do is a flag too: supportChatDocs lets it answer from the documentation,
+// helpCenter lets it link to the pages of the help center the app serves at /help.
 export const SupportChat: React.FC = () => {
     const { isOpen, close } = useSupportChatContext();
     const { isEnabled } = useFeatureFlags();
@@ -36,7 +37,10 @@ export const SupportChat: React.FC = () => {
         <AssistantChatLazy
             appContext={appContext}
             assistantUrl={assistantUrl}
-            features={{ docsSearch: isEnabled('supportChatDocs') }}
+            features={{
+                docsSearch: isEnabled('supportChatDocs'),
+                docsLinks: isEnabled('helpCenter'),
+            }}
             isOpen={isOpen}
             monitoring={supportChatMonitoring}
             onClose={close}

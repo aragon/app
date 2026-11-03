@@ -9,7 +9,10 @@ import type {
     IFeatureFlagsProvider,
 } from './featureFlags.api';
 import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.constants';
-import { GithubCmsFeatureFlagsProvider } from './providers/githubProvider';
+import {
+    type GithubCmsCookieSourceGetter,
+    GithubCmsFeatureFlagsProvider,
+} from './providers/githubProvider';
 import { getEnvironment } from './utils/getEnvironment';
 
 const getStaticDefaultValue = (
@@ -119,6 +122,23 @@ class FeatureFlags {
 }
 
 /**
+ * Feature flags service over the code definitions, the CMS overrides of the current environment
+ * and the local overrides in the cookies the caller reads for it — for the proxy, which runs
+ * before `headers()` is available.
+ */
+export const createFeatureFlags = (
+    getCookieSource: GithubCmsCookieSourceGetter,
+): FeatureFlags => {
+    const environment = getEnvironment();
+
+    return new FeatureFlags(
+        new GithubCmsFeatureFlagsProvider(environment, getCookieSource),
+        FEATURE_FLAG_DEFINITIONS,
+        environment,
+    );
+};
+
+/**
  * Server-only feature flags service.
  *
  * All storage specific logic is delegated to the provider.
@@ -126,11 +146,7 @@ class FeatureFlags {
  * without touching the public API. The effective environment is provided
  * explicitly by the caller.
  */
-export const featureFlags = new FeatureFlags(
-    new GithubCmsFeatureFlagsProvider(getEnvironment(), async () => {
-        const h = await headers();
-        return h.get('cookie');
-    }),
-    FEATURE_FLAG_DEFINITIONS,
-    getEnvironment(),
-);
+export const featureFlags = createFeatureFlags(async () => {
+    const h = await headers();
+    return h.get('cookie');
+});

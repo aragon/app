@@ -91,6 +91,31 @@ describe('<WizardRoot /> component', () => {
         });
     });
 
+    it('opens on the first step by default', () => {
+        const ActiveStep = () => <p>{useWizardContext().activeStep}</p>;
+        render(
+            createTestComponent({
+                initialSteps: wizardSteps,
+                children: <ActiveStep />,
+            }),
+        );
+
+        expect(screen.getByText('metadata')).toBeInTheDocument();
+    });
+
+    it('opens on the initial active step when set', () => {
+        const ActiveStep = () => <p>{useWizardContext().activeStep}</p>;
+        render(
+            createTestComponent({
+                initialSteps: wizardSteps,
+                initialActiveStep: 'network',
+                children: <ActiveStep />,
+            }),
+        );
+
+        expect(screen.getByText('network')).toBeInTheDocument();
+    });
+
     it('tracks wizard start and initial step when analytics are configured', async () => {
         render(
             createTestComponent({

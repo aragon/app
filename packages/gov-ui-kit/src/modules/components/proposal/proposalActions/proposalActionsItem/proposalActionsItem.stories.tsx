@@ -1,8 +1,20 @@
 import { DevTool } from '@hookform/devtools';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FormProvider, useForm } from 'react-hook-form';
-import { generateProposalActionTokenMint, type IProposalActionsItemProps, ProposalActions } from '../index';
+import { DefinitionList } from '../../../../../core';
+import { type IProposalActionComponentProps, type IProposalActionsItemProps, ProposalActions } from '../index';
 import { generateProposalAction } from '../proposalActionsTestUtils';
+
+const CustomActionView = (props: IProposalActionComponentProps) => {
+    const { action } = props;
+
+    return (
+        <DefinitionList.Container className="w-full">
+            <DefinitionList.Item term="Function">{action.inputData?.function}</DefinitionList.Item>
+            <DefinitionList.Item term="Target">{action.to}</DefinitionList.Item>
+        </DefinitionList.Container>
+    );
+};
 
 const defaultRender = (props: IProposalActionsItemProps) => {
     const methods = useForm({ mode: 'onTouched', defaultValues: props.action });
@@ -118,37 +130,20 @@ export const Unverified: Story = {
 };
 
 /**
- * For supported/native actions, the ProposalActions.Item component renders the related BASIC view by default.
+ * When a `CustomComponent` is passed, the ProposalActions.Item component renders it as the BASIC view by default.
  */
-export const Native: Story = {
+export const CustomView: Story = {
     render: defaultRender,
     args: {
         index: 0,
-        action: generateProposalActionTokenMint({
-            to: '0x80CB2f4f9B403C4C418C597d96c95FE14FD344a6',
-            data: '0xfdbd7eb30f83e91c298b29ec98b25dccba03447d2805c35a3c5f14dac295a8610d165173',
-            receiver: {
-                address: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b',
-                name: 'ens.eth',
-                currentBalance: '500',
-                newBalance: '1500',
-            },
+        CustomComponent: CustomActionView,
+        action: generateProposalAction({
+            to: '0x96208a79d4f3386922ebEc815EF1C0d02b48Eb70',
             inputData: {
-                function: 'mint',
-                contract: 'Governance Token',
+                function: 'addAddresses',
+                contract: 'Multisig',
                 parameters: [
-                    {
-                        name: 'to',
-                        type: 'address',
-                        value: '0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b',
-                        notice: 'The receiver of the tokens',
-                    },
-                    {
-                        name: 'amount',
-                        type: 'uint256',
-                        value: '1000000000',
-                        notice: 'Amount of minted tokens',
-                    },
+                    { name: '_members', type: 'address[]', value: ['0x15b4bfc1c85ffbdb6d7d0eb9f30c49657dfb1f5b'] },
                 ],
             },
         }),

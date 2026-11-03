@@ -31,12 +31,13 @@ class PluginSortUtils {
      * 1. Root-DAO plugins first, then linked-account plugins.
      * 2. Within each group, sorted by interface type priority.
      *
-     * Does not mutate the input array.
+     * Does not mutate the input array, and preserves the type it is given: callers tag their tabs with fields of
+     * their own, which a sort must not erase.
      */
-    sortByDisplayOrder = (
-        plugins: IFilterComponentPlugin<IDaoPlugin>[],
+    sortByDisplayOrder = <T extends IFilterComponentPlugin<IDaoPlugin>>(
+        plugins: T[],
         params?: ISortPluginsByDisplayOrderParams,
-    ): IFilterComponentPlugin<IDaoPlugin>[] => {
+    ): T[] => {
         const { rootDaoAddress, typePriority = defaultTypePriority } =
             params ?? {};
 

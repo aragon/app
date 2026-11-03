@@ -1,10 +1,9 @@
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import {
-    addressUtils,
-    ProposalActionType as GukProposalActionType,
-    IconType,
-    type IProposalActionChangeSettings as IGukProposalActionChangeSettings,
-} from '@aragon/gov-ui-kit';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+    type IProposalAction,
+    type IProposalActionChangeSettings,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { ITokenProposalAction } from '@/plugins/tokenPlugin/types';
@@ -113,7 +112,7 @@ class LockToVoteActionUtils {
 
     normalizeChangeSettingsAction = (
         params: INormalizeChangeSettingsParams,
-    ): IGukProposalActionChangeSettings => {
+    ): IProposalActionChangeSettings => {
         const { action, t, token } = params;
         const { proposedSettings, existingSettings, ...otherValues } = action;
 
@@ -134,7 +133,7 @@ class LockToVoteActionUtils {
 
         return {
             ...otherValues,
-            type: GukProposalActionType.CHANGE_SETTINGS_TOKENVOTE,
+            type: ProposalActionType.CHANGE_SETTINGS,
             existingSettings: parsedExistingSettings,
             proposedSettings: parsedProposedSettings,
         };
