@@ -1,5 +1,15 @@
 # @aragon/aragon-domain
 
+## 0.4.1
+
+### Patch Changes
+
+- [#1425](https://github.com/aragon/app/pull/1425) [`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Move the package into the aragon/app monorepo, with its history.
+
+- [#1449](https://github.com/aragon/app/pull/1449) [`2c28ae6`](https://github.com/aragon/app/commit/2c28ae66db1ca496314ff47f4c898e8009189a78) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (viem 2.57.1, vitest 5)
+
+- [#1529](https://github.com/aragon/app/pull/1529) [`142ec69`](https://github.com/aragon/app/commit/142ec694d065dbc21c075e58cada6757fe82ec16) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (viem 2.57.7, vitest 5.0.5, tsup 9)
+
 ## 0.4.0
 
 ### Minor Changes
