@@ -450,7 +450,6 @@
           "help": "Support",
           "learn": "Learn",
           "privacy": "Privacy",
-          "terms": "Terms",
           "termsOfService": "Terms of Service"
         }
       },
@@ -508,7 +507,6 @@
       },
       "supportChat": {
         "launcher": {
-          "close": "Close support chat",
           "label": "Ask Aragon"
         },
         "panel": {

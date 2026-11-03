@@ -5,17 +5,10 @@ import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
-import { footerLinks, type IFooterLink } from './footerLinks';
+import { footerLinks } from './footerLinks';
 
 // Explore is reached through "Governed on Aragon".
-const sidebarLinks = footerLinks
-    .filter(({ label }) => label !== 'explore')
-    .map(
-        (link): IFooterLink =>
-            link.label === 'termsOfService'
-                ? { ...link, label: 'terms' }
-                : link,
-    );
+const sidebarLinks = footerLinks.filter(({ label }) => label !== 'explore');
 
 /**
  * Footer content of the side navigation, replacing the page footer while the sidebar is shown.
@@ -37,7 +30,7 @@ export const FooterSidebar: React.FC = () => {
                 </span>
                 <AragonLogo size="sm" />
             </Link>
-            <div className="flex flex-wrap items-center gap-x-3">
+            <div className="flex flex-wrap items-center gap-x-2">
                 {sidebarLinks.map(({ link, label, target }) => (
                     <Link
                         className="font-normal text-neutral-500 text-sm hover:text-neutral-800"
