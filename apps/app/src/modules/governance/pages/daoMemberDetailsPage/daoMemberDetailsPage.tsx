@@ -80,6 +80,7 @@ export const DaoMemberDetailsPage: React.FC<
             type: PluginType.BODY,
             includeSubPlugins: true,
             includeLinkedAccounts: true,
+            includeProcessSafes: true,
         }) ?? [];
     const visibleBodyPlugins = daoVisibilityUtils.filterHiddenPlugins(
         allBodyPlugins,

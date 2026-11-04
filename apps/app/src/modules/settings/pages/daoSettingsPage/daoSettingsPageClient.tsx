@@ -8,6 +8,7 @@ import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/sel
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { AdminSettingsPanel } from '@/plugins/adminPlugin/components/adminSettingsPanel';
 import {
+    type IDao,
     type IDaoPlugin,
     type Network,
     PluginInterfaceType,
@@ -45,6 +46,22 @@ export interface IDaoSettingsPageClientProps {
      */
     isLinkedAccountEnabled?: boolean;
 }
+
+const getProcessDetailsUrl = (
+    dao: IDao,
+    process: IDaoPlugin,
+): string | undefined => {
+    const defaultUrl = daoUtils.getDaoUrl(dao, `settings/${process.slug}`);
+
+    if (
+        process.interfaceType === PluginInterfaceType.SAFE &&
+        process.daoAddress != null
+    ) {
+        return `/dao/${dao.network}/${process.daoAddress}/settings/${process.slug}`;
+    }
+
+    return defaultUrl;
+};
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
     props,
@@ -225,10 +242,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                         {processPlugins.map((process) => (
                             <ProcessDataListItem
                                 dao={dao}
-                                href={daoUtils.getDaoUrl(
-                                    dao,
-                                    `settings/${process.meta.slug}`,
-                                )}
+                                href={getProcessDetailsUrl(dao, process.meta)}
                                 key={process.uniqueId}
                                 process={process.meta}
                             />

@@ -186,6 +186,27 @@ const multiSendHeaderLength = 2 + 40 + 64 + 64;
 export const maxSafeBatchDepth = 4;
 
 /**
+ * Canonical MultiSend and MultiSendCallOnly deployments used by Safe 1.3.0 and 1.4.1. The
+ * addresses are deterministic across the standard EVM chains this app supports; calldata alone
+ * never proves that a call executes MultiSend.
+ */
+export const safeMultiSendDeploymentAddresses: Readonly<Record<string, true>> =
+    {
+        '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
+        '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
+        '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
+        '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
+    };
+
+/**
+ * A Safe transaction only executes a MultiSend payload when the Safe delegates to a known
+ * MultiSend deployment. A selector-shaped payload sent to an arbitrary contract is not a batch.
+ */
+export const isSafeMultiSendDelegateCall = (call: ISafeCall): boolean =>
+    call.operation === 1 &&
+    safeMultiSendDeploymentAddresses[call.to.toLowerCase()] === true;
+
+/**
  * Reconstruction and inspection of the exact Safe transaction an owner signs: its envelope, its
  * hash identity, and the calls it actually carries.
  *

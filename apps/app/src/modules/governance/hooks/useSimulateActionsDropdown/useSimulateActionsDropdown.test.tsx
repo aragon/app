@@ -1,5 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import { encodeFunctionData } from 'viem';
+import { setMetadataAbi } from '@/modules/governance/constants/setMetadataAbi';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, generateFormContext } from '@/shared/testUtils';
 import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
@@ -168,5 +170,49 @@ describe('useSimulateActionsDropdown hook', () => {
                 },
             ),
         );
+    });
+
+    it('uses the Safe sender while preserving encoded metadata actions', async () => {
+        const open = jest.fn();
+        const metadata = '0x1234' as const;
+        const metadataAction = {
+            to: '0xdao',
+            data: encodeFunctionData({
+                abi: [setMetadataAbi],
+                args: [metadata],
+            }),
+            value: '0',
+        };
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({
+                getValues: jest.fn().mockReturnValue([action]),
+                trigger: jest.fn().mockResolvedValue(true),
+            }),
+        );
+        prepareActionsSpy.mockResolvedValue([metadataAction]);
+
+        const { result } = renderTestHook({
+            from: '0xsafe',
+            isDirectExecute: true,
+            formId: 'execId',
+        });
+        await result.current?.[0].onClick?.();
+
+        await waitFor(() =>
+            expect(open).toHaveBeenCalledWith(
+                GovernanceDialogId.SIMULATE_ACTIONS,
+                {
+                    params: {
+                        network: 'ethereum-mainnet',
+                        from: '0xsafe',
+                        daoAddress: '0xdao',
+                        actions: [metadataAction],
+                        formId: 'execId',
+                    },
+                },
+            ),
+        );
+        expect(metadataAction.data.slice(0, 10)).toBe('0xee57e36f');
     });
 });

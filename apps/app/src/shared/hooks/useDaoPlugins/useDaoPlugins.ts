@@ -45,6 +45,10 @@ export interface IUseDaoPluginsParams {
      */
     slug?: string;
     /**
+     * Includes Safe process plugins when filtering for body plugins.
+     */
+    includeProcessSafes?: boolean;
+    /**
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
@@ -163,6 +167,7 @@ export const useDaoPlugins = (
         includeGroupFilter,
         interfaceType,
         slug,
+        includeProcessSafes,
         hasExecute,
         visibleOnly,
         includeUnsupported,
@@ -178,6 +183,7 @@ export const useDaoPlugins = (
         pluginAddress,
         includeSubPlugins,
         includeLinkedAccounts,
+        includeProcessSafes,
         interfaceType,
         slug,
         hasExecute,

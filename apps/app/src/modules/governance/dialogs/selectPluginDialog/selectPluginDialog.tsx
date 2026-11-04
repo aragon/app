@@ -1,7 +1,11 @@
 import { Dialog, invariant, Spinner } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -37,6 +41,8 @@ export interface ISelectPluginDialogParams {
      * Only allow plugins with full execute permissions.
      */
     fullExecuteOnly?: boolean;
+    /** Include native Safe accounts in proposal creation only. */
+    allowNativeSafe?: boolean;
     /**
      * Callback called on back action. Turns the secondary action into a back one for the callers opening this
      * dialog as the second step of a stacked flow, where cancelling would drop the first step as well.
@@ -63,6 +69,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
         initialPlugin,
         variant = 'proposal',
         fullExecuteOnly,
+        allowNativeSafe,
         onBack,
     } = location.params;
 
@@ -81,18 +88,21 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
     })!;
 
     const processedDaoPlugins = daoPlugins.filter(
-        (plugin) => !excludePluginIds?.includes(plugin.uniqueId),
+        (plugin) =>
+            (allowNativeSafe ||
+                plugin.meta.interfaceType !== PluginInterfaceType.SAFE) &&
+            !excludePluginIds?.includes(plugin.uniqueId),
     );
 
     const [selectedPlugin, setSelectedPlugin] = useState(initialPlugin);
     const [eligibility, setEligibility] = useState<Record<string, boolean>>({});
 
     const handleEligibilityResult = useCallback(
-        (pluginId: string, isEligible: boolean) =>
+        (uniqueId: string, isEligible: boolean) =>
             setEligibility((current) =>
-                current[pluginId] === isEligible
+                current[uniqueId] === isEligible
                     ? current
-                    : { ...current, [pluginId]: isEligible },
+                    : { ...current, [uniqueId]: isEligible },
             ),
         [],
     );
@@ -155,8 +165,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
                             key={plugin.uniqueId}
                             onClick={() => setSelectedPlugin(plugin)}
                             onEligibilityResult={handleEligibilityResult}
-                            pluginId={plugin.uniqueId}
                             process={plugin.meta}
+                            uniqueId={plugin.uniqueId}
                         />
                     ))}
                 </div>

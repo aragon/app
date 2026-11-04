@@ -90,7 +90,11 @@ export const ProposalVotingStatus: React.FC<IProposalVotingStatusProps> = (props
     const { copy } = useGukModulesContext();
 
     const mainText = getMainText(status, copy, isMultiStage);
-    const secondaryText = statusToSecondaryText(copy)[status];
+    const hasCountdown = status === ProposalStatus.ACTIVE && endDate != null;
+    const secondaryText =
+        status === ProposalStatus.ACTIVE && !hasCountdown
+            ? copy.proposalDataListItemStatus.statusLabel[status]
+            : statusToSecondaryText(copy)[status];
     const statusText = statusToText(copy)[status];
 
     if (status === ProposalStatus.ADVANCEABLE) {
@@ -107,7 +111,7 @@ export const ProposalVotingStatus: React.FC<IProposalVotingStatusProps> = (props
     return (
         <div className={classNames('flex flex-row items-center gap-2', className)} {...otherProps}>
             <div className="flex flex-row gap-0.5">
-                {status === ProposalStatus.ACTIVE && (
+                {hasCountdown && (
                     <span className="text-primary-400">
                         <Rerender>
                             {() => formatterUtils.formatDate(endDate, { format: DateFormat.DURATION }) ?? '-'}

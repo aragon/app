@@ -156,6 +156,23 @@ describe('useSimulateProposalCreation hook', () => {
         );
     });
 
+    it('does not build or simulate a proposal when explicitly disabled', () => {
+        renderHook(() =>
+            useSimulateProposalCreation({
+                plugin: generateDaoPlugin(),
+                network: Network.ETHEREUM_MAINNET,
+                enabled: false,
+            }),
+        );
+
+        expect(buildTransactionSpy).not.toHaveBeenCalled();
+        expect(useCallSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                query: expect.objectContaining({ enabled: false }),
+            }),
+        );
+    });
+
     it('disables the query when the network is missing', () => {
         renderHook(() =>
             useSimulateProposalCreation({ plugin: generateDaoPlugin() }),

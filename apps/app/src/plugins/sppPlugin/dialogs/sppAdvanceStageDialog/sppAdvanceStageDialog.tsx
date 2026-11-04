@@ -95,7 +95,7 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
         .find(({ stageIndex }) => stageIndex === proposal.stageIndex)
         ?.plugins.some(
             (plugin) =>
-                sppStageUtils.getBodyPluginId(plugin) ===
+                sppStageUtils.getBodyPluginId(plugin, proposal.network) ===
                 PluginInterfaceType.SAFE,
         );
 

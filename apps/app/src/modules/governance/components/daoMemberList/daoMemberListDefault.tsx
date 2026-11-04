@@ -206,7 +206,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
  * Extracted from the inline `.map()` because React hooks cannot
  * be called inside a callback — they must be called at the top level of a component.
  * With `batch.multicall` enabled on the viem client, the ENS reads across
- * the rendered list items are auto-batched into RPC multicalls.
+ * the rendered list are auto-batched into RPC multicalls.
  */
 const EnsAwareMemberItem: React.FC<{
     member: IMember;

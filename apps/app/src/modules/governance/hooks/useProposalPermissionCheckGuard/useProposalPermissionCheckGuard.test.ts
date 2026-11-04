@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
+import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import * as UseDaoPlugins from '@/shared/hooks/useDaoPlugins';
@@ -21,8 +22,18 @@ describe('useProposalPermissionCheckGuard hook', () => {
     const useDaoPluginsSpy = jest.spyOn(UseDaoPlugins, 'useDaoPlugins');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useWalletAccountSpy = jest.spyOn(
+        walletAccountApi,
+        'useWalletAccount',
+    );
 
     beforeEach(() => {
+        useWalletAccountSpy.mockReturnValue({
+            address: '0x1111111111111111111111111111111111111111',
+            chainId: 1,
+            isConnecting: false,
+            isReconnecting: false,
+        });
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
@@ -33,6 +44,7 @@ describe('useProposalPermissionCheckGuard hook', () => {
         useDaoPluginsSpy.mockReset();
         useRouterSpy.mockReset();
         useDaoSpy.mockReset();
+        useWalletAccountSpy.mockReset();
     });
 
     it('calls createProposalGuard when canCreateProposal check returns false', () => {
@@ -146,5 +158,60 @@ describe('useProposalPermissionCheckGuard hook', () => {
         // Without the fix, guard would be called 4 times
         // With the fix, it should only be called once
         expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
+    });
+
+    it('runs the creation guard once after it is subsequently enabled', () => {
+        const checkCreateProposalGuard = jest.fn();
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
+        usePermissionCheckGuardSpy.mockImplementation(() => ({
+            result: false,
+            check: jest.fn(() => checkCreateProposalGuard()),
+        }));
+
+        const { rerender } = renderHook(
+            ({ enabled }) =>
+                useProposalPermissionCheckGuard({
+                    daoId: '',
+                    pluginAddress: '',
+                    enabled,
+                }),
+            { initialProps: { enabled: false } },
+        );
+        expect(checkCreateProposalGuard).not.toHaveBeenCalled();
+
+        rerender({ enabled: true });
+        rerender({ enabled: true });
+
+        expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
+    });
+    it('reruns the creation guard when the connected wallet changes', () => {
+        const checkCreateProposalGuard = jest.fn();
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
+        usePermissionCheckGuardSpy.mockImplementation(() => ({
+            result: false,
+            check: jest.fn(() => checkCreateProposalGuard()),
+        }));
+
+        const { rerender } = renderHook(() =>
+            useProposalPermissionCheckGuard({
+                daoId: '',
+                pluginAddress: '',
+            }),
+        );
+        expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
+
+        useWalletAccountSpy.mockReturnValue({
+            address: '0x2222222222222222222222222222222222222222',
+            chainId: 1,
+            isConnecting: false,
+            isReconnecting: false,
+        });
+        rerender();
+
+        expect(checkCreateProposalGuard).toHaveBeenCalledTimes(2);
     });
 });

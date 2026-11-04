@@ -21,13 +21,13 @@ export interface ISimulateActionsDialogParams {
     /**
      * Address that calls `DAO.execute` and that the actions are therefore simulated from (the
      * `from` address): the governance plugin for proposals, the connected wallet for direct
-     * execution.
+     * execution, or the native Safe for Safe-backed direct execution.
      */
     from: string;
     /**
      * Address of the DAO the actions are executed on. Set only for direct execution, in which case
-     * the actions are simulated against the DAO from the connected wallet (`from`) instead of a
-     * governance plugin.
+     * the actions are simulated against the DAO from the `from` address instead of a governance
+     * plugin.
      */
     daoAddress?: string;
     /**

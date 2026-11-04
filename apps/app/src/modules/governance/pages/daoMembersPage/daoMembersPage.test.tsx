@@ -7,8 +7,11 @@ import {
     Network,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { PluginType } from '@/shared/types';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateLinkedAccount,
+} from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     buildTokenVotingMembershipParams,
@@ -93,11 +96,6 @@ describe('<DaoMembersPage /> component', () => {
         expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
             daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
         );
-        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
-            type: PluginType.BODY,
-            includeSubPlugins: true,
-            includeLinkedAccounts: true,
-        });
 
         const memberListParams = {
             daoId: expectedDaoId,
@@ -138,13 +136,14 @@ describe('<DaoMembersPage /> component', () => {
         );
     });
 
-    it('prefetches Safe owners when a Safe is a DAO body', async () => {
+    it('prefetches Safe owners when a Safe is execute-only', async () => {
         const expectedDaoId = 'test-dao-id';
         const safeAddress = '0x1234567890123456789012345678901234567890';
         const safePlugin = generateDaoPlugin({
             address: safeAddress,
             interfaceType: PluginInterfaceType.SAFE,
-            isBody: true,
+            isProcess: true,
+            isBody: false,
         });
         const dao = generateDao({ plugins: [safePlugin] });
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
@@ -157,6 +156,44 @@ describe('<DaoMembersPage /> component', () => {
             memberListOptions({
                 queryParams: {
                     daoId: expectedDaoId,
+                    pageSize: daoMembersCount,
+                    pluginAddress: safeAddress,
+                },
+            }).queryKey,
+        );
+    });
+
+    it('prefetches linked Safe members from the owning DAO', async () => {
+        const rootDaoAddress = '0x1111111111111111111111111111111111111111';
+        const linkedDaoAddress = '0x2222222222222222222222222222222222222222';
+        const safeAddress = '0x3333333333333333333333333333333333333333';
+        const expectedDaoId = `${Network.ETHEREUM_MAINNET}-${rootDaoAddress}`;
+        const memberDaoId = `${Network.ETHEREUM_MAINNET}-${linkedDaoAddress}`;
+        const safePlugin = generateDaoPlugin({
+            address: safeAddress,
+            daoAddress: linkedDaoAddress,
+            interfaceType: PluginInterfaceType.SAFE,
+            isProcess: true,
+            isBody: false,
+        });
+        const dao = generateDao({
+            address: rootDaoAddress,
+            linkedAccounts: [
+                generateLinkedAccount({ address: linkedDaoAddress }),
+            ],
+            network: Network.ETHEREUM_MAINNET,
+            plugins: [safePlugin],
+        });
+        resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
+        fetchQuerySpy.mockResolvedValue(dao);
+        getDaoPluginsSpy.mockReturnValue([safePlugin]);
+
+        render(await createTestComponent());
+
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            memberListOptions({
+                queryParams: {
+                    daoId: memberDaoId,
                     pageSize: daoMembersCount,
                     pluginAddress: safeAddress,
                 },

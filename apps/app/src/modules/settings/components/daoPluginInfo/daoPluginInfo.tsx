@@ -4,7 +4,7 @@ import {
     DefinitionList,
     IconType,
 } from '@aragon/gov-ui-kit';
-import { useDao } from '@/shared/api/daoService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
@@ -25,9 +25,16 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
 
     const { description, links } = plugin;
 
-    const pluginInfo = useDaoPluginInfo({ daoId, address: plugin.address });
+    const pluginDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
+    const pluginInfo = useDaoPluginInfo({
+        daoId: pluginDaoId,
+        address: plugin.address,
+    });
 
-    const processLink = daoUtils.getDaoUrl(dao, `settings/${plugin.slug}`);
+    const processLink =
+        plugin.interfaceType === PluginInterfaceType.SAFE && dao != null
+            ? `/dao/${dao.network}/${plugin.daoAddress ?? dao.address}/settings/${plugin.slug}`
+            : daoUtils.getDaoUrl(dao, `settings/${plugin.slug}`);
 
     const hasLinkedAccounts = (dao?.linkedAccounts?.length ?? 0) > 0;
 

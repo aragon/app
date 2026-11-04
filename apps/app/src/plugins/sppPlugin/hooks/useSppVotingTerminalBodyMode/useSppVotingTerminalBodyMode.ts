@@ -18,7 +18,10 @@ export const useSppVotingTerminalBodyMode = (
     params: IUseSppVotingTerminalBodyModeParams,
 ): IUseSppVotingTerminalBodyModeReturn => {
     const { plugin, proposal, stage } = params;
-    const registeredPluginId = sppStageUtils.getBodyPluginId(plugin);
+    const registeredPluginId = sppStageUtils.getBodyPluginId(
+        plugin,
+        proposal.network,
+    );
     const isSafe = registeredPluginId === PluginInterfaceType.SAFE;
     const { data: safeInfo } = useSafeInfo(
         { urlParams: { network: proposal.network, address: plugin.address } },

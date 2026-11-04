@@ -21,4 +21,16 @@ export {
     type ISafePaginatedResponse,
     isSafePaginatedResponse,
 } from './safePaginatedResponse';
+export {
+    type IRawActionTuple,
+    type ISafeStoredMeta,
+    type ISafeStoredTransaction,
+    type ISafeStoredTransactionsResponse,
+    type ISafeTransactionActions,
+    isSafeStoredMeta,
+    isSafeStoredTransaction,
+    isSafeStoredTransactionsResponse,
+    isSafeTransactionActions,
+    SafeStoredTransactionState,
+} from './safeStoredTransaction';
 export type { ISafeTransactionData } from './safeTransactionData';

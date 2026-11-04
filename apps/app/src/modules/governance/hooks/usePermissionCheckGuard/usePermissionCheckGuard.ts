@@ -19,9 +19,15 @@ export interface IUsePermissionCheckGuardParams
     plugin?: IDaoPlugin;
 }
 
+interface IUsePermissionCheckGuardResult {
+    check: (functionParams?: Partial<IUsePermissionCheckGuardParams>) => void;
+    result: boolean;
+    isLoading?: boolean;
+}
+
 export const usePermissionCheckGuard = (
     params: IUsePermissionCheckGuardParams,
-) => {
+): IUsePermissionCheckGuardResult => {
     const {
         onSuccess,
         onError,
@@ -38,7 +44,7 @@ export const usePermissionCheckGuard = (
     // the property is not stable we break the rules of hooks (see https://react.dev/warnings/invalid-hook-call-warning)
     const plugin = useRef(pluginProp).current;
 
-    const { hasPermission } = useSlotSingleFunction<
+    const { hasPermission, isLoading = false } = useSlotSingleFunction<
         IPermissionCheckGuardParams,
         IPermissionCheckGuardResult
     >({
@@ -103,5 +109,6 @@ export const usePermissionCheckGuard = (
     return {
         check: checkFunction,
         result: isConnected && hasPermission,
+        isLoading,
     };
 };
