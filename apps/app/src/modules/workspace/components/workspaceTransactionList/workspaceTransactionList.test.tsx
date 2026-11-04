@@ -1,14 +1,12 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { TransactionSide } from '@/modules/finance/api/financeService';
-import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
+import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
 import { daoService, Network } from '@/shared/api/daoService';
-import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDao,
-    generateDialogContext,
     generatePaginatedResponseMetadata,
     generateReactQueryInfiniteResultSuccess,
     ReactQueryWrapper,
@@ -42,7 +40,10 @@ describe('<WorkspaceTransactionList /> component', () => {
         'useWorkspaceTransactions',
     );
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
-    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const transactionExecutionDetailsSpy = jest.spyOn(
+        transactionExecutionDetails,
+        'TransactionExecutionDetails',
+    );
 
     const buildAccount = (
         account?: Partial<IWorkspaceAccount>,
@@ -135,13 +136,15 @@ describe('<WorkspaceTransactionList /> component', () => {
         typeAvailability = { received: 1, sent: 1, executions: 1 };
         mockTransactions();
         getDaoSpy.mockResolvedValue(generateDao({ ...account }));
-        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        transactionExecutionDetailsSpy.mockReturnValue(
+            <div data-testid="execution-detail" />,
+        );
     });
 
     afterEach(() => {
         useWorkspaceTransactionsSpy.mockReset();
         getDaoSpy.mockReset();
-        useDialogContextSpy.mockReset();
+        transactionExecutionDetailsSpy.mockReset();
     });
 
     // The query client must sit inside the gov-ui-kit provider: that provider carries a query client of its own,
@@ -305,10 +308,7 @@ describe('<WorkspaceTransactionList /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('opens the transaction detail dialog with the DAO of the clicked execution', async () => {
-        const dialogContext = generateDialogContext();
-        useDialogContextSpy.mockReturnValue(dialogContext);
-
+    it('expands an execution to its detail in the context of the DAO that emitted it', async () => {
         const dao = generateDao({ ...account, name: 'Test DAO' });
         getDaoSpy.mockResolvedValue(dao);
 
@@ -321,15 +321,94 @@ describe('<WorkspaceTransactionList /> component', () => {
 
         render(createTestComponent());
 
-        // The row links to the block explorer until its DAO resolves, at which point it becomes the dialog
-        // trigger, so the link is only clicked once the execution label is on screen.
-        await screen.findByText('router');
-        await waitFor(() => expect(getDaoSpy).toHaveBeenCalled());
-        await userEvent.click(screen.getByRole('link'));
+        const header = await screen.findByRole('button', { name: /router/ });
+        await userEvent.click(header);
 
-        expect(dialogContext.open).toHaveBeenCalledWith(
-            FinanceDialogId.TRANSACTION_DETAIL,
-            { params: { dao, transaction } },
+        expect(screen.getByTestId('execution-detail')).toBeInTheDocument();
+        expect(transactionExecutionDetailsSpy).toHaveBeenCalledWith(
+            { dao, transaction },
+            undefined,
         );
+    });
+
+    it('expands the two rows of a transfer between selected accounts independently', async () => {
+        const otherAccount = {
+            network: account.network,
+            address: otherAddress,
+        };
+        const transfer = { id: 'transfer-id', internal: true };
+        mockTransactions([
+            generateWorkspaceTransaction({ ...transfer, account }),
+            generateWorkspaceTransaction({
+                ...transfer,
+                account: otherAccount,
+            }),
+        ]);
+
+        render(
+            createTestComponent({
+                accounts: [
+                    buildAccount(),
+                    buildAccount({
+                        id: `${Network.ETHEREUM_SEPOLIA}-${otherAddress}`,
+                        address: otherAddress,
+                    }),
+                ],
+            }),
+        );
+
+        const [firstRow, secondRow] = await screen.findAllByRole('button', {
+            name: /Received/,
+        });
+        await userEvent.click(firstRow);
+
+        expect(firstRow).toHaveAttribute('aria-expanded', 'true');
+        expect(secondRow).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    // The rows reach their accordion through context, so the data list container still counts and paginates them.
+    it('renders one page of rows at a time', async () => {
+        mockTransactions([
+            generateWorkspaceTransaction({ account, id: 'first' }),
+            generateWorkspaceTransaction({ account, id: 'second' }),
+            generateWorkspaceTransaction({ account, id: 'third' }),
+        ]);
+
+        // A page size of one would make the rows query read as an availability probe of the mock.
+        render(createTestComponent({ pageSize: 2 }));
+
+        expect(
+            await screen.findAllByRole('button', { name: /Received/ }),
+        ).toHaveLength(2);
+    });
+
+    // A row without its DAO is the block-explorer link of the accounts that have none, so rendering the rows before
+    // the DAOs resolve would turn the executions of a DAO from links into accordions under the user's cursor.
+    it('keeps the list loading until the DAOs of the accounts are read', async () => {
+        let resolveDao: (dao: ReturnType<typeof generateDao>) => void = () =>
+            undefined;
+        getDaoSpy.mockReturnValue(
+            new Promise((resolve) => {
+                resolveDao = resolve;
+            }),
+        );
+        mockTransactions([
+            generateWorkspaceTransaction({
+                account,
+                side: TransactionSide.EXECUTION,
+                source: 'router',
+            }),
+        ]);
+
+        render(createTestComponent());
+
+        expect(screen.queryByText('router')).not.toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+
+        resolveDao(generateDao({ ...account }));
+
+        expect(
+            await screen.findByRole('button', { name: /router/ }),
+        ).toBeInTheDocument();
     });
 });

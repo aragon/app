@@ -3,7 +3,7 @@ import type { ITransactionActionsResult } from '@/modules/finance/api/financeSer
 import {
     getTransactionActions,
     getTransactionActionsRefetchInterval,
-} from './transactionDetailDialogUtils';
+} from './transactionExecutionDetailsUtils';
 
 const generateActionData = (
     values: Partial<ITransactionActionsResult> = {},
@@ -16,7 +16,7 @@ const generateActionData = (
     ...values,
 });
 
-describe('transactionDetailDialogUtils', () => {
+describe('transactionExecutionDetailsUtils', () => {
     describe('getTransactionActionsRefetchInterval', () => {
         it('polls while action decoding is pending', () => {
             const result = getTransactionActionsRefetchInterval({

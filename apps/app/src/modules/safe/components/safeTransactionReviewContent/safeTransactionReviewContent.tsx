@@ -237,7 +237,7 @@ export const SafeTransactionReviewContent: React.FC<
      * Decoded actions are matched to calls by position, so a response of a different length cannot
      * be trusted to line up: labelling call N with call M's function inside a consent surface is
      * worse than labelling nothing. Mirrors the raw-calldata downgrade in
-     * `transactionDetailDialogUtils.getTransactionActions`.
+     * `transactionExecutionDetailsUtils.getTransactionActions`.
      */
     const decoded =
         decodedActions?.length === calls.length ? decodedActions : undefined;
