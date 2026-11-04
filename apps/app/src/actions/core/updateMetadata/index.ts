@@ -11,9 +11,11 @@ export const initUpdateMetadataActionViews = () => {
     actionViewRegistry.register({
         actionType: ProposalActionType.METADATA_UPDATE,
         componentDetails: UpdateMetadataActionDetails,
+        isDaoIndependent: true,
     });
     actionViewRegistry.register({
         actionType: ProposalActionType.METADATA_PLUGIN_UPDATE,
         componentDetails: UpdateMetadataActionDetails,
+        isDaoIndependent: true,
     });
 };
