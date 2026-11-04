@@ -6,8 +6,8 @@ import { observability } from '../lib/observability';
 import { sessionTtlSeconds } from '../lib/sessionStore';
 
 // Blobs of abandoned sessions outlive their KV queue (which expires with the session TTL); this
-// sweep deletes anything older than the session lifetime. Vercel Cron calls it daily with
-// `Authorization: Bearer ${CRON_SECRET}` (sent automatically when the env var is set).
+// sweep deletes anything older than the session lifetime. The assistant-cleanup.yml workflow calls
+// it daily on every environment with `Authorization: Bearer ${CRON_SECRET}`.
 const maxBlobAgeMs = sessionTtlSeconds * 1000;
 
 export const buildInternalRoute = (deps: IAppDependencies) => {
