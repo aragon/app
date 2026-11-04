@@ -91,9 +91,9 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
         ? chatCopy.requestHistory.heading
         : (ticketContext ?? chatCopy.header.contextNew);
 
-    // Match the app bar's md height when the portalled panel is open.
+    // Match the app bar's md height after the docked panel leaves the app column at md width.
     return (
-        <div className="flex h-[75px] screen-md:h-[91px] flex-none items-center gap-3.5 border-neutral-100 border-b pr-3.5 pl-5">
+        <div className="flex h-[75px] screen-docked-md:h-[91px] flex-none items-center gap-3.5 border-neutral-100 border-b pr-3.5 pl-5">
             {isViewingRequests ? (
                 <Button
                     aria-label={chatCopy.header.back}
