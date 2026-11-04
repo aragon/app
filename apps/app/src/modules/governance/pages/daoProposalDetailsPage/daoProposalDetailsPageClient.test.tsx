@@ -552,6 +552,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                 useLastSimulationSpy.mockReturnValue(
                     generateReactQueryResultSuccess({
                         data: generateSimulationResult({
+                            runAt: Date.now() - 60_000,
                             matchesCurrentActions: false,
                         }),
                     }),
@@ -580,6 +581,9 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
                         'app.governance.daoProposalDetailsPage.main.actions.staleSimulation',
                     ),
                 ).not.toBeInTheDocument();
+                expect(
+                    screen.getByRole('button', { name: 'Simulate again' }),
+                ).toBeEnabled();
             },
         );
 

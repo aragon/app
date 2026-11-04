@@ -266,6 +266,29 @@ describe('useCrossChainControllerGasLimit hook', () => {
         expect(onGasLimitChange).toHaveBeenLastCalledWith('296530');
     });
 
+    it('shows the revert reason before the stale note', async () => {
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({
+                status: GasLimitEstimationStatus.REVERTED,
+                requiredGas: undefined,
+                revertReason: 'ERC20: insufficient balance',
+                staleSince: Date.parse('2026-11-04T10:00:00.000Z'),
+            }),
+        );
+
+        const { result } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message:
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.reverted (reason=ERC20: insufficient balance)',
+                variant: 'critical',
+            }),
+        );
+    });
+
     it('exposes the simulation url from the last estimation', async () => {
         estimateGasLimitSpy.mockResolvedValue(
             generateEstimation({ simulationUrl: 'https://tenderly.co/x' }),

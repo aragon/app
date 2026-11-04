@@ -68,6 +68,8 @@ export const DispatchSimulationDialog: React.FC<
 
     const { tenderlySupport } = networkDefinitions[network];
     const isReverted = simulation?.status === 'failed';
+    const canContinue =
+        !isLoading && error == null && simulation != null && !isReverted;
 
     const simulateDispatch = useCallback(async () => {
         if (!address) {
@@ -123,7 +125,7 @@ export const DispatchSimulationDialog: React.FC<
     }, [tenderlySupport, simulateDispatch, t]);
 
     const handleContinue = () => {
-        if (isLoading || error != null || simulation == null || isReverted) {
+        if (!canContinue) {
             return;
         }
 
@@ -242,11 +244,7 @@ export const DispatchSimulationDialog: React.FC<
                     label: t(
                         'app.capitalFlow.dispatchSimulationDialog.continue',
                     ),
-                    disabled:
-                        isLoading ||
-                        error != null ||
-                        simulation == null ||
-                        isReverted,
+                    disabled: !canContinue,
                     onClick: handleContinue,
                 }}
                 secondaryAction={{
