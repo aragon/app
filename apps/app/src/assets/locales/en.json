@@ -2676,12 +2676,14 @@
             "exceedsMax": "The actions need more gas than a single cross-chain message allows ({{maxGasLimit}}). Split them across several forward actions.",
             "helpText": "Set the amount of gas the destination chain will be able to spend to execute the forwarded actions on this proposal. You can estimate it by simulating the actions or entering it manually.",
             "label": "Destination gas limit",
+            "limitReached": "Estimation limit reached for now. Try again later or enter a gas limit manually.",
             "marginReduced": "Simulated successfully. The delivery needs {{requiredGas}} gas, but the lane does not allow the usual safety margin on top, so the limit was set to the maximum the lane accepts.",
             "minimumApplied": "The simulated transaction cost {{requiredGas}} gas, but the minimum gas accepted by the controller is {{minGasLimit}}.",
             "notWholeNumber": "Gas is counted in whole units, so the gas limit cannot have decimals.",
             "placeholder": "Enter a gas limit",
             "reverted": "The actions failed when simulated on the destination chain, so no gas limit could be measured: {{reason}}",
             "simulated": "The simulated transaction cost {{requiredGas}} gas, so we recommend an additional {{bufferPercent}}% margin at a total of {{totalGas}} to ensure it is successful.",
+            "stale": "The estimation limit is reached, so this gas limit comes from an earlier run at {{date}}. Check it still fits or enter a value manually.",
             "unknownReason": "no reason given",
             "viewSimulation": "View simulation"
           }

@@ -1,4 +1,6 @@
+import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -195,6 +197,73 @@ describe('useCrossChainControllerGasLimit hook', () => {
                 expect.stringContaining('reverted'),
             ),
         );
+    });
+
+    it('reports the limit when the gas budget is finished and leaves the field empty', async () => {
+        estimateGasLimitSpy.mockRejectedValue(
+            new AragonBackendServiceError(
+                'crossChainGasBudgetExhausted',
+                'Limit reached',
+                429,
+            ),
+        );
+
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message:
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.limitReached',
+                variant: 'critical',
+            }),
+        );
+        expect(onGasLimitChange).toHaveBeenCalledTimes(1);
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+    });
+
+    it.each([
+        ['tooBusy', 503],
+        ['crossChainSimulationFailed', 502],
+    ])('keeps the generic error for %s', async (code, status) => {
+        estimateGasLimitSpy.mockRejectedValue(
+            new AragonBackendServiceError(code, 'Unavailable', status),
+        );
+
+        const { result } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message:
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.error',
+                variant: 'critical',
+            }),
+        );
+    });
+
+    it('applies a stale estimate and says which run it comes from', async () => {
+        const staleSince = Date.parse('2026-11-04T10:00:00.000Z');
+        const formattedDate = formatterUtils.formatDate(staleSince, {
+            format: DateFormat.YEAR_MONTH_DAY_TIME,
+        });
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({ staleSince, runAt: staleSince + 659_000 }),
+        );
+
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message: `app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.stale (date=${formattedDate})`,
+                variant: 'warning',
+            }),
+        );
+        expect(onGasLimitChange).toHaveBeenLastCalledWith('296530');
     });
 
     it('exposes the simulation url from the last estimation', async () => {
