@@ -56,9 +56,15 @@ export interface INavigationWizardProps extends INavigationContainerProps {
  */
 export const wizardReturnToParam = 'returnTo';
 
-// Only paths inside the app are honoured: `//host` and `/\host` resolve to another origin.
-const isAppPath = (path: string | null): path is Route =>
-    path != null && /^\/(?![/\\])/.test(path);
+// Only paths inside the app are honoured.
+// URL parsing rejects protocol-relative paths and backslashes.
+const isAppPath = (path: string | null): path is Route => {
+    if (path == null || !path.startsWith('/')) {
+        return false;
+    }
+
+    return new URL(path, 'https://app.local').origin === 'https://app.local';
+};
 /**
  * Resolves the display DAO info based on target address.
  * Returns the linked account if targeting a linked account, otherwise returns the parent DAO.

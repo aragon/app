@@ -4,6 +4,7 @@ import {
     AddressOutput,
     ChainEntityType,
     DaoAvatar,
+    Tooltip,
     Wallet,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -128,10 +129,12 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 size="lg"
                 src={daoAvatar}
             />
-            <div className="flex flex-col gap-1.5 font-normal leading-tight">
-                <p className="truncate text-lg text-neutral-800 sm:text-xl">
-                    {daoDisplayName}
-                </p>
+            <div className="flex min-w-0 flex-col gap-1.5 font-normal leading-tight">
+                <Tooltip content={daoDisplayName} triggerAsChild={true}>
+                    <p className="truncate text-lg text-neutral-800 sm:text-xl">
+                        {daoDisplayName}
+                    </p>
+                </Tooltip>
                 <AddressOutput
                     address={dao.address}
                     className="w-full text-neutral-500 text-sm sm:text-base"

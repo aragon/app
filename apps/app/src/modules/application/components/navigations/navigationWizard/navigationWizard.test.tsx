@@ -114,14 +114,16 @@ describe('<NavigationWizard /> component', () => {
         );
     });
 
-    it.each(['https://evil.example', '//evil.example', '/\\evil.example'])(
-        'ignores a return path leaving the app (%s)',
-        (returnTo) => {
-            setSearchParams({ returnTo });
-            render(createTestComponent());
-            expect(screen.getByRole('link')).toHaveAttribute('href', '/');
-        },
-    );
+    it.each([
+        'https://evil.example',
+        '//evil.example',
+        '/\\evil.example',
+        '/\t/evil.example',
+    ])('ignores a return path leaving the app (%s)', (returnTo) => {
+        setSearchParams({ returnTo });
+        render(createTestComponent());
+        expect(screen.getByRole('link')).toHaveAttribute('href', '/');
+    });
 
     it('renders the DAO avatar and name when data is fetched', () => {
         const dao = generateDao({
