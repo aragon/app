@@ -208,8 +208,6 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
-            // TEMPORARY (APP-1364): on for the PR preview review only; revert before merge.
-            preview: true,
         },
     },
 ];
