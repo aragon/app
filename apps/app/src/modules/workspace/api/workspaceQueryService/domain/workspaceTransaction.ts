@@ -41,7 +41,12 @@ export interface IWorkspaceTransactionTransfer
 
 export interface IWorkspaceTransactionExecution
     extends ITransactionExecution,
-        IWorkspaceTransactionBase {}
+        IWorkspaceTransactionBase {
+    /**
+     * Hash of the Safe transaction behind the execution, set on the executions of Safe accounts.
+     */
+    safeTxHash?: string;
+}
 
 export type IWorkspaceTransaction =
     | IWorkspaceTransactionTransfer

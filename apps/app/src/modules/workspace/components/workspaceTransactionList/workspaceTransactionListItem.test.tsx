@@ -3,13 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
-import {
-    generateToken,
-    generateTransaction,
-} from '@/modules/finance/testUtils';
+import { generateToken } from '@/modules/finance/testUtils';
+import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import { WorkspaceAccountType } from '../../api/workspaceService';
+import { generateWorkspaceTransaction } from '../../testUtils';
 import {
     type IWorkspaceTransactionListItemProps,
     WorkspaceTransactionListItem,
@@ -21,24 +21,32 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         transactionExecutionDetails,
         'TransactionExecutionDetails',
     );
+    const safeExecutionDetailsSpy = jest.spyOn(
+        safeExecutionDetails,
+        'SafeExecutionDetails',
+    );
 
     beforeEach(() => {
         assetTransferSpy.mockReturnValue(<div data-testid="asset-transfer" />);
         transactionExecutionDetailsSpy.mockReturnValue(
             <div data-testid="execution-detail" />,
         );
+        safeExecutionDetailsSpy.mockReturnValue(
+            <div data-testid="safe-execution-detail" />,
+        );
     });
 
     afterEach(() => {
         assetTransferSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
+        safeExecutionDetailsSpy.mockReset();
     });
 
     const createTestComponent = (
         props?: Partial<IWorkspaceTransactionListItemProps>,
     ) => {
         const completeProps: IWorkspaceTransactionListItemProps = {
-            transaction: generateTransaction(),
+            transaction: generateWorkspaceTransaction(),
             value: 'transaction-0',
             index: 0,
             ...props,
@@ -54,7 +62,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
     };
 
     it('renders a received transfer with its token amount', () => {
-        const transaction = generateTransaction({
+        const transaction = generateWorkspaceTransaction({
             side: TransactionSide.DEPOSIT,
             value: '10',
             token: generateToken({ symbol: 'USDC' }),
@@ -69,7 +77,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
     });
 
     it('renders a sent transfer', () => {
-        const transaction = generateTransaction({
+        const transaction = generateWorkspaceTransaction({
             side: TransactionSide.WITHDRAW,
         });
 
@@ -88,7 +96,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             logo: 'shib-logo.png',
             priceUsd: '0.5',
         });
-        const transaction = generateTransaction({
+        const transaction = generateWorkspaceTransaction({
             side: TransactionSide.WITHDRAW,
             network: Network.ETHEREUM_SEPOLIA,
             value: '12',
@@ -127,7 +135,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             name: 'Core council',
         });
         const dao = generateDao({ plugins: [plugin] });
-        const transaction = generateTransaction({
+        const transaction = generateWorkspaceTransaction({
             side: TransactionSide.EXECUTION,
             source: 'multisig',
             actionCount: 2,
@@ -142,7 +150,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
     it('expands an execution to its detail in the context of its DAO', async () => {
         const dao = generateDao();
-        const transaction = generateTransaction({
+        const transaction = generateWorkspaceTransaction({
             side: TransactionSide.EXECUTION,
         });
 
@@ -162,7 +170,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
     });
 
     it('renders an execution without a DAO as a block-explorer row, as its actions cannot be decoded', () => {
-        const transaction = generateTransaction({
+        const transaction = generateWorkspaceTransaction({
             side: TransactionSide.EXECUTION,
         });
 
@@ -170,5 +178,70 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
         expect(screen.getByRole('link')).toHaveAttribute('target', '_blank');
+    });
+
+    it('expands an execution of a Safe account to its detail read from the Safe', async () => {
+        const safeAddress = '0xeB88A1D01306Bd9d8442673ee78770f2665B008F';
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            account: {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: safeAddress,
+            },
+            safeTxHash: '0xff54',
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                accountType: WorkspaceAccountType.SAFE,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: /Executed/ }));
+
+        expect(screen.getByTestId('safe-execution-detail')).toBeInTheDocument();
+        expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
+            { safeAddress, safeTxHash: '0xff54', transaction },
+            undefined,
+        );
+        expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
+    });
+
+    it('renders an execution of a Safe account without a Safe transaction hash as a block-explorer row', () => {
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                accountType: WorkspaceAccountType.SAFE,
+            }),
+        );
+
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+        expect(screen.getByRole('link')).toHaveAttribute('target', '_blank');
+    });
+
+    it('ignores the Safe transaction hash of an execution of a DAO account', async () => {
+        const dao = generateDao();
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            safeTxHash: '0xff54',
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                dao,
+                accountType: WorkspaceAccountType.DAO,
+            }),
+        );
+
+        await userEvent.click(screen.getByRole('button', { name: /Executed/ }));
+
+        expect(screen.getByTestId('execution-detail')).toBeInTheDocument();
+        expect(safeExecutionDetailsSpy).not.toHaveBeenCalled();
     });
 });

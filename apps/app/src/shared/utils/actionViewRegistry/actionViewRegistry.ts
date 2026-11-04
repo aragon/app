@@ -60,6 +60,30 @@ export class ActionViewRegistry {
         );
     };
 
+    /**
+     * Resolves the details view of an action for contexts without a DAO, among the views flagged as
+     * `isDaoIndependent` only: by action type first, so that such a view is kept even when another view matches the
+     * same calldata, then by function selector.
+     */
+    getDaoIndependentView = (
+        actionType?: string,
+        selector?: Hex,
+    ): IActionViewDescriptor | undefined => {
+        const daoIndependentViews = this.views.filter(
+            (view) => view.isDaoIndependent && view.componentDetails != null,
+        );
+
+        return (
+            daoIndependentViews.find(
+                (view) => actionType != null && view.actionType === actionType,
+            ) ??
+            daoIndependentViews.find(
+                (view) =>
+                    selector != null && view.functionSelector === selector,
+            )
+        );
+    };
+
     getViewsByPermissionId = (permissionId: string): IActionViewDescriptor[] =>
         this.views.filter((view) => view.permissionId === permissionId);
 

@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
+import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
 import { daoService, Network } from '@/shared/api/daoService';
 import {
     generateDao,
@@ -43,6 +44,10 @@ describe('<WorkspaceTransactionList /> component', () => {
     const transactionExecutionDetailsSpy = jest.spyOn(
         transactionExecutionDetails,
         'TransactionExecutionDetails',
+    );
+    const safeExecutionDetailsSpy = jest.spyOn(
+        safeExecutionDetails,
+        'SafeExecutionDetails',
     );
 
     const buildAccount = (
@@ -139,12 +144,16 @@ describe('<WorkspaceTransactionList /> component', () => {
         transactionExecutionDetailsSpy.mockReturnValue(
             <div data-testid="execution-detail" />,
         );
+        safeExecutionDetailsSpy.mockReturnValue(
+            <div data-testid="safe-execution-detail" />,
+        );
     });
 
     afterEach(() => {
         useWorkspaceTransactionsSpy.mockReset();
         getDaoSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
+        safeExecutionDetailsSpy.mockReset();
     });
 
     // The query client must sit inside the gov-ui-kit provider: that provider carries a query client of its own,
@@ -329,6 +338,32 @@ describe('<WorkspaceTransactionList /> component', () => {
             { dao, transaction },
             undefined,
         );
+    });
+
+    it('expands an execution of a Safe account to its detail read from the Safe', async () => {
+        const transaction = generateWorkspaceTransaction({
+            account,
+            side: TransactionSide.EXECUTION,
+            source: 'safe',
+            safeTxHash: '0xff54',
+        });
+        mockTransactions([transaction]);
+
+        render(
+            createTestComponent({
+                accounts: [buildAccount({ type: WorkspaceAccountType.SAFE })],
+            }),
+        );
+
+        const header = await screen.findByRole('button', { name: /safe/ });
+        await userEvent.click(header);
+
+        expect(screen.getByTestId('safe-execution-detail')).toBeInTheDocument();
+        expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
+            { safeAddress: address, safeTxHash: '0xff54', transaction },
+            undefined,
+        );
+        expect(getDaoSpy).not.toHaveBeenCalled();
     });
 
     it('expands the two rows of a transfer between selected accounts independently', async () => {

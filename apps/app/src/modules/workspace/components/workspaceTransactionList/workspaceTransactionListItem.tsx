@@ -24,19 +24,30 @@ import {
     TransactionList,
 } from '@/modules/finance/components/transactionList';
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
+import { SafeExecutionDetails } from '@/modules/safe/components/safeExecutionDetails';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import type { IWorkspaceTransaction } from '../../api/workspaceQueryService';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 
 export interface IWorkspaceTransactionListItemProps
-    extends Pick<ITransactionListItemProps, 'transaction' | 'index'> {
+    extends Pick<ITransactionListItemProps, 'index'> {
+    /**
+     * Transaction to render.
+     */
+    transaction: IWorkspaceTransaction;
+    /**
+     * Type of the account the transaction belongs to, which decides how an execution is decoded.
+     */
+    accountType?: WorkspaceAccountType;
     /**
      * Value identifying the item in its accordion container. It must be unique within the container, which a
      * transaction ID alone is not when the same transfer is listed once per account.
      */
     value: string;
     /**
-     * DAO the transaction belongs to. An execution cannot be expanded without it, as its actions are decoded in the
-     * context of the DAO, so it is rendered as a block-explorer row instead.
+     * DAO the transaction belongs to. An execution of a DAO account cannot be expanded without it, as its actions are
+     * decoded in the context of the DAO, so it is rendered as a block-explorer row instead.
      */
     dao?: IDao;
 }
@@ -101,20 +112,25 @@ const buildTransferDisplay = (
 };
 
 /**
- * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions,
- * transfers to the transferred asset. Must be rendered inside an `<Accordion.Container />`.
+ * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions
+ * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset. Must
+ * be rendered inside an `<Accordion.Container />`.
  */
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
 > = (props) => {
-    const { transaction, value, index, dao } = props;
+    const { transaction, value, index, accountType, dao } = props;
 
     const { copy } = useGukModulesContext();
     const headerCopy = copy.transactionDataListItemStructure;
 
     const isExecution = transactionExecutionUtils.isExecution(transaction);
+    const safeTxHash =
+        isExecution && accountType === WorkspaceAccountType.SAFE
+            ? transaction.safeTxHash
+            : undefined;
 
-    if (isExecution && dao == null) {
+    if (isExecution && dao == null && safeTxHash == null) {
         return <TransactionList.Item index={index} transaction={transaction} />;
     }
 
@@ -166,12 +182,21 @@ export const WorkspaceTransactionListItem: React.FC<
                 </div>
             </Accordion.ItemHeader>
             <Accordion.ItemContent>
-                {isExecution && dao != null && (
+                {isExecution && (
                     <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
-                        <TransactionExecutionDetails
-                            dao={dao}
-                            transaction={transaction}
-                        />
+                        {safeTxHash != null && (
+                            <SafeExecutionDetails
+                                safeAddress={transaction.account.address}
+                                safeTxHash={safeTxHash}
+                                transaction={transaction}
+                            />
+                        )}
+                        {safeTxHash == null && dao != null && (
+                            <TransactionExecutionDetails
+                                dao={dao}
+                                transaction={transaction}
+                            />
+                        )}
                     </div>
                 )}
                 {!isExecution && (

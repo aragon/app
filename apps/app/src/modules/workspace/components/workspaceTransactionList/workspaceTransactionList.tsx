@@ -185,7 +185,7 @@ export const WorkspaceTransactionList: React.FC<
             ),
             { enabled: hasAccounts },
         );
-
+    console.log('data', data);
     const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
 
     const transactions = data?.pages.flatMap((page) => page.data);
@@ -288,11 +288,15 @@ export const WorkspaceTransactionList: React.FC<
                             transaction.account,
                         );
                         const dao = daos[accountId];
+                        const accountType = accounts.find(
+                            (account) => account.id === accountId,
+                        )?.type;
                         // A transfer between two selected accounts is listed once per account under the same ID.
                         const itemId = `${accountId}-${transaction.id}`;
 
                         return (
                             <WorkspaceTransactionListItem
+                                accountType={accountType}
                                 dao={dao}
                                 index={index}
                                 key={itemId}
