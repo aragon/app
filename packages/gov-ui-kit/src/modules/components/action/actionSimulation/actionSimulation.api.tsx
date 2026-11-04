@@ -1,6 +1,6 @@
 export interface IActionSimulationRun {
     timestamp: number;
-    url: string;
+    url?: string;
     status: 'success' | 'failed';
 }
 

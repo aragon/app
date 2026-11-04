@@ -61,6 +61,16 @@ describe('<ActionSimulation /> component', () => {
         expect(screen.getByText(actionSimulationCopy.likelyToFail)).toBeInTheDocument();
     });
 
+    it('disables the Tenderly button when the run has no url', () => {
+        render(
+            createTestComponent({
+                lastSimulation: { timestamp: 0, status: 'success' },
+            }),
+        );
+
+        expect(screen.getByRole('button', { name: actionSimulationCopy.viewOnTenderly })).toBeDisabled();
+    });
+
     it('renders unknown status when no lastSimulation is provided', () => {
         render(createTestComponent());
         expect(screen.getByText(actionSimulationCopy.unknown)).toBeInTheDocument();

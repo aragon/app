@@ -39,4 +39,8 @@ export interface IGasLimitEstimation {
      * Timestamp of the simulation, in milliseconds.
      */
     runAt: number;
+    /**
+     * Timestamp of the earlier run reused when the budget is finished, in milliseconds.
+     */
+    staleSince?: number;
 }
