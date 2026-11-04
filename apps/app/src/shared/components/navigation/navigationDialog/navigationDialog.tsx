@@ -8,10 +8,16 @@ export interface INavigationDialogProps extends IDialogRootProps {
      * Links of the application.
      */
     links: INavigationLink[];
+    /**
+     * Links rendered below the main ones, apart behind a divider (e.g. the settings of the workspace, below the
+     * sections of the account it is scoped to).
+     */
+    secondaryLinks?: INavigationLink[];
 }
 
 export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
-    const { links, children, onOpenChange, ...otherProps } = props;
+    const { links, secondaryLinks, children, onOpenChange, ...otherProps } =
+        props;
 
     const { t } = useTranslations();
     const handleLinksClick = () => onOpenChange?.(false);
@@ -29,6 +35,18 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                         onClick={handleLinksClick}
                         variant="column"
                     />
+                    {secondaryLinks != null && (
+                        <>
+                            <div className="w-full px-4">
+                                <div className="border-neutral-100 border-t" />
+                            </div>
+                            <NavigationLinks
+                                links={secondaryLinks}
+                                onClick={handleLinksClick}
+                                variant="column"
+                            />
+                        </>
+                    )}
                     <div className="w-full px-4">
                         <div className="border-neutral-100 border-t" />
                     </div>

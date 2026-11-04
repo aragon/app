@@ -74,7 +74,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
             : undefined;
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
+        <Card className="flex flex-col gap-3 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <InputText
                 placeholder={t(
                     'app.shared.resourcesInput.item.linkInput.placeholder',

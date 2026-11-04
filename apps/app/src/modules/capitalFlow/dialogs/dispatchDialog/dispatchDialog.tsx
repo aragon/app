@@ -156,7 +156,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-4 pb-6">
-                    <Card className="flex flex-col gap-4 border border-neutral-100 p-6">
+                    <Card className="flex flex-col gap-4 p-6">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-lg text-neutral-800">

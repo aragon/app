@@ -34,7 +34,7 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
         <button className={buttonClassName} {...otherProps}>
             <InteractiveAncestorContext.Provider value={true}>
                 <DaoAvatar name={daoDisplayName} size="lg" src={daoAvatar} />
-                <p className="hidden truncate font-normal text-base text-neutral-800 leading-tight md:block">
+                <p className="hidden grow truncate text-left font-normal text-base text-neutral-800 leading-tight md:block">
                     <AddressOutput
                         address={dao.address}
                         label={daoName || undefined}

@@ -25,7 +25,7 @@ export const CreateWorkspaceFormTargetsItem: React.FC<
     const { t } = useTranslations();
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
+        <Card className="flex flex-col gap-3 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <div className="min-w-0 grow">
                 <CreateWorkspaceFormNetworkAddressFields
                     index={index}

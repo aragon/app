@@ -79,7 +79,7 @@ export const SetupStrategyDialogDistributionStreamRecipientItem: React.FC<
     };
 
     return (
-        <Card className="flex flex-col gap-4 border border-neutral-100 p-4 shadow-neutral-sm md:flex-row md:items-start md:gap-3">
+        <Card className="flex flex-col gap-4 p-4 shadow-neutral-sm md:flex-row md:items-start md:gap-3">
             <div className="flex-1">
                 <AddressInput
                     chainId={chainId}

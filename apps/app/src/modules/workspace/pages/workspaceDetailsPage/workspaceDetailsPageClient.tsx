@@ -103,7 +103,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                         )}
                     >
                         {accounts.length === 0 && (
-                            <Card className="border border-neutral-100 py-10">
+                            <Card className="py-10">
                                 <EmptyState
                                     description={t(
                                         'app.workspace.workspaceDetailsPage.emptyAccounts.description',
@@ -150,7 +150,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                             <div className="flex flex-col gap-3 md:gap-2">
                                 {targets.map((target) => (
                                     <Card
-                                        className="flex flex-col gap-1 border border-neutral-100 p-4 shadow-neutral-sm md:p-6"
+                                        className="flex flex-col gap-1 p-4 shadow-neutral-sm md:p-6"
                                         key={`${target.network}-${target.address}`}
                                     >
                                         <span className="text-neutral-500 text-sm leading-normal">

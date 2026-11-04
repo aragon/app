@@ -61,6 +61,8 @@
 
 @custom-variant screen-sm (@media (width >= 40rem));
 @custom-variant screen-md (@media (width >= 48rem));
+/* 48rem app column + 31.25rem minimum docked chat panel. */
+@custom-variant screen-docked-md (@media (width >= 79.25rem));
 @custom-variant screen-lg (@media (width >= 64rem));
 @custom-variant screen-xl (@media (width >= 80rem));
 @custom-variant screen-2xl (@media (width >= 96rem));

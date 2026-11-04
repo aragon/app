@@ -110,7 +110,7 @@ export const WorkspaceAccountStateCard: React.FC<
         (accountState != null ? states[accountState] : undefined) ?? errorState;
 
     return (
-        <Card className="border border-neutral-100 py-10">
+        <Card className="py-10">
             <EmptyState
                 description={t(
                     `${translationNamespace}.${namespace}.description`,

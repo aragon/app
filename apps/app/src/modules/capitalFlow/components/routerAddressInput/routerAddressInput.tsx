@@ -88,7 +88,7 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
     };
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-sm">
+        <Card className="flex flex-col gap-3 p-6 shadow-sm">
             {/* Header row: Label + Remove button */}
             <div className="flex items-center justify-between">
                 <label className="font-normal text-lg text-neutral-800 leading-tight">
