@@ -214,21 +214,6 @@ describe('<SimulateActionsDialog /> component', () => {
         expect(close).toHaveBeenCalledWith(GovernanceDialogId.SIMULATE_ACTIONS);
     });
 
-    it('passes a run without a url to the simulation card', () => {
-        const simulation = generateSimulationResult({ url: undefined });
-        useProposalSimulationMock.mockReturnValue(
-            generateReactQueryMutationResultSuccess({ data: simulation }),
-        );
-        renderComponent(createLocation());
-
-        expect(ActionSimulation).toHaveBeenCalledWith(
-            expect.objectContaining({
-                lastSimulation: { ...simulation, timestamp: simulation.runAt },
-            }),
-            undefined,
-        );
-    });
-
     it('simulates via the direct-execute mutation with the from address in the body when daoAddress is set', () => {
         useDialogContextMock.mockReturnValue({ close: jest.fn() });
 

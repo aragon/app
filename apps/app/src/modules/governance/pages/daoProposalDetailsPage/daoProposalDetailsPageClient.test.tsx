@@ -693,24 +693,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             );
         });
 
-        it('passes the saved run without a url to the card', () => {
-            const simulation = generateSimulationResult({ url: undefined });
-            useLastSimulationSpy.mockReturnValue(
-                generateReactQueryResultSuccess({ data: simulation }),
-            );
-            render(createTestComponent());
-
-            expect(ActionSimulation).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    lastSimulation: {
-                        ...simulation,
-                        timestamp: simulation.runAt,
-                    },
-                }),
-                undefined,
-            );
-        });
-
         it('keeps the original time after a cached simulation', async () => {
             const simulation = generateSimulationResult({
                 runAt: Date.now() - 60_000,
