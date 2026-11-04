@@ -1,4 +1,5 @@
 import {
+    ActionSimulation,
     clipboardUtils,
     GukModulesProvider,
     ProposalStatus,
@@ -17,12 +18,15 @@ import {
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateAddressInfo,
     generateDao,
+    generateReactQueryMutationResultIdle,
+    generateReactQueryMutationResultSuccess,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
     generateReactQueryResultSuccessWithData,
@@ -31,6 +35,14 @@ import * as actionSimulationService from '../../api/actionSimulationService';
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import * as UseNormalizedProposalActions from '../../hooks/useNormalizedProposalActions';
+
+jest.mock('@aragon/gov-ui-kit', () => {
+    const actual =
+        jest.requireActual<typeof import('@aragon/gov-ui-kit')>(
+            '@aragon/gov-ui-kit',
+        );
+    return { ...actual, ActionSimulation: jest.fn(actual.ActionSimulation) };
+});
 
 jest.mock('@tanstack/react-query', () => {
     const actual = jest.requireActual<typeof ReactQuery>(
@@ -505,6 +517,16 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         );
 
         beforeEach(() => {
+            useProposalSpy.mockReturnValue(
+                generateReactQueryResultSuccess({
+                    data: generateProposal({
+                        hasActions: true,
+                        hasSimulation: true,
+                    }),
+                }),
+            );
+            useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            jest.mocked(ActionSimulation).mockClear();
             useSimulateProposalSpy.mockReturnValue({
                 mutate: jest.fn(),
                 isPending: false,
@@ -518,6 +540,215 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
         afterEach(() => {
             useSimulateProposalSpy.mockReset();
+        });
+
+        it.each([
+            ['simulationBudgetExhausted', 429, 'simulationLimitReached'],
+            ['tooBusy', 503, 'simulationError'],
+            ['simulationFailed', 502, 'simulationError'],
+        ])(
+            'shows the error for %s before the stale note',
+            (code, status, context) => {
+                useLastSimulationSpy.mockReturnValue(
+                    generateReactQueryResultSuccess({
+                        data: generateSimulationResult({
+                            matchesCurrentActions: false,
+                        }),
+                    }),
+                );
+                useSimulateProposalSpy.mockReturnValue({
+                    isError: true,
+                    isPending: false,
+                    status: 'error',
+                    error: new AragonBackendServiceError(
+                        code,
+                        'Unavailable',
+                        status,
+                    ),
+                } as ReturnType<
+                    typeof actionSimulationService.useSimulateProposal
+                >);
+                render(createTestComponent());
+
+                expect(
+                    screen.getByText(
+                        `app.governance.daoProposalDetailsPage.main.actions.${context}`,
+                    ),
+                ).toBeInTheDocument();
+                expect(
+                    screen.queryByText(
+                        'app.governance.daoProposalDetailsPage.main.actions.staleSimulation',
+                    ),
+                ).not.toBeInTheDocument();
+            },
+        );
+
+        it.each([true, undefined])(
+            'keeps simulate off for a recent run with a match flag of %s',
+            (matchesCurrentActions) => {
+                const simulation = generateSimulationResult({
+                    runAt: Date.now() - 60_000,
+                    matchesCurrentActions,
+                });
+                useLastSimulationSpy.mockReturnValue(
+                    generateReactQueryResultSuccess({ data: simulation }),
+                );
+                render(createTestComponent());
+
+                expect(ActionSimulation).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        isEnabled: false,
+                        error: undefined,
+                        lastSimulation: {
+                            ...simulation,
+                            timestamp: simulation.runAt,
+                        },
+                    }),
+                    undefined,
+                );
+            },
+        );
+
+        it('shows no error when there is no saved simulation', () => {
+            useLastSimulationSpy.mockReturnValue(
+                generateReactQueryResultError({
+                    error: new AragonBackendServiceError(
+                        'notFound',
+                        'Not found',
+                        404,
+                    ),
+                }),
+            );
+            render(createTestComponent());
+
+            expect(ActionSimulation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    error: undefined,
+                    lastSimulation: undefined,
+                    isEnabled: true,
+                }),
+                undefined,
+            );
+        });
+
+        it('shows an error when the saved simulation is unavailable', () => {
+            useLastSimulationSpy.mockReturnValue(
+                generateReactQueryResultError({
+                    error: new AragonBackendServiceError(
+                        'tooBusy',
+                        'Unavailable',
+                        503,
+                    ),
+                }),
+            );
+            render(createTestComponent());
+
+            expect(
+                screen.getByText(
+                    'app.governance.daoProposalDetailsPage.main.actions.lastSimulationError',
+                ),
+            ).toBeInTheDocument();
+        });
+
+        it('shows the stale note and lets the user simulate again', async () => {
+            const simulation = generateSimulationResult({
+                runAt: Date.now() - 60_000,
+                status: 'failed',
+                matchesCurrentActions: false,
+            });
+            const mutate = jest.fn();
+            useLastSimulationSpy.mockReturnValue(
+                generateReactQueryResultSuccess({ data: simulation }),
+            );
+            useSimulateProposalSpy.mockReturnValue(
+                generateReactQueryMutationResultIdle({ mutate }),
+            );
+            render(createTestComponent());
+
+            expect(
+                screen.getByText(
+                    'app.governance.daoProposalDetailsPage.main.actions.staleSimulation',
+                ),
+            ).toBeInTheDocument();
+            expect(ActionSimulation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    isEnabled: true,
+                    lastSimulation: {
+                        ...simulation,
+                        timestamp: simulation.runAt,
+                    },
+                }),
+                undefined,
+            );
+            await userEvent.click(
+                screen.getByRole('button', { name: 'Simulate again' }),
+            );
+            expect(mutate).toHaveBeenCalledWith(
+                { urlParams: { proposalId: '1' } },
+                expect.objectContaining({ onSuccess: expect.any(Function) }),
+            );
+        });
+
+        it('passes the saved run without a url to the card', () => {
+            const simulation = generateSimulationResult({ url: undefined });
+            useLastSimulationSpy.mockReturnValue(
+                generateReactQueryResultSuccess({ data: simulation }),
+            );
+            render(createTestComponent());
+
+            expect(ActionSimulation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    lastSimulation: {
+                        ...simulation,
+                        timestamp: simulation.runAt,
+                    },
+                }),
+                undefined,
+            );
+        });
+
+        it('keeps the original time after a cached simulation', async () => {
+            const simulation = generateSimulationResult({
+                runAt: Date.now() - 60_000,
+                matchesCurrentActions: true,
+            });
+            useLastSimulationSpy.mockReturnValue(
+                generateReactQueryResultError({
+                    error: new AragonBackendServiceError(
+                        'notFound',
+                        'Not found',
+                        404,
+                    ),
+                }),
+            );
+            const mutate = jest.fn();
+            useSimulateProposalSpy.mockReturnValue(
+                generateReactQueryMutationResultIdle({ mutate }),
+            );
+            const { rerender } = render(createTestComponent());
+
+            await userEvent.click(
+                screen.getByRole('button', { name: 'Simulate' }),
+            );
+            expect(mutate).toHaveBeenCalled();
+            useSimulateProposalSpy.mockReturnValue(
+                generateReactQueryMutationResultSuccess({ data: simulation }),
+            );
+            useLastSimulationSpy.mockReturnValue(
+                generateReactQueryResultSuccess({ data: simulation }),
+            );
+            rerender(createTestComponent());
+
+            expect(ActionSimulation).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    isEnabled: false,
+                    lastSimulation: {
+                        ...simulation,
+                        timestamp: simulation.runAt,
+                    },
+                }),
+                undefined,
+            );
         });
 
         it('does not fetch simulation when hasSimulation is false', () => {

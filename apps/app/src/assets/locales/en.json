@@ -2185,7 +2185,9 @@
             "expandAll": "Expand all",
             "header": "Actions",
             "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
-            "simulationError": "There was an error simulating the actions. Please try again later."
+            "simulationError": "There was an error simulating the actions. Please try again later.",
+            "simulationLimitReached": "Simulation limit reached for now. Try again later.",
+            "staleSimulation": "The actions changed after this simulation. Simulate again to check the current actions."
           },
           "description": {
             "header": "Proposal",
@@ -2436,6 +2438,7 @@
           "success": "Continue"
         },
         "error": "There was an error simulating the actions. Please try again later.",
+        "limitReached": "Simulation limit reached for now. Try again later or continue without it.",
         "simulate": "Simulate actions",
         "skipSimulation": "Skip simulation",
         "title": "Simulate actions"

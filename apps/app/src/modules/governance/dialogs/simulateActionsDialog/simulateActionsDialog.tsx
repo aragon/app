@@ -1,5 +1,6 @@
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
@@ -65,7 +66,13 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
         ? directExecuteSimulation
         : proposalSimulation;
 
-    const { isError, isPending, status, data } = activeSimulation;
+    const {
+        isError,
+        isPending,
+        status,
+        data,
+        error: simulationError,
+    } = activeSimulation;
 
     useEffect(() => {
         if (status !== 'idle') {
@@ -104,8 +111,13 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
     const lastSimulation =
         data != null ? { ...data, timestamp: data.runAt } : undefined;
 
+    const errorContext = AragonBackendServiceError.isSimulationBudgetError(
+        simulationError,
+    )
+        ? 'limitReached'
+        : 'error';
     const error = isError
-        ? t('app.governance.simulateActionsDialog.error')
+        ? t(`app.governance.simulateActionsDialog.${errorContext}`)
         : undefined;
     const primaryLabel = t(
         `app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`,
