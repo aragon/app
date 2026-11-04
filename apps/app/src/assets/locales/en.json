@@ -899,11 +899,14 @@
         "continue": "Continue to dispatch",
         "description": "Review the simulation before dispatching this router.",
         "failed": "Simulation failed",
+        "limitReached": "Simulation limit reached for now. Try again later, or go back and dispatch without a simulation.",
         "loading": "Running simulation...",
         "noTenderly": "Simulation is not available for this network.",
         "noWallet": "Connect your wallet to run the simulation.",
         "retry": "Retry simulation",
-        "title": "Dispatch {{policyName}}"
+        "reverted": "Dispatch would fail",
+        "title": "Dispatch {{policyName}}",
+        "unavailable": "Simulation is not available right now. Try again later, or go back and dispatch without a simulation."
       },
       "simulationFlowVisualization": {
         "summary": {

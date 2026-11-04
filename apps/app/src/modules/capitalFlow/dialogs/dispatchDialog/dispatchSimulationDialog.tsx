@@ -10,6 +10,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { encodeFunctionData } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import { daoService } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
@@ -66,6 +67,7 @@ export const DispatchSimulationDialog: React.FC<
     );
 
     const { tenderlySupport } = networkDefinitions[network];
+    const isReverted = simulation?.status === 'failed';
 
     const simulateDispatch = useCallback(async () => {
         if (!address) {
@@ -97,9 +99,13 @@ export const DispatchSimulationDialog: React.FC<
 
             setSimulation(result);
         } catch (err: unknown) {
-            const message =
-                err instanceof Error ? err.message : 'Unknown error';
-            setError(message);
+            setError(
+                t(
+                    AragonBackendServiceError.isSimulationBudgetError(err)
+                        ? 'app.capitalFlow.dispatchSimulationDialog.limitReached'
+                        : 'app.capitalFlow.dispatchSimulationDialog.unavailable',
+                ),
+            );
             setSimulation(null);
         } finally {
             setIsLoading(false);
@@ -117,7 +123,7 @@ export const DispatchSimulationDialog: React.FC<
     }, [tenderlySupport, simulateDispatch, t]);
 
     const handleContinue = () => {
-        if (isLoading || error != null || simulation == null) {
+        if (isLoading || error != null || simulation == null || isReverted) {
             return;
         }
 
@@ -171,7 +177,7 @@ export const DispatchSimulationDialog: React.FC<
                     )}
 
                     {/* Error State */}
-                    {error && !isLoading && (
+                    {(error || isReverted) && !isLoading && (
                         <Card
                             className="flex flex-col gap-3 border border-critical-200 bg-critical-50 p-4"
                             role="alert"
@@ -185,15 +191,30 @@ export const DispatchSimulationDialog: React.FC<
                                 <div className="min-w-0 flex-1">
                                     <p className="font-semibold text-critical-700 leading-tight">
                                         {t(
-                                            'app.capitalFlow.dispatchSimulationDialog.failed',
+                                            isReverted
+                                                ? 'app.capitalFlow.dispatchSimulationDialog.reverted'
+                                                : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
                                     <p className="mt-1 break-words text-critical-600 text-sm leading-tight">
-                                        {error}
+                                        {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex justify-end">
+                            <div className="flex justify-end gap-2">
+                                {isReverted && simulation?.tenderlyUrl && (
+                                    <Button
+                                        href={simulation.tenderlyUrl}
+                                        iconRight={IconType.LINK_EXTERNAL}
+                                        size="sm"
+                                        target="_blank"
+                                        variant="secondary"
+                                    >
+                                        {t(
+                                            'app.capitalFlow.simulationFlowVisualization.tenderlyLink',
+                                        )}
+                                    </Button>
+                                )}
                                 <Button
                                     onClick={handleRetry}
                                     size="sm"
@@ -208,7 +229,7 @@ export const DispatchSimulationDialog: React.FC<
                     )}
 
                     {/* Success State */}
-                    {simulation && !isLoading && !error && (
+                    {simulation && !isLoading && !error && !isReverted && (
                         <SimulationFlowVisualization
                             buildEntityUrl={buildEntityUrl}
                             simulation={simulation}
@@ -221,7 +242,11 @@ export const DispatchSimulationDialog: React.FC<
                     label: t(
                         'app.capitalFlow.dispatchSimulationDialog.continue',
                     ),
-                    disabled: isLoading || error != null || simulation == null,
+                    disabled:
+                        isLoading ||
+                        error != null ||
+                        simulation == null ||
+                        isReverted,
                     onClick: handleContinue,
                 }}
                 secondaryAction={{

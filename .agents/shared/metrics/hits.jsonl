@@ -310,3 +310,4 @@
 {"ts":"2026-11-03T09:55:45.372Z","tool":"Edit","file":"apps/app/src/shared/api/aragonBackendService/aragonBackendServiceError.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":3,"adapter":"generic"}
 {"ts":"2026-11-03T09:55:45.372Z","tool":"Edit","file":"apps/app/src/shared/api/aragonBackendService/aragonBackendServiceError.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"generic"}
 {"ts":"2026-11-04T03:22:16.197Z","tool":"Edit","file":"apps/app/src/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"generic"}
+{"ts":"2026-11-04T03:39:10.937Z","tool":"Write","file":"apps/app/src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"generic"}
