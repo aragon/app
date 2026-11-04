@@ -60,7 +60,7 @@ jobs:
     steps:
       - name: Resolve 1Password secrets
         id: op
-        uses: aragon/github-templates/steps/credential-retrieval@main
+        uses: aragon/github-templates/steps/credential-retrieval@v1
         with:
           mode: byref
           op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
             ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           ref: ${{ inputs.base_commit || 'main' }}
           fetch-depth: "0"
@@ -123,7 +123,7 @@ jobs:
   start:
     needs: content
     if: ${{ !cancelled() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
-    uses: aragon/github-templates/.github/workflows/release-start.yml@main
+    uses: aragon/github-templates/.github/workflows/release-start.yml@v1
     with:
       engine: changesets
       base-ref: ${{ inputs.base_commit || 'main' }}
@@ -151,7 +151,7 @@ jobs:
       github.event_name == 'pull_request'
       && github.event.action != 'closed'
       && startsWith(github.event.pull_request.head.ref, 'release/docs/')
-    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@main
+    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@v1
     with:
       release-branch-prefix: release/docs/
       tag-prefix: "@aragon/docs@"
@@ -175,7 +175,7 @@ jobs:
       contents: read
     steps:
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: "0"
@@ -197,7 +197,7 @@ jobs:
     steps:
       - name: Resolve 1Password secrets
         id: op
-        uses: aragon/github-templates/steps/credential-retrieval@main
+        uses: aragon/github-templates/steps/credential-retrieval@v1
         with:
           mode: byref
           op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
@@ -218,7 +218,7 @@ jobs:
   # Staging has no required reviewers, so there is no gate message.
   deploy:
     needs: [test, corpus]
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: staging
       ref: ${{ github.event.pull_request.head.sha }}
@@ -266,7 +266,7 @@ jobs:
 
   e2e:
     needs: deploy
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: https://stg.platform-doc.aragon.org
       environment: staging
@@ -289,7 +289,7 @@ jobs:
       github.event_name == 'pull_request'
       && github.event.pull_request.merged == true
       && startsWith(github.event.pull_request.head.ref, 'release/docs/')
-    uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
+    uses: aragon/github-templates/.github/workflows/release-finalize.yml@v1
     with:
       sha: ${{ github.event.pull_request.head.sha }}
       pr-body: ${{ github.event.pull_request.body }}
@@ -309,7 +309,7 @@ jobs:
       && github.event.action == 'closed'
       && github.event.pull_request.merged == false
       && startsWith(github.event.pull_request.head.ref, 'release/docs/')
-    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@main
+    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@v1
     with:
       op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
       op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
