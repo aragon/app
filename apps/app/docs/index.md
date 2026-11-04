@@ -24,6 +24,8 @@ Ensure consistency and maintainability by following our coding guidelines:
 Check the project specific processes and guidelines below:
 
 - [Data Fetching](./projectDocs/dataFetching.md)
+- [Data-layer migration (ADR)](./projectDocs/dataLayerMigration.md) and its
+  [target model and capacity budget](./projectDocs/dataLayerTargetModel.md)
 - [Plugin Encapsulation](./projectDocs/pluginEncapsulation.md)
 - [Project Structure](./projectDocs/projectStructure.md)
 - [Releases](./projectDocs/releases.md)
