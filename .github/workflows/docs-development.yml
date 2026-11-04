@@ -47,7 +47,7 @@ jobs:
   deploy:
     needs: changes
     if: ${{ !cancelled() && (github.event_name != 'push' || needs.changes.outputs.docs == 'true') }}
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: development
       domain: dev.platform-doc.aragon.org
