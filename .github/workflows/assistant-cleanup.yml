@@ -1,0 +1,67 @@
+# The "Assistant Cleanup" workflow calls the assistant's /internal/cleanup endpoint once a day on
+# both deployed environments: it deletes the attachment blobs of abandoned sessions (see
+# apps/assistant/src/routes/internal.ts). A GitHub schedule instead of a Vercel Cron Job: Vercel
+# binds its cron jobs to the promoted production deployment, and the deploys here alias a staged
+# deployment instead (`--skip-domain`, which keeps dev.assistant.aragon.org off production), so a
+# Vercel cron stays on whichever deployment was promoted last and never reaches dev.
+
+name: Assistant Cleanup
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - env: development
+            url: https://dev.assistant.aragon.org
+          - env: production
+            url: https://assistant.aragon.org
+    steps:
+      # CRON_SECRET is the one the deployment of that environment reads at runtime; the bypass
+      # secret passes Vercel's bot challenge in front of both domains (same as the LLM smoke).
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@main
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            CRON_SECRET=op://kv_assistant_${{ matrix.env }}/CRON_SECRET/credential
+            VERCEL_AUTOMATION_BYPASS_SECRET=op://kv_assistant_infra/VERCEL_AUTOMATION_BYPASS_SECRET/credential
+
+      - name: Sweep abandoned blobs
+        env:
+          CRON_SECRET: ${{ fromJSON(steps.op.outputs.secrets).CRON_SECRET }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ fromJSON(steps.op.outputs.secrets).VERCEL_AUTOMATION_BYPASS_SECRET }}
+          URL: ${{ matrix.url }}
+        run: |
+          set -euo pipefail
+          : "${CRON_SECRET:?empty — check the 1Password item}"
+          curl -fsS --max-time 60 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            -H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}" \
+            "${URL}/internal/cleanup"
+
+  # Nobody watches a scheduled run: a failure goes to the alerts channel.
+  notify-failure:
+    needs: cleanup
+    if: ${{ failure() }}
+    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    with:
+      kind: failure
+      subject: "Assistant blob cleanup"
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_ALERTS_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
