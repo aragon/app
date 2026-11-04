@@ -48,9 +48,8 @@ export interface IActionViewDescriptor {
      */
     componentDetails?: ActionViewDetailsComponent;
     /**
-     * Whether `componentDetails` renders from the action and the chain ID alone, without reading the DAO. Only such
-     * views are used where no DAO applies to the action, e.g. actions forwarded to another chain or executed by a
-     * Safe. Views that do not set it are assumed to depend on the DAO.
+     * Whether `componentDetails` renders correctly without a `daoId`. Only such views are used where no DAO applies to
+     * the action, e.g. actions forwarded to another chain. Views that do not set it are assumed to require the DAO.
      */
     isDaoIndependent?: boolean;
     /**
