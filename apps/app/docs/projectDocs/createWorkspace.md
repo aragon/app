@@ -299,7 +299,7 @@ src/app/workspace/[workspaceId]/
 │  │  └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 │  └─ [accountId]/
 │     ├─ layout.tsx           LayoutWorkspaceAccount (DAO + overrides prefetch)
-│     ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard)
+│     ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard, or the Safe dashboard)
 │     ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
 │     ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
 │     ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
@@ -364,7 +364,7 @@ The account selector closes with an Add account item opening the edit wizard on 
 
 `workspaceAssetsPage` mirrors `daoAssetsPage`: `Page.Main` with the asset list, plus an aside. **One page serves
 both scopes** — `/workspace/{workspaceId}/all/assets` and `/workspace/{workspaceId}/{accountId}/assets` — unlike
-the account overview, which renders `DaoDashboardPage` as is. Delegating to the DAO assets page would read the DAO
+the account overview, which renders `DaoDashboardPage` as is for a DAO. Delegating to the DAO assets page would read the DAO
 finance API instead, which breaks the invariant below and has nothing to show for a Safe.
 
 For the same reason **`WorkspaceAccountGate` is deliberately not applied here**. The gate exists for pages that are
@@ -373,7 +373,7 @@ assets page would replace a Safe asset list that renders — whatever the endpoi
 or a placeholder. `LayoutWorkspaceAccount` says the same thing from the other side: assets and transactions "work
 from the workspace query endpoints regardless", which is a claim about the page's data path and not about what
 comes back for a Safe (see [the Safe aggregation gap](#known-gaps)). Neither the Safe branch of the gate nor the
-one the members and settings routes run before it (`workspaceAccountInfoUtils.getAccountInfo`) ever sees these two routes, so
+one the members, settings and overview routes run before it (`workspaceAccountInfoUtils.getAccountInfo`) ever sees these two routes, so
 they cost them no extra request.
 
 **Every scope reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — the aggregated one over all
@@ -729,9 +729,8 @@ removes support.
 Flipping a row to **implemented** is not only a new branch; it also means retiring whatever makes that route fail
 today, and the two differ by route:
 
-- **overview, proposal details** — the gate stays. It guards the DAO branch, which still
-  needs a DAO record. What changes is that the page gains a Safe branch *before* the gate, as the two members routes
-  and settings already did.
+- **proposal details** — the gate stays. It guards the DAO branch, which still needs a DAO record. What changes is
+  that the page gains a Safe branch *before* the gate, as the two members routes, settings and overview already did.
 - **`/{accountId}/proposals`** — the gate wrap in `WorkspaceProposalsPage` must be **deleted**, together with the
   DAO-only narrowing in `workspaceProposalsPageClient`. Both halves in one change: removing the gate alone sends the
   route back to answering for a Safe with an empty list, and changing the narrowing alone leaves a
@@ -746,7 +745,7 @@ today, and the two differ by route:
 | `/{workspaceId}/all/overview` | **implemented** | the workspace overview lists accounts of both types |
 | `/{accountId}/assets` | **implemented** | the list and the aside card describe the Safe |
 | `/{accountId}/transactions` | **implemented**, read-only | the list and the aside card describe the Safe; no create action, and the dispatch panel is DAO-only |
-| `/{accountId}/overview` | not yet | the gate's Safe state |
+| `/{accountId}/overview` | **implemented** | the Safe's dashboard: threshold, owners and nonce, its pending transactions, and previews of its owners and assets |
 | `/{accountId}/members` | **implemented** | the Safe's owners, with its settings in the aside |
 | `/{accountId}/members/{address}` | **implemented** (redirect) | a redirect to the Safe's members page |
 | `/{accountId}/proposals` | will not be supported | no link for a Safe; the URL gets the gate's Safe state |
@@ -792,15 +791,35 @@ because layout and page render in parallel, so a page's `notFound()` — `DaoMem
 Safe lacks — unwinds to `app/workspace/[workspaceId]/not-found.tsx`, which sits above `[accountId]` and discards
 the layout's output along with the page's. Its doc comment records the reasoning where the next reader will look.
 
-The Safe branch of the members and settings routes reads the account through `workspaceAccountInfoUtils.getAccountInfo`, a
+The Safe branch of the members, settings and overview routes reads the account through `workspaceAccountInfoUtils.getAccountInfo`, a
 single-account `query/accounts` lookup made on the server, once per request. It asks the accounts API what the
 address is, not whether the workspace holds it, so an external Safe takes the Safe branch too. A failed lookup
 returns `undefined` and the route falls back to the DAO branch, where the gate settles it.
 
 The cost is one `query/accounts` POST on a gated route whose DAO cannot be read (a POST is not memoised the way the
-DAO GET is), none for a DAO that loads, and none on assets and transactions. The members and settings routes add their own
-lookup on top: one POST on every request, and two when the account is not a Safe and its DAO cannot be read, since
+DAO GET is), none for a DAO that loads, and none on assets and transactions. The members, settings and overview routes add
+their own lookup on top: one POST on every request, and two when the account is not a Safe and its DAO cannot be read, since
 the gate then repeats the same lookup.
+
+### Dashboard page
+
+`/{accountId}/overview` serves a DAO and a Safe. `WorkspaceAccountOverviewPage` looks the account up with
+`workspaceAccountInfoUtils.getAccountInfo`, renders `WorkspaceSafeDashboardPageClient` for a Safe and the DAO
+dashboard behind the gate otherwise, like the members and settings routes.
+
+The Safe dashboard mirrors the DAO one:
+
+- **Header** — the option's label as the title with the account's avatar (the Safe icon by default), and the
+  threshold, owners and nonce of the Safe as stats, those of the Safe account page.
+- **Pending transactions**, in place of the proposals — `SafePendingTransactionList`, the live queue of the Safe
+  service with its Review and Safe app links, as on the Safe account page. Where the Safe service does not serve the
+  network the section says so, and the stats are left out; the rest of the page reads the workspace endpoints and
+  still renders.
+- **Members** and **Assets** — `WorkspaceMemberList` and `WorkspaceAssetList` on the account, 6 owners and 3 assets
+  as on the DAO dashboard, with their pagination hidden (`hidePagination`) and a "View all" link to the account's
+  members and assets pages.
+- **Aside** — `WorkspaceSafeAsideCard`, the card of the transactions and assets pages (description, chain, address
+  linked to the Safe app, Octav), without stats since the header states them.
 
 ### Settings page
 
@@ -1139,8 +1158,8 @@ Keep it that way when extending this.
 ## Known gaps
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
-- All five scopes' sections now have an account-scoped route, though for a Safe the overview and proposals sections
-  still fail with the gate's Safe state (see "Safe support by route").
+- All five scopes' sections now have an account-scoped route, though for a Safe the proposals and proposal details
+  routes still fail with the gate's Safe state (see "Safe support by route").
 - **The backend aggregates no Safe assets or transactions (verified on sandbox, `sandbox.backend.aragonservices.in`,
   2026-10-28).** `query/assets` and `query/transactions` return few or no rows for real Sepolia Safes that hold
   balances and transfers (2 asset rows and 5 transaction records on the Safes checked), with coverage `source:

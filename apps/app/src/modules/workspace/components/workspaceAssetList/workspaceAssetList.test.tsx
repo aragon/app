@@ -1,6 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import { generateAsset } from '@/modules/finance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -9,6 +10,7 @@ import {
     WorkspaceCoverageStatus,
     workspaceQueryService,
 } from '../../api/workspaceQueryService';
+import * as useWorkspaceAssetListDataHook from '../../hooks/useWorkspaceAssetListData';
 import {
     type IWorkspaceAssetListProps,
     WorkspaceAssetList,
@@ -138,5 +140,42 @@ describe('<WorkspaceAssetList /> component', () => {
         expect(
             screen.queryByText(/workspaceAssetList\.unavailable\.title$/),
         ).not.toBeInTheDocument();
+    });
+
+    describe('pagination', () => {
+        const useWorkspaceAssetListDataSpy = jest.spyOn(
+            useWorkspaceAssetListDataHook,
+            'useWorkspaceAssetListData',
+        );
+
+        beforeEach(() => {
+            useWorkspaceAssetListDataSpy.mockReturnValue({
+                onLoadMore: jest.fn(),
+                assetList: [generateAsset()],
+                state: 'idle',
+                itemsCount: 5,
+                unavailableAccounts: [],
+                emptyState: { heading: '', description: '' },
+                errorState: { heading: '', description: '' },
+            } as unknown as ReturnType<
+                typeof useWorkspaceAssetListDataHook.useWorkspaceAssetListData
+            >);
+        });
+
+        afterEach(() => {
+            useWorkspaceAssetListDataSpy.mockReset();
+        });
+
+        it('renders the data-list pagination by default', () => {
+            render(createTestComponent({ pageSize: 1 }));
+
+            expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        });
+
+        it('does not render the data-list pagination when hidePagination is set to true', () => {
+            render(createTestComponent({ pageSize: 1, hidePagination: true }));
+
+            expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+        });
     });
 });
