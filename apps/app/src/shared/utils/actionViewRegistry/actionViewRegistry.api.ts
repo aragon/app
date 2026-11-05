@@ -48,6 +48,11 @@ export interface IActionViewDescriptor {
      */
     componentDetails?: ActionViewDetailsComponent;
     /**
+     * Whether `componentDetails` renders correctly without a `daoId`. Only such views are used where no DAO applies to
+     * the action, e.g. actions forwarded to another chain. Views that do not set it are assumed to require the DAO.
+     */
+    isDaoIndependent?: boolean;
+    /**
      *  Action composer item.
      */
     getItem?: (params: {

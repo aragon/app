@@ -11,9 +11,11 @@ export const initWithdrawTokenActionViews = () => {
     actionViewRegistry.register({
         actionType: ProposalActionType.TRANSFER,
         componentDetails: WithdrawTokenActionDetails,
+        isDaoIndependent: true,
     });
     actionViewRegistry.register({
         actionType: ProposalActionType.TRANSFER_NATIVE,
         componentDetails: WithdrawTokenActionDetails,
+        isDaoIndependent: true,
     });
 };

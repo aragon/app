@@ -15,6 +15,7 @@ export const initPermissionManagerActionViews = () => {
         actionType: CoreActionType.PERMISSION_GRANT,
         componentCreate: PermissionActionCreate,
         componentDetails: PermissionActionDetails,
+        isDaoIndependent: true,
         functionSelector: permissionActionSelectors.grant,
     });
 
@@ -22,6 +23,7 @@ export const initPermissionManagerActionViews = () => {
         actionType: CoreActionType.PERMISSION_REVOKE,
         componentCreate: PermissionActionCreate,
         componentDetails: PermissionActionDetails,
+        isDaoIndependent: true,
         functionSelector: permissionActionSelectors.revoke,
     });
 
@@ -29,6 +31,7 @@ export const initPermissionManagerActionViews = () => {
         actionType: CoreActionType.PERMISSION_GRANT_WITH_CONDITION,
         componentCreate: PermissionActionCreate,
         componentDetails: PermissionActionDetails,
+        isDaoIndependent: true,
         functionSelector: permissionActionSelectors.grantWithCondition,
     });
 
@@ -36,6 +39,7 @@ export const initPermissionManagerActionViews = () => {
         actionType: CoreActionType.PERMISSION_APPLY_SINGLE_TARGET,
         componentCreate: PermissionChangesCreate,
         componentDetails: PermissionChangesDetails,
+        isDaoIndependent: true,
         functionSelector:
             permissionActionSelectors.applySingleTargetPermissions,
     });
@@ -44,6 +48,7 @@ export const initPermissionManagerActionViews = () => {
         actionType: CoreActionType.PERMISSION_APPLY_MULTI_TARGET,
         componentCreate: PermissionChangesCreate,
         componentDetails: PermissionChangesDetails,
+        isDaoIndependent: true,
         functionSelector: permissionActionSelectors.applyMultiTargetPermissions,
     });
 };
