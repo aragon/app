@@ -4,10 +4,14 @@
 // The `next/navigation` alias points to the client-hooks wrapper, which cannot re-export server functions.
 import { notFound } from 'next/navigation-original';
 import { DaoSettingsPage } from '@/modules/settings/pages/daoSettingsPage/daoSettingsPage';
+import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { WorkspaceAccountInfoType } from '../../api/workspaceQueryService';
 import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
+import { WorkspaceSafeSettingsPageClient } from './workspaceSafeSettingsPageClient';
 
 export interface IWorkspaceAccountSettingsPageProps {
     /**
@@ -17,12 +21,17 @@ export interface IWorkspaceAccountSettingsPageProps {
 }
 
 /**
- * Settings of one DAO account of a workspace, served by rendering the DAO settings page as is — like
- * `WorkspaceAccountMembersPage` does with the members page: an account ID is a DAO ID, so the only adaptation is the
- * shape of the route parameters.
+ * Settings of one account of a workspace, a DAO or a Safe. The aggregated scope has none: the navigation hides the
+ * link there (`workspaceUtils.isSectionServed`).
  *
- * Settings exist for a DAO alone: the navigation hides the link for the aggregated scope and for a Safe, and
- * `WorkspaceAccountGate` fails the route for any account whose DAO record cannot be read.
+ * The Safe branch comes first, before `WorkspaceAccountGate`, because the gate fails the route for anything whose DAO
+ * record cannot be read, a Safe included — as on `WorkspaceAccountMembersPage`. The account type comes from the
+ * workspace accounts API; a failed lookup falls back to the DAO branch, where the gate settles it.
+ *
+ * The DAO branch renders the DAO settings page as is: an account ID is a DAO ID, so the only adaptation is the shape
+ * of the route parameters.
+ *
+ * See "Safe support by route" in `docs/projectDocs/createWorkspace.md`.
  */
 export const WorkspaceAccountSettingsPage: React.FC<
     IWorkspaceAccountSettingsPageProps
@@ -33,8 +42,27 @@ export const WorkspaceAccountSettingsPage: React.FC<
         notFound();
     }
 
-    const { accountId } = await params;
+    const { workspaceId, accountId } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
+
+    const accountInfo = await workspaceAccountInfoUtils.getAccountInfo({
+        network,
+        address,
+    });
+
+    if (accountInfo?.type === WorkspaceAccountInfoType.SAFE) {
+        return (
+            <Page.Container>
+                <Page.Content>
+                    <WorkspaceSafeSettingsPageClient
+                        address={address}
+                        network={network}
+                        workspaceId={workspaceId}
+                    />
+                </Page.Content>
+            </Page.Container>
+        );
+    }
 
     return (
         <WorkspaceAccountGate accountId={accountId}>

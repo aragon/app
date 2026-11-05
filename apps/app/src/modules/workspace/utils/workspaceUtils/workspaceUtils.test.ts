@@ -14,6 +14,9 @@ import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
+    type IWorkspaceSectionScope,
+    type WorkspaceAccountSection,
+    workspaceAccountSections,
     workspaceAllAccountsSegment,
     workspaceEditStepParam,
     workspaceUtils,
@@ -276,6 +279,80 @@ describe('workspace utils', () => {
                 ),
             ).toEqual('assets');
         });
+    });
+
+    describe('isSectionServed', () => {
+        const all = { isAllAccounts: true };
+        const dao = {
+            isAllAccounts: false,
+            accountType: WorkspaceAccountType.DAO,
+        };
+        const safe = {
+            isAllAccounts: false,
+            accountType: WorkspaceAccountType.SAFE,
+        };
+        const unknown = { isAllAccounts: false };
+
+        it.each([all, dao, safe, unknown])(
+            'serves the sections every scope has for %o',
+            (scope) => {
+                expect(
+                    workspaceUtils.isSectionServed('assets', scope),
+                ).toBeTruthy();
+            },
+        );
+
+        it.each<{
+            section: WorkspaceAccountSection;
+            scope: IWorkspaceSectionScope;
+            expected: boolean;
+        }>([
+            { section: 'proposals', scope: all, expected: true },
+            { section: 'proposals', scope: dao, expected: true },
+            { section: 'proposals', scope: safe, expected: false },
+            { section: 'permissions', scope: all, expected: false },
+            { section: 'permissions', scope: dao, expected: true },
+            { section: 'permissions', scope: safe, expected: false },
+            { section: 'settings', scope: all, expected: false },
+            { section: 'settings', scope: dao, expected: true },
+            { section: 'settings', scope: safe, expected: true },
+        ])(
+            'returns $expected for $section on $scope',
+            ({ section, scope, expected }) => {
+                expect(workspaceUtils.isSectionServed(section, scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
+        it.each<WorkspaceAccountSection>([
+            'proposals',
+            'permissions',
+            'settings',
+        ])(
+            'does not serve %s to an account whose type is not known yet',
+            (section) => {
+                expect(
+                    workspaceUtils.isSectionServed(section, unknown),
+                ).toBeFalsy();
+            },
+        );
+    });
+
+    describe('isAccountSection', () => {
+        it.each(workspaceAccountSections)(
+            'returns true for the %s section',
+            (section) => {
+                expect(workspaceUtils.isAccountSection(section)).toBeTruthy();
+            },
+        );
+
+        it.each(['unknown', '', 'Settings', workspaceAllAccountsSegment])(
+            'returns false for "%s", which names no account-scoped route',
+            (section) => {
+                expect(workspaceUtils.isAccountSection(section)).toBeFalsy();
+            },
+        );
     });
 
     describe('resolveAccountScope', () => {

@@ -93,7 +93,15 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
             ? []
             : [
                   ...safeSettingsUtils.liveConfigurationRows({ safeInfo, t }),
-                  ...safeSettingsUtils.authorityRows({ safeInfo, t }),
+                  ...safeSettingsUtils.authorityRows({
+                      safeInfo,
+                      buildAddressHref: (contract) =>
+                          buildEntityUrl({
+                              type: ChainEntityType.ADDRESS,
+                              id: contract,
+                          }),
+                      t,
+                  }),
               ]),
     ];
 

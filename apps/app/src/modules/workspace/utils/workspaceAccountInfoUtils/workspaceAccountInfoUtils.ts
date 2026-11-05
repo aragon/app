@@ -7,7 +7,7 @@ import {
 class WorkspaceAccountInfoUtils {
     /**
      * Resolves what an address is (Safe or DAO) through the workspace accounts API. Backs the Safe branch of the
-     * account member pages.
+     * account members and settings pages.
      *
      * Returns `undefined` when the lookup throws, so callers fall back to the DAO path.
      */

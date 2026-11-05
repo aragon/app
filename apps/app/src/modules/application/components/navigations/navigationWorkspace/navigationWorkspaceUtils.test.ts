@@ -1,3 +1,4 @@
+import { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
 import { navigationWorkspaceUtils } from './navigationWorkspaceUtils';
 
 describe('navigationWorkspace utils', () => {
@@ -10,10 +11,25 @@ describe('navigationWorkspace utils', () => {
     ) => links.filter((link) => !link.hidden).map((link) => link.link);
 
     describe('buildLinks', () => {
-        it('scopes every section link to the given account', () => {
+        it('scopes the section links to an account whose type is not known yet, holding back the ones restricted by type', () => {
             const links = navigationWorkspaceUtils.buildLinks(
                 workspaceId,
                 accountId,
+            );
+
+            expect(visibleLinks(links)).toEqual([
+                `/workspace/demo/${accountId}/overview`,
+                `/workspace/demo/${accountId}/transactions`,
+                `/workspace/demo/${accountId}/assets`,
+                `/workspace/demo/${accountId}/members`,
+            ]);
+        });
+
+        it('lists every section of a DAO account', () => {
+            const links = navigationWorkspaceUtils.buildLinks(
+                workspaceId,
+                accountId,
+                WorkspaceAccountType.DAO,
             );
 
             expect(visibleLinks(links)).toEqual([
@@ -22,19 +38,39 @@ describe('navigationWorkspace utils', () => {
                 `/workspace/demo/${accountId}/transactions`,
                 `/workspace/demo/${accountId}/assets`,
                 `/workspace/demo/${accountId}/members`,
+                `/workspace/demo/${accountId}/permissions`,
+                `/workspace/demo/${accountId}/settings`,
             ]);
         });
 
-        it('adds the permissions and settings of a DAO account', () => {
+        it('lists the settings of a Safe account, but not its proposals or permissions', () => {
             const links = navigationWorkspaceUtils.buildLinks(
                 workspaceId,
                 accountId,
-                true,
+                WorkspaceAccountType.SAFE,
             );
 
-            expect(visibleLinks(links).slice(-2)).toEqual([
-                `/workspace/demo/${accountId}/permissions`,
+            expect(visibleLinks(links)).toEqual([
+                `/workspace/demo/${accountId}/overview`,
+                `/workspace/demo/${accountId}/transactions`,
+                `/workspace/demo/${accountId}/assets`,
+                `/workspace/demo/${accountId}/members`,
                 `/workspace/demo/${accountId}/settings`,
+            ]);
+        });
+
+        it('lists the proposals of the aggregated scope, but not permissions or settings', () => {
+            const links = navigationWorkspaceUtils.buildLinks(
+                workspaceId,
+                'all',
+            );
+
+            expect(visibleLinks(links)).toEqual([
+                '/workspace/demo/all/overview',
+                '/workspace/demo/all/proposals',
+                '/workspace/demo/all/transactions',
+                '/workspace/demo/all/assets',
+                '/workspace/demo/all/members',
             ]);
         });
 
