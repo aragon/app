@@ -3898,12 +3898,21 @@
       "safeSettings": {
         "currentNonce": "Current Safe nonce",
         "guard": "Transaction guard",
+        "guardHelp": "Checks every transaction before it executes",
+        "module": "Module",
+        "moduleNames": {
+          "allowance": "Allowance module",
+          "safe4337": "Safe 4337 module",
+          "socialRecovery": "Social recovery module"
+        },
+        "moduleVersion": "Safe module v{{version}}",
         "modules": "Enabled modules",
         "modulesValue": "{{count}}",
         "nonce": "Safe nonce used",
         "safe": "Safe address",
         "threshold": "Required confirmations",
         "thresholdOfOwners": "{{threshold}} of {{total}}",
+        "unknownModule": "Unrecognised module",
         "unknownVersion": "unknown version",
         "versionHelp": "Safe {{version}}"
       },

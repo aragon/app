@@ -46,7 +46,8 @@ const translationKey = 'app.workspace.workspaceSafeSettingsPage';
 /**
  * Settings of a Safe account of a workspace, laid out as the DAO settings page: an "Account" section saying which
  * account this is (name, chain, summary) and a "Governance" section saying what it takes to move it, with the
- * contract aside — the Safe address, its version and its Safe app link, as `DaoVersionInfo` states a DAO's.
+ * contract aside — the Safe address, its version and its Safe app link, then its guard and each enabled module, as
+ * `DaoVersionInfo` states a DAO and its plugins.
  *
  * Read-only, with no actions: a Safe is configured in the Safe app, so nothing here creates a transaction or edits it.
  *
@@ -96,8 +97,21 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
     });
 
     const governanceRows: IDefinitionSetting[] = [];
+    const contractRows: IDefinitionSetting[] = [safeRow];
+
+    const buildAddressHref = (contract: string) =>
+        buildEntityUrl({ type: ChainEntityType.ADDRESS, id: contract });
 
     if (safeInfo != null) {
+        contractRows.push(
+            ...safeSettingsUtils.contractRows({
+                safeInfo,
+                network,
+                buildAddressHref,
+                t,
+            }),
+        );
+
         const [thresholdRow, ...configurationRows] =
             safeSettingsUtils.liveConfigurationRows({ safeInfo, t });
 
@@ -105,7 +119,11 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
             // The owners are listed on the members page, so the threshold leads there rather than repeating them.
             { ...thresholdRow, link: { href: membersUrl } },
             ...configurationRows,
-            ...safeSettingsUtils.authorityRows({ safeInfo, t }),
+            ...safeSettingsUtils.authorityRows({
+                safeInfo,
+                buildAddressHref,
+                t,
+            }),
         );
     }
 
@@ -189,7 +207,9 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                     title={t(`${translationKey}.aside.contractsTitle`)}
                 >
                     <DefinitionList.Container>
-                        <SettingRow row={safeRow} />
+                        {contractRows.map((row) => (
+                            <SettingRow key={row.copyValue} row={row} />
+                        ))}
                     </DefinitionList.Container>
                 </Page.AsideCard>
             </Page.Aside>

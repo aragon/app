@@ -1,4 +1,5 @@
 import locales from '@/assets/locales/en.json';
+import { Network } from '@/shared/api/daoService';
 import { generateSafeInfo } from '@/shared/testUtils';
 import { safeSettingsUtils } from './safeSettingsUtils';
 
@@ -81,7 +82,86 @@ describe('safeSettings utils', () => {
             'Enabled modules',
         ]);
         expect(rows[0].copyValue).toEqual(guard);
+        expect(rows[0].link).toBeUndefined();
         expect(rows[1].definition).toEqual('2');
         expect(safeSettingsUtils.authorityRows({ safeInfo, t })).toEqual([]);
+    });
+
+    it('links the guard where its address resolves', () => {
+        const guard = '0x0000000000000000000000000000000000000099';
+        const [row] = safeSettingsUtils.authorityRows({
+            safeInfo: generateSafeInfo({ guard }),
+            buildAddressHref: (address) => `https://explorer/${address}`,
+            t,
+        });
+
+        expect(row.link).toEqual({
+            href: `https://explorer/${guard}`,
+            isExternal: true,
+            isOnchainEntity: true,
+        });
+    });
+
+    it('lists the guard and each module as contracts, naming the official modules', () => {
+        const guard = '0x0000000000000000000000000000000000000099';
+        const allowanceModule = '0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134';
+        const unknownModule = '0x0000000000000000000000000000000000000022';
+
+        const rows = safeSettingsUtils.contractRows({
+            safeInfo: generateSafeInfo({
+                guard,
+                modules: [allowanceModule, unknownModule],
+            }),
+            network: Network.ETHEREUM_SEPOLIA,
+            buildAddressHref: (address) => `https://explorer/${address}`,
+            t,
+        });
+
+        expect(
+            rows.map(({ term, description, copyValue }) => ({
+                term,
+                description,
+                copyValue,
+            })),
+        ).toEqual([
+            {
+                term: 'Transaction guard',
+                description: 'Checks every transaction before it executes',
+                copyValue: guard,
+            },
+            {
+                term: 'Allowance module',
+                description: 'Safe module v0.1.0',
+                copyValue: allowanceModule,
+            },
+            {
+                term: 'Module',
+                description: 'Unrecognised module',
+                copyValue: unknownModule,
+            },
+        ]);
+        expect(rows[1].link?.href).toEqual(
+            `https://explorer/${allowanceModule}`,
+        );
+    });
+
+    it('lists no contracts for a Safe with neither guard nor modules, and links none without an href', () => {
+        expect(
+            safeSettingsUtils.contractRows({
+                safeInfo,
+                network: Network.ETHEREUM_SEPOLIA,
+                t,
+            }),
+        ).toEqual([]);
+
+        const [row] = safeSettingsUtils.contractRows({
+            safeInfo: generateSafeInfo({
+                modules: ['0x0000000000000000000000000000000000000022'],
+            }),
+            network: Network.ETHEREUM_SEPOLIA,
+            t,
+        });
+
+        expect(row.link).toBeUndefined();
     });
 });

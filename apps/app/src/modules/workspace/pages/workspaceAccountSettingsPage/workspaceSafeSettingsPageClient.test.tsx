@@ -169,7 +169,19 @@ describe('<WorkspaceSafeSettingsPageClient /> component', () => {
         );
         render(createTestComponent());
 
-        expect(screen.getByText(/safeSettings\.guard$/)).toBeInTheDocument();
+        // The guard is disclosed in governance and listed again among the contracts, linked in both.
+        expect(screen.getAllByText(/safeSettings\.guard$/)).toHaveLength(2);
+        expect(
+            screen
+                .getAllByRole('link')
+                .filter((link) =>
+                    link
+                        .getAttribute('href')
+                        ?.endsWith(
+                            '/address/0x3333333333333333333333333333333333333333',
+                        ),
+                ),
+        ).toHaveLength(2);
         expect(screen.getByText(/safeSettings\.modules$/)).toBeInTheDocument();
     });
 
@@ -219,5 +231,28 @@ describe('<WorkspaceSafeSettingsPageClient /> component', () => {
         expect(
             screen.getByText(/safeSettings\.versionHelp/),
         ).toBeInTheDocument();
+    });
+
+    it('lists the enabled modules in the contracts aside, named when they are official deployments', () => {
+        useSafeInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse({
+                    address,
+                    modules: [
+                        '0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134',
+                        '0x4444444444444444444444444444444444444444',
+                    ],
+                }),
+            }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/safeSettings\.moduleNames\.allowance/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/safeSettings\.unknownModule/),
+        ).toBeInTheDocument();
+        expect(screen.getByText('0x4444…4444')).toBeInTheDocument();
     });
 });

@@ -1,6 +1,8 @@
 import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { Network } from '@/shared/api/daoService';
 import type { ISafeInfo } from '@/shared/api/safeService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { safeModuleUtils } from '../safeModuleUtils';
 
 export const safeSettingsTranslationKey = 'app.safe.safeSettings';
 
@@ -34,8 +36,31 @@ export interface ISafeSettingsRowsParams {
      * Live Safe state: owners, threshold and nonce.
      */
     safeInfo: ISafeInfo;
+    /**
+     * Where a contract address the rows state (the guard, each module) resolves, usually the block
+     * explorer. Absent, or returning undefined, leaves those rows unlinked.
+     */
+    buildAddressHref?: (address: string) => string | undefined;
     t: TranslationFunction;
 }
+
+export interface ISafeContractRowsParams extends ISafeSettingsRowsParams {
+    /**
+     * Network the Safe is deployed on, which the module deployments are matched on.
+     */
+    network: Network;
+}
+
+const buildContractLink = (
+    address: string,
+    buildAddressHref?: (address: string) => string | undefined,
+): IDefinitionSetting['link'] => {
+    const href = buildAddressHref?.(address);
+
+    return href == null
+        ? undefined
+        : { href, isExternal: true, isOnchainEntity: true };
+};
 
 /**
  * One description of a Safe, stated the same way wherever it appears: the body's Settings tab in a
@@ -113,13 +138,14 @@ class SafeSettingsUtils {
      * app, and a Safe with neither gets no rows rather than two empty ones.
      */
     authorityRows = (params: ISafeSettingsRowsParams): IDefinitionSetting[] => {
-        const { safeInfo, t } = params;
+        const { safeInfo, buildAddressHref, t } = params;
         const rows: IDefinitionSetting[] = [];
 
         if (safeInfo.guard != null) {
             rows.push({
                 term: t(`${safeSettingsTranslationKey}.guard`),
                 definition: addressUtils.truncateAddress(safeInfo.guard),
+                link: buildContractLink(safeInfo.guard, buildAddressHref),
                 copyValue: safeInfo.guard,
             });
         }
@@ -131,6 +157,65 @@ class SafeSettingsUtils {
                     count: safeInfo.modules.length,
                 }),
             });
+        }
+
+        return rows;
+    };
+
+    /**
+     * The contracts attached to the Safe besides the Safe itself - its guard and each enabled
+     * module - as the DAO settings aside lists a DAO's plugins. `authorityRows` says that they
+     * exist; these say which they are. A module found among Safe's official deployments is named
+     * with its version; any other is still listed, as an unrecognised module, because it can act
+     * on the Safe all the same.
+     */
+    contractRows = (params: ISafeContractRowsParams): IDefinitionSetting[] => {
+        const { safeInfo, network, buildAddressHref, t } = params;
+
+        const toRow = (
+            address: string,
+            term: string,
+            description: string,
+        ): IDefinitionSetting => ({
+            term,
+            definition: addressUtils.truncateAddress(address),
+            link: buildContractLink(address, buildAddressHref),
+            copyValue: address,
+            description,
+        });
+
+        const rows: IDefinitionSetting[] = [];
+
+        if (safeInfo.guard != null) {
+            rows.push(
+                toRow(
+                    safeInfo.guard,
+                    t(`${safeSettingsTranslationKey}.guard`),
+                    t(`${safeSettingsTranslationKey}.guardHelp`),
+                ),
+            );
+        }
+
+        for (const module of safeInfo.modules) {
+            const info = safeModuleUtils.getModuleInfo(network, module);
+
+            rows.push(
+                info == null
+                    ? toRow(
+                          module,
+                          t(`${safeSettingsTranslationKey}.module`),
+                          t(`${safeSettingsTranslationKey}.unknownModule`),
+                      )
+                    : toRow(
+                          module,
+                          t(
+                              `${safeSettingsTranslationKey}.moduleNames.${info.name}`,
+                          ),
+                          t(`${safeSettingsTranslationKey}.moduleVersion`, {
+                              version: info.version,
+                          }),
+                      ),
+            );
         }
 
         return rows;
