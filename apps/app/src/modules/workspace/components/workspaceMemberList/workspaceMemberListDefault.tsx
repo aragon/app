@@ -220,6 +220,10 @@ export interface IWorkspaceMemberListDefaultProps {
      * rows of a Safe body, which the backend reports under the Safe account, link to the member page of that body.
      */
     bodyAccountId?: string;
+    /**
+     * Hides the pagination of the list, e.g. on a dashboard that previews the list and links to its page.
+     */
+    hidePagination?: boolean;
 }
 
 /**
@@ -239,6 +243,7 @@ export const WorkspaceMemberListDefault: React.FC<
         filters,
         visiblePluginsByAccountId,
         bodyAccountId,
+        hidePagination,
     } = props;
 
     const { t } = useTranslations();
@@ -420,7 +425,7 @@ export const WorkspaceMemberListDefault: React.FC<
                     );
                 })}
             </DataListContainer>
-            <DataListPagination />
+            {!hidePagination && <DataListPagination />}
         </DataListRoot>
     );
 };

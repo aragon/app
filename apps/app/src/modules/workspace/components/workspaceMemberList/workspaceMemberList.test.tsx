@@ -22,7 +22,10 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { generateWorkspaceQueryResponse } from '../../testUtils';
+import {
+    generateWorkspaceMember,
+    generateWorkspaceQueryResponse,
+} from '../../testUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspaceMemberListProps,
@@ -501,4 +504,30 @@ describe('<WorkspaceMemberList /> component', () => {
             screen.queryByTestId('plugin-filter-mock'),
         ).not.toBeInTheDocument();
     });
+
+    it.each([
+        { hidePagination: undefined, hasPagination: true },
+        { hidePagination: true, hasPagination: false },
+    ])(
+        'renders the pagination of the list unless hidden (hidePagination: $hidePagination)',
+        async ({ hidePagination, hasPagination }) => {
+            getMemberListSpy.mockResolvedValue(
+                generateWorkspaceQueryResponse<IWorkspaceMember>({
+                    data: [generateWorkspaceMember()],
+                    metadata: {
+                        page: 1,
+                        pageSize: 1,
+                        totalPages: 5,
+                        totalRecords: 5,
+                    },
+                }) as IWorkspaceQueryResponse<IWorkspaceMember>,
+            );
+            render(createTestComponent({ pageSize: 1, hidePagination }));
+
+            expect(await screen.findByText('0x0000…0002')).toBeInTheDocument();
+            expect(screen.queryByRole('progressbar') != null).toBe(
+                hasPagination,
+            );
+        },
+    );
 });

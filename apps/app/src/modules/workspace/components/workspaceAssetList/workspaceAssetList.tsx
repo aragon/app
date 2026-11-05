@@ -25,6 +25,10 @@ export interface IWorkspaceAssetListProps {
      * Keeps the list in its loading state while the accounts are still being resolved.
      */
     isPending?: boolean;
+    /**
+     * Hides the pagination of the list, e.g. on a dashboard that previews the list and links to its page.
+     */
+    hidePagination?: boolean;
 }
 
 /**
@@ -34,7 +38,7 @@ export interface IWorkspaceAssetListProps {
 export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
     props,
 ) => {
-    const { accounts, pageSize, isPending } = props;
+    const { accounts, pageSize, isPending, hidePagination } = props;
 
     const { t } = useTranslations();
 
@@ -103,7 +107,7 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
                         />
                     ))}
                 </DataListContainer>
-                <DataListPagination />
+                {!hidePagination && <DataListPagination />}
             </DataListRoot>
         </div>
     );
