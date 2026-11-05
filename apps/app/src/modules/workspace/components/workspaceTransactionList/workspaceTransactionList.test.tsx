@@ -356,7 +356,7 @@ describe('<WorkspaceTransactionList /> component', () => {
         );
 
         const header = await screen.findByRole('button', {
-            name: /Executed/,
+            name: /status\.executed/,
         });
         await userEvent.click(header);
 

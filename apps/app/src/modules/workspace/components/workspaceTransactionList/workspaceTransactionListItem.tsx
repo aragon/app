@@ -18,6 +18,7 @@ import {
 import {
     type ITransactionTransfer,
     TransactionSide,
+    useTransactionActions,
 } from '@/modules/finance/api/financeService';
 import { TransactionExecutionDetails } from '@/modules/finance/components/transactionExecutionDetails';
 import {
@@ -79,9 +80,15 @@ interface ITransactionHeaderDisplay {
      */
     iconVariant: AvatarIconVariant;
     /**
-     * Heading of the transaction type.
+     * Title of the transaction: its type for a transfer; for an execution, its executor (a plugin name or an address)
+     * or the account of a Safe transaction.
      */
-    heading: string;
+    title: string;
+    /**
+     * Identifier displayed after the title of an execution: the slug of the proposal behind it or the nonce of its
+     * Safe transaction, when known.
+     */
+    identifier?: string;
     /**
      * Token amount of a transfer, displayed on the right of the header.
      */
@@ -90,10 +97,6 @@ interface ITransactionHeaderDisplay {
      * Status of an execution, displayed on the right of the header.
      */
     status?: ITagProps;
-    /**
-     * Executor of an execution, a plugin name or an address, or the account of a Safe transaction.
-     */
-    label?: string;
 }
 
 interface IBuildExecutionDisplayParams {
@@ -108,6 +111,10 @@ interface IBuildExecutionDisplayParams {
      */
     safeTxHash?: string;
     /**
+     * Slug of the proposal that triggered the execution, when known.
+     */
+    proposalSlug?: string;
+    /**
      * Name of the account the execution belongs to.
      */
     accountName?: string;
@@ -115,10 +122,6 @@ interface IBuildExecutionDisplayParams {
      * DAO the execution belongs to.
      */
     dao?: IDao;
-    /**
-     * Copy of the transaction header.
-     */
-    headerCopy: TransactionHeaderCopy;
     /**
      * Translation function.
      */
@@ -155,18 +158,26 @@ const buildExecutionStatus = (
 const buildExecutionDisplay = (
     params: IBuildExecutionDisplayParams,
 ): ITransactionHeaderDisplay => {
-    const { execution, safeTxHash, accountName, dao, headerCopy, t } = params;
+    const { execution, safeTxHash, proposalSlug, accountName, dao, t } = params;
 
-    // A Safe transaction is identified by its account and nonce, as an executed one may not have been run by a plugin.
+    // An execution is identified by the proposal behind it, else, for a Safe transaction, by its account and nonce.
+    // Without either it is identified by its executor alone, its status tag already saying it executed.
     const isSafeTransaction = safeTxHash != null;
-    const heading =
-        isSafeTransaction && execution.nonce != null
-            ? workspaceTransactionUtils.getSafeTransactionTitle(
-                  execution.nonce,
-                  accountName,
-              )
-            : headerCopy.executed;
-    const label =
+    const getIdentifier = () => {
+        if (proposalSlug != null) {
+            return proposalSlug.toUpperCase();
+        }
+
+        if (isSafeTransaction && execution.nonce != null) {
+            return workspaceTransactionUtils.getSafeTransactionTitle(
+                execution.nonce,
+                accountName,
+            );
+        }
+
+        return undefined;
+    };
+    const title =
         !isSafeTransaction &&
         workspaceTransactionUtils.isExecutedExecution(execution)
             ? transactionExecutionUtils.getExecutionLabel(execution, dao)
@@ -175,8 +186,8 @@ const buildExecutionDisplay = (
     return {
         icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
         iconVariant: 'neutral',
-        heading,
-        label,
+        title,
+        identifier: getIdentifier(),
         status: buildExecutionStatus(execution, t),
     };
 };
@@ -193,7 +204,7 @@ const buildTransferDisplay = (
     return {
         icon: isDeposit ? IconType.DEPOSIT : IconType.WITHDRAW,
         iconVariant: isDeposit ? 'success' : 'warning',
-        heading: isDeposit ? headerCopy.received : headerCopy.sent,
+        title: isDeposit ? headerCopy.received : headerCopy.sent,
         value:
             formattedAmount == null
                 ? '-'
@@ -229,6 +240,22 @@ export const WorkspaceTransactionListItem: React.FC<
             ? transaction.safeTxHash
             : undefined;
 
+    // The row does not always carry the slug of the proposal behind a DAO execution, in which case it is read from the
+    // actions of the execution: the expanded details read the same query, so expanding the row adds no request.
+    const isProposalSlugMissing =
+        isExecuted &&
+        safeTxHash == null &&
+        dao != null &&
+        transaction.proposalIndex != null &&
+        transaction.proposalSlug == null;
+    const { data: actionData } = useTransactionActions(
+        { urlParams: { id: transaction.id, network: transaction.network } },
+        { enabled: isProposalSlugMissing },
+    );
+    const proposalSlug = isExecuted
+        ? (transaction.proposalSlug ?? actionData?.proposalSlug)
+        : undefined;
+
     if (isExecuted && dao == null && safeTxHash == null) {
         return <TransactionList.Item index={index} transaction={transaction} />;
     }
@@ -236,22 +263,22 @@ export const WorkspaceTransactionListItem: React.FC<
     const {
         icon,
         iconVariant,
-        heading,
-        label,
+        title,
+        identifier,
         status,
         value: amount,
     } = isExecution
         ? buildExecutionDisplay({
               execution: transaction,
               safeTxHash,
+              proposalSlug,
               accountName,
               dao,
-              headerCopy,
               t,
           })
         : buildTransferDisplay(transaction, headerCopy);
 
-    const isAddressLabel = label != null && addressUtils.isAddress(label);
+    const isAddressTitle = addressUtils.isAddress(title);
     const formattedDate = formatterUtils.formatDate(
         workspaceTransactionUtils.getTimestamp(transaction) * 1000,
         { format: DateFormat.YEAR_MONTH_DAY_TIME },
@@ -268,20 +295,20 @@ export const WorkspaceTransactionListItem: React.FC<
                     />
                     <div className="flex min-w-0 grow flex-col items-start gap-y-0.5 md:gap-y-1">
                         <span className="text-left text-neutral-800 leading-tight md:text-lg">
-                            {heading}
-                            {label != null && (
+                            {isAddressTitle ? (
+                                // The header is the accordion trigger, so the address must not add a control of its
+                                // own.
+                                <AddressOutput
+                                    address={title}
+                                    hasInteractiveAncestor={true}
+                                />
+                            ) : (
+                                title
+                            )}
+                            {identifier != null && (
                                 <span className="text-neutral-500">
                                     {' '}
-                                    {isAddressLabel ? (
-                                        // The header is the accordion trigger, so the address must not add a
-                                        // control of its own.
-                                        <AddressOutput
-                                            address={label}
-                                            hasInteractiveAncestor={true}
-                                        />
-                                    ) : (
-                                        label
-                                    )}
+                                    {identifier}
                                 </span>
                             )}
                         </span>

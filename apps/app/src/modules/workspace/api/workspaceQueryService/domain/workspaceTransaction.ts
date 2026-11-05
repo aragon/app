@@ -53,6 +53,10 @@ export interface IWorkspaceTransactionExecution
      * Nonce of the Safe transaction behind the execution, set on the executions of Safe accounts.
      */
     nonce?: string;
+    /**
+     * Slug of the proposal that triggered the execution, when the endpoint provides it.
+     */
+    proposalSlug?: string;
 }
 
 /**

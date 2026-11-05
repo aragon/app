@@ -1,13 +1,21 @@
 import * as GovUiKit from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { TransactionSide } from '@/modules/finance/api/financeService';
+import * as financeService from '@/modules/finance/api/financeService';
+import {
+    type ITransactionActionsResult,
+    TransactionSide,
+} from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
 import { generateToken } from '@/modules/finance/testUtils';
 import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import {
     generateWorkspacePendingTransaction,
@@ -28,6 +36,26 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         safeExecutionDetails,
         'SafeExecutionDetails',
     );
+    const useTransactionActionsSpy = jest.spyOn(
+        financeService,
+        'useTransactionActions',
+    );
+
+    const mockTransactionActions = (
+        data?: Partial<ITransactionActionsResult>,
+    ) =>
+        useTransactionActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess<ITransactionActionsResult, Error>({
+                data: {
+                    actionCount: 1,
+                    transactionHash: '0x',
+                    blockTimestamp: 0,
+                    decoding: false,
+                    actions: [],
+                    ...data,
+                },
+            }),
+        );
 
     beforeEach(() => {
         assetTransferSpy.mockReturnValue(<div data-testid="asset-transfer" />);
@@ -37,12 +65,14 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         safeExecutionDetailsSpy.mockReturnValue(
             <div data-testid="safe-execution-detail" />,
         );
+        mockTransactionActions();
     });
 
     afterEach(() => {
         assetTransferSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
         safeExecutionDetailsSpy.mockReset();
+        useTransactionActionsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -131,7 +161,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         );
     });
 
-    it('renders an execution with the plugin that emitted it and its executed status', () => {
+    it('renders an execution without proposal by its executor alone, next to its executed status', () => {
         const plugin = generateDaoPlugin({
             interfaceType: PluginInterfaceType.MULTISIG,
             subdomain: 'multisig',
@@ -146,12 +176,94 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         render(createTestComponent({ transaction, dao }));
 
-        const header = screen.getByRole('button', { name: /Executed/ });
+        const header = screen.getByRole('button', { name: /status\.executed/ });
         expect(header).toHaveTextContent('Core council');
         expect(header).toHaveTextContent(
             'app.workspace.workspaceTransactionList.item.status.executed',
         );
+        expect(header).not.toHaveTextContent(/Executed/);
         expect(header).not.toHaveTextContent('2 actions');
+    });
+
+    it('titles a DAO execution with the proposal slug of the row, without reading its actions', () => {
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            proposalIndex: '2',
+            proposalSlug: 'token-12',
+        });
+
+        render(createTestComponent({ transaction, dao: generateDao() }));
+
+        // The executor comes first, followed by the proposal slug.
+        expect(
+            screen.getByRole('button', { name: /router TOKEN-12/ }),
+        ).toBeInTheDocument();
+        expect(useTransactionActionsSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            { enabled: false },
+        );
+    });
+
+    it('titles a DAO execution with the proposal slug read from its actions when the row lacks it', () => {
+        mockTransactionActions({ proposalSlug: 'multisig-3' });
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            network: Network.ETHEREUM_SEPOLIA,
+            proposalIndex: '2',
+        });
+
+        render(createTestComponent({ transaction, dao: generateDao() }));
+
+        expect(
+            screen.getByRole('button', { name: /MULTISIG-3/ }),
+        ).toBeInTheDocument();
+        expect(useTransactionActionsSpy).toHaveBeenCalledWith(
+            {
+                urlParams: {
+                    id: transaction.id,
+                    network: Network.ETHEREUM_SEPOLIA,
+                },
+            },
+            { enabled: true },
+        );
+    });
+
+    it('does not read the actions of a DAO execution that no proposal triggered', () => {
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            proposalIndex: null,
+        });
+
+        render(createTestComponent({ transaction, dao: generateDao() }));
+
+        expect(
+            screen.getByRole('button', { name: /status\.executed/ }),
+        ).toBeInTheDocument();
+        expect(useTransactionActionsSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            { enabled: false },
+        );
+    });
+
+    it('does not read the proposal slug of a Safe transaction', () => {
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            proposalIndex: '2',
+            safeTxHash: '0xff54',
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                dao: generateDao(),
+                accountType: WorkspaceAccountType.SAFE,
+            }),
+        );
+
+        expect(useTransactionActionsSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            { enabled: false },
+        );
     });
 
     it('renders an executed Safe transaction with its account initials, nonce and account name', () => {
@@ -169,8 +281,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             }),
         );
 
-        const header = screen.getByRole('button', { name: /TS-21/ });
-        expect(header).toHaveTextContent('Treasury Safe');
+        const header = screen.getByRole('button', {
+            name: /Treasury Safe TS-21/,
+        });
         expect(header).toHaveTextContent(
             'app.workspace.workspaceTransactionList.item.status.executed',
         );
@@ -193,8 +306,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             }),
         );
 
-        const header = screen.getByRole('button', { name: /TS-22/ });
-        expect(header).toHaveTextContent('Treasury Safe');
+        const header = screen.getByRole('button', {
+            name: /Treasury Safe TS-22/,
+        });
         expect(header).toHaveTextContent(
             'app.workspace.workspaceTransactionList.item.status.active',
         );
@@ -255,7 +369,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             screen.queryByTestId('execution-detail'),
         ).not.toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole('button', { name: /Executed/ }));
+        await userEvent.click(
+            screen.getByRole('button', { name: /status\.executed/ }),
+        );
 
         expect(screen.getByTestId('execution-detail')).toBeInTheDocument();
         expect(transactionExecutionDetailsSpy).toHaveBeenCalledWith(
@@ -293,7 +409,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             }),
         );
 
-        await userEvent.click(screen.getByRole('button', { name: /Executed/ }));
+        await userEvent.click(
+            screen.getByRole('button', { name: /status\.executed/ }),
+        );
 
         expect(screen.getByTestId('safe-execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
@@ -334,7 +452,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             }),
         );
 
-        await userEvent.click(screen.getByRole('button', { name: /Executed/ }));
+        await userEvent.click(
+            screen.getByRole('button', { name: /status\.executed/ }),
+        );
 
         expect(screen.getByTestId('execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).not.toHaveBeenCalled();
