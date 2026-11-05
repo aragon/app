@@ -185,7 +185,6 @@ export const WorkspaceTransactionList: React.FC<
             ),
             { enabled: hasAccounts },
         );
-    console.log('data', data);
     const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
 
     const transactions = data?.pages.flatMap((page) => page.data);

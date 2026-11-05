@@ -66,6 +66,28 @@ describe('safe service keys', () => {
         );
     });
 
+    it('builds one safeTransactionActions key regardless of the address and hash casing', () => {
+        const safeTxHash = `0x${'AB'.repeat(32)}`;
+
+        expect(
+            safeServiceKeys.safeTransactionActions({
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: lowercased,
+                    safeTxHash,
+                },
+            }),
+        ).toEqual(
+            safeServiceKeys.safeTransactionActions({
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: checksummed,
+                    safeTxHash: safeTxHash.toLowerCase(),
+                },
+            }),
+        );
+    });
+
     it('keeps distinct Safes on distinct keys', () => {
         const other = '0x665928FeacC8739116A3f2eF66a9c61936348DC2';
 

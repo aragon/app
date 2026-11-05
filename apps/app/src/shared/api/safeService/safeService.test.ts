@@ -112,6 +112,55 @@ describe('safe service', () => {
         expect(result).toEqual(nextNonce);
     });
 
+    it('getSafeTransactionActions reads decoded actions with a lowercased Safe transaction hash', async () => {
+        const safeTxHash = `0x${'AB'.repeat(32)}`;
+        const actions = {
+            decoding: false,
+            actions: [
+                {
+                    from: safeAddress,
+                    to: safeAddress,
+                    value: '0',
+                    data: '0x',
+                    type: 'RAW',
+                    inputData: null,
+                },
+            ],
+            rawActions: [{ to: safeAddress, value: '0', data: '0x' }],
+        };
+        requestSpy.mockResolvedValue(actions);
+
+        const result = await safeService.getSafeTransactionActions({
+            urlParams: { ...urlParams, safeTxHash },
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            safeService['urls'].safeTransactionActions,
+            {
+                urlParams: {
+                    network: Network.ETHEREUM_MAINNET,
+                    address: safeAddress,
+                    safeTxHash: safeTxHash.toLowerCase(),
+                },
+            },
+        );
+        expect(result).toEqual(actions);
+    });
+
+    it('getSafeTransactionActions rejects a response whose actions do not match the contract', async () => {
+        requestSpy.mockResolvedValue({
+            decoding: false,
+            actions: [{ to: safeAddress }],
+            rawActions: [],
+        });
+
+        await expect(
+            safeService.getSafeTransactionActions({
+                urlParams: { ...urlParams, safeTxHash: '0xab' },
+            }),
+        ).rejects.toMatchObject({ code: 'invalid-response', status: 502 });
+    });
+
     it.each([
         {
             label: 'safe info',
