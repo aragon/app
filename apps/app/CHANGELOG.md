@@ -1,5 +1,51 @@
 # @aragon/app
 
+## 1.43.0
+
+### Minor Changes
+
+- [#1474](https://github.com/aragon/app/pull/1474) [`903e5c2`](https://github.com/aragon/app/commit/903e5c2e35d854b4778f2848ef469532fb0f2b70) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Serve the knowledge-base site at `/help` behind the `helpCenter` feature flag (on in local, development and preview): the proxy rewrites `/help/*` to the site deployment named by `NEXT_PUBLIC_DOCS_URL`, `robots.txt` lists the site's sitemap, the documentation links of the admin onboarding, the process dialog and the token import go to the site's pages, and the support chat tells the assistant whether it may link to them (it will with the citations of APP-1229). Flag off, nothing changes: the links keep going to docs.aragon.org.
+
+- [#1397](https://github.com/aragon/app/pull/1397) [`fedae71`](https://github.com/aragon/app/commit/fedae711c8bc5b41e890f2f80e8b8084ec7ec0c3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add Safe multisig bodies to SPP proposal stages with live approval and veto status, confirmation lists, result reporting, execution, and settled-result attribution. Add a read-only Safe account view for balances and nonce-ordered queued transactions, with proposal links, independent payload review, and hardware-wallet hash comparison. Keep signing, confirmation, and execution in proposal context.
+
+    List a DAO's Safes as ordinary governance bodies: one Safe appears once on Members with its own tab, owner list and aside, whether it is referenced by a process, carried as a body, or both. Name each Safe by its address so a DAO holding several of them stays readable, and offer no plugin update for a Safe, which is not installed from a repository. Members tabs keep their place in the URL across reload and shared links. Keep a Safe used by several linked DAOs scoped to the DAO being viewed, and keep stage permissions decided by the process's own stage conditions.
+
+    Preserve the selected Safe body when opening an owner, reloading their details, and returning to Members. Show the Safe's version without an OSx plugin release/build label.
+
+- [#1397](https://github.com/aragon/app/pull/1397) [`9e91fdc`](https://github.com/aragon/app/commit/9e91fdcfc4c8e6d1cfab9635473e2223ae3f3861) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Report SPP stage status from effective proposal progression, warn that advancing forfeits a queued Safe report, and narrow what the signing surface trusts: hash under the Safe's onchain version and threshold, decode governance calldata locally, refuse payloads whose operation, value or numeric envelope fields the label cannot cover, and link queued transactions to associated Aragon proposals without treating those links as execution authority. Disclose nonce order, same-nonce rivals, queue staleness, and unavailable hash comparisons.
+
+    Open Safe proposal transactions with the complete pre-action review in the shared transaction dialog. The same primary action accepts that review and starts Sign and submit or Execute; keep transaction details expandable while signing and retain submitted execution identity for read-only recovery without another send. The review starts with a compact action, Safe, network and cost summary; optional verification details are collapsed by default behind “Verify transaction details,” while security warnings remain visible and full hashes/calldata stay expandable before and during signing.
+
+    Wait for wallet reconnection before preparing or continuing a Safe transaction, and keep review retryable when a persisted connector has not yet restored its provider or a network switch is rejected.
+
+    Keep live Safe confirmation progress neutral until execution, show recovered decisions with their signers and execution link, and use the external-body fallback for unsupported Safe versions or missing confirmation history. Consolidate read warnings, prioritize stage advancement, and keep execution recovery and indexing inside the transaction dialog.
+
+    Restore Safe approval and execution in one wallet transaction, with review text that distinguishes its gas cost from gasless signing. Keep gasless approve-only and veto-only available to unsigned owners after quorum and while queued, with a direct execution action and a separate options dropdown.
+
+    Open “View in Safe” in the Safe web app and show queued-nonce warnings before quorum. Refresh Safe state again when a completed transaction dialog is closed, so Done can pick up confirmations that were not yet visible on the first read.
+
+    Use the Safe voting dropdown to select the primary button's mode. Selecting approve-only or veto-only changes the button without starting a transaction; the primary button starts the selected action.
+
+    Name the proposal occupying the Safe's current nonce in the queued-behind warning, linking to it wherever it lives. A Safe can be shared by anything, so a transaction with no Aragon correlation keeps the plain nonce warning.
+
+    Advance verified Safe executions into indexing and refresh the proposal result when indexing completes, instead of leaving the dialog on Execute.
+
+### Patch Changes
+
+- [#1383](https://github.com/aragon/app/pull/1383) [`bbe197d`](https://github.com/aragon/app/commit/bbe197d654545f6eb7f8b143b2ba94717ec13550) Thanks [@milosh86](https://github.com/milosh86)! - Let `notFound()` and `redirect()` pass through the app error boundary, so they render the not-found page or redirect instead of the generic error state.
+
+- [#1539](https://github.com/aragon/app/pull/1539) [`519c213`](https://github.com/aragon/app/commit/519c2132499c2b637fb6decbdc0099b787e052da) Thanks [@milosh86](https://github.com/milosh86)! - Fix proposal details page crashing on reload inside a workspace
+
+- [#1536](https://github.com/aragon/app/pull/1536) [`3826f39`](https://github.com/aragon/app/commit/3826f39db8e07090a8bb776d35285a6d3bb89f2c) Thanks [@milosh86](https://github.com/milosh86)! - Let SPP bodies approve or veto while their stage is advanceable and the voting period is still open, and stop offering a vote to a body whose sub-proposal already reported its result
+
+- [#1529](https://github.com/aragon/app/pull/1529) [`142ec69`](https://github.com/aragon/app/commit/142ec694d065dbc21c075e58cada6757fe82ec16) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (Next.js 16.4.2, React 19.3.1, framer-motion 14, Sentry 10.76, viem 2.57.7, Radix 1.3 line, assistant-ui 0.15.30, ai 7.0.146), rebuild the advisory floors (undici 6.29.1, zod 4.6.6 under the Vercel CLI) and drop the dead seroval and source-map-js ones
+
+- [#1537](https://github.com/aragon/app/pull/1537) [`09fba67`](https://github.com/aragon/app/commit/09fba672ea201f7789d7d7661605370e66a29b77) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Resolve the body of the member details page from one identifier, whether it comes from the workspace or the `members` search parameter, matched regardless of casing, so that a Safe body's member opens on that Safe, votes included.
+
+- [#1531](https://github.com/aragon/app/pull/1531) [`20e6625`](https://github.com/aragon/app/commit/20e66252b337dfd604bc6f0fba8e6db360d3d444) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Give a Safe account its own aside card on the workspace transactions and assets pages: its description, the stats of the page, its chain, its address linked to the Safe app and its Octav link, as the DAO card shows for a DAO.
+- Updated dependencies [[`142ec69`](https://github.com/aragon/app/commit/142ec694d065dbc21c075e58cada6757fe82ec16)]:
+    - @aragon/assistant-chat@0.5.4
+
 ## 1.42.0
 
 ### Minor Changes

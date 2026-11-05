@@ -1,11 +1,7 @@
 'use client';
 
 import { ProposalActions } from '@aragon/gov-ui-kit';
-import type { Hex } from 'viem';
-import {
-    type IProposalAction,
-    ProposalActionType,
-} from '@/modules/governance/api/governanceService';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IRawActionTuple } from '@/modules/governance/types';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
@@ -28,46 +24,11 @@ export interface ICrossChainControllerNestedActionsListProps {
 }
 
 /**
- * Action types whose views read nothing from the DAO, so they can be resolved by type on the destination chain.
- */
-const chainAgnosticActionTypes: string[] = [
-    ProposalActionType.TRANSFER,
-    ProposalActionType.TRANSFER_NATIVE,
-    ProposalActionType.METADATA_UPDATE,
-    ProposalActionType.METADATA_PLUGIN_UPDATE,
-];
-
-/**
- * Resolves the custom view of a forwarded action. Chain-agnostic action types are resolved by type first, so they keep
- * their view even when a selector view matches the same calldata; other actions are resolved by selector only.
- */
-const getCustomActionView = (
-    action: IProposalAction,
-    functionSelector?: Hex,
-) => {
-    if (chainAgnosticActionTypes.includes(action.type)) {
-        const customActionViewByType = actionViewRegistry.getViewByActionType(
-            action.type,
-        );
-
-        if (customActionViewByType != null) {
-            return customActionViewByType;
-        }
-    }
-
-    return actionViewRegistry.getViewBySelector(functionSelector);
-};
-
-/**
  * Renders the actions forwarded to another chain by a cross-chain controller message. Unlike `NestedActionsList`,
- * actions are rendered with `ProposalActions.Item` directly, without plugin normalization or a plugin-specific
- * `CustomComponent`: the DAO's own network and installed plugins belong to its home chain, not the destination chain
- * the actions execute on, so resolving a plugin view for them would read the wrong chain's state.
- *
- * Views matched by function selector are the exception: they carry no `daoId`, so they resolve nothing from the
- * home chain and only decode what is chain-independent, such as a permission hash to its name. Token and native
- * transfers and metadata updates are resolved by action type for the same reason: their views render the decoded
- * action as is.
+ * actions are rendered with `ProposalActions.Item` directly, without plugin normalization: the DAO's own network and
+ * installed plugins belong to its home chain, not the destination chain the actions execute on, so a view reading the
+ * DAO would read the wrong chain's state. Only the views flagged as `isDaoIndependent` are therefore resolved, and
+ * every other action is rendered with the generic decoded or raw view.
  */
 export const CrossChainControllerNestedActionsList: React.FC<
     ICrossChainControllerNestedActionsListProps
@@ -90,10 +51,11 @@ export const CrossChainControllerNestedActionsList: React.FC<
                     const functionSelector =
                         proposalActionUtils.actionToFunctionSelector(action);
 
-                    const customActionView = getCustomActionView(
-                        action,
-                        functionSelector,
-                    );
+                    const customActionView =
+                        actionViewRegistry.getDaoIndependentView(
+                            action.type,
+                            functionSelector,
+                        );
 
                     return (
                         <ProposalActions.Item<IProposalActionData>

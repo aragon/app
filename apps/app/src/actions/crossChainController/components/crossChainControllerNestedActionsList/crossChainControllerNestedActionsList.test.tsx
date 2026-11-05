@@ -1,16 +1,15 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { encodeFunctionData } from 'viem';
 import { initUpdateMetadataActionViews } from '@/actions/core/updateMetadata';
-import {
-    type IProposalAction,
-    ProposalActionType,
-} from '@/modules/governance/api/governanceService';
+import { initGaugeVoterActionViews } from '@/actions/gaugeVoter';
+import { activateGaugeAbi } from '@/actions/gaugeVoter/constants/addressGaugeVoterAbi';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import {
     generateProposalActionUpdateMetadata,
     generateProposalActionUpdatePluginMetadata,
 } from '@/modules/governance/testUtils';
-import { TokenProposalActionType } from '@/plugins/tokenPlugin/types';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import {
     CrossChainControllerNestedActionsList,
@@ -18,14 +17,14 @@ import {
 } from './crossChainControllerNestedActionsList';
 
 describe('<CrossChainControllerNestedActionsList /> component', () => {
-    const { getViewByActionType } = actionViewRegistry;
-    const getViewByActionTypeSpy = jest.spyOn(
+    const { getDaoIndependentView } = actionViewRegistry;
+    const getDaoIndependentViewSpy = jest.spyOn(
         actionViewRegistry,
-        'getViewByActionType',
+        'getDaoIndependentView',
     );
 
     afterEach(() => {
-        getViewByActionTypeSpy.mockReset();
+        getDaoIndependentViewSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -95,17 +94,17 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         expect(screen.getByText('0xb')).toBeInTheDocument();
     });
 
-    it.each([
-        ProposalActionType.TRANSFER,
-        ProposalActionType.TRANSFER_NATIVE,
-        ProposalActionType.METADATA_UPDATE,
-        ProposalActionType.METADATA_PLUGIN_UPDATE,
-    ])('renders the view registered for %s actions', async (type) => {
-        getViewByActionTypeSpy.mockReturnValue({
-            actionType: type,
+    it('renders the DAO-independent view resolved for an action', async () => {
+        getDaoIndependentViewSpy.mockReturnValue({
+            actionType: 'Transfer',
             componentDetails: () => 'action-view',
+            isDaoIndependent: true,
         });
-        const action = generateAction({ type, data: '0x', value: '1' });
+        const action = generateAction({
+            type: 'Transfer',
+            data: '0x',
+            value: '1',
+        });
 
         render(
             createTestComponent({
@@ -116,15 +115,42 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
 
         await userEvent.click(screen.getAllByRole('button')[0]);
 
-        expect(getViewByActionTypeSpy).toHaveBeenCalledWith(type);
+        expect(getDaoIndependentViewSpy).toHaveBeenCalledWith(
+            'Transfer',
+            undefined,
+        );
         expect(screen.getByText('action-view')).toBeInTheDocument();
     });
 
-    // Forwarded token mints are intentionally rendered with the generic decoded/raw views.
-    it.each(['Execute', TokenProposalActionType.MINT])(
-        'does not resolve views by action type for %s actions',
-        (type) => {
-            const action = generateAction({ type });
+    describe('DAO-dependent view integration', () => {
+        beforeAll(() => {
+            initGaugeVoterActionViews();
+        });
+
+        beforeEach(() => {
+            getDaoIndependentViewSpy.mockImplementation(getDaoIndependentView);
+        });
+
+        it('renders a forwarded gauge call with the decoded view instead of its DAO-dependent view', async () => {
+            const gaugeAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
+            const action = generateAction({
+                data: encodeFunctionData({
+                    abi: [activateGaugeAbi],
+                    args: [gaugeAddress],
+                }),
+                inputData: {
+                    function: 'activateGauge',
+                    contract: 'GaugeVoter',
+                    stateMutability: 'nonpayable',
+                    parameters: [
+                        {
+                            name: '_gauge',
+                            type: 'address',
+                            value: gaugeAddress,
+                        },
+                    ],
+                },
+            });
 
             render(
                 createTestComponent({
@@ -135,9 +161,11 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
                 }),
             );
 
-            expect(getViewByActionTypeSpy).not.toHaveBeenCalled();
-        },
-    );
+            await userEvent.click(screen.getAllByRole('button')[0]);
+
+            expect(screen.getByText('activateGauge')).toBeInTheDocument();
+        });
+    });
 
     describe('metadata update integration', () => {
         beforeAll(() => {
@@ -145,7 +173,7 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
         });
 
         beforeEach(() => {
-            getViewByActionTypeSpy.mockImplementation(getViewByActionType);
+            getDaoIndependentViewSpy.mockImplementation(getDaoIndependentView);
         });
 
         // Decoded actions must match the forwarded tuple (valid target, same calldata) to be rendered instead of raw stubs.
