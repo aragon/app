@@ -76,8 +76,9 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ? { address, name: displayName ?? undefined }
             : undefined;
 
-    // Built from the route, so the section links are complete on the first paint; the ones served for some account
-    // types alone (permissions, settings) wait for the workspace read that tells a DAO account from a Safe.
+    // Built from the route, so the section links are complete on the first paint; under an account scope, the ones
+    // served for some account types alone (proposals, permissions, settings) wait for the workspace read that tells a
+    // DAO account from a Safe.
     const links = navigationWorkspaceUtils.buildLinks(
         workspaceId,
         accountId,

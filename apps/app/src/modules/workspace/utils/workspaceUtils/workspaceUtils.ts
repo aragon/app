@@ -44,7 +44,23 @@ const fallbackWorkspaceSlug = 'workspace';
  */
 export const workspaceAllAccountsSegment = 'all';
 
-export interface IWorkspaceSectionScopes {
+/**
+ * Sections of `/workspace/{workspaceId}/{accountId}/{section}`, one per route under `[accountId]`. A segment outside
+ * this list has no route: it renders the section-not-found page.
+ */
+export const workspaceAccountSections = [
+    'overview',
+    'proposals',
+    'members',
+    'assets',
+    'transactions',
+    'permissions',
+    'settings',
+] as const;
+
+export type WorkspaceAccountSection = (typeof workspaceAccountSections)[number];
+
+interface IWorkspaceSectionScopes {
     /**
      * Account types whose account scope has the section.
      */
@@ -52,7 +68,7 @@ export interface IWorkspaceSectionScopes {
     /**
      * Whether the aggregated scope, every account of the workspace, has the section.
      */
-    isAggregated: boolean;
+    isAllAccounts: boolean;
 }
 
 /**
@@ -63,17 +79,20 @@ export interface IWorkspaceSectionScopes {
  * - permissions — a DAO account alone.
  * - settings — a DAO or a Safe account, not the aggregated scope.
  */
-export const workspaceSectionScopes: Readonly<
-    Partial<Record<string, IWorkspaceSectionScopes>>
+const workspaceSectionScopes: Readonly<
+    Partial<Record<WorkspaceAccountSection, IWorkspaceSectionScopes>>
 > = {
-    proposals: { accountTypes: [WorkspaceAccountType.DAO], isAggregated: true },
+    proposals: {
+        accountTypes: [WorkspaceAccountType.DAO],
+        isAllAccounts: true,
+    },
     permissions: {
         accountTypes: [WorkspaceAccountType.DAO],
-        isAggregated: false,
+        isAllAccounts: false,
     },
     settings: {
         accountTypes: [WorkspaceAccountType.DAO, WorkspaceAccountType.SAFE],
-        isAggregated: false,
+        isAllAccounts: false,
     },
 };
 
@@ -250,6 +269,15 @@ class WorkspaceUtils {
     };
 
     /**
+     * Whether a URL segment names a section the app has a route for (`workspaceAccountSections`), narrowing it for
+     * `isSectionServed`.
+     * @param section - Section segment of an account-scoped workspace URL, e.g. from `getAccountScopeSection`.
+     * @returns True when the segment is a known section.
+     */
+    isAccountSection = (section: string): section is WorkspaceAccountSection =>
+        (workspaceAccountSections as readonly string[]).includes(section);
+
+    /**
      * Whether a section is served for a scope (`workspaceSectionScopes`). The navigation hides the link to a section
      * that is not, and the account selector sends an option that does not have the current section to its overview
      * instead. An account scope whose type is not known yet has none of the sections restricted by type, so their
@@ -259,7 +287,7 @@ class WorkspaceUtils {
      * @returns True when the section is served for the scope.
      */
     isSectionServed = (
-        section: string,
+        section: WorkspaceAccountSection,
         scope: IWorkspaceSectionScope,
     ): boolean => {
         const { isAllAccounts, accountType } = scope;
@@ -270,7 +298,7 @@ class WorkspaceUtils {
         }
 
         if (isAllAccounts) {
-            return sectionScopes.isAggregated;
+            return sectionScopes.isAllAccounts;
         }
 
         return (

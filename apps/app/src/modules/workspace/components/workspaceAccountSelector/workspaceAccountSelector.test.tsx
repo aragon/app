@@ -273,6 +273,36 @@ describe('<WorkspaceAccountSelector /> component', () => {
         },
     );
 
+    // A segment the app has no route for renders the section-not-found page under every scope, so it is carried over
+    // as is rather than read as a restricted section.
+    it('keeps a section the app has no route for on every option', async () => {
+        usePathnameSpy.mockReturnValue(
+            `/workspace/test-workspace/${daoAccount.id}/unknown`,
+        );
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+            activeOption: daoOption,
+            isAllAccounts: false,
+        });
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const [all, dao, safe] = await screen.findAllByRole('menuitem');
+        expect(all).toHaveAttribute(
+            'href',
+            '/workspace/test-workspace/all/unknown',
+        );
+        expect(dao).toHaveAttribute(
+            'href',
+            `/workspace/test-workspace/${daoAccount.id}/unknown`,
+        );
+        expect(safe).toHaveAttribute(
+            'href',
+            `/workspace/test-workspace/${safeAccount.id}/unknown`,
+        );
+    });
+
     it('renders every option as a link to the current section of its own account scope', async () => {
         render(createTestComponent());
 

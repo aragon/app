@@ -14,6 +14,9 @@ import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
+    type IWorkspaceSectionScope,
+    type WorkspaceAccountSection,
+    workspaceAccountSections,
     workspaceAllAccountsSegment,
     workspaceEditStepParam,
     workspaceUtils,
@@ -299,7 +302,11 @@ describe('workspace utils', () => {
             },
         );
 
-        it.each([
+        it.each<{
+            section: WorkspaceAccountSection;
+            scope: IWorkspaceSectionScope;
+            expected: boolean;
+        }>([
             { section: 'proposals', scope: all, expected: true },
             { section: 'proposals', scope: dao, expected: true },
             { section: 'proposals', scope: safe, expected: false },
@@ -318,12 +325,32 @@ describe('workspace utils', () => {
             },
         );
 
-        it.each(['proposals', 'permissions', 'settings'])(
+        it.each<WorkspaceAccountSection>([
+            'proposals',
+            'permissions',
+            'settings',
+        ])(
             'does not serve %s to an account whose type is not known yet',
             (section) => {
                 expect(
                     workspaceUtils.isSectionServed(section, unknown),
                 ).toBeFalsy();
+            },
+        );
+    });
+
+    describe('isAccountSection', () => {
+        it.each(workspaceAccountSections)(
+            'returns true for the %s section',
+            (section) => {
+                expect(workspaceUtils.isAccountSection(section)).toBeTruthy();
+            },
+        );
+
+        it.each(['unknown', '', 'Settings', workspaceAllAccountsSegment])(
+            'returns false for "%s", which names no account-scoped route',
+            (section) => {
+                expect(workspaceUtils.isAccountSection(section)).toBeFalsy();
             },
         );
     });
