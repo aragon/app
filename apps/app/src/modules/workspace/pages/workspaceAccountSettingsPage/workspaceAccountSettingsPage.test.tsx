@@ -5,11 +5,17 @@ import type { ReactNode } from 'react';
 import { DaoSettingsPage } from '@/modules/settings/pages/daoSettingsPage/daoSettingsPage';
 import { Network } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
+import {
+    type IWorkspaceAccountInfo,
+    WorkspaceAccountInfoType,
+} from '../../api/workspaceQueryService';
 import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import {
     type IWorkspaceAccountSettingsPageProps,
     WorkspaceAccountSettingsPage,
 } from './workspaceAccountSettingsPage';
+import { WorkspaceSafeSettingsPageClient } from './workspaceSafeSettingsPageClient';
 
 jest.mock('next/navigation-original', () => ({
     notFound: jest.fn(() => {
@@ -19,6 +25,12 @@ jest.mock('next/navigation-original', () => ({
 
 jest.mock('@/modules/settings/pages/daoSettingsPage/daoSettingsPage', () => ({
     DaoSettingsPage: jest.fn(() => <div data-testid="dao-settings-mock" />),
+}));
+
+jest.mock('./workspaceSafeSettingsPageClient', () => ({
+    WorkspaceSafeSettingsPageClient: jest.fn(() => (
+        <div data-testid="safe-settings-mock" />
+    )),
 }));
 
 jest.mock('../../components/workspaceAccountGate', () => ({
@@ -35,9 +47,26 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
     const daoSettingsPageMock = DaoSettingsPage as jest.Mock;
     const accountGateMock = WorkspaceAccountGate as jest.Mock;
+    const safeSettingsClientMock = WorkspaceSafeSettingsPageClient as jest.Mock;
+    const getAccountInfoSpy = jest.spyOn(
+        workspaceAccountInfoUtils,
+        'getAccountInfo',
+    );
+
+    const generateAccountInfo = (
+        type: WorkspaceAccountInfoType,
+    ): IWorkspaceAccountInfo =>
+        ({
+            network: Network.ETHEREUM_SEPOLIA,
+            address,
+            type,
+        }) as IWorkspaceAccountInfo;
 
     beforeEach(() => {
         isEnabledSpy.mockResolvedValue(true);
+        getAccountInfoSpy.mockResolvedValue(
+            generateAccountInfo(WorkspaceAccountInfoType.DAO),
+        );
     });
 
     afterEach(() => {
@@ -45,6 +74,8 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
         notFoundMock.mockClear();
         daoSettingsPageMock.mockClear();
         accountGateMock.mockClear();
+        safeSettingsClientMock.mockClear();
+        getAccountInfoSpy.mockReset();
     });
 
     const createTestComponent = async (
@@ -92,5 +123,52 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
         );
         expect(notFoundMock).toHaveBeenCalled();
         expect(daoSettingsPageMock).not.toHaveBeenCalled();
+    });
+
+    describe('Safe account', () => {
+        beforeEach(() => {
+            getAccountInfoSpy.mockResolvedValue(
+                generateAccountInfo(WorkspaceAccountInfoType.SAFE),
+            );
+        });
+
+        it('renders the Safe settings page outside the account gate', async () => {
+            render(await createTestComponent());
+
+            expect(
+                screen.getByTestId('safe-settings-mock'),
+            ).toBeInTheDocument();
+            expect(accountGateMock).not.toHaveBeenCalled();
+            expect(daoSettingsPageMock).not.toHaveBeenCalled();
+            expect(safeSettingsClientMock).toHaveBeenCalledWith(
+                {
+                    workspaceId: 'demo',
+                    network: Network.ETHEREUM_SEPOLIA,
+                    address,
+                },
+                undefined,
+            );
+        });
+
+        it('looks the account up by the network and address of the URL', async () => {
+            render(await createTestComponent());
+
+            expect(getAccountInfoSpy).toHaveBeenCalledWith({
+                network: Network.ETHEREUM_SEPOLIA,
+                address,
+            });
+        });
+    });
+
+    it('renders the DAO settings page behind the gate when the lookup fails', async () => {
+        getAccountInfoSpy.mockResolvedValue(undefined);
+
+        render(await createTestComponent());
+
+        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('dao-settings-mock')).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('safe-settings-mock'),
+        ).not.toBeInTheDocument();
     });
 });

@@ -805,13 +805,12 @@ the gate then repeats the same lookup.
 looks the account up with `workspaceAccountInfoUtils.getAccountInfo`, renders `WorkspaceSafeSettingsPageClient` for a
 Safe and the DAO settings page behind the gate otherwise, like the members routes.
 
-The Safe page mirrors the DAO one, read-only:
+The Safe page mirrors the DAO one, read-only and without actions (no Edit: a Safe is configured in the Safe app, and
+its workspace name, description and avatar are set from Edit workspace):
 
 - **Account** — the option's label as the name (metadata name, accounts-API name or truncated address) with the
   account's avatar (the Safe icon by default), the chain, and the description when the workspace stores one, as
-  `DaoSettingsInfo` states a DAO. Its **Edit** action opens the edit wizard on its Accounts step,
-  returning to the page, since the wizard is where a Safe's name, description and avatar are set; it is hidden for a
-  Safe the workspace does not hold.
+  `DaoSettingsInfo` states a DAO.
 - **Governance** — threshold, current nonce, guard and modules, the rows of the Safe account page
   (`safeSettingsUtils`). The threshold links to the Safe's members page, which lists the owners. When the Safe
   service does not cover the network or the read fails, the section says the configuration could not be loaded and
