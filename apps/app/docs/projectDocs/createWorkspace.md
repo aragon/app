@@ -752,7 +752,7 @@ today, and the two differ by route:
 | `/{accountId}/proposals` | will not be supported | no link for a Safe; the URL gets the gate's Safe state |
 | `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's Safe state |
 | `/{accountId}/permissions` | not applicable | DAO only: no link for a Safe; the URL gets the gate's Safe state |
-| `/{accountId}/settings` | **implemented**, read-only | the Safe's account (name, chain, summary) and governance (threshold linking to its members, nonce, guard, modules), with its address and version aside |
+| `/{accountId}/settings` | **implemented**, read-only | the Safe's account (blockchain, address, summary) and governance (threshold linking to its members, nonce, guard, modules), with its address and version aside |
 
 Two consequences worth stating, because both are deliberate:
 
@@ -811,9 +811,10 @@ Safe and the DAO settings page behind the gate otherwise, like the members route
 The Safe page mirrors the DAO one, read-only and without actions (no Edit: a Safe is configured in the Safe app, and
 its workspace name, description and avatar are set from Edit workspace):
 
-- **Account** — the option's label as the name (metadata name, accounts-API name or truncated address) with the
-  account's avatar (the Safe icon by default), the chain, and the description when the workspace stores one, as
-  `DaoSettingsInfo` states a DAO.
+- **Account** — the rows `DaoHierarchy` states a DAO with: the blockchain and the address, each with "Not
+  changeable" under it (the address standing where a DAO's ENS name would, linked to the Safe app with a copy
+  button), and the description when the workspace stores one. Like the DAO section, it names no account: the
+  workspace name and avatar of the Safe show in the account selector.
 - **Governance** — threshold, current nonce, guard and modules, the rows of the Safe account page
   (`safeSettingsUtils`). The threshold links to the Safe's members page, which lists the owners. When the Safe
   service does not cover the network or the read fails, the section says the configuration could not be loaded and

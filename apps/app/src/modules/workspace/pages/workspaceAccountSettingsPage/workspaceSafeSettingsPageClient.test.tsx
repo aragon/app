@@ -96,15 +96,52 @@ describe('<WorkspaceSafeSettingsPageClient /> component', () => {
         );
     };
 
-    it('renders the account section with the name, chain, Safe and description of the account', () => {
+    it('renders the account section with the blockchain, address and description of the Safe, as the DAO hierarchy states a DAO', () => {
         render(createTestComponent());
 
         expect(
             screen.getByText(/workspaceSafeSettingsPage\.main\.accountTitle/),
         ).toBeInTheDocument();
-        expect(screen.getByText('Grants Safe')).toBeInTheDocument();
         expect(screen.getByText('Ethereum Sepolia')).toBeInTheDocument();
+        expect(
+            screen.getByText(/workspaceSafeSettingsPage\.account\.address/),
+        ).toBeInTheDocument();
         expect(screen.getByText('Pays the grants')).toBeInTheDocument();
+        // The DAO hierarchy names no account in the section, so neither does the Safe.
+        expect(
+            screen.queryByText(/workspaceSafeSettingsPage\.account\.name/),
+        ).not.toBeInTheDocument();
+    });
+
+    it('links the address of the Safe to the Safe app and states it as not changeable', () => {
+        render(createTestComponent());
+
+        const [, addressNotChangeable] = screen.getAllByText(
+            /workspaceSafeSettingsPage\.account\.notChangeable/,
+        );
+        expect(addressNotChangeable).toBeInTheDocument();
+        const [addressLink] = screen.getAllByRole('link', {
+            name: /0x1F01…132a/,
+        });
+        expect(addressLink).toHaveAttribute(
+            'href',
+            expect.stringContaining(`sep:${address}`),
+        );
+    });
+
+    it('states the blockchain of the Safe as not changeable under its name, as the DAO hierarchy does', () => {
+        render(createTestComponent());
+
+        const term = screen.getByText(
+            /workspaceSafeSettingsPage\.account\.blockchain/,
+        );
+        const [notChangeable] = screen.getAllByText(
+            /workspaceSafeSettingsPage\.account\.notChangeable/,
+        );
+        expect(term).toBeInTheDocument();
+        expect(notChangeable.previousElementSibling).toHaveTextContent(
+            'Ethereum Sepolia',
+        );
     });
 
     it('leaves the summary out for an account with no description', () => {
@@ -118,7 +155,7 @@ describe('<WorkspaceSafeSettingsPageClient /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('labels the account by its truncated address while no option resolves it', () => {
+    it('renders the blockchain and address of the Safe while no option resolves the account', () => {
         useWorkspaceAccountOptionsSpy.mockReturnValue({
             options: [],
             accountId,
@@ -129,7 +166,10 @@ describe('<WorkspaceSafeSettingsPageClient /> component', () => {
         });
         render(createTestComponent());
 
-        expect(screen.getAllByText('0x1F01…132a').length).toBeGreaterThan(0);
+        expect(screen.getByText('Ethereum Sepolia')).toBeInTheDocument();
+        expect(
+            screen.getByText(/workspaceSafeSettingsPage\.account\.address/),
+        ).toBeInTheDocument();
     });
 
     it('renders the governance of the Safe, linking the threshold to its members', () => {
@@ -155,6 +195,53 @@ describe('<WorkspaceSafeSettingsPageClient /> component', () => {
                         `/workspace/demo/${accountId}/members`,
                 ),
         ).toBeTruthy();
+    });
+
+    it('opens the members page from the threshold in the same tab, as an in-app link', () => {
+        render(createTestComponent());
+
+        const membersLink = screen
+            .getAllByRole('link')
+            .find(
+                (link) =>
+                    link.getAttribute('href') ===
+                    `/workspace/demo/${accountId}/members`,
+            );
+        expect(membersLink).toBeDefined();
+        expect(membersLink).not.toHaveAttribute('target');
+    });
+
+    it('lists a contract that is both the guard and a module of the Safe once per role', () => {
+        const contract = '0x3333333333333333333333333333333333333333';
+        const consoleErrorSpy = jest
+            .spyOn(console, 'error')
+            .mockImplementation(() => undefined);
+        useSafeInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse({
+                    address,
+                    guard: contract,
+                    modules: [contract],
+                }),
+            }),
+        );
+        render(createTestComponent());
+
+        const duplicateKeyErrors = consoleErrorSpy.mock.calls.filter((call) =>
+            call.some(
+                (argument) =>
+                    typeof argument === 'string' &&
+                    argument.includes('same key'),
+            ),
+        );
+        expect(duplicateKeyErrors).toHaveLength(0);
+        // Disclosed once in governance and once in the contracts as the guard, then once more as a module.
+        expect(screen.getAllByText(/safeSettings\.guard$/)).toHaveLength(2);
+        expect(
+            screen.getAllByText(/safeSettings\.(module|moduleNames)/).length,
+        ).toBeGreaterThan(0);
+
+        consoleErrorSpy.mockRestore();
     });
 
     it('renders the guard and modules of the Safe when it has any', () => {

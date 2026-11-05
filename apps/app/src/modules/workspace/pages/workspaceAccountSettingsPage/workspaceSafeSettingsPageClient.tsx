@@ -1,16 +1,13 @@
 'use client';
 
 import {
-    Avatar,
     addressUtils,
     Card,
     ChainEntityType,
     Collapsible,
     DefinitionList,
     type IDefinitionSetting,
-    Tag,
 } from '@aragon/gov-ui-kit';
-import safeWallet from '@/assets/images/safeWallet.png';
 import {
     safeAppAccountUrl,
     safeShortNameFromNetwork,
@@ -22,7 +19,6 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -45,7 +41,8 @@ const translationKey = 'app.workspace.workspaceSafeSettingsPage';
 
 /**
  * Settings of a Safe account of a workspace, laid out as the DAO settings page: an "Account" section saying which
- * account this is (name, chain, summary) and a "Governance" section saying what it takes to move it, with the
+ * account this is (blockchain, address, summary — the rows `DaoHierarchy` states a DAO with, its ENS name falling
+ * back to its address as a Safe's always does) and a "Governance" section saying what it takes to move it, with the
  * contract aside — the Safe address, its version and its Safe app link, then its guard and each enabled module, as
  * `DaoVersionInfo` states a DAO and its plugins.
  *
@@ -72,10 +69,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
         { enabled: isSafeServed },
     );
 
-    const metadata = activeOption?.account?.metadata;
-    const name = activeOption?.label ?? truncatedAddress;
-    const description = metadata?.description?.trim();
-    const avatar = ipfsUtils.cidToSrc(metadata?.avatar) ?? safeWallet.src;
+    const description = activeOption?.account?.metadata?.description?.trim();
 
     const safeHref =
         safeAppAccountUrl({ network, address }) ??
@@ -117,7 +111,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
 
         governanceRows.push(
             // The owners are listed on the members page, so the threshold leads there rather than repeating them.
-            { ...thresholdRow, link: { href: membersUrl } },
+            { ...thresholdRow, link: { href: membersUrl, isExternal: false } },
             ...configurationRows,
             ...safeSettingsUtils.authorityRows({
                 safeInfo,
@@ -138,27 +132,32 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                     <Card className="p-6">
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                term={t(`${translationKey}.account.name`)}
+                                term={t(`${translationKey}.account.blockchain`)}
                             >
-                                <div className="flex items-center gap-2">
-                                    <p className="text-neutral-500">{name}</p>
-                                    <Avatar size="md" src={avatar} />
-                                </div>
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                term={t(`${translationKey}.account.chain`)}
-                            >
-                                <div className="flex items-center justify-between gap-2">
+                                <div className="flex flex-col gap-1">
                                     <p className="text-neutral-500">
                                         {networkDefinitions[network].name}
                                     </p>
-                                    <Tag
-                                        className="shrink-0"
-                                        label={t(
+                                    <p className="font-normal text-neutral-400 text-sm leading-tight">
+                                        {t(
                                             `${translationKey}.account.notChangeable`,
                                         )}
-                                    />
+                                    </p>
                                 </div>
+                            </DefinitionList.Item>
+                            <DefinitionList.Item
+                                copyValue={address}
+                                description={t(
+                                    `${translationKey}.account.notChangeable`,
+                                )}
+                                link={{
+                                    href: safeHref,
+                                    isExternal: true,
+                                    isOnchainEntity: true,
+                                }}
+                                term={t(`${translationKey}.account.address`)}
+                            >
+                                {address}
                             </DefinitionList.Item>
                             {description != null && description !== '' && (
                                 <DefinitionList.Item
@@ -208,7 +207,11 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 >
                     <DefinitionList.Container>
                         {contractRows.map((row) => (
-                            <SettingRow key={row.copyValue} row={row} />
+                            // A contract can be both the guard and a module, so its address alone is not unique.
+                            <SettingRow
+                                key={`${row.term}-${row.copyValue}`}
+                                row={row}
+                            />
                         ))}
                     </DefinitionList.Container>
                 </Page.AsideCard>

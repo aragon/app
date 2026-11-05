@@ -4901,8 +4901,8 @@
       },
       "workspaceSafeSettingsPage": {
         "account": {
-          "chain": "Chain",
-          "name": "Name",
+          "address": "Address",
+          "blockchain": "Blockchain",
           "notChangeable": "Not changeable",
           "readLess": "Read less",
           "readMore": "Read more",
