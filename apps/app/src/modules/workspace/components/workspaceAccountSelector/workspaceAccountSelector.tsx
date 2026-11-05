@@ -21,10 +21,7 @@ import {
     useWorkspaceAccountOptions,
 } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
-import {
-    workspaceDaoAccountSections,
-    workspaceUtils,
-} from '../../utils/workspaceUtils';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAccountSelectorProps {
     /**
@@ -79,19 +76,17 @@ export const WorkspaceAccountSelector: React.FC<
 
     const section =
         workspaceUtils.getAccountScopeSection(pathname) ?? fallbackSection;
-    // Permissions and settings exist for a DAO account alone: any other option opens on the overview.
-    const isDaoOnlySection = (
-        workspaceDaoAccountSections as readonly string[]
-    ).includes(section);
-
+    // Some sections exist for some scopes alone (proposals, permissions, settings): an option that does not have the
+    // current one opens on the overview.
     const optionLinks = useMemo(
         () =>
             options.map((option) => {
-                const optionSection =
-                    isDaoOnlySection &&
-                    option.account?.type !== WorkspaceAccountType.DAO
-                        ? fallbackSection
-                        : section;
+                const optionSection = workspaceUtils.isSectionServed(section, {
+                    isAllAccounts: option.isAllAccounts,
+                    accountType: option.account?.type,
+                })
+                    ? section
+                    : fallbackSection;
 
                 return {
                     option,
@@ -102,7 +97,7 @@ export const WorkspaceAccountSelector: React.FC<
                     ),
                 };
             }),
-        [options, workspaceId, section, isDaoOnlySection],
+        [options, workspaceId, section],
     );
 
     // Exiting the wizard lands back on the page the account was added from.

@@ -343,12 +343,15 @@ again and this layout should adopt it.
 `navigationWorkspaceUtils.buildLinks` builds the section links through `workspaceUtils.getAccountScopeUrl`, scoped to
 the account on the route, at orders 100-500: Overview, Proposals, Members, Assets, Transactions. It lists them all,
 including the ones that have no account-scoped route yet — so under an account scope those links lead to the
-section-not-found page until the route lands. Permissions and Settings follow at orders 600-700 for a DAO account
-only (`workspaceDaoAccountSections`): they are hidden for the aggregated scope and for a Safe, and appear once the
-workspace read tells the account type. Their pages, `WorkspaceAccountPermissionsPage` and
-`WorkspaceAccountSettingsPage`, render the DAO pages as is behind `WorkspaceAccountGate`, like the members page; the
-links inside them (plugin settings details, automations) still lead to the `/dao/…` routes. Switching account from
-either section lands any option that is not a DAO account on its overview instead.
+section-not-found page until the route lands. Permissions and Settings follow at orders 600-700. Three sections are
+served for some scopes alone (`workspaceSectionScopes`, read through `workspaceUtils.isSectionServed`): proposals for
+the aggregated scope and a DAO account, permissions for a DAO account, settings for a DAO or a Safe account. Their
+links are hidden elsewhere, and under an account scope appear once the workspace read tells the account type. For a
+DAO, `WorkspaceAccountPermissionsPage` and `WorkspaceAccountSettingsPage` render
+the DAO pages as is behind `WorkspaceAccountGate`, like the members page; the links inside them (plugin settings
+details, automations) still lead to the `/dao/…` routes. For a Safe, `WorkspaceAccountSettingsPage` renders
+`WorkspaceSafeSettingsPageClient` before the gate (see "Safe support by route"). Switching account from either
+section lands any option that does not have it on its overview instead.
 
 `navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Edit workspace, to the
 edit wizard — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
@@ -725,7 +728,7 @@ today, and the two differ by route:
 
 - **overview, proposal details** — the gate stays. It guards the DAO branch, which still
   needs a DAO record. What changes is that the page gains a Safe branch *before* the gate, as the two members routes
-  already did.
+  and settings already did.
 - **`/{accountId}/proposals`** — the gate wrap in `WorkspaceProposalsPage` must be **deleted**, together with the
   DAO-only narrowing in `workspaceProposalsPageClient`. Both halves in one change: removing the gate alone sends the
   route back to answering for a Safe with an empty list, and changing the narrowing alone leaves a
@@ -743,18 +746,19 @@ today, and the two differ by route:
 | `/{accountId}/overview` | not yet | the gate's Safe state |
 | `/{accountId}/members` | **implemented** | the Safe's owners, with its settings in the aside |
 | `/{accountId}/members/{address}` | **implemented** (redirect) | a redirect to the Safe's members page |
-| `/{accountId}/proposals` | not yet | the gate's Safe state |
+| `/{accountId}/proposals` | not yet | no link for a Safe; the URL gets the gate's Safe state |
 | `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's Safe state |
 | `/{accountId}/permissions` | not applicable | DAO only: no link for a Safe; the URL gets the gate's Safe state |
-| `/{accountId}/settings` | not applicable | DAO only: no link for a Safe; the URL gets the gate's Safe state |
+| `/{accountId}/settings` | **implemented**, read-only | the Safe's account (name, chain, summary) and governance (threshold linking to its members, nonce, guard, modules), with its address and version aside |
 
 Two consequences worth stating, because both are deliberate:
 
 - **A Safe is a selectable account option on every section**, so the selector can lead a reader to a route that
   fails. That is preferred over hiding the option per section: the account exists, and a failure says so plainly
-  while a missing option says nothing at all. The DAO-only sections (`workspaceDaoAccountSections`: permissions,
-  settings) are the exception: a Safe will never have them, so there the Safe option — and the aggregated one — stays
-  listed but links to its overview rather than to a route that can only fail.
+  while a missing option says nothing at all. The sections of `workspaceSectionScopes` are the exception: on
+  proposals and permissions the Safe option stays listed but links to its overview rather than to a route that
+  fails, and so does the aggregated option on permissions and settings. Proposals is the one of them a Safe is meant
+  to gain: its entry changes once `/{accountId}/proposals` serves a Safe.
 - **`/{accountId}/proposals` is gated even though the page needs no DAO.** The aggregated proposals page is shared
   by both scopes and narrows to DAO accounts, so for a Safe it would answer a URL naming one account with the
   proposals of every DAO account of the workspace — the narrowing fails open. `WorkspaceProposalsPage` therefore
@@ -794,6 +798,28 @@ The cost is one `query/accounts` POST on a gated route whose DAO cannot be read 
 DAO GET is), none for a DAO that loads, and none on assets and transactions. The members routes add their own
 lookup on top: one POST on every request, and two when the account is not a Safe and its DAO cannot be read, since
 the gate then repeats the same lookup.
+
+### Settings page
+
+`/{accountId}/settings` serves a DAO and a Safe; the aggregated scope has no settings. `WorkspaceAccountSettingsPage`
+looks the account up with `workspaceAccountInfoUtils.getAccountInfo`, renders `WorkspaceSafeSettingsPageClient` for a
+Safe and the DAO settings page behind the gate otherwise, like the members routes.
+
+The Safe page mirrors the DAO one, read-only:
+
+- **Account** — the option's label as the name (metadata name, accounts-API name or truncated address) with the
+  account's avatar (the Safe icon by default), the chain, and the description when the workspace stores one, as
+  `DaoSettingsInfo` states a DAO. Its **Edit** action opens the edit wizard on its Accounts step,
+  returning to the page, since the wizard is where a Safe's name, description and avatar are set; it is hidden for a
+  Safe the workspace does not hold.
+- **Governance** — threshold, current nonce, guard and modules, the rows of the Safe account page
+  (`safeSettingsUtils`). The threshold links to the Safe's members page, which lists the owners. When the Safe
+  service does not cover the network or the read fails, the section says the configuration could not be loaded and
+  the account section still renders.
+- **Contracts** (aside) — the Safe address with its version and Safe app link, as `DaoVersionInfo` states a DAO's
+  contracts.
+
+Nothing on it creates a transaction: a Safe is configured in the Safe app.
 
 ### Members page
 

@@ -226,9 +226,25 @@ describe('<WorkspaceAccountSelector /> component', () => {
         );
     });
 
-    it.each(['permissions', 'settings'])(
-        'links the options without %s to their overview',
-        async (section) => {
+    it.each([
+        {
+            section: 'proposals',
+            allSection: 'proposals',
+            safeSection: 'overview',
+        },
+        {
+            section: 'permissions',
+            allSection: 'overview',
+            safeSection: 'overview',
+        },
+        {
+            section: 'settings',
+            allSection: 'overview',
+            safeSection: 'settings',
+        },
+    ])(
+        'links the options without $section to their overview',
+        async ({ section, allSection, safeSection }) => {
             usePathnameSpy.mockReturnValue(
                 `/workspace/test-workspace/${daoAccount.id}/${section}`,
             );
@@ -244,7 +260,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
             const [all, dao, safe] = await screen.findAllByRole('menuitem');
             expect(all).toHaveAttribute(
                 'href',
-                '/workspace/test-workspace/all/overview',
+                `/workspace/test-workspace/all/${allSection}`,
             );
             expect(dao).toHaveAttribute(
                 'href',
@@ -252,7 +268,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
             );
             expect(safe).toHaveAttribute(
                 'href',
-                `/workspace/test-workspace/${safeAccount.id}/overview`,
+                `/workspace/test-workspace/${safeAccount.id}/${safeSection}`,
             );
         },
     );

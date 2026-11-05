@@ -278,6 +278,56 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('isSectionServed', () => {
+        const all = { isAllAccounts: true };
+        const dao = {
+            isAllAccounts: false,
+            accountType: WorkspaceAccountType.DAO,
+        };
+        const safe = {
+            isAllAccounts: false,
+            accountType: WorkspaceAccountType.SAFE,
+        };
+        const unknown = { isAllAccounts: false };
+
+        it.each([all, dao, safe, unknown])(
+            'serves the sections every scope has for %o',
+            (scope) => {
+                expect(
+                    workspaceUtils.isSectionServed('assets', scope),
+                ).toBeTruthy();
+            },
+        );
+
+        it.each([
+            { section: 'proposals', scope: all, expected: true },
+            { section: 'proposals', scope: dao, expected: true },
+            { section: 'proposals', scope: safe, expected: false },
+            { section: 'permissions', scope: all, expected: false },
+            { section: 'permissions', scope: dao, expected: true },
+            { section: 'permissions', scope: safe, expected: false },
+            { section: 'settings', scope: all, expected: false },
+            { section: 'settings', scope: dao, expected: true },
+            { section: 'settings', scope: safe, expected: true },
+        ])(
+            'returns $expected for $section on $scope',
+            ({ section, scope, expected }) => {
+                expect(workspaceUtils.isSectionServed(section, scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
+        it.each(['proposals', 'permissions', 'settings'])(
+            'does not serve %s to an account whose type is not known yet',
+            (section) => {
+                expect(
+                    workspaceUtils.isSectionServed(section, unknown),
+                ).toBeFalsy();
+            },
+        );
+    });
+
     describe('resolveAccountScope', () => {
         const accountId =
             'ethereum-sepolia-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';

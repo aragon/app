@@ -1,7 +1,9 @@
 export {
     type IWorkspaceNetworkAddress,
+    type IWorkspaceSectionScope,
+    type IWorkspaceSectionScopes,
     workspaceAllAccountsSegment,
-    workspaceDaoAccountSections,
     workspaceEditStepParam,
+    workspaceSectionScopes,
     workspaceUtils,
 } from './workspaceUtils';
