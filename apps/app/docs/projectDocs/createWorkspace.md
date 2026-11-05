@@ -357,9 +357,9 @@ DAO pages and therefore assume a resolved DAO; it resolves the DAO with `fetchQu
 assets page would replace a Safe asset list that renders — whatever the endpoint puts in it — with an error state
 or a placeholder. `LayoutWorkspaceAccount` says the same thing from the other side: assets and transactions "work
 from the workspace query endpoints regardless", which is a claim about the page's data path and not about what
-comes back for a Safe (see [the Safe aggregation gap](#known-gaps)). The gate only reads the DAO; the Safe lookup
-belongs to the members routes, which run `workspaceAccountInfoUtils.getAccountInfo` before the gate and fall back
-to the DAO path when it fails. Neither ever sees these two routes, so they cost them no extra request.
+comes back for a Safe (see [the Safe aggregation gap](#known-gaps)). Neither the Safe branch of the gate nor the
+one the members routes run before it (`workspaceAccountInfoUtils.getAccountInfo`) ever sees these two routes, so
+they cost them no extra request.
 
 **Every scope reads `POST /v2/workspaces/query/assets`** through `WorkspaceAssetList` — the aggregated one over all
 accounts, an account over just that one. The page only decides which accounts to send:
@@ -731,11 +731,11 @@ today, and the two differ by route:
 | `/{workspaceId}/all/overview` | **implemented** | the workspace overview lists accounts of both types |
 | `/{accountId}/assets` | **implemented** | the list and the aside card describe the Safe |
 | `/{accountId}/transactions` | **implemented**, read-only | the list and the aside card describe the Safe; no create action, and the dispatch panel is DAO-only |
-| `/{accountId}/overview` | not yet | the gate's error state |
+| `/{accountId}/overview` | not yet | the gate's Safe state |
 | `/{accountId}/members` | **implemented** | the Safe's owners, with its settings in the aside |
 | `/{accountId}/members/{address}` | **implemented** (redirect) | a redirect to the Safe's members page |
-| `/{accountId}/proposals` | not yet | the gate's error state |
-| `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's error state |
+| `/{accountId}/proposals` | not yet | the gate's Safe state |
+| `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's Safe state |
 
 Two consequences worth stating, because both are deliberate:
 
@@ -752,10 +752,22 @@ Two consequences worth stating, because both are deliberate:
   aggregated route stays ungated either way: it names no account, so there is nothing to resolve and nothing to
   mislead about.
 
-`WorkspaceAccountGate` itself asks nothing about the account type. It reads the DAO record and renders the error
-state when that read fails, which is exactly the set of accounts these pages cannot serve — a Safe among them, on the
-routes whose Safe branch (which runs before the gate) does not exist yet. It
-is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
+`WorkspaceAccountGate` reads the DAO record, and a failed read is exactly the set of accounts these pages cannot
+serve — a Safe among them, on the routes whose Safe branch (which runs before the gate) does not exist yet. The read
+alone cannot say why it failed (a Safe and an address that is neither a DAO nor a Safe both 404), and the account
+may be one the workspace does not hold, so only then does the gate look the address up with a single-account
+`query/accounts` request and pick a state through `workspaceUtils.resolveAccountState`, the same rule the external
+option of `useWorkspaceAccountOptions` reads. The states render inline (`WorkspaceAccountGateError`, the page frame
+around `WorkspaceAccountStateCard`), never through `notFound()`, for the reason below:
+
+| Lookup | `WorkspaceAccountState` | State |
+| --- | --- | --- |
+| Safe, available | `SAFE` | "Not available for Safe accounts yet", linking to the account's assets and transactions |
+| `unsupported`, or the whole-request 404 (see Known gaps) | `NOT_FOUND` | "Account not found", linking to every account |
+| `unavailable`, or the lookup itself fails | `UNAVAILABLE` | "Couldn't verify this account", no action: reloading the page retries the lookup |
+| DAO, available (the DAO read failed for another reason) | `DAO` | the generic error |
+
+It is **not** merged into `LayoutWorkspaceAccount`, which carried a TODO to do so: a layout cannot withhold a page,
 because layout and page render in parallel, so a page's `notFound()` — `DaoMembersPage` raises one for the DAO a
 Safe lacks — unwinds to `app/workspace/[workspaceId]/not-found.tsx`, which sits above `[accountId]` and discards
 the layout's output along with the page's. Its doc comment records the reasoning where the next reader will look.
@@ -764,6 +776,11 @@ The Safe branch of the members routes reads the account through `workspaceAccoun
 single-account `query/accounts` lookup made on the server, once per request. It asks the accounts API what the
 address is, not whether the workspace holds it, so an external Safe takes the Safe branch too. A failed lookup
 returns `undefined` and the route falls back to the DAO branch, where the gate settles it.
+
+The cost is one `query/accounts` POST on a gated route whose DAO cannot be read (a POST is not memoised the way the
+DAO GET is), none for a DAO that loads, and none on assets and transactions. The members routes add their own
+lookup on top: one POST on every request, and two when the account is not a Safe and its DAO cannot be read, since
+the gate then repeats the same lookup.
 
 ### Members page
 
@@ -1083,7 +1100,7 @@ Keep it that way when extending this.
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
 - All five scopes' sections now have an account-scoped route, though for a Safe the overview and proposals sections
-  still fail with the gate's error state (see "Safe support by route").
+  still fail with the gate's Safe state (see "Safe support by route").
 - **The backend aggregates no Safe assets or transactions (verified on sandbox, `sandbox.backend.aragonservices.in`,
   2026-10-28).** `query/assets` and `query/transactions` return few or no rows for real Sepolia Safes that hold
   balances and transfers (2 asset rows and 5 transaction records on the Safes checked), with coverage `source:
