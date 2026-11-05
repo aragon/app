@@ -1,5 +1,11 @@
 # @aragon/assistant
 
+## 0.3.3
+
+### Patch Changes
+
+- [#1544](https://github.com/aragon/app/pull/1544) [`b39257b`](https://github.com/aragon/app/commit/b39257b345c0ba667970db78275843c6d52d2c49) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Drop the Vercel Cron Job for the abandoned-blob sweep: the assistant-cleanup.yml workflow now calls `/internal/cleanup` daily on dev and production.
+
 ## 0.3.2
 
 ### Patch Changes

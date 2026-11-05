@@ -75,7 +75,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
             label={label}
             useCustomWrapper={true}
         >
-            <Card className="flex w-full flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:gap-6 md:p-6">
+            <Card className="flex w-full flex-col gap-4 rounded-xl p-4 md:gap-6 md:p-6">
                 <div className="flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                     <InputNumber
                         className="w-full md:max-w-40"

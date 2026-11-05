@@ -1,10 +1,17 @@
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { generateDao, generateDaoPermission } from '@/shared/testUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
+import {
+    generateDao,
+    generateDaoPermission,
+    generateDaoPlugin,
+} from '@/shared/testUtils';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { mockTranslations } from '@/test/utils';
 import {
     type IProposalAction,
     ProposalActionType,
 } from '../../api/governanceService';
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import {
     generateAllowedAction,
     generateSmartContractAbi,
@@ -323,6 +330,111 @@ describe('actionComposerUtils', () => {
 
         it('leaves it undefined when the backend does not return it', () => {
             expect(getStateMutability()).toBeUndefined();
+        });
+    });
+
+    describe('getDaoPluginActions', () => {
+        let getSlotFunctionSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            getSlotFunctionSpy = jest.spyOn(
+                pluginRegistryUtils,
+                'getSlotFunction',
+            );
+        });
+
+        afterEach(() => {
+            getSlotFunctionSpy.mockRestore();
+        });
+
+        it('calls the plugin actions slot function of each plugin with the plugin and the translation function', () => {
+            const multisigPlugin = generateDaoPlugin({
+                address: '0xA',
+                interfaceType: PluginInterfaceType.MULTISIG,
+            });
+            const tokenPlugin = generateDaoPlugin({
+                address: '0xB',
+                interfaceType: PluginInterfaceType.TOKEN_VOTING,
+            });
+            const dao = generateDao({
+                plugins: [multisigPlugin, tokenPlugin],
+            });
+            const slotFunction = jest.fn(() => ({ items: [], groups: [] }));
+            getSlotFunctionSpy.mockReturnValue(slotFunction);
+
+            actionComposerUtils.getDaoPluginActions(
+                dao,
+                mockTranslations.tMock,
+            );
+
+            expect(getSlotFunctionSpy).toHaveBeenCalledWith({
+                pluginId: PluginInterfaceType.MULTISIG,
+                slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
+            });
+            expect(slotFunction).toHaveBeenCalledWith({
+                plugin: multisigPlugin,
+                t: mockTranslations.tMock,
+            });
+            expect(slotFunction).toHaveBeenCalledWith({
+                plugin: tokenPlugin,
+                t: mockTranslations.tMock,
+            });
+        });
+
+        it('merges the items, groups and components of the plugins and skips plugins without a slot function', () => {
+            const dao = generateDao({
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                    }),
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.UNKNOWN,
+                    }),
+                ],
+            });
+            const item = {
+                id: 'item',
+                name: 'Item',
+                icon: IconType.SETTINGS,
+                groupId: 'group',
+                defaultValue: { to: '0xA' } as IProposalAction,
+            };
+            const group = { id: 'group', name: 'Group', info: '' };
+            const component = () => null;
+            getSlotFunctionSpy.mockImplementation(({ pluginId }) =>
+                pluginId === PluginInterfaceType.MULTISIG
+                    ? () => ({
+                          items: [item],
+                          groups: [group],
+                          components: { item: component },
+                      })
+                    : undefined,
+            );
+
+            const result = actionComposerUtils.getDaoPluginActions(
+                dao,
+                mockTranslations.tMock,
+            );
+
+            expect(result).toEqual({
+                pluginItems: [item],
+                pluginGroups: [group],
+                pluginComponents: { item: component },
+            });
+        });
+
+        it('returns empty actions when the DAO is not loaded', () => {
+            const result = actionComposerUtils.getDaoPluginActions(
+                undefined,
+                mockTranslations.tMock,
+            );
+
+            expect(result).toEqual({
+                pluginItems: [],
+                pluginGroups: [],
+                pluginComponents: {},
+            });
+            expect(getSlotFunctionSpy).not.toHaveBeenCalled();
         });
     });
 

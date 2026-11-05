@@ -37,7 +37,7 @@ export const SetupStageDurationField: React.FC<
             )}
             useCustomWrapper={true}
         >
-            <Card className="border border-neutral-100">
+            <Card className="">
                 <AdvancedDateInputDuration
                     field="votingPeriod"
                     infoDisplay="inline"

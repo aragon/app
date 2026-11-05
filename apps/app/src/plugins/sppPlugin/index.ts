@@ -5,9 +5,9 @@ import { SppCreateProposalSettingsForm } from './components/sppCreateProposalSet
 import { SppProposalListItem } from './components/sppProposalListItem';
 import { SppVotingTerminal } from './components/sppVotingTerminal';
 import { sppPlugin } from './constants/sppPlugin';
-import { useSppActions } from './hooks/useSppActions';
 import { useSppGovernanceSettings } from './hooks/useSppGovernanceSettings';
 import { useSppPermissionCheckProposalCreation } from './hooks/useSppPermissionCheckProposalCreation';
+import { sppActionUtils } from './utils/sppActionUtils';
 import { sppProposalUtils } from './utils/sppProposalUtils';
 import { sppTransactionUtils } from './utils/sppTransactionUtils';
 
@@ -40,7 +40,7 @@ export const initialiseSppPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: sppPlugin.id,
-            function: useSppActions,
+            function: sppActionUtils.getSppActions,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_PROPOSAL_LIST_ITEM,

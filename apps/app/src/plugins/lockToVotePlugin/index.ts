@@ -17,11 +17,11 @@ import { LockToVoteSetupGovernance } from './components/lockToVoteSetupGovernanc
 import { LockToVoteSetupMembership } from './components/lockToVoteSetupMembership';
 import { LockToVoteSubmitVote } from './components/lockToVoteSubmitVote';
 import { lockToVotePlugin } from './constants/lockToVotePlugin';
-import { useLockToVoteActions } from './hooks/useLockToVoteActions';
 import { useLockToVoteGovernanceSettings } from './hooks/useLockToVoteGovernanceSettings';
 import { useLockToVoteNormalizeActions } from './hooks/useLockToVoteNormalizeActions';
 import { useLockToVotePermissionCheckProposalCreation } from './hooks/useLockToVotePermissionCheckProposalCreation';
 import { useLockToVotePermissionCheckVoteSubmission } from './hooks/useLockToVotePermissionCheckVoteSubmission';
+import { lockToVoteActionUtils } from './utils/lockToVoteActionUtils';
 import { lockToVoteProposalUtils } from './utils/lockToVoteProposalUtils';
 import { lockToVoteTransactionUtils } from './utils/lockToVoteTransactionUtils';
 
@@ -89,7 +89,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: lockToVotePlugin.id,
-            function: useLockToVoteActions,
+            function: lockToVoteActionUtils.getLockToVoteActions,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,

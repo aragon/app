@@ -72,11 +72,7 @@ export const DebugPanel: React.FC = () => {
     return (
         <>
             <Button
-                className={classNames(
-                    'fixed right-4.5',
-                    { 'bottom-4.5': process.env.NEXT_PUBLIC_ENV !== 'local' },
-                    { 'bottom-18': process.env.NEXT_PUBLIC_ENV === 'local' },
-                )}
+                className="fixed right-4.5 bottom-18"
                 iconLeft={IconType.SETTINGS}
                 onClick={togglePanel}
                 size="md"

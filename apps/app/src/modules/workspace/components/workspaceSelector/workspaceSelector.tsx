@@ -1,8 +1,9 @@
 'use client';
 
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspace, useWorkspaceList } from '../../api/workspaceService';
@@ -19,8 +20,9 @@ export interface IWorkspaceSelectorProps {
 }
 
 /**
- * Workspace switcher of the workspace navigation, listing every workspace plus links to edit the current workspace
- * and to create a new one.
+ * Workspace switcher of the workspace navigation, listing every workspace plus a link to create a new one. Editing
+ * the current workspace lives in the navigation links (Edit workspace), not here. Its trigger is a full-width row,
+ * rendered in the sidebar and in the navigation dialog.
  */
 export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { workspaceId } = props;
@@ -29,6 +31,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
 
     const { t } = useTranslations();
     const router = useRouter();
+    const pathname = usePathname();
 
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
@@ -45,7 +48,11 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
             ),
         );
 
-    const handleCreateWorkspace = () => router.push('/create/workspace');
+    // Exiting the wizard lands back on the workspace page it was opened from.
+    const handleCreateWorkspace = () =>
+        router.push(
+            `/create/workspace?${wizardReturnToParam}=${encodeURIComponent(pathname)}`,
+        );
 
     return (
         <Dropdown.Container
@@ -53,19 +60,19 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
             constrainContentWidth={false}
             customTrigger={
                 <button
-                    className="focus-ring-primary flex max-w-56 cursor-pointer items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 p-1 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 md:pr-3 xl:max-w-68"
+                    className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800"
                     type="button"
                 >
                     <DaoAvatar
                         name={workspace?.name}
-                        size="lg"
+                        size="md"
                         src={ipfsUtils.cidToSrc(workspace?.avatar)}
                     />
-                    <span className="hidden truncate text-base text-neutral-800 leading-tight md:block">
+                    <span className="grow truncate text-left text-base text-neutral-800 leading-tight">
                         {workspace?.name}
                     </span>
                     <Icon
-                        className="hidden shrink-0 md:block"
+                        className="shrink-0"
                         icon={
                             isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN
                         }
@@ -93,13 +100,6 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                     </span>
                 </Dropdown.Item>
             ))}
-            <Dropdown.Item
-                href={workspaceUtils.getWorkspaceEditUrl(workspaceId)}
-                icon={IconType.SETTINGS}
-                iconPosition="left"
-            >
-                {t('app.workspace.workspaceSelector.edit')}
-            </Dropdown.Item>
             <Dropdown.Item
                 icon={IconType.PLUS}
                 iconPosition="left"

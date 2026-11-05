@@ -91,11 +91,9 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
         ? chatCopy.requestHistory.heading
         : (ticketContext ?? chatCopy.header.contextNew);
 
-    // The header stands next to the app's navigation bar and carries its exact height (20px of
-    // padding around a 50px control row, plus the 1px rule): anything else meets the bar's bottom
-    // border in a step at the panel edge.
+    // Match the app bar's md height after the docked panel leaves the app column at md width.
     return (
-        <div className="flex h-[91px] flex-none items-center gap-3.5 border-neutral-100 border-b pr-3.5 pl-5">
+        <div className="flex h-[75px] screen-docked-md:h-[91px] flex-none items-center gap-3.5 border-neutral-100 border-b pr-3.5 pl-5">
             {isViewingRequests ? (
                 <Button
                     aria-label={chatCopy.header.back}

@@ -7,11 +7,5 @@
             "source": "/(.*)",
             "destination": "/api"
         }
-    ],
-    "crons": [
-        {
-            "path": "/internal/cleanup",
-            "schedule": "0 4 * * *"
-        }
     ]
 }

@@ -1,19 +1,33 @@
 # The "Gov UI Kit Release" workflow is the kit's release PR lifecycle, on the shared
-# aragon/github-templates modules: a start every Tuesday (or by hand) cuts release/gov-ui-kit/<timestamp>
-# with the changesets bump of the "gov-ui-kit" release scope and opens the "Release
-# @aragon/gov-ui-kit@x.y.z" PR with its Slack thread; every push refreshes the summary and runs the
-# checks; merging tags the PR head and publishes the GitHub Release, which starts the npm
-# publish (gov-ui-kit-publish.yml) behind its approval; closing without a merge cancels the release.
+# aragon/github-templates modules: a start (with every app release start, or by hand) cuts
+# release/gov-ui-kit/<timestamp> with the changesets bump of the "gov-ui-kit" release scope and
+# opens the "Release @aragon/gov-ui-kit@x.y.z" PR with its Slack thread; every push refreshes the
+# summary and runs the checks; merging tags the PR head and publishes the GitHub Release, which
+# starts the npm publish (gov-ui-kit-publish.yml) behind its approval; closing without a merge
+# cancels the release.
 #
-# Packages start their train on Tuesday, apps on Monday. A scheduled start green-skips when a kit
-# release PR is open or there are no pending kit changesets. The kit needs a scope and a flow of its
-# own even though only the app bundles it: publishing is triggered by a GitHub Release on a kit tag.
+# The kit has no train of its own: app-release.yml calls this workflow from its start, so every app
+# release sweeps the pending kit changesets into a kit release cut from the same commit. That start
+# green-skips when a kit release PR is open or there are no pending kit changesets. The kit needs a
+# scope and a flow of its own even though only the app bundles it: publishing is triggered by a
+# GitHub Release on a kit tag.
 
 name: Gov UI Kit Release
 
 on:
-  schedule:
-    - cron: "7 15 * * 2"
+  workflow_call:
+    inputs:
+      base_commit:
+        required: false
+        type: string
+      # Set by app-release.yml: start the kit release, green-skipping on an open kit release PR.
+      sweep:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       base_commit:
@@ -36,7 +50,7 @@ concurrency:
 
 jobs:
   start:
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: inputs.sweep || github.event_name == 'workflow_dispatch'
     uses: aragon/github-templates/.github/workflows/release-start.yml@main
     with:
       engine: changesets
@@ -48,7 +62,8 @@ jobs:
       branch-suffix: timestamp
       commit-message: "Release {tag}"
       summary-path-filter: gov-ui-kit
-      on-active-release: ${{ github.event_name == 'schedule' && 'skip' || 'fail' }}
+      # A manual start fails on an open kit release PR; the app's sweep skips.
+      on-active-release: ${{ inputs.sweep && 'skip' || 'fail' }}
       op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
       op-gpg-key-path: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
       op-gpg-passphrase-path: op://kv_app_infra/arabot-1_SIGN_CERTS/credential

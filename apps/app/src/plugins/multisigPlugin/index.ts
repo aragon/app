@@ -14,9 +14,9 @@ import { MultisigSetupMembership } from './components/multisigSetupMembership';
 import { MultisigSubmitVote } from './components/multisigSubmitVote';
 import { MultisigVoteList } from './components/multisigVoteList';
 import { multisigPlugin } from './constants/multisigPlugin';
-import { useMultisigActions } from './hooks/useMultisigActions';
 import { useMultisigGovernanceSettings } from './hooks/useMultisigGovernanceSettings';
 import { useMultisigNormalizeActions } from './hooks/useMultisigNormalizeActions';
+import { multisigActionUtils } from './utils/multisigActionUtils';
 import { multisigPluginUtils } from './utils/multisigPluginUtils';
 import { multisigProposalUtils } from './utils/multisigProposalUtils';
 import { multisigTransactionUtils } from './utils/multisigTransactionUtils';
@@ -70,7 +70,7 @@ export const initialiseMultisigPlugin = () => {
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             pluginId: multisigPlugin.id,
-            function: useMultisigActions,
+            function: multisigActionUtils.getMultisigActions,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_NORMALIZE_ACTIONS,

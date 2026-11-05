@@ -10,8 +10,8 @@ export interface IDropdownItemProps extends Omit<ComponentProps<'div'>, 'onSelec
      */
     selected?: boolean;
     /**
-     * Icon displayed beside the item label. Defaults to LinkExternal when the item is a link or to Checkmark when the
-     * selected property is set to true.
+     * Icon displayed beside the item label. Defaults to LinkExternal when the item is a link opening in a new tab
+     * (`target="_blank"`), otherwise to Checkmark when the selected property is set to true.
      */
     icon?: IconType;
     /**
@@ -93,7 +93,8 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
         props.onSelect?.(event);
     };
 
-    const defaultIcon = renderLink ? IconType.LINK_EXTERNAL : selected ? IconType.CHECKMARK : undefined;
+    const opensNewTab = renderLink && target === '_blank';
+    const defaultIcon = opensNewTab ? IconType.LINK_EXTERNAL : selected ? IconType.CHECKMARK : undefined;
     const processedIcon = icon ?? defaultIcon;
 
     return (

@@ -20,7 +20,10 @@ import type {
     ISmartContractAbiFunction,
 } from '../../api/smartContractService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import type { IActionComposerPluginData } from '../../types';
+import type {
+    IActionComposerPluginData,
+    IPluginActionsParams,
+} from '../../types';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
 import {
@@ -49,7 +52,7 @@ class ActionComposerUtils {
     getDaoActions = ({ dao, permissions, t }: IGetDaoActionsParams) => {
         // Exclude plugins installed on linked accounts so only the target DAO's
         // own plugin actions appear in the composer.
-        const pluginActions = this.getDaoPluginActions(dao, {
+        const pluginActions = this.getDaoPluginActions(dao, t, {
             excludeLinkedAccountPlugins: true,
         });
         const permissionActions = this.getDaoPermissionActions({
@@ -145,8 +148,13 @@ class ActionComposerUtils {
         return groups.filter((group) => usedGroupIds.has(group.id));
     };
 
+    /**
+     * Collects the action composer data of every plugin of the DAO. The plugin functions are plain functions, not
+     * hooks, so this can run for any number of plugins, including none while the DAO is loading.
+     */
     getDaoPluginActions = (
-        dao?: IDao,
+        dao: IDao | undefined,
+        t: TranslationFunction,
         { excludeLinkedAccountPlugins = false } = {},
     ) => {
         const { plugins = [] } = dao ?? {};
@@ -165,14 +173,14 @@ class ActionComposerUtils {
 
         const pluginActions = filteredPlugins.map((plugin) => {
             const slotFunction = pluginRegistryUtils.getSlotFunction<
-                IDaoPlugin,
+                IPluginActionsParams,
                 IActionComposerPluginData
             >({
                 pluginId: plugin.interfaceType,
                 slotId: GovernanceSlotId.GOVERNANCE_PLUGIN_ACTIONS,
             });
 
-            return slotFunction?.(plugin);
+            return slotFunction?.({ plugin, t });
         });
 
         const pluginItems = pluginActions.flatMap((data) => data?.items ?? []);

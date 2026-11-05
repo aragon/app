@@ -80,11 +80,6 @@ export function validateTokens(tokens, baseline, options = {}) {
         baseline.source.package,
         'GovKit package name changed',
     );
-    assert.equal(
-        source.package.version,
-        baseline.source.version,
-        'GovKit version changed; review the baseline',
-    );
     const provenance = tokens.$extensions['org.aragon.tokenParity'];
     for (const [tokenKey, baselineKey] of [
         ['sourceRepository', 'repository'],

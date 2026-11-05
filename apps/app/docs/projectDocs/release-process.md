@@ -6,7 +6,7 @@ The flows are the reusable workflows of [`aragon/github-templates`](https://gith
 
 - **Assistant** — `assistant-release.yml` → merge → production deploy (`assistant-production.yml`). Starts every Wednesday.
 - **Docs site** — `docs-release.yml` → staging (`stg.platform-doc.aragon.org`) with smoke tests → merge → production deploy (`docs-production.yml`), plus `docs-hotfix-start.yml` and `docs-rollback.yml`: the app's shape, see `apps/docs/README.md`. Starts every Wednesday.
-- **Gov UI Kit** — `gov-ui-kit-release.yml` → merge → an **npm publish** rather than a deploy; see `packages/gov-ui-kit/RELEASING.md`. Starts every Tuesday.
+- **Gov UI Kit** — `gov-ui-kit-release.yml` → merge → an **npm publish** rather than a deploy; see `packages/gov-ui-kit/RELEASING.md`. No schedule of its own: every app release start also starts it from the same commit when kit changesets are pending.
 - **Aragon Domain** — `aragon-domain-release.yml` → merge → an **npm publish**, same as the kit; see `packages/aragon-domain/RELEASING.md`. Starts every Tuesday.
 
 See the "Releases" section of the root `AGENTS.md` for the per-package model.

@@ -169,6 +169,7 @@ describe('breakpoints.css', () => {
         const root = await compile([
             'screen-lg:sticky',
             'screen-max-lg:overflow-hidden',
+            'screen-docked-md:h-[91px]',
         ]);
 
         expect(describeRules(root, 'screen-lg:sticky')).toEqual([
@@ -181,6 +182,12 @@ describe('breakpoints.css', () => {
             {
                 selector: '.screen-max-lg:overflow-hidden',
                 wrappers: ['@media (width < 64rem)'],
+            },
+        ]);
+        expect(describeRules(root, 'screen-docked-md:h-[91px]')).toEqual([
+            {
+                selector: '.screen-docked-md:h-[91px]',
+                wrappers: ['@media (width >= 79.25rem)'],
             },
         ]);
     });

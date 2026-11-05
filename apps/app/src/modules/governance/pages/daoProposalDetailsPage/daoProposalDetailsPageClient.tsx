@@ -44,6 +44,7 @@ import {
 import { ProposalActionsItem } from '../../components/proposalActionsItem';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { useNormalizedProposalActions } from '../../hooks/useNormalizedProposalActions';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import {
     ProposalMetadataStatus,
@@ -138,6 +139,17 @@ export const DaoProposalDetailsPageClient: React.FC<
     // render them only after mount to avoid a hydration mismatch.
     const isMounted = useIsMounted();
 
+    const proposalActions = proposalActionUtils.resolveActions(
+        actionData?.actions ?? [],
+        actionData?.rawActions,
+        proposal?.creator.address,
+    );
+
+    const normalizedProposalActions = useNormalizedProposalActions({
+        actions: proposalActions,
+        daoId,
+    });
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -176,16 +188,6 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
-    const proposalActions = proposalActionUtils.resolveActions(
-        actionData?.actions ?? [],
-        actionData?.rawActions,
-        creator.address,
-    );
-
-    const normalizedProposalActions = proposalActionUtils.normalizeActions(
-        proposalActions,
-        dao,
-    );
     const formattedCreationDate = isMounted
         ? formatterUtils.formatDate(blockTimestamp * 1000, {
               format: DateFormat.YEAR_MONTH_DAY,

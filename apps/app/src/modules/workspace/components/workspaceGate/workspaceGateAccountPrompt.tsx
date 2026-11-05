@@ -133,7 +133,7 @@ export const WorkspaceGateAccountPrompt: React.FC<
 
     return (
         <div className="flex grow items-center justify-center px-4 py-10">
-            <Card className="flex w-full max-w-[480px] flex-col gap-6 border border-neutral-100 p-6 md:p-8">
+            <Card className="flex w-full max-w-[480px] flex-col gap-6 p-6 md:p-8">
                 <div className="flex flex-col gap-1 md:gap-2">
                     <Heading as="h1" size="h3">
                         {t('app.workspace.workspaceGateAccountPrompt.heading')}

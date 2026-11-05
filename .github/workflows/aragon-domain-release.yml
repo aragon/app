@@ -1,10 +1,11 @@
 # The "Aragon Domain Release" workflow is the domain package's release PR lifecycle, on the shared
-# aragon/github-templates modules — the same flow as the kit's (gov-ui-kit-release.yml): a start
-# every Tuesday (or by hand) cuts release/aragon-domain/<timestamp> with the changesets bump of the
-# "aragon-domain" release scope and opens the "Release @aragon/aragon-domain@x.y.z" PR with its Slack
-# thread; every push refreshes the summary and runs the checks; merging tags the PR head and
-# publishes the GitHub Release, which starts the npm publish (aragon-domain-publish.yml) behind its
-# approval; closing without a merge cancels the release.
+# aragon/github-templates modules — the same flow as the kit's (gov-ui-kit-release.yml), but on a
+# train of its own: a start every Tuesday (or by hand) cuts release/aragon-domain/<timestamp> with
+# the changesets bump of the "aragon-domain" release scope and opens the "Release
+# @aragon/aragon-domain@x.y.z" PR with its Slack thread; every push refreshes the summary and runs
+# the checks; merging tags the PR head and publishes the GitHub Release, which starts the npm
+# publish (aragon-domain-publish.yml) behind its approval; closing without a merge cancels the
+# release.
 
 name: Aragon Domain Release
 
