@@ -1,7 +1,13 @@
 'use client';
 
-import { formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    DateFormat,
+    formatterUtils,
+    invariant,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import {
     type TranslationFunction,
@@ -80,7 +86,7 @@ const formatGas = (gas?: string) =>
 interface IBuildEstimationAlertParams {
     t: TranslationFunction;
     estimation: IGasLimitEstimation | undefined;
-    isEstimationError: boolean;
+    estimationError: unknown;
 }
 
 /**
@@ -90,13 +96,19 @@ interface IBuildEstimationAlertParams {
 const buildEstimationAlert = (
     params: IBuildEstimationAlertParams,
 ): IGasLimitEstimationAlert | undefined => {
-    const { t, estimation, isEstimationError } = params;
+    const { t, estimation, estimationError } = params;
     const translationPrefix =
         'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas';
 
-    if (isEstimationError) {
+    if (estimationError != null) {
+        const errorKey = AragonBackendServiceError.isSimulationBudgetError(
+            estimationError,
+        )
+            ? 'limitReached'
+            : 'error';
+
         return {
-            message: t(`${translationPrefix}.error`),
+            message: t(`${translationPrefix}.${errorKey}`),
             variant: 'critical',
         };
     }
@@ -135,6 +147,17 @@ const buildEstimationAlert = (
                 ),
             }),
             variant: 'critical',
+        };
+    }
+
+    if (estimation.staleSince != null) {
+        return {
+            message: t(`${translationPrefix}.stale`, {
+                date: formatterUtils.formatDate(estimation.staleSince, {
+                    format: DateFormat.YEAR_MONTH_DAY_TIME,
+                }),
+            }),
+            variant: 'warning',
         };
     }
 
@@ -205,7 +228,7 @@ export const useCrossChainControllerGasLimit = (
         mutate: estimateGasLimit,
         data: estimation,
         isPending: isEstimating,
-        isError: isEstimationError,
+        error: estimationError,
         reset: resetEstimation,
     } = useEstimateGasLimit();
 
@@ -291,7 +314,7 @@ export const useCrossChainControllerGasLimit = (
         estimationAlert: buildEstimationAlert({
             t,
             estimation,
-            isEstimationError,
+            estimationError,
         }),
         simulationUrl: estimation?.simulationUrl,
     };

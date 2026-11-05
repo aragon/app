@@ -4,6 +4,8 @@ import type { IErrorResponse } from './domain';
 export class AragonBackendServiceError extends Error {
     static notFoundCode = 'notFound';
     static pluginNotFoundCode = 'pluginNotFound';
+    static simulationBudgetExhaustedCode = 'simulationBudgetExhausted';
+    static crossChainGasBudgetExhaustedCode = 'crossChainGasBudgetExhausted';
 
     static parseErrorCode = 'parseError';
     static parseErrorDescription = 'Error parsing response';
@@ -72,6 +74,10 @@ export class AragonBackendServiceError extends Error {
 
     static isPluginNotFoundError = (error: unknown) =>
         this.hasCode(error, this.pluginNotFoundCode);
+
+    static isSimulationBudgetError = (error: unknown): boolean =>
+        this.hasCode(error, this.simulationBudgetExhaustedCode) ||
+        this.hasCode(error, this.crossChainGasBudgetExhaustedCode);
 
     /**
      * Expected "resource is gone" errors: a genuine 404 or a stale link to a DAO

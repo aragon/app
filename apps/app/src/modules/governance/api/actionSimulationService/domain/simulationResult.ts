@@ -11,4 +11,8 @@ export interface ISimulationResult {
      * URL to view the simulation in Tenderly.
      */
     url: string;
+    /**
+     * Whether the saved run matches the current actions. Set on proposal GET only.
+     */
+    matchesCurrentActions?: boolean;
 }

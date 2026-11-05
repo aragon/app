@@ -92,6 +92,33 @@ describe('AragonBackendServiceError class', () => {
         });
     });
 
+    describe('isSimulationBudgetError', () => {
+        it.each(['simulationBudgetExhausted', 'crossChainGasBudgetExhausted'])(
+            'returns true for %s',
+            (code) => {
+                const error = new AragonBackendServiceError(code, '', 429);
+
+                expect(
+                    AragonBackendServiceError.isSimulationBudgetError(error),
+                ).toBeTruthy();
+            },
+        );
+
+        it('returns false when the service is busy', () => {
+            const error = new AragonBackendServiceError('tooBusy', '', 503);
+
+            expect(
+                AragonBackendServiceError.isSimulationBudgetError(error),
+            ).toBeFalsy();
+        });
+
+        it('returns false for a plain error', () => {
+            expect(
+                AragonBackendServiceError.isSimulationBudgetError(new Error()),
+            ).toBeFalsy();
+        });
+    });
+
     describe('isPluginNotFoundError / isExpectedNotFoundError', () => {
         it('isPluginNotFoundError is true only for the pluginNotFound code', () => {
             expect(
