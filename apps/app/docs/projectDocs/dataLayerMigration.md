@@ -5,7 +5,8 @@ Decision record for moving the app's data from `app-backend` to [aragon-indexer]
 - **Status:** accepted, 2026-10-06; roadmap added 2026-10-07. Owner: Platform team.
 - **Project:** [Migration to Envio and aragon-domain](https://linear.app/aragon/project/migration-to-envio-and-aragon-domain-e1c1b0cdc8b8) (milestones M0 to M5).
 - **Goal:** every read the app makes moves off `app-backend`, and `app-backend` is retired.
-- **Out of scope:** data created by users (campaign uploads, Telegram subscriptions, hidden DAOs) gets one small store, decided in the target model ([APP-1318](https://linear.app/aragon/issue/APP-1318)). Gauge rewards stay a read-time computation.
+- **Out of scope:** data created by users (campaign uploads, Telegram subscriptions, hidden DAOs) gets one small store; the [target model](./dataLayerTargetModel.md#the-store-for-user-data) names it ([APP-1318](https://linear.app/aragon/issue/APP-1318)). Gauge rewards stay a read-time computation.
+- **Target model:** [dataLayerTargetModel.md](./dataLayerTargetModel.md) maps every path the app calls onto the layers, lists the entities and use cases per milestone and carries the capacity budget.
 
 Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. An accepted decision does not mean its tooling is already built.
 
@@ -16,7 +17,7 @@ Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. 
 - The UI does not know what feeds it. The BFF forks per route between app-backend and the domain behind one flag per slice (CMS). A migrated route keeps its path and its JSON shape; the domain DTO is mapped to the app's view model inside the BFF. The fork sits in both server entry points: the `/api/backend` proxy for the browser and `AragonBackendService` for RSC. The token-voting members route (app#1128) stays as built.
 - Legacy stays the source of truth for a slice until its parity report is clean on Sepolia and mainnet. The BFF falls back to legacy on page 1 and never mixes two sources in one list.
 - The app never calls Envio directly. It goes through `@aragon/aragon-domain` and the BFF service: a route for the browser, in-process for RSC prefetch.
-- One multichain indexer. Every deploy re-indexes from the start blocks while the previous deployment keeps serving. Capacity (chains, events, registered contracts, requests per minute) is budgeted before a chain is added.
+- One multichain indexer. Every deploy re-indexes from the start blocks while the previous deployment keeps serving. Capacity (chains, events, registered contracts, requests per minute, indexing hours) is budgeted before a chain is added; the [budget](./dataLayerTargetModel.md#capacity-budget) may split the chains over two production indexers from the same repository, one config each; nothing else changes the rule.
 - Every count the app shows is computed at index time, because the hosted endpoint has no aggregates.
 - The DDD foundation of `aragon-domain` stays.
 
@@ -28,7 +29,8 @@ Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. 
 | Immutable by key (IPFS metadata by CID, for DAOs, plugins and proposals) | indexer effect, cached |
 | Volatile external (ENS names, prices, balances, Safe service, ABIs, simulations, current-state RPC reads) | domain and BFF at read time, cached |
 | Not read by the app (admin queues, monitors, integrity tools) | dropped |
-| Created by users (campaign uploads, Telegram subscriptions, hidden DAOs) | one small store ([APP-1318](https://linear.app/aragon/issue/APP-1318)) |
+| Created by users or admins (campaign uploads, Telegram subscriptions, saved simulations, spam verdicts, TVL snapshots) | one small Postgres, written by the BFF only ([target model](./dataLayerTargetModel.md#the-store-for-user-data)) |
+| Curated by the team (hidden DAOs, spam list, featured DAOs, overrides, flags) | `aragon/app-cms` |
 
 ## Indexer decisions
 
@@ -114,7 +116,7 @@ Once a slice is on in production, its legacy handlers in `app-backend` take bug 
 
 ## Capacity
 
-Envio Production Medium: 10 chains, 10M events, about 10 000 registered contracts, 1 000 requests a minute, $300 a month. Production Large: 15 chains, 100M events, about 50 000 contracts, 2 000 requests a minute, $800 a month. The app serves 14 networks, 13 of them on HyperSync (Hemi is not). Dynamic registration counts towards contracts: Sepolia alone registers about 17 000 DAO and plugin addresses. The budget and the tier decision are in the target model ([APP-1318](https://linear.app/aragon/issue/APP-1318)); a chain is added only inside the budget. The BFF caches domain reads and the app sits behind Cloudflare, so a scraping run never reaches the Envio rate limit.
+Envio Production Medium: 10 chains, about 10 M stored rows, 10 000 contracts, 1 000 requests a minute, 800 indexing hours, $300 a month. Production Large: 15 chains, about 100 M rows, 50 000 contracts, 2 000 requests a minute, $800 a month. Every running deployment counts towards the hours, so a candidate and the previous production cost extra while they exist. The app serves 19 networks, 18 of them on HyperSync (Hemi is not). The current deployment registers 18 200 DAO and plugin addresses on two chains alone (measured 2026-11-05) and runs on Medium, so dynamically registered addresses are not what throttles a plan; the dashboard meters are the check. The inventory per network, the budget per limit and the tier decision are in the [target model](./dataLayerTargetModel.md#capacity-budget) ([APP-1318](https://linear.app/aragon/issue/APP-1318)); a chain is added only inside the budget. The BFF caches domain reads and the app sits behind Cloudflare, so a scraping run never reaches the Envio rate limit.
 
 ## Runbook
 
@@ -152,5 +154,6 @@ On the app side, run the status checks above on the candidate's endpoint before 
 - Indexer: [README](https://github.com/aragon/aragon-indexer/blob/main/README.md), [AGENTS.md](https://github.com/aragon/aragon-indexer/blob/main/AGENTS.md)
 - Domain: [README](/packages/aragon-domain/README.md), [AGENTS.md](/packages/aragon-domain/AGENTS.md)
 - Feature flags: [README](/apps/app/src/shared/featureFlags/README.md)
-- Legacy audit and target model: [APP-1317](https://linear.app/aragon/issue/APP-1317), [APP-1318](https://linear.app/aragon/issue/APP-1318)
+- Legacy audit: [aragon-indexer `docs/legacy-audit.md`](https://github.com/aragon/aragon-indexer/blob/main/docs/legacy-audit.md) ([APP-1317](https://linear.app/aragon/issue/APP-1317))
+- Target model and capacity budget: [dataLayerTargetModel.md](./dataLayerTargetModel.md) ([APP-1318](https://linear.app/aragon/issue/APP-1318))
 - Envio: [zero-downtime deployments](https://docs.envio.dev/docs/HyperIndex/hosted-service-features#zero-downtime-deployments), [Effect API cache](https://docs.envio.dev/docs/HyperIndex/hosted-service-features#effect-api-cache)
