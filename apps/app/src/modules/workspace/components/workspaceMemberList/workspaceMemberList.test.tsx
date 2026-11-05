@@ -75,6 +75,7 @@ describe('<WorkspaceMemberList /> component', () => {
 
     const getMemberListSpy = jest.spyOn(workspaceQueryService, 'getMemberList');
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
+    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
 
     const buildAccount = (
         address: string,
@@ -93,11 +94,13 @@ describe('<WorkspaceMemberList /> component', () => {
             }) as IWorkspaceQueryResponse<IWorkspaceMember>,
         );
         getDaoSpy.mockResolvedValue(generateDao());
+        getAccountsSpy.mockResolvedValue([]);
     });
 
     afterEach(() => {
         getMemberListSpy.mockReset();
         getDaoSpy.mockReset();
+        getAccountsSpy.mockReset();
         useDaoOverridesMock.mockReturnValue({
             data: undefined,
             isPending: false,
@@ -204,9 +207,9 @@ describe('<WorkspaceMemberList /> component', () => {
         ]);
     });
 
-    // A Safe contributes members but has no body to put in a tab, so the group tab shows more than the single body
-    // tab does and the tabs earn their place.
-    it('renders the tabs for a single body when the workspace also holds a Safe account', async () => {
+    // A Safe account has a tab of its own, after the DAO's body tab. Two accounts contribute tabs, so the body tab
+    // names its DAO.
+    it('renders a tab for a Safe account beside the body tabs', async () => {
         const address = nextAddress();
         getDaoSpy.mockResolvedValue(
             generateDao({
@@ -234,10 +237,12 @@ describe('<WorkspaceMemberList /> component', () => {
         );
 
         const tabs = await screen.findAllByTestId('plugin-tab');
-        // One DAO contributes every tab, so the tab names the body alone.
         expect(tabs.map((tab) => tab.textContent)).toEqual([
             'app.workspace.workspaceMemberList.groupTab',
-            'Body',
+            'app.workspace.workspaceMemberList.pluginTab (dao=Only DAO,plugin=Body)',
+            workspaceUtils.getAccountLabel(
+                buildAccount(safeAddress, WorkspaceAccountType.SAFE),
+            ),
         ]);
     });
 

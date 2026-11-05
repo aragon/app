@@ -144,12 +144,27 @@ class DaoUtils {
      * address and slug. Those are separate tabs, so a Safe is additionally keyed by the DAO that
      * holds it. Every surface that builds plugin tabs has to agree on this, or a tab selected in a
      * list cannot be found again by the aside or the detail page.
+     *
+     * A Safe that belongs to no DAO — a Safe workspace account, which is not a plugin and has no `daoAddress` nor
+     * root DAO — is keyed by its address and slug alone. The id carries no network: a caller whose tabs span
+     * several networks (the workspace members strip) prefixes it with one.
+     * @param plugin - Plugin, or plugin-shaped Safe account, to identify.
+     * @param rootDaoAddress - Address of the DAO the tab is built for, keying a Safe with no `daoAddress` of its own.
+     * @returns The tab id.
      */
-    getPluginTabId = (plugin: IDaoPlugin, rootDaoAddress?: string): string => {
+    getPluginTabId = (
+        plugin: Pick<
+            IDaoPlugin,
+            'address' | 'slug' | 'interfaceType' | 'daoAddress'
+        >,
+        rootDaoAddress?: string,
+    ): string => {
         const base = `${plugin.address}-${plugin.slug}`;
+        const safeDaoAddress = plugin.daoAddress ?? rootDaoAddress;
 
-        return plugin.interfaceType === PluginInterfaceType.SAFE
-            ? `${base}-${plugin.daoAddress ?? rootDaoAddress}`
+        return plugin.interfaceType === PluginInterfaceType.SAFE &&
+            safeDaoAddress != null
+            ? `${base}-${safeDaoAddress}`
             : base;
     };
 
