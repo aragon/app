@@ -749,7 +749,7 @@ today, and the two differ by route:
 | `/{accountId}/overview` | not yet | the gate's Safe state |
 | `/{accountId}/members` | **implemented** | the Safe's owners, with its settings in the aside |
 | `/{accountId}/members/{address}` | **implemented** (redirect) | a redirect to the Safe's members page |
-| `/{accountId}/proposals` | not yet | no link for a Safe; the URL gets the gate's Safe state |
+| `/{accountId}/proposals` | will not be supported | no link for a Safe; the URL gets the gate's Safe state |
 | `/{accountId}/proposals/{proposalSlug}` | not yet | the gate's Safe state |
 | `/{accountId}/permissions` | not applicable | DAO only: no link for a Safe; the URL gets the gate's Safe state |
 | `/{accountId}/settings` | **implemented**, read-only | the Safe's account (name, chain, summary) and governance (threshold linking to its members, nonce, guard, modules), with its address and version aside |
