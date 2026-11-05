@@ -355,7 +355,9 @@ describe('<WorkspaceTransactionList /> component', () => {
             }),
         );
 
-        const header = await screen.findByRole('button', { name: /safe/ });
+        const header = await screen.findByRole('button', {
+            name: /Executed/,
+        });
         await userEvent.click(header);
 
         expect(screen.getByTestId('safe-execution-detail')).toBeInTheDocument();

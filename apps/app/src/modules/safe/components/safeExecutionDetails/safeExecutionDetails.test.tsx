@@ -106,6 +106,19 @@ describe('<SafeExecutionDetails /> component', () => {
         expect(screen.queryByText('Proposal')).not.toBeInTheDocument();
     });
 
+    it('renders only the actions of a pending Safe transaction, which has no onchain execution yet', () => {
+        const transaction = {
+            ...generateTransaction({ side: TransactionSide.EXECUTION }),
+            transactionHash: null,
+            blockTimestamp: null,
+        };
+
+        render(createTestComponent({ transaction }));
+
+        expect(screen.queryByText('Executed by')).not.toBeInTheDocument();
+        expect(screen.getByTestId('execution-actions')).toBeInTheDocument();
+    });
+
     it('attributes the raw calls to the Safe while the actions are being decoded', () => {
         mockActions({
             decoding: true,

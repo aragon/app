@@ -287,15 +287,20 @@ export const WorkspaceTransactionList: React.FC<
                             transaction.account,
                         );
                         const dao = daos[accountId];
-                        const accountType = accounts.find(
-                            (account) => account.id === accountId,
-                        )?.type;
+                        const account = accounts.find(
+                            ({ id }) => id === accountId,
+                        );
                         // A transfer between two selected accounts is listed once per account under the same ID.
                         const itemId = `${accountId}-${transaction.id}`;
 
                         return (
                             <WorkspaceTransactionListItem
-                                accountType={accountType}
+                                accountName={
+                                    account == null
+                                        ? undefined
+                                        : workspaceUtils.getAccountName(account)
+                                }
+                                accountType={account?.type}
                                 dao={dao}
                                 index={index}
                                 key={itemId}

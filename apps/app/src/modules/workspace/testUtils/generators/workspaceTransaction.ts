@@ -6,7 +6,9 @@ import {
 import { Network } from '@/shared/api/daoService';
 import {
     type IWorkspaceTransactionExecution,
+    type IWorkspaceTransactionPendingExecution,
     type IWorkspaceTransactionTransfer,
+    WorkspaceTransactionStatus,
     WorkspaceTransactionType,
 } from '../../api/workspaceQueryService';
 
@@ -46,3 +48,20 @@ export function generateWorkspaceTransaction(
         ...transaction,
     };
 }
+
+export const generateWorkspacePendingTransaction = (
+    transaction?: Partial<IWorkspaceTransactionPendingExecution>,
+): IWorkspaceTransactionPendingExecution => ({
+    ...generateTransaction({ side: TransactionSide.EXECUTION }),
+    ...workspaceFields,
+    status: WorkspaceTransactionStatus.PENDING,
+    transactionHash: null,
+    blockNumber: null,
+    blockTimestamp: null,
+    submittedAt: 1_793_804_572,
+    safeTxHash: '0x2632',
+    nonce: '22',
+    confirmations: 1,
+    confirmationsRequired: 2,
+    ...transaction,
+});

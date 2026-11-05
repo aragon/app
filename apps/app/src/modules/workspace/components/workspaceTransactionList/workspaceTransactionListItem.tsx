@@ -10,11 +10,12 @@ import {
     DateFormat,
     formatterUtils,
     IconType,
+    type ITagProps,
     NumberFormat,
+    Tag,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import {
-    type ITransactionExecution,
     type ITransactionTransfer,
     TransactionSide,
 } from '@/modules/finance/api/financeService';
@@ -26,9 +27,15 @@ import {
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { SafeExecutionDetails } from '@/modules/safe/components/safeExecutionDetails';
 import type { IDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import type { IWorkspaceTransaction } from '../../api/workspaceQueryService';
+import type {
+    IWorkspaceTransaction,
+    IWorkspaceTransactionExecution,
+    IWorkspaceTransactionPendingExecution,
+} from '../../api/workspaceQueryService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
+import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
 
 export interface IWorkspaceTransactionListItemProps
     extends Pick<ITransactionListItemProps, 'index'> {
@@ -40,6 +47,10 @@ export interface IWorkspaceTransactionListItemProps
      * Type of the account the transaction belongs to, which decides how an execution is decoded.
      */
     accountType?: WorkspaceAccountType;
+    /**
+     * Name of the account the transaction belongs to, used to label the transactions of a Safe account.
+     */
+    accountName?: string;
     /**
      * Value identifying the item in its accordion container. It must be unique within the container, which a
      * transaction ID alone is not when the same transfer is listed once per account.
@@ -56,6 +67,8 @@ type TransactionHeaderCopy = ReturnType<
     typeof useGukModulesContext
 >['copy']['transactionDataListItemStructure'];
 
+type TranslationFunction = ReturnType<typeof useTranslations>['t'];
+
 interface ITransactionHeaderDisplay {
     /**
      * Icon of the transaction type.
@@ -70,26 +83,103 @@ interface ITransactionHeaderDisplay {
      */
     heading: string;
     /**
-     * Value displayed on the right of the header: the token amount of a transfer, the action count of an execution.
+     * Token amount of a transfer, displayed on the right of the header.
      */
-    value: string;
+    value?: string;
     /**
-     * Executor of an execution, a plugin name or an address.
+     * Status of an execution, displayed on the right of the header.
+     */
+    status?: ITagProps;
+    /**
+     * Executor of an execution, a plugin name or an address, or the account of a Safe transaction.
      */
     label?: string;
 }
 
+interface IBuildExecutionDisplayParams {
+    /**
+     * Execution to display, executed or pending.
+     */
+    execution:
+        | IWorkspaceTransactionExecution
+        | IWorkspaceTransactionPendingExecution;
+    /**
+     * Hash of the Safe transaction behind the execution, set when it is read from a Safe.
+     */
+    safeTxHash?: string;
+    /**
+     * Name of the account the execution belongs to.
+     */
+    accountName?: string;
+    /**
+     * DAO the execution belongs to.
+     */
+    dao?: IDao;
+    /**
+     * Copy of the transaction header.
+     */
+    headerCopy: TransactionHeaderCopy;
+    /**
+     * Translation function.
+     */
+    t: TranslationFunction;
+}
+
+const buildExecutionStatus = (
+    execution:
+        | IWorkspaceTransactionExecution
+        | IWorkspaceTransactionPendingExecution,
+    t: TranslationFunction,
+): ITagProps => {
+    if (!workspaceTransactionUtils.isPendingExecution(execution)) {
+        return {
+            label: t(
+                'app.workspace.workspaceTransactionList.item.status.executed',
+            ),
+            variant: 'success',
+        };
+    }
+
+    const status = workspaceTransactionUtils.isExecutable(execution)
+        ? 'executable'
+        : 'active';
+
+    return {
+        label: t(
+            `app.workspace.workspaceTransactionList.item.status.${status}`,
+        ),
+        variant: 'info',
+    };
+};
+
 const buildExecutionDisplay = (
-    execution: ITransactionExecution,
-    headerCopy: TransactionHeaderCopy,
-    dao?: IDao,
-): ITransactionHeaderDisplay => ({
-    icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
-    iconVariant: 'info',
-    heading: headerCopy.executed,
-    value: headerCopy.actionCount(execution.actionCount),
-    label: transactionExecutionUtils.getExecutionLabel(execution, dao),
-});
+    params: IBuildExecutionDisplayParams,
+): ITransactionHeaderDisplay => {
+    const { execution, safeTxHash, accountName, dao, headerCopy, t } = params;
+
+    // A Safe transaction is identified by its account and nonce, as an executed one may not have been run by a plugin.
+    const isSafeTransaction = safeTxHash != null;
+    const heading =
+        isSafeTransaction && execution.nonce != null
+            ? workspaceTransactionUtils.getSafeTransactionTitle(
+                  execution.nonce,
+                  accountName,
+              )
+            : headerCopy.executed;
+    const label =
+        !isSafeTransaction &&
+        workspaceTransactionUtils.isExecutedExecution(execution)
+            ? transactionExecutionUtils.getExecutionLabel(execution, dao)
+            : (accountName ?? execution.account.address);
+
+    return {
+        icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
+        iconVariant: 'neutral',
+        heading,
+        label,
+        status: buildExecutionStatus(execution, t),
+    };
+};
 
 const buildTransferDisplay = (
     transfer: ITransactionTransfer,
@@ -113,34 +203,57 @@ const buildTransferDisplay = (
 
 /**
  * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions
- * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset. Must
- * be rendered inside an `<Accordion.Container />`.
+ * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset.
+ * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their
+ * decoded actions only. Must be rendered inside an `<Accordion.Container />`.
  */
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
 > = (props) => {
-    const { transaction, value, index, accountType, dao } = props;
+    const { transaction, value, index, accountType, accountName, dao } = props;
 
+    const { t } = useTranslations();
     const { copy } = useGukModulesContext();
     const headerCopy = copy.transactionDataListItemStructure;
 
-    const isExecution = transactionExecutionUtils.isExecution(transaction);
+    const isExecution = workspaceTransactionUtils.isExecution(transaction);
+    const isPendingExecution =
+        workspaceTransactionUtils.isPendingExecution(transaction);
+    const isExecuted =
+        workspaceTransactionUtils.isExecutedExecution(transaction);
+
+    // A pending transaction only exists on a Safe, whatever the type of its account resolves to.
     const safeTxHash =
-        isExecution && accountType === WorkspaceAccountType.SAFE
+        isExecution &&
+        (isPendingExecution || accountType === WorkspaceAccountType.SAFE)
             ? transaction.safeTxHash
             : undefined;
 
-    if (isExecution && dao == null && safeTxHash == null) {
+    if (isExecuted && dao == null && safeTxHash == null) {
         return <TransactionList.Item index={index} transaction={transaction} />;
     }
 
-    const { icon, iconVariant, heading, label, ...display } = isExecution
-        ? buildExecutionDisplay(transaction, headerCopy, dao)
+    const {
+        icon,
+        iconVariant,
+        heading,
+        label,
+        status,
+        value: amount,
+    } = isExecution
+        ? buildExecutionDisplay({
+              execution: transaction,
+              safeTxHash,
+              accountName,
+              dao,
+              headerCopy,
+              t,
+          })
         : buildTransferDisplay(transaction, headerCopy);
 
     const isAddressLabel = label != null && addressUtils.isAddress(label);
     const formattedDate = formatterUtils.formatDate(
-        transaction.blockTimestamp * 1000,
+        workspaceTransactionUtils.getTimestamp(transaction) * 1000,
         { format: DateFormat.YEAR_MONTH_DAY_TIME },
     );
 
@@ -176,9 +289,12 @@ export const WorkspaceTransactionListItem: React.FC<
                             {formattedDate}
                         </p>
                     </div>
-                    <span className="shrink-0 truncate text-neutral-800 leading-tight md:text-lg">
-                        {display.value}
-                    </span>
+                    {amount != null && (
+                        <span className="shrink-0 truncate text-neutral-800 leading-tight md:text-lg">
+                            {amount}
+                        </span>
+                    )}
+                    {status != null && <Tag className="shrink-0" {...status} />}
                 </div>
             </Accordion.ItemHeader>
             <Accordion.ItemContent>
@@ -191,7 +307,7 @@ export const WorkspaceTransactionListItem: React.FC<
                                 transaction={transaction}
                             />
                         )}
-                        {safeTxHash == null && dao != null && (
+                        {isExecuted && safeTxHash == null && dao != null && (
                             <TransactionExecutionDetails
                                 dao={dao}
                                 transaction={transaction}

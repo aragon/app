@@ -4780,6 +4780,13 @@
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
         },
+        "item": {
+          "status": {
+            "active": "Active",
+            "executable": "Executable",
+            "executed": "Executed"
+          }
+        },
         "partial": "Some accounts of this workspace could not be read, so this list may be incomplete.",
         "partialSingle": "This account could not be read in full, so this list may be incomplete.",
         "typeFilter": {

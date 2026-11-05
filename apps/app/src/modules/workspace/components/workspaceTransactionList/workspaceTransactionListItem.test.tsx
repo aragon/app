@@ -9,7 +9,10 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { WorkspaceAccountType } from '../../api/workspaceService';
-import { generateWorkspaceTransaction } from '../../testUtils';
+import {
+    generateWorkspacePendingTransaction,
+    generateWorkspaceTransaction,
+} from '../../testUtils';
 import {
     type IWorkspaceTransactionListItemProps,
     WorkspaceTransactionListItem,
@@ -128,7 +131,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         );
     });
 
-    it('renders an execution with the plugin that emitted it and its action count', () => {
+    it('renders an execution with the plugin that emitted it and its executed status', () => {
         const plugin = generateDaoPlugin({
             interfaceType: PluginInterfaceType.MULTISIG,
             subdomain: 'multisig',
@@ -145,7 +148,99 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         const header = screen.getByRole('button', { name: /Executed/ });
         expect(header).toHaveTextContent('Core council');
-        expect(header).toHaveTextContent('2 actions');
+        expect(header).toHaveTextContent(
+            'app.workspace.workspaceTransactionList.item.status.executed',
+        );
+        expect(header).not.toHaveTextContent('2 actions');
+    });
+
+    it('renders an executed Safe transaction with its account initials, nonce and account name', () => {
+        const transaction = generateWorkspaceTransaction({
+            side: TransactionSide.EXECUTION,
+            safeTxHash: '0xff54',
+            nonce: '21',
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                accountType: WorkspaceAccountType.SAFE,
+                accountName: 'Treasury Safe',
+            }),
+        );
+
+        const header = screen.getByRole('button', { name: /TS-21/ });
+        expect(header).toHaveTextContent('Treasury Safe');
+        expect(header).toHaveTextContent(
+            'app.workspace.workspaceTransactionList.item.status.executed',
+        );
+    });
+
+    it('renders a pending Safe transaction with its submission date and active status', () => {
+        const submittedAt = 1_793_804_572;
+        const transaction = generateWorkspacePendingTransaction({
+            nonce: '22',
+            submittedAt,
+            confirmations: 1,
+            confirmationsRequired: 2,
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                accountType: WorkspaceAccountType.SAFE,
+                accountName: 'Treasury Safe',
+            }),
+        );
+
+        const header = screen.getByRole('button', { name: /TS-22/ });
+        expect(header).toHaveTextContent('Treasury Safe');
+        expect(header).toHaveTextContent(
+            'app.workspace.workspaceTransactionList.item.status.active',
+        );
+        expect(header).toHaveTextContent(
+            GovUiKit.formatterUtils.formatDate(submittedAt * 1000, {
+                format: GovUiKit.DateFormat.YEAR_MONTH_DAY_TIME,
+            })!,
+        );
+    });
+
+    it('renders a pending Safe transaction with enough confirmations as executable', () => {
+        const transaction = generateWorkspacePendingTransaction({
+            confirmations: 2,
+            confirmationsRequired: 2,
+        });
+
+        render(
+            createTestComponent({
+                transaction,
+                accountType: WorkspaceAccountType.SAFE,
+            }),
+        );
+
+        expect(screen.getByRole('button')).toHaveTextContent(
+            'app.workspace.workspaceTransactionList.item.status.executable',
+        );
+    });
+
+    it('expands a pending Safe transaction to its detail read from the Safe, whatever its account type', async () => {
+        const transaction = generateWorkspacePendingTransaction({
+            safeTxHash: '0x2632',
+        });
+
+        render(createTestComponent({ transaction }));
+
+        await userEvent.click(screen.getByRole('button'));
+
+        expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
+            {
+                safeAddress: transaction.account.address,
+                safeTxHash: '0x2632',
+                transaction,
+            },
+            undefined,
+        );
+        expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
     });
 
     it('expands an execution to its detail in the context of its DAO', async () => {

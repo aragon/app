@@ -7,11 +7,28 @@ import { transactionExecutionUtils } from '@/modules/finance/utils/transactionEx
 import { useSafeTransactionActions } from '@/shared/api/safeService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
+/**
+ * Execution behind a Safe transaction. A Safe transaction still waiting to be executed has no onchain hash nor block.
+ */
+export type SafeExecutionDetailsTransaction = Pick<
+    ITransactionExecution,
+    'id' | 'network' | 'fromAddress' | 'actionCount'
+> & {
+    /**
+     * Hash of the execution transaction, null while the Safe transaction is pending.
+     */
+    transactionHash: ITransactionExecution['transactionHash'] | null;
+    /**
+     * Timestamp of the block the execution was included in, null while the Safe transaction is pending.
+     */
+    blockTimestamp: ITransactionExecution['blockTimestamp'] | null;
+};
+
 export interface ISafeExecutionDetailsProps {
     /**
      * Execution transaction to display.
      */
-    transaction: ITransactionExecution;
+    transaction: SafeExecutionDetailsTransaction;
     /**
      * Address of the Safe that executed the transaction.
      */
@@ -23,8 +40,8 @@ export interface ISafeExecutionDetailsProps {
 }
 
 /**
- * Summary and decoded actions of a Safe execution transaction. Like the DAO execution details, it renders no layout
- * of its own.
+ * Summary and decoded actions of a Safe execution transaction, or only its decoded actions while the Safe transaction
+ * is pending. Like the DAO execution details, it renders no layout of its own.
  */
 export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
     props,
@@ -55,15 +72,20 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
     const actionCount =
         actionData?.rawActions.length ?? transaction.actionCount;
 
+    const { transactionHash, blockTimestamp } = transaction;
+
     return (
         <>
-            <TransactionDetailSummary
-                chainId={chainId}
-                date={transaction.blockTimestamp * 1000}
-                executedBy={{ address: transaction.fromAddress }}
-                totalActions={actionCount}
-                transactionHash={transaction.transactionHash}
-            />
+            {/* The summary describes the onchain execution, which a pending Safe transaction does not have yet. */}
+            {transactionHash != null && blockTimestamp != null && (
+                <TransactionDetailSummary
+                    chainId={chainId}
+                    date={blockTimestamp * 1000}
+                    executedBy={{ address: transaction.fromAddress }}
+                    totalActions={actionCount}
+                    transactionHash={transactionHash}
+                />
+            )}
             <TransactionExecutionActions
                 actionCount={actionCount}
                 actions={actions}

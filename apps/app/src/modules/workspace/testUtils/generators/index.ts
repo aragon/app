@@ -3,4 +3,7 @@ export {
     generateWorkspaceMembership,
 } from './workspaceMember';
 export { generateWorkspaceQueryResponse } from './workspaceQueryResponse';
-export { generateWorkspaceTransaction } from './workspaceTransaction';
+export {
+    generateWorkspacePendingTransaction,
+    generateWorkspaceTransaction,
+} from './workspaceTransaction';
