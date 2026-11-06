@@ -19,7 +19,7 @@ on:
     types: [published]
   workflow_dispatch:
 
-# id-token is for the inline publish jobs only; the jobs on the shared `@main` flows drop it.
+# id-token is for the inline publish jobs only; the jobs on the shared `@v1` flows drop it.
 permissions:
   id-token: write # required for OIDC trusted publishing
   contents: read
@@ -32,7 +32,7 @@ jobs:
       startsWith(github.event.release.tag_name, '@aragon/gov-ui-kit@')
     permissions:
       contents: read
-    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    uses: aragon/github-templates/.github/workflows/notify.yml@v1
     with:
       kind: gate
       env: npm
@@ -59,7 +59,7 @@ jobs:
     environment: npm-publish
     steps:
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           # Build from the tag, never from a branch. This job waits on the npm-publish approval,
           # so the gap between tagging and building is unbounded — anything merged to main in the
@@ -93,7 +93,7 @@ jobs:
       startsWith(github.event.release.tag_name, '@aragon/gov-ui-kit@')
     permissions:
       contents: read
-    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    uses: aragon/github-templates/.github/workflows/notify.yml@v1
     with:
       kind: result
       env: npm
@@ -111,7 +111,7 @@ jobs:
     needs: release
     permissions:
       contents: read
-    uses: aragon/github-templates/.github/workflows/release-complete.yml@main
+    uses: aragon/github-templates/.github/workflows/release-complete.yml@v1
     with:
       tag: ${{ github.event.release.tag_name }}
       env: npm
@@ -131,7 +131,7 @@ jobs:
     steps:
       - name: Resolve 1Password secrets
         id: op
-        uses: aragon/github-templates/steps/credential-retrieval@main
+        uses: aragon/github-templates/steps/credential-retrieval@v1
         with:
           mode: byref
           op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
@@ -139,7 +139,7 @@ jobs:
             ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           # Full history so `changeset status --since origin/main` can diff.
           fetch-depth: "0"

@@ -61,7 +61,7 @@ jobs:
 
       - name: Resolve 1Password secrets
         id: op
-        uses: aragon/github-templates/steps/credential-retrieval@main
+        uses: aragon/github-templates/steps/credential-retrieval@v1
         with:
           mode: byref
           op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
@@ -73,7 +73,7 @@ jobs:
             SLACK_CHANNEL_ID=op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
           fetch-depth: "0"
@@ -121,7 +121,7 @@ jobs:
 
       - name: Ensure hotfix branch from tag
         if: steps.meta.outputs.mode == 'fresh'
-        uses: aragon/github-templates/steps/git-ensure-branch@main
+        uses: aragon/github-templates/steps/git-ensure-branch@v1
         with:
           branch: ${{ steps.ctx.outputs.branch }}
           base-ref: ${{ steps.ctx.outputs.tag }}
@@ -204,7 +204,7 @@ jobs:
       - name: Notify Slack — Hotfix Started
         id: notify
         continue-on-error: true
-        uses: aragon/github-templates/steps/slack-notify@main
+        uses: aragon/github-templates/steps/slack-notify@v1
         with:
           slack-bot-token: ${{ fromJSON(steps.op.outputs.secrets).SLACK_BOT_TOKEN }}
           slack-channel-id: ${{ fromJSON(steps.op.outputs.secrets).SLACK_CHANNEL_ID }}
@@ -222,7 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           ref: ${{ needs.start.outputs.hotfix-sha }}
           fetch-depth: "0"
@@ -235,7 +235,7 @@ jobs:
 
   deploy:
     needs: [start, test]
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: staging
       ref: ${{ needs.start.outputs.hotfix-sha }}
@@ -263,7 +263,7 @@ jobs:
     steps:
       - name: Resolve 1Password secrets
         id: op
-        uses: aragon/github-templates/steps/credential-retrieval@main
+        uses: aragon/github-templates/steps/credential-retrieval@v1
         with:
           mode: byref
           op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
@@ -278,14 +278,14 @@ jobs:
           fetch-depth: 1
 
       - name: Create and push hotfix tag
-        uses: aragon/github-templates/steps/gh-ensure-tag@main
+        uses: aragon/github-templates/steps/gh-ensure-tag@v1
         with:
           tag: ${{ needs.start.outputs.hotfix-tag }}
           sha: ${{ needs.start.outputs.hotfix-sha }}
 
   e2e:
     needs: [start, deploy]
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: https://stg.app.aragon.org
       environment: staging

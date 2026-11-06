@@ -112,7 +112,7 @@ jobs:
         if: steps.target.outputs.deployed == 'true'
         id: op
         continue-on-error: true
-        uses: aragon/github-templates/steps/credential-retrieval@main
+        uses: aragon/github-templates/steps/credential-retrieval@v1
         with:
           mode: byref
           op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
@@ -146,7 +146,7 @@ jobs:
   notify-result:
     needs: smoke
     if: ${{ !cancelled() && needs.smoke.outputs.deployed == 'true' && ((inputs.thread-pr-number || 0) != 0 || needs.smoke.outputs.release-tag != '') }}
-    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    uses: aragon/github-templates/.github/workflows/notify.yml@v1
     with:
       kind: tests
       suite: LLM smoke
@@ -171,7 +171,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Comment the result
-        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@v1
         with:
           tag: llm-smoke
           pr-number: ${{ inputs.thread-pr-number }}
@@ -187,7 +187,7 @@ jobs:
   notify-failure:
     needs: smoke
     if: ${{ failure() }}
-    uses: aragon/github-templates/.github/workflows/notify.yml@main
+    uses: aragon/github-templates/.github/workflows/notify.yml@v1
     with:
       kind: failure
       subject: "Assistant LLM smoke on ${{ needs.smoke.outputs.url }}"

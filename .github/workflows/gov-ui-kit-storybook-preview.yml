@@ -45,7 +45,7 @@ jobs:
   deploy:
     needs: changes
     if: ${{ needs.changes.outputs.changed == 'true' }}
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: preview
       vercel-scope: aragon-app
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Comment preview PR
-        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@v1
         with:
           message: "📚 **Storybook Preview:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})"
           tag: storybook-preview-url
