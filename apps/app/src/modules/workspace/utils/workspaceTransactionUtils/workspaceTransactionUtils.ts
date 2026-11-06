@@ -28,14 +28,6 @@ class WorkspaceTransactionUtils {
         transaction.status === WorkspaceTransactionStatus.PENDING;
 
     /**
-     * Narrows a transaction to an execution included onchain.
-     */
-    isExecutedExecution = (
-        transaction: IWorkspaceTransaction,
-    ): transaction is IWorkspaceTransactionExecution =>
-        this.isExecution(transaction) && !this.isPendingExecution(transaction);
-
-    /**
      * Timestamp (in seconds) of a transaction: the block it was included in, or its submission to the Safe
      * transaction service while it is pending.
      */

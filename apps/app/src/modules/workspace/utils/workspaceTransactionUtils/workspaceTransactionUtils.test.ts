@@ -37,20 +37,6 @@ describe('workspaceTransaction utils', () => {
         });
     });
 
-    describe('isExecutedExecution', () => {
-        it('returns true only for executions included onchain', () => {
-            expect(
-                workspaceTransactionUtils.isExecutedExecution(executed),
-            ).toBe(true);
-            expect(workspaceTransactionUtils.isExecutedExecution(pending)).toBe(
-                false,
-            );
-            expect(
-                workspaceTransactionUtils.isExecutedExecution(transfer),
-            ).toBe(false);
-        });
-    });
-
     describe('getTimestamp', () => {
         it('returns the block timestamp of an executed transaction', () => {
             expect(workspaceTransactionUtils.getTimestamp(executed)).toBe(
