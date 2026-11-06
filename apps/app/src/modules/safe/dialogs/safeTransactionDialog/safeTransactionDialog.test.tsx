@@ -2,7 +2,7 @@ import { Dialog, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import type { Hex } from 'viem';
+import { type Hex, UserRejectedRequestError } from 'viem';
 import * as WagmiActions from 'wagmi/actions';
 import * as connectedWalletGuardApi from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
@@ -399,24 +399,73 @@ describe('<SafeTransactionDialog /> component', () => {
         expect(confirmSafeTransactionSpy).not.toHaveBeenCalled();
     });
 
-    it('surfaces a signature rejected in the wallet without submitting a confirmation', async () => {
+    it('returns to the approval after a signature rejected in the wallet, so it can be retried', async () => {
+        mockSafe({});
+        protocolKit.signTypedData.mockRejectedValueOnce(
+            new UserRejectedRequestError(new Error('User rejected.')),
+        );
+        render(createTestComponent());
+
+        const confirmButton = await confirmReview('confirm');
+        await userEvent.click(confirmButton);
+
+        expect(
+            await screen.findByText(`${translationKey}.signatureRejected`),
+        ).toBeInTheDocument();
+        expect(confirmSafeTransactionSpy).not.toHaveBeenCalled();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: `${translationKey}.actions.confirm`,
+            }),
+        );
+
+        expect(
+            await screen.findByText(`${translationKey}.confirmed`),
+        ).toBeInTheDocument();
+        expect(confirmSafeTransactionSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('ends in an error when signing fails for another reason than a rejection', async () => {
         mockSafe({});
         protocolKit.signTypedData.mockRejectedValue(
-            new Error('User rejected the request.'),
+            new Error('Provider disconnected.'),
         );
         render(createTestComponent());
 
         await userEvent.click(await confirmReview('confirm'));
 
         expect(
-            await screen.findByText('User rejected the request.'),
+            await screen.findByText('Provider disconnected.'),
         ).toBeInTheDocument();
         expect(
             screen.getByRole('button', {
                 name: `${translationKey}.actions.close`,
             }),
         ).toBeEnabled();
-        expect(confirmSafeTransactionSpy).not.toHaveBeenCalled();
+    });
+
+    it('returns to the execution after it was rejected in the wallet', async () => {
+        const confirmations = [
+            generateSafeConfirmation({ owner, signature }),
+            generateSafeConfirmation({ owner: otherOwner, signature }),
+        ];
+        executeSafeTransaction.mockRejectedValue(
+            new UserRejectedRequestError(new Error('User rejected.')),
+        );
+        mockSafe({ transaction: generateTransaction({ confirmations }) });
+        render(createTestComponent());
+
+        await userEvent.click(await confirmReview('execute'));
+
+        expect(
+            await screen.findByText(`${translationKey}.executionRejected`),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: `${translationKey}.actions.execute`,
+            }),
+        ).toBeEnabled();
     });
 
     it('does not submit a signature made after the wallet switched account', async () => {
@@ -654,6 +703,90 @@ describe('<SafeTransactionDialog /> component', () => {
                 name: `${translationKey}.actions.recheck`,
             }),
         ).toBeEnabled();
+    });
+
+    it('re-checks an execution sent before the dialog opened without asking for a wallet or a network', async () => {
+        const confirmations = [
+            generateSafeConfirmation({ owner, signature }),
+            generateSafeConfirmation({ owner: otherOwner, signature }),
+        ];
+        const resumeSafeTransaction = jest.fn().mockResolvedValue({
+            result: SafeExecutionResult.EXECUTED,
+            hash: executionHash,
+        });
+        executeSafeTransaction.mockRejectedValue(
+            new SafeExecutionPendingError(executionHash),
+        );
+        useSafeTransactionExecutionSpy.mockReturnValue({
+            execute: executeSafeTransaction,
+            resume: resumeSafeTransaction,
+        } as never);
+        mockSafe({ transaction: generateTransaction({ confirmations }) });
+
+        // The execution is sent, then the dialog is closed while its outcome is still unknown, as on a reload.
+        const { unmount } = render(createTestComponent());
+        await userEvent.click(await confirmReview('execute'));
+        await screen.findByRole('button', {
+            name: `${translationKey}.actions.recheck`,
+        });
+        unmount();
+
+        const checkWalletConnection = jest.fn();
+        const withNetworkSwitch = jest.fn();
+        useConnectedWalletGuardSpy.mockReturnValue({
+            result: false,
+            check: checkWalletConnection,
+        });
+        useNetworkSwitchSpy.mockReturnValue({
+            requiredChainId: chainId,
+            withNetworkSwitch,
+        } as unknown as ReturnType<typeof networkSwitchApi.useNetworkSwitch>);
+        useWalletAccountSpy.mockReturnValue({
+            address: undefined,
+            chainId: undefined,
+            isConnecting: false,
+            isReconnecting: false,
+        });
+        render(createTestComponent());
+
+        await userEvent.click(await confirmReview('recheck'));
+
+        expect(
+            await screen.findByText(`${translationKey}.executed`),
+        ).toBeInTheDocument();
+        expect(resumeSafeTransaction).toHaveBeenCalledWith(
+            expect.objectContaining({ hash: executionHash }),
+        );
+        expect(checkWalletConnection).not.toHaveBeenCalled();
+        expect(withNetworkSwitch).not.toHaveBeenCalled();
+        expect(executeSafeTransaction).toHaveBeenCalledTimes(1);
+    });
+
+    it('reports a rejected network switch and keeps the action available', async () => {
+        useNetworkSwitchSpy.mockReturnValue({
+            requiredChainId: chainId,
+            withNetworkSwitch: (
+                _onSend: () => void,
+                onError?: (error: unknown) => void,
+            ) =>
+                onError?.(
+                    new UserRejectedRequestError(new Error('User rejected.')),
+                ),
+        } as unknown as ReturnType<typeof networkSwitchApi.useNetworkSwitch>);
+        mockSafe({});
+        render(createTestComponent());
+
+        await userEvent.click(await confirmReview('confirm'));
+
+        expect(
+            await screen.findByText(`${translationKey}.networkSwitchRejected`),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: `${translationKey}.actions.confirm`,
+            }),
+        ).toBeEnabled();
+        expect(protocolKit.signTypedData).not.toHaveBeenCalled();
     });
 
     it('renders an error when the transaction is no longer available', async () => {

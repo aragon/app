@@ -30,6 +30,7 @@ import { SafeTransactionReviewContent } from '../../components/safeTransactionRe
 import { SafeDialogId } from '../../constants/safeDialogId';
 import {
     type ISafeExecutionOutcomeReport,
+    isUserRejectionError,
     SafeExecutionPendingError,
     SafeExecutionResult,
     SafeExecutionSubmissionError,
@@ -189,6 +190,15 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             setUncertainConfirmation(confirmation);
         },
         [],
+    );
+
+    // A request rejected in the wallet sent nothing, so the dialog goes back to its action rather than to a dead end.
+    const returnToReady = useCallback(
+        (messageKey: string) => {
+            setError(t(`${translationKey}.${messageKey}`));
+            setState('ready');
+        },
+        [t],
     );
 
     const fail = useCallback(
@@ -495,6 +505,11 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 return;
             }
 
+            if (isUserRejectionError(reason)) {
+                returnToReady('executionRejected');
+                return;
+            }
+
             fail(reason);
         },
         [
@@ -504,6 +519,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             recovery,
             registerExecutionSubmitted,
             requiredChainId,
+            returnToReady,
         ],
     );
 
@@ -755,6 +771,11 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 return;
             }
 
+            if (isUserRejectionError(reason)) {
+                returnToReady('signatureRejected');
+                return;
+            }
+
             fail(reason);
         }
     }, [
@@ -767,6 +788,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
         readOwnerAuthority,
         reconcileConfirmation,
         requiredChainId,
+        returnToReady,
         safeTxHash,
         t,
         updateUncertainConfirmation,
@@ -814,15 +836,31 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     }, [handleDismiss, updateOptions]);
 
     const handleReadyAction = () => {
+        // Following an execution already sent only reads its receipt, so it needs neither a wallet nor a network switch.
+        if (isExecutionPending()) {
+            void handleExecute();
+            return;
+        }
+
         if (!isWalletConnected) {
             checkWalletConnection();
             return;
         }
 
-        const shouldExecute = isExecutionPending() || prepared?.canExecute;
-        withNetworkSwitch(() => {
-            void (shouldExecute ? handleExecute() : handleConfirm());
-        });
+        // A rejected switch is reported while the dialog stays ready, so the action can be retried.
+        withNetworkSwitch(
+            () =>
+                void (prepared?.canExecute ? handleExecute() : handleConfirm()),
+            (switchError: unknown) =>
+                setError(
+                    isUserRejectionError(switchError)
+                        ? t(`${translationKey}.networkSwitchRejected`)
+                        : getErrorMessage(
+                              switchError,
+                              t(`${translationKey}.walletRequired`),
+                          ),
+                ),
+        );
     };
 
     const readyActionKey = isExecutionPending()

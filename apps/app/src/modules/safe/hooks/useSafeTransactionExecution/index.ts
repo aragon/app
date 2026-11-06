@@ -3,6 +3,7 @@ export {
     type IResumeSafeExecutionParams,
     type ISafeExecutionOutcomeReport,
     type ISafeRecoveryContext,
+    isUserRejectionError,
     parseSafeRecoveryContext,
     SafeExecutionPendingError,
     SafeExecutionResult,
