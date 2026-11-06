@@ -21,4 +21,8 @@ export {
     type ISafePaginatedResponse,
     isSafePaginatedResponse,
 } from './safePaginatedResponse';
+export {
+    type ISafeTransactionActions,
+    isSafeTransactionActions,
+} from './safeTransactionActions';
 export type { ISafeTransactionData } from './safeTransactionData';

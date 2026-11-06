@@ -23,6 +23,7 @@ export type {
     IWorkspaceTransaction,
     IWorkspaceTransactionBase,
     IWorkspaceTransactionExecution,
+    IWorkspaceTransactionPendingExecution,
     IWorkspaceTransactionTransfer,
     WorkspaceTransactionTransferType,
 } from './workspaceTransaction';

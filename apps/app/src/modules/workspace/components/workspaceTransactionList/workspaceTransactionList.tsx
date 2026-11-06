@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    Accordion,
     AlertInline,
     DataListContainer,
     DataListPagination,
@@ -9,14 +10,7 @@ import {
     ToggleGroup,
     TransactionDataListItem,
 } from '@aragon/gov-ui-kit';
-import {
-    type ITransactionExecution,
-    TransactionSide,
-} from '@/modules/finance/api/financeService';
-import { TransactionList } from '@/modules/finance/components/transactionList';
-import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
-import type { IDao } from '@/shared/api/daoService';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import { TransactionSide } from '@/modules/finance/api/financeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
@@ -31,6 +25,7 @@ import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+import { WorkspaceTransactionListItem } from './workspaceTransactionListItem';
 
 enum WorkspaceTransactionListTypeFilter {
     ALL = 'all',
@@ -103,7 +98,6 @@ export const WorkspaceTransactionList: React.FC<
     const { accounts, pageSize, isPending } = props;
 
     const { t } = useTranslations();
-    const { open } = useDialogContext();
 
     const accountRefs = accounts.map(({ network, address }) => ({
         network,
@@ -191,13 +185,12 @@ export const WorkspaceTransactionList: React.FC<
             ),
             { enabled: hasAccounts },
         );
-
-    // Execution rows need the DAO they were emitted by: it resolves the plugin name displayed on the row and is a
-    // required parameter of the transaction detail dialog. Keyed by account ID, which is the checksummed
-    // `network-address` that `buildAccountId` builds, so a row looks its DAO up by the ID of its own account.
-    const { daos } = useWorkspaceDaos(accounts);
+    const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
 
     const transactions = data?.pages.flatMap((page) => page.data);
+    const accountsById = new Map(
+        accounts.map((account) => [account.id, account]),
+    );
     const metadata = data?.pages[0].metadata;
 
     // The list is incomplete as soon as one account of one loaded page could not be read at all. Saying so is what
@@ -221,9 +214,11 @@ export const WorkspaceTransactionList: React.FC<
         : t('app.workspace.workspaceTransactionList.emptyState.description');
 
     // A selection with no account keeps every query disabled, which would otherwise leave the list loading forever
-    // instead of showing its empty state.
+    // instead of showing its empty state. The DAOs are waited for because a row without one renders as the
+    // block-explorer link reserved for accounts that have no DAO (Safes), so an execution of a DAO still being read
+    // would switch from that link to an accordion once its DAO resolves.
     const listState = () => {
-        if (isPending) {
+        if (isPending || isDaosPending) {
             return 'initialLoading';
         }
 
@@ -237,15 +232,6 @@ export const WorkspaceTransactionList: React.FC<
             isFetchingNextPage,
         });
     };
-
-    // Without a DAO the dialog cannot be opened, so the row stays a link to the block explorer.
-    const buildTransactionClickHandler = (dao?: IDao) =>
-        dao == null
-            ? undefined
-            : (transaction: ITransactionExecution) =>
-                  open(FinanceDialogId.TRANSACTION_DETAIL, {
-                      params: { dao, transaction },
-                  });
 
     return (
         <DataListRoot
@@ -279,42 +265,47 @@ export const WorkspaceTransactionList: React.FC<
             {isPartial && (
                 <AlertInline message={partialMessage} variant="warning" />
             )}
-            <DataListContainer
-                emptyState={{
-                    heading: t(
-                        'app.workspace.workspaceTransactionList.emptyState.heading',
-                    ),
-                    description: emptyStateDescription,
-                }}
-                errorState={{
-                    heading: t(
-                        'app.workspace.workspaceTransactionList.errorState.heading',
-                    ),
-                    description: t(
-                        'app.workspace.workspaceTransactionList.errorState.description',
-                    ),
-                }}
-                SkeletonElement={TransactionDataListItem.Skeleton}
-            >
-                {transactions?.map((transaction, index) => {
-                    const accountId = workspaceUtils.buildAccountId(
-                        transaction.account,
-                    );
-                    const dao = daos[accountId];
+            {/* The accordion container wraps the data list container rather than sitting inside it: the data list
+                container counts its direct children to paginate, and the items reach their accordion through context. */}
+            <Accordion.Container isMulti={false}>
+                <DataListContainer
+                    emptyState={{
+                        heading: t(
+                            'app.workspace.workspaceTransactionList.emptyState.heading',
+                        ),
+                        description: emptyStateDescription,
+                    }}
+                    errorState={{
+                        heading: t(
+                            'app.workspace.workspaceTransactionList.errorState.heading',
+                        ),
+                        description: t(
+                            'app.workspace.workspaceTransactionList.errorState.description',
+                        ),
+                    }}
+                    SkeletonElement={TransactionDataListItem.Skeleton}
+                >
+                    {transactions?.map((transaction, index) => {
+                        const accountId = workspaceUtils.buildAccountId(
+                            transaction.account,
+                        );
+                        const dao = daos[accountId];
+                        // A transfer between two selected accounts is listed once per account under the same ID.
+                        const itemId = `${accountId}-${transaction.id}`;
 
-                    return (
-                        <TransactionList.Item
-                            dao={dao}
-                            index={index}
-                            key={`${accountId}-${transaction.id}`}
-                            onTransactionClick={buildTransactionClickHandler(
-                                dao,
-                            )}
-                            transaction={transaction}
-                        />
-                    );
-                })}
-            </DataListContainer>
+                        return (
+                            <WorkspaceTransactionListItem
+                                account={accountsById.get(accountId)}
+                                dao={dao}
+                                index={index}
+                                key={itemId}
+                                transaction={transaction}
+                                value={itemId}
+                            />
+                        );
+                    })}
+                </DataListContainer>
+            </Accordion.Container>
             <DataListPagination />
         </DataListRoot>
     );

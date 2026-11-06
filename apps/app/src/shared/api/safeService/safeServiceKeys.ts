@@ -4,6 +4,7 @@ import type {
     IGetSafeBalancesParams,
     IGetSafeInfoParams,
     IGetSafePendingTransactionsParams,
+    IGetSafeTransactionActionsParams,
     IGetSafeTransactionHistoryParams,
 } from './safeService.api';
 
@@ -11,6 +12,7 @@ export enum SafeServiceKey {
     SAFE_INFO = 'SAFE_INFO',
     SAFE_PENDING_TRANSACTIONS = 'SAFE_PENDING_TRANSACTIONS',
     SAFE_TRANSACTION_HISTORY = 'SAFE_TRANSACTION_HISTORY',
+    SAFE_TRANSACTION_ACTIONS = 'SAFE_TRANSACTION_ACTIONS',
     SAFE_BALANCES = 'SAFE_BALANCES',
 }
 
@@ -31,6 +33,26 @@ const withChecksummedAddress = <
     },
 });
 
+/**
+ * Canonicalises the Safe address and lowercases the Safe transaction hash, so callers using
+ * different casings share one cache entry.
+ */
+const withSafeHash = <
+    TParams extends { urlParams: { address: string; safeTxHash: string } },
+>(
+    params: TParams,
+): TParams => {
+    const normalized = withChecksummedAddress(params);
+
+    return {
+        ...normalized,
+        urlParams: {
+            ...normalized.urlParams,
+            safeTxHash: params.urlParams.safeTxHash.toLowerCase(),
+        },
+    };
+};
+
 export const safeServiceKeys = {
     safeInfo: (params: IGetSafeInfoParams) => [
         SafeServiceKey.SAFE_INFO,
@@ -46,6 +68,11 @@ export const safeServiceKeys = {
         SafeServiceKey.SAFE_TRANSACTION_HISTORY,
         apiVersionUtils.getApiVersion(),
         withChecksummedAddress(params),
+    ],
+    safeTransactionActions: (params: IGetSafeTransactionActionsParams) => [
+        SafeServiceKey.SAFE_TRANSACTION_ACTIONS,
+        apiVersionUtils.getApiVersion(),
+        withSafeHash(params),
     ],
     safeBalances: (params: IGetSafeBalancesParams) => [
         SafeServiceKey.SAFE_BALANCES,

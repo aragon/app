@@ -6,6 +6,7 @@ import {
     isSafeMultisigTransaction,
     isSafeNextNonce,
     isSafePaginatedResponse,
+    isSafeTransactionActions,
     SafeServiceErrorCode,
 } from './domain';
 import { checksumSafeAddress } from './safeAddressUtils';
@@ -13,7 +14,9 @@ import type {
     IGetSafeInfoParams,
     IGetSafeNextNonceParams,
     IGetSafePendingTransactionsParams,
+    IGetSafeTransactionActionsParams,
     IGetSafeTransactionHistoryParams,
+    ISafeTransactionUrlParams,
     ISafeUrlParams,
 } from './safeService.api';
 import { SafeServiceError } from './safeServiceError';
@@ -36,6 +39,8 @@ class SafeService extends AragonBackendService {
         safeQueue: '/v2/safe/:network/:address/queue',
         safeNextNonce: '/v2/safe/:network/:address/next-nonce',
         safeHistory: '/v2/safe/:network/:address/history',
+        safeTransactionActions:
+            '/v2/safe/:network/:address/transactions/:safeTxHash/actions',
     };
 
     constructor() {
@@ -110,6 +115,24 @@ class SafeService extends AragonBackendService {
     };
 
     /**
+     * Reads the decoded actions of a single Safe transaction, identified by its Safe transaction hash.
+     */
+    getSafeTransactionActions = async ({
+        urlParams,
+    }: IGetSafeTransactionActionsParams) => {
+        const response = await this.request<unknown>(
+            this.urls.safeTransactionActions,
+            { urlParams: this.buildTransactionUrlParams(urlParams) },
+        );
+
+        if (!isSafeTransactionActions(response)) {
+            return this.throwInvalidResponse('Safe transaction actions');
+        }
+
+        return response;
+    };
+
+    /**
      * Resolves the nonce a new transaction must occupy.
      *
      * Takes no `currentNonce`: given one, a caller would eventually pass a polled value, and a stale
@@ -148,6 +171,15 @@ class SafeService extends AragonBackendService {
     private buildUrlParams = ({ network, address }: ISafeUrlParams) => ({
         network,
         address: checksumSafeAddress(address),
+    });
+
+    private buildTransactionUrlParams = ({
+        network,
+        address,
+        safeTxHash,
+    }: ISafeTransactionUrlParams) => ({
+        ...this.buildUrlParams({ network, address }),
+        safeTxHash: safeTxHash.toLowerCase(),
     });
 }
 

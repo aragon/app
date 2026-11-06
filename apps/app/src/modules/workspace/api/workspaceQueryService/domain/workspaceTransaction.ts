@@ -2,7 +2,10 @@ import type {
     ITransactionExecution,
     ITransactionTransfer,
 } from '@/modules/finance/api/financeService';
-import type { WorkspaceTransactionType } from './enum';
+import type {
+    WorkspaceTransactionStatus,
+    WorkspaceTransactionType,
+} from './enum';
 import type { IWorkspaceAccountRef } from './workspaceAccountInfo';
 
 export type WorkspaceTransactionTransferType = Exclude<
@@ -41,8 +44,74 @@ export interface IWorkspaceTransactionTransfer
 
 export interface IWorkspaceTransactionExecution
     extends ITransactionExecution,
-        IWorkspaceTransactionBase {}
+        IWorkspaceTransactionBase {
+    /**
+     * Hash of the Safe transaction behind the execution, set on the executions of Safe accounts.
+     */
+    safeTxHash?: string;
+    /**
+     * Nonce of the Safe transaction behind the execution, set on the executions of Safe accounts.
+     */
+    nonce?: string;
+    /**
+     * Slug of the proposal that triggered the execution, when the endpoint provides it.
+     */
+    proposalSlug?: string;
+}
+
+/**
+ * Safe transaction queued on the Safe transaction service but not executed yet. It has no onchain trace (hash,
+ * block), and the endpoint always returns these rows before the executed ones.
+ */
+export interface IWorkspaceTransactionPendingExecution
+    extends Omit<
+        IWorkspaceTransactionExecution,
+        | 'transactionHash'
+        | 'blockNumber'
+        | 'blockTimestamp'
+        | 'safeTxHash'
+        | 'nonce'
+    > {
+    /**
+     * Status of the transaction.
+     */
+    status: WorkspaceTransactionStatus.PENDING;
+    /**
+     * Not executed yet, so not included in any transaction.
+     */
+    transactionHash: null;
+    /**
+     * Not executed yet, so not included in any block.
+     */
+    blockNumber: null;
+    /**
+     * Not executed yet, so not included in any block.
+     */
+    blockTimestamp: null;
+    /**
+     * Timestamp (in seconds) at which the transaction was submitted to the Safe transaction service.
+     */
+    submittedAt: number;
+    /**
+     * Hash of the Safe transaction.
+     */
+    safeTxHash: string;
+    /**
+     * Nonce of the Safe transaction.
+     */
+    nonce: string;
+    /**
+     * Number of owner confirmations collected so far.
+     */
+    confirmations: number;
+    /**
+     * Number of owner confirmations required to execute the transaction, as reported by the Safe transaction
+     * service.
+     */
+    confirmationsRequired: number;
+}
 
 export type IWorkspaceTransaction =
     | IWorkspaceTransactionTransfer
-    | IWorkspaceTransactionExecution;
+    | IWorkspaceTransactionExecution
+    | IWorkspaceTransactionPendingExecution;

@@ -6,6 +6,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useWorkspaceTransactions } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
+import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
 import { buildWorkspaceTransactionListParams } from '../workspaceTransactionList';
 
 /**
@@ -32,7 +33,12 @@ export const useWorkspaceTransactionStats = (
 
     const firstPage = transactions?.pages[0];
     const transactionsCount = firstPage?.metadata.totalRecords;
-    const lastActivity = firstPage?.data[0]?.blockTimestamp;
+    // Pending Safe transactions come first and have no block yet, so their submission counts as the last activity.
+    const mostRecentTransaction = firstPage?.data[0];
+    const lastActivity =
+        mostRecentTransaction != null
+            ? workspaceTransactionUtils.getTimestamp(mostRecentTransaction)
+            : undefined;
 
     const formattedCount =
         transactionsCount != null
