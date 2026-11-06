@@ -3986,6 +3986,45 @@
           "result_verification": "Verifying Safe execution and proposal result",
           "execute": "Execute"
         }
+      },
+      "safeTransactionDialog": {
+        "title": "Review Safe transaction",
+        "description": "Review the exact Safe transaction before approving or executing it.",
+        "loading": "Preparing the Safe transaction…",
+        "signing": "Approving the Safe transaction…",
+        "executing": "Executing the Safe transaction…",
+        "confirmed": "Your approval was added to the Safe transaction.",
+        "executed": "Safe transaction executed successfully.",
+        "failed": "The Safe transaction could not be processed.",
+        "walletRequired": "Connect an owner wallet on the Safe's network to approve or execute this transaction.",
+        "providerUnavailable": "The connected wallet provider is unavailable.",
+        "transactionUnavailable": "This Safe transaction is no longer available from the service.",
+        "hashMismatch": "The transaction fields do not match the Safe transaction hash.",
+        "notOwner": "The connected wallet is not a current Safe owner.",
+        "invalidThreshold": "The Safe returned an invalid owner threshold.",
+        "unsupportedContractOwner": "This Safe version cannot verify approvals from a smart contract wallet. Connect an owner wallet that is not a contract.",
+        "alreadyExecuted": "This Safe transaction has already been executed.",
+        "nonceConsumed": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
+        "executionUnavailable": "This Safe transaction is no longer ready to execute.",
+        "executionFailed": "The Safe transaction could not be executed.",
+        "uncertain": "The result is not confirmed yet. Re-check before trying again.",
+        "actions": {
+          "confirm": "Approve transaction",
+          "execute": "Execute",
+          "recheck": "Re-check",
+          "done": "Done",
+          "close": "Close"
+        }
+      },
+      "safeTransactionVoting": {
+        "approve": "Approve transaction",
+        "approved": "Approved",
+        "execute": "Execute Safe transaction",
+        "superseded": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
+        "waitingForNonce": {
+          "title": "This transaction is queued behind nonce {{currentNonce}}.",
+          "description": "It can be executed once the Safe reaches nonce {{nonce}}."
+        }
       }
     },
     "settings": {

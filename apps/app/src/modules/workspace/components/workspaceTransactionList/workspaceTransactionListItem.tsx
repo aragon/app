@@ -15,6 +15,7 @@ import {
     Tag,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import {
     type ITransactionTransfer,
     TransactionSide,
@@ -27,14 +28,16 @@ import {
 } from '@/modules/finance/components/transactionList';
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { SafeExecutionDetails } from '@/modules/safe/components/safeExecutionDetails';
+import { SafeTransactionVoting } from '@/modules/safe/components/safeTransactionVoting';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import type {
-    IWorkspaceTransaction,
-    IWorkspaceTransactionExecution,
-    IWorkspaceTransactionPendingExecution,
-    IWorkspaceTransactionTransfer,
+import {
+    type IWorkspaceTransaction,
+    type IWorkspaceTransactionExecution,
+    type IWorkspaceTransactionPendingExecution,
+    type IWorkspaceTransactionTransfer,
+    WorkspaceQueryServiceKey,
 } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -288,8 +291,8 @@ const buildTransferDisplay = (
 /**
  * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions
  * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset.
- * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their
- * decoded actions only. Must be rendered inside an `<Accordion.Container />`.
+ * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their voting
+ * card, where owners confirm or execute them, above their decoded actions. Must be rendered inside an `<Accordion.Container />`.
  */
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
@@ -299,6 +302,7 @@ export const WorkspaceTransactionListItem: React.FC<
     const { t } = useTranslations();
     const { copy } = useGukModulesContext();
     const headerCopy = copy.transactionDataListItemStructure;
+    const queryClient = useQueryClient();
 
     const row = getRow(transaction, account?.type, dao);
     const accountName =
@@ -314,6 +318,12 @@ export const WorkspaceTransactionListItem: React.FC<
         { urlParams: { id: transaction.id, network: transaction.network } },
         { enabled: isProposalSlugMissing },
     );
+
+    // A confirmation changes the status of the row and an execution moves it out of the pending ones.
+    const handleSafeStateChange = () =>
+        void queryClient.invalidateQueries({
+            queryKey: [WorkspaceQueryServiceKey.TRANSACTIONS],
+        });
 
     if (row.kind === 'explorerLink') {
         return (
@@ -400,6 +410,16 @@ export const WorkspaceTransactionListItem: React.FC<
                 )}
                 {row.kind === 'safe' && (
                     <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
+                        {workspaceTransactionUtils.isPendingExecution(
+                            row.transaction,
+                        ) && (
+                            <SafeTransactionVoting
+                                network={row.transaction.network}
+                                onSafeStateChange={handleSafeStateChange}
+                                safeAddress={row.transaction.account.address}
+                                safeTxHash={row.safeTxHash}
+                            />
+                        )}
                         <SafeExecutionDetails
                             safeAddress={row.transaction.account.address}
                             safeTxHash={row.safeTxHash}

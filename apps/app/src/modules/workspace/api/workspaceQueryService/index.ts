@@ -6,4 +6,7 @@ export {
     workspaceAccountsRequestLimit,
     workspaceQueryPageSizeLimit,
 } from './workspaceQueryService.api';
-export { workspaceQueryServiceKeys } from './workspaceQueryServiceKeys';
+export {
+    WorkspaceQueryServiceKey,
+    workspaceQueryServiceKeys,
+} from './workspaceQueryServiceKeys';

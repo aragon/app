@@ -9,6 +9,7 @@ import {
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
 import { generateToken } from '@/modules/finance/testUtils';
 import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
+import * as safeTransactionVoting from '@/modules/safe/components/safeTransactionVoting';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -36,6 +37,10 @@ describe('<WorkspaceTransactionListItem /> component', () => {
     const safeExecutionDetailsSpy = jest.spyOn(
         safeExecutionDetails,
         'SafeExecutionDetails',
+    );
+    const safeTransactionVotingSpy = jest.spyOn(
+        safeTransactionVoting,
+        'SafeTransactionVoting',
     );
     const useTransactionActionsSpy = jest.spyOn(
         financeService,
@@ -66,6 +71,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         safeExecutionDetailsSpy.mockReturnValue(
             <div data-testid="safe-execution-detail" />,
         );
+        safeTransactionVotingSpy.mockReturnValue(
+            <div data-testid="safe-transaction-voting" />,
+        );
         mockTransactionActions();
     });
 
@@ -73,6 +81,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         assetTransferSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
         safeExecutionDetailsSpy.mockReset();
+        safeTransactionVotingSpy.mockReset();
         useTransactionActionsSpy.mockReset();
     });
 
@@ -366,6 +375,32 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
     });
 
+    it('renders the voting card of a pending Safe transaction above its actions', async () => {
+        const transaction = generateWorkspacePendingTransaction({
+            safeTxHash: '0x2632',
+        });
+
+        render(createTestComponent({ transaction }));
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const votingCard = screen.getByTestId('safe-transaction-voting');
+        expect(
+            votingCard.compareDocumentPosition(
+                screen.getByTestId('safe-execution-detail'),
+            ),
+        ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        expect(safeTransactionVotingSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                network: transaction.network,
+                safeAddress: transaction.account.address,
+                safeTxHash: '0x2632',
+                onSafeStateChange: expect.any(Function),
+            }),
+            undefined,
+        );
+    });
+
     it('expands an execution to its detail in the context of its DAO', async () => {
         const dao = generateDao();
         const transaction = generateWorkspaceTransaction({
@@ -430,6 +465,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             undefined,
         );
         expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
+        expect(safeTransactionVotingSpy).not.toHaveBeenCalled();
     });
 
     it('renders an execution of a Safe account without a Safe transaction hash as a block-explorer row', () => {

@@ -32,12 +32,11 @@ import {
     SafeBatchStatus,
     safeTransactionEnvelopeUtils,
 } from '@/modules/safe/utils/safeTransactionEnvelopeUtils';
-import { safeQueueReadLimit } from '@/plugins/safeMultisigPlugin/constants';
+import { safeTransactionLookupUtils } from '@/modules/safe/utils/safeTransactionLookupUtils';
 import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import { safeMultisigTransactionUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigTransactionUtils';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
-import type { Network } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import {
@@ -228,52 +227,6 @@ const resolveCostNote = (prepared: IPreparedReport, owner: string): string => {
         return 'gasless';
     }
     return ownerSignatureOwed ? 'bundledExecution' : 'executionOnly';
-};
-
-const findTransaction = async (params: {
-    network: Network;
-    address: string;
-    safeTxHash: string;
-}): Promise<ISafeMultisigTransaction | undefined> => {
-    for (const history of [false, true]) {
-        let offset = 0;
-        for (;;) {
-            const page = history
-                ? await safeService.getSafeTransactionHistory({
-                      urlParams: {
-                          network: params.network,
-                          address: params.address,
-                      },
-                      queryParams: {
-                          limit: safeQueueReadLimit,
-                          offset,
-                      },
-                  })
-                : await safeService.getSafePendingTransactions({
-                      urlParams: {
-                          network: params.network,
-                          address: params.address,
-                      },
-                      queryParams: {
-                          limit: safeQueueReadLimit,
-                          offset,
-                      },
-                  });
-            const transaction = page.results.find(
-                (item) =>
-                    item.safeTxHash.toLowerCase() ===
-                    params.safeTxHash.toLowerCase(),
-            );
-            if (transaction != null) {
-                return transaction;
-            }
-            if (page.next == null || page.results.length === 0) {
-                break;
-            }
-            offset += page.results.length;
-        }
-    }
-    return undefined;
 };
 
 const recoveryTransaction = (
@@ -625,7 +578,7 @@ export const SafeProposalTransactionDialog: React.FC<
             let transaction = report.transaction;
             let isNew = report.isNew;
             if (!isNew || serviceAcceptedHashRef.current != null) {
-                const exact = await findTransaction({
+                const exact = await safeTransactionLookupUtils.findTransaction({
                     network,
                     address: externalAddress,
                     safeTxHash: transaction.safeTxHash,
@@ -793,7 +746,7 @@ export const SafeProposalTransactionDialog: React.FC<
         let transaction = reviewSeedRef.current;
         const isNew = transaction == null;
         if (transaction != null) {
-            const exact = await findTransaction({
+            const exact = await safeTransactionLookupUtils.findTransaction({
                 network,
                 address: externalAddress,
                 safeTxHash: transaction.safeTxHash,
@@ -932,7 +885,7 @@ export const SafeProposalTransactionDialog: React.FC<
 
     const reconcile = useCallback(
         (safeTxHash: string) =>
-            findTransaction({
+            safeTransactionLookupUtils.findTransaction({
                 network,
                 address: externalAddress,
                 safeTxHash,
