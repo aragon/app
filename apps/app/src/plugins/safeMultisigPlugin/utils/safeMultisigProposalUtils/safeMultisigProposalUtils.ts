@@ -1,6 +1,10 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
-import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
-import { SafeTransactionState } from '../../types';
+import { isHex } from 'viem';
+import type {
+    ISafeConfirmation,
+    ISafeMultisigTransaction,
+} from '@/shared/api/safeService';
+import { SafeApprovalReadiness, SafeTransactionState } from '../../types';
 
 export interface ISafeTransactionLivenessParams {
     /**
@@ -46,37 +50,19 @@ export interface ISafeConfirmedByParams {
     address?: string;
 }
 
-/**
- * Executable lifecycle of a live Safe transaction, combining confirmation count against the live
- * threshold with nonce position. Distinct from `SafeTransactionState`, which only answers whether a
- * transaction can ever execute again; this answers what the owner should do next.
- */
-export enum SafeApprovalReadiness {
-    /** Fewer current-owner confirmations than the live threshold. */
-    AWAITING_APPROVALS = 'awaitingApprovals',
-    /** Threshold reached and the transaction sits on the Safe's current nonce. */
-    READY_TO_EXECUTE = 'readyToExecute',
-    /** Threshold reached but an earlier nonce must execute first. */
-    WAITING_FOR_NONCE = 'waitingForNonce',
-    /** The nonce was consumed by another transaction — permanently unexecutable. */
-    SUPERSEDED = 'superseded',
-    /** Executed onchain successfully. */
-    EXECUTED_SUCCESS = 'executedSuccess',
-    /** Executed onchain but reverted; the nonce is still consumed. */
-    EXECUTED_FAILURE = 'executedFailure',
-    /** Executed but the outcome is not yet reported. */
-    EXECUTED_UNKNOWN = 'executedUnknown',
-}
-
-export interface ISafeApprovalReadinessParams {
+export interface ISafeCurrentOwnerConfirmationsParams {
     /**
-     * Transaction to classify.
+     * Transaction to read the confirmations of.
      */
     transaction: ISafeMultisigTransaction;
     /**
      * Current Safe owners (`ISafeInfo.owners`).
      */
     owners: string[];
+}
+
+export interface ISafeApprovalReadinessParams
+    extends ISafeCurrentOwnerConfirmationsParams {
     /**
      * Live confirmation threshold (`ISafeInfo.threshold`).
      */
@@ -191,35 +177,53 @@ class SafeMultisigProposalUtils {
         transaction.confirmations.length >= transaction.confirmationsRequired;
 
     /**
-     * Number of distinct current owners that have confirmed the transaction. A confirmation from an
-     * address that is no longer an owner is dropped, and a duplicate confirmation from the same
-     * owner is counted once, so a removed or double-listed signer can never inflate the approvals
-     * shown against the live threshold.
+     * Confirmations that count towards the live threshold: one per distinct current owner, carrying a well-formed
+     * signature. A confirmation from an address that is no longer an owner, a duplicate from the same owner and a
+     * malformed signature are dropped, so the approvals shown, the readiness derived from them and the signatures
+     * handed to an execution all agree.
      */
-    countCurrentOwnerApprovals = (
-        transaction: ISafeMultisigTransaction,
-        owners: string[],
-    ): number => {
-        const ownerSet = new Set(owners.map((owner) => owner.toLowerCase()));
-        const approvingOwners = new Set<string>();
+    getCurrentOwnerConfirmations = (
+        params: ISafeCurrentOwnerConfirmationsParams,
+    ): ISafeConfirmation[] => {
+        const { transaction, owners } = params;
+        const confirmations: ISafeConfirmation[] = [];
 
-        for (const { owner } of transaction.confirmations) {
-            const normalizedOwner = owner.toLowerCase();
+        for (const confirmation of transaction.confirmations) {
+            const isCurrentOwner = owners.some((owner) =>
+                addressUtils.isAddressEqual(owner, confirmation.owner),
+            );
+            const isDuplicate = confirmations.some(({ owner }) =>
+                addressUtils.isAddressEqual(owner, confirmation.owner),
+            );
 
-            if (ownerSet.has(normalizedOwner)) {
-                approvingOwners.add(normalizedOwner);
+            if (
+                isCurrentOwner &&
+                !isDuplicate &&
+                this.hasWellFormedSignature(confirmation)
+            ) {
+                confirmations.push(confirmation);
             }
         }
 
-        return approvingOwners.size;
+        return confirmations;
     };
 
-    getApprovalReadiness = ({
-        transaction,
-        owners,
-        threshold,
-        currentNonce,
-    }: ISafeApprovalReadinessParams): SafeApprovalReadiness => {
+    /**
+     * Number of confirmations that count towards the live threshold, see `getCurrentOwnerConfirmations`.
+     */
+    countCurrentOwnerApprovals = (
+        params: ISafeCurrentOwnerConfirmationsParams,
+    ): number => this.getCurrentOwnerConfirmations(params).length;
+
+    /**
+     * What the owners can do next with a Safe transaction, from its execution state, its current-owner confirmations
+     * against the live threshold and its nonce position.
+     */
+    getApprovalReadiness = (
+        params: ISafeApprovalReadinessParams,
+    ): SafeApprovalReadiness => {
+        const { transaction, owners, threshold, currentNonce } = params;
+
         if (transaction.isExecuted) {
             if (transaction.isSuccessful === true) {
                 return SafeApprovalReadiness.EXECUTED_SUCCESS;
@@ -239,10 +243,10 @@ class SafeMultisigProposalUtils {
             return SafeApprovalReadiness.SUPERSEDED;
         }
 
-        const approvalCount = this.countCurrentOwnerApprovals(
+        const approvalCount = this.countCurrentOwnerApprovals({
             transaction,
             owners,
-        );
+        });
 
         if (approvalCount < threshold) {
             return SafeApprovalReadiness.AWAITING_APPROVALS;
@@ -252,6 +256,14 @@ class SafeMultisigProposalUtils {
             ? SafeApprovalReadiness.READY_TO_EXECUTE
             : SafeApprovalReadiness.WAITING_FOR_NONCE;
     };
+
+    // A 65-byte ECDSA signature, or a contract signature whose dynamic part makes it longer.
+    private hasWellFormedSignature = (
+        confirmation: ISafeConfirmation,
+    ): boolean =>
+        isHex(confirmation.signature) &&
+        (confirmation.signatureType === 'CONTRACT_SIGNATURE' ||
+            confirmation.signature.length === 132);
 }
 
 export const safeMultisigProposalUtils = new SafeMultisigProposalUtils();

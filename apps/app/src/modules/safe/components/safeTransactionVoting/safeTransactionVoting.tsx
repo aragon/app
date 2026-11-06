@@ -17,16 +17,17 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { SafeMultisigProposalVotingBreakdownView } from '@/plugins/safeMultisigPlugin/components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigVoteListView } from '@/plugins/safeMultisigPlugin/components/safeMultisigVoteList';
-import { safeQueueReadLimit } from '@/plugins/safeMultisigPlugin/constants';
 import {
-    SafeApprovalReadiness,
-    safeMultisigProposalUtils,
-} from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
+    safeBodyPollInterval,
+    safeQueueReadLimit,
+} from '@/plugins/safeMultisigPlugin/constants';
+import { SafeApprovalReadiness } from '@/plugins/safeMultisigPlugin/types';
+import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import { safeMultisigSettingsUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigSettingsUtils';
 import type { Network } from '@/shared/api/daoService';
 import {
     useSafeInfo,
-    useSafePendingTransactions,
+    useSafePendingTransaction,
 } from '@/shared/api/safeService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -55,9 +56,6 @@ export interface ISafeTransactionVotingProps {
 
 const translationKey = 'app.safe.safeTransactionVoting';
 
-// Same cadence as the Safe body card: owners confirm from anywhere, so the queue changes without this page acting.
-const safeTransactionPollInterval = 30_000;
-
 /**
  * Confirmation progress, confirming owners and Safe settings of a queued Safe transaction, with the action the
  * connected owner can take on it: confirm it, or execute it once it holds enough confirmations on the current nonce.
@@ -74,38 +72,52 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     const { check: checkWalletConnection } = useConnectedWalletGuard();
     const { buildEntityUrl } = useDaoChain({ network });
 
-    const urlParams = { network, address: safeAddress };
-    const { data: safeInfo } = useSafeInfo(
-        { urlParams },
-        { refetchInterval: safeTransactionPollInterval },
+    // Owners confirm from anywhere, so both reads poll at the Safe body card's cadence.
+    const queryOptions = { refetchInterval: safeBodyPollInterval };
+    const { data: safeInfo, isError: isSafeInfoError } = useSafeInfo(
+        { urlParams: { network, address: safeAddress } },
+        queryOptions,
     );
-    const { data: queue, isLoading: isQueueLoading } =
-        useSafePendingTransactions(
-            { urlParams, queryParams: { limit: safeQueueReadLimit } },
-            { refetchInterval: safeTransactionPollInterval },
+    const { data: transaction, isError: isTransactionError } =
+        useSafePendingTransaction(
+            {
+                urlParams: { network, address: safeAddress, safeTxHash },
+                queryParams: { limit: safeQueueReadLimit },
+            },
+            queryOptions,
         );
-
-    const transaction = queue?.results.find(
-        (item) => item.safeTxHash.toLowerCase() === safeTxHash.toLowerCase(),
-    );
 
     // Once executed, the transaction leaves the queue before the transaction list refreshes: it has nothing left to
     // confirm, so the card is not rendered rather than showing a misleading empty state.
-    if (!isQueueLoading && queue != null && transaction == null) {
+    if (transaction === null) {
         return null;
+    }
+
+    // A failed poll keeps the data already read, so only a read that never succeeded is reported.
+    if (
+        (safeInfo == null && isSafeInfoError) ||
+        (transaction == null && isTransactionError)
+    ) {
+        return (
+            <Card className="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+                <AlertInline
+                    message={t(`${translationKey}.loadError`)}
+                    variant="critical"
+                />
+            </Card>
+        );
     }
 
     const isLoading = safeInfo == null || transaction == null;
     const owners = safeInfo?.owners ?? [];
 
+    // The same confirmations the readiness counts, so the progress, the voters and the actions always agree.
     const signers =
-        transaction?.confirmations
-            .map(({ owner }) => owner)
-            .filter((owner) =>
-                owners.some((safeOwner) =>
-                    addressUtils.isAddressEqual(safeOwner, owner),
-                ),
-            ) ?? [];
+        transaction == null
+            ? []
+            : safeMultisigProposalUtils
+                  .getCurrentOwnerConfirmations({ transaction, owners })
+                  .map(({ owner }) => owner);
 
     const readiness =
         safeInfo == null || transaction == null
@@ -121,12 +133,9 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     const isOwner = owners.some((owner) =>
         addressUtils.isAddressEqual(owner, connectedAddress),
     );
-    const hasConfirmed =
-        transaction != null &&
-        safeMultisigProposalUtils.hasAddressConfirmed({
-            address: connectedAddress,
-            transaction,
-        });
+    const hasConfirmed = signers.some((signer) =>
+        addressUtils.isAddressEqual(signer, connectedAddress),
+    );
 
     // A disconnected viewer is offered the action and asked to connect first; a connected wallet that is not an owner
     // has nothing to sign or execute.

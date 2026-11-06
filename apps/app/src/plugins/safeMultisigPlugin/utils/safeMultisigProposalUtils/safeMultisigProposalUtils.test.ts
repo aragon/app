@@ -3,11 +3,8 @@ import {
     generateSafeConfirmation,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
-import { SafeTransactionState } from '../../types';
-import {
-    SafeApprovalReadiness,
-    safeMultisigProposalUtils,
-} from './safeMultisigProposalUtils';
+import { SafeApprovalReadiness, SafeTransactionState } from '../../types';
+import { safeMultisigProposalUtils } from './safeMultisigProposalUtils';
 
 describe('safeMultisigProposal utils', () => {
     describe('supportsEip1271Signatures', () => {
@@ -257,6 +254,92 @@ describe('safeMultisigProposal utils', () => {
             },
         );
     });
+    describe('getCurrentOwnerConfirmations', () => {
+        const ownerOne = '0x0000000000000000000000000000000000000011';
+        const ownerTwo = '0x0000000000000000000000000000000000000012';
+        const formerOwner = '0x0000000000000000000000000000000000000013';
+
+        const getOwners = (
+            confirmations: ReturnType<typeof generateSafeConfirmation>[],
+        ) =>
+            safeMultisigProposalUtils
+                .getCurrentOwnerConfirmations({
+                    transaction: generateSafeMultisigTransaction({
+                        confirmations,
+                    }),
+                    owners: [ownerOne, ownerTwo],
+                })
+                .map(({ owner }) => owner);
+
+        it('returns the confirmations of current owners', () => {
+            expect(
+                getOwners([
+                    generateSafeConfirmation({ owner: ownerOne }),
+                    generateSafeConfirmation({ owner: ownerTwo }),
+                ]),
+            ).toEqual([ownerOne, ownerTwo]);
+        });
+
+        it('drops the confirmation of an address that is no longer an owner', () => {
+            expect(
+                getOwners([
+                    generateSafeConfirmation({ owner: ownerOne }),
+                    generateSafeConfirmation({ owner: formerOwner }),
+                ]),
+            ).toEqual([ownerOne]);
+        });
+
+        it('keeps one confirmation per owner whatever the address casing', () => {
+            const checksummedOwner =
+                '0x5F2c8A1b9D3e7C4a6B0d2E8f1A3c5B7d9E0f2A4c';
+
+            expect(
+                safeMultisigProposalUtils
+                    .getCurrentOwnerConfirmations({
+                        transaction: generateSafeMultisigTransaction({
+                            confirmations: [
+                                generateSafeConfirmation({
+                                    owner: checksummedOwner,
+                                }),
+                                generateSafeConfirmation({
+                                    owner: checksummedOwner.toLowerCase(),
+                                }),
+                            ],
+                        }),
+                        owners: [checksummedOwner],
+                    })
+                    .map(({ owner }) => owner),
+            ).toEqual([checksummedOwner]);
+        });
+
+        it.each([
+            { label: 'an empty signature', signature: '0x' },
+            {
+                label: 'a truncated signature',
+                signature: `0x${'a'.repeat(64)}`,
+            },
+            { label: 'a non-hex signature', signature: `0x${'z'.repeat(130)}` },
+        ])('drops a confirmation carrying $label', ({ signature }) => {
+            expect(
+                getOwners([
+                    generateSafeConfirmation({ owner: ownerOne, signature }),
+                ]),
+            ).toEqual([]);
+        });
+
+        it('keeps a contract signature longer than an ECDSA signature', () => {
+            expect(
+                getOwners([
+                    generateSafeConfirmation({
+                        owner: ownerOne,
+                        signature: `0x${'a'.repeat(260)}`,
+                        signatureType: 'CONTRACT_SIGNATURE',
+                    }),
+                ]),
+            ).toEqual([ownerOne]);
+        });
+    });
+
     describe('getApprovalReadiness', () => {
         const ownerOne = '0x0000000000000000000000000000000000000011';
         const ownerTwo = '0x0000000000000000000000000000000000000012';
@@ -331,6 +414,16 @@ describe('safeMultisigProposal utils', () => {
                 readiness: SafeApprovalReadiness.EXECUTED_FAILURE,
                 threshold: 1,
                 confirmations: [ownerOne],
+            },
+            {
+                currentNonce: '10',
+                isExecuted: false,
+                isSuccessful: null,
+                label: 'counts a duplicated owner confirmation once',
+                nonce: '10',
+                readiness: SafeApprovalReadiness.AWAITING_APPROVALS,
+                threshold: 2,
+                confirmations: [ownerOne, ownerOne],
             },
         ])(
             'classifies a transaction that $label',

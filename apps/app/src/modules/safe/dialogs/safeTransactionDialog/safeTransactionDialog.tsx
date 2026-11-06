@@ -8,10 +8,8 @@ import { getBytecode, getConnection } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import {
-    SafeApprovalReadiness,
-    safeMultisigProposalUtils,
-} from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
+import { SafeApprovalReadiness } from '@/plugins/safeMultisigPlugin/types';
+import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import {
     type ISafeInfo,
     type ISafeMultisigTransaction,
@@ -101,20 +99,15 @@ const isSameHash = (a: string, b: string): boolean =>
 const isTransactionHash = (hash: unknown): hash is Hex =>
     isHex(hash) && hash.length === 66;
 
-// A malformed signature from the service must not count as an approval, or the owner would never be asked to sign.
-const hasOwnerConfirmation = (
+// Matches the exact signature submitted, not any confirmation of the owner: only that proves the uncertain write landed.
+const hasSubmittedConfirmation = (
     transaction: ISafeMultisigTransaction,
-    owner: string,
-    expectedSignature?: string,
+    submitted: IUncertainConfirmation,
 ): boolean =>
     transaction.confirmations.some(
         (confirmation) =>
-            addressUtils.isAddressEqual(confirmation.owner, owner) &&
-            isHex(confirmation.signature) &&
-            (confirmation.signatureType === 'CONTRACT_SIGNATURE' ||
-                confirmation.signature.length === 132) &&
-            (expectedSignature == null ||
-                isSameHash(confirmation.signature, expectedSignature)),
+            addressUtils.isAddressEqual(confirmation.owner, submitted.owner) &&
+            isSameHash(confirmation.signature, submitted.signature),
     );
 
 const hasValidThreshold = (threshold: number, owners: string[]): boolean =>
@@ -291,12 +284,51 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
 
     const reconcileConfirmation = useCallback(
         async (confirmation: IUncertainConfirmation) =>
-            hasOwnerConfirmation(
-                await findTransaction(),
-                confirmation.owner,
-                confirmation.signature,
-            ),
+            hasSubmittedConfirmation(await findTransaction(), confirmation),
         [findTransaction],
+    );
+
+    /**
+     * Reads the owners, threshold and nonce from the chain together with the transaction, and refuses a wallet that is no
+     * longer an owner, an invalid threshold or a transaction already executed: the checks both approving and executing
+     * run right before the wallet is asked for anything.
+     */
+    const readOwnerAuthority = useCallback(
+        async (owner: string) => {
+            const protocolKit = await getProtocolKit(owner);
+            const [owners, threshold, currentNonce, transaction] =
+                await Promise.all([
+                    protocolKit.getOwners(),
+                    protocolKit.getThreshold(),
+                    protocolKit.getNonce(),
+                    findTransaction(),
+                ]);
+
+            if (
+                !owners.some((safeOwner) =>
+                    addressUtils.isAddressEqual(safeOwner, owner),
+                )
+            ) {
+                throw new Error(t(`${translationKey}.notOwner`));
+            }
+
+            if (!hasValidThreshold(threshold, owners)) {
+                throw new Error(t(`${translationKey}.invalidThreshold`));
+            }
+
+            if (transaction.isExecuted) {
+                throw new Error(t(`${translationKey}.alreadyExecuted`));
+            }
+
+            return {
+                protocolKit,
+                owners,
+                threshold,
+                currentNonce,
+                transaction,
+            };
+        },
+        [findTransaction, getProtocolKit, t],
     );
 
     const invalidateSafeQueries = useCallback(() => {
@@ -521,43 +553,36 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             return;
         }
 
+        // Following an execution already sent needs no wallet, so it runs before the wallet is required.
+        if (isExecutionPending()) {
+            setError(undefined);
+            setState('executing');
+
+            try {
+                await resumeExecution();
+            } catch (reason: unknown) {
+                handleExecutionError(reason);
+            }
+
+            return;
+        }
+
+        // Checked before the state changes: returning from 'executing' would leave a dialog that cannot be dismissed.
+        if (walletAddress == null || !prepared.canExecute) {
+            return;
+        }
+
         setError(undefined);
         setState('executing');
 
         try {
-            if (isExecutionPending()) {
-                await resumeExecution();
-                return;
-            }
-
-            if (walletAddress == null || !prepared.canExecute) {
-                return;
-            }
-
-            const protocolKit = await getProtocolKit(walletAddress);
-            const [owners, threshold, currentNonce, transaction] =
-                await Promise.all([
-                    protocolKit.getOwners(),
-                    protocolKit.getThreshold(),
-                    protocolKit.getNonce(),
-                    findTransaction(),
-                ]);
-
-            if (
-                !owners.some((owner) =>
-                    addressUtils.isAddressEqual(owner, walletAddress),
-                )
-            ) {
-                throw new Error(t(`${translationKey}.notOwner`));
-            }
-
-            if (!hasValidThreshold(threshold, owners)) {
-                throw new Error(t(`${translationKey}.invalidThreshold`));
-            }
-
-            if (transaction.isExecuted) {
-                throw new Error(t(`${translationKey}.alreadyExecuted`));
-            }
+            const {
+                protocolKit,
+                owners,
+                threshold,
+                currentNonce,
+                transaction,
+            } = await readOwnerAuthority(walletAddress);
 
             const readiness = safeMultisigProposalUtils.getApprovalReadiness({
                 currentNonce: String(currentNonce),
@@ -577,14 +602,17 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             const { EthSafeSignature } = await import(
                 '@safe-global/protocol-kit'
             );
-            const signatures = transaction.confirmations.map(
-                ({ owner, signature, signatureType }) =>
-                    new EthSafeSignature(
-                        owner,
-                        signature,
-                        signatureType === 'CONTRACT_SIGNATURE',
-                    ),
-            );
+            // The confirmations the readiness counted, so a duplicated or removed signer cannot reach the execution.
+            const signatures = safeMultisigProposalUtils
+                .getCurrentOwnerConfirmations({ transaction, owners })
+                .map(
+                    ({ owner, signature, signatureType }) =>
+                        new EthSafeSignature(
+                            owner,
+                            signature,
+                            signatureType === 'CONTRACT_SIGNATURE',
+                        ),
+                );
 
             const result = await execute({
                 protocolKit,
@@ -594,6 +622,15 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 chainId: requiredChainId,
                 signatures,
                 onSubmitted: registerExecutionSubmitted,
+                // The wallet sends from whichever account is active, so the owner is checked again right before it.
+                beforeSubmit: () => {
+                    if (
+                        getOwnerConnection(walletAddress, requiredChainId) ==
+                        null
+                    ) {
+                        throw new Error(t(`${translationKey}.walletRequired`));
+                    }
+                },
             });
             finishExecution(result);
         } catch (reason: unknown) {
@@ -602,13 +639,12 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     }, [
         buildSafeTransaction,
         execute,
-        findTransaction,
         finishExecution,
-        getProtocolKit,
         handleExecutionError,
         isExecutionPending,
         isReviewGateBlocked,
         prepared,
+        readOwnerAuthority,
         registerExecutionSubmitted,
         requiredChainId,
         resumeExecution,
@@ -627,26 +663,8 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
         setState('signing');
 
         try {
-            const protocolKit = await getProtocolKit(walletAddress);
-            const [owners, threshold, currentNonce, transaction] =
-                await Promise.all([
-                    protocolKit.getOwners(),
-                    protocolKit.getThreshold(),
-                    protocolKit.getNonce(),
-                    findTransaction(),
-                ]);
-
-            if (
-                !owners.some((owner) =>
-                    addressUtils.isAddressEqual(owner, walletAddress),
-                )
-            ) {
-                throw new Error(t(`${translationKey}.notOwner`));
-            }
-
-            if (!hasValidThreshold(threshold, owners)) {
-                throw new Error(t(`${translationKey}.invalidThreshold`));
-            }
+            const { protocolKit, owners, currentNonce, transaction } =
+                await readOwnerAuthority(walletAddress);
 
             // Safes older than v1.3.0 cannot verify the signature of a contract owner.
             if (
@@ -666,10 +684,6 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 }
             }
 
-            if (transaction.isExecuted) {
-                throw new Error(t(`${translationKey}.alreadyExecuted`));
-            }
-
             if (BigInt(transaction.nonce) < BigInt(currentNonce)) {
                 throw new Error(t(`${translationKey}.nonceConsumed`));
             }
@@ -679,7 +693,13 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 transaction,
             );
 
-            if (hasOwnerConfirmation(transaction, walletAddress)) {
+            const hasConfirmed = safeMultisigProposalUtils
+                .getCurrentOwnerConfirmations({ transaction, owners })
+                .some(({ owner }) =>
+                    addressUtils.isAddressEqual(owner, walletAddress),
+                );
+
+            if (hasConfirmed) {
                 invalidateSafeQueries();
                 setState('success');
                 return;
@@ -740,12 +760,11 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     }, [
         buildSafeTransaction,
         fail,
-        findTransaction,
-        getProtocolKit,
         invalidateSafeQueries,
         isReviewGateBlocked,
         network,
         prepared,
+        readOwnerAuthority,
         reconcileConfirmation,
         requiredChainId,
         safeTxHash,

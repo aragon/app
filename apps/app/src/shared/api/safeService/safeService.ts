@@ -1,5 +1,5 @@
 import { AragonBackendService } from '../aragonBackendService';
-import type { ISafeMeta } from './domain';
+import type { ISafeMeta, ISafeMultisigTransaction } from './domain';
 import {
     isSafeInfo,
     isSafeMeta,
@@ -13,6 +13,7 @@ import { checksumSafeAddress } from './safeAddressUtils';
 import type {
     IGetSafeInfoParams,
     IGetSafeNextNonceParams,
+    IGetSafePendingTransactionParams,
     IGetSafePendingTransactionsParams,
     IGetSafeTransactionActionsParams,
     IGetSafeTransactionHistoryParams,
@@ -83,6 +84,40 @@ class SafeService extends AragonBackendService {
         }
 
         return response;
+    };
+
+    /**
+     * Finds one unexecuted transaction of a Safe by its hash. The queue cannot be filtered by hash, so it is read page
+     * by page: a transaction past the first page is not absent, and null is only returned once the whole queue has
+     * been read without finding it.
+     */
+    getSafePendingTransaction = async ({
+        urlParams,
+        queryParams,
+    }: IGetSafePendingTransactionParams): Promise<ISafeMultisigTransaction | null> => {
+        const { safeTxHash, ...safeUrlParams } = urlParams;
+        let offset = 0;
+
+        for (;;) {
+            const page = await this.getSafePendingTransactions({
+                urlParams: safeUrlParams,
+                queryParams: { ...queryParams, offset },
+            });
+            const transaction = page.results.find(
+                (item) =>
+                    item.safeTxHash.toLowerCase() === safeTxHash.toLowerCase(),
+            );
+
+            if (transaction != null) {
+                return transaction;
+            }
+
+            if (page.next == null || page.results.length === 0) {
+                return null;
+            }
+
+            offset += page.results.length;
+        }
     };
 
     /**

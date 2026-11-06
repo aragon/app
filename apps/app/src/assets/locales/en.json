@@ -4020,6 +4020,7 @@
         "approve": "Approve transaction",
         "approved": "Approved",
         "execute": "Execute Safe transaction",
+        "loadError": "The Safe transaction could not be loaded. Try again later.",
         "superseded": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
         "waitingForNonce": {
           "title": "This transaction is queued behind nonce {{currentNonce}}.",

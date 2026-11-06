@@ -15,14 +15,13 @@ import * as safeService from '@/shared/api/safeService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDialogContext,
+    generateReactQueryResultError,
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
+    generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import { generateSafeInfo } from '@/shared/testUtils/generators/safeInfo';
-import {
-    generateSafeInfoResponse,
-    generateSafeQueueResponse,
-} from '@/shared/testUtils/generators/safeResponse';
+import { generateSafeInfoResponse } from '@/shared/testUtils/generators/safeResponse';
 import { SafeDialogId } from '../../constants/safeDialogId';
 import {
     type ISafeTransactionVotingProps,
@@ -37,9 +36,9 @@ describe('<SafeTransactionVoting /> component', () => {
     const safeTxHash = '0xabc';
 
     const useSafeInfoSpy = jest.spyOn(safeService, 'useSafeInfo');
-    const useSafePendingTransactionsSpy = jest.spyOn(
+    const useSafePendingTransactionSpy = jest.spyOn(
         safeService,
-        'useSafePendingTransactions',
+        'useSafePendingTransaction',
     );
     const useWalletAccountSpy = jest.spyOn(
         walletAccountApi,
@@ -74,12 +73,8 @@ describe('<SafeTransactionVoting /> component', () => {
                 }),
             }),
         );
-        useSafePendingTransactionsSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateSafeQueueResponse({
-                    results: transaction == null ? [] : [transaction],
-                }),
-            }),
+        useSafePendingTransactionSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData(transaction ?? null),
         );
     };
 
@@ -126,7 +121,7 @@ describe('<SafeTransactionVoting /> component', () => {
     afterEach(() => {
         jest.clearAllMocks();
         useSafeInfoSpy.mockReset();
-        useSafePendingTransactionsSpy.mockReset();
+        useSafePendingTransactionSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -283,6 +278,49 @@ describe('<SafeTransactionVoting /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('offers no action to a former owner whose approval no longer counts', () => {
+        mockWallet(nonOwner);
+        mockSafe({ transaction: generateTransaction([nonOwner, ownerTwo]) });
+        render(createTestComponent());
+
+        expect(
+            screen.queryByRole('button', { name: /safeTransactionVoting/ }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('counts an owner listed twice once, so the threshold is not reached early', () => {
+        mockSafe({ transaction: generateTransaction([ownerTwo, ownerTwo]) });
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting.approve/,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: /safeTransactionVoting.execute/,
+            }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('reports a Safe that could not be read instead of loading forever', () => {
+        mockSafe({ transaction: generateTransaction([ownerTwo]) });
+        useSafePendingTransactionSpy.mockReturnValue(
+            generateReactQueryResultError({
+                error: new Error('Upstream error'),
+            }) as ReturnType<typeof safeService.useSafePendingTransaction>,
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/safeTransactionVoting.loadError/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('tab', { name: 'Breakdown' }),
+        ).not.toBeInTheDocument();
+    });
+
     it('renders nothing once the transaction has left the queue', () => {
         mockSafe({});
         const { container } = render(createTestComponent());
@@ -296,9 +334,9 @@ describe('<SafeTransactionVoting /> component', () => {
                 typeof safeService.useSafeInfo
             >,
         );
-        useSafePendingTransactionsSpy.mockReturnValue(
+        useSafePendingTransactionSpy.mockReturnValue(
             generateReactQueryResultLoading() as ReturnType<
-                typeof safeService.useSafePendingTransactions
+                typeof safeService.useSafePendingTransaction
             >,
         );
         render(createTestComponent());

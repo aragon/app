@@ -68,11 +68,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         transactionExecutionDetailsSpy.mockReturnValue(
             <div data-testid="execution-detail" />,
         );
-        safeExecutionDetailsSpy.mockReturnValue(
-            <div data-testid="safe-execution-detail" />,
-        );
+        safeExecutionDetailsSpy.mockReturnValue(<p>safe-execution-detail</p>);
         safeTransactionVotingSpy.mockReturnValue(
-            <div data-testid="safe-transaction-voting" />,
+            <p>safe-transaction-voting</p>,
         );
         mockTransactionActions();
     });
@@ -384,10 +382,10 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         await userEvent.click(screen.getByRole('button'));
 
-        const votingCard = screen.getByTestId('safe-transaction-voting');
+        const votingCard = screen.getByText('safe-transaction-voting');
         expect(
             votingCard.compareDocumentPosition(
-                screen.getByTestId('safe-execution-detail'),
+                screen.getByText('safe-execution-detail'),
             ),
         ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
         expect(safeTransactionVotingSpy).toHaveBeenCalledWith(
@@ -459,7 +457,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             screen.getByRole('button', { name: /status\.executed/ }),
         );
 
-        expect(screen.getByTestId('safe-execution-detail')).toBeInTheDocument();
+        expect(screen.getByText('safe-execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
             { safeAddress, safeTxHash: '0xff54', transaction },
             undefined,

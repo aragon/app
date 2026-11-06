@@ -562,6 +562,100 @@ describe('<SafeTransactionDialog /> component', () => {
         expect(executeSafeTransaction).toHaveBeenCalledTimes(1);
     });
 
+    it('hands the execution only one signature per current owner', async () => {
+        const confirmations = [
+            generateSafeConfirmation({ owner, signature }),
+            generateSafeConfirmation({ owner, signature }),
+            generateSafeConfirmation({ owner: otherOwner, signature }),
+        ];
+        mockSafe({ transaction: generateTransaction({ confirmations }) });
+        render(createTestComponent());
+
+        await userEvent.click(await confirmReview('execute'));
+
+        expect(
+            await screen.findByText(`${translationKey}.executed`),
+        ).toBeInTheDocument();
+        expect(executeSafeTransaction).toHaveBeenCalledWith(
+            expect.objectContaining({
+                signatures: [
+                    { signer: owner, data: signature },
+                    { signer: otherOwner, data: signature },
+                ],
+            }),
+        );
+    });
+
+    it('refuses to send the execution once the wallet switched to another account', async () => {
+        const confirmations = [
+            generateSafeConfirmation({ owner, signature }),
+            generateSafeConfirmation({ owner: otherOwner, signature }),
+        ];
+        executeSafeTransaction.mockImplementation(
+            (params: { beforeSubmit: () => void }) => {
+                getConnectionMock.mockReturnValue({
+                    address: otherOwner,
+                    chainId,
+                    status: 'connected',
+                    connector: { getProvider: jest.fn() },
+                } as never);
+                params.beforeSubmit();
+
+                return Promise.resolve({
+                    result: SafeExecutionResult.EXECUTED,
+                    hash: executionHash,
+                });
+            },
+        );
+        mockSafe({ transaction: generateTransaction({ confirmations }) });
+        render(createTestComponent());
+
+        await userEvent.click(await confirmReview('execute'));
+
+        expect(
+            await screen.findByText(`${translationKey}.walletRequired`),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(`${translationKey}.executed`),
+        ).not.toBeInTheDocument();
+    });
+
+    it('stays dismissable when a re-check finds no execution to follow and no wallet', async () => {
+        const confirmations = [
+            generateSafeConfirmation({ owner, signature }),
+            generateSafeConfirmation({ owner: otherOwner, signature }),
+        ];
+        // A broadcast whose hash is unusable leaves no record of the execution to follow.
+        executeSafeTransaction.mockRejectedValue(
+            new SafeExecutionPendingError('0x' as Hex),
+        );
+        mockSafe({ transaction: generateTransaction({ confirmations }) });
+        const { rerender } = render(createTestComponent());
+
+        await userEvent.click(await confirmReview('execute'));
+        const recheckButton = await screen.findByRole('button', {
+            name: `${translationKey}.actions.recheck`,
+        });
+
+        useWalletAccountSpy.mockReturnValue({
+            address: undefined,
+            chainId,
+            isConnecting: false,
+            isReconnecting: false,
+        });
+        rerender(createTestComponent());
+        await userEvent.click(recheckButton);
+
+        expect(
+            screen.queryByText(`${translationKey}.executing`),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: `${translationKey}.actions.recheck`,
+            }),
+        ).toBeEnabled();
+    });
+
     it('renders an error when the transaction is no longer available', async () => {
         getSafeInfoSpy.mockResolvedValue(generateSafeInfoResponse());
         findTransactionSpy.mockResolvedValue(undefined);

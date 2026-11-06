@@ -31,40 +31,37 @@ class SafeTransactionLookupUtils {
         const { network, address, safeTxHash } = params;
         const urlParams = { network, address };
 
-        for (const isHistory of [false, true]) {
-            let offset = 0;
+        const queued = await safeService.getSafePendingTransaction({
+            urlParams: { ...urlParams, safeTxHash },
+            queryParams: { limit: safeQueueReadLimit },
+        });
 
-            for (;;) {
-                const queryParams = { limit: safeQueueReadLimit, offset };
-                const page = isHistory
-                    ? await safeService.getSafeTransactionHistory({
-                          urlParams,
-                          queryParams,
-                      })
-                    : await safeService.getSafePendingTransactions({
-                          urlParams,
-                          queryParams,
-                      });
-
-                const transaction = page.results.find(
-                    (item) =>
-                        item.safeTxHash.toLowerCase() ===
-                        safeTxHash.toLowerCase(),
-                );
-
-                if (transaction != null) {
-                    return transaction;
-                }
-
-                if (page.next == null || page.results.length === 0) {
-                    break;
-                }
-
-                offset += page.results.length;
-            }
+        if (queued != null) {
+            return queued;
         }
 
-        return undefined;
+        let offset = 0;
+
+        for (;;) {
+            const page = await safeService.getSafeTransactionHistory({
+                urlParams,
+                queryParams: { limit: safeQueueReadLimit, offset },
+            });
+            const transaction = page.results.find(
+                (item) =>
+                    item.safeTxHash.toLowerCase() === safeTxHash.toLowerCase(),
+            );
+
+            if (transaction != null) {
+                return transaction;
+            }
+
+            if (page.next == null || page.results.length === 0) {
+                return undefined;
+            }
+
+            offset += page.results.length;
+        }
     };
 }
 
