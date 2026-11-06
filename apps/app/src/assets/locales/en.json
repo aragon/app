@@ -3898,12 +3898,21 @@
       "safeSettings": {
         "currentNonce": "Current Safe nonce",
         "guard": "Transaction guard",
+        "guardHelp": "Checks every transaction before it executes",
+        "module": "Module",
+        "moduleNames": {
+          "allowance": "Allowance module",
+          "safe4337": "Safe 4337 module",
+          "socialRecovery": "Social recovery module"
+        },
+        "moduleVersion": "Safe module v{{version}}",
         "modules": "Enabled modules",
         "modulesValue": "{{count}}",
         "nonce": "Safe nonce used",
         "safe": "Safe address",
         "threshold": "Required confirmations",
         "thresholdOfOwners": "{{threshold}} of {{total}}",
+        "unknownModule": "Unrecognised module",
         "unknownVersion": "unknown version",
         "versionHelp": "Safe {{version}}"
       },
@@ -4896,6 +4905,27 @@
           }
         },
         "submitLabel": "Save changes"
+      },
+      "workspaceSafeSettingsPage": {
+        "account": {
+          "address": "Address",
+          "blockchain": "Blockchain",
+          "notChangeable": "Not changeable",
+          "readLess": "Read less",
+          "readMore": "Read more",
+          "summary": "Summary"
+        },
+        "aside": {
+          "contractsTitle": "Contracts"
+        },
+        "governance": {
+          "unavailable": "Couldn't load this Safe's configuration. Reload the page to try again."
+        },
+        "main": {
+          "accountTitle": "Account",
+          "governanceTitle": "Governance",
+          "title": "Settings"
+        }
       }
     }
   }

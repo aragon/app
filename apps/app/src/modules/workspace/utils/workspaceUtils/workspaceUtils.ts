@@ -45,10 +45,67 @@ const fallbackWorkspaceSlug = 'workspace';
 export const workspaceAllAccountsSegment = 'all';
 
 /**
- * Sections served for a DAO account alone, `/workspace/{workspaceId}/{accountId}/{section}`: the aggregated scope and
- * a Safe have neither, so switching to one of those from these sections lands on the overview instead.
+ * Sections of `/workspace/{workspaceId}/{accountId}/{section}`, one per route under `[accountId]`. A segment outside
+ * this list has no route: it renders the section-not-found page.
  */
-export const workspaceDaoAccountSections = ['permissions', 'settings'] as const;
+export const workspaceAccountSections = [
+    'overview',
+    'proposals',
+    'members',
+    'assets',
+    'transactions',
+    'permissions',
+    'settings',
+] as const;
+
+export type WorkspaceAccountSection = (typeof workspaceAccountSections)[number];
+
+interface IWorkspaceSectionScopes {
+    /**
+     * Account types whose account scope has the section.
+     */
+    accountTypes: readonly WorkspaceAccountType[];
+    /**
+     * Whether the aggregated scope, every account of the workspace, has the section.
+     */
+    isAllAccounts: boolean;
+}
+
+/**
+ * Sections of `/workspace/{workspaceId}/{accountId}/{section}` served for some scopes alone, with the scopes that have
+ * them. A section left out is served for every scope. Read through `workspaceUtils.isSectionServed`.
+ *
+ * - proposals — the aggregated scope and a DAO account: a Safe account has no proposals route yet.
+ * - permissions — a DAO account alone.
+ * - settings — a DAO or a Safe account, not the aggregated scope.
+ */
+const workspaceSectionScopes: Readonly<
+    Partial<Record<WorkspaceAccountSection, IWorkspaceSectionScopes>>
+> = {
+    proposals: {
+        accountTypes: [WorkspaceAccountType.DAO],
+        isAllAccounts: true,
+    },
+    permissions: {
+        accountTypes: [WorkspaceAccountType.DAO],
+        isAllAccounts: false,
+    },
+    settings: {
+        accountTypes: [WorkspaceAccountType.DAO, WorkspaceAccountType.SAFE],
+        isAllAccounts: false,
+    },
+};
+
+export interface IWorkspaceSectionScope {
+    /**
+     * Whether the scope is the aggregated one, every account of the workspace.
+     */
+    isAllAccounts: boolean;
+    /**
+     * Type of the account in scope, undefined for the aggregated scope or while the account type is not known yet.
+     */
+    accountType?: WorkspaceAccountType;
+}
 
 /**
  * Query parameter opening the edit wizard of a workspace on a given step, e.g. `?step=ACCOUNTS`.
@@ -209,6 +266,45 @@ class WorkspaceUtils {
             .filter((segment) => segment !== '');
 
         return base === 'workspace' ? section : undefined;
+    };
+
+    /**
+     * Whether a URL segment names a section the app has a route for (`workspaceAccountSections`), narrowing it for
+     * `isSectionServed`.
+     * @param section - Section segment of an account-scoped workspace URL, e.g. from `getAccountScopeSection`.
+     * @returns True when the segment is a known section.
+     */
+    isAccountSection = (section: string): section is WorkspaceAccountSection =>
+        (workspaceAccountSections as readonly string[]).includes(section);
+
+    /**
+     * Whether a section is served for a scope (`workspaceSectionScopes`). The navigation hides the link to a section
+     * that is not, and the account selector sends an option that does not have the current section to its overview
+     * instead. An account scope whose type is not known yet has none of the sections restricted by type, so their
+     * links only appear once the workspace read tells it.
+     * @param section - Section of an account-scoped workspace URL, e.g. `settings`.
+     * @param scope - The scope: aggregated, or an account of a given type.
+     * @returns True when the section is served for the scope.
+     */
+    isSectionServed = (
+        section: WorkspaceAccountSection,
+        scope: IWorkspaceSectionScope,
+    ): boolean => {
+        const { isAllAccounts, accountType } = scope;
+        const sectionScopes = workspaceSectionScopes[section];
+
+        if (sectionScopes == null) {
+            return true;
+        }
+
+        if (isAllAccounts) {
+            return sectionScopes.isAllAccounts;
+        }
+
+        return (
+            accountType != null &&
+            sectionScopes.accountTypes.includes(accountType)
+        );
     };
 
     /**

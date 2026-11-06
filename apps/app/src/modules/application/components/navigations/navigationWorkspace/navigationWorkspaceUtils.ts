@@ -1,5 +1,9 @@
 import { IconType } from '@aragon/gov-ui-kit';
-import { workspaceUtils } from '@/modules/workspace/utils/workspaceUtils';
+import type { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
+import {
+    workspaceAllAccountsSegment,
+    workspaceUtils,
+} from '@/modules/workspace/utils/workspaceUtils';
 import type { INavigationLink } from '@/shared/components/navigation';
 
 class NavigationWorkspaceUtils {
@@ -19,16 +23,21 @@ class NavigationWorkspaceUtils {
      * it keeps a tab change on the account being looked at. A segment naming no account scope falls back to the
      * aggregated one, so links stay servable on a URL the app does not serve — e.g. the workspace not-found page,
      * which renders inside this navigation.
-     * @param isDaoAccount - Whether the account is a DAO, which alone has permissions and settings: the aggregated
-     * scope and a Safe hide those links.
+     * @param accountType - Type of the account in scope, undefined for the aggregated scope or while the workspace
+     * read has not told it yet. It decides the links of the sections served for some scopes alone
+     * (`workspaceUtils.isSectionServed`): proposals, permissions and settings.
      * @returns The navigation links.
      */
     buildLinks = (
         workspaceId: string,
         accountId?: string,
-        isDaoAccount = false,
+        accountType?: WorkspaceAccountType,
     ): INavigationLink[] => {
         const scope = workspaceUtils.resolveAccountScope(accountId);
+        const sectionScope = {
+            isAllAccounts: scope === workspaceAllAccountsSegment,
+            accountType,
+        };
 
         return [
             {
@@ -50,6 +59,10 @@ class NavigationWorkspaceUtils {
                 ),
                 icon: IconType.APP_PROPOSALS,
                 order: 200,
+                hidden: !workspaceUtils.isSectionServed(
+                    'proposals',
+                    sectionScope,
+                ),
             },
             {
                 label: 'app.application.navigationWorkspace.link.transactions',
@@ -90,7 +103,10 @@ class NavigationWorkspaceUtils {
                 ),
                 icon: IconType.APP_PERMISSIONS,
                 order: 600,
-                hidden: !isDaoAccount,
+                hidden: !workspaceUtils.isSectionServed(
+                    'permissions',
+                    sectionScope,
+                ),
             },
             {
                 label: 'app.application.navigationWorkspace.link.accountSettings',
@@ -101,7 +117,10 @@ class NavigationWorkspaceUtils {
                 ),
                 icon: IconType.SETTINGS,
                 order: 700,
-                hidden: !isDaoAccount,
+                hidden: !workspaceUtils.isSectionServed(
+                    'settings',
+                    sectionScope,
+                ),
             },
         ];
     };

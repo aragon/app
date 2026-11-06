@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
-import { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
 import { useWorkspaceAccountOptions } from '@/modules/workspace/hooks/useWorkspaceAccountOptions';
@@ -77,12 +76,13 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ? { address, name: displayName ?? undefined }
             : undefined;
 
-    // Built from the route, so the section links are complete on the first paint; the DAO-only ones (permissions,
-    // settings) wait for the workspace read that tells a DAO account from a Safe.
+    // Built from the route, so the section links are complete on the first paint; under an account scope, the ones
+    // served for some account types alone (proposals, permissions, settings) wait for the workspace read that tells a
+    // DAO account from a Safe.
     const links = navigationWorkspaceUtils.buildLinks(
         workspaceId,
         accountId,
-        activeOption?.account?.type === WorkspaceAccountType.DAO,
+        activeOption?.account?.type,
     );
     const workspaceLinks =
         navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId);

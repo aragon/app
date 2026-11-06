@@ -57,6 +57,7 @@
         "@reown/appkit-adapter-wagmi": "^1.8.24",
         "@reown/walletkit": "^1.6.0",
         "@safe-global/protocol-kit": "^8.0.8",
+        "@safe-global/safe-modules-deployments": "^3.0.11",
         "@sentry/core": "^10.76.2",
         "@sentry/nextjs": "^10.76.2",
         "@tanstack/react-query": "catalog:",
