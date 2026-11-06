@@ -36,8 +36,12 @@ import type {
     IWorkspaceTransactionPendingExecution,
     IWorkspaceTransactionTransfer,
 } from '../../api/workspaceQueryService';
-import { WorkspaceAccountType } from '../../api/workspaceService';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+} from '../../api/workspaceService';
 import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceTransactionListItemProps
     extends Pick<ITransactionListItemProps, 'index'> {
@@ -46,13 +50,10 @@ export interface IWorkspaceTransactionListItemProps
      */
     transaction: IWorkspaceTransaction;
     /**
-     * Type of the account the transaction belongs to, which decides how an execution is decoded.
+     * Account the transaction belongs to. Its type decides how an execution is decoded and its name labels the
+     * transactions of a Safe account.
      */
-    accountType?: WorkspaceAccountType;
-    /**
-     * Name of the account the transaction belongs to, used to label the transactions of a Safe account.
-     */
-    accountName?: string;
+    account?: IWorkspaceAccount;
     /**
      * Value identifying the item in its accordion container. It must be unique within the container, which a
      * transaction ID alone is not when the same transfer is listed once per account.
@@ -293,13 +294,15 @@ const buildTransferDisplay = (
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
 > = (props) => {
-    const { transaction, value, index, accountType, accountName, dao } = props;
+    const { transaction, value, index, account, dao } = props;
 
     const { t } = useTranslations();
     const { copy } = useGukModulesContext();
     const headerCopy = copy.transactionDataListItemStructure;
 
-    const row = getRow(transaction, accountType, dao);
+    const row = getRow(transaction, account?.type, dao);
+    const accountName =
+        account == null ? undefined : workspaceUtils.getAccountName(account);
 
     // The row does not always carry the slug of the proposal behind a DAO execution, in which case it is read from the
     // actions of the execution: the expanded details read the same query, so expanding the row adds no request.

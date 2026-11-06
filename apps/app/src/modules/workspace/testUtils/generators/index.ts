@@ -1,3 +1,4 @@
+export { generateWorkspaceAccount } from './workspaceAccount';
 export {
     generateWorkspaceMember,
     generateWorkspaceMembership,

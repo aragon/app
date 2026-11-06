@@ -18,6 +18,7 @@ import {
 } from '@/shared/testUtils';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import {
+    generateWorkspaceAccount,
     generateWorkspacePendingTransaction,
     generateWorkspaceTransaction,
 } from '../../testUtils';
@@ -256,7 +257,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             createTestComponent({
                 transaction,
                 dao: generateDao(),
-                accountType: WorkspaceAccountType.SAFE,
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.SAFE,
+                }),
             }),
         );
 
@@ -276,8 +279,10 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         render(
             createTestComponent({
                 transaction,
-                accountType: WorkspaceAccountType.SAFE,
-                accountName: 'Treasury Safe',
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.SAFE,
+                    metadata: { name: 'Treasury Safe' },
+                }),
             }),
         );
 
@@ -301,8 +306,10 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         render(
             createTestComponent({
                 transaction,
-                accountType: WorkspaceAccountType.SAFE,
-                accountName: 'Treasury Safe',
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.SAFE,
+                    metadata: { name: 'Treasury Safe' },
+                }),
             }),
         );
 
@@ -328,7 +335,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         render(
             createTestComponent({
                 transaction,
-                accountType: WorkspaceAccountType.SAFE,
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.SAFE,
+                }),
             }),
         );
 
@@ -405,7 +414,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         render(
             createTestComponent({
                 transaction,
-                accountType: WorkspaceAccountType.SAFE,
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.SAFE,
+                }),
             }),
         );
 
@@ -429,7 +440,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         render(
             createTestComponent({
                 transaction,
-                accountType: WorkspaceAccountType.SAFE,
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.SAFE,
+                }),
             }),
         );
 
@@ -448,7 +461,9 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             createTestComponent({
                 transaction,
                 dao,
-                accountType: WorkspaceAccountType.DAO,
+                account: generateWorkspaceAccount({
+                    type: WorkspaceAccountType.DAO,
+                }),
             }),
         );
 

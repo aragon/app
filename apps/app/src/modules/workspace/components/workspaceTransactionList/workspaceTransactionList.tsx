@@ -188,6 +188,9 @@ export const WorkspaceTransactionList: React.FC<
     const { daos, isPending: isDaosPending } = useWorkspaceDaos(accounts);
 
     const transactions = data?.pages.flatMap((page) => page.data);
+    const accountsById = new Map(
+        accounts.map((account) => [account.id, account]),
+    );
     const metadata = data?.pages[0].metadata;
 
     // The list is incomplete as soon as one account of one loaded page could not be read at all. Saying so is what
@@ -287,20 +290,12 @@ export const WorkspaceTransactionList: React.FC<
                             transaction.account,
                         );
                         const dao = daos[accountId];
-                        const account = accounts.find(
-                            ({ id }) => id === accountId,
-                        );
                         // A transfer between two selected accounts is listed once per account under the same ID.
                         const itemId = `${accountId}-${transaction.id}`;
 
                         return (
                             <WorkspaceTransactionListItem
-                                accountName={
-                                    account == null
-                                        ? undefined
-                                        : workspaceUtils.getAccountName(account)
-                                }
-                                accountType={account?.type}
+                                account={accountsById.get(accountId)}
                                 dao={dao}
                                 index={index}
                                 key={itemId}
