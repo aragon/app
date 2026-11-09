@@ -14,6 +14,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
+import { WorkspaceTodoList } from '../../components/workspaceTodoList';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -97,6 +98,12 @@ export const WorkspaceDetailsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
+                    <WorkspaceTodoList
+                        accountInfos={accountInfos}
+                        accounts={accounts}
+                        workspaceId={workspaceId}
+                        workspaceName={name}
+                    />
                     <Page.MainSection
                         title={t(
                             'app.workspace.workspaceDetailsPage.section.accounts',

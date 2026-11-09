@@ -2,8 +2,10 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
+import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import {
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
@@ -14,6 +16,7 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import * as useWorkspaceTodoDataModule from '../../hooks/useWorkspaceTodoData';
 import {
     type IWorkspaceDetailsPageClientProps,
     WorkspaceDetailsPageClient,
@@ -22,9 +25,28 @@ import {
 describe('<WorkspaceDetailsPageClient /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const targetAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
+    const walletAddress = '0x1c8Cae0e29e1a0dc65f0f0E4C74DCE9f9C9F4a2B';
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
     const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+    // The real hook subscribes to the wagmi connection, which the page is not rendered under here; the to-do reader
+    // is tested on its own.
+    const useWalletAccountSpy = jest.spyOn(
+        useWalletAccountModule,
+        'useWalletAccount',
+    );
+    const useWorkspaceTodoDataSpy = jest.spyOn(
+        useWorkspaceTodoDataModule,
+        'useWorkspaceTodoData',
+    );
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+
+    const mockWallet = (connectedAddress?: string) =>
+        useWalletAccountSpy.mockReturnValue({
+            address: connectedAddress,
+        } as unknown as ReturnType<
+            typeof useWalletAccountModule.useWalletAccount
+        >);
 
     let testIndex = 0;
 
@@ -61,11 +83,23 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
                 name: 'Demo DAO',
             },
         ]);
+        mockWallet(undefined);
+        useWorkspaceTodoDataSpy.mockReturnValue({
+            proposals: [],
+            transactions: [],
+            isPending: false,
+            isError: false,
+            hasUnreadableAccounts: false,
+        });
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
+        useWalletAccountSpy.mockReset();
+        useWorkspaceTodoDataSpy.mockReset();
+        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -117,6 +151,30 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         await waitFor(() =>
             expect(screen.getByText('Demo DAO')).toBeInTheDocument(),
         );
+    });
+
+    it('displays the to-do section above the accounts for a connected wallet', async () => {
+        mockWallet(walletAddress);
+        renderWorkspace(buildWorkspace());
+
+        const todoTitle = await screen.findByText(/workspaceTodoList\.title$/);
+        const accountsTitle = screen.getByText(
+            /workspaceDetailsPage\.section\.accounts$/,
+        );
+
+        expect(
+            todoTitle.compareDocumentPosition(accountsTitle) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
+
+    it('asks to connect a wallet in the to-do section when none is connected', async () => {
+        renderWorkspace(buildWorkspace());
+
+        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
+        expect(
+            screen.getByText(/workspaceTodoList\.connect\.heading$/),
+        ).toBeInTheDocument();
     });
 
     it('hides the targets section when the workspace has no target', async () => {

@@ -479,6 +479,10 @@
           "description": "Navigate between the pages of this workspace",
           "title": "Workspace navigation"
         },
+        "group": {
+          "inbox": "Inbox",
+          "workspace": "Workspace"
+        },
         "link": {
           "accountSettings": "Settings",
           "assets": "Assets",
@@ -487,6 +491,7 @@
           "members": "Members",
           "permissions": "Permissions",
           "proposals": "Proposals",
+          "todos": "To-dos",
           "transactions": "Transactions"
         }
       },
@@ -4952,6 +4957,46 @@
           "accountTitle": "Account",
           "governanceTitle": "Governance",
           "title": "Settings"
+        }
+      },
+      "workspaceTodoList": {
+        "title": "To-dos",
+        "description": "Across every account in {{workspace}}. To-dos belong to your wallet; the workspace only filters them.",
+        "connect": {
+          "heading": "Connect a wallet to see your to-dos",
+          "description": "To-dos are what your wallet can vote on or sign right now across the accounts in {{workspace}}.",
+          "action": "Connect wallet"
+        },
+        "emptyState": {
+          "heading": "Nothing is waiting for you",
+          "description": "Active proposals you can vote on and Safe transactions you can sign will show up here."
+        },
+        "errorState": {
+          "heading": "Unable to load your to-dos",
+          "description": "What is waiting for you could not be read. Please try again later."
+        },
+        "partial": "Some Safes could not be read, so this list may be missing transactions.",
+        "viewAll": "View all",
+        "proposal": {
+          "title": "{{slug}} · {{title}}",
+          "meta": "Vote · ends {{date}}",
+          "action": "Vote"
+        },
+        "transaction": {
+          "title": "Safe transaction #{{nonce}}",
+          "meta": "Sign · {{account}} · {{count}} of {{required}} signatures",
+          "nonceRival": "nonce conflict",
+          "action": "Sign"
+        }
+      },
+      "workspaceTodosPage": {
+        "main": {
+          "title": "To-dos"
+        },
+        "filter": {
+          "all": "All to-dos",
+          "proposals": "Proposals",
+          "transactions": "Safe transactions"
         }
       }
     }

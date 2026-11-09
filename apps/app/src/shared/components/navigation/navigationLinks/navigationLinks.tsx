@@ -39,8 +39,9 @@ export const NavigationLinks: React.FC<INavigationLinksProps> = (props) => {
         >
             {links
                 .filter((link) => !link.hidden)
-                .map(({ link, label, icon }) => (
+                .map(({ link, label, icon, badge }) => (
                     <NavigationLinksItem
+                        badge={badge}
                         href={link}
                         icon={icon}
                         key={link}

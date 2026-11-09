@@ -23,4 +23,19 @@ export interface INavigationLink {
      * Determines display order. Lower values appear first.
      */
     order?: number;
+    /**
+     * Short count displayed after the label (e.g. the number of to-dos waiting on the wallet).
+     */
+    badge?: string;
+}
+
+export interface INavigationLinkGroup {
+    /**
+     * Label displayed above the links of the group (e.g. "Inbox", or the name of the workspace).
+     */
+    label?: string;
+    /**
+     * Links of the group. A group whose links are all hidden is not rendered.
+     */
+    links: INavigationLink[];
 }

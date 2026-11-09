@@ -728,7 +728,9 @@ decides whether it gets the route at all.
 | `all/assets`, `all/transactions` | included in the selection | client (`scopedAccounts`) |
 | `all/members` | its owners are in the list (sandbox, 2026-10-28; see Known gaps) | client |
 | `all/proposals` | excluded from the request: DAO proposals only | client DAO filter |
-| `all/overview` | listed with the DAOs | — |
+| `all/overview` | listed with the DAOs; the to-do list reads its queue when the wallet owns it | — |
+| `all/todos` | its queued transactions the wallet still has to sign, beside the proposals to vote on | backend (`query/todo`) |
+| `{accountId}/todos` | the same rows, narrowed to the Safe | backend (`query/todo`) |
 | `{accountId}/assets` | list and aside describe the Safe | client; no guard |
 | `{accountId}/transactions` | the same, read-only: no create action, dispatch panel is DAO-only | client; no guard |
 | `{accountId}/overview` | the Safe dashboard (threshold, owners, nonce, pending transactions, previews) | page `switch` |
@@ -894,8 +896,46 @@ replace the explorer links of the Safe account members page and of the Safe-only
 `workspaceDetailsPageClient` composes the standard page primitives, matching the DAO pages:
 
 - `Page.Header` — workspace avatar, name, description and `stats` for the account and target counts.
-- `Page.Main` → `Page.MainSection` for Accounts, and for Targets only when the workspace has any.
+- `Page.Main` → `WorkspaceTodoList` first (see below), then `Page.MainSection` for Accounts, and for Targets only
+  when the workspace has any.
 - `Page.Aside` → `Page.AsideCard` for the workspace resources, when present.
+
+#### To-do list
+
+`WorkspaceTodoList` sits above the accounts and lists what the **connected wallet** can still act on across the
+whole workspace: the active proposals it can vote on and has not voted on, and the queued Safe transactions it can
+sign and has not signed. To-dos belong to the wallet, so without one the section asks to connect it
+(`CardEmptyState` opening the connect dialog) rather than vanishing.
+
+Both kinds share one compact row (`WorkspaceTodoItem`: the account's avatar, what is waiting, what to do about it
+and until when, and the action button), proposals first. A proposal row (`WorkspaceTodoProposalItem`) reads
+"`SLUG · title` / Vote · ends in 5 days" with a primary Vote button leading to the proposal page of its account; a
+Safe row (`WorkspaceTodoSafeTransactionItem`) reads "Safe transaction #nonce / Sign · Treasury · 1 of 2 signatures"
+with a secondary Sign button opening the queue page's review dialog. When nothing is waiting the section shows an
+empty state, so a member learns that nobody is waiting on them.
+
+The rows and states live in `WorkspaceTodoContent`, shared by the overview section and the to-dos page. The overview
+shows the first `workspaceTodoPreviewSize` rows (3) and, when there are more, "View all" leads to
+`/workspace/{workspaceId}/all/todos` (`WorkspaceTodosPage`), which lists them all with a toggle on their kind
+(`todotype` URL parameter: all, proposals, Safe transactions). The page is a section like the others, served for
+every scope, so an account-scoped URL narrows it to that account. The navigation is three labelled groups
+(`INavigationLinkGroup`): "Inbox" with the "To-dos" link, shown only while a wallet is connected and badged with the
+number waiting in the account scope it opens (`navigationWorkspaceUtils.buildInboxLinks`; the count comes from the
+same query as the to-dos page and the overview, so it costs no extra request); the sections of the account in scope under the workspace name; and "Workspace" with the
+edit link.
+
+Eligibility is computed by the backend. `useWorkspaceTodoData` posts the accounts and the wallet address to
+`query/todo` (`useWorkspaceTodo`), which answers from its stored rows: the wallet's plugin memberships across the DAO
+accounts, the open proposals of those plugins inside their vote window (a process proposal through the bodies of its
+current stage and their sub-proposals), minus the ones the wallet voted on; and the live queued transactions of the
+Safe accounts the wallet owns, minus the ones it confirmed, each with the Safe's current nonce, threshold and
+version. Both lists are capped at 50, proposals newest first, each carrying the `voteEndDate` the wallet's window
+closes at (the current stage's end for a process proposal). The hook then settles two things the endpoint
+cannot: the process plugin's `GOVERNANCE_PROCESS_PROPOSAL_STATUS` slot has the final word on "active"
+(`workspaceTodoUtils.getProposalStatus`), so a proposal kept for its open window but no longer active (one already
+approved, say) drops out; and each proposal is paired with its real DAO through `useWorkspaceDaos`, which the rows
+need for their link and title. A Safe the backend could not read is reported through the coverage and warned about
+above the lists (`hasUnreadableAccounts`); the other accounts stay listed.
 
 Each account renders as a `WorkspaceAccountItem`. The **type tag comes from the registry**, not from a lookup: it
 was resolved at creation time and decides which APIs the workspace pages query, so the row keeps showing it even
@@ -1148,6 +1188,12 @@ Keep it that way when extending this.
 ## Known gaps
 
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
+- **The to-do list is a v1 built on memberships, not voting power.** A token holder is listed for a proposal even
+  when their balance at its snapshot was zero, since the backend judges eligibility on its current membership rows.
+  Both lists are cut at 50 rows by the backend, so a wallet with more open work than that sees the newest rows
+  only. The Safe bodies of a process only surface when the Safe is itself a workspace account, and a Safe
+  account only contributes transactions when the backend tracks it (a body or process of some DAO, or an
+  admin-registered Safe), which is also what the transactions feed requires.
 - **The backend aggregates no Safe assets or transactions (verified on sandbox, `sandbox.backend.aragonservices.in`,
   2026-10-28).** `query/assets` and `query/transactions` return few or no rows for real Sepolia Safes that hold
   balances and transfers (2 asset rows and 5 transaction records on the Safes checked), with coverage `source:
