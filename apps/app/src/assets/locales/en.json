@@ -4632,6 +4632,43 @@
         },
         "submitLabel": "Create workspace"
       },
+      "demo": {
+        "account": {
+          "safeAvatar": "Safe account",
+          "threshold": "{{threshold}} of {{owners}} signatures required",
+          "type": {
+            "dao": "DAO",
+            "safe": "Safe"
+          }
+        },
+        "description": "A static, read-only workspace showing how DAO and Safe accounts can be managed in one place.",
+        "navigation": {
+          "accounts": "Accounts",
+          "dashboard": "Dashboard",
+          "dialog": {
+            "description": "Navigate the read-only demo workspace.",
+            "title": "Demo workspace navigation"
+          },
+          "label": "Demo workspace navigation",
+          "landing": "Go to Aragon home",
+          "open": "Open demo navigation"
+        },
+        "name": "Demo workspace",
+        "readOnly": "Read-only demo",
+        "section": {
+          "accounts": "Accounts"
+        },
+        "stat": {
+          "accounts": "Accounts",
+          "targets": "Targets"
+        },
+        "todo": {
+          "description": "A live workspace brings actions across every account together.",
+          "readOnlyDescription": "This example does not connect to a wallet, load live account data, or submit transactions.",
+          "readOnlyTitle": "Explore without making changes",
+          "title": "To-dos"
+        }
+      },
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
