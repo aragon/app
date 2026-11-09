@@ -133,13 +133,28 @@ const getNavigationLinks = (account?: DemoAccount): INavigationLink[] => {
         return [
             {
                 icon: IconType.APP_DASHBOARD,
-                label: 'app.workspace.demo.navigation.dashboard',
+                label: 'app.application.navigationWorkspace.link.dashboard',
                 link: '/demo/dashboard',
             },
             {
+                icon: IconType.APP_PROPOSALS,
+                label: 'app.application.navigationWorkspace.link.proposals',
+                link: '/demo/proposals',
+            },
+            {
+                icon: IconType.APP_TRANSACTIONS,
+                label: 'app.application.navigationWorkspace.link.transactions',
+                link: '/demo/transactions',
+            },
+            {
+                icon: IconType.APP_ASSETS,
+                label: 'app.application.navigationWorkspace.link.assets',
+                link: '/demo/assets',
+            },
+            {
                 icon: IconType.APP_MEMBERS,
-                label: 'app.workspace.demo.navigation.accounts',
-                link: '/demo/accounts',
+                label: 'app.application.navigationWorkspace.link.members',
+                link: '/demo/members',
             },
         ];
     }
@@ -225,7 +240,11 @@ const DemoWorkspaceSelector: React.FC = () => {
                     <span className="truncate">{name}</span>
                 </span>
             </Dropdown.Item>
-            <Dropdown.Item href="/" icon={IconType.PLUS} iconPosition="left">
+            <Dropdown.Item
+                href="/create/workspace"
+                icon={IconType.PLUS}
+                iconPosition="left"
+            >
                 {t('app.workspace.workspaceSelector.create')}
             </Dropdown.Item>
         </Dropdown.Container>
@@ -365,12 +384,14 @@ const DemoAccountItem: React.FC<{ account: DemoAccount }> = ({ account }) => {
     );
 };
 
-const DemoProposalList: React.FC = () => {
+const DemoProposalList: React.FC<{ limit?: number }> = ({ limit }) => {
     const { t } = useTranslations();
+    const proposals =
+        limit == null ? demoProposals : demoProposals.slice(0, limit);
 
     return (
         <div className="flex flex-col gap-3">
-            {demoProposals.map((proposal) => (
+            {proposals.map((proposal) => (
                 <Card
                     className="flex flex-col gap-3 p-4 md:p-6"
                     key={proposal.id}
@@ -506,10 +527,22 @@ const DemoSectionLink: React.FC<{ href: string }> = ({ href }) => {
     );
 };
 
-const DemoWorkspacePage: React.FC<{ accountsOnly: boolean }> = ({
-    accountsOnly,
-}) => {
+const DemoWorkspacePage: React.FC<{ section: DemoSection }> = ({ section }) => {
     const { t } = useTranslations();
+    const isDashboard = section === 'dashboard';
+    const sectionContent: Partial<Record<DemoSection, ReactNode>> = {
+        proposals: <DemoProposalList />,
+        transactions: <DemoTransactionList />,
+        assets: <DemoAssetList />,
+        members: <DemoMemberList />,
+    };
+    const sectionTitles: Record<DemoSection, string> = {
+        dashboard: t('app.workspace.demo.name'),
+        proposals: t('app.workspace.demo.section.proposals'),
+        transactions: t('app.workspace.demo.section.transactions'),
+        assets: t('app.workspace.demo.section.assets'),
+        members: t('app.workspace.demo.section.members'),
+    };
 
     return (
         <Page.Container>
@@ -532,29 +565,37 @@ const DemoWorkspacePage: React.FC<{ accountsOnly: boolean }> = ({
             />
             <Page.Content>
                 <Page.Main className="max-w-4xl">
-                    {!accountsOnly && (
-                        <Page.MainSection
-                            title={t(
-                                'app.workspace.demo.section.latestActivity',
-                            )}
-                        >
-                            <DemoTransactionList />
+                    {isDashboard ? (
+                        <>
+                            <Page.MainSection
+                                title={t(
+                                    'app.workspace.demo.section.latestActivity',
+                                )}
+                            >
+                                <DemoTransactionList />
+                            </Page.MainSection>
+                            <Page.MainSection
+                                aria-label={t(
+                                    'app.workspace.demo.section.accounts',
+                                )}
+                                role="region"
+                                title={t('app.workspace.demo.section.accounts')}
+                            >
+                                <div className="flex flex-col gap-3 md:gap-2">
+                                    {demoAccounts.map((account) => (
+                                        <DemoAccountItem
+                                            account={account}
+                                            key={account.id}
+                                        />
+                                    ))}
+                                </div>
+                            </Page.MainSection>
+                        </>
+                    ) : (
+                        <Page.MainSection title={sectionTitles[section]}>
+                            {sectionContent[section]}
                         </Page.MainSection>
                     )}
-                    <Page.MainSection
-                        aria-label={t('app.workspace.demo.section.accounts')}
-                        role="region"
-                        title={t('app.workspace.demo.section.accounts')}
-                    >
-                        <div className="flex flex-col gap-3 md:gap-2">
-                            {demoAccounts.map((account) => (
-                                <DemoAccountItem
-                                    account={account}
-                                    key={account.id}
-                                />
-                            ))}
-                        </div>
-                    </Page.MainSection>
                 </Page.Main>
             </Page.Content>
         </Page.Container>
@@ -574,7 +615,7 @@ const DemoAccountPage: React.FC<{
         ? [
               {
                   label: t('app.workspace.demo.stat.proposals'),
-                  value: 266,
+                  value: demoProposals.length,
               },
               { label: t('app.workspace.demo.stat.members'), value: 4 },
               {
@@ -631,7 +672,7 @@ const DemoAccountPage: React.FC<{
                                         'app.workspace.demo.section.proposals',
                                     )}
                                 >
-                                    <DemoProposalList />
+                                    <DemoProposalList limit={2} />
                                     <DemoSectionLink
                                         href={`${baseUrl}/proposals`}
                                     />
@@ -727,8 +768,13 @@ export const WorkspaceDemoPageClient: React.FC<
     const [isDialogOpen, setDialogOpen] = useState(false);
     const accountId = path[0] === 'account' ? path[1] : undefined;
     const account = demoAccounts.find(({ id }) => id === accountId);
-    const section = (path[2] ?? 'dashboard') as DemoSection;
-    const accountsOnly = path[0] === 'accounts';
+    const section = (
+        account == null
+            ? path[0] === 'accounts'
+                ? 'dashboard'
+                : (path[0] ?? 'dashboard')
+            : (path[2] ?? 'dashboard')
+    ) as DemoSection;
     const navigationLinks = getNavigationLinks(account);
 
     const navigation = (
@@ -807,7 +853,7 @@ export const WorkspaceDemoPageClient: React.FC<
     return (
         <LayoutSidebar navigation={navigation}>
             {account == null ? (
-                <DemoWorkspacePage accountsOnly={accountsOnly} />
+                <DemoWorkspacePage section={section} />
             ) : (
                 <DemoAccountPage account={account} section={section} />
             )}
