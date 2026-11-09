@@ -3,9 +3,18 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import { WorkspaceDemoPageClient } from './workspaceDemoPageClient';
 
 const workspaceStorageKey = 'aragon-workspaces';
+const workspacesSnapshot: FeatureFlagSnapshot[] = [
+    {
+        key: 'workspaces',
+        name: 'Workspaces',
+        description: '',
+        enabled: true,
+    },
+];
 
 describe('<WorkspaceDemoPageClient /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -27,7 +36,7 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         const storedWorkspaces = localStorage.getItem(workspaceStorageKey);
 
         render(
-            <FeatureFlagsProvider>
+            <FeatureFlagsProvider initialSnapshot={workspacesSnapshot}>
                 <GukModulesProvider>
                     <WorkspaceDemoPageClient />
                 </GukModulesProvider>
@@ -65,7 +74,7 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         const user = userEvent.setup();
 
         render(
-            <FeatureFlagsProvider>
+            <FeatureFlagsProvider initialSnapshot={workspacesSnapshot}>
                 <GukModulesProvider>
                     <WorkspaceDemoPageClient />
                 </GukModulesProvider>
@@ -96,6 +105,6 @@ describe('<WorkspaceDemoPageClient /> component', () => {
             screen.getByRole('link', {
                 name: 'app.application.navigationDao.dialog.explore',
             }),
-        ).toHaveAttribute('href', '/');
+        ).toHaveAttribute('href', '/explore');
     });
 });
