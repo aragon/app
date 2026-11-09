@@ -118,6 +118,9 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             >
                 <div className="flex items-center justify-between gap-1">
                     <Navigation.Trigger
+                        aria-label={t(
+                            'app.application.navigationWorkspace.a11y.title',
+                        )}
                         className="shrink-0"
                         onClick={() => handleDialogOpenChange(true)}
                     />
