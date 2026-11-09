@@ -48,11 +48,9 @@ export const LandingPage: React.FC = () => {
     const legalLinks = (
         <div className="flex items-center gap-3 text-sm leading-tight">
             <p>{t('app.application.landingPage.copyright', { year })}</p>
-            <span aria-hidden="true">·</span>
             <Link href={privacyUrl} target="_blank">
                 {t('app.application.landingPage.privacy')}
             </Link>
-            <span aria-hidden="true">·</span>
             <Link href={termsUrl} target="_blank">
                 {t('app.application.landingPage.terms')}
             </Link>
