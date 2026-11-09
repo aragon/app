@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
 import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
@@ -13,10 +14,26 @@ describe('<Footer /> component', () => {
         'useApplicationVersion',
     );
 
-    const createTestComponent = (props?: Partial<IFooterProps>) => {
+    const createTestComponent = (
+        props?: Partial<IFooterProps>,
+        workspacesEnabled = false,
+    ) => {
         const completeProps: IFooterProps = { ...props };
 
-        return <Footer {...completeProps} />;
+        return (
+            <FeatureFlagsProvider
+                initialSnapshot={[
+                    {
+                        key: 'workspaces',
+                        name: 'Workspaces',
+                        description: '',
+                        enabled: workspacesEnabled,
+                    },
+                ]}
+            >
+                <Footer {...completeProps} />
+            </FeatureFlagsProvider>
+        );
     };
 
     beforeEach(() => {
@@ -50,6 +67,16 @@ describe('<Footer /> component', () => {
             expect(linkElement).toBeInTheDocument();
             expect(linkElement.href).toMatch(link.link);
         });
+    });
+
+    it('routes Explore to its dedicated page when workspaces are enabled', () => {
+        render(createTestComponent(undefined, true));
+
+        expect(
+            screen.getByRole('link', {
+                name: /footer.link.explore/,
+            }),
+        ).toHaveAttribute('href', '/explore');
     });
 
     it('renders the copyright info', () => {

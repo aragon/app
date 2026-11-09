@@ -1,4 +1,5 @@
 import { Dialog, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { type INavigationLink, NavigationLinks } from '../navigationLinks';
 import { NavigationLinksItem } from '../navigationLinks/navigationLinksItem';
@@ -20,6 +21,8 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
         props;
 
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+    const exploreHref = isEnabled('workspaces') ? '/explore' : '/';
     const handleLinksClick = () => onOpenChange?.(false);
 
     return (
@@ -51,7 +54,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                         <div className="border-neutral-100 border-t" />
                     </div>
                     <NavigationLinksItem
-                        href="/"
+                        href={exploreHref}
                         icon={IconType.APP_EXPLORE}
                         iconSide="right"
                         variant="column"
