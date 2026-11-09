@@ -28,6 +28,7 @@ import {
 } from '@/modules/finance/components/transactionList';
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { SafeExecutionDetails } from '@/modules/safe/components/safeExecutionDetails';
+import { SafeTransactionSimulation } from '@/modules/safe/components/safeTransactionSimulation';
 import { SafeTransactionVoting } from '@/modules/safe/components/safeTransactionVoting';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -292,7 +293,7 @@ const buildTransferDisplay = (
  * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions
  * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset.
  * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their voting
- * card, where owners confirm or execute them, above their decoded actions. Must be rendered inside an `<Accordion.Container />`.
+ * card, where owners confirm or execute them, and their Tenderly simulation, above their decoded actions. Must be rendered inside an `<Accordion.Container />`.
  */
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
@@ -413,12 +414,24 @@ export const WorkspaceTransactionListItem: React.FC<
                         {workspaceTransactionUtils.isPendingExecution(
                             row.transaction,
                         ) && (
-                            <SafeTransactionVoting
-                                network={row.transaction.network}
-                                onSafeStateChange={handleSafeStateChange}
-                                safeAddress={row.transaction.account.address}
-                                safeTxHash={row.safeTxHash}
-                            />
+                            <>
+                                <SafeTransactionVoting
+                                    network={row.transaction.network}
+                                    onSafeStateChange={handleSafeStateChange}
+                                    safeAddress={
+                                        row.transaction.account.address
+                                    }
+                                    safeTxHash={row.safeTxHash}
+                                />
+                                <SafeTransactionSimulation
+                                    actionCount={row.transaction.actionCount}
+                                    network={row.transaction.network}
+                                    safeAddress={
+                                        row.transaction.account.address
+                                    }
+                                    safeTxHash={row.safeTxHash}
+                                />
+                            </>
                         )}
                         <SafeExecutionDetails
                             safeAddress={row.transaction.account.address}

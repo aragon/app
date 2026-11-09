@@ -92,3 +92,24 @@ export interface IGetLastSimulationUrlParams {
 
 export interface IGetLastSimulationParams
     extends IRequestUrlParams<IGetLastSimulationUrlParams> {}
+
+export interface ISafeTransactionSimulationUrlParams {
+    /**
+     * Network the Safe is deployed on.
+     */
+    network: Network;
+    /**
+     * Address of the Safe the transaction belongs to.
+     */
+    safeAddress: string;
+    /**
+     * Hash of the pending Safe transaction to simulate.
+     */
+    safeTxHash: string;
+}
+
+export interface ISimulateSafeTransactionParams
+    extends IRequestUrlParams<ISafeTransactionSimulationUrlParams> {}
+
+export interface IGetLastSafeTransactionSimulationParams
+    extends IRequestUrlParams<ISafeTransactionSimulationUrlParams> {}
