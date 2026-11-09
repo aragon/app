@@ -25,7 +25,8 @@ export interface IWorkspaceSafeAsideCardProps {
      */
     title: string;
     /**
-     * Stats of the page the card is displayed on, e.g. transaction or asset totals.
+     * Stats of the page the card is displayed on, e.g. transaction or asset totals. None renders no stats grid, for a
+     * page that states its stats elsewhere, e.g. in its header.
      */
     stats: IStatCardProps[];
 }
@@ -67,16 +68,18 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                     {description}
                 </Collapsible>
             )}
-            <div className="grid w-full grid-cols-2 gap-3">
-                {stats.map((stat) => (
-                    <StatCard
-                        key={stat.label}
-                        label={stat.label}
-                        suffix={stat.suffix}
-                        value={stat.value}
-                    />
-                ))}
-            </div>
+            {stats.length > 0 && (
+                <div className="grid w-full grid-cols-2 gap-3">
+                    {stats.map((stat) => (
+                        <StatCard
+                            key={stat.label}
+                            label={stat.label}
+                            suffix={stat.suffix}
+                            value={stat.value}
+                        />
+                    ))}
+                </div>
+            )}
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t('app.finance.transactionLinkedAccountInfo.chain')}

@@ -25,6 +25,10 @@ export interface IWorkspaceMemberListProps {
      * Number of members to read per page.
      */
     pageSize: number;
+    /**
+     * Hides the pagination of the list, e.g. on a dashboard that previews the list and links to its page.
+     */
+    hidePagination?: boolean;
 }
 
 /**
@@ -48,7 +52,7 @@ export interface IWorkspaceMemberListProps {
 export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
     props,
 ) => {
-    const { workspaceId, accounts, pageSize } = props;
+    const { workspaceId, accounts, pageSize, hidePagination } = props;
 
     const { filterTabs, hasTabs, activeTab } = useWorkspaceMemberTabs({
         accounts,
@@ -92,6 +96,7 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
             accounts={accounts}
             bodyAccountId={tabProps?.bodyAccountId}
             filters={tabProps?.filters}
+            hidePagination={hidePagination}
             pageSize={pageSize}
             visiblePluginsByAccountId={visiblePluginsByAccountId}
             workspaceId={workspaceId}
