@@ -2,6 +2,7 @@ import { Network } from '@/shared/api/daoService';
 import { type IWorkspaceAccount, WorkspaceAccountType } from './domain';
 import {
     defaultWorkspaceName,
+    pinnedWorkspaceStorageKey,
     workspaceService,
     workspaceStorageKey,
 } from './workspaceService';
@@ -119,6 +120,16 @@ describe('workspace service', () => {
             expect(Object.keys(getStoredWorkspaces())).toHaveLength(1);
         });
 
+        it('clears a stale pin before seeding the default workspace', async () => {
+            localStorage.setItem(pinnedWorkspaceStorageKey, 'missing');
+
+            const workspace =
+                await workspaceService.getOrCreateDefaultWorkspace();
+
+            expect(workspace.name).toBe(defaultWorkspaceName);
+            expect(localStorage.getItem(pinnedWorkspaceStorageKey)).toBeNull();
+        });
+
         it('resolves the first persisted workspace without seeding', async () => {
             const first = await workspaceService.createWorkspace({
                 body: buildBody({ name: 'First' }),
@@ -133,6 +144,32 @@ describe('workspace service', () => {
             expect(Object.keys(getStoredWorkspaces())).toHaveLength(2);
         });
 
+        it('resolves the pinned workspace when it is not first', async () => {
+            await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            const second = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Second' }),
+            });
+            await workspaceService.setPinnedWorkspaceId(second.id);
+
+            await expect(
+                workspaceService.getOrCreateDefaultWorkspace(),
+            ).resolves.toEqual(second);
+        });
+
+        it('falls back to the first workspace and clears a stale pin', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            localStorage.setItem(pinnedWorkspaceStorageKey, 'missing');
+
+            await expect(
+                workspaceService.getOrCreateDefaultWorkspace(),
+            ).resolves.toEqual(first);
+            expect(localStorage.getItem(pinnedWorkspaceStorageKey)).toBeNull();
+        });
+
         it('rejects with a storage error when local storage rejects the write', async () => {
             const setItemSpy = jest
                 .spyOn(Storage.prototype, 'setItem')
@@ -145,6 +182,30 @@ describe('workspace service', () => {
             ).rejects.toMatchObject({ code: 'workspaceStorageError' });
 
             setItemSpy.mockRestore();
+        });
+    });
+
+    describe('setPinnedWorkspaceId', () => {
+        it('replaces the pinned workspace and removes it when unpinned', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            const second = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Second' }),
+            });
+
+            await workspaceService.setPinnedWorkspaceId(first.id);
+            await workspaceService.setPinnedWorkspaceId(second.id);
+
+            await expect(workspaceService.getPinnedWorkspaceId()).resolves.toBe(
+                second.id,
+            );
+
+            await workspaceService.setPinnedWorkspaceId(null);
+
+            await expect(
+                workspaceService.getPinnedWorkspaceId(),
+            ).resolves.toBeNull();
         });
     });
 

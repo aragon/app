@@ -4976,7 +4976,9 @@
         "message": "{{account}} isn't part of {{workspace}}."
       },
       "workspaceSelector": {
-        "create": "Create workspace"
+        "create": "Create workspace",
+        "pin": "Pin {{workspace}}",
+        "unpin": "Unpin {{workspace}}"
       },
       "workspaceEditPage": {
         "steps": {

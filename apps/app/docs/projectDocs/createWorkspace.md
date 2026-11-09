@@ -223,8 +223,9 @@ local storage for real requests is a single-method change:
 - `getWorkspace({ urlParams: { id } })` → the stored workspace; rejects with `notFoundCode` / 404 when absent.
 - `getWorkspaceList()` → every stored workspace, read by the workspace switcher through `useWorkspaceList`. The
   publish dialog invalidates it after creating a workspace so the new one is listed straight away.
-- `getOrCreateDefaultWorkspace()` → the first stored workspace, or the default one, seeded and persisted when the
-  registry is empty. Called by the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
+- `getOrCreateDefaultWorkspace()` → the pinned workspace when that ID still exists, otherwise the first stored
+  workspace, or the default one seeded and persisted when the registry is empty. Clears a stale pinned ID. Called by
+  the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
   `IWorkspace`.
@@ -236,22 +237,24 @@ local storage for real requests is a single-method change:
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
   `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
 
-Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
+Storage key `aragon-workspaces` holds a `Record<string, IWorkspace>`. The separate
+`aragon-pinned-workspace` key holds the single user-local pinned workspace ID. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
 
-The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
-`getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an
-explicit call because a read that writes makes the default appear depending on which page a user opened first, and
-lets two tabs reading an empty registry seed two different workspaces. It is also the shape a backend registry would
-take: a get-or-create (bootstrap) call, not a GET with a side effect. The seed's ID gets a random suffix
+The list and individual workspace reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so
+the list can be empty. Only `getOrCreateDefaultWorkspace` seeds an empty "My workspace"; it also removes a pinned ID
+that no longer identifies a stored workspace before falling back to the first workspace. `createWorkspace` does not
+seed. Seeding is an explicit call because a read that writes makes the default appear depending on which page a user
+opened first, and lets two tabs reading an empty registry seed two different workspaces. It is also the shape a backend
+registry would take: a get-or-create (bootstrap) call, not a GET with a side effect. The seed's ID gets a random suffix
 (`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage reads as
 empty and is overwritten on the next write — acceptable, as only outside tampering can produce it.
 
-The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it
-must not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, invalidates the workspace list
-(a list read before the seed is cached as empty) and `router.replace`s to the workspace's aggregated overview, so
-Back does not land on the redirect again. Running it twice (Strict Mode) is harmless: the second call finds the
-workspace the first one seeded.
+The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it must
+not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, selects the valid pinned workspace or
+the first stored workspace, seeds only when none exist, invalidates the workspace list and `router.replace`s to the
+selected workspace's aggregated overview, so Back does not land on the redirect again. Running it twice (Strict Mode)
+is harmless: the second call finds the workspace the first one seeded.
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -289,7 +292,7 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 
 ```
 src/app/workspace/
-├─ page.tsx                   WorkspaceEntryPage: opens the first workspace, seeding the default one
+├─ page.tsx                   WorkspaceEntryPage: opens the pinned or first workspace, seeding the default one
 src/app/workspace/[workspaceId]/
 ├─ (workspacePage)/           route group: every page with the workspace navigation
 │  ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)

@@ -15,6 +15,11 @@ import type {
 export const workspaceStorageKey = 'aragon-workspaces';
 
 /**
+ * Local-storage key holding the single workspace ID preferred by this user.
+ */
+export const pinnedWorkspaceStorageKey = 'aragon-pinned-workspace';
+
+/**
  * Name of the workspace seeded on an empty registry. Stored data the user can rename, so not translated.
  */
 export const defaultWorkspaceName = 'My workspace';
@@ -45,13 +50,46 @@ class WorkspaceService {
     getWorkspaceList = async (): Promise<IWorkspace[]> =>
         Object.values(this.getStoredWorkspaces());
 
+    getPinnedWorkspaceId = async (): Promise<string | null> =>
+        this.getStorage().getItem(pinnedWorkspaceStorageKey);
+
+    setPinnedWorkspaceId = async (id: string | null): Promise<void> => {
+        const storage = this.getStorage();
+
+        try {
+            if (id == null) {
+                storage.removeItem(pinnedWorkspaceStorageKey);
+            } else {
+                storage.setItem(pinnedWorkspaceStorageKey, id);
+            }
+        } catch (error: unknown) {
+            throw this.buildStorageError(error);
+        }
+    };
+
     /**
-     * Returns the first stored workspace, seeding and persisting the default one when the registry is empty.
+     * Returns the pinned workspace when it still exists, otherwise the first stored workspace. Seeds and persists
+     * the default one when the registry is empty.
      *
      * @throws {AragonBackendServiceError} `workspaceStorageError` when local storage rejects to write.
      */
     getOrCreateDefaultWorkspace = async (): Promise<IWorkspace> => {
-        const [firstWorkspace] = Object.values(this.getStoredWorkspaces());
+        const workspaces = this.getStoredWorkspaces();
+        const pinnedWorkspaceId = await this.getPinnedWorkspaceId();
+        const pinnedWorkspace =
+            pinnedWorkspaceId != null
+                ? workspaces[pinnedWorkspaceId]
+                : undefined;
+
+        if (pinnedWorkspace != null) {
+            return pinnedWorkspace;
+        }
+
+        if (pinnedWorkspaceId != null) {
+            await this.setPinnedWorkspaceId(null);
+        }
+
+        const [firstWorkspace] = Object.values(workspaces);
 
         if (firstWorkspace != null) {
             return firstWorkspace;
@@ -153,10 +191,7 @@ class WorkspaceService {
         targets: [],
     });
 
-    /**
-     * Returns the workspaces persisted on local storage, ignoring corrupted entries.
-     */
-    private getStoredWorkspaces = (): Record<string, IWorkspace> => {
+    private getStorage = (): Storage => {
         if (typeof window === 'undefined') {
             throw new AragonBackendServiceError(
                 'workspaceStorageUnavailable',
@@ -165,7 +200,14 @@ class WorkspaceService {
             );
         }
 
-        const rawWorkspaces = localStorage.getItem(workspaceStorageKey);
+        return localStorage;
+    };
+
+    /**
+     * Returns the workspaces persisted on local storage, ignoring corrupted entries.
+     */
+    private getStoredWorkspaces = (): Record<string, IWorkspace> => {
+        const rawWorkspaces = this.getStorage().getItem(workspaceStorageKey);
 
         if (rawWorkspaces == null) {
             return {};
@@ -185,7 +227,7 @@ class WorkspaceService {
      */
     private persistWorkspaces = (workspaces: Record<string, IWorkspace>) => {
         try {
-            localStorage.setItem(
+            this.getStorage().setItem(
                 workspaceStorageKey,
                 JSON.stringify(workspaces),
             );

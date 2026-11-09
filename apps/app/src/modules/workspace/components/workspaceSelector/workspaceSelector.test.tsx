@@ -1,6 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
@@ -57,9 +57,13 @@ describe('<WorkspaceSelector /> component', () => {
         useRouterSpy.mockReset();
         usePathnameSpy.mockReset();
         pushMock.mockReset();
+        localStorage.clear();
     });
 
-    const createTestComponent = (props?: Partial<IWorkspaceSelectorProps>) => {
+    const createTestComponent = (
+        props?: Partial<IWorkspaceSelectorProps>,
+        duplicate = false,
+    ) => {
         const completeProps: IWorkspaceSelectorProps = {
             workspaceId: firstWorkspace.id,
             ...props,
@@ -69,6 +73,7 @@ describe('<WorkspaceSelector /> component', () => {
             <GukModulesProvider>
                 <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
                     <WorkspaceSelector {...completeProps} />
+                    {duplicate && <WorkspaceSelector {...completeProps} />}
                 </ReactQueryWrapper>
             </GukModulesProvider>
         );
@@ -76,15 +81,54 @@ describe('<WorkspaceSelector /> component', () => {
 
     const openDropdown = async () =>
         userEvent.click(
-            await screen.findByRole('button', { name: /First Workspace/ }),
+            await screen.findByRole('button', { name: 'First Workspace' }),
         );
 
     it('displays the current workspace on the trigger', async () => {
         render(createTestComponent());
 
         expect(
-            await screen.findByRole('button', { name: /First Workspace/ }),
+            await screen.findByRole('button', { name: 'First Workspace' }),
         ).toBeInTheDocument();
+    });
+
+    it('pins and unpins the current workspace across selector instances', async () => {
+        render(createTestComponent(undefined, true));
+
+        const pinButtons = await screen.findAllByRole('button', {
+            name: /workspaceSelector\.pin/,
+        });
+        expect(pinButtons).toHaveLength(2);
+
+        await userEvent.click(pinButtons[0]);
+
+        await waitFor(() =>
+            expect(
+                screen.getAllByRole('button', {
+                    name: /workspaceSelector\.unpin/,
+                }),
+            ).toHaveLength(2),
+        );
+        await expect(workspaceService.getPinnedWorkspaceId()).resolves.toBe(
+            firstWorkspace.id,
+        );
+
+        await userEvent.click(
+            screen.getAllByRole('button', {
+                name: /workspaceSelector\.unpin/,
+            })[0],
+        );
+
+        await waitFor(() =>
+            expect(
+                screen.getAllByRole('button', {
+                    name: /workspaceSelector\.pin/,
+                }),
+            ).toHaveLength(2),
+        );
+        await expect(
+            workspaceService.getPinnedWorkspaceId(),
+        ).resolves.toBeNull();
     });
 
     it('lists every workspace followed by the create workspace item', async () => {
