@@ -464,6 +464,7 @@
           "description": "Your existing Safe and Aragon accounts - in one place.",
           "title": "Manage your team’s onchain finances"
         },
+        "openingWorkspace": "Opening your workspace…",
         "privacy": "Privacy",
         "signIn": {
           "comingSoon": "coming soon",

@@ -1,11 +1,12 @@
 'use client';
 
-import { Button, Card, Icon, IconType } from '@aragon/gov-ui-kit';
+import { Button, Card, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import NetBackground from '@/assets/images/net_bg.svg';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -21,12 +22,35 @@ export const LandingPage: React.FC = () => {
             onSuccess: () => router.push('/workspace'),
         });
     const year = new Date().getFullYear();
+    const { address, isConnecting, isReconnecting } = useWalletAccount();
 
     useEffect(() => {
         if (isWalletConnected) {
             router.replace('/workspace');
         }
     }, [isWalletConnected, router]);
+    const isOpeningWorkspace =
+        isWalletConnected || address != null || isConnecting || isReconnecting;
+
+    if (isOpeningWorkspace) {
+        return (
+            <main
+                aria-busy="true"
+                className="flex min-h-dvh items-center justify-center bg-neutral-0"
+                data-ftue-landing=""
+            >
+                <div
+                    className="flex flex-col items-center gap-3 text-neutral-500"
+                    role="status"
+                >
+                    <Spinner size="lg" variant="neutral" />
+                    <p className="text-base leading-tight">
+                        {t('app.application.landingPage.openingWorkspace')}
+                    </p>
+                </div>
+            </main>
+        );
+    }
 
     const exploreDaosLink = (
         <Link
