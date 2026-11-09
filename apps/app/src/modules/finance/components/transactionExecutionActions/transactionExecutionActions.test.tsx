@@ -46,6 +46,7 @@ describe('<TransactionExecutionActions /> component', () => {
             actions: [],
             actionCount: 0,
             isLoading: false,
+            isError: false,
             chainId: 1,
             transactionId: 'transaction-id',
             ...props,
@@ -98,5 +99,14 @@ describe('<TransactionExecutionActions /> component', () => {
             }),
             undefined,
         );
+    });
+
+    it('reports the actions as not loaded instead of as missing when they could not be read', () => {
+        render(createTestComponent({ actionCount: 3, isError: true }));
+
+        expect(
+            screen.getByText(/transactionExecutionActions.loadError/),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('No actions added')).not.toBeInTheDocument();
     });
 });

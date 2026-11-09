@@ -35,7 +35,11 @@ export const TransactionExecutionDetails: React.FC<
 
     const { t } = useTranslations();
 
-    const { data: actionData, isLoading } = useTransactionActions(
+    const {
+        data: actionData,
+        isLoading,
+        isError,
+    } = useTransactionActions(
         {
             urlParams: {
                 id: transaction.id,
@@ -111,6 +115,8 @@ export const TransactionExecutionDetails: React.FC<
                 actions={actions}
                 chainId={chainId}
                 daoId={dao.id}
+                // A failed poll keeps the actions already read, so only a read that never succeeded is reported.
+                isError={actionData == null && isError}
                 isLoading={
                     isLoading ||
                     (actionData?.decoding === true &&

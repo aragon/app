@@ -1955,6 +1955,9 @@
         "transactions": "Transactions",
         "value": "Value"
       },
+      "transactionExecutionActions": {
+        "loadError": "The actions of this transaction could not be loaded. Try again later."
+      },
       "transferAssetForm": {
         "amount": {
           "label": "Amount",
