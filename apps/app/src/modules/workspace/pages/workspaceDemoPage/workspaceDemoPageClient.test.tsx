@@ -114,10 +114,10 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         );
 
         expect(
-            screen.getAllByRole('link', {
+            screen.getByRole('link', {
                 name: 'app.workspace.demo.navigation.landing',
             }),
-        ).toHaveLength(2);
+        ).toHaveAttribute('href', '/');
         expect(
             screen.getAllByText('app.workspace.demo.readOnly'),
         ).not.toHaveLength(0);
