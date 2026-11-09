@@ -2,6 +2,7 @@ import path from 'node:path';
 import {
     cleanBody,
     loadCorpus,
+    parseHeading,
     resolvePublicLink,
     rewriteLinks,
 } from './corpus';
@@ -227,6 +228,45 @@ describe('loadCorpus', () => {
         // The section after the skipped one comes back.
         expect(body).toContain('## Naming');
         expect(body).toContain('### Metadata-backed display');
+    });
+});
+
+describe('parseHeading', () => {
+    it('returns the level and the text without closing hashes', () => {
+        expect(parseHeading('## Title ##', false)).toEqual({
+            level: 2,
+            text: 'Title',
+        });
+        expect(parseHeading('### Title##  ', false)).toEqual({
+            level: 3,
+            text: 'Title',
+        });
+        expect(parseHeading('# a #b', false)).toEqual({
+            level: 1,
+            text: 'a #b',
+        });
+        expect(parseHeading('#   ', false)).toEqual({ level: 1, text: '' });
+    });
+
+    it('returns null for non-headings and inside fences', () => {
+        expect(parseHeading('Text', false)).toBeNull();
+        expect(parseHeading('#tag', false)).toBeNull();
+        expect(parseHeading('# Title', true)).toBeNull();
+    });
+
+    // Jest cannot time out synchronous code, so the bound is asserted here. The old pattern spends
+    // about 20 s on the first line and 10 s on the second; parseHeading takes milliseconds.
+    it('handles long runs of spaces and hashes in linear time', () => {
+        const start = Date.now();
+        const spaces = parseHeading(`# a${' '.repeat(5000)}b`, false);
+        const hashes = parseHeading(
+            `# x ${'#'.repeat(100_000)} ${'#'.repeat(100_000)}`,
+            false,
+        );
+
+        expect(spaces?.text).toEqual(`a${' '.repeat(5000)}b`);
+        expect(hashes?.text).toEqual(`x ${'#'.repeat(100_000)}`);
+        expect(Date.now() - start).toBeLessThan(2000);
     });
 });
 
