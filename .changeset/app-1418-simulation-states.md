@@ -1,5 +1,5 @@
 ---
-'@aragon/app': patch
+'@aragon/app': minor
 ---
 
 Add simulation budget error checks and types for saved simulation results.

@@ -224,9 +224,11 @@ describe('useCrossChainControllerGasLimit hook', () => {
     });
 
     it.each([
-        ['tooBusy', 503],
-        ['crossChainSimulationFailed', 502],
-    ])('keeps the generic error for %s', async (code, status) => {
+        ['tooBusy', 503, 'unavailable'],
+        ['simulationBudgetCheckFailed', 503, 'unavailable'],
+        ['crossChainSimulationFailed', 502, 'error'],
+        ['badSimulationRequest', 400, 'error'],
+    ])('shows the %s error as %s', async (code, status, errorKey) => {
         estimateGasLimitSpy.mockRejectedValue(
             new AragonBackendServiceError(code, 'Unavailable', status),
         );
@@ -237,8 +239,7 @@ describe('useCrossChainControllerGasLimit hook', () => {
 
         await waitFor(() =>
             expect(result.current.estimationAlert).toEqual({
-                message:
-                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.error',
+                message: `app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.${errorKey}`,
                 variant: 'critical',
             }),
         );

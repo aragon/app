@@ -6,6 +6,8 @@ export class AragonBackendServiceError extends Error {
     static pluginNotFoundCode = 'pluginNotFound';
     static simulationBudgetExhaustedCode = 'simulationBudgetExhausted';
     static crossChainGasBudgetExhaustedCode = 'crossChainGasBudgetExhausted';
+    static tooBusyCode = 'tooBusy';
+    static simulationBudgetCheckFailedCode = 'simulationBudgetCheckFailed';
 
     static parseErrorCode = 'parseError';
     static parseErrorDescription = 'Error parsing response';
@@ -78,6 +80,15 @@ export class AragonBackendServiceError extends Error {
     static isSimulationBudgetError = (error: unknown): boolean =>
         this.hasCode(error, this.simulationBudgetExhaustedCode) ||
         this.hasCode(error, this.crossChainGasBudgetExhaustedCode);
+
+    /**
+     * Simulation could not run right now but a later retry can succeed: the backend is busy, could
+     * not check the budget, or never answered (e.g. a network error, which is not a backend error).
+     */
+    static isSimulationUnavailableError = (error: unknown): boolean =>
+        !(error instanceof AragonBackendServiceError) ||
+        this.hasCode(error, this.tooBusyCode) ||
+        this.hasCode(error, this.simulationBudgetCheckFailedCode);
 
     /**
      * Expected "resource is gone" errors: a genuine 404 or a stale link to a DAO

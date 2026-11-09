@@ -170,9 +170,11 @@ describe('<SimulateActionsDialog /> component', () => {
     );
 
     it.each([
-        ['tooBusy', 503],
-        ['simulationFailed', 502],
-    ])('shows the error text for %s', (code, status) => {
+        ['tooBusy', 503, 'unavailable'],
+        ['simulationBudgetCheckFailed', 503, 'unavailable'],
+        ['simulationFailed', 502, 'error'],
+        ['badSimulationRequest', 400, 'error'],
+    ])('shows the %s error as %s', (code, status, errorKey) => {
         useProposalSimulationMock.mockReturnValue({
             isError: true,
             isPending: false,
@@ -185,7 +187,7 @@ describe('<SimulateActionsDialog /> component', () => {
 
         expect(ActionSimulation).toHaveBeenCalledWith(
             expect.objectContaining({
-                error: 'app.governance.simulateActionsDialog.error',
+                error: `app.governance.simulateActionsDialog.${errorKey}`,
             }),
             undefined,
         );

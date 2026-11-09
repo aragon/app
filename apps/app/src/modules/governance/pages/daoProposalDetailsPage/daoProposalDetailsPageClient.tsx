@@ -232,12 +232,20 @@ export const DaoProposalDetailsPageClient: React.FC<
         : undefined;
     let simulationErrorContext: string | undefined;
     if (hasSimulationFailed) {
-        simulationErrorContext =
+        simulationErrorContext = 'simulationError';
+        if (
             AragonBackendServiceError.isSimulationBudgetError(
                 simulateProposalError,
             )
-                ? 'simulationLimitReached'
-                : 'simulationError';
+        ) {
+            simulationErrorContext = 'simulationLimitReached';
+        } else if (
+            AragonBackendServiceError.isSimulationUnavailableError(
+                simulateProposalError,
+            )
+        ) {
+            simulationErrorContext = 'simulationUnavailable';
+        }
     } else if (isLastSimulationError && !isLastSimulationNotFoundError) {
         simulationErrorContext = 'lastSimulationError';
     } else if (isStaleRun) {

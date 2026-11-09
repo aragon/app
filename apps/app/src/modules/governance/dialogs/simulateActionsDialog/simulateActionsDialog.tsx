@@ -111,11 +111,14 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
     const lastSimulation =
         data != null ? { ...data, timestamp: data.runAt } : undefined;
 
-    const errorContext = AragonBackendServiceError.isSimulationBudgetError(
-        simulationError,
-    )
-        ? 'limitReached'
-        : 'error';
+    let errorContext = 'error';
+    if (AragonBackendServiceError.isSimulationBudgetError(simulationError)) {
+        errorContext = 'limitReached';
+    } else if (
+        AragonBackendServiceError.isSimulationUnavailableError(simulationError)
+    ) {
+        errorContext = 'unavailable';
+    }
     const error = isError
         ? t(`app.governance.simulateActionsDialog.${errorContext}`)
         : undefined;

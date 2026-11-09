@@ -899,6 +899,7 @@
         "continue": "Continue to dispatch",
         "description": "Review the simulation before dispatching this router.",
         "failed": "Simulation failed",
+        "failedDescription": "The simulation could not be completed. You can go back and dispatch without a simulation.",
         "limitReached": "Simulation limit reached for now. Try again later, or go back and dispatch without a simulation.",
         "loading": "Running simulation...",
         "noTenderly": "Simulation is not available for this network.",
@@ -2190,6 +2191,7 @@
             "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
             "simulationError": "There was an error simulating the actions. Please try again later.",
             "simulationLimitReached": "Simulation limit reached for now. Try again later.",
+            "simulationUnavailable": "Simulation is not available right now. Try again later.",
             "staleSimulation": "The actions changed after this simulation. Simulate again to check the current actions."
           },
           "description": {
@@ -2444,7 +2446,8 @@
         "limitReached": "Simulation limit reached for now. Try again later or continue without it.",
         "simulate": "Simulate actions",
         "skipSimulation": "Skip simulation",
-        "title": "Simulate actions"
+        "title": "Simulate actions",
+        "unavailable": "Simulation is not available right now. Try again later or continue without it."
       },
       "verifySmartContractDialog": {
         "action": {
@@ -2684,6 +2687,7 @@
             "reverted": "The actions failed when simulated on the destination chain, so no gas limit could be measured: {{reason}}",
             "simulated": "The simulated transaction cost {{requiredGas}} gas, so we recommend an additional {{bufferPercent}}% margin at a total of {{totalGas}} to ensure it is successful.",
             "stale": "The estimation limit is reached, so this gas limit comes from an earlier run at {{date}}. Check it still fits or enter a value manually.",
+            "unavailable": "Estimation is not available right now. Try again later or enter a gas limit manually.",
             "unknownReason": "no reason given",
             "viewSimulation": "View simulation"
           }

@@ -190,15 +190,34 @@ describe('<DispatchSimulationDialog /> component', () => {
     });
 
     it.each([
-        new AragonBackendServiceError('tooBusy', 'Busy', 503),
-        new AragonBackendServiceError('simulationFailed', 'Failed', 502),
-        new Error('Network error'),
-    ])('shows unavailable for $message', async (error) => {
+        [new AragonBackendServiceError('tooBusy', 'Busy', 503), 'unavailable'],
+        [
+            new AragonBackendServiceError(
+                'simulationBudgetCheckFailed',
+                'Check failed',
+                503,
+            ),
+            'unavailable',
+        ],
+        [new TypeError('Failed to fetch'), 'unavailable'],
+        [
+            new AragonBackendServiceError('simulationFailed', 'Failed', 502),
+            'failedDescription',
+        ],
+        [
+            new AragonBackendServiceError(
+                'badSimulationRequest',
+                'Bad request',
+                400,
+            ),
+            'failedDescription',
+        ],
+    ])('shows %s as %s', async (error, errorKey) => {
         simulateDispatchSpy.mockRejectedValue(error);
         renderComponent();
 
         expect(await screen.findByRole('alert')).toHaveTextContent(
-            'app.capitalFlow.dispatchSimulationDialog.unavailable',
+            `app.capitalFlow.dispatchSimulationDialog.${errorKey}`,
         );
         expect(
             screen.getByRole('button', { name: continueLabel }),

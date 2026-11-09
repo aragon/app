@@ -101,11 +101,18 @@ const buildEstimationAlert = (
         'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas';
 
     if (estimationError != null) {
-        const errorKey = AragonBackendServiceError.isSimulationBudgetError(
-            estimationError,
-        )
-            ? 'limitReached'
-            : 'error';
+        let errorKey = 'error';
+        if (
+            AragonBackendServiceError.isSimulationBudgetError(estimationError)
+        ) {
+            errorKey = 'limitReached';
+        } else if (
+            AragonBackendServiceError.isSimulationUnavailableError(
+                estimationError,
+            )
+        ) {
+            errorKey = 'unavailable';
+        }
 
         return {
             message: t(`${translationPrefix}.${errorKey}`),

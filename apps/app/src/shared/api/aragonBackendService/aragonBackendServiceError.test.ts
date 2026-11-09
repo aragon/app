@@ -119,6 +119,40 @@ describe('AragonBackendServiceError class', () => {
         });
     });
 
+    describe('isSimulationUnavailableError', () => {
+        it.each([
+            ['tooBusy', 503],
+            ['simulationBudgetCheckFailed', 503],
+        ])('returns true for %s', (code, status) => {
+            const error = new AragonBackendServiceError(code, '', status);
+
+            expect(
+                AragonBackendServiceError.isSimulationUnavailableError(error),
+            ).toBeTruthy();
+        });
+
+        it('returns true for an error the backend did not send', () => {
+            expect(
+                AragonBackendServiceError.isSimulationUnavailableError(
+                    new TypeError('Failed to fetch'),
+                ),
+            ).toBeTruthy();
+        });
+
+        it.each([
+            ['simulationBudgetExhausted', 429],
+            ['badSimulationRequest', 400],
+            ['notFound', 404],
+            ['simulationFailed', 502],
+        ])('returns false for %s', (code, status) => {
+            const error = new AragonBackendServiceError(code, '', status);
+
+            expect(
+                AragonBackendServiceError.isSimulationUnavailableError(error),
+            ).toBeFalsy();
+        });
+    });
+
     describe('isPluginNotFoundError / isExpectedNotFoundError', () => {
         it('isPluginNotFoundError is true only for the pluginNotFound code', () => {
             expect(

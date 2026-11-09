@@ -101,13 +101,15 @@ export const DispatchSimulationDialog: React.FC<
 
             setSimulation(result);
         } catch (err: unknown) {
-            setError(
-                t(
-                    AragonBackendServiceError.isSimulationBudgetError(err)
-                        ? 'app.capitalFlow.dispatchSimulationDialog.limitReached'
-                        : 'app.capitalFlow.dispatchSimulationDialog.unavailable',
-                ),
-            );
+            let errorKey = 'failedDescription';
+            if (AragonBackendServiceError.isSimulationBudgetError(err)) {
+                errorKey = 'limitReached';
+            } else if (
+                AragonBackendServiceError.isSimulationUnavailableError(err)
+            ) {
+                errorKey = 'unavailable';
+            }
+            setError(t(`app.capitalFlow.dispatchSimulationDialog.${errorKey}`));
             setSimulation(null);
         } finally {
             setIsLoading(false);

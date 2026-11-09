@@ -544,8 +544,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
         it.each([
             ['simulationBudgetExhausted', 429, 'simulationLimitReached'],
-            ['tooBusy', 503, 'simulationError'],
+            ['tooBusy', 503, 'simulationUnavailable'],
+            ['simulationBudgetCheckFailed', 503, 'simulationUnavailable'],
             ['simulationFailed', 502, 'simulationError'],
+            ['badSimulationRequest', 400, 'simulationError'],
         ])(
             'shows the error for %s before the stale note',
             (code, status, context) => {
