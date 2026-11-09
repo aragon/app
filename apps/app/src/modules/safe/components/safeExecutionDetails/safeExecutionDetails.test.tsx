@@ -45,7 +45,7 @@ describe('<SafeExecutionDetails /> component', () => {
     beforeEach(() => {
         mockActions();
         transactionExecutionActionsSpy.mockReturnValue(
-            <div data-testid="execution-actions" />,
+            <div>execution-actions</div>,
         );
     });
 
@@ -116,7 +116,7 @@ describe('<SafeExecutionDetails /> component', () => {
         render(createTestComponent({ transaction }));
 
         expect(screen.queryByText('Executed by')).not.toBeInTheDocument();
-        expect(screen.getByTestId('execution-actions')).toBeInTheDocument();
+        expect(screen.getByText('execution-actions')).toBeInTheDocument();
     });
 
     it('attributes the raw calls to the Safe while the actions are being decoded', () => {
