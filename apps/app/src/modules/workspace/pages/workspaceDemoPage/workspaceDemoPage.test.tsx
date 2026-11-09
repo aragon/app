@@ -48,6 +48,14 @@ describe('<WorkspaceDemoPage /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders supported workspace-wide demo sections', async () => {
+        render(await WorkspaceDemoPage({ path: ['proposals'] }));
+
+        expect(
+            screen.getByText('demo page client proposals'),
+        ).toBeInTheDocument();
+    });
+
     it('renders the 404 page when the workspaces feature is disabled', async () => {
         isEnabledSpy.mockResolvedValue(false);
 
