@@ -170,6 +170,27 @@ describe('workspace service', () => {
             expect(localStorage.getItem(pinnedWorkspaceStorageKey)).toBeNull();
         });
 
+        it('falls back when a stale pin cannot be cleared', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            localStorage.setItem(pinnedWorkspaceStorageKey, 'missing');
+            const removeItemSpy = jest
+                .spyOn(Storage.prototype, 'removeItem')
+                .mockImplementation(() => {
+                    throw new Error('SecurityError');
+                });
+
+            await expect(
+                workspaceService.getOrCreateDefaultWorkspace(),
+            ).resolves.toEqual(first);
+            expect(localStorage.getItem(pinnedWorkspaceStorageKey)).toBe(
+                'missing',
+            );
+
+            removeItemSpy.mockRestore();
+        });
+
         it('rejects with a storage error when local storage rejects the write', async () => {
             const setItemSpy = jest
                 .spyOn(Storage.prototype, 'setItem')

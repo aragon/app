@@ -86,7 +86,11 @@ class WorkspaceService {
         }
 
         if (pinnedWorkspaceId != null) {
-            await this.setPinnedWorkspaceId(null);
+            try {
+                await this.setPinnedWorkspaceId(null);
+            } catch {
+                // A stale preference must not block selection of an existing workspace.
+            }
         }
 
         const [firstWorkspace] = Object.values(workspaces);

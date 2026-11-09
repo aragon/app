@@ -1,0 +1,1 @@
+export { useSetPinnedWorkspaceId } from './useSetPinnedWorkspaceId';

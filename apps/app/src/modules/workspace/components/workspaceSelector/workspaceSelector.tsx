@@ -7,16 +7,17 @@ import {
     Icon,
     IconType,
 } from '@aragon/gov-ui-kit';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
+    usePinnedWorkspaceId,
+    useSetPinnedWorkspaceId,
     useWorkspace,
     useWorkspaceList,
-    workspaceService,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
 import {
@@ -51,12 +52,8 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     });
     const { data: workspaces = [] } = useWorkspaceList();
     const pinnedWorkspaceQueryKey = workspaceServiceKeys.pinnedWorkspace();
-    const { data: pinnedWorkspaceId = null } = useQuery({
-        queryFn: workspaceService.getPinnedWorkspaceId,
-        queryKey: pinnedWorkspaceQueryKey,
-    });
-    const { mutate: setPinnedWorkspaceId } = useMutation({
-        mutationFn: workspaceService.setPinnedWorkspaceId,
+    const { data: pinnedWorkspaceId = null } = usePinnedWorkspaceId();
+    const { mutate: setPinnedWorkspaceId } = useSetPinnedWorkspaceId({
         onSuccess: (_data, id) =>
             queryClient.setQueryData(pinnedWorkspaceQueryKey, id),
     });
