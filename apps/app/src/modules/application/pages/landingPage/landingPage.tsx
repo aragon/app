@@ -22,7 +22,7 @@ export const LandingPage: React.FC = () => {
             onSuccess: () => router.push('/workspace'),
         });
     const year = new Date().getFullYear();
-    const { address, isConnecting, isReconnecting } = useWalletAccount();
+    const { address, isConnecting } = useWalletAccount();
 
     useEffect(() => {
         if (isWalletConnected) {
@@ -30,7 +30,7 @@ export const LandingPage: React.FC = () => {
         }
     }, [isWalletConnected, router]);
     const isOpeningWorkspace =
-        isWalletConnected || address != null || isConnecting || isReconnecting;
+        isWalletConnected || address != null || isConnecting;
 
     if (isOpeningWorkspace) {
         return (
