@@ -1,12 +1,25 @@
-import { expect, test } from '@playwright/test';
+import { type BrowserContext, expect, test } from '@playwright/test';
+
+const enableWorkspaces = async (context: BrowserContext, baseURL: string) => {
+    await context.addCookies([
+        {
+            name: 'aragon.featureFlags.overrides',
+            value: encodeURIComponent(JSON.stringify({ workspaces: true })),
+            url: baseURL,
+        },
+    ]);
+};
 
 test.describe('Wallet connect dialog', () => {
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ baseURL, context, page }) => {
+        await enableWorkspaces(context, baseURL!);
         await page.goto('/');
     });
 
     test('opens with expected trust signals and controls', async ({ page }) => {
-        await page.getByRole('button', { name: /connect/i }).click();
+        await page
+            .getByRole('button', { name: 'Continue with wallet' })
+            .click();
 
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();
@@ -27,7 +40,9 @@ test.describe('Wallet connect dialog', () => {
     });
 
     test('Cancel closes the dialog', async ({ page }) => {
-        await page.getByRole('button', { name: /connect/i }).click();
+        await page
+            .getByRole('button', { name: 'Continue with wallet' })
+            .click();
 
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();

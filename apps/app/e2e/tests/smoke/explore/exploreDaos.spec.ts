@@ -3,12 +3,23 @@ import {
     EXPLORE_SEARCH_UI_TIMEOUT,
     ExplorePage,
 } from '@e2e/helpers';
-import { expect, test } from '@playwright/test';
+import { type BrowserContext, expect, test } from '@playwright/test';
+
+const enableWorkspaces = async (context: BrowserContext, baseURL: string) => {
+    await context.addCookies([
+        {
+            name: 'aragon.featureFlags.overrides',
+            value: encodeURIComponent(JSON.stringify({ workspaces: true })),
+            url: baseURL,
+        },
+    ]);
+};
 
 test.describe('Explore page', () => {
     let explore: ExplorePage;
 
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ baseURL, context, page }) => {
+        await enableWorkspaces(context, baseURL!);
         explore = await new ExplorePage(page).navigate();
     });
 
