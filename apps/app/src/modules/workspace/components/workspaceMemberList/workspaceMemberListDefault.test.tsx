@@ -783,4 +783,18 @@ describe('<WorkspaceMemberListDefault /> component', () => {
             { enabled: true },
         );
     });
+
+    it('renders the data-list pagination by default', () => {
+        mockMembers([generateWorkspaceMember()]);
+        render(createTestComponent());
+
+        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+
+    it('does not render the data-list pagination when hidePagination is set to true', () => {
+        mockMembers([generateWorkspaceMember()]);
+        render(createTestComponent({ hidePagination: true }));
+
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
 });
