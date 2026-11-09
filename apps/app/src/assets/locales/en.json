@@ -4647,26 +4647,57 @@
             "safe": "Safe"
           }
         },
-        "description": "A static, read-only workspace showing how DAO and Safe accounts can be managed in one place.",
+        "action": {
+          "viewAll": "View all"
+        },
+        "contract": {
+          "address": "DAO address",
+          "chain": "Chain",
+          "launched": "Launched"
+        },
+        "description": "A read-only Aragon workspace with realistic DAO and Safe activity.",
         "navigation": {
           "accounts": "Accounts",
+          "allAccounts": "View all accounts",
           "dashboard": "Dashboard",
           "dialog": {
             "description": "Navigate the read-only demo workspace.",
             "title": "Demo workspace navigation"
           },
+          "featuredAccount": "Featured account",
           "label": "Demo workspace navigation",
           "landing": "Go to Aragon home",
           "open": "Open demo navigation"
         },
-        "name": "Demo workspace",
+        "name": "Aragon workspace",
+        "proposal": {
+          "author": "by aragonx.aragon.eth"
+        },
         "readOnly": "Read-only demo",
         "section": {
-          "accounts": "Accounts"
+          "accounts": "Accounts",
+          "assets": "Assets",
+          "contract": "Contract",
+          "latestActivity": "Latest activity",
+          "members": "Members",
+          "owners": "Owners",
+          "pendingDescription": "Transactions waiting for the signatures of the owners.",
+          "pendingTransactions": "Pending transactions",
+          "proposals": "Latest proposals",
+          "transactions": "Transactions"
         },
         "stat": {
           "accounts": "Accounts",
-          "targets": "Targets"
+          "members": "Members",
+          "nonce": "Nonce",
+          "owners": "Owners",
+          "proposals": "Proposals",
+          "targets": "Targets",
+          "threshold": "Threshold",
+          "treasury": "Treasury"
+        },
+        "status": {
+          "executed": "Executed"
         },
         "todo": {
           "description": "A live workspace brings actions across every account together.",

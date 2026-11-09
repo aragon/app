@@ -32,7 +32,7 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         localStorage.clear();
     });
 
-    it('renders the static account fixture without linking or persisting it', () => {
+    it('renders navigable Aragon account fixtures without persisting them', () => {
         const storedWorkspaces = localStorage.getItem(workspaceStorageKey);
 
         render(
@@ -49,25 +49,57 @@ describe('<WorkspaceDemoPageClient /> component', () => {
                 name: 'app.workspace.demo.name',
             }),
         ).toBeInTheDocument();
-        expect(screen.getAllByText('Citrea DAO')).not.toHaveLength(0);
-        expect(screen.getByText('Citrea Ops Safe')).toBeInTheDocument();
-        expect(screen.getByText('Citrea Grants Safe')).toBeInTheDocument();
+        expect(screen.getAllByText('Aragon X (Mainnet)')).not.toHaveLength(0);
+        expect(screen.getByText('Aragon Operations Safe')).toBeInTheDocument();
+        expect(screen.getByText('Aragon Grants Safe')).toBeInTheDocument();
         expect(
-            screen.getByTitle('0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419'),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByTitle('0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419'),
-        ).toHaveTextContent(/^Citrea · /);
-        expect(screen.getByText(/owners=5,threshold=3/)).toBeInTheDocument();
+            screen.getByTitle('0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482'),
+        ).toHaveTextContent(/^Ethereum · /);
+        expect(screen.getByText(/owners=4,threshold=3/)).toBeInTheDocument();
         expect(screen.getByText(/owners=3,threshold=2/)).toBeInTheDocument();
 
         const accounts = screen.getByRole('region', {
             name: 'app.workspace.demo.section.accounts',
         });
-        expect(within(accounts).queryByRole('link')).not.toBeInTheDocument();
+        expect(
+            within(accounts).getByRole('link', { name: /Aragon X/ }),
+        ).toHaveAttribute('href', '/demo/account/aragon-x/dashboard');
+        expect(
+            within(accounts).getByRole('link', {
+                name: /Aragon Operations Safe/,
+            }),
+        ).toHaveAttribute('href', '/demo/account/operations-safe/dashboard');
         expect(localStorage.getItem(workspaceStorageKey)).toBe(
             storedWorkspaces,
         );
+    });
+
+    it('renders the selected DAO dashboard with working section links', () => {
+        usePathnameSpy.mockReturnValue('/demo/account/aragon-x/dashboard');
+
+        render(
+            <FeatureFlagsProvider initialSnapshot={workspacesSnapshot}>
+                <GukModulesProvider>
+                    <WorkspaceDemoPageClient
+                        path={['account', 'aragon-x', 'dashboard']}
+                    />
+                </GukModulesProvider>
+            </FeatureFlagsProvider>,
+        );
+
+        expect(
+            screen.getByRole('heading', {
+                level: 1,
+                name: 'Aragon X (Mainnet)',
+            }),
+        ).toBeInTheDocument();
+        expect(screen.getByText('MULTISIG-265')).toBeInTheDocument();
+        expect(
+            screen.getAllByRole('link', {
+                name: 'app.workspace.demo.action.viewAll',
+            })[0],
+        ).toHaveAttribute('href', '/demo/account/aragon-x/proposals');
+        expect(screen.getByText('eagleops.dao.eth')).toBeInTheDocument();
     });
 
     it('keeps landing, read-only state, and navigation reachable below lg', async () => {

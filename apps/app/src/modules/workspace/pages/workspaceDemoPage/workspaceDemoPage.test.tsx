@@ -10,7 +10,9 @@ jest.mock('next/navigation-original', () => ({
 }));
 
 jest.mock('./workspaceDemoPageClient', () => ({
-    WorkspaceDemoPageClient: () => <div>demo page client</div>,
+    WorkspaceDemoPageClient: ({ path = [] }: { path?: string[] }) => (
+        <div>demo page client {path.join('/')}</div>
+    ),
 }));
 
 describe('<WorkspaceDemoPage /> component', () => {
@@ -34,12 +36,33 @@ describe('<WorkspaceDemoPage /> component', () => {
         expect(screen.getByText('demo page client')).toBeInTheDocument();
     });
 
+    it('renders supported nested demo views', async () => {
+        render(
+            await WorkspaceDemoPage({
+                path: ['account', 'aragon-x', 'proposals'],
+            }),
+        );
+
+        expect(
+            screen.getByText('demo page client account/aragon-x/proposals'),
+        ).toBeInTheDocument();
+    });
+
     it('renders the 404 page when the workspaces feature is disabled', async () => {
         isEnabledSpy.mockResolvedValue(false);
 
         await expect(WorkspaceDemoPage({})).rejects.toThrow(
             'NEXT_HTTP_ERROR_FALLBACK;404',
         );
+        expect(notFoundMock).toHaveBeenCalled();
+    });
+
+    it('renders the 404 page for unsupported demo views', async () => {
+        await expect(
+            WorkspaceDemoPage({
+                path: ['account', 'operations-safe', 'proposals'],
+            }),
+        ).rejects.toThrow('NEXT_HTTP_ERROR_FALLBACK;404');
         expect(notFoundMock).toHaveBeenCalled();
     });
 });
