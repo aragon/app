@@ -63,14 +63,15 @@ export const LandingPage: React.FC = () => {
     );
 
     const demoLink = (
-        <div className="flex flex-col gap-1">
-            <Link
-                className="flex items-center gap-1 rounded-md text-base leading-tight"
+        <div className="flex flex-col items-start gap-2">
+            <Button
                 href="/demo"
+                iconRight={IconType.CHEVRON_RIGHT}
+                size="lg"
+                variant="secondary"
             >
                 {t('app.application.landingPage.demo.action')}
-                <Icon icon={IconType.CHEVRON_RIGHT} size="sm" />
-            </Link>
+            </Button>
             <p className="text-sm leading-tight">
                 {t('app.application.landingPage.demo.description')}
             </p>

@@ -7,6 +7,7 @@ import {
     Card,
     DaoAvatar,
     DataList,
+    Dropdown,
     Icon,
     IconType,
     Tag,
@@ -187,6 +188,138 @@ const DemoAccountAvatar: React.FC<{
             src={safeWallet.src}
         />
     );
+
+const DemoWorkspaceSelector: React.FC = () => {
+    const { t } = useTranslations();
+    const [isOpen, setIsOpen] = useState(false);
+    const name = t('app.workspace.demo.name');
+
+    return (
+        <Dropdown.Container
+            align="start"
+            constrainContentWidth={false}
+            customTrigger={
+                <button
+                    className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800"
+                    type="button"
+                >
+                    <DaoAvatar name={name} size="md" />
+                    <span className="grow truncate text-left text-base text-neutral-800 leading-tight">
+                        {name}
+                    </span>
+                    <Icon
+                        className="shrink-0"
+                        icon={
+                            isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN
+                        }
+                        size="md"
+                    />
+                </button>
+            }
+            onOpenChange={setIsOpen}
+            open={isOpen}
+        >
+            <Dropdown.Item href="/demo/dashboard" selected={true}>
+                <span className="flex min-w-0 items-center gap-3">
+                    <DaoAvatar className="shrink-0" name={name} size="sm" />
+                    <span className="truncate">{name}</span>
+                </span>
+            </Dropdown.Item>
+            <Dropdown.Item href="/" icon={IconType.PLUS} iconPosition="left">
+                {t('app.workspace.workspaceSelector.create')}
+            </Dropdown.Item>
+        </Dropdown.Container>
+    );
+};
+
+const DemoAccountSelector: React.FC<{
+    account?: DemoAccount;
+    section: DemoSection;
+}> = ({ account, section }) => {
+    const { t } = useTranslations();
+    const [isOpen, setIsOpen] = useState(false);
+    const allAccountsLabel = t(
+        'app.workspace.useWorkspaceAccountOptions.allAccounts',
+    );
+
+    const activeLabel = account?.name ?? allAccountsLabel;
+    const subtitle =
+        account?.address ??
+        t('app.workspace.workspaceAccountSelector.accounts', {
+            count: demoAccounts.length,
+        });
+
+    return (
+        <Dropdown.Container
+            align="start"
+            constrainContentWidth={false}
+            customTrigger={
+                <button
+                    className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800"
+                    type="button"
+                >
+                    {account == null ? (
+                        <DaoAvatar name={allAccountsLabel} size="md" />
+                    ) : (
+                        <DemoAccountAvatar account={account} />
+                    )}
+                    <span className="flex min-w-0 grow flex-col text-left leading-tight">
+                        <span className="truncate text-base text-neutral-800">
+                            {activeLabel}
+                        </span>
+                        <span className="truncate text-neutral-500 text-sm">
+                            {account == null
+                                ? subtitle
+                                : addressUtils.truncateAddress(subtitle)}
+                        </span>
+                    </span>
+                    <Icon
+                        className="shrink-0"
+                        icon={
+                            isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN
+                        }
+                        size="md"
+                    />
+                </button>
+            }
+            onOpenChange={setIsOpen}
+            open={isOpen}
+        >
+            <Dropdown.Item href="/demo/dashboard" selected={account == null}>
+                <span className="flex min-w-0 items-center gap-3">
+                    <DaoAvatar
+                        className="shrink-0"
+                        name={allAccountsLabel}
+                        size="sm"
+                    />
+                    <span className="truncate">{allAccountsLabel}</span>
+                </span>
+            </Dropdown.Item>
+            {demoAccounts.map((option) => (
+                <Dropdown.Item
+                    href={getAccountUrl(
+                        option.id,
+                        option.type === 'safe' && section === 'proposals'
+                            ? 'dashboard'
+                            : section,
+                    )}
+                    key={option.id}
+                    selected={option.id === account?.id}
+                >
+                    <span className="flex min-w-0 items-center gap-3">
+                        <DemoAccountAvatar account={option} size="md" />
+                        <span className="flex min-w-0 flex-col leading-tight">
+                            <span className="truncate">{option.name}</span>
+                            <span className="truncate text-neutral-500 text-sm">
+                                {addressUtils.truncateAddress(option.address)}
+                            </span>
+                        </span>
+                    </span>
+                </Dropdown.Item>
+            ))}
+        </Dropdown.Container>
+    );
+};
 
 const DemoAccountItem: React.FC<{ account: DemoAccount }> = ({ account }) => {
     const { t } = useTranslations();
@@ -596,38 +729,7 @@ export const WorkspaceDemoPageClient: React.FC<
     const account = demoAccounts.find(({ id }) => id === accountId);
     const section = (path[2] ?? 'dashboard') as DemoSection;
     const accountsOnly = path[0] === 'accounts';
-    const demoWorkspaceName = t('app.workspace.demo.name');
     const navigationLinks = getNavigationLinks(account);
-    const summaryAccount = account ?? demoAccounts[0];
-
-    if (summaryAccount == null) {
-        return null;
-    }
-
-    const accountSummary = (
-        <Link
-            className="focus-ring-primary flex items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-3 transition-colors hover:bg-neutral-50"
-            href={
-                account == null
-                    ? getAccountUrl(summaryAccount.id)
-                    : '/demo/accounts'
-            }
-        >
-            <DemoAccountAvatar account={summaryAccount} />
-            <div className="flex min-w-0 grow flex-col">
-                <span className="truncate text-neutral-800 text-sm">
-                    {account?.name ??
-                        t('app.workspace.demo.navigation.featuredAccount')}
-                </span>
-                <span className="truncate text-neutral-500 text-xs">
-                    {account == null
-                        ? summaryAccount.name
-                        : t('app.workspace.demo.navigation.allAccounts')}
-                </span>
-            </div>
-            <Icon className="text-neutral-300" icon={IconType.CHEVRON_RIGHT} />
-        </Link>
-    );
 
     const navigation = (
         <>
@@ -645,19 +747,11 @@ export const WorkspaceDemoPageClient: React.FC<
                 }
                 header={
                     <>
-                        <Link
-                            aria-label={t(
-                                'app.workspace.demo.navigation.landing',
-                            )}
-                            className="mx-2 mb-4"
-                            href="/"
-                        >
-                            <AragonLogo size="md" />
-                        </Link>
-                        {accountSummary}
-                        <span className="px-3 pt-1 text-neutral-500 text-sm">
-                            {demoWorkspaceName}
-                        </span>
+                        <DemoWorkspaceSelector />
+                        <DemoAccountSelector
+                            account={account}
+                            section={section}
+                        />
                     </>
                 }
                 links={navigationLinks}
@@ -698,17 +792,12 @@ export const WorkspaceDemoPageClient: React.FC<
                     onOpenChange={setDialogOpen}
                     open={isDialogOpen}
                 >
-                    <div className="flex flex-col gap-3 px-4">
-                        {accountSummary}
-                        <div className="flex items-center justify-between gap-3 px-3">
-                            <span className="text-neutral-500 text-sm">
-                                {demoWorkspaceName}
-                            </span>
-                            <Tag
-                                label={t('app.workspace.demo.readOnly')}
-                                variant="neutral"
-                            />
-                        </div>
+                    <div className="flex flex-col gap-2 px-4">
+                        <DemoWorkspaceSelector />
+                        <DemoAccountSelector
+                            account={account}
+                            section={section}
+                        />
                     </div>
                 </Navigation.Dialog>
             </Navigation.Container>
