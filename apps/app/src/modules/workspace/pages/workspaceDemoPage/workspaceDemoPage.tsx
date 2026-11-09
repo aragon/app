@@ -27,7 +27,8 @@ const isValidPath = (path: string[]) => {
     return (
         path.length === 0 ||
         (path.length === 1 &&
-            (path[0] === 'dashboard' || path[0] === 'accounts')) ||
+            (path[0] === 'accounts' ||
+                accountSections[path[0] ?? ''] === true)) ||
         (path[0] === 'account' &&
             accountType != null &&
             (path.length === 2 ||
