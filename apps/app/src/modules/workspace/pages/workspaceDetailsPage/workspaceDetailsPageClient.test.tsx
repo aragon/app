@@ -1,9 +1,12 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import {
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
@@ -25,6 +28,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
     const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     let testIndex = 0;
 
@@ -51,6 +55,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
     };
 
     beforeEach(() => {
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         getAccountsSpy.mockResolvedValue([
             {
                 network: Network.ETHEREUM_SEPOLIA,
@@ -66,6 +71,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
+        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -159,6 +165,20 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             'href',
             `/workspace/${workspace.id}/edit?step=ACCOUNTS`,
         );
+    });
+
+    it('opens DAO creation from a workspace with no account', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        renderWorkspace(buildWorkspace({ accounts: [] }));
+
+        await userEvent.click(
+            await screen.findByRole('button', {
+                name: /workspaceDetailsPage\.emptyAccounts\.createAction$/,
+            }),
+        );
+
+        expect(open).toHaveBeenCalledWith(CreateDaoDialogId.CREATE_DAO_DETAILS);
     });
 
     it('hides the empty accounts state when the workspace has accounts', async () => {
