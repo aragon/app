@@ -72,6 +72,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         getWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
         useDialogContextSpy.mockReset();
+        localStorage.clear();
     });
 
     const createTestComponent = (
@@ -112,6 +113,44 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
 
         expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
         expect(screen.getByText('A test workspace')).toBeInTheDocument();
+    });
+
+    it('sets and unsets the workspace as the default beside its name', async () => {
+        const workspace = buildWorkspace();
+        renderWorkspace(workspace);
+
+        const setDefaultButton = await screen.findByRole('button', {
+            name: /workspaceSelector\.pin/,
+        });
+        await userEvent.click(setDefaultButton);
+
+        await waitFor(() =>
+            expect(
+                screen.getByRole('button', {
+                    name: /workspaceSelector\.unpin/,
+                }),
+            ).toBeInTheDocument(),
+        );
+        await expect(workspaceService.getPinnedWorkspaceId()).resolves.toBe(
+            workspace.id,
+        );
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /workspaceSelector\.unpin/,
+            }),
+        );
+
+        await waitFor(() =>
+            expect(
+                screen.getByRole('button', {
+                    name: /workspaceSelector\.pin/,
+                }),
+            ).toBeInTheDocument(),
+        );
+        await expect(
+            workspaceService.getPinnedWorkspaceId(),
+        ).resolves.toBeNull();
     });
 
     it('displays the accounts with the name resolved by the accounts API', async () => {

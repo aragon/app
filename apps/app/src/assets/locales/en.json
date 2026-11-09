@@ -4977,8 +4977,8 @@
       },
       "workspaceSelector": {
         "create": "Create workspace",
-        "pin": "Pin {{workspace}}",
-        "unpin": "Unpin {{workspace}}"
+        "pin": "Set default",
+        "unpin": "Unset default"
       },
       "workspaceEditPage": {
         "steps": {

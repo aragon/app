@@ -2,10 +2,13 @@
 
 import {
     AddressOutput,
+    Button,
     Card,
     DaoAvatar,
     EmptyState,
+    IconType,
     Link,
+    Tooltip,
 } from '@aragon/gov-ui-kit';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -14,7 +17,11 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
-import { useWorkspace } from '../../api/workspaceService';
+import {
+    usePinnedWorkspaceId,
+    useSetPinnedWorkspaceId,
+    useWorkspace,
+} from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import { workspaceUtils } from '../../utils/workspaceUtils';
@@ -48,6 +55,11 @@ export const WorkspaceDetailsPageClient: React.FC<
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
     });
+    const {
+        data: pinnedWorkspaceId = null,
+        isPending: isPinnedWorkspacePending,
+    } = usePinnedWorkspaceId();
+    const { mutate: setPinnedWorkspaceId } = useSetPinnedWorkspaceId();
 
     const accounts = workspace?.accounts ?? [];
 
@@ -70,6 +82,12 @@ export const WorkspaceDetailsPageClient: React.FC<
     }
 
     const { name, description, avatar, links, targets } = workspace;
+    const isPinned = pinnedWorkspaceId === workspaceId;
+    const pinLabel = t(
+        isPinned
+            ? 'app.workspace.workspaceSelector.unpin'
+            : 'app.workspace.workspaceSelector.pin',
+    );
 
     return (
         <>
@@ -97,6 +115,27 @@ export const WorkspaceDetailsPageClient: React.FC<
                     },
                 ]}
                 title={name}
+                titleAccessory={
+                    !isPinnedWorkspacePending && (
+                        <Tooltip content={pinLabel} triggerAsChild={true}>
+                            <Button
+                                aria-label={pinLabel}
+                                iconLeft={
+                                    isPinned
+                                        ? IconType.FAVORITE_SELECTED
+                                        : IconType.FAVORITE
+                                }
+                                onClick={() =>
+                                    setPinnedWorkspaceId(
+                                        isPinned ? null : workspaceId,
+                                    )
+                                }
+                                size="md"
+                                variant="tertiary"
+                            />
+                        </Tooltip>
+                    )
+                }
             />
             <Page.Content>
                 <Page.Main>

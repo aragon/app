@@ -26,6 +26,10 @@ export interface IPageHeaderProps extends ComponentProps<'header'> {
      */
     title?: string;
     /**
+     * Optional control displayed beside the page title.
+     */
+    titleAccessory?: ReactNode;
+    /**
      * Description of the page.
      */
     description?: string;
@@ -42,6 +46,7 @@ export interface IPageHeaderProps extends ComponentProps<'header'> {
 export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     const {
         title,
+        titleAccessory,
         description,
         stats,
         avatar,
@@ -69,17 +74,20 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col gap-6">
                         <div className="flex flex-col gap-y-2 md:gap-y-3">
-                            <Heading size="h1">
-                                {title != null &&
-                                addressUtils.isAddress(title) ? (
-                                    <AddressOutput
-                                        address={title}
-                                        copy={false}
-                                    />
-                                ) : (
-                                    title
-                                )}
-                            </Heading>
+                            <div className="flex items-center gap-2">
+                                <Heading size="h1">
+                                    {title != null &&
+                                    addressUtils.isAddress(title) ? (
+                                        <AddressOutput
+                                            address={title}
+                                            copy={false}
+                                        />
+                                    ) : (
+                                        title
+                                    )}
+                                </Heading>
+                                {titleAccessory}
+                            </div>
                             {description && (
                                 <Collapsible
                                     buttonLabelClosed={t(
