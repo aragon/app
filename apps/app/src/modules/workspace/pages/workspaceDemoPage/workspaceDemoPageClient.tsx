@@ -143,9 +143,9 @@ export const WorkspaceDemoPageClient: React.FC = () => {
                 footer={
                     <>
                         <Tag
-                            className="self-center"
+                            className="self-start"
                             label={t('app.workspace.demo.readOnly')}
-                            variant="info"
+                            variant="neutral"
                         />
                         <FooterSidebar />
                     </>
@@ -185,7 +185,7 @@ export const WorkspaceDemoPageClient: React.FC = () => {
                     <div className="flex items-center gap-2">
                         <Tag
                             label={t('app.workspace.demo.readOnly')}
-                            variant="info"
+                            variant="neutral"
                         />
                         <Navigation.Trigger
                             aria-label={t('app.workspace.demo.navigation.open')}
@@ -213,7 +213,7 @@ export const WorkspaceDemoPageClient: React.FC = () => {
                             </span>
                             <Tag
                                 label={t('app.workspace.demo.readOnly')}
-                                variant="info"
+                                variant="neutral"
                             />
                         </div>
                     </div>
