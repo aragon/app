@@ -20,6 +20,13 @@ export interface ISafeUrlParams {
     address: string;
 }
 
+export interface ISafeTransactionUrlParams extends ISafeUrlParams {
+    /**
+     * Safe transaction hash. Normalised to lowercase at the service boundary.
+     */
+    safeTxHash: string;
+}
+
 export interface IGetSafeInfoParams extends IRequestUrlParams<ISafeUrlParams> {}
 
 export interface IGetSafePendingTransactionsQueryParams {
@@ -56,6 +63,9 @@ export interface IGetSafeTransactionHistoryParams
     extends IRequestUrlParams<ISafeUrlParams> {
     queryParams?: IGetSafeTransactionHistoryQueryParams;
 }
+
+export interface IGetSafeTransactionActionsParams
+    extends IRequestUrlParams<ISafeTransactionUrlParams> {}
 
 export interface IGetSafeBalancesParams
     extends IRequestUrlParams<ISafeUrlParams> {}

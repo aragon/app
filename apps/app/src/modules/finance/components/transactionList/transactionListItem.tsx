@@ -9,13 +9,11 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    type ITransaction,
-    type ITransactionExecution,
-    type ITransactionTransfer,
-    TransactionSide,
-    type TransactionTransferSide,
+import type {
+    ITransaction,
+    ITransactionExecution,
+    ITransactionTransfer,
+    TransactionTransferSide,
 } from '../../api/financeService';
 import { transactionExecutionUtils } from '../../utils/transactionExecutionUtils';
 
@@ -58,11 +56,6 @@ type DataListVariantProps =
     | Pick<DataListTransferProps, 'tokenAmount' | 'tokenSymbol' | 'type'>
     | Pick<DataListExecutionProps, 'actionCount' | 'label' | 'type'>;
 
-const isExecutionTransaction = (
-    transaction: ITransaction,
-): transaction is ITransactionExecution =>
-    transaction.side === TransactionSide.EXECUTION;
-
 const buildTransferProps = (
     transaction: ITransactionTransfer,
 ): DataListVariantProps => ({
@@ -71,30 +64,12 @@ const buildTransferProps = (
     type: transactionSideToDataListType[transaction.side],
 });
 
-const getExecutionLabel = (
-    transaction: ITransactionExecution,
-    dao: IDao | undefined,
-) => {
-    const sourcePlugin = transactionExecutionUtils.getSourcePlugin(
-        transaction.source,
-        dao,
-    );
-
-    if (sourcePlugin != null) {
-        return daoUtils.getPluginName(sourcePlugin);
-    }
-
-    // The kit renders `label` through AddressOutput when it is an address, so
-    // hand it the raw value instead of a pre-truncated string.
-    return transaction.source ?? transaction.fromAddress;
-};
-
 const buildExecutionProps = (
     transaction: ITransactionExecution,
     dao?: IDao,
 ): DataListVariantProps => ({
     actionCount: transaction.actionCount,
-    label: getExecutionLabel(transaction, dao),
+    label: transactionExecutionUtils.getExecutionLabel(transaction, dao),
     type: DataListTransactionType.EXECUTION,
 });
 
@@ -103,7 +78,7 @@ export const TransactionListItem: React.FC<ITransactionListItemProps> = (
 ) => {
     const { transaction, onTransactionClick, dao } = props;
 
-    const isExecution = isExecutionTransaction(transaction);
+    const isExecution = transactionExecutionUtils.isExecution(transaction);
     const handleClick =
         isExecution && onTransactionClick
             ? (e: React.MouseEvent) => {
