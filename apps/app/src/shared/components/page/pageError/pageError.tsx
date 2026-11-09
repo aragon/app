@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { useOptionalFeatureFlags } from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
@@ -33,8 +33,9 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
     } = props;
 
     const { t } = useTranslations();
-    const { isEnabled } = useFeatureFlags();
-    const exploreHref = isEnabled('workspaces') ? '/explore' : '/';
+    const featureFlags = useOptionalFeatureFlags();
+    const exploreHref =
+        featureFlags?.isEnabled('workspaces') === false ? '/' : '/explore';
 
     const isNotFoundError =
         AragonBackendServiceError.isExpectedNotFoundError(error);

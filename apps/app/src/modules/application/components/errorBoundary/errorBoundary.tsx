@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { ErrorFeedback } from '@/shared/components/errorFeedback';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { useOptionalFeatureFlags } from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import {
     ErrorBoundaryClass,
     type IErrorBoundaryClassProps,
@@ -14,8 +14,9 @@ export interface IErrorBoundaryProps
 export const ErrorBoundary: React.FC<IErrorBoundaryProps> = (props) => {
     const { fallback, ...otherProps } = props;
     const pathname = usePathname();
-    const { isEnabled } = useFeatureFlags();
-    const exploreHref = isEnabled('workspaces') ? '/explore' : '/';
+    const featureFlags = useOptionalFeatureFlags();
+    const exploreHref =
+        featureFlags?.isEnabled('workspaces') === false ? '/' : '/explore';
 
     return (
         <ErrorBoundaryClass
