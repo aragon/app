@@ -1,5 +1,5 @@
 import { Dialog, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { useOptionalFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     type INavigationLink,
@@ -36,8 +36,9 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
     } = props;
 
     const { t } = useTranslations();
-    const { isEnabled } = useFeatureFlags();
-    const exploreHref = isEnabled('workspaces') ? '/explore' : '/';
+    const featureFlags = useOptionalFeatureFlags();
+    const exploreHref =
+        featureFlags?.isEnabled('workspaces') === false ? '/' : '/explore';
     const handleLinksClick = () => onOpenChange?.(false);
 
     return (
