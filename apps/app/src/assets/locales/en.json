@@ -459,7 +459,7 @@
           "action": "See a demo workspace",
           "description": "No sign-in required."
         },
-        "findAccount": "Find your Safe or Aragon account",
+        "exploreDaos": "Explore DAOs",
         "hero": {
           "description": "Your existing Safe and Aragon accounts - in one place.",
           "title": "Manage your team’s onchain finances"

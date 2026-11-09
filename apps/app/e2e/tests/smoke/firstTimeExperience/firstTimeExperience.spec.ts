@@ -61,9 +61,7 @@ test.describe('First-time workspace experience', () => {
             ).toBeVisible();
 
             await page
-                .getByRole('link', {
-                    name: 'Find your Safe or Aragon account',
-                })
+                .getByRole('link', { name: 'Explore DAOs' })
                 .first()
                 .click();
             await expect(page).toHaveURL(/\/explore(?:\?.*)?$/);

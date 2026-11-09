@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import * as useWalletConnected from '@/modules/application/hooks/useWalletConnected';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
-import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
+import { Footer, FooterSidebar, type IFooterProps } from './index';
 
 jest.mock('../../../../shared/components/aragonLogo', () => ({
     AragonLogo: () => <div data-testid="aragon-logo-mock" />,
@@ -12,6 +13,10 @@ describe('<Footer /> component', () => {
     const useApplicationVersionSpy = jest.spyOn(
         useApplicationVersion,
         'useApplicationVersion',
+    );
+    const useWalletConnectedSpy = jest.spyOn(
+        useWalletConnected,
+        'useWalletConnected',
     );
 
     const createTestComponent = (
@@ -38,10 +43,12 @@ describe('<Footer /> component', () => {
 
     beforeEach(() => {
         jest.useFakeTimers();
+        useWalletConnectedSpy.mockReturnValue(false);
     });
 
     afterEach(() => {
         jest.useRealTimers();
+        useWalletConnectedSpy.mockReset();
     });
 
     it('renders the aragon logo', () => {
@@ -78,6 +85,23 @@ describe('<Footer /> component', () => {
             }),
         ).toHaveAttribute('href', '/explore');
     });
+
+    it.each([
+        [false, '/'],
+        [true, '/explore'],
+    ])(
+        'routes the sidebar branding for wallet connection %s',
+        (isConnected, href) => {
+            useWalletConnectedSpy.mockReturnValue(isConnected);
+            render(<FooterSidebar />);
+
+            expect(
+                screen.getByRole('link', {
+                    name: /footer.governed/,
+                }),
+            ).toHaveAttribute('href', href);
+        },
+    );
 
     it('renders the copyright info', () => {
         jest.setSystemTime(new Date(2021, 2, 1));

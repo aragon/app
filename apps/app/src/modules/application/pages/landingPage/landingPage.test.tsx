@@ -1,5 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
@@ -8,6 +8,7 @@ import { LandingPage } from './landingPage';
 
 describe('<LandingPage /> component', () => {
     const push = jest.fn();
+    const replace = jest.fn();
     const check = jest.fn();
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const walletGuardSpy = jest.spyOn(
@@ -16,12 +17,16 @@ describe('<LandingPage /> component', () => {
     );
 
     beforeEach(() => {
-        useRouterSpy.mockReturnValue({ push } as unknown as AppRouterInstance);
+        useRouterSpy.mockReturnValue({
+            push,
+            replace,
+        } as unknown as AppRouterInstance);
         walletGuardSpy.mockReturnValue({ check, result: false });
     });
 
     afterEach(() => {
         push.mockReset();
+        replace.mockReset();
         check.mockReset();
         useRouterSpy.mockReset();
         walletGuardSpy.mockReset();
@@ -36,7 +41,7 @@ describe('<LandingPage /> component', () => {
 
         expect(
             screen.getAllByRole('link', {
-                name: /landingPage\.findAccount$/,
+                name: /landingPage\.exploreDaos$/,
             })[0],
         ).toHaveAttribute('href', '/explore');
         expect(
@@ -44,6 +49,18 @@ describe('<LandingPage /> component', () => {
                 name: /landingPage\.demo\.action$/,
             })[0],
         ).toHaveAttribute('href', '/demo');
+    });
+
+    it('opens the existing workspace when the wallet is already connected', async () => {
+        walletGuardSpy.mockReturnValue({ check, result: true });
+
+        render(
+            <GukModulesProvider>
+                <LandingPage />
+            </GukModulesProvider>,
+        );
+
+        await waitFor(() => expect(replace).toHaveBeenCalledWith('/workspace'));
     });
 
     it('checks the connected wallet before opening the workspace', async () => {
