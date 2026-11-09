@@ -83,12 +83,12 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('heading', {
                     level: 1,
-                    name: 'Demo workspace',
+                    name: 'Aragon workspace',
                 }),
             ).toBeVisible();
         });
 
-        test('keeps the demo read-only and outside local workspaces', async ({
+        test('keeps the demo read-only while its account views remain navigable', async ({
             page,
         }) => {
             await page.goto('/demo');
@@ -97,9 +97,9 @@ test.describe('First-time workspace experience', () => {
                 page.getByText('Read-only demo').first(),
             ).toBeVisible();
             for (const account of [
-                'Citrea DAO',
-                'Citrea Ops Safe',
-                'Citrea Grants Safe',
+                'Aragon X (Mainnet)',
+                'Aragon Operations Safe',
+                'Aragon Grants Safe',
             ]) {
                 await expect(page.getByText(account).first()).toBeVisible();
             }
@@ -109,6 +109,25 @@ test.describe('First-time workspace experience', () => {
                     workspaceStorageKey,
                 ),
             ).toBeNull();
+
+            await page
+                .getByRole('link', { name: /Aragon X \(Mainnet\)/ })
+                .last()
+                .click();
+            await expect(page).toHaveURL(
+                /\/demo\/account\/aragon-x\/dashboard$/,
+            );
+            await expect(
+                page.getByRole('heading', {
+                    level: 1,
+                    name: 'Aragon X (Mainnet)',
+                }),
+            ).toBeVisible();
+            await page.getByRole('link', { name: 'Proposals' }).first().click();
+            await expect(page).toHaveURL(
+                /\/demo\/account\/aragon-x\/proposals$/,
+            );
+            await expect(page.getByText('MULTISIG-265')).toBeVisible();
         });
 
         test('creates an empty workspace and exposes both account actions', async ({
