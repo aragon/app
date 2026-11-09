@@ -131,7 +131,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                     )
                                 }
                                 size="md"
-                                variant="tertiary"
+                                variant="ghost"
                             />
                         </Tooltip>
                     )
