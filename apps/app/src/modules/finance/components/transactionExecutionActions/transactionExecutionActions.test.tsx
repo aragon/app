@@ -31,7 +31,7 @@ describe('<TransactionExecutionActions /> component', () => {
     };
 
     beforeEach(() => {
-        proposalActionsItemSpy.mockReturnValue(<div data-testid="action" />);
+        proposalActionsItemSpy.mockReturnValue(<div />);
     });
 
     afterEach(() => {

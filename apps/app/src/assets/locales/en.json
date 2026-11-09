@@ -4954,6 +4954,29 @@
         },
         "submitLabel": "Save changes"
       },
+      "workspaceSafeDashboardPage": {
+        "main": {
+          "assets": {
+            "title": "Assets"
+          },
+          "members": {
+            "title": "Members"
+          },
+          "pending": {
+            "description": "Transactions waiting for the signatures of the owners of this Safe.",
+            "title": "Pending transactions",
+            "unavailable": "Safe does not serve {{network}}, so the pending transactions of this Safe cannot be read.",
+            "unavailableHeading": "Pending transactions unavailable"
+          },
+          "viewAllAssets": "View all",
+          "viewAllMembers": "View all"
+        },
+        "stats": {
+          "nonce": "Nonce",
+          "owners": "Owners",
+          "threshold": "Threshold"
+        }
+      },
       "workspaceSafeSettingsPage": {
         "account": {
           "address": "Address",

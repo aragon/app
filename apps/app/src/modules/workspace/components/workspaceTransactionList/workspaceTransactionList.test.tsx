@@ -142,10 +142,10 @@ describe('<WorkspaceTransactionList /> component', () => {
         mockTransactions();
         getDaoSpy.mockResolvedValue(generateDao({ ...account }));
         transactionExecutionDetailsSpy.mockReturnValue(
-            <div data-testid="execution-detail" />,
+            <div>execution-detail</div>,
         );
         safeExecutionDetailsSpy.mockReturnValue(
-            <div data-testid="safe-execution-detail" />,
+            <div>safe-execution-detail</div>,
         );
     });
 
@@ -333,7 +333,7 @@ describe('<WorkspaceTransactionList /> component', () => {
         const header = await screen.findByRole('button', { name: /router/ });
         await userEvent.click(header);
 
-        expect(screen.getByTestId('execution-detail')).toBeInTheDocument();
+        expect(screen.getByText('execution-detail')).toBeInTheDocument();
         expect(transactionExecutionDetailsSpy).toHaveBeenCalledWith(
             { dao, transaction },
             undefined,
@@ -360,7 +360,7 @@ describe('<WorkspaceTransactionList /> component', () => {
         });
         await userEvent.click(header);
 
-        expect(screen.getByTestId('safe-execution-detail')).toBeInTheDocument();
+        expect(screen.getByText('safe-execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
             { safeAddress: address, safeTxHash: '0xff54', transaction },
             undefined,

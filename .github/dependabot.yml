@@ -9,8 +9,8 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 0
 
-  # The release and deploy flows call aragon/github-templates `@main` while the shared modules
-  # settle; once they are pinned to a commit, this is what bumps the pin.
+  # The release and deploy flows call aragon/github-templates through its moving major tag (`@v1`):
+  # a fix there reaches every repo at once, and this is what proposes the next major (`@v2`).
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

@@ -40,7 +40,7 @@ jobs:
     concurrency:
       group: production-deployment
       cancel-in-progress: true
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: production
       ref: ${{ github.event.release.tag_name || inputs.tag }}
@@ -66,7 +66,7 @@ jobs:
   e2e:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: https://app.aragon.org
       environment: production
@@ -84,7 +84,7 @@ jobs:
   complete:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' && github.event_name == 'release' }}
-    uses: aragon/github-templates/.github/workflows/release-complete.yml@main
+    uses: aragon/github-templates/.github/workflows/release-complete.yml@v1
     with:
       tag: ${{ github.event.release.tag_name }}
       env: production

@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: staging
       domain: stg.app.aragon.org
@@ -33,7 +33,7 @@ jobs:
 
   e2e:
     needs: deploy
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: https://stg.app.aragon.org
       environment: staging
@@ -49,7 +49,7 @@ jobs:
 
   bv:
     needs: deploy
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: https://stg.app.aragon.org
       environment: staging
