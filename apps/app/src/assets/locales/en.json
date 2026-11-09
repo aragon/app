@@ -4782,9 +4782,9 @@
           "resources": "Resources"
         },
         "emptyAccounts": {
-          "action": "Add accounts",
-          "description": "This workspace has no accounts yet. Add the DAOs and Safes it should bring together.",
-          "heading": "No accounts yet"
+          "action": "Add an existing account",
+          "createAction": "Create a new account",
+          "heading": "Add a Safe or an Aragon account"
         },
         "section": {
           "accounts": "Accounts",
