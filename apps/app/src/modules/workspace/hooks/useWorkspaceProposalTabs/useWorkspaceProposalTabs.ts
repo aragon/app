@@ -31,7 +31,7 @@ export interface IWorkspaceProposalTab
 
 export interface IUseWorkspaceProposalTabsParams {
     /**
-     * Accounts whose processes become tabs. Non-DAO accounts are ignored: Safe processes are not implemented yet
+     * Accounts whose processes become tabs. Non-DAO accounts are ignored: a Safe has no processes
      * (see "Safe support by route" in `docs/projectDocs/createWorkspace.md`).
      */
     accounts: IWorkspaceAccount[];

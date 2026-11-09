@@ -49,22 +49,6 @@ describe('<WorkspaceAccountStateCard /> component', () => {
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
-    it('points a Safe to the sections that serve it', () => {
-        render(
-            createTestComponent({ accountState: WorkspaceAccountState.SAFE }),
-        );
-
-        expect(
-            screen.getByText(/workspaceAccountStateCard\.safe\.heading$/),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole('link', { name: /safe\.action\.assets$/ }),
-        ).toHaveAttribute('href', `/workspace/demo/${accountId}/assets`);
-        expect(
-            screen.getByRole('link', { name: /safe\.action\.transactions$/ }),
-        ).toHaveAttribute('href', `/workspace/demo/${accountId}/transactions`);
-    });
-
     it('renders the not-found state with a way back to every account', () => {
         render(
             createTestComponent({

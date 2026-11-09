@@ -1,15 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation-original';
-import type { ReactNode } from 'react';
 import { DaoSettingsPage } from '@/modules/settings/pages/daoSettingsPage/daoSettingsPage';
 import { Network } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
-import {
-    type IWorkspaceAccountInfo,
-    WorkspaceAccountInfoType,
-} from '../../api/workspaceQueryService';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import {
     type IWorkspaceAccountSettingsPageProps,
@@ -33,12 +28,6 @@ jest.mock('./workspaceSafeSettingsPageClient', () => ({
     )),
 }));
 
-jest.mock('../../components/workspaceAccountGate', () => ({
-    WorkspaceAccountGate: jest.fn(({ children }: { children: ReactNode }) => (
-        <div data-testid="account-gate-mock">{children}</div>
-    )),
-}));
-
 describe('<WorkspaceAccountSettingsPage /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const accountId = `${Network.ETHEREUM_SEPOLIA}-${address}`;
@@ -46,36 +35,23 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
     const daoSettingsPageMock = DaoSettingsPage as jest.Mock;
-    const accountGateMock = WorkspaceAccountGate as jest.Mock;
     const safeSettingsClientMock = WorkspaceSafeSettingsPageClient as jest.Mock;
-    const getAccountInfoSpy = jest.spyOn(
+    const resolveAccountTypeSpy = jest.spyOn(
         workspaceAccountInfoUtils,
-        'getAccountInfo',
+        'resolveAccountType',
     );
-
-    const generateAccountInfo = (
-        type: WorkspaceAccountInfoType,
-    ): IWorkspaceAccountInfo =>
-        ({
-            network: Network.ETHEREUM_SEPOLIA,
-            address,
-            type,
-        }) as IWorkspaceAccountInfo;
 
     beforeEach(() => {
         isEnabledSpy.mockResolvedValue(true);
-        getAccountInfoSpy.mockResolvedValue(
-            generateAccountInfo(WorkspaceAccountInfoType.DAO),
-        );
+        resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.DAO);
     });
 
     afterEach(() => {
         isEnabledSpy.mockReset();
         notFoundMock.mockClear();
         daoSettingsPageMock.mockClear();
-        accountGateMock.mockClear();
         safeSettingsClientMock.mockClear();
-        getAccountInfoSpy.mockReset();
+        resolveAccountTypeSpy.mockReset();
     });
 
     const createTestComponent = async (
@@ -90,16 +66,11 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
         return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
-    it('renders the DAO settings page of the account behind the account gate', async () => {
+    it('renders the DAO settings page of the account', async () => {
         render(await createTestComponent());
 
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
-        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
         expect(screen.getByTestId('dao-settings-mock')).toBeInTheDocument();
-        expect(accountGateMock).toHaveBeenCalledWith(
-            expect.objectContaining({ accountId }),
-            undefined,
-        );
     });
 
     it('hands the settings page the account as DAO route parameters', async () => {
@@ -127,18 +98,15 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
 
     describe('Safe account', () => {
         beforeEach(() => {
-            getAccountInfoSpy.mockResolvedValue(
-                generateAccountInfo(WorkspaceAccountInfoType.SAFE),
-            );
+            resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.SAFE);
         });
 
-        it('renders the Safe settings page outside the account gate', async () => {
+        it('renders the Safe settings page', async () => {
             render(await createTestComponent());
 
             expect(
                 screen.getByTestId('safe-settings-mock'),
             ).toBeInTheDocument();
-            expect(accountGateMock).not.toHaveBeenCalled();
             expect(daoSettingsPageMock).not.toHaveBeenCalled();
             expect(safeSettingsClientMock).toHaveBeenCalledWith(
                 {
@@ -150,25 +118,10 @@ describe('<WorkspaceAccountSettingsPage /> component', () => {
             );
         });
 
-        it('looks the account up by the network and address of the URL', async () => {
+        it('looks the account up by the account ID of the URL', async () => {
             render(await createTestComponent());
 
-            expect(getAccountInfoSpy).toHaveBeenCalledWith({
-                network: Network.ETHEREUM_SEPOLIA,
-                address,
-            });
+            expect(resolveAccountTypeSpy).toHaveBeenCalledWith(accountId);
         });
-    });
-
-    it('renders the DAO settings page behind the gate when the lookup fails', async () => {
-        getAccountInfoSpy.mockResolvedValue(undefined);
-
-        render(await createTestComponent());
-
-        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('dao-settings-mock')).toBeInTheDocument();
-        expect(
-            screen.queryByTestId('safe-settings-mock'),
-        ).not.toBeInTheDocument();
     });
 });
