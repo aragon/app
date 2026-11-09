@@ -50,7 +50,7 @@ jobs:
   deploy-assistant:
     needs: changes
     if: ${{ needs.changes.outputs.assistant == 'true' }}
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: preview
       vercel-scope: aragon-app
@@ -69,7 +69,7 @@ jobs:
   deploy-docs:
     needs: changes
     if: ${{ needs.changes.outputs.docs == 'true' }}
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: preview
       vercel-scope: aragon-app
@@ -85,7 +85,7 @@ jobs:
   deploy:
     needs: [changes, deploy-assistant, deploy-docs]
     if: ${{ !cancelled() && needs.changes.result == 'success' && (needs.deploy-assistant.result == 'success' || needs.deploy-assistant.result == 'skipped') && (needs.deploy-docs.result == 'success' || needs.deploy-docs.result == 'skipped') }}
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: preview
       vercel-scope: aragon-app
@@ -106,7 +106,7 @@ jobs:
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     steps:
       - name: Comment preview PR
-        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@v1
         with:
           message: |
             🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})
@@ -118,7 +118,7 @@ jobs:
   e2e:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: ${{ needs.deploy.outputs.deploymentUrl }}
       environment: preview
@@ -137,7 +137,7 @@ jobs:
       - name: Comment E2E results
         env:
           ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
-        uses: aragon/github-templates/steps/gh-ensure-pr-comment@main
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@v1
         with:
           tag: e2e-results
           message: |

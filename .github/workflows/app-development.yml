@@ -23,11 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           fetch-depth: "0"
       - name: Check workflow job guards
-        uses: aragon/github-templates/steps/workflow-guards@main
+        uses: aragon/github-templates/steps/workflow-guards@v1
       - name: Check types
         run: pnpm type-check
       - name: Check linter with formatter
@@ -74,7 +74,7 @@ jobs:
   deploy:
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@main
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
     with:
       env: development
       domain: dev.app.aragon.org
@@ -90,7 +90,7 @@ jobs:
   e2e:
     needs: deploy
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: aragon/github-templates/.github/workflows/e2e.yml@main
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
     with:
       deployment-url: https://dev.app.aragon.org
       environment: development

@@ -35,7 +35,7 @@ concurrency:
 jobs:
   start:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    uses: aragon/github-templates/.github/workflows/release-start.yml@main
+    uses: aragon/github-templates/.github/workflows/release-start.yml@v1
     with:
       engine: changesets
       base-ref: ${{ inputs.base_commit || 'main' }}
@@ -62,7 +62,7 @@ jobs:
       github.event_name == 'pull_request'
       && github.event.action != 'closed'
       && startsWith(github.event.pull_request.head.ref, 'release/aragon-domain/')
-    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@main
+    uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@v1
     with:
       release-branch-prefix: release/aragon-domain/
       tag-prefix: "@aragon/aragon-domain@"
@@ -86,7 +86,7 @@ jobs:
       contents: read
     steps:
       - name: Setup
-        uses: aragon/github-templates/steps/setup@main
+        uses: aragon/github-templates/steps/setup@v1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: "0"
@@ -105,7 +105,7 @@ jobs:
       github.event_name == 'pull_request'
       && github.event.pull_request.merged == true
       && startsWith(github.event.pull_request.head.ref, 'release/aragon-domain/')
-    uses: aragon/github-templates/.github/workflows/release-finalize.yml@main
+    uses: aragon/github-templates/.github/workflows/release-finalize.yml@v1
     with:
       sha: ${{ github.event.pull_request.head.sha }}
       pr-body: ${{ github.event.pull_request.body }}
@@ -125,7 +125,7 @@ jobs:
       && github.event.action == 'closed'
       && github.event.pull_request.merged == false
       && startsWith(github.event.pull_request.head.ref, 'release/aragon-domain/')
-    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@main
+    uses: aragon/github-templates/.github/workflows/release-pr-cancel.yml@v1
     with:
       op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
       op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
