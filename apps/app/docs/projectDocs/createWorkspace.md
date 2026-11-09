@@ -782,6 +782,8 @@ client's external option uses too; `resolveAccountType` turns the state into the
 
 | Item | Today | Possible fix |
 | --- | --- | --- |
+| Miscased account address (wrong EIP-55 checksum) | the backend answers 400, so the route shows the generic error, even for a real DAO or Safe | redirect to the checksummed URL in `proxyUtils` (see Known gaps) |
+| Account that is neither a DAO nor a Safe | the generic "Page not found", whose action leaves the workspace | make `(workspacePage)/not-found.tsx` a client component: when the route names an account the client cannot place (`useWorkspaceAccountOptions`), render "Account not found" linking to every account, else `NotFoundBase`. It must ask the lookup rather than the params, as the `[...section]` catch-all 404s under valid accounts too |
 | Transient lookup failure | generic error on every account section | accepted: one check in the layout over per-page messages |
 | Members page, external account | no `WorkspaceAccountStateCard` when the client lookup fails | see Known gaps |
 | DAO pages rendered under workspace routes | some still redirect client-side with `RedirectToUrl` | server `redirect()`, follow-up PR |
@@ -1175,15 +1177,19 @@ Keep it that way when extending this.
   `WorkspaceAccountStateCard`: for a Safe the workspace does not hold, the list stays empty if that client lookup
   fails. The server lookup that routed the page to the Safe branch makes the failure unlikely, but the client request
   is a separate one, as on the proposals page.
-- **`query/accounts` fails the whole request when one address is unplaceable.** An address that is neither an
-  indexed DAO nor a Safe makes the endpoint answer 404 `{"code":"safeNotFound"}` for the *entire* batch, which
-  contradicts the per-entry `status: "unsupported"` that `IWorkspaceAccountInfo` and
-  `workspaceUtils.validateAccountInfo` are built around. It predates and is independent of the Safe aggregation
-  work, and it affects the create form today, so one such address in the list probably fails the validation of the others (inferred from the whole-request 404, not exercised in the form), with
-  the error state rather than `error.unsupportedAccount`. `workspaceAccountInfoUtils.resolveAccount` is written around it:
-  its lookup names a single account, so `workspaceUtils.resolveAccountState` reads that 404 as `NOT_FOUND`, and
-  `LayoutWorkspaceAccount` fails the route. Should the endpoint answer 404 for another reason (a backend without
-  the workspace endpoints), every account route would 404 the same way.
+- **`query/accounts` used to fail the whole request when one address was unplaceable** — a 404
+  `{"code":"safeNotFound"}` for the entire batch instead of a per-entry `status: "unsupported"`. **Fixed on sandbox
+  (verified 2026-11-09):** an unknown address, alone or in a batch, now comes back as an `unsupported` entry with a
+  200. `workspaceUtils.resolveAccountState` still reads a single-account 404 as `NOT_FOUND` for backends without the
+  fix; should the endpoint 404 for another reason (no workspace endpoints at all), every account route would 404.
+- **A miscased account address fails the route with the generic error (verified on sandbox, 2026-11-09).** The
+  backend answers 400 `badParams` to a mixed-case address whose EIP-55 checksum is wrong, on `query/accounts` and
+  `GET /v2/daos/{id}` alike; lowercase and checksummed addresses are accepted. `isValidAccountId` accepts any casing,
+  so e.g. `…5103B70Da78396` (a changed last digit) reaches the lookup, which reads the 400 as unavailable and throws,
+  and a real DAO opened with one letter miscased fails the same way. The ID reaches many requests verbatim (lookup,
+  DAO read, DAO pages, client lookups), so the fix is to normalize it once — redirect the URL to its checksummed form
+  in `proxyUtils` — rather than per request. The create form can send such an address too: its check,
+  `addressUtils.isAddress`, defaults to `strict: false`.
 - The workspace proposal details page is the DAO page as is, so the links inside it still leave the workspace: its
   breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter, publisher and settings links of its
   nested plugin components. Held back on purpose until the rest of the migration lands and every call site is
