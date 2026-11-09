@@ -18,7 +18,6 @@ import {
 import {
     type ITransactionTransfer,
     TransactionSide,
-    useTransactionActions,
 } from '@/modules/finance/api/financeService';
 import { TransactionExecutionDetails } from '@/modules/finance/components/transactionExecutionDetails';
 import {
@@ -304,17 +303,6 @@ export const WorkspaceTransactionListItem: React.FC<
     const accountName =
         account == null ? undefined : workspaceUtils.getAccountName(account);
 
-    // The row does not always carry the slug of the proposal behind a DAO execution, in which case it is read from the
-    // actions of the execution: the expanded details read the same query, so expanding the row adds no request.
-    const isProposalSlugMissing =
-        row.kind === 'daoExecution' &&
-        row.transaction.proposalIndex != null &&
-        row.transaction.proposalSlug == null;
-    const { data: actionData } = useTransactionActions(
-        { urlParams: { id: transaction.id, network: transaction.network } },
-        { enabled: isProposalSlugMissing },
-    );
-
     if (row.kind === 'explorerLink') {
         return (
             <TransactionList.Item index={index} transaction={row.transaction} />
@@ -332,8 +320,7 @@ export const WorkspaceTransactionListItem: React.FC<
         ? buildTransferDisplay(row.transaction, headerCopy)
         : buildExecutionDisplay({
               row,
-              proposalSlug:
-                  row.transaction.proposalSlug ?? actionData?.proposalSlug,
+              proposalSlug: row.transaction.proposalSlug,
               accountName,
               t,
           });
