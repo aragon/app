@@ -7,7 +7,7 @@ export const tokenPlugin: IPluginInfo = {
     name: 'Token',
     installVersion: {
         release: 1,
-        build: 4,
+        build: 3,
         releaseNotes:
             'https://github.com/aragon/token-voting-plugin/releases/tag/v1.4',
         description:
