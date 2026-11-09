@@ -1,6 +1,7 @@
 'use client';
 
 import { Tag } from '@aragon/gov-ui-kit';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -16,6 +17,7 @@ const sidebarLinks = footerLinks.filter(({ label }) => label !== 'explore');
 export const FooterSidebar: React.FC = () => {
     const { t } = useTranslations();
     const version = useApplicationVersion();
+    const isWalletConnected = useWalletConnected();
 
     const year = new Date().getFullYear();
 
@@ -23,7 +25,7 @@ export const FooterSidebar: React.FC = () => {
         <div className="flex flex-col gap-2 border-neutral-100 border-t px-1 pt-4 text-neutral-500 text-sm leading-tight">
             <Link
                 className="flex items-center gap-2 self-start font-normal text-neutral-500 text-sm hover:text-neutral-800"
-                href="/"
+                href={isWalletConnected ? '/explore' : '/'}
             >
                 <span className="text-nowrap">
                     {t('app.application.footer.governed')}
