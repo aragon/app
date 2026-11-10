@@ -131,6 +131,13 @@ test.describe('First-time workspace experience', () => {
                 debugHeadings.indexOf('Simulation'),
             );
 
+            const downloadPromise = page.waitForEvent('download');
+            await page.getByRole('button', { name: 'Export JSON' }).click();
+            const download = await downloadPromise;
+            expect(download.suggestedFilename()).toMatch(
+                /^aragon-workspaces-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.json$/,
+            );
+
             page.once('dialog', (dialog) => dialog.accept());
             await page.locator('input[type="file"]').setInputFiles({
                 name: 'aragon-workspaces.json',

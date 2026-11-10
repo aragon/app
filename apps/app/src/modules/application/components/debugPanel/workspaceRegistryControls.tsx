@@ -4,7 +4,8 @@ import { Button, Heading } from '@aragon/gov-ui-kit';
 import { type ChangeEvent, useRef, useState } from 'react';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
 
-const exportFilename = 'aragon-workspaces.json';
+const buildExportFilename = () =>
+    `aragon-workspaces-${new Date().toISOString().slice(0, 19).replaceAll(':', '-')}Z.json`;
 
 export const WorkspaceRegistryControls: React.FC = () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -16,7 +17,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
             new Blob([registry], { type: 'application/json' }),
         );
         const link = document.createElement('a');
-        link.download = exportFilename;
+        link.download = buildExportFilename();
         link.href = url;
         link.click();
         window.setTimeout(() => URL.revokeObjectURL(url), 1000);
