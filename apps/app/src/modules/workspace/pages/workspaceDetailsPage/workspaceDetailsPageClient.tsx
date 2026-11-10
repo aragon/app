@@ -14,7 +14,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
-import { WorkspaceTodoList } from '../../components/workspaceTodoList';
+import { WorkspaceTodoPreview } from '../../components/workspaceTodoPreview';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     workspaceAllAccountsSegment,
@@ -116,9 +116,9 @@ export const WorkspaceDetailsPageClient: React.FC<
                         >
                             {/* To-dos belong to the wallet, not to an account, so the page they continue on is
                                 the aggregated one. */}
-                            <WorkspaceTodoList
+                            <WorkspaceTodoPreview
                                 accounts={accounts}
-                                pageSize={dashboardTodosCount}
+                                previewSize={dashboardTodosCount}
                                 viewAllHref={workspaceUtils.getAccountScopeUrl(
                                     workspaceId,
                                     workspaceAllAccountsSegment,

@@ -1,14 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
-import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDao,
-    generateDialogContext,
     generateSafeInfo,
     generateSafeTransaction,
 } from '@/shared/testUtils';
@@ -16,12 +12,12 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import * as useWorkspaceTodoDataModule from '../../hooks/useWorkspaceTodoData';
 import {
-    type IUseWorkspaceTodoDataResult,
     type IWorkspaceTodoItem,
     WorkspaceTodoType,
 } from '../../hooks/useWorkspaceTodoData';
+import type { IUseWorkspaceTodoListDataResult } from '../../hooks/useWorkspaceTodoListData';
+import * as useWorkspaceTodoListDataModule from '../../hooks/useWorkspaceTodoListData';
 import {
     type IWorkspaceTodoListProps,
     WorkspaceTodoList,
@@ -36,17 +32,10 @@ jest.mock('./workspaceTodoListItem', () => ({
 }));
 
 describe('<WorkspaceTodoList /> component', () => {
-    const useWalletAccountSpy = jest.spyOn(
-        useWalletAccountModule,
-        'useWalletAccount',
+    const useWorkspaceTodoListDataSpy = jest.spyOn(
+        useWorkspaceTodoListDataModule,
+        'useWorkspaceTodoListData',
     );
-    const useWorkspaceTodoDataSpy = jest.spyOn(
-        useWorkspaceTodoDataModule,
-        'useWorkspaceTodoData',
-    );
-    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-
-    const walletAddress = '0x1c8Cae0e29e1a0dc65f0f0E4C74DCE9f9C9F4a2B';
 
     const account: IWorkspaceAccount = {
         id: 'ethereum-sepolia-0xDao',
@@ -68,32 +57,27 @@ describe('<WorkspaceTodoList /> component', () => {
         hasNonceRival: false,
     };
 
-    const mockTodo = (result?: Partial<IUseWorkspaceTodoDataResult>) =>
-        useWorkspaceTodoDataSpy.mockReturnValue({
-            todos: [],
-            isPending: false,
-            isError: false,
-            hasUnreadableAccounts: false,
+    const mockListData = (result?: Partial<IUseWorkspaceTodoListDataResult>) =>
+        useWorkspaceTodoListDataSpy.mockReturnValue({
+            todoList: [],
+            state: 'idle',
+            emptyState: {
+                heading: 'empty-state',
+                objectIllustration: { object: 'SUCCESS' },
+            },
+            errorState: {
+                heading: 'error-state',
+                objectIllustration: { object: 'ERROR' },
+            },
             ...result,
         });
 
-    const mockWallet = (address?: string) =>
-        useWalletAccountSpy.mockReturnValue({
-            address,
-        } as unknown as ReturnType<
-            typeof useWalletAccountModule.useWalletAccount
-        >);
-
     beforeEach(() => {
-        mockWallet(walletAddress);
-        mockTodo();
-        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        mockListData();
     });
 
     afterEach(() => {
-        useWalletAccountSpy.mockReset();
-        useWorkspaceTodoDataSpy.mockReset();
-        useDialogContextSpy.mockReset();
+        useWorkspaceTodoListDataSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IWorkspaceTodoListProps>) => {
@@ -111,67 +95,41 @@ describe('<WorkspaceTodoList /> component', () => {
         );
     };
 
-    it('reads the to-dos of the connected wallet across the accounts', () => {
-        render(createTestComponent());
+    it('reads the to-dos of the accounts, loading while they resolve', () => {
+        render(createTestComponent({ isPending: true }));
 
-        expect(useWorkspaceTodoDataSpy).toHaveBeenCalledWith({
+        expect(useWorkspaceTodoListDataSpy).toHaveBeenCalledWith({
             accounts: [account],
-            address: walletAddress,
+            isPending: true,
         });
     });
 
-    it('asks to connect a wallet without one and opens the connect dialog', async () => {
-        const open = jest.fn();
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        mockWallet(undefined);
+    it('renders no row and no state while loading', () => {
+        mockListData({
+            todoList: [buildProposalTodo('p1')],
+            state: 'initialLoading',
+        });
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceTodoList\.connect\.heading$/),
-        ).toBeInTheDocument();
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: /workspaceTodoList\.connect\.action$/,
-            }),
-        );
-        expect(open).toHaveBeenCalledWith(ApplicationDialogId.CONNECT_WALLET);
+        expect(screen.queryByText(/todo-row/)).not.toBeInTheDocument();
+        expect(screen.queryByText('empty-state')).not.toBeInTheDocument();
     });
-
-    it.each([
-        ['the read', { isPending: true }, undefined],
-        ['the accounts', undefined, { isPending: true }],
-    ])(
-        'renders no row and no state while %s are pending',
-        (_what, todoResult, props) => {
-            mockTodo({ todos: [buildProposalTodo('p1')], ...todoResult });
-            render(createTestComponent(props));
-
-            expect(screen.queryByText(/todo-row/)).not.toBeInTheDocument();
-            expect(
-                screen.queryByText(/workspaceTodoList\.emptyState\.heading$/),
-            ).not.toBeInTheDocument();
-        },
-    );
 
     it('renders the error state when the read fails', () => {
-        mockTodo({ isError: true });
+        mockListData({ state: 'error' });
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceTodoList\.errorState\.heading$/),
-        ).toBeInTheDocument();
+        expect(screen.getByText('error-state')).toBeInTheDocument();
     });
 
-    it('renders the empty state when nothing is waiting for the wallet', () => {
+    it('renders the empty state when the list holds no to-do', () => {
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceTodoList\.emptyState\.heading$/),
-        ).toBeInTheDocument();
+        expect(screen.getByText('empty-state')).toBeInTheDocument();
     });
 
     it('renders one row per to-do, in the order they are read', () => {
-        mockTodo({ todos: [buildProposalTodo('p1'), transactionTodo] });
+        mockListData({ todoList: [buildProposalTodo('p1'), transactionTodo] });
         render(createTestComponent());
 
         const rows = screen.getAllByText(/todo-row/);
@@ -182,44 +140,21 @@ describe('<WorkspaceTodoList /> component', () => {
     });
 
     it('displays one page of to-dos, the rest being a click away', async () => {
-        mockTodo({ todos: ['p1', 'p2', 'p3', 'p4'].map(buildProposalTodo) });
+        mockListData({
+            todoList: ['p1', 'p2', 'p3', 'p4'].map(buildProposalTodo),
+        });
         render(createTestComponent({ pageSize: 3 }));
 
         expect(screen.getAllByText(/todo-row/)).toHaveLength(3);
-        expect(
-            screen.queryByRole('link', { name: /workspaceTodoList\.viewAll$/ }),
-        ).not.toBeInTheDocument();
 
         await userEvent.click(screen.getByRole('button'));
         expect(screen.getAllByText(/todo-row/)).toHaveLength(4);
     });
 
-    it('previews one page and links the rest to the view-all page', () => {
-        mockTodo({ todos: ['p1', 'p2', 'p3', 'p4'].map(buildProposalTodo) });
-        render(createTestComponent({ pageSize: 3, viewAllHref: '/todos' }));
-
-        expect(screen.getAllByText(/todo-row/)).toHaveLength(3);
-        expect(
-            screen.getByRole('link', { name: /workspaceTodoList\.viewAll$/ }),
-        ).toHaveAttribute('href', '/todos');
-        expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    });
-
-    it('does not link to the view-all page when the preview shows every to-do', () => {
-        mockTodo({ todos: [buildProposalTodo('p1'), transactionTodo] });
-        render(createTestComponent({ pageSize: 3, viewAllHref: '/todos' }));
-
-        expect(
-            screen.queryByRole('link', { name: /workspaceTodoList\.viewAll$/ }),
-        ).not.toBeInTheDocument();
-    });
-
-    it('warns when a Safe could not be read', () => {
-        mockTodo({ hasUnreadableAccounts: true });
+    it('warns when the list is missing to-dos', () => {
+        mockListData({ partialMessage: 'partial-warning' });
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceTodoList\.partial$/),
-        ).toBeInTheDocument();
+        expect(screen.getByText('partial-warning')).toBeInTheDocument();
     });
 });

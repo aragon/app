@@ -15,6 +15,7 @@ import {
     type IWorkspaceTodoTransactionItem,
     WorkspaceTodoType,
 } from '../../hooks/useWorkspaceTodoData';
+import { workspaceTodoUtils } from '../../utils/workspaceTodoUtils';
 import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import { WorkspaceAccountAvatar } from '../workspaceAccountAvatar';
@@ -62,11 +63,6 @@ const buildProposalDisplay = (
           })
         : null;
 
-    const accountId = workspaceUtils.buildAccountId({
-        network: proposal.network,
-        address: proposal.daoAddress,
-    });
-
     return {
         avatar: (
             <WorkspaceAccountAvatar
@@ -84,12 +80,7 @@ const buildProposalDisplay = (
             label: t('app.workspace.workspaceTodoList.item.proposal.action'),
             variant: 'primary',
         },
-        // A proposal whose plugin does not resolve has no slug, hence no page of its own.
-        href: workspaceUtils.getAccountScopeUrl(
-            workspaceId,
-            accountId,
-            slug == null ? 'proposals' : `proposals/${slug}`,
-        ),
+        href: workspaceTodoUtils.getProposalUrl(workspaceId, todo, slug),
     };
 };
 
@@ -98,7 +89,7 @@ const buildTransactionDisplay = (
     workspaceId: string,
     t: TranslationFunction,
 ): IWorkspaceTodoDisplay => {
-    const { account, safeInfo, transaction, hasNonceRival } = todo;
+    const { account, transaction, hasNonceRival } = todo;
 
     const accountName = workspaceUtils.getAccountName(account);
 
@@ -120,9 +111,7 @@ const buildTransactionDisplay = (
             `app.workspace.workspaceTodoList.item.transaction.${hasNonceRival ? 'signaturesNonceRival' : 'signatures'}`,
             {
                 count: transaction.confirmations.length,
-                // The threshold read from the Safe wins over the one the queue carries, as on the queue page.
-                required:
-                    safeInfo?.threshold ?? transaction.confirmationsRequired,
+                required: workspaceTodoUtils.getRequiredSignatures(todo),
             },
         ),
         tag: {

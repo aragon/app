@@ -4980,7 +4980,6 @@
           "description": "What is waiting for you could not be read. Please try again later."
         },
         "partial": "Some Safes could not be read, so this list may be missing transactions.",
-        "viewAll": "View all",
         "item": {
           "proposal": {
             "action": "Vote"
@@ -4990,6 +4989,20 @@
             "signaturesNonceRival": "{{count}} of {{required}} signatures, nonce conflict",
             "action": "Sign"
           }
+        }
+      },
+      "workspaceTodoPreview": {
+        "viewAll": "View all",
+        "proposal": {
+          "title": "{{slug}} · {{title}}",
+          "meta": "Vote · ends {{date}}",
+          "action": "Vote"
+        },
+        "transaction": {
+          "title": "Safe transaction #{{nonce}}",
+          "meta": "Sign · {{account}} · {{count}} of {{required}} signatures",
+          "nonceRival": "nonce conflict",
+          "action": "Sign"
         }
       },
       "workspaceTodosAsideCard": {

@@ -17,7 +17,7 @@ import {
 // The list is tested on its own; here it only needs to say what it was asked for.
 jest.mock('../../components/workspaceTodoList', () => ({
     WorkspaceTodoList: (props: IWorkspaceTodoListProps) => (
-        <p>{`list ${props.workspaceId} ${props.accounts.map((account) => account.id).join(',')} ${props.isPending ? 'pending' : 'ready'} ${props.viewAllHref ?? 'paginated'}`}</p>
+        <p>{`list ${props.workspaceId} ${props.accounts.map((account) => account.id).join(',')} ${props.isPending ? 'pending' : 'ready'}`}</p>
     ),
 }));
 
@@ -81,11 +81,11 @@ describe('<WorkspaceTodosPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('lists the to-dos of the accounts of the route scope, paginated', () => {
+    it('lists the to-dos of the accounts of the route scope', () => {
         render(createTestComponent());
 
         expect(
-            screen.getByText(`list demo ${account.id} ready paginated`),
+            screen.getByText(`list demo ${account.id} ready`),
         ).toBeInTheDocument();
     });
 
