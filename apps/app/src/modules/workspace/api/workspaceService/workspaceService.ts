@@ -98,6 +98,7 @@ const isWorkspace = (id: string, value: unknown): value is IWorkspace => {
 
     return (
         workspace.id === id &&
+        (workspace.isDemo == null || typeof workspace.isDemo === 'boolean') &&
         typeof workspace.name === 'string' &&
         typeof workspace.description === 'string' &&
         (workspace.avatar == null || typeof workspace.avatar === 'string') &&

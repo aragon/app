@@ -88,11 +88,17 @@ test.describe('First-time workspace experience', () => {
                     page.evaluate((key) => {
                         const registry = JSON.parse(
                             localStorage.getItem(key) ?? '{}',
-                        ) as Record<string, unknown>;
-                        return 'aragon-demo' in registry;
+                        ) as Record<string, { isDemo?: boolean }>;
+                        return registry['aragon-demo']?.isDemo;
                     }, workspaceStorageKey),
                 )
                 .toBe(true);
+            await expect(
+                page.getByRole('button', { name: 'Read-Only Demo' }).first(),
+            ).toBeDisabled();
+            await expect(
+                page.getByRole('link', { name: 'Edit workspace' }),
+            ).toHaveCount(0);
 
             await page
                 .getByRole('link', { name: /Aragon X \(Mainnet\)/ })
@@ -105,6 +111,16 @@ test.describe('First-time workspace experience', () => {
             await expect(page).toHaveURL(
                 /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/proposals(?:\?.*)?$/,
             );
+            await expect(
+                page.getByRole('button', { name: 'New proposal' }),
+            ).toHaveCount(0);
+            await page
+                .getByRole('link', { name: 'Transactions' })
+                .first()
+                .click();
+            await expect(
+                page.getByRole('button', { name: 'New transaction' }),
+            ).toHaveCount(0);
         });
 
         test('creates an empty workspace and exposes both account actions', async ({

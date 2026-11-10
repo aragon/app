@@ -245,7 +245,9 @@ server-side (`typeof window === 'undefined'`) rather than silently returning not
 The debug panel downloads and restores this exact registry format. Imports require an explicit browser confirmation
 because replacement discards local-only workspaces. The `/demo` route installs `workspaceDemo.fixture.json`, then
 redirects to `/workspace/aragon-demo/all/overview`; the fixture therefore uses the same workspace layout, navigation,
-queries, and account interactions as any user-created workspace instead of maintaining a parallel demo UI.
+queries, and account interactions as any user-created workspace instead of maintaining a parallel demo UI. Its
+persisted `isDemo` flag replaces wallet connection with a read-only label and hides workspace, account, proposal, and
+transaction creation controls.
 
 The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
 `getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an

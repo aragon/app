@@ -99,6 +99,20 @@ describe('<WorkspaceSelector /> component', () => {
         expect(items[2]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
+    it('hides workspace creation for a demo workspace', async () => {
+        getWorkspaceSpy.mockResolvedValue({
+            ...firstWorkspace,
+            isDemo: true,
+        });
+        render(createTestComponent());
+
+        await openDropdown();
+
+        expect(
+            screen.queryByText(/workspaceSelector\.create$/),
+        ).not.toBeInTheDocument();
+    });
+
     it('opens the overview of the selected workspace', async () => {
         render(createTestComponent());
 

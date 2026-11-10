@@ -8,6 +8,10 @@ export interface IWorkspace {
      */
     id: string;
     /**
+     * Whether the workspace is a read-only demo.
+     */
+    isDemo?: boolean;
+    /**
      * Name of the workspace.
      */
     name: string;

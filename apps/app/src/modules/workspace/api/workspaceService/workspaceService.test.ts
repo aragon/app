@@ -377,7 +377,7 @@ describe('workspace service', () => {
     describe('workspace registry portability', () => {
         it('exports and restores the complete registry', async () => {
             const first = await workspaceService.createWorkspace({
-                body: buildBody({ name: 'First' }),
+                body: buildBody({ name: 'First', isDemo: true }),
             });
             const second = await workspaceService.createWorkspace({
                 body: buildBody({ name: 'Second' }),
@@ -414,7 +414,11 @@ describe('workspace service', () => {
             await expect(
                 workspaceService.importWorkspaceRegistry(
                     JSON.stringify({
-                        broken: { id: 'broken', name: 'Broken' },
+                        broken: {
+                            ...buildBody(),
+                            id: 'broken',
+                            isDemo: 'yes',
+                        },
                     }),
                 ),
             ).rejects.toThrow('not a valid workspace registry');

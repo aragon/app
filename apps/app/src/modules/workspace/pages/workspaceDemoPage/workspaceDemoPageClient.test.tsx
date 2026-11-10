@@ -13,6 +13,7 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         workspaceService,
         'getWorkspaceList',
     );
+    const updateWorkspaceSpy = jest.spyOn(workspaceService, 'updateWorkspace');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const replaceMock = jest.fn();
 
@@ -21,10 +22,15 @@ describe('<WorkspaceDemoPageClient /> component', () => {
             replace: replaceMock,
         } as unknown as AppRouterInstance);
         getWorkspaceListSpy.mockResolvedValue([]);
+        updateWorkspaceSpy.mockImplementation(async ({ urlParams, body }) => ({
+            ...body,
+            id: urlParams.id,
+        }));
     });
 
     afterEach(() => {
         getWorkspaceListSpy.mockReset();
+        updateWorkspaceSpy.mockReset();
         importRegistrySpy.mockReset();
         useRouterSpy.mockReset();
         replaceMock.mockReset();
@@ -49,7 +55,7 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         );
     });
 
-    it('preserves an existing demo workspace before opening it', async () => {
+    it('preserves an existing demo workspace while marking it read-only', async () => {
         getWorkspaceListSpy.mockResolvedValue([
             {
                 id: 'aragon-demo',
@@ -65,11 +71,23 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         render(<WorkspaceDemoPageClient />);
 
         await waitFor(() =>
-            expect(replaceMock).toHaveBeenCalledWith(
-                '/workspace/aragon-demo/all/overview',
-            ),
+            expect(updateWorkspaceSpy).toHaveBeenCalledWith({
+                urlParams: { id: 'aragon-demo' },
+                body: {
+                    name: 'Edited demo',
+                    description: '',
+                    avatar: null,
+                    links: [],
+                    accounts: [],
+                    targets: [],
+                    isDemo: true,
+                },
+            }),
         );
         expect(importRegistrySpy).not.toHaveBeenCalled();
+        expect(replaceMock).toHaveBeenCalledWith(
+            '/workspace/aragon-demo/all/overview',
+        );
     });
 
     it('shows an error instead of navigating when the fixture cannot be installed', async () => {

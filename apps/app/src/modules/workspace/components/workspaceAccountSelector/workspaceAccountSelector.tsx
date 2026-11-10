@@ -219,13 +219,15 @@ export const WorkspaceAccountSelector: React.FC<
                     </span>
                 </Dropdown.Item>
             ))}
-            <Dropdown.Item
-                href={addAccountUrl}
-                icon={IconType.PLUS}
-                iconPosition="left"
-            >
-                {t('app.workspace.workspaceAccountSelector.addAccount')}
-            </Dropdown.Item>
+            {!workspace?.isDemo && (
+                <Dropdown.Item
+                    href={addAccountUrl}
+                    icon={IconType.PLUS}
+                    iconPosition="left"
+                >
+                    {t('app.workspace.workspaceAccountSelector.addAccount')}
+                </Dropdown.Item>
+            )}
         </Dropdown.Container>
     );
 };

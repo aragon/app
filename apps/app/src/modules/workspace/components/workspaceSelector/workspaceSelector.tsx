@@ -100,13 +100,15 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                     </span>
                 </Dropdown.Item>
             ))}
-            <Dropdown.Item
-                icon={IconType.PLUS}
-                iconPosition="left"
-                onSelect={handleCreateWorkspace}
-            >
-                {t('app.workspace.workspaceSelector.create')}
-            </Dropdown.Item>
+            {!workspace?.isDemo && (
+                <Dropdown.Item
+                    icon={IconType.PLUS}
+                    iconPosition="left"
+                    onSelect={handleCreateWorkspace}
+                >
+                    {t('app.workspace.workspaceSelector.create')}
+                </Dropdown.Item>
+            )}
         </Dropdown.Container>
     );
 };

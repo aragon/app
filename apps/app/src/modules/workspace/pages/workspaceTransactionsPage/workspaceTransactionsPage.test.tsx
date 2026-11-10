@@ -52,7 +52,7 @@ describe('<WorkspaceTransactionsPage /> component', () => {
         expect(notFoundMock).not.toHaveBeenCalled();
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
         expect(WorkspaceTransactionsPageClient).toHaveBeenCalledWith(
-            expect.objectContaining({ pageSize: 20 }),
+            expect.objectContaining({ pageSize: 20, workspaceId: 'demo' }),
             undefined,
         );
     });

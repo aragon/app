@@ -240,6 +240,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         props?: Partial<IWorkspaceTransactionsPageClientProps>,
     ) => {
         const completeProps: IWorkspaceTransactionsPageClientProps = {
+            workspaceId: 'test-workspace',
             pageSize: 20,
             ...props,
         };
@@ -362,6 +363,20 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         );
     });
     it('offers no create action when no account in view can be executed on', async () => {
+        render(createTestComponent());
+
+        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
+        expect(
+            screen.queryByRole('button', { name: createActionName }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: createActionName }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('offers no create action for a demo workspace', async () => {
+        getWorkspaceSpy.mockResolvedValue(buildWorkspace({ isDemo: true }));
+        mockExecutePermissions({ [daoAccount.id]: true });
         render(createTestComponent());
 
         await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));

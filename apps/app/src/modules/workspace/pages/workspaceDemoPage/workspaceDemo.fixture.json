@@ -1,6 +1,7 @@
 {
     "aragon-demo": {
         "id": "aragon-demo",
+        "isDemo": true,
         "name": "Aragon",
         "description": "Aragon builds secure and modular DAO infrastructure for onchain organizations.",
         "avatar": "ipfs://QmX4q3fu1QkSfdVFUAmSUWziCmnXtitp2TVKLbrFVBcPvv",
