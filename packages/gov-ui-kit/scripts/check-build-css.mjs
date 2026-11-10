@@ -15,9 +15,7 @@ const entry = resolve(repoRoot, 'build.css');
 const source = resolve(repoRoot, 'index.css');
 
 const built = readFileSync(entry, 'utf8');
-// `base` is pinned because Tailwind v4 scans for candidates from the working directory, so the output otherwise
-// depends on where this runs.
-const { css: expected } = await postcss([tailwindcss({ base: repoRoot, optimize: { minify: true } })]).process(
+const { css: expected } = await postcss([tailwindcss({ optimize: { minify: true } })]).process(
     readFileSync(source, 'utf8'),
     { from: source, to: entry },
 );

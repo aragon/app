@@ -1,5 +1,3 @@
 @import "./src/index.css";
-@import "tailwindcss";
-
-/* Design-system docs mention class names that the kit does not use. */
-@source not "./design-system";
+/* Class names come from `src` only: prose and config elsewhere in the package would add unused utilities. */
+@import "tailwindcss" source("./src");
