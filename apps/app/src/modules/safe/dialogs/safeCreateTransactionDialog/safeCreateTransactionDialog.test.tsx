@@ -292,6 +292,31 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         expect(initForOwnerSpy).not.toHaveBeenCalled();
     });
 
+    it('checksums the target of an action, which the service refuses in any other casing', async () => {
+        const target = '0x9642F9b4480F6e134742922d8e0C7D3503F95b0e';
+        render(
+            createTestComponent({
+                actions: [
+                    {
+                        ...generateProposalAction({
+                            to: target.toLowerCase(),
+                            data: '0x1234',
+                        }),
+                        meta: undefined,
+                    },
+                ],
+            }),
+        );
+
+        await screen.findByRole('button', { name: 'confirm-review' });
+
+        expect(readOnlyKit.createTransaction).toHaveBeenCalledWith(
+            expect.objectContaining({
+                transactions: [{ to: target, value: '0', data: '0x1234' }],
+            }),
+        );
+    });
+
     it('keeps the action disabled until the review content clears the payload', async () => {
         render(createTestComponent());
 

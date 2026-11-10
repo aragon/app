@@ -3,7 +3,7 @@
 import { addressUtils, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Hex } from 'viem';
+import { getAddress, type Hex } from 'viem';
 import { getBytecode } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
@@ -159,10 +159,13 @@ export const SafeCreateTransactionDialog: React.FC<
             chainId: requiredChainId,
             safeAddress,
         });
-        // Several actions become one delegate call to MultiSendCallOnly, which cannot delegate any further.
+        // Several actions become one delegate call to MultiSendCallOnly, which cannot delegate any further. A single
+        // action is the transaction itself, so its target reaches the service verbatim, and the service refuses an
+        // address that is not checksummed (e.g. one imported from a JSON file) after the owner has signed. Casing does
+        // not change the Safe transaction hash.
         const safeTransaction = await protocolKit.createTransaction({
             transactions: preparedActions.map(({ to, value, data }) => ({
-                to,
+                to: getAddress(to),
                 value: value.toString(),
                 data,
             })),
