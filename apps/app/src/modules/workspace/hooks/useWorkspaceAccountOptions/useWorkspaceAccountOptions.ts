@@ -185,7 +185,7 @@ export const useWorkspaceAccountOptions =
             // The lookup names a single account, so its only entry is that account.
             const externalInfo = externalInfos?.[0];
 
-            // The same rule as `WorkspaceAccountGate`, so the server and the client agree on what the account is.
+            // The rule `workspaceAccountInfoUtils.resolveAccount` applies on the server, so both agree.
             const accountState = workspaceUtils.resolveAccountState(
                 externalInfo,
                 externalInfosError,

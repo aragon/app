@@ -231,6 +231,7 @@ describe('<WorkspaceSafeDashboardPageClient /> component', () => {
                 accounts: [safeAccount],
                 pageSize: 6,
                 hidePagination: true,
+                isPending: false,
             },
             undefined,
         );
@@ -270,5 +271,16 @@ describe('<WorkspaceSafeDashboardPageClient /> component', () => {
         render(createTestComponent());
 
         expect(asideCardMock).not.toHaveBeenCalled();
+    });
+
+    // The owner preview must not flash "no members" while an account the workspace does not hold is being placed.
+    it('keeps the member preview loading while the account is not resolved', () => {
+        mockUnresolvedOption();
+        render(createTestComponent());
+
+        expect(memberListMock).toHaveBeenLastCalledWith(
+            expect.objectContaining({ accounts: [], isPending: true }),
+            undefined,
+        );
     });
 });

@@ -5,14 +5,12 @@ import {
 } from '@tanstack/react-query';
 import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
-// biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
-import { isAddress } from 'viem';
+import { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceExternalAccountBanner } from '@/modules/workspace/components/workspaceExternalAccountBanner';
+import { workspaceAccountInfoUtils } from '@/modules/workspace/utils/workspaceAccountInfoUtils';
 import { daoOptions } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { networkUtils } from '@/shared/utils/networkUtils';
 import { ErrorBoundary } from '../../errorBoundary';
 
 export interface ILayoutWorkspaceAccountProps {
@@ -29,16 +27,15 @@ export interface ILayoutWorkspaceAccountProps {
 /**
  * Layout of the pages of a workspace scoped to one account, `/workspace/{workspaceId}/{accountId}/…`.
  *
- * This is what the account scope buys: an account ID is also a DAO ID, so the DAO resolves here without reading the
- * workspace registry — which lives on local storage and is unreadable during a server render (see
- * `docs/projectDocs/createWorkspace.md`). Fetching it once here hydrates it for every section below, the way
- * `LayoutDao` does for the DAO pages, so those sections render complete on the first paint instead of behind a
- * client-side spinner. A prefetch added to `LayoutDao` does not reach these routes and belongs here too.
+ * Owns whether the account exists: `workspaceAccountInfoUtils.resolveAccountType` 404s an address that is neither an
+ * indexed DAO nor a Safe and throws when the lookup cannot tell, which the `LayoutWorkspace` error boundary catches.
+ * Throwing works from a layout because a throwing layout is discarded with its page; a layout cannot *replace* its
+ * page. Which sections an account type has is `WorkspaceSectionGuard`'s job, as a layout does not see its child
+ * segment. See "Account existence and the account lookup" in `docs/projectDocs/createWorkspace.md`.
  *
- * The read uses `prefetchQuery`, which resolves rather than throws, because it is not load-bearing *here*: a
- * workspace holds Safe accounts as well as DAOs, and a Safe has no DAO to read. The sections that need one render
- * their own not-found state; the ones that do not — assets, transactions — work from the workspace query endpoints
- * regardless.
+ * The account ID is also a DAO ID, so the DAO is read here without the workspace registry (local storage, unreadable
+ * on the server) and hydrated for the sections. A failed read fails the route for a DAO only, as a Safe has none.
+ * The account lookup is not hydrated: the navigation creates that query before this layout's `HydrationBoundary`.
  *
  * `WorkspaceExternalAccountBanner` sits above every section, the way `BannerDao` does in `LayoutDao`: it renders only
  * when the route names an account the workspace does not hold, and offers to add it.
@@ -57,26 +54,30 @@ export const LayoutWorkspaceAccount: React.FC<
 
     const { accountId } = await params;
 
-    // Bots constantly probe account-addressed URLs with unknown or malformed addresses. The DAO routes filter those
-    // through `resolveDaoId`; here the account ID is used verbatim as the DAO ID, so it is validated before any
-    // request. Not strict about the checksum, as `resolveDaoId` is not either: the backend accepts any casing, so a
-    // lowercase account on a shared link addresses the same pages.
-    const { network, address } = daoUtils.parseDaoId(accountId);
-
-    if (
-        !networkUtils.isValidNetwork(network) ||
-        !isAddress(address, { strict: false })
-    ) {
+    // Bots probe account-addressed URLs; the account ID is used verbatim as the DAO ID, so it is validated before
+    // any request.
+    if (!workspaceAccountInfoUtils.isValidAccountId(accountId)) {
         notFound();
     }
 
     const queryClient = new QueryClient();
 
-    // TODO: once Safe accounts are implemented, `WorkspaceAccountGate` can move here and its `fetchQuery` replace this
-    // DAO prefetch, provided no page below fails the route on an unreadable DAO any more (see the gate's JSDoc).
-    await queryClient.prefetchQuery(
-        daoOptions({ urlParams: { id: accountId } }),
-    );
+    const [isDaoRead, accountType] = await Promise.all([
+        queryClient
+            .fetchQuery(daoOptions({ urlParams: { id: accountId } }))
+            .then(
+                () => true,
+                () => false,
+            ),
+        workspaceAccountInfoUtils.resolveAccountType(accountId),
+    ]);
+
+    // A Safe has no DAO to read, but the DAO pages render nothing without theirs.
+    if (accountType === WorkspaceAccountType.DAO && !isDaoRead) {
+        throw new Error(
+            'LayoutWorkspaceAccount: the DAO of the account could not be read.',
+        );
+    }
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

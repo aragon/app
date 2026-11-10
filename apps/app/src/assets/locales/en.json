@@ -4761,14 +4761,6 @@
           "description": "This address is neither a DAO nor a Safe on this network.",
           "heading": "Account not found"
         },
-        "safe": {
-          "action": {
-            "assets": "View assets",
-            "transactions": "View transactions"
-          },
-          "description": "This page isn't available for Safe accounts yet. You can view the assets and transactions of this Safe.",
-          "heading": "Not available for Safe accounts yet"
-        },
         "unavailable": {
           "description": "We couldn't verify this account right now. Please try again in a moment.",
           "heading": "Couldn't verify this account"

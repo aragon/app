@@ -3,7 +3,9 @@ import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
+import { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
 import * as workspaceExternalAccountBannerModule from '@/modules/workspace/components/workspaceExternalAccountBanner';
+import { workspaceAccountInfoUtils } from '@/modules/workspace/utils/workspaceAccountInfoUtils';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, Network } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
@@ -32,6 +34,10 @@ describe('<LayoutWorkspaceAccount /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
+    const resolveAccountTypeSpy = jest.spyOn(
+        workspaceAccountInfoUtils,
+        'resolveAccountType',
+    );
     // Stubbed: the banner reads the workspace on the client, which belongs to its own tests.
     const externalAccountBannerSpy = jest.spyOn(
         workspaceExternalAccountBannerModule,
@@ -41,12 +47,14 @@ describe('<LayoutWorkspaceAccount /> component', () => {
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue({});
         isEnabledSpy.mockResolvedValue(true);
+        resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.DAO);
         externalAccountBannerSpy.mockImplementation(() => null);
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
         isEnabledSpy.mockReset();
+        resolveAccountTypeSpy.mockReset();
         externalAccountBannerSpy.mockReset();
         notFoundMock.mockClear();
     });
@@ -63,8 +71,7 @@ describe('<LayoutWorkspaceAccount /> component', () => {
         return await LayoutWorkspaceAccount(completeProps);
     };
 
-    // Query options carry a fresh queryFn per call, so the key is what identifies the read. `prefetchQuery`
-    // passes its options straight to `fetchQuery`, which is what is spied here.
+    // Query options carry a fresh queryFn per call, so the key is what identifies the read.
     const prefetchedKeys = () =>
         fetchQuerySpy.mock.calls.map(
             ([options]) => (options as { queryKey: unknown[] }).queryKey,
@@ -144,9 +151,9 @@ describe('<LayoutWorkspaceAccount /> component', () => {
         expect(screen.getByTestId('page-mock')).toBeInTheDocument();
     });
 
-    // A workspace holds Safe accounts too, and a Safe has no DAO to read. Prefetching rather than fetching is
-    // what keeps that from failing the whole scope: the sections that need a DAO render their own not-found state.
-    it('renders the page even when the account has no DAO', async () => {
+    // A Safe has no DAO to read, so the failed DAO read must not fail its route.
+    it('renders the page of a Safe, whose DAO read fails', async () => {
+        resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.SAFE);
         fetchQuerySpy.mockRejectedValue(new Error('not a DAO'));
 
         render(await createTestComponent());
@@ -154,9 +161,73 @@ describe('<LayoutWorkspaceAccount /> component', () => {
         expect(screen.getByTestId('page-mock')).toBeInTheDocument();
     });
 
+    // The DAO pages render nothing without their DAO, so a DAO whose record cannot be read fails the route instead.
+    it('fails the route of a DAO whose DAO read fails', async () => {
+        resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.DAO);
+        fetchQuerySpy.mockRejectedValue(new Error('backend down'));
+
+        await expect(createTestComponent()).rejects.toThrow(
+            'the DAO of the account could not be read',
+        );
+    });
+
     it('renders the banner of an account the workspace does not hold above the page', async () => {
         render(await createTestComponent());
 
         expect(externalAccountBannerSpy).toHaveBeenCalled();
+    });
+
+    // Bots probe account-addressed URLs; a URL failing before the lookup must not cost one.
+    it('sends no account lookup when the workspaces flag is disabled', async () => {
+        isEnabledSpy.mockResolvedValue(false);
+
+        await expect(createTestComponent()).rejects.toThrow(
+            'NEXT_HTTP_ERROR_FALLBACK;404',
+        );
+        expect(resolveAccountTypeSpy).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        { accountId: 'not-a-network-0x123', case: 'an unknown network' },
+        {
+            accountId: `${Network.ETHEREUM_SEPOLIA}-not-an-address`,
+            case: 'a malformed address',
+        },
+    ])('sends no account lookup for $case', async ({ accountId }) => {
+        await expect(
+            createTestComponent({
+                params: Promise.resolve({ workspaceId: 'demo', accountId }),
+            }),
+        ).rejects.toThrow('NEXT_HTTP_ERROR_FALLBACK;404');
+        expect(resolveAccountTypeSpy).not.toHaveBeenCalled();
+    });
+
+    it('looks up the type of the account of the route', async () => {
+        await createTestComponent();
+
+        expect(resolveAccountTypeSpy).toHaveBeenCalledWith(accountId);
+    });
+
+    it.each([WorkspaceAccountType.DAO, WorkspaceAccountType.SAFE])(
+        'renders the page of a %s',
+        async (accountType) => {
+            resolveAccountTypeSpy.mockResolvedValue(accountType);
+
+            render(await createTestComponent());
+
+            expect(screen.getByTestId('page-mock')).toBeInTheDocument();
+        },
+    );
+
+    // The lookup fails the route itself — `notFound()` for an unknown address, an error for one it cannot place — and
+    // the layout lets that through to the boundaries above it.
+    it.each([
+        'NEXT_HTTP_ERROR_FALLBACK;404',
+        'the account could not be verified',
+    ])('fails the route when the lookup does (%s)', async (message) => {
+        resolveAccountTypeSpy.mockRejectedValue(new Error(message));
+
+        await expect(createTestComponent()).rejects.toThrow(message);
+        expect(screen.queryByTestId('page-mock')).not.toBeInTheDocument();
     });
 });

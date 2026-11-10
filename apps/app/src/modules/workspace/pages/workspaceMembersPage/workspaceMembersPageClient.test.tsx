@@ -137,6 +137,7 @@ describe('<WorkspaceMembersPageClient /> component', () => {
                     workspaceId: 'demo',
                     accounts: [daoAccount, safeAccount],
                     pageSize: 18,
+                    isPending: false,
                 },
                 undefined,
             ),
@@ -225,5 +226,23 @@ describe('<WorkspaceMembersPageClient /> component', () => {
                 ([props]) => props.accounts.length === 1,
             ),
         ).toBe(true);
+    });
+
+    // An external account's scope is empty until the client lookup answers; that must not read as "no members".
+    it('keeps the list loading while the scope is still being resolved', () => {
+        useWorkspaceAccountOptionsSpy.mockReturnValue({
+            options: [],
+            accountId: `${Network.ETHEREUM_SEPOLIA}-0x1F01e6fe406295c9fe42189A2ef999636a04132a`,
+            activeOption: undefined,
+            isAllAccounts: false,
+            scopedAccounts: [],
+            isPending: true,
+        });
+        render(createTestComponent());
+
+        expect(memberListMock).toHaveBeenLastCalledWith(
+            expect.objectContaining({ accounts: [], isPending: true }),
+            undefined,
+        );
     });
 });

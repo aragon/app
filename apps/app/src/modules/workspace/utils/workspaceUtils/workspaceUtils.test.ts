@@ -1,3 +1,5 @@
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
@@ -768,5 +770,29 @@ describe('workspace utils', () => {
                 workspaceUtils.validateNetworkAddress(networkAddresses, 1),
             ).toBeTruthy();
         });
+    });
+});
+
+// Every route below an account is a section the navigation, the account selector and `WorkspaceSectionGuard` read
+// from `workspaceSectionScopes`. A route folder missing from the list would serve every account type unnoticed.
+describe('workspace account routes', () => {
+    it('every route folder under [accountId] is a workspace account section', () => {
+        // biome-ignore lint/correctness/noGlobalDirnameFilename: Jest runs tests as CommonJS, where `import.meta` does not parse.
+        const testDir = __dirname;
+        const accountRoutesDir = join(
+            testDir,
+            '../../../../app/workspace/[workspaceId]/(workspacePage)/[accountId]',
+        );
+        const routeFolders = readdirSync(accountRoutesDir, {
+            withFileTypes: true,
+        })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => entry.name)
+            // Dynamic segments, such as the `[...section]` catch-all, are not sections.
+            .filter((name) => !name.startsWith('['));
+
+        expect([...routeFolders].sort()).toEqual(
+            [...workspaceAccountSections].sort(),
+        );
     });
 });

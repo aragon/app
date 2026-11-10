@@ -1,1 +1,4 @@
-export { workspaceAccountInfoUtils } from './workspaceAccountInfoUtils';
+export {
+    type IWorkspaceAccountLookup,
+    workspaceAccountInfoUtils,
+} from './workspaceAccountInfoUtils';

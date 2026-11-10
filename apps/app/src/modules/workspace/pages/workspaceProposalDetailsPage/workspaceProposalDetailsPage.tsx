@@ -6,7 +6,7 @@ import { DaoProposalDetailsPage } from '@/modules/governance/pages/daoProposalDe
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountProposalPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceSectionGuard } from '../../components/workspaceSectionGuard';
 
 export interface IWorkspaceProposalDetailsPageProps {
     /**
@@ -18,9 +18,9 @@ export interface IWorkspaceProposalDetailsPageProps {
 /**
  * Details of one proposal of one account of a workspace.
  *
- * Like `WorkspaceAccountMembersPage`, only the DAO branch exists so far: the DAO proposal details page is rendered
- * as is and only the shape of the route parameters is adapted. Another account type is added by branching here
- * or adapted into the underlying `DaoProposalDetailsPage` if it can be made to handle both account types.
+ * Proposals exist for a DAO alone, so this is the DAO branch only: the DAO proposal details page is rendered as is
+ * and only the shape of the route parameters is adapted. `WorkspaceSectionGuard`, as the proposals section, redirects
+ * a Safe that reaches the URL to its overview.
  *
  * Deliberately deferred: the page's breadcrumb and its error `actionLink` resolve to `/dao/…`, as do the voter,
  * publisher and settings links of its nested plugin components, so a reader who uses one leaves the workspace. The
@@ -35,11 +35,15 @@ export const WorkspaceProposalDetailsPage: React.FC<
         notFound();
     }
 
-    const { accountId, proposalSlug } = await params;
+    const { workspaceId, accountId, proposalSlug } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
 
     return (
-        <WorkspaceAccountGate accountId={accountId}>
+        <WorkspaceSectionGuard
+            accountId={accountId}
+            section="proposals"
+            workspaceId={workspaceId}
+        >
             <DaoProposalDetailsPage
                 params={Promise.resolve({
                     network,
@@ -47,6 +51,6 @@ export const WorkspaceProposalDetailsPage: React.FC<
                     proposalSlug,
                 })}
             />
-        </WorkspaceAccountGate>
+        </WorkspaceSectionGuard>
     );
 };
