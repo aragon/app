@@ -150,6 +150,7 @@ export const WorkspaceSafeDashboardPageClient: React.FC<
                         <WorkspaceMemberList
                             accounts={scopedAccounts}
                             hidePagination={true}
+                            isPending={isPending}
                             pageSize={dashboardMembersCount}
                             workspaceId={workspaceId}
                         />
