@@ -896,29 +896,37 @@ replace the explorer links of the Safe account members page and of the Safe-only
 `workspaceDetailsPageClient` composes the standard page primitives, matching the DAO pages:
 
 - `Page.Header` — workspace avatar, name, description and `stats` for the account and target counts.
-- `Page.Main` → `WorkspaceTodoList` first (see below), then `Page.MainSection` for Accounts, and for Targets only
-  when the workspace has any.
+- `Page.Main` → `Page.MainSection` for the To-dos first (see below, skipped for a workspace without accounts), then
+  for Accounts, and for Targets only when the workspace has any.
 - `Page.Aside` → `Page.AsideCard` for the workspace resources, when present.
 
 #### To-do list
 
 `WorkspaceTodoList` sits above the accounts and lists what the **connected wallet** can still act on across the
 whole workspace: the active proposals it can vote on and has not voted on, and the queued Safe transactions it can
-sign and has not signed. To-dos belong to the wallet, so without one the section asks to connect it
-(`CardEmptyState` opening the connect dialog) rather than vanishing.
+sign and has not signed. It is a data list like the other workspace lists (`DataListRoot` / `DataListContainer`),
+whose states are the container's: to-dos belong to the wallet, so without one the empty state asks to connect it
+(opening the connect dialog) rather than vanishing, and when nothing is waiting it says so, so a member learns that
+nobody is waiting on them.
 
-Both kinds share one compact row (`WorkspaceTodoItem`: the account's avatar, what is waiting, what to do about it
-and until when, and the action button), proposals first. A proposal row (`WorkspaceTodoProposalItem`) reads
-"`SLUG · title` / Vote · ends in 5 days" with a primary Vote button leading to the proposal page of its account; a
-Safe row (`WorkspaceTodoSafeTransactionItem`) reads "Safe transaction #nonce / Sign · Treasury · 1 of 2 signatures"
-with a secondary Sign button opening the queue page's review dialog. When nothing is waiting the section shows an
-empty state, so a member learns that nobody is waiting on them.
+Both kinds are one data-list item (`WorkspaceTodoListItem`), proposals first. The row takes no action itself: it
+links to where the to-do is acted on. A proposal row reads "`title` `SLUG` / 5 days left" (the deadline worded as
+the proposal rows word it), tagged "Vote", and links to the proposal page of its account. A Safe row is titled as
+on the transactions page, "`Treasury Safe` `TS-12` / 1 of 2 signatures", tagged "Sign", and links to that
+transaction among the ones of its Safe (`workspaceTransactionUtils.getSafeTransactionUrl`): the URL names it by its
+hash (`safetx`), and `WorkspaceTransactionList` expands the row of that hash on arrival, as long as it is among the
+loaded rows, which the queued transactions are since they come first.
 
-The rows and states live in `WorkspaceTodoContent`, shared by the overview section and the to-dos page. The overview
-shows the first `workspaceTodoPreviewSize` rows (3) and, when there are more, "View all" leads to
-`/workspace/{workspaceId}/all/todos` (`WorkspaceTodosPage`), which lists them all with a toggle on their kind
-(`todotype` URL parameter: all, proposals, Safe transactions). The page is a section like the others, served for
-every scope, so an account-scoped URL narrows it to that account. The navigation is three labelled groups
+The rows are laid out by `WorkspaceListItemSummary` (avatar, title and identifier, description, value or tag), the
+same summary that heads the rows of `WorkspaceTransactionList`, so the workspace lists read alike and a long title
+is truncated the same way everywhere: on one line, its identifier kept. The avatar is `WorkspaceAccountAvatar`,
+shared with the account rows.
+
+The overview and the to-dos page render the same list. The overview shows one page of 3 rows and, when there are
+more, "View all" leads to `/workspace/{workspaceId}/all/todos` (`WorkspaceTodosPage`), which paginates them and
+counts them by kind on its aside (`WorkspaceTodosAsideCard`, read under the list's query, hidden without a wallet).
+The page has no filter of its own; it is a section like the others, served for every scope, so an account-scoped
+URL narrows it to that account. The navigation is three labelled groups
 (`INavigationLinkGroup`): "Inbox" with the "To-dos" link, shown only while a wallet is connected and badged with the
 number waiting in the account scope it opens (`navigationWorkspaceUtils.buildInboxLinks`; the count comes from the
 same query as the to-dos page and the overview, so it costs no extra request); the sections of the account in scope under the workspace name; and "Workspace" with the
@@ -934,8 +942,9 @@ closes at (the current stage's end for a process proposal). The hook then settle
 cannot: the process plugin's `GOVERNANCE_PROCESS_PROPOSAL_STATUS` slot has the final word on "active"
 (`workspaceTodoUtils.getProposalStatus`), so a proposal kept for its open window but no longer active (one already
 approved, say) drops out; and each proposal is paired with its real DAO through `useWorkspaceDaos`, which the rows
-need for their link and title. A Safe the backend could not read is reported through the coverage and warned about
-above the lists (`hasUnreadableAccounts`); the other accounts stay listed.
+need for their link and title. It returns both kinds as one list (`todos`, each item typed by `WorkspaceTodoType`).
+A Safe the backend could not read is reported through the coverage and warned about above the rows
+(`hasUnreadableAccounts`); the other accounts stay listed.
 
 Each account renders as a `WorkspaceAccountItem`. The **type tag comes from the registry**, not from a lookup: it
 was resolved at creation time and decides which APIs the workspace pages query, so the row keeps showing it even

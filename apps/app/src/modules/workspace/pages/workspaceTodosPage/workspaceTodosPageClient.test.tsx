@@ -1,17 +1,12 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { QueryClient } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
-import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
-    type IWorkspace,
     type IWorkspaceAccount,
     WorkspaceAccountType,
-    workspaceService,
 } from '../../api/workspaceService';
-import type { IWorkspaceTodoContentProps } from '../../components/workspaceTodoList';
+import type { IWorkspaceTodoListProps } from '../../components/workspaceTodoList';
+import type { IWorkspaceTodosAsideCardProps } from '../../components/workspaceTodosAsideCard';
 import type { IUseWorkspaceAccountOptionsResult } from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAccountOptionsModule from '../../hooks/useWorkspaceAccountOptions';
 import {
@@ -19,17 +14,20 @@ import {
     WorkspaceTodosPageClient,
 } from './workspaceTodosPageClient';
 
-// The content is tested on its own; here it only needs to say which accounts and kind it was asked for.
+// The list is tested on its own; here it only needs to say what it was asked for.
 jest.mock('../../components/workspaceTodoList', () => ({
-    ...jest.requireActual('../../components/workspaceTodoList'),
-    WorkspaceTodoContent: (props: IWorkspaceTodoContentProps) => (
-        <p>{`content ${props.filter ?? ''} ${props.accounts.map((account) => account.id).join(',')} ${props.workspaceName} ${props.isAccountsPending ? 'pending' : 'ready'}`}</p>
+    WorkspaceTodoList: (props: IWorkspaceTodoListProps) => (
+        <p>{`list ${props.workspaceId} ${props.accounts.map((account) => account.id).join(',')} ${props.isPending ? 'pending' : 'ready'} ${props.viewAllHref ?? 'paginated'}`}</p>
+    ),
+}));
+
+jest.mock('../../components/workspaceTodosAsideCard', () => ({
+    WorkspaceTodosAsideCard: (props: IWorkspaceTodosAsideCardProps) => (
+        <p>{`aside ${props.accounts.map((account) => account.id).join(',')} ${props.title ?? 'untitled'}`}</p>
     ),
 }));
 
 describe('<WorkspaceTodosPageClient /> component', () => {
-    const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
-    const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
     const useWorkspaceAccountOptionsSpy = jest.spyOn(
         useWorkspaceAccountOptionsModule,
         'useWorkspaceAccountOptions',
@@ -40,15 +38,6 @@ describe('<WorkspaceTodosPageClient /> component', () => {
         type: WorkspaceAccountType.DAO,
         address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
         network: Network.ETHEREUM_SEPOLIA,
-    };
-    const workspace: IWorkspace = {
-        id: 'demo',
-        name: 'Demo workspace',
-        description: '',
-        avatar: null,
-        links: [],
-        targets: [],
-        accounts: [account],
     };
 
     const mockOptions = (result?: Partial<IUseWorkspaceAccountOptionsResult>) =>
@@ -62,14 +51,10 @@ describe('<WorkspaceTodosPageClient /> component', () => {
         });
 
     beforeEach(() => {
-        getWorkspaceSpy.mockResolvedValue(workspace);
-        getAccountsSpy.mockResolvedValue([]);
         mockOptions();
     });
 
     afterEach(() => {
-        getWorkspaceSpy.mockReset();
-        getAccountsSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
     });
 
@@ -83,64 +68,59 @@ describe('<WorkspaceTodosPageClient /> component', () => {
 
         return (
             <GukModulesProvider>
-                <ReactQueryWrapper client={new QueryClient()}>
-                    <WorkspaceTodosPageClient {...completeProps} />
-                </ReactQueryWrapper>
+                <WorkspaceTodosPageClient {...completeProps} />
             </GukModulesProvider>
         );
     };
 
-    it('renders the title and the kind filters, every kind selected by default', () => {
+    it('renders the page title', () => {
         render(createTestComponent());
 
         expect(
             screen.getByText(/workspaceTodosPage\.main\.title$/),
         ).toBeInTheDocument();
-        expect(
-            screen.getByRole('radio', {
-                name: /workspaceTodosPage\.filter\.all$/,
-            }),
-        ).toBeChecked();
-        expect(
-            screen.getByRole('radio', {
-                name: /workspaceTodosPage\.filter\.proposals$/,
-            }),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole('radio', {
-                name: /workspaceTodosPage\.filter\.transactions$/,
-            }),
-        ).toBeInTheDocument();
     });
 
-    it('hands the accounts of the route scope and the workspace name to the content', async () => {
+    it('lists the to-dos of the accounts of the route scope, paginated', () => {
         render(createTestComponent());
 
-        await waitFor(() =>
-            expect(
-                screen.getByText(
-                    `content all ${account.id} Demo workspace ready`,
-                ),
-            ).toBeInTheDocument(),
-        );
+        expect(
+            screen.getByText(`list demo ${account.id} ready paginated`),
+        ).toBeInTheDocument();
     });
 
-    it('keeps the content loading while the scope resolves', () => {
+    it('keeps the list loading and the aside back while the scope resolves', () => {
         mockOptions({ scopedAccounts: [], isPending: true });
         render(createTestComponent());
 
-        expect(screen.getByText(/^content all .*pending$/)).toBeInTheDocument();
+        expect(screen.getByText(/^list demo\s+pending/)).toBeInTheDocument();
+        expect(screen.queryByText(/^aside/)).not.toBeInTheDocument();
     });
 
-    it('filters the content on the selected kind', async () => {
+    it('summarises the to-dos of the whole workspace on the aside', () => {
         render(createTestComponent());
 
-        await userEvent.click(
-            screen.getByRole('radio', {
-                name: /workspaceTodosPage\.filter\.transactions$/,
-            }),
-        );
+        expect(
+            screen.getByText(`aside ${account.id} untitled`),
+        ).toBeInTheDocument();
+    });
 
-        expect(screen.getByText(/^content transactions /)).toBeInTheDocument();
+    it('titles the aside with the account the route is scoped to', () => {
+        mockOptions({
+            accountId: account.id,
+            isAllAccounts: false,
+            activeOption: {
+                id: account.id,
+                label: 'Demo DAO',
+                account,
+                isAllAccounts: false,
+                isExternal: false,
+            },
+        });
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(`aside ${account.id} Demo DAO`),
+        ).toBeInTheDocument();
     });
 });

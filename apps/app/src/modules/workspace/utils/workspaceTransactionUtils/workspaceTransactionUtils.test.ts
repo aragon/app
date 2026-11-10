@@ -3,7 +3,10 @@ import {
     generateWorkspacePendingTransaction,
     generateWorkspaceTransaction,
 } from '../../testUtils';
-import { workspaceTransactionUtils } from './workspaceTransactionUtils';
+import {
+    workspaceSafeTransactionParam,
+    workspaceTransactionUtils,
+} from './workspaceTransactionUtils';
 
 describe('workspaceTransaction utils', () => {
     const executed = generateWorkspaceTransaction({
@@ -101,6 +104,20 @@ describe('workspaceTransaction utils', () => {
             expect(
                 workspaceTransactionUtils.getSafeTransactionTitle('43', '  '),
             ).toBe('#43');
+        });
+    });
+
+    describe('getSafeTransactionUrl', () => {
+        it('names the transaction on the transactions of its account', () => {
+            expect(
+                workspaceTransactionUtils.getSafeTransactionUrl(
+                    'my-workspace',
+                    'ethereum-sepolia-0xSafe',
+                    '0xff54',
+                ),
+            ).toBe(
+                `/workspace/my-workspace/ethereum-sepolia-0xSafe/transactions?${workspaceSafeTransactionParam}=0xff54`,
+            );
         });
     });
 });

@@ -28,7 +28,16 @@ export interface IUseWorkspaceTodoDataParams {
     address?: string;
 }
 
+export enum WorkspaceTodoType {
+    PROPOSAL = 'PROPOSAL',
+    TRANSACTION = 'TRANSACTION',
+}
+
 export interface IWorkspaceTodoProposalItem {
+    /**
+     * A proposal to vote on.
+     */
+    type: WorkspaceTodoType.PROPOSAL;
     /**
      * Proposal awaiting the wallet's vote.
      */
@@ -40,6 +49,10 @@ export interface IWorkspaceTodoProposalItem {
 }
 
 export interface IWorkspaceTodoTransactionItem {
+    /**
+     * A Safe transaction to sign.
+     */
+    type: WorkspaceTodoType.TRANSACTION;
     /**
      * Safe account the transaction is queued on.
      */
@@ -58,15 +71,17 @@ export interface IWorkspaceTodoTransactionItem {
     hasNonceRival: boolean;
 }
 
+export type IWorkspaceTodoItem =
+    | IWorkspaceTodoProposalItem
+    | IWorkspaceTodoTransactionItem;
+
 export interface IUseWorkspaceTodoDataResult {
     /**
-     * Active proposals the wallet can vote on and has not voted on yet, newest first.
+     * What is waiting on the wallet, as one list: the active proposals it can vote on and has not voted on yet,
+     * newest first, then the live transactions of the Safes it owns that it has not confirmed yet, in account
+     * order then by nonce.
      */
-    proposals: IWorkspaceTodoProposalItem[];
-    /**
-     * Live transactions of the Safes the wallet owns that it has not confirmed yet, in account order then by nonce.
-     */
-    transactions: IWorkspaceTodoTransactionItem[];
+    todos: IWorkspaceTodoItem[];
     /**
      * Whether the read is still pending. False without a wallet or without accounts, where nothing is read.
      */
@@ -124,42 +139,57 @@ export const useWorkspaceTodoData = (
     );
     const { daos, isPending: isDaosPending } = useWorkspaceDaos(daoAccounts);
 
-    const proposals = (data?.proposals ?? []).flatMap((proposal) => {
-        if (
-            workspaceTodoUtils.getProposalStatus(proposal) !==
-            ProposalStatus.ACTIVE
-        ) {
-            return [];
-        }
+    const proposals = (data?.proposals ?? []).flatMap(
+        (proposal): IWorkspaceTodoProposalItem[] => {
+            if (
+                workspaceTodoUtils.getProposalStatus(proposal) !==
+                ProposalStatus.ACTIVE
+            ) {
+                return [];
+            }
 
-        const dao =
-            daos[
-                workspaceUtils.buildAccountId({
-                    network: proposal.network,
-                    address: proposal.daoAddress,
-                })
-            ];
+            const dao =
+                daos[
+                    workspaceUtils.buildAccountId({
+                        network: proposal.network,
+                        address: proposal.daoAddress,
+                    })
+                ];
 
-        // The row needs the DAO for its link and title, so a proposal whose DAO failed to load is dropped rather
-        // than rendered half-broken.
-        return dao == null ? [] : [{ proposal, dao }];
-    });
+            // The row needs the DAO for its link and title, so a proposal whose DAO failed to load is dropped
+            // rather than rendered half-broken.
+            return dao == null
+                ? []
+                : [{ type: WorkspaceTodoType.PROPOSAL, proposal, dao }];
+        },
+    );
 
     const transactions = (data?.transactions ?? []).flatMap(
-        ({ account: accountRef, safe, transaction, hasNonceRival }) => {
+        (todoTransaction): IWorkspaceTodoTransactionItem[] => {
+            const { safe, transaction, hasNonceRival } = todoTransaction;
             const account = accounts.find((candidate) =>
-                workspaceUtils.isSameNetworkAddress(candidate, accountRef),
+                workspaceUtils.isSameNetworkAddress(
+                    candidate,
+                    todoTransaction.account,
+                ),
             );
 
             return account == null
                 ? []
-                : [{ account, safeInfo: safe, transaction, hasNonceRival }];
+                : [
+                      {
+                          type: WorkspaceTodoType.TRANSACTION,
+                          account,
+                          safeInfo: safe,
+                          transaction,
+                          hasNonceRival,
+                      },
+                  ];
         },
     );
 
     return {
-        proposals,
-        transactions,
+        todos: [...proposals, ...transactions],
         isPending: isEnabled && (isTodoPending || isDaosPending),
         isError,
         hasUnreadableAccounts: workspaceCoverageUtils.hasUnreadableAccounts(

@@ -85,7 +85,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     });
     // The to-dos of the wallet in the scope the to-dos link opens, for its badge. Read under the same query as the
     // to-dos page and the overview, so the badge counts the rows its link leads to at no extra request.
-    const { proposals, transactions } = useWorkspaceTodoData({
+    const { todos } = useWorkspaceTodoData({
         accounts: scopedAccounts,
         address: effectiveIsConnected ? address : undefined,
     });
@@ -102,7 +102,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                 accountId,
                 {
                     isConnected: effectiveIsConnected,
-                    count: proposals.length + transactions.length,
+                    count: todos.length,
                 },
             ),
         },

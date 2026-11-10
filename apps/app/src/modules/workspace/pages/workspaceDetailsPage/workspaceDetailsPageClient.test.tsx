@@ -85,8 +85,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         ]);
         mockWallet(undefined);
         useWorkspaceTodoDataSpy.mockReturnValue({
-            proposals: [],
-            transactions: [],
+            todos: [],
             isPending: false,
             isError: false,
             hasUnreadableAccounts: false,
@@ -157,7 +156,9 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         mockWallet(walletAddress);
         renderWorkspace(buildWorkspace());
 
-        const todoTitle = await screen.findByText(/workspaceTodoList\.title$/);
+        const todoTitle = await screen.findByText(
+            /workspaceDetailsPage\.section\.todos$/,
+        );
         const accountsTitle = screen.getByText(
             /workspaceDetailsPage\.section\.accounts$/,
         );
@@ -175,6 +176,15 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         expect(
             screen.getByText(/workspaceTodoList\.connect\.heading$/),
         ).toBeInTheDocument();
+    });
+
+    it('hides the to-do section for a workspace without accounts', async () => {
+        renderWorkspace(buildWorkspace({ accounts: [] }));
+
+        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
+        expect(
+            screen.queryByText(/workspaceDetailsPage\.section\.todos$/),
+        ).not.toBeInTheDocument();
     });
 
     it('hides the targets section when the workspace has no target', async () => {

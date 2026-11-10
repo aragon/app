@@ -21,7 +21,10 @@ import {
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import { workspaceUtils } from '../../utils/workspaceUtils';
-import { useWorkspaceTodoData } from './useWorkspaceTodoData';
+import {
+    useWorkspaceTodoData,
+    WorkspaceTodoType,
+} from './useWorkspaceTodoData';
 
 describe('useWorkspaceTodoData hook', () => {
     const network = Network.ETHEREUM_SEPOLIA;
@@ -102,8 +105,7 @@ describe('useWorkspaceTodoData hook', () => {
         const { result } = renderTodoData({ accounts: [daoAccount] });
 
         expect(result.current).toEqual({
-            proposals: [],
-            transactions: [],
+            todos: [],
             isPending: false,
             isError: false,
             hasUnreadableAccounts: false,
@@ -147,7 +149,9 @@ describe('useWorkspaceTodoData hook', () => {
         const { result } = renderTodoData();
 
         await waitFor(() => expect(result.current.isPending).toBeFalsy());
-        expect(result.current.proposals).toEqual([{ proposal: active, dao }]);
+        expect(result.current.todos).toEqual([
+            { type: WorkspaceTodoType.PROPOSAL, proposal: active, dao },
+        ]);
     });
 
     it('maps each transaction to its workspace account and keeps the Safe state', async () => {
@@ -180,8 +184,9 @@ describe('useWorkspaceTodoData hook', () => {
         const { result } = renderTodoData();
 
         await waitFor(() => expect(result.current.isPending).toBeFalsy());
-        expect(result.current.transactions).toEqual([
+        expect(result.current.todos).toEqual([
             {
+                type: WorkspaceTodoType.TRANSACTION,
                 account: safeAccount,
                 safeInfo: safe,
                 transaction,
@@ -218,7 +223,6 @@ describe('useWorkspaceTodoData hook', () => {
         const { result } = renderTodoData();
 
         await waitFor(() => expect(result.current.isError).toBeTruthy());
-        expect(result.current.proposals).toEqual([]);
-        expect(result.current.transactions).toEqual([]);
+        expect(result.current.todos).toEqual([]);
     });
 });

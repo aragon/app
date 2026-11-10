@@ -16,7 +16,10 @@ import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
 import { WorkspaceTodoList } from '../../components/workspaceTodoList';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
-import { workspaceUtils } from '../../utils/workspaceUtils';
+import {
+    workspaceAllAccountsSegment,
+    workspaceUtils,
+} from '../../utils/workspaceUtils';
 
 export interface IWorkspaceDetailsPageClientProps {
     /**
@@ -25,8 +28,11 @@ export interface IWorkspaceDetailsPageClientProps {
     workspaceId: string;
 }
 
+const dashboardTodosCount = 3;
+
 /**
- * Overview of a workspace: its metadata, the accounts it aggregates and its targets.
+ * Overview of a workspace: its metadata, what is waiting on the connected wallet, the accounts it aggregates and its
+ * targets.
  *
  * This is the aggregated overview, which is also the state a workspace holding no DAO account is always in; the
  * dashboard of a single account is an account-scoped page of its own.
@@ -98,12 +104,30 @@ export const WorkspaceDetailsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
-                    <WorkspaceTodoList
-                        accountInfos={accountInfos}
-                        accounts={accounts}
-                        workspaceId={workspaceId}
-                        workspaceName={name}
-                    />
+                    {accounts.length > 0 && (
+                        <Page.MainSection
+                            description={t(
+                                'app.workspace.workspaceDetailsPage.section.todosDescription',
+                                { workspace: name },
+                            )}
+                            title={t(
+                                'app.workspace.workspaceDetailsPage.section.todos',
+                            )}
+                        >
+                            {/* To-dos belong to the wallet, not to an account, so the page they continue on is
+                                the aggregated one. */}
+                            <WorkspaceTodoList
+                                accounts={accounts}
+                                pageSize={dashboardTodosCount}
+                                viewAllHref={workspaceUtils.getAccountScopeUrl(
+                                    workspaceId,
+                                    workspaceAllAccountsSegment,
+                                    'todos',
+                                )}
+                                workspaceId={workspaceId}
+                            />
+                        </Page.MainSection>
+                    )}
                     <Page.MainSection
                         title={t(
                             'app.workspace.workspaceDetailsPage.section.accounts',

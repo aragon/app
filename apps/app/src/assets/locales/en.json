@@ -4663,6 +4663,9 @@
           "title": "Save workspace"
         }
       },
+      "workspaceAccountAvatar": {
+        "safe": "Safe"
+      },
       "workspaceAccountItem": {
         "type": {
           "dao": "DAO",
@@ -4726,7 +4729,9 @@
         "section": {
           "accounts": "Accounts",
           "targets": "Targets",
-          "targetsDescription": "Addresses this workspace relates to."
+          "targetsDescription": "Addresses this workspace relates to.",
+          "todos": "To-dos",
+          "todosDescription": "Across every account in {{workspace}}. To-dos belong to your wallet; the workspace only filters them."
         },
         "stat": {
           "accounts": "Accounts",
@@ -4960,11 +4965,10 @@
         }
       },
       "workspaceTodoList": {
-        "title": "To-dos",
-        "description": "Across every account in {{workspace}}. To-dos belong to your wallet; the workspace only filters them.",
+        "entity": "to-dos",
         "connect": {
           "heading": "Connect a wallet to see your to-dos",
-          "description": "To-dos are what your wallet can vote on or sign right now across the accounts in {{workspace}}.",
+          "description": "To-dos are what your wallet can vote on or sign right now across the accounts of this workspace.",
           "action": "Connect wallet"
         },
         "emptyState": {
@@ -4977,26 +4981,25 @@
         },
         "partial": "Some Safes could not be read, so this list may be missing transactions.",
         "viewAll": "View all",
-        "proposal": {
-          "title": "{{slug}} · {{title}}",
-          "meta": "Vote · ends {{date}}",
-          "action": "Vote"
-        },
-        "transaction": {
-          "title": "Safe transaction #{{nonce}}",
-          "meta": "Sign · {{account}} · {{count}} of {{required}} signatures",
-          "nonceRival": "nonce conflict",
-          "action": "Sign"
+        "item": {
+          "proposal": {
+            "action": "Vote"
+          },
+          "transaction": {
+            "signatures": "{{count}} of {{required}} signatures",
+            "signaturesNonceRival": "{{count}} of {{required}} signatures, nonce conflict",
+            "action": "Sign"
+          }
         }
+      },
+      "workspaceTodosAsideCard": {
+        "allTodos": "All to-dos",
+        "proposals": "To vote",
+        "transactions": "To sign"
       },
       "workspaceTodosPage": {
         "main": {
           "title": "To-dos"
-        },
-        "filter": {
-          "all": "All to-dos",
-          "proposals": "Proposals",
-          "transactions": "Safe transactions"
         }
       }
     }
