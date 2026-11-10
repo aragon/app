@@ -124,6 +124,12 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('heading', { name: 'Workspace registry' }),
             ).toBeVisible();
+            const debugHeadings = await page
+                .getByRole('heading', { level: 3 })
+                .allTextContents();
+            expect(debugHeadings.indexOf('Workspace registry')).toBeLessThan(
+                debugHeadings.indexOf('Simulation'),
+            );
 
             page.once('dialog', (dialog) => dialog.accept());
             await page.locator('input[type="file"]').setInputFiles({

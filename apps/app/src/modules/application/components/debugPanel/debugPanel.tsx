@@ -2,7 +2,7 @@
 
 import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -99,20 +99,24 @@ export const DebugPanel: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-4 overflow-y-auto">
                     {Object.keys(groupedControls).map((group) => (
-                        <div className="flex flex-col gap-2" key={group}>
-                            <Heading size="h3">{group}</Heading>
+                        <Fragment key={group}>
+                            {group === 'Simulation' && (
+                                <WorkspaceRegistryControls />
+                            )}
                             <div className="flex flex-col gap-2">
-                                {groupedControls[group]?.map((control) => (
-                                    <DebugPanelControl
-                                        control={control}
-                                        key={control.name}
-                                    />
-                                ))}
+                                <Heading size="h3">{group}</Heading>
+                                <div className="flex flex-col gap-2">
+                                    {groupedControls[group]?.map((control) => (
+                                        <DebugPanelControl
+                                            control={control}
+                                            key={control.name}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </Fragment>
                     ))}
                 </div>
-                <WorkspaceRegistryControls />
             </div>
         </>
     );
