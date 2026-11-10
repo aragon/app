@@ -67,7 +67,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **`src/modules/` = governance-domain composition**: wallet, vote, proposal, dao, member,
   asset, transaction, smartContract, action, and address components built from core + peers.
 - **Styling:** Tailwind CSS v4, CSS-first. There is no `tailwind.config.js`. Root `index.css`
-  imports `./src/index.css` and `tailwindcss`; `src/index.css` pulls in core + theme CSS.
+  imports `./src/index.css` and `tailwindcss`, scanning only `src` for class names;
+  `src/index.css` pulls in core + theme CSS.
   Tokens live under `src/theme/tokens/` via `@theme` and expose the `--color-*` scale used
   as utilities such as `bg-primary-500` and `text-neutral-800`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
