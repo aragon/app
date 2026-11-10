@@ -204,10 +204,11 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         key: 'workspaces',
         name: 'Workspaces',
         description:
-            'Enables the workspace feature: the create-workspace wizard, the workspace pages and the explore call to action. Workspaces are backed by a mocked local-storage registry, so this must stay off outside local. Preview stays off as it points at the development backend, which has no workspace endpoints yet.',
+            'Enables the workspace feature: the create-workspace wizard, the workspace pages and the explore call to action. Workspaces are backed by a mocked local-storage registry, so this must stay off in staging and production.',
         defaultValue: false,
         environments: {
             local: true,
+            preview: true,
         },
     },
 ];
