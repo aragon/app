@@ -83,6 +83,27 @@ describe('useWrappedTokenBalance hook', () => {
         );
     });
 
+    it('disables query when enabled is false', () => {
+        useReadContractSpy.mockReturnValue({
+            data: undefined,
+            refetch: jest.fn(),
+        } as unknown as wagmi.UseReadContractReturnType);
+
+        renderHook(() =>
+            useWrappedTokenBalance({
+                userAddress: '0xUserAddress',
+                token: generateTokenPluginSettingsToken(),
+                enabled: false,
+            }),
+        );
+
+        expect(useReadContractSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                query: { enabled: false },
+            }),
+        );
+    });
+
     it('uses correct token address and chain ID', () => {
         const mockRefetch = jest.fn();
         useReadContractSpy.mockReturnValue({

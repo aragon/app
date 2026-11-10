@@ -10,6 +10,7 @@ import {
     generateTokenMember,
     generateTokenMemberMetrics,
     generateTokenPluginSettings,
+    generateTokenPluginSettingsEscrowSettings,
     generateTokenPluginSettingsToken,
 } from '../../testUtils';
 import * as useWrappedTokenBalanceModule from '../useWrappedTokenBalance';
@@ -80,6 +81,25 @@ describe('useTokenMemberStats hook', () => {
             'app.plugins.token.tokenMemberStats.delegations',
         );
         expect(delegations.value).toBe(47_928_374);
+    });
+
+    it('omits the token balance for a voting-escrow plugin', () => {
+        const settings = generateTokenPluginSettings({
+            votingEscrow: generateTokenPluginSettingsEscrowSettings(),
+        });
+        const plugin = generateDaoPlugin({ settings });
+
+        const { result } = renderHook(() =>
+            useTokenMemberStats({ address: '0x123', daoId: '1', plugin }),
+        );
+
+        expect(result.current.map((stat) => stat.label)).toEqual([
+            'app.plugins.token.tokenMemberStats.votingPower',
+            'app.plugins.token.tokenMemberStats.delegations',
+        ]);
+        expect(useWrappedTokenBalanceSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ enabled: false }),
+        );
     });
 
     it('returns empty list when member is not a token member', () => {
