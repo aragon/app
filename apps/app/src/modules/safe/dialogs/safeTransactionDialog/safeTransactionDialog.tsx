@@ -2,16 +2,13 @@
 
 import { addressUtils, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Hex, isHex } from 'viem';
-import { getBytecode } from 'wagmi/actions';
-import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     type ISafeInfo,
     type ISafeMultisigTransaction,
-    SafeServiceError,
     SafeServiceKey,
     safeService,
     safeTransactionService,
@@ -27,6 +24,10 @@ import {
 import { SafeTransactionReviewContent } from '../../components/safeTransactionReviewContent';
 import { SafeDialogId } from '../../constants/safeDialogId';
 import {
+    SafeSignatureSubmission,
+    useSafeOwnerSigning,
+} from '../../hooks/useSafeOwnerSigning';
+import {
     type ISafeExecutionOutcomeReport,
     isUserRejectionError,
     SafeExecutionPendingError,
@@ -36,11 +37,7 @@ import {
 } from '../../hooks/useSafeTransactionExecution';
 import { SafeApprovalReadiness } from '../../types';
 import { SafeExecutionOutcome } from '../../utils/safeExecutionOutcomeUtils';
-import {
-    SafeProtocolKitError,
-    safeProtocolKitUtils,
-} from '../../utils/safeProtocolKitUtils';
-import { safeTransactionEnvelopeUtils } from '../../utils/safeTransactionEnvelopeUtils';
+import { safeProtocolKitUtils } from '../../utils/safeProtocolKitUtils';
 import { safeTransactionLookupUtils } from '../../utils/safeTransactionLookupUtils';
 import { safeTransactionUtils } from '../../utils/safeTransactionUtils';
 import type { ISafeTransactionDialogProps } from './safeTransactionDialog.api';
@@ -77,43 +74,11 @@ type DialogState =
     | 'uncertain'
     | 'error';
 
-/**
- * Confirmation whose submission to the Safe transaction service returned no definitive answer.
- */
-interface IUncertainConfirmation {
-    /**
-     * Owner that signed the transaction.
-     */
-    owner: string;
-    /**
-     * Hash of the signed transaction.
-     */
-    safeTxHash: string;
-    /**
-     * Signature submitted to the service.
-     */
-    signature: string;
-}
-
 const getErrorMessage = (error: unknown, fallback: string): string =>
     error instanceof Error ? error.message : fallback;
 
-const isSameHash = (a: string, b: string): boolean =>
-    a.toLowerCase() === b.toLowerCase();
-
 const isTransactionHash = (hash: unknown): hash is Hex =>
     isHex(hash) && hash.length === 66;
-
-// Matches the exact signature submitted, not any confirmation of the owner: only that proves the uncertain write landed.
-const hasSubmittedConfirmation = (
-    transaction: ISafeMultisigTransaction,
-    submitted: IUncertainConfirmation,
-): boolean =>
-    transaction.confirmations.some(
-        (confirmation) =>
-            addressUtils.isAddressEqual(confirmation.owner, submitted.owner) &&
-            isSameHash(confirmation.signature, submitted.signature),
-    );
 
 /**
  * Reviews a queued Safe transaction, then confirms it with the connected owner's signature or executes it once it
@@ -143,6 +108,15 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     });
     const { check: checkWalletConnection, result: isWalletConnected } =
         useConnectedWalletGuard();
+    const {
+        getProtocolKit,
+        readOwnerAuthority,
+        assertCanSign,
+        buildSafeTransaction,
+        signAndSubmit,
+        recheck,
+        hasUncertainSignature,
+    } = useSafeOwnerSigning({ network, safeAddress });
 
     const executionIntentId = useMemo(
         () =>
@@ -160,17 +134,6 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     const [error, setError] = useState<string>();
     const [isExecuted, setIsExecuted] = useState(false);
     const [isReviewGateBlocked, setIsReviewGateBlocked] = useState(true);
-    const [uncertainConfirmation, setUncertainConfirmation] =
-        useState<IUncertainConfirmation>();
-    const uncertainConfirmationRef = useRef<IUncertainConfirmation>(undefined);
-
-    const updateUncertainConfirmation = useCallback(
-        (confirmation?: IUncertainConfirmation) => {
-            uncertainConfirmationRef.current = confirmation;
-            setUncertainConfirmation(confirmation);
-        },
-        [],
-    );
 
     // A request rejected in the wallet sent nothing, so the dialog goes back to its action rather than to a dead end.
     const returnToReady = useCallback(
@@ -203,110 +166,26 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
         return transaction;
     }, [network, safeAddress, safeTxHash, t]);
 
-    const getProtocolKit = useCallback(
-        async (owner: string) => {
-            try {
-                return await safeProtocolKitUtils.initForOwner({
-                    owner,
-                    chainId: requiredChainId,
-                    safeAddress,
-                });
-            } catch (reason: unknown) {
-                if (reason instanceof SafeProtocolKitError) {
-                    throw new Error(t(`${translationKey}.${reason.reason}`), {
-                        cause: reason,
-                    });
-                }
-
-                throw reason;
-            }
-        },
-        [requiredChainId, safeAddress, t],
-    );
-
-    /**
-     * Rebuilds the protocol-kit transaction from the service fields and checks it hashes to the reviewed transaction:
-     * signing or executing fields that hash to anything else would authorise something that was never reviewed.
-     */
-    const buildSafeTransaction = useCallback(
-        async (
-            protocolKit: Awaited<ReturnType<typeof getProtocolKit>>,
-            transaction: ISafeMultisigTransaction,
-        ) => {
-            const { EthSafeTransaction } = await import(
-                '@safe-global/protocol-kit'
-            );
-            const envelope =
-                safeTransactionEnvelopeUtils.getEnvelope(transaction);
-            const safeTransaction = new EthSafeTransaction({
-                ...envelope,
-                nonce: Number(envelope.nonce),
-            });
-            const computedHash = (await protocolKit.getTransactionHash(
-                safeTransaction,
-            )) as Hex;
-
-            if (
-                !isSameHash(computedHash, safeTxHash) ||
-                !isSameHash(transaction.safeTxHash, safeTxHash)
-            ) {
-                throw new Error(t(`${translationKey}.hashMismatch`));
-            }
-
-            return safeTransaction;
-        },
-        [safeTxHash, t],
-    );
-
-    const reconcileConfirmation = useCallback(
-        async (confirmation: IUncertainConfirmation) =>
-            hasSubmittedConfirmation(await findTransaction(), confirmation),
-        [findTransaction],
-    );
-
     /**
      * Reads the owners, threshold and nonce from the chain together with the transaction, and refuses a wallet that is no
      * longer an owner, an invalid threshold or a transaction already executed: the checks both approving and executing
      * run right before the wallet is asked for anything.
      */
-    const readOwnerAuthority = useCallback(
+    const readSigningContext = useCallback(
         async (owner: string) => {
             const protocolKit = await getProtocolKit(owner);
-            const [owners, threshold, currentNonce, transaction] =
-                await Promise.all([
-                    protocolKit.getOwners(),
-                    protocolKit.getThreshold(),
-                    protocolKit.getNonce(),
-                    findTransaction(),
-                ]);
-
-            if (
-                !owners.some((safeOwner) =>
-                    addressUtils.isAddressEqual(safeOwner, owner),
-                )
-            ) {
-                throw new Error(t(`${translationKey}.notOwner`));
-            }
-
-            if (
-                !safeTransactionUtils.hasValidThreshold({ threshold, owners })
-            ) {
-                throw new Error(t(`${translationKey}.invalidThreshold`));
-            }
+            const [authority, transaction] = await Promise.all([
+                readOwnerAuthority({ protocolKit, owner }),
+                findTransaction(),
+            ]);
 
             if (transaction.isExecuted) {
                 throw new Error(t(`${translationKey}.alreadyExecuted`));
             }
 
-            return {
-                protocolKit,
-                owners,
-                threshold,
-                currentNonce,
-                transaction,
-            };
+            return { protocolKit, ...authority, transaction };
         },
-        [findTransaction, getProtocolKit, t],
+        [findTransaction, getProtocolKit, readOwnerAuthority, t],
     );
 
     const invalidateSafeQueries = useCallback(() => {
@@ -339,7 +218,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     }, [getPendingExecution]);
 
     useEffect(() => {
-        if (uncertainConfirmationRef.current != null) {
+        if (hasUncertainSignature()) {
             return;
         }
 
@@ -396,6 +275,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
         fail,
         findTransaction,
         getPendingExecution,
+        hasUncertainSignature,
         network,
         safeAddress,
     ]);
@@ -566,7 +446,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 threshold,
                 currentNonce,
                 transaction,
-            } = await readOwnerAuthority(walletAddress);
+            } = await readSigningContext(walletAddress);
 
             const readiness = safeTransactionUtils.getApprovalReadiness({
                 currentNonce: String(currentNonce),
@@ -579,10 +459,11 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 throw new Error(t(`${translationKey}.executionUnavailable`));
             }
 
-            const safeTransaction = await buildSafeTransaction(
+            const safeTransaction = await buildSafeTransaction({
                 protocolKit,
                 transaction,
-            );
+                expectedSafeTxHash: safeTxHash,
+            });
             const { EthSafeSignature } = await import(
                 '@safe-global/protocol-kit'
             );
@@ -630,7 +511,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
         isExecutionPending,
         isReviewGateBlocked,
         prepared,
-        readOwnerAuthority,
+        readSigningContext,
         registerExecutionSubmitted,
         requiredChainId,
         resumeExecution,
@@ -649,35 +530,24 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
         setState('signing');
 
         try {
-            const { protocolKit, owners, currentNonce, transaction } =
-                await readOwnerAuthority(walletAddress);
-
-            // Safes older than v1.3.0 cannot verify the signature of a contract owner.
-            if (
-                !safeTransactionUtils.supportsEip1271Signatures(
-                    prepared.safeInfo.version,
-                )
-            ) {
-                const ownerBytecode = await getBytecode(wagmiConfig, {
-                    address: walletAddress as Hex,
-                    chainId: requiredChainId,
-                });
-
-                if (ownerBytecode != null) {
-                    throw new Error(
-                        t(`${translationKey}.unsupportedContractOwner`),
-                    );
-                }
-            }
+            const [{ protocolKit, owners, currentNonce, transaction }] =
+                await Promise.all([
+                    readSigningContext(walletAddress),
+                    assertCanSign({
+                        owner: walletAddress,
+                        safeVersion: prepared.safeInfo.version,
+                    }),
+                ]);
 
             if (BigInt(transaction.nonce) < BigInt(currentNonce)) {
                 throw new Error(t(`${translationKey}.nonceConsumed`));
             }
 
-            const safeTransaction = await buildSafeTransaction(
+            const safeTransaction = await buildSafeTransaction({
                 protocolKit,
                 transaction,
-            );
+                expectedSafeTxHash: safeTxHash,
+            });
 
             const hasConfirmed = safeTransactionUtils
                 .getCurrentOwnerConfirmations({ transaction, owners })
@@ -691,46 +561,21 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 return;
             }
 
-            const signature = await protocolKit.signTypedData(safeTransaction);
-
-            // The wallet signs with whichever account is active, so a switch during the prompt yields a signature of
-            // another account, which reconciliation would then look for under the wrong owner.
-            if (
-                safeProtocolKitUtils.getOwnerConnection(
-                    walletAddress,
-                    requiredChainId,
-                ) == null
-            ) {
-                throw new Error(t(`${translationKey}.walletRequired`));
-            }
-
-            const confirmation: IUncertainConfirmation = {
+            const submission = await signAndSubmit({
+                protocolKit,
                 owner: walletAddress,
+                safeTransaction,
                 safeTxHash,
-                signature: signature.data,
-            };
+                submit: (signature) =>
+                    safeTransactionService.confirmSafeTransaction({
+                        urlParams: { network, safeTxHash },
+                        body: { signature },
+                    }),
+            });
 
-            try {
-                await safeTransactionService.confirmSafeTransaction({
-                    urlParams: { network, safeTxHash },
-                    body: { signature: signature.data },
-                });
-            } catch (writeError: unknown) {
-                if (SafeServiceError.isDefinitiveWriteError(writeError)) {
-                    throw writeError;
-                }
-
-                updateUncertainConfirmation(confirmation);
-                setState('uncertain');
-
-                if (await reconcileConfirmation(confirmation)) {
-                    updateUncertainConfirmation(undefined);
-                    invalidateSafeQueries();
-                    setState('success');
-                    return;
-                }
-
+            if (submission === SafeSignatureSubmission.UNCERTAIN) {
                 setError(t(`${translationKey}.uncertain`));
+                setState('uncertain');
                 return;
             }
 
@@ -738,7 +583,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             setState('success');
         } catch (reason: unknown) {
             // A confirmation that may have reached the service stays re-checkable rather than becoming a plain error.
-            if (uncertainConfirmationRef.current != null) {
+            if (hasUncertainSignature()) {
                 setError(
                     getErrorMessage(reason, t(`${translationKey}.uncertain`)),
                 );
@@ -754,31 +599,27 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             fail(reason);
         }
     }, [
+        assertCanSign,
         buildSafeTransaction,
         fail,
+        hasUncertainSignature,
         invalidateSafeQueries,
         isReviewGateBlocked,
         network,
         prepared,
-        readOwnerAuthority,
-        reconcileConfirmation,
-        requiredChainId,
+        readSigningContext,
         returnToReady,
         safeTxHash,
+        signAndSubmit,
         t,
-        updateUncertainConfirmation,
         walletAddress,
     ]);
 
     const handleRecheckConfirmation = () => {
-        if (uncertainConfirmation == null) {
-            return;
-        }
-
         setError(undefined);
         setState('signing');
 
-        reconcileConfirmation(uncertainConfirmation)
+        recheck()
             .then((isAccepted) => {
                 if (!isAccepted) {
                     setError(t(`${translationKey}.uncertain`));
@@ -786,7 +627,6 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                     return;
                 }
 
-                updateUncertainConfirmation(undefined);
                 invalidateSafeQueries();
                 setState('success');
             })

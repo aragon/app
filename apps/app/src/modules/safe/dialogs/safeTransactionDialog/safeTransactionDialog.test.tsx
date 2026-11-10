@@ -67,6 +67,7 @@ describe('<SafeTransactionDialog /> component', () => {
     const signature = `0x${'3'.repeat(130)}`;
     const executionHash = `0x${'4'.repeat(64)}` as Hex;
 
+    const signingTranslationKey = 'app.safe.safeOwnerSigning';
     const translationKey = 'app.safe.safeTransactionDialog';
 
     const protocolKitModule = jest.requireMock('@safe-global/protocol-kit') as {
@@ -291,7 +292,7 @@ describe('<SafeTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview('confirm'));
 
         expect(
-            await screen.findByText(`${translationKey}.notOwner`),
+            await screen.findByText(`${signingTranslationKey}.notOwner`),
         ).toBeInTheDocument();
         expect(protocolKit.signTypedData).not.toHaveBeenCalled();
     });
@@ -304,7 +305,7 @@ describe('<SafeTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview('confirm'));
 
         expect(
-            await screen.findByText(`${translationKey}.hashMismatch`),
+            await screen.findByText(`${signingTranslationKey}.hashMismatch`),
         ).toBeInTheDocument();
         expect(protocolKit.signTypedData).not.toHaveBeenCalled();
     });
@@ -485,7 +486,7 @@ describe('<SafeTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview('confirm'));
 
         expect(
-            await screen.findByText(`${translationKey}.walletRequired`),
+            await screen.findByText(`${signingTranslationKey}.walletRequired`),
         ).toBeInTheDocument();
         expect(confirmSafeTransactionSpy).not.toHaveBeenCalled();
     });
@@ -498,7 +499,9 @@ describe('<SafeTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview('confirm'));
 
         expect(
-            await screen.findByText(`${translationKey}.invalidThreshold`),
+            await screen.findByText(
+                `${signingTranslationKey}.invalidThreshold`,
+            ),
         ).toBeInTheDocument();
         expect(protocolKit.signTypedData).not.toHaveBeenCalled();
     });

@@ -66,6 +66,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
     const signature = `0x${'3'.repeat(130)}`;
     const multiSendCallOnly = '0xA1dabEF33b3B82c7814B6D82A79e50F4AC44102B';
 
+    const signingTranslationKey = 'app.safe.safeOwnerSigning';
     const translationKey = 'app.safe.safeCreateTransactionDialog';
 
     // Composed outside a DAO, the actions carry no metadata of their own.
@@ -498,7 +499,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview());
 
         expect(
-            await screen.findByText(`${translationKey}.notOwner`),
+            await screen.findByText(`${signingTranslationKey}.notOwner`),
         ).toBeInTheDocument();
         expect(ownerKit.signTypedData).not.toHaveBeenCalled();
     });
@@ -510,7 +511,9 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview());
 
         expect(
-            await screen.findByText(`${translationKey}.invalidThreshold`),
+            await screen.findByText(
+                `${signingTranslationKey}.invalidThreshold`,
+            ),
         ).toBeInTheDocument();
         expect(ownerKit.signTypedData).not.toHaveBeenCalled();
     });
@@ -522,7 +525,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview());
 
         expect(
-            await screen.findByText(`${translationKey}.hashMismatch`),
+            await screen.findByText(`${signingTranslationKey}.hashMismatch`),
         ).toBeInTheDocument();
         expect(ownerKit.signTypedData).not.toHaveBeenCalled();
     });
@@ -536,7 +539,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview());
 
         expect(
-            await screen.findByText(`${translationKey}.walletRequired`),
+            await screen.findByText(`${signingTranslationKey}.walletRequired`),
         ).toBeInTheDocument();
     });
 
@@ -567,7 +570,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         await userEvent.click(await confirmReview());
 
         expect(
-            await screen.findByText(`${translationKey}.walletRequired`),
+            await screen.findByText(`${signingTranslationKey}.walletRequired`),
         ).toBeInTheDocument();
         expect(proposeSafeTransactionSpy).not.toHaveBeenCalled();
     });

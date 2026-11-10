@@ -4015,12 +4015,7 @@
         "signatureRejected": "The approval was rejected in your wallet. Nothing was submitted.",
         "executionRejected": "The execution was rejected in your wallet. Nothing was sent.",
         "networkSwitchRejected": "The network switch was rejected. Switch to the Safe's network to continue.",
-        "providerUnavailable": "The connected wallet provider is unavailable.",
         "transactionUnavailable": "This Safe transaction is no longer available from the service.",
-        "hashMismatch": "The transaction fields do not match the Safe transaction hash.",
-        "notOwner": "The connected wallet is not a current Safe owner.",
-        "invalidThreshold": "The Safe returned an invalid owner threshold.",
-        "unsupportedContractOwner": "This Safe version cannot verify approvals from a smart contract wallet. Connect an owner wallet that is not a contract.",
         "alreadyExecuted": "This Safe transaction has already been executed.",
         "nonceConsumed": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
         "executionUnavailable": "This Safe transaction is no longer ready to execute.",
@@ -4070,12 +4065,7 @@
         "createdReadyToExecute": "Safe transaction created. It is queued on the Safe and can be executed from the transactions list.",
         "failed": "The Safe transaction could not be created.",
         "walletRequired": "Connect an owner wallet on the Safe's network to create this transaction.",
-        "providerUnavailable": "The connected wallet provider is unavailable.",
-        "notOwner": "The connected wallet is not a current Safe owner.",
-        "invalidThreshold": "The Safe returned an invalid owner threshold.",
         "invalidNonce": "The Safe returned an invalid nonce.",
-        "unsupportedContractOwner": "This Safe version cannot verify signatures from a smart contract wallet. Connect an owner wallet that is not a contract.",
-        "hashMismatch": "The transaction fields do not match the Safe transaction hash.",
         "queueChanged": "Another transaction was queued on the Safe since you reviewed this one, so it was rebuilt on the next free nonce. Review it again before signing.",
         "signatureRejected": "The signature was rejected in your wallet. Nothing was submitted.",
         "networkSwitchRejected": "The network switch was rejected. Switch to the Safe's network to continue.",
@@ -4087,6 +4077,14 @@
           "close": "Close"
         },
         "networkUnavailable": "The Safe's network can't be reached right now. Try again later."
+      },
+      "safeOwnerSigning": {
+        "walletRequired": "Connect an owner wallet on the Safe's network to continue.",
+        "providerUnavailable": "The connected wallet provider is unavailable.",
+        "notOwner": "The connected wallet is not a current Safe owner.",
+        "invalidThreshold": "The Safe returned an invalid owner threshold.",
+        "unsupportedContractOwner": "This Safe version cannot verify signatures from a smart contract wallet. Connect an owner wallet that is not a contract.",
+        "hashMismatch": "The transaction fields do not match the Safe transaction hash."
       }
     },
     "settings": {
