@@ -3,6 +3,7 @@ export {
     type ISafeConfirmedByParams,
     type ISafeCurrentOwnerConfirmationsParams,
     type ISafeNonceCompetitorsParams,
+    type ISafeOwnerThresholdParams,
     type ISafeTransactionListParams,
     type ISafeTransactionLivenessParams,
     safeTransactionUtils,

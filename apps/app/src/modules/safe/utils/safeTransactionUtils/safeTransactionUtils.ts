@@ -83,6 +83,17 @@ export interface ISafeApprovalReadinessParams
  * matter how many confirmations they hold, and a reverted execution consumes its nonce just the
  * same. Deriving on every read is what makes the rule recoverable — no transition is tracked.
  */
+export interface ISafeOwnerThresholdParams {
+    /**
+     * Number of confirmations the Safe requires.
+     */
+    threshold: number;
+    /**
+     * Current owners of the Safe.
+     */
+    owners: string[];
+}
+
 class SafeTransactionUtils {
     supportsEip1271Signatures = (version: string | null): boolean => {
         if (version == null) {
@@ -161,6 +172,16 @@ class SafeTransactionUtils {
 
     isThresholdReached = (transaction: ISafeMultisigTransaction): boolean =>
         transaction.confirmations.length >= transaction.confirmationsRequired;
+
+    /**
+     * Whether the threshold read from the Safe is one its owners can reach. Anything else is a misread or a broken
+     * Safe, and no signature should be asked for against it.
+     */
+    hasValidThreshold = (params: ISafeOwnerThresholdParams): boolean => {
+        const { threshold, owners } = params;
+
+        return threshold >= 1 && threshold <= owners.length;
+    };
 
     /**
      * Confirmations that count towards the live threshold: one per distinct current owner, carrying a well-formed

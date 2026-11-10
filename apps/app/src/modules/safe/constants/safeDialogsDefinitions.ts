@@ -1,4 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { SafeCreateTransactionDialog } from '../dialogs/safeCreateTransactionDialog';
 import { SafeProposalTransactionDialog } from '../dialogs/safeProposalTransactionDialog';
 import { SafeTransactionDialog } from '../dialogs/safeTransactionDialog';
 import { SafeTransactionReviewDialog } from '../dialogs/safeTransactionReviewDialog';
@@ -23,5 +24,10 @@ export const safeDialogsDefinitions: Record<
     // disconnection, and every wallet action guards on the connected owner and chain itself.
     [SafeDialogId.TRANSACTION]: {
         Component: SafeTransactionDialog,
+    },
+    // Same again: re-checking a proposal whose submission got no answer is read-only and must survive wallet
+    // disconnection, and signing guards on the connected owner and chain itself.
+    [SafeDialogId.CREATE_TRANSACTION]: {
+        Component: SafeCreateTransactionDialog,
     },
 };

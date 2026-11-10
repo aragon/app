@@ -134,14 +134,29 @@ const collectCalls = (
 };
 
 /**
- * Canonical MultiSend and MultiSendCallOnly deployments for Safe 1.3.0 and 1.4.1, lowercased for
- * comparison. Deterministic across the standard EVM chains this app supports.
+ * Every MultiSend and MultiSendCallOnly deployment of `safe-deployments` for Safe 1.3.0, 1.4.1 and 1.5.0 (canonical,
+ * eip155 and zkSync), lowercased for comparison. The protocol kit batches through whichever deployment the registry
+ * lists first for a chain, which is not always the canonical one (e.g. eip155 on Sepolia), so a batch the app built
+ * itself must not be reported as an unrecognised delegate target.
  */
 const knownDelegateTargets: Record<string, true> = {
-    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
-    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
+    // v1.3.0 MultiSend: canonical, eip155, zkSync
     '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
+    '0x998739bfdaadde7c933b942a68053933098f9eda': true,
+    '0x0dfcccb95225ffb03c6fbb2559b530c2b7c8a912': true,
+    // v1.3.0 MultiSendCallOnly: canonical, eip155, zkSync
     '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
+    '0xa1dabef33b3b82c7814b6d82a79e50f4ac44102b': true,
+    '0xf220d3b4dfb23c4ade8c88e526c1353abacbc38f': true,
+    // v1.4.1 MultiSend: canonical, zkSync
+    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
+    '0x309d0b190fecca8e1d5d8309a16f7e3cb133e885': true,
+    // v1.4.1 MultiSendCallOnly: canonical, zkSync
+    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
+    '0x0408ef011960d02349d50286d20531229bcef773': true,
+    // v1.5.0 MultiSend and MultiSendCallOnly: canonical
+    '0x218543288004cd07832472d464648173c77d7eb7': true,
+    '0xa83c336b20401af773b6219ba5027174338d1836': true,
 };
 
 /**

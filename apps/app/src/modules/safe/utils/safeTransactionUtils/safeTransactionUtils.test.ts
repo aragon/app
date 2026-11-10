@@ -231,6 +231,29 @@ describe('safeTransaction utils', () => {
             },
         );
     });
+    describe('hasValidThreshold', () => {
+        const owners = [
+            '0x0000000000000000000000000000000000000011',
+            '0x0000000000000000000000000000000000000012',
+        ];
+
+        it.each([
+            { threshold: 0, isValid: false },
+            { threshold: 1, isValid: true },
+            { threshold: 2, isValid: true },
+            { threshold: 3, isValid: false },
+        ])(
+            'returns $isValid for a threshold of $threshold with two owners',
+            ({ threshold, isValid }) => {
+                expect(
+                    safeTransactionUtils.hasValidThreshold({
+                        threshold,
+                        owners,
+                    }),
+                ).toEqual(isValid);
+            },
+        );
+    });
     describe('getCurrentOwnerConfirmations', () => {
         const ownerOne = '0x0000000000000000000000000000000000000011';
         const ownerTwo = '0x0000000000000000000000000000000000000012';

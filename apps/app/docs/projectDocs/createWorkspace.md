@@ -739,12 +739,13 @@ today, and the two differ by route:
 | Route | Safe support | What a Safe gets today |
 | --- | --- | --- |
 | `/{workspaceId}/all/assets` | **implemented** | included in the selection, as any account is |
-| `/{workspaceId}/all/transactions` | **implemented** | included in the selection |
+| `/{workspaceId}/all/transactions` | **implemented** | included in the selection; selectable in the create action when the wallet is one of its owners |
 | `/{workspaceId}/all/members` | **implemented** | Safe owners are in the list (verified on sandbox, 2026-10-28; see Known gaps) |
 | `/{workspaceId}/all/proposals` | not yet | excluded from the request; the aggregated list shows DAO proposals only |
 | `/{workspaceId}/all/overview` | **implemented** | the workspace overview lists accounts of both types |
 | `/{accountId}/assets` | **implemented** | the list and the aside card describe the Safe |
-| `/{accountId}/transactions` | **implemented**, read-only | the list and the aside card describe the Safe; no create action, and the dispatch panel is DAO-only |
+| `/{accountId}/transactions` | **implemented** | the list and the aside card describe the Safe; the create action (for an owner, read with `isOwner`) leads to `/{accountId}/create/transaction`, and the dispatch panel is DAO-only |
+| `/{accountId}/create/transaction` | **implemented**, Safe only | the full-page Safe wizard (`SafeCreateTransactionWizard`): composed actions become one Safe transaction — batched through MultiSendCallOnly when there is more than one — signed and proposed by the owner. A DAO account creates through `/dao/…/create/execute` instead and gets a "Safe only" error state here. The route sits outside `(workspacePage)`, like the edit wizard, so it renders in the wizard layout |
 | `/{accountId}/overview` | **implemented** | the Safe's dashboard: threshold, owners and nonce, its pending transactions, and previews of its owners and assets |
 | `/{accountId}/members` | **implemented** | the Safe's owners, with its settings in the aside |
 | `/{accountId}/members/{address}` | **implemented** (redirect) | a redirect to the Safe's members page |

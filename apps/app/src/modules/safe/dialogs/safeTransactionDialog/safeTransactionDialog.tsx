@@ -4,7 +4,7 @@ import { addressUtils, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type Hex, isHex } from 'viem';
-import { getBytecode, getConnection } from 'wagmi/actions';
+import { getBytecode } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
@@ -36,6 +36,10 @@ import {
 } from '../../hooks/useSafeTransactionExecution';
 import { SafeApprovalReadiness } from '../../types';
 import { SafeExecutionOutcome } from '../../utils/safeExecutionOutcomeUtils';
+import {
+    SafeProtocolKitError,
+    safeProtocolKitUtils,
+} from '../../utils/safeProtocolKitUtils';
 import { safeTransactionEnvelopeUtils } from '../../utils/safeTransactionEnvelopeUtils';
 import { safeTransactionLookupUtils } from '../../utils/safeTransactionLookupUtils';
 import { safeTransactionUtils } from '../../utils/safeTransactionUtils';
@@ -110,30 +114,6 @@ const hasSubmittedConfirmation = (
             addressUtils.isAddressEqual(confirmation.owner, submitted.owner) &&
             isSameHash(confirmation.signature, submitted.signature),
     );
-
-const hasValidThreshold = (threshold: number, owners: string[]): boolean =>
-    threshold >= 1 && threshold <= owners.length;
-
-/**
- * Returns the wallet connection when it is the given owner on the given chain, undefined otherwise.
- */
-const getOwnerConnection = (owner: string, chainId: number) => {
-    const connection = getConnection(wagmiConfig);
-
-    return connection.status === 'connected' &&
-        addressUtils.isAddressEqual(connection.address, owner) &&
-        connection.chainId === chainId
-        ? connection
-        : undefined;
-};
-
-// A 4xx answer is the service refusing the confirmation; a timeout or a conflict may hide an accepted one.
-const isDefinitiveWriteError = (error: unknown): boolean =>
-    error instanceof SafeServiceError &&
-    error.status >= 400 &&
-    error.status < 500 &&
-    error.status !== 408 &&
-    error.status !== 409;
 
 /**
  * Reviews a queued Safe transaction, then confirms it with the connected owner's signature or executes it once it
@@ -225,35 +205,21 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
 
     const getProtocolKit = useCallback(
         async (owner: string) => {
-            const connection = getOwnerConnection(owner, requiredChainId);
+            try {
+                return await safeProtocolKitUtils.initForOwner({
+                    owner,
+                    chainId: requiredChainId,
+                    safeAddress,
+                });
+            } catch (reason: unknown) {
+                if (reason instanceof SafeProtocolKitError) {
+                    throw new Error(t(`${translationKey}.${reason.reason}`), {
+                        cause: reason,
+                    });
+                }
 
-            if (typeof connection?.connector.getProvider !== 'function') {
-                throw new Error(t(`${translationKey}.walletRequired`));
+                throw reason;
             }
-
-            const provider = await connection.connector.getProvider({
-                chainId: requiredChainId,
-            });
-
-            if (
-                provider == null ||
-                typeof provider !== 'object' ||
-                !('request' in provider) ||
-                typeof provider.request !== 'function'
-            ) {
-                throw new Error(t(`${translationKey}.providerUnavailable`));
-            }
-
-            const { default: Safe } = await import('@safe-global/protocol-kit');
-            const { request } = provider;
-
-            return Safe.init({
-                provider: {
-                    request: async (args) => await request.call(provider, args),
-                },
-                signer: owner,
-                safeAddress,
-            });
         },
         [requiredChainId, safeAddress, t],
     );
@@ -322,7 +288,9 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 throw new Error(t(`${translationKey}.notOwner`));
             }
 
-            if (!hasValidThreshold(threshold, owners)) {
+            if (
+                !safeTransactionUtils.hasValidThreshold({ threshold, owners })
+            ) {
                 throw new Error(t(`${translationKey}.invalidThreshold`));
             }
 
@@ -641,8 +609,10 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 // The wallet sends from whichever account is active, so the owner is checked again right before it.
                 beforeSubmit: () => {
                     if (
-                        getOwnerConnection(walletAddress, requiredChainId) ==
-                        null
+                        safeProtocolKitUtils.getOwnerConnection(
+                            walletAddress,
+                            requiredChainId,
+                        ) == null
                     ) {
                         throw new Error(t(`${translationKey}.walletRequired`));
                     }
@@ -725,7 +695,12 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
 
             // The wallet signs with whichever account is active, so a switch during the prompt yields a signature of
             // another account, which reconciliation would then look for under the wrong owner.
-            if (getOwnerConnection(walletAddress, requiredChainId) == null) {
+            if (
+                safeProtocolKitUtils.getOwnerConnection(
+                    walletAddress,
+                    requiredChainId,
+                ) == null
+            ) {
                 throw new Error(t(`${translationKey}.walletRequired`));
             }
 
@@ -741,7 +716,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                     body: { signature: signature.data },
                 });
             } catch (writeError: unknown) {
-                if (isDefinitiveWriteError(writeError)) {
+                if (SafeServiceError.isDefinitiveWriteError(writeError)) {
                     throw writeError;
                 }
 

@@ -401,6 +401,38 @@ describe('<SafeTransactionReviewContent /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    // The protocol kit batches through the deployment `safe-deployments` lists first for a chain, which is not
+    // always the canonical one, so a batch the app built itself must pass without comment too.
+    it.each([
+        {
+            label: 'v1.3.0 eip155 MultiSendCallOnly',
+            to: '0xA1dabEF33b3B82c7814B6D82A79e50F4AC44102B',
+        },
+        {
+            label: 'v1.4.1 zkSync MultiSendCallOnly',
+            to: '0x0408EF011960d02349d50286D20531229BCef773',
+        },
+        {
+            label: 'v1.5.0 MultiSendCallOnly',
+            to: '0xA83c336B20401Af773B6219BA5027174338D1836',
+        },
+    ])('accepts a delegate call to the $label without comment', ({ to }) => {
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({
+                    operation: 1,
+                    to: getAddress(to),
+                }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.unrecognisedDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
     it('does not call an ordinary call an unrecognised delegate call', () => {
         render(
             createTestComponent({

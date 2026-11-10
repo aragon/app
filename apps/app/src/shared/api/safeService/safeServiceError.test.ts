@@ -67,4 +67,33 @@ describe('safe service error', () => {
         expect(error.code).toEqual(SafeServiceErrorCode.UPSTREAM_ERROR);
         expect(SafeServiceError.isUnsupportedChainError(error)).toBeFalsy();
     });
+
+    it.each([
+        { status: 400, isDefinitive: true },
+        { status: 422, isDefinitive: true },
+        { status: 408, isDefinitive: false },
+        { status: 409, isDefinitive: false },
+        { status: 500, isDefinitive: false },
+    ])(
+        'reports a write answered with $status as definitive: $isDefinitive',
+        ({ status, isDefinitive }) => {
+            const error = new SafeServiceError(
+                SafeServiceErrorCode.UPSTREAM_ERROR,
+                'Write failed',
+                status,
+            );
+
+            expect(SafeServiceError.isDefinitiveWriteError(error)).toEqual(
+                isDefinitive,
+            );
+        },
+    );
+
+    it('does not report a failure without an answer as a definitive write error', () => {
+        expect(
+            SafeServiceError.isDefinitiveWriteError(
+                new TypeError('Failed to fetch'),
+            ),
+        ).toBeFalsy();
+    });
 });

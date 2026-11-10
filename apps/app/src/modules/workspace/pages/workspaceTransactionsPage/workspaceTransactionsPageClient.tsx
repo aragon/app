@@ -1,11 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IWorkspacePageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { IWorkspaceAccount } from '../../api/workspaceService';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+} from '../../api/workspaceService';
 import { WorkspaceAccountStateCard } from '../../components/workspaceAccountStateCard';
 import { WorkspaceTransactionList } from '../../components/workspaceTransactionList';
 import { WorkspaceTransactionsAsideCard } from '../../components/workspaceTransactionsAsideCard';
@@ -14,6 +18,7 @@ import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspac
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAccountsExecutePermission } from '../../hooks/useWorkspaceAccountsExecutePermission';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceTransactionsPageClientProps {
     /**
@@ -37,6 +42,8 @@ export const WorkspaceTransactionsPageClient: React.FC<
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const router = useRouter();
+    const { workspaceId } =
+        useParams<Pick<IWorkspacePageParams, 'workspaceId'>>();
 
     // Every account of the workspace, or just the one the route names, held by the workspace or not.
     const {
@@ -61,10 +68,16 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const isPending = isDaosPending || isPermissionsPending;
 
-    // TODO(APP-1140): the workspace has no create routes of its own yet, so the destination is the create wizard of
-    // the account itself. A Safe account will need a destination of its own, which `getDaoUrl` cannot name.
+    // A DAO account creates its transactions through the direct-execute wizard of the DAO itself; a Safe account has
+    // no page outside the workspace, so its wizard is a workspace route.
     const getCreateTransactionUrl = (account: IWorkspaceAccount) =>
-        daoUtils.getDaoUrl(daos[account.id], 'create/execute');
+        account.type === WorkspaceAccountType.SAFE
+            ? workspaceUtils.getAccountScopeUrl(
+                  workspaceId,
+                  account.id,
+                  'create/transaction',
+              )
+            : daoUtils.getDaoUrl(daos[account.id], 'create/execute');
 
     const canCreateTransactionFor = (account: IWorkspaceAccount) =>
         permissions[account.id] === true &&
