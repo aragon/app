@@ -1,7 +1,15 @@
 // biome-ignore-all lint/suspicious/useAwait: async keeps the service contract of a real backend over the sync storage.
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
-import type { IWorkspace } from './domain';
+import {
+    type IWorkspace,
+    type IWorkspaceAccount,
+    type IWorkspaceAccountMetadata,
+    type IWorkspaceTarget,
+    WorkspaceAccountType,
+} from './domain';
 import type {
     IAddWorkspaceAccountParams,
     ICreateWorkspaceParams,
@@ -19,6 +27,122 @@ export const workspaceStorageKey = 'aragon-workspaces';
  */
 export const defaultWorkspaceName = 'My workspace';
 
+type WorkspaceRegistry = Record<string, IWorkspace>;
+
+const isOptionalString = (value: unknown) =>
+    value == null || typeof value === 'string';
+
+const isWorkspaceAccountMetadata = (
+    value: unknown,
+): value is IWorkspaceAccountMetadata => {
+    if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+        return false;
+    }
+
+    const metadata = value as Partial<IWorkspaceAccountMetadata>;
+
+    return (
+        typeof metadata.name === 'string' &&
+        isOptionalString(metadata.description) &&
+        isOptionalString(metadata.avatar)
+    );
+};
+
+const isWorkspaceAccount = (value: unknown): value is IWorkspaceAccount => {
+    if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+        return false;
+    }
+
+    const account = value as Partial<IWorkspaceAccount>;
+
+    return (
+        typeof account.id === 'string' &&
+        Object.values(WorkspaceAccountType).includes(
+            account.type as WorkspaceAccountType,
+        ) &&
+        typeof account.network === 'string' &&
+        networkUtils.isValidNetwork(account.network) &&
+        typeof account.address === 'string' &&
+        addressUtils.isAddress(account.address) &&
+        account.id ===
+            workspaceUtils.buildAccountId({
+                network: account.network,
+                address: account.address,
+            }) &&
+        (account.metadata == null ||
+            isWorkspaceAccountMetadata(account.metadata))
+    );
+};
+
+const isWorkspaceTarget = (value: unknown): value is IWorkspaceTarget => {
+    if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+        return false;
+    }
+
+    const target = value as Partial<IWorkspaceTarget>;
+
+    return (
+        typeof target.network === 'string' &&
+        networkUtils.isValidNetwork(target.network) &&
+        typeof target.address === 'string' &&
+        addressUtils.isAddress(target.address)
+    );
+};
+
+const isWorkspace = (id: string, value: unknown): value is IWorkspace => {
+    if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+        return false;
+    }
+
+    const workspace = value as Partial<IWorkspace>;
+
+    return (
+        workspace.id === id &&
+        typeof workspace.name === 'string' &&
+        typeof workspace.description === 'string' &&
+        (workspace.avatar == null || typeof workspace.avatar === 'string') &&
+        Array.isArray(workspace.links) &&
+        workspace.links.every((value) => {
+            const link = value as Partial<(typeof workspace.links)[number]>;
+
+            return (
+                typeof link.name === 'string' &&
+                typeof link.url === 'string' &&
+                URL.canParse(link.url) &&
+                ['http:', 'https:'].includes(new URL(link.url).protocol)
+            );
+        }) &&
+        Array.isArray(workspace.accounts) &&
+        workspace.accounts.every(isWorkspaceAccount) &&
+        Array.isArray(workspace.targets) &&
+        workspace.targets.every(isWorkspaceTarget)
+    );
+};
+
+const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
+    let parsed: unknown;
+
+    try {
+        parsed = JSON.parse(rawRegistry);
+    } catch (error) {
+        throw new Error('The selected file is not valid JSON.', {
+            cause: error,
+        });
+    }
+
+    if (
+        parsed == null ||
+        typeof parsed !== 'object' ||
+        Array.isArray(parsed) ||
+        !Object.entries(parsed).every(([id, workspace]) =>
+            isWorkspace(id, workspace),
+        )
+    ) {
+        throw new Error('The selected file is not a valid workspace registry.');
+    }
+
+    return parsed as WorkspaceRegistry;
+};
 /**
  * Workspace API.
  *
@@ -137,6 +261,23 @@ class WorkspaceService {
         this.persistWorkspaces({ ...workspaces, [id]: workspace });
 
         return workspace;
+    };
+
+    exportWorkspaceRegistry = async (): Promise<string> =>
+        JSON.stringify(this.getStoredWorkspaces(), null, 2);
+
+    importWorkspaceRegistry = async (
+        rawRegistry: string,
+        merge = false,
+    ): Promise<IWorkspace[]> => {
+        const imported = parseWorkspaceRegistry(rawRegistry);
+        const workspaces = merge
+            ? { ...this.getStoredWorkspaces(), ...imported }
+            : imported;
+
+        this.persistWorkspaces(workspaces);
+
+        return Object.values(workspaces);
     };
 
     /**

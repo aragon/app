@@ -1,0 +1,26 @@
+{
+    "aragon-demo": {
+        "id": "aragon-demo",
+        "name": "Aragon",
+        "description": "Aragon builds secure and modular DAO infrastructure for onchain organizations.",
+        "avatar": "ipfs://QmX4q3fu1QkSfdVFUAmSUWziCmnXtitp2TVKLbrFVBcPvv",
+        "links": [
+            {
+                "name": "Aragon",
+                "url": "https://www.aragon.org/"
+            }
+        ],
+        "accounts": [
+            {
+                "id": "ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482",
+                "type": "DAO",
+                "address": "0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482",
+                "network": "ethereum-mainnet",
+                "metadata": {
+                    "name": "Aragon X (Mainnet)"
+                }
+            }
+        ],
+        "targets": []
+    }
+}

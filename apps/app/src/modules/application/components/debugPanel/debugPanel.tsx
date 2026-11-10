@@ -8,6 +8,7 @@ import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
 import { DebugPanelControl } from './debugPanelControl';
+import { WorkspaceRegistryControls } from './workspaceRegistryControls';
 
 export const DebugPanel: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -111,6 +112,7 @@ export const DebugPanel: React.FC = () => {
                         </div>
                     ))}
                 </div>
+                <WorkspaceRegistryControls />
             </div>
         </>
     );

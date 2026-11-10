@@ -373,4 +373,52 @@ describe('workspace service', () => {
             ).rejects.toMatchObject({ status: 404 });
         });
     });
+
+    describe('workspace registry portability', () => {
+        it('exports and restores the complete registry', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            const second = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Second' }),
+            });
+            const exported = await workspaceService.exportWorkspaceRegistry();
+
+            localStorage.clear();
+            await workspaceService.importWorkspaceRegistry(exported);
+
+            expect(getStoredWorkspaces()).toEqual({ first, second });
+        });
+
+        it('can merge an imported fixture without replacing stored workspaces', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+            const fixture = {
+                fixture: { ...buildBody({ name: 'Fixture' }), id: 'fixture' },
+            };
+
+            await workspaceService.importWorkspaceRegistry(
+                JSON.stringify(fixture),
+                true,
+            );
+
+            expect(getStoredWorkspaces()).toEqual({ existing, ...fixture });
+        });
+
+        it('rejects malformed imports without changing stored workspaces', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    JSON.stringify({
+                        broken: { id: 'broken', name: 'Broken' },
+                    }),
+                ),
+            ).rejects.toThrow('not a valid workspace registry');
+            expect(getStoredWorkspaces()).toEqual({ existing });
+        });
+    });
 });

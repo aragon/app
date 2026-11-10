@@ -235,9 +235,17 @@ local storage for real requests is a single-method change:
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
   `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
+- `exportWorkspaceRegistry()` → the complete registry as formatted JSON.
+- `importWorkspaceRegistry(json, merge?)` → validates the full registry before writing it. Import from the debug
+  panel replaces local state; `/demo` uses merge mode so installing its fixture does not remove existing workspaces.
 
 Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
 server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
+
+The debug panel downloads and restores this exact registry format. Imports require an explicit browser confirmation
+because replacement discards local-only workspaces. The `/demo` route installs `workspaceDemo.fixture.json`, then
+redirects to `/workspace/aragon-demo/all/overview`; the fixture therefore uses the same workspace layout, navigation,
+queries, and account interactions as any user-created workspace instead of maintaining a parallel demo UI.
 
 The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
 `getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an

@@ -45,7 +45,7 @@ test.describe('First-time workspace experience', () => {
             await setWorkspacesFlag(context, baseURL!, true);
         });
 
-        test('links the landing page to Explore and the demo workspace', async ({
+        test('links the landing page to the real demo workspace without an Explore CTA', async ({
             page,
         }) => {
             await page.goto('/');
@@ -59,73 +59,52 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('button', { name: 'Continue with wallet' }),
             ).toBeVisible();
-
-            await page
-                .getByRole('link', { name: 'Explore DAOs' })
-                .first()
-                .click();
-            await expect(page).toHaveURL(/\/explore(?:\?.*)?$/);
             await expect(
-                page.getByRole('heading', {
-                    level: 1,
-                    name: /Governed on Aragon/i,
-                }),
-            ).toBeVisible();
+                page.getByRole('link', { name: 'Explore DAOs' }),
+            ).toHaveCount(0);
 
-            await page.goto('/');
             await page
                 .getByRole('link', { name: 'See a demo workspace' })
                 .first()
                 .click();
-            await expect(page).toHaveURL(/\/demo$/);
+            await expect(page).toHaveURL(
+                /\/workspace\/aragon-demo\/all\/overview$/,
+            );
             await expect(
-                page.getByRole('heading', {
-                    level: 1,
-                    name: 'Aragon workspace',
-                }),
+                page.getByRole('heading', { level: 1, name: 'Aragon' }),
             ).toBeVisible();
         });
 
-        test('keeps the demo read-only while its account views remain navigable', async ({
+        test('installs the demo fixture and keeps normal workspace navigation working', async ({
             page,
         }) => {
             await page.goto('/demo');
 
-            await expect(
-                page.getByText('Read-only demo').first(),
-            ).toBeVisible();
-            for (const account of [
-                'Aragon X (Mainnet)',
-                'Aragon Operations Safe',
-                'Aragon Grants Safe',
-            ]) {
-                await expect(page.getByText(account).first()).toBeVisible();
-            }
-            expect(
-                await page.evaluate(
-                    (key) => localStorage.getItem(key),
-                    workspaceStorageKey,
-                ),
-            ).toBeNull();
+            await expect(page).toHaveURL(
+                /\/workspace\/aragon-demo\/all\/overview$/,
+            );
+            await expect
+                .poll(async () =>
+                    page.evaluate((key) => {
+                        const registry = JSON.parse(
+                            localStorage.getItem(key) ?? '{}',
+                        ) as Record<string, unknown>;
+                        return 'aragon-demo' in registry;
+                    }, workspaceStorageKey),
+                )
+                .toBe(true);
 
             await page
                 .getByRole('link', { name: /Aragon X \(Mainnet\)/ })
                 .last()
                 .click();
             await expect(page).toHaveURL(
-                /\/demo\/account\/aragon-x\/dashboard$/,
+                /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/overview(?:\?.*)?$/,
             );
-            await expect(
-                page.getByRole('heading', {
-                    level: 1,
-                    name: 'Aragon X (Mainnet)',
-                }),
-            ).toBeVisible();
             await page.getByRole('link', { name: 'Proposals' }).first().click();
             await expect(page).toHaveURL(
-                /\/demo\/account\/aragon-x\/proposals$/,
+                /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/proposals(?:\?.*)?$/,
             );
-            await expect(page.getByText('MULTISIG-265')).toBeVisible();
         });
 
         test('creates an empty workspace and exposes both account actions', async ({
