@@ -7,9 +7,9 @@ export const tokenPlugin: IPluginInfo = {
     name: 'Token',
     installVersion: {
         release: 1,
-        build: 4,
+        build: 5,
         releaseNotes:
-            'https://github.com/aragon/token-voting-plugin/releases/tag/v1.4',
+            'https://github.com/aragon/token-voting-plugin/releases/tag/v1.5',
         description:
             'This optional upgrade introduces minor new features, including the ability to exclude specified addresses from the quorum calculation.',
     },
