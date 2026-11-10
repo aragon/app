@@ -282,6 +282,16 @@ describe('<SafeTransactionDialog /> component', () => {
             body: { signature },
         });
         expect(onSafeStateChange).toHaveBeenCalled();
+        expect(
+            screen.getByRole('button', {
+                name: `${translationKey}.actions.done`,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.shared.transactionDialog.footer.cancel',
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('does not sign when the connected wallet is not a current owner', async () => {
@@ -444,6 +454,11 @@ describe('<SafeTransactionDialog /> component', () => {
                 name: `${translationKey}.actions.close`,
             }),
         ).toBeEnabled();
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.shared.transactionDialog.footer.cancel',
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('returns to the execution after it was rejected in the wallet', async () => {

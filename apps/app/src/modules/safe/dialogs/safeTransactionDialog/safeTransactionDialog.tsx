@@ -639,6 +639,8 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     };
 
     const isDismissBlocked = state === 'signing' || state === 'executing';
+    // The primary action of these states already closes the dialog, so a second close button would duplicate it.
+    const hasDismissAction = state !== 'success' && state !== 'error';
 
     const handleDismiss = useCallback(() => {
         if (!isDismissBlocked) {
@@ -756,11 +758,17 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={primaryAction}
-                secondaryAction={{
-                    label: t('app.shared.transactionDialog.footer.cancel'),
-                    onClick: handleDismiss,
-                    disabled: isDismissBlocked,
-                }}
+                secondaryAction={
+                    hasDismissAction
+                        ? {
+                              label: t(
+                                  'app.shared.transactionDialog.footer.cancel',
+                              ),
+                              onClick: handleDismiss,
+                              disabled: isDismissBlocked,
+                          }
+                        : undefined
+                }
             />
         </>
     );

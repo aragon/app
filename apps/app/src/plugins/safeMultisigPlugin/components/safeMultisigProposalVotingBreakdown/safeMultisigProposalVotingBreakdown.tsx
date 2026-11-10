@@ -21,8 +21,8 @@ export interface ISafeMultisigProposalVotingBreakdownViewProps {
     minApprovals: number;
     /** Number of current Safe owners. */
     membersCount?: number;
-    /** Whether the transaction has executed and represents settled history. */
-    isSettled?: boolean;
+    /** Whether the transaction has been executed. */
+    isExecuted?: boolean;
     /** Whether the Safe is reporting a veto rather than an approval. */
     isVeto?: boolean;
     /** Actions and status displayed below the breakdown. */
@@ -41,7 +41,7 @@ export const SafeMultisigProposalVotingBreakdownView: React.FC<
     const {
         approvalsAmount,
         children,
-        isSettled = false,
+        isExecuted = false,
         isVeto = false,
         membersCount,
         minApprovals,
@@ -62,7 +62,7 @@ export const SafeMultisigProposalVotingBreakdownView: React.FC<
         );
     }
 
-    if (isSettled) {
+    if (isExecuted) {
         return (
             <ProposalVoting.BreakdownMultisig
                 approvalsAmount={approvalsAmount}
@@ -150,7 +150,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                 settledReport?.transaction.confirmations.length ??
                 approvalsAmount
             }
-            isSettled={settledReport != null}
+            isExecuted={settledReport != null}
             isVeto={isVeto}
             membersCount={safeInfo == null ? undefined : membersCount}
             minApprovals={

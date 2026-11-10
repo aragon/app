@@ -1,5 +1,6 @@
 import * as GovUiKit from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
@@ -450,5 +451,61 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(screen.getByText('execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).not.toHaveBeenCalled();
+    });
+
+    describe('after a Safe state change', () => {
+        const invalidateQueriesSpy = jest.spyOn(
+            QueryClient.prototype,
+            'invalidateQueries',
+        );
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            invalidateQueriesSpy.mockResolvedValue();
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+            invalidateQueriesSpy.mockReset();
+        });
+
+        const expandAndChangeSafeState = async () => {
+            const user = userEvent.setup({
+                advanceTimers: jest.advanceTimersByTime,
+            });
+            await user.click(screen.getByRole('button'));
+            const { onSafeStateChange } =
+                safeTransactionVotingSpy.mock.calls[0][0];
+            act(() => onSafeStateChange?.());
+            invalidateQueriesSpy.mockClear();
+        };
+
+        it('refreshes the transactions until the row reflects the change', async () => {
+            const transaction = generateWorkspacePendingTransaction({
+                confirmations: 1,
+            });
+            const { rerender } = render(createTestComponent({ transaction }));
+            await expandAndChangeSafeState();
+
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+
+            rerender(
+                createTestComponent({
+                    transaction: { ...transaction, confirmations: 2 },
+                }),
+            );
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+        });
+
+        it('stops refreshing the transactions when the row never reflects the change', async () => {
+            const transaction = generateWorkspacePendingTransaction();
+            render(createTestComponent({ transaction }));
+            await expandAndChangeSafeState();
+
+            act(() => jest.advanceTimersByTime(5 * 60_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(24);
+        });
     });
 });
