@@ -37,7 +37,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
 
         try {
             await workspaceService.importWorkspaceRegistry(await file.text());
-            window.location.reload();
+            window.location.assign('/workspace');
         } catch (error: unknown) {
             setError(error instanceof Error ? error.message : String(error));
         }

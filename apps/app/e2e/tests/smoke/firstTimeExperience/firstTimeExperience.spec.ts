@@ -83,6 +83,96 @@ test.describe('First-time workspace experience', () => {
             expect(response?.status()).toBe(404);
         });
 
+        test('opens a valid workspace after replacing differently-IDed or blank registries', async ({
+            baseURL,
+            context,
+            page,
+        }) => {
+            await context.addCookies([
+                {
+                    name: featureFlagCookieName,
+                    value: encodeURIComponent(
+                        JSON.stringify({
+                            debugPanel: true,
+                            workspaces: true,
+                        }),
+                    ),
+                    url: baseURL!,
+                },
+            ]);
+            await page.goto('/');
+            await page.evaluate(
+                ([key, registry]) =>
+                    localStorage.setItem(key, JSON.stringify(registry)),
+                [
+                    workspaceStorageKey,
+                    {
+                        'my-workspace-12345678': {
+                            id: 'my-workspace-12345678',
+                            name: 'Old workspace',
+                            description: '',
+                            avatar: null,
+                            links: [],
+                            accounts: [],
+                            targets: [],
+                        },
+                    },
+                ],
+            );
+            await page.goto('/workspace/my-workspace-12345678/all/overview');
+            await page.locator('button[class*="bottom-18"]').click();
+            await expect(
+                page.getByRole('heading', { name: 'Workspace registry' }),
+            ).toBeVisible();
+
+            page.once('dialog', (dialog) => dialog.accept());
+            await page.locator('input[type="file"]').setInputFiles({
+                name: 'aragon-workspaces.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from(
+                    JSON.stringify({
+                        'imported-workspace': {
+                            id: 'imported-workspace',
+                            name: 'Imported workspace',
+                            description: '',
+                            avatar: null,
+                            links: [],
+                            accounts: [],
+                            targets: [],
+                        },
+                    }),
+                ),
+            });
+
+            await expect(page).toHaveURL(
+                /\/workspace\/imported-workspace\/all\/overview$/,
+            );
+            await expect(
+                page.getByRole('heading', {
+                    level: 1,
+                    name: 'Imported workspace',
+                }),
+            ).toBeVisible();
+
+            await page.locator('button[class*="bottom-18"]').click();
+            page.once('dialog', (dialog) => dialog.accept());
+            await page.locator('input[type="file"]').setInputFiles({
+                name: 'blank-aragon-workspaces.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from('{}'),
+            });
+
+            await expect(page).toHaveURL(
+                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
+            );
+            await expect(
+                page.getByRole('heading', {
+                    level: 1,
+                    name: 'My workspace',
+                }),
+            ).toBeVisible();
+        });
+
         test('installs the demo fixture and keeps normal workspace navigation working', async ({
             page,
         }) => {
