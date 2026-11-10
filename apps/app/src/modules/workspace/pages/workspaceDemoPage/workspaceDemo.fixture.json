@@ -20,6 +20,40 @@
                 "metadata": {
                     "name": "Aragon X (Mainnet)"
                 }
+            },
+            {
+                "id": "polygon-mainnet-0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB",
+                "type": "SAFE",
+                "address": "0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB",
+                "network": "polygon-mainnet",
+                "metadata": {
+                    "name": "Developers Safe"
+                }
+            }
+        ],
+        "targets": []
+    },
+    "cryptex-demo": {
+        "id": "cryptex-demo",
+        "isDemo": true,
+        "name": "Cryptex",
+        "description": "Cryptex Finance builds decentralized index infrastructure governed by CTX holders.",
+        "avatar": null,
+        "links": [
+            {
+                "name": "Cryptex",
+                "url": "https://cryptex.finance/"
+            }
+        ],
+        "accounts": [
+            {
+                "id": "ethereum-mainnet-0xf204245b0B05E9A0780761E326552A569c1D6ceb",
+                "type": "DAO",
+                "address": "0xf204245b0B05E9A0780761E326552A569c1D6ceb",
+                "network": "ethereum-mainnet",
+                "metadata": {
+                    "name": "Cryptex"
+                }
             }
         ],
         "targets": []

@@ -88,17 +88,42 @@ test.describe('First-time workspace experience', () => {
                     page.evaluate((key) => {
                         const registry = JSON.parse(
                             localStorage.getItem(key) ?? '{}',
-                        ) as Record<string, { isDemo?: boolean }>;
-                        return registry['aragon-demo']?.isDemo;
+                        ) as Record<
+                            string,
+                            {
+                                isDemo?: boolean;
+                                accounts?: { address: string }[];
+                            }
+                        >;
+                        return {
+                            demoIds: Object.values(registry)
+                                .filter(({ isDemo }) => isDemo)
+                                .map(({ accounts }) => accounts?.[0]?.address),
+                            aragonAccounts: registry[
+                                'aragon-demo'
+                            ]?.accounts?.map(({ address }) => address),
+                        };
                     }, workspaceStorageKey),
                 )
-                .toBe(true);
+                .toEqual({
+                    demoIds: [
+                        '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
+                        '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
+                    ],
+                    aragonAccounts: [
+                        '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
+                        '0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB',
+                    ],
+                });
             await expect(
                 page.getByRole('button', { name: 'Read-Only Demo' }).first(),
             ).toBeDisabled();
             await expect(
                 page.getByRole('link', { name: 'Edit workspace' }),
             ).toHaveCount(0);
+            await expect(
+                page.getByRole('link', { name: /Developers Safe/ }).last(),
+            ).toBeVisible();
 
             await page
                 .getByRole('link', { name: /Aragon X \(Mainnet\)/ })
@@ -121,6 +146,16 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('button', { name: 'New transaction' }),
             ).toHaveCount(0);
+            await page
+                .getByRole('button', { exact: true, name: 'avatar Aragon' })
+                .click();
+            await page.getByRole('menuitem', { name: 'Cryptex' }).click();
+            await expect(page).toHaveURL(
+                /\/workspace\/cryptex-demo\/all\/overview$/,
+            );
+            await expect(
+                page.getByRole('heading', { level: 1, name: 'Cryptex' }),
+            ).toBeVisible();
         });
 
         test('creates an empty workspace and exposes both account actions', async ({

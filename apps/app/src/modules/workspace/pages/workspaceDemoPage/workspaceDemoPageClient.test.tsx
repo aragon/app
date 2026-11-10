@@ -9,11 +9,6 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         workspaceService,
         'importWorkspaceRegistry',
     );
-    const getWorkspaceListSpy = jest.spyOn(
-        workspaceService,
-        'getWorkspaceList',
-    );
-    const updateWorkspaceSpy = jest.spyOn(workspaceService, 'updateWorkspace');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const replaceMock = jest.fn();
 
@@ -21,16 +16,9 @@ describe('<WorkspaceDemoPageClient /> component', () => {
         useRouterSpy.mockReturnValue({
             replace: replaceMock,
         } as unknown as AppRouterInstance);
-        getWorkspaceListSpy.mockResolvedValue([]);
-        updateWorkspaceSpy.mockImplementation(async ({ urlParams, body }) => ({
-            ...body,
-            id: urlParams.id,
-        }));
     });
 
     afterEach(() => {
-        getWorkspaceListSpy.mockReset();
-        updateWorkspaceSpy.mockReset();
         importRegistrySpy.mockReset();
         useRouterSpy.mockReset();
         replaceMock.mockReset();
@@ -47,46 +35,27 @@ describe('<WorkspaceDemoPageClient /> component', () => {
                 '/workspace/aragon-demo/all/overview',
             ),
         );
-        expect(importRegistrySpy).toHaveBeenCalledWith(
-            expect.stringContaining(
-                '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
+        const [rawFixture, merge] = importRegistrySpy.mock.calls[0];
+        const fixture = JSON.parse(rawFixture);
+        expect(merge).toBe(true);
+        expect(
+            fixture['aragon-demo'].accounts.map(
+                (account: { address: string }) => account.address,
             ),
-            true,
-        );
-    });
-
-    it('preserves an existing demo workspace while marking it read-only', async () => {
-        getWorkspaceListSpy.mockResolvedValue([
-            {
-                id: 'aragon-demo',
-                name: 'Edited demo',
-                description: '',
-                avatar: null,
-                links: [],
-                accounts: [],
-                targets: [],
-            },
+        ).toEqual([
+            '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
+            '0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB',
         ]);
-
-        render(<WorkspaceDemoPageClient />);
-
-        await waitFor(() =>
-            expect(updateWorkspaceSpy).toHaveBeenCalledWith({
-                urlParams: { id: 'aragon-demo' },
-                body: {
-                    name: 'Edited demo',
-                    description: '',
-                    avatar: null,
-                    links: [],
-                    accounts: [],
-                    targets: [],
-                    isDemo: true,
-                },
+        expect(fixture['cryptex-demo']).toEqual(
+            expect.objectContaining({
+                isDemo: true,
+                name: 'Cryptex',
+                accounts: [
+                    expect.objectContaining({
+                        address: '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
+                    }),
+                ],
             }),
-        );
-        expect(importRegistrySpy).not.toHaveBeenCalled();
-        expect(replaceMock).toHaveBeenCalledWith(
-            '/workspace/aragon-demo/all/overview',
         );
     });
 

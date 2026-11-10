@@ -87,7 +87,12 @@ describe('<WorkspaceSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('lists every workspace followed by the create workspace item', async () => {
+    it('lists non-demo workspaces followed by the create workspace item', async () => {
+        getWorkspaceListSpy.mockResolvedValue([
+            firstWorkspace,
+            secondWorkspace,
+            buildWorkspace({ id: 'demo', name: 'Demo', isDemo: true }),
+        ]);
         render(createTestComponent());
 
         await openDropdown();
@@ -99,15 +104,29 @@ describe('<WorkspaceSelector /> component', () => {
         expect(items[2]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
-    it('hides workspace creation for a demo workspace', async () => {
-        getWorkspaceSpy.mockResolvedValue({
-            ...firstWorkspace,
+    it('lists only demo workspaces and hides creation for a demo workspace', async () => {
+        const currentDemo = { ...firstWorkspace, isDemo: true };
+        const secondDemo = {
+            ...secondWorkspace,
+            id: 'second-demo',
+            name: 'Second Demo',
             isDemo: true,
-        });
+        };
+        getWorkspaceSpy.mockResolvedValue(currentDemo);
+        getWorkspaceListSpy.mockResolvedValue([
+            currentDemo,
+            secondWorkspace,
+            secondDemo,
+        ]);
         render(createTestComponent());
 
         await openDropdown();
 
+        const items = await screen.findAllByRole('menuitem');
+        expect(items).toHaveLength(2);
+        expect(items[0]).toHaveTextContent('First Workspace');
+        expect(items[1]).toHaveTextContent('Second Demo');
+        expect(screen.queryByText('Second Workspace')).not.toBeInTheDocument();
         expect(
             screen.queryByText(/workspaceSelector\.create$/),
         ).not.toBeInTheDocument();

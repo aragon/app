@@ -20,9 +20,9 @@ export interface IWorkspaceSelectorProps {
 }
 
 /**
- * Workspace switcher of the workspace navigation, listing every workspace plus a link to create a new one. Editing
- * the current workspace lives in the navigation links (Edit workspace), not here. Its trigger is a full-width row,
- * rendered in the sidebar and in the navigation dialog.
+ * Workspace switcher of the workspace navigation, listing workspaces of the same mode plus a link to create a new
+ * one. Demo and personal workspaces stay separate even though both persist in the same local registry. Editing the
+ * current workspace lives in the navigation links (Edit workspace), not here. Its trigger is a full-width row,
  */
 export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { workspaceId } = props;
@@ -37,6 +37,9 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
         urlParams: { id: workspaceId },
     });
     const { data: workspaces = [] } = useWorkspaceList();
+    const visibleWorkspaces = workspaces.filter(
+        ({ isDemo }) => Boolean(isDemo) === Boolean(workspace?.isDemo),
+    );
 
     // The account scope belongs to the previous workspace, so the new one opens on its aggregated overview.
     const handleSelectWorkspace = (id: string) =>
@@ -83,7 +86,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
             onOpenChange={setIsOpen}
             open={isOpen}
         >
-            {workspaces.map(({ id, name, avatar }) => (
+            {visibleWorkspaces.map(({ id, name, avatar }) => (
                 <Dropdown.Item
                     key={id}
                     onSelect={() => handleSelectWorkspace(id)}

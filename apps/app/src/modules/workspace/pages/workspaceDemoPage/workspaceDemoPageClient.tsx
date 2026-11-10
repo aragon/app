@@ -29,23 +29,10 @@ export const WorkspaceDemoPageClient: React.FC = () => {
 
         const openDemo = async () => {
             try {
-                const workspaces = await workspaceService.getWorkspaceList();
-                const demoWorkspace = workspaces.find(
-                    (workspace) => workspace.id === demoWorkspaceId,
+                await workspaceService.importWorkspaceRegistry(
+                    JSON.stringify(workspaceDemoFixture),
+                    true,
                 );
-
-                if (demoWorkspace == null) {
-                    await workspaceService.importWorkspaceRegistry(
-                        JSON.stringify(workspaceDemoFixture),
-                        true,
-                    );
-                } else if (!demoWorkspace.isDemo) {
-                    const { id, ...body } = demoWorkspace;
-                    await workspaceService.updateWorkspace({
-                        urlParams: { id },
-                        body: { ...body, isDemo: true },
-                    });
-                }
 
                 if (isActive) {
                     router.replace(demoWorkspaceUrl);
