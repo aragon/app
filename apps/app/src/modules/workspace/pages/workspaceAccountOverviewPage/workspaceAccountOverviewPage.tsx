@@ -8,8 +8,7 @@ import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { WorkspaceAccountInfoType } from '../../api/workspaceQueryService';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import { WorkspaceSafeDashboardPageClient } from './workspaceSafeDashboardPageClient';
 
@@ -23,9 +22,7 @@ export interface IWorkspaceAccountOverviewPageProps {
 /**
  * Overview of one account of a workspace, a DAO or a Safe: the dashboard of the account.
  *
- * The Safe branch comes first, before `WorkspaceAccountGate`, because the gate fails the route for anything whose DAO
- * record cannot be read, a Safe included — as on the members and settings routes. The account type comes from the
- * workspace accounts API; a failed lookup falls back to the DAO branch, where the gate settles it.
+ * Switches on `workspaceAccountInfoUtils.resolveAccountType`.
  *
  * The DAO branch renders the DAO dashboard page as is rather than reimplementing it: it already owns the CMS read its
  * client needs and its own page container, and a workspace DAO account ID is a DAO ID, so the only adaptation is the
@@ -46,28 +43,27 @@ export const WorkspaceAccountOverviewPage: React.FC<
     const { workspaceId, accountId } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
 
-    const accountInfo = await workspaceAccountInfoUtils.getAccountInfo({
-        network,
-        address,
-    });
+    const accountType =
+        await workspaceAccountInfoUtils.resolveAccountType(accountId);
 
-    if (accountInfo?.type === WorkspaceAccountInfoType.SAFE) {
-        return (
-            <Page.Container>
-                <WorkspaceSafeDashboardPageClient
-                    address={address}
-                    network={network}
-                    workspaceId={workspaceId}
+    switch (accountType) {
+        case WorkspaceAccountType.SAFE:
+            return (
+                <Page.Container>
+                    <WorkspaceSafeDashboardPageClient
+                        address={address}
+                        network={network}
+                        workspaceId={workspaceId}
+                    />
+                </Page.Container>
+            );
+        case WorkspaceAccountType.DAO:
+            return (
+                <DaoDashboardPage
+                    params={Promise.resolve({ network, addressOrEns: address })}
                 />
-            </Page.Container>
-        );
+            );
+        default:
+            return accountType satisfies never;
     }
-
-    return (
-        <WorkspaceAccountGate accountId={accountId}>
-            <DaoDashboardPage
-                params={Promise.resolve({ network, addressOrEns: address })}
-            />
-        </WorkspaceAccountGate>
-    );
 };

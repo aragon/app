@@ -34,8 +34,11 @@ export const WorkspaceMembersPageClient: React.FC<
 
     const { t } = useTranslations();
 
-    const { activeOption, scopedAccounts: accountsToDisplay } =
-        useWorkspaceAccountOptions();
+    const {
+        activeOption,
+        scopedAccounts: accountsToDisplay,
+        isPending,
+    } = useWorkspaceAccountOptions();
 
     // The single reader of the selection: the list renders the tabs and owns the URL parameter, while the aside
     // card is handed the selected tab from here, so the two cannot describe different tabs.
@@ -50,6 +53,7 @@ export const WorkspaceMembersPageClient: React.FC<
             >
                 <WorkspaceMemberList
                     accounts={accountsToDisplay}
+                    isPending={isPending}
                     pageSize={pageSize}
                     workspaceId={workspaceId}
                 />

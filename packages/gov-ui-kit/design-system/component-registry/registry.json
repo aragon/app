@@ -6,12 +6,14 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "01aad5f92a58c8365028d7def1a4a64500ddf4ff",
+            "commit": "343ea5a1778e28996e84fae17bb75fd43772dfdc",
             "dirty": [
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownItem/dropdownItem.test.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownItem/dropdownItem.tsx"
+                "packages/gov-ui-kit/AGENTS.md",
+                "packages/gov-ui-kit/index.css",
+                "packages/gov-ui-kit/rollup.config.mjs",
+                "packages/gov-ui-kit/scripts/check-build-css.mjs"
             ],
-            "sourceVersion": "2.11.4",
+            "sourceVersion": "3.0.0",
             "entrypoints": {
                 "js": [
                     "."
@@ -3008,7 +3010,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "f9b62d3567f6a00f67968a1c27e4367341a3ca31bee7453fb00309dec237f1c8"
+                "sha256": "15607b5221c6872bd4d47a39108f99018bbea27a8fb1c222a0df9cccba575d2c"
             },
             "props": [],
             "stories": [],
@@ -16208,7 +16210,7 @@
                 "repository": "kit",
                 "path": "index.css",
                 "line": 1,
-                "sha256": "dcccb7b7f04ce859f67df23314238f51e3df57bea33778699ff7d53e24df30e9"
+                "sha256": "37945270590206be2110c9209a3c0dc555a92f72025eeff09be2e085a5b93a12"
             },
             "props": [],
             "stories": [],

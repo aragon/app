@@ -1,17 +1,11 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { notFound } from 'next/navigation-original';
-import type { ReactNode } from 'react';
+import { notFound, redirect } from 'next/navigation-original';
 import { DaoMemberDetailsPage } from '@/modules/governance/pages/daoMemberDetailsPage/daoMemberDetailsPage';
 import { Network } from '@/shared/api/daoService';
-import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { featureFlags } from '@/shared/featureFlags';
-import {
-    type IWorkspaceAccountInfo,
-    WorkspaceAccountInfoType,
-    workspaceQueryService,
-} from '../../api/workspaceQueryService';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { workspaceQueryService } from '../../api/workspaceQueryService';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 import {
     generateWorkspaceMember,
     generateWorkspaceMembership,
@@ -28,6 +22,9 @@ jest.mock('next/navigation-original', () => ({
     notFound: jest.fn(() => {
         throw new Error('NEXT_HTTP_ERROR_FALLBACK;404');
     }),
+    redirect: jest.fn(() => {
+        throw new Error('NEXT_REDIRECT');
+    }),
 }));
 
 jest.mock(
@@ -39,18 +36,6 @@ jest.mock(
     }),
 );
 
-jest.mock('../../components/workspaceAccountGate', () => ({
-    WorkspaceAccountGate: jest.fn(({ children }: { children: ReactNode }) => (
-        <div data-testid="account-gate-mock">{children}</div>
-    )),
-}));
-
-jest.mock('@/shared/components/redirectToUrl', () => ({
-    RedirectToUrl: jest.fn(({ url }: { url: string }) => (
-        <div data-testid="redirect-mock">{url}</div>
-    )),
-}));
-
 describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const accountId = `${Network.ETHEREUM_SEPOLIA}-${address}`;
@@ -60,12 +45,12 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
     const getMemberListSpy = jest.spyOn(workspaceQueryService, 'getMemberList');
-    const getAccountInfoSpy = jest.spyOn(
+    const resolveAccountTypeSpy = jest.spyOn(
         workspaceAccountInfoUtils,
-        'getAccountInfo',
+        'resolveAccountType',
     );
     const daoMemberDetailsPageMock = DaoMemberDetailsPage as jest.Mock;
-    const accountGateMock = WorkspaceAccountGate as jest.Mock;
+    const redirectMock = redirect as jest.MockedFunction<typeof redirect>;
 
     /**
      * Mocks the lookup answering with a member of `governanceAddress` on the account of the URL.
@@ -95,21 +80,17 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
 
     beforeEach(() => {
         isEnabledSpy.mockResolvedValue(true);
-        getAccountInfoSpy.mockResolvedValue({
-            network: Network.ETHEREUM_SEPOLIA,
-            address,
-            type: WorkspaceAccountInfoType.DAO,
-        } as IWorkspaceAccountInfo);
+        resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.DAO);
         mockMembership();
     });
 
     afterEach(() => {
         isEnabledSpy.mockReset();
         getMemberListSpy.mockReset();
-        getAccountInfoSpy.mockReset();
+        resolveAccountTypeSpy.mockReset();
         notFoundMock.mockClear();
         daoMemberDetailsPageMock.mockClear();
-        accountGateMock.mockClear();
+        redirectMock.mockClear();
     });
 
     const createTestComponent = async (
@@ -139,18 +120,13 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
                 | undefined
         )?.searchParams;
 
-    it('renders the DAO member page of the account behind the account gate', async () => {
+    it('renders the DAO member page of the account', async () => {
         render(await createTestComponent());
 
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
-        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
         expect(
             screen.getByTestId('dao-member-details-mock'),
         ).toBeInTheDocument();
-        expect(accountGateMock).toHaveBeenCalledWith(
-            expect.objectContaining({ accountId }),
-            undefined,
-        );
     });
 
     it('hands the member page the account as DAO route parameters', async () => {
@@ -194,9 +170,9 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         getMemberListSpy.mockResolvedValue(
             generateWorkspaceQueryResponse({ data: [] }),
         );
-        render(await createTestComponent());
+        await expect(createTestComponent()).rejects.toThrow('NEXT_REDIRECT');
 
-        expect(screen.getByTestId('redirect-mock')).toHaveTextContent(
+        expect(redirectMock).toHaveBeenCalledWith(
             `/workspace/demo/${accountId}/members`,
         );
         expect(daoMemberDetailsPageMock).not.toHaveBeenCalled();
@@ -223,7 +199,7 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         );
         render(await createTestComponent());
 
-        expect(screen.queryByTestId('redirect-mock')).not.toBeInTheDocument();
+        expect(redirectMock).not.toHaveBeenCalled();
         expect(
             screen.getByTestId('dao-member-details-mock'),
         ).toBeInTheDocument();
@@ -262,7 +238,7 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
             }),
         );
 
-        expect(screen.queryByTestId('redirect-mock')).not.toBeInTheDocument();
+        expect(redirectMock).not.toHaveBeenCalled();
         expect(
             screen.getByTestId('dao-member-details-mock'),
         ).toBeInTheDocument();
@@ -293,43 +269,35 @@ describe('<WorkspaceAccountMemberDetailsPage /> component', () => {
         );
 
         beforeEach(() => {
-            getAccountInfoSpy.mockResolvedValue({
-                network: Network.ETHEREUM_SEPOLIA,
-                address,
-                type: WorkspaceAccountInfoType.SAFE,
-            } as IWorkspaceAccountInfo);
+            resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.SAFE);
         });
 
         it('redirects a Safe account to its members page', async () => {
-            render(await createTestComponent());
-
-            expect(RedirectToUrl).toHaveBeenCalledWith(
-                { url: safeMembersUrl },
-                undefined,
+            await expect(createTestComponent()).rejects.toThrow(
+                'NEXT_REDIRECT',
             );
-            expect(accountGateMock).not.toHaveBeenCalled();
+
+            expect(redirectMock).toHaveBeenCalledWith(safeMembersUrl);
             expect(daoMemberDetailsPageMock).not.toHaveBeenCalled();
         });
 
         it('does not look the member up for a Safe account', async () => {
-            render(await createTestComponent());
+            await expect(createTestComponent()).rejects.toThrow(
+                'NEXT_REDIRECT',
+            );
 
             expect(getMemberListSpy).not.toHaveBeenCalled();
         });
 
+        // Called with the members URL alone, so the body parameter of the original URL does not carry over.
         it('drops the body parameter when redirecting a Safe account', async () => {
-            render(
-                await createTestComponent({
+            await expect(
+                createTestComponent({
                     searchParams: Promise.resolve({ vote: 'x' }),
                 }),
-            );
+            ).rejects.toThrow('NEXT_REDIRECT');
 
-            expect(screen.getByTestId('redirect-mock')).toHaveTextContent(
-                safeMembersUrl,
-            );
-            expect(
-                screen.getByTestId('redirect-mock').textContent,
-            ).not.toContain('?');
+            expect(redirectMock).toHaveBeenCalledWith(safeMembersUrl);
         });
     });
 
