@@ -1,5 +1,49 @@
 # @aragon/gov-ui-kit
 
+## 3.0.0
+
+### Major Changes
+
+- [#1492](https://github.com/aragon/app/pull/1492) [`07b1292`](https://github.com/aragon/app/commit/07b1292ca190bc41d787e6f14e858bc6ff5ec14c) Thanks [@milosh86](https://github.com/milosh86)! - Remove the last built-in proposal action view. `ProposalActionChangeMembers`, its `IProposalActionChangeMembers` / `IProposalActionChangeMembersProps` types, the `generateProposalActionChangeMembers` test util and the `proposalActionChangeMembers` modules copy are removed, and so is the `ProposalActionType` enum, which has no values left. `ProposalActions.Item` now renders its BASIC view only through `CustomComponent`: without one, the BASIC view mode is disabled and the item opens the decoded or raw view. `ProposalActionTypeNoBasicView` stays exported.
+
+- [#1492](https://github.com/aragon/app/pull/1492) [`07b1292`](https://github.com/aragon/app/commit/07b1292ca190bc41d787e6f14e858bc6ff5ec14c) Thanks [@milosh86](https://github.com/milosh86)! - Remove `ProposalActionChangeSettings`, its `IProposalActionChangeSettings` / `IProposalActionChangeSettingsProps` types, the `generateProposalActionChangeSettings` test util, the `ProposalActionType.CHANGE_SETTINGS_MULTISIG` and `ProposalActionType.CHANGE_SETTINGS_TOKENVOTE` values and the `proposalActionsChangeSettings` modules copy: `ProposalActions.Item` no longer has a built-in view for settings changes. Render them through `CustomComponent`, for example with `DefinitionList`, which stays exported together with `IDefinitionSetting`.
+
+- [#1492](https://github.com/aragon/app/pull/1492) [`07b1292`](https://github.com/aragon/app/commit/07b1292ca190bc41d787e6f14e858bc6ff5ec14c) Thanks [@milosh86](https://github.com/milosh86)! - Remove `ProposalActionTokenMint`, its `IProposalActionTokenMint` / `IProposalActionTokenMintMetadataReceiver` / `IProposalActionTokenMintProps` types, the `generateProposalActionTokenMint` test util, the `ProposalActionType.TOKEN_MINT` value and the unused `proposalActionsTokenMint` modules copy: `ProposalActions.Item` no longer has a built-in view for token mints. Render them through `CustomComponent`, for example with `MemberDataListItemStructure`, which stays exported.
+
+- [#1489](https://github.com/aragon/app/pull/1489) [`05451c7`](https://github.com/aragon/app/commit/05451c70ae2b460819ad49c4ba1ba328c5bdd28e) Thanks [@milosh86](https://github.com/milosh86)! - Remove `ProposalActionUpdateMetadata`, its `IProposalActionUpdateMetadata` / `IProposalActionUpdateMetadataDaoMetadata` / `IProposalActionUpdateMetadataDaoMetadataLink` / `IProposalActionUpdateMetadataProps` types, the `generateProposalActionUpdateMetadata` test util, the `ProposalActionType.UPDATE_METADATA` and `ProposalActionType.UPDATE_PLUGIN_METADATA` values and the `proposalActionsUpdateMetadata` modules copy: `ProposalActions.Item` no longer has a built-in view for metadata updates. Render them through `CustomComponent`.
+
+- [#1433](https://github.com/aragon/app/pull/1433) [`bedbbf8`](https://github.com/aragon/app/commit/bedbbf876ce30609ff550c55bea887a4002a2a8b) Thanks [@milosh86](https://github.com/milosh86)! - Remove `ProposalActionWithdrawToken`, its `IProposalActionWithdrawToken` / `IProposalActionWithdrawTokenProps` types, the `generateProposalActionWithdrawToken` test util and the `ProposalActionType.WITHDRAW_TOKEN` value: `ProposalActions.Item` no longer has a built-in view for token transfers. Render them through `CustomComponent`, for example with `AssetTransfer`, which stays exported.
+
+### Minor Changes
+
+- [#1532](https://github.com/aragon/app/pull/1532) [`a521ea5`](https://github.com/aragon/app/commit/a521ea5689b14be0b9a612d918503f0ed8cc9f47) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - `Card` draws a hairline `border-neutral-100` border. Callers that added `border border-neutral-100` themselves can drop it; to change the colour, pass a `border-*` colour class (colours sorting before `neutral`, such as `critical`, need the important modifier).
+
+- [#1532](https://github.com/aragon/app/pull/1532) [`a521ea5`](https://github.com/aragon/app/commit/a521ea5689b14be0b9a612d918503f0ed8cc9f47) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - `Dropdown.Item` defaults to the external-link icon only for links opening in a new tab (`target="_blank"`). A link opening in the same tab gets no default icon, or the checkmark when `selected`. Pass `icon={IconType.LINK_EXTERNAL}` to keep the previous icon on a same-tab link.
+
+### Patch Changes
+
+- [#1425](https://github.com/aragon/app/pull/1425) [`b6f8776`](https://github.com/aragon/app/commit/b6f8776759d622881e31bc477946ed9d2c60383d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Follow the monorepo-wide Biome rules. `Breadcrumbs` no longer throws on an empty `links` list.
+
+- [#1447](https://github.com/aragon/app/pull/1447) [`f674a2c`](https://github.com/aragon/app/commit/f674a2c267d0b69d94a5ec692d9c7cf2eade6a1a) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Document usage notes in the JSDoc of 31 components. They show in IDE hover and, except on the seven compound namespaces, at the top of each Storybook docs page. They cover contracts the props table doesn't show: controlled state, required parents and providers, render conditions and layout defaults.
+
+    Document the 11 compound namespaces that had no JSDoc (`Accordion`, `Dropdown`, `DefinitionList`, `ProposalVotingProgress` and the `*DataListItem` families). Storybook's component manifest can now match their members and lists their props. Accordion's members now use their export names as `displayName` (`AccordionItemContent` showed as `Accordion.Content`).
+
+- [#1383](https://github.com/aragon/app/pull/1383) [`bbe197d`](https://github.com/aragon/app/commit/bbe197d654545f6eb7f8b143b2ba94717ec13550) Thanks [@milosh86](https://github.com/milosh86)! - Render `Dropdown.Item` links through the `Link` component of the `GukCoreProvider` instead of a plain anchor, as `Button` and `Link` already do. In a Next.js app the items now navigate client-side and prefetch their target.
+
+- [#1480](https://github.com/aragon/app/pull/1480) [`af8f6d5`](https://github.com/aragon/app/commit/af8f6d52d213dd6a23bb52972c7f3fab3a667325) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - `InputContainer`'s `id` is optional. Without it the label renders without a `for`, for containers with no single input to label.
+
+- [#1532](https://github.com/aragon/app/pull/1532) [`a521ea5`](https://github.com/aragon/app/commit/a521ea5689b14be0b9a612d918503f0ed8cc9f47) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add the `neutral-25` colour token (`#fafbfd`), halfway between `neutral-0` and `neutral-50`, for page backgrounds beside a side navigation.
+
+- [#1393](https://github.com/aragon/app/pull/1393) [`480b14c`](https://github.com/aragon/app/commit/480b14c2b12d0005fb904016996293087b2f013b) Thanks [@milosh86](https://github.com/milosh86)! - Move the package into the aragon/app monorepo.
+
+    Allow the neutral variant on proposal voting progress items for thresholds that do not yet represent a recorded decision.
+
+- [#1449](https://github.com/aragon/app/pull/1449) [`2c28ae6`](https://github.com/aragon/app/commit/2c28ae66db1ca496314ff47f4c898e8009189a78) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (framer-motion 13, react-dropzone 20, sanitize-html 2.17.7 with its two XSS fixes, tiptap 3.31) and drop the unused Babel toolchain
+
+- [#1529](https://github.com/aragon/app/pull/1529) [`142ec69`](https://github.com/aragon/app/commit/142ec694d065dbc21c075e58cada6757fe82ec16) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (framer-motion 14, sanitize-html 2.18.1 with its fixes, Radix 1.3 line, tiptap 3.32, Storybook 10.6.3, vite 8.3.4)
+
+- [#1475](https://github.com/aragon/app/pull/1475) [`8d72803`](https://github.com/aragon/app/commit/8d7280391facd8162c4c95ddb2f426b6188db1f4) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Drop the redundant `Components` level from Storybook titles and move `Formatter` to a top-level `Utilities` section. Storybook-only; no change to published exports.
+
 ## 2.11.4
 
 ### Patch Changes
@@ -12,8 +56,7 @@
 
 ### Patch Changes
 
-- [#768](https://github.com/aragon/gov-ui-kit/pull/768) [`652c9a1`](https://github.com/aragon/gov-ui-kit/commit/652c9a108f1fa4b3cc10032549b6a6dfa413b131) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Move `AddressOutput` and `addressUtils` to the core package layer and let `DefinitionList.Item` render on-chain
-  entity values as address outputs directly, without duplicating link props on children.
+- [#768](https://github.com/aragon/gov-ui-kit/pull/768) [`652c9a1`](https://github.com/aragon/gov-ui-kit/commit/652c9a108f1fa4b3cc10032549b6a6dfa413b131) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Move `AddressOutput` and `addressUtils` to the core package layer and let `DefinitionList.Item` render on-chain entity values as address outputs directly, without duplicating link props on children.
 
 - [#768](https://github.com/aragon/gov-ui-kit/pull/768) [`652c9a1`](https://github.com/aragon/gov-ui-kit/commit/652c9a108f1fa4b3cc10032549b6a6dfa413b131) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Render `AddressOutput` and `Clipboard` as inline-safe spans, vertically center address labels and controls, apply `AddressOutput` `className` to the component root, and add `InteractiveAncestorContext` so wrapper components—including `Wallet`—avoid nested address controls.
 
