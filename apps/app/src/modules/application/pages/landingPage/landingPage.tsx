@@ -4,6 +4,7 @@ import { Button, Card, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import GoogleIcon from '@/assets/images/google.svg';
 import NetBackground from '@/assets/images/net_bg.svg';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
@@ -52,16 +53,6 @@ export const LandingPage: React.FC = () => {
         );
     }
 
-    const exploreDaosLink = (
-        <Link
-            className="flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-neutral-0 px-3 py-2 text-neutral-800 text-sm leading-tight hover:bg-neutral-50 md:text-base"
-            href="/explore"
-        >
-            {t('app.application.landingPage.exploreDaos')}
-            <Icon icon={IconType.CHEVRON_RIGHT} size="sm" />
-        </Link>
-    );
-
     const demoLink = (
         <div className="flex flex-col items-start gap-2">
             <Button
@@ -105,7 +96,6 @@ export const LandingPage: React.FC = () => {
                 />
                 <div className="relative flex items-center justify-between md:block">
                     <AragonLogo size="lg" variant="white" />
-                    <div className="md:hidden">{exploreDaosLink}</div>
                 </div>
                 <div className="relative mt-12 flex max-w-[520px] flex-col gap-3 md:my-auto md:gap-4">
                     <h1 className="font-normal text-4xl leading-tight md:text-5xl">
@@ -122,9 +112,6 @@ export const LandingPage: React.FC = () => {
             </section>
 
             <section className="flex min-h-[528px] flex-col px-5 py-12 text-neutral-800 md:min-h-dvh md:px-12 md:py-10 lg:px-20">
-                <div className="hidden justify-end md:flex">
-                    {exploreDaosLink}
-                </div>
                 <div className="flex grow items-center justify-center py-8 md:py-0">
                     <Card className="flex w-full max-w-[376px] flex-col gap-6 p-5 md:p-6">
                         <div className="flex flex-col gap-1">
@@ -155,7 +142,7 @@ export const LandingPage: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-3 gap-3 text-neutral-500">
                             <button
-                                className="flex cursor-not-allowed flex-col items-center gap-2"
+                                className="flex flex-col items-center gap-2"
                                 disabled={true}
                                 type="button"
                             >
@@ -168,17 +155,22 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.email')}
                             </button>
                             <button
-                                className="flex cursor-not-allowed flex-col items-center gap-2"
+                                className="flex flex-col items-center gap-2"
                                 disabled={true}
                                 type="button"
                             >
-                                <span className="flex size-12 items-center justify-center rounded-full border border-neutral-100 font-semibold">
-                                    G
+                                <span className="flex size-12 items-center justify-center rounded-full border border-neutral-100">
+                                    <Image
+                                        alt=""
+                                        height={24}
+                                        src={GoogleIcon}
+                                        width={24}
+                                    />
                                 </span>
                                 {t('app.application.landingPage.signIn.google')}
                             </button>
                             <button
-                                className="flex cursor-not-allowed flex-col items-center gap-2"
+                                className="flex flex-col items-center gap-2"
                                 disabled={true}
                                 type="button"
                             >

@@ -39,12 +39,16 @@ export const SupportChatLauncher: React.FC = () => {
         <div className="sticky bottom-6 z-10 h-0 starting:translate-y-2 self-end starting:opacity-0 transition-[opacity,translate] delay-300 duration-200 ease-out motion-reduce:transition-none">
             <button
                 aria-label={t('app.application.supportChat.launcher.label')}
-                className="focus-ring-primary absolute right-6 bottom-0 flex size-12 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary-400 text-neutral-0 shadow-neutral-xl transition-colors hover:bg-primary-500 md:w-auto md:px-5"
+                className="group focus-ring-primary absolute right-6 bottom-0 flex size-12 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border border-primary-100 bg-neutral-0 text-primary-400 shadow-primary-sm transition-all hover:border-primary-200 hover:bg-primary-50 hover:shadow-primary active:border-primary-400 active:bg-neutral-0 active:shadow-none md:w-auto md:px-5"
                 onClick={open}
                 ref={buttonRef}
                 type="button"
             >
-                <Icon icon={IconType.FEEDBACK} size="md" />
+                <Icon
+                    className="text-primary-300 transition-all group-hover:text-primary-400 group-active:text-primary-400"
+                    icon={IconType.FEEDBACK}
+                    size="md"
+                />
                 <span className="hidden text-base leading-tight md:inline">
                     {t('app.application.supportChat.launcher.label')}
                 </span>

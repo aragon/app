@@ -41,7 +41,7 @@ describe('<LandingPage /> component', () => {
         walletAccountSpy.mockReset();
     });
 
-    it('links to Explore and the demo workspace', () => {
+    it('links to the demo workspace without an Explore CTA', () => {
         render(
             <GukModulesProvider>
                 <LandingPage />
@@ -49,15 +49,34 @@ describe('<LandingPage /> component', () => {
         );
 
         expect(
-            screen.getAllByRole('link', {
+            screen.queryByRole('link', {
                 name: /landingPage\.exploreDaos$/,
-            })[0],
-        ).toHaveAttribute('href', '/explore');
+            }),
+        ).not.toBeInTheDocument();
         expect(
             screen.getAllByRole('link', {
                 name: /landingPage\.demo\.action$/,
             })[0],
         ).toHaveAttribute('href', '/demo');
+    });
+
+    it('keeps coming-soon sign-in options disabled without a not-allowed cursor', () => {
+        render(
+            <GukModulesProvider>
+                <LandingPage />
+            </GukModulesProvider>,
+        );
+
+        for (const name of [
+            /landingPage\.signIn\.email$/,
+            /landingPage\.signIn\.google$/,
+            /landingPage\.signIn\.passkey$/,
+        ]) {
+            const button = screen.getByRole('button', { name });
+
+            expect(button).toBeDisabled();
+            expect(button).not.toHaveClass('cursor-not-allowed');
+        }
     });
 
     it('opens the existing workspace when the wallet is already connected', async () => {
