@@ -7,6 +7,7 @@ import type {
     FeatureFlagSnapshot,
     IFeatureFlagsProvider,
 } from './featureFlags.api';
+import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.constants';
 
 interface FeatureFlagsService {
     isEnabled: (key: FeatureFlagKey) => Promise<boolean>;
@@ -99,6 +100,16 @@ describe('FeatureFlags service', () => {
 
         expect(debugPanel?.enabled).toBe(true); // local env override
         expect(linkedAccount?.enabled).toBe(false); // all false in config
+    });
+
+    it('enables workspaces in preview environments', async () => {
+        const { service } = createService({
+            definitions: FEATURE_FLAG_DEFINITIONS,
+            environment: 'preview',
+            overrides: {},
+        });
+
+        await expect(service.isEnabled('workspaces')).resolves.toBe(true);
     });
 
     it('returns false for unknown feature flag keys', async () => {
