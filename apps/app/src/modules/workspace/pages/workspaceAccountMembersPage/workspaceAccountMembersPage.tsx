@@ -8,8 +8,7 @@ import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { WorkspaceAccountInfoType } from '../../api/workspaceQueryService';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import {
     WorkspaceMembersPageClient,
@@ -26,19 +25,9 @@ export interface IWorkspaceAccountMembersPageProps {
 /**
  * Members of one account of a workspace.
  *
- * A workspace holds more than DAOs, and how an account answers "who are its members" depends on what it is: a DAO
- * has the members of its governance plugins, a Safe has its owners.
- *
- * The Safe branch comes first, before `WorkspaceAccountGate`, because the gate fails the route for anything whose DAO
- * record cannot be read, a Safe included. A Safe renders the workspace members page narrowed to the account, which
- * lists its owners. The account type comes from the workspace accounts API; a failed lookup falls back to the DAO
- * branch.
- *
- * The DAO branch is unchanged and sits behind the gate: it renders the DAO members page as is — like
- * `WorkspaceAccountOverviewPage` does with the dashboard: it already prefetches the member list of the first body and
- * owns its page container, and an account ID is a DAO ID, so the only adaptation is the shape of the route parameters.
- *
- * See "Safe support by route" in `docs/projectDocs/createWorkspace.md`.
+ * Switches on `workspaceAccountInfoUtils.resolveAccountType`: a Safe gets the workspace members page narrowed to it
+ * (its owners), a DAO the DAO members page as is, with only the route parameters adapted. See "Safe support by
+ * route" in `docs/projectDocs/createWorkspace.md`.
  */
 export const WorkspaceAccountMembersPage: React.FC<
     IWorkspaceAccountMembersPageProps
@@ -52,29 +41,26 @@ export const WorkspaceAccountMembersPage: React.FC<
     const { workspaceId, accountId } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
 
-    const accountInfo = await workspaceAccountInfoUtils.getAccountInfo({
-        network,
-        address,
-    });
+    const accountType =
+        await workspaceAccountInfoUtils.resolveAccountType(accountId);
 
-    // TODO: investigate how the gate should behave for a Safe
-    // given that not all DAO routes have corresponding Safe routes. For now, the gate is skipped for a Safe, and the members page is rendered directly.
-    if (accountInfo?.type === WorkspaceAccountInfoType.SAFE) {
-        return (
-            <Page.Container>
-                <WorkspaceMembersPageClient
-                    pageSize={workspaceMembersCount}
-                    workspaceId={workspaceId}
+    switch (accountType) {
+        case WorkspaceAccountType.SAFE:
+            return (
+                <Page.Container>
+                    <WorkspaceMembersPageClient
+                        pageSize={workspaceMembersCount}
+                        workspaceId={workspaceId}
+                    />
+                </Page.Container>
+            );
+        case WorkspaceAccountType.DAO:
+            return (
+                <DaoMembersPage
+                    params={Promise.resolve({ network, addressOrEns: address })}
                 />
-            </Page.Container>
-        );
+            );
+        default:
+            return accountType satisfies never;
     }
-
-    return (
-        <WorkspaceAccountGate accountId={accountId}>
-            <DaoMembersPage
-                params={Promise.resolve({ network, addressOrEns: address })}
-            />
-        </WorkspaceAccountGate>
-    );
 };

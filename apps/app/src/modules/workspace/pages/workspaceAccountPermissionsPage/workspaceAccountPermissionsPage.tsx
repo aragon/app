@@ -7,7 +7,7 @@ import { DaoPermissionsPage } from '@/modules/permissions/pages/daoPermissionsPa
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceSectionGuard } from '../../components/workspaceSectionGuard';
 
 export interface IWorkspaceAccountPermissionsPageProps {
     /**
@@ -22,7 +22,7 @@ export interface IWorkspaceAccountPermissionsPageProps {
  * shape of the route parameters.
  *
  * Permissions exist for a DAO alone: the navigation hides the link for the aggregated scope and for a Safe, and
- * `WorkspaceAccountGate` fails the route for any account whose DAO record cannot be read.
+ * `WorkspaceSectionGuard` redirects a Safe that reaches the URL to its overview.
  */
 export const WorkspaceAccountPermissionsPage: React.FC<
     IWorkspaceAccountPermissionsPageProps
@@ -33,14 +33,18 @@ export const WorkspaceAccountPermissionsPage: React.FC<
         notFound();
     }
 
-    const { accountId } = await params;
+    const { workspaceId, accountId } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
 
     return (
-        <WorkspaceAccountGate accountId={accountId}>
+        <WorkspaceSectionGuard
+            accountId={accountId}
+            section="permissions"
+            workspaceId={workspaceId}
+        >
             <DaoPermissionsPage
                 params={Promise.resolve({ network, addressOrEns: address })}
             />
-        </WorkspaceAccountGate>
+        </WorkspaceSectionGuard>
     );
 };

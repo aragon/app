@@ -1,8 +1,7 @@
 // The `next/navigation` alias points to the client-hooks wrapper, which cannot re-export server functions.
-import { notFound } from 'next/navigation-original';
+import { notFound, redirect } from 'next/navigation-original';
 import { voteListFilterParam } from '@/modules/governance/components/voteList/voteListConstants';
 import { DaoMemberDetailsPage } from '@/modules/governance/pages/daoMemberDetailsPage/daoMemberDetailsPage';
-import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { featureFlags } from '@/shared/featureFlags';
 import type {
     IPageSearchParams,
@@ -11,10 +10,9 @@ import type {
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IWorkspaceAccountRef,
-    WorkspaceAccountInfoType,
     workspaceQueryService,
 } from '../../api/workspaceQueryService';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -66,10 +64,8 @@ export interface IWorkspaceAccountMemberDetailsPageProps {
 /**
  * Details of one member of one account of a workspace.
  *
- * A Safe has no member page of its own: its owners are listed on the members page, so a Safe account redirects
- * there, before the member lookup and before `WorkspaceAccountGate` (which fails the route for anything whose DAO
- * record cannot be read). The account type comes from the workspace accounts API; a failed lookup falls back to the
- * DAO branch.
+ * Switches on `workspaceAccountInfoUtils.resolveAccountType`: a Safe has no member page, so it redirects to its
+ * members page before the member lookup.
  *
  * The DAO branch is unchanged: the DAO member page is rendered as is and only the shape of the route parameters is
  * adapted. Its address-validation fallbacks (invalid address, non-checksummed redirect) build `/dao/…` URLs, so the
@@ -87,21 +83,22 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
     const { workspaceId, accountId, address: memberAddress } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
 
-    const accountInfo = await workspaceAccountInfoUtils.getAccountInfo({
-        network,
-        address,
-    });
+    const accountType =
+        await workspaceAccountInfoUtils.resolveAccountType(accountId);
 
-    if (accountInfo?.type === WorkspaceAccountInfoType.SAFE) {
-        return (
-            <RedirectToUrl
-                url={workspaceUtils.getAccountScopeUrl(
+    switch (accountType) {
+        case WorkspaceAccountType.SAFE:
+            return redirect(
+                workspaceUtils.getAccountScopeUrl(
                     workspaceId,
                     accountId,
                     'members',
-                )}
-            />
-        );
+                ),
+            );
+        case WorkspaceAccountType.DAO:
+            break;
+        default:
+            return accountType satisfies never;
     }
 
     const memberSearchParams = (await searchParams) ?? {};
@@ -120,14 +117,12 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
     // URL for a DAO account, and goes back to the members list; a partial one is no answer and degrades like a failure.
     const isCompleteLookup = memberList != null && !memberList.partial;
     if (isCompleteLookup && member == null) {
-        return (
-            <RedirectToUrl
-                url={workspaceUtils.getAccountScopeUrl(
-                    workspaceId,
-                    accountId,
-                    'members',
-                )}
-            />
+        redirect(
+            workspaceUtils.getAccountScopeUrl(
+                workspaceId,
+                accountId,
+                'members',
+            ),
         );
     }
 
@@ -135,15 +130,13 @@ export const WorkspaceAccountMemberDetailsPage: React.FC<
         linkedBodyId ?? member?.memberships[0]?.governance.address;
 
     return (
-        <WorkspaceAccountGate accountId={accountId}>
-            <DaoMemberDetailsPage
-                params={Promise.resolve({
-                    network,
-                    addressOrEns: address,
-                    address: memberAddress,
-                })}
-                searchParams={Promise.resolve({ members: bodyPluginId })}
-            />
-        </WorkspaceAccountGate>
+        <DaoMemberDetailsPage
+            params={Promise.resolve({
+                network,
+                addressOrEns: address,
+                address: memberAddress,
+            })}
+            searchParams={Promise.resolve({ members: bodyPluginId })}
+        />
     );
 };

@@ -136,6 +136,15 @@ describe('<WorkspaceMemberList /> component', () => {
         );
     };
 
+    // An empty selection that is still resolving must not read as "no members".
+    it('stays in its loading state while the accounts are still being resolved', () => {
+        render(createTestComponent({ accounts: [], isPending: true }));
+
+        expect(
+            screen.queryByText(/workspaceMemberList\.emptyState\.heading$/),
+        ).not.toBeInTheDocument();
+    });
+
     it('reads the members of the given accounts', async () => {
         const address = nextAddress();
         render(createTestComponent({ accounts: [buildAccount(address)] }));

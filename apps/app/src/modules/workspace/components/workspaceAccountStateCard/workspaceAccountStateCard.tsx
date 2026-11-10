@@ -46,13 +46,13 @@ const translationNamespace = 'app.workspace.workspaceAccountStateCard';
 
 /**
  * Card standing in for the content of an account-scoped workspace page that cannot serve the account, picked by what
- * the account is (`workspaceUtils.resolveAccountState`): a Safe is pointed to the sections that serve it, an address
- * that is neither a DAO nor a Safe is not found, a lookup that could not be verified asks the user to try again
+ * the account is (`workspaceUtils.resolveAccountState`): an address that is neither a DAO nor a Safe is not found, a
+ * lookup that could not be verified asks the user to try again
  * later (reloading the page retries it), and anything else is the generic error.
  *
- * Rendered by `WorkspaceAccountGate` for the DAO-only sections, and by the assets, transactions and proposals pages for an
- * account the workspace does not hold that the lookup could not place. The workspace and account IDs are read from
- * the route, which every caller sits under.
+ * Rendered by the assets, transactions and proposals pages for an account the workspace does not hold that the lookup
+ * could not place, which is never a DAO or a Safe. The workspace ID is read from the route, which every caller sits
+ * under.
  */
 export const WorkspaceAccountStateCard: React.FC<
     IWorkspaceAccountStateCardProps
@@ -60,13 +60,8 @@ export const WorkspaceAccountStateCard: React.FC<
     const { accountState } = props;
 
     const { t } = useTranslations();
-    const { workspaceId, accountId } =
-        useParams<
-            Pick<IWorkspaceAccountPageParams, 'workspaceId' | 'accountId'>
-        >();
-
-    const getSectionUrl = (section: string) =>
-        workspaceUtils.getAccountScopeUrl(workspaceId, accountId, section);
+    const { workspaceId } =
+        useParams<Pick<IWorkspaceAccountPageParams, 'workspaceId'>>();
 
     const errorState: IWorkspaceAccountStateCardState = {
         namespace: 'error',
@@ -76,18 +71,6 @@ export const WorkspaceAccountStateCard: React.FC<
     const states: Partial<
         Record<WorkspaceAccountState, IWorkspaceAccountStateCardState>
     > = {
-        [WorkspaceAccountState.SAFE]: {
-            namespace: 'safe',
-            illustration: 'WARNING',
-            primaryButton: {
-                label: t(`${translationNamespace}.safe.action.assets`),
-                href: getSectionUrl('assets'),
-            },
-            secondaryButton: {
-                label: t(`${translationNamespace}.safe.action.transactions`),
-                href: getSectionUrl('transactions'),
-            },
-        },
         [WorkspaceAccountState.NOT_FOUND]: {
             namespace: 'notFound',
             illustration: 'NOT_FOUND',

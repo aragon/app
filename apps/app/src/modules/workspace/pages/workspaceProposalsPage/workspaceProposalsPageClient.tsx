@@ -42,12 +42,10 @@ export interface IWorkspaceProposalsPageClientProps {
  * proposals endpoint, so a single account sums into the aggregated view.
  * The plugin tabs and the aside card follow from that selection on their own.
  *
- * A Safe never reaches this client on an account-scoped route: `WorkspaceProposalsPage` wraps that route in
- * `WorkspaceAccountGate`, so the narrowing below only ever sees a DAO or the aggregated selection. That gate is
- * load-bearing because the narrowing keeps DAO accounts only, so a Safe would be answered for with an empty list
- * instead of failing. See "Safe support by route" in `docs/projectDocs/createWorkspace.md`.
+ * A Safe never reaches this client on an account-scoped route (`WorkspaceProposalsPage` guards it), so the DAO
+ * narrowing below only sees a DAO or the aggregated selection.
  *
- * The gate only proves that the DAO loads on the server; an account the workspace does not hold is still resolved
+ * The guard only places the account on the server; an account the workspace does not hold is still resolved
  * on the client, so the list loads until that lookup settles, and a lookup that cannot place the account renders
  * its state instead of an empty list, as on the assets and transactions pages.
  */
@@ -75,10 +73,7 @@ export const WorkspaceProposalsPageClient: React.FC<
         activeOption.account == null &&
         !isScopePending;
 
-    // TEMPORARY narrowing: only DAO accounts have proposals, so a Safe scope narrows to nothing, which is why the
-    // account-scoped route is gated in `WorkspaceProposalsPage`. When Safe proposals land, keep the route's account
-    // whatever its type and drop that gate wrap — both halves together, or the route answers for a Safe with an
-    // empty list instead of failing.
+    // Only DAO accounts have proposals.
     const accountsToDisplay = scopedAccounts.filter(
         (account: IWorkspaceAccount) =>
             account.type === WorkspaceAccountType.DAO,
