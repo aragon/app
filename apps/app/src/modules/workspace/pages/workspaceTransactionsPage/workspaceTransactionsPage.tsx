@@ -19,10 +19,8 @@ export const workspaceTransactionsCount = 20;
  *
  * One page serves both, as the assets page does. Every scope reads `POST /v2/workspaces/query/transactions`, which
  * is what keeps a single account summing into the aggregated view — both come out of the same aggregation — and
- * what makes a Safe account, which has no DAO page to delegate to, readable at all. For the same reason
- * `WorkspaceAccountGate` is deliberately not applied here: it fails a route whose DAO record cannot be read, which
- * would withhold a list this page serves without reading a DAO at all. Which routes serve a Safe and which fail is
- * listed under "Safe support by route" in `docs/projectDocs/createWorkspace.md`.
+ * what makes a Safe account, which has no DAO page to delegate to, readable at all. No `WorkspaceSectionGuard` wraps
+ * it: every account type has this section (see "Safe support by route" in `docs/projectDocs/createWorkspace.md`).
  *
  * The scope is not read here. The aggregated route spells the account `all`, a static segment, so there is no
  * `accountId` parameter to read on that route and typing one would be a lie; the client resolves the scope from the

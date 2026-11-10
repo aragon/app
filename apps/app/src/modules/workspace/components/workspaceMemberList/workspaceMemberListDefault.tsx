@@ -221,6 +221,10 @@ export interface IWorkspaceMemberListDefaultProps {
      */
     bodyAccountId?: string;
     /**
+     * Keeps the list in its loading state while the accounts are still being resolved.
+     */
+    isPending?: boolean;
+    /**
      * Hides the pagination of the list, e.g. on a dashboard that previews the list and links to its page.
      */
     hidePagination?: boolean;
@@ -244,6 +248,7 @@ export const WorkspaceMemberListDefault: React.FC<
         visiblePluginsByAccountId,
         bodyAccountId,
         hidePagination,
+        isPending = false,
     } = props;
 
     const { t } = useTranslations();
@@ -264,14 +269,21 @@ export const WorkspaceMemberListDefault: React.FC<
     const isPartial = data?.pages.some((page) => page.partial) ?? false;
 
     // A workspace with no account keeps the query disabled, which would otherwise leave the list loading forever
-    // instead of showing its empty state.
-    const state = hasAccounts
-        ? dataListUtils.queryToDataListState({
-              status,
-              fetchStatus,
-              isFetchingNextPage,
-          })
-        : 'idle';
+    // instead of showing its empty state. Accounts still being resolved are not "no account" yet.
+    const getState = () => {
+        if (isPending) {
+            return 'initialLoading';
+        }
+
+        return hasAccounts
+            ? dataListUtils.queryToDataListState({
+                  status,
+                  fetchStatus,
+                  isFetchingNextPage,
+              })
+            : 'idle';
+    };
+    const state = getState();
 
     // Accounts whose member page the app can serve. Membership is not a DAO notion — a Safe owner is a member of
     // the workspace too — but the member details page reads a DAO, so only DAO accounts have a page to open. Safe

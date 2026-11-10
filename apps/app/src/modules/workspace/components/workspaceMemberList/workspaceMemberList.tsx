@@ -26,6 +26,10 @@ export interface IWorkspaceMemberListProps {
      */
     pageSize: number;
     /**
+     * Keeps the list in its loading state while the accounts are still being resolved.
+     */
+    isPending?: boolean;
+    /**
      * Hides the pagination of the list, e.g. on a dashboard that previews the list and links to its page.
      */
     hidePagination?: boolean;
@@ -52,7 +56,8 @@ export interface IWorkspaceMemberListProps {
 export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
     props,
 ) => {
-    const { workspaceId, accounts, pageSize, hidePagination } = props;
+    const { workspaceId, accounts, pageSize, hidePagination, isPending } =
+        props;
 
     const { filterTabs, hasTabs, activeTab } = useWorkspaceMemberTabs({
         accounts,
@@ -97,6 +102,7 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
             bodyAccountId={tabProps?.bodyAccountId}
             filters={tabProps?.filters}
             hidePagination={hidePagination}
+            isPending={isPending}
             pageSize={pageSize}
             visiblePluginsByAccountId={visiblePluginsByAccountId}
             workspaceId={workspaceId}

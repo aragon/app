@@ -75,7 +75,10 @@ interface IWorkspaceSectionScopes {
  * Sections of `/workspace/{workspaceId}/{accountId}/{section}` served for some scopes alone, with the scopes that have
  * them. A section left out is served for every scope. Read through `workspaceUtils.isSectionServed`.
  *
- * - proposals — the aggregated scope and a DAO account: a Safe account has no proposals route yet.
+ * This is the single declaration of which account types have which section: the navigation hides links from it, the
+ * account selector sends an option to its overview from it, and `WorkspaceSectionGuard` redirects a route from it.
+ *
+ * - proposals — the aggregated scope and a DAO account: a Safe has no proposals, and will not.
  * - permissions — a DAO account alone.
  * - settings — a DAO or a Safe account, not the aggregated scope.
  */
@@ -467,11 +470,14 @@ class WorkspaceUtils {
             return undefined;
         }
 
-        const typeMap: Partial<
-            Record<WorkspaceAccountInfoType, WorkspaceAccountType>
+        // A full record, so an account type the API adds is a type error here until it is mapped.
+        const typeMap: Record<
+            WorkspaceAccountInfoType,
+            WorkspaceAccountType | undefined
         > = {
             [WorkspaceAccountInfoType.DAO]: WorkspaceAccountType.DAO,
             [WorkspaceAccountInfoType.SAFE]: WorkspaceAccountType.SAFE,
+            [WorkspaceAccountInfoType.UNKNOWN]: undefined,
         };
 
         return typeMap[accountInfo.type];
@@ -479,8 +485,8 @@ class WorkspaceUtils {
 
     /**
      * Reads the outcome of a single-account lookup of the workspace accounts API as one state, so that every reader
-     * of such a lookup — `WorkspaceAccountGate` on the server, `useWorkspaceAccountOptions` on the client — agrees
-     * on what the address is. The DAO and Safe states follow `getAccountType`.
+     * of such a lookup — `workspaceAccountInfoUtils.resolveAccount` on the server, `useWorkspaceAccountOptions` on the
+     * client — agrees on what the address is. The DAO and Safe states follow `getAccountType`.
      *
      * The endpoint answers an address that is neither an indexed DAO nor a Safe with a 404 for the whole request
      * rather than with an `unsupported` entry (see Known gaps in `docs/projectDocs/createWorkspace.md`). With a

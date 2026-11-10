@@ -1,15 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation-original';
-import type { ReactNode } from 'react';
 import { DaoMembersPage } from '@/modules/governance/pages/daoMembersPage/daoMembersPage';
 import { Network } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
-import {
-    type IWorkspaceAccountInfo,
-    WorkspaceAccountInfoType,
-} from '../../api/workspaceQueryService';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceAccountType } from '../../api/workspaceService';
 import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import {
     WorkspaceMembersPageClient,
@@ -37,12 +32,6 @@ jest.mock('../workspaceMembersPage', () => ({
     )),
 }));
 
-jest.mock('../../components/workspaceAccountGate', () => ({
-    WorkspaceAccountGate: jest.fn(({ children }: { children: ReactNode }) => (
-        <div data-testid="account-gate-mock">{children}</div>
-    )),
-}));
-
 describe('<WorkspaceAccountMembersPage /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const accountId = `${Network.ETHEREUM_SEPOLIA}-${address}`;
@@ -50,36 +39,23 @@ describe('<WorkspaceAccountMembersPage /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
     const daoMembersPageMock = DaoMembersPage as jest.Mock;
-    const accountGateMock = WorkspaceAccountGate as jest.Mock;
     const membersClientMock = WorkspaceMembersPageClient as jest.Mock;
-    const getAccountInfoSpy = jest.spyOn(
+    const resolveAccountTypeSpy = jest.spyOn(
         workspaceAccountInfoUtils,
-        'getAccountInfo',
+        'resolveAccountType',
     );
-
-    const generateAccountInfo = (
-        type: WorkspaceAccountInfoType,
-    ): IWorkspaceAccountInfo =>
-        ({
-            network: Network.ETHEREUM_SEPOLIA,
-            address,
-            type,
-        }) as IWorkspaceAccountInfo;
 
     beforeEach(() => {
         isEnabledSpy.mockResolvedValue(true);
-        getAccountInfoSpy.mockResolvedValue(
-            generateAccountInfo(WorkspaceAccountInfoType.DAO),
-        );
+        resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.DAO);
     });
 
     afterEach(() => {
         isEnabledSpy.mockReset();
         notFoundMock.mockClear();
         daoMembersPageMock.mockClear();
-        accountGateMock.mockClear();
         membersClientMock.mockClear();
-        getAccountInfoSpy.mockReset();
+        resolveAccountTypeSpy.mockReset();
     });
 
     const createTestComponent = async (
@@ -94,16 +70,11 @@ describe('<WorkspaceAccountMembersPage /> component', () => {
         return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
-    it('renders the DAO members page of the account behind the account gate', async () => {
+    it('renders the DAO members page of the account', async () => {
         render(await createTestComponent());
 
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
-        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
         expect(screen.getByTestId('dao-members-mock')).toBeInTheDocument();
-        expect(accountGateMock).toHaveBeenCalledWith(
-            expect.objectContaining({ accountId }),
-            undefined,
-        );
     });
 
     it('hands the members page the account as DAO route parameters', async () => {
@@ -131,18 +102,15 @@ describe('<WorkspaceAccountMembersPage /> component', () => {
 
     describe('Safe account', () => {
         beforeEach(() => {
-            getAccountInfoSpy.mockResolvedValue(
-                generateAccountInfo(WorkspaceAccountInfoType.SAFE),
-            );
+            resolveAccountTypeSpy.mockResolvedValue(WorkspaceAccountType.SAFE);
         });
 
-        it('renders the workspace members page for a Safe account, outside the account gate', async () => {
+        it('renders the workspace members page for a Safe account', async () => {
             render(await createTestComponent());
 
             expect(
                 screen.getByTestId('members-client-mock'),
             ).toBeInTheDocument();
-            expect(accountGateMock).not.toHaveBeenCalled();
             expect(daoMembersPageMock).not.toHaveBeenCalled();
             expect(membersClientMock).toHaveBeenCalledWith(
                 { workspaceId: 'demo', pageSize: workspaceMembersCount },
@@ -150,13 +118,10 @@ describe('<WorkspaceAccountMembersPage /> component', () => {
             );
         });
 
-        it('looks the account up by the network and address of the URL', async () => {
+        it('looks the account up by the account ID of the URL', async () => {
             render(await createTestComponent());
 
-            expect(getAccountInfoSpy).toHaveBeenCalledWith({
-                network: Network.ETHEREUM_SEPOLIA,
-                address,
-            });
+            expect(resolveAccountTypeSpy).toHaveBeenCalledWith(accountId);
         });
 
         it('takes the Safe branch for a lowercased account ID', async () => {
@@ -173,22 +138,9 @@ describe('<WorkspaceAccountMembersPage /> component', () => {
             expect(
                 screen.getByTestId('members-client-mock'),
             ).toBeInTheDocument();
-            expect(getAccountInfoSpy).toHaveBeenCalledWith({
-                network: Network.ETHEREUM_SEPOLIA,
-                address: lowerAddress,
-            });
+            expect(resolveAccountTypeSpy).toHaveBeenCalledWith(
+                `${Network.ETHEREUM_SEPOLIA}-${lowerAddress}`,
+            );
         });
-    });
-
-    it('renders the DAO members page behind the gate when the lookup fails', async () => {
-        getAccountInfoSpy.mockResolvedValue(undefined);
-
-        render(await createTestComponent());
-
-        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
-        expect(screen.getByTestId('dao-members-mock')).toBeInTheDocument();
-        expect(
-            screen.queryByTestId('members-client-mock'),
-        ).not.toBeInTheDocument();
     });
 });

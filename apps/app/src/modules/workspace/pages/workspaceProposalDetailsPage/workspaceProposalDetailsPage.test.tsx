@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { DaoProposalDetailsPage } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPage';
 import { Network } from '@/shared/api/daoService';
 import { featureFlags } from '@/shared/featureFlags';
-import { WorkspaceAccountGate } from '../../components/workspaceAccountGate';
+import { WorkspaceSectionGuard } from '../../components/workspaceSectionGuard';
 import {
     type IWorkspaceProposalDetailsPageProps,
     WorkspaceProposalDetailsPage,
@@ -26,9 +26,9 @@ jest.mock(
     }),
 );
 
-jest.mock('../../components/workspaceAccountGate', () => ({
-    WorkspaceAccountGate: jest.fn(({ children }: { children: ReactNode }) => (
-        <div data-testid="account-gate-mock">{children}</div>
+jest.mock('../../components/workspaceSectionGuard', () => ({
+    WorkspaceSectionGuard: jest.fn(({ children }: { children: ReactNode }) => (
+        <div data-testid="section-guard-mock">{children}</div>
     )),
 }));
 
@@ -40,7 +40,7 @@ describe('<WorkspaceProposalDetailsPage /> component', () => {
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
     const detailsPageMock = DaoProposalDetailsPage as jest.Mock;
-    const accountGateMock = WorkspaceAccountGate as jest.Mock;
+    const sectionGuardMock = WorkspaceSectionGuard as jest.Mock;
 
     beforeEach(() => {
         isEnabledSpy.mockResolvedValue(true);
@@ -50,7 +50,7 @@ describe('<WorkspaceProposalDetailsPage /> component', () => {
         isEnabledSpy.mockReset();
         notFoundMock.mockClear();
         detailsPageMock.mockClear();
-        accountGateMock.mockClear();
+        sectionGuardMock.mockClear();
     });
 
     const createTestComponent = async (
@@ -69,16 +69,20 @@ describe('<WorkspaceProposalDetailsPage /> component', () => {
         return <GukModulesProvider>{Component}</GukModulesProvider>;
     };
 
-    it('renders the DAO proposal details page behind the account gate', async () => {
+    it('renders the DAO proposal details page behind the section guard', async () => {
         render(await createTestComponent());
 
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
-        expect(screen.getByTestId('account-gate-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('section-guard-mock')).toBeInTheDocument();
         expect(
             screen.getByTestId('dao-proposal-details-mock'),
         ).toBeInTheDocument();
-        expect(accountGateMock).toHaveBeenCalledWith(
-            expect.objectContaining({ accountId }),
+        expect(sectionGuardMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                workspaceId: 'demo',
+                accountId,
+                section: 'proposals',
+            }),
             undefined,
         );
     });
@@ -109,8 +113,12 @@ describe('<WorkspaceProposalDetailsPage /> component', () => {
             }),
         );
 
-        expect(accountGateMock).toHaveBeenCalledWith(
-            expect.objectContaining({ accountId: lowercaseId }),
+        expect(sectionGuardMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                workspaceId: 'demo',
+                accountId: lowercaseId,
+                section: 'proposals',
+            }),
             undefined,
         );
 
