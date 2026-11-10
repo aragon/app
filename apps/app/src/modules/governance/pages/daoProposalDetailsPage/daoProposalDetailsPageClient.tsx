@@ -62,7 +62,7 @@ export interface IDaoProposalDetailsPageClientProps {
     proposalSlug: string;
 }
 
-// Proposal actions cannot be simulated if last simulation has been triggered less than 10 minutes ago
+// Matching proposal actions cannot be simulated again within 10 minutes.
 const actionSimulationLimitMillis = 10 * 60 * 1000;
 
 export const DaoProposalDetailsPageClient: React.FC<
@@ -131,6 +131,7 @@ export const DaoProposalDetailsPageClient: React.FC<
         mutate: simulateProposal,
         isPending: isSimulationLoading,
         isError: hasSimulationFailed,
+        error: simulateProposalError,
     } = useSimulateProposal();
 
     const { data: creatorEnsName } = useEnsName(proposal?.creator.address);
@@ -156,9 +157,6 @@ export const DaoProposalDetailsPageClient: React.FC<
 
     const isLastSimulationNotFoundError =
         AragonBackendServiceError.isNotFoundError(lastSimulationError);
-    const showSimulationError =
-        hasSimulationFailed ||
-        (isLastSimulationError && !isLastSimulationNotFoundError);
 
     const handleSimulateProposalSuccess = () => {
         const urlParams = { proposalId: proposal.id };
@@ -223,19 +221,42 @@ export const DaoProposalDetailsPageClient: React.FC<
         { label: proposalSlug.toUpperCase() },
     ];
 
+    const isStaleRun = lastSimulation?.matchesCurrentActions === false;
     const canSimulate =
         lastSimulation == null ||
+        isStaleRun ||
         Date.now() - lastSimulation.runAt > actionSimulationLimitMillis;
 
     const processedLastSimulation = lastSimulation
         ? { ...lastSimulation, timestamp: lastSimulation.runAt }
         : undefined;
-    const simulationErrorContext = hasSimulationFailed
-        ? 'simulationError'
-        : 'lastSimulationError';
-    const simulationError = t(
-        `app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`,
-    );
+    let simulationErrorContext: string | undefined;
+    if (hasSimulationFailed) {
+        simulationErrorContext = 'simulationError';
+        if (
+            AragonBackendServiceError.isSimulationBudgetError(
+                simulateProposalError,
+            )
+        ) {
+            simulationErrorContext = 'simulationLimitReached';
+        } else if (
+            AragonBackendServiceError.isSimulationUnavailableError(
+                simulateProposalError,
+            )
+        ) {
+            simulationErrorContext = 'simulationUnavailable';
+        }
+    } else if (isLastSimulationError && !isLastSimulationNotFoundError) {
+        simulationErrorContext = 'lastSimulationError';
+    } else if (isStaleRun) {
+        simulationErrorContext = 'staleSimulation';
+    }
+    const simulationError =
+        simulationErrorContext == null
+            ? undefined
+            : t(
+                  `app.governance.daoProposalDetailsPage.main.actions.${simulationErrorContext}`,
+              );
 
     const proposalActionsDropdownItems: IProposalActionsFooterDropdownItem[] = [
         {
@@ -319,11 +340,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                     >
                         {showActionSimulation && (
                             <ActionSimulation
-                                error={
-                                    showSimulationError
-                                        ? simulationError
-                                        : undefined
-                                }
+                                error={simulationError}
                                 isEnabled={canSimulate}
                                 isLoading={isSimulationLoading}
                                 lastSimulation={processedLastSimulation}

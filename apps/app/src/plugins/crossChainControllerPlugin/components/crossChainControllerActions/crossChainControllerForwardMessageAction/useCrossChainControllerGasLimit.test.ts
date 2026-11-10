@@ -1,4 +1,6 @@
+import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -194,6 +196,97 @@ describe('useCrossChainControllerGasLimit hook', () => {
             expect(result.current.estimationAlert?.message).toEqual(
                 expect.stringContaining('reverted'),
             ),
+        );
+    });
+
+    it('reports the limit when the gas budget is finished and leaves the field empty', async () => {
+        estimateGasLimitSpy.mockRejectedValue(
+            new AragonBackendServiceError(
+                'crossChainGasBudgetExhausted',
+                'Limit reached',
+                429,
+            ),
+        );
+
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message:
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.limitReached',
+                variant: 'critical',
+            }),
+        );
+        expect(onGasLimitChange).toHaveBeenCalledTimes(1);
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+    });
+
+    it.each([
+        ['tooBusy', 503, 'unavailable'],
+        ['simulationBudgetCheckFailed', 503, 'unavailable'],
+        ['crossChainSimulationFailed', 502, 'error'],
+        ['badSimulationRequest', 400, 'error'],
+    ])('shows the %s error as %s', async (code, status, errorKey) => {
+        estimateGasLimitSpy.mockRejectedValue(
+            new AragonBackendServiceError(code, 'Unavailable', status),
+        );
+
+        const { result } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message: `app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.${errorKey}`,
+                variant: 'critical',
+            }),
+        );
+    });
+
+    it('applies a stale estimate and says which run it comes from', async () => {
+        const staleSince = Date.parse('2026-11-04T10:00:00.000Z');
+        const formattedDate = formatterUtils.formatDate(staleSince, {
+            format: DateFormat.YEAR_MONTH_DAY_TIME,
+        });
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({ staleSince, runAt: staleSince + 659_000 }),
+        );
+
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message: `app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.stale (date=${formattedDate})`,
+                variant: 'warning',
+            }),
+        );
+        expect(onGasLimitChange).toHaveBeenLastCalledWith('296530');
+    });
+
+    it('shows the revert reason before the stale note', async () => {
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({
+                status: GasLimitEstimationStatus.REVERTED,
+                requiredGas: undefined,
+                revertReason: 'ERC20: insufficient balance',
+                staleSince: Date.parse('2026-11-04T10:00:00.000Z'),
+            }),
+        );
+
+        const { result } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert).toEqual({
+                message:
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.reverted (reason=ERC20: insufficient balance)',
+                variant: 'critical',
+            }),
         );
     });
 
