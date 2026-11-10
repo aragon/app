@@ -156,37 +156,57 @@ describe('<SafeTransactionSimulation /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('reports a simulation refused because the Tenderly budget is exhausted', async () => {
-        getLastSafeTransactionSimulationSpy.mockRejectedValue(notFoundError);
-        simulateSafeTransactionSpy.mockRejectedValue(
-            new AragonBackendServiceError(
-                'simulationBudgetExhausted',
+    it.each([
+        {
+            label: 'refused because the Tenderly budget is exhausted',
+            error: new AragonBackendServiceError(
+                AragonBackendServiceError.simulationBudgetExhaustedCode,
                 'Budget exhausted',
                 429,
             ),
-        );
+            errorKey: 'limitReached',
+        },
+        {
+            label: 'refused because the backend is busy',
+            error: new AragonBackendServiceError(
+                AragonBackendServiceError.tooBusyCode,
+                'Too busy',
+                503,
+            ),
+            errorKey: 'unavailable',
+        },
+        {
+            label: 'refused because the budget could not be checked',
+            error: new AragonBackendServiceError(
+                AragonBackendServiceError.simulationBudgetCheckFailedCode,
+                'Budget check failed',
+                503,
+            ),
+            errorKey: 'unavailable',
+        },
+        {
+            label: 'that never reached the backend',
+            error: new TypeError('Failed to fetch'),
+            errorKey: 'unavailable',
+        },
+        {
+            label: 'that failed for another reason',
+            error: new AragonBackendServiceError(
+                'internal',
+                'Server error',
+                500,
+            ),
+            errorKey: 'simulationError',
+        },
+    ])('reports a simulation $label', async ({ error, errorKey }) => {
+        getLastSafeTransactionSimulationSpy.mockRejectedValue(notFoundError);
+        simulateSafeTransactionSpy.mockRejectedValue(error);
         render(createTestComponent());
 
         await userEvent.click(await getSimulateButton());
 
         expect(
-            await screen.findByText(`${translationKey}.limitReached`),
+            await screen.findByText(`${translationKey}.${errorKey}`),
         ).toBeInTheDocument();
-    });
-
-    it('reports a simulation that failed for another reason', async () => {
-        getLastSafeTransactionSimulationSpy.mockRejectedValue(notFoundError);
-        simulateSafeTransactionSpy.mockRejectedValue(
-            new AragonBackendServiceError('internal', 'Server error', 500),
-        );
-        render(createTestComponent());
-
-        await userEvent.click(await getSimulateButton());
-
-        await waitFor(() =>
-            expect(
-                screen.getByText(`${translationKey}.simulationError`),
-            ).toBeInTheDocument(),
-        );
     });
 });

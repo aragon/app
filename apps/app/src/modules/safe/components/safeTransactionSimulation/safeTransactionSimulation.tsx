@@ -38,9 +38,19 @@ const translationKey = 'app.safe.safeTransactionSimulation';
 // Same rule as the proposal page: a transaction cannot be simulated again within 10 minutes of its last run.
 const simulationLimitMillis = 10 * 60 * 1000;
 
-// The backend answers 429 once the Tenderly budget is exhausted.
-const isSimulationLimitError = (error: unknown): boolean =>
-    error instanceof AragonBackendServiceError && error.status === 429;
+// Same classification as the proposal page: an exhausted Tenderly budget and a run that could not start right now
+// both clear up later, unlike any other failure.
+const getSimulationErrorKey = (error: unknown): string => {
+    if (AragonBackendServiceError.isSimulationBudgetError(error)) {
+        return 'limitReached';
+    }
+
+    if (AragonBackendServiceError.isSimulationUnavailableError(error)) {
+        return 'unavailable';
+    }
+
+    return 'simulationError';
+};
 
 /**
  * Tenderly simulation of a pending Safe transaction: its last stored run, and the action to simulate it again once the
@@ -99,9 +109,7 @@ export const SafeTransactionSimulation: React.FC<
 
     let errorKey: string | undefined;
     if (simulationError != null) {
-        errorKey = isSimulationLimitError(simulationError)
-            ? 'limitReached'
-            : 'simulationError';
+        errorKey = getSimulationErrorKey(simulationError);
     } else if (hasLastSimulationError) {
         errorKey = 'lastSimulationError';
     }

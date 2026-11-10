@@ -4037,7 +4037,8 @@
       "safeTransactionSimulation": {
         "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
         "limitReached": "Simulation limit reached for now. Try again later.",
-        "simulationError": "There was an error simulating the transaction. Please try again later."
+        "simulationError": "There was an error simulating the transaction. Please try again later.",
+        "unavailable": "Simulation is not available right now. Try again later."
       },
       "safeTransactionVoting": {
         "approve": "Approve transaction",
