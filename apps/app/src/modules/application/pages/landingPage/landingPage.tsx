@@ -162,9 +162,9 @@ export const LandingPage: React.FC = () => {
                                 <span className="flex size-12 items-center justify-center rounded-full border border-neutral-100">
                                     <Image
                                         alt=""
-                                        height={24}
+                                        height={16}
                                         src={GoogleIcon}
-                                        width={24}
+                                        width={16}
                                     />
                                 </span>
                                 {t('app.application.landingPage.signIn.google')}
