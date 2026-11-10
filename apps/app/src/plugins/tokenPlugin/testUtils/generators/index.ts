@@ -2,6 +2,7 @@ export * from './tokenActionTokenMint';
 export * from './tokenMember';
 export * from './tokenMemberMetrics';
 export * from './tokenPluginSettings';
+export * from './tokenPluginSettingsEscrowSettings';
 export * from './tokenPluginSettingsToken';
 export * from './tokenProposal';
 export * from './tokenVote';

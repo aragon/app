@@ -15,6 +15,7 @@ import { type IDaoPlugin, type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { tokenPluginUtils } from '../../utils/tokenPluginUtils';
 import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
 export interface ITokenPermissionCheckProposalCreationParams
@@ -71,10 +72,13 @@ export const useTokenPermissionCheckProposalCreation = (
         { enabled: address != null && dao != null },
     );
 
+    const hasTokenBalance = tokenPluginUtils.hasTokenBalance(plugin.settings);
+
     // Read wrapped token balance directly from blockchain
     const { balance: userBalance } = useWrappedTokenBalance({
         userAddress: address,
         token,
+        enabled: hasTokenBalance,
     });
 
     const userVotingPower = bigIntUtils.safeParse(member?.votingPower);
@@ -110,6 +114,13 @@ export const useTokenPermissionCheckProposalCreation = (
         },
     ];
 
+    const userTokenBalanceSetting = {
+        term: t(
+            'app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance',
+        ),
+        definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
+    };
+
     const connectedUserSettings = [
         {
             term: t(
@@ -117,12 +128,7 @@ export const useTokenPermissionCheckProposalCreation = (
             ),
             definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
         },
-        {
-            term: t(
-                'app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance',
-            ),
-            definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
-        },
+        ...(hasTokenBalance ? [userTokenBalanceSetting] : []),
     ];
 
     const processedSettings = useConnectedUserInfo
