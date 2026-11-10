@@ -33,7 +33,7 @@ import {
     safeTransactionEnvelopeUtils,
 } from '@/modules/safe/utils/safeTransactionEnvelopeUtils';
 import { safeTransactionLookupUtils } from '@/modules/safe/utils/safeTransactionLookupUtils';
-import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import { safeMultisigTransactionUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigTransactionUtils';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
@@ -726,7 +726,7 @@ export const SafeProposalTransactionDialog: React.FC<
             throw new Error(t(`${translationKey}.authorityChanged`));
         }
         if (
-            !safeMultisigProposalUtils.supportsEip1271Signatures(
+            !safeTransactionUtils.supportsEip1271Signatures(
                 currentSafeInfo.version,
             )
         ) {

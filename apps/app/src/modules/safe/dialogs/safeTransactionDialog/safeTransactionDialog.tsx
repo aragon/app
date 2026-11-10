@@ -8,8 +8,6 @@ import { getBytecode, getConnection } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import { SafeApprovalReadiness } from '@/plugins/safeMultisigPlugin/types';
-import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import {
     type ISafeInfo,
     type ISafeMultisigTransaction,
@@ -36,9 +34,11 @@ import {
     SafeExecutionSubmissionError,
     useSafeTransactionExecution,
 } from '../../hooks/useSafeTransactionExecution';
+import { SafeApprovalReadiness } from '../../types';
 import { SafeExecutionOutcome } from '../../utils/safeExecutionOutcomeUtils';
 import { safeTransactionEnvelopeUtils } from '../../utils/safeTransactionEnvelopeUtils';
 import { safeTransactionLookupUtils } from '../../utils/safeTransactionLookupUtils';
+import { safeTransactionUtils } from '../../utils/safeTransactionUtils';
 import type { ISafeTransactionDialogProps } from './safeTransactionDialog.api';
 
 const translationKey = 'app.safe.safeTransactionDialog';
@@ -392,7 +392,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 }),
                 findTransaction(),
             ]);
-            const readiness = safeMultisigProposalUtils.getApprovalReadiness({
+            const readiness = safeTransactionUtils.getApprovalReadiness({
                 currentNonce: safeInfo.nonce,
                 owners: safeInfo.owners,
                 threshold: safeInfo.threshold,
@@ -600,7 +600,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 transaction,
             } = await readOwnerAuthority(walletAddress);
 
-            const readiness = safeMultisigProposalUtils.getApprovalReadiness({
+            const readiness = safeTransactionUtils.getApprovalReadiness({
                 currentNonce: String(currentNonce),
                 owners,
                 threshold,
@@ -619,7 +619,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 '@safe-global/protocol-kit'
             );
             // The confirmations the readiness counted, so a duplicated or removed signer cannot reach the execution.
-            const signatures = safeMultisigProposalUtils
+            const signatures = safeTransactionUtils
                 .getCurrentOwnerConfirmations({ transaction, owners })
                 .map(
                     ({ owner, signature, signatureType }) =>
@@ -684,7 +684,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
 
             // Safes older than v1.3.0 cannot verify the signature of a contract owner.
             if (
-                !safeMultisigProposalUtils.supportsEip1271Signatures(
+                !safeTransactionUtils.supportsEip1271Signatures(
                     prepared.safeInfo.version,
                 )
             ) {
@@ -709,7 +709,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 transaction,
             );
 
-            const hasConfirmed = safeMultisigProposalUtils
+            const hasConfirmed = safeTransactionUtils
                 .getCurrentOwnerConfirmations({ transaction, owners })
                 .some(({ owner }) =>
                     addressUtils.isAddressEqual(owner, walletAddress),

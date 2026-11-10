@@ -21,8 +21,6 @@ import {
     safeBodyPollInterval,
     safeQueueReadLimit,
 } from '@/plugins/safeMultisigPlugin/constants';
-import { SafeApprovalReadiness } from '@/plugins/safeMultisigPlugin/types';
-import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import { safeMultisigSettingsUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigSettingsUtils';
 import type { Network } from '@/shared/api/daoService';
 import {
@@ -34,6 +32,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { SafeDialogId } from '../../constants/safeDialogId';
 import type { ISafeTransactionDialogParams } from '../../dialogs/safeTransactionDialog';
+import { SafeApprovalReadiness } from '../../types';
+import { safeTransactionUtils } from '../../utils/safeTransactionUtils';
 
 export interface ISafeTransactionVotingProps {
     /**
@@ -115,14 +115,14 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     const signers =
         transaction == null
             ? []
-            : safeMultisigProposalUtils
+            : safeTransactionUtils
                   .getCurrentOwnerConfirmations({ transaction, owners })
                   .map(({ owner }) => owner);
 
     const readiness =
         safeInfo == null || transaction == null
             ? undefined
-            : safeMultisigProposalUtils.getApprovalReadiness({
+            : safeTransactionUtils.getApprovalReadiness({
                   currentNonce: safeInfo.nonce,
                   owners: safeInfo.owners,
                   threshold: safeInfo.threshold,

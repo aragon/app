@@ -5,6 +5,7 @@ import {
     Tabs,
 } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { SafeTransactionState } from '@/modules/safe/types';
 import { Network } from '@/shared/api/daoService';
 import {
     generateSppProposal,
@@ -18,7 +19,6 @@ import {
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
-import { SafeTransactionState } from '../../types';
 import {
     type ISafeMultisigProposalVotingBreakdownProps,
     SafeMultisigProposalVotingBreakdown,
