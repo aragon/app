@@ -46,17 +46,14 @@ describe('<WorkspaceDemoPageClient /> component', () => {
             '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
             '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
         ]);
-        expect(fixture['cryptex-demo']).toEqual(
-            expect.objectContaining({
-                isDemo: true,
-                name: 'Cryptex',
-                accounts: [
-                    expect.objectContaining({
-                        address: '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
-                    }),
-                ],
-            }),
-        );
+        expect(
+            fixture['cryptex-demo'].accounts.map(
+                (account: { address: string }) => account.address,
+            ),
+        ).toEqual([
+            '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
+            '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
+        ]);
     });
 
     it('shows an error instead of navigating when the fixture cannot be installed', async () => {

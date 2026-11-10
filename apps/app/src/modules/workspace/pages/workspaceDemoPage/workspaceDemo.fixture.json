@@ -54,6 +54,15 @@
                 "metadata": {
                     "name": "Cryptex"
                 }
+            },
+            {
+                "id": "polygon-mainnet-0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
+                "type": "SAFE",
+                "address": "0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
+                "network": "polygon-mainnet",
+                "metadata": {
+                    "name": "Polygon Safe"
+                }
             }
         ],
         "targets": []

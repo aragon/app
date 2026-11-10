@@ -102,6 +102,9 @@ test.describe('First-time workspace experience', () => {
                             aragonAccounts: registry[
                                 'aragon-demo'
                             ]?.accounts?.map(({ address }) => address),
+                            cryptexAccounts: registry[
+                                'cryptex-demo'
+                            ]?.accounts?.map(({ address }) => address),
                         };
                     }, workspaceStorageKey),
                 )
@@ -112,6 +115,10 @@ test.describe('First-time workspace experience', () => {
                     ],
                     aragonAccounts: [
                         '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
+                        '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
+                    ],
+                    cryptexAccounts: [
+                        '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
                         '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
                     ],
                 });
@@ -170,6 +177,9 @@ test.describe('First-time workspace experience', () => {
             );
             await expect(
                 page.getByRole('heading', { level: 1, name: 'Cryptex' }),
+            ).toBeVisible();
+            await expect(
+                page.getByRole('link', { name: /Polygon Safe/ }).last(),
             ).toBeVisible();
         });
 
