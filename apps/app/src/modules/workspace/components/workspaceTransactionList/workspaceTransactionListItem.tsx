@@ -16,6 +16,7 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useState } from 'react';
 import {
     type ITransactionTransfer,
     TransactionSide,
@@ -68,6 +69,25 @@ export interface IWorkspaceTransactionListItemProps
      */
     dao?: IDao;
 }
+
+/**
+ * Interval (in milliseconds) at which the transactions are refreshed while a Safe state change has not reached its row.
+ */
+const safeStateRefreshInterval = 5000;
+
+/**
+ * Number of refreshes after which a Safe state change that never reached its row stops being awaited.
+ */
+const safeStateRefreshAttempts = 24;
+
+/**
+ * State of a transaction that a confirmation or an execution changes: the confirmations of a pending Safe transaction,
+ * none once executed.
+ */
+const getSafeRowState = (transaction: IWorkspaceTransaction) =>
+    workspaceTransactionUtils.isPendingExecution(transaction)
+        ? `pending-${transaction.confirmations.toString()}`
+        : 'executed';
 
 type TransactionHeaderCopy = ReturnType<
     typeof useGukModulesContext
@@ -308,11 +328,44 @@ export const WorkspaceTransactionListItem: React.FC<
     const accountName =
         account == null ? undefined : workspaceUtils.getAccountName(account);
 
-    // A confirmation changes the status of the row and an execution moves it out of the pending ones.
-    const handleSafeStateChange = () =>
-        void queryClient.invalidateQueries({
-            queryKey: [WorkspaceQueryServiceKey.TRANSACTIONS],
-        });
+    // Rows come from the backend store, which learns of a confirmation once it syncs the Safe and of an execution once
+    // it indexes the execution event: a single refresh right after the change usually reads the old row, so the rows
+    // are refreshed until this one changes or the attempts run out.
+    const [awaitedRowState, setAwaitedRowState] = useState<string>();
+    const isAwaitingSafeState =
+        awaitedRowState === getSafeRowState(transaction);
+
+    const refreshTransactions = useCallback(
+        () =>
+            void queryClient.invalidateQueries({
+                queryKey: [WorkspaceQueryServiceKey.TRANSACTIONS],
+            }),
+        [queryClient],
+    );
+
+    useEffect(() => {
+        if (!isAwaitingSafeState) {
+            return;
+        }
+
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts += 1;
+            refreshTransactions();
+
+            if (attempts >= safeStateRefreshAttempts) {
+                clearInterval(interval);
+                setAwaitedRowState(undefined);
+            }
+        }, safeStateRefreshInterval);
+
+        return () => clearInterval(interval);
+    }, [isAwaitingSafeState, refreshTransactions]);
+
+    const handleSafeStateChange = () => {
+        setAwaitedRowState(getSafeRowState(transaction));
+        refreshTransactions();
+    };
 
     if (row.kind === 'explorerLink') {
         return (

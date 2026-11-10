@@ -22,8 +22,10 @@ export interface IFindSafeTransactionParams {
 
 class SafeTransactionLookupUtils {
     /**
-     * Finds a Safe transaction by its hash, reading the queue first and the history after it. Both are read fresh
-     * rather than from the query cache, as the result backs a signature or an execution.
+     * Finds a Safe transaction by its hash, reading the queue first and the history after it. Both bypass the query
+     * cache, as the result backs a signature or an execution, but not the backend cache: the queue can lag ~10 s and
+     * the history up to 10 min, so a transaction just executed can be missing from both. Owners, threshold and nonce
+     * are read onchain by the callers, and the transaction fields are checked against the reviewed hash.
      */
     findTransaction = async (
         params: IFindSafeTransactionParams,
