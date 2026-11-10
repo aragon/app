@@ -22,12 +22,12 @@
                 }
             },
             {
-                "id": "polygon-mainnet-0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB",
+                "id": "polygon-mainnet-0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
                 "type": "SAFE",
-                "address": "0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB",
+                "address": "0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
                 "network": "polygon-mainnet",
                 "metadata": {
-                    "name": "Developers Safe"
+                    "name": "Polygon Safe"
                 }
             }
         ],

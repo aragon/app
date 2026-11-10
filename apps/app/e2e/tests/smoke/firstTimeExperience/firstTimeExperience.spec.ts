@@ -112,7 +112,7 @@ test.describe('First-time workspace experience', () => {
                     ],
                     aragonAccounts: [
                         '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
-                        '0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB',
+                        '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
                     ],
                 });
             await expect(
@@ -121,13 +121,28 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('link', { name: 'Edit workspace' }),
             ).toHaveCount(0);
+            const polygonSafe = page
+                .getByRole('link', { name: /Polygon Safe/ })
+                .last();
+            await expect(polygonSafe).toBeVisible();
+            await polygonSafe.click();
+            await expect(page).toHaveURL(
+                /\/workspace\/aragon-demo\/polygon-mainnet-0x311Ff044882bf953cA3A70867f5B1836C2a9b76B\/overview(?:\?.*)?$/,
+            );
             await expect(
-                page.getByRole('link', { name: /Developers Safe/ }).last(),
+                page.getByRole('heading', {
+                    level: 1,
+                    name: 'Polygon Safe',
+                }),
             ).toBeVisible();
 
             await page
-                .getByRole('link', { name: /Aragon X \(Mainnet\)/ })
-                .last()
+                .getByRole('button', {
+                    name: /Polygon Safe 0x311F…b76B/,
+                })
+                .click();
+            await page
+                .getByRole('menuitem', { name: /Aragon X \(Mainnet\)/ })
                 .click();
             await expect(page).toHaveURL(
                 /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/overview(?:\?.*)?$/,

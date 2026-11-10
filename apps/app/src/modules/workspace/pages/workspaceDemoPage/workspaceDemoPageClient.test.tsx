@@ -44,7 +44,7 @@ describe('<WorkspaceDemoPageClient /> component', () => {
             ),
         ).toEqual([
             '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
-            '0xC047434EeaBd6E90BeeDBed40DFb8D916905A5bB',
+            '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
         ]);
         expect(fixture['cryptex-demo']).toEqual(
             expect.objectContaining({
