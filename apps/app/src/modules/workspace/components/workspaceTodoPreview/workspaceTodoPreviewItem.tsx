@@ -9,8 +9,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import { SafeDialogId } from '@/modules/safe/constants';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import {
@@ -20,6 +18,7 @@ import {
     WorkspaceTodoType,
 } from '../../hooks/useWorkspaceTodoData';
 import { workspaceTodoUtils } from '../../utils/workspaceTodoUtils';
+import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import { WorkspaceAccountAvatar } from '../workspaceAccountAvatar';
 
@@ -29,14 +28,12 @@ export interface IWorkspaceTodoPreviewItemProps {
      */
     todo: IWorkspaceTodoItem;
     /**
-     * ID of the workspace, which the vote button links into.
+     * ID of the workspace, which the button links into.
      */
     workspaceId: string;
 }
 
 type TranslationFunction = ReturnType<typeof useTranslations>['t'];
-
-type OpenDialogFunction = ReturnType<typeof useDialogContext>['open'];
 
 interface IWorkspaceTodoPreviewAction {
     /**
@@ -48,13 +45,9 @@ interface IWorkspaceTodoPreviewAction {
      */
     variant: 'primary' | 'secondary';
     /**
-     * Page the action takes place on. The button navigates when set, and calls `onClick` otherwise.
+     * Where the to-do is acted on.
      */
-    href?: string;
-    /**
-     * Opens the action in place, for a Safe transaction reviewed and signed in a dialog.
-     */
-    onClick?: () => void;
+    href: string;
 }
 
 interface IWorkspaceTodoPreviewDisplay {
@@ -132,10 +125,10 @@ const buildProposalDisplay = (
 
 const buildTransactionDisplay = (
     todo: IWorkspaceTodoTransactionItem,
+    workspaceId: string,
     t: TranslationFunction,
-    open: OpenDialogFunction,
 ): IWorkspaceTodoPreviewDisplay => {
-    const { account, safeInfo, transaction, hasNonceRival } = todo;
+    const { account, transaction, hasNonceRival } = todo;
 
     const meta = t('app.workspace.workspaceTodoPreview.transaction.meta', {
         account: workspaceUtils.getAccountLabel(account),
@@ -161,24 +154,19 @@ const buildTransactionDisplay = (
         action: {
             label: t('app.workspace.workspaceTodoPreview.transaction.action'),
             variant: 'secondary',
-            // The same review dialog as the Safe queue, which is where a transaction is signed.
-            onClick: () =>
-                open(SafeDialogId.TRANSACTION_REVIEW, {
-                    params: {
-                        transaction,
-                        safeAddress: account.address,
-                        network: account.network,
-                        safeVersion: safeInfo?.version ?? null,
-                    },
-                }),
+            href: workspaceTransactionUtils.getSafeTransactionUrl(
+                workspaceId,
+                account.id,
+                transaction.safeTxHash,
+            ),
         },
     };
 };
 
 /**
  * A to-do of the connected wallet as a compact row of the overview preview: the avatar of its account, what is
- * waiting, what to do about it and until when, and the action itself. A vote leads to the proposal page of its
- * account; a signature opens the review dialog of the Safe queue in place.
+ * waiting, what to do about it and until when, and the button leading to where it is acted on: the proposal page
+ * of its account for a vote, and for a signature the transactions of its Safe, with the transaction expanded.
  */
 export const WorkspaceTodoPreviewItem: React.FC<
     IWorkspaceTodoPreviewItemProps
@@ -186,18 +174,11 @@ export const WorkspaceTodoPreviewItem: React.FC<
     const { todo, workspaceId } = props;
 
     const { t } = useTranslations();
-    const { open } = useDialogContext();
 
     const { avatar, title, meta, action } =
         todo.type === WorkspaceTodoType.PROPOSAL
             ? buildProposalDisplay(todo, workspaceId, t)
-            : buildTransactionDisplay(todo, t, open);
-
-    const buttonProps = {
-        className: 'shrink-0',
-        size: 'sm' as const,
-        variant: action.variant,
-    };
+            : buildTransactionDisplay(todo, workspaceId, t);
 
     return (
         <div className={rowClassName}>
@@ -210,15 +191,14 @@ export const WorkspaceTodoPreviewItem: React.FC<
                     {meta}
                 </p>
             </div>
-            {action.href == null ? (
-                <Button {...buttonProps} onClick={action.onClick}>
-                    {action.label}
-                </Button>
-            ) : (
-                <Button {...buttonProps} href={action.href}>
-                    {action.label}
-                </Button>
-            )}
+            <Button
+                className="shrink-0"
+                href={action.href}
+                size="sm"
+                variant={action.variant}
+            >
+                {action.label}
+            </Button>
         </div>
     );
 };

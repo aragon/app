@@ -910,16 +910,18 @@ they tell the same story: to-dos belong to the wallet, so without one the empty 
 the connect dialog) rather than vanishing, and when nothing is waiting it says so, so a member learns that nobody
 is waiting on them.
 
-The preview is one card of compact rows (`WorkspaceTodoPreviewItem`), each with its action. A proposal row reads
-"`SLUG · title` / Vote · ends in 5 days" with a primary Vote button leading to the proposal page of its account; a
-Safe row reads "Safe transaction #nonce / Sign · Treasury · 1 of 2 signatures" with a secondary Sign button opening
-the review dialog of the Safe queue in place. It shows the first 3 to-dos and, when there are more, "View all"
-leads to `/workspace/{workspaceId}/all/todos`.
+Neither surface acts in place: a to-do leads to where it is acted on, the proposal page of its account for a vote
+and, for a signature, that transaction among the ones of its Safe.
+
+The preview is one card of compact rows (`WorkspaceTodoPreviewItem`), each with the button leading there. A
+proposal row reads "`SLUG · title` / Vote · ends in 5 days" with a primary Vote button; a Safe row reads "Safe
+transaction #nonce / Sign · Treasury · 1 of 2 signatures" with a secondary Sign button. It shows the first 3 to-dos
+and, when there are more, "View all" leads to `/workspace/{workspaceId}/all/todos`.
 
 The to-dos page (`WorkspaceTodosPage`) is a data list like the other workspace lists (`DataListRoot` /
 `DataListContainer`), paginated, with the counts by kind on its aside (`WorkspaceTodosAsideCard`, read under the
-list's query, hidden without a wallet). Both kinds are one data-list item (`WorkspaceTodoListItem`), which takes no
-action itself: it links to where the to-do is acted on. A proposal row reads "`title` `SLUG` / 5 days left" (the
+list's query, hidden without a wallet). Both kinds are one data-list item (`WorkspaceTodoListItem`), the row itself
+being the link. A proposal row reads "`title` `SLUG` / 5 days left" (the
 deadline worded as the proposal rows word it), tagged "Vote", and links to the proposal page of its account. A Safe
 row is titled as on the transactions page, "`Treasury Safe` `TS-12` / 1 of 2 signatures", tagged "Sign", and links
 to that transaction among the ones of its Safe (`workspaceTransactionUtils.getSafeTransactionUrl`): the URL names

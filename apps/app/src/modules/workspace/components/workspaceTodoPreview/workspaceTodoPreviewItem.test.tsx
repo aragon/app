@@ -1,14 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { generateProposal } from '@/modules/governance/testUtils';
-import { SafeDialogId } from '@/modules/safe/constants';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
-import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDao,
     generateDaoPlugin,
-    generateDialogContext,
     generateSafeInfo,
     generateSafeTransaction,
 } from '@/shared/testUtils';
@@ -21,6 +17,7 @@ import {
     type IWorkspaceTodoTransactionItem,
     WorkspaceTodoType,
 } from '../../hooks/useWorkspaceTodoData';
+import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspaceTodoPreviewItemProps,
@@ -28,8 +25,6 @@ import {
 } from './workspaceTodoPreviewItem';
 
 describe('<WorkspaceTodoPreviewItem /> component', () => {
-    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-
     const network = Network.ETHEREUM_SEPOLIA;
     const daoAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
     const pluginAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
@@ -83,7 +78,7 @@ describe('<WorkspaceTodoPreviewItem /> component', () => {
     ): IWorkspaceTodoTransactionItem => ({
         type: WorkspaceTodoType.TRANSACTION,
         account: safeAccount,
-        safeInfo: generateSafeInfo({ threshold: 2, version: '1.4.1' }),
+        safeInfo: generateSafeInfo({ threshold: 2 }),
         transaction: generateSafeTransaction({
             nonce: '12',
             confirmations: [
@@ -93,14 +88,6 @@ describe('<WorkspaceTodoPreviewItem /> component', () => {
         }),
         hasNonceRival: false,
         ...todo,
-    });
-
-    beforeEach(() => {
-        useDialogContextSpy.mockReturnValue(generateDialogContext());
-    });
-
-    afterEach(() => {
-        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -211,28 +198,22 @@ describe('<WorkspaceTodoPreviewItem /> component', () => {
             ).toBeInTheDocument();
         });
 
-        it('opens the review dialog of the transaction on sign', async () => {
-            const open = jest.fn();
-            useDialogContextSpy.mockReturnValue(
-                generateDialogContext({ open }),
-            );
+        it('links the sign button to the transaction among the ones of its Safe', () => {
             const todo = buildTransactionTodo();
             render(createTestComponent({ todo }));
 
-            await userEvent.click(
-                screen.getByRole('button', {
+            expect(
+                screen.getByRole('link', {
                     name: /workspaceTodoPreview\.transaction\.action$/,
                 }),
+            ).toHaveAttribute(
+                'href',
+                workspaceTransactionUtils.getSafeTransactionUrl(
+                    'my-workspace',
+                    safeAccount.id,
+                    todo.transaction.safeTxHash,
+                ),
             );
-
-            expect(open).toHaveBeenCalledWith(SafeDialogId.TRANSACTION_REVIEW, {
-                params: {
-                    transaction: todo.transaction,
-                    safeAddress: safeAccount.address,
-                    network: safeAccount.network,
-                    safeVersion: '1.4.1',
-                },
-            });
         });
     });
 });
