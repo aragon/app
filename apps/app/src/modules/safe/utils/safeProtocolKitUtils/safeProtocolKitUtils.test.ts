@@ -161,4 +161,85 @@ describe('safeProtocolKit utils', () => {
             ).rejects.toHaveProperty('reason', 'providerUnavailable');
         });
     });
+
+    describe('buildTransaction', () => {
+        const safeTxHash = `0x${'1'.repeat(64)}`;
+        const target = '0x9642F9b4480F6e134742922d8e0C7D3503F95b0e';
+
+        const buildKit = (data: Record<string, unknown>) => ({
+            createTransaction: jest.fn().mockResolvedValue({ data }),
+            getTransactionHash: jest.fn().mockResolvedValue(safeTxHash),
+        });
+
+        it('builds the calls at the nonce, checksumming every target', async () => {
+            const protocolKit = buildKit({ to: target, operation: 0 });
+
+            await safeProtocolKitUtils.buildTransaction({
+                protocolKit: protocolKit as never,
+                calls: [
+                    {
+                        to: target.toLowerCase(),
+                        value: BigInt(7),
+                        data: '0x12',
+                    },
+                    { to: safeAddress, value: '0', data: '0x' },
+                ],
+                nonce: 5,
+                threshold: 2,
+            });
+
+            expect(protocolKit.createTransaction).toHaveBeenCalledWith({
+                transactions: [
+                    { to: target, value: '7', data: '0x12' },
+                    { to: safeAddress, value: '0', data: '0x' },
+                ],
+                onlyCalls: true,
+                options: { nonce: 5 },
+            });
+        });
+
+        it('returns an unsigned transaction in the shape of a queued one', async () => {
+            const protocolKit = buildKit({
+                to: target,
+                value: '0',
+                data: '0x12',
+                operation: 1,
+                nonce: 5,
+            });
+
+            const transaction = await safeProtocolKitUtils.buildTransaction({
+                protocolKit: protocolKit as never,
+                calls: [{ to: target, value: '0', data: '0x12' }],
+                nonce: 5,
+                threshold: 2,
+                proposer: owner,
+            });
+
+            expect(transaction).toEqual(
+                expect.objectContaining({
+                    to: target,
+                    operation: 1,
+                    nonce: '5',
+                    safeTxHash,
+                    from: owner,
+                    confirmations: [],
+                    confirmationsRequired: 2,
+                    signatures: null,
+                    isExecuted: false,
+                    isSuccessful: null,
+                }),
+            );
+        });
+
+        it('leaves the proposer unknown when none is given', async () => {
+            const transaction = await safeProtocolKitUtils.buildTransaction({
+                protocolKit: buildKit({ operation: 0 }) as never,
+                calls: [{ to: target, value: '0', data: '0x' }],
+                nonce: 0,
+                threshold: 1,
+            });
+
+            expect(transaction.from).toBeNull();
+        });
+    });
 });

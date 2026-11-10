@@ -1,7 +1,9 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type Safe from '@safe-global/protocol-kit';
+import { getAddress } from 'viem';
 import { getConnection, getPublicClient } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
+import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 
 /**
  * Protocol kit bound to one Safe.
@@ -53,6 +55,47 @@ export interface IInitReadOnlyParams {
      * Address of the Safe.
      */
     safeAddress: string;
+}
+
+/**
+ * One call the Safe makes.
+ */
+export interface ISafeTransactionCall {
+    /**
+     * Target of the call, in any casing.
+     */
+    to: string;
+    /**
+     * Native value sent with the call, in wei.
+     */
+    value: bigint | string;
+    /**
+     * Calldata of the call.
+     */
+    data: string;
+}
+
+export interface IBuildTransactionParams {
+    /**
+     * Protocol kit bound to the Safe; reading is enough.
+     */
+    protocolKit: SafeProtocolKit;
+    /**
+     * Calls the Safe makes, in order. More than one is batched into one delegate call to MultiSendCallOnly.
+     */
+    calls: ISafeTransactionCall[];
+    /**
+     * Nonce the transaction takes.
+     */
+    nonce: number;
+    /**
+     * Threshold of the Safe, the confirmations the transaction requires.
+     */
+    threshold: number;
+    /**
+     * Owner proposing the transaction, when it is already known.
+     */
+    proposer?: string;
 }
 
 /**
@@ -123,6 +166,47 @@ class SafeProtocolKitUtils {
         }
 
         return this.init(client, safeAddress);
+    };
+
+    /**
+     * Builds an unsigned Safe transaction from calls at the given nonce, in the shape the Safe transaction service
+     * returns, so it can be reviewed, hashed and proposed like a queued one.
+     *
+     * Every target is checksummed: a single call is the transaction itself, so its target reaches the service verbatim,
+     * and the service refuses an address that is not checksummed (e.g. one imported from a JSON file) after the owner
+     * has signed. Casing does not change the Safe transaction hash.
+     */
+    buildTransaction = async (
+        params: IBuildTransactionParams,
+    ): Promise<ISafeMultisigTransaction> => {
+        const { protocolKit, calls, nonce, threshold, proposer } = params;
+
+        // Several calls become one delegate call to MultiSendCallOnly, which cannot delegate any further.
+        const safeTransaction = await protocolKit.createTransaction({
+            transactions: calls.map(({ to, value, data }) => ({
+                to: getAddress(to),
+                value: value.toString(),
+                data,
+            })),
+            onlyCalls: true,
+            options: { nonce },
+        });
+        const safeTxHash =
+            await protocolKit.getTransactionHash(safeTransaction);
+
+        return {
+            ...safeTransaction.data,
+            operation: safeTransaction.data.operation === 1 ? 1 : 0,
+            nonce: String(nonce),
+            safeTxHash,
+            from: proposer ?? null,
+            confirmations: [],
+            confirmationsRequired: threshold,
+            signatures: null,
+            isExecuted: false,
+            isSuccessful: null,
+            submissionDate: new Date().toISOString(),
+        };
     };
 
     private init = async (

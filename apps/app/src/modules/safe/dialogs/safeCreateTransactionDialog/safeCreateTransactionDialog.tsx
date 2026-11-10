@@ -3,7 +3,6 @@
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAddress } from 'viem';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { proposalActionPreparationUtils } from '@/modules/governance/utils/proposalActionPreparationUtils';
@@ -158,38 +157,14 @@ export const SafeCreateTransactionDialog: React.FC<
                     cause: reason,
                 });
             }
-            // Several actions become one delegate call to MultiSendCallOnly, which cannot delegate any further. A single
-            // action is the transaction itself, so its target reaches the service verbatim, and the service refuses an
-            // address that is not checksummed (e.g. one imported from a JSON file) after the owner has signed. Casing does
-            // not change the Safe transaction hash.
-            const safeTransaction = await protocolKit.createTransaction({
-                transactions: preparedActions.map(({ to, value, data }) => ({
-                    to: getAddress(to),
-                    value: value.toString(),
-                    data,
-                })),
-                onlyCalls: true,
-                options: { nonce: flooredNonce },
+            const transaction = await safeProtocolKitUtils.buildTransaction({
+                protocolKit,
+                calls: preparedActions,
+                nonce: flooredNonce,
+                threshold: safeInfo.threshold,
             });
-            const safeTxHash =
-                await protocolKit.getTransactionHash(safeTransaction);
 
-            return {
-                safeInfo,
-                transaction: {
-                    ...safeTransaction.data,
-                    operation: safeTransaction.data.operation === 1 ? 1 : 0,
-                    nonce: String(flooredNonce),
-                    safeTxHash,
-                    from: null,
-                    confirmations: [],
-                    confirmationsRequired: safeInfo.threshold,
-                    signatures: null,
-                    isExecuted: false,
-                    isSuccessful: null,
-                    submissionDate: new Date().toISOString(),
-                },
-            };
+            return { safeInfo, transaction };
         },
         [network, requiredChainId, safeAddress, t],
     );
