@@ -1,10 +1,14 @@
 'use client';
 
 import { Spinner } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { workspaceService } from '../../api/workspaceService';
+import {
+    workspaceService,
+    workspaceServiceKeys,
+} from '../../api/workspaceService';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -23,16 +27,33 @@ export const WorkspaceDemoPageClient: React.FC = () => {
     const router = useRouter();
     const { t } = useTranslations();
     const [hasError, setHasError] = useState(false);
+    const queryClient = useQueryClient();
+    const installPromiseRef = useRef<Promise<void> | null>(null);
 
     useEffect(() => {
         let isActive = true;
 
         const openDemo = async () => {
             try {
-                await workspaceService.importWorkspaceRegistry(
-                    JSON.stringify(workspaceDemoFixture),
-                    true,
-                );
+                installPromiseRef.current ??= (async () => {
+                    await workspaceService.importWorkspaceRegistry(
+                        JSON.stringify(workspaceDemoFixture),
+                        true,
+                    );
+                    await Promise.all([
+                        queryClient.invalidateQueries({
+                            queryKey: workspaceServiceKeys.workspaceList(),
+                        }),
+                        ...Object.keys(workspaceDemoFixture).map((id) =>
+                            queryClient.invalidateQueries({
+                                queryKey: workspaceServiceKeys.workspace({
+                                    urlParams: { id },
+                                }),
+                            }),
+                        ),
+                    ]);
+                })();
+                await installPromiseRef.current;
 
                 if (isActive) {
                     router.replace(demoWorkspaceUrl);
@@ -49,7 +70,7 @@ export const WorkspaceDemoPageClient: React.FC = () => {
         return () => {
             isActive = false;
         };
-    }, [router]);
+    }, [queryClient, router]);
 
     return (
         <main className="flex min-h-screen items-center justify-center p-6">

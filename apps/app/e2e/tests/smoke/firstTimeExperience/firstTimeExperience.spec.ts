@@ -75,6 +75,14 @@ test.describe('First-time workspace experience', () => {
             ).toBeVisible();
         });
 
+        test('does not treat nested demo paths as the installer', async ({
+            page,
+        }) => {
+            const response = await page.goto('/demo/not-a-route');
+
+            expect(response?.status()).toBe(404);
+        });
+
         test('installs the demo fixture and keeps normal workspace navigation working', async ({
             page,
         }) => {
