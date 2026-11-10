@@ -4085,7 +4085,8 @@
           "recheck": "Re-check",
           "done": "Done",
           "close": "Close"
-        }
+        },
+        "networkUnavailable": "The Safe's network can't be reached right now. Try again later."
       }
     },
     "settings": {

@@ -138,60 +138,80 @@ export const SafeCreateTransactionDialog: React.FC<
     );
 
     /**
-     * Builds the Safe transaction at the next free nonce, with a protocol kit that only reads: the owner reviews it
-     * before connecting or signing anything.
+     * Builds the Safe transaction at the next free nonce, never below `minNonce`, with a protocol kit that only reads:
+     * the owner reviews it before connecting or signing anything.
      */
-    const prepare = useCallback(async (): Promise<IPreparedTransaction> => {
-        const urlParams = { network, address: safeAddress };
-        const [safeInfo, { nextNonce }, preparedActions] = await Promise.all([
-            safeService.getSafeInfo({ urlParams }),
-            safeService.getSafeNextNonce({ urlParams }),
-            proposalActionPreparationUtils.prepareActions(actionsRef.current),
-        ]);
+    const prepare = useCallback(
+        async (minNonce?: bigint): Promise<IPreparedTransaction> => {
+            const urlParams = { network, address: safeAddress };
+            const [safeInfo, { nextNonce }, preparedActions] =
+                await Promise.all([
+                    safeService.getSafeInfo({ urlParams }),
+                    safeService.getSafeNextNonce({ urlParams }),
+                    proposalActionPreparationUtils.prepareActions(
+                        actionsRef.current,
+                    ),
+                ]);
 
-        const nonce = Number(nextNonce);
+            const nonce = Number(nextNonce);
 
-        if (!Number.isSafeInteger(nonce) || nonce < 0) {
-            throw new Error(t(`${translationKey}.invalidNonce`));
-        }
+            if (!Number.isSafeInteger(nonce) || nonce < 0) {
+                throw new Error(t(`${translationKey}.invalidNonce`));
+            }
 
-        const protocolKit = await safeProtocolKitUtils.initReadOnly({
-            chainId: requiredChainId,
-            safeAddress,
-        });
-        // Several actions become one delegate call to MultiSendCallOnly, which cannot delegate any further. A single
-        // action is the transaction itself, so its target reaches the service verbatim, and the service refuses an
-        // address that is not checksummed (e.g. one imported from a JSON file) after the owner has signed. Casing does
-        // not change the Safe transaction hash.
-        const safeTransaction = await protocolKit.createTransaction({
-            transactions: preparedActions.map(({ to, value, data }) => ({
-                to: getAddress(to),
-                value: value.toString(),
-                data,
-            })),
-            onlyCalls: true,
-            options: { nonce },
-        });
-        const safeTxHash =
-            await protocolKit.getTransactionHash(safeTransaction);
+            const flooredNonce =
+                minNonce != null && minNonce > BigInt(nonce)
+                    ? Number(minNonce)
+                    : nonce;
 
-        return {
-            safeInfo,
-            transaction: {
-                ...safeTransaction.data,
-                operation: safeTransaction.data.operation === 1 ? 1 : 0,
-                nonce: String(nonce),
-                safeTxHash,
-                from: null,
-                confirmations: [],
-                confirmationsRequired: safeInfo.threshold,
-                signatures: null,
-                isExecuted: false,
-                isSuccessful: null,
-                submissionDate: new Date().toISOString(),
-            },
-        };
-    }, [network, requiredChainId, safeAddress, t]);
+            let protocolKit: SafeProtocolKit;
+
+            try {
+                protocolKit = await safeProtocolKitUtils.initReadOnly({
+                    chainId: requiredChainId,
+                    safeAddress,
+                });
+            } catch (reason: unknown) {
+                // Not the wallet's provider: the app itself cannot read the Safe's network.
+                throw new Error(t(`${translationKey}.networkUnavailable`), {
+                    cause: reason,
+                });
+            }
+            // Several actions become one delegate call to MultiSendCallOnly, which cannot delegate any further. A single
+            // action is the transaction itself, so its target reaches the service verbatim, and the service refuses an
+            // address that is not checksummed (e.g. one imported from a JSON file) after the owner has signed. Casing does
+            // not change the Safe transaction hash.
+            const safeTransaction = await protocolKit.createTransaction({
+                transactions: preparedActions.map(({ to, value, data }) => ({
+                    to: getAddress(to),
+                    value: value.toString(),
+                    data,
+                })),
+                onlyCalls: true,
+                options: { nonce: flooredNonce },
+            });
+            const safeTxHash =
+                await protocolKit.getTransactionHash(safeTransaction);
+
+            return {
+                safeInfo,
+                transaction: {
+                    ...safeTransaction.data,
+                    operation: safeTransaction.data.operation === 1 ? 1 : 0,
+                    nonce: String(flooredNonce),
+                    safeTxHash,
+                    from: null,
+                    confirmations: [],
+                    confirmationsRequired: safeInfo.threshold,
+                    signatures: null,
+                    isExecuted: false,
+                    isSuccessful: null,
+                    submissionDate: new Date().toISOString(),
+                },
+            };
+        },
+        [network, requiredChainId, safeAddress, t],
+    );
 
     useEffect(() => {
         if (isCreatedRef.current || uncertainProposalRef.current != null) {
@@ -323,16 +343,25 @@ export const SafeCreateTransactionDialog: React.FC<
 
     /**
      * Builds the transaction again on the Safe's current queue, for the owner to review before signing: a transaction
-     * queued or executed since the review took the nonce the reviewed one was built on.
+     * queued or executed since the review took the nonce the reviewed one was built on. The nonce is floored at the one
+     * the queue and the chain expect, as the service's next nonce can lag behind the chain.
      */
-    const rebuildOnCurrentQueue = useCallback(async () => {
-        const value = await prepare();
+    const rebuildOnCurrentQueue = useCallback(
+        async (expectedNonce: bigint, reviewedHash: string) => {
+            const value = await prepare(expectedNonce);
 
-        setIsReviewGateBlocked(true);
-        setPrepared(value);
-        setError(t(`${translationKey}.queueChanged`));
-        setState('ready');
-    }, [prepare, t]);
+            // The review content only reports its verdict again for a new payload (it is keyed by hash), so the gate is
+            // closed only when the payload actually changed; otherwise the action would stay disabled for good.
+            if (!isSameHash(value.transaction.safeTxHash, reviewedHash)) {
+                setIsReviewGateBlocked(true);
+            }
+
+            setPrepared(value);
+            setError(t(`${translationKey}.queueChanged`));
+            setState('ready');
+        },
+        [prepare, t],
+    );
 
     const handleCreate = useCallback(async () => {
         if (prepared == null || walletAddress == null || isReviewGateBlocked) {
@@ -388,13 +417,17 @@ export const SafeCreateTransactionDialog: React.FC<
                 }
             }
 
-            const reviewedNonce = BigInt(transaction.nonce);
+            // The nonce the transaction must take now: past everything queued, and never one the chain already used.
+            const expectedNonce =
+                BigInt(currentNonce) > BigInt(nextNonce)
+                    ? BigInt(currentNonce)
+                    : BigInt(nextNonce);
 
-            if (
-                BigInt(nextNonce) !== reviewedNonce ||
-                BigInt(currentNonce) > reviewedNonce
-            ) {
-                await rebuildOnCurrentQueue();
+            if (expectedNonce !== BigInt(transaction.nonce)) {
+                await rebuildOnCurrentQueue(
+                    expectedNonce,
+                    transaction.safeTxHash,
+                );
                 return;
             }
 

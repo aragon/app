@@ -421,7 +421,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         expect(readOnlyKit.createTransaction).toHaveBeenCalledTimes(1);
     });
 
-    it('rebuilds the transaction on the next free nonce when the queue changed since the review', async () => {
+    it('rebuilds the transaction on the next free nonce when the queue changed since the review, for a new review', async () => {
         render(createTestComponent());
         const button = await confirmReview();
         getSafeNextNonceSpy.mockResolvedValue(
@@ -430,6 +430,7 @@ describe('<SafeCreateTransactionDialog /> component', () => {
                 currentNonce: '3',
             }),
         );
+        readOnlyKit.getTransactionHash.mockResolvedValue(`0x${'2'.repeat(64)}`);
 
         await userEvent.click(button);
 
@@ -441,6 +442,53 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         );
         expect(ownerKit.signTypedData).not.toHaveBeenCalled();
         expect(proposeSafeTransactionSpy).not.toHaveBeenCalled();
+        // The new payload is reviewed again before it can be signed.
+        expect(getCreateButton()).toBeDisabled();
+        await confirmReview();
+    });
+
+    it('floors the rebuilt nonce at the chain when the service lags behind it', async () => {
+        render(createTestComponent());
+        const button = await confirmReview();
+        // The service still answers the reviewed nonce while the chain already used it.
+        ownerKit.getNonce.mockResolvedValue(7);
+
+        await userEvent.click(button);
+
+        expect(
+            await screen.findByText(`${translationKey}.queueChanged`),
+        ).toBeInTheDocument();
+        expect(readOnlyKit.createTransaction).toHaveBeenLastCalledWith(
+            expect.objectContaining({ options: { nonce: 7 } }),
+        );
+        expect(ownerKit.signTypedData).not.toHaveBeenCalled();
+    });
+
+    it('keeps the action available when a rebuild yields the reviewed transaction again', async () => {
+        render(createTestComponent());
+        const button = await confirmReview();
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '6',
+                currentNonce: '3',
+            }),
+        );
+
+        await userEvent.click(button);
+
+        await screen.findByText(`${translationKey}.queueChanged`);
+        expect(getCreateButton()).toBeEnabled();
+    });
+
+    it('reports a Safe network the app cannot read', async () => {
+        initReadOnlySpy.mockRejectedValue(
+            new SafeProtocolKitError('providerUnavailable'),
+        );
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(`${translationKey}.networkUnavailable`),
+        ).toBeInTheDocument();
     });
 
     it('refuses a wallet that is not a current owner', async () => {
