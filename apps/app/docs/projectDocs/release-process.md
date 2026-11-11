@@ -4,7 +4,7 @@ This document describes the release process for Aragon App.
 
 The flows are the reusable workflows of [`aragon/github-templates`](https://github.com/aragon/github-templates) (see its `docs/release-design.md`), called from thin workflows in this repository. This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of `release-start`). Other workspaces release through their own flows, each following the same shape:
 
-- **Assistant** — `assistant-release.yml` → merge → production deploy (`assistant-production.yml`). Starts every Wednesday.
+- **Assistant** — `assistant-release.yml` → dev (`dev.assistant.aragon.org`, the newest knowledge base pinned on the head as the `assistant/corpus` status) with the LLM smoke → merge → production deploy (`assistant-production.yml`, builds the pinned knowledge base). Starts every Wednesday; the knowledge-base pages the index changed cut a release on their own, see `apps/assistant/README.md`.
 - **Docs site** — `docs-release.yml` → staging (`stg.platform-doc.aragon.org`) with smoke tests → merge → production deploy (`docs-production.yml`), plus `docs-hotfix-start.yml` and `docs-rollback.yml`: the app's shape, see `apps/docs/README.md`. Starts every Wednesday.
 - **Gov UI Kit** — `gov-ui-kit-release.yml` → merge → an **npm publish** rather than a deploy; see `packages/gov-ui-kit/RELEASING.md`. No schedule of its own: every app release start also starts it from the same commit when kit changesets are pending.
 - **Aragon Domain** — `aragon-domain-release.yml` → merge → an **npm publish**, same as the kit; see `packages/aragon-domain/RELEASING.md`. Starts every Tuesday.
