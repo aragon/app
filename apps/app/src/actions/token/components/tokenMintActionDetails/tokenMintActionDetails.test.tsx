@@ -1,6 +1,7 @@
 import * as GovUiKit from '@aragon/gov-ui-kit';
 import { ChainEntityType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as ensModule from '@/modules/ens';
 import { generateToken } from '@/modules/finance/testUtils';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { generateTokenActionTokenMint } from '@/plugins/tokenPlugin/testUtils';
@@ -17,12 +18,16 @@ describe('<TokenMintActionDetails /> component', () => {
         'MemberDataListItemStructure',
     );
     const useDaoChainSpy = jest.spyOn(useDaoChainHook, 'useDaoChain');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const buildEntityUrl = jest.fn();
 
     beforeEach(() => {
         memberDataListItemStructureSpy.mockReturnValue(
             <div data-testid="member-item" />,
         );
+        useEnsNameSpy.mockReturnValue({ data: null } as ReturnType<
+            typeof ensModule.useEnsName
+        >);
         buildEntityUrl.mockReturnValue('https://explorer.com/address/0x1');
         useDaoChainSpy.mockReturnValue({
             buildEntityUrl,
@@ -32,6 +37,7 @@ describe('<TokenMintActionDetails /> component', () => {
     afterEach(() => {
         memberDataListItemStructureSpy.mockReset();
         useDaoChainSpy.mockReset();
+        useEnsNameSpy.mockReset();
         buildEntityUrl.mockReset();
     });
 
@@ -190,16 +196,19 @@ describe('<TokenMintActionDetails /> component', () => {
         });
     });
 
-    it('renders the ENS name of the receiver when set', () => {
+    it('renders the resolved ENS name of the receiver', () => {
         const receivers = {
             address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
-            ens: 'dzepina.eth',
             currentBalance: '0',
             newBalance: '1',
         };
+        useEnsNameSpy.mockReturnValue({ data: 'dzepina.eth' } as ReturnType<
+            typeof ensModule.useEnsName
+        >);
 
         render(createTestComponent({ action: buildAction({ receivers }) }));
 
+        expect(useEnsNameSpy).toHaveBeenCalledWith(receivers.address);
         expect(getMemberItemProps()).toEqual(
             expect.objectContaining({ ensName: 'dzepina.eth' }),
         );

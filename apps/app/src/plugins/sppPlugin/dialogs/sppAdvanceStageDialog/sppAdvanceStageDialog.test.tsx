@@ -6,6 +6,7 @@ import {
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
@@ -69,8 +70,12 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
         sppProposalUtils.sppProposalUtils,
         'getProposalStatus',
     );
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
 
     beforeEach(() => {
+        useEnsNameSpy.mockReturnValue({ data: null } as ReturnType<
+            typeof ensModule.useEnsName
+        >);
         useConnectionSpy.mockReturnValue({
             address: '0xAdvancer',
         } as unknown as Wagmi.UseConnectionReturnType);
@@ -94,6 +99,7 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
         useProposalBySlugSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         getProposalStatusSpy.mockReset();
+        useEnsNameSpy.mockReset();
         (TransactionDialog as jest.Mock).mockClear();
     });
 
@@ -212,6 +218,25 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
             ([params]) => params.urlParams.slug === 'SLUG-1',
         );
         expect(fetchedWithLocalSlug).toBe(true);
+    });
+
+    it('shows the resolved ENS name of the proposal creator', () => {
+        const creator = {
+            address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
+            ens: null,
+            avatar: null,
+        };
+        useEnsNameSpy.mockReturnValue({ data: 'creator.eth' } as ReturnType<
+            typeof ensModule.useEnsName
+        >);
+        const location = generateDialogLocation({
+            proposal: generateSppProposal({ creator }),
+        });
+
+        render(createTestComponent({ location }));
+
+        expect(useEnsNameSpy).toHaveBeenCalledWith(creator.address);
+        expect(screen.getByText(/creator\.eth/)).toBeInTheDocument();
     });
 
     describe('queued Safe report forfeiture warning', () => {
