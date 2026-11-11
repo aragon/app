@@ -14,6 +14,10 @@ export interface IUseWrappedTokenBalanceParams {
      * Governance token configuration.
      */
     token: ITokenPluginSettingsToken;
+    /**
+     * Whether the query should be enabled.
+     */
+    enabled?: boolean;
 }
 
 export interface IUseWrappedTokenBalanceReturn {
@@ -32,7 +36,7 @@ export interface IUseWrappedTokenBalanceReturn {
 export const useWrappedTokenBalance = (
     params: IUseWrappedTokenBalanceParams,
 ): IUseWrappedTokenBalanceReturn => {
-    const { userAddress, token } = params;
+    const { userAddress, token, enabled = true } = params;
 
     const { id: chainId } = networkDefinitions[token.network];
 
@@ -41,7 +45,7 @@ export const useWrappedTokenBalance = (
         functionName: 'balanceOf',
         address: token.address as Hex,
         args: [userAddress as Hex],
-        query: { enabled: userAddress != null },
+        query: { enabled: enabled && userAddress != null },
         chainId,
     });
 

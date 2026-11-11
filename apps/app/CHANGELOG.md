@@ -1,5 +1,35 @@
 # @aragon/app
 
+## 1.44.0
+
+### Minor Changes
+
+- [#1560](https://github.com/aragon/app/pull/1560) [`2ec98cc`](https://github.com/aragon/app/commit/2ec98cc8002f5d0336dd65cde0887486519f6f69) Thanks [@evanaronson](https://github.com/evanaronson)! - Target Token Voting plugin v1.5 (release 1, build 5) for DAO contract upgrades.
+
+- [#1546](https://github.com/aragon/app/pull/1546) [`39511b6`](https://github.com/aragon/app/commit/39511b63ef363f1c06ffb17207c32f1e3bc95d3b) Thanks [@harryburger](https://github.com/harryburger)! - Add simulation budget error checks and types for saved simulation results.
+
+    Show simulation limits in the simulate dialog and proposal page, and let proposals with changed actions be simulated again.
+
+- [#1554](https://github.com/aragon/app/pull/1554) [`ae2764f`](https://github.com/aragon/app/commit/ae2764fcf842dac9063f6b9e85d69b9661c8419b) Thanks [@milosh86](https://github.com/milosh86)! - Expand workspace transactions inline to their details, including decoded Safe transaction actions, and list pending Safe transactions with their confirmation status
+
+### Patch Changes
+
+- [#1561](https://github.com/aragon/app/pull/1561) [`bff390b`](https://github.com/aragon/app/commit/bff390b39648d6bed5b3eb5050959a4e95bc8b21) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Workspace account pages now show the not-found page for an address that is neither an indexed DAO nor a Safe, an error when the account cannot be verified, and send a Safe opened on proposals or permissions to its overview; member lists stay loading while an account outside the workspace is being resolved
+
+- [#1549](https://github.com/aragon/app/pull/1549) [`df88d1f`](https://github.com/aragon/app/commit/df88d1fa5711addaf2065007303680d6818d56e7) Thanks [@milosh86](https://github.com/milosh86)! - Fix cross-chain forwarded actions crashing the proposal page when they match a view that needs the DAO (e.g. `activateGauge`): only the views flagged as `isDaoIndependent` (transfers, metadata updates and permission changes) are now resolved for them, and every other forwarded action renders with the generic decoded view.
+
+- [#1548](https://github.com/aragon/app/pull/1548) [`553b998`](https://github.com/aragon/app/commit/553b9985bdf0866efe396935cbfb09a82dfc8ac5) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Keep workspaces disabled in preview environments.
+
+- [#1541](https://github.com/aragon/app/pull/1541) [`9cad313`](https://github.com/aragon/app/commit/9cad3134293d16b8d8b4b2d8d56e4d70bb3f9b8f) Thanks [@milosh86](https://github.com/milosh86)! - Register plain functions instead of hooks for the plugin actions slot so the action composer no longer risks a hook-count crash while the DAO loads
+
+- [#1553](https://github.com/aragon/app/pull/1553) [`422a589`](https://github.com/aragon/app/commit/422a589f77c76f8630a6971546850d9b9d622cee) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Serve Safe accounts on the workspace account dashboard. A Safe's overview shows its threshold, owners and nonce, its pending transactions, and previews of its owners and assets linking to their pages, with its Safe card aside.
+
+- [#1538](https://github.com/aragon/app/pull/1538) [`c54f57c`](https://github.com/aragon/app/commit/c54f57c2d927c70363cbdcc4c775a50fa704da84) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Serve Safe accounts on the workspace members pages: each Safe account gets its own tab on the members page, the account's members page lists the Safe's owners with its settings in the aside, and its member details URL leads back to that list.
+
+- [#1552](https://github.com/aragon/app/pull/1552) [`febf2a6`](https://github.com/aragon/app/commit/febf2a6367eb84518bc5350ca1964d95899a411e) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Serve Safe accounts on the workspace settings page. A Safe gets a read-only page: an Account section (name, avatar, chain and description), a Governance section (threshold linked to its members, nonce, guard and modules) and a Contracts aside (address, version and Safe app link, then the guard and each enabled module, named with its version when it is an official Safe module). The workspace navigation and the account selector now offer Settings for a Safe, and keep Proposals for DAO accounts only.
+- Updated dependencies [[`a521ea5`](https://github.com/aragon/app/commit/a521ea5689b14be0b9a612d918503f0ed8cc9f47)]:
+    - @aragon/assistant-chat@0.5.4
+
 ## 1.43.0
 
 ### Minor Changes

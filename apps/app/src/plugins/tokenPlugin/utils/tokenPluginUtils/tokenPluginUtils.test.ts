@@ -1,4 +1,8 @@
-import { generateTokenPluginSettingsToken } from '../../testUtils';
+import {
+    generateTokenPluginSettings,
+    generateTokenPluginSettingsEscrowSettings,
+    generateTokenPluginSettingsToken,
+} from '../../testUtils';
 import { tokenPluginUtils } from './tokenPluginUtils';
 
 describe('tokenPluginUtils', () => {
@@ -50,6 +54,20 @@ describe('tokenPluginUtils', () => {
             expect(result.address).toBe('0xUnderlyingAddress');
             expect(result.symbol).toBeNull();
             expect(result.name).toBeNull();
+        });
+    });
+
+    describe('hasTokenBalance', () => {
+        it('returns true when the plugin has no voting escrow', () => {
+            const settings = generateTokenPluginSettings();
+            expect(tokenPluginUtils.hasTokenBalance(settings)).toBe(true);
+        });
+
+        it('returns false when the plugin has a voting escrow', () => {
+            const settings = generateTokenPluginSettings({
+                votingEscrow: generateTokenPluginSettingsEscrowSettings(),
+            });
+            expect(tokenPluginUtils.hasTokenBalance(settings)).toBe(false);
         });
     });
 });
