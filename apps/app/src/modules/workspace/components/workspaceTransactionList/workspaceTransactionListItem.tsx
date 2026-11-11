@@ -12,7 +12,6 @@ import {
     IconType,
     type ITagProps,
     NumberFormat,
-    Tag,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import {
@@ -41,6 +40,7 @@ import {
 } from '../../api/workspaceService';
 import { workspaceTransactionUtils } from '../../utils/workspaceTransactionUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+import { WorkspaceListItemSummary } from '../workspaceListItemSummary';
 
 export interface IWorkspaceTransactionListItemProps
     extends Pick<ITransactionListItemProps, 'index'> {
@@ -334,42 +334,31 @@ export const WorkspaceTransactionListItem: React.FC<
     return (
         <Accordion.Item value={value}>
             <Accordion.ItemHeader>
-                <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                    <AvatarIcon
-                        icon={icon}
-                        responsiveSize={{ md: 'md' }}
-                        variant={iconVariant}
-                    />
-                    <div className="flex min-w-0 grow flex-col items-start gap-y-0.5 md:gap-y-1">
-                        <span className="text-left text-neutral-800 leading-tight md:text-lg">
-                            {isAddressTitle ? (
-                                // The header is the accordion trigger, so the address must not add a control of its
-                                // own.
-                                <AddressOutput
-                                    address={title}
-                                    hasInteractiveAncestor={true}
-                                />
-                            ) : (
-                                title
-                            )}
-                            {identifier != null && (
-                                <span className="text-neutral-500">
-                                    {' '}
-                                    {identifier}
-                                </span>
-                            )}
-                        </span>
-                        <p className="text-neutral-500 text-sm leading-tight md:text-base">
-                            {formattedDate}
-                        </p>
-                    </div>
-                    {amount != null && (
-                        <span className="shrink-0 truncate text-neutral-800 leading-tight md:text-lg">
-                            {amount}
-                        </span>
-                    )}
-                    {status != null && <Tag className="shrink-0" {...status} />}
-                </div>
+                <WorkspaceListItemSummary
+                    avatar={
+                        <AvatarIcon
+                            icon={icon}
+                            responsiveSize={{ md: 'md' }}
+                            variant={iconVariant}
+                        />
+                    }
+                    description={formattedDate}
+                    identifier={identifier}
+                    tag={status}
+                    title={
+                        isAddressTitle ? (
+                            // The header is the accordion trigger, so the address must not add a control of its
+                            // own.
+                            <AddressOutput
+                                address={title}
+                                hasInteractiveAncestor={true}
+                            />
+                        ) : (
+                            title
+                        )
+                    }
+                    value={amount}
+                />
             </Accordion.ItemHeader>
             <Accordion.ItemContent>
                 {row.kind === 'transfer' && (

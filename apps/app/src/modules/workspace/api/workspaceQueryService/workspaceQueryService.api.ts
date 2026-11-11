@@ -245,3 +245,23 @@ export interface IGetWorkspaceMemberListBody {
 
 export interface IGetWorkspaceMemberListParams
     extends IRequestBodyParams<IGetWorkspaceMemberListBody> {}
+
+export interface IGetWorkspaceTodoBody {
+    /**
+     * Accounts to read the to-do list across, DAOs and Safes alike. Max {@link workspaceAccountsRequestLimit}.
+     */
+    accounts: IWorkspaceAccountRef[];
+    /**
+     * Wallet the list is computed for: the proposals it can vote on and the Safe transactions it can sign.
+     */
+    memberAddress: string;
+    /**
+     * Keeps only the accounts on this network for the request.
+     */
+    filters?: {
+        network?: Network;
+    };
+}
+
+export interface IGetWorkspaceTodoParams
+    extends IRequestBodyParams<IGetWorkspaceTodoBody> {}

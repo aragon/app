@@ -1,13 +1,17 @@
 import classNames from 'classnames';
 import type { ComponentProps, ReactNode } from 'react';
-import type { INavigationLink } from '../navigationLinks';
-import { NavigationLinks } from '../navigationLinks';
+import type { INavigationLink, INavigationLinkGroup } from '../navigationLinks';
+import { NavigationLinks, NavigationLinksGroup } from '../navigationLinks';
 
 export interface INavigationSidebarProps extends ComponentProps<'nav'> {
     /**
+     * Labelled groups of links, rendered first (e.g. the inbox of the wallet, then the sections of the workspace).
+     */
+    groups?: INavigationLinkGroup[];
+    /**
      * Links of the sidebar, rendered as a column.
      */
-    links: INavigationLink[];
+    links?: INavigationLink[];
     /**
      * Links rendered below the main ones, apart behind a divider (e.g. the settings of the workspace, below the
      * sections of the account it is scoped to).
@@ -28,8 +32,16 @@ export interface INavigationSidebarProps extends ComponentProps<'nav'> {
  * dialog take over. Render it beside the page content through `LayoutSidebar`.
  */
 export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
-    const { links, secondaryLinks, header, footer, className, ...otherProps } =
-        props;
+    const {
+        groups,
+        links,
+        secondaryLinks,
+        header,
+        footer,
+        className,
+        ...otherProps
+    } = props;
+
     return (
         <nav
             className={classNames(
@@ -42,7 +54,15 @@ export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
                 <div className="flex flex-col gap-2">{header}</div>
             )}
             <div className="flex flex-col gap-4">
-                <NavigationLinks links={links} variant="column" />
+                {groups?.map((group, index) => (
+                    <NavigationLinksGroup
+                        group={group}
+                        key={group.label ?? index.toString()}
+                    />
+                ))}
+                {links != null && (
+                    <NavigationLinks links={links} variant="column" />
+                )}
                 {secondaryLinks != null && (
                     <>
                         <div className="w-full px-4">

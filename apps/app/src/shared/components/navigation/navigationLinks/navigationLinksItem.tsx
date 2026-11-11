@@ -1,6 +1,6 @@
 'use client';
 
-import { Icon, type IconType } from '@aragon/gov-ui-kit';
+import { Icon, type IconType, Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -25,6 +25,10 @@ export interface INavigationLinksItemProps extends ILinkProps {
      * @default 'left'
      */
     iconSide?: 'left' | 'right';
+    /**
+     * Short count displayed after the label, pushed to the far end in the column variant.
+     */
+    badge?: string;
 }
 
 export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
@@ -35,6 +39,7 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
         variant,
         icon,
         iconSide = 'left',
+        badge,
         children,
         className,
         ...otherProps
@@ -72,6 +77,15 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
         >
             <Icon className={iconClassNames} icon={icon} />
             {children}
+            {badge != null && (
+                <Tag
+                    className={classNames('shrink-0', {
+                        'ml-auto': variant === 'column',
+                    })}
+                    label={badge}
+                    variant="critical"
+                />
+            )}
         </Link>
     );
 };

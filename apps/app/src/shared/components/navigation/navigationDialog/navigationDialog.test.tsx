@@ -64,6 +64,26 @@ describe('<Navigation.Dialog /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders the labelled groups of links', () => {
+        const groups = [
+            {
+                label: 'Inbox',
+                links: [
+                    {
+                        link: '/todos' as Route,
+                        label: 'To-dos',
+                        icon: IconType.CHECKMARK,
+                    },
+                ],
+            },
+        ];
+        render(createTestComponent({ links: undefined, groups, open: true }));
+        expect(screen.getByText('Inbox')).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'To-dos' }),
+        ).toBeInTheDocument();
+    });
+
     it('closes the dialog on link click', async () => {
         testLogger.suppressErrors(); // suppress navigation not implemented error
         const onOpenChange = jest.fn();
