@@ -8,7 +8,7 @@ export interface IWorkspace {
      */
     id: string;
     /**
-     * Whether the workspace is a read-only demo.
+     * Whether the workspace was installed from the example demo fixture.
      */
     isDemo?: boolean;
     /**

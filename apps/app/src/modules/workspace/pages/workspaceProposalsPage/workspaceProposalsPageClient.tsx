@@ -13,7 +13,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IWorkspaceAccount,
-    useWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import { WorkspaceAccountStateCard } from '../../components/workspaceAccountStateCard';
@@ -58,9 +57,6 @@ export const WorkspaceProposalsPageClient: React.FC<
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const router = useRouter();
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
 
     // `scopedAccounts` holds every account of the workspace, or just the one the route names, held by the workspace
     // or not. `activeOption` resolves the route account by network and address, so any casing of the ID lands on it.
@@ -171,7 +167,7 @@ export const WorkspaceProposalsPageClient: React.FC<
     };
 
     const action =
-        !workspace?.isDemo && accountsToDisplay.length > 0
+        accountsToDisplay.length > 0
             ? {
                   label: t('app.workspace.workspaceProposalsPage.main.action'),
                   onClick: handleCreateProposal,

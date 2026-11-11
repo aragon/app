@@ -171,19 +171,25 @@ class WorkspaceService {
         Object.values(this.getStoredWorkspaces());
 
     /**
-     * Returns the first stored workspace, seeding and persisting the default one when the registry is empty.
+     * Returns the first personal workspace, seeding and persisting the default one when only demo fixtures exist.
      *
      * @throws {AragonBackendServiceError} `workspaceStorageError` when local storage rejects to write.
      */
     getOrCreateDefaultWorkspace = async (): Promise<IWorkspace> => {
-        const [firstWorkspace] = Object.values(this.getStoredWorkspaces());
+        const workspaces = this.getStoredWorkspaces();
+        const firstWorkspace = Object.values(workspaces).find(
+            ({ isDemo }) => isDemo !== true,
+        );
 
         if (firstWorkspace != null) {
             return firstWorkspace;
         }
 
         const defaultWorkspace = this.buildDefaultWorkspace();
-        this.persistWorkspaces({ [defaultWorkspace.id]: defaultWorkspace });
+        this.persistWorkspaces({
+            ...workspaces,
+            [defaultWorkspace.id]: defaultWorkspace,
+        });
 
         return defaultWorkspace;
     };

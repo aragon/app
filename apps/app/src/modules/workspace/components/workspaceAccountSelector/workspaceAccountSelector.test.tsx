@@ -211,15 +211,15 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(cidToSrcSpy).toHaveBeenCalledWith('workspace-cid');
     });
 
-    it('hides account creation for a demo workspace', async () => {
+    it('allows account creation for an imported demo workspace', async () => {
         getWorkspaceSpy.mockResolvedValue({ ...workspace, isDemo: true });
         render(createTestComponent());
 
         await userEvent.click(screen.getByRole('button'));
 
         expect(
-            screen.queryByText(/workspaceAccountSelector\.addAccount$/),
-        ).not.toBeInTheDocument();
+            await screen.findByText(/workspaceAccountSelector\.addAccount$/),
+        ).toBeInTheDocument();
     });
 
     it('opens the accounts step of the edit wizard from the add account item, returning to the current page', async () => {

@@ -133,6 +133,25 @@ describe('workspace service', () => {
             expect(Object.keys(getStoredWorkspaces())).toHaveLength(2);
         });
 
+        it('creates and reuses a personal default without removing demo fixtures', async () => {
+            const demo = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Demo', isDemo: true }),
+            });
+
+            const first = await workspaceService.getOrCreateDefaultWorkspace();
+            const second = await workspaceService.getOrCreateDefaultWorkspace();
+
+            expect(first).toMatchObject({
+                id: expect.stringMatching(/^my-workspace-[0-9a-f]{8}$/),
+            });
+            expect(first.isDemo).toBeUndefined();
+            expect(second).toEqual(first);
+            expect(getStoredWorkspaces()).toEqual({
+                [demo.id]: demo,
+                [first.id]: first,
+            });
+        });
+
         it('rejects with a storage error when local storage rejects the write', async () => {
             const setItemSpy = jest
                 .spyOn(Storage.prototype, 'setItem')

@@ -6,7 +6,6 @@ import {
     type IWorkspaceTransactionsPageProps,
     WorkspaceTransactionsPage,
 } from './workspaceTransactionsPage';
-import { WorkspaceTransactionsPageClient } from './workspaceTransactionsPageClient';
 
 jest.mock('next/navigation-original', () => ({
     notFound: jest.fn(() => {
@@ -51,10 +50,6 @@ describe('<WorkspaceTransactionsPage /> component', () => {
         expect(isEnabledSpy).toHaveBeenCalledWith('workspaces');
         expect(notFoundMock).not.toHaveBeenCalled();
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
-        expect(WorkspaceTransactionsPageClient).toHaveBeenCalledWith(
-            expect.objectContaining({ pageSize: 20, workspaceId: 'demo' }),
-            undefined,
-        );
     });
 
     it('renders the 404 page when the workspaces feature is disabled', async () => {

@@ -87,7 +87,7 @@ describe('<WorkspaceSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('lists non-demo workspaces followed by the create workspace item', async () => {
+    it('lists every workspace followed by the create workspace item', async () => {
         getWorkspaceListSpy.mockResolvedValue([
             firstWorkspace,
             secondWorkspace,
@@ -98,13 +98,14 @@ describe('<WorkspaceSelector /> component', () => {
         await openDropdown();
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(3);
+        expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('First Workspace');
         expect(items[1]).toHaveTextContent('Second Workspace');
-        expect(items[2]).toHaveTextContent(/workspaceSelector\.create$/);
+        expect(items[2]).toHaveTextContent('Demo');
+        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
-    it('lists only demo workspaces and hides creation for a demo workspace', async () => {
+    it('lists personal workspaces and creation from a demo workspace', async () => {
         const currentDemo = { ...firstWorkspace, isDemo: true };
         const secondDemo = {
             ...secondWorkspace,
@@ -123,13 +124,11 @@ describe('<WorkspaceSelector /> component', () => {
         await openDropdown();
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(2);
+        expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('First Workspace');
-        expect(items[1]).toHaveTextContent('Second Demo');
-        expect(screen.queryByText('Second Workspace')).not.toBeInTheDocument();
-        expect(
-            screen.queryByText(/workspaceSelector\.create$/),
-        ).not.toBeInTheDocument();
+        expect(items[1]).toHaveTextContent('Second Workspace');
+        expect(items[2]).toHaveTextContent('Second Demo');
+        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
     it('opens the overview of the selected workspace', async () => {

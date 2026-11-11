@@ -234,11 +234,8 @@ test.describe('First-time workspace experience', () => {
                     ],
                 });
             await expect(
-                page.getByRole('button', { name: 'Read-Only Demo' }).first(),
-            ).toBeDisabled();
-            await expect(
                 page.getByRole('link', { name: 'Edit workspace' }),
-            ).toHaveCount(0);
+            ).toBeVisible();
             const polygonSafe = page
                 .getByRole('link', { name: /Polygon Safe/ })
                 .last();
@@ -271,17 +268,17 @@ test.describe('First-time workspace experience', () => {
             );
             await expect(
                 page.getByRole('button', { name: 'New proposal' }),
-            ).toHaveCount(0);
+            ).toBeVisible();
             await page
                 .getByRole('link', { name: 'Transactions' })
                 .first()
                 .click();
-            await expect(
-                page.getByRole('button', { name: 'New transaction' }),
-            ).toHaveCount(0);
             await page
                 .getByRole('button', { exact: true, name: 'avatar Aragon' })
                 .click();
+            await expect(
+                page.getByRole('menuitem', { name: 'Create workspace' }),
+            ).toBeVisible();
             await page.getByRole('menuitem', { name: 'Cryptex' }).click();
             await expect(page).toHaveURL(
                 /\/workspace\/cryptex-demo\/all\/overview$/,
@@ -292,6 +289,30 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('link', { name: /Polygon Safe/ }).last(),
             ).toBeVisible();
+
+            await page.goto('/workspace');
+            await expect(page).toHaveURL(
+                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
+            );
+            await expect(
+                page.getByRole('heading', {
+                    level: 1,
+                    name: 'My workspace',
+                }),
+            ).toBeVisible();
+            await expect
+                .poll(() =>
+                    page.evaluate((key) => {
+                        const registry = JSON.parse(
+                            localStorage.getItem(key) ?? '{}',
+                        ) as Record<string, { isDemo?: boolean }>;
+
+                        return Object.values(registry).map(
+                            ({ isDemo }) => isDemo === true,
+                        );
+                    }, workspaceStorageKey),
+                )
+                .toEqual([true, true, false]);
         });
 
         test('creates an empty workspace and exposes both account actions', async ({

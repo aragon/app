@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Wallet } from '@aragon/gov-ui-kit';
+import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -64,7 +64,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
     });
-    const isDemo = workspace?.isDemo === true;
     const { open } = useDialogContext();
 
     // The links stay scoped to the account being looked at, so a tab change keeps the reader on it. The hook reads
@@ -84,9 +83,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ? { address, name: displayName ?? undefined }
             : undefined;
 
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
     // The to-dos of the wallet in the scope the to-dos link opens, for its badge. Read under the same query as the
     // to-dos page and the overview, so the badge counts the rows its link leads to at no extra request.
     const { todos } = useWorkspaceTodoData({
@@ -132,18 +128,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             <Navigation.Sidebar
                 footer={
                     <>
-                        {isDemo ? (
-                            <Button
-                                className="w-full"
-                                disabled={true}
-                                size="md"
-                                variant="secondary"
-                            >
-                                {t(
-                                    'app.application.navigationWorkspace.readOnlyDemo',
-                                )}
-                            </Button>
-                        ) : workspace != null ? (
+                        {workspace != null ? (
                             <NavigationSidebarAccount
                                 onClick={handleWalletClick}
                                 user={walletUser}
@@ -176,13 +161,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                         className="shrink-0"
                         onClick={() => handleDialogOpenChange(true)}
                     />
-                    {isDemo ? (
-                        <Button disabled={true} size="md" variant="secondary">
-                            {t(
-                                'app.application.navigationWorkspace.readOnlyDemo',
-                            )}
-                        </Button>
-                    ) : workspace != null ? (
+                    {workspace != null ? (
                         <Wallet onClick={handleWalletClick} user={walletUser} />
                     ) : null}
                 </div>

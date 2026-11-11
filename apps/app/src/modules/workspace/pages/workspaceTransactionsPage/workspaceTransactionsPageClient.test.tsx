@@ -240,7 +240,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         props?: Partial<IWorkspaceTransactionsPageClientProps>,
     ) => {
         const completeProps: IWorkspaceTransactionsPageClientProps = {
-            workspaceId: 'test-workspace',
             pageSize: 20,
             ...props,
         };
@@ -374,18 +373,15 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('offers no create action for a demo workspace', async () => {
+    it('offers creation for an executable account in an imported demo workspace', async () => {
         getWorkspaceSpy.mockResolvedValue(buildWorkspace({ isDemo: true }));
         mockExecutePermissions({ [daoAccount.id]: true });
         render(createTestComponent());
 
         await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
         expect(
-            screen.queryByRole('button', { name: createActionName }),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByRole('link', { name: createActionName }),
-        ).not.toBeInTheDocument();
+            screen.getByRole('button', { name: createActionName }),
+        ).toBeInTheDocument();
     });
 
     // The selection dialog snapshots the permissions and destinations it is given, so an action offered while the
