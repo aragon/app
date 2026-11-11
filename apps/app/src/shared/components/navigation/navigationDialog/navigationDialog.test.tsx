@@ -67,6 +67,7 @@ describe('<Navigation.Dialog /> component', () => {
     it('renders the labelled groups of links', () => {
         const groups = [
             {
+                id: 'inbox',
                 label: 'Inbox',
                 links: [
                     {

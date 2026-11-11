@@ -54,11 +54,8 @@ export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
                 <div className="flex flex-col gap-2">{header}</div>
             )}
             <div className="flex flex-col gap-4">
-                {groups?.map((group, index) => (
-                    <NavigationLinksGroup
-                        group={group}
-                        key={group.label ?? index.toString()}
-                    />
+                {groups?.map((group) => (
+                    <NavigationLinksGroup group={group} key={group.id} />
                 ))}
                 {links != null && (
                     <NavigationLinks links={links} variant="column" />
