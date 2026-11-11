@@ -27,14 +27,26 @@ export interface ILoadSiteResult {
     indexSources: ReadonlyMap<string, string>;
 }
 
-// The raw index.md of the root and of every folder with a published page, where it exists.
+// The raw index.md of the root and of every folder on the way to a published page, where it
+// exists.
 const readIndexSources = async (
     rootDir: string,
     dirs: Iterable<string>,
 ): Promise<Map<string, string>> => {
     const sources = new Map<string, string>();
+    const folderDirs = new Set(['']);
 
-    for (const dir of new Set(['', ...dirs])) {
+    for (const dir of dirs) {
+        for (
+            let folderDir = dir;
+            folderDir !== '';
+            folderDir = path.posix.dirname(folderDir).replace(/^\.$/, '')
+        ) {
+            folderDirs.add(folderDir);
+        }
+    }
+
+    for (const dir of folderDirs) {
         const indexPath = dir === '' ? 'index.md' : `${dir}/index.md`;
         const source = await readFile(
             path.join(rootDir, indexPath),

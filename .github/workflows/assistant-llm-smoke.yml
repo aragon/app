@@ -1,7 +1,7 @@
 # The "Assistant LLM Smoke" workflow runs a few real conversations (real models, real Linear
 # team of the target environment) against a deployed assistant. It runs on the release PR
-# (called from assistant-release.yml against dev.assistant.aragon.org, which serves main — the
-# release content — since the assistant has no staging), after a development deploy, after a
+# (called from assistant-release.yml against dev.assistant.aragon.org, where the PR deploys the
+# release candidate since the assistant has no staging), after a development deploy, after a
 # production deploy, and by hand against any URL. It is deliberately NON-BLOCKING: it is not a
 # required check anywhere — a red run is a signal to look at prompt or pipeline drift, not a
 # merge gate. The result is posted to the release thread when there is one (the release PR, a

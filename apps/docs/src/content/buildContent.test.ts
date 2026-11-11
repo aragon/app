@@ -129,6 +129,14 @@ const documents: ICorpusDocument[] = [
         status: 'draft',
         body: 'Decides for the [account](/accounts/account).',
     }),
+    document('governance/configuration/admin-governance.md', {
+        title: 'Admin governance',
+        area: 'Configure governance',
+    }),
+    document('governance/participation/voting-power.md', {
+        title: 'Voting power',
+        area: 'Participation',
+    }),
     document('value-proposition.md', {
         title: 'Value proposition',
         area: 'Aragon Platform',
@@ -162,6 +170,18 @@ const indexSources = new Map<string, string>([
             '- [ ] Pending',
         ].join('\n'),
     ],
+    [
+        'governance/index.md',
+        [
+            '# Governance',
+            '',
+            '[Participate](./participation/index.md) before the [process](./process.md); [configure](./configuration/index.md) it first.',
+        ].join('\n'),
+    ],
+    [
+        'governance/configuration/index.md',
+        '# Configure governance\n\n- [Admin governance](./admin-governance.md)',
+    ],
 ]);
 
 describe('buildSite', () => {
@@ -179,6 +199,37 @@ describe('buildSite', () => {
             'accounts/safe.md',
             'accounts/account.md',
         ]);
+        expect(site.root.order).toEqual([
+            'value-proposition',
+            'governance',
+            'accounts',
+        ]);
+        expect(site.areas[1]?.order).toEqual(['safe', 'account']);
+    });
+
+    it('nests the folders of an area the way the corpus does, in the order its index links to them', () => {
+        const governance = site.areas[0];
+
+        expect(governance?.folders.map((folder) => folder.dir)).toEqual([
+            'governance/participation',
+            'governance/configuration',
+        ]);
+        expect(governance?.order).toEqual([
+            'participation',
+            'process',
+            'configuration',
+        ]);
+        expect(governance?.folders[1]).toMatchObject({
+            title: 'Configure governance',
+            index: { route: '/governance/configuration' },
+            order: ['admin-governance'],
+        });
+        // A folder without an index page is named after the area the loader read.
+        expect(governance?.folders[0]).toMatchObject({
+            title: 'Participation',
+            index: undefined,
+            folders: [],
+        });
     });
 
     it('builds the landing pages from the index files: title from the heading, body cleaned and resolved', () => {
@@ -195,10 +246,16 @@ describe('buildSite', () => {
     });
 
     it('names a folder without an index file after the area the loader read', () => {
-        expect(site.areas[0]).toMatchObject({
-            dir: 'governance',
+        const noIndex = buildSite(documents, new Map());
+
+        expect(noIndex.areas.map((area) => area.dir)).toEqual([
+            'accounts',
+            'governance',
+        ]);
+        expect(noIndex.areas[1]).toMatchObject({
             title: 'Governance',
             index: undefined,
+            order: ['process', 'configuration', 'participation'],
         });
     });
 
@@ -264,6 +321,26 @@ describe('renderContentFiles', () => {
         });
     });
 
+    it('writes the folders of an area under it, each with its own sidebar order', () => {
+        expect(JSON.parse(contentOf('governance/meta.json') ?? '')).toEqual({
+            title: 'Governance',
+            icon: 'APP_PROPOSALS',
+            pages: ['participation', 'process', 'configuration', '...'],
+        });
+        expect(
+            JSON.parse(contentOf('governance/configuration/meta.json') ?? ''),
+        ).toEqual({
+            title: 'Configure governance',
+            pages: ['admin-governance', '...'],
+        });
+        expect(contentOf('governance/configuration/index.md')).toContain(
+            '[Admin governance](/governance/configuration/admin-governance)',
+        );
+        expect(contentOf('governance/participation/voting-power.md')).toContain(
+            'title: "Voting power"',
+        );
+    });
+
     it('gives the root pages their sidebar label and icon, and the area pages neither', () => {
         expect(contentOf('index.md')).toContain(
             'sidebarTitle: "Home"\nicon: "HOME"\n',
@@ -292,9 +369,12 @@ describe('renderPublicFiles', () => {
         expect(contentOf('accounts/index.md')).toBeUndefined();
     });
 
-    it('indexes the pages by area in llms.txt and concatenates them in llms-full.txt', () => {
+    it('indexes the pages by area in llms.txt, the folders of an area as its subsections, and concatenates them in llms-full.txt', () => {
         expect(contentOf('llms.txt')).toContain(
-            '\n- [Value proposition](https://app.aragon.org/help/value-proposition.md)\n\n## Governance\n\n- [Governance: process](https://app.aragon.org/help/governance/process.md)\n\n## Accounts\n\n- [Safe](https://app.aragon.org/help/accounts/safe.md)\n- [Account](https://app.aragon.org/help/accounts/account.md): What an account is.\n',
+            '\n- [Value proposition](https://app.aragon.org/help/value-proposition.md)\n\n## Governance\n\n- [Governance: process](https://app.aragon.org/help/governance/process.md)\n\n### Participation\n\n- [Voting power](https://app.aragon.org/help/governance/participation/voting-power.md)\n\n### Configure governance\n\n- [Admin governance](https://app.aragon.org/help/governance/configuration/admin-governance.md)\n\n## Accounts\n\n- [Safe](https://app.aragon.org/help/accounts/safe.md)\n- [Account](https://app.aragon.org/help/accounts/account.md): What an account is.\n',
+        );
+        expect(contentOf('governance/configuration.md')).toContain(
+            '# Configure governance',
         );
         expect(contentOf('llms-full.txt')).toContain(
             '\n---\n\n# Account (https://app.aragon.org/help/accounts/account)\n\nWhat an account is.\n\nBody of accounts/account.md.\n',
