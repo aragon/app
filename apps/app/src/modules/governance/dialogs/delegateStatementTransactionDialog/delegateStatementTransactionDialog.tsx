@@ -3,9 +3,7 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
-import { mainnet } from 'viem/chains';
-import { getEnsResolver } from 'wagmi/actions';
-import { wagmiConfig } from '@/modules/application/constants/wagmi';
+import { buildEnsDelegateKey, ensTransactionUtils } from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import { DelegateStatementServiceKey } from '@/shared/api/delegateStatementService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
@@ -22,7 +20,6 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { IDelegateStatement } from '../../components/delegationStatementCard/delegateStatement.api';
 import type { IDelegateStatementTransactionDialogParams } from './delegateStatementTransactionDialog.api';
-import { delegateStatementTransactionDialogUtils } from './delegateStatementTransactionDialogUtils';
 
 const TELEMETRY_MODULE = 'delegateStatementTransactionDialog';
 
@@ -97,13 +94,12 @@ export const DelegateStatementTransactionDialog: React.FC<
             pinJsonData != null,
             'DelegateStatementTransactionDialog: statement must be pinned before tx prepare runs.',
         );
-        const { IpfsHash: cid } = pinJsonData;
+        const key = buildEnsDelegateKey({ network, tokenAddress });
 
-        let resolverAddress;
         try {
-            resolverAddress = await getEnsResolver(wagmiConfig, {
-                name: ensName,
-                chainId: mainnet.id,
+            return await ensTransactionUtils.buildUpdateRecordsTransaction({
+                ensName,
+                updates: { [key]: `ipfs://${pinJsonData.IpfsHash}` },
             });
         } catch (error) {
             monitoringUtils.logError(error, {
@@ -111,14 +107,6 @@ export const DelegateStatementTransactionDialog: React.FC<
             });
             throw error;
         }
-
-        return delegateStatementTransactionDialogUtils.buildTransaction({
-            resolverAddress,
-            ensName,
-            network,
-            tokenAddress,
-            cid,
-        });
     };
 
     const handleSuccess = () => {

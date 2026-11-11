@@ -9,6 +9,46 @@ export const memberRegistryAddress =
 export const memberRegistrySubdomainSuffix = '.aragon.eth';
 
 /**
+ * ENSv1 Registry address on mainnet. Holds the resolver of every name that has
+ * not migrated to ENSv2; migrating a name clears its entry.
+ * Source: https://docs.ens.domains/registry/ens
+ */
+export const ensRegistryAddress =
+    '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' as const;
+
+/** Minimal ABI for ENSv1 Registry.resolver. */
+export const ensRegistryAbi = [
+    {
+        type: 'function',
+        name: 'resolver',
+        inputs: [{ name: 'node', type: 'bytes32' }],
+        outputs: [{ name: '', type: 'address' }],
+        stateMutability: 'view',
+    },
+] as const;
+
+/**
+ * Minimal ABI for the Universal Resolver `resolve` (ENSIP-10 entry point that
+ * reads ENSv1 and ENSv2 names alike). Its address comes from the viem chain
+ * config (`mainnet.contracts.ensUniversalResolver`).
+ */
+export const ensUniversalResolverAbi = [
+    {
+        type: 'function',
+        name: 'resolve',
+        inputs: [
+            { name: 'name', type: 'bytes' },
+            { name: 'data', type: 'bytes' },
+        ],
+        outputs: [
+            { name: 'result', type: 'bytes' },
+            { name: 'resolver', type: 'address' },
+        ],
+        stateMutability: 'view',
+    },
+] as const;
+
+/**
  * ENS Reverse Registrar contract address on mainnet.
  * Source: https://docs.ens.domains/contract-api-reference/reverseregistrar
  */
