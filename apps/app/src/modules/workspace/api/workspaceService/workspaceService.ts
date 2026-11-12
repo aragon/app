@@ -302,6 +302,23 @@ class WorkspaceService {
         }
     };
 
+    hasSessionWorkspace = (id: string): boolean => {
+        this.requireWindow();
+        const rawRegistry = sessionStorage.getItem(sessionWorkspaceStorageKey);
+
+        if (rawRegistry == null) {
+            return false;
+        }
+
+        try {
+            const registry = JSON.parse(rawRegistry) as WorkspaceRegistry;
+
+            return Object.hasOwn(registry, id);
+        } catch {
+            return false;
+        }
+    };
+
     /**
      * Builds the workspace seeded on an empty registry. Its ID gets a random suffix so default workspaces of
      * different users never share one.

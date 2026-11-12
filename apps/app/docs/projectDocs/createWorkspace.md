@@ -238,12 +238,11 @@ local storage for real requests is a single-method change:
 - `exportWorkspaceRegistry()` → the complete active registry as formatted JSON.
 - `importWorkspaceRegistry(json, merge?)` → validates the full registry before writing it.
 
-The persistent registry uses local-storage key `aragon-workspaces`. Public demo links include `?demo=true`; the
-workspace layout uses that marker to overwrite a tab-scoped registry with `workspaceDemo.fixture.json` before loading
-the requested fixture workspace. Workspace routes select that session registry only when the current workspace ID
-belongs to the fixture; navigating to `/workspace` or a persistent workspace discards it and resumes the local
-registry. Opening or clicking a demo link therefore always starts from a fresh fixture and never merges demo data into
-a user's workspaces.
+The persistent registry uses local-storage key `aragon-workspaces`. Known fixture workspace IDs activate the
+tab-scoped `workspaceDemo.fixture.json` registry before the first workspace read, so copied demo account URLs also work
+in a fresh tab. Opening the landing-page demo link resets that session registry to the fixture. Navigating to
+`/workspace` or a persistent workspace discards it and resumes the local registry; persistent and demo workspaces
+therefore never appear together or overwrite one another.
 
 The debug panel downloads and restores the active registry format. Imports require an explicit browser confirmation
 because replacement discards the active browser-only workspaces. The fixture contains Aragon and XMAQUINA workspaces,

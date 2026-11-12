@@ -70,7 +70,7 @@ test.describe('First-time workspace experience', () => {
                 .getByRole('link', { name: 'Explore a demo workspace' })
                 .click();
             await expect(page).toHaveURL(
-                /\/workspace\/aragon-demo\/all\/overview\?demo=true$/,
+                /\/workspace\/aragon-demo\/all\/overview$/,
             );
             await expect(
                 page.getByRole('heading', {
@@ -80,15 +80,17 @@ test.describe('First-time workspace experience', () => {
             ).toBeVisible();
         });
 
-        test('installs the fixture from a direct demo link in a fresh tab', async ({
+        test('installs the fixture from a copied demo account link in a fresh tab', async ({
             page,
         }) => {
-            await page.goto('/workspace/aragon-demo/all/overview?demo=true');
+            await page.goto(
+                '/workspace/aragon-demo/polygon-mainnet-0x311Ff044882bf953cA3A70867f5B1836C2a9b76B/overview',
+            );
 
             await expect(
                 page.getByRole('heading', {
                     level: 1,
-                    name: aragonDemoName,
+                    name: 'Polygon Safe',
                 }),
             ).toBeVisible();
         });
@@ -219,7 +221,7 @@ test.describe('First-time workspace experience', () => {
                 .click();
 
             await expect(page).toHaveURL(
-                /\/workspace\/aragon-demo\/all\/overview\?demo=true$/,
+                /\/workspace\/aragon-demo\/all\/overview$/,
             );
             await expect(
                 page.getByRole('link', { name: 'Edit workspace' }),

@@ -389,6 +389,8 @@ describe('workspace service', () => {
             await workspaceService.activateSessionWorkspaceRegistry(
                 JSON.stringify(fixture),
             );
+            expect(workspaceService.hasSessionWorkspace('fixture')).toBe(true);
+            expect(workspaceService.hasSessionWorkspace('unknown')).toBe(false);
 
             window.history.pushState(
                 null,
@@ -414,6 +416,7 @@ describe('workspace service', () => {
             await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
                 persistent,
             ]);
+            expect(workspaceService.hasSessionWorkspace('fixture')).toBe(false);
             window.history.pushState(
                 null,
                 '',

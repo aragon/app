@@ -1,7 +1,6 @@
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import * as NextNavigation from 'next/navigation';
 import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import * as WorkspaceServiceModule from '@/modules/workspace/api/workspaceService';
@@ -51,7 +50,6 @@ describe('<LayoutWorkspace /> component', () => {
     const useWorkspaceSpy = jest.spyOn(WorkspaceServiceModule, 'useWorkspace');
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
-    const useSearchParamsSpy = jest.spyOn(NextNavigation, 'useSearchParams');
     const activateSessionRegistrySpy = jest.spyOn(
         workspaceService,
         'activateSessionWorkspaceRegistry',
@@ -65,11 +63,6 @@ describe('<LayoutWorkspace /> component', () => {
             status: 'success',
             error: null,
         } as ReturnType<typeof WorkspaceServiceModule.useWorkspace>);
-        useSearchParamsSpy.mockReturnValue(
-            new URLSearchParams() as ReturnType<
-                typeof NextNavigation.useSearchParams
-            >,
-        );
         activateSessionRegistrySpy.mockResolvedValue();
     });
 
@@ -79,7 +72,6 @@ describe('<LayoutWorkspace /> component', () => {
         isEnabledSpy.mockReset();
         useWorkspaceSpy.mockReset();
         notFoundMock.mockClear();
-        useSearchParamsSpy.mockReset();
         activateSessionRegistrySpy.mockReset();
     });
 
@@ -125,16 +117,14 @@ describe('<LayoutWorkspace /> component', () => {
     });
 
     it('installs the session fixture for a fresh direct demo link', async () => {
-        useSearchParamsSpy.mockReturnValue(
-            new URLSearchParams({ demo: 'true' }) as ReturnType<
-                typeof NextNavigation.useSearchParams
-            >,
-        );
-
         render(
             await createTestComponent({
                 params: Promise.resolve({ workspaceId: 'aragon-demo' }),
             }),
+        );
+        expect(useWorkspaceSpy).toHaveBeenCalledWith(
+            { urlParams: { id: 'aragon-demo' } },
+            { enabled: false, retry: false },
         );
 
         await waitFor(() => {
@@ -143,6 +133,10 @@ describe('<LayoutWorkspace /> component', () => {
                 screen.getByTestId('workspace-gate-mock'),
             ).toBeInTheDocument();
         });
+        expect(useWorkspaceSpy).toHaveBeenCalledWith(
+            { urlParams: { id: 'aragon-demo' } },
+            { enabled: true, retry: false },
+        );
     });
 
     it('renders the page below the navigation', async () => {

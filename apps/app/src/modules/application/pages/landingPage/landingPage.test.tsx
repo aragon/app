@@ -6,6 +6,10 @@ import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.
 import * as NextNavigation from 'next/navigation';
 import * as connectedWalletGuard from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountHook from '@/modules/application/hooks/useWalletAccount';
+import {
+    workspaceService,
+    workspaceServiceKeys,
+} from '@/modules/workspace/api/workspaceService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { LandingPage } from './landingPage';
 
@@ -19,6 +23,10 @@ describe('<LandingPage /> component', () => {
         'useConnectedWalletGuard',
     );
     const walletAccountSpy = jest.spyOn(walletAccountHook, 'useWalletAccount');
+    const activateSessionRegistrySpy = jest.spyOn(
+        workspaceService,
+        'activateSessionWorkspaceRegistry',
+    );
 
     beforeEach(() => {
         useRouterSpy.mockReturnValue({
@@ -32,6 +40,7 @@ describe('<LandingPage /> component', () => {
             isConnecting: false,
             isReconnecting: false,
         });
+        activateSessionRegistrySpy.mockResolvedValue();
     });
 
     afterEach(() => {
@@ -41,6 +50,7 @@ describe('<LandingPage /> component', () => {
         useRouterSpy.mockReset();
         walletGuardSpy.mockReset();
         walletAccountSpy.mockReset();
+        activateSessionRegistrySpy.mockReset();
     });
     const createTestComponent = (client = new QueryClient()) => (
         <ReactQueryWrapper client={client}>
@@ -50,22 +60,31 @@ describe('<LandingPage /> component', () => {
         </ReactQueryWrapper>
     );
 
-    it('links to the self-contained demo workspace route', () => {
-        render(createTestComponent());
+    it('resets the session fixture before opening the demo workspace', async () => {
+        const queryClient = new QueryClient();
+        queryClient.setQueryData(workspaceServiceKeys.workspaceList(), [
+            { id: 'persistent' },
+        ]);
+        render(createTestComponent(queryClient));
 
-        expect(
-            screen.queryByRole('link', {
-                name: /landingPage\.exploreDaos$/,
-            }),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.getAllByRole('link', {
-                name: /landingPage\.demo\.action$/,
-            })[0],
-        ).toHaveAttribute(
+        const demoLink = screen.getAllByRole('link', {
+            name: /landingPage\.demo\.action$/,
+        })[0];
+        expect(demoLink).toHaveAttribute(
             'href',
-            '/workspace/aragon-demo/all/overview?demo=true',
+            '/workspace/aragon-demo/all/overview',
         );
+        await userEvent.click(demoLink);
+
+        await waitFor(() => {
+            expect(activateSessionRegistrySpy).toHaveBeenCalledTimes(1);
+            expect(
+                queryClient.getQueryData(workspaceServiceKeys.workspaceList()),
+            ).toBeUndefined();
+            expect(push).toHaveBeenCalledWith(
+                '/workspace/aragon-demo/all/overview',
+            );
+        });
     });
 
     it('keeps coming-soon sign-in options disabled without a not-allowed cursor', () => {

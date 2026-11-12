@@ -2,7 +2,6 @@
 
 import { Spinner } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
 import { type ReactNode, useEffect, useState } from 'react';
 import {
     useWorkspace,
@@ -42,18 +41,22 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
 ) => {
     const { workspaceId, children } = props;
     const queryClient = useQueryClient();
-    const searchParams = useSearchParams();
-    const isDemoRequest =
-        searchParams.get('demo') === 'true' &&
-        Object.hasOwn(workspaceDemoFixture, workspaceId);
-    const [bootstrappedWorkspaceId, setBootstrappedWorkspaceId] = useState<
+    const isDemoWorkspace = Object.hasOwn(workspaceDemoFixture, workspaceId);
+    const [readyWorkspaceId, setReadyWorkspaceId] = useState<
         string | undefined
-    >();
-    const isRegistryReady =
-        !isDemoRequest || bootstrappedWorkspaceId === workspaceId;
+    >(() => (isDemoWorkspace ? undefined : workspaceId));
+    const isRegistryReady = readyWorkspaceId === workspaceId;
 
     useEffect(() => {
-        if (!isDemoRequest || bootstrappedWorkspaceId === workspaceId) {
+        if (isRegistryReady) {
+            return;
+        }
+
+        if (
+            !isDemoWorkspace ||
+            workspaceService.hasSessionWorkspace(workspaceId)
+        ) {
+            setReadyWorkspaceId(workspaceId);
             return;
         }
 
@@ -73,7 +76,7 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
                 });
             } finally {
                 if (isActive) {
-                    setBootstrappedWorkspaceId(workspaceId);
+                    setReadyWorkspaceId(workspaceId);
                 }
             }
         };
@@ -83,7 +86,7 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
         return () => {
             isActive = false;
         };
-    }, [bootstrappedWorkspaceId, isDemoRequest, queryClient, workspaceId]);
+    }, [isDemoWorkspace, isRegistryReady, queryClient, workspaceId]);
 
     // Same query and options as the gate, so this observes its read rather than adding one.
     const { status, error } = useWorkspace(
