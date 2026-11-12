@@ -21,7 +21,7 @@ describe('<NavigationLinksGroup /> component', () => {
         props?: Partial<INavigationLinksGroupProps>,
     ) => {
         const completeProps: INavigationLinksGroupProps = {
-            group: { links: [] },
+            group: { id: 'group', links: [] },
             ...props,
         };
 
@@ -32,6 +32,7 @@ describe('<NavigationLinksGroup /> component', () => {
         render(
             createTestComponent({
                 group: {
+                    id: 'inbox',
                     label: 'Inbox',
                     links: [
                         {
@@ -54,6 +55,7 @@ describe('<NavigationLinksGroup /> component', () => {
         const { container } = render(
             createTestComponent({
                 group: {
+                    id: 'inbox',
                     label: 'Inbox',
                     links: [
                         {

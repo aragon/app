@@ -31,6 +31,11 @@ export interface INavigationLink {
 
 export interface INavigationLinkGroup {
     /**
+     * Stable identifier of the group, its React key among the groups of a navigation. Not derived from the label: a
+     * workspace named like a fixed group would otherwise share its key.
+     */
+    id: string;
+    /**
      * Label displayed above the links of the group (e.g. "Inbox", or the name of the workspace).
      */
     label?: string;

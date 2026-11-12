@@ -96,6 +96,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     // (proposals, permissions, settings) wait for the workspace read that tells a DAO account from a Safe.
     const groups: INavigationLinkGroup[] = [
         {
+            id: 'inbox',
             label: t('app.application.navigationWorkspace.group.inbox'),
             links: navigationWorkspaceUtils.buildInboxLinks(
                 workspaceId,
@@ -107,6 +108,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ),
         },
         {
+            id: 'account',
             label: workspace?.name,
             links: navigationWorkspaceUtils.buildLinks(
                 workspaceId,
@@ -115,6 +117,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ),
         },
         {
+            id: 'workspace',
             label: t('app.application.navigationWorkspace.group.workspace'),
             links: navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId),
         },

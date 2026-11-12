@@ -45,10 +45,10 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
             >
                 {children}
                 <div className="flex flex-col gap-4 px-4">
-                    {groups?.map((group, index) => (
+                    {groups?.map((group) => (
                         <NavigationLinksGroup
                             group={group}
-                            key={group.label ?? index.toString()}
+                            key={group.id}
                             onLinkClick={handleLinksClick}
                         />
                     ))}
