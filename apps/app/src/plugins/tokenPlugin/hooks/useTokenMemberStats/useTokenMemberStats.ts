@@ -8,6 +8,7 @@ import type { IUsePluginMemberStatsParams } from '@/modules/governance/types';
 import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
+import { tokenPluginUtils } from '../../utils/tokenPluginUtils';
 import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
 export interface IUseTokenMemberStatsParams
@@ -35,10 +36,13 @@ export const useTokenMemberStats = (
         queryParams: memberQueryParams,
     });
 
+    const hasTokenBalance = tokenPluginUtils.hasTokenBalance(plugin.settings);
+
     // Read wrapped token balance directly from blockchain
     const { balance: tokenBalance } = useWrappedTokenBalance({
         userAddress: address,
         token,
+        enabled: hasTokenBalance,
     });
 
     if (!isTokenMember(member)) {
@@ -64,17 +68,19 @@ export const useTokenMemberStats = (
 
     const { delegationCount } = member.metrics;
 
+    const tokenBalanceStat = {
+        label: t('app.plugins.token.tokenMemberStats.tokenBalance'),
+        value: formattedTokenBalance,
+        suffix: token.symbol,
+    };
+
     return [
         {
             label: t('app.plugins.token.tokenMemberStats.votingPower'),
             value: formattedVotingPower,
             suffix: token.symbol,
         },
-        {
-            label: t('app.plugins.token.tokenMemberStats.tokenBalance'),
-            value: formattedTokenBalance,
-            suffix: token.symbol,
-        },
+        ...(hasTokenBalance ? [tokenBalanceStat] : []),
         {
             label: t(
                 `app.plugins.token.tokenMemberStats.${delegationCount === 1 ? 'delegation' : 'delegations'}`,

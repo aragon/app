@@ -7,12 +7,15 @@ import { useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useEnsName } from '@/modules/ens';
+import { useWorkspace } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
 import { useWorkspaceAccountOptions } from '@/modules/workspace/hooks/useWorkspaceAccountOptions';
+import { useWorkspaceTodoData } from '@/modules/workspace/hooks/useWorkspaceTodoData';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
     type INavigationContainerProps,
+    type INavigationLinkGroup,
     Navigation,
 } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -62,7 +65,8 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
 
     // The links stay scoped to the account being looked at, so a tab change keeps the reader on it. The hook reads
     // the account from the route, which is where it lives, and falls back to the aggregated segment.
-    const { accountId, activeOption } = useWorkspaceAccountOptions();
+    const { accountId, activeOption, scopedAccounts } =
+        useWorkspaceAccountOptions();
 
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected
@@ -76,16 +80,48 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ? { address, name: displayName ?? undefined }
             : undefined;
 
-    // Built from the route, so the section links are complete on the first paint; under an account scope, the ones
-    // served for some account types alone (proposals, permissions, settings) wait for the workspace read that tells a
-    // DAO account from a Safe.
-    const links = navigationWorkspaceUtils.buildLinks(
-        workspaceId,
-        accountId,
-        activeOption?.account?.type,
-    );
-    const workspaceLinks =
-        navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId);
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
+    // The to-dos of the wallet in the scope the to-dos link opens, for its badge. Read under the same query as the
+    // to-dos page and the overview, so the badge counts the rows its link leads to at no extra request.
+    const { todos } = useWorkspaceTodoData({
+        accounts: scopedAccounts,
+        address: effectiveIsConnected ? address : undefined,
+    });
+
+    // Three groups: the wallet's inbox (hidden with its label until a wallet connects), the sections of the account in
+    // scope under the name of the workspace, and the workspace itself. The section links are built from the route,
+    // so they are complete on the first paint; under an account scope, the ones served for some account types alone
+    // (proposals, permissions, settings) wait for the workspace read that tells a DAO account from a Safe.
+    const groups: INavigationLinkGroup[] = [
+        {
+            id: 'inbox',
+            label: t('app.application.navigationWorkspace.group.inbox'),
+            links: navigationWorkspaceUtils.buildInboxLinks(
+                workspaceId,
+                accountId,
+                {
+                    isConnected: effectiveIsConnected,
+                    count: todos.length,
+                },
+            ),
+        },
+        {
+            id: 'account',
+            label: workspace?.name,
+            links: navigationWorkspaceUtils.buildLinks(
+                workspaceId,
+                accountId,
+                activeOption?.account?.type,
+            ),
+        },
+        {
+            id: 'workspace',
+            label: t('app.application.navigationWorkspace.group.workspace'),
+            links: navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId),
+        },
+    ];
 
     return (
         <>
@@ -99,14 +135,13 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                         <FooterSidebar />
                     </>
                 }
+                groups={groups}
                 header={
                     <>
                         <WorkspaceSelector workspaceId={workspaceId} />
                         <WorkspaceAccountSelector workspaceId={workspaceId} />
                     </>
                 }
-                links={links}
-                secondaryLinks={workspaceLinks}
             />
             <Navigation.Container
                 className={classNames('lg:hidden', className)}
@@ -124,16 +159,15 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     <Wallet onClick={handleWalletClick} user={walletUser} />
                 </div>
                 <Navigation.Dialog
+                    groups={groups}
                     hiddenDescription={t(
                         'app.application.navigationWorkspace.a11y.description',
                     )}
                     hiddenTitle={t(
                         'app.application.navigationWorkspace.a11y.title',
                     )}
-                    links={links}
                     onOpenChange={handleDialogOpenChange}
                     open={isDialogOpen}
-                    secondaryLinks={workspaceLinks}
                 >
                     <div className="flex flex-col gap-2 px-4">
                         <WorkspaceSelector workspaceId={workspaceId} />

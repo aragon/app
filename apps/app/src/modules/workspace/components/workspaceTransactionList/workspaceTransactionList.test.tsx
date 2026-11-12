@@ -2,6 +2,7 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import * as NextNavigation from 'next/navigation';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
 import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
@@ -23,9 +24,11 @@ import {
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import {
+    generateWorkspacePendingTransaction,
     generateWorkspaceQueryResponse,
     generateWorkspaceTransaction,
 } from '../../testUtils';
+import { workspaceSafeTransactionParam } from '../../utils/workspaceTransactionUtils';
 import {
     type IWorkspaceTransactionListProps,
     WorkspaceTransactionList,
@@ -401,6 +404,72 @@ describe('<WorkspaceTransactionList /> component', () => {
 
         expect(firstRow).toHaveAttribute('aria-expanded', 'true');
         expect(secondRow).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    describe('linked Safe transaction', () => {
+        const useSearchParamsSpy = jest.spyOn(
+            NextNavigation,
+            'useSearchParams',
+        );
+
+        const safeAccount = buildAccount({ type: WorkspaceAccountType.SAFE });
+
+        const mockSearchParams = (params?: Record<string, string>) =>
+            useSearchParamsSpy.mockReturnValue(
+                new URLSearchParams(params) as unknown as ReturnType<
+                    typeof NextNavigation.useSearchParams
+                >,
+            );
+
+        const renderLinked = (safeTxHash: string) => {
+            mockSearchParams({ [workspaceSafeTransactionParam]: safeTxHash });
+            mockTransactions([
+                generateWorkspacePendingTransaction({
+                    account,
+                    id: 'queued',
+                    safeTxHash: '0xff54',
+                }),
+                generateWorkspaceTransaction({ account, id: 'transfer' }),
+            ]);
+
+            return render(createTestComponent({ accounts: [safeAccount] }));
+        };
+
+        // Back to the empty parameters the other tests of this file read.
+        afterEach(() => {
+            mockSearchParams();
+        });
+
+        it('expands the transaction the URL names on arrival', async () => {
+            renderLinked('0xFF54');
+
+            expect(
+                await screen.findByText('safe-execution-detail'),
+            ).toBeInTheDocument();
+        });
+
+        it('lets the reader collapse the linked transaction', async () => {
+            renderLinked('0xff54');
+
+            await userEvent.click(
+                await screen.findByRole('button', { name: /status\.active/ }),
+            );
+
+            expect(
+                screen.queryByText('safe-execution-detail'),
+            ).not.toBeInTheDocument();
+        });
+
+        it('expands nothing when the URL names a transaction that is not listed', async () => {
+            renderLinked('0xother');
+
+            expect(
+                await screen.findByRole('button', { name: /status\.active/ }),
+            ).toBeInTheDocument();
+            expect(
+                screen.queryByText('safe-execution-detail'),
+            ).not.toBeInTheDocument();
+        });
     });
 
     // The rows reach their accordion through context, so the data list container still counts and paginates them.

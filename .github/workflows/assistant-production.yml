@@ -1,8 +1,11 @@
 # Assistant Production — deploys the assistant service to assistant.aragon.org when an
 # @aragon/assistant@* GitHub Release is published (assistant-release.yml finalize), and by hand for
 # a re-deploy of an existing tag (rollback = dispatch an older tag, or use Vercel instant rollback).
-# The `production` environment requires an approval from @aragon/app-team; the release thread gets
-# the "waiting for approval" ping, the result and the head message flipped to Completed.
+# It builds the tag with the knowledge-base commit its dev deploy recorded (the `assistant/corpus`
+# status of the tagged commit, see assistant-release.yml), so production answers from the pages
+# the release tested; a tag without the status never reached dev and is refused. The `production`
+# environment requires an approval from @aragon/app-team; the release thread gets the "waiting for
+# approval" ping, the result and the head message flipped to Completed.
 
 name: Assistant Production
 
@@ -20,23 +23,41 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    if: github.event_name == 'workflow_dispatch'
+  # The repo publishes releases for several workspaces; only assistant tags deploy the service.
+  corpus:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, '@aragon/assistant@')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: read
+    outputs:
+      commit: ${{ steps.pin.outputs.commit }}
     steps:
-      - name: Validate tag exists
+      - name: Read the knowledge-base commit the release tested
+        id: pin
         env:
-          TAG: ${{ inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SERVER: ${{ github.server_url }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
-          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/$TAG" || \
-            (echo "::error::Tag '$TAG' does not exist" && exit 1)
+          set -euo pipefail
+          # The tagged commit: the tag's own entry for a lightweight tag, its peeled one (^{}, listed
+          # last) for an annotated tag.
+          sha="$(git ls-remote "$SERVER/$REPO.git" "refs/tags/$TAG" "refs/tags/$TAG^{}" | awk 'END { print $1 }')"
+          [ -n "$sha" ] || { echo "::error::Tag '$TAG' does not exist" >&2; exit 1; }
+          commit="$(gh api "repos/$REPO/commits/$sha/status" --jq '.statuses[] | select(.context == "assistant/corpus") | .description')"
+          if ! [[ "$commit" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::$TAG carries no assistant/corpus status: it never reached dev" >&2
+            exit 1
+          fi
+          echo "Knowledge base: aragon/platform-doc@$commit"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
 
-  # On release events, only react to assistant tags — other workspaces publish their own releases.
   # The production group sits on this job, not the workflow: a run skipped by the tag guard must
   # not cancel a deploy waiting for its approval.
   deploy:
-    needs: validate
-    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/assistant@')) }}
+    needs: corpus
     concurrency:
       group: assistant-production-deployment
       cancel-in-progress: true
@@ -52,6 +73,7 @@ jobs:
       setup-command: pnpm run setup production
       # The build reads the private aragon/platform-doc knowledge base; build-time only.
       op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.corpus.outputs.commit }}
       # VERCEL_ENV=production maps correctly at runtime; only the secrets need lifting.
       runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"
       upload-sentry-source-maps: true
@@ -64,11 +86,10 @@ jobs:
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
-  # `validate` is skipped on release events; without the explicit guard the skipped ancestor
-  # skips this job too (same as app-production.yml).
+  # A manual deploy of an older tag is not a release completing.
   complete:
     needs: deploy
-    if: ${{ !cancelled() && needs.deploy.result == 'success' && github.event_name == 'release' }}
+    if: github.event_name == 'release'
     uses: aragon/github-templates/.github/workflows/release-complete.yml@v1
     with:
       tag: ${{ github.event.release.tag_name }}

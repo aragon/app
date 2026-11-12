@@ -10,6 +10,7 @@ import type {
     IWorkspaceAssetListResponse,
     IWorkspaceMember,
     IWorkspaceProposalListResponse,
+    IWorkspaceTodoResponse,
     IWorkspaceTransaction,
 } from './domain';
 
@@ -18,6 +19,7 @@ import type {
     IGetWorkspaceAssetListParams,
     IGetWorkspaceMemberListParams,
     IGetWorkspaceProposalListParams,
+    IGetWorkspaceTodoParams,
     IGetWorkspaceTransactionsParams,
     IWorkspaceQueryResponse,
 } from './workspaceQueryService.api';
@@ -35,6 +37,7 @@ class WorkspaceQueryService extends AragonBackendService {
         assetList: '/workspaces/query/assets',
         proposalList: '/workspaces/query/proposals',
         memberList: '/workspaces/query/members',
+        todo: '/workspaces/query/todo',
     };
 
     private get urls() {
@@ -59,6 +62,9 @@ class WorkspaceQueryService extends AragonBackendService {
                 this.basePaths.memberList,
                 { forceVersion: 'v2' },
             ),
+            todo: apiVersionUtils.buildVersionedUrl(this.basePaths.todo, {
+                forceVersion: 'v2',
+            }),
         };
     }
 
@@ -129,6 +135,17 @@ class WorkspaceQueryService extends AragonBackendService {
             params,
             { method: 'POST' },
         );
+
+    /**
+     * Reads what the given wallet can still act on across the given accounts: the active proposals it can vote on
+     * and the live Safe transactions it can sign, each minus what it already did.
+     */
+    getTodo = async (
+        params: IGetWorkspaceTodoParams,
+    ): Promise<IWorkspaceTodoResponse> =>
+        await this.request<IWorkspaceTodoResponse>(this.urls.todo, params, {
+            method: 'POST',
+        });
 
     /**
      * Returns the parameters of the next page of a workspace list endpoint, or undefined on the last one.

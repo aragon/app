@@ -50,6 +50,7 @@ export const workspaceAllAccountsSegment = 'all';
  */
 export const workspaceAccountSections = [
     'overview',
+    'todos',
     'proposals',
     'members',
     'assets',

@@ -2,17 +2,32 @@
 # aragon/github-templates modules: a start every Wednesday (or by hand) cuts release/assistant/<timestamp>
 # with the changesets bump of the "assistant" release scope (the service plus its version-only
 # packages) and opens the "Release @aragon/assistant@x.y.z" PR with its Slack thread; every push to
-# that PR refreshes the summary, runs the checks and the LLM smoke; merging tags the PR head and
-# publishes the GitHub Release, which starts the production deploy (assistant-production.yml);
-# closing it without a merge cancels the release. Linear mirrors the release in the "Assistant"
-# pipeline.
+# that PR refreshes the summary, runs the checks, deploys the release head to dev and runs the LLM
+# smoke there; merging tags the PR head and publishes the GitHub Release, which starts the
+# production deploy (assistant-production.yml); closing it without a merge cancels the release.
+# Linear mirrors the release in the "Assistant" pipeline.
 #
 # The PR head is tagged, as in every release flow: it is the commit the checks ran on, and the
 # merge commit would also carry whatever landed on main while the PR was open (an in-scope
 # changeset merged in the meantime tripped the finalize guard of 0.3.1). Release PRs are merged
-# with a merge commit so the head stays in main's history. The release content is smoked where it
-# already runs: dev.assistant.aragon.org serves main, which the release branch only bumps. A
-# scheduled start green-skips when a release PR is open or there is nothing to release.
+# with a merge commit so the head stays in main's history. The assistant has no staging: the
+# release candidate is smoked on dev.assistant.aragon.org, which the release PR deploys (and which
+# otherwise serves main, see assistant-development.yml). A scheduled start green-skips when a
+# release PR is open or there is nothing to release.
+#
+# The index is built from aragon/platform-doc, outside this repository, so the tag alone does not
+# fix the pages it answers from. Every dev deploy of the release PR builds the newest knowledge
+# base and records the commit it built on the deployed commit as the `assistant/corpus` commit
+# status; production builds the commit the status of the tag names, the pages the release tested.
+#
+# Pages of the knowledge base change no file here, so no changeset describes them: the start
+# compares the pages the assistant indexes now with the ones the latest assistant tag indexed and,
+# when pages differ, adds a patch changeset that lists them, so a release cuts for new pages alone
+# and its changelog names them. The generated summary of the PR body only knows the commits of
+# this repository, so the changelog of the release goes below it (`body-extras`): the changeset
+# the start composed, and on a refresh the section the CHANGELOG of the branch holds.
+#
+# The `test` and `deploy` job names are required status checks of the main ruleset — keep them.
 
 name: Assistant Release
 
@@ -33,15 +48,99 @@ permissions:
   contents: write
   pull-requests: write
 
-# One run per PR: a push supersedes the previous run; the close runs (finalize, cancel) get a
-# group of their own, so they are never cancelled.
+# One run per PR: a push supersedes the previous run (its checks, dev deploy and smoke would
+# otherwise keep going against a dev the next run re-aliases); the close runs (finalize, cancel)
+# get a group of their own, so they are never cancelled.
 concurrency:
   group: assistant-release-${{ github.event.pull_request.number || github.run_id }}${{ github.event.action == 'closed' && '-closed' || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
 
 jobs:
-  start:
+  content:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: read
+    outputs:
+      changeset: ${{ steps.changeset.outputs.content }}
+      body: ${{ steps.changeset.outputs.body }}
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@v1
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Setup
+        uses: aragon/github-templates/steps/setup@v1
+        with:
+          ref: ${{ inputs.base_commit || 'main' }}
+          fetch-depth: "0"
+
+      - name: Find the pages of the latest release
+        id: base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag="$(git tag --list '@aragon/assistant@*' --sort=-creatordate | head -1)"
+          commit=""
+          if [ -n "$tag" ]; then
+            commit="$(gh api "repos/$REPO/commits/$(git rev-parse "$tag^{commit}")/status" --jq '.statuses[] | select(.context == "assistant/corpus") | .description')"
+          fi
+          echo "Latest release: ${tag:-none}, knowledge base ${commit:-none}"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      # The docs site owns the comparison (apps/docs/src/content/diffContent.ts); the consumer
+      # argument reads the pages in the assistant's mode.
+      - name: Compare the indexed pages with the newest knowledge base
+        working-directory: apps/docs
+        env:
+          GH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          DOCS_REPO_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          BASE: ${{ steps.base.outputs.commit }}
+        run: |
+          set -euo pipefail
+          head="$(gh api repos/aragon/platform-doc/commits/development --jq .sha)"
+          pnpm -s content:diff "$BASE" "$head" assistant > "$RUNNER_TEMP/content-diff.json"
+          cat "$RUNNER_TEMP/content-diff.json"
+
+      # The changeset summary doubles as the changelog block of the PR body and the Slack message.
+      - name: Compose the changeset
+        id: changeset
+        run: |
+          set -euo pipefail
+          diff="$RUNNER_TEMP/content-diff.json"
+          if [ "$(jq '[.added, .changed, .removed] | map(length) | add' "$diff")" = "0" ]; then
+            echo "No page changed since the latest release."
+            exit 0
+          fi
+          summary="$RUNNER_TEMP/content-summary.md"
+          {
+            jq -r '"Index the pages the knowledge base changed since the previous release: \(.added | length) added, \(.changed | length) changed, \(.removed | length) removed."' "$diff"
+            echo
+            jq -r '(.added[] | "- Added `\(.)`"), (.changed[] | "- Changed `\(.)`"), (.removed[] | "- Removed `\(.)`")' "$diff"
+          } > "$summary"
+          {
+            echo 'content<<CHANGESET_EOF'
+            printf -- '---\n"@aragon/assistant": patch\n---\n\n'
+            cat "$summary"
+            echo 'CHANGESET_EOF'
+            echo 'body<<BODY_EOF'
+            printf -- '## Changelog\n\n'
+            cat "$summary"
+            echo 'BODY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+  # A failed comparison does not hold the release back: it starts on the changesets alone.
+  start:
+    needs: content
+    if: ${{ !cancelled() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     uses: aragon/github-templates/.github/workflows/release-start.yml@v1
     with:
       engine: changesets
@@ -54,6 +153,8 @@ jobs:
       commit-message: "Release {tag}"
       summary-path-filter: assistant
       on-active-release: ${{ github.event_name == 'schedule' && 'skip' || 'fail' }}
+      extra-changeset: ${{ needs.content.outputs.changeset }}
+      body-extras: ${{ needs.content.outputs.body }}
       op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
       op-gpg-key-path: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
       op-gpg-passphrase-path: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
@@ -65,9 +166,53 @@ jobs:
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
-  refresh:
+  # The changelog block of the PR body, re-read from the branch for every rewrite of the body.
+  changelog:
     if: >
       github.event_name == 'pull_request'
+      && github.event.action != 'closed'
+      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      body: ${{ steps.body.outputs.content }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          sparse-checkout: apps/assistant
+
+      - name: Read the version
+        id: version
+        run: echo "version=$(jq -r .version apps/assistant/package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Read the changelog section
+        id: changelog
+        uses: aragon/github-templates/steps/read-changelog@v1
+        with:
+          version: ${{ steps.version.outputs.version }}
+          path: apps/assistant/CHANGELOG.md
+
+      - name: Compose the block
+        id: body
+        env:
+          CHANGES: ${{ steps.changelog.outputs.changes }}
+        run: |
+          set -euo pipefail
+          {
+            echo 'content<<BODY_EOF'
+            printf -- '## Changelog\n\n%s\n' "$CHANGES"
+            echo 'BODY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+  # A missing changelog block does not hold the refresh back: the summary goes out without it.
+  refresh:
+    needs: changelog
+    if: >
+      !cancelled()
+      && github.event_name == 'pull_request'
       && github.event.action != 'closed'
       && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
     uses: aragon/github-templates/.github/workflows/release-pr-refresh.yml@v1
@@ -75,6 +220,7 @@ jobs:
       release-branch-prefix: release/assistant/
       tag-prefix: "@aragon/assistant@"
       summary-path-filter: assistant
+      body-extras: ${{ needs.changelog.outputs.body }}
       op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
       op-linear-token-path: op://kv_app_infra/LINEAR_API_TOKEN/credential
       op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
@@ -105,14 +251,96 @@ jobs:
       - name: Run tests with coverage
         run: pnpm test:coverage
 
+  # Every dev deploy takes the newest knowledge base.
+  corpus:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      commit: ${{ steps.head.outputs.commit }}
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@v1
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Resolve the head of the knowledge base
+        id: head
+        env:
+          GH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+        run: |
+          set -euo pipefail
+          commit="$(gh api repos/aragon/platform-doc/commits/development --jq .sha)"
+          echo "Knowledge base: aragon/platform-doc@$commit"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+  # Every push lands on dev, announced in the release thread (found through the PR body). The
+  # inputs mirror assistant-development.yml, which deploys the same environment from main; the
+  # two are not serialized, so a merge to main during the release puts main back on dev — the
+  # release branch only bumps main, and the next push to the PR redeploys it.
+  deploy:
+    needs: [test, corpus]
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
+    with:
+      env: development
+      ref: ${{ github.event.pull_request.head.sha }}
+      domain: dev.assistant.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/assistant
+      op-infra-vault: kv_assistant_infra
+      op-env-vault: kv_assistant_development
+      setup-command: pnpm run setup development
+      # The build reads the private aragon/platform-doc knowledge base; build-time only.
+      op-build-secret-refs: DOCS_REPO_TOKEN=op://kv_app_infra/ARABOT_PAT/credential
+      env-overrides: DOCS_CORPUS_REF=${{ needs.corpus.outputs.commit }}
+      # dev.assistant is an aliased preview deployment, so VERCEL_ENV reports 'preview' at
+      # runtime — ASSISTANT_ENV pins the actual environment for src/lib/env.ts.
+      runtime-env: "ASSISTANT_ENV=development"
+      runtime-env-keys: "AI_GATEWAY_API_KEY LINEAR_API_KEY LINEAR_TEAM_ID UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN BLOB_READ_WRITE_TOKEN CRON_SECRET SENTRY_DSN"
+      upload-sentry-source-maps: true
+      slack-thread-pr-number: ${{ github.event.pull_request.number }}
+      next-steps: |
+        Ready for testing 🧪 (knowledge base `${{ needs.corpus.outputs.commit }}`)
+        • Found bugs? Create a PR with fixes to `${{ github.event.pull_request.head.ref }}`
+        • All good? Approve the PR and merge → the production deploy starts automatically
+      op-release-token-path: op://kv_app_infra/ARABOT_PAT/credential
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # Only a head that reached dev carries the status: production refuses a tag without it.
+  pin:
+    needs: [corpus, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Record the knowledge-base commit on the release head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          CORPUS: ${{ needs.corpus.outputs.commit }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/statuses/$SHA" \
+            -f state=success \
+            -f context=assistant/corpus \
+            -f description="$CORPUS" \
+            -f target_url="https://github.com/aragon/platform-doc/commit/$CORPUS" \
+            --silent
+
   # Not a required check: a red smoke is a signal to read the conversations, not a merge gate.
   # The result lands in the release thread and as a PR comment, a failure also in the alerts
   # channel.
   smoke:
-    if: >
-      github.event_name == 'pull_request'
-      && github.event.action != 'closed'
-      && startsWith(github.event.pull_request.head.ref, 'release/assistant/')
+    needs: deploy
     # What the called workflow asks for: `actions: read` for the deploy-run lookup,
     # `pull-requests: write` for the result comment.
     permissions:
@@ -126,6 +354,8 @@ jobs:
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
+  # Tags the dev-TESTED head commit, not the merge commit: it is the commit that carries the
+  # `assistant/corpus` status.
   finalize:
     if: >
       github.event_name == 'pull_request'

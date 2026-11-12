@@ -20,6 +20,11 @@ export type {
 export type { IWorkspaceProposal } from './workspaceProposal';
 export type { IWorkspaceProposalListResponse } from './workspaceProposalListResponse';
 export type {
+    IWorkspaceTodoProposal,
+    IWorkspaceTodoResponse,
+    IWorkspaceTodoTransaction,
+} from './workspaceTodo';
+export type {
     IWorkspaceTransaction,
     IWorkspaceTransactionBase,
     IWorkspaceTransactionExecution,

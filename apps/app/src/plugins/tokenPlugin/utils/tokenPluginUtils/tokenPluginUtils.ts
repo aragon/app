@@ -1,7 +1,10 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { pluginMetaUtils } from '@/shared/utils/pluginMetaUtils';
-import type { ITokenPluginSettingsToken } from '../../types';
+import type {
+    ITokenPluginSettings,
+    ITokenPluginSettingsToken,
+} from '../../types';
 
 export interface ITokenPluginHasExecutePermissionParams {
     /**
@@ -26,6 +29,13 @@ class TokenPluginUtils {
             name: token.name?.slice(11) ?? token.name,
         };
     };
+
+    /**
+     * Whether `balanceOf` on the governance token is a token amount. A voting-escrow adapter
+     * returns the number of locks the member holds instead.
+     */
+    hasTokenBalance = (settings: ITokenPluginSettings): boolean =>
+        settings.votingEscrow == null;
 
     hasExecuteProposalPermissionModifier = (
         params: ITokenPluginHasExecutePermissionParams,
