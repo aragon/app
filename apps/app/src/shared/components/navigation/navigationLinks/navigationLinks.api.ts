@@ -23,4 +23,24 @@ export interface INavigationLink {
      * Determines display order. Lower values appear first.
      */
     order?: number;
+    /**
+     * Short count displayed after the label (e.g. the number of to-dos waiting on the wallet).
+     */
+    badge?: string;
+}
+
+export interface INavigationLinkGroup {
+    /**
+     * Stable identifier of the group, its React key among the groups of a navigation. Not derived from the label: a
+     * workspace named like a fixed group would otherwise share its key.
+     */
+    id: string;
+    /**
+     * Label displayed above the links of the group (e.g. "Inbox", or the name of the workspace).
+     */
+    label?: string;
+    /**
+     * Links of the group. A group whose links are all hidden is not rendered.
+     */
+    links: INavigationLink[];
 }

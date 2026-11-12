@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { ensTransactionUtils } from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import * as ipfsServiceMutations from '@/shared/api/ipfsService/mutations';
 import {
@@ -26,15 +27,15 @@ jest.mock('@/shared/components/transactionDialog', () => ({
     TransactionDialogStep: { PREPARE: 'PREPARE' },
 }));
 
-jest.mock('wagmi/actions', () => ({
-    getEnsResolver: jest.fn(),
-}));
-
 jest.mock('@/modules/application/constants/wagmi', () => ({
     wagmiConfig: { mocked: true },
 }));
 
-const RESOLVER = '0xResolverResolverResolverResolverResolver01';
+const TRANSACTION = {
+    to: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63',
+    data: '0x10f13a8c',
+    value: BigInt(0),
+} as const;
 
 const buildParams = (
     overrides?: Partial<IDelegateStatementTransactionDialogParams>,
@@ -49,10 +50,15 @@ const buildParams = (
 describe('<DelegateStatementTransactionDialog />', () => {
     const usePinJsonSpy = jest.spyOn(ipfsServiceMutations, 'usePinJson');
     const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
+    const buildUpdateRecordsTransactionSpy = jest.spyOn(
+        ensTransactionUtils,
+        'buildUpdateRecordsTransaction',
+    );
 
     afterEach(() => {
         usePinJsonSpy.mockReset();
         logErrorSpy.mockReset();
+        buildUpdateRecordsTransactionSpy.mockReset();
         (TransactionDialog as unknown as jest.Mock).mockClear();
     });
 
@@ -118,15 +124,14 @@ describe('<DelegateStatementTransactionDialog />', () => {
         expect(props.customSteps?.[0].meta.errorLabel).toBeTruthy();
     });
 
-    it('encodes the setText call with the pinned CID once pinJson succeeds', async () => {
+    it('writes the pinned CID to the delegate-statement text record once pinJson succeeds', async () => {
         const ipfsHash = 'bafyHashFromPinata';
         usePinJsonSpy.mockReturnValue(
             generateReactQueryMutationResultSuccess({
                 data: { IpfsHash: ipfsHash },
             }) as never,
         );
-        const { getEnsResolver } = await import('wagmi/actions');
-        (getEnsResolver as jest.Mock).mockResolvedValue(RESOLVER);
+        buildUpdateRecordsTransactionSpy.mockResolvedValue(TRANSACTION);
 
         render(
             <ReactQueryWrapper>
@@ -137,11 +142,13 @@ describe('<DelegateStatementTransactionDialog />', () => {
         );
 
         const props = lastDialogProps();
-        const tx = await props.prepareTransaction();
-        expect(tx.to).toBe(RESOLVER);
-        expect(typeof tx.data).toBe('string');
-        expect(tx.data.startsWith('0x')).toBe(true);
-        expect(tx.value).toBe(BigInt(0));
+        await expect(props.prepareTransaction()).resolves.toBe(TRANSACTION);
+        expect(buildUpdateRecordsTransactionSpy).toHaveBeenCalledWith({
+            ensName: 'whomst.eth',
+            updates: {
+                'eth.0x1111111111111111111111111111111111111111.delegate': `ipfs://${ipfsHash}`,
+            },
+        });
     });
 
     it('routes Pinata pin failures through monitoringUtils with stage="pinStatement"', () => {
@@ -177,8 +184,7 @@ describe('<DelegateStatementTransactionDialog />', () => {
                 data: { IpfsHash: 'bafyTest' },
             }) as never,
         );
-        const { getEnsResolver } = await import('wagmi/actions');
-        (getEnsResolver as jest.Mock).mockRejectedValue(
+        buildUpdateRecordsTransactionSpy.mockRejectedValue(
             new Error('resolver lookup failed'),
         );
 

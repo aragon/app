@@ -10,6 +10,8 @@ import {
     ToggleGroup,
     TransactionDataListItem,
 } from '@aragon/gov-ui-kit';
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
@@ -18,12 +20,17 @@ import {
     type IGetWorkspaceTransactionsFilters,
     type IGetWorkspaceTransactionsParams,
     type IWorkspaceAccountRef,
+    type IWorkspaceTransaction,
     useWorkspaceTransactions,
     WorkspaceTransactionType,
 } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceCoverageUtils } from '../../utils/workspaceCoverageUtils';
+import {
+    workspaceSafeTransactionParam,
+    workspaceTransactionUtils,
+} from '../../utils/workspaceTransactionUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import { WorkspaceTransactionListItem } from './workspaceTransactionListItem';
 
@@ -193,6 +200,30 @@ export const WorkspaceTransactionList: React.FC<
     );
     const metadata = data?.pages[0].metadata;
 
+    // A transfer between two selected accounts is listed once per account under the same ID.
+    const getItemId = (transaction: IWorkspaceTransaction) =>
+        `${workspaceUtils.buildAccountId(transaction.account)}-${transaction.id}`;
+
+    // A link to a Safe transaction (`workspaceTransactionUtils.getSafeTransactionUrl`) lands on its row expanded,
+    // as long as the row is among the loaded ones, which the queued transactions are: they come first. The
+    // reader's own choice then takes over, an empty one meaning they collapsed the row.
+    const linkedSafeTxHash = useSearchParams()
+        .get(workspaceSafeTransactionParam)
+        ?.toLowerCase();
+    const linkedTransaction =
+        linkedSafeTxHash == null
+            ? undefined
+            : transactions?.find(
+                  (transaction) =>
+                      workspaceTransactionUtils.isExecution(transaction) &&
+                      transaction.safeTxHash?.toLowerCase() ===
+                          linkedSafeTxHash,
+              );
+    const [selectedItemId, setSelectedItemId] = useState<string>();
+    const expandedItemId =
+        selectedItemId ??
+        (linkedTransaction == null ? '' : getItemId(linkedTransaction));
+
     // The list is incomplete as soon as one account of one loaded page could not be read at all. Saying so is what
     // stops a short list from reading as the complete history. A `partial` account — read, but not exhaustively —
     // is deliberately not warned about here: it is carried by the count alone, which `hasIncompleteCount` marks as
@@ -267,7 +298,11 @@ export const WorkspaceTransactionList: React.FC<
             )}
             {/* The accordion container wraps the data list container rather than sitting inside it: the data list
                 container counts its direct children to paginate, and the items reach their accordion through context. */}
-            <Accordion.Container isMulti={false}>
+            <Accordion.Container
+                isMulti={false}
+                onValueChange={(itemId) => setSelectedItemId(itemId ?? '')}
+                value={expandedItemId}
+            >
                 <DataListContainer
                     emptyState={{
                         heading: t(
@@ -290,8 +325,7 @@ export const WorkspaceTransactionList: React.FC<
                             transaction.account,
                         );
                         const dao = daos[accountId];
-                        // A transfer between two selected accounts is listed once per account under the same ID.
-                        const itemId = `${accountId}-${transaction.id}`;
+                        const itemId = getItemId(transaction);
 
                         return (
                             <WorkspaceTransactionListItem

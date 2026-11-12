@@ -6,7 +6,46 @@ import {
 } from '@/modules/workspace/utils/workspaceUtils';
 import type { INavigationLink } from '@/shared/components/navigation';
 
+export interface INavigationWorkspaceTodos {
+    /**
+     * Whether a wallet is connected. To-dos belong to the wallet, so the link is hidden without one.
+     */
+    isConnected: boolean;
+    /**
+     * Number of to-dos waiting on the wallet, shown as the badge of the link when above zero.
+     */
+    count: number;
+}
+
 class NavigationWorkspaceUtils {
+    /**
+     * Links of the wallet's inbox in a workspace: its to-dos, scoped like the section links. To-dos belong to the
+     * connected wallet, so the link is hidden without one, which hides the whole group, and carries the number
+     * waiting as its badge.
+     * @param workspaceId - ID of the workspace to build the links for.
+     * @param accountId - Account the link stays scoped to, defaulting to every account of the workspace.
+     * @param todos - Connection state and number of to-dos waiting.
+     * @returns The navigation links.
+     */
+    buildInboxLinks = (
+        workspaceId: string,
+        accountId: string | undefined,
+        todos: INavigationWorkspaceTodos,
+    ): INavigationLink[] => [
+        {
+            label: 'app.application.navigationWorkspace.link.todos',
+            link: workspaceUtils.getAccountScopeUrl(
+                workspaceId,
+                workspaceUtils.resolveAccountScope(accountId),
+                'todos',
+            ),
+            icon: IconType.CHECKMARK,
+            order: 100,
+            hidden: !todos.isConnected,
+            badge: todos.count > 0 ? todos.count.toString() : undefined,
+        },
+    ];
+
     /**
      * Navigation links of the account a workspace page is scoped to.
      *

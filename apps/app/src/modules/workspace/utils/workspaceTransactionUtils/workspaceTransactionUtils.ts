@@ -5,6 +5,12 @@ import {
     type IWorkspaceTransactionPendingExecution,
     WorkspaceTransactionStatus,
 } from '../../api/workspaceQueryService';
+import { workspaceUtils } from '../workspaceUtils';
+
+/**
+ * URL parameter of the workspace transactions page naming, by its hash, the Safe transaction to expand on arrival.
+ */
+export const workspaceSafeTransactionParam = 'safetx';
 
 class WorkspaceTransactionUtils {
     /**
@@ -58,6 +64,31 @@ class WorkspaceTransactionUtils {
             .toUpperCase();
 
         return initials.length > 0 ? `${initials}-${nonce}` : `#${nonce}`;
+    };
+
+    /**
+     * URL of a Safe transaction inside a workspace: the transactions of its account, which expand the transaction
+     * named by `workspaceSafeTransactionParam`.
+     * @param workspaceId - ID of the workspace.
+     * @param accountId - ID of the Safe account the transaction belongs to.
+     * @param safeTxHash - Hash of the Safe transaction.
+     * @returns The URL of the transaction.
+     */
+    getSafeTransactionUrl = (
+        workspaceId: string,
+        accountId: string,
+        safeTxHash: string,
+    ): string => {
+        const transactionsUrl = workspaceUtils.getAccountScopeUrl(
+            workspaceId,
+            accountId,
+            'transactions',
+        );
+        const searchParams = new URLSearchParams({
+            [workspaceSafeTransactionParam]: safeTxHash,
+        });
+
+        return `${transactionsUrl}?${searchParams.toString()}`;
     };
 }
 

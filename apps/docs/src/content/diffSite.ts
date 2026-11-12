@@ -1,4 +1,4 @@
-import type { ISite, ISitePage } from './buildContent';
+import { type ISite, type ISitePage, listSitePages } from './buildContent';
 
 // What a release changes on the site: its pages, by route, against the site of the previous
 // release. A page counts as changed when what a reader sees of it does — its title, description
@@ -10,11 +10,7 @@ export interface ISiteDiff {
     removed: string[];
 }
 
-const listPages = (site: ISite): ISitePage[] =>
-    [site.root, ...site.areas].flatMap((folder) => [
-        ...(folder.index == null ? [] : [folder.index]),
-        ...folder.pages,
-    ]);
+const listPages = (site: ISite): ISitePage[] => listSitePages(site.root);
 
 const readerView = (page: ISitePage): string =>
     JSON.stringify([page.title, page.description ?? '', page.body]);

@@ -14,6 +14,7 @@ export {
     useWorkspaceProposalList,
     workspaceProposalListOptions,
 } from './useWorkspaceProposalList';
+export { useWorkspaceTodo, workspaceTodoOptions } from './useWorkspaceTodo';
 export {
     useWorkspaceTransactions,
     workspaceTransactionsOptions,

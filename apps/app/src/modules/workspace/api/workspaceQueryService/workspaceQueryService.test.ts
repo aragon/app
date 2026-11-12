@@ -10,6 +10,7 @@ import { workspaceQueryService } from './workspaceQueryService';
 import type {
     IGetWorkspaceAssetListParams,
     IGetWorkspaceMemberListParams,
+    IGetWorkspaceTodoParams,
     IGetWorkspaceTransactionsParams,
 } from './workspaceQueryService.api';
 
@@ -111,6 +112,30 @@ describe('workspaceQuery service', () => {
                 { method: 'POST' },
             );
             expect(result).toEqual(members);
+        });
+    });
+
+    describe('getTodo', () => {
+        it('posts the accounts and the member address to the v2 workspace to-do endpoint and returns the response', async () => {
+            const todo = {
+                proposals: [],
+                transactions: [],
+                coverage: [],
+                partial: false,
+            };
+            requestSpy.mockResolvedValue(todo);
+
+            const params: IGetWorkspaceTodoParams = {
+                body: { accounts: [account], memberAddress: '0xMember' },
+            };
+            const result = await workspaceQueryService.getTodo(params);
+
+            expect(requestSpy).toHaveBeenCalledWith(
+                '/v2/workspaces/query/todo',
+                params,
+                { method: 'POST' },
+            );
+            expect(result).toEqual(todo);
         });
     });
 

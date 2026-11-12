@@ -4,6 +4,7 @@ import type {
     IGetWorkspaceAssetListParams,
     IGetWorkspaceMemberListParams,
     IGetWorkspaceProposalListParams,
+    IGetWorkspaceTodoParams,
     IGetWorkspaceTransactionsParams,
 } from './workspaceQueryService.api';
 
@@ -13,6 +14,7 @@ export enum WorkspaceQueryServiceKey {
     ASSET_LIST = 'WORKSPACE_ASSET_LIST',
     PROPOSAL_LIST = 'WORKSPACE_PROPOSAL_LIST',
     MEMBER_LIST = 'WORKSPACE_MEMBER_LIST',
+    TODO = 'WORKSPACE_TODO',
 }
 
 export const workspaceQueryServiceKeys = {
@@ -38,6 +40,11 @@ export const workspaceQueryServiceKeys = {
     ],
     memberList: (params: IGetWorkspaceMemberListParams) => [
         WorkspaceQueryServiceKey.MEMBER_LIST,
+        apiVersionUtils.getApiVersion(),
+        params,
+    ],
+    todo: (params: IGetWorkspaceTodoParams) => [
+        WorkspaceQueryServiceKey.TODO,
         apiVersionUtils.getApiVersion(),
         params,
     ],

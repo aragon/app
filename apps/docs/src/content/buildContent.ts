@@ -51,7 +51,8 @@ export interface ISitePage {
 
 export interface ISiteFolder {
     /**
-     * Corpus directory: '' for the root, 'accounts' for an area.
+     * Corpus directory: '' for the root, 'accounts' for an area, 'governance/configuration' for
+     * a folder inside one.
      */
     dir: string;
     title: string;
@@ -60,18 +61,37 @@ export interface ISiteFolder {
      */
     index?: ISitePage;
     /**
-     * The folder's pages in sidebar order.
+     * The folder's own pages in sidebar order.
      */
     pages: ISitePage[];
+    /**
+     * The folders inside it in sidebar order; the sidebar nests them the way the corpus does.
+     */
+    folders: ISiteFolder[];
+    /**
+     * The sidebar order of the folder: the slugs of its pages and the names of its folders, as
+     * its index links to them, the ones it does not link to after (pages by path, then folders).
+     */
+    order: string[];
 }
 
 export interface ISite {
     root: ISiteFolder;
     /**
-     * The areas in sidebar order.
+     * The areas (the root's folders) in sidebar order.
      */
     areas: ISiteFolder[];
 }
+
+/**
+ * Every page of a folder and the folders inside it: the landing page first, then the pages, then
+ * the folders in sidebar order.
+ */
+export const listSitePages = (folder: ISiteFolder): ISitePage[] => [
+    ...(folder.index == null ? [] : [folder.index]),
+    ...folder.pages,
+    ...folder.folders.flatMap(listSitePages),
+];
 
 export interface IFile {
     /**
@@ -93,10 +113,22 @@ export const toRoute = (corpusPath: string): string =>
 const indexPathOf = (dir: string): string =>
     dir === '' ? 'index.md' : `${dir}/index.md`;
 
+// The directory of a page, and the parent of a directory ('' for the root and the areas).
 const dirOf = (corpusPath: string): string => {
     const dir = path.posix.dirname(corpusPath);
 
     return dir === '.' ? '' : dir;
+};
+
+const slugOf = (corpusPath: string): string =>
+    path.posix.basename(corpusPath, '.md');
+
+// The title of a folder with neither an index page nor a page of its own, from its name
+// (staged-governance → Staged governance).
+const humanizeDir = (dir: string): string => {
+    const name = path.posix.basename(dir).replace(/-/g, ' ');
+
+    return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
 // A destination the author percent-encoded is compared decoded; one with a stray `%` (not an
@@ -242,13 +274,14 @@ const toSitePage = (
 });
 
 /**
- * Arranges the published pages into the site: the areas (folders with published pages) and their
- * landing pages come from the index.md files, which also set the sidebar order — a folder's pages
- * follow the order its index links to them, the areas the order the root index links to their
- * landing pages, and pages an index does not link to come after, by path. `indexSources` holds
- * the raw index.md files of the corpus by path; a folder without one has no landing page.
- * `lastModified` dates the corpus files by their last change (readLastModified of the loader);
- * a page it does not date shows no date.
+ * Arranges the published pages into the site, the tree of the corpus: the areas (folders with
+ * published pages), the folders inside them and their landing pages come from the index.md
+ * files, which also set the sidebar order — a folder's pages and folders follow the order its
+ * index links to them (a folder through its landing page), the areas the order the root index
+ * links to their landing pages, and what an index does not link to comes after, by path.
+ * `indexSources` holds the raw index.md files of the corpus by path; a folder without one has no
+ * landing page. `lastModified` dates the corpus files by their last change (readLastModified of
+ * the loader); a page it does not date shows no date.
  */
 export const buildSite = (
     documents: ICorpusDocument[],
@@ -258,6 +291,13 @@ export const buildSite = (
     const publishedPaths: ReadonlySet<string> = new Set(
         documents.map((document) => document.path),
     );
+    // Every directory on the way to a published page: a folder of the site.
+    const folderDirs = new Set<string>();
+    for (const document of documents) {
+        for (let dir = dirOf(document.path); dir !== ''; dir = dirOf(dir)) {
+            folderDirs.add(dir);
+        }
+    }
 
     const buildFolder = (dir: string): ISiteFolder => {
         const indexPath = indexPathOf(dir);
@@ -269,12 +309,40 @@ export const buildSite = (
         const pages = folderDocuments.map((document) =>
             toSitePage(document, lastModified),
         );
+        const childDirs = [...folderDirs]
+            .filter((candidate) => dirOf(candidate) === dir)
+            .sort((a, b) => a.localeCompare(b));
         // The loader read the area title from the same index.md, or humanized the directory.
         const title =
             (source == null ? undefined : readTitle(source)) ??
             folderDocuments[0]?.area ??
-            siteTitle;
+            (dir === '' ? siteTitle : humanizeDir(dir));
         const linked = source == null ? [] : listLinkedPaths(source, context);
+        const linkedDirs = linked
+            .filter((linkedPath) => slugOf(linkedPath) === 'index')
+            .map(dirOf)
+            .filter((linkedDir) => childDirs.includes(linkedDir));
+        const folders = [
+            ...linkedDirs,
+            ...childDirs.filter((childDir) => !linkedDirs.includes(childDir)),
+        ].map(buildFolder);
+        const orderedPages = orderPages(pages, linked);
+        const linkedNames = linked.flatMap((linkedPath) => {
+            if (pages.some((page) => page.path === linkedPath)) {
+                return [slugOf(linkedPath)];
+            }
+            const linkedDir = dirOf(linkedPath);
+
+            return slugOf(linkedPath) === 'index' &&
+                childDirs.includes(linkedDir)
+                ? [path.posix.basename(linkedDir)]
+                : [];
+        });
+        const order = [
+            ...linkedNames,
+            ...orderedPages.map((page) => slugOf(page.path)),
+            ...folders.map((folder) => path.posix.basename(folder.dir)),
+        ].filter((name, index, names) => names.indexOf(name) === index);
 
         return {
             dir,
@@ -293,31 +361,16 @@ export const buildSite = (
                               (url) => resolveSiteLink(url, context),
                           ),
                       },
-            pages: orderPages(pages, linked),
+            pages: orderedPages,
+            folders,
+            order,
         };
     };
 
     const root = buildFolder('');
-    const rootSource = indexSources.get(indexPathOf('')) ?? '';
-    const linkedDirs = listLinkedPaths(rootSource, {
-        path: indexPathOf(''),
-        publishedPaths,
-    })
-        .filter((linkedPath) => path.posix.basename(linkedPath) === 'index.md')
-        .map(dirOf);
-    const dirs = [...new Set(documents.map((document) => dirOf(document.path)))]
-        .filter((dir) => dir !== '')
-        .sort((a, b) => a.localeCompare(b));
-    const areas = [
-        ...linkedDirs.filter((dir) => dirs.includes(dir)),
-        ...dirs.filter((dir) => !linkedDirs.includes(dir)),
-    ].map(buildFolder);
 
-    return { root, areas };
+    return { root, areas: root.folders };
 };
-
-const slugOf = (corpusPath: string): string =>
-    path.posix.basename(corpusPath, '.md');
 
 const renderFrontmatter = (
     fields: Record<string, string | boolean | undefined>,
@@ -381,7 +434,7 @@ const toContentFile = (page: ISitePage, entry?: ISidebarEntry): IFile => ({
     })}${page.body}\n`,
 });
 
-// The sidebar order of a folder: its pages in order, then whatever else is in the folder.
+// The sidebar order of a folder: its pages and folders in order, then whatever else is in it.
 const toMetaFile = (folder: ISiteFolder, items: string[]): IFile => ({
     path: path.posix.join(folder.dir, 'meta.json'),
     content: `${JSON.stringify(
@@ -395,6 +448,14 @@ const toMetaFile = (folder: ISiteFolder, items: string[]): IFile => ({
     )}\n`,
 });
 
+// The files of a folder and the folders inside it; a folder's landing page is its folder entry.
+const renderFolderFiles = (folder: ISiteFolder, items: string[]): IFile[] => [
+    ...(folder.index == null ? [] : [toContentFile(folder.index)]),
+    ...folder.pages.map((page) => toContentFile(page)),
+    toMetaFile(folder, items),
+    ...folder.folders.flatMap((child) => renderFolderFiles(child, child.order)),
+];
+
 /**
  * The files of the fumadocs content directory: a markdown page per published page and landing
  * page, a meta.json per folder.
@@ -404,30 +465,19 @@ export const renderContentFiles = (site: ISite): IFile[] => {
         ...(site.root.index == null ? [] : [site.root.index]),
         ...site.root.pages,
     ];
-    const areaPages = site.areas.flatMap((area) => [
-        ...(area.index == null ? [] : [area.index]),
-        ...area.pages,
-    ]);
     // The home page and the root pages sit next to the areas; sidebarEntries orders them together
     // (a stable sort, so the unlisted ones keep the order of the root index).
     const rootItems = [
-        ...rootPages.map((page) => slugOf(page.path)),
-        ...site.areas.map((area) => area.dir),
+        ...(site.root.index == null ? [] : ['index']),
+        ...site.root.order,
     ].sort((a, b) => sidebarRankOf(a) - sidebarRankOf(b));
 
-    // An area's landing page is its folder entry.
     return [
         ...rootPages.map((page) =>
             toContentFile(page, sidebarEntryOf(slugOf(page.path))),
         ),
-        ...areaPages.map((page) => toContentFile(page)),
         toMetaFile(site.root, rootItems),
-        ...site.areas.map((area) =>
-            toMetaFile(
-                area,
-                area.pages.map((page) => slugOf(page.path)),
-            ),
-        ),
+        ...site.areas.flatMap((area) => renderFolderFiles(area, area.order)),
     ];
 };
 
@@ -454,23 +504,27 @@ const renderLlmsEntry = (page: ISitePage): string => {
  * llms-full.txt concatenation.
  */
 export const renderPublicFiles = (site: ISite): IFile[] => {
-    const folders = [site.root, ...site.areas];
-    const pages = folders.flatMap((folder) => [
-        ...(folder.index == null ? [] : [folder.index]),
-        ...folder.pages,
-    ]);
+    const pages = listSitePages(site.root);
+    // An area is a section of the index, a folder inside it a subsection.
+    const renderLlmsSection = (
+        folder: ISiteFolder,
+        level: number,
+    ): string[] => [
+        '',
+        `${'#'.repeat(level)} ${folder.title}`,
+        '',
+        ...folder.pages.map(renderLlmsEntry),
+        ...folder.folders.flatMap((child) =>
+            renderLlmsSection(child, Math.min(level + 1, 6)),
+        ),
+    ];
     const index = [
         `# ${siteTitle}`,
         '',
         `> ${siteDescription}`,
         '',
         ...site.root.pages.map(renderLlmsEntry),
-        ...site.areas.flatMap((area) => [
-            '',
-            `## ${area.title}`,
-            '',
-            ...area.pages.map(renderLlmsEntry),
-        ]),
+        ...site.areas.flatMap((area) => renderLlmsSection(area, 2)),
     ];
     const full = pages.map(
         (page) =>

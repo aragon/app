@@ -90,6 +90,41 @@ describe('navigationWorkspace utils', () => {
         });
     });
 
+    describe('buildInboxLinks', () => {
+        it('hides the to-dos link without a connected wallet', () => {
+            const [link] = navigationWorkspaceUtils.buildInboxLinks(
+                workspaceId,
+                'all',
+                { isConnected: false, count: 0 },
+            );
+
+            expect(link.hidden).toBeTruthy();
+        });
+
+        it('scopes the to-dos link to the account and badges it with the count waiting', () => {
+            const [link] = navigationWorkspaceUtils.buildInboxLinks(
+                workspaceId,
+                accountId,
+                { isConnected: true, count: 5 },
+            );
+
+            expect(link.link).toEqual(`/workspace/demo/${accountId}/todos`);
+            expect(link.hidden).toBeFalsy();
+            expect(link.badge).toEqual('5');
+        });
+
+        it('shows no badge when nothing is waiting', () => {
+            const [link] = navigationWorkspaceUtils.buildInboxLinks(
+                workspaceId,
+                'all',
+                { isConnected: true, count: 0 },
+            );
+
+            expect(link.link).toEqual('/workspace/demo/all/todos');
+            expect(link.badge).toBeUndefined();
+        });
+    });
+
     describe('buildWorkspaceLinks', () => {
         it('links the settings of the workspace to its edit wizard', () => {
             const links =

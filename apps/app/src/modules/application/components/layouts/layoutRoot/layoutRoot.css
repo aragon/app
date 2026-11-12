@@ -6,5 +6,6 @@
 @import "tailwindcss";
 @import "./breakpoints.css";
 
-@source "../../../../../../node_modules/@aragon/gov-ui-kit";
+/* Class names of the workspace packages the app renders: the kit ships as a bundle, the chat as source. */
+@source "../../../../../../node_modules/@aragon/gov-ui-kit/dist";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";

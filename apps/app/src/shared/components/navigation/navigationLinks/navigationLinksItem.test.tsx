@@ -38,6 +38,19 @@ describe('<NavigationLinksItem /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders the badge after the label when set', () => {
+        render(
+            createTestComponent({
+                children: 'To-dos',
+                href: '/todos',
+                badge: '5',
+            }),
+        );
+        expect(screen.getByRole('link', { name: /To-dos/ })).toHaveTextContent(
+            'To-dos5',
+        );
+    });
+
     it('correctly renders the link as row and active when href matches current pathname', () => {
         const href = '/test';
         const variant = 'column';

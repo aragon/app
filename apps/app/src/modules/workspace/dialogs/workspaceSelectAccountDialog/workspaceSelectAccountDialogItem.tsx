@@ -1,21 +1,18 @@
 import {
-    Avatar,
     addressUtils,
-    DaoAvatar,
     DataList,
     type IDataListItemProps,
     Tag,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import safeWallet from '@/assets/images/safeWallet.png';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountAvatar } from '../../components/workspaceAccountAvatar';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export type IWorkspaceSelectAccountDialogItemProps = IDataListItemProps & {
@@ -92,23 +89,11 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         'opacity-60': isDisabled,
                     })}
                 >
-                    {isDao ? (
-                        <DaoAvatar
-                            className="shrink-0"
-                            name={name}
-                            size="md"
-                            src={ipfsUtils.cidToSrc(avatar)}
-                        />
-                    ) : (
-                        <Avatar
-                            alt={t(
-                                'app.workspace.workspaceSelectAccountDialogItem.type.safe',
-                            )}
-                            className="shrink-0"
-                            size="md"
-                            src={ipfsUtils.cidToSrc(avatar) ?? safeWallet.src}
-                        />
-                    )}
+                    <WorkspaceAccountAvatar
+                        avatar={avatar}
+                        name={name}
+                        type={type}
+                    />
                     <div className="flex min-w-0 grow flex-col">
                         <span className="truncate text-base text-neutral-800 leading-tight">
                             {name ?? truncatedAddress}

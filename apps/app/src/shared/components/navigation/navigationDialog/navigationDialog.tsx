@@ -1,13 +1,22 @@
 import { Dialog, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type INavigationLink, NavigationLinks } from '../navigationLinks';
+import {
+    type INavigationLink,
+    type INavigationLinkGroup,
+    NavigationLinks,
+    NavigationLinksGroup,
+} from '../navigationLinks';
 import { NavigationLinksItem } from '../navigationLinks/navigationLinksItem';
 
 export interface INavigationDialogProps extends IDialogRootProps {
     /**
+     * Labelled groups of links, rendered first (e.g. the inbox of the wallet, then the sections of the workspace).
+     */
+    groups?: INavigationLinkGroup[];
+    /**
      * Links of the application.
      */
-    links: INavigationLink[];
+    links?: INavigationLink[];
     /**
      * Links rendered below the main ones, apart behind a divider (e.g. the settings of the workspace, below the
      * sections of the account it is scoped to).
@@ -16,8 +25,14 @@ export interface INavigationDialogProps extends IDialogRootProps {
 }
 
 export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
-    const { links, secondaryLinks, children, onOpenChange, ...otherProps } =
-        props;
+    const {
+        groups,
+        links,
+        secondaryLinks,
+        children,
+        onOpenChange,
+        ...otherProps
+    } = props;
 
     const { t } = useTranslations();
     const handleLinksClick = () => onOpenChange?.(false);
@@ -30,11 +45,20 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
             >
                 {children}
                 <div className="flex flex-col gap-4 px-4">
-                    <NavigationLinks
-                        links={links}
-                        onClick={handleLinksClick}
-                        variant="column"
-                    />
+                    {groups?.map((group) => (
+                        <NavigationLinksGroup
+                            group={group}
+                            key={group.id}
+                            onLinkClick={handleLinksClick}
+                        />
+                    ))}
+                    {links != null && (
+                        <NavigationLinks
+                            links={links}
+                            onClick={handleLinksClick}
+                            variant="column"
+                        />
+                    )}
                     {secondaryLinks != null && (
                         <>
                             <div className="w-full px-4">

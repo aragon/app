@@ -1,20 +1,13 @@
-import {
-    Avatar,
-    addressUtils,
-    DaoAvatar,
-    DataList,
-    Tag,
-} from '@aragon/gov-ui-kit';
-import safeWallet from '@/assets/images/safeWallet.png';
+import { addressUtils, DataList, Tag } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { IWorkspaceAccountInfo } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+import { WorkspaceAccountAvatar } from '../workspaceAccountAvatar';
 
 export interface IWorkspaceAccountItemProps {
     /**
@@ -67,21 +60,11 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
             className="flex items-center gap-3 p-4 md:p-6"
             href={accountUrl}
         >
-            {isDao ? (
-                <DaoAvatar
-                    className="shrink-0"
-                    name={name}
-                    size="md"
-                    src={ipfsUtils.cidToSrc(metadata?.avatar)}
-                />
-            ) : (
-                <Avatar
-                    alt={t('app.workspace.workspaceAccountItem.type.safe')}
-                    className="shrink-0"
-                    size="md"
-                    src={ipfsUtils.cidToSrc(metadata?.avatar) ?? safeWallet.src}
-                />
-            )}
+            <WorkspaceAccountAvatar
+                avatar={metadata?.avatar}
+                name={name}
+                type={type}
+            />
             <div className="flex min-w-0 grow flex-col">
                 <span className="truncate text-base text-neutral-800 leading-tight">
                     {name ?? truncatedAddress}

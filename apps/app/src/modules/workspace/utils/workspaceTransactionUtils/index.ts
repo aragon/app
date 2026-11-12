@@ -1,1 +1,4 @@
-export { workspaceTransactionUtils } from './workspaceTransactionUtils';
+export {
+    workspaceSafeTransactionParam,
+    workspaceTransactionUtils,
+} from './workspaceTransactionUtils';
