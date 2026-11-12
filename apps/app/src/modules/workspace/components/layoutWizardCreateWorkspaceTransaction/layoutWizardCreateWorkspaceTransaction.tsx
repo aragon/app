@@ -1,12 +1,9 @@
 import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
-// biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
-import { isAddress } from 'viem';
 import { LayoutWizard } from '@/modules/application/components/layouts/layoutWizard';
 import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { networkUtils } from '@/shared/utils/networkUtils';
+import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface ILayoutWizardCreateWorkspaceTransactionProps {
@@ -36,14 +33,7 @@ export const LayoutWizardCreateWorkspaceTransaction: React.FC<
 
     const { workspaceId, accountId } = await params;
 
-    // Validated like `LayoutWorkspaceAccount` does, with viem rather than `workspaceUtils.resolveAccountScope`: the
-    // kit's `addressUtils` it relies on is re-exported from a client module, so it cannot run in a server component.
-    const { network, address } = daoUtils.parseDaoId(accountId);
-
-    if (
-        !networkUtils.isValidNetwork(network) ||
-        !isAddress(address, { strict: false })
-    ) {
+    if (!workspaceAccountInfoUtils.isValidAccountId(accountId)) {
         notFound();
     }
 
