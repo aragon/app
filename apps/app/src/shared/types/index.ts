@@ -9,4 +9,5 @@ export type * from './queryOptions';
 export type { IWorkspaceAccountMemberPageParams } from './workspaceAccountMemberPageParams';
 export type { IWorkspaceAccountPageParams } from './workspaceAccountPageParams';
 export type { IWorkspaceAccountProposalPageParams } from './workspaceAccountProposalPageParams';
+export type { IWorkspaceCreateProposalPageParams } from './workspaceCreateProposalPageParams';
 export type { IWorkspacePageParams } from './workspacePageParams';

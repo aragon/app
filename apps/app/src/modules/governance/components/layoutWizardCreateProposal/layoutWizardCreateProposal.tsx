@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { unstable_rethrow } from 'next/navigation-server';
+import type { ReactNode } from 'react';
 import {
     type ILayoutWizardProps,
     LayoutWizard,
@@ -16,6 +17,14 @@ export interface ILayoutWizardCreateProposalProps {
      * URL parameters of the create proposal page.
      */
     params: Promise<ICreateProposalPageParams>;
+    /**
+     * Exit of the wizard and link of its error state. Defaults to the proposals of the DAO.
+     */
+    exitPath?: string;
+    /**
+     * Children of the layout.
+     */
+    children?: ReactNode;
 }
 
 interface IWizardConfig {
@@ -54,13 +63,14 @@ const getWizardConfig = (dao: IDao, pluginAddress: string): IWizardConfig => {
 export const LayoutWizardCreateProposal: React.FC<
     ILayoutWizardCreateProposalProps
 > = async (props) => {
-    const { params } = props;
+    const { params, exitPath, children } = props;
     const { addressOrEns, network, pluginAddress } = await params;
 
     const queryClient = new QueryClient();
     let wizardConfig: IWizardConfig = { name: '' };
 
-    const proposalsPageUrl = `/dao/${network}/${addressOrEns}/proposals/`;
+    const proposalsPageUrl =
+        exitPath ?? `/dao/${network}/${addressOrEns}/proposals/`;
 
     try {
         const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
@@ -89,8 +99,10 @@ export const LayoutWizardCreateProposal: React.FC<
         <LayoutWizard
             exitPath={proposalsPageUrl}
             name={wizardConfig.name}
+            params={params}
             targetDaoAddress={wizardConfig.targetDaoAddress}
-            {...props}
-        />
+        >
+            {children}
+        </LayoutWizard>
     );
 };

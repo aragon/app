@@ -5,7 +5,8 @@ import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
-import { daoService, type IDao, Network } from '@/shared/api/daoService';
+import * as usePermissionCheckGuardModule from '@/modules/governance/hooks/usePermissionCheckGuard';
+import { daoService, type IDaoPlugin, Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDao,
@@ -300,34 +301,6 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         );
     });
 
-    // The create flow resolves its destination from the DAOs, so the action waits for them.
-    it('offers proposal creation only once the DAOs of the workspace are loaded', async () => {
-        let resolveDao: (dao: IDao) => void = () => undefined;
-        getDaoSpy.mockReturnValue(
-            new Promise((resolve) => {
-                resolveDao = resolve;
-            }),
-        );
-        render(createTestComponent());
-
-        await waitFor(() =>
-            expect(lastListProps()?.accounts).toEqual([daoAccount]),
-        );
-        expect(
-            screen.queryByRole('button', {
-                name: /workspaceProposalsPage\.main\.action$/,
-            }),
-        ).not.toBeInTheDocument();
-
-        resolveDao(generateDao({ id: daoAccount.id }));
-
-        expect(
-            await screen.findByRole('button', {
-                name: /workspaceProposalsPage\.main\.action$/,
-            }),
-        ).toBeInTheDocument();
-    });
-
     it('offers no proposal creation for a workspace without DAO accounts', async () => {
         getWorkspaceSpy.mockResolvedValue(
             buildWorkspace({ accounts: [safeAccount] }),
@@ -382,6 +355,40 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
             WorkspaceDialogId.SELECT_ACCOUNT,
             expect.anything(),
         );
+    });
+
+    it('opens the workspace proposal wizard of the selected process once the permission check passes', async () => {
+        const pushMock = jest.fn();
+        const useRouterSpy = jest
+            .spyOn(NextNavigation, 'useRouter')
+            .mockReturnValue({
+                push: pushMock,
+            } as unknown as ReturnType<typeof NextNavigation.useRouter>);
+        const usePermissionCheckGuardSpy = jest
+            .spyOn(usePermissionCheckGuardModule, 'usePermissionCheckGuard')
+            .mockReturnValue({
+                check: (params) => params?.onSuccess?.(),
+                result: true,
+            });
+        mockAccountScope();
+        render(createTestComponent());
+
+        await userEvent.click(
+            await screen.findByRole('button', {
+                name: /workspaceProposalsPage\.main\.action$/,
+            }),
+        );
+        const pluginDialog = openMock.mock.calls.at(-1)?.[1] as
+            | { params: { onPluginSelected: (plugin: IDaoPlugin) => void } }
+            | undefined;
+        const plugin = generateDaoPlugin({ address: '0xPlugin' });
+        pluginDialog?.params.onPluginSelected(plugin);
+
+        expect(pushMock).toHaveBeenCalledWith(
+            `/workspace/demo/${daoAccount.id}/create/${plugin.address}/proposal`,
+        );
+        useRouterSpy.mockRestore();
+        usePermissionCheckGuardSpy.mockRestore();
     });
 
     it('still aggregates every DAO account on the all-accounts route', async () => {
