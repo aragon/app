@@ -295,16 +295,21 @@ src/app/workspace/[workspaceId]/
 │  ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
 │  ├─ not-found.tsx           NotFoundBase, so a 404 keeps the workspace navigation
 │  ├─ all/
-│  │  ├─ {overview,proposals,assets,transactions,members}/page.tsx
+│  │  ├─ {overview,todos,proposals,assets,transactions,members}/page.tsx
 │  │  └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 │  └─ [accountId]/
 │     ├─ layout.tsx           LayoutWorkspaceAccount (account lookup + DAO read)
 │     ├─ overview/page.tsx    WorkspaceAccountOverviewPage (the DAO dashboard, or the Safe dashboard)
-│     ├─ assets/page.tsx      WorkspaceAssetsPage, the same page the aggregated route renders
-│     ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise the aggregated route's own page
+│     ├─ todos/page.tsx       WorkspaceTodosPage, the same page the aggregated route renders
+│     ├─ assets/page.tsx      WorkspaceAssetsPage, likewise
+│     ├─ transactions/page.tsx   WorkspaceTransactionsPage, likewise
 │     ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
 │     ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
 │     ├─ members/page.tsx     WorkspaceAccountMembersPage
+│     ├─ members/[address]/page.tsx   WorkspaceAccountMemberDetailsPage (a Safe: redirect to its members)
+│     ├─ permissions/page.tsx   WorkspaceAccountPermissionsPage, DAO only
+│     ├─ settings/page.tsx    WorkspaceAccountSettingsPage (the DAO settings, or the Safe settings)
+│     ├─ settings/[slug]/page.tsx   WorkspaceAccountProcessDetailsPage (a Safe: redirect to its settings)
 │     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ├─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
 │  ├─ layout.tsx              LayoutWizardEditWorkspace
@@ -766,6 +771,7 @@ checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whe
 | `{accountId}/overview` | the Safe dashboard (threshold, owners, nonce, pending transactions, previews) | page `switch` |
 | `{accountId}/members` | its owners, settings in the aside | page `switch` |
 | `{accountId}/members/{address}` | redirect to its members page | page `switch` |
+| `{accountId}/settings/{slug}` | redirect to its settings | page `switch` |
 | `{accountId}/settings` | read-only account and governance details | page `switch` |
 | `{accountId}/proposals`, `…/proposals/{slug}`, `…/permissions` | no link; the URL redirects to its overview | `WorkspaceSectionGuard` |
 | `{accountId}/create/execute`, `…/create/{pluginAddress}/proposal` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
@@ -816,6 +822,12 @@ remove it when the link stays in the workspace.
 | `{accountId}/create/{pluginAddress}/proposal` | redirect when the permission check fails | `/dao/…/proposals` | `useProposalPermissionCheckGuard` (`redirectTab: 'proposals'`) |
 | `{accountId}/create/{pluginAddress}/proposal` | success action of the publish dialog | `/dao/…/proposals/{slug}`, or the linked account's DAO path | `PublishProposalDialog` (`getProposalsLink`) |
 | `{accountId}/create/{pluginAddress}/proposal` | indexing fallback of the publish dialog | `/dao/…/proposals` | `PublishProposalDialog` (`indexingFallbackUrl`) |
+| `{accountId}/settings/{slug}` | "Settings" breadcrumb | `/dao/…/settings` | `DaoProcessDetailsPageClient` |
+| `{accountId}/settings/{slug}` | "process not found" error action | `/dao/…/settings` | `DaoProcessDetailsPage` |
+| `{accountId}/settings/{slug}` | redirect for a hidden process | `/dao/…/settings` | `DaoProcessDetailsPage` (`RedirectToUrl`) |
+| `{accountId}/settings` (DAO) | a process row | `/dao/…/settings/{slug}` | `DaoSettingsPageClient` |
+| `{accountId}/proposals`, `all/proposals` | process link of the process aside | `/dao/…/settings/{slug}` | `DaoPluginInfo`, rendered by `WorkspaceProcessProposalsAsideCard` |
+| `{accountId}/proposals`, `all/proposals` | "not eligible" link of the select-plugin dialog | `/dao/…/settings/{slug}#…` | `ProcessDataListItem` |
 
 #### Account existence and the account lookup
 
@@ -826,7 +838,7 @@ An account route goes through these steps on the server, then the client:
 | 1 | `LayoutWorkspaceAccount` (a create wizard: its own layout) | `notFound()` for a malformed ID (`isValidAccountId`: invalid network or address), before any request |
 | 2 | `LayoutWorkspaceAccount` → `resolveAccountType` | one `POST query/accounts` lookup, read as below, in parallel with the DAO read; a DAO whose DAO read fails throws |
 | 3 | `WorkspaceSectionGuard` | proposals, proposal details, permissions, create wizards: redirect to the overview when the type lacks the section or subsection. A create wizard has no `LayoutWorkspaceAccount`, so the guard runs step 2's lookup itself |
-| 4 | page `switch` | overview, members, member details, settings: Safe branch or DAO branch, exhaustive (`satisfies never`) |
+| 4 | page `switch` | overview, members, member details, settings, process details: Safe branch or DAO branch, exhaustive (`satisfies never`) |
 | 5 | client | assets, transactions, proposals, members re-resolve an external account (`useWorkspaceAccountOptions`), stay loading on `isPending` |
 
 `workspaceAccountInfoUtils.resolveAccount` reads the lookup through `workspaceUtils.resolveAccountState`, the rule the
@@ -900,6 +912,12 @@ its workspace name, description and avatar are set from Edit workspace):
   the account section still renders.
 - **Contracts** (aside) — the Safe address with its version and Safe app link, as `DaoVersionInfo` states a DAO's
   contracts.
+
+`/{accountId}/settings/{slug}` is a process of a DAO: `WorkspaceAccountProcessDetailsPage` renders the DAO's
+`DaoProcessDetailsPage` with the route parameters adapted, and redirects a Safe, which has no processes, to its
+settings. The DAO's automations (`settings/automations/{id}`) have no workspace route, so `settings/automations` lands
+on this page and reads as a process that does not exist. Nothing in the workspace links here yet; see "Links out of
+the workspace".
 
 ### Members page
 
@@ -1233,6 +1251,7 @@ src/modules/workspace/
 ├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
 ├── pages/workspaceCreateExecutePage/{workspaceCreateExecutePage.tsx,index.ts}
 ├── pages/workspaceCreateProposalPage/{workspaceCreateProposalPage.tsx,index.ts}
+├── pages/workspaceAccountProcessDetailsPage/{workspaceAccountProcessDetailsPage.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
 └── index.ts
