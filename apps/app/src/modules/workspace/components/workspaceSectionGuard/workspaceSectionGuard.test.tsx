@@ -84,7 +84,7 @@ describe('<WorkspaceSectionGuard /> component', () => {
         render(
             await createTestComponent({
                 section: 'create',
-                subsection: 'execution',
+                subsection: 'execute',
             }),
         );
 
@@ -96,7 +96,7 @@ describe('<WorkspaceSectionGuard /> component', () => {
         mockAccount(WorkspaceAccountType.SAFE);
 
         await expect(
-            createTestComponent({ section: 'create', subsection: 'execution' }),
+            createTestComponent({ section: 'create', subsection: 'execute' }),
         ).rejects.toThrow('NEXT_REDIRECT');
         expect(redirectMock).toHaveBeenCalledWith(overviewUrl);
     });

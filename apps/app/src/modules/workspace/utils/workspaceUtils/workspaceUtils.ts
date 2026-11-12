@@ -45,8 +45,8 @@ const fallbackWorkspaceSlug = 'workspace';
 export const workspaceAllAccountsSegment = 'all';
 
 /**
- * Sections of `/workspace/{workspaceId}/{accountId}/{section}`, one per route under `[accountId]`. A segment outside
- * this list has no route: it renders the section-not-found page.
+ * Sections of `/workspace/{workspaceId}/{accountId}/{section}`, one per route folder under either `[accountId]` (pages
+ * in `(workspacePage)`, wizards outside it). Any other segment 404s; so does `create` alone, a parent of wizards.
  */
 export const workspaceAccountSections = [
     'overview',
@@ -57,6 +57,7 @@ export const workspaceAccountSections = [
     'transactions',
     'permissions',
     'settings',
+    'create',
 ] as const;
 
 export type WorkspaceAccountSection = (typeof workspaceAccountSections)[number];
@@ -70,6 +71,10 @@ interface IWorkspaceSectionScopes {
      * Whether the aggregated scope, every account of the workspace, has the section.
      */
     isAllAccounts: boolean;
+    /**
+     * Account types of each route under the section, keyed by its segment. A route left out gets the section's types.
+     */
+    subsections?: Readonly<Record<string, readonly WorkspaceAccountType[]>>;
 }
 
 /**
@@ -82,10 +87,9 @@ interface IWorkspaceSectionScopes {
  * - proposals — the aggregated scope and a DAO account: a Safe has no proposals, and will not.
  * - permissions — a DAO account alone.
  * - settings — a DAO or a Safe account, not the aggregated scope.
+ * - create — a DAO or a Safe account, not the aggregated scope; each wizard under it names its type.
  */
-const workspaceSectionScopes: Readonly<
-    Partial<Record<WorkspaceAccountSection, IWorkspaceSectionScopes>>
-> = {
+const workspaceSectionScopes = {
     proposals: {
         accountTypes: [WorkspaceAccountType.DAO],
         isAllAccounts: true,
@@ -98,7 +102,37 @@ const workspaceSectionScopes: Readonly<
         accountTypes: [WorkspaceAccountType.DAO, WorkspaceAccountType.SAFE],
         isAllAccounts: false,
     },
-};
+    create: {
+        accountTypes: [WorkspaceAccountType.DAO, WorkspaceAccountType.SAFE],
+        isAllAccounts: false,
+        subsections: {
+            execute: [WorkspaceAccountType.DAO],
+        },
+    },
+} satisfies Readonly<
+    Partial<Record<WorkspaceAccountSection, IWorkspaceSectionScopes>>
+>;
+
+/**
+ * `workspaceSectionScopes` indexable by any section; the declaration keeps its literal keys for the subsection type.
+ */
+const sectionScopes: Readonly<
+    Partial<Record<WorkspaceAccountSection, IWorkspaceSectionScopes>>
+> = workspaceSectionScopes;
+
+type WorkspaceSectionScopesDeclaration = typeof workspaceSectionScopes;
+
+/**
+ * Every subsection `workspaceSectionScopes` declares. A literal union, so a typo fails type-check rather than falling
+ * back to the section's types.
+ */
+export type WorkspaceAccountSubsection = {
+    [Section in keyof WorkspaceSectionScopesDeclaration]: WorkspaceSectionScopesDeclaration[Section] extends {
+        subsections: infer Subsections;
+    }
+        ? keyof Subsections & string
+        : never;
+}[keyof WorkspaceSectionScopesDeclaration];
 
 export interface IWorkspaceSectionScope {
     /**
@@ -109,6 +143,10 @@ export interface IWorkspaceSectionScope {
      * Type of the account in scope, undefined for the aggregated scope or while the account type is not known yet.
      */
     accountType?: WorkspaceAccountType;
+    /**
+     * Route under the section to check instead of the section itself, e.g. `execute` for `create/execute`.
+     */
+    subsection?: WorkspaceAccountSubsection;
 }
 
 /**
@@ -285,31 +323,45 @@ class WorkspaceUtils {
      * Whether a section is served for a scope (`workspaceSectionScopes`). The navigation hides the link to a section
      * that is not, and the account selector sends an option that does not have the current section to its overview
      * instead. An account scope whose type is not known yet has none of the sections restricted by type, so their
-     * links only appear once the workspace read tells it.
+     * links only appear once the workspace read tells it. A declared `subsection` replaces the section's types.
      * @param section - Section of an account-scoped workspace URL, e.g. `settings`.
-     * @param scope - The scope: aggregated, or an account of a given type.
+     * @param scope - The scope: aggregated, or an account of a given type, optionally for a subsection.
      * @returns True when the section is served for the scope.
      */
     isSectionServed = (
         section: WorkspaceAccountSection,
         scope: IWorkspaceSectionScope,
     ): boolean => {
-        const { isAllAccounts, accountType } = scope;
-        const sectionScopes = workspaceSectionScopes[section];
+        const { isAllAccounts, accountType, subsection } = scope;
+        const scopes = sectionScopes[section];
 
-        if (sectionScopes == null) {
+        if (scopes == null) {
             return true;
         }
 
         if (isAllAccounts) {
-            return sectionScopes.isAllAccounts;
+            return scopes.isAllAccounts;
         }
 
-        return (
-            accountType != null &&
-            sectionScopes.accountTypes.includes(accountType)
-        );
+        const accountTypes =
+            (subsection != null
+                ? scopes.subsections?.[subsection]
+                : undefined) ?? scopes.accountTypes;
+
+        return accountType != null && accountTypes.includes(accountType);
     };
+
+    /**
+     * Subsections a section declares in `workspaceSectionScopes`, empty when it declares none.
+     * @param section - Section of an account-scoped workspace URL.
+     * @returns The declared subsections.
+     */
+    getSubsections = (
+        section: WorkspaceAccountSection,
+    ): WorkspaceAccountSubsection[] =>
+        Object.keys(
+            sectionScopes[section]?.subsections ?? {},
+        ) as WorkspaceAccountSubsection[];
 
     /**
      * URL of the current page in another workspace: only the workspace segment changes, so the account, the section,

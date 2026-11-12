@@ -306,12 +306,17 @@ src/app/workspace/[workspaceId]/
 │     ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
 │     ├─ members/page.tsx     WorkspaceAccountMembersPage
 │     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
-└─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
-   ├─ layout.tsx              LayoutWizardEditWorkspace
-   └─ page.tsx                WorkspaceEditPage
+├─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
+│  ├─ layout.tsx              LayoutWizardEditWorkspace
+│  └─ page.tsx                WorkspaceEditPage
+└─ [accountId]/create/        the create wizards of an account, outside the group too
+   └─ execute/                the DAO direct-execute wizard (see "Direct-execute wizard")
+      ├─ layout.tsx           LayoutWizardCreateWorkspaceExecute
+      └─ page.tsx             WorkspaceCreateExecutePage
 ```
 
-The route group, as with `(daoPage)`, only decides the layout: `edit/` sits outside it to get the wizard layout.
+The route group, as with `(daoPage)`, only decides the layout: `edit/` and `[accountId]/create/` sit outside it to get
+the wizard layout.
 
 Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
 it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
@@ -343,10 +348,12 @@ again and this layout should adopt it.
 `navigationWorkspaceUtils.buildLinks` builds the section links through `workspaceUtils.getAccountScopeUrl`, scoped to
 the account on the route, at orders 100-500: Overview, Proposals, Members, Assets, Transactions. It lists them all
 (Proposals aside, see below), including the ones that have no account-scoped route yet — so under an account scope those links lead to the
-section-not-found page until the route lands. Permissions and Settings follow at orders 600-700. Three sections are
+section-not-found page until the route lands. Permissions and Settings follow at orders 600-700. Four sections are
 served for some scopes alone (`workspaceSectionScopes`, read through `workspaceUtils.isSectionServed`): proposals for
-the aggregated scope and a DAO account, permissions for a DAO account, settings for a DAO or a Safe account. Their
-links are hidden elsewhere, and under an account scope appear once the workspace read tells the account type. The
+the aggregated scope and a DAO account, permissions for a DAO account, settings and create for a DAO or a Safe
+account. `create` has no navigation link, and its wizards each declare their own types (`subsections`, see
+"Adding a route to an account"). Their links are hidden elsewhere, and under an account scope appear once the
+workspace read tells the account type. The
 map is keyed by `WorkspaceAccountSection`, the union of `workspaceAccountSections` (one entry per route under
 `[accountId]`), so a mistyped section fails type-check; it lists only the restricted sections. It is the single declaration of
 which account types have which section: the navigation and the account selector read it, and so does
@@ -409,11 +416,30 @@ different thing from them being populated: see [the Safe aggregation gap](#known
 `workspaceTransactionsPage` is the assets page's twin: one page for both scopes, no section guard, one endpoint
 (`query/transactions`), the account from `useWorkspaceAccountOptions`. Its aside card follows the same rule as the
 assets one: a selected DAO gets the DAO card, and anything else — the aggregated scope or a Safe — gets
-`WorkspaceAllTransactionsAsideCard`, titled by the option's label when one is selected. The Safe write path is
-closed by construction rather than by a check at the edge: a Safe has no create destination (`getDaoUrl` cannot name
-one), so its row in the select-account dialog is dimmed and picking it navigates nowhere. `DispatchPanel` takes the account address as
+`WorkspaceAllTransactionsAsideCard`, titled by the option's label when one is selected. The create action sends a
+DAO to the workspace's own direct-execute wizard (`{accountId}/create/execute`, see "Direct-execute wizard"),
+which checks the account itself, so the page reads no DAO to build it. The Safe write path is closed by construction
+rather than by a check at the edge: a Safe has no create wizard in the workspace yet, so its row in the
+select-account dialog is dimmed and picking it navigates nowhere. `DispatchPanel` takes the account address as
 a *DAO* address, so it renders only beside a DAO card; tests pin all of this, as the next person to touch a
 Safe branch will be tempted to open it.
+
+#### Direct-execute wizard
+
+`/{accountId}/create/execute` is the DAO's `/dao/…/create/execute` wizard inside the workspace, DAO accounts only.
+`LayoutWizardCreateWorkspaceExecute` and `WorkspaceCreateExecutePage` render the DAO's layout and page with the
+route parameters adapted; the layout passes an `exitPath` to the account's workspace transactions.
+
+| Outcome | Where |
+| --- | --- |
+| `workspaces` flag off, malformed account ID | layout: `notFound()` |
+| unknown account | `WorkspaceSectionGuard` (in the layout): `notFound()` |
+| Safe | the guard: redirect to the overview |
+| lookup cannot tell | the guard throws; `LayoutRoot`'s error boundary renders it |
+| workspace not on this device | page: `WorkspaceGate` |
+| DAO | the wizard |
+
+The wizard's success link still leaves the workspace; see "Links out of the workspace".
 
 ### Account scope
 
@@ -719,9 +745,8 @@ has no slug, so it gets no href and the row renders unlinked.
 
 A Safe has no proposals and no permissions, and will not get them. Which account types have which section is
 declared once, in `workspaceSectionScopes` (`workspaceUtils.ts`), and read through `workspaceUtils.isSectionServed`
-by the navigation, the account selector and `WorkspaceSectionGuard`. A test fails when a route folder under
-`[accountId]` is missing from `workspaceAccountSections`. The table says what a Safe gets; `workspaceSectionScopes`
-decides whether it gets the route at all.
+by the navigation, the account selector and `WorkspaceSectionGuard`; "Adding a route to an account" below is the
+checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whether it gets the route at all.
 
 | Route | What a Safe gets | Decided by |
 | --- | --- | --- |
@@ -738,6 +763,7 @@ decides whether it gets the route at all.
 | `{accountId}/members/{address}` | redirect to its members page | page `switch` |
 | `{accountId}/settings` | read-only account and governance details | page `switch` |
 | `{accountId}/proposals`, `…/proposals/{slug}`, `…/permissions` | no link; the URL redirects to its overview | `WorkspaceSectionGuard` |
+| `{accountId}/create/execute` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
 
 - **A Safe is an account option on every section.** Where it lacks the section, the option links to its overview,
   as does the aggregated option on permissions and settings; a URL that gets there anyway is redirected by the guard.
@@ -746,15 +772,47 @@ decides whether it gets the route at all.
   with an `accountId` other than `all` (the aggregated route is a static segment and passes none; the sentinel check
   keeps a deleted `all/proposals/page.tsx` from guarding an account named `all`).
 
+#### Adding a route to an account
+
+Two tests in `workspaceUtils.test.ts` read the route folders, so a missing declaration fails CI instead of serving the
+route to the wrong account type.
+
+**An account page** — `(workspacePage)/[accountId]/{section}/page.tsx`:
+
+1. Add the section to `workspaceAccountSections`.
+2. If some account types or the aggregated scope lack it, declare it in `workspaceSectionScopes` and wrap the page in
+   `WorkspaceSectionGuard`. `LayoutWorkspaceAccount` already checks the account exists.
+3. Add a navigation link in `navigationWorkspaceUtils.buildLinks`, hidden through `isSectionServed`.
+
+**A create wizard** — `[accountId]/create/{subsection}/{layout,page}.tsx`:
+
+1. Declare the subsection under `create.subsections` with its account types. A subsection left out would be served to
+   every type of `create`, a DAO and a Safe; `WorkspaceAccountSubsection` makes a mistyped one a type error.
+2. Layout: check the `workspaces` flag and `isValidAccountId`, then render `WorkspaceSectionGuard` (`section="create"`,
+   the subsection) **around** the wizard layout. Nothing above it checks the account, and a DAO layout that reads the
+   DAO replaces its children with an error state when the read fails, so a guard in the page would never run.
+3. Page: wrap it in `WorkspaceGate`, which `LayoutWorkspace` provides only to `(workspacePage)`.
+4. Exit to the account's workspace section (`getAccountScopeUrl`), and point the entry action at the new route.
+5. Record every link the wizard still has to `/dao/…` in "Links out of the workspace".
+
+#### Links out of the workspace
+
+Links on a workspace route that lead to `/dao/…`, kept here for a review pass. Add a row when a change introduces one;
+remove it when the link stays in the workspace.
+
+| Route | Link | Leads to | Source |
+| --- | --- | --- | --- |
+| `{accountId}/create/execute` | success action of the execute dialog ("View transactions") | `/dao/{network}/{addressOrEns}/transactions` | `ExecuteActionsDialog` (`daoUtils.getDaoUrl(dao, 'transactions')`) |
+
 #### Account existence and the account lookup
 
 An account route goes through these steps on the server, then the client:
 
 | # | Where | What happens |
 | --- | --- | --- |
-| 1 | `LayoutWorkspaceAccount` | `notFound()` for a malformed ID (`isValidAccountId`: invalid network or address), before any request |
+| 1 | `LayoutWorkspaceAccount` (a create wizard: its own layout) | `notFound()` for a malformed ID (`isValidAccountId`: invalid network or address), before any request |
 | 2 | `LayoutWorkspaceAccount` → `resolveAccountType` | one `POST query/accounts` lookup, read as below, in parallel with the DAO read; a DAO whose DAO read fails throws |
-| 3 | `WorkspaceSectionGuard` | proposals, proposal details, permissions: redirect to the overview when the type lacks the section |
+| 3 | `WorkspaceSectionGuard` | proposals, proposal details, permissions, create wizards: redirect to the overview when the type lacks the section or subsection. A create wizard has no `LayoutWorkspaceAccount`, so the guard runs step 2's lookup itself |
 | 4 | page `switch` | overview, members, member details, settings: Safe branch or DAO branch, exhaustive (`satisfies never`) |
 | 5 | client | assets, transactions, proposals, members re-resolve an external account (`useWorkspaceAccountOptions`), stay loading on `isPending` |
 
@@ -1139,6 +1197,7 @@ src/modules/workspace/
 ├── components/workspaceSectionGuard/{workspaceSectionGuard.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
+├── components/layoutWizardCreateWorkspaceExecute/{layoutWizardCreateWorkspaceExecute.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
@@ -1158,6 +1217,7 @@ src/modules/workspace/
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
 ├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
+├── pages/workspaceCreateExecutePage/{workspaceCreateExecutePage.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
 └── index.ts
@@ -1168,6 +1228,7 @@ src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
 src/app/workspace/page.tsx
 src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
+src/app/workspace/[workspaceId]/[accountId]/create/execute/{layout.tsx,page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,
