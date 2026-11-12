@@ -347,6 +347,19 @@ describe('workspace utils', () => {
             },
         );
 
+        it.each<{ scope: IWorkspaceSectionScope; expected: boolean }>([
+            { scope: { ...dao, subsection: 'proposal' }, expected: true },
+            { scope: { ...safe, subsection: 'proposal' }, expected: false },
+            { scope: { ...all, subsection: 'proposal' }, expected: false },
+        ])(
+            'returns $expected for the create/{pluginAddress}/proposal subsection on $scope',
+            ({ scope, expected }) => {
+                expect(workspaceUtils.isSectionServed('create', scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
         it('applies the section rule to a section that declares no subsections', () => {
             expect(
                 workspaceUtils.isSectionServed('settings', {
@@ -383,6 +396,7 @@ describe('workspace utils', () => {
         it('returns the routes a section restricts under it', () => {
             expect(workspaceUtils.getSubsections('create')).toEqual([
                 'execute',
+                'proposal',
             ]);
         });
 
@@ -857,6 +871,16 @@ describe('workspace account routes', () => {
         );
     });
 
+    // A wizard is named by its static segment, also under a dynamic one (`[pluginAddress]/proposal`).
+    const readWizardRoutes = (dir: string) =>
+        readdirSync(dir, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .flatMap((entry) =>
+                entry.name.startsWith('[')
+                    ? readRouteFolders(join(dir, entry.name))
+                    : [entry.name],
+            );
+
     // An undeclared wizard route gets every type of its section (a new create wizard: DAO and Safe).
     it('every route folder under a wizard section is one of its subsections', () => {
         const wizardSections = readRouteFolders(accountWizardsDir).filter(
@@ -866,7 +890,7 @@ describe('workspace account routes', () => {
         expect(wizardSections).not.toHaveLength(0);
 
         wizardSections.forEach((section) => {
-            const routeFolders = readRouteFolders(
+            const routeFolders = readWizardRoutes(
                 join(accountWizardsDir, section),
             );
 

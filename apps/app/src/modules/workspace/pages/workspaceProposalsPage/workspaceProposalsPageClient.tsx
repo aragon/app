@@ -10,7 +10,6 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
@@ -21,8 +20,8 @@ import { WorkspaceProposalsAsideCard } from '../../components/workspaceProposals
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
-import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { useWorkspaceProposalTabs } from '../../hooks/useWorkspaceProposalTabs';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceProposalsPageClientProps {
     /**
@@ -84,9 +83,6 @@ export const WorkspaceProposalsPageClient: React.FC<
             ? accountsToDisplay[0]
             : undefined;
 
-    const { daos, isPending: isDaosPending } =
-        useWorkspaceDaos(accountsToDisplay);
-
     // The single reader of the selection: the list renders the tabs and owns the URL parameter, while the aside
     // card is handed the selected tab from here, so the two cannot describe different tabs.
     const { activeTab } = useWorkspaceProposalTabs({
@@ -112,21 +108,17 @@ export const WorkspaceProposalsPageClient: React.FC<
         account: IWorkspaceAccount,
         plugin: IDaoPlugin,
     ) => {
-        const dao = daos[account.id];
-
         createProposalGuard({
             plugin,
             daoId: account.id,
-            onSuccess: () => {
-                const createProposalUrl = daoUtils.getDaoUrl(
-                    dao,
-                    `create/${plugin.address}/proposal`,
-                );
-
-                if (createProposalUrl != null) {
-                    router.push(createProposalUrl);
-                }
-            },
+            onSuccess: () =>
+                router.push(
+                    workspaceUtils.getAccountScopeUrl(
+                        workspaceId,
+                        account.id,
+                        `create/${plugin.address}/proposal`,
+                    ),
+                ),
         });
     };
 
@@ -191,7 +183,7 @@ export const WorkspaceProposalsPageClient: React.FC<
     return (
         <Page.Content>
             <Page.Main
-                action={isScopePending || isDaosPending ? undefined : action}
+                action={isScopePending ? undefined : action}
                 title={t('app.workspace.workspaceProposalsPage.main.title')}
             >
                 <WorkspaceProposalList

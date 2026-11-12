@@ -72,7 +72,8 @@ interface IWorkspaceSectionScopes {
      */
     isAllAccounts: boolean;
     /**
-     * Account types of each route under the section, keyed by its segment. A route left out gets the section's types.
+     * Account types of each route under the section, keyed by its static segment (`execute`, or `proposal` under
+     * `[pluginAddress]`). A route left out gets the section's types.
      */
     subsections?: Readonly<Record<string, readonly WorkspaceAccountType[]>>;
 }
@@ -107,6 +108,7 @@ const workspaceSectionScopes = {
         isAllAccounts: false,
         subsections: {
             execute: [WorkspaceAccountType.DAO],
+            proposal: [WorkspaceAccountType.DAO],
         },
     },
 } satisfies Readonly<
