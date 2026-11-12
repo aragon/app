@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { RadixImageMock } from '../../../test';
-import { Avatar, type IAvatarProps } from './avatar';
+import { Avatar, type AvatarSize, type IAvatarProps } from './avatar';
 
 describe('<Avatar /> component', () => {
     const originalGlobalImage = global.Image;
@@ -27,6 +27,24 @@ describe('<Avatar /> component', () => {
 
         expect(fallback).toBeInTheDocument();
         expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    });
+
+    it.each([
+        ['xs', 'text-[8px]'],
+        ['sm', 'text-xs'],
+        ['md', 'text-sm'],
+        ['lg', 'text-base'],
+        ['xl', 'text-lg'],
+        ['2xl', 'text-xl'],
+    ] satisfies [AvatarSize, string][])('sizes %s fallback text with %s', (size, textClass) => {
+        render(
+            createTestComponent({
+                fallback: <span data-testid="custom-fallback">AB</span>,
+                size,
+            }),
+        );
+
+        expect(screen.getByTestId('custom-fallback').parentElement?.parentElement).toHaveClass(textClass);
     });
 
     it('does not render fallback when valid image provided', () => {

@@ -453,6 +453,30 @@
           "termsOfService": "Terms of Service"
         }
       },
+      "landingPage": {
+        "copyright": "© {{year}} Aragon",
+        "demo": {
+          "action": "Explore a demo workspace",
+          "desktopPreviewAlt": "My Workspace dashboard with four accounts and open to-dos",
+          "mobilePreviewAlt": "My Workspace dashboard on a phone, with open to-dos",
+          "previewLabel": "Explore the demo workspace"
+        },
+        "hero": {
+          "description": "Bring your existing Safes and Aragon DAOs into one shared workspace. Review and sign transactions, track pending approvals, and see what needs your team’s attention. Free to use.",
+          "title": "Your team’s onchain finances, in one place"
+        },
+        "legal": "Legal",
+        "openingWorkspace": "Opening your workspace…",
+        "privacy": "Privacy",
+        "signIn": {
+          "comingSoon": "coming soon",
+          "email": "Email",
+          "google": "Google",
+          "passkey": "Passkey",
+          "walletAction": "Continue with wallet"
+        },
+        "terms": "Terms"
+      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
@@ -4632,6 +4656,10 @@
         },
         "submitLabel": "Create workspace"
       },
+      "demo": {
+        "error": "The demo workspace could not be installed. Reload the page to try again.",
+        "settingUp": "Setting up your Aragon demo workspace…"
+      },
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
@@ -4722,9 +4750,9 @@
           "resources": "Resources"
         },
         "emptyAccounts": {
-          "action": "Add accounts",
-          "description": "This workspace has no accounts yet. Add the DAOs and Safes it should bring together.",
-          "heading": "No accounts yet"
+          "action": "Add an existing account",
+          "createAction": "Create a new account",
+          "heading": "Add a Safe or an Aragon account"
         },
         "section": {
           "accounts": "Accounts",

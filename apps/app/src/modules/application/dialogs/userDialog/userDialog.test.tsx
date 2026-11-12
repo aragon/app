@@ -6,8 +6,10 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import * as AppKit from '@reown/appkit/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
 import * as useDialogContext from '@/shared/components/dialogProvider';
@@ -31,8 +33,13 @@ describe('<UserDialog /> component', () => {
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
+    const replace = jest.fn();
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
 
     beforeEach(() => {
+        useRouterSpy.mockReturnValue({
+            replace,
+        } as unknown as AppRouterInstance);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useConnectionSpy.mockReturnValue(
             {} as unknown as wagmi.UseConnectionReturnType,
@@ -57,6 +64,8 @@ describe('<UserDialog /> component', () => {
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
         clipboardCopySpy.mockReset();
+        replace.mockReset();
+        useRouterSpy.mockReset();
     });
 
     const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
@@ -196,8 +205,8 @@ describe('<UserDialog /> component', () => {
         expect(open).toHaveBeenCalled();
     });
 
-    it('disconnects when the logout icon button is clicked', async () => {
-        const disconnect = jest.fn();
+    it('disconnects and returns to the login screen when logout is clicked', async () => {
+        const disconnect = jest.fn().mockResolvedValue(undefined);
         useConnectionSpy.mockReturnValue({
             address: '0x123',
         } as unknown as wagmi.UseConnectionReturnType);
@@ -211,7 +220,9 @@ describe('<UserDialog /> component', () => {
         render(createTestComponent());
 
         await userEvent.click(screen.getByTestId(IconType.LOGOUT));
+
         expect(disconnect).toHaveBeenCalled();
+        await waitFor(() => expect(replace).toHaveBeenCalledWith('/'));
     });
 
     it('closes the dialog when the user disconnects', () => {

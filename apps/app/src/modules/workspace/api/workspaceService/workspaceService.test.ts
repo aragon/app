@@ -35,6 +35,8 @@ describe('workspace service', () => {
 
     afterEach(() => {
         localStorage.clear();
+        sessionStorage.clear();
+        window.history.replaceState(null, '', '/');
     });
 
     describe('getWorkspace', () => {
@@ -371,6 +373,112 @@ describe('workspace service', () => {
                     body: { account: safeAccount },
                 }),
             ).rejects.toMatchObject({ status: 404 });
+        });
+    });
+    describe('session workspace registry', () => {
+        it('uses the fixture only on its routes and discards it on a persistent route', async () => {
+            const persistent = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Persistent' }),
+            });
+            const fixture = {
+                fixture: {
+                    ...buildBody({ name: 'Fixture' }),
+                    id: 'fixture',
+                },
+            };
+            await workspaceService.activateSessionWorkspaceRegistry(
+                JSON.stringify(fixture),
+            );
+            expect(workspaceService.hasSessionWorkspace('fixture')).toBe(true);
+            expect(workspaceService.hasSessionWorkspace('unknown')).toBe(false);
+
+            window.history.pushState(
+                null,
+                '',
+                '/workspace/fixture/all/overview',
+            );
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
+                fixture.fixture,
+            ]);
+            await workspaceService.updateWorkspace({
+                urlParams: { id: 'fixture' },
+                body: buildBody({ name: 'Changed fixture' }),
+            });
+            expect(getStoredWorkspaces()).toEqual({
+                [persistent.id]: persistent,
+            });
+
+            window.history.pushState(
+                null,
+                '',
+                `/workspace/${persistent.id}/all/overview`,
+            );
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
+                persistent,
+            ]);
+            expect(workspaceService.hasSessionWorkspace('fixture')).toBe(false);
+            window.history.pushState(
+                null,
+                '',
+                '/workspace/fixture/all/overview',
+            );
+            await expect(
+                workspaceService.getWorkspace({
+                    urlParams: { id: 'fixture' },
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+    });
+
+    describe('workspace registry portability', () => {
+        it('exports and restores the complete registry', async () => {
+            const first = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'First' }),
+            });
+            const second = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Second' }),
+            });
+            const exported = await workspaceService.exportWorkspaceRegistry();
+
+            localStorage.clear();
+            await workspaceService.importWorkspaceRegistry(exported);
+
+            expect(getStoredWorkspaces()).toEqual({ first, second });
+        });
+
+        it('can merge an imported fixture without replacing stored workspaces', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+            const fixture = {
+                fixture: { ...buildBody({ name: 'Fixture' }), id: 'fixture' },
+            };
+
+            await workspaceService.importWorkspaceRegistry(
+                JSON.stringify(fixture),
+                true,
+            );
+
+            expect(getStoredWorkspaces()).toEqual({ existing, ...fixture });
+        });
+
+        it('rejects malformed imports without changing stored workspaces', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    JSON.stringify({
+                        broken: {
+                            ...buildBody(),
+                            id: 'broken',
+                            name: 42,
+                        },
+                    }),
+                ),
+            ).rejects.toThrow('not a valid workspace registry');
+            expect(getStoredWorkspaces()).toEqual({ existing });
         });
     });
 });

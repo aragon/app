@@ -1,6 +1,8 @@
 'use client';
 
 import {
+    AvatarIcon,
+    AvatarStack,
     addressUtils,
     DaoAvatar,
     Dropdown,
@@ -9,7 +11,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -54,8 +56,6 @@ export const WorkspaceAccountSelector: React.FC<
     IWorkspaceAccountSelectorProps
 > = (props) => {
     const { workspaceId, className } = props;
-
-    const [isOpen, setIsOpen] = useState(false);
 
     const { t } = useTranslations();
     const pathname = usePathname();
@@ -133,13 +133,19 @@ export const WorkspaceAccountSelector: React.FC<
         }
     };
 
-    // An unnamed account is labelled by its truncated address already, so the line is skipped rather than repeated.
-    const subtitle =
-        activeOption?.account != null
-            ? addressUtils.truncateAddress(activeOption.account.address)
-            : t('app.workspace.workspaceAccountSelector.accounts', {
-                  count: workspace?.accounts.length ?? 0,
-              });
+    const accountAvatars = options
+        .filter((option) => !option.isAllAccounts)
+        .map((option) => (
+            <DaoAvatar
+                key={option.id}
+                name={option.label}
+                src={getOptionAvatar(option)}
+            />
+        ));
+    const activeOptionAddress =
+        activeOption?.account == null
+            ? undefined
+            : addressUtils.truncateAddress(activeOption.account.address);
 
     return (
         <Dropdown.Container
@@ -148,37 +154,53 @@ export const WorkspaceAccountSelector: React.FC<
             customTrigger={
                 <button
                     className={classNames(
-                        'focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
+                        'focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800',
                         className,
                     )}
                     type="button"
                 >
-                    <DaoAvatar
-                        name={activeOption?.label}
-                        size="md"
-                        src={getOptionAvatar(activeOption)}
-                    />
+                    <span className="flex w-11 shrink-0 items-center">
+                        {activeOption?.isAllAccounts ? (
+                            accountAvatars.length > 0 ? (
+                                <AvatarStack
+                                    aria-hidden={true}
+                                    avatars={accountAvatars}
+                                />
+                            ) : (
+                                <DaoAvatar
+                                    name={workspace?.name}
+                                    size="md"
+                                    src={ipfsUtils.cidToSrc(workspace?.avatar)}
+                                />
+                            )
+                        ) : (
+                            <DaoAvatar
+                                name={activeOption?.label}
+                                size="md"
+                                src={getOptionAvatar(activeOption)}
+                            />
+                        )}
+                    </span>
                     <span className="flex min-w-0 grow flex-col text-left leading-tight">
                         <span className="truncate text-base text-neutral-800">
                             {activeOption?.label}
                         </span>
-                        {subtitle !== activeOption?.label && (
-                            <span className="truncate text-neutral-500 text-sm">
-                                {subtitle}
-                            </span>
-                        )}
+                        {activeOptionAddress != null &&
+                            activeOptionAddress !== activeOption?.label && (
+                                <span className="truncate text-sm">
+                                    {activeOptionAddress}
+                                </span>
+                            )}
                     </span>
-                    <Icon
-                        className="shrink-0"
-                        icon={
-                            isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN
-                        }
-                        size="md"
-                    />
+                    <span
+                        aria-hidden={true}
+                        className="flex shrink-0 flex-col items-center -space-y-1"
+                    >
+                        <Icon icon={IconType.CHEVRON_UP} size="sm" />
+                        <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
+                    </span>
                 </button>
             }
-            onOpenChange={setIsOpen}
-            open={isOpen}
         >
             {optionLinks.map(({ option, url }) => (
                 <Dropdown.Item
@@ -189,12 +211,21 @@ export const WorkspaceAccountSelector: React.FC<
                     {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing content is
                      * allowed here. */}
                     <span className="flex min-w-0 items-center gap-3">
-                        <DaoAvatar
-                            className="shrink-0"
-                            name={option.label}
-                            size="sm"
-                            src={getOptionAvatar(option)}
-                        />
+                        {option.isAllAccounts ? (
+                            <AvatarIcon
+                                className="shrink-0"
+                                icon={IconType.RICHTEXT_LIST_UNORDERED}
+                                size="sm"
+                                variant="primary"
+                            />
+                        ) : (
+                            <DaoAvatar
+                                className="shrink-0"
+                                name={option.label}
+                                size="sm"
+                                src={getOptionAvatar(option)}
+                            />
+                        )}
                         <span className="flex min-w-0 flex-col leading-tight">
                             <span className="truncate">{option.label}</span>
                             {option.account != null &&

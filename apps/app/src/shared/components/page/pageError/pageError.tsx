@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { useOptionalFeatureFlags } from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
@@ -32,6 +33,9 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
     } = props;
 
     const { t } = useTranslations();
+    const featureFlags = useOptionalFeatureFlags();
+    const exploreHref =
+        featureFlags?.isEnabled('workspaces') === false ? '/' : '/explore';
 
     const isNotFoundError =
         AragonBackendServiceError.isExpectedNotFoundError(error);
@@ -58,6 +62,7 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
     return (
         <ErrorFeedback
             descriptionKey={processedDescription}
+            exploreHref={exploreHref}
             hideReportButton={isNotFoundError}
             illustration={isNotFoundError ? 'NOT_FOUND' : undefined}
             primaryButton={primaryButton}

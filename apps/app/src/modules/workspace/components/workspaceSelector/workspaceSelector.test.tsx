@@ -88,15 +88,21 @@ describe('<WorkspaceSelector /> component', () => {
     });
 
     it('lists every workspace followed by the create workspace item', async () => {
+        getWorkspaceListSpy.mockResolvedValue([
+            firstWorkspace,
+            secondWorkspace,
+            buildWorkspace({ id: 'third', name: 'Third Workspace' }),
+        ]);
         render(createTestComponent());
 
         await openDropdown();
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(3);
+        expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('First Workspace');
         expect(items[1]).toHaveTextContent('Second Workspace');
-        expect(items[2]).toHaveTextContent(/workspaceSelector\.create$/);
+        expect(items[2]).toHaveTextContent('Third Workspace');
+        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
     it('opens the overview of the selected workspace', async () => {

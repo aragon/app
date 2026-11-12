@@ -1,6 +1,12 @@
 'use client';
 
-import { Wallet } from '@aragon/gov-ui-kit';
+import {
+    DaoAvatar,
+    Dropdown,
+    Icon,
+    IconType,
+    Wallet,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -20,6 +26,7 @@ import {
 } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWalletAccount } from '../../../hooks/useWalletAccount';
 import { FooterSidebar } from '../../footer';
 import { NavigationSidebarAccount } from '../navigationSidebarAccount';
@@ -33,9 +40,9 @@ export interface INavigationWorkspaceProps extends INavigationContainerProps {
 }
 
 /**
- * Navigation of the workspace pages: the sidebar from the `lg` breakpoint, the navigation bar and its dialog below it.
- * Render it as the `navigation` of `LayoutSidebar`. The workspace and account selectors head the sidebar and, below
- * `lg`, the dialog: the bar only carries the dialog trigger and the wallet.
+ * Navigation of the workspace pages: the sidebar from the `lg` breakpoint, the navigation bar and its dialog below
+ * it. The workspace and account selectors head the sidebar and dialog; the bar carries a compact selector that opens
+ * that same dialog plus the wallet.
  *
  * Every section link is built from the workspace ID on the route, so the navigation is usable from the first paint on
  * a cold load, before the workspace registry (local storage, see `docs/projectDocs/createWorkspace.md`) is read.
@@ -61,6 +68,9 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected && address != null;
+    const { data: workspace } = useWorkspace({
+        urlParams: { id: workspaceId },
+    });
     const { open } = useDialogContext();
 
     // The links stay scoped to the account being looked at, so a tab change keeps the reader on it. The hook reads
@@ -80,9 +90,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             ? { address, name: displayName ?? undefined }
             : undefined;
 
-    const { data: workspace } = useWorkspace({
-        urlParams: { id: workspaceId },
-    });
     // The to-dos of the wallet in the scope the to-dos link opens, for its badge. Read under the same query as the
     // to-dos page and the overview, so the badge counts the rows its link leads to at no extra request.
     const { todos } = useWorkspaceTodoData({
@@ -128,19 +135,21 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             <Navigation.Sidebar
                 footer={
                     <>
-                        <NavigationSidebarAccount
-                            onClick={handleWalletClick}
-                            user={walletUser}
-                        />
+                        {workspace != null ? (
+                            <NavigationSidebarAccount
+                                onClick={handleWalletClick}
+                                user={walletUser}
+                            />
+                        ) : null}
                         <FooterSidebar />
                     </>
                 }
                 groups={groups}
                 header={
-                    <>
+                    <Dropdown.Group>
                         <WorkspaceSelector workspaceId={workspaceId} />
                         <WorkspaceAccountSelector workspaceId={workspaceId} />
-                    </>
+                    </Dropdown.Group>
                 }
             />
             <Navigation.Container
@@ -151,12 +160,40 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                 )}
                 {...otherProps}
             >
-                <div className="flex items-center justify-between gap-1">
-                    <Navigation.Trigger
-                        className="shrink-0"
+                <div className="flex items-center justify-between gap-3">
+                    <button
+                        aria-expanded={isDialogOpen}
+                        aria-haspopup="dialog"
+                        className="focus-ring-primary flex min-w-0 cursor-pointer items-center gap-2 rounded-lg border border-neutral-100 bg-neutral-0 p-1.5 pr-2 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800 md:gap-3 md:rounded-xl md:p-2 md:pr-3"
                         onClick={() => handleDialogOpenChange(true)}
-                    />
-                    <Wallet onClick={handleWalletClick} user={walletUser} />
+                        type="button"
+                    >
+                        <DaoAvatar
+                            className="shrink-0"
+                            name={workspace?.name}
+                            responsiveSize={{ md: 'md' }}
+                            size="sm"
+                            src={ipfsUtils.cidToSrc(workspace?.avatar)}
+                        />
+                        <span className="flex min-w-0 flex-col text-left leading-tight">
+                            <span className="truncate text-neutral-800 text-sm md:text-base">
+                                {workspace?.name}
+                            </span>
+                            <span className="truncate text-xs md:text-sm">
+                                {activeOption?.label}
+                            </span>
+                        </span>
+                        <span
+                            aria-hidden={true}
+                            className="flex shrink-0 flex-col items-center -space-y-1"
+                        >
+                            <Icon icon={IconType.CHEVRON_UP} size="sm" />
+                            <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
+                        </span>
+                    </button>
+                    {workspace != null ? (
+                        <Wallet onClick={handleWalletClick} user={walletUser} />
+                    ) : null}
                 </div>
                 <Navigation.Dialog
                     groups={groups}
@@ -169,9 +206,13 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     onOpenChange={handleDialogOpenChange}
                     open={isDialogOpen}
                 >
-                    <div className="flex flex-col gap-2 px-4">
-                        <WorkspaceSelector workspaceId={workspaceId} />
-                        <WorkspaceAccountSelector workspaceId={workspaceId} />
+                    <div className="px-4">
+                        <Dropdown.Group>
+                            <WorkspaceSelector workspaceId={workspaceId} />
+                            <WorkspaceAccountSelector
+                                workspaceId={workspaceId}
+                            />
+                        </Dropdown.Group>
                     </div>
                 </Navigation.Dialog>
             </Navigation.Container>

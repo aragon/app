@@ -2,12 +2,19 @@
 
 import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
 import { DebugPanelControl } from './debugPanelControl';
+import { WorkspaceRegistryControls } from './workspaceRegistryControls';
+
+const groupOrder: Record<string, number> = {
+    Global: 0,
+    'Feature flags': 1,
+    Simulation: 2,
+};
 
 export const DebugPanel: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -68,6 +75,9 @@ export const DebugPanel: React.FC = () => {
         controls,
         ({ group }) => group ?? 'Global',
     );
+    const groupNames = Object.keys(groupedControls).toSorted(
+        (left, right) => (groupOrder[left] ?? 3) - (groupOrder[right] ?? 3),
+    );
 
     return (
         <>
@@ -97,18 +107,23 @@ export const DebugPanel: React.FC = () => {
                     />
                 </div>
                 <div className="flex flex-col gap-4 overflow-y-auto">
-                    {Object.keys(groupedControls).map((group) => (
-                        <div className="flex flex-col gap-2" key={group}>
-                            <Heading size="h3">{group}</Heading>
+                    {groupNames.map((group) => (
+                        <Fragment key={group}>
+                            {group === 'Simulation' && (
+                                <WorkspaceRegistryControls />
+                            )}
                             <div className="flex flex-col gap-2">
-                                {groupedControls[group]?.map((control) => (
-                                    <DebugPanelControl
-                                        control={control}
-                                        key={control.name}
-                                    />
-                                ))}
+                                <Heading size="h3">{group}</Heading>
+                                <div className="flex flex-col gap-2">
+                                    {groupedControls[group]?.map((control) => (
+                                        <DebugPanelControl
+                                            control={control}
+                                            key={control.name}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </Fragment>
                     ))}
                 </div>
             </div>

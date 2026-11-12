@@ -1,6 +1,6 @@
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { notFound } from 'next/navigation-server';
 import type { ReactNode } from 'react';
 import * as WorkspaceServiceModule from '@/modules/workspace/api/workspaceService';
@@ -9,6 +9,7 @@ import type { IWorkspaceGateProps } from '@/modules/workspace/components/workspa
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { featureFlags } from '@/shared/featureFlags';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import type { INavigationWorkspaceProps } from '../../navigations/navigationWorkspace';
 import { type ILayoutWorkspaceProps, LayoutWorkspace } from './layoutWorkspace';
 
@@ -49,6 +50,10 @@ describe('<LayoutWorkspace /> component', () => {
     const useWorkspaceSpy = jest.spyOn(WorkspaceServiceModule, 'useWorkspace');
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
+    const activateSessionRegistrySpy = jest.spyOn(
+        workspaceService,
+        'activateSessionWorkspaceRegistry',
+    );
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
 
     beforeEach(() => {
@@ -58,6 +63,7 @@ describe('<LayoutWorkspace /> component', () => {
             status: 'success',
             error: null,
         } as ReturnType<typeof WorkspaceServiceModule.useWorkspace>);
+        activateSessionRegistrySpy.mockResolvedValue();
     });
 
     afterEach(() => {
@@ -66,6 +72,7 @@ describe('<LayoutWorkspace /> component', () => {
         isEnabledSpy.mockReset();
         useWorkspaceSpy.mockReset();
         notFoundMock.mockClear();
+        activateSessionRegistrySpy.mockReset();
     });
 
     // Query options carry a fresh queryFn per call, so the key is what identifies the read. `prefetchQuery` passes
@@ -83,7 +90,11 @@ describe('<LayoutWorkspace /> component', () => {
             ...props,
         };
 
-        return await LayoutWorkspace(completeProps);
+        return (
+            <ReactQueryWrapper client={new QueryClient()}>
+                {await LayoutWorkspace(completeProps)}
+            </ReactQueryWrapper>
+        );
     };
 
     // The pages check the flag too, but this layout renders around their 404, navigation included.
@@ -103,6 +114,29 @@ describe('<LayoutWorkspace /> component', () => {
         expect(
             screen.getByTestId('navigation-workspace-mock'),
         ).toHaveTextContent('demo');
+    });
+
+    it('installs the session fixture for a fresh direct demo link', async () => {
+        render(
+            await createTestComponent({
+                params: Promise.resolve({ workspaceId: 'aragon-demo' }),
+            }),
+        );
+        expect(useWorkspaceSpy).toHaveBeenCalledWith(
+            { urlParams: { id: 'aragon-demo' } },
+            { enabled: false, retry: false },
+        );
+
+        await waitFor(() => {
+            expect(activateSessionRegistrySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.getByTestId('workspace-gate-mock'),
+            ).toBeInTheDocument();
+        });
+        expect(useWorkspaceSpy).toHaveBeenCalledWith(
+            { urlParams: { id: 'aragon-demo' } },
+            { enabled: true, retry: false },
+        );
     });
 
     it('renders the page below the navigation', async () => {

@@ -226,7 +226,7 @@ local storage for real requests is a single-method change:
 - `getOrCreateDefaultWorkspace()` → the first stored workspace, or the default one, seeded and persisted when the
   registry is empty. Called by the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
-  `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
+  `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to the active browser registry, resolves with the full
   `IWorkspace`.
 - `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
   stored workspace, keeping its ID (so its URLs keep working); rejects with
@@ -235,17 +235,29 @@ local storage for real requests is a single-method change:
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
   `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
+- `exportWorkspaceRegistry()` → the complete active registry as formatted JSON.
+- `importWorkspaceRegistry(json, merge?)` → validates the full registry before writing it.
 
-Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
-server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
+The persistent registry uses local-storage key `aragon-workspaces`. Known fixture workspace IDs activate the
+tab-scoped `workspaceDemo.fixture.json` registry before the first workspace read, so copied demo account URLs also work
+in a fresh tab. Opening the landing-page demo link resets that session registry to the fixture. Navigating to
+`/workspace` or a persistent workspace discards it and resumes the local registry; persistent and demo workspaces
+therefore never appear together or overwrite one another.
 
-The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
-`getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an
-explicit call because a read that writes makes the default appear depending on which page a user opened first, and
-lets two tabs reading an empty registry seed two different workspaces. It is also the shape a backend registry would
-take: a get-or-create (bootstrap) call, not a GET with a side effect. The seed's ID gets a random suffix
-(`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage reads as
-empty and is overwritten on the next write — acceptable, as only outside tampering can produce it.
+The debug panel downloads and restores the active registry format. Imports require an explicit browser confirmation
+because replacement discards the active browser-only workspaces. The fixture contains Aragon and XMAQUINA workspaces,
+each with a standalone Polygon Safe, and uses the regular workspace layout, navigation, queries, and account
+interactions instead of parallel demo UI.
+
+Workspace payload reads never seed or modify the selected registry. `getWorkspace` and `getWorkspaceList` return what
+is stored, so the list can be empty; the route-aware resolver only discards the disposable session fixture after
+navigation leaves its workspace IDs. Only `getOrCreateDefaultWorkspace` seeds an empty "My workspace"
+(`createWorkspace` does not either). Seeding is an explicit call because a read that writes makes the default appear
+depending on which page a user opened first, and lets two tabs reading an empty registry seed two different
+workspaces. It is also the shape a backend registry would take: a get-or-create (bootstrap) call, not a GET with a
+side effect. The seed's ID gets a random suffix (`my-workspace-1a2b3c4d`) so that default workspaces of different
+users never share one. Unreadable storage reads as empty and are overwritten on the next write — acceptable, as only
+outside tampering can produce it.
 
 The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it
 must not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, invalidates the workspace list

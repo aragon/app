@@ -31,6 +31,11 @@ export interface IErrorFeedbackProps {
      * Hides the report issue button when set to true.
      */
     hideReportButton?: boolean;
+    /**
+     * Route used by the default Explore action.
+     * @default /
+     */
+    exploreHref?: string;
 }
 
 // The global error page renders this above the root layout, without a TranslationsProvider.
@@ -50,6 +55,7 @@ export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
         illustration = 'WARNING',
         primaryButton,
         hideReportButton,
+        exploreHref = '/',
     } = props;
 
     const { t } = useSafeTranslations(fallbackTranslations);
@@ -68,7 +74,7 @@ export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
 
     const processedPrimaryButton = primaryButton ?? {
         label: t('app.shared.errorFeedback.link.explore'),
-        href: '/',
+        href: exploreHref,
     };
     const processedSecondaryButton = hideReportButton
         ? undefined

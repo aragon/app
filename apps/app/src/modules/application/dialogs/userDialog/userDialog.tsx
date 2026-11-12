@@ -69,7 +69,10 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             params: { mode: 'edit' },
         });
 
-    const handleDisconnect = () => void disconnect();
+    const handleDisconnect = async () => {
+        await disconnect();
+        router.replace('/');
+    };
 
     const handleMyDaosClick = () => {
         router.push(

@@ -263,6 +263,24 @@ Avatar-shaped frame rendering an Icon with variant styling.
 - `kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:83`
 - `kit:src/core/components/avatars/avatarIcon/avatarIcon.stories.tsx:1`
 
+### AvatarStack
+
+`import { AvatarStack } from '@aragon/gov-ui-kit';`
+
+
+
+**Usage notes**
+
+- Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.
+- The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.
+- Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.
+- Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed.
+
+**References**
+
+- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140`
+- `kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1`
+
 ### Breadcrumbs
 
 `import { Breadcrumbs } from '@aragon/gov-ui-kit';`
@@ -498,7 +516,7 @@ Avatar specialized for a DAO (name + image with fallback).
 
 **References**
 
-- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81`
+- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:23`
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1`
 
 ### DaoDataListItem.Skeleton
@@ -735,6 +753,22 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72`
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1`
+
+### Dropdown.Group
+
+`import { Dropdown } from '@aragon/gov-ui-kit';`
+
+
+
+**Usage notes**
+
+- Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.
+- Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own.
+
+**References**
+
+- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17`
+- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1`
 
 ### Dropdown.Item
 
@@ -1989,7 +2023,7 @@ Compound dropdown menu (Dropdown.Container/Item) with a trigger and menu.
 
 **References**
 
-- `kit:src/core/components/dropdown/index.ts:7`
+- `kit:src/core/components/dropdown/index.ts:9`
 
 ### MemberDataListItem
 

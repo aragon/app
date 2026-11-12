@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { type IPageErrorProps, PageError } from './pageError';
 
 describe('<Page.Error /> component', () => {
@@ -12,10 +13,26 @@ describe('<Page.Error /> component', () => {
         isNotFoundErrorSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IPageErrorProps>) => {
+    const createTestComponent = (
+        props?: Partial<IPageErrorProps>,
+        workspacesEnabled = false,
+    ) => {
         const completeProps: IPageErrorProps = { ...props };
 
-        return <PageError {...completeProps} />;
+        return (
+            <FeatureFlagsProvider
+                initialSnapshot={[
+                    {
+                        key: 'workspaces',
+                        name: 'Workspaces',
+                        description: '',
+                        enabled: workspacesEnabled,
+                    },
+                ]}
+            >
+                <PageError {...completeProps} />
+            </FeatureFlagsProvider>
+        );
     };
 
     it('renders a generic error with the specified action link', () => {
@@ -37,6 +54,14 @@ describe('<Page.Error /> component', () => {
         });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
+    });
+
+    it('routes the default action to Explore when workspaces are enabled', () => {
+        render(createTestComponent(undefined, true));
+
+        expect(
+            screen.getByRole('link', { name: 'Explore DAOs' }),
+        ).toHaveAttribute('href', '/explore');
     });
 
     it('renders a not-found feedback when the error is a not-found error', () => {

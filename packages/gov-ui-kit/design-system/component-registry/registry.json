@@ -6,12 +6,24 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "343ea5a1778e28996e84fae17bb75fd43772dfdc",
+            "commit": "da31e780f2a6755595bc185827e4d6a94cfc6375",
             "dirty": [
-                "packages/gov-ui-kit/AGENTS.md",
-                "packages/gov-ui-kit/index.css",
-                "packages/gov-ui-kit/rollup.config.mjs",
-                "packages/gov-ui-kit/scripts/check-build-css.mjs"
+                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.stories.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.test.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.test.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/index.ts",
+                "packages/gov-ui-kit/src/core/components/avatars/index.ts",
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx",
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownGroup/dropdownGroup.test.tsx",
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownGroup/index.ts",
+                "packages/gov-ui-kit/src/core/components/dropdown/index.ts",
+                "packages/gov-ui-kit/src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
+                "packages/gov-ui-kit/src/modules/components/dao/daoAvatar/daoAvatar.tsx"
             ],
             "sourceVersion": "3.0.0",
             "entrypoints": {
@@ -2253,14 +2265,14 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 78,
-                "sha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                "sha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.tsx",
                     "line": 11,
-                    "sha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                    "sha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
                 }
             ],
             "stories": [
@@ -2268,7 +2280,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                    "sha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
                 }
             ],
             "tests": [
@@ -2276,7 +2288,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "04a2645abc0fa4e043285fd132c457624dbca6b80838249d4adc35b73c337563"
+                    "sha256": "788bf96e2335054164eade156be6e51ba7e3e7efccc6388b11f63bf975dd1091"
                 }
             ],
             "docs": [],
@@ -2339,30 +2351,30 @@
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                        "actualSha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                        "actualSha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                        "actualSha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573",
-                        "actualSha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                        "actualSha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
                     }
                 ],
                 "review": {
@@ -2370,7 +2382,7 @@
                     "by": null,
                     "at": null
                 },
-                "stale": false
+                "stale": true
             }
         },
         {
@@ -2768,7 +2780,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 9,
-                "sha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                "sha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
             },
             "props": [],
             "stories": [
@@ -2776,7 +2788,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                    "sha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
                 }
             ],
             "tests": [
@@ -2784,7 +2796,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "04a2645abc0fa4e043285fd132c457624dbca6b80838249d4adc35b73c337563"
+                    "sha256": "788bf96e2335054164eade156be6e51ba7e3e7efccc6388b11f63bf975dd1091"
                 }
             ],
             "docs": [],
@@ -2795,6 +2807,78 @@
                 "'lg'",
                 "'xl'",
                 "'2xl'"
+            ],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AvatarStack",
+            "name": "AvatarStack",
+            "kind": "component",
+            "exportNames": [
+                "AvatarStack"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AvatarStack",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "line": 140,
+                "sha256": "8dabaea872cdd922be94b83c7c2e18518f65f27924c6428003ec36fc480ca170"
+            },
+            "props": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/avatars/avatarStack/avatarStack.tsx",
+                    "line": 8,
+                    "sha256": "8dabaea872cdd922be94b83c7c2e18518f65f27924c6428003ec36fc480ca170"
+                }
+            ],
+            "stories": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
+                    "line": 1,
+                    "sha256": "efa391425a0d8650823f1ac858f2bf241198d132ff31d2778d61881a86fb21fc"
+                }
+            ],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/avatars/avatarStack/avatarStack.test.tsx",
+                    "line": 1,
+                    "sha256": "f118c69d82f234a670e11db06805a9b28fc01bca496c48303148a7aa65e570db"
+                }
+            ],
+            "docs": [],
+            "usageNotes": [
+                "Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.",
+                "The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.",
+                "Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.",
+                "Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed."
             ],
             "intent": {
                 "description": null,
@@ -3010,7 +3094,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "15607b5221c6872bd4d47a39108f99018bbea27a8fb1c222a0df9cccba575d2c"
+                "sha256": "a4371da769da068a11e6b0c02b9a27263b3419666c1211fe6c72f296792b2a4e"
             },
             "props": [],
             "stories": [],
@@ -4952,15 +5036,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                "line": 81,
-                "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                "line": 23,
+                "sha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                    "line": 11,
-                    "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                    "line": 4,
+                    "sha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
                 }
             ],
             "stories": [
@@ -4976,7 +5060,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
                     "line": 1,
-                    "sha256": "0921c4b4fe22945cdde602fdd1905e9bcd41ce98ada6f3bc2604f3755307fd1b"
+                    "sha256": "31b32818f0e5cc00654a5e9503895210ad8db5c8597b0c1c65eccb4d53b94c01"
                 }
             ],
             "docs": [],
@@ -5035,23 +5119,23 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
-                        "actualSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                        "actualSha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
-                        "actualSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                        "actualSha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
-                        "actualSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                        "actualSha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
                     },
                     {
                         "repository": "kit",
@@ -5066,7 +5150,7 @@
                     "by": null,
                     "at": null
                 },
-                "stale": false
+                "stale": true
             }
         },
         {
@@ -8552,14 +8636,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
                         "line": 72,
-                        "sha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                        "sha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
                             "line": 7,
-                            "sha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                            "sha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                         }
                     ],
                     "stories": [
@@ -8576,6 +8660,45 @@
                             "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.test.tsx",
                             "line": 1,
                             "sha256": "e53203405de993ac7ea1c812d6020d2e77e8fb6b2053352e652cbeca787a8f1c"
+                        }
+                    ],
+                    "docs": []
+                },
+                {
+                    "id": "govkit:DropdownGroup",
+                    "name": "Dropdown.Group",
+                    "exportNames": [
+                        "Dropdown.Group",
+                        "DropdownGroup"
+                    ],
+                    "source": {
+                        "repository": "kit",
+                        "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
+                        "line": 17,
+                        "sha256": "d2be4e1c957acdd040b1ed1091adeaa53b1f68448af3ddde4474438e172d7577"
+                    },
+                    "props": [
+                        {
+                            "repository": "kit",
+                            "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
+                            "line": 5,
+                            "sha256": "d2be4e1c957acdd040b1ed1091adeaa53b1f68448af3ddde4474438e172d7577"
+                        }
+                    ],
+                    "stories": [
+                        {
+                            "repository": "kit",
+                            "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx",
+                            "line": 1,
+                            "sha256": "f42fa8980bbd7297912a369bdb7b01a89b5007846a74097da5be397e5d92cadd"
+                        }
+                    ],
+                    "tests": [
+                        {
+                            "repository": "kit",
+                            "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.test.tsx",
+                            "line": 1,
+                            "sha256": "61ac8e5512559dd43b9a8a01293176bd592e9c640bef4aded339a53b7797e35f"
                         }
                     ],
                     "docs": []
@@ -8623,8 +8746,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/dropdown/index.ts",
-                "line": 7,
-                "sha256": "07eb43e0641516856c6d029c2596cc5e153a343680a3552217b1ba65eeccc104"
+                "line": 9,
+                "sha256": "cf59448ca3d7d870489ab4dcbae5ef67a2aa2f9574094e37abd1417309184aba"
             },
             "props": [],
             "stories": [],
@@ -8677,23 +8800,23 @@
                     {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c",
-                        "actualSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                        "actualSha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c",
-                        "actualSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                        "actualSha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c",
-                        "actualSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                        "actualSha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                     },
                     {
                         "repository": "kit",
@@ -8708,7 +8831,7 @@
                     "by": null,
                     "at": null
                 },
-                "stale": false,
+                "stale": true,
                 "composition": [
                     "Compound export with members: Dropdown.Container, Dropdown.Item."
                 ]
@@ -8733,14 +8856,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
                 "line": 72,
-                "sha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                "sha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
                     "line": 7,
-                    "sha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                    "sha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                 }
             ],
             "stories": [
@@ -8787,11 +8910,81 @@
                     {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c",
-                        "actualSha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                        "actualSha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
                     }
                 ],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": true
+            }
+        },
+        {
+            "id": "govkit:DropdownGroup",
+            "name": "DropdownGroup",
+            "kind": "component",
+            "exportNames": [
+                "DropdownGroup"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "DropdownGroup",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
+                "line": 17,
+                "sha256": "d2be4e1c957acdd040b1ed1091adeaa53b1f68448af3ddde4474438e172d7577"
+            },
+            "props": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
+                    "line": 5,
+                    "sha256": "d2be4e1c957acdd040b1ed1091adeaa53b1f68448af3ddde4474438e172d7577"
+                }
+            ],
+            "stories": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx",
+                    "line": 1,
+                    "sha256": "f42fa8980bbd7297912a369bdb7b01a89b5007846a74097da5be397e5d92cadd"
+                }
+            ],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.test.tsx",
+                    "line": 1,
+                    "sha256": "61ac8e5512559dd43b9a8a01293176bd592e9c640bef4aded339a53b7797e35f"
+                }
+            ],
+            "docs": [],
+            "usageNotes": [
+                "Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.",
+                "Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own."
+            ],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
                 "review": {
                     "state": "unreviewed",
                     "by": null,
@@ -10796,7 +10989,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 11,
-                "sha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b"
+                "sha256": "1f0d4ec7e72b7ea6a7e78acb7646240d28865c6bf84d15f9323ec65f753a32f8"
             },
             "props": [],
             "stories": [
@@ -10804,7 +10997,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                    "sha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
                 }
             ],
             "tests": [
@@ -10812,7 +11005,66 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "04a2645abc0fa4e043285fd132c457624dbca6b80838249d4adc35b73c337563"
+                    "sha256": "788bf96e2335054164eade156be6e51ba7e3e7efccc6388b11f63bf975dd1091"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:IAvatarStackProps",
+            "name": "IAvatarStackProps",
+            "kind": "non-component",
+            "exportNames": [
+                "IAvatarStackProps"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IAvatarStackProps",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "line": 8,
+                "sha256": "8dabaea872cdd922be94b83c7c2e18518f65f27924c6428003ec36fc480ca170"
+            },
+            "props": [],
+            "stories": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
+                    "line": 1,
+                    "sha256": "efa391425a0d8650823f1ac858f2bf241198d132ff31d2778d61881a86fb21fc"
+                }
+            ],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/avatars/avatarStack/avatarStack.test.tsx",
+                    "line": 1,
+                    "sha256": "f118c69d82f234a670e11db06805a9b28fc01bca496c48303148a7aa65e570db"
                 }
             ],
             "docs": [],
@@ -12185,8 +12437,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                "line": 11,
-                "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                "line": 4,
+                "sha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
             },
             "props": [],
             "stories": [
@@ -12202,7 +12454,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
                     "line": 1,
-                    "sha256": "0921c4b4fe22945cdde602fdd1905e9bcd41ce98ada6f3bc2604f3755307fd1b"
+                    "sha256": "31b32818f0e5cc00654a5e9503895210ad8db5c8597b0c1c65eccb4d53b94c01"
                 }
             ],
             "docs": [],
@@ -13706,7 +13958,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
                 "line": 7,
-                "sha256": "e3f4311ae3394b86805c4076858da9bf170fe8a3faf84f9e6cf9a8d9baa4629c"
+                "sha256": "48db686c71a5e3b25ed0df17982e8fb1282bbaa84966a2ce514cd8010b9121f0"
             },
             "props": [],
             "stories": [
@@ -13723,6 +13975,65 @@
                     "path": "src/core/components/dropdown/dropdownContainer/dropdownContainer.test.tsx",
                     "line": 1,
                     "sha256": "e53203405de993ac7ea1c812d6020d2e77e8fb6b2053352e652cbeca787a8f1c"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:IDropdownGroupProps",
+            "name": "IDropdownGroupProps",
+            "kind": "non-component",
+            "exportNames": [
+                "IDropdownGroupProps"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IDropdownGroupProps",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
+                "line": 5,
+                "sha256": "d2be4e1c957acdd040b1ed1091adeaa53b1f68448af3ddde4474438e172d7577"
+            },
+            "props": [],
+            "stories": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx",
+                    "line": 1,
+                    "sha256": "f42fa8980bbd7297912a369bdb7b01a89b5007846a74097da5be397e5d92cadd"
+                }
+            ],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.test.tsx",
+                    "line": 1,
+                    "sha256": "61ac8e5512559dd43b9a8a01293176bd592e9c640bef4aded339a53b7797e35f"
                 }
             ],
             "docs": [],

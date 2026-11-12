@@ -74,9 +74,8 @@ export const createWorkspaceFormEmptyNetworkAddress: ICreateWorkspaceFormNetwork
     { address: '', network: Network.ETHEREUM_SEPOLIA };
 
 /**
- * Default values of the create-workspace form. Both field-arrays are seeded here, at the form root, so that
- * `useFieldArray` sees them on the very first render: seeding them from the list components instead would either
- * render an empty list on mount or need an effect that mutates the form while the rows are already mounting.
+ * Default values of the create-workspace form. Optional field arrays start empty;
+ * their controls append the first row when the user chooses to add one.
  */
 export const createWorkspaceFormDefaultValues: Pick<
     ICreateWorkspaceFormData,
@@ -84,6 +83,5 @@ export const createWorkspaceFormDefaultValues: Pick<
 > = {
     // Targets are optional, therefore the list starts empty.
     targets: [],
-    // Accounts are optional; one removable row makes adding one the obvious path.
-    accounts: [createWorkspaceFormEmptyNetworkAddress],
+    accounts: [],
 };

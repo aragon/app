@@ -1,0 +1,68 @@
+{
+    "aragon-demo": {
+        "id": "aragon-demo",
+        "name": "Aragon Workspace",
+        "description": "Aragon builds secure and modular DAO infrastructure for onchain organizations.",
+        "avatar": "ipfs://QmX4q3fu1QkSfdVFUAmSUWziCmnXtitp2TVKLbrFVBcPvv",
+        "links": [
+            {
+                "name": "Aragon",
+                "url": "https://www.aragon.org/"
+            }
+        ],
+        "accounts": [
+            {
+                "id": "ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482",
+                "type": "DAO",
+                "address": "0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482",
+                "network": "ethereum-mainnet",
+                "metadata": {
+                    "name": "Aragon X (Mainnet)"
+                }
+            },
+            {
+                "id": "polygon-mainnet-0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
+                "type": "SAFE",
+                "address": "0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
+                "network": "polygon-mainnet",
+                "metadata": {
+                    "name": "Polygon Safe"
+                }
+            }
+        ],
+        "targets": []
+    },
+    "xmaquina-demo": {
+        "id": "xmaquina-demo",
+        "name": "XMAQUINA Workspace",
+        "description": "The XMAQUINA DAO is dedicated to democratizing access to Robotics Capital Markets.",
+        "avatar": "ipfs://QmTzZnH3jsrCq56Bxb7tSwrwrtJEcaD56Rr9YA2nLVNEY7",
+        "links": [
+            {
+                "name": "XMAQUINA",
+                "url": "https://www.xmaquina.io"
+            }
+        ],
+        "accounts": [
+            {
+                "id": "base-mainnet-0xfEA21e0500022F34dE0a02Ae3A7D04dF923Ed020",
+                "type": "DAO",
+                "address": "0xfEA21e0500022F34dE0a02Ae3A7D04dF923Ed020",
+                "network": "base-mainnet",
+                "metadata": {
+                    "name": "XMAQUINA"
+                }
+            },
+            {
+                "id": "polygon-mainnet-0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
+                "type": "SAFE",
+                "address": "0x311Ff044882bf953cA3A70867f5B1836C2a9b76B",
+                "network": "polygon-mainnet",
+                "metadata": {
+                    "name": "Polygon Safe"
+                }
+            }
+        ],
+        "targets": []
+    }
+}
