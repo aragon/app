@@ -9,6 +9,10 @@ import {
     Link as KitLink,
     Tag,
 } from '@aragon/gov-ui-kit';
+import {
+    getMultiSendCallOnlyDeployments,
+    getMultiSendDeployments,
+} from '@safe-global/safe-deployments';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
@@ -139,25 +143,16 @@ const collectCalls = (
  * lists first for a chain, which is not always the canonical one (e.g. eip155 on Sepolia), so a batch the app built
  * itself must not be reported as an unrecognised delegate target.
  */
-const knownDelegateTargets: Record<string, true> = {
-    // v1.3.0 MultiSend: canonical, eip155, zkSync
-    '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
-    '0x998739bfdaadde7c933b942a68053933098f9eda': true,
-    '0x0dfcccb95225ffb03c6fbb2559b530c2b7c8a912': true,
-    // v1.3.0 MultiSendCallOnly: canonical, eip155, zkSync
-    '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
-    '0xa1dabef33b3b82c7814b6d82a79e50f4ac44102b': true,
-    '0xf220d3b4dfb23c4ade8c88e526c1353abacbc38f': true,
-    // v1.4.1 MultiSend: canonical, zkSync
-    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
-    '0x309d0b190fecca8e1d5d8309a16f7e3cb133e885': true,
-    // v1.4.1 MultiSendCallOnly: canonical, zkSync
-    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
-    '0x0408ef011960d02349d50286d20531229bcef773': true,
-    // v1.5.0 MultiSend and MultiSendCallOnly: canonical
-    '0x218543288004cd07832472d464648173c77d7eb7': true,
-    '0xa83c336b20401af773b6219ba5027174338d1836': true,
-};
+const knownDelegateTargets = new Set(
+    ['1.3.0', '1.4.1', '1.5.0'].flatMap((version) =>
+        [getMultiSendDeployments, getMultiSendCallOnlyDeployments].flatMap(
+            (getDeployments) =>
+                Object.values(
+                    getDeployments({ version })?.deployments ?? {},
+                ).map(({ address }) => address.toLowerCase()),
+        ),
+    ),
+);
 
 /**
  * The reviewable payload of a Safe transaction: its fields, the device-comparison hashes, every
@@ -288,7 +283,7 @@ export const SafeTransactionReviewContent: React.FC<
      */
     const delegateCalls = calls.filter(({ call }) => call.operation === 1);
     const hasUnrecognisedDelegateTarget = delegateCalls.some(
-        ({ call }) => knownDelegateTargets[call.to.toLowerCase()] !== true,
+        ({ call }) => !knownDelegateTargets.has(call.to.toLowerCase()),
     );
 
     /**

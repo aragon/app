@@ -2,7 +2,7 @@
 
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { EthSafeTransaction } from '@safe-global/protocol-kit';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import type { Hex } from 'viem';
 import { getBytecode } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
@@ -156,18 +156,8 @@ export const useSafeOwnerSigning = (params: IUseSafeOwnerSigningParams) => {
     const { t } = useTranslations();
     const chainId = networkDefinitions[network].id;
 
-    const [uncertainSignature, setUncertainSignature] =
-        useState<IUncertainSafeSignature>();
-    // Read synchronously by error handlers that run before a re-render.
+    // A ref rather than state: nothing renders it, and error handlers read it synchronously before a re-render.
     const uncertainSignatureRef = useRef<IUncertainSafeSignature>(undefined);
-
-    const updateUncertainSignature = useCallback(
-        (signature?: IUncertainSafeSignature) => {
-            uncertainSignatureRef.current = signature;
-            setUncertainSignature(signature);
-        },
-        [],
-    );
 
     /**
      * Protocol kit signing as the owner through the connected wallet.
@@ -351,10 +341,10 @@ export const useSafeOwnerSigning = (params: IUseSafeOwnerSigningParams) => {
                     throw writeError;
                 }
 
-                updateUncertainSignature(submitted);
+                uncertainSignatureRef.current = submitted;
 
                 if (await reconcile(submitted)) {
-                    updateUncertainSignature(undefined);
+                    uncertainSignatureRef.current = undefined;
                     return SafeSignatureSubmission.ACCEPTED;
                 }
 
@@ -363,7 +353,7 @@ export const useSafeOwnerSigning = (params: IUseSafeOwnerSigningParams) => {
 
             return SafeSignatureSubmission.ACCEPTED;
         },
-        [chainId, reconcile, t, updateUncertainSignature],
+        [chainId, reconcile, t],
     );
 
     /**
@@ -379,11 +369,11 @@ export const useSafeOwnerSigning = (params: IUseSafeOwnerSigningParams) => {
         const isAccepted = await reconcile(submitted);
 
         if (isAccepted) {
-            updateUncertainSignature(undefined);
+            uncertainSignatureRef.current = undefined;
         }
 
         return isAccepted;
-    }, [reconcile, updateUncertainSignature]);
+    }, [reconcile]);
 
     /**
      * Whether a submission that may have landed is still unresolved. Read synchronously, so an error handler running
@@ -402,6 +392,5 @@ export const useSafeOwnerSigning = (params: IUseSafeOwnerSigningParams) => {
         signAndSubmit,
         recheck,
         hasUncertainSignature,
-        uncertainSignature,
     };
 };

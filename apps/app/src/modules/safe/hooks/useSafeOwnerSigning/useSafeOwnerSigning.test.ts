@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import * as WagmiActions from 'wagmi/actions';
 import {
     generateSafeConfirmation,
@@ -361,13 +361,6 @@ describe('useSafeOwnerSigning hook', () => {
                 ),
             ).resolves.toBe(SafeSignatureSubmission.UNCERTAIN);
             expect(result.current.hasUncertainSignature()).toBeTruthy();
-            await waitFor(() =>
-                expect(result.current.uncertainSignature).toEqual({
-                    owner,
-                    safeTxHash,
-                    signature,
-                }),
-            );
         });
     });
 
@@ -401,9 +394,6 @@ describe('useSafeOwnerSigning hook', () => {
                 inAct(() => result.current.recheck()),
             ).resolves.toBeTruthy();
             expect(result.current.hasUncertainSignature()).toBeFalsy();
-            await waitFor(() =>
-                expect(result.current.uncertainSignature).toBeUndefined(),
-            );
         });
     });
 });
