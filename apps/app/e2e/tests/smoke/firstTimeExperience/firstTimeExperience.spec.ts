@@ -48,6 +48,17 @@ test.describe('First-time workspace experience', () => {
             await setWorkspacesFlag(context, baseURL!, true);
         });
 
+        test('keeps the existing Explore experience on its separate route', async ({
+            page,
+        }) => {
+            const response = await page.goto('/explore');
+
+            expect(response?.status()).toBe(200);
+            await expect(
+                page.getByRole('heading', { name: 'Explore', exact: true }),
+            ).toBeVisible();
+        });
+
         test('links the landing page to the real demo workspace without an Explore DAOs CTA', async ({
             page,
         }) => {
