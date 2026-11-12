@@ -20,6 +20,11 @@ export interface IWorkspaceSectionGuardProps {
      */
     section: WorkspaceAccountSection;
     /**
+     * Route under the section the page below serves, e.g. `execution` for `create/execution`, when the section
+     * restricts it to fewer account types than the section itself.
+     */
+    subsection?: string;
+    /**
      * Page rendered when the account type has the section.
      */
     children?: ReactNode;
@@ -27,7 +32,7 @@ export interface IWorkspaceSectionGuardProps {
 
 /**
  * Redirects an account to its overview when its type does not have the section (a Safe on proposals or permissions),
- * as the account selector does. Reads `workspaceUtils.isSectionServed`, like the navigation and the selector.
+ * or the route under it (a Safe on `create/execution`), as the account selector does. Reads `workspaceUtils.isSectionServed`, like the navigation and the selector.
  *
  * Wraps the page because a layout does not see its child segment. Existence is `LayoutWorkspaceAccount`'s check; the
  * lookup is the layout's cached one, so this sends no request.
@@ -35,7 +40,7 @@ export interface IWorkspaceSectionGuardProps {
 export const WorkspaceSectionGuard: React.FC<
     IWorkspaceSectionGuardProps
 > = async (props) => {
-    const { workspaceId, accountId, section, children } = props;
+    const { workspaceId, accountId, section, subsection, children } = props;
 
     const accountType =
         await workspaceAccountInfoUtils.resolveAccountType(accountId);
@@ -44,6 +49,7 @@ export const WorkspaceSectionGuard: React.FC<
         !workspaceUtils.isSectionServed(section, {
             isAllAccounts: false,
             accountType,
+            subsection,
         })
     ) {
         redirect(
