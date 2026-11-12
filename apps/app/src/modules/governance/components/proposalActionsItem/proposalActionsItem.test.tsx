@@ -5,6 +5,7 @@ import { initChangeSettingsActionViews } from '@/actions/core/changeSettings';
 import { initUpdateMetadataActionViews } from '@/actions/core/updateMetadata';
 import { initMultisigActionViews } from '@/actions/multisig';
 import { initTokenActionViews } from '@/actions/token';
+import * as ensModule from '@/modules/ens';
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateMultisigActionChangeMembers } from '@/plugins/multisigPlugin/testUtils';
 import { MultisigProposalActionType } from '@/plugins/multisigPlugin/types';
@@ -24,11 +25,28 @@ import {
 } from './proposalActionsItem';
 
 describe('<ProposalActionsItem /> component', () => {
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
+
     beforeAll(() => {
         initChangeSettingsActionViews();
         initUpdateMetadataActionViews();
         initMultisigActionViews();
         initTokenActionViews();
+    });
+
+    beforeEach(() => {
+        useEnsNameSpy.mockReturnValue({ data: null } as ReturnType<
+            typeof ensModule.useEnsName
+        >);
+        useEnsAvatarSpy.mockReturnValue({ data: null } as ReturnType<
+            typeof ensModule.useEnsAvatar
+        >);
+    });
+
+    afterEach(() => {
+        useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -172,14 +190,14 @@ describe('<ProposalActionsItem /> component', () => {
         async ({ type, term, otherTerm }) => {
             const membersCopyKey = (key: string) =>
                 `app.actions.multisig.multisigChangeMembersActionDetails.${key}`;
+            useEnsNameSpy.mockReturnValue({ data: 'dzepina.eth' } as ReturnType<
+                typeof ensModule.useEnsName
+            >);
             const action = generateMultisigActionChangeMembers({
                 ...target,
                 type,
                 members: [
-                    {
-                        address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
-                        ens: 'dzepina.eth',
-                    },
+                    { address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F' },
                 ],
                 currentMembers: 7,
             });
