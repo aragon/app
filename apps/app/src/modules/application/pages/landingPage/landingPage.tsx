@@ -1,7 +1,6 @@
 'use client';
 
 import { Button, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -9,11 +8,6 @@ import GoogleIcon from '@/assets/images/google.svg';
 import NetBackground from '@/assets/images/net_bg.svg';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import {
-    workspaceService,
-    workspaceServiceKeys,
-} from '@/modules/workspace/api/workspaceService';
-import workspaceDemoFixture from '@/modules/workspace/fixtures/workspaceDemo.fixture.json';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -24,16 +18,15 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 
 const privacyUrl = 'https://aragon.org/privacy-policy';
 const termsUrl = 'https://aragon.org/terms-and-conditions';
-const demoWorkspaceUrl = workspaceUtils.getAccountScopeUrl(
+const demoWorkspaceUrl = `${workspaceUtils.getAccountScopeUrl(
     'aragon-demo',
     workspaceAllAccountsSegment,
     'overview',
-);
+)}?demo=true`;
 
 export const LandingPage: React.FC = () => {
     const { t } = useTranslations();
     const router = useRouter();
-    const queryClient = useQueryClient();
     const { check: checkWalletConnection, result: isWalletConnected } =
         useConnectedWalletGuard({
             onSuccess: () => router.push('/workspace'),
@@ -84,31 +77,10 @@ export const LandingPage: React.FC = () => {
         </nav>
     );
 
-    const handleOpenDemo = async (
-        event: React.MouseEvent<HTMLAnchorElement>,
-    ) => {
-        event.preventDefault();
-        await workspaceService.activateSessionWorkspaceRegistry(
-            JSON.stringify(workspaceDemoFixture),
-        );
-        queryClient.removeQueries({
-            queryKey: workspaceServiceKeys.workspaceList(),
-        });
-        Object.keys(workspaceDemoFixture).forEach((id) =>
-            queryClient.removeQueries({
-                queryKey: workspaceServiceKeys.workspace({
-                    urlParams: { id },
-                }),
-            }),
-        );
-        router.push(demoWorkspaceUrl);
-    };
-
     const demoLink = (
         <Link
             className="relative inline-flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-neutral-0/55 px-5 text-base text-neutral-0 transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
-            onClick={handleOpenDemo}
         >
             {t('app.application.landingPage.demo.action')}
             <Icon icon={IconType.CHEVRON_RIGHT} size="sm" />
@@ -215,7 +187,6 @@ export const LandingPage: React.FC = () => {
                     )}
                     className="relative hidden aspect-[16/10] h-[64%] shrink-0 overflow-hidden rounded-l-xl bg-neutral-50 shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:block"
                     href={demoWorkspaceUrl}
-                    onClick={handleOpenDemo}
                 >
                     <Image
                         alt={t(
@@ -234,7 +205,6 @@ export const LandingPage: React.FC = () => {
                     )}
                     className="relative block w-full max-w-[300px] overflow-hidden rounded-t-xl bg-neutral-50 shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:hidden"
                     href={demoWorkspaceUrl}
-                    onClick={handleOpenDemo}
                 >
                     <Image
                         alt={t(

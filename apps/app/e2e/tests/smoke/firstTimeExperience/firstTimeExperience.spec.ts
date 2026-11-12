@@ -70,8 +70,21 @@ test.describe('First-time workspace experience', () => {
                 .getByRole('link', { name: 'Explore a demo workspace' })
                 .click();
             await expect(page).toHaveURL(
-                /\/workspace\/aragon-demo\/all\/overview$/,
+                /\/workspace\/aragon-demo\/all\/overview\?demo=true$/,
             );
+            await expect(
+                page.getByRole('heading', {
+                    level: 1,
+                    name: aragonDemoName,
+                }),
+            ).toBeVisible();
+        });
+
+        test('installs the fixture from a direct demo link in a fresh tab', async ({
+            page,
+        }) => {
+            await page.goto('/workspace/aragon-demo/all/overview?demo=true');
+
             await expect(
                 page.getByRole('heading', {
                     level: 1,
@@ -206,7 +219,7 @@ test.describe('First-time workspace experience', () => {
                 .click();
 
             await expect(page).toHaveURL(
-                /\/workspace\/aragon-demo\/all\/overview$/,
+                /\/workspace\/aragon-demo\/all\/overview\?demo=true$/,
             );
             await expect(
                 page.getByRole('link', { name: 'Edit workspace' }),
