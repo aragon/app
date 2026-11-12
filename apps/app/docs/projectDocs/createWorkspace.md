@@ -316,7 +316,8 @@ src/app/workspace/[workspaceId]/
 │  └─ page.tsx                WorkspaceEditPage
 └─ [accountId]/create/        the create wizards of an account, outside the group too (see "Create wizards")
    ├─ execute/                LayoutWizardCreateWorkspaceExecute, WorkspaceCreateExecutePage
-   └─ [pluginAddress]/proposal/   LayoutWizardCreateWorkspaceProposal, WorkspaceCreateProposalPage
+   ├─ [pluginAddress]/proposal/   LayoutWizardCreateWorkspaceProposal, WorkspaceCreateProposalPage
+   └─ [pluginAddress]/process/    LayoutWizardCreateWorkspaceProcess, WorkspaceCreateProcessPage
 ```
 
 The route group, as with `(daoPage)`, only decides the layout: `edit/` and `[accountId]/create/` sit outside it to get
@@ -432,12 +433,16 @@ Safe branch will be tempted to open it.
 
 The DAO's create wizards inside the workspace, at the DAO's own path after the account. Each workspace layout and page
 renders the DAO's with the route parameters adapted; the layout passes an `exitPath` to the account's workspace section.
-DAO accounts only: a Safe has no execute wizard and no proposals.
+DAO accounts only: a Safe has none of these wizards.
 
 | Route | DAO wizard | Exits to |
 | --- | --- | --- |
 | `{accountId}/create/execute` | `/dao/…/create/execute` | `{accountId}/transactions` |
 | `{accountId}/create/{pluginAddress}/proposal` | `/dao/…/create/{pluginAddress}/proposal` | `{accountId}/proposals` |
+| `{accountId}/create/{pluginAddress}/process` | `/dao/…/create/{pluginAddress}/process` | `{accountId}/settings` |
+
+Nothing in the workspace opens the process wizard yet: its entry points are DAO components rendered as is, which
+still link to `/dao/…` (see "Links out of the workspace").
 
 | Outcome | Where |
 | --- | --- |
@@ -774,7 +779,7 @@ checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whe
 | `{accountId}/settings/{slug}` | redirect to its settings | page `switch` |
 | `{accountId}/settings` | read-only account and governance details | page `switch` |
 | `{accountId}/proposals`, `…/proposals/{slug}`, `…/permissions` | no link; the URL redirects to its overview | `WorkspaceSectionGuard` |
-| `{accountId}/create/execute`, `…/create/{pluginAddress}/proposal` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
+| `{accountId}/create/execute`, `…/create/{pluginAddress}/proposal`, `…/create/{pluginAddress}/process` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
 
 - **A Safe is an account option on every section.** Where it lacks the section, the option links to its overview,
   as does the aggregated option on permissions and settings; a URL that gets there anyway is redirected by the guard.
@@ -802,7 +807,7 @@ route to the wrong account type.
    `WorkspaceAccountSubsection` makes a mistyped one a type error.
 2. Layout: check the `workspaces` flag and `isValidAccountId`, then render `WorkspaceSectionGuard` (`section="create"`,
    the subsection) **around** the wizard layout. Nothing above it checks the account, and a DAO layout that reads the
-   DAO replaces its children with an error state when the read fails, so a guard in the page would never run.
+   DAO replaces its children (404 or error state) when the read fails, so a guard in the page would never run.
 3. Page: wrap it in `WorkspaceGate`, which `LayoutWorkspace` provides only to `(workspacePage)`.
 4. Exit to the account's workspace section (`getAccountScopeUrl`), and point the entry action at the new route.
 5. Record every link the wizard still has to `/dao/…` in "Links out of the workspace".
@@ -822,6 +827,13 @@ remove it when the link stays in the workspace.
 | `{accountId}/create/{pluginAddress}/proposal` | redirect when the permission check fails | `/dao/…/proposals` | `useProposalPermissionCheckGuard` (`redirectTab: 'proposals'`) |
 | `{accountId}/create/{pluginAddress}/proposal` | success action of the publish dialog | `/dao/…/proposals/{slug}`, or the linked account's DAO path | `PublishProposalDialog` (`getProposalsLink`) |
 | `{accountId}/create/{pluginAddress}/proposal` | indexing fallback of the publish dialog | `/dao/…/proposals` | `PublishProposalDialog` (`indexingFallbackUrl`) |
+| `{accountId}/create/{pluginAddress}/process` | "plugin not found" error action | `/dao/…/settings` | `CreateProcessPageClient` |
+| `{accountId}/create/{pluginAddress}/process` | redirect when the permission check fails | `/dao/…/settings` | `useProposalPermissionCheckGuard` (`redirectTab: 'settings'`) |
+| `{accountId}/create/{pluginAddress}/process` | success action of the publish step | `/dao/…/proposals/{slug}` | `PublishProposalDialog` (`getProposalsLink`), opened by `PrepareProcessDialog` |
+| `{accountId}/create/{pluginAddress}/process` | indexing fallback of the publish step | `/dao/…/proposals` | `PublishProposalDialog` (`indexingFallbackUrl`), opened by `PrepareProcessDialog` |
+| `{accountId}/settings` (DAO) | "New process" | `/dao/…/create/{pluginAddress}/process` | `DaoSettingsPageClient` |
+| `{accountId}/settings` (DAO) | process-required dialog action | `/dao/…/create/{pluginAddress}/process` | `GovernanceProcessRequiredDialog`, opened by `DaoProcessDetailsInfo` and `AdminUninstallPlugin` |
+| `{accountId}/settings`, `{accountId}/overview` (DAO) | wizard link of the create-process dialog | `/dao/…/create/{pluginAddress}/process` | `CreateProcessDetailsDialog`, opened by `DaoSettingsPageClient` and `DashboardOnboarding` |
 | `{accountId}/settings/{slug}` | "Settings" breadcrumb | `/dao/…/settings` | `DaoProcessDetailsPageClient` |
 | `{accountId}/settings/{slug}` | "process not found" error action | `/dao/…/settings` | `DaoProcessDetailsPage` |
 | `{accountId}/settings/{slug}` | redirect for a hidden process | `/dao/…/settings` | `DaoProcessDetailsPage` (`RedirectToUrl`) |
@@ -1230,6 +1242,7 @@ src/modules/workspace/
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspaceExecute/{layoutWizardCreateWorkspaceExecute.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspaceProposal/{layoutWizardCreateWorkspaceProposal.tsx,index.ts}
+├── components/layoutWizardCreateWorkspaceProcess/{layoutWizardCreateWorkspaceProcess.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
@@ -1251,6 +1264,7 @@ src/modules/workspace/
 ├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
 ├── pages/workspaceCreateExecutePage/{workspaceCreateExecutePage.tsx,index.ts}
 ├── pages/workspaceCreateProposalPage/{workspaceCreateProposalPage.tsx,index.ts}
+├── pages/workspaceCreateProcessPage/{workspaceCreateProcessPage.tsx,index.ts}
 ├── pages/workspaceAccountProcessDetailsPage/{workspaceAccountProcessDetailsPage.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
@@ -1264,6 +1278,7 @@ src/app/workspace/page.tsx
 src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
 src/app/workspace/[workspaceId]/[accountId]/create/execute/{layout.tsx,page.tsx}
 src/app/workspace/[workspaceId]/[accountId]/create/[pluginAddress]/proposal/{layout.tsx,page.tsx}
+src/app/workspace/[workspaceId]/[accountId]/create/[pluginAddress]/process/{layout.tsx,page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,

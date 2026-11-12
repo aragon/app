@@ -360,6 +360,19 @@ describe('workspace utils', () => {
             },
         );
 
+        it.each<{ scope: IWorkspaceSectionScope; expected: boolean }>([
+            { scope: { ...dao, subsection: 'process' }, expected: true },
+            { scope: { ...safe, subsection: 'process' }, expected: false },
+            { scope: { ...all, subsection: 'process' }, expected: false },
+        ])(
+            'returns $expected for the create/{pluginAddress}/process subsection on $scope',
+            ({ scope, expected }) => {
+                expect(workspaceUtils.isSectionServed('create', scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
         it('applies the section rule to a section that declares no subsections', () => {
             expect(
                 workspaceUtils.isSectionServed('settings', {
@@ -397,6 +410,7 @@ describe('workspace utils', () => {
             expect(workspaceUtils.getSubsections('create')).toEqual([
                 'execute',
                 'proposal',
+                'process',
             ]);
         });
 
