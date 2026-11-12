@@ -456,22 +456,23 @@
       "landingPage": {
         "copyright": "© {{year}} Aragon",
         "demo": {
-          "action": "See a demo workspace",
-          "description": "No sign-in required."
+          "action": "Explore a demo workspace",
+          "desktopPreviewAlt": "My Workspace dashboard with four accounts and open to-dos",
+          "mobilePreviewAlt": "My Workspace dashboard on a phone, with open to-dos",
+          "previewLabel": "Explore the demo workspace"
         },
         "hero": {
-          "description": "Your existing Safe and Aragon accounts - in one place.",
-          "title": "Manage your team’s onchain finances"
+          "description": "Bring your existing Safes and Aragon DAOs into one shared workspace. Review and sign transactions, track pending approvals, and see what needs your team’s attention. Free to use.",
+          "title": "Your team’s onchain finances, in one place"
         },
+        "legal": "Legal",
         "openingWorkspace": "Opening your workspace…",
         "privacy": "Privacy",
         "signIn": {
           "comingSoon": "coming soon",
-          "description": "Open your workspace, or set one up for your team.",
           "email": "Email",
           "google": "Google",
           "passkey": "Passkey",
-          "title": "Sign in to Aragon",
           "walletAction": "Continue with wallet"
         },
         "terms": "Terms"

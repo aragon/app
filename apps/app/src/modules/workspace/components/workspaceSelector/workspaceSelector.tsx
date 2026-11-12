@@ -2,7 +2,6 @@
 
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -27,9 +26,8 @@ export interface IWorkspaceSelectorProps {
 export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { workspaceId } = props;
 
-    const [isOpen, setIsOpen] = useState(false);
-
     const { t } = useTranslations();
+
     const router = useRouter();
     const pathname = usePathname();
 
@@ -60,28 +58,28 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
             constrainContentWidth={false}
             customTrigger={
                 <button
-                    className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800"
+                    className="focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
                     type="button"
                 >
-                    <DaoAvatar
-                        name={workspace?.name}
-                        size="md"
-                        src={ipfsUtils.cidToSrc(workspace?.avatar)}
-                    />
+                    <span className="flex w-11 shrink-0 items-center">
+                        <DaoAvatar
+                            name={workspace?.name}
+                            size="md"
+                            src={ipfsUtils.cidToSrc(workspace?.avatar)}
+                        />
+                    </span>
                     <span className="grow truncate text-left text-base text-neutral-800 leading-tight">
                         {workspace?.name}
                     </span>
-                    <Icon
-                        className="shrink-0"
-                        icon={
-                            isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN
-                        }
-                        size="md"
-                    />
+                    <span
+                        aria-hidden={true}
+                        className="flex shrink-0 flex-col items-center -space-y-1"
+                    >
+                        <Icon icon={IconType.CHEVRON_UP} size="sm" />
+                        <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
+                    </span>
                 </button>
             }
-            onOpenChange={setIsOpen}
-            open={isOpen}
         >
             {workspaces.map(({ id, name, avatar }) => (
                 <Dropdown.Item

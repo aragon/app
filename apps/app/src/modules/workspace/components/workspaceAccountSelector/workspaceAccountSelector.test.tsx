@@ -165,12 +165,23 @@ describe('<WorkspaceAccountSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('counts the workspace accounts under the aggregated option', () => {
+    it('summarizes account avatars beyond the first two on the aggregated trigger', () => {
+        mockAccountOptions({
+            options: [
+                allAccountsOption,
+                daoOption,
+                safeOption,
+                {
+                    ...safeOption,
+                    id: 'operations-safe',
+                    label: 'Operations Safe',
+                },
+                { ...safeOption, id: 'reserve-safe', label: 'Reserve Safe' },
+            ],
+        });
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceAccountSelector\.accounts/),
-        ).toBeInTheDocument();
+        expect(screen.getByText('+2')).toBeInTheDocument();
     });
 
     it('displays the address of the active account under its name', () => {
@@ -193,7 +204,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
     });
 
-    it('lists every option with its avatar, using the workspace avatar for the aggregated option, then the add account item', async () => {
+    it('lists every option with its avatar, using a list icon for the aggregated option, then the add account item', async () => {
         render(createTestComponent());
 
         await waitFor(() =>
@@ -208,17 +219,8 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(items[2]).toHaveTextContent(
             /workspaceAccountSelector\.addAccount$/,
         );
-        expect(cidToSrcSpy).toHaveBeenCalledWith('workspace-cid');
-    });
-
-    it('allows account creation for an imported demo workspace', async () => {
-        getWorkspaceSpy.mockResolvedValue({ ...workspace, isDemo: true });
-        render(createTestComponent());
-
-        await userEvent.click(screen.getByRole('button'));
-
         expect(
-            await screen.findByText(/workspaceAccountSelector\.addAccount$/),
+            within(items[0]).getByTestId('RICHTEXT_LIST_UNORDERED'),
         ).toBeInTheDocument();
     });
 

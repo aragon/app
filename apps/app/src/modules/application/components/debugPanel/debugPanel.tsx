@@ -10,6 +10,12 @@ import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
 import { DebugPanelControl } from './debugPanelControl';
 import { WorkspaceRegistryControls } from './workspaceRegistryControls';
 
+const groupOrder: Record<string, number> = {
+    Global: 0,
+    'Feature flags': 1,
+    Simulation: 2,
+};
+
 export const DebugPanel: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -69,6 +75,9 @@ export const DebugPanel: React.FC = () => {
         controls,
         ({ group }) => group ?? 'Global',
     );
+    const groupNames = Object.keys(groupedControls).toSorted(
+        (left, right) => (groupOrder[left] ?? 3) - (groupOrder[right] ?? 3),
+    );
 
     return (
         <>
@@ -98,7 +107,7 @@ export const DebugPanel: React.FC = () => {
                     />
                 </div>
                 <div className="flex flex-col gap-4 overflow-y-auto">
-                    {Object.keys(groupedControls).map((group) => (
+                    {groupNames.map((group) => (
                         <Fragment key={group}>
                             {group === 'Simulation' && (
                                 <WorkspaceRegistryControls />

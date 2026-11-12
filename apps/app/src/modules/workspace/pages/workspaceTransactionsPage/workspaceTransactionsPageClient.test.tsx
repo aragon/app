@@ -373,17 +373,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('offers creation for an executable account in an imported demo workspace', async () => {
-        getWorkspaceSpy.mockResolvedValue(buildWorkspace({ isDemo: true }));
-        mockExecutePermissions({ [daoAccount.id]: true });
-        render(createTestComponent());
-
-        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
-        expect(
-            screen.getByRole('button', { name: createActionName }),
-        ).toBeInTheDocument();
-    });
-
     // The selection dialog snapshots the permissions and destinations it is given, so an action offered while the
     // accounts that answered first say yes would freeze a disabled list that never catches up.
     it('offers no create action while the execute permissions are still being read', async () => {

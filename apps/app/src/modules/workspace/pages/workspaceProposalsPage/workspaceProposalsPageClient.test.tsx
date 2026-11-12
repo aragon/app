@@ -300,20 +300,6 @@ describe('<WorkspaceProposalsPageClient /> component', () => {
         );
     });
 
-    it('offers proposal creation for an imported demo workspace', async () => {
-        getWorkspaceSpy.mockResolvedValue(buildWorkspace({ isDemo: true }));
-        render(createTestComponent());
-
-        await waitFor(() =>
-            expect(lastListProps()?.accounts).toEqual([daoAccount]),
-        );
-        expect(
-            await screen.findByRole('button', {
-                name: /workspaceProposalsPage\.main\.action$/,
-            }),
-        ).toBeInTheDocument();
-    });
-
     // The create flow resolves its destination from the DAOs, so the action waits for them.
     it('offers proposal creation only once the DAOs of the workspace are loaded', async () => {
         let resolveDao: (dao: IDao) => void = () => undefined;

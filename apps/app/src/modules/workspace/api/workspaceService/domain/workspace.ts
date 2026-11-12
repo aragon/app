@@ -8,10 +8,6 @@ export interface IWorkspace {
      */
     id: string;
     /**
-     * Whether the workspace was installed from the example demo fixture.
-     */
-    isDemo?: boolean;
-    /**
      * Name of the workspace.
      */
     name: string;

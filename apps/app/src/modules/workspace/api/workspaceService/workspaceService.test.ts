@@ -35,6 +35,8 @@ describe('workspace service', () => {
 
     afterEach(() => {
         localStorage.clear();
+        sessionStorage.clear();
+        window.history.replaceState(null, '', '/');
     });
 
     describe('getWorkspace', () => {
@@ -131,25 +133,6 @@ describe('workspace service', () => {
                 workspaceService.getOrCreateDefaultWorkspace(),
             ).resolves.toEqual(first);
             expect(Object.keys(getStoredWorkspaces())).toHaveLength(2);
-        });
-
-        it('creates and reuses a personal default without removing demo fixtures', async () => {
-            const demo = await workspaceService.createWorkspace({
-                body: buildBody({ name: 'Demo', isDemo: true }),
-            });
-
-            const first = await workspaceService.getOrCreateDefaultWorkspace();
-            const second = await workspaceService.getOrCreateDefaultWorkspace();
-
-            expect(first).toMatchObject({
-                id: expect.stringMatching(/^my-workspace-[0-9a-f]{8}$/),
-            });
-            expect(first.isDemo).toBeUndefined();
-            expect(second).toEqual(first);
-            expect(getStoredWorkspaces()).toEqual({
-                [demo.id]: demo,
-                [first.id]: first,
-            });
         });
 
         it('rejects with a storage error when local storage rejects the write', async () => {
@@ -392,11 +375,62 @@ describe('workspace service', () => {
             ).rejects.toMatchObject({ status: 404 });
         });
     });
+    describe('session workspace registry', () => {
+        it('uses the fixture only on its routes and discards it on a persistent route', async () => {
+            const persistent = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Persistent' }),
+            });
+            const fixture = {
+                fixture: {
+                    ...buildBody({ name: 'Fixture' }),
+                    id: 'fixture',
+                },
+            };
+            await workspaceService.activateSessionWorkspaceRegistry(
+                JSON.stringify(fixture),
+            );
+
+            window.history.pushState(
+                null,
+                '',
+                '/workspace/fixture/all/overview',
+            );
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
+                fixture.fixture,
+            ]);
+            await workspaceService.updateWorkspace({
+                urlParams: { id: 'fixture' },
+                body: buildBody({ name: 'Changed fixture' }),
+            });
+            expect(getStoredWorkspaces()).toEqual({
+                [persistent.id]: persistent,
+            });
+
+            window.history.pushState(
+                null,
+                '',
+                `/workspace/${persistent.id}/all/overview`,
+            );
+            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
+                persistent,
+            ]);
+            window.history.pushState(
+                null,
+                '',
+                '/workspace/fixture/all/overview',
+            );
+            await expect(
+                workspaceService.getWorkspace({
+                    urlParams: { id: 'fixture' },
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+    });
 
     describe('workspace registry portability', () => {
         it('exports and restores the complete registry', async () => {
             const first = await workspaceService.createWorkspace({
-                body: buildBody({ name: 'First', isDemo: true }),
+                body: buildBody({ name: 'First' }),
             });
             const second = await workspaceService.createWorkspace({
                 body: buildBody({ name: 'Second' }),
@@ -436,7 +470,7 @@ describe('workspace service', () => {
                         broken: {
                             ...buildBody(),
                             id: 'broken',
-                            isDemo: 'yes',
+                            name: 42,
                         },
                     }),
                 ),

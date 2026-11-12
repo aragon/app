@@ -1,7 +1,10 @@
 import { type BrowserContext, expect, test } from '@playwright/test';
+import workspaceDemoFixture from '../../../../src/modules/workspace/fixtures/workspaceDemo.fixture.json';
 
 const featureFlagCookieName = 'aragon.featureFlags.overrides';
 const workspaceStorageKey = 'aragon-workspaces';
+const aragonDemoName = workspaceDemoFixture['aragon-demo'].name;
+const xmaquinaDemoName = workspaceDemoFixture['xmaquina-demo'].name;
 
 const setWorkspacesFlag = async (
     context: BrowserContext,
@@ -45,7 +48,7 @@ test.describe('First-time workspace experience', () => {
             await setWorkspacesFlag(context, baseURL!, true);
         });
 
-        test('links the landing page to the real demo workspace without an Explore CTA', async ({
+        test('links the landing page to the real demo workspace without an Explore DAOs CTA', async ({
             page,
         }) => {
             await page.goto('/');
@@ -53,7 +56,7 @@ test.describe('First-time workspace experience', () => {
             await expect(
                 page.getByRole('heading', {
                     level: 1,
-                    name: 'Manage your team’s onchain finances',
+                    name: 'Your team’s onchain finances, in one place',
                 }),
             ).toBeVisible();
             await expect(
@@ -64,14 +67,16 @@ test.describe('First-time workspace experience', () => {
             ).toHaveCount(0);
 
             await page
-                .getByRole('link', { name: 'See a demo workspace' })
-                .first()
+                .getByRole('link', { name: 'Explore a demo workspace' })
                 .click();
             await expect(page).toHaveURL(
                 /\/workspace\/aragon-demo\/all\/overview$/,
             );
             await expect(
-                page.getByRole('heading', { level: 1, name: 'Aragon' }),
+                page.getByRole('heading', {
+                    level: 1,
+                    name: aragonDemoName,
+                }),
             ).toBeVisible();
         });
 
@@ -189,50 +194,20 @@ test.describe('First-time workspace experience', () => {
         test('installs the demo fixture and keeps normal workspace navigation working', async ({
             page,
         }) => {
-            await page.goto('/demo');
+            await page.goto('/workspace');
+            await expect(page).toHaveURL(
+                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
+            );
+
+            await page.goto('/');
+            await page
+                .getByRole('link', { name: 'Explore a demo workspace' })
+                .first()
+                .click();
 
             await expect(page).toHaveURL(
                 /\/workspace\/aragon-demo\/all\/overview$/,
             );
-            await expect
-                .poll(async () =>
-                    page.evaluate((key) => {
-                        const registry = JSON.parse(
-                            localStorage.getItem(key) ?? '{}',
-                        ) as Record<
-                            string,
-                            {
-                                isDemo?: boolean;
-                                accounts?: { address: string }[];
-                            }
-                        >;
-                        return {
-                            demoIds: Object.values(registry)
-                                .filter(({ isDemo }) => isDemo)
-                                .map(({ accounts }) => accounts?.[0]?.address),
-                            aragonAccounts: registry[
-                                'aragon-demo'
-                            ]?.accounts?.map(({ address }) => address),
-                            cryptexAccounts: registry[
-                                'cryptex-demo'
-                            ]?.accounts?.map(({ address }) => address),
-                        };
-                    }, workspaceStorageKey),
-                )
-                .toEqual({
-                    demoIds: [
-                        '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
-                        '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
-                    ],
-                    aragonAccounts: [
-                        '0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482',
-                        '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
-                    ],
-                    cryptexAccounts: [
-                        '0xf204245b0B05E9A0780761E326552A569c1D6ceb',
-                        '0x311Ff044882bf953cA3A70867f5B1836C2a9b76B',
-                    ],
-                });
             await expect(
                 page.getByRole('link', { name: 'Edit workspace' }),
             ).toBeVisible();
@@ -274,17 +249,31 @@ test.describe('First-time workspace experience', () => {
                 .first()
                 .click();
             await page
-                .getByRole('button', { exact: true, name: 'avatar Aragon' })
+                .getByRole('button', {
+                    exact: true,
+                    name: `avatar ${aragonDemoName}`,
+                })
                 .click();
             await expect(
                 page.getByRole('menuitem', { name: 'Create workspace' }),
             ).toBeVisible();
-            await page.getByRole('menuitem', { name: 'Cryptex' }).click();
+            await expect(
+                page.getByRole('menuitem', { name: 'My workspace' }),
+            ).toHaveCount(0);
+            await expect(
+                page.getByRole('menuitem', { name: /Cryptex/i }),
+            ).toHaveCount(0);
+            await page
+                .getByRole('menuitem', { name: xmaquinaDemoName })
+                .click();
             await expect(page).toHaveURL(
-                /\/workspace\/cryptex-demo\/all\/overview$/,
+                /\/workspace\/xmaquina-demo\/all\/overview$/,
             );
             await expect(
-                page.getByRole('heading', { level: 1, name: 'Cryptex' }),
+                page.getByRole('heading', {
+                    level: 1,
+                    name: xmaquinaDemoName,
+                }),
             ).toBeVisible();
             await expect(
                 page.getByRole('link', { name: /Polygon Safe/ }).last(),
@@ -300,19 +289,13 @@ test.describe('First-time workspace experience', () => {
                     name: 'My workspace',
                 }),
             ).toBeVisible();
-            await expect
-                .poll(() =>
-                    page.evaluate((key) => {
-                        const registry = JSON.parse(
-                            localStorage.getItem(key) ?? '{}',
-                        ) as Record<string, { isDemo?: boolean }>;
-
-                        return Object.values(registry).map(
-                            ({ isDemo }) => isDemo === true,
-                        );
-                    }, workspaceStorageKey),
-                )
-                .toEqual([true, true, false]);
+            await page.getByRole('button', { name: /My workspace/ }).click();
+            await expect(
+                page.getByRole('menuitem', { name: aragonDemoName }),
+            ).toHaveCount(0);
+            await expect(
+                page.getByRole('menuitem', { name: xmaquinaDemoName }),
+            ).toHaveCount(0);
         });
 
         test('creates an empty workspace and exposes both account actions', async ({

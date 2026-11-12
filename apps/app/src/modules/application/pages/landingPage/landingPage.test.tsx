@@ -1,10 +1,16 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as connectedWalletGuard from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountHook from '@/modules/application/hooks/useWalletAccount';
+import {
+    workspaceService,
+    workspaceServiceKeys,
+} from '@/modules/workspace/api/workspaceService';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import { LandingPage } from './landingPage';
 
 describe('<LandingPage /> component', () => {
@@ -17,6 +23,10 @@ describe('<LandingPage /> component', () => {
         'useConnectedWalletGuard',
     );
     const walletAccountSpy = jest.spyOn(walletAccountHook, 'useWalletAccount');
+    const activateSessionRegistrySpy = jest.spyOn(
+        workspaceService,
+        'activateSessionWorkspaceRegistry',
+    );
 
     beforeEach(() => {
         useRouterSpy.mockReturnValue({
@@ -30,6 +40,7 @@ describe('<LandingPage /> component', () => {
             isConnecting: false,
             isReconnecting: false,
         });
+        activateSessionRegistrySpy.mockResolvedValue();
     });
 
     afterEach(() => {
@@ -39,14 +50,22 @@ describe('<LandingPage /> component', () => {
         useRouterSpy.mockReset();
         walletGuardSpy.mockReset();
         walletAccountSpy.mockReset();
+        activateSessionRegistrySpy.mockReset();
     });
-
-    it('links to the demo workspace without an Explore CTA', () => {
-        render(
-            <GukModulesProvider>
+    const createTestComponent = (client = new QueryClient()) => (
+        <ReactQueryWrapper client={client}>
+            <GukModulesProvider queryClient={client}>
                 <LandingPage />
-            </GukModulesProvider>,
-        );
+            </GukModulesProvider>
+        </ReactQueryWrapper>
+    );
+
+    it('resets the session fixture before opening the demo workspace', async () => {
+        const queryClient = new QueryClient();
+        queryClient.setQueryData(workspaceServiceKeys.workspaceList(), [
+            { id: 'persistent' },
+        ]);
+        render(createTestComponent(queryClient));
 
         expect(
             screen.queryByRole('link', {
@@ -57,15 +76,26 @@ describe('<LandingPage /> component', () => {
             screen.getAllByRole('link', {
                 name: /landingPage\.demo\.action$/,
             })[0],
-        ).toHaveAttribute('href', '/demo');
+        ).toHaveAttribute('href', '/workspace/aragon-demo/all/overview');
+        await userEvent.click(
+            screen.getAllByRole('link', {
+                name: /landingPage\.demo\.action$/,
+            })[0],
+        );
+
+        await waitFor(() => {
+            expect(activateSessionRegistrySpy).toHaveBeenCalledTimes(1);
+            expect(
+                queryClient.getQueryData(workspaceServiceKeys.workspaceList()),
+            ).toBeUndefined();
+            expect(push).toHaveBeenCalledWith(
+                '/workspace/aragon-demo/all/overview',
+            );
+        });
     });
 
     it('keeps coming-soon sign-in options disabled without a not-allowed cursor', () => {
-        render(
-            <GukModulesProvider>
-                <LandingPage />
-            </GukModulesProvider>,
-        );
+        render(createTestComponent());
 
         for (const name of [
             /landingPage\.signIn\.email$/,
@@ -82,11 +112,7 @@ describe('<LandingPage /> component', () => {
     it('opens the existing workspace when the wallet is already connected', async () => {
         walletGuardSpy.mockReturnValue({ check, result: true });
 
-        render(
-            <GukModulesProvider>
-                <LandingPage />
-            </GukModulesProvider>,
-        );
+        render(createTestComponent());
 
         await waitFor(() => expect(replace).toHaveBeenCalledWith('/workspace'));
     });
@@ -99,11 +125,7 @@ describe('<LandingPage /> component', () => {
             isReconnecting: true,
         });
 
-        render(
-            <GukModulesProvider>
-                <LandingPage />
-            </GukModulesProvider>,
-        );
+        render(createTestComponent());
 
         expect(screen.getByRole('status')).toHaveTextContent(
             /landingPage\.openingWorkspace$/,
@@ -120,11 +142,7 @@ describe('<LandingPage /> component', () => {
             check: () => params?.onSuccess?.(),
             result: false,
         }));
-        render(
-            <GukModulesProvider>
-                <LandingPage />
-            </GukModulesProvider>,
-        );
+        render(createTestComponent());
 
         await userEvent.click(
             screen.getByRole('button', {

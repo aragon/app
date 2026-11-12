@@ -91,7 +91,7 @@ describe('<WorkspaceSelector /> component', () => {
         getWorkspaceListSpy.mockResolvedValue([
             firstWorkspace,
             secondWorkspace,
-            buildWorkspace({ id: 'demo', name: 'Demo', isDemo: true }),
+            buildWorkspace({ id: 'third', name: 'Third Workspace' }),
         ]);
         render(createTestComponent());
 
@@ -101,33 +101,7 @@ describe('<WorkspaceSelector /> component', () => {
         expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('First Workspace');
         expect(items[1]).toHaveTextContent('Second Workspace');
-        expect(items[2]).toHaveTextContent('Demo');
-        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
-    });
-
-    it('lists personal workspaces and creation from a demo workspace', async () => {
-        const currentDemo = { ...firstWorkspace, isDemo: true };
-        const secondDemo = {
-            ...secondWorkspace,
-            id: 'second-demo',
-            name: 'Second Demo',
-            isDemo: true,
-        };
-        getWorkspaceSpy.mockResolvedValue(currentDemo);
-        getWorkspaceListSpy.mockResolvedValue([
-            currentDemo,
-            secondWorkspace,
-            secondDemo,
-        ]);
-        render(createTestComponent());
-
-        await openDropdown();
-
-        const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(4);
-        expect(items[0]).toHaveTextContent('First Workspace');
-        expect(items[1]).toHaveTextContent('Second Workspace');
-        expect(items[2]).toHaveTextContent('Second Demo');
+        expect(items[2]).toHaveTextContent('Third Workspace');
         expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
     });
 
