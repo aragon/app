@@ -318,6 +318,9 @@ describe('workspace utils', () => {
             { section: 'settings', scope: all, expected: false },
             { section: 'settings', scope: dao, expected: true },
             { section: 'settings', scope: safe, expected: true },
+            { section: 'create', scope: all, expected: false },
+            { section: 'create', scope: dao, expected: true },
+            { section: 'create', scope: safe, expected: true },
         ])(
             'returns $expected for $section on $scope',
             ({ section, scope, expected }) => {
@@ -327,10 +330,45 @@ describe('workspace utils', () => {
             },
         );
 
+        it.each<{ scope: IWorkspaceSectionScope; expected: boolean }>([
+            { scope: { ...dao, subsection: 'execute' }, expected: true },
+            { scope: { ...safe, subsection: 'execute' }, expected: false },
+            { scope: { ...all, subsection: 'execute' }, expected: false },
+            {
+                scope: { ...unknown, subsection: 'execute' },
+                expected: false,
+            },
+        ])(
+            'returns $expected for the create/execute subsection on $scope',
+            ({ scope, expected }) => {
+                expect(workspaceUtils.isSectionServed('create', scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
+        it('applies the section rule to a section that declares no subsections', () => {
+            expect(
+                workspaceUtils.isSectionServed('settings', {
+                    ...safe,
+                    subsection: 'execute',
+                }),
+            ).toBeTruthy();
+        });
+
+        it('rejects a subsection no section declares at type-check', () => {
+            workspaceUtils.isSectionServed('create', {
+                ...dao,
+                // @ts-expect-error -- not a declared subsection
+                subsection: 'exectuion',
+            });
+        });
+
         it.each<WorkspaceAccountSection>([
             'proposals',
             'permissions',
             'settings',
+            'create',
         ])(
             'does not serve %s to an account whose type is not known yet',
             (section) => {
@@ -339,6 +377,19 @@ describe('workspace utils', () => {
                 ).toBeFalsy();
             },
         );
+    });
+
+    describe('getSubsections', () => {
+        it('returns the routes a section restricts under it', () => {
+            expect(workspaceUtils.getSubsections('create')).toEqual([
+                'execute',
+            ]);
+        });
+
+        it('returns no routes for a section that restricts none', () => {
+            expect(workspaceUtils.getSubsections('settings')).toEqual([]);
+            expect(workspaceUtils.getSubsections('assets')).toEqual([]);
+        });
     });
 
     describe('isAccountSection', () => {
@@ -776,23 +827,53 @@ describe('workspace utils', () => {
 // Every route below an account is a section the navigation, the account selector and `WorkspaceSectionGuard` read
 // from `workspaceSectionScopes`. A route folder missing from the list would serve every account type unnoticed.
 describe('workspace account routes', () => {
-    it('every route folder under [accountId] is a workspace account section', () => {
-        // biome-ignore lint/correctness/noGlobalDirnameFilename: Jest runs tests as CommonJS, where `import.meta` does not parse.
-        const testDir = __dirname;
-        const accountRoutesDir = join(
-            testDir,
-            '../../../../app/workspace/[workspaceId]/(workspacePage)/[accountId]',
-        );
-        const routeFolders = readdirSync(accountRoutesDir, {
-            withFileTypes: true,
-        })
+    // biome-ignore lint/correctness/noGlobalDirnameFilename: Jest runs tests as CommonJS, where `import.meta` does not parse.
+    const testDir = __dirname;
+    const workspaceRoutesDir = join(
+        testDir,
+        '../../../../app/workspace/[workspaceId]',
+    );
+    // Account pages live in `(workspacePage)`; account wizards live outside it.
+    const accountPagesDir = join(
+        workspaceRoutesDir,
+        '(workspacePage)/[accountId]',
+    );
+    const accountWizardsDir = join(workspaceRoutesDir, '[accountId]');
+
+    // Dynamic segments, such as the `[...section]` catch-all, are not sections.
+    const readRouteFolders = (dir: string) =>
+        readdirSync(dir, { withFileTypes: true })
             .filter((entry) => entry.isDirectory())
             .map((entry) => entry.name)
-            // Dynamic segments, such as the `[...section]` catch-all, are not sections.
             .filter((name) => !name.startsWith('['));
+
+    it('every route folder under [accountId] is a workspace account section', () => {
+        const routeFolders = [accountPagesDir, accountWizardsDir].flatMap(
+            readRouteFolders,
+        );
 
         expect([...routeFolders].sort()).toEqual(
             [...workspaceAccountSections].sort(),
         );
+    });
+
+    // An undeclared wizard route gets every type of its section (a new create wizard: DAO and Safe).
+    it('every route folder under a wizard section is one of its subsections', () => {
+        const wizardSections = readRouteFolders(accountWizardsDir).filter(
+            workspaceUtils.isAccountSection,
+        );
+
+        expect(wizardSections).not.toHaveLength(0);
+
+        wizardSections.forEach((section) => {
+            const routeFolders = readRouteFolders(
+                join(accountWizardsDir, section),
+            );
+
+            expect({ section, routes: [...routeFolders].sort() }).toEqual({
+                section,
+                routes: [...workspaceUtils.getSubsections(section)].sort(),
+            });
+        });
     });
 });
