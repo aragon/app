@@ -1,12 +1,5 @@
-import classNames from 'classnames';
 import type React from 'react';
-import {
-    Avatar,
-    type AvatarSize,
-    type IAvatarProps,
-    type ResponsiveAttributeClassMap,
-    responsiveUtils,
-} from '../../../../core';
+import { Avatar, type AvatarSize, type IAvatarProps } from '../../../../core';
 
 export interface IDaoAvatarProps extends Omit<IAvatarProps, 'fallback'> {
     /**
@@ -20,57 +13,6 @@ export interface IDaoAvatarProps extends Omit<IAvatarProps, 'fallback'> {
     size?: AvatarSize;
 }
 
-const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
-    xs: {
-        default: 'text-xs',
-        sm: 'sm:text-xs',
-        md: 'md:text-xs',
-        lg: 'lg:text-xs',
-        xl: 'xl:text-xs',
-        '2xl': '2xl:text-xs',
-    },
-    sm: {
-        default: 'text-sm',
-        sm: 'sm:text-sm',
-        md: 'md:text-sm',
-        lg: 'lg:text-sm',
-        xl: 'xl:text-sm',
-        '2xl': '2xl:text-sm',
-    },
-    md: {
-        default: 'text-md',
-        sm: 'sm:text-md',
-        md: 'md:text-md',
-        lg: 'lg:text-md',
-        xl: 'xl:text-md',
-        '2xl': '2xl:text-md',
-    },
-    lg: {
-        default: 'text-lg',
-        sm: 'sm:text-lg',
-        md: 'md:text-lg',
-        lg: 'lg:text-lg',
-        xl: 'xl:text-lg',
-        '2xl': '2xl:text-lg',
-    },
-    xl: {
-        default: 'text-xl',
-        sm: 'sm:text-xl',
-        md: 'md:text-xl',
-        lg: 'lg:text-xl',
-        xl: 'xl:text-xl',
-        '2xl': '2xl:text-xl',
-    },
-    '2xl': {
-        default: 'text-2xl',
-        sm: 'sm:text-2xl',
-        md: 'md:text-2xl',
-        lg: 'lg:text-2xl',
-        xl: 'xl:text-2xl',
-        '2xl': '2xl:text-2xl',
-    },
-};
-
 /**
  * Usage notes:
  *
@@ -79,19 +21,13 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
  *   characters, and a multi-word name uses the first character of its first two words.
  */
 export const DaoAvatar: React.FC<IDaoAvatarProps> = (props) => {
-    const { name, size = 'lg', responsiveSize, className, ...otherProps } = props;
+    const { name, size = 'lg', responsiveSize, ...otherProps } = props;
     const daoInitials = getDaoInitials(name).toUpperCase();
 
     return (
         <Avatar
             fallback={
-                <span
-                    className={classNames(
-                        'flex size-full items-center justify-center rounded-full bg-primary-400 text-neutral-0 leading-tight',
-                        responsiveUtils.generateClassNames(size, responsiveSize, responsiveSizeClasses),
-                        className,
-                    )}
-                >
+                <span className="flex size-full items-center justify-center rounded-full bg-primary-400 text-neutral-0">
                     {daoInitials}
                 </span>
             }

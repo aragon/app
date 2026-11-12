@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Avatar } from './avatar';
+import { Avatar, type AvatarSize } from './avatar';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Avatar> = {
@@ -44,6 +44,27 @@ export const CustomFallback: Story = {
         size: 'lg',
         fallback: <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">SO</span>,
     },
+};
+
+/**
+ * Avatar fallback text at every supported size.
+ */
+export const AllSizes: Story = {
+    render: () => (
+        <div className="flex items-center gap-4">
+            {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] satisfies AvatarSize[]).map((size) => (
+                <Avatar
+                    fallback={
+                        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+                            AB
+                        </span>
+                    }
+                    key={size}
+                    size={size}
+                />
+            ))}
+        </div>
+    ),
 };
 
 export default meta;

@@ -5,10 +5,10 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "122c44a19fb95a3a16f7415ea647673a12294eb0de7d9dc50362f968661f27c2",
-            "totalRecords": 394,
-            "entryCount": 145,
-            "uiEntryCount": 138,
+            "sha256": "73e436ef7f4c120388273e683ca25a7f683b87f8631ebf5acfb70130a46b29e8",
+            "totalRecords": 398,
+            "entryCount": 147,
+            "uiEntryCount": 140,
             "utilityEntryCount": 7,
             "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
         },
@@ -527,6 +527,33 @@
             }
         },
         {
+            "id": "govkit:AvatarStack",
+            "kind": "component",
+            "name": "AvatarStack",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AvatarStack"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [
+                "Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.",
+                "The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.",
+                "Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.",
+                "Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed."
+            ],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140",
+                "stories": [
+                    "kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1"
+                ]
+            }
+        },
+        {
             "id": "govkit:Breadcrumbs",
             "kind": "component",
             "name": "Breadcrumbs",
@@ -894,7 +921,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81",
+                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:23",
                 "stories": [
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ]
@@ -1519,7 +1546,7 @@
                 "Compound export with members: Dropdown.Container, Dropdown.Item."
             ],
             "references": {
-                "source": "kit:src/core/components/dropdown/index.ts:7",
+                "source": "kit:src/core/components/dropdown/index.ts:9",
                 "stories": []
             }
         },
@@ -1542,6 +1569,31 @@
                 "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DropdownGroup",
+            "kind": "component",
+            "name": "Dropdown.Group",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Dropdown"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [
+                "Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.",
+                "Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own."
+            ],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17",
+                "stories": [
+                    "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1"
                 ]
             }
         },
