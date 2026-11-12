@@ -8,6 +8,8 @@ export type { IPluginInfoSetup } from './pluginInfoSetup';
 export type * from './queryOptions';
 export type { IWorkspaceAccountMemberPageParams } from './workspaceAccountMemberPageParams';
 export type { IWorkspaceAccountPageParams } from './workspaceAccountPageParams';
+export type { IWorkspaceAccountProcessPageParams } from './workspaceAccountProcessPageParams';
 export type { IWorkspaceAccountProposalPageParams } from './workspaceAccountProposalPageParams';
+export type { IWorkspaceCreateProcessPageParams } from './workspaceCreateProcessPageParams';
 export type { IWorkspaceCreateProposalPageParams } from './workspaceCreateProposalPageParams';
 export type { IWorkspacePageParams } from './workspacePageParams';
