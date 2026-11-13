@@ -1,10 +1,15 @@
+import { calculateSafeTransactionHash } from '@safe-global/protocol-kit';
+import { getAddress, zeroAddress } from 'viem';
 import {
     generateSafeConfirmation,
     generateSafeMultisigTransaction,
 } from '@/plugins/safeMultisigPlugin/testUtils';
 import { SafeApprovalReadiness } from '../../types/safeApprovalReadiness';
 import { SafeTransactionState } from '../../types/safeTransactionState';
-import { safeTransactionUtils } from './safeTransactionUtils';
+import {
+    type ISafeRejectionParams,
+    safeTransactionUtils,
+} from './safeTransactionUtils';
 
 describe('safeTransaction utils', () => {
     describe('supportsEip1271Signatures', () => {
@@ -19,6 +24,103 @@ describe('safeTransaction utils', () => {
             expect(
                 safeTransactionUtils.supportsEip1271Signatures(version),
             ).toEqual(supported);
+        });
+    });
+
+    describe('isRejection', () => {
+        const safeAddress = getAddress(
+            '0x5afe000000000000000000000000000000000001',
+        );
+        const receiver = getAddress(
+            '0x0000000000000000000000000000000000000031',
+        );
+        const chainId = 11_155_111;
+        const nonce = '12';
+        const rejection: Parameters<typeof calculateSafeTransactionHash>[1] = {
+            to: safeAddress,
+            value: '0',
+            data: '0x',
+            operation: 0,
+            safeTxGas: '0',
+            baseGas: '0',
+            gasPrice: '0',
+            gasToken: zeroAddress,
+            refundReceiver: zeroAddress,
+            nonce: Number(nonce),
+        };
+
+        // The hash the protocol kit gives a transaction, which is the one the Safe transaction service reports.
+        const hashOf = (
+            fields?: Partial<typeof rejection>,
+            safeVersion = '1.4.1',
+        ) =>
+            calculateSafeTransactionHash(
+                safeAddress,
+                { ...rejection, ...fields },
+                safeVersion,
+                BigInt(chainId),
+            );
+
+        const isRejection = (
+            safeTxHash: string,
+            params?: Partial<ISafeRejectionParams>,
+        ) =>
+            safeTransactionUtils.isRejection({
+                safeTxHash,
+                nonce,
+                safeAddress,
+                chainId,
+                ...params,
+            });
+
+        it.each(['1.1.1', '1.3.0', '1.4.1', '1.5.0'])(
+            'recognises the rejection of a nonce on a Safe %s',
+            (safeVersion) => {
+                expect(isRejection(hashOf({}, safeVersion))).toBeTruthy();
+            },
+        );
+
+        it('recognises the rejection whatever the casing of its hash and of the Safe address', () => {
+            expect(
+                isRejection(hashOf().toUpperCase().replace('0X', '0x'), {
+                    safeAddress: safeAddress.toLowerCase(),
+                }),
+            ).toBeTruthy();
+        });
+
+        it.each([
+            { label: 'carries calldata', fields: { data: '0x12' } },
+            { label: 'sends value', fields: { value: '1' } },
+            { label: 'is a delegate call', fields: { operation: 1 } },
+            { label: 'sets a gas price', fields: { gasPrice: '1' } },
+            { label: 'sets a base gas', fields: { baseGas: '1' } },
+            {
+                label: 'sets a Safe transaction gas',
+                fields: { safeTxGas: '1' },
+            },
+            { label: 'sets a gas token', fields: { gasToken: receiver } },
+            {
+                label: 'sets a refund receiver',
+                fields: { refundReceiver: receiver },
+            },
+            { label: 'targets another address', fields: { to: receiver } },
+        ])('refuses an empty-looking transaction that $label', ({ fields }) => {
+            expect(isRejection(hashOf(fields))).toBeFalsy();
+        });
+
+        it.each([
+            { label: 'another nonce', params: { nonce: '13' } },
+            { label: 'another Safe', params: { safeAddress: receiver } },
+            { label: 'another chain', params: { chainId: 1 } },
+        ])('refuses the rejection of $label', ({ params }) => {
+            expect(isRejection(hashOf(), params)).toBeFalsy();
+        });
+
+        it.each([
+            { label: 'nonce', params: { nonce: 'unknown' } },
+            { label: 'Safe address', params: { safeAddress: '0x12' } },
+        ])('refuses a transaction with an unreadable $label', ({ params }) => {
+            expect(isRejection(hashOf(), params)).toBeFalsy();
         });
     });
 
