@@ -342,6 +342,14 @@ export const SafeTransactionReviewContent: React.FC<
     const isHashMismatch = verification === SafeHashVerification.MISMATCH;
 
     /**
+     * With a gas price above zero the Safe pays for its own execution, whatever its calls do: the
+     * refund goes to the refund receiver, or to whoever executes, in the gas token. The fields
+     * sit in the collapsed details, so the refund is said out loud. Disclosed rather than refused,
+     * as relayed transactions use it legitimately.
+     */
+    const hasGasRefund = !/^0+$/.test(envelope.gasPrice);
+
+    /**
      * Refused rather than disclosed, because in these states what this surface *says* is wrong, not
      * merely incomplete. An unverifiable hash and an undecodable call stay signable on purpose:
      * both are honest about themselves and a gate there would lock owners out of legitimately
@@ -420,6 +428,12 @@ export const SafeTransactionReviewContent: React.FC<
             {hasUnrecognisedDelegateTarget && !hasCodelessTarget && (
                 <AlertInline
                     message={t(`${translationKey}.unrecognisedDelegateCall`)}
+                    variant="warning"
+                />
+            )}
+            {hasGasRefund && (
+                <AlertInline
+                    message={t(`${translationKey}.gasRefund`)}
                     variant="warning"
                 />
             )}

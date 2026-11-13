@@ -200,6 +200,21 @@ describe('<SafeTransactionReviewContent /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('warns that a transaction with a gas price pays a refund out of the Safe', () => {
+        const gasRefund = 'app.safe.safeTransactionReviewDialog.gasRefund';
+        const { rerender } = render(createTestComponent());
+
+        expect(screen.queryByText(gasRefund)).not.toBeInTheDocument();
+
+        rerender(
+            createTestComponent({
+                transaction: { ...generateSignedTransaction(), gasPrice: '1' },
+            }),
+        );
+
+        expect(screen.getByText(gasRefund)).toBeInTheDocument();
+    });
+
     it('keeps security warnings visible while verification details stay collapsed', async () => {
         mockDelegateCode(undefined);
         render(

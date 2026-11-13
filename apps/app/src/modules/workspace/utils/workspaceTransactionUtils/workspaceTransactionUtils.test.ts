@@ -78,6 +78,59 @@ describe('workspaceTransaction utils', () => {
         });
     });
 
+    describe('getNonceRivalsState', () => {
+        const rejection = generateWorkspacePendingTransaction({
+            safeTxHash: '0xdef',
+            confirmations: 1,
+        });
+
+        it('returns the hash and confirmations of the other pending transactions on the nonce', () => {
+            expect(
+                workspaceTransactionUtils.getNonceRivalsState(pending, [
+                    pending,
+                    rejection,
+                ]),
+            ).toBe('0xdef:1');
+        });
+
+        it.each([
+            { label: 'another nonce', rival: { nonce: '23' } },
+            {
+                label: 'another account',
+                rival: {
+                    account: {
+                        network: pending.account.network,
+                        address: '0x0000000000000000000000000000000000000031',
+                    },
+                },
+            },
+        ])('ignores a pending transaction of $label', ({ rival }) => {
+            expect(
+                workspaceTransactionUtils.getNonceRivalsState(pending, [
+                    pending,
+                    { ...rejection, ...rival },
+                ]),
+            ).toBe('');
+        });
+
+        it('ignores executed transactions and returns nothing for one', () => {
+            const executedRival = { ...executed, nonce: pending.nonce };
+
+            expect(
+                workspaceTransactionUtils.getNonceRivalsState(pending, [
+                    pending,
+                    executedRival,
+                ]),
+            ).toBe('');
+            expect(
+                workspaceTransactionUtils.getNonceRivalsState(executed, [
+                    executed,
+                    rejection,
+                ]),
+            ).toBe('');
+        });
+    });
+
     describe('getSafeTransactionTitle', () => {
         it('prefixes the nonce with the initials of the account name', () => {
             expect(

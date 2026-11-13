@@ -8,6 +8,7 @@ import { generateToken } from '@/modules/finance/testUtils';
 import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
 import * as safeTransactionSimulation from '@/modules/safe/components/safeTransactionSimulation';
 import * as safeTransactionVoting from '@/modules/safe/components/safeTransactionVoting';
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
@@ -40,7 +41,10 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         safeTransactionSimulation,
         'SafeTransactionSimulation',
     );
+    const isRejectionSpy = jest.spyOn(safeTransactionUtils, 'isRejection');
+
     beforeEach(() => {
+        isRejectionSpy.mockReturnValue(false);
         assetTransferSpy.mockReturnValue(<div>asset-transfer</div>);
         transactionExecutionDetailsSpy.mockReturnValue(
             <div>execution-detail</div>,
@@ -57,6 +61,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
     });
 
     afterEach(() => {
+        isRejectionSpy.mockReset();
         assetTransferSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
         safeExecutionDetailsSpy.mockReset();
@@ -277,6 +282,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
             {
+                isRejection: false,
                 safeAddress: transaction.account.address,
                 safeTxHash: '0x2632',
                 transaction,
@@ -284,6 +290,40 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             undefined,
         );
         expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
+    });
+
+    it('lists the rejection of a Safe nonce as one, with no simulation and no actions to read', async () => {
+        isRejectionSpy.mockReturnValue(true);
+        const transaction = generateWorkspacePendingTransaction({
+            network: Network.ETHEREUM_SEPOLIA,
+            safeTxHash: '0x2632',
+            nonce: '22',
+        });
+
+        render(createTestComponent({ transaction }));
+
+        expect(isRejectionSpy).toHaveBeenCalledWith({
+            safeTxHash: '0x2632',
+            nonce: '22',
+            safeAddress: transaction.account.address,
+            chainId: networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+        });
+
+        const header = screen.getByRole('button');
+        expect(header).toHaveTextContent(
+            /workspaceTransactionList.item.rejection \(date=/,
+        );
+
+        await userEvent.click(header);
+
+        expect(screen.getByText('safe-transaction-voting')).toBeInTheDocument();
+        expect(
+            screen.queryByText('safe-transaction-simulation'),
+        ).not.toBeInTheDocument();
+        expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ isRejection: true }),
+            undefined,
+        );
     });
 
     it('renders the voting card of a pending Safe transaction above its actions', async () => {
@@ -402,7 +442,12 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(screen.getByText('safe-execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
-            { safeAddress, safeTxHash: '0xff54', transaction },
+            {
+                isRejection: false,
+                safeAddress,
+                safeTxHash: '0xff54',
+                transaction,
+            },
             undefined,
         );
         expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
@@ -495,6 +540,29 @@ describe('<WorkspaceTransactionListItem /> component', () => {
                     transaction: { ...transaction, confirmations: 2 },
                 }),
             );
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+        });
+
+        it('refreshes the transactions until the nonce rivals of the row reflect the change', async () => {
+            const transaction = generateWorkspacePendingTransaction();
+            const { rerender } = render(createTestComponent({ transaction }));
+            await expandAndChangeSafeState();
+
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+
+            rerender(
+                createTestComponent({
+                    transaction,
+                    nonceRivalsState: '0xdef:1',
+                }),
+            );
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+
+            // The rival leaving the list brings the row back to the state it was awaited from.
+            rerender(createTestComponent({ transaction }));
             act(() => jest.advanceTimersByTime(10_000));
             expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
         });

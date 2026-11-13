@@ -53,6 +53,36 @@ class WorkspaceTransactionUtils {
         transaction.confirmations >= transaction.confirmationsRequired;
 
     /**
+     * State of the other pending Safe transactions queued on the nonce of a pending one: their hashes and
+     * confirmations, empty when there is none. A rejection queues on the nonce of the transaction it rejects, so
+     * signing one changes this state while the rejected transaction itself stays as it is.
+     */
+    getNonceRivalsState = (
+        transaction: IWorkspaceTransaction,
+        transactions: IWorkspaceTransaction[],
+    ): string => {
+        if (!this.isPendingExecution(transaction)) {
+            return '';
+        }
+
+        const accountId = workspaceUtils.buildAccountId(transaction.account);
+
+        return transactions
+            .filter(this.isPendingExecution)
+            .filter(
+                (rival) =>
+                    rival.safeTxHash !== transaction.safeTxHash &&
+                    rival.nonce === transaction.nonce &&
+                    workspaceUtils.buildAccountId(rival.account) === accountId,
+            )
+            .map(
+                ({ safeTxHash, confirmations }) =>
+                    `${safeTxHash}:${confirmations.toString()}`,
+            )
+            .join();
+    };
+
+    /**
      * Title of a Safe transaction: the initials of its account followed by its nonce (e.g. `TS-43` for nonce 43 of
      * "Treasury Safe"), or the nonce alone when the account has no name.
      */

@@ -13,9 +13,15 @@ export interface ISafeCreateTransactionDialogParams {
      */
     safeAddress: string;
     /**
-     * Actions the Safe executes, in order. More than one is batched through MultiSendCallOnly.
+     * Actions the Safe executes, in order. More than one is batched through MultiSendCallOnly. Left out for a
+     * rejection, which has none.
      */
-    actions: IProposalActionData[];
+    actions?: IProposalActionData[];
+    /**
+     * Nonce of the queued transaction to reject. When set, the dialog creates the rejection of that nonce instead of
+     * a transaction built from `actions`.
+     */
+    rejectedNonce?: string;
     /**
      * Partial map of action-type and prepare-action functions, as not all actions require an async data preparation.
      */
