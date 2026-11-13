@@ -1,9 +1,11 @@
 import { AragonBackendService } from '@/shared/api/aragonBackendService';
 import type {
+    IGetLastSafeTransactionSimulationParams,
     IGetLastSimulationParams,
     ISimulateDirectExecuteActionsParams,
     ISimulateProposalActionsParams,
     ISimulateProposalParams,
+    ISimulateSafeTransactionParams,
 } from './actionSimulationService.api';
 import type { ISimulationResult } from './domain';
 
@@ -15,6 +17,10 @@ class ActionSimulationService extends AragonBackendService {
             '/v2/simulations/:network/dao/:daoAddress/simulate',
         simulateProposal: '/v2/simulations/proposal/:proposalId',
         getLastSimulation: '/v2/simulations/proposal/:proposalId',
+        simulateSafeTransaction:
+            '/v2/simulations/:network/safe/:safeAddress/transactions/:safeTxHash',
+        getLastSafeTransactionSimulation:
+            '/v2/simulations/:network/safe/:safeAddress/transactions/:safeTxHash',
     };
 
     simulateProposalActions = async (
@@ -58,6 +64,37 @@ class ActionSimulationService extends AragonBackendService {
     ): Promise<ISimulationResult> => {
         const result = await this.request<ISimulationResult>(
             this.urls.getLastSimulation,
+            params,
+        );
+
+        return result;
+    };
+
+    /**
+     * Simulates a pending Safe transaction and stores the run. The backend reads the transaction from the Safe queue
+     * by its hash, so no calldata is sent.
+     */
+    simulateSafeTransaction = async (
+        params: ISimulateSafeTransactionParams,
+    ): Promise<ISimulationResult> => {
+        const result = await this.request<ISimulationResult>(
+            this.urls.simulateSafeTransaction,
+            params,
+            { method: 'POST' },
+        );
+
+        return result;
+    };
+
+    /**
+     * Reads the last stored simulation of a pending Safe transaction. Fails with a not-found error when it was never
+     * simulated.
+     */
+    getLastSafeTransactionSimulation = async (
+        params: IGetLastSafeTransactionSimulationParams,
+    ): Promise<ISimulationResult> => {
+        const result = await this.request<ISimulationResult>(
+            this.urls.getLastSafeTransactionSimulation,
             params,
         );
 

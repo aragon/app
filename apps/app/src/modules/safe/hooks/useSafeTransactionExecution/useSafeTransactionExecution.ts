@@ -202,7 +202,7 @@ const walkErrorCauseChain = (
  * guessing from message text. The raw EIP-1193 code remains supported for connectors that surface
  * `4001` without Viem's class.
  */
-const isUserRejectionError = (error: unknown): boolean =>
+export const isUserRejectionError = (error: unknown): boolean =>
     walkErrorCauseChain(
         error,
         (cause) =>

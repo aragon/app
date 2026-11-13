@@ -6,6 +6,8 @@ import * as NextNavigation from 'next/navigation';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
 import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
+import * as safeTransactionSimulation from '@/modules/safe/components/safeTransactionSimulation';
+import * as safeTransactionVoting from '@/modules/safe/components/safeTransactionVoting';
 import { daoService, Network } from '@/shared/api/daoService';
 import {
     generateDao,
@@ -51,6 +53,14 @@ describe('<WorkspaceTransactionList /> component', () => {
     const safeExecutionDetailsSpy = jest.spyOn(
         safeExecutionDetails,
         'SafeExecutionDetails',
+    );
+    const safeTransactionVotingSpy = jest.spyOn(
+        safeTransactionVoting,
+        'SafeTransactionVoting',
+    );
+    const safeTransactionSimulationSpy = jest.spyOn(
+        safeTransactionSimulation,
+        'SafeTransactionSimulation',
     );
 
     const buildAccount = (
@@ -150,6 +160,12 @@ describe('<WorkspaceTransactionList /> component', () => {
         safeExecutionDetailsSpy.mockReturnValue(
             <div>safe-execution-detail</div>,
         );
+        safeTransactionVotingSpy.mockReturnValue(
+            <div>safe-transaction-voting</div>,
+        );
+        safeTransactionSimulationSpy.mockReturnValue(
+            <div>safe-transaction-simulation</div>,
+        );
     });
 
     afterEach(() => {
@@ -157,6 +173,8 @@ describe('<WorkspaceTransactionList /> component', () => {
         getDaoSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
         safeExecutionDetailsSpy.mockReset();
+        safeTransactionVotingSpy.mockReset();
+        safeTransactionSimulationSpy.mockReset();
     });
 
     // The query client must sit inside the gov-ui-kit provider: that provider carries a query client of its own,

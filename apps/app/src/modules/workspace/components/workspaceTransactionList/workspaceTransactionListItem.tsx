@@ -14,6 +14,8 @@ import {
     NumberFormat,
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useState } from 'react';
 import {
     type ITransactionTransfer,
     TransactionSide,
@@ -25,14 +27,17 @@ import {
 } from '@/modules/finance/components/transactionList';
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { SafeExecutionDetails } from '@/modules/safe/components/safeExecutionDetails';
+import { SafeTransactionSimulation } from '@/modules/safe/components/safeTransactionSimulation';
+import { SafeTransactionVoting } from '@/modules/safe/components/safeTransactionVoting';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import type {
-    IWorkspaceTransaction,
-    IWorkspaceTransactionExecution,
-    IWorkspaceTransactionPendingExecution,
-    IWorkspaceTransactionTransfer,
+import {
+    type IWorkspaceTransaction,
+    type IWorkspaceTransactionExecution,
+    type IWorkspaceTransactionPendingExecution,
+    type IWorkspaceTransactionTransfer,
+    WorkspaceQueryServiceKey,
 } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
@@ -64,6 +69,25 @@ export interface IWorkspaceTransactionListItemProps
      */
     dao?: IDao;
 }
+
+/**
+ * Interval (in milliseconds) at which the transactions are refreshed while a Safe state change has not reached its row.
+ */
+const safeStateRefreshInterval = 5000;
+
+/**
+ * Number of refreshes after which a Safe state change that never reached its row stops being awaited.
+ */
+const safeStateRefreshAttempts = 24;
+
+/**
+ * State of a transaction that a confirmation or an execution changes: the confirmations of a pending Safe transaction,
+ * none once executed.
+ */
+const getSafeRowState = (transaction: IWorkspaceTransaction) =>
+    workspaceTransactionUtils.isPendingExecution(transaction)
+        ? `pending-${transaction.confirmations.toString()}`
+        : 'executed';
 
 type TransactionHeaderCopy = ReturnType<
     typeof useGukModulesContext
@@ -287,8 +311,8 @@ const buildTransferDisplay = (
 /**
  * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions
  * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset.
- * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their
- * decoded actions only. Must be rendered inside an `<Accordion.Container />`.
+ * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their voting
+ * card, where owners confirm or execute them, and their Tenderly simulation, above their decoded actions. Must be rendered inside an `<Accordion.Container />`.
  */
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
@@ -298,10 +322,50 @@ export const WorkspaceTransactionListItem: React.FC<
     const { t } = useTranslations();
     const { copy } = useGukModulesContext();
     const headerCopy = copy.transactionDataListItemStructure;
+    const queryClient = useQueryClient();
 
     const row = getRow(transaction, account?.type, dao);
     const accountName =
         account == null ? undefined : workspaceUtils.getAccountName(account);
+
+    // Rows come from the backend store, which learns of a confirmation once it syncs the Safe and of an execution once
+    // it indexes the execution event: a single refresh right after the change usually reads the old row, so the rows
+    // are refreshed until this one changes or the attempts run out.
+    const [awaitedRowState, setAwaitedRowState] = useState<string>();
+    const isAwaitingSafeState =
+        awaitedRowState === getSafeRowState(transaction);
+
+    const refreshTransactions = useCallback(
+        () =>
+            void queryClient.invalidateQueries({
+                queryKey: [WorkspaceQueryServiceKey.TRANSACTIONS],
+            }),
+        [queryClient],
+    );
+
+    useEffect(() => {
+        if (!isAwaitingSafeState) {
+            return;
+        }
+
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts += 1;
+            refreshTransactions();
+
+            if (attempts >= safeStateRefreshAttempts) {
+                clearInterval(interval);
+                setAwaitedRowState(undefined);
+            }
+        }, safeStateRefreshInterval);
+
+        return () => clearInterval(interval);
+    }, [isAwaitingSafeState, refreshTransactions]);
+
+    const handleSafeStateChange = () => {
+        setAwaitedRowState(getSafeRowState(transaction));
+        refreshTransactions();
+    };
 
     if (row.kind === 'explorerLink') {
         return (
@@ -376,6 +440,28 @@ export const WorkspaceTransactionListItem: React.FC<
                 )}
                 {row.kind === 'safe' && (
                     <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
+                        {workspaceTransactionUtils.isPendingExecution(
+                            row.transaction,
+                        ) && (
+                            <>
+                                <SafeTransactionVoting
+                                    network={row.transaction.network}
+                                    onSafeStateChange={handleSafeStateChange}
+                                    safeAddress={
+                                        row.transaction.account.address
+                                    }
+                                    safeTxHash={row.safeTxHash}
+                                />
+                                <SafeTransactionSimulation
+                                    actionCount={row.transaction.actionCount}
+                                    network={row.transaction.network}
+                                    safeAddress={
+                                        row.transaction.account.address
+                                    }
+                                    safeTxHash={row.safeTxHash}
+                                />
+                            </>
+                        )}
                         <SafeExecutionDetails
                             safeAddress={row.transaction.account.address}
                             safeTxHash={row.safeTxHash}

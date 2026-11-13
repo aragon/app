@@ -16,7 +16,10 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
-import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
+import type {
+    ISafeMultisigVoteListProps,
+    ISafeMultisigVoteListViewProps,
+} from './safeMultisigVoteList.api';
 
 const signersPerPage = 6;
 
@@ -51,7 +54,6 @@ const SafeMultisigProposalVoteList: React.FC<
     const { proposal, body, stage, isVeto } = props;
     const network = proposal.network;
 
-    const { t } = useTranslations();
     const { address: connectedAddress } = useWalletAccount();
 
     const { safeInfo, signers } = useSafeMultisigBodyState({
@@ -75,12 +77,47 @@ const SafeMultisigProposalVoteList: React.FC<
         includeLinkedAccounts: true,
     })?.at(0);
 
+    const getSignerHref =
+        safeBodyPlugin == null
+            ? undefined
+            : (signer: string) =>
+                  daoUtils.withMemberTab(
+                      `/dao/${safeDaoNetwork}/${safeDaoAddress}/members/${signer}`,
+                      safeBodyPlugin.uniqueId,
+                  );
+
+    return (
+        <SafeMultisigVoteListView
+            connectedAddress={connectedAddress}
+            getSignerHref={getSignerHref}
+            isLoading={safeInfo == null}
+            isVeto={isVeto}
+            signers={signers}
+        />
+    );
+};
+
+/**
+ * Confirmations of a Safe transaction, independent of where the transaction comes from.
+ */
+export const SafeMultisigVoteListView: React.FC<
+    ISafeMultisigVoteListViewProps
+> = (props) => {
+    const {
+        signers,
+        connectedAddress,
+        getSignerHref,
+        isVeto,
+        isLoading = false,
+    } = props;
+
+    const { t } = useTranslations();
+
     // A Safe confirmation is only ever agreement: an owner signs or does not, so there is no
     // against-indicator to render here.
     const voteIndicator: VoteIndicator = isVeto === true ? 'veto' : 'approve';
-    const state = safeInfo == null ? 'initialLoading' : 'idle';
 
-    // The owner reading the card cares first about whether their own signature is on the report.
+    // The owner reading the card cares first about whether their own signature is on the transaction.
     const orderedSigners = [...signers].sort((a, b) => {
         const aIsViewer = addressUtils.isAddressEqual(a, connectedAddress);
         const bIsViewer = addressUtils.isAddressEqual(b, connectedAddress);
@@ -93,7 +130,7 @@ const SafeMultisigProposalVoteList: React.FC<
             entityLabel={t(`${translationKey}.entity`)}
             itemsCount={orderedSigners.length}
             pageSize={signersPerPage}
-            state={state}
+            state={isLoading ? 'initialLoading' : 'idle'}
         >
             <DataListContainer
                 emptyState={{
@@ -105,14 +142,7 @@ const SafeMultisigProposalVoteList: React.FC<
             >
                 {orderedSigners.map((signer) => (
                     <SafeMultisigVoteListItem
-                        href={
-                            safeBodyPlugin == null
-                                ? undefined
-                                : daoUtils.withMemberTab(
-                                      `/dao/${safeDaoNetwork}/${safeDaoAddress}/members/${signer}`,
-                                      safeBodyPlugin.uniqueId,
-                                  )
-                        }
+                        href={getSignerHref?.(signer)}
                         key={signer}
                         signer={signer}
                         voteIndicator={voteIndicator}

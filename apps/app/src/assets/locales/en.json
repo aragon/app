@@ -1964,6 +1964,9 @@
         "transactions": "Transactions",
         "value": "Value"
       },
+      "transactionExecutionActions": {
+        "loadError": "The actions of this transaction could not be loaded. Try again later."
+      },
       "transferAssetForm": {
         "amount": {
           "label": "Amount",
@@ -4002,6 +4005,55 @@
           "chain_confirmation": "Waiting for chain confirmation",
           "result_verification": "Verifying Safe execution and proposal result",
           "execute": "Execute"
+        }
+      },
+      "safeTransactionDialog": {
+        "title": "Review Safe transaction",
+        "description": "Review the exact Safe transaction before approving or executing it.",
+        "loading": "Preparing the Safe transaction…",
+        "signing": "Approving the Safe transaction…",
+        "executing": "Executing the Safe transaction…",
+        "confirmed": "Your approval was added to the Safe transaction.",
+        "executed": "Safe transaction executed successfully.",
+        "failed": "The Safe transaction could not be processed.",
+        "walletRequired": "Connect an owner wallet on the Safe's network to approve or execute this transaction.",
+        "signatureRejected": "The approval was rejected in your wallet. Nothing was submitted.",
+        "executionRejected": "The execution was rejected in your wallet. Nothing was sent.",
+        "networkSwitchRejected": "The network switch was rejected. Switch to the Safe's network to continue.",
+        "providerUnavailable": "The connected wallet provider is unavailable.",
+        "transactionUnavailable": "This Safe transaction is no longer available from the service.",
+        "hashMismatch": "The transaction fields do not match the Safe transaction hash.",
+        "notOwner": "The connected wallet is not a current Safe owner.",
+        "invalidThreshold": "The Safe returned an invalid owner threshold.",
+        "unsupportedContractOwner": "This Safe version cannot verify approvals from a smart contract wallet. Connect an owner wallet that is not a contract.",
+        "alreadyExecuted": "This Safe transaction has already been executed.",
+        "nonceConsumed": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
+        "executionUnavailable": "This Safe transaction is no longer ready to execute.",
+        "executionFailed": "The Safe transaction could not be executed.",
+        "uncertain": "The result is not confirmed yet. Re-check before trying again.",
+        "actions": {
+          "confirm": "Approve transaction",
+          "execute": "Execute",
+          "recheck": "Re-check",
+          "done": "Done",
+          "close": "Close"
+        }
+      },
+      "safeTransactionSimulation": {
+        "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
+        "limitReached": "Simulation limit reached for now. Try again later.",
+        "simulationError": "There was an error simulating the transaction. Please try again later.",
+        "unavailable": "Simulation is not available right now. Try again later."
+      },
+      "safeTransactionVoting": {
+        "approve": "Approve transaction",
+        "approved": "Approved",
+        "execute": "Execute Safe transaction",
+        "loadError": "The Safe transaction could not be loaded. Try again later.",
+        "superseded": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
+        "waitingForNonce": {
+          "title": "This transaction is queued behind nonce {{currentNonce}}.",
+          "description": "It can be executed once the Safe reaches nonce {{nonce}}."
         }
       }
     },

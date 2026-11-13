@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
+import { SafeTransactionState } from '@/modules/safe/types';
 import {
     generateSppPluginSettings,
     generateSppProposal,
@@ -14,7 +15,6 @@ import {
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
-import { SafeTransactionState } from '../../types';
 import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
 import * as settledReportApi from '../useSafeSettledReport';
 import { useSafeMultisigBodyState } from './useSafeMultisigBodyState';

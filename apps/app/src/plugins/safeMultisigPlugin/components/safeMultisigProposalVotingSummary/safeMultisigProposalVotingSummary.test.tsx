@@ -2,6 +2,7 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { IUseEnsNameReturn } from '@/modules/ens';
 import * as ensModule from '@/modules/ens';
+import { SafeTransactionState } from '@/modules/safe/types';
 import { Network } from '@/shared/api/daoService';
 import {
     generateSppProposal,
@@ -16,7 +17,6 @@ import {
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
-import { SafeTransactionState } from '../../types';
 import { SafeMultisigProposalVotingSummary } from './safeMultisigProposalVotingSummary';
 import type { ISafeMultisigProposalVotingSummaryProps } from './safeMultisigProposalVotingSummary.api';
 
