@@ -127,24 +127,49 @@ describe('useWorkspaceAccountsExecutePermission hook', () => {
         );
     });
 
-    // Until the Safe owner and proposer checks land, see the TODO on the hook.
-    it('reports a Safe account as not executable without reading any contract for it', () => {
+    it('checks whether the wallet owns a Safe account, in the same batch as the DAO accounts', () => {
         const daoAccount = buildAccount({ id: 'dao' });
         const safeAccount = buildAccount({
             id: 'safe',
             type: WorkspaceAccountType.SAFE,
             address: '0x5afe000000000000000000000000000000000001',
+            network: Network.ETHEREUM_SEPOLIA,
         });
-        mockReadContracts({ data: [successRead(true)] });
+        mockReadContracts({ data: [successRead(true), successRead(true)] });
 
         const { result } = renderHook(() =>
             useWorkspaceAccountsExecutePermission([daoAccount, safeAccount]),
         );
 
-        expect(result.current.permissions).toEqual({ dao: true, safe: false });
+        expect(result.current.permissions).toEqual({ dao: true, safe: true });
         expect(useReadContractsSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ contracts: [expect.anything()] }),
+            expect.objectContaining({
+                contracts: [
+                    expect.objectContaining({ functionName: 'hasPermission' }),
+                    expect.objectContaining({
+                        address: safeAccount.address,
+                        functionName: 'isOwner',
+                        args: [walletAddress],
+                        chainId:
+                            networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+                    }),
+                ],
+            }),
         );
+    });
+
+    it('reports a Safe account the wallet does not own as not executable', () => {
+        const safeAccount = buildAccount({
+            id: 'safe',
+            type: WorkspaceAccountType.SAFE,
+        });
+        mockReadContracts({ data: [successRead(false)] });
+
+        const { result } = renderHook(() =>
+            useWorkspaceAccountsExecutePermission([safeAccount]),
+        );
+
+        expect(result.current.permissions).toEqual({ safe: false });
     });
 
     it('reports an account whose read has not resolved as not executable', () => {
@@ -205,18 +230,6 @@ describe('useWorkspaceAccountsExecutePermission hook', () => {
             expect.objectContaining({ query: { enabled: false } }),
         );
         expect(result.current.isPending).toBeFalsy();
-    });
-
-    it('disables the query when there is no DAO account to check', () => {
-        renderHook(() =>
-            useWorkspaceAccountsExecutePermission([
-                buildAccount({ type: WorkspaceAccountType.SAFE }),
-            ]),
-        );
-
-        expect(useReadContractsSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ query: { enabled: false } }),
-        );
     });
 
     it('forwards the loading state of an enabled read', () => {

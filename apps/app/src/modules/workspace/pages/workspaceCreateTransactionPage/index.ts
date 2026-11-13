@@ -1,0 +1,1 @@
+export { WorkspaceCreateTransactionPage } from './workspaceCreateTransactionPage';

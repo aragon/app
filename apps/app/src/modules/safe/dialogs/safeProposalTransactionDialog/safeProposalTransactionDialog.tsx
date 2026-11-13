@@ -29,6 +29,10 @@ import {
 } from '@/modules/safe/hooks/useSafeTransactionExecution';
 import { SafeExecutionOutcome } from '@/modules/safe/utils/safeExecutionOutcomeUtils';
 import {
+    SafeProtocolKitError,
+    safeProtocolKitUtils,
+} from '@/modules/safe/utils/safeProtocolKitUtils';
+import {
     SafeBatchStatus,
     safeTransactionEnvelopeUtils,
 } from '@/modules/safe/utils/safeTransactionEnvelopeUtils';
@@ -539,35 +543,27 @@ export const SafeProposalTransactionDialog: React.FC<
         [requiredChainId, t],
     );
 
+    // Owner and chain are asserted by `assertWallet` before every use, so a failure to build the kit is the provider's.
     const getProtocolKit = useCallback(
         async (owner: string) => {
-            const connection = getConnection(wagmiConfig);
-            if (
-                connection.status !== 'connected' ||
-                typeof connection.connector?.getProvider !== 'function'
-            ) {
-                throw new Error(t(`${translationKey}.providerUnavailable`));
+            try {
+                return await safeProtocolKitUtils.initForOwner({
+                    owner,
+                    chainId: requiredChainId,
+                    safeAddress: externalAddress,
+                });
+            } catch (reason: unknown) {
+                if (reason instanceof SafeProtocolKitError) {
+                    throw new Error(
+                        t(`${translationKey}.providerUnavailable`),
+                        {
+                            cause: reason,
+                        },
+                    );
+                }
+
+                throw reason;
             }
-            const provider = await connection.connector.getProvider({
-                chainId: requiredChainId,
-            });
-            if (
-                provider == null ||
-                typeof provider !== 'object' ||
-                !('request' in provider) ||
-                typeof provider.request !== 'function'
-            ) {
-                throw new Error(t(`${translationKey}.providerUnavailable`));
-            }
-            const { default: Safe } = await import('@safe-global/protocol-kit');
-            const request = provider.request;
-            return Safe.init({
-                provider: {
-                    request: async (args) => await request.call(provider, args),
-                },
-                signer: owner,
-                safeAddress: externalAddress,
-            });
         },
         [externalAddress, requiredChainId, t],
     );
@@ -765,30 +761,19 @@ export const SafeProposalTransactionDialog: React.FC<
                         ? SppProposalType.VETO
                         : SppProposalType.APPROVAL,
                 });
-            const safeTransaction = await protocolKit.createTransaction({
-                transactions: [
+            transaction = await safeProtocolKitUtils.buildTransaction({
+                protocolKit,
+                calls: [
                     {
                         to: proposal.pluginAddress,
                         value: '0',
                         data: reportData,
                     },
                 ],
-                onlyCalls: true,
-                options: { nonce: Number(nextNonce.nextNonce) },
+                nonce: Number(nextNonce.nextNonce),
+                threshold: currentSafeInfo.threshold,
+                proposer: walletAddress,
             });
-            transaction = {
-                ...safeTransaction.data,
-                nonce: safeTransaction.data.nonce.toString(),
-                safeTxHash:
-                    await protocolKit.getTransactionHash(safeTransaction),
-                from: walletAddress,
-                confirmations: [],
-                confirmationsRequired: currentSafeInfo.threshold,
-                signatures: null,
-                isExecuted: false,
-                isSuccessful: null,
-                submissionDate: new Date().toISOString(),
-            };
         }
         assertWallet(walletAddress, walletRevision);
         const normalizedTransaction = applyAuthority(
@@ -1003,13 +988,8 @@ export const SafeProposalTransactionDialog: React.FC<
                         });
                     }
                 } catch (writeError) {
-                    serviceWriteUncertainRef.current = !(
-                        writeError instanceof SafeServiceError &&
-                        writeError.status >= 400 &&
-                        writeError.status < 500 &&
-                        writeError.status !== 408 &&
-                        writeError.status !== 409
-                    );
+                    serviceWriteUncertainRef.current =
+                        !SafeServiceError.isDefinitiveWriteError(writeError);
                     if (SafeServiceError.isRateLimitedError(writeError)) {
                         throw writeError;
                     }

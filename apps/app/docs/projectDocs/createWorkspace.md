@@ -733,6 +733,7 @@ decides whether it gets the route at all.
 | `{accountId}/todos` | the same rows, narrowed to the Safe | backend (`query/todo`) |
 | `{accountId}/assets` | list and aside describe the Safe | client; no guard |
 | `{accountId}/transactions` | the same, read-only: no create action, dispatch panel is DAO-only | client; no guard |
+| `/{accountId}/create/transaction` | **implemented**, Safe only | the full-page Safe wizard (`SafeCreateTransactionWizard`): composed actions become one Safe transaction — batched through MultiSendCallOnly when there is more than one — signed and proposed by the owner. A DAO account creates through `/dao/…/create/execute` instead and gets a "Safe only" error state here. The route sits outside `(workspacePage)`, like the edit wizard, so it renders in the wizard layout |
 | `{accountId}/overview` | the Safe dashboard (threshold, owners, nonce, pending transactions, previews) | page `switch` |
 | `{accountId}/members` | its owners, settings in the aside | page `switch` |
 | `{accountId}/members/{address}` | redirect to its members page | page `switch` |

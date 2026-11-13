@@ -66,6 +66,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
     );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const useParamsSpy = jest.spyOn(NextNavigation, 'useParams');
 
     const openMock = jest.fn();
     const closeMock = jest.fn();
@@ -218,6 +219,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         useRouterSpy.mockReturnValue({
             push: pushMock,
         } as unknown as AppRouterInstance);
+        useParamsSpy.mockReturnValue({ workspaceId: 'demo' });
     });
 
     afterEach(() => {
@@ -227,6 +229,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         useWorkspaceDaosSpy.mockReset();
         useDialogContextSpy.mockReset();
         useRouterSpy.mockReset();
+        useParamsSpy.mockReset();
         asideCardMock.mockClear();
         listMock.mockClear();
         openMock.mockClear();
@@ -569,9 +572,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         );
     });
 
-    // Write path pins: a Safe has no create destination yet (`getDaoUrl` names a DAO page only), so creating from one
-    // stays closed even when the wallet holds the permission. Opening it is a deliberate later change, not a fix.
-    it('renders no create action for a Safe account', async () => {
+    it('links straight to the create wizard of a Safe account the wallet owns under its scope', async () => {
         mockAccountOptions({
             options: [allAccountsOption, daoOption, safeOption],
             accountId: safeAccount.id,
@@ -581,48 +582,54 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         mockExecutePermissions({ [safeAccount.id]: true });
         render(createTestComponent());
 
+        expect(
+            await screen.findByRole('link', { name: createActionName }),
+        ).toHaveAttribute(
+            'href',
+            `/workspace/demo/${safeAccount.id}/create/transaction`,
+        );
+    });
+
+    it('renders no create action for a Safe account the wallet does not own', async () => {
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+            accountId: safeAccount.id,
+            activeOption: safeOption,
+            isAllAccounts: false,
+        });
+        mockExecutePermissions({ [safeAccount.id]: false });
+        render(createTestComponent());
+
         await waitFor(() =>
             expect(lastListProps()?.accounts).toEqual([safeAccount]),
         );
         expect(
             screen.queryByRole('link', { name: createActionName }),
         ).not.toBeInTheDocument();
-        expect(
-            screen.queryByRole('button', { name: createActionName }),
-        ).not.toBeInTheDocument();
     });
 
-    it('lists a Safe as disabled in the selection even when the wallet holds the permission', async () => {
-        mockExecutePermissions({
-            [daoAccount.id]: true,
-            [safeAccount.id]: true,
-        });
+    it('offers a Safe the wallet owns in the selection and opens its create wizard', async () => {
+        mockExecutePermissions({ [safeAccount.id]: true });
         render(createTestComponent());
 
         await userEvent.click(
             await screen.findByRole('button', { name: createActionName }),
         );
 
-        expect(lastDialogParams()?.disabledAccountIds).toEqual([
-            safeAccount.id,
-        ]);
-    });
+        expect(lastDialogParams()?.disabledAccountIds).toEqual([daoAccount.id]);
 
-    it('does not navigate when a Safe is picked from the selection', async () => {
-        mockExecutePermissions({ [daoAccount.id]: true });
-        render(createTestComponent());
-
-        await userEvent.click(
-            await screen.findByRole('button', { name: createActionName }),
-        );
         lastDialogParams()?.onAccountSelected(safeAccount);
 
-        expect(pushMock).not.toHaveBeenCalled();
-        expect(closeMock).not.toHaveBeenCalled();
+        expect(closeMock).toHaveBeenCalledWith(
+            WorkspaceDialogId.SELECT_ACCOUNT,
+        );
+        expect(pushMock).toHaveBeenCalledWith(
+            `/workspace/demo/${safeAccount.id}/create/transaction`,
+        );
     });
 
-    // No DAO to read and no destination to build: the page must stay readable and offer nothing to create.
-    it('describes the Safe accounts in the aside and offers no create action for a workspace holding only Safes', async () => {
+    // No DAO to read: the page must stay readable, and a Safe has a create destination of its own.
+    it('describes the Safe accounts in the aside and offers the create action for a workspace holding only Safes', async () => {
         getWorkspaceSpy.mockResolvedValue(
             buildWorkspace({ accounts: [safeAccount] }),
         );
@@ -637,18 +644,16 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         expect(screen.getByTestId('list-mock')).toBeInTheDocument();
         expect(lastAsideCardProps()?.activeOption).toEqual(allAccountsOption);
         expect(
-            screen.queryByRole('button', { name: createActionName }),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByRole('link', { name: createActionName }),
-        ).not.toBeInTheDocument();
+            await screen.findByRole('button', { name: createActionName }),
+        ).toBeInTheDocument();
     });
 
     // There is nothing to list for an account the lookup cannot place, so the page says what the account is instead.
     it('renders the state of an external account the lookup cannot place', async () => {
-        const useParamsSpy = jest
-            .spyOn(NextNavigation, 'useParams')
-            .mockReturnValue({ workspaceId: 'demo', accountId: daoAccount.id });
+        useParamsSpy.mockReturnValue({
+            workspaceId: 'demo',
+            accountId: daoAccount.id,
+        });
         mockAccountOptions({
             accountId: daoAccount.id,
             activeOption: {
@@ -670,6 +675,5 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(listMock).not.toHaveBeenCalled();
         expect(asideCardMock).not.toHaveBeenCalled();
-        useParamsSpy.mockRestore();
     });
 });
