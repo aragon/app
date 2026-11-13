@@ -16,7 +16,7 @@ catalog:
   "@biomejs/biome": ^2.5.15
   "@changesets/changelog-github": ^1.0.1
   "@changesets/cli": ^3.0.3
-  "@hono/node-server": ^2.1.5
+  "@hono/node-server": ^2.1.6
   "@linear/sdk": ^98.0.0
   # orama: tilde-pinned to the 3.1 line — the assistant persists its documentation index in a
   # shape the runtime re-inserts into Orama, and a major/minor bump can change search behavior.
