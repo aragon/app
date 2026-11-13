@@ -1,4 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { SafeCreateDialog } from '../dialogs/safeCreateDialog';
+import { SafeDeployTransactionDialog } from '../dialogs/safeDeployTransactionDialog';
 import { SafeProposalTransactionDialog } from '../dialogs/safeProposalTransactionDialog';
 import { SafeTransactionReviewDialog } from '../dialogs/safeTransactionReviewDialog';
 import { SafeDialogId } from './safeDialogId';
@@ -17,5 +19,14 @@ export const safeDialogsDefinitions: Record<
     // The controller guards each wallet action against its reviewed account and chain.
     [SafeDialogId.PROPOSAL_TRANSACTION]: {
         Component: SafeProposalTransactionDialog,
+    },
+    [SafeDialogId.CREATE]: {
+        Component: SafeCreateDialog,
+        requiresWallet: true,
+        size: 'lg',
+    },
+    [SafeDialogId.DEPLOY_TRANSACTION]: {
+        Component: SafeDeployTransactionDialog,
+        requiresWallet: true,
     },
 };

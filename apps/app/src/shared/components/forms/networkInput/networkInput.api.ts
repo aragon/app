@@ -23,6 +23,11 @@ export interface INetworkInputProps {
      */
     defaultValue?: Network;
     /**
+     * Networks the user can select, listed in the given order.
+     * @default every supported network that is not disabled
+     */
+    networks?: Network[];
+    /**
      * Callback called with the new network whenever the user selects a different one.
      */
     onValueChange?: (network: Network) => void;

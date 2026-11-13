@@ -7,6 +7,7 @@ import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAc
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import {
     WorkspaceAccountInfoStatus,
@@ -42,6 +43,18 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         'useWorkspaceTodoData',
     );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
+
+    const mockFeatureFlags = (isSafeCreationEnabled: boolean) =>
+        useFeatureFlagsSpy.mockReturnValue({
+            snapshot: [],
+            isEnabled: (flag) =>
+                flag === 'safeCreation' && isSafeCreationEnabled,
+            setOverride: jest.fn(),
+        });
 
     const mockWallet = (connectedAddress?: string) =>
         useWalletAccountSpy.mockReturnValue({
@@ -76,6 +89,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
+        mockFeatureFlags(false);
         getAccountsSpy.mockResolvedValue([
             {
                 network: Network.ETHEREUM_SEPOLIA,
@@ -244,6 +258,22 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         );
 
         expect(open).toHaveBeenCalledWith(CreateDaoDialogId.CREATE_DAO_DETAILS);
+    });
+
+    it('offers a DAO or a Safe from a workspace with no account when Safe creation is on', async () => {
+        mockFeatureFlags(true);
+        renderWorkspace(buildWorkspace({ accounts: [] }));
+
+        expect(
+            await screen.findByRole('button', {
+                name: /workspaceCreateAccountDropdown\.label$/,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: /workspaceDetailsPage\.emptyAccounts\.createAction$/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('hides the empty accounts state when the workspace has accounts', async () => {

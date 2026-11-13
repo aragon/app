@@ -2,6 +2,7 @@
 
 import {
     AddressOutput,
+    Button,
     Card,
     DaoAvatar,
     EmptyState,
@@ -9,6 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -16,6 +18,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
+import { WorkspaceCreateAccountDropdown } from '../../components/workspaceCreateAccountDropdown';
 import { WorkspaceTodoPreview } from '../../components/workspaceTodoPreview';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
@@ -51,6 +54,16 @@ export const WorkspaceDetailsPageClient: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { isEnabled } = useFeatureFlags();
+    const isSafeCreationEnabled = isEnabled('safeCreation');
+
+    const addExistingAccountButton = {
+        label: t('app.workspace.workspaceDetailsPage.emptyAccounts.action'),
+        href: workspaceUtils.getWorkspaceEditUrl(
+            workspaceId,
+            WorkspaceWizardStep.ACCOUNTS,
+        ),
+    };
 
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
@@ -143,25 +156,37 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         'app.workspace.workspaceDetailsPage.emptyAccounts.heading',
                                     )}
                                     objectIllustration={{ object: 'BUILD' }}
-                                    primaryButton={{
-                                        label: t(
-                                            'app.workspace.workspaceDetailsPage.emptyAccounts.action',
-                                        ),
-                                        href: workspaceUtils.getWorkspaceEditUrl(
-                                            workspaceId,
-                                            WorkspaceWizardStep.ACCOUNTS,
-                                        ),
-                                    }}
-                                    secondaryButton={{
-                                        label: t(
-                                            'app.workspace.workspaceDetailsPage.emptyAccounts.createAction',
-                                        ),
-                                        onClick: () =>
-                                            open(
-                                                CreateDaoDialogId.CREATE_DAO_DETAILS,
-                                            ),
-                                    }}
+                                    primaryButton={
+                                        isSafeCreationEnabled
+                                            ? undefined
+                                            : addExistingAccountButton
+                                    }
+                                    secondaryButton={
+                                        isSafeCreationEnabled
+                                            ? undefined
+                                            : {
+                                                  label: t(
+                                                      'app.workspace.workspaceDetailsPage.emptyAccounts.createAction',
+                                                  ),
+                                                  onClick: () =>
+                                                      open(
+                                                          CreateDaoDialogId.CREATE_DAO_DETAILS,
+                                                      ),
+                                              }
+                                    }
                                 />
+                                {isSafeCreationEnabled && (
+                                    <div className="flex flex-col items-center justify-center gap-3 px-6 md:flex-row md:gap-4">
+                                        <Button
+                                            href={addExistingAccountButton.href}
+                                            size="lg"
+                                            variant="primary"
+                                        >
+                                            {addExistingAccountButton.label}
+                                        </Button>
+                                        <WorkspaceCreateAccountDropdown />
+                                    </div>
+                                )}
                             </Card>
                         )}
                         <div className="flex flex-col gap-3 md:gap-2">

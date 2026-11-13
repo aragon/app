@@ -4027,6 +4027,39 @@
           "result_verification": "Verifying Safe execution and proposal result",
           "execute": "Execute"
         }
+      },
+      "safeCreateDialog": {
+        "title": "Create a Safe",
+        "name": {
+          "label": "Name",
+          "helpText": "Shown in this workspace only."
+        },
+        "owners": {
+          "label": "Owners",
+          "helpText": "Wallets that can sign the transactions of this Safe."
+        },
+        "threshold": {
+          "label": "Approvals",
+          "helpText": "How many owners must approve a transaction before it can be executed.",
+          "total": "of {{total}} owners"
+        },
+        "action": {
+          "continue": "Continue",
+          "cancel": "Cancel"
+        }
+      },
+      "safeDeployTransactionDialog": {
+        "title": "Deploy Safe",
+        "description": "Confirm the transaction in your wallet to deploy the Safe.",
+        "submit": "Deploy Safe",
+        "success": "Done",
+        "summary": {
+          "name": "Name",
+          "network": "Network",
+          "approvals": "Approvals",
+          "approvalsValue": "{{threshold}} of {{owners}} owners",
+          "address": "Address"
+        }
       }
     },
     "settings": {
@@ -5042,6 +5075,11 @@
         "main": {
           "title": "To-dos"
         }
+      },
+      "workspaceCreateAccountDropdown": {
+        "label": "Create a new account",
+        "dao": "Aragon DAO",
+        "safe": "Safe"
       }
     }
   }
