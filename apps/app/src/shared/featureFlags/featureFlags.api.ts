@@ -24,7 +24,8 @@ export type FeatureFlagKey =
     | 'telegramSubscription'
     | 'safeAccountPage'
     | 'domainMemberList'
-    | 'workspaces';
+    | 'workspaces'
+    | 'safeCreation';
 
 /**
  * Feature flag definition structure.

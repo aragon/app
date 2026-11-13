@@ -35,8 +35,15 @@ const selectableNetworks = networkUtils
     );
 
 export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
-    const { name, label, helpText, fieldPrefix, defaultValue, onValueChange } =
-        props;
+    const {
+        name,
+        label,
+        helpText,
+        fieldPrefix,
+        defaultValue,
+        networks = selectableNetworks,
+        onValueChange,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -105,7 +112,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                     </button>
                 }
             >
-                {selectableNetworks.map((network) => {
+                {networks.map((network) => {
                     const {
                         name: networkName,
                         logo,

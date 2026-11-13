@@ -234,7 +234,8 @@ local storage for real requests is a single-method change:
 - `addWorkspaceAccount({ urlParams: { id }, body: { account } })` → appends one account to the stored workspace,
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
-  `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
+  `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` and `useCreateSafeAccount` through
+  `useAddWorkspaceAccount`.
 - `exportWorkspaceRegistry()` → the complete active registry as formatted JSON.
 - `importWorkspaceRegistry(json, merge?)` → validates the full registry before writing it.
 
@@ -911,6 +912,23 @@ replace the explorer links of the Safe account members page and of the Safe-only
 - `Page.Main` → `Page.MainSection` for the To-dos first (see below, skipped for a workspace without accounts), then
   for Accounts, and for Targets only when the workspace has any.
 - `Page.Aside` → `Page.AsideCard` for the workspace resources, when present.
+
+#### Create a Safe
+
+With the `safeCreation` flag on, the empty accounts state swaps "Create a new account" for
+`WorkspaceCreateAccountDropdown`: "Aragon DAO" opens DAO creation as before, "Safe" deploys a new Safe.
+`useCreateSafeAccount` (`hooks/useCreateSafeAccount/`) asks for a connected wallet, opens `SafeDialogId.CREATE` from
+the safe module and, once the Safe is deployed, appends it to the workspace of the route through
+`addWorkspaceAccount`, then invalidates the workspace list and the workspace, as the external account banner does.
+The type is stored as `SAFE` without a lookup: the app deployed it through the Safe proxy factory.
+
+The safe module knows nothing about workspaces. `SafeCreateDialog` is the form (network, optional name, owners,
+approvals). Its network field only lists `safeCreationNetworks` (`modules/safe/constants/`), Ethereum mainnet and
+Ethereum Sepolia for now, through the `networks` prop of the shared `NetworkInput`. The form opens
+`SafeDeployTransactionDialog` stacked, the managed `TransactionDialog`. Its prepare step calls
+`safeDeploymentUtils.buildDeployment`, which predicts the address and builds the deploy transaction from the same
+configuration with protocol-kit, on the Safe version named by `safeDeploymentVersion`. On the receipt
+`safeDeploymentUtils.getSafeAddress` reads the address and the dialog hands the Safe back.
 
 #### To-do list
 

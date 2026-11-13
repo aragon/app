@@ -210,4 +210,15 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             local: true,
         },
     },
+    {
+        key: 'safeCreation',
+        name: 'Safe creation',
+        description:
+            'Lets "Create a new account" on an empty workspace offer a Safe next to an Aragon DAO, deploying the Safe from the connected wallet.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            preview: true,
+        },
+    },
 ];

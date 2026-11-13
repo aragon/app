@@ -87,6 +87,25 @@ describe('<NetworkInput /> component', () => {
         }
     });
 
+    it('displays only the networks passed, in the given order', async () => {
+        const networks = [Network.ETHEREUM_SEPOLIA, Network.ETHEREUM_MAINNET];
+        render(createTestComponent({ networks }));
+
+        await userEvent.click(
+            screen.getByRole('button', { name: /shared.networkInput.label/ }),
+        );
+
+        const renderedNetworks = screen.getAllByRole('menuitem');
+
+        expect(renderedNetworks).toHaveLength(2);
+        expect(renderedNetworks[0]).toHaveTextContent(
+            networkDefinitions[Network.ETHEREUM_SEPOLIA].name,
+        );
+        expect(renderedNetworks[1]).toHaveTextContent(
+            networkDefinitions[Network.ETHEREUM_MAINNET].name,
+        );
+    });
+
     it('keeps the testnet tag off the trigger so the network name is not truncated', async () => {
         render(createTestComponent({ defaultValue: Network.ETHEREUM_SEPOLIA }));
 
