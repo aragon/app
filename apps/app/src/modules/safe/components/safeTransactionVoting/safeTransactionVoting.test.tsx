@@ -13,6 +13,7 @@ import { Network } from '@/shared/api/daoService';
 import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 import * as safeService from '@/shared/api/safeService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDialogContext,
     generateReactQueryResultError,
@@ -21,8 +22,12 @@ import {
     generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import { generateSafeInfo } from '@/shared/testUtils/generators/safeInfo';
-import { generateSafeInfoResponse } from '@/shared/testUtils/generators/safeResponse';
+import {
+    generateSafeInfoResponse,
+    generateSafeQueueResponse,
+} from '@/shared/testUtils/generators/safeResponse';
 import { SafeDialogId } from '../../constants/safeDialogId';
+import { safeTransactionUtils } from '../../utils/safeTransactionUtils';
 import {
     type ISafeTransactionVotingProps,
     SafeTransactionVoting,
@@ -34,12 +39,18 @@ describe('<SafeTransactionVoting /> component', () => {
     const nonOwner = '0x3333333333333333333333333333333333333333' as const;
     const safeAddress = '0x5F2c8A1b9D3e7C4a6B0d2E8f1A3c5B7d9E0f2A4c';
     const safeTxHash = '0xabc';
+    const rejectionTxHash = '0xdef';
 
     const useSafeInfoSpy = jest.spyOn(safeService, 'useSafeInfo');
     const useSafePendingTransactionSpy = jest.spyOn(
         safeService,
         'useSafePendingTransaction',
     );
+    const useSafePendingTransactionsSpy = jest.spyOn(
+        safeService,
+        'useSafePendingTransactions',
+    );
+    const isRejectionSpy = jest.spyOn(safeTransactionUtils, 'isRejection');
     const useWalletAccountSpy = jest.spyOn(
         walletAccountApi,
         'useWalletAccount',
@@ -57,10 +68,17 @@ describe('<SafeTransactionVoting /> component', () => {
 
     const mockSafe = (params: {
         transaction?: ISafeMultisigTransaction;
+        queue?: ISafeMultisigTransaction[];
         nonce?: string;
         threshold?: number;
     }) => {
-        const { transaction, nonce = '10', threshold = 2 } = params;
+        const { transaction, queue = [], nonce = '10', threshold = 2 } = params;
+
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeQueueResponse({ results: queue }),
+            }),
+        );
 
         useSafeInfoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
@@ -98,7 +116,23 @@ describe('<SafeTransactionVoting /> component', () => {
             ),
         });
 
+    const generateRejection = (
+        signers: string[],
+        nonce?: string,
+    ): ISafeMultisigTransaction => ({
+        ...generateTransaction(signers, nonce),
+        safeTxHash: rejectionTxHash,
+    });
+
     beforeEach(() => {
+        isRejectionSpy.mockImplementation(
+            (params) => params.safeTxHash === rejectionTxHash,
+        );
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof safeService.useSafePendingTransactions
+            >,
+        );
         mockWallet(ownerOne);
         useConnectedWalletGuardSpy.mockReturnValue({
             check: checkWalletConnection,
@@ -122,6 +156,8 @@ describe('<SafeTransactionVoting /> component', () => {
         jest.clearAllMocks();
         useSafeInfoSpy.mockReset();
         useSafePendingTransactionSpy.mockReset();
+        useSafePendingTransactionsSpy.mockReset();
+        isRejectionSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -174,6 +210,163 @@ describe('<SafeTransactionVoting /> component', () => {
                 onSafeStateChange,
             },
         });
+    });
+
+    it('opens the rejection of the transaction nonce once the wallet is connected when an owner rejects', async () => {
+        const onSafeStateChange = jest.fn();
+        mockSafe({ transaction: generateTransaction([ownerTwo], '12') });
+        render(createTestComponent({ onSafeStateChange }));
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting.reject/,
+            }),
+        );
+
+        expect(checkWalletConnection).toHaveBeenCalled();
+        expect(open).toHaveBeenCalledWith(SafeDialogId.CREATE_TRANSACTION, {
+            params: {
+                network: Network.ETHEREUM_SEPOLIA,
+                safeAddress,
+                rejectedNonce: '12',
+                onCreated: onSafeStateChange,
+            },
+        });
+    });
+
+    it.each([
+        { label: 'the owner already approved', signers: [ownerOne] },
+        { label: 'is ready to execute', signers: [ownerOne, ownerTwo] },
+        {
+            label: 'waits for an earlier nonce',
+            signers: [ownerOne, ownerTwo],
+            nonce: '12',
+        },
+    ])('offers the rejection of a transaction that $label', (params) => {
+        const { signers, nonce } = params;
+        mockSafe({ transaction: generateTransaction(signers, nonce) });
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting.reject/,
+            }),
+        ).toBeEnabled();
+    });
+
+    it('does not offer to reject a rejection, and reads no queue for it', () => {
+        mockSafe({ transaction: generateRejection([ownerTwo]) });
+        render(createTestComponent({ safeTxHash: rejectionTxHash }));
+
+        expect(isRejectionSpy).toHaveBeenCalledWith({
+            safeTxHash: rejectionTxHash,
+            nonce: '10',
+            safeAddress,
+            chainId: networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+        });
+        expect(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting.approve/,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: /safeTransactionVoting.reject/,
+            }),
+        ).not.toBeInTheDocument();
+        expect(useSafePendingTransactionsSpy).toHaveBeenLastCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: false }),
+        );
+    });
+
+    it('reports the rejection queued on the nonce of the transaction, which the owner can still sign', () => {
+        mockSafe({
+            transaction: generateTransaction([ownerTwo]),
+            queue: [generateRejection([ownerTwo])],
+        });
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/safeTransactionVoting.rejectionQueued.title/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                /rejectionQueued.description \(approvals=1,threshold=2,nonce=10\)/,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting\.reject$/,
+            }),
+        ).toBeEnabled();
+    });
+
+    it('still offers the rejection when the queue could not be read', () => {
+        mockSafe({ transaction: generateTransaction([ownerTwo]) });
+        useSafePendingTransactionsSpy.mockReturnValue(
+            generateReactQueryResultError({
+                error: new Error('Upstream error'),
+            }) as ReturnType<typeof safeService.useSafePendingTransactions>,
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting\.reject$/,
+            }),
+        ).toBeEnabled();
+        expect(
+            screen.queryByText(/safeTransactionVoting.rejectionQueued/),
+        ).not.toBeInTheDocument();
+    });
+
+    it('renders a disabled rejection signed button when the connected owner already signed the rejection', () => {
+        mockSafe({
+            transaction: generateTransaction([ownerTwo]),
+            queue: [generateRejection([ownerOne])],
+        });
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: /safeTransactionVoting\.rejected$/,
+            }),
+        ).toBeDisabled();
+        expect(
+            screen.queryByRole('button', {
+                name: /safeTransactionVoting\.reject$/,
+            }),
+        ).not.toBeInTheDocument();
+    });
+
+    it.each([
+        {
+            label: 'queued on another nonce',
+            transaction: generateTransaction([ownerTwo]),
+            rejectionNonce: '11',
+        },
+        {
+            label: 'of a transaction whose nonce was used',
+            transaction: generateTransaction([ownerTwo], '9'),
+            rejectionNonce: '9',
+        },
+    ])('does not report a rejection $label', (params) => {
+        const { transaction, rejectionNonce } = params;
+        mockSafe({
+            transaction,
+            queue: [generateRejection([ownerOne], rejectionNonce)],
+        });
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(/safeTransactionVoting.rejectionQueued/),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', {
+                name: /safeTransactionVoting\.rejected$/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('offers the approval to a disconnected viewer', () => {

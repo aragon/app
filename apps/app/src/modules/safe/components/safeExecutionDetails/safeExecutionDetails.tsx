@@ -1,10 +1,11 @@
 'use client';
 
-import { TransactionDetailSummary } from '@aragon/gov-ui-kit';
+import { CardEmptyState, TransactionDetailSummary } from '@aragon/gov-ui-kit';
 import type { ITransactionExecution } from '@/modules/finance/api/financeService';
 import { TransactionExecutionActions } from '@/modules/finance/components/transactionExecutionActions';
 import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { useSafeTransactionActions } from '@/shared/api/safeService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 /**
@@ -37,16 +38,25 @@ export interface ISafeExecutionDetailsProps {
      * Hash of the Safe transaction behind the execution.
      */
     safeTxHash: string;
+    /**
+     * Whether the Safe transaction is the onchain rejection of its nonce, which has no actions to show.
+     */
+    isRejection?: boolean;
 }
+
+const translationKey = 'app.safe.safeExecutionDetails';
 
 /**
  * Summary and decoded actions of a Safe execution transaction, or only its decoded actions while the Safe transaction
- * is pending. Like the DAO execution details, it renders no layout of its own.
+ * is pending. An onchain rejection has no actions to read and says what it is instead. Like the DAO execution details,
+ * it renders no layout of its own.
  */
 export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
     props,
 ) => {
-    const { transaction, safeAddress, safeTxHash } = props;
+    const { transaction, safeAddress, safeTxHash, isRejection } = props;
+
+    const { t } = useTranslations();
 
     const {
         data: actionData,
@@ -61,6 +71,7 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
             },
         },
         {
+            enabled: !isRejection,
             refetchInterval:
                 transactionExecutionUtils.getActionsRefetchInterval,
         },
@@ -73,8 +84,10 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
     );
 
     const chainId = networkDefinitions[transaction.network].id;
-    const actionCount =
-        actionData?.rawActions.length ?? transaction.actionCount;
+    // The empty call of a rejection is not an action.
+    const actionCount = isRejection
+        ? 0
+        : (actionData?.rawActions.length ?? transaction.actionCount);
 
     const { transactionHash, blockTimestamp } = transaction;
 
@@ -90,15 +103,25 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
                     transactionHash={transactionHash}
                 />
             )}
-            <TransactionExecutionActions
-                actionCount={actionCount}
-                actions={actions}
-                chainId={chainId}
-                // A failed poll keeps the actions already read, so only a read that never succeeded is reported.
-                isError={actionData == null && isError}
-                isLoading={isLoading}
-                transactionId={transaction.id}
-            />
+            {isRejection ? (
+                <CardEmptyState
+                    className="border border-neutral-100"
+                    description={t(`${translationKey}.rejection.description`)}
+                    heading={t(`${translationKey}.rejection.heading`)}
+                    isStacked={false}
+                    objectIllustration={{ object: 'SMART_CONTRACT' }}
+                />
+            ) : (
+                <TransactionExecutionActions
+                    actionCount={actionCount}
+                    actions={actions}
+                    chainId={chainId}
+                    // A failed poll keeps the actions already read, so only a read that never succeeded is reported.
+                    isError={actionData == null && isError}
+                    isLoading={isLoading}
+                    transactionId={transaction.id}
+                />
+            )}
         </>
     );
 };

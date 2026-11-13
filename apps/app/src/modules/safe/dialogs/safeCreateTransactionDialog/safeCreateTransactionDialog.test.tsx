@@ -713,4 +713,98 @@ describe('<SafeCreateTransactionDialog /> component', () => {
         expect(getCreateButton()).toBeEnabled();
         expect(ownerKit.signTypedData).not.toHaveBeenCalled();
     });
+
+    describe('rejection', () => {
+        const rejectionKey = `${translationKey}.rejection`;
+        const rejectedNonce = '4';
+
+        // The rejection the protocol kit builds: an empty call from the Safe to itself on the rejected nonce.
+        const rejectionData = {
+            ...batchData,
+            to: safeAddress,
+            data: '0x',
+            operation: 0,
+            nonce: 4,
+        };
+
+        let createRejectionTransaction: jest.Mock;
+
+        beforeEach(() => {
+            createRejectionTransaction = jest
+                .fn()
+                .mockResolvedValue({ data: rejectionData });
+            initReadOnlySpy.mockResolvedValue({
+                ...readOnlyKit,
+                createRejectionTransaction,
+            } as unknown as SafeProtocolKit);
+        });
+
+        const confirmRejectionReview = async () => {
+            await userEvent.click(
+                await screen.findByRole('button', { name: 'confirm-review' }),
+            );
+            const button = screen.getByRole('button', {
+                name: `${rejectionKey}.actions.create`,
+            });
+            await waitFor(() => expect(button).toBeEnabled());
+
+            return button;
+        };
+
+        it('builds the rejection on the rejected nonce, whatever the next free nonce is', async () => {
+            render(createTestComponent({ actions: undefined, rejectedNonce }));
+
+            await screen.findByRole('button', { name: 'confirm-review' });
+
+            expect(createRejectionTransaction).toHaveBeenCalledWith(4);
+            expect(readOnlyKit.createTransaction).not.toHaveBeenCalled();
+            expect(getSafeNextNonceSpy).not.toHaveBeenCalled();
+            expect(
+                screen.getByText(`${rejectionKey}.title`),
+            ).toBeInTheDocument();
+        });
+
+        it('signs the rejection and proposes it as the connected owner', async () => {
+            // The Safe executes the rejected nonce next, the usual case.
+            ownerKit.getNonce.mockResolvedValue(4);
+            render(createTestComponent({ actions: undefined, rejectedNonce }));
+
+            await userEvent.click(await confirmRejectionReview());
+
+            expect(
+                await screen.findByText(`${rejectionKey}.created`),
+            ).toBeInTheDocument();
+            expect(proposeSafeTransactionSpy).toHaveBeenCalledWith({
+                urlParams: { network, address: safeAddress },
+                body: {
+                    safeTransactionData: expect.objectContaining({
+                        to: safeAddress,
+                        value: '0',
+                        data: '0x',
+                        operation: 0,
+                        nonce: 4,
+                    }),
+                    safeTxHash,
+                    senderAddress: owner,
+                    senderSignature: signature,
+                    origin: 'Aragon',
+                },
+            });
+            expect(getSafeNextNonceSpy).not.toHaveBeenCalled();
+        });
+
+        it('refuses to sign once the Safe has used the rejected nonce, instead of moving the rejection to another one', async () => {
+            ownerKit.getNonce.mockResolvedValue(5);
+            render(createTestComponent({ actions: undefined, rejectedNonce }));
+
+            await userEvent.click(await confirmRejectionReview());
+
+            expect(
+                await screen.findByText(`${rejectionKey}.nonceUsed`),
+            ).toBeInTheDocument();
+            expect(createRejectionTransaction).toHaveBeenCalledTimes(1);
+            expect(ownerKit.signTypedData).not.toHaveBeenCalled();
+            expect(proposeSafeTransactionSpy).not.toHaveBeenCalled();
+        });
+    });
 });

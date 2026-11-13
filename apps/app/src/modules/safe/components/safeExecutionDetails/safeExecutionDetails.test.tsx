@@ -90,8 +90,26 @@ describe('<SafeExecutionDetails /> component', () => {
                     safeTxHash: '0xff54',
                 },
             },
-            { refetchInterval: expect.any(Function) },
+            { enabled: true, refetchInterval: expect.any(Function) },
         );
+    });
+
+    it('says a rejection is one instead of reading and listing its actions', () => {
+        mockActions({
+            rawActions: [{ to: safeAddress, data: '0x', value: '0' }],
+        });
+        render(createTestComponent({ isRejection: true }));
+
+        expect(
+            screen.getByText(/safeExecutionDetails.rejection.heading/),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('execution-actions')).not.toBeInTheDocument();
+        expect(useSafeTransactionActionsSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: false }),
+        );
+        // The summary counts no action either.
+        expect(screen.getByText('0')).toBeInTheDocument();
     });
 
     it('renders the executor and no proposal', () => {

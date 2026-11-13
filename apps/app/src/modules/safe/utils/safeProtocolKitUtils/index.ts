@@ -1,4 +1,5 @@
 export {
+    type IBuildRejectionTransactionParams,
     type IBuildTransactionParams,
     type IInitForOwnerParams,
     type IInitReadOnlyParams,

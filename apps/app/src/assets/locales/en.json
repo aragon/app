@@ -3957,6 +3957,7 @@
         "callRunsNothing": "The address this delegate call targets holds no code, so this call executes nothing while the rest of the transaction still runs.",
         "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does - one of them is the remote decoder, which may be the wrong one - so it cannot be signed here.",
         "delegateTargetUnresolved": "The code at this delegate call's target could not be read, so whether the calls below would actually run is unknown. Nothing can be signed until that read succeeds — refresh to try again.",
+        "gasRefund": "This transaction pays a gas refund out of the Safe when it is executed. Check its gas price, gas token and refund receiver in the details before signing.",
         "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",
         "hashUnverifiable": "The transaction hash could not be recomputed, so its fields could not be checked against it.",
         "incompleteBatch": "Part of this transaction could not be read. The calls below are not the whole transaction, so it cannot be signed here. Review it in the Safe app if you intend to approve it.",
@@ -4045,6 +4046,12 @@
         "approved": "Approved",
         "execute": "Execute Safe transaction",
         "loadError": "The Safe transaction could not be loaded. Try again later.",
+        "reject": "Reject transaction",
+        "rejected": "Rejection signed",
+        "rejectionQueued": {
+          "title": "A rejection of this transaction is queued.",
+          "description": "It has {{approvals}} of {{threshold}} approvals. Nonce {{nonce}} can be used once, so this transaction can no longer be executed after the rejection is."
+        },
         "superseded": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
         "waitingForNonce": {
           "title": "This transaction is queued behind nonce {{currentNonce}}.",
@@ -4081,7 +4088,23 @@
           "done": "Done",
           "close": "Close"
         },
-        "networkUnavailable": "The Safe's network can't be reached right now. Try again later."
+        "networkUnavailable": "The Safe's network can't be reached right now. Try again later.",
+        "rejection": {
+          "title": "Reject Safe transaction",
+          "description": "A rejection is an empty Safe transaction on the same nonce as the one it rejects. Review it, then sign it. Once it has enough approvals and is executed, the rejected transaction can never be executed.",
+          "created": "Rejection signed. It is queued on the Safe. Once it has enough approvals, execute it from the transactions list to reject the transaction.",
+          "createdReadyToExecute": "Rejection signed and queued on the Safe. Execute it from the transactions list to reject the transaction.",
+          "nonceUsed": "The Safe has already used this nonce, so there is nothing left to reject.",
+          "actions": {
+            "create": "Sign rejection"
+          }
+        }
+      },
+      "safeExecutionDetails": {
+        "rejection": {
+          "heading": "Onchain rejection",
+          "description": "This transaction performs no action. Executing it uses up its Safe nonce, so any other transaction queued on that nonce can no longer be executed."
+        }
       },
       "safeOwnerSigning": {
         "walletRequired": "Connect an owner wallet on the Safe's network to continue.",
@@ -4891,6 +4914,7 @@
           "heading": "Error loading transactions"
         },
         "item": {
+          "rejection": "Onchain rejection · {{date}}",
           "status": {
             "active": "Active",
             "executable": "Executable",

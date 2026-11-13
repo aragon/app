@@ -242,4 +242,48 @@ describe('safeProtocolKit utils', () => {
             expect(transaction.from).toBeNull();
         });
     });
+
+    describe('buildRejectionTransaction', () => {
+        const safeTxHash = `0x${'2'.repeat(64)}`;
+
+        it('returns the rejection the protocol kit builds for the nonce, in the shape of a queued transaction', async () => {
+            const protocolKit = {
+                createRejectionTransaction: jest.fn().mockResolvedValue({
+                    data: {
+                        to: safeAddress,
+                        value: '0',
+                        data: '0x',
+                        operation: 0,
+                        nonce: 7,
+                    },
+                }),
+                getTransactionHash: jest.fn().mockResolvedValue(safeTxHash),
+            };
+
+            const transaction =
+                await safeProtocolKitUtils.buildRejectionTransaction({
+                    protocolKit: protocolKit as never,
+                    nonce: 7,
+                    threshold: 2,
+                });
+
+            expect(protocolKit.createRejectionTransaction).toHaveBeenCalledWith(
+                7,
+            );
+            expect(transaction).toEqual(
+                expect.objectContaining({
+                    to: safeAddress,
+                    value: '0',
+                    data: '0x',
+                    operation: 0,
+                    nonce: '7',
+                    safeTxHash,
+                    from: null,
+                    confirmations: [],
+                    confirmationsRequired: 2,
+                    isExecuted: false,
+                }),
+            );
+        });
+    });
 });

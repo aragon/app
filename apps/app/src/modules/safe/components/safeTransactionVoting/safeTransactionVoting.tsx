@@ -24,13 +24,17 @@ import {
 import { safeMultisigSettingsUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigSettingsUtils';
 import type { Network } from '@/shared/api/daoService';
 import {
+    type ISafeMultisigTransaction,
     useSafeInfo,
     useSafePendingTransaction,
+    useSafePendingTransactions,
 } from '@/shared/api/safeService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { SafeDialogId } from '../../constants/safeDialogId';
+import type { ISafeCreateTransactionDialogParams } from '../../dialogs/safeCreateTransactionDialog';
 import type { ISafeTransactionDialogParams } from '../../dialogs/safeTransactionDialog';
 import { SafeApprovalReadiness } from '../../types';
 import { safeTransactionUtils } from '../../utils/safeTransactionUtils';
@@ -49,7 +53,8 @@ export interface ISafeTransactionVotingProps {
      */
     safeTxHash: string;
     /**
-     * Called once the transaction has been confirmed or executed, for the caller to refresh the queries it owns.
+     * Called once the transaction has been confirmed, executed or rejected, for the caller to refresh the queries it
+     * owns.
      */
     onSafeStateChange?: () => void;
 }
@@ -57,8 +62,10 @@ export interface ISafeTransactionVotingProps {
 const translationKey = 'app.safe.safeTransactionVoting';
 
 /**
- * Confirmation progress, confirming owners and Safe settings of a queued Safe transaction, with the action the
- * connected owner can take on it: confirm it, or execute it once it holds enough confirmations on the current nonce.
+ * Confirmation progress, confirming owners and Safe settings of a queued Safe transaction, with the actions the
+ * connected owner can take on it: confirm it, execute it once it holds enough confirmations on the current nonce, or
+ * reject it by signing the rejection of its nonce. A rejection already queued on that nonce is reported with its
+ * approvals.
  */
 export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     props,
@@ -86,6 +93,24 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
             },
             queryOptions,
         );
+
+    const isRejection = (candidate: ISafeMultisigTransaction) =>
+        safeTransactionUtils.isRejection({
+            safeTxHash: candidate.safeTxHash,
+            nonce: candidate.nonce,
+            safeAddress,
+            chainId: networkDefinitions[network].id,
+        });
+    const isRejectable = transaction != null && !isRejection(transaction);
+
+    // The queue holds the rejection of the transaction once an owner signed one.
+    const { data: queue } = useSafePendingTransactions(
+        {
+            urlParams: { network, address: safeAddress },
+            queryParams: { limit: safeQueueReadLimit },
+        },
+        { ...queryOptions, enabled: isRejectable },
+    );
 
     // Once executed, the transaction leaves the queue before the transaction list refreshes: it has nothing left to
     // confirm, so the card is not rendered rather than showing a misleading empty state.
@@ -151,6 +176,52 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
 
         checkWalletConnection({
             onSuccess: () => open(SafeDialogId.TRANSACTION, { params }),
+        });
+    };
+
+    // A transaction is rejected while it can still execute, and a rejection is not rejected in turn: its rejection
+    // would be the very same transaction.
+    const isRejectableNow =
+        isRejectable &&
+        safeInfo != null &&
+        safeTransactionUtils.isTransactionLive({
+            transaction,
+            currentNonce: safeInfo.nonce,
+        });
+
+    // A nonce has one rejection, so an owner rejecting a transaction that already has one approves that rejection.
+    const rejection =
+        isRejectableNow && queue != null
+            ? safeTransactionUtils
+                  .getNonceCompetitors({
+                      transactions: queue.results,
+                      transaction,
+                  })
+                  .find(isRejection)
+            : undefined;
+    const rejectionSigners =
+        rejection == null
+            ? []
+            : safeTransactionUtils
+                  .getCurrentOwnerConfirmations({
+                      transaction: rejection,
+                      owners,
+                  })
+                  .map(({ owner }) => owner);
+    const hasRejected = rejectionSigners.some((signer) =>
+        addressUtils.isAddressEqual(signer, connectedAddress),
+    );
+
+    const openRejectionDialog = (rejectedNonce: string) => {
+        const params: ISafeCreateTransactionDialogParams = {
+            network,
+            safeAddress,
+            rejectedNonce,
+            onCreated: onSafeStateChange,
+        };
+
+        checkWalletConnection({
+            onSuccess: () => open(SafeDialogId.CREATE_TRANSACTION, { params }),
         });
     };
 
@@ -228,6 +299,37 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
         return null;
     };
 
+    const renderRejectAction = () => {
+        if (!(canAct && isRejectableNow)) {
+            return null;
+        }
+
+        if (hasRejected) {
+            return (
+                <Button
+                    className="w-full md:w-fit"
+                    disabled={true}
+                    iconLeft={IconType.CHECKMARK}
+                    size="md"
+                    variant="secondary"
+                >
+                    {t(`${translationKey}.rejected`)}
+                </Button>
+            );
+        }
+
+        return (
+            <Button
+                className="w-full md:w-fit"
+                onClick={() => openRejectionDialog(transaction.nonce)}
+                size="md"
+                variant="critical"
+            >
+                {t(`${translationKey}.reject`)}
+            </Button>
+        );
+    };
+
     const actions = renderActions();
 
     return (
@@ -270,9 +372,31 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
                                 </AlertCard>
                             </div>
                         )}
+                    {rejection != null && safeInfo != null && (
+                        <div className="pt-6">
+                            <AlertCard
+                                message={t(
+                                    `${translationKey}.rejectionQueued.title`,
+                                )}
+                                variant="warning"
+                            >
+                                <p>
+                                    {t(
+                                        `${translationKey}.rejectionQueued.description`,
+                                        {
+                                            approvals: rejectionSigners.length,
+                                            threshold: safeInfo.threshold,
+                                            nonce: rejection.nonce,
+                                        },
+                                    )}
+                                </p>
+                            </AlertCard>
+                        </div>
+                    )}
                     {actions != null && (
                         <div className="flex flex-col items-start gap-3 pt-6 md:flex-row md:items-center">
                             {actions}
+                            {renderRejectAction()}
                         </div>
                     )}
                 </SafeMultisigProposalVotingBreakdownView>
