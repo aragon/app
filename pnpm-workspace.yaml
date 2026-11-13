@@ -50,7 +50,7 @@ catalog:
   classnames: ^2.5.1
   cross-env: ^10.1.0
   file-type: ^22.2.0
-  hono: ^4.13.13
+  hono: ^4.13.16
   husky: ^9.1.7
   # jest: held on 30.4 — 30.5 replaces module.register/registerHooks with a throwing stub, and
   # @tailwindcss/node calls one on import, so breakpoints.test.ts cannot load Tailwind.
