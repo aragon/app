@@ -30,12 +30,12 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
     const randomId = useRandomId(id);
 
     const itemClasses = classNames(
-        'group peer focus-ring-primary cursor-pointer rounded-full outline-hidden disabled:cursor-default',
+        'group peer cursor-pointer rounded-full outline-hidden focus-ring-primary disabled:cursor-default',
         { 'order-2': labelPosition === 'left' },
     );
 
     const labelClasses = classNames(
-        'cursor-pointer text-base text-neutral-500 leading-tight', // default
+        'cursor-pointer text-base leading-tight text-neutral-500', // default
         'hover:text-neutral-800', // hover
         'peer-disabled:cursor-default peer-data-[state=unchecked]:peer-disabled:text-neutral-300', // unchecked and disabled
         { 'pr-2 md:pr-3': labelPosition === 'left' },

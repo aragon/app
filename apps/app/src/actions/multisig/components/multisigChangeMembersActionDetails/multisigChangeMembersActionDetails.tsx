@@ -94,7 +94,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                         </p>
                     </DefinitionList.Item>
                 </DefinitionList.Container>
-                <p className="text-neutral-500 text-sm">
+                <p className="text-sm text-neutral-500">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.blockNote',
                     )}

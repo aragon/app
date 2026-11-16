@@ -124,7 +124,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 )}
             </div>
             {error && (
-                <div className="flex items-center gap-2 text-critical-800 text-sm">
+                <div className="flex items-center gap-2 text-sm text-critical-800">
                     <AvatarIcon icon={IconType.INFO} size="sm" variant="critical" />
                     {error}
                 </div>

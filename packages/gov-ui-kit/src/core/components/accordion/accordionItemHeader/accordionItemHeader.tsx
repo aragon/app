@@ -16,7 +16,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
     return (
         <RadixAccordionHeader
             className={classNames(
-                'group data-[state=open]:gradient-neutral-50-transparent-to-b relative flex overflow-hidden',
+                'group relative flex overflow-hidden data-[state=open]:gradient-neutral-50-transparent-to-b',
                 'data-[disabled=true]:bg-neutral-100', // disabled
             )}
         >
@@ -61,7 +61,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                     <>
                         {children}
                         <AvatarIcon
-                            className="transition-transform group-data-[state=open]:rotate-180 group-data-disabled:bg-neutral-100 group-data-disabled:text-neutral-100"
+                            className="transition-transform group-data-disabled:bg-neutral-100 group-data-disabled:text-neutral-100 group-data-[state=open]:rotate-180"
                             icon={IconType.CHEVRON_DOWN}
                         />
                     </>

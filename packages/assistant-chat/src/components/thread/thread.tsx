@@ -77,7 +77,7 @@ export const Thread: React.FC<IThreadProps> = (props) => {
             {/* The scrollbar is hidden (wheel/touch scrolling stays): the thread sits right next
                 to the page scrollbar and two adjacent bars read as a glitch. */}
             <ThreadPrimitive.Viewport
-                className="relative flex flex-1 flex-col overflow-x-auto overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className="relative flex flex-1 [scrollbar-width:none] flex-col overflow-x-auto overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden"
                 turnAnchor="bottom"
             >
                 {/* Stable skeleton in every state: the composer is always pinned to the bottom;
@@ -166,7 +166,7 @@ const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
     return (
         <div className="flex items-center gap-3">
             <span className="h-px flex-1 bg-neutral-100" />
-            <p className="flex-none text-neutral-400 text-xs">{label}</p>
+            <p className="flex-none text-xs text-neutral-400">{label}</p>
             <span className="h-px flex-1 bg-neutral-100" />
         </div>
     );
@@ -238,7 +238,7 @@ const NoticeLink: React.FC<INoticeLinkProps> = (props) => {
 
     return (
         <a
-            className="focus-ring-primary rounded-sm underline underline-offset-2 hover:text-neutral-600"
+            className="rounded-sm underline underline-offset-2 focus-ring-primary hover:text-neutral-600"
             href={href}
             rel="noopener noreferrer"
             target="_blank"
@@ -256,7 +256,7 @@ const AiNotice: React.FC<IAiNoticeProps> = (props) => {
 
     return (
         <p
-            className="text-balance px-2 text-center text-neutral-400 text-xs leading-normal"
+            className="px-2 text-center text-xs leading-normal text-balance text-neutral-400"
             id={id}
         >
             {text}
@@ -286,7 +286,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="focus-ring-primary mx-auto cursor-pointer rounded-sm text-neutral-500 text-xs underline underline-offset-2"
+            className="mx-auto cursor-pointer rounded-sm text-xs text-neutral-500 underline underline-offset-2 focus-ring-primary"
             onClick={onViewRequests}
             type="button"
         >
@@ -296,7 +296,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 };
 
 const EmailEscalation: React.FC = () => (
-    <p className="flex items-center justify-center gap-1 text-center text-neutral-400 text-xs">
+    <p className="flex items-center justify-center gap-1 text-center text-xs text-neutral-400">
         {chatCopy.composer.escalationPrompt}
         <CaptionLink href={supportEmailHref}>
             {chatCopy.composer.escalationLink}
@@ -324,7 +324,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="focus-ring-primary cursor-pointer whitespace-nowrap rounded-full border border-neutral-100 px-3.5 py-1.5 text-neutral-800 text-sm transition-colors hover:bg-neutral-50"
+                        className="cursor-pointer rounded-full border border-neutral-100 px-3.5 py-1.5 text-sm whitespace-nowrap text-neutral-800 transition-colors focus-ring-primary hover:bg-neutral-50"
                         type="button"
                     >
                         {suggestion.label}
@@ -370,14 +370,14 @@ const Composer: React.FC<IComposerProps> = (props) => {
     return (
         <ComposerPrimitive.Root className="relative flex w-full flex-col">
             <ComposerPrimitive.AttachmentDropzone asChild={true}>
-                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-200 bg-neutral-0 p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-primary-400 focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-primary-400 data-[dragging=true]:border-dashed data-[dragging=true]:bg-primary-50">
+                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-200 bg-neutral-0 p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-primary-400 focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-primary-400 data-[dragging=true]:bg-primary-50">
                     <ComposerAttachments />
                     <AuiIf
                         condition={(state) =>
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="px-2.5 text-neutral-300 text-xs leading-normal">
+                        <p className="px-2.5 text-xs leading-normal text-neutral-300">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -388,7 +388,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-neutral-800 text-sm caret-primary-400 outline-none placeholder:text-neutral-300"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-sm text-neutral-800 caret-primary-400 outline-none placeholder:text-neutral-300"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -513,7 +513,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-300 bg-critical-100/40 p-3 text-critical-800 text-sm leading-normal">
+        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-300 bg-critical-100/40 p-3 text-sm leading-normal text-critical-800">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -602,7 +602,7 @@ const AssistantMessage: React.FC = () => (
         className="group relative [contain-intrinsic-size:auto_200px] [content-visibility:auto]"
         data-role="assistant"
     >
-        <div className="wrap-break-word px-2 text-neutral-800 text-sm leading-relaxed">
+        <div className="px-2 text-sm leading-relaxed wrap-break-word text-neutral-800">
             {/* A tool without a registered component deliberately renders nothing: the model
                 narrates around flagOffTopic, and the documentation tools are covered by the
                 single indicator below. */}
@@ -623,7 +623,7 @@ const AssistantMessage: React.FC = () => (
 
         {/* The slot always occupies its height so messages never shift; the bar itself fades in
             on hover (or keyboard focus) only. */}
-        <div className="ms-2 flex items-center pt-1.5 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+        <div className="ms-2 flex items-center pt-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <AssistantActionBar />
         </div>
     </MessagePrimitive.Root>
@@ -637,7 +637,7 @@ const UserMessage: React.FC = () => (
         <UserMessageAttachments />
 
         <div className="relative col-start-2 min-w-0">
-            <div className="wrap-break-word whitespace-pre-wrap rounded-xl rounded-br-sm bg-neutral-100 px-4 py-2 text-neutral-800 text-sm empty:hidden">
+            <div className="rounded-xl rounded-br-sm bg-neutral-100 px-4 py-2 text-sm wrap-break-word whitespace-pre-wrap text-neutral-800 empty:hidden">
                 <MessagePrimitive.Parts />
             </div>
         </div>

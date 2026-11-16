@@ -62,7 +62,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                     {secondaryLinks != null && (
                         <>
                             <div className="w-full px-4">
-                                <div className="border-neutral-100 border-t" />
+                                <div className="border-t border-neutral-100" />
                             </div>
                             <NavigationLinks
                                 links={secondaryLinks}
@@ -72,7 +72,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                         </>
                     )}
                     <div className="w-full px-4">
-                        <div className="border-neutral-100 border-t" />
+                        <div className="border-t border-neutral-100" />
                     </div>
                     <NavigationLinksItem
                         href="/"

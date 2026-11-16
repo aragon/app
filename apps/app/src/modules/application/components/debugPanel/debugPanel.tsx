@@ -80,7 +80,7 @@ export const DebugPanel: React.FC = () => {
             />
             <div
                 className={classNames(
-                    'fixed right-0 z-50 flex h-full screen-sm:w-[480px] w-full flex-col gap-4 border-neutral-100 border-l bg-neutral-0 px-4 py-2',
+                    'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-l border-neutral-100 bg-neutral-0 px-4 py-2 screen-sm:w-[480px]',
                     { hidden: !isOpen },
                 )}
                 ref={panelRef}

@@ -55,7 +55,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
             <button
                 {...otherProps}
                 aria-labelledby={contentId}
-                className="focus-ring-primary absolute inset-0 z-0 cursor-pointer rounded-full border-0 bg-transparent p-0 disabled:cursor-default"
+                className="absolute inset-0 z-0 cursor-pointer rounded-full border-0 bg-transparent p-0 focus-ring-primary disabled:cursor-default"
             />
             <InteractiveAncestorContext.Provider value={true}>
                 <div

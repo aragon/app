@@ -94,7 +94,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 className={classNames(
                     'flex flex-row items-center rounded-xl border p-3 pr-2 transition-all md:pr-3 md:pl-6',
                     'border-neutral-100 bg-neutral-0 text-neutral-500 shadow-neutral-sm',
-                    'font-normal text-base leading-tight',
+                    'text-base leading-tight font-normal',
                     'hover:border-neutral-200 hover:shadow-neutral',
                     'focus-within:border-primary-400 focus-within:shadow-primary',
                     'focus-within:hover:border-primary-400 focus-within:hover:shadow-primary',
@@ -113,8 +113,8 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 )}
                 <input
                     className={classNames(
-                        'search-cancel-hidden size-full truncate bg-transparent pl-3 caret-neutral-500 outline-hidden',
-                        'placeholder:font-normal placeholder:text-base placeholder:text-neutral-300 placeholder:leading-tight',
+                        'size-full search-cancel-hidden truncate bg-transparent pl-3 caret-neutral-500 outline-hidden',
+                        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-neutral-300',
                     )}
                     onBlur={handleInputBlur}
                     onChange={handleSearchValueChange}

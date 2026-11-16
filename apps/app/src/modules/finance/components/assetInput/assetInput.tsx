@@ -229,8 +229,8 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const inputClassName = classNames(
-        'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none [appearance:textfield]', // base styles
-        ' placeholder:text-base placeholder:font-normal placeholder:leading-tight placeholder:text-neutral-300', // placeholder styles
+        'size-full [appearance:textfield] rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-none', // base styles
+        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-neutral-300', // placeholder styles
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
     );
 

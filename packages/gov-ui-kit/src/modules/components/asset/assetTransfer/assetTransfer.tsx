@@ -91,7 +91,7 @@ export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
         <div className="flex size-full flex-col gap-y-2 md:gap-y-3">
             <div className="relative flex h-full flex-col rounded-xl bg-neutral-0 md:flex-row">
                 <AssetTransferAddress addressUrl={senderUrl} participant={sender} txRole="sender" />
-                <div className="border-neutral-100 border-t md:border-l" />
+                <div className="border-t border-neutral-100 md:border-l" />
                 <AvatarIcon
                     className={classNames(
                         'absolute top-1/2 left-4 -translate-y-1/2 bg-neutral-50 text-neutral-300', //base
@@ -110,11 +110,11 @@ export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
             >
                 <div className="flex items-center space-x-3 md:space-x-4">
                     <Avatar responsiveSize={{ md: 'md' }} src={assetIconSrc} />
-                    <span className="text-neutral-800 text-sm leading-tight md:text-base">{assetName}</span>
+                    <span className="text-sm leading-tight text-neutral-800 md:text-base">{assetName}</span>
                 </div>
                 <div className="flex flex-col items-end justify-end">
-                    <span className="text-neutral-800 text-sm leading-tight md:text-base">{formattedTokenAmount}</span>
-                    <span className="text-neutral-500 text-sm leading-tight md:text-base">{formattedFiatValue}</span>
+                    <span className="text-sm leading-tight text-neutral-800 md:text-base">{formattedTokenAmount}</span>
+                    <span className="text-sm leading-tight text-neutral-500 md:text-base">{formattedFiatValue}</span>
                 </div>
             </DataList.Item>
         </div>

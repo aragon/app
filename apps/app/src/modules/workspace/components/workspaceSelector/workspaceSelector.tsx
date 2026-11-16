@@ -60,7 +60,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
             constrainContentWidth={false}
             customTrigger={
                 <button
-                    className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800"
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800"
                     type="button"
                 >
                     <DaoAvatar
@@ -68,7 +68,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                         size="md"
                         src={ipfsUtils.cidToSrc(workspace?.avatar)}
                     />
-                    <span className="grow truncate text-left text-base text-neutral-800 leading-tight">
+                    <span className="grow truncate text-left text-base leading-tight text-neutral-800">
                         {workspace?.name}
                     </span>
                     <Icon

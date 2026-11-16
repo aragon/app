@@ -103,7 +103,7 @@ export const InsideClickable: Story = {
             onClick={() => alert('Parent clicked!')}
             type="button"
         >
-            <span className="text-neutral-500 text-sm">{props.copyValue}</span>
+            <span className="text-sm text-neutral-500">{props.copyValue}</span>
             <Clipboard {...props} />
         </button>
     ),
@@ -125,7 +125,7 @@ export const InsideLink: Story = {
             rel="noopener noreferrer"
             target="_blank"
         >
-            <span className="text-neutral-500 text-sm">{props.copyValue}</span>
+            <span className="text-sm text-neutral-500">{props.copyValue}</span>
             <Clipboard {...props} />
         </a>
     ),

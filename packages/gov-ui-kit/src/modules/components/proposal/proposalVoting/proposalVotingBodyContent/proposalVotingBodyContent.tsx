@@ -62,7 +62,7 @@ export const ProposalVotingBodyContent: React.FC<IProposalVotingBodyContentProps
             <div className="flex flex-col gap-4 gap-x-6 gap-y-1 md:flex-row md:items-center md:justify-between">
                 <p className="truncate text-base text-neutral-800 md:text-lg">{name}</p>
                 {bodyBrand != null && (
-                    <div className="flex items-center gap-2 text-neutral-500 text-sm md:text-base">
+                    <div className="flex items-center gap-2 text-sm text-neutral-500 md:text-base">
                         <span>{bodyBrand.label}</span>
                         <Avatar size="sm" src={bodyBrand.logo} />
                     </div>

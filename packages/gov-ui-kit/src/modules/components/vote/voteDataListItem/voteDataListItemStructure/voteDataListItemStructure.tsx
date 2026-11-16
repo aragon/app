@@ -103,11 +103,11 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                     {isCurrentUser && <Tag label={copy.voteDataListItemStructure.you} variant="neutral" />}
                 </span>
                 {isTokenVoting && (
-                    <span className="truncate text-neutral-500 text-sm md:text-base">{formattedTokenVote}</span>
+                    <span className="truncate text-sm text-neutral-500 md:text-base">{formattedTokenVote}</span>
                 )}
             </div>
 
-            <div className="flex items-center gap-x-1 font-normal text-neutral-500 text-sm leading-tight md:gap-x-2 md:text-base">
+            <div className="flex items-center gap-x-1 text-sm leading-tight font-normal text-neutral-500 md:gap-x-2 md:text-base">
                 <Tag
                     className="capitalize"
                     data-testid="tag"

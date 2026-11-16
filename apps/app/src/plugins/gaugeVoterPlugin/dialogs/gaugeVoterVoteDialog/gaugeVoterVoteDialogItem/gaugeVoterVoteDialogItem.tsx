@@ -89,7 +89,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
 
     return (
         <DataList.Item className="relative flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
-            <div className="b-0 flex flex-1 items-center gap-3 border-neutral-100 border-b pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
+            <div className="b-0 flex flex-1 items-center gap-3 border-b border-neutral-100 pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
                 {gaugeAvatar && (
                     <Avatar
                         alt={displayGaugeName}
@@ -107,7 +107,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
                             label={gaugeName ?? undefined}
                         />
                     </span>
-                    <span className="truncate text-neutral-500 text-sm">
+                    <span className="truncate text-sm text-neutral-500">
                         <AddressOutput address={gaugeAddress} copy={false} />
                     </span>
                 </div>
@@ -115,12 +115,12 @@ export const GaugeVoterVoteDialogItem: React.FC<
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
                 <div className="flex flex-col items-end md:w-32">
                     {displayShare != null && (
-                        <span className="font-semibold text-base text-neutral-800">
+                        <span className="text-base font-semibold text-neutral-800">
                             {displayShare.toFixed(2)}%
                         </span>
                     )}
                     {showTokenAmount && (
-                        <span className="text-neutral-500 text-sm">
+                        <span className="text-sm text-neutral-500">
                             {displayVotes} {tokenSymbol}
                         </span>
                     )}

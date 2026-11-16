@@ -27,10 +27,10 @@ export const BoundlessActionText: React.FC<IBoundlessActionTextProps> = (
         <>
             {/* Static for small screens */}
             <div className="flex flex-col items-start md:hidden">
-                <p className="text-2xl text-[#000000] leading-tight">
+                <p className="text-2xl leading-tight text-[#000000]">
                     {t(title)}
                 </p>
-                <p className="text-nowrap text-[#78716C] text-lg leading-tight">
+                <p className="text-lg leading-tight text-nowrap text-[#78716C]">
                     {t(description)}
                 </p>
             </div>
@@ -44,10 +44,10 @@ export const BoundlessActionText: React.FC<IBoundlessActionTextProps> = (
                 initial={{ y: 0, scale: 1 }}
                 transition={{ type: 'spring', stiffness: 250, damping: 18 }}
             >
-                <p className="text-2xl text-[#000000] leading-tight">
+                <p className="text-2xl leading-tight text-[#000000]">
                     {t(title)}
                 </p>
-                <p className="text-nowrap text-[#78716C] text-lg leading-tight">
+                <p className="text-lg leading-tight text-nowrap text-[#78716C]">
                     {t(description)}
                 </p>
             </motion.div>

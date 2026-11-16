@@ -94,7 +94,7 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<
                         tokenDecimals: token.decimals,
                     }}
                 />
-                <p className="font-normal text-neutral-500 text-sm">
+                <p className="text-sm font-normal text-neutral-500">
                     {t(
                         'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.info',
                     )}

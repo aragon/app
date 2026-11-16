@@ -39,7 +39,7 @@ export const SimulationFlowVisualization: React.FC<
     if (summaryGroups.length === 0) {
         return (
             <div className={classNames('flex flex-col gap-8', className)}>
-                <p className="text-neutral-500 text-sm">
+                <p className="text-sm text-neutral-500">
                     {t(
                         'app.capitalFlow.simulationFlowVisualization.summary.empty',
                     )}
@@ -52,7 +52,7 @@ export const SimulationFlowVisualization: React.FC<
         <div className={classNames('flex flex-col gap-8', className)}>
             {summaryGroups.map((group) => (
                 <div className="flex w-full flex-col gap-3" key={group.kind}>
-                    <p className="text-neutral-800 text-xl leading-tight">
+                    <p className="text-xl leading-tight text-neutral-800">
                         {t(
                             simulationFlowVisualizationUtils.getGroupTitleKey(
                                 group,

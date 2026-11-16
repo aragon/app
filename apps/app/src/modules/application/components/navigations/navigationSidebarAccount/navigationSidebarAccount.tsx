@@ -49,7 +49,7 @@ export const NavigationSidebarAccount: React.FC<
 
     return (
         <button
-            className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 text-left transition-all hover:border-neutral-200 active:bg-neutral-50"
+            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 text-left transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50"
             onClick={onClick}
             type="button"
         >
@@ -63,7 +63,7 @@ export const NavigationSidebarAccount: React.FC<
                     {user.name ?? truncatedAddress}
                 </span>
                 {user.name != null && (
-                    <span className="truncate text-neutral-500 text-sm">
+                    <span className="truncate text-sm text-neutral-500">
                         {truncatedAddress}
                     </span>
                 )}

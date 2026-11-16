@@ -152,7 +152,7 @@ export const AddressOutput: React.FC<IAddressOutputProps> = (props) => {
     const truncatedValue = addressUtils.truncateHash(addressUtils.truncateAddress(address));
     const displayLabel = label ?? (showCompleteAddress ? checksumAddress : truncatedValue);
 
-    const text = <span className="block min-w-0 max-w-full truncate">{displayLabel}</span>;
+    const text = <span className="block max-w-full min-w-0 truncate">{displayLabel}</span>;
 
     const labelElement =
         href == null ? (
@@ -196,7 +196,7 @@ export const AddressOutput: React.FC<IAddressOutputProps> = (props) => {
     // The copy control matches the label: primary circle on a link, neutral circle on plain text. The root is a span
     // so the component stays valid phrasing content inside paragraphs and headings.
     return (
-        <span className={classNames('inline-flex min-w-0 max-w-full items-center', className)}>
+        <span className={classNames('inline-flex max-w-full min-w-0 items-center', className)}>
             {copy ? (
                 <Clipboard copyValue={checksumAddress} size="sm" variant={isLink ? 'avatar' : 'avatar-neutral'}>
                     {output}
