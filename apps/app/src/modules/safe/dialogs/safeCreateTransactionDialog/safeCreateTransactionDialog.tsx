@@ -71,12 +71,24 @@ export const SafeCreateTransactionDialog: React.FC<
     const { location } = props;
 
     invariant(
-        location.params != null && location.params.actions.length > 0,
+        location.params != null &&
+            (location.params.rejectedNonce != null ||
+                (location.params.actions?.length ?? 0) > 0),
         'SafeCreateTransactionDialog: required parameters must be set.',
     );
 
-    const { network, safeAddress, actions, prepareActions, onCreated } =
-        location.params;
+    const {
+        network,
+        safeAddress,
+        actions = [],
+        prepareActions,
+        rejectedNonce,
+        onCreated,
+    } = location.params;
+
+    // The copy that differs for a rejection lives under its own key.
+    const copyKey =
+        rejectedNonce == null ? translationKey : `${translationKey}.rejection`;
 
     const { close, updateOptions } = useDialogContext();
     const { t } = useTranslations();
@@ -118,22 +130,38 @@ export const SafeCreateTransactionDialog: React.FC<
     );
 
     /**
-     * Builds the Safe transaction at the next free nonce, never below `minNonce`, with a protocol kit that only reads:
-     * the owner reviews it before connecting or signing anything.
+     * Nonce the queue hands to the transaction: the next free one, or the rejected one for a rejection, which takes
+     * the place of the transaction it rejects whatever else is queued.
+     */
+    const readQueueNonce = useCallback(async (): Promise<string> => {
+        if (rejectedNonce != null) {
+            return rejectedNonce;
+        }
+
+        const { nextNonce } = await safeService.getSafeNextNonce({
+            urlParams: { network, address: safeAddress },
+        });
+
+        return nextNonce;
+    }, [network, rejectedNonce, safeAddress]);
+
+    /**
+     * Builds the Safe transaction at the next free nonce, never below `minNonce`, or the rejection at the rejected
+     * nonce, with a protocol kit that only reads: the owner reviews it before connecting or signing anything.
      */
     const prepare = useCallback(
         async (minNonce?: bigint): Promise<IPreparedTransaction> => {
-            const urlParams = { network, address: safeAddress };
-            const [safeInfo, { nextNonce }, preparedActions] =
-                await Promise.all([
-                    safeService.getSafeInfo({ urlParams }),
-                    safeService.getSafeNextNonce({ urlParams }),
-                    proposalActionPreparationUtils.prepareActions(
-                        actionsRef.current,
-                    ),
-                ]);
+            const [safeInfo, queueNonce, preparedActions] = await Promise.all([
+                safeService.getSafeInfo({
+                    urlParams: { network, address: safeAddress },
+                }),
+                readQueueNonce(),
+                proposalActionPreparationUtils.prepareActions(
+                    actionsRef.current,
+                ),
+            ]);
 
-            const nonce = Number(nextNonce);
+            const nonce = Number(queueNonce);
 
             if (!Number.isSafeInteger(nonce) || nonce < 0) {
                 throw new Error(t(`${translationKey}.invalidNonce`));
@@ -157,16 +185,31 @@ export const SafeCreateTransactionDialog: React.FC<
                     cause: reason,
                 });
             }
-            const transaction = await safeProtocolKitUtils.buildTransaction({
-                protocolKit,
-                calls: preparedActions,
-                nonce: flooredNonce,
-                threshold: safeInfo.threshold,
-            });
+            const { threshold } = safeInfo;
+            const transaction =
+                rejectedNonce == null
+                    ? await safeProtocolKitUtils.buildTransaction({
+                          protocolKit,
+                          calls: preparedActions,
+                          nonce: flooredNonce,
+                          threshold,
+                      })
+                    : await safeProtocolKitUtils.buildRejectionTransaction({
+                          protocolKit,
+                          nonce,
+                          threshold,
+                      });
 
             return { safeInfo, transaction };
         },
-        [network, requiredChainId, safeAddress, t],
+        [
+            network,
+            readQueueNonce,
+            rejectedNonce,
+            requiredChainId,
+            safeAddress,
+            t,
+        ],
     );
 
     useEffect(() => {
@@ -248,24 +291,29 @@ export const SafeCreateTransactionDialog: React.FC<
 
         try {
             const protocolKit = await getProtocolKit(walletAddress);
-            const [{ currentNonce }, { nextNonce }] = await Promise.all([
+            const [{ currentNonce }, queueNonce] = await Promise.all([
                 readOwnerAuthority({ protocolKit, owner: walletAddress }),
-                safeService.getSafeNextNonce({
-                    urlParams: { network, address: safeAddress },
-                }),
+                readQueueNonce(),
                 assertCanSign({
                     owner: walletAddress,
                     safeVersion: safeInfo.version,
                 }),
             ]);
 
-            // The nonce the transaction must take now: past everything queued, and never one the chain already used.
+            // The nonce the transaction must take now: the one the queue hands it, and never one the chain already
+            // used.
             const expectedNonce =
-                BigInt(currentNonce) > BigInt(nextNonce)
+                BigInt(currentNonce) > BigInt(queueNonce)
                     ? BigInt(currentNonce)
-                    : BigInt(nextNonce);
+                    : BigInt(queueNonce);
 
             if (expectedNonce !== BigInt(transaction.nonce)) {
+                // A rejection only works on the nonce it rejects: once the Safe has used that nonce, the rejected
+                // transaction is settled, and a rejection moved to another nonce would reject something else.
+                if (rejectedNonce != null) {
+                    throw new Error(t(`${translationKey}.rejection.nonceUsed`));
+                }
+
                 await rebuildOnCurrentQueue(
                     expectedNonce,
                     transaction.safeTxHash,
@@ -333,7 +381,9 @@ export const SafeCreateTransactionDialog: React.FC<
         network,
         prepared,
         readOwnerAuthority,
+        readQueueNonce,
         rebuildOnCurrentQueue,
+        rejectedNonce,
         safeAddress,
         signAndSubmit,
         t,
@@ -405,7 +455,7 @@ export const SafeCreateTransactionDialog: React.FC<
     const primaryAction =
         state === 'ready'
             ? {
-                  label: t(`${translationKey}.actions.create`),
+                  label: t(`${copyKey}.actions.create`),
                   disabled: prepared == null || isReviewGateBlocked,
                   onClick: handleReadyAction,
               }
@@ -438,18 +488,18 @@ export const SafeCreateTransactionDialog: React.FC<
             : state === 'signing'
               ? t(`${translationKey}.signing`)
               : state === 'success'
-                ? t(`${translationKey}.${successKey}`)
+                ? t(`${copyKey}.${successKey}`)
                 : undefined;
 
     return (
         <>
             <Dialog.Header
                 onClose={handleDismiss}
-                title={t(`${translationKey}.title`)}
+                title={t(`${copyKey}.title`)}
             />
             <Dialog.Content
                 className="flex flex-col gap-3 pb-4 md:pb-6"
-                description={t(`${translationKey}.description`)}
+                description={t(`${copyKey}.description`)}
             >
                 {statusMessage != null && (
                     <p className="text-neutral-500">{statusMessage}</p>

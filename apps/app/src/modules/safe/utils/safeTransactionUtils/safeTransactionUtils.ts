@@ -1,11 +1,12 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { isHex } from 'viem';
+import { type Hex, hashTypedData, isHex, zeroAddress } from 'viem';
 import type {
     ISafeConfirmation,
     ISafeMultisigTransaction,
 } from '@/shared/api/safeService';
 import { SafeApprovalReadiness } from '../../types/safeApprovalReadiness';
 import { SafeTransactionState } from '../../types/safeTransactionState';
+import { safeTxTypes } from '../safeTransactionEnvelopeUtils/safeTxTypes';
 
 export interface ISafeTransactionLivenessParams {
     /**
@@ -60,6 +61,25 @@ export interface ISafeCurrentOwnerConfirmationsParams {
      * Current Safe owners (`ISafeInfo.owners`).
      */
     owners: string[];
+}
+
+export interface ISafeRejectionParams {
+    /**
+     * Hash of the Safe transaction to check.
+     */
+    safeTxHash: string;
+    /**
+     * Nonce of the transaction.
+     */
+    nonce: string;
+    /**
+     * Address of the Safe the transaction belongs to.
+     */
+    safeAddress: string;
+    /**
+     * ID of the chain the Safe is deployed on.
+     */
+    chainId: number;
 }
 
 export interface ISafeApprovalReadinessParams
@@ -172,6 +192,57 @@ class SafeTransactionUtils {
 
     isThresholdReached = (transaction: ISafeMultisigTransaction): boolean =>
         transaction.confirmations.length >= transaction.confirmationsRequired;
+
+    /**
+     * Whether a Safe transaction is the onchain rejection of its nonce: an empty call from the Safe to itself that
+     * refunds no gas, so executing it only uses up the nonce. Every field of that transaction is fixed, so a nonce has
+     * one rejection, the one the protocol kit and the Safe app build, and its hash identifies it.
+     *
+     * The hash covers the whole transaction, gas refund included. A refund is paid out of the Safe whatever the call
+     * does, so an empty call that drains the Safe through its refund has another hash and never passes for a rejection.
+     *
+     * A Safe signs under a domain that names its chain from v1.3.0 on, and only its address before. Both are
+     * checked, so the version of the Safe is not needed.
+     */
+    isRejection = (params: ISafeRejectionParams): boolean => {
+        const { safeTxHash, nonce, chainId } = params;
+
+        // Anything unreadable is not a rejection.
+        if (
+            !addressUtils.isAddress(params.safeAddress) ||
+            !/^\d+$/.test(nonce)
+        ) {
+            return false;
+        }
+
+        // Lowercased, as the hash does not depend on the casing and a miscased checksum would be refused.
+        const safeAddress = params.safeAddress.toLowerCase() as Hex;
+        const domains = [
+            { chainId, verifyingContract: safeAddress },
+            { verifyingContract: safeAddress },
+        ];
+
+        return domains.some(
+            (domain) =>
+                hashTypedData({
+                    domain,
+                    types: safeTxTypes,
+                    primaryType: 'SafeTx',
+                    message: {
+                        to: safeAddress,
+                        value: BigInt(0),
+                        data: '0x',
+                        operation: 0,
+                        safeTxGas: BigInt(0),
+                        baseGas: BigInt(0),
+                        gasPrice: BigInt(0),
+                        gasToken: zeroAddress,
+                        refundReceiver: zeroAddress,
+                        nonce: BigInt(nonce),
+                    },
+                }) === safeTxHash.toLowerCase(),
+        );
+    };
 
     /**
      * Whether the threshold read from the Safe is one its owners can reach. Anything else is a misread or a broken

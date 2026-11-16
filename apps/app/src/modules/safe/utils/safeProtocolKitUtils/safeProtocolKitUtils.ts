@@ -98,6 +98,19 @@ export interface IBuildTransactionParams {
     proposer?: string;
 }
 
+export interface IBuildRejectionTransactionParams
+    extends Pick<IBuildTransactionParams, 'protocolKit' | 'threshold'> {
+    /**
+     * Nonce to reject: the one of the queued transaction the rejection replaces.
+     */
+    nonce: number;
+}
+
+/**
+ * Transaction as the protocol kit builds it.
+ */
+type SafeTransaction = Awaited<ReturnType<Safe['createTransaction']>>;
+
 /**
  * Minimal EIP-1193 provider, the only shape the protocol kit needs.
  */
@@ -191,13 +204,48 @@ class SafeProtocolKitUtils {
             onlyCalls: true,
             options: { nonce },
         });
+
+        return this.toQueuedTransaction(
+            protocolKit,
+            safeTransaction,
+            threshold,
+            proposer,
+        );
+    };
+
+    /**
+     * Builds the unsigned rejection of a nonce, in the same shape as `buildTransaction`: an empty transaction from the
+     * Safe to itself that uses up the nonce once executed, so nothing else queued on that nonce can execute. The
+     * protocol kit builds it, so it is the transaction, hash included, that the Safe app creates for the same nonce.
+     */
+    buildRejectionTransaction = async (
+        params: IBuildRejectionTransactionParams,
+    ): Promise<ISafeMultisigTransaction> => {
+        const { protocolKit, nonce, threshold } = params;
+
+        const safeTransaction =
+            await protocolKit.createRejectionTransaction(nonce);
+
+        return this.toQueuedTransaction(
+            protocolKit,
+            safeTransaction,
+            threshold,
+        );
+    };
+
+    private toQueuedTransaction = async (
+        protocolKit: SafeProtocolKit,
+        safeTransaction: SafeTransaction,
+        threshold: number,
+        proposer?: string,
+    ): Promise<ISafeMultisigTransaction> => {
         const safeTxHash =
             await protocolKit.getTransactionHash(safeTransaction);
 
         return {
             ...safeTransaction.data,
             operation: safeTransaction.data.operation === 1 ? 1 : 0,
-            nonce: String(nonce),
+            nonce: String(safeTransaction.data.nonce),
             safeTxHash,
             from: proposer ?? null,
             confirmations: [],
