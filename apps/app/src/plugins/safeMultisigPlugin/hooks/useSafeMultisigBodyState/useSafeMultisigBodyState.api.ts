@@ -1,4 +1,5 @@
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
+import type { SafeTransactionState } from '@/modules/safe/types';
 import type {
     ISppProposal,
     ISppStage,
@@ -10,10 +11,7 @@ import type {
     ISafeInfo,
     ISafeMultisigTransaction,
 } from '@/shared/api/safeService';
-import type {
-    ISafeProposalResultReport,
-    SafeTransactionState,
-} from '../../types';
+import type { ISafeProposalResultReport } from '../../types';
 import type { SafeSettledReportOutcome } from '../useSafeSettledReport';
 
 export interface IUseSafeMultisigBodyStateParams {

@@ -8,11 +8,11 @@ import {
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
+import { SafeTransactionState } from '@/modules/safe/types';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
-import { SafeTransactionState } from '../../types';
 import type { ISafeMultisigProposalVotingSummaryProps } from './safeMultisigProposalVotingSummary.api';
 
 const translationKey =

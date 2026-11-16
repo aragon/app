@@ -8,6 +8,7 @@ import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     generateDao,
     generateDaoPlugin,
+    generateReactQueryResultError,
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
@@ -163,5 +164,47 @@ describe('<TransactionExecutionDetails /> component', () => {
         expect(useNormalizedProposalActionsSpy).toHaveBeenCalledWith(
             expect.objectContaining({ daoId: 'dao-id' }),
         );
+    });
+
+    it('reports the actions as not loaded when they could not be read', () => {
+        useTransactionActionsSpy.mockReturnValue(
+            generateReactQueryResultError({
+                error: new Error('error'),
+            }) as ReturnType<typeof financeService.useTransactionActions>,
+        );
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/transactionExecutionActions.loadError/),
+        ).toBeInTheDocument();
+    });
+
+    it('keeps the actions already read when a later read fails', () => {
+        useTransactionActionsSpy.mockReturnValue({
+            ...generateReactQueryResultSuccess<
+                financeService.ITransactionActionsResult,
+                Error
+            >({
+                data: {
+                    actionCount: 0,
+                    actions: [],
+                    blockTimestamp: 1_700_000_000,
+                    decoding: true,
+                    transactionHash: '0xabc',
+                },
+            }),
+            error: new Error('error'),
+            isError: true,
+            isRefetchError: true,
+            isSuccess: false,
+            status: 'error',
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(/transactionExecutionActions.loadError/),
+        ).not.toBeInTheDocument();
     });
 });

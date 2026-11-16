@@ -5,6 +5,8 @@ import { DateTime } from 'luxon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { SafeTransactionState } from '@/modules/safe/types';
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
@@ -14,7 +16,6 @@ import {
     useSafePendingTransactions,
 } from '@/shared/api/safeService';
 import { safeBodyPollInterval } from '../../constants';
-import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
 import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
 import { useSafeSettledReport } from '../useSafeSettledReport';
@@ -183,7 +184,7 @@ export const useSafeMultisigBodyState = (
     const liveTransactionCount =
         currentNonce == null
             ? 0
-            : safeMultisigProposalUtils.filterLiveTransactions({
+            : safeTransactionUtils.filterLiveTransactions({
                   transactions,
                   currentNonce,
               }).length;
@@ -215,7 +216,7 @@ export const useSafeMultisigBodyState = (
                 reports.push({
                     transaction,
                     report,
-                    state: safeMultisigProposalUtils.getTransactionState({
+                    state: safeTransactionUtils.getTransactionState({
                         transaction,
                         currentNonce,
                     }),
@@ -224,7 +225,7 @@ export const useSafeMultisigBodyState = (
                         currentNonce,
                     }),
                     hasNonceCompetition:
-                        safeMultisigProposalUtils.hasNonceCompetition({
+                        safeTransactionUtils.hasNonceCompetition({
                             transactions,
                             transaction,
                         }),
@@ -350,7 +351,7 @@ export const useSafeMultisigBodyState = (
         signers,
         hasConnectedWalletSigned:
             pendingReport != null &&
-            safeMultisigProposalUtils.hasAddressConfirmed({
+            safeTransactionUtils.hasAddressConfirmed({
                 transaction: pendingReport.transaction,
                 address: connectedAddress,
             }),
