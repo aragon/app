@@ -84,4 +84,18 @@ describe('<ResourcesInput /> component', () => {
 
         expect(linkInputs).toHaveLength(1);
     });
+
+    it('stacks the fields of every resource when isStacked is set', async () => {
+        render(createTestComponent({ isStacked: true }));
+
+        await userEvent.click(
+            screen.getByRole('button', { name: /resourcesInput.add/ }),
+        );
+
+        expect(
+            screen.getByRole('button', {
+                name: /resourcesInput.item.removeResource/,
+            }),
+        ).toBeInTheDocument();
+    });
 });

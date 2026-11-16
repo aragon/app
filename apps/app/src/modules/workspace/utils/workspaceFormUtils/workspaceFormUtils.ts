@@ -6,7 +6,7 @@ import type {
     ICreateWorkspaceFormData,
 } from '../../components/createWorkspaceForm';
 
-class WorkspaceEditPageUtils {
+class WorkspaceFormUtils {
     /**
      * Builds the values of the workspace form from a stored workspace, the inverse of
      * `publishWorkspaceDialogUtils.buildWorkspace`.
@@ -61,4 +61,4 @@ class WorkspaceEditPageUtils {
         avatar != null ? { url: ipfsUtils.cidToSrc(avatar) } : undefined;
 }
 
-export const workspaceEditPageUtils = new WorkspaceEditPageUtils();
+export const workspaceFormUtils = new WorkspaceFormUtils();
