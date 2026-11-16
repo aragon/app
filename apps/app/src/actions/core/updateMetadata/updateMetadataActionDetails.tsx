@@ -117,7 +117,7 @@ export const UpdateMetadataActionDetails: React.FC<
                         'app.actions.core.updateMetadataActionDetails.nameTerm',
                     )}
                 >
-                    <p className="text-base text-neutral-800 leading-tight">
+                    <p className="text-base leading-tight text-neutral-800">
                         {metadataToDisplay.name}
                     </p>
                 </DefinitionList.Item>
@@ -127,7 +127,7 @@ export const UpdateMetadataActionDetails: React.FC<
                             'app.actions.core.updateMetadataActionDetails.processKeyTerm',
                         )}
                     >
-                        <p className="text-base text-neutral-800 leading-tight">
+                        <p className="text-base leading-tight text-neutral-800">
                             {processKey}
                         </p>
                     </DefinitionList.Item>
@@ -137,7 +137,7 @@ export const UpdateMetadataActionDetails: React.FC<
                         `app.actions.core.updateMetadataActionDetails.${descriptionTerm}`,
                     )}
                 >
-                    <p className="text-base text-neutral-800 leading-tight">
+                    <p className="text-base leading-tight text-neutral-800">
                         {metadataToDisplay.description}
                     </p>
                 </DefinitionList.Item>

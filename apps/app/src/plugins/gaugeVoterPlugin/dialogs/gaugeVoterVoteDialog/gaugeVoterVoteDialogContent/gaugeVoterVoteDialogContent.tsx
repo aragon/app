@@ -95,12 +95,12 @@ export const GaugeVoterVoteDialogContent: React.FC<
     return (
         <div className="flex flex-col gap-2">
             <div className="hidden gap-3 pr-4 md:flex md:items-center md:justify-end">
-                <span className="w-32 pr-2 text-right font-semibold text-neutral-500 text-xs uppercase">
+                <span className="w-32 pr-2 text-right text-xs font-semibold text-neutral-500 uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.votingPower',
                     )}
                 </span>
-                <span className="w-40 pr-2 text-right font-semibold text-neutral-500 text-xs uppercase">
+                <span className="w-40 pr-2 text-right text-xs font-semibold text-neutral-500 uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.weights',
                     )}

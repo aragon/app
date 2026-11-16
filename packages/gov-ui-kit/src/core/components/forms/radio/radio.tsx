@@ -35,7 +35,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
     );
 
     const labelClasses = classNames(
-        'cursor-pointer text-base text-neutral-500 leading-tight', // default
+        'cursor-pointer text-base leading-tight text-neutral-500', // default
         'hover:text-neutral-800', // hover
         'peer-disabled:cursor-default peer-data-[state=unchecked]:peer-disabled:text-neutral-300', // unchecked and disabled
         { 'pr-2 md:pr-3': labelPosition === 'left' },
@@ -53,7 +53,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
                 {...otherProps}
             >
                 <Icon
-                    className="text-neutral-300 group-hover:text-primary-400 group-disabled:text-neutral-300 group-data-[state=checked]:hidden"
+                    className="group-hover:text-primary-400 text-neutral-300 group-disabled:text-neutral-300 group-data-[state=checked]:hidden"
                     icon={IconType.RADIO}
                 />
                 <RadioGroupIndicator className="text-primary-400 group-disabled:text-neutral-300">

@@ -44,7 +44,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
         <>
             <ExploreNav />
             <div
-                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] md:-mt-24 md:pt-24"
+                className="bg-primary-400 relative mt-[-72px] flex flex-col items-center self-stretch pt-[72px] md:-mt-24 md:pt-24"
                 id="explore-page-hero"
             >
                 <Container className="w-full py-10 md:px-6 md:py-12">
@@ -57,10 +57,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
 
                     <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
                         <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
-                            <h1 className="font-normal text-3xl text-neutral-0 leading-tight md:text-5xl">
+                            <h1 className="text-neutral-0 text-3xl leading-tight font-normal md:text-5xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="font-normal text-lg text-primary-50 leading-normal md:text-2xl">
+                            <h3 className="text-primary-50 text-lg leading-normal font-normal md:text-2xl">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>

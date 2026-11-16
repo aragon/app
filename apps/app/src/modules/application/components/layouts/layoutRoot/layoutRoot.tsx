@@ -61,7 +61,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     return (
         <html className="h-full" lang="en">
-            <body className="flex h-full flex-col bg-neutral-50 has-[[data-app-sidebar]]:bg-neutral-25">
+            <body className="has-[[data-app-sidebar]]:bg-neutral-25 flex h-full flex-col bg-neutral-50">
                 <NextTopLoader
                     color="var(--color-primary-400)"
                     easing="ease-in-out"
@@ -83,7 +83,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                         panel measures the browser window through `screen-*` variants. */}
                     <SupportChatContextProvider>
                         <div className="flex grow flex-row">
-                            <div className="@container/app group/app flex min-w-0 grow flex-col">
+                            <div className="group/app @container/app flex min-w-0 grow flex-col">
                                 <ErrorBoundary>
                                     <div className="flex grow flex-col">
                                         {children}

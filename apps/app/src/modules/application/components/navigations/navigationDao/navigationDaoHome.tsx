@@ -24,9 +24,9 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     const buttonClassName = classNames(
-        'p-1 md:pr-4 cursor-pointer',
-        'flex max-w-56 xl:max-w-68 items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all',
-        'hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 focus-ring-primary',
+        'cursor-pointer p-1 md:pr-4',
+        'bg-neutral-0 flex max-w-56 items-center gap-3 rounded-full border border-neutral-100 text-neutral-500 transition-all xl:max-w-68',
+        'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
         className,
     );
 
@@ -34,7 +34,7 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
         <button className={buttonClassName} {...otherProps}>
             <InteractiveAncestorContext.Provider value={true}>
                 <DaoAvatar name={daoDisplayName} size="lg" src={daoAvatar} />
-                <p className="hidden grow truncate text-left font-normal text-base text-neutral-800 leading-tight md:block">
+                <p className="hidden grow truncate text-left text-base leading-tight font-normal text-neutral-800 md:block">
                     <AddressOutput
                         address={dao.address}
                         label={daoName || undefined}

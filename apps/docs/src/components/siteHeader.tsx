@@ -17,22 +17,22 @@ const links = [
  * sidebar and the table of contents stick below it.
  */
 export const SiteHeader = () => (
-    <header className="sticky top-0 z-40 h-(--fd-banner-height) bg-primary-400">
+    <header className="bg-primary-400 sticky top-0 z-40 h-(--fd-banner-height)">
         <div className="mx-auto flex h-full max-w-[1550px] items-center justify-between gap-4 px-4">
             <Link
                 aria-label="Aragon Help"
-                className="flex items-center gap-2 text-neutral-0"
+                className="text-neutral-0 flex items-center gap-2"
                 href="/"
             >
                 <AragonLogo className="h-[30px] w-auto" />
-                <span className="relative -top-[1.5px] font-semibold text-base leading-normal">
+                <span className="relative -top-[1.5px] text-base leading-normal font-semibold">
                     Help
                 </span>
             </Link>
             <nav className="flex items-center gap-8">
                 {links.map((link) => (
                     <a
-                        className="inline-flex items-center gap-1.5 whitespace-nowrap text-base text-primary-50 leading-tight transition-colors hover:text-neutral-0 max-md:hidden"
+                        className="text-primary-50 hover:text-neutral-0 inline-flex items-center gap-1.5 text-base leading-tight whitespace-nowrap transition-colors max-md:hidden"
                         href={link.url}
                         key={link.url}
                         rel="noopener noreferrer"

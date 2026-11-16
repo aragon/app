@@ -23,7 +23,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
             <div
                 aria-hidden="true"
                 className={classNames(
-                    'absolute inset-0 bg-neutral-0 transition-opacity duration-300',
+                    'bg-neutral-0 absolute inset-0 transition-opacity duration-300',
                     'group-data-[state=closed]:opacity-100 group-data-[state=open]:opacity-0',
                 )}
             />
@@ -61,7 +61,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                     <>
                         {children}
                         <AvatarIcon
-                            className="transition-transform group-data-[state=open]:rotate-180 group-data-disabled:bg-neutral-100 group-data-disabled:text-neutral-100"
+                            className="transition-transform group-data-disabled:bg-neutral-100 group-data-disabled:text-neutral-100 group-data-[state=open]:rotate-180"
                             icon={IconType.CHEVRON_DOWN}
                         />
                     </>

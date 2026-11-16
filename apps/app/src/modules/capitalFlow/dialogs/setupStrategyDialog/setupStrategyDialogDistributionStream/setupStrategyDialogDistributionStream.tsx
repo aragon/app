@@ -36,12 +36,12 @@ export const SetupStrategyDialogDistributionStream: React.FC<
     return (
         <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-0.5 md:gap-1">
-                <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionStream.token.label',
                     )}
                 </p>
-                <p className="font-normal text-neutral-500 text-sm leading-normal md:text-base">
+                <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionStream.token.helpText',
                     )}

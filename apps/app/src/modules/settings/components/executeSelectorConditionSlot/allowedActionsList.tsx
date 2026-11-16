@@ -25,7 +25,7 @@ export const AllowedActionsList: React.FC<IAllowedActionsListProps> = ({
         <div className="flex flex-col">
             {actions.map((action) => (
                 <div
-                    className="flex min-w-0 flex-col gap-1 border-neutral-100 border-b py-3 first:pt-0 last:border-b-0 last:pb-0"
+                    className="flex min-w-0 flex-col gap-1 border-b border-neutral-100 py-3 first:pt-0 last:border-b-0 last:pb-0"
                     key={action.id}
                 >
                     <div className="flex min-w-0 items-center gap-2.5 leading-normal">
@@ -42,7 +42,7 @@ export const AllowedActionsList: React.FC<IAllowedActionsListProps> = ({
                             </span>
                         )}
                     </div>
-                    <div className="flex min-w-0 items-center gap-2.5 text-neutral-500 leading-normal">
+                    <div className="flex min-w-0 items-center gap-2.5 leading-normal text-neutral-500">
                         <span className="truncate">
                             {action.contractName ??
                                 t(

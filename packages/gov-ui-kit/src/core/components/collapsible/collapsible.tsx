@@ -181,7 +181,7 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
                     <div
                         className={classNames(
                             overlayClassName,
-                            'bg-linear-to-t from-neutral-0 via-neutral-0/70 to-neutral-0/0',
+                            'from-neutral-0 via-neutral-0/70 to-neutral-0/0 bg-linear-to-t',
                         )}
                         data-testid="collapsible-overlay"
                         style={{ height: overlayHeightPx }}
@@ -206,13 +206,13 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
                         <button
                             aria-controls={contentId}
                             aria-expanded={isOpen}
-                            className="group flex cursor-pointer items-center text-primary-400 hover:text-primary-600 active:text-primary-800"
+                            className="group text-primary-400 hover:text-primary-600 active:text-primary-800 flex cursor-pointer items-center"
                             onClick={toggle}
                             type="button"
                         >
                             {isOpen ? buttonLabelOpened : buttonLabelClosed}
                             <Icon
-                                className="ml-2 text-primary-300 group-hover:text-primary-500 group-active:text-primary-700"
+                                className="text-primary-300 group-hover:text-primary-500 group-active:text-primary-700 ml-2"
                                 icon={isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN}
                                 size="sm"
                             />
