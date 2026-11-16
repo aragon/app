@@ -12,3 +12,5 @@ bb9dbdd9b177af4995c76adbed8a7b4a7e236481
 b72b19146020c55b21af3d94b936db9fb93cc2da
 # style: sort Tailwind classes with Biome 2.6 (ultracite 8)
 6eafe1270225e1c617e908f5450bfb09f3be87ae
+# style: order Tailwind classes against the kit theme
+418f88f0e965dfeffb97e8d63cf92670c9a72ff6
