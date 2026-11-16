@@ -302,7 +302,7 @@ export const AddressInput = forwardRef<HTMLTextAreaElement, IAddressInputProps>(
             <textarea
                 className={classNames(
                     // min-h-11 is required to prevent placeholder displacement
-                    'min-h-11 resize-none !md:px-4 px-3!',
+                    'min-h-11 resize-none px-3!',
                     { 'whitespace-normal': isFocused },
                     inputClassName,
                 )}
