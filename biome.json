@@ -36,6 +36,21 @@
             "expand": "always"
         }
     },
+    "tailwind": {
+        "stylesheet": "packages/gov-ui-kit/index.css",
+        "mergeFunctions": [
+            "classNames",
+            "clsx",
+            "tw",
+            "twMerge",
+            "cn",
+            "twJoin"
+        ],
+        "variantFunctions": [
+            "cva",
+            "tv"
+        ]
+    },
     "javascript": {
         "formatter": {
             "quoteStyle": "single",
@@ -181,7 +196,11 @@
                     }
                 },
                 "noParameterProperties": "off",
-                "useReadonlyClassProperties": "off"
+                "useReadonlyClassProperties": "off",
+                "useUnicodeRegex": "off",
+                "useNamedCaptureGroup": "off",
+                "useThisInClassMethods": "off",
+                "useDomQuerySelector": "off"
             },
             "suspicious": {
                 "noAsyncPromiseExecutor": "error",
@@ -320,7 +339,14 @@
                 "**/*.test.tsx"
             ],
             "linter": {
-                "rules": {}
+                "rules": {
+                    "correctness": {
+                        "noComponentHookFactories": "off"
+                    },
+                    "style": {
+                        "useImportsFirst": "off"
+                    }
+                }
             }
         },
         {

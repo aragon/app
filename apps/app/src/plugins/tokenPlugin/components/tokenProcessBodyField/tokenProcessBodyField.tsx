@@ -194,7 +194,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                         'app.plugins.token.tokenProcessBodyField.supplyTerm',
                     )}
                 >
-                    {formattedSupply} (${tokenSymbol})
+                    {formattedSupply} ({tokenSymbol})
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item

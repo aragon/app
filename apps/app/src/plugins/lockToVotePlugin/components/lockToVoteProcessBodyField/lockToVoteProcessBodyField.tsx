@@ -182,7 +182,7 @@ export const LockToVoteProcessBodyField = (
                 )}
                 {...(readOnly ? readOnlyTokenProps : {})}
             >
-                {tokenName} (${tokenSymbol})
+                {tokenName} ({tokenSymbol})
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
