@@ -166,7 +166,6 @@ export const WorkspaceAdminPageClient: React.FC<
                             className="w-full"
                             iconLeft={IconType.DEPOSIT}
                             onClick={handleExport}
-                            size="md"
                             variant="tertiary"
                         >
                             {t(
