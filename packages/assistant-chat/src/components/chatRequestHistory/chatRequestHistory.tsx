@@ -32,7 +32,7 @@ export const ChatRequestHistory: React.FC = () => {
         <div className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col gap-2 overflow-y-auto overscroll-contain p-4 [&::-webkit-scrollbar]:hidden">
             {requestHistory.map((entry) => (
                 <div
-                    className="bg-neutral-0 shadow-neutral flex flex-none items-center gap-3 rounded-xl border border-neutral-100 px-4 py-3"
+                    className="flex flex-none items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral"
                     key={entry.identifier}
                 >
                     <Tag label={entry.identifier} variant="primary" />

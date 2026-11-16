@@ -19,7 +19,7 @@ const DefaultChildComponent = (childCount: number) =>
         <Accordion.Item key={`item-${index.toString()}`} value={`item-${index.toString()}`}>
             <Accordion.ItemHeader>Item {index + 1} Header</Accordion.ItemHeader>
             <Accordion.ItemContent>
-                <div className="border-info-300 bg-info-100 flex h-24 w-full items-center justify-center border border-dashed">
+                <div className="flex h-24 w-full items-center justify-center border border-dashed border-info-300 bg-info-100">
                     Item {index + 1} Content
                 </div>
             </Accordion.ItemContent>

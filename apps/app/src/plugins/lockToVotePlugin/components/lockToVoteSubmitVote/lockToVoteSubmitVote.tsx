@@ -227,7 +227,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
                 </div>
             )}
             {showOptions && (
-                <Card className="shadow-neutral-sm p-6">
+                <Card className="p-6 shadow-neutral-sm">
                     <TokenVotingOptions
                         disableOptions={
                             latestVote != null && !isVoteReplacement

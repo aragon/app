@@ -32,14 +32,14 @@ export const DialogAlertRoot: React.FC<IDialogAlertRootProps> = (props) => {
     } = props;
 
     const overlayClassNames = classNames(
-        'gradient-neutral-50-transparent-to-t fixed inset-0 backdrop-blur-md',
+        'fixed inset-0 backdrop-blur-md gradient-neutral-50-transparent-to-t',
         'z-[var(--guk-dialog-alert-overlay-z-index)]',
         overlayClassName,
     );
 
     const containerClassNames = classNames(
         'fixed inset-x-2 bottom-2 mx-auto max-h-[calc(100vh-80px)] lg:top-12 lg:bottom-auto lg:max-h-[calc(100vh-200px)]',
-        'bg-neutral-0 shadow-neutral-md flex flex-col rounded-xl border border-neutral-100',
+        'flex flex-col rounded-xl border border-neutral-100 bg-neutral-0 shadow-neutral-md',
         'z-[var(--guk-dialog-alert-content-z-index)]',
         sizeToClassNames[size],
         containerClassName,

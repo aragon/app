@@ -87,9 +87,9 @@ export const GaugeVoterVotingTerminal: React.FC<
     const wrapperClassName = classNames(
         'flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6',
         'sticky bottom-3 md:bottom-6 lg:-mx-4',
-        'bg-neutral-0 rounded-xl border border-b-0 p-3 md:h-[64px] md:px-4 md:py-0',
+        'rounded-xl border border-b-0 bg-neutral-0 p-3 md:h-[64px] md:px-4 md:py-0',
         {
-            'shadow-neutral-md border-neutral-100': !showVoteButton,
+            'border-neutral-100 shadow-neutral-md': !showVoteButton,
             'border-primary-100 shadow-primary-xl': showVoteButton,
         },
     );

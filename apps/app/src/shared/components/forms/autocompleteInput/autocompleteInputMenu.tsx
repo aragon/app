@@ -41,7 +41,7 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
-        'border-primary-400 bg-neutral-0 shadow-primary-lg pointer-events-auto flex flex-col gap-3 overflow-hidden border-x outline-none',
+        'pointer-events-auto flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
         'z-[var(--guk-dropdown-container-content-z-index)]',
         { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },
         { 'rounded-t-xl border-t pb-1 md:pt-12': !isBottomPlacement },

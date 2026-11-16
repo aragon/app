@@ -33,7 +33,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     return (
         <footer
             className={classNames(
-                'bg-neutral-0 border-t border-neutral-100 py-5',
+                'border-t border-neutral-100 bg-neutral-0 py-5',
                 className,
             )}
             {...otherProps}

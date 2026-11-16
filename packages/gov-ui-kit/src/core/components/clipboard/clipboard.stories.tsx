@@ -99,7 +99,7 @@ export const InsideClickable: Story = {
     },
     render: (props) => (
         <button
-            className="bg-neutral-0 flex items-center gap-2 rounded-xl border border-neutral-100 px-4 py-3 hover:bg-neutral-50"
+            className="flex items-center gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 hover:bg-neutral-50"
             onClick={() => alert('Parent clicked!')}
             type="button"
         >
@@ -120,7 +120,7 @@ export const InsideLink: Story = {
     },
     render: (props) => (
         <a
-            className="bg-neutral-0 flex items-center gap-2 rounded-xl border border-neutral-100 px-4 py-3 hover:bg-neutral-50"
+            className="flex items-center gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 hover:bg-neutral-50"
             href="https://example.com"
             rel="noopener noreferrer"
             target="_blank"

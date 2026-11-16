@@ -115,7 +115,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     return (
         <div
             className={classNames(
-                'bg-neutral-0 overflow-hidden border border-neutral-200',
+                'overflow-hidden border border-neutral-200 bg-neutral-0',
                 isFullScreen
                     ? 'fixed top-0 left-0 z-[var(--guk-text-area-rich-text-expanded-z-index)] h-screen w-screen rounded-none'
                     : 'relative h-[640px] rounded-lg',
@@ -138,7 +138,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
                         ? 'app.settings.daoPermissionsPage.graphView.fullscreen.close'
                         : 'app.settings.daoPermissionsPage.graphView.fullscreen.open',
                 )}
-                className="shadow-neutral-sm absolute right-4 bottom-4 z-10"
+                className="absolute right-4 bottom-4 z-10 shadow-neutral-sm"
                 iconLeft={isFullScreen ? IconType.SHRINK : IconType.EXPAND}
                 onClick={() => setIsFullScreen((current) => !current)}
                 size="sm"

@@ -54,7 +54,7 @@ export const PermissionNodeDetailPanel: React.FC<
 
     return (
         <div
-            className="bg-neutral-0 shadow-neutral-md absolute z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200"
+            className="absolute z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md"
             ref={panelRef}
             style={style}
         >

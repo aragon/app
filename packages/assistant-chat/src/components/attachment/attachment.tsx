@@ -95,12 +95,12 @@ const AttachmentPreviewDialog: React.FC<PropsWithChildren> = (props) => {
                     <Dialog.Title className="sr-only">
                         {chatCopy.attachments.previewTitle}
                     </Dialog.Title>
-                    <div className="bg-neutral-0 relative mx-auto flex max-h-[80dvh] w-full items-center justify-center overflow-hidden rounded-xl">
+                    <div className="relative mx-auto flex max-h-[80dvh] w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-0">
                         <AttachmentPreview src={src} />
                     </div>
                     <Dialog.Close asChild={true}>
                         <TooltipIconButton
-                            className="bg-neutral-0/80 hover:bg-neutral-0 absolute top-4 right-4 text-neutral-800"
+                            className="absolute top-4 right-4 bg-neutral-0/80 text-neutral-800 hover:bg-neutral-0"
                             tooltip={chatCopy.attachments.closePreview}
                             variant="unstyled"
                         >
@@ -201,7 +201,7 @@ const AttachmentUI: React.FC = () => {
                         {isUploading && (
                             <div
                                 aria-hidden="true"
-                                className="bg-neutral-0/60 absolute inset-0 flex items-center justify-center"
+                                className="absolute inset-0 flex items-center justify-center bg-neutral-0/60"
                             >
                                 <Spinner size="sm" variant="neutral" />
                             </div>
@@ -209,7 +209,7 @@ const AttachmentUI: React.FC = () => {
                         {isError && (
                             <div
                                 aria-hidden="true"
-                                className="bg-critical-100/60 absolute inset-0 flex items-center justify-center"
+                                className="absolute inset-0 flex items-center justify-center bg-critical-100/60"
                             >
                                 <Icon
                                     className="text-critical-600"
@@ -229,7 +229,7 @@ const AttachmentUI: React.FC = () => {
 const AttachmentRemove: React.FC = () => (
     <AttachmentPrimitive.Remove asChild={true}>
         <TooltipIconButton
-            className="bg-neutral-0 hover:bg-neutral-0 hover:text-critical-600 absolute end-1.5 top-1.5 size-3.5 text-neutral-800 shadow-sm"
+            className="absolute end-1.5 top-1.5 size-3.5 bg-neutral-0 text-neutral-800 shadow-sm hover:bg-neutral-0 hover:text-critical-600"
             side="top"
             size="none"
             tooltip={chatCopy.attachments.remove}

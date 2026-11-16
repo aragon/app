@@ -151,7 +151,7 @@ export const AutocompleteInput = forwardRef<
 
     const inputWrapperClassName = classNames(
         {
-            'shadow-primary-lg border-primary-400 hover:border-primary-400':
+            'border-primary-400 shadow-primary-lg hover:border-primary-400':
                 isOpen,
         },
         { 'rounded-b-none border-b-0': isOpen && isBottomPlacement },

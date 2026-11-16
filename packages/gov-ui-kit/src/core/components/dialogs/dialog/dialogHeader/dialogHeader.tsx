@@ -24,13 +24,13 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
     const { title, onClose, className, description, ...otherProps } = props;
 
     const headerClassNames = classNames(
-        'gradient-neutral-50-transparent-to-b relative flex w-full items-start rounded-t-xl backdrop-blur-md', // Layout
+        'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-neutral-50-transparent-to-b', // Layout
         'pt-4 pr-14 pb-1.5 pl-4 md:pt-6 md:pr-16 md:pb-2 md:pl-6', // Spacings
         className,
     );
 
     const closeButtonClassNames = classNames(
-        'group bg-neutral-0 cursor-pointer rounded-full border border-neutral-100 p-1 outline-hidden', // Default
+        'group cursor-pointer rounded-full border border-neutral-100 bg-neutral-0 p-1 outline-hidden', // Default
         'absolute top-3 right-3 md:top-4 md:right-4', // Positioning
         'focus-ring-primary hover:border-neutral-200 active:border-neutral-200 active:bg-neutral-50', // Hover/Active/Focus states
     );

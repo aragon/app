@@ -23,7 +23,7 @@ export const NavigationContainer: React.FC<INavigationContainerProps> = (
     return (
         <nav
             className={classNames(
-                'bg-neutral-0 sticky top-0 z-10 flex w-full border-b border-neutral-100',
+                'sticky top-0 z-10 flex w-full border-b border-neutral-100 bg-neutral-0',
                 className,
             )}
             {...otherProps}
