@@ -26,17 +26,21 @@ export interface ICreateExecuteActionsPageClientProps {
      * ID of the DAO to execute actions on.
      */
     daoId: string;
+    /**
+     * Redirect target when the wallet lacks the execute permission. Defaults to the transactions of the DAO.
+     */
+    exitPath?: string;
 }
 
 export const CreateExecuteActionsPageClient: React.FC<
     ICreateExecuteActionsPageClientProps
 > = (props) => {
-    const { daoId } = props;
+    const { daoId, exitPath } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    useExecutePermissionCheckGuard({ daoId });
+    useExecutePermissionCheckGuard({ daoId, exitPath });
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
