@@ -18,6 +18,7 @@ import {
     SafeServiceErrorCode,
 } from '@/shared/api/safeService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
+import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import * as translationsProvider from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
@@ -107,6 +108,10 @@ describe('<SafeTransactionDialog /> component', () => {
     const findTransactionSpy = jest.spyOn(
         safeTransactionLookupUtils,
         'findTransaction',
+    );
+    const monitorTransactionErrorSpy = jest.spyOn(
+        transactionDialogUtils,
+        'monitorTransactionError',
     );
     const getConnectionMock = jest.mocked(WagmiActions.getConnection);
 
@@ -201,6 +206,7 @@ describe('<SafeTransactionDialog /> component', () => {
             resume: jest.fn(),
         } as never);
         confirmSafeTransactionSpy.mockResolvedValue({});
+        monitorTransactionErrorSpy.mockImplementation(() => undefined);
     });
 
     afterEach(() => {
@@ -392,6 +398,10 @@ describe('<SafeTransactionDialog /> component', () => {
             await screen.findByText(`${translationKey}.executionUnavailable`),
         ).toBeInTheDocument();
         expect(executeSafeTransaction).not.toHaveBeenCalled();
+        expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(
+            expect.any(Error),
+            { flow: 'safe_transaction', step: 'execute', network },
+        );
     });
 
     it('asks for a wallet instead of signing while disconnected', async () => {
@@ -424,6 +434,7 @@ describe('<SafeTransactionDialog /> component', () => {
             await screen.findByText(`${translationKey}.signatureRejected`),
         ).toBeInTheDocument();
         expect(confirmSafeTransactionSpy).not.toHaveBeenCalled();
+        expect(monitorTransactionErrorSpy).not.toHaveBeenCalled();
 
         await userEvent.click(
             screen.getByRole('button', {
@@ -438,10 +449,9 @@ describe('<SafeTransactionDialog /> component', () => {
     });
 
     it('ends in an error when signing fails for another reason than a rejection', async () => {
+        const error = new Error('Provider disconnected.');
         mockSafe({});
-        protocolKit.signTypedData.mockRejectedValue(
-            new Error('Provider disconnected.'),
-        );
+        protocolKit.signTypedData.mockRejectedValue(error);
         render(createTestComponent());
 
         await userEvent.click(await confirmReview('confirm'));
@@ -449,6 +459,11 @@ describe('<SafeTransactionDialog /> component', () => {
         expect(
             await screen.findByText('Provider disconnected.'),
         ).toBeInTheDocument();
+        expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(error, {
+            flow: 'safe_transaction',
+            step: 'confirm',
+            network,
+        });
         expect(
             screen.getByRole('button', {
                 name: `${translationKey}.actions.close`,
@@ -815,5 +830,29 @@ describe('<SafeTransactionDialog /> component', () => {
         expect(
             await screen.findByText(`${translationKey}.transactionUnavailable`),
         ).toBeInTheDocument();
+        expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(
+            expect.any(Error),
+            { flow: 'safe_transaction', step: 'load', network },
+        );
+    });
+
+    it('reports a confirmation the Safe transaction service refuses', async () => {
+        const error = new SafeServiceError(
+            SafeServiceErrorCode.UPSTREAM_ERROR,
+            'Upstream error',
+            422,
+        );
+        mockSafe({});
+        confirmSafeTransactionSpy.mockRejectedValue(error);
+        render(createTestComponent());
+
+        await userEvent.click(await confirmReview('confirm'));
+
+        expect(await screen.findByText('Upstream error')).toBeInTheDocument();
+        expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(error, {
+            flow: 'safe_transaction',
+            step: 'confirm',
+            network,
+        });
     });
 });

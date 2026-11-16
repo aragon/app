@@ -14,6 +14,7 @@ import {
     safeTransactionService,
 } from '@/shared/api/safeService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import {
@@ -63,6 +64,11 @@ interface IPreparedTransaction {
      */
     canExecute: boolean;
 }
+
+/**
+ * Step of the dialog a failure happened in, reported with the error.
+ */
+type SafeTransactionStep = 'load' | 'confirm' | 'execute';
 
 type DialogState =
     | 'loading'
@@ -145,11 +151,16 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
     );
 
     const fail = useCallback(
-        (reason: unknown) => {
+        (step: SafeTransactionStep, reason: unknown) => {
             setError(getErrorMessage(reason, t(`${translationKey}.failed`)));
             setState('error');
+            transactionDialogUtils.monitorTransactionError(reason, {
+                flow: 'safe_transaction',
+                step,
+                network,
+            });
         },
-        [t],
+        [network, t],
     );
 
     const findTransaction = useCallback(async () => {
@@ -263,7 +274,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
             })
             .catch((reason: unknown) => {
                 if (!isCancelled) {
-                    fail(reason);
+                    fail('load', reason);
                 }
             });
 
@@ -358,7 +369,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 return;
             }
 
-            fail(reason);
+            fail('execute', reason);
         },
         [
             executionIntentId,
@@ -596,7 +607,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 return;
             }
 
-            fail(reason);
+            fail('confirm', reason);
         }
     }, [
         assertCanSign,
