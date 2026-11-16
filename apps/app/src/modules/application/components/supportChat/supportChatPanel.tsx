@@ -62,7 +62,7 @@ export const SupportChatPanel: React.FC = () => {
     }
 
     const panelClassNames = classNames(
-        'justify-end overflow-hidden bg-neutral-0',
+        'bg-neutral-0 justify-end overflow-hidden',
         'screen-lg:sticky screen-lg:top-0 screen-lg:h-dvh screen-lg:shrink-0 screen-lg:self-start',
         'screen-lg:transition-[width] screen-lg:duration-300 screen-lg:ease-in-out',
         isOpen
@@ -71,7 +71,7 @@ export const SupportChatPanel: React.FC = () => {
                   'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-neutral-100 screen-lg:border-l screen-lg:shadow-neutral-lg',
                   panelWidthClassName,
               )
-            : 'hidden screen-lg:flex screen-lg:w-0',
+            : 'screen-lg:flex screen-lg:w-0 hidden',
     );
 
     return (
@@ -86,7 +86,7 @@ export const SupportChatPanel: React.FC = () => {
                 animates, so the chat appears to slide in from the right instead of reflowing. */}
             <div
                 className={classNames(
-                    'h-full w-full screen-lg:shrink-0',
+                    'screen-lg:shrink-0 h-full w-full',
                     panelWidthClassName,
                 )}
             >

@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: 'Page not found' };
 export default function NotFound() {
     return (
         <DocsPage breadcrumb={{ enabled: false }} footer={{ enabled: false }}>
-            <DocsTitle className="border-neutral-200 border-b pb-3 font-normal text-2xl text-neutral-800 leading-tight md:text-3xl">
+            <DocsTitle className="border-b border-neutral-200 pb-3 text-2xl leading-tight font-normal text-neutral-800 md:text-3xl">
                 Page not found
             </DocsTitle>
             <DocsBody>

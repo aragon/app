@@ -170,7 +170,7 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
                             'app.settings.daoPolicyDetailsInfo.uninstall.action',
                         )}
                     </Button>
-                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
+                    <p className="text-center text-sm leading-normal font-normal text-neutral-500">
                         {t('app.settings.daoPolicyDetailsInfo.uninstall.info')}
                     </p>
                 </div>

@@ -32,7 +32,7 @@ export const GaugeRegistrarGaugeListItem: React.FC<
     const gaugeName = gauge.name ?? 'NA';
     const avatarSrc = ipfsUtils.cidToSrc(gauge.avatar);
     const avatarFallback = (
-        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
             {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -52,9 +52,9 @@ export const GaugeRegistrarGaugeListItem: React.FC<
                         size="lg"
                         src={avatarSrc}
                     />
-                    <div className="flex flex-col gap-1 font-normal leading-tight">
+                    <div className="flex flex-col gap-1 leading-tight font-normal">
                         <p className="text-lg text-neutral-800">{gauge.name}</p>
-                        <p className="text-neutral-500 text-sm">
+                        <p className="text-sm text-neutral-500">
                             <AddressOutput
                                 address={gauge.gaugeAddress}
                                 copy={false}

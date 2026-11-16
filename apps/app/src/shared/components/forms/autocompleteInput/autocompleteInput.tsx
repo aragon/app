@@ -155,7 +155,7 @@ export const AutocompleteInput = forwardRef<
                 isOpen,
         },
         { 'rounded-b-none border-b-0': isOpen && isBottomPlacement },
-        { 'rounded-t-none border-t-0 z-10': isOpen && !isBottomPlacement },
+        { 'z-10 rounded-t-none border-t-0': isOpen && !isBottomPlacement },
         wrapperClassName,
     );
 

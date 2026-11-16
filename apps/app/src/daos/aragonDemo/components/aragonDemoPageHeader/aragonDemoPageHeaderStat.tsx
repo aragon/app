@@ -25,7 +25,7 @@ export const AragonDemoPageHeaderStat: React.FC<
     return (
         <div
             className={classNames(
-                'flex flex-col gap-1 font-normal text-neutral-0 leading-tight',
+                'text-neutral-0 flex flex-col gap-1 leading-tight font-normal',
                 className,
             )}
             {...otherProps}

@@ -49,7 +49,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
     // zero approvals: name the body and say no more.
     if (stageStatus === ProposalStatus.PENDING || safeInfo == null) {
         return (
-            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {displayName}
             </p>
         );
@@ -84,7 +84,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                   : 'text-neutral-500';
 
         return (
-            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {displayName}{' '}
                 <span className={statusClass}>
                     {t(`${translationKey}.${statusKey}`)}
@@ -104,7 +104,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {displayName}{' '}
                 <span className="text-neutral-500">
                     {t(
@@ -120,7 +120,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                 value={approvalsPercentage}
                 variant="neutral"
             />
-            <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
+            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
                 {formatterUtils.formatNumber(approvalsAmount, {
                     format: NumberFormat.GENERIC_SHORT,
                 })}{' '}

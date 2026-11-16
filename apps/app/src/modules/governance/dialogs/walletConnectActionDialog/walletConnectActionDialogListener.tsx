@@ -72,7 +72,7 @@ export const WalletConnectActionDialogListener: React.FC<
                     <Avatar size="md" src={icons[0]} />
                     <Heading size="h3">{name}</Heading>
                     <div className="flex flex-row gap-3">
-                        <p className="font-normal text-base text-primary-400 leading-tight">
+                        <p className="text-primary-400 text-base leading-tight font-normal">
                             {t(
                                 'app.governance.walletConnectActionDialog.listener.progress',
                             )}
@@ -82,7 +82,7 @@ export const WalletConnectActionDialogListener: React.FC<
                 </div>
                 <div className="h-[1px] w-full bg-neutral-100" />
                 <div className="flex flex-col gap-3 md:gap-4">
-                    <p className="text-balance font-normal text-neutral-500 leading-normal">
+                    <p className="leading-normal font-normal text-balance text-neutral-500">
                         <span>
                             {t(
                                 'app.governance.walletConnectActionDialog.listener.info_1',

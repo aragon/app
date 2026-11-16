@@ -120,7 +120,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
 
     const gaugeName = gauge.name ?? addressUtils.truncateAddress(gauge.address);
     const avatarFallback = (
-        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
             {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -150,7 +150,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             onClick={() => onViewDetails?.(gauge)}
         >
             {/* Top section on mobile - Gauge info with border bottom */}
-            <div className="flex min-w-0 grow items-center gap-3 border-neutral-100 border-b pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
+            <div className="flex min-w-0 grow items-center gap-3 border-b border-neutral-100 pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
                 <Avatar
                     alt="Gauge icon"
                     fallback={avatarFallback}
@@ -166,7 +166,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                             label={gauge.name ?? undefined}
                         />
                     </p>
-                    <p className="truncate text-neutral-500 text-sm">
+                    <p className="truncate text-sm text-neutral-500">
                         <AddressOutput address={gauge.address} />
                     </p>
                 </div>
@@ -175,7 +175,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             {/* Middle section on mobile - Total votes and Your votes side by side */}
             <div className="flex items-start justify-between gap-4 md:contents">
                 <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
-                    <p className="font-semibold text-neutral-500 text-xs uppercase tracking-wider md:hidden">
+                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes',
                         )}
@@ -186,7 +186,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes',
                         )}
                     </p>
-                    <p className="text-neutral-500 text-sm">
+                    <p className="text-sm text-neutral-500">
                         {formattedPercentage
                             ? `${formattedPercentage} of total`
                             : '-- of total'}
@@ -194,7 +194,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                 </div>
 
                 <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
-                    <p className="font-semibold text-neutral-500 text-xs uppercase tracking-wider md:hidden">
+                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes',
                         )}
@@ -214,7 +214,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                                     <span className="text-base text-neutral-800 md:text-lg">
                                         {displayUserVotes}
                                     </span>
-                                    <span className="text-neutral-500 text-sm md:text-base">
+                                    <span className="text-sm text-neutral-500 md:text-base">
                                         {tokenSymbol}
                                     </span>
                                 </>

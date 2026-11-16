@@ -14,7 +14,7 @@ export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <div className="flex h-full w-full lg:border-r lg:border-r-neutral-0/10">
+        <div className="lg:border-r-neutral-0/10 flex h-full w-full lg:border-r">
             <Link
                 className={classNames(
                     'group relative flex h-40 w-[calc(66.1vw)] shrink-0 grow items-center justify-between self-end overflow-hidden bg-black p-4 transition-all',

@@ -18,7 +18,7 @@ export const FooterInfo: React.FC<IFooterInfoProps> = (props) => {
     return (
         <p
             className={classNames(
-                'font-normal text-neutral-500 text-sm leading-normal',
+                'text-sm leading-normal font-normal text-neutral-500',
                 {
                     'text-center': mode === 'panel',
                     'text-left': mode === 'dialog',

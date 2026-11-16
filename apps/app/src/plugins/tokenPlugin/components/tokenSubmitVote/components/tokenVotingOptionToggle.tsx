@@ -75,12 +75,12 @@ export const TokenVotingOptionToggle: React.FC<
     } = props;
 
     const toggleClasses = classNames(
-        'flex items-center justify-between gap-3 rounded-xl border py-2 pl-4 pr-3 h-[50px]',
-        'cursor-pointer bg-neutral-0 transition-all',
-        'border-neutral-100 text-neutral-500 shadow-neutral-sm focus-ring-primary',
+        'flex h-[50px] items-center justify-between gap-3 rounded-xl border py-2 pr-3 pl-4',
+        'bg-neutral-0 cursor-pointer transition-all',
+        'shadow-neutral-sm focus-ring-primary border-neutral-100 text-neutral-500',
         'active:shadow-none',
-        'hover:border-neutral-200 hover:shadow-neutral',
-        'disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300 disabled:cursor-default',
+        'hover:shadow-neutral hover:border-neutral-200',
+        'disabled:cursor-default disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300',
         variantToClassNames[variant],
         className,
     );
@@ -92,7 +92,7 @@ export const TokenVotingOptionToggle: React.FC<
             value={value}
             {...otherProps}
         >
-            <p className="font-normal text-sm leading-tight md:text-base">
+            <p className="text-sm leading-tight font-normal md:text-base">
                 {label}
                 {description && (
                     <span className="text-neutral-500">{description}</span>

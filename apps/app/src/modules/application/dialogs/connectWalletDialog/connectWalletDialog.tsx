@@ -109,11 +109,11 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
             <Dialog.Content className="flex flex-col gap-6 p-6 md:p-8">
                 <div className="flex flex-col gap-3 md:gap-4">
                     <AragonLogo size="lg" />
-                    <p className="font-normal text-lg text-neutral-500 leading-tight md:text-xl">
+                    <p className="text-lg leading-tight font-normal text-neutral-500 md:text-xl">
                         {t('app.application.connectWalletDialog.connect')}
                     </p>
                 </div>
-                <div className="flex flex-col gap-4 font-normal text-neutral-500 text-sm leading-tight">
+                <div className="flex flex-col gap-4 text-sm leading-tight font-normal text-neutral-500">
                     <div className="flex flex-row items-center gap-3">
                         <AvatarIcon
                             icon={IconType.CHECKMARK}

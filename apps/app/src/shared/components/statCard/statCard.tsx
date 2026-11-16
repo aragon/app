@@ -23,12 +23,12 @@ export const StatCard: React.FC<IStatCardProps> = (props) => {
             <Heading size="h3">
                 {value}
                 {suffix && (
-                    <span className="text-neutral-500 text-xs md:text-sm">
+                    <span className="text-xs text-neutral-500 md:text-sm">
                         {suffix}
                     </span>
                 )}
             </Heading>
-            <p className="text-neutral-500 text-sm">{label}</p>
+            <p className="text-sm text-neutral-500">{label}</p>
         </div>
     );
 };

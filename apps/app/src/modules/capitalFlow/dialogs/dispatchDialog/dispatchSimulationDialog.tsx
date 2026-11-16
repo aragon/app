@@ -183,24 +183,24 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
-                            className="flex flex-col gap-3 border-critical-200! bg-critical-50 p-4"
+                            className="border-critical-200! bg-critical-50 flex flex-col gap-3 p-4"
                             role="alert"
                         >
                             <div className="flex items-start gap-3">
                                 <Icon
-                                    className="mt-0.5 shrink-0 text-critical-500"
+                                    className="text-critical-500 mt-0.5 shrink-0"
                                     icon={IconType.WARNING}
                                     size="md"
                                 />
                                 <div className="min-w-0 flex-1">
-                                    <p className="font-semibold text-critical-700 leading-tight">
+                                    <p className="text-critical-700 leading-tight font-semibold">
                                         {t(
                                             isReverted
                                                 ? 'app.capitalFlow.dispatchSimulationDialog.reverted'
                                                 : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
-                                    <p className="mt-1 break-words text-critical-600 text-sm leading-tight">
+                                    <p className="text-critical-600 mt-1 text-sm leading-tight break-words">
                                         {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>

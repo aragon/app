@@ -118,7 +118,7 @@ export const InputFileAvatar: React.FC<IInputFileAvatarProps> = (props) => {
     const { containerClasses, addIconClasses } = stateToClassNames[processedVariant];
 
     const inputAvatarClassNames = classNames(
-        'group flex size-16 items-center justify-center rounded-full bg-neutral-0 hover:shadow-neutral',
+        'group bg-neutral-0 hover:shadow-neutral flex size-16 items-center justify-center rounded-full',
         containerClasses,
     );
 
@@ -133,7 +133,7 @@ export const InputFileAvatar: React.FC<IInputFileAvatarProps> = (props) => {
                         <button
                             aria-label="Cancel Selection"
                             className={classNames(
-                                'focus-ring-primary absolute -top-1 -right-1 cursor-pointer rounded-full bg-neutral-0 p-1 shadow-neutral',
+                                'focus-ring-primary bg-neutral-0 shadow-neutral absolute -top-1 -right-1 cursor-pointer rounded-full p-1',
                             )}
                             onClick={handleCancel}
                             type="button"

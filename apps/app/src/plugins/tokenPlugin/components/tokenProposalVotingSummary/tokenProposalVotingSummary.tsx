@@ -39,7 +39,7 @@ export const TokenProposalVotingSummary: React.FC<
 
     if (!proposal) {
         return (
-            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {name}
             </p>
         );
@@ -88,7 +88,7 @@ export const TokenProposalVotingSummary: React.FC<
                   : 'text-neutral-500';
 
         return (
-            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {name}{' '}
                 <span className={statusClass}>
                     {t(
@@ -101,7 +101,7 @@ export const TokenProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {name}{' '}
                 <span className="text-neutral-500">
                     {isVeto
@@ -118,7 +118,7 @@ export const TokenProposalVotingSummary: React.FC<
                 value={supportPercentage}
                 variant={isSupportReached ? 'primary' : 'neutral'}
             />
-            <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
+            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
                 {formattedYesVotes}{' '}
                 <span className="text-neutral-500">
                     {t(

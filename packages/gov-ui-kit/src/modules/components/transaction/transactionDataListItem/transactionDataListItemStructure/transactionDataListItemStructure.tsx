@@ -102,7 +102,7 @@ export const TransactionDataListItemStructure: React.FC<ITransactionDataListItem
                 </div>
             )}
             <div className="flex w-full flex-col items-start gap-y-0.5 self-center md:gap-y-1">
-                <span className="text-neutral-800 leading-tight md:text-lg">
+                <span className="leading-tight text-neutral-800 md:text-lg">
                     {typeToHeading[type]}
                     {isExecution && processedLabel != null && (
                         <span className="text-neutral-500">
@@ -112,16 +112,16 @@ export const TransactionDataListItemStructure: React.FC<ITransactionDataListItem
                     )}
                 </span>
                 {date && (
-                    <p className="text-neutral-500 text-sm leading-tight md:text-base">
+                    <p className="text-sm leading-tight text-neutral-500 md:text-base">
                         {formatterUtils.formatDate(date, { format: DateFormat.YEAR_MONTH_DAY_TIME })}
                     </p>
                 )}
             </div>
 
             <div className="flex h-full shrink-0 flex-col items-end gap-y-0.5 truncate md:gap-y-1">
-                <span className="text-neutral-800 leading-tight md:text-lg">{processedValue}</span>
+                <span className="leading-tight text-neutral-800 md:text-lg">{processedValue}</span>
                 {showValue && (
-                    <span className="text-neutral-500 text-sm leading-tight md:text-base">
+                    <span className="text-sm leading-tight text-neutral-500 md:text-base">
                         {formattedTransactionValue}
                     </span>
                 )}

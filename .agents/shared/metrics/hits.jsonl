@@ -358,3 +358,7 @@
 {"ts":"2026-11-09T09:33:57.006Z","tool":"Edit","file":"apps/app/src/modules/workspace/api/workspaceQueryService/workspaceQueryService.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-11-09T16:34:06.526Z","tool":"Edit","file":"apps/app/src/modules/workspace/api/workspaceQueryService/domain/index.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-11-09T16:34:08.125Z","tool":"Edit","file":"apps/app/src/modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.test.tsx","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-16T09:20:43.909Z","tool":"Edit","file":"apps/app/src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-16T09:20:43.909Z","tool":"Edit","file":"apps/app/src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-16T09:32:10.113Z","tool":"Edit","file":"apps/app/src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-16T09:32:10.113Z","tool":"Edit","file":"apps/app/src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
