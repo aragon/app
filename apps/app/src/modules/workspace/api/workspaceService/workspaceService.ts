@@ -2,6 +2,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { networkUtils } from '@/shared/utils/networkUtils';
+import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspace,
@@ -14,7 +15,10 @@ import type {
     IAddWorkspaceAccountParams,
     ICreateWorkspaceParams,
     IGetWorkspaceParams,
+    IRemoveWorkspaceAccountParams,
+    IUpdateWorkspaceDetailsParams,
     IUpdateWorkspaceParams,
+    IWorkspaceExport,
 } from './workspaceService.api';
 
 /**
@@ -30,6 +34,16 @@ const sessionWorkspaceStorageKey = 'aragon-session-workspaces';
 export const defaultWorkspaceName = 'My workspace';
 
 type WorkspaceRegistry = Record<string, IWorkspace>;
+
+interface IWorkspaceStorage {
+    storage: Storage;
+    key: string;
+}
+
+/**
+ * Version of the single-workspace export format, bumped on breaking changes to it.
+ */
+const workspaceExportVersion = 1;
 
 const isOptionalString = (value: unknown) =>
     value == null || typeof value === 'string';
@@ -91,7 +105,7 @@ const isWorkspaceTarget = (value: unknown): value is IWorkspaceTarget => {
     );
 };
 
-const isWorkspace = (id: string, value: unknown): value is IWorkspace => {
+const isWorkspaceBody = (value: unknown): value is Omit<IWorkspace, 'id'> => {
     if (value == null || typeof value !== 'object' || Array.isArray(value)) {
         return false;
     }
@@ -99,7 +113,6 @@ const isWorkspace = (id: string, value: unknown): value is IWorkspace => {
     const workspace = value as Partial<IWorkspace>;
 
     return (
-        workspace.id === id &&
         typeof workspace.name === 'string' &&
         typeof workspace.description === 'string' &&
         (workspace.avatar == null || typeof workspace.avatar === 'string') &&
@@ -119,6 +132,34 @@ const isWorkspace = (id: string, value: unknown): value is IWorkspace => {
         Array.isArray(workspace.targets) &&
         workspace.targets.every(isWorkspaceTarget)
     );
+};
+
+const isWorkspace = (id: string, value: unknown): value is IWorkspace =>
+    isWorkspaceBody(value) && (value as Partial<IWorkspace>).id === id;
+
+const parseWorkspaceExport = (rawExport: string): Omit<IWorkspace, 'id'> => {
+    let parsed: unknown;
+
+    try {
+        parsed = JSON.parse(rawExport);
+    } catch (error) {
+        throw new Error('The selected file is not valid JSON.', {
+            cause: error,
+        });
+    }
+
+    const workspaceExport = parsed as Partial<IWorkspaceExport> | null;
+
+    if (
+        workspaceExport?.version !== workspaceExportVersion ||
+        !isWorkspaceBody(workspaceExport.workspace)
+    ) {
+        throw new Error('The selected file is not a valid workspace export.');
+    }
+
+    const { id: _id, ...workspace } = workspaceExport.workspace as IWorkspace;
+
+    return workspace;
 };
 
 const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
@@ -270,6 +311,117 @@ class WorkspaceService {
         return workspace;
     };
 
+    /**
+     * Replaces the details of a stored workspace, keeping its accounts and targets as stored.
+     *
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored, `workspaceStorageError`
+     * when browser storage rejects the write.
+     */
+    updateWorkspaceDetails = async (
+        params: IUpdateWorkspaceDetailsParams,
+    ): Promise<IWorkspace> => {
+        const { urlParams, body } = params;
+        const { id } = urlParams;
+
+        const workspaces = this.getStoredWorkspaces();
+        const storedWorkspace = workspaces[id];
+
+        if (storedWorkspace == null) {
+            throw this.buildNotFoundError(id);
+        }
+
+        const workspace: IWorkspace = { ...storedWorkspace, ...body, id };
+        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+
+        return workspace;
+    };
+
+    /**
+     * Removes an account from a stored workspace. A workspace not holding the account is returned unchanged.
+     *
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored, `workspaceStorageError`
+     * when browser storage rejects the write.
+     */
+    removeWorkspaceAccount = async (
+        params: IRemoveWorkspaceAccountParams,
+    ): Promise<IWorkspace> => {
+        const { urlParams, body } = params;
+        const { id } = urlParams;
+
+        const workspaces = this.getStoredWorkspaces();
+        const storedWorkspace = workspaces[id];
+
+        if (storedWorkspace == null) {
+            throw this.buildNotFoundError(id);
+        }
+
+        const accounts = storedWorkspace.accounts.filter(
+            (account) => account.id !== body.accountId,
+        );
+
+        if (accounts.length === storedWorkspace.accounts.length) {
+            return storedWorkspace;
+        }
+
+        const workspace: IWorkspace = { ...storedWorkspace, accounts };
+        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+
+        return workspace;
+    };
+
+    /**
+     * Serialises one workspace, without its ID, for `importWorkspace`.
+     *
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored.
+     */
+    exportWorkspace = async (params: IGetWorkspaceParams): Promise<string> => {
+        const { id: _id, ...workspace } = await this.getWorkspace(params);
+        // The resources input accepts a URL without a protocol, which the import validation rejects.
+        const links = workspace.links.map((link) => ({
+            ...link,
+            url: /^https?:\/\//i.test(link.url)
+                ? link.url
+                : `https://${link.url}`,
+        }));
+        const workspaceExport: IWorkspaceExport = {
+            version: workspaceExportVersion,
+            workspace: { ...workspace, links },
+        };
+
+        return JSON.stringify(workspaceExport, null, 2);
+    };
+
+    /**
+     * Stores an exported workspace as a new workspace with its own ID, never overwriting a stored one. It always
+     * lands on the persistent registry, whatever route it is imported from.
+     *
+     * @throws {Error} when the file is not a valid workspace export.
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the write.
+     */
+    importWorkspace = async (rawExport: string): Promise<IWorkspace> => {
+        const body = parseWorkspaceExport(rawExport);
+        this.requireWindow();
+
+        const localStorageTarget: IWorkspaceStorage = {
+            storage: localStorage,
+            key: workspaceStorageKey,
+        };
+        const workspaces = this.getStoredWorkspaces(localStorageTarget);
+        // A demo ID would open the demo in place of the import.
+        const id = workspaceUtils.buildWorkspaceId(body.name, [
+            ...Object.keys(workspaces),
+            ...Object.keys(workspaceDemoFixture),
+        ]);
+        const workspace: IWorkspace = { ...body, id };
+
+        this.persistWorkspaces(
+            { ...workspaces, [id]: workspace },
+            localStorageTarget,
+        );
+
+        return workspace;
+    };
+
     exportWorkspaceRegistry = async (): Promise<string> =>
         JSON.stringify(this.getStoredWorkspaces(), null, 2);
 
@@ -336,8 +488,10 @@ class WorkspaceService {
     /**
      * Returns the workspaces from the active browser registry, ignoring corrupted JSON.
      */
-    private getStoredWorkspaces = (): Record<string, IWorkspace> => {
-        const { storage, key } = this.getActiveStorage();
+    private getStoredWorkspaces = (
+        target: IWorkspaceStorage = this.getActiveStorage(),
+    ): Record<string, IWorkspace> => {
+        const { storage, key } = target;
         const rawWorkspaces = storage.getItem(key);
 
         if (rawWorkspaces == null) {
@@ -356,8 +510,11 @@ class WorkspaceService {
      * @param workspaces - Every workspace of the registry.
      * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the write.
      */
-    private persistWorkspaces = (workspaces: Record<string, IWorkspace>) => {
-        const { storage, key } = this.getActiveStorage();
+    private persistWorkspaces = (
+        workspaces: Record<string, IWorkspace>,
+        target: IWorkspaceStorage = this.getActiveStorage(),
+    ) => {
+        const { storage, key } = target;
 
         try {
             storage.setItem(key, JSON.stringify(workspaces));
@@ -366,7 +523,7 @@ class WorkspaceService {
         }
     };
 
-    private getActiveStorage = (): { storage: Storage; key: string } => {
+    private getActiveStorage = (): IWorkspaceStorage => {
         this.requireWindow();
 
         const workspaceId =
