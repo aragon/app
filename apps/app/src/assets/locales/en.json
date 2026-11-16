@@ -4928,7 +4928,9 @@
         "message": "{{account}} isn't part of {{workspace}}."
       },
       "workspaceSelector": {
-        "create": "Create workspace"
+        "create": "Create workspace",
+        "import": "Import workspace",
+        "importError": "This file is not a valid workspace export."
       },
       "workspaceEditPage": {
         "steps": {

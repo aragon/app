@@ -1,11 +1,18 @@
 'use client';
 
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
+import { type ChangeEvent, useEffect, useRef } from 'react';
 import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { useWorkspace, useWorkspaceList } from '../../api/workspaceService';
+import {
+    useImportWorkspace,
+    useWorkspace,
+    useWorkspaceList,
+    workspaceServiceKeys,
+} from '../../api/workspaceService';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -19,9 +26,7 @@ export interface IWorkspaceSelectorProps {
 }
 
 /**
- * Workspace switcher of the workspace navigation, listing every local workspace plus a link to create a new one.
- * Editing the current workspace lives in the navigation links (Edit workspace), not here. Its trigger is a full-width
- * row.
+ * Workspace switcher of the workspace navigation: every workspace, plus items to create one and import one from a file.
  */
 export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { workspaceId } = props;
@@ -35,6 +40,23 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
         urlParams: { id: workspaceId },
     });
     const { data: workspaces = [] } = useWorkspaceList();
+
+    const queryClient = useQueryClient();
+    const { mutateAsync: importWorkspace } = useImportWorkspace();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // The list key does not name its registry (demo or local), so another workspace reads it again.
+    const listWorkspaceIdRef = useRef(workspaceId);
+    useEffect(() => {
+        if (listWorkspaceIdRef.current === workspaceId) {
+            return;
+        }
+
+        listWorkspaceIdRef.current = workspaceId;
+        void queryClient.invalidateQueries({
+            queryKey: workspaceServiceKeys.workspaceList(),
+        });
+    }, [queryClient, workspaceId]);
 
     // The account scope belongs to the previous workspace, so the new one opens on its aggregated overview.
     const handleSelectWorkspace = (id: string) =>
@@ -52,59 +74,95 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
             `/create/workspace?${wizardReturnToParam}=${encodeURIComponent(pathname)}`,
         );
 
+    const handleImportWorkspace = async (
+        event: ChangeEvent<HTMLInputElement>,
+    ) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (file == null) {
+            return;
+        }
+
+        try {
+            const workspace = await importWorkspace(await file.text());
+            handleSelectWorkspace(workspace.id);
+        } catch {
+            window.alert(t('app.workspace.workspaceSelector.importError'));
+        }
+    };
+
     return (
-        <Dropdown.Container
-            align="start"
-            constrainContentWidth={false}
-            customTrigger={
-                <button
-                    className="focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
-                    type="button"
-                >
-                    <span className="flex w-11 shrink-0 items-center">
-                        <DaoAvatar
-                            name={workspace?.name}
-                            size="md"
-                            src={ipfsUtils.cidToSrc(workspace?.avatar)}
-                        />
-                    </span>
-                    <span className="grow truncate text-left text-base text-neutral-800 leading-tight">
-                        {workspace?.name}
-                    </span>
-                    <span
-                        aria-hidden={true}
-                        className="flex shrink-0 flex-col items-center -space-y-1"
+        <>
+            <Dropdown.Container
+                align="start"
+                constrainContentWidth={false}
+                customTrigger={
+                    <button
+                        className="focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
+                        type="button"
                     >
-                        <Icon icon={IconType.CHEVRON_UP} size="sm" />
-                        <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
-                    </span>
-                </button>
-            }
-        >
-            {workspaces.map(({ id, name, avatar }) => (
-                <Dropdown.Item
-                    key={id}
-                    onSelect={() => handleSelectWorkspace(id)}
-                    selected={id === workspaceId}
-                >
-                    <span className="flex min-w-0 items-center gap-3">
-                        <DaoAvatar
-                            className="shrink-0"
-                            name={name}
-                            size="sm"
-                            src={ipfsUtils.cidToSrc(avatar)}
-                        />
-                        <span className="truncate">{name}</span>
-                    </span>
-                </Dropdown.Item>
-            ))}
-            <Dropdown.Item
-                icon={IconType.PLUS}
-                iconPosition="left"
-                onSelect={handleCreateWorkspace}
+                        <span className="flex w-11 shrink-0 items-center">
+                            <DaoAvatar
+                                name={workspace?.name}
+                                size="md"
+                                src={ipfsUtils.cidToSrc(workspace?.avatar)}
+                            />
+                        </span>
+                        <span className="grow truncate text-left text-base text-neutral-800 leading-tight">
+                            {workspace?.name}
+                        </span>
+                        <span
+                            aria-hidden={true}
+                            className="flex shrink-0 flex-col items-center -space-y-1"
+                        >
+                            <Icon icon={IconType.CHEVRON_UP} size="sm" />
+                            <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
+                        </span>
+                    </button>
+                }
             >
-                {t('app.workspace.workspaceSelector.create')}
-            </Dropdown.Item>
-        </Dropdown.Container>
+                {workspaces.map(({ id, name, avatar }) => (
+                    <Dropdown.Item
+                        key={id}
+                        onSelect={() => handleSelectWorkspace(id)}
+                        selected={id === workspaceId}
+                    >
+                        <span className="flex min-w-0 items-center gap-3">
+                            <DaoAvatar
+                                className="shrink-0"
+                                name={name}
+                                size="sm"
+                                src={ipfsUtils.cidToSrc(avatar)}
+                            />
+                            <span className="truncate">{name}</span>
+                        </span>
+                    </Dropdown.Item>
+                ))}
+                <Dropdown.Item
+                    icon={IconType.PLUS}
+                    iconPosition="left"
+                    onSelect={handleCreateWorkspace}
+                >
+                    {t('app.workspace.workspaceSelector.create')}
+                </Dropdown.Item>
+                <Dropdown.Item
+                    icon={IconType.WITHDRAW}
+                    iconPosition="left"
+                    onSelect={() => fileInputRef.current?.click()}
+                >
+                    {t('app.workspace.workspaceSelector.import')}
+                </Dropdown.Item>
+            </Dropdown.Container>
+            {/* Outside the dropdown, whose content unmounts on close. */}
+            <input
+                accept="application/json,.json"
+                aria-label={t('app.workspace.workspaceSelector.import')}
+                className="hidden"
+                onChange={handleImportWorkspace}
+                ref={fileInputRef}
+                type="file"
+            />
+        </>
     );
 };

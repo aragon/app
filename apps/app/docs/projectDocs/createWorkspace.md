@@ -235,6 +235,16 @@ local storage for real requests is a single-method change:
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
   `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
+- `updateWorkspaceDetails({ urlParams: { id }, body })` where `body` is `name`, `description`, `avatar` and
+  `links` → replaces those fields of the stored workspace, reading it in the same step like `addWorkspaceAccount`.
+  Called by `WorkspaceEditDetailsDialog`.
+- `removeWorkspaceAccount({ urlParams: { id }, body: { accountId } })` → drops one account; a workspace not holding
+  it is returned unchanged. Rejects like `updateWorkspace`. Called by the admin page.
+- `exportWorkspace({ urlParams: { id } })` → one workspace as `{ version: 1, workspace }`, without its ID. Links
+  saved without a protocol get `https://`: the resources input accepts them, the import validation does not.
+- `importWorkspace(json)` → validates an `exportWorkspace` file and stores it as a **new** workspace (ID from its
+  name, suffixed when taken by a stored or demo workspace), never overwriting one. It always writes the persistent
+  registry, never the demo session one, so a workspace imported while a demo workspace is open does not vanish.
 - `exportWorkspaceRegistry()` → the complete active registry as formatted JSON.
 - `importWorkspaceRegistry(json, merge?)` → validates the full registry before writing it.
 
@@ -369,8 +379,8 @@ to the `/dao/…` routes. For a Safe, `WorkspaceAccountSettingsPage` renders `Wo
 "Safe support by route"). Switching account from any of the three sections lands an option that does not have it
 on its overview instead.
 
-`navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Edit workspace, to the
-edit wizard — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
+`navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Workspace admin, to the
+admin page — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
 The account selector closes with an Add account item opening the edit wizard on its Accounts step.
 
 ### Assets page
@@ -996,13 +1006,32 @@ generic `Page.Error`, and branches on the account segment read with `useParams()
 - The redirect lands on an account the chosen workspace may not hold, which renders as an external option (see
   "External accounts" under Account scope).
 
+## Workspace admin
+
+`/workspace/{workspaceId}/admin` (`WorkspaceAdminPage`, inside `(workspacePage)`) is where a workspace is seen and
+changed without the wizard. The `admin` segment is static, so it wins over `[accountId]`; the navigation reads it as
+the aggregated scope (`resolveAccountScope`).
+
+- **Details** (in `WorkspaceAdminPageClient`) — name with avatar, description, links. "Edit details" opens
+  `WorkspaceEditDetailsDialog` (`WorkspaceDialogId.EDIT_DETAILS`, params `{ workspaceId }`), which reuses
+  `CreateWorkspaceForm.Metadata` and saves through `updateWorkspaceDetails`. A new avatar is pinned by
+  `useResolveWorkspaceAvatar`, shared with the publish dialog. Opened by ID so other entry points can reuse it.
+- **Accounts** (`WorkspaceAdminAccounts`) — one `WorkspaceAccountItem` per account with `onRemove`, which turns the
+  overview's link row into a row with a "Remove from workspace" menu (removes at once, no confirmation). Names and
+  avatars come from `useWorkspaceDaos`. "Add account" opens the edit wizard on its Accounts step.
+- **Storage** (aside of `WorkspaceAdminPageClient`) — Published "None" and Sync "Local only". "Export workspace"
+  downloads `{workspaceId}.json` from `exportWorkspace`.
+- **Import** — the workspace selector's "Import workspace" item opens the file picker at once; a valid export becomes
+  a new workspace and opens on its overview. The selector reads its list again on a workspace change, as the list
+  key does not name the registry (demo or local) it was read from.
+
 ## Edit workspace
 
-`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the workspace
-selector or the empty-accounts state of the overview.
+`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the account
+selector's Add account item or the empty-accounts states of the overview and the admin page.
 
 - Outside `(workspacePage)`, so it renders its own `WorkspaceGate`; the wizard reads its default values
-  (`workspaceEditPageUtils.buildFormValues`) on mount.
+  (`workspaceFormUtils.buildFormValues`) on mount.
 - Submitting opens `PublishWorkspaceDialog` with a `workspaceId`. A stored avatar comes back as a URL with no file
   and keeps its URI instead of being pinned again.
 - `?step=ACCOUNTS` opens a given step (`workspaceUtils.getWorkspaceEditUrl` / `parseWorkspaceEditStep`).
@@ -1169,7 +1198,8 @@ src/modules/workspace/
 ├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
-├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
+├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,index.ts}
+├── utils/workspaceFormUtils/{workspaceFormUtils.ts,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
 └── index.ts
@@ -1217,6 +1247,14 @@ Keep it that way when extending this.
 
 ## Known gaps
 
+- **Admin page account rows show no network badge.** `WorkspaceAccountAvatar` takes no network; extending it is a
+  follow-up ticket.
+- **Admin page "Add account" opens the edit wizard.** It switches to the Add accounts dialog once that lands.
+- **Admin page Storage values are fixed** ("None", "Local only") until workspaces can be published.
+- **Import is a stopgap.** It opens the file picker straight from the selector and reports an invalid file with a
+  browser alert, as the app has no toast.
+- **The workspace list query key does not name its registry.** A demo and a local list share one cache entry, so
+  the selector refetches on every workspace change; keying the list by registry would remove that.
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
 - **The to-do list is a v1 built on memberships, not voting power.** A token holder is listed for a proposal even
   when their balance at its snapshot was zero, since the backend judges eligibility on its current membership rows.
