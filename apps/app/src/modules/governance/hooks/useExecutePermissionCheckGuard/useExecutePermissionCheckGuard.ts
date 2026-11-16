@@ -10,12 +10,16 @@ export interface IUseExecutePermissionCheckGuardParams {
      * ID of the DAO to check the execute permission on.
      */
     daoId: string;
+    /**
+     * Redirect target when the wallet lacks the permission. Defaults to the transactions of the DAO.
+     */
+    exitPath?: string;
 }
 
 /**
  * Guards the direct-execute wizard: prompts the user to connect when no wallet
  * is connected and redirects to the DAO transactions page when the connected
- * wallet does not hold EXECUTE_PERMISSION on the DAO.
+ * wallet does not hold EXECUTE_PERMISSION on the DAO (or to `exitPath` when given).
  *
  * Re-runs on mount and whenever the connected account changes, so switching from
  * a permitted to an unpermitted wallet still redirects.
@@ -23,7 +27,7 @@ export interface IUseExecutePermissionCheckGuardParams {
 export const useExecutePermissionCheckGuard = (
     params: IUseExecutePermissionCheckGuardParams,
 ) => {
-    const { daoId } = params;
+    const { daoId, exitPath } = params;
 
     const router = useRouter();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -35,12 +39,13 @@ export const useExecutePermissionCheckGuard = (
         }
 
         if (!hasPermission) {
-            const transactionsUrl = daoUtils.getDaoUrl(dao, 'transactions');
+            const transactionsUrl =
+                exitPath ?? daoUtils.getDaoUrl(dao, 'transactions');
             if (transactionsUrl != null) {
                 router.replace(transactionsUrl);
             }
         }
-    }, [dao, hasPermission, isLoading, router]);
+    }, [dao, exitPath, hasPermission, isLoading, router]);
 
     const { check: checkWalletConnected } = useConnectedWalletGuard({
         onSuccess: checkPermission,

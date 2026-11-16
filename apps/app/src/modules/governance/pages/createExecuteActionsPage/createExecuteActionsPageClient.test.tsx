@@ -98,6 +98,17 @@ describe('<CreateExecuteActionsPageClient /> component', () => {
         );
     });
 
+    it('passes the exit path to the permission guard', () => {
+        render(
+            <CreateExecuteActionsPageClient daoId="dao-id" exitPath="/exit" />,
+        );
+
+        expect(useExecutePermissionCheckGuardSpy).toHaveBeenCalledWith({
+            daoId: 'dao-id',
+            exitPath: '/exit',
+        });
+    });
+
     it('tracks direct-execute wizard submit with action count', async () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
