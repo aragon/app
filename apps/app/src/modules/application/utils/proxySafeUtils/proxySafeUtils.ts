@@ -145,19 +145,27 @@ export class ProxySafeUtils {
 
             if (!result.ok) {
                 const isNotFound = result.status === 404;
+                // 400/422 reject the caller's payload; other statuses point at this deployment
+                // or the service and stay errors.
+                const isRejectedPayload =
+                    result.status === 400 || result.status === 422;
+                const statusContext = {
+                    status: result.status,
+                    statusText: result.statusText,
+                    ...monitoringContext,
+                };
 
-                if (!isNotFound) {
+                if (isRejectedPayload) {
+                    monitoringUtils.logMessage(
+                        'Safe transaction service rejected the request',
+                        { context: statusContext, noiseClass: 'expected' },
+                    );
+                } else if (!isNotFound) {
                     monitoringUtils.logError(
                         new Error(
                             'Safe transaction service returned error status',
                         ),
-                        {
-                            context: {
-                                status: result.status,
-                                statusText: result.statusText,
-                                ...monitoringContext,
-                            },
-                        },
+                        { context: statusContext },
                     );
                 }
 

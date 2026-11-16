@@ -152,10 +152,11 @@ describe('monitoring utils', () => {
             expect(result?.level).toEqual('info');
         });
 
-        it('tags wallet-side cancellations surfaced as RPC errors as expected/info', () => {
+        it('tags wallet-side failures surfaced as RPC errors as expected/info', () => {
             const cancellationMessages = [
                 'TransactionExecutionError: An unknown RPC error occurred. Details: User disapproved requested methods',
                 'TransactionExecutionError: An internal error was received. Details: User cancelled action on Trezor device (Passphrase dismissed)',
+                'TransactionExecutionError: Invalid parameters were provided to the RPC method. Details: Invalid parameters: must provide an Ethereum address.',
             ];
 
             cancellationMessages.forEach((message) => {

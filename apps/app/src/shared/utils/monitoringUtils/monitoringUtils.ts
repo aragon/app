@@ -74,6 +74,7 @@ class MonitoringUtils {
         'User denied transaction signature', // Older wallet variants
         'User disapproved requested methods', // WalletConnect: user declined the requested session methods
         'User cancelled action on Trezor', // Trezor: confirmation or passphrase dismissed on the device
+        'Invalid parameters: must provide an Ethereum address', // Wallet in-app browser dropping `from` from a valid eth_sendTransaction
         'must be connected', // Dialog invariants opened without a connected wallet
         'wallet must has at least one account', // Wallet connected with no selected account
         'exceeds the balance', // Insufficient balance for gas/value
