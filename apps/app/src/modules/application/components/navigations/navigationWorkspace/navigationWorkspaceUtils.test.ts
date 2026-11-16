@@ -1,3 +1,4 @@
+import { IconType } from '@aragon/gov-ui-kit';
 import { WorkspaceAccountType } from '@/modules/workspace/api/workspaceService';
 import { navigationWorkspaceUtils } from './navigationWorkspaceUtils';
 
@@ -126,12 +127,16 @@ describe('navigationWorkspace utils', () => {
     });
 
     describe('buildWorkspaceLinks', () => {
-        it('links the settings of the workspace to its edit wizard', () => {
+        it('links the workspace to its admin page', () => {
             const links =
                 navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId);
 
-            expect(links.map((link) => link.link)).toEqual([
-                '/workspace/demo/edit',
+            expect(links).toEqual([
+                expect.objectContaining({
+                    label: 'app.application.navigationWorkspace.link.admin',
+                    link: '/workspace/demo/admin',
+                    icon: IconType.SETTINGS,
+                }),
             ]);
         });
     });

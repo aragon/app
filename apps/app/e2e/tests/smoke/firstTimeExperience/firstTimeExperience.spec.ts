@@ -235,7 +235,7 @@ test.describe('First-time workspace experience', () => {
                 /\/workspace\/aragon-demo\/all\/overview$/,
             );
             await expect(
-                page.getByRole('link', { name: 'Edit workspace' }),
+                page.getByRole('link', { name: 'Workspace admin' }),
             ).toBeVisible();
             const polygonSafe = page
                 .getByRole('link', { name: /Polygon Safe/ })

@@ -125,7 +125,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
         },
         {
             id: 'workspace',
-            label: t('app.application.navigationWorkspace.group.workspace'),
+            label: t('app.application.navigationWorkspace.group.settings'),
             links: navigationWorkspaceUtils.buildWorkspaceLinks(workspaceId),
         },
     ];
