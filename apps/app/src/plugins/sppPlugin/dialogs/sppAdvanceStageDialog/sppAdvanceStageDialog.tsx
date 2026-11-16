@@ -7,6 +7,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { useEnsName } from '@/modules/ens';
 import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
@@ -65,7 +66,8 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
 
     const onSuccessClick = () => router.refresh();
 
-    const { address: creatorAddress, ens: creatorEns } = proposal.creator;
+    const { address: creatorAddress } = proposal.creator;
+    const { data: creatorEns } = useEnsName(creatorAddress);
     const slug = proposalUtils.getProposalSlug(proposal, dao);
     const currentProposalStatus = sppProposalUtils.getProposalStatus(proposal);
     const [isIndexed, setIsIndexed] = useState(false);

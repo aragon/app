@@ -147,7 +147,9 @@ export interface ILoadCorpusResult {
 
 const frontmatterPattern = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
 const frontmatterLinePattern = /^([a-z_]+):\s*(.*)$/;
-const headingPattern = /^(#{1,6})\s+(.*?)\s*#*\s*$/;
+// Only the marker is matched; parseHeading trims the text and strips the closing hashes by hand,
+// since any pattern over the rest of the line (`(.*?)\s*#*\s*$`, `#+$`) backtracks quadratically.
+const headingMarkerPattern = /^(#{1,6})\s/;
 const fencePattern = /^\s*(```|~~~)/;
 const checklistPattern = /^\s*[-*]\s+\[[ xX]\]\s/;
 
@@ -222,11 +224,21 @@ export const parseHeading = (
         return null;
     }
 
-    const match = headingPattern.exec(line);
+    const match = headingMarkerPattern.exec(line);
 
-    return match == null
-        ? null
-        : { level: match[1]?.length ?? 0, text: match[2] ?? '' };
+    if (match == null) {
+        return null;
+    }
+
+    const level = match[1]?.length ?? 0;
+    const body = line.slice(level).trim();
+    let end = body.length;
+
+    while (end > 0 && body[end - 1] === '#') {
+        end -= 1;
+    }
+
+    return { level, text: body.slice(0, end).trimEnd() };
 };
 
 export const isFenceLine = (line: string): boolean => fencePattern.test(line);

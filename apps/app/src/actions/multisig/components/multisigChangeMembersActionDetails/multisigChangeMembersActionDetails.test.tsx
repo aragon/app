@@ -5,6 +5,7 @@ import {
     GukModulesProvider,
 } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as ensModule from '@/modules/ens';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { generateMultisigActionChangeMembers } from '@/plugins/multisigPlugin/testUtils';
 import {
@@ -19,18 +20,34 @@ import {
 
 describe('<MultisigChangeMembersActionDetails /> component', () => {
     const useDaoChainSpy = jest.spyOn(useDaoChainHook, 'useDaoChain');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const buildEntityUrl = jest.fn(
         ({ id }: { id?: string }) => `https://explorer.com/address/${id ?? ''}`,
     );
+
+    const mockEnsNames = (names: Record<string, string>) =>
+        useEnsNameSpy.mockImplementation(
+            (address) =>
+                ({ data: names[address ?? ''] ?? null }) as ReturnType<
+                    typeof ensModule.useEnsName
+                >,
+        );
 
     beforeEach(() => {
         useDaoChainSpy.mockReturnValue({
             buildEntityUrl,
         } as unknown as ReturnType<typeof useDaoChainHook.useDaoChain>);
+        mockEnsNames({});
+        useEnsAvatarSpy.mockReturnValue({ data: null } as ReturnType<
+            typeof ensModule.useEnsAvatar
+        >);
     });
 
     afterEach(() => {
         useDaoChainSpy.mockReset();
+        useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
         buildEntityUrl.mockClear();
     });
 
@@ -86,12 +103,10 @@ describe('<MultisigChangeMembersActionDetails /> component', () => {
 
     it('renders every added member, using the ENS name when the member has one', () => {
         const members = [
-            {
-                address: '0xceB69F6342eCE283b2F5c9088Ff249B5d0Ae66ea',
-                ens: 'Coinbase Prime',
-            },
+            { address: '0xceB69F6342eCE283b2F5c9088Ff249B5d0Ae66ea' },
             { address: '0x97fb9274ac39bB275AC76f56390e6713A2C417D9' },
         ];
+        mockEnsNames({ [members[0].address]: 'Coinbase Prime' });
         const action = buildAction({
             type: MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
             members,
@@ -113,12 +128,10 @@ describe('<MultisigChangeMembersActionDetails /> component', () => {
 
     it('renders every removed member and the removed count for remove-members actions', () => {
         const members = [
-            {
-                address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-                ens: 'ensname.eth',
-            },
+            { address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' },
             { address: '0x8C8D7C46219D9205f056f28fee5950aD564d7465' },
         ];
+        mockEnsNames({ [members[0].address]: 'ensname.eth' });
         const action = buildAction({
             type: MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
             members,
@@ -138,21 +151,29 @@ describe('<MultisigChangeMembersActionDetails /> component', () => {
         expect(screen.queryByText(copyKey('added'))).not.toBeInTheDocument();
     });
 
-    it('passes the ENS name and avatar sent by the backend to each member item', () => {
+    it('passes the resolved ENS name and avatar to each member item', () => {
         const memberStructureSpy = jest
             .spyOn(GovUiKit.MemberDataListItem, 'Structure')
             .mockReturnValue(null);
         const members = [
-            {
-                address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F',
-                ens: 'dzepina.eth',
-                avatar: 'https://avatar.com/dzepina.png',
-            },
+            { address: '0x92e9d0Cd7f5E87a2B2b19661aAa4C2e6D019472F' },
             { address: '0x97fb9274ac39bB275AC76f56390e6713A2C417D9' },
         ];
+        mockEnsNames({ [members[0].address]: 'dzepina.eth' });
+        useEnsAvatarSpy.mockImplementation(
+            (name) =>
+                ({
+                    data:
+                        name === 'dzepina.eth'
+                            ? 'https://avatar.com/dzepina.png'
+                            : null,
+                }) as ReturnType<typeof ensModule.useEnsAvatar>,
+        );
 
         render(createTestComponent({ action: buildAction({ members }) }));
 
+        expect(useEnsNameSpy).toHaveBeenCalledWith(members[0].address);
+        expect(useEnsNameSpy).toHaveBeenCalledWith(members[1].address);
         expect(memberStructureSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 address: members[0].address,
