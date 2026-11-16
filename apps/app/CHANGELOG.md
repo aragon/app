@@ -1,5 +1,29 @@
 # @aragon/app
 
+## 1.45.0
+
+### Minor Changes
+
+- [#1556](https://github.com/aragon/app/pull/1556) [`d849db1`](https://github.com/aragon/app/commit/d849db19bac97b1fb7a3ea326795e8b3fdeb5785) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add a to-do list to the workspace overview and a to-dos page, listing the active proposals the connected wallet can still vote on and the queued Safe transactions it can still sign, across every account of the workspace.
+
+- [#1557](https://github.com/aragon/app/pull/1557) [`c5ceebb`](https://github.com/aragon/app/commit/c5ceebb57841dc60dcca22091ba3f986191e7fe2) Thanks [@milosh86](https://github.com/milosh86)! - Approve and execute pending Safe transactions from the workspace transactions list: an expanded pending Safe transaction shows its approval breakdown, confirming owners and Safe settings, with the approve or execute action for the connected owner, and its Tenderly simulation
+
+- [#1574](https://github.com/aragon/app/pull/1574) [`041dc08`](https://github.com/aragon/app/commit/041dc089dc666832f310ffb6a39922e4404871d5) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Open the direct-execute wizard of a DAO account inside the workspace: the transactions page's create action leads to a workspace route that exits back to the account's transactions
+
+### Patch Changes
+
+- [#1569](https://github.com/aragon/app/pull/1569) [`a0e0cad`](https://github.com/aragon/app/commit/a0e0cadd7a1d677ecf3d9fbf27955fb82e9ac932) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Resolve member ENS names in the app for the SPP advance stage dialog, the multisig add and remove members action and the token mint action.
+
+- [#1567](https://github.com/aragon/app/pull/1567) [`aca3a35`](https://github.com/aragon/app/commit/aca3a35f6deb442cddbcbeb93646862e2ab88b14) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix profile updates, profile renames and delegate statements for ENS names after the ENSv2 launch: records are written to the resolver that stores them (ENSv1 or ENSv2), and names without a writable resolver show an error instead of sending a reverting transaction.
+
+- [#1573](https://github.com/aragon/app/pull/1573) [`77a0257`](https://github.com/aragon/app/commit/77a0257d41a96928aa7d9443c58d91e82ee1b871) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Key the groups of the workspace navigation by a stable ID instead of their label, and point preview deployments back at the dev backend.
+
+- [#1566](https://github.com/aragon/app/pull/1566) [`086ed7b`](https://github.com/aragon/app/commit/086ed7b2b2cffab3319bae48f17bad9696f71c82) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Scan only the GovKit bundle for class names, which removes about 560 unused utilities and cuts the main stylesheet by 45%.
+
+- [`c56915d`](https://github.com/aragon/app/commit/c56915db420284269d4bff0b0f6c14ce4c014359) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (Next.js 16.4.5, Sentry 10.78, viem 2.57.17, wagmi 3.7.11, assistant-ui 0.15.33, ai 7.0.166, botid 1.5.12), rebuild the advisory floors, and drop the stray `$` before the token symbol in the token and lock-to-vote process summaries
+- Updated dependencies [[`c56915d`](https://github.com/aragon/app/commit/c56915db420284269d4bff0b0f6c14ce4c014359)]:
+    - @aragon/assistant-chat@0.5.5
+
 ## 1.44.0
 
 ### Minor Changes
