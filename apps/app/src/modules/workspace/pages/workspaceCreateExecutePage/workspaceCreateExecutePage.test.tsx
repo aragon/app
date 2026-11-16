@@ -79,7 +79,11 @@ describe('<WorkspaceCreateExecutePage /> component', () => {
         const { page } = await createTestComponent();
 
         expect(page.props.exitPath).toEqual(
-            workspaceUtils.getAccountScopeUrl('demo', accountId, 'transactions'),
+            workspaceUtils.getAccountScopeUrl(
+                'demo',
+                accountId,
+                'transactions',
+            ),
         );
     });
 

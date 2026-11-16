@@ -428,7 +428,9 @@ Safe branch will be tempted to open it.
 
 `/{accountId}/create/execute` is the DAO's `/dao/…/create/execute` wizard inside the workspace, DAO accounts only.
 `LayoutWizardCreateWorkspaceExecute` and `WorkspaceCreateExecutePage` render the DAO's layout and page with the
-route parameters adapted; the layout passes an `exitPath` to the account's workspace transactions.
+route parameters adapted; both pass an `exitPath` to the account's workspace transactions. The page drills it
+through `CreateExecuteActionsPage` and `CreateExecuteActionsPageClient` to `useExecutePermissionCheckGuard`, which
+redirects there instead of the DAO transactions when the wallet cannot execute.
 
 | Outcome | Where |
 | --- | --- |
@@ -439,7 +441,8 @@ route parameters adapted; the layout passes an `exitPath` to the account's works
 | workspace not on this device | page: `WorkspaceGate` |
 | DAO | the wizard |
 
-The wizard's success link still leaves the workspace; see "Links out of the workspace".
+The wizard's success link still leaves the workspace; see "Links out of the workspace". Review the `exitPath` prop
+drilling when the workspace links are fixed: a route-aware link mechanism should replace it.
 
 ### Account scope
 
@@ -798,7 +801,8 @@ route to the wrong account type.
 #### Links out of the workspace
 
 Links on a workspace route that lead to `/dao/…`, kept here for a review pass. Add a row when a change introduces one;
-remove it when the link stays in the workspace.
+remove it when the link stays in the workspace. The same review covers the `exitPath` props that keep the DAO
+wizards' redirects in the workspace today (see "Direct-execute wizard").
 
 | Route | Link | Leads to | Source |
 | --- | --- | --- | --- |
