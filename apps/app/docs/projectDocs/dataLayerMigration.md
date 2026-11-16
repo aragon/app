@@ -15,7 +15,7 @@ Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. 
 - Two layers, no new backend on the read path. The indexer holds deterministic read models and metadata by CID; the domain composes volatile sources at read time behind a cache. The work no request starts (notifications, the DAO directory, TVL, spam scoring) runs in one small worker outside the app, and the worker serves no reads.
 - Nothing is ported one for one. The legacy audit ([APP-1317](https://linear.app/aragon/issue/APP-1317)) gives every app-backend route, collection and job a verdict: read model, simplify, read time, Envio provides, bury. Slices follow the verdicts; the bury list is the deletion list of M5.
 - The UI does not know what feeds it. The BFF forks per route between app-backend and the domain behind one flag per slice (CMS). A migrated route keeps its path and its JSON shape; the domain DTO is mapped to the app's view model inside the BFF. The fork sits in both server entry points: the `/api/backend` proxy for the browser and `AragonBackendService` for RSC. The token-voting members route (app#1128) stays as built.
-- Legacy stays the source of truth for a slice until its parity report is clean on Sepolia and mainnet. The BFF falls back to legacy on page 1 and never mixes two sources in one list.
+- Legacy stays the source of truth for a slice until its [scorecard](#the-scorecard) is clean on Sepolia and mainnet. The BFF falls back to legacy on page 1 and never mixes two sources in one list.
 - The app never calls Envio directly. It goes through `@aragon/aragon-domain` and the BFF service: a route for the browser, in-process for RSC prefetch. Every read is a domain use case, whatever its source (the indexer, RPC, an external API, the store); the BFF is the HTTP layer, and the worker calls the same use cases.
 - One multichain indexer. Every deploy re-indexes from the start blocks while the previous deployment keeps serving. Capacity (chains, events, registered contracts, requests per minute, indexing hours) is budgeted before a chain is added; the [budget](./dataLayerTargetModel.md#capacity-budget) may split the chains over two production indexers from the same repository, one config each; nothing else changes the rule.
 - Every count the app shows is computed at index time, because the hosted endpoint has no aggregates. Counters are kept per account or finer and summed for a DAO with linked accounts or a workspace. The explore list is the exception: its rows, order and total come from the DAO directory in the store.
@@ -69,7 +69,7 @@ Copy this into every slice ticket. The ENS profile records are the exception, se
 - [ ] Indexer: entities and handlers merged, unit tests at 100 % coverage, a replay fixture per DAO archetype the slice touches.
 - [ ] Domain: use case and DTO merged; the contract suite covers the new queries and passes against the target deployment.
 - [ ] BFF: the route switches to the domain behind the slice flag, keeps the legacy shape, applies the readiness gate and the page-1 fallback, and reports `source` **(pending APP-1177)**.
-- [ ] Parity script clean for the slice on Sepolia and mainnet; known legacy defects listed, not reproduced **(pending APP-1178)**.
+- [ ] [Scorecard](#the-scorecard) clean for the slice on Sepolia and mainnet; known legacy defects listed, not reproduced **(pending APP-1178)**.
 - [ ] Product sign-off on a preview URL.
 - [ ] Rollback checked: with the flag off, a list restarted from page 1 returns `source: 'backend'`.
 
@@ -77,18 +77,45 @@ Copy this into every slice ticket. The ENS profile records are the exception, se
 
 ## Rollout
 
-Slice order: token-voting members (M1); multisig and admin members, votes, proposals with SPP, settings history, member detail, VE (M2); DAO list, detail and explore, treasury, decoding, simulations, Safe and RPC reads (M3); gauges, campaigns and the remaining chains (M4).
+Slice order: token-voting members (M1); multisig and admin members, votes, proposals with SPP, plugin settings, member detail, VE (M2); DAO list, detail and explore, treasury, decoding, simulations, Safe and RPC reads (M3); gauges, campaigns and the remaining chains (M4).
 
 | Milestone | Exit |
 |---|---|
 | M0 Foundations | domain in the monorepo; indexer foundation and release flow merged; ADR merged; vaults and CI secret in place |
-| M1 Indexer base and members | legacy audit and target model reviewed; token-voting members rebuilt with the contract suite green and the development endpoint switched; BFF fork and readiness gate; parity clean for members |
-| M2 Governance read models | the M2 slices behind flags below production, Sepolia first; parity clean per slice on Sepolia and mainnet |
-| M3 DAO read model and read-time routes | DAO read model from the indexer; read-time routes through the domain; the worker running with the DAO directory; every app-backend route marked migrated, dropped or deferred; user-data store decided |
-| M4 All chains and production | remaining HyperSync chains within the plan limits; every slice on in production; legacy frozen |
+| M1 Indexer base and members | legacy audit and target model reviewed; token-voting members rebuilt with the contract suite green and the development endpoint switched; BFF fork and readiness gate; the members batch on in production on Sepolia and mainnet with a clean scorecard |
+| M2 Governance read models | the M2 slices on in production in batches of two or three, each with a clean scorecard on Sepolia and mainnet; app-backend is the fallback |
+| M3 DAO read model and read-time routes | DAO read model from the indexer; read-time routes through the domain; the worker running with the DAO directory; each batch on in production with a clean scorecard; every app-backend route marked migrated, dropped or deferred; user-data store decided |
+| M4 All chains and production | Arbitrum, then the remaining HyperSync chains, within the plan limits and each with a scorecard sample; the routes that span networks on; legacy frozen |
 | M5 Retire app-backend | proxy removed, services stopped, Mongo and RabbitMQ cancelled, repository archived |
 
-Sepolia first. A slice turns on for Sepolia in local, development, preview and staging, where the Sepolia gate runs: correctness on every Sepolia DAO and every plugin family. Mainnet follows in the same environments once that gate is clean, with the mainnet gate: scale and real data ([APP-1189](https://linear.app/aragon/issue/APP-1189)). Both gates fit in one week. Production turns the slice on for both chains together, with 48 h of observation, `*_domain_error` at zero and a Slack note with the Sentry link ([APP-1186](https://linear.app/aragon/issue/APP-1186)). Other chains follow as a config change, a resync and a parity sample. The ENS profile records stay on mainnet in every environment, as today.
+Target, agreed 2026-11-16: the M1 and M2 slices in production by the end of January 2027, and app-backend archived about a month after the last route moves.
+
+### The scorecard
+
+A slice is switched on evidence. Before a switch the same requests run against app-backend and against the domain, and the result is one scorecard per batch and chain. The run is offline; there is no shadow traffic ([APP-1178](https://linear.app/aragon/issue/APP-1178)).
+
+| Part | Measured | Clean when |
+|---|---|---|
+| Data | page 1 of every plugin the batch serves and a deep sample: rows, order, totals | no unexplained mismatch; known legacy defects are listed, not reproduced |
+| Speed | p50 and p95 of each source on the same requests | the domain's p95 is not above legacy's; a slower route states why in its ticket |
+| Errors | failed requests of each source in the run; after a switch, `*_domain_error` and `envio_lag_fallback` in Sentry | none in the run; `*_domain_error` at zero over the observation window |
+| Indexer | `_meta` of every served chain; the queries a page costs against the [Envio budget](./dataLayerTargetModel.md#indexer-reads-and-the-envio-budget) | every chain ready with its lag under the limit; the budget under 70 % |
+
+The run writes the scorecard as a report linked from the batch's ticket. After a switch the same four parts are read live on one dashboard, split by `source` ([APP-1179](https://linear.app/aragon/issue/APP-1179)).
+
+### Steps of a batch
+
+Slices move in batches of two or three.
+
+1. **Built.** The indexer release is promoted with the contract suite green, the use cases and the BFF routes are merged, the flags are off.
+2. **Measured.** The scorecard on Sepolia: correctness on every Sepolia DAO and every plugin family. Then on mainnet: scale and real data ([APP-1189](https://linear.app/aragon/issue/APP-1189)).
+3. **On below production.** Flags on in local, development, preview and staging. Product signs off on a preview URL.
+4. **On in production.** Flags on for both chains together, app-backend as the fallback; 48 h on the dashboard, with a Slack note and the Sentry link ([APP-1186](https://linear.app/aragon/issue/APP-1186)).
+5. **Held.** The batch's legacy handlers freeze, and the nightly run keeps the scorecard ([legacy freeze](#legacy-freeze)).
+
+A step that fails goes back one: the flag turns off ([rollback ladder](#rollback-ladder)) and the batch is measured again after the fix. A batch enters step 4 only when the batch before it has left it.
+
+Other chains follow as a config change, a resync and a scorecard sample: Arbitrum first, the rest once Sepolia, mainnet and Arbitrum are stable. The ENS profile records stay on mainnet in every environment, as today.
 
 ## Readiness gate
 
@@ -99,7 +126,7 @@ Sepolia first. A slice turns on for Sepolia in local, development, preview and s
 - The set of indexed chains comes from `_meta`, not from app code.
 - A read from a table the worker keeps has the same gate on that table's age. Explore reads the DAO directory, and a directory that was last synced more than 2 minutes ago is a domain failure ([target model](./dataLayerTargetModel.md#monitoring)).
 - The ENS text-records route (`/api/domain/member-profile/[subdomain]/records`) has no legacy source. It gets its own `domainMemberProfile` slice entry and gate; when off or not ready it returns 503 and the rename dialog shows an unavailable state.
-- There is no shadow mode: parity runs offline against both sources ([APP-1178](https://linear.app/aragon/issue/APP-1178)).
+- There is no shadow mode: the [scorecard](#the-scorecard) run compares both sources offline, on the same requests ([APP-1178](https://linear.app/aragon/issue/APP-1178)).
 
 ## Rollback ladder
 
@@ -115,7 +142,7 @@ A cookie override wins over the CMS, so step 2 does not turn the slice off for a
 
 ## Legacy freeze
 
-Once a slice is on in production, its legacy handlers in `app-backend` take bug fixes only; CODEOWNERS covers those paths **(pending APP-1187)**. The nightly parity run catches drift **(pending APP-1178)**.
+Once a slice is on in production, its legacy handlers in `app-backend` take bug fixes only; CODEOWNERS covers those paths **(pending APP-1187)**. The nightly scorecard run catches drift **(pending APP-1178)**.
 
 ## Capacity
 
