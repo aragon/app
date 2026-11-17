@@ -73,7 +73,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
     const displayGaugeName =
         gaugeName ?? addressUtils.truncateAddress(gaugeAddress);
     const avatarFallback = (
-        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
+        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
             {displayGaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -88,7 +88,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
         weight > BigInt(0) && displayVotes && displayVotes !== '0';
 
     return (
-        <DataList.Item className="bg-neutral-0 relative flex flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:flex-row md:items-center md:justify-between">
+        <DataList.Item className="relative flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
             <div className="b-0 flex flex-1 items-center gap-3 border-b border-neutral-100 pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
                 {gaugeAvatar && (
                     <Avatar

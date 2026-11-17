@@ -120,7 +120,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
 
     const gaugeName = gauge.name ?? addressUtils.truncateAddress(gauge.address);
     const avatarFallback = (
-        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
+        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
             {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );

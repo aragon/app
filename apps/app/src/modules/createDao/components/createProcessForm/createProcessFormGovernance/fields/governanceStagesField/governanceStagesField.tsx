@@ -54,7 +54,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
 
     if (!isAdvancedAvailable) {
         return (
-            <div className="bg-neutral-0 shadow-neutral-sm flex flex-col gap-6 rounded-xl border border-neutral-100 p-4 md:p-12">
+            <div className="flex flex-col gap-6 rounded-xl border border-neutral-100 bg-neutral-0 p-4 shadow-neutral-sm md:p-12">
                 <div className="flex items-start justify-between gap-6">
                     <div className="flex flex-col gap-2">
                         <p className="text-lg leading-tight text-neutral-800 md:text-2xl">

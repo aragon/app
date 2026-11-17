@@ -170,7 +170,7 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
                 </div>
             )}
             {showOptions && (
-                <Card className="shadow-neutral-sm p-6">
+                <Card className="p-6 shadow-neutral-sm">
                     <TokenVotingOptions
                         disabledOptions={disabledOptions}
                         helpText={t(

@@ -84,7 +84,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                 customTrigger={
                     <button
                         aria-label={label ?? t('app.shared.networkInput.label')}
-                        className="focus-ring-primary bg-neutral-0 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 px-4 py-3 text-left hover:border-neutral-200 focus:outline-hidden"
+                        className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 text-left focus-ring-primary hover:border-neutral-200 focus:outline-hidden"
                         type="button"
                     >
                         <Avatar

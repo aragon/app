@@ -25,7 +25,7 @@ export const Default: Story = {
     render: (props) => (
         <div className="flex h-16 items-end">
             <Tooltip {...props}>
-                <p className="text-primary-300 border p-2">Hover over me!</p>
+                <p className="border p-2 text-primary-300">Hover over me!</p>
             </Tooltip>
         </div>
     ),
@@ -44,7 +44,7 @@ export const Controlled: Story = {
         return (
             <div className="flex h-16 items-end">
                 <Tooltip {...props} onOpenChange={setOpen} open={open}>
-                    <p className="text-primary-300 border p-2">Hover over me!</p>
+                    <p className="border p-2 text-primary-300">Hover over me!</p>
                 </Tooltip>
             </div>
         );

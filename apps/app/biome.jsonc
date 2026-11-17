@@ -2,6 +2,9 @@
     "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
     "root": false,
     "extends": "//",
+    "tailwind": {
+        "stylesheet": "src/modules/application/components/layouts/layoutRoot/layoutRoot.css"
+    },
     "files": {
         // files.includes of a nested config replaces the root list, so the shared exclusions repeat here.
         "includes": [
