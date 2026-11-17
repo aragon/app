@@ -530,6 +530,22 @@
         {
             "artboard": "DialogAddVotingBody.dc.html",
             "reference": "dialog-create-process-add-voting-body.webp"
+        },
+        {
+            "artboard": "SafeAccount.dc.html",
+            "reference": "safe-account.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountMember.dc.html",
+            "reference": "workspace-account-member-detail.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountProposal.dc.html",
+            "reference": "workspace-account-proposal-mgp-8.webp"
+        },
+        {
+            "artboard": "WorkspaceCreateExecute.dc.html",
+            "reference": "workspace-create-execute-step1.webp"
         }
     ]
 }

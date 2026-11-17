@@ -1034,3 +1034,38 @@
 /* radioCard.tsx: with a description the indicator wrapper is `h-full` (top-aligned in the real app, where the percentage
    height resolves; on the canvas the wrapper chain makes it auto, so align it to the top explicitly) */
 .dlg-wizard-form [role="radio"] > div > span { align-self: flex-start; }
+
+/* ---- SafeAccount: modules/safe/pages/safeAccountPage/safeAccountPageClient.tsx, components/safePendingTransactionList
+   (safePendingTransactionListItem.tsx, safeProposalReportLink.tsx) ---- */
+.safe-pending { display: flex; flex-direction: column; gap: 12px; }
+.safe-pending__main { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.safe-pending__title { display: flex; min-width: 0; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+.safe-pending__name { min-width: 0; overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.safe-pending__side { display: flex; flex-shrink: 0; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+.safe-pending__confirmations { display: flex; align-items: center; gap: 4px; color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; }
+@media (min-width: 48rem) {
+    .safe-pending { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    .safe-pending__name { font-size: 18px; }
+    .safe-pending__confirmations { font-size: 16px; }
+}
+/* SafeAccount: the page has no DAO sidebar, so main and aside sit side by side from the large breakpoint on the window */
+@media (min-width: 64rem) {
+    .safe-account { flex-direction: row; align-items: flex-start; gap: 64px; }
+    .safe-account > .page-main { flex: 1 1 0; min-width: 0; }
+    .safe-account > .page-aside { width: 400px; flex: none; }
+}
+.page-header.safe-header { padding-top: 40px; }
+.page-header.safe-header .page-header__description { font-size: 18px; line-height: 28px; }
+.safe-account { padding-top: 40px; }
+.safe-pending { padding: 16px 24px; }
+@media (min-width: 48rem) { .safe-pending { padding: 20px 24px; } }
+.page-header.safe-header { background: linear-gradient(to bottom, var(--color-neutral-0, #fff), var(--color-neutral-50)); }
+/* SafeAccount: Page.Header without the sidebar is sized by the window (md/lg/xl), not by the column */
+@media (min-width: 48rem) {
+    .safe-header .page-header__title { row-gap: 12px; }
+    .safe-header .page-stat__value > p:first-child { font-size: 20px; }
+    .safe-header .page-stat__value > p + p,
+    .safe-header .page-stat__label { font-size: 14px; line-height: 20px; }
+}
+@media (min-width: 64rem) { .safe-header .page-header__stats { gap: 40px; } }
+@media (min-width: 80rem) { .safe-header .page-header__stats { gap: 64px; } }

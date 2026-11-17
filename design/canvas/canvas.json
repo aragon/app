@@ -1064,6 +1064,42 @@
       "title": "Transaction dialogs: DialogAddVotingBody",
       "expand": "fill",
       "is_interactive": true
+    },
+    "SafeAccount.dc.html": {
+      "x": 0,
+      "y": 49600,
+      "w": 1440,
+      "h": 1967,
+      "title": "Safe account and workspace detail: SafeAccount",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountMember.dc.html": {
+      "x": 1520,
+      "y": 49600,
+      "w": 1440,
+      "h": 2400,
+      "title": "Safe account and workspace detail: WorkspaceAccountMember",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountProposal.dc.html": {
+      "x": 3040,
+      "y": 49600,
+      "w": 1440,
+      "h": 1988,
+      "title": "Safe account and workspace detail: WorkspaceAccountProposal",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceCreateExecute.dc.html": {
+      "x": 4560,
+      "y": 49600,
+      "w": 1440,
+      "h": 900,
+      "title": "Safe account and workspace detail: WorkspaceCreateExecute",
+      "expand": "fill",
+      "is_interactive": true
     }
   },
   "order": [
@@ -1184,7 +1220,11 @@
     "DialogVoteTransaction.dc.html",
     "DialogPublishProposal.dc.html",
     "DialogPublishDao.dc.html",
-    "DialogAddVotingBody.dc.html"
+    "DialogAddVotingBody.dc.html",
+    "SafeAccount.dc.html",
+    "WorkspaceAccountMember.dc.html",
+    "WorkspaceAccountProposal.dc.html",
+    "WorkspaceCreateExecute.dc.html"
   ],
   "notes": {
     "screens": {
@@ -1331,6 +1371,13 @@
       "x": 0,
       "y": 47920,
       "text": "Transaction dialogs",
+      "kind": "title1",
+      "maxW": 6000
+    },
+    "row-Safe account and workspace detail": {
+      "x": 0,
+      "y": 49320,
+      "text": "Safe account and workspace detail",
       "kind": "title1",
       "maxW": 6000
     }
