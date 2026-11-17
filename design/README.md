@@ -251,3 +251,7 @@ Ideas that need this flow to have run for real at least once before they are wor
   text up by key from a copy of `apps/app/src/assets/locales/en.json` published with the canvas, so app copy changes
   reach the canvas on their own and a copy change in a design shows up as a key in the diff. The cost: retyping text
   on the canvas becomes an edit of the key's value or an override.
+- **Use the app's Playwright test runner.** `apps/app/e2e` already runs `@playwright/test`. The captures and the
+  canvas comparison could move there as a separate config on the mock backend, which gives parallel workers,
+  sharding, test selection by tag (for the pages a pull request touches) and a visual diff report, and would replace
+  much of `baseline-check/`. For the app team to decide.
