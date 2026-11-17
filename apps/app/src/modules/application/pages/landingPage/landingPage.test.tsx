@@ -1,11 +1,12 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import * as AppKit from '@reown/appkit/react';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
-import * as connectedWalletGuard from '@/modules/application/hooks/useConnectedWalletGuard';
 import * as walletAccountHook from '@/modules/application/hooks/useWalletAccount';
+import * as walletConnectedHook from '@/modules/application/hooks/useWalletConnected';
 import {
     workspaceService,
     workspaceServiceKeys,
@@ -16,11 +17,12 @@ import { LandingPage } from './landingPage';
 describe('<LandingPage /> component', () => {
     const push = jest.fn();
     const replace = jest.fn();
-    const check = jest.fn();
+    const openWeb3Modal = jest.fn();
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
-    const walletGuardSpy = jest.spyOn(
-        connectedWalletGuard,
-        'useConnectedWalletGuard',
+    const useAppKitSpy = jest.spyOn(AppKit, 'useAppKit');
+    const walletConnectedSpy = jest.spyOn(
+        walletConnectedHook,
+        'useWalletConnected',
     );
     const walletAccountSpy = jest.spyOn(walletAccountHook, 'useWalletAccount');
     const activateSessionRegistrySpy = jest.spyOn(
@@ -33,7 +35,11 @@ describe('<LandingPage /> component', () => {
             push,
             replace,
         } as unknown as AppRouterInstance);
-        walletGuardSpy.mockReturnValue({ check, result: false });
+        useAppKitSpy.mockReturnValue({
+            open: openWeb3Modal,
+            close: jest.fn(),
+        });
+        walletConnectedSpy.mockReturnValue(false);
         walletAccountSpy.mockReturnValue({
             address: undefined,
             chainId: undefined,
@@ -46,9 +52,10 @@ describe('<LandingPage /> component', () => {
     afterEach(() => {
         push.mockReset();
         replace.mockReset();
-        check.mockReset();
+        openWeb3Modal.mockReset();
         useRouterSpy.mockReset();
-        walletGuardSpy.mockReset();
+        useAppKitSpy.mockReset();
+        walletConnectedSpy.mockReset();
         walletAccountSpy.mockReset();
         activateSessionRegistrySpy.mockReset();
     });
@@ -103,7 +110,7 @@ describe('<LandingPage /> component', () => {
     });
 
     it('opens the existing workspace when the wallet is already connected', async () => {
-        walletGuardSpy.mockReturnValue({ check, result: true });
+        walletConnectedSpy.mockReturnValue(true);
 
         render(createTestComponent());
 
@@ -130,11 +137,7 @@ describe('<LandingPage /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('checks the connected wallet before opening the workspace', async () => {
-        walletGuardSpy.mockImplementation((params) => ({
-            check: () => params?.onSuccess?.(),
-            result: false,
-        }));
+    it('opens the wallet connect modal directly', async () => {
         render(createTestComponent());
 
         await userEvent.click(
@@ -143,6 +146,6 @@ describe('<LandingPage /> component', () => {
             }),
         );
 
-        expect(push).toHaveBeenCalledWith('/workspace');
+        expect(openWeb3Modal).toHaveBeenCalledWith({ view: 'Connect' });
     });
 });

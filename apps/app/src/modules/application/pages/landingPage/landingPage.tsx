@@ -1,14 +1,15 @@
 'use client';
 
 import { Button, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
+import { useAppKit } from '@reown/appkit/react';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import GoogleIcon from '@/assets/images/google.svg';
 import NetBackground from '@/assets/images/net_bg.svg';
-import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import {
     workspaceService,
     workspaceServiceKeys,
@@ -34,10 +35,10 @@ export const LandingPage: React.FC = () => {
     const { t } = useTranslations();
     const router = useRouter();
     const queryClient = useQueryClient();
-    const { check: checkWalletConnection, result: isWalletConnected } =
-        useConnectedWalletGuard({
-            onSuccess: () => router.push('/workspace'),
-        });
+    // FTUE signs in straight from the AppKit modal, without the intermediate
+    // Aragon connect dialog; the effect below routes on connection.
+    const { open: openWeb3Modal } = useAppKit();
+    const isWalletConnected = useWalletConnected();
     const year = new Date().getFullYear();
     const { address, isConnecting } = useWalletAccount();
 
@@ -137,7 +138,9 @@ export const LandingPage: React.FC = () => {
                         <Button
                             className="w-full"
                             iconLeft={IconType.BLOCKCHAIN_WALLET}
-                            onClick={() => checkWalletConnection()}
+                            onClick={() =>
+                                void openWeb3Modal({ view: 'Connect' })
+                            }
                             size="lg"
                             type="button"
                         >
