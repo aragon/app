@@ -92,6 +92,41 @@ describe('proxySafe utils', () => {
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
         });
 
+        it('forwards the lookup of the Safes an address owns', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({
+                    json: jest.fn(() => Promise.resolve({ safes: [] })),
+                }),
+            );
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1', ['v1', 'owners', safeAddress, 'safes']),
+            );
+
+            expect(fetchSpy).toHaveBeenCalledWith(
+                `https://api.safe.global/tx-service/eth/api/v1/owners/${safeAddress}/safes/`,
+                expect.objectContaining({ method: 'GET' }),
+            );
+        });
+
+        it('rejects an owner lookup for a value that is not an address', async () => {
+            const testClass = new ProxySafeUtils();
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1', [
+                    'v1',
+                    'owners',
+                    'not-an-address',
+                    'safes',
+                ]),
+            );
+
+            expect(fetchSpy).not.toHaveBeenCalled();
+        });
+
         it('rejects a read outside the allowlisted surface', async () => {
             // The route is unauthenticated and spends a shared API key. Governance-body reads moved
             // to the Aragon backend, so an open GET here would only serve an abuser.

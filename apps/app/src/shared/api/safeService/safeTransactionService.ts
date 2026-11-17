@@ -5,6 +5,7 @@ import { checksumSafeAddress } from './safeAddressUtils';
 import type {
     IConfirmSafeTransactionParams,
     IGetSafeBalancesParams,
+    IGetSafesByOwnerParams,
     IProposeSafeTransactionParams,
     ISafeUrlParams,
 } from './safeService.api';
@@ -27,6 +28,7 @@ import { SafeServiceError } from './safeServiceError';
 class SafeTransactionService extends HttpService {
     private basePaths = {
         safeBalances: '/:chainId/v1/safes/:address/balances',
+        safesByOwner: '/:chainId/v1/owners/:address/safes',
         proposeSafeTransaction:
             '/:chainId/v1/safes/:address/multisig-transactions',
         confirmSafeTransaction:
@@ -52,6 +54,33 @@ class SafeTransactionService extends HttpService {
         }
 
         return response;
+    };
+
+    /**
+     * Addresses of the Safes the given address signs for (an owner, to the Safe API) on the given network.
+     */
+    getSafesByOwner = async ({
+        urlParams,
+    }: IGetSafesByOwnerParams): Promise<string[]> => {
+        const response = await this.request<unknown>(
+            this.basePaths.safesByOwner,
+            { urlParams: this.buildUrlParams(urlParams) },
+        );
+        const safes = (response as { safes?: unknown } | null)?.safes;
+
+        const isValidResponse =
+            Array.isArray(safes) &&
+            safes.every((safe) => typeof safe === 'string');
+
+        if (!isValidResponse) {
+            throw new SafeServiceError(
+                SafeServiceErrorCode.INVALID_RESPONSE,
+                'Safes by owner response did not match the expected contract',
+                502,
+            );
+        }
+
+        return safes;
     };
 
     proposeSafeTransaction = ({

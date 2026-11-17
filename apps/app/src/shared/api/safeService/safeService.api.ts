@@ -111,3 +111,6 @@ export interface IConfirmSafeTransactionParams
         IConfirmSafeTransactionUrlParams,
         IConfirmSafeTransactionBody
     > {}
+
+export interface IGetSafesByOwnerParams
+    extends IRequestUrlParams<ISafeUrlParams> {}

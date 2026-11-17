@@ -365,19 +365,27 @@ export class ProxySafeUtils {
      * Every path this proxy will forward, by method.
      *
      * `/v2/safe/*` on the Aragon backend now serves the reads a governance body needs, so what is
-     * left here is only what the backend does not: balances, and the signature-bearing writes.
+     * left here is only what the backend does not: balances, the Safes an address owns (account
+     * suggestions) and the signature-bearing writes.
      * The surface is allowlisted rather than open because the route is unauthenticated and spends a
      * shared API key — an open GET would let anyone drive the whole transaction service on our quota.
      */
     private isSupportedPath = (method: string, path: string[]): boolean => {
         if (method === 'GET') {
-            return (
+            const isBalancesPath =
                 path.length === 4 &&
                 path[0] === 'v1' &&
                 path[1] === 'safes' &&
                 isAddress(path[2], { strict: false }) &&
-                path[3] === 'balances'
-            );
+                path[3] === 'balances';
+            const isSafesByOwnerPath =
+                path.length === 4 &&
+                path[0] === 'v1' &&
+                path[1] === 'owners' &&
+                isAddress(path[2], { strict: false }) &&
+                path[3] === 'safes';
+
+            return isBalancesPath || isSafesByOwnerPath;
         }
 
         // Writes are signature-bearing: proposal POST carries the Safe address in its path, and a
