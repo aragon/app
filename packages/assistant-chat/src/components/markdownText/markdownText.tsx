@@ -154,7 +154,7 @@ const defaultComponents = memoizeMarkdownComponents({
     a: ({ className, ...props }) => (
         <a
             className={classNames(
-                'text-primary-400 hover:text-primary-500 underline underline-offset-2',
+                'text-primary-400 underline underline-offset-2 hover:text-primary-500',
                 className,
             )}
             rel="noreferrer"

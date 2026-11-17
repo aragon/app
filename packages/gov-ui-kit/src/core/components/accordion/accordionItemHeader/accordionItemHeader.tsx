@@ -16,14 +16,14 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
     return (
         <RadixAccordionHeader
             className={classNames(
-                'group data-[state=open]:gradient-neutral-50-transparent-to-b relative flex overflow-hidden',
+                'group relative flex overflow-hidden data-[state=open]:gradient-neutral-50-transparent-to-b',
                 'data-[disabled=true]:bg-neutral-100', // disabled
             )}
         >
             <div
                 aria-hidden="true"
                 className={classNames(
-                    'bg-neutral-0 absolute inset-0 transition-opacity duration-300',
+                    'absolute inset-0 bg-neutral-0 transition-opacity duration-300',
                     'group-data-[state=closed]:opacity-100 group-data-[state=open]:opacity-0',
                 )}
             />

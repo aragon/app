@@ -80,18 +80,18 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             )}
         >
             {selectionRole != null && (
-                <span className="border-primary-400 bg-neutral-0 absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 px-4 py-0.5 text-xs font-medium text-neutral-500 uppercase">
+                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-primary-400 bg-neutral-0 px-4 py-0.5 text-xs font-medium text-neutral-500 uppercase">
                     {t(SELECTION_LABEL_KEY[selectionRole])}
                 </span>
             )}
             <div
                 className={classNames(
-                    'bg-neutral-0 hover:border-primary-300 flex min-w-64 cursor-pointer items-center justify-between gap-4 border px-4 py-3 transition-colors',
+                    'flex min-w-64 cursor-pointer items-center justify-between gap-4 border bg-neutral-0 px-4 py-3 transition-colors hover:border-primary-300',
                     isSelected && 'border-primary-400 shadow-primary-lg',
                     selectionRole != null
                         ? 'rounded-xl rounded-tl-none'
                         : 'rounded-xl',
-                    !isSelected && 'shadow-neutral-sm border-neutral-300',
+                    !isSelected && 'border-neutral-300 shadow-neutral-sm',
                 )}
             >
                 <InteractiveAncestorContext.Provider value={true}>

@@ -328,7 +328,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     );
 
     return (
-        <Card className="shadow-neutral-sm flex flex-col gap-4 p-4 md:p-6">
+        <Card className="flex flex-col gap-4 p-4 shadow-neutral-sm md:p-6">
             {delegateeInfo}
             {hasPosition && !showOptions && (
                 <div className="flex items-center gap-3 border-t border-neutral-100 pt-4">

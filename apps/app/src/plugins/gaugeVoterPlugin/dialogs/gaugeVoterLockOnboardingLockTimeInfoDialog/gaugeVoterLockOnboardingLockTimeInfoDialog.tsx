@@ -96,7 +96,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.cooldown',
                                 )}
                             </span>
-                            <div className="bg-info-400 size-2 rounded-full" />
+                            <div className="size-2 rounded-full bg-info-400" />
                         </div>
                         <span className="text-neutral-500">
                             {t(

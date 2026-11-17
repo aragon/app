@@ -73,9 +73,9 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
 
     const containerClasses = classNames(
         'group flex min-w-0 cursor-pointer flex-col gap-3 outline-hidden transition-all', // Layout
-        'focus-ring-primary bg-neutral-0 rounded-xl border px-4 py-3 md:gap-4 md:px-6 md:py-4', // Style
+        'rounded-xl border bg-neutral-0 px-4 py-3 focus-ring-primary md:gap-4 md:px-6 md:py-4', // Style
         'border-primary-400 shadow-primary hover:shadow-primary-md', // Checked/indeterminate & hover
-        'data-[state=unchecked]:enabled:shadow-neutral-sm data-[state=unchecked]:enabled:border-neutral-100', // Unchecked
+        'data-[state=unchecked]:enabled:border-neutral-100 data-[state=unchecked]:enabled:shadow-neutral-sm', // Unchecked
         'data-[state=unchecked]:enabled:hover:shadow-neutral', // Unchecked hover
         'disabled:cursor-default disabled:border-neutral-300 disabled:bg-neutral-100 disabled:shadow-none', // Checked/indeterminate & disabled
         'disabled:data-[state=unchecked]:border-neutral-200', // Disabled & unchecked
@@ -120,7 +120,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
                     size="md"
                 />
                 <RadixCheckbox.Indicator
-                    className={classNames('text-primary-400 mt-0.5 group-data-disabled:text-neutral-500 md:mt-1', {
+                    className={classNames('mt-0.5 text-primary-400 group-data-disabled:text-neutral-500 md:mt-1', {
                         'self-start': description,
                     })}
                 >
