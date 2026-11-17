@@ -421,6 +421,50 @@
             "artboard": "SppProposalNSP1.dc.html",
             "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-1",
             "reference": "spp-proposal-nsp-1-rejected.webp"
+        },
+        {
+            "artboard": "SppDashboard.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/dashboard",
+            "reference": "spp-dashboard.webp"
+        },
+        {
+            "artboard": "SppProposals.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals",
+            "reference": "spp-proposals.webp"
+        },
+        {
+            "artboard": "SppMembers.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/members",
+            "reference": "spp-members.webp"
+        },
+        {
+            "artboard": "SppMembersCoreTeam.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/members",
+            "reference": "spp-members-core-team.webp"
+        },
+        {
+            "artboard": "SppMembersCouncilSafe.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/members",
+            "reference": "spp-members-council-safe.webp"
+        },
+        {
+            "artboard": "SppMembersGuardianSafe.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/members",
+            "reference": "spp-members-guardian-safe.webp"
+        },
+        {
+            "artboard": "SppMember.dc.html",
+            "reference": "spp-member-detail.webp"
+        },
+        {
+            "artboard": "SppAssets.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/assets",
+            "reference": "spp-assets.webp"
+        },
+        {
+            "artboard": "SppTransactions.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/transactions",
+            "reference": "spp-transactions.webp"
         }
     ]
 }

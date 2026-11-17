@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Transactions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" dao="northstar" active="transactions" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Transactions</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <div class="flex flex-col items-start gap-2 md:gap-3">
+              <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="all">
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All transactions"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="executions" label="Executions"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="received" label="Deposits"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="sent" label="Withdrawals"></x-import>
+              </x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="EXECUTION" label="proposal" action-count="{{one}}" chain-id="{{chainId}}" date="2026-10-30T18:00:00" hash="0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="WITHDRAW" token-amount="240000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-10-30T18:00:00" hash="0x29e139b26b0b22eecd4c348132ee4170e458abf8718413c2594d55f91bb82809" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x29e139b26b0b22eecd4c348132ee4170e458abf8718413c2594d55f91bb82809" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="400000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-10-24T18:00:00" hash="0x2fbe5ca6e50ac810bc1a136eee6f1535296a07445f9900f00e0397a297f9ef15" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x2fbe5ca6e50ac810bc1a136eee6f1535296a07445f9900f00e0397a297f9ef15" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="85" token-symbol="ETH" chain-id="{{chainId}}" date="2026-10-06T18:00:00" hash="0x3a1abe6039f07d04be8a3ee4822b0e933f8b5280c0dc2e210e9a1db6a4ad2477" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x3a1abe6039f07d04be8a3ee4822b0e933f8b5280c0dc2e210e9a1db6a4ad2477" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="8500000" token-symbol="NSP" chain-id="{{chainId}}" date="2026-08-12T18:00:00" hash="0x13b3f70335360b06e15f0edca17de5ef224c293b05772e972453d3db7e6e817e" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x13b3f70335360b06e15f0edca17de5ef224c293b05772e972453d3db7e6e817e" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="384210.07" token-symbol="DAI" chain-id="{{chainId}}" date="2026-06-29T18:00:00" hash="0xa2f152b6312eb231e16b6e244ea8099c2d639e9ea5f77805f4e25000161d4189" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0xa2f152b6312eb231e16b6e244ea8099c2d639e9ea5f77805f4e25000161d4189" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="2255380.42" token-symbol="USDC" chain-id="{{chainId}}" date="2026-04-20T18:00:00" hash="0x3a855dcde0bfdb20484799a80cd9d090fbc1950c0686099487888035d9ed9e87" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x3a855dcde0bfdb20484799a80cd9d090fbc1950c0686099487888035d9ed9e87" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="527.48" token-symbol="ETH" chain-id="{{chainId}}" date="2026-03-01T18:00:00" hash="0xaf26991d395b1aef24395c724f89cecc5d7e5d4ec4fe82773c62b0c457d6d7a7" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0xaf26991d395b1aef24395c724f89cecc5d7e5d4ec4fe82773c62b0c457d6d7a7" target="_blank"></x-import>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Northstar Protocol</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">8</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{lastActivity}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="0xa767846912853e30403f3efb946a5250e8e6a063"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Docs</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/northstar_fi" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+              </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0xa767846912853e30403f3efb946a5250e8e6a063" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1058}}'>
+// DAO transactions (apps/app: modules/finance/pages/daoTransactionsPage, list: components/transactionList, aside:
+// components/daoFilterAsideCard + daoInfoAside with the linkedAccount feature flag on). Mock data:
+// design/baseline-check/data.cjs (Northstar DAO txs, data-spp.cjs). The list items are written out one by one at the start of the line,
+// not looped or indented: the kit's pagination counts the list's direct children (see Proposals.dc.html).
+// Transaction dates are absolute ("November 14, 2026 at 18:18"), so they are fixed local times copied from the reference.
+// "Last activity" is relative to now in the app (DateFormat.RELATIVE of the latest transaction), so it is an offset
+// from now: it reads "2 days ago" like the reference on any day.
+class Component extends DCLogic {
+  renderVals() {
+    const day = 24 * 3600000;
+    const kit = window.GovUiKit;
+    const lastActivity = kit.formatterUtils.formatDate(Date.now() - 17 * day, { format: kit.DateFormat.RELATIVE }) ?? '-';
+    return {
+      yes: true,
+      no: false,
+      one: 1,
+      two: 2,
+      chainId: 1,
+      count: 8,
+      pageSize: 20,
+      lastActivity,
+      addressLink: { href: 'https://etherscan.io/address/0xa767846912853e30403f3efb946a5250e8e6a063', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

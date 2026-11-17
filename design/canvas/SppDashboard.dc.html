@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Dashboard</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" dao="northstar" active="dashboard" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Northstar Protocol</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>8</p></div>
+                    <p class="page-stat__label">Proposals</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>2.85K</p></div>
+                    <p class="page-stat__label">Members</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>$8.30M</p><p>USD</p></div>
+                    <p class="page-stat__label">Treasury</p>
+                  </div>
+                </div>
+              </div>
+              <div class="page-header__avatar">
+                <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Northstar Protocol" src="assets/mock/avatar/northstar.svg" size="2xl"></x-import>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Latest proposals</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+                  <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
+                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" status-context="{{p.statusContext}}" date="{{p.date}}" publisher="{{p.publisher}}" href="#"></x-import>
+                  </sc-for>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="SppProposals.dc.html" class-name="self-start">View all</x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Members</x-import>
+              </div>
+              <div class="flex flex-col gap-2 md:gap-3">
+                <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="tv">
+                    <x-import component-from-global-scope="GovUiKit.Toggle" value="tv" label="NSP Token Holders"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.Toggle" value="ms" label="Core Team"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.Toggle" value="c" label="Safe 0x515f…02e2"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.Toggle" value="g" label="Safe 0xf361…465e"></x-import>
+                </x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{six}}" page-size="{{six}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+                  <sc-for list="{{members}}" as="m" hint-placeholder-count="6">
+                    <x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m.address}}" ens-name="{{m.ens}}" delegation-count="{{m.delegations}}" token-amount="{{m.votingPower}}" href="SppMember.dc.html"></x-import>
+                  </sc-for>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="SppMembers.dc.html" class-name="self-start">View all</x-import>
+              </x-import>
+              </div>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Assets</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{three}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+                  <sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+                    <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{a.name}}" symbol="{{a.symbol}}" amount="{{a.amount}}" fiat-price="{{a.price}}" logo-src="{{a.logo}}"></x-import>
+                  </sc-for>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="SppAssets.dc.html" class-name="self-start">View all</x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contract</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain"><p class="text-neutral-500">Ethereum</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="DAO address" link="{{addressLink}}" children="0xa767846912853e30403f3efb946a5250e8e6a063"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" link="{{addressLink}}" children="northstar.dao.eth"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{creationLink}}" children="December 2025"></x-import>
+              </x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#" class-name="w-full">View permissions</x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Resources</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Docs</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/northstar_fi" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+              </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Notifications</x-import>
+              <p class="page-aside__text">Get notified on Telegram about new proposals and other activity.</p>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="SOCIAL_TELEGRAM" href="https://t.me/aragon_test_bot" target="_blank" class-name="w-full">Subscribe</x-import>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2368}}'>
+// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/baseline-check/data-spp.cjs (Northstar).
+class Component extends DCLogic {
+  renderVals() {
+    // Kit components print proposal dates relative to the viewer's clock ("3 days left"), so dates are offsets from
+    // now: the labels then read the same as in the reference screenshots on any day.
+    const hour = 3600000;
+    const day = 24 * hour;
+    const now = Date.now();
+    const person = (address, name) => ({ address, name, link: 'SppMember.dc.html' });
+    return {
+      yes: true, no: false, two: 2, three: 3, six: 6,
+      proposals: [
+        { id: 'NSP-8', title: 'Seed NSP/ETH liquidity on Uniswap v4', summary: 'Move 2,000,000 NSP and 220 ETH to the Liquidity Operations Safe to seed an NSP/ETH v4 pool with a dynamic-fee hook.', status: 'ACTIVE', statusContext: 'Council approval', date: now + 3 * day + hour, publisher: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth') },
+        { id: 'NSP-7', title: 'Increase the bug bounty ceiling to 1M USDC', summary: 'Raise the maximum Immunefi payout for critical vulnerabilities from 250,000 to 1,000,000 USDC and pre-fund the bounty Safe with 250,000 USDC.', status: 'ADVANCEABLE', statusContext: 'Council approval', date: now + 1 * day + hour, publisher: person('0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth') },
+        { id: 'NSP-6', title: 'Launch the Northstar Ecosystem Grants round 3', summary: 'Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement.', status: 'ACTIVE', statusContext: 'Community veto', date: now + 4 * day + hour, publisher: person('0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81', 'ines-alvarez.eth') }
+      ],
+      members: [
+        { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth', delegations: 41, votingPower: 3200000 },
+        { address: '0xac6399087027f972e6d2ab830dc9b33cda035642', ens: 'kofi-mensah.eth', delegations: 28, votingPower: 2450000 },
+        { address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', ens: 'lenaweber.eth', delegations: 17, votingPower: 1980000 },
+        { address: '0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81', ens: 'ines-alvarez.eth', delegations: 9, votingPower: 1640000 },
+        { address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', ens: 'sofiaruiz.eth', delegations: 6, votingPower: 1210000 },
+        { address: '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', ens: undefined, delegations: 0, votingPower: 980000 }
+      ],
+      assets: [
+        { name: 'Northstar', symbol: 'NSP', amount: 8500000, price: 0.42, logo: 'assets/mock/token/nsp.svg' },
+        { name: 'USD Coin', symbol: 'USDC', amount: 2415380.42, price: 1, logo: 'assets/mock/token/usdc.svg' },
+        { name: 'Ether', symbol: 'ETH', amount: 612.48, price: 3148.62, logo: 'assets/mock/token/eth.svg' }
+      ],
+      addressLink: { href: 'https://etherscan.io/address/0xa767846912853e30403f3efb946a5250e8e6a063', isOnchainEntity: true },
+      creationLink: { href: 'https://etherscan.io/tx/0x449cf0eabbcaf6cce407f7190a62e00bc35ef0bdd7340c5d470904c3e793aa92' }
+    };
+  }
+}
+</script>
+</body>
+</html>

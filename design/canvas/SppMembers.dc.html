@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MsMembers</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" dao="northstar" active="members" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <div class="flex flex-col gap-2 md:gap-3">
+              <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="tv">
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="tv" label="NSP Token Holders"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="ms" label="Core Team"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="c" label="Safe 0x515f…02e2"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="g" label="Safe 0xf361…465e"></x-import>
+              </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" delegation-count="{{d41}}" token-amount="3200000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xac6399087027f972e6d2ab830dc9b33cda035642" ens-name="kofi-mensah.eth" delegation-count="{{d28}}" token-amount="2450000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" delegation-count="{{d17}}" token-amount="1980000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81" ens-name="ines-alvarez.eth" delegation-count="{{d9}}" token-amount="1640000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" delegation-count="{{d6}}" token-amount="1210000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x865f1f2c83b0ee4a9116da01bcc1e2661086e089" delegation-count="{{d0}}" token-amount="980000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fd8c5d6a351f67a517e6b0f452f63" ens-name="dmitri.eth" delegation-count="{{d3}}" token-amount="860000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" delegation-count="{{d0}}" token-amount="720000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x66b7d87059d8d1cf9da8842075250fd8a2e20805" delegation-count="{{d0}}" token-amount="550000" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" delegation-count="{{d0}}" token-amount="430000" class-name="min-w-0" href="#"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">NSP Token Holders</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <div style="display: flex; flex-direction: column; row-gap: 24px;">
+                  <p class="page-aside__text">Every NSP holder and delegate can veto a council-approved proposal during the 7-day community window.</p>
+                  <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi/governance/delegates" is-external="{{yes}}" show-url="{{yes}}">Delegate guide</x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0x65bcf0e7d2a74d45fe702135d19f954d59658f36" description="Token Voting v1.3" link="{{pluginLink}}" children="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="January 2026"></x-import>
+                </x-import>
+              </div>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Delegation</x-import>
+              <form class="flex flex-col gap-4">
+                <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Who would you like to delegate to?" name="selection" value="YOURSELF">
+                  <x-import component-from-global-scope="GovUiKit.RadioCard" label="Yourself" value="YOURSELF"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.RadioCard" label="Someone else" value="OTHER"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.AddressInput" label="Your delegation" help-text="Enter the address where you want to delegate your current or future token balance's voting power." placeholder="ENS or 0x…" disabled="{{yes}}" chain-id="{{chainId}}"></x-import>
+                <div class="flex flex-col gap-3">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg">Delegate NSP</x-import>
+                  <p class="footer-info">Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.</p>
+                </div>
+              </form>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1242}}'>
+// Northstar members page (apps/app: modules/governance/pages/daoMembersPage + PluginFilterComponent body tabs; the aside is
+// the plugin-info slot of the active body). Generated by gen/members.py from design/baseline-check/data-spp.cjs.
+// List items are written out one per line at column 0 (the kit pagination counts direct children).
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      no: false,
+      count: 10,
+      pageSize: 12,
+      chainId: 1,
+      d0: 0,
+      d3: 3,
+      d6: 6,
+      d9: 9,
+      d17: 17,
+      d28: 28,
+      d41: 41,
+      pluginLink: { href: 'https://etherscan.io/address/0x65bcf0e7d2a74d45fe702135d19f954d59658f36', isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x3995ecdb4ac48b1d2129986ea48b2668d1fc8f8f4cb3fb59dad4f99f4e868c6e' }
+    };
+  }
+}
+</script>
+</body>
+</html>

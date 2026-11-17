@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MsMembers</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" dao="northstar" active="members" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <div class="flex flex-col gap-2 md:gap-3">
+              <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="c">
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="tv" label="NSP Token Holders"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="ms" label="Core Team"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="c" label="Safe 0x515f…02e2"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="g" label="Safe 0xf361…465e"></x-import>
+              </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xac6399087027f972e6d2ab830dc9b33cda035642" ens-name="kofi-mensah.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81" ens-name="ines-alvarez.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fd8c5d6a351f67a517e6b0f452f63" ens-name="dmitri.eth" class-name="min-w-0" href="#"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Safe 0x515f…02e2</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" description="Safe 1.4.1" link="{{pluginLink}}" children="0x515feC2E8F6553948b1D57C14c1243a1405C02e2"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Required confirmations" children="{{conf}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Current Safe nonce" children="{{nonce}}"></x-import>
+              </x-import>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Northstar members page (apps/app: modules/governance/pages/daoMembersPage + PluginFilterComponent body tabs; the aside is
+// the plugin-info slot of the active body). Generated by gen/members.py from design/baseline-check/data-spp.cjs.
+// List items are written out one per line at column 0 (the kit pagination counts direct children).
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      no: false,
+      count: 5,
+      pageSize: 12,
+      chainId: 1,
+      conf: '3 of 5',
+      nonce: '5',
+      pluginLink: { href: 'https://etherscan.io/address/0x515fec2e8f6553948b1d57c14c1243a1405c02e2', isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x350264a8296d3b22cb75d8c310e9991fd9fab80bd18d85b9fa0148c3be5a955f' }
+    };
+  }
+}
+</script>
+</body>
+</html>

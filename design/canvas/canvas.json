@@ -849,6 +849,87 @@
       "title": "Multistage proposal: SppProposalNSP1",
       "expand": "fill",
       "is_interactive": true
+    },
+    "SppDashboard.dc.html": {
+      "x": 0,
+      "y": 39600,
+      "w": 1440,
+      "h": 2368,
+      "title": "Multistage DAO: SppDashboard",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposals.dc.html": {
+      "x": 1520,
+      "y": 39600,
+      "w": 1440,
+      "h": 2000,
+      "title": "Multistage DAO: SppProposals",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppMembers.dc.html": {
+      "x": 3040,
+      "y": 39600,
+      "w": 1440,
+      "h": 1242,
+      "title": "Multistage DAO: SppMembers",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppMembersCoreTeam.dc.html": {
+      "x": 4560,
+      "y": 39600,
+      "w": 1440,
+      "h": 900,
+      "title": "Multistage DAO: SppMembersCoreTeam",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppMembersCouncilSafe.dc.html": {
+      "x": 6080,
+      "y": 39600,
+      "w": 1440,
+      "h": 900,
+      "title": "Multistage DAO: SppMembersCouncilSafe",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppMembersGuardianSafe.dc.html": {
+      "x": 7600,
+      "y": 39600,
+      "w": 1440,
+      "h": 900,
+      "title": "Multistage DAO: SppMembersGuardianSafe",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppMember.dc.html": {
+      "x": 9120,
+      "y": 39600,
+      "w": 1440,
+      "h": 1848,
+      "title": "Multistage DAO: SppMember",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppAssets.dc.html": {
+      "x": 10640,
+      "y": 39600,
+      "w": 1440,
+      "h": 900,
+      "title": "Multistage DAO: SppAssets",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppTransactions.dc.html": {
+      "x": 12160,
+      "y": 39600,
+      "w": 1440,
+      "h": 1058,
+      "title": "Multistage DAO: SppTransactions",
+      "expand": "fill",
+      "is_interactive": true
     }
   },
   "order": [
@@ -945,7 +1026,16 @@
     "SppProposalNSP4.dc.html",
     "SppProposalNSP3.dc.html",
     "SppProposalNSP2.dc.html",
-    "SppProposalNSP1.dc.html"
+    "SppProposalNSP1.dc.html",
+    "SppDashboard.dc.html",
+    "SppProposals.dc.html",
+    "SppMembers.dc.html",
+    "SppMembersCoreTeam.dc.html",
+    "SppMembersCouncilSafe.dc.html",
+    "SppMembersGuardianSafe.dc.html",
+    "SppMember.dc.html",
+    "SppAssets.dc.html",
+    "SppTransactions.dc.html"
   ],
   "notes": {
     "screens": {
@@ -1066,6 +1156,13 @@
       "text": "Multistage proposal",
       "kind": "title1",
       "maxW": 12080
+    },
+    "row-Multistage DAO": {
+      "x": 0,
+      "y": 39320,
+      "text": "Multistage DAO",
+      "kind": "title1",
+      "maxW": 13600
     }
   },
   "designSystems": [
