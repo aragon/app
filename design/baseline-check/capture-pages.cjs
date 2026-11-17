@@ -69,9 +69,18 @@ const PAGES = [
     ['spp-proposal-nsp-1-rejected', `${SPP}/proposals/NSP-1`],
     ['spp-members', `${SPP}/members`],
     // The other tabs of the members page (daoUtils.getPluginTabId; a Safe tab adds the DAO address).
-    ['spp-members-core-team', `${SPP}/members?members=${NS.MS_ADDR.toLowerCase()}-core-team`],
-    ['spp-members-council-safe', `${SPP}/members?members=${NS.COUNCIL_SAFE.toLowerCase()}-safe-${NS.DAO_ADDR.toLowerCase()}`],
-    ['spp-members-guardian-safe', `${SPP}/members?members=${NS.GUARDIAN_SAFE.toLowerCase()}-safe-${NS.DAO_ADDR.toLowerCase()}`],
+    [
+        'spp-members-core-team',
+        `${SPP}/members?members=${NS.MS_ADDR.toLowerCase()}-core-team`,
+    ],
+    [
+        'spp-members-council-safe',
+        `${SPP}/members?members=${NS.COUNCIL_SAFE.toLowerCase()}-safe-${NS.DAO_ADDR.toLowerCase()}`,
+    ],
+    [
+        'spp-members-guardian-safe',
+        `${SPP}/members?members=${NS.GUARDIAN_SAFE.toLowerCase()}-safe-${NS.DAO_ADDR.toLowerCase()}`,
+    ],
     ['spp-member-detail', `${SPP}/members/${D.PEOPLE[0].address}`],
     ['spp-assets', `${SPP}/assets`],
     ['spp-transactions', `${SPP}/transactions`],
@@ -111,7 +120,11 @@ const PAGES = [
         `/workspace/${WS}/${seed.tvAccountId}/proposals/MGP-8`,
     ],
     ['workspace-edit', `/workspace/${WS}/edit`],
-    ['not-found-404', '/this-page-does-not-exist', { status: 404, errorPage: true }],
+    [
+        'not-found-404',
+        '/this-page-does-not-exist',
+        { status: 404, errorPage: true },
+    ],
     [
         'dao-not-found',
         '/dao/ethereum-mainnet/0x000000000000000000000000000000000000dead/dashboard',

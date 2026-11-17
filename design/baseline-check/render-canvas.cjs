@@ -144,7 +144,9 @@ const renderArtboard = async (browser, artboard, opts = {}) => {
         .locator('#dc-root > *')
         .first()
         .waitFor({ state: 'attached', timeout: 20_000 })
-        .catch(() => problems.push('the artboard never mounted (#dc-root is empty)'));
+        .catch(() =>
+            problems.push('the artboard never mounted (#dc-root is empty)'),
+        );
     await page.evaluate(() => document.fonts.ready);
     // Lookups retry with a growing delay before a component falls back: wait for 5s without any request.
     for (
@@ -168,7 +170,9 @@ if (require.main === module) {
         const args = process.argv.slice(2);
         const mobile = args.includes('--mobile');
         const names = args.filter((arg) => arg !== '--mobile');
-        const known = fs.readdirSync(CANVAS).filter((f) => f.endsWith('.dc.html'));
+        const known = fs
+            .readdirSync(CANVAS)
+            .filter((f) => f.endsWith('.dc.html'));
         const unknown = names.filter((name) => !known.includes(name));
         if (unknown.length > 0) {
             die(
@@ -181,13 +185,19 @@ if (require.main === module) {
         fs.mkdirSync(outDir, { recursive: true });
         let failed = false;
         for (const artboard of names.length > 0 ? names : known) {
-            const { png, height, problems } = await renderArtboard(browser, artboard, { mobile });
+            const { png, height, problems } = await renderArtboard(
+                browser,
+                artboard,
+                { mobile },
+            );
             const file = path.join(
                 outDir,
                 `${artboard.replace('.dc.html', '')}-${mobile ? 390 : 1440}.png`,
             );
             fs.writeFileSync(file, png);
-            console.log(`${artboard}: height ${height} -> ${path.relative(process.cwd(), file)}`);
+            console.log(
+                `${artboard}: height ${height} -> ${path.relative(process.cwd(), file)}`,
+            );
             for (const problem of problems) {
                 failed = true;
                 console.error(`  ${problem}`);

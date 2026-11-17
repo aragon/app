@@ -451,7 +451,7 @@ const goto = async (page, route, opts = {}) => {
 // Screenshots until two consecutive frames are identical: late layout (the permissions graph fitting its viewport)
 // or a JS-driven animation shows up as frames that differ.
 const stableScreenshot = async (page, fullPage) => {
-    await page.evaluate(() => window.baselineRepaintSvgs());
+    await page.evaluate(() => window.baselineRepaintSvgs?.());
     // Two animation frames, so what was just laid out has also been painted.
     await page.evaluate(
         () =>

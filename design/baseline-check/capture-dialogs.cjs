@@ -42,7 +42,10 @@ const dialogs = {
         const page = await context.newPage();
         await gotoConnected(page, `${TV}/dashboard`, NADIA.ens);
         await shot(page, 'connected-dao-dashboard');
-        await page.getByRole('button', { name: /nadia\.eth/ }).first().click();
+        await page
+            .getByRole('button', { name: /nadia\.eth/ })
+            .first()
+            .click();
         await page.getByRole('dialog').waitFor();
         await shot(page, 'dialog-user-wallet', viewport);
         await page.keyboard.press('Escape');
