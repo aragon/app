@@ -222,9 +222,13 @@ Ideas that need this flow to have run for real at least once before they are wor
 - **The design as the gate (TDD for UI).** A pull-request check that captures the app on mock data, renders the screens
   and fails while they differ. A designed change is red until the app matches the screens; an undesigned UI change
   is red until the code is reverted or the screens are updated to match, which shows up as a design diff in review.
-  Needs per-screen tolerances for the few screens that cannot match exactly (still drawings of moving parts). It is
-  slow today: starting the app, about 12 minutes of capture, and rendering and comparing the 121 screens took over
-  half an hour together on a 4-core machine; capturing only the affected pages would cut most of it.
+  Needs per-screen tolerances for the few screens that cannot match exactly (still drawings of moving parts).
+  It would run only on pull requests that change `apps/app/src`, `packages/gov-ui-kit/src` or `design/canvas`
+  (`.github/filters.yml`), once they are ready for review, and only on the pages a change can affect where that can be
+  told. Order: after the first exploration has gone from canvas to merged code, run it as a report that comments on
+  the pull request; make it required (with the ownership rule below) once that report has proven trustworthy.
+  Speed: rendering and comparing now runs several screens at once (about 8 minutes for all 121, from 24); capture
+  and a production build of the app instead of `next dev` are the next steps.
 - **Design review by ownership.** A CODEOWNERS entry on `design/canvas/` for the design lead, so a screen change in
   any pull request, including one made to follow the code, needs their approval.
 - **No screenshots in git.** With the check above comparing the app with the screens directly, the reference
@@ -237,3 +241,7 @@ Ideas that need this flow to have run for real at least once before they are wor
   production), taking its values from the snapshot of the flags in `baseline-check/cms/feature-flags.json`, would let
   a designer see and design the other states. Only for flags that change what a drawn screen shows; the baseline check
   would then also capture those pages with production flags, so the flag-off states are verified too.
+- **Copy from `en.json`.** Screens type the app's text in; nothing ties it to its translation key. Screens could look
+  text up by key from a copy of `apps/app/src/assets/locales/en.json` published with the canvas, so app copy changes
+  reach the canvas on their own and a copy change in a design shows up as a key in the diff. The cost: retyping text
+  on the canvas becomes an edit of the key's value or an override.
