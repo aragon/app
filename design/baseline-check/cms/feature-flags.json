@@ -1,0 +1,114 @@
+{
+  "debugPanel": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": false,
+    "production": false
+  },
+  "linkedAccount": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "capitalFlowAutomation": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": false,
+    "production": false
+  },
+  "gateAdvancedGovernance": {
+    "local": false,
+    "preview": false,
+    "development": false,
+    "staging": false,
+    "production": true
+  },
+  "governanceDesigner": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "osxUpdates": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "useMocks": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": false,
+    "production": false
+  },
+  "existingProposalCreationCondition": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": false,
+    "production": false
+  },
+  "aragonProfiles": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "supportChat": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "supportChatDocs": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "helpCenter": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "telegramSubscription": {
+    "local": true,
+    "preview": true,
+    "development": true,
+    "staging": true,
+    "production": true
+  },
+  "safeAccountPage": {
+    "local": true,
+    "preview": true,
+    "development": false,
+    "staging": false,
+    "production": false
+  },
+  "domainMemberList": {
+    "local": false,
+    "preview": false,
+    "development": false,
+    "staging": false,
+    "production": false
+  },
+  "workspaces": {
+    "local": true,
+    "preview": false,
+    "development": false,
+    "staging": false,
+    "production": false
+  }
+}

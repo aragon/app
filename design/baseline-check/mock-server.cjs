@@ -1,14 +1,18 @@
 'use strict';
-// Mock Aragon backend + JSON-RPC endpoint. Usage: node mock-server.cjs [port]
+// Mock Aragon backend + JSON-RPC endpoint on MOCK_PORT (default 4100). Requests are logged to out/mock-requests.log.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const { deps, MOCK_PORT, OUT } = require('./lib.cjs');
 const D = require('./data.cjs');
 
-const PORT = Number(process.argv[2] ?? process.env.MOCK_PORT ?? 4100);
-const LOG = path.join(__dirname, 'mock-requests.log');
+const { viem } = deps;
+fs.mkdirSync(OUT, { recursive: true });
+const LOG = path.join(OUT, 'mock-requests.log');
 const log = (line) =>
     fs.appendFileSync(LOG, `${new Date().toISOString()} ${line}\n`);
+// Requests without a route and handler errors, reported by /health so a capture can fail on them.
+const counters = { unmatched: 0, errors: 0 };
 
 const page = (items, q) => {
     const pageNum = Number(q.get('page') ?? 1);
@@ -81,13 +85,6 @@ const coverage = (body, resource) =>
     }));
 
 // ---------- JSON-RPC ----------
-const viem = require(
-    require.resolve('viem', {
-        paths: [
-            require('node:path').join(__dirname, '..', '..', 'apps', 'app'),
-        ],
-    }),
-);
 const reverseAbi = [
     {
         name: 'reverseWithGateways',
@@ -352,7 +349,7 @@ const rpcResult = (call) => {
     }
 };
 
-const handle = async (req, res, bodyText) => {
+const handle = (req, res, bodyText) => {
     const url = new URL(req.url, 'http://x');
     const p = url.pathname;
     const q = url.searchParams;
@@ -363,6 +360,9 @@ const handle = async (req, res, bodyText) => {
         body = undefined;
     }
 
+    if (p === '/health') {
+        return send(res, 200, { ok: true, now: D.NOW, ...counters });
+    }
     if (p.startsWith('/rpc')) {
         const one = (c) => {
             const r = rpcResult(c ?? {});
@@ -758,22 +758,26 @@ http.createServer((req, res) => {
     req.on('data', (c) => {
         chunks += c;
     });
-    req.on('end', async () => {
+    req.on('end', () => {
         try {
-            const r = await handle(req, res, chunks);
+            const r = handle(req, res, chunks);
             if (r === null) {
+                counters.unmatched += 1;
                 log(
                     `UNMATCHED ${req.method} ${req.url} ${chunks.slice(0, 300)}`,
                 );
                 notFound(res, 'Unmatched mock route');
-            } else if (!req.url.startsWith('/rpc')) {
+            } else if (!req.url.startsWith('/rpc') && req.url !== '/health') {
                 log(`OK ${req.method} ${req.url}`);
             }
         } catch (e) {
+            counters.errors += 1;
             log(`ERROR ${req.method} ${req.url} ${e.stack}`);
             send(res, 500, { code: 'mockError', description: String(e) });
         }
     });
-}).listen(PORT, () =>
-    console.log(`mock backend listening on http://localhost:${PORT}`),
+}).listen(MOCK_PORT, () =>
+    console.log(
+        `mock backend listening on http://localhost:${MOCK_PORT}, now = ${new Date(D.NOW * 1000).toISOString()}`,
+    ),
 );

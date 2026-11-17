@@ -1,5 +1,6 @@
 'use strict';
-// Init script injecting a mock EIP-1193 wallet (EIP-6963 + window.ethereum) connected as WALLET_ADDRESS.
+// Init script injecting a mock EIP-1193 wallet (EIP-6963 + window.ethereum, shown as MetaMask) holding one account.
+// opts.connected === false: the account is only handed out once the user connects. Signing never completes.
 module.exports = (address, opts = {}) => `(() => {
   const ACCOUNT = '${address}';
   let authorized = ${opts.connected === false ? 'false' : 'true'};

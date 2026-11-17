@@ -3,3 +3,8 @@
 # sets instead of asking every rebase to settle a conflict by hand.
 # See .agents/shared/metrics/README.md.
 .agents/shared/metrics/hits.jsonl merge=union
+
+# Design canvas files are written by the claude.ai canvas editor and synced back byte for byte: no end-of-line
+# conversion, and kept out of the language statistics. See design/README.md.
+design/canvas/** -text linguist-vendored
+design/reference/** binary

@@ -1,0 +1,50 @@
+{
+    "base-mainnet-0xfEA21e0500022F34dE0a02Ae3A7D04dF923Ed020": {
+        "daoName": "XMAQUINA",
+        "comment": "Hide governance bodies that should not be exposed in the members, proposals, and settings flows.",
+        "pluginsToHide": [
+            {
+                "address": "0x6214EB90BE7D84588De57F539754D6827FFF07a6",
+                "name": "xDEUS Holders",
+                "comment": "Exclude this body from governance navigation and member selection."
+            },
+            {
+                "address": "0x1370a17ea6E6805410DC58A96884301f1838d44c",
+                "name": "xDEUS Holders",
+                "comment": "Exclude this body from governance navigation and member selection."
+            },
+            {
+                "address": "0x3e5598c1b34dA6E198E4Bd7d20Acb287D9e88c91",
+                "name": "XMAQUINA Gauges",
+                "comment": "XMAQUINA needed velockers but not gauges."
+            }
+        ]
+    },
+    "citrea-mainnet-0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419": {
+        "daoName": "Citrea",
+        "comment": "Hide governance bodies that should not be exposed in the members, proposals, and settings flows.",
+        "pluginsToHide": [
+            {
+                "address": "0x8AB7f7B617B5248358ea9c9B728f3C2eDbAa97a2",
+                "name": "Citrea Gauges",
+                "comment": "Citrea will have gauges later but not now."
+            },
+            {
+                "address": "0xD7b74EFdcD3B0B58F34b6E9bf46731862983De76",
+                "name": "Core Governance Delegate (Polling)",
+                "comment": "They have the same token holders in multiple processes. This is just to hide the redundant one."
+            }
+        ]
+    },
+    "ethereum-mainnet-0xf204245b0B05E9A0780761E326552A569c1D6ceb": {
+        "daoName": "Cryptex",
+        "comment": "Hide governance bodies that should not be exposed in the members, proposals, and settings flows.",
+        "pluginsToHide": [
+            {
+                "address": "0x453D0792f28aa694e533a7fFbe06F4e11e2b7885",
+                "name": "veCTX Guardians",
+                "comment": "Exclude this body from governance navigation and member selection."
+            }
+        ]
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "name": "baseline",
+    "branch": "claude/eloquent-cori-mv7xrx",
+    "canvas": "https://claude.ai/artifact/9gVpqYZDyCe6ksmjvvkA54",
+    "canvasVersion": "1794912709-5903",
+    "kit": {
+        "package": "@aragon/gov-ui-kit",
+        "version": "3.0.0",
+        "commit": "041dc089d",
+        "designSystem": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
+        "designSystemVersion": "1794906150-8cdd",
+        "folder": "ds/aragon-gov-ui-kit",
+        "files": {
+            "components/bundle.css": "7bf519e04065305ccafd521f70f981e6f158627a1ac9667f67377129c24e7702",
+            "components/bundle.js": "e61dbd643dc3ac1588067f0583c52d8e7ca9eb95a43957e093ccf8ecd3939fbd",
+            "components/index.d.ts": "4c206ab4fa236a1eecd87c47d95e28f139e5206666cca9ac6b77a9f22f5097d5",
+            "components/lib/react-hook-form.js": "86724735743b0c0898fcd8e899c37020d0769d3e1383cd571ee275654a03d85f",
+            "fonts/Manrope-Regular.ttf": "2960175e094cf559435dd6ad7b67391689a95e866e7989b70560937dccaaea87",
+            "fonts/Manrope-SemiBold.ttf": "9cb6bdf00c2c6b64d4bc77087aadf88207a577f32dae410745e4d55582355d3c",
+            "tokens.css": "b5744b5a383fec007889959117a43daade7fa79568a771da0ce45dada7486f43",
+            "tokens.json": "5006926de6db3ff9cc0c9df3f450e965767967c0e191253828bf95f600a034bd"
+        }
+    }
+}

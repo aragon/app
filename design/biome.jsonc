@@ -5,29 +5,25 @@
     "files": {
         // files.includes of a nested config replaces the root list, so the shared exclusions repeat here.
         // canvas/ is written by the claude.ai canvas editor and synced back verbatim: reformatting it breaks the round-trip.
+        // baseline-check/cms/ is a verbatim snapshot of the app-cms files, kept byte-identical to upstream.
         "includes": [
             "**",
             "!**/*.svg",
             "!canvas",
-            "!reference"
+            "!reference",
+            "!baseline-check/cms"
         ]
     },
     "overrides": [
         {
-            // Local scripts that run the app on mock data and take screenshots: they log progress, and resolve their
-            // dependencies (viem, sharp) through apps/app instead of declaring their own.
+            // Command-line scripts: they report progress and failures on the console.
             "includes": [
-                "mock-backend/**"
+                "baseline-check/**"
             ],
             "linter": {
                 "rules": {
                     "suspicious": {
-                        "noConsole": "off",
-                        // Fetch shims and request handlers return promises by contract, with or without an await.
-                        "useAwait": "off"
-                    },
-                    "correctness": {
-                        "noUndeclaredDependencies": "off"
+                        "noConsole": "off"
                     }
                 }
             }

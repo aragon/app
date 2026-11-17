@@ -1,19 +1,14 @@
 'use strict';
-// Mock data for the Aragon App backend. Timestamps are relative to server start (seconds).
+// Mock data for the Aragon App backend. Every timestamp is an offset from NOW, the reference time of
+// design/screens.json (seconds), so the data is the same on every run.
 const crypto = require('node:crypto');
-const viem = require(
-    require.resolve('viem', {
-        paths: [
-            require('node:path').join(__dirname, '..', '..', 'apps', 'app'),
-        ],
-    }),
-);
+const { deps, NOW_MS, ASSET_HOST } = require('./lib.cjs');
 
-const NOW = Math.floor(Date.now() / 1000);
+const { viem } = deps;
+const NOW = Math.floor(NOW_MS / 1000);
 const DAY = 86_400;
 const HOUR = 3600;
 const NET = 'ethereum-mainnet';
-const ASSET_HOST = 'https://mock-assets.aragon.test';
 
 const addr = (seed) =>
     `0x${crypto.createHash('sha256').update(seed).digest('hex').slice(0, 40)}`;
