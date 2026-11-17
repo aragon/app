@@ -24,10 +24,7 @@
         {
             "artboard": "Proposal.dc.html",
             "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-8",
-            "reference": "dao-proposal-mgp-8-active.webp",
-            "knownDifferences": [
-                "Proposal body: the app renders the headings of the description as plain text; the kit's DocumentParser styles them. Open question for engineering (see README, Known gaps)."
-            ]
+            "reference": "dao-proposal-mgp-8-active.webp"
         },
         {
             "artboard": "Assets.dc.html",
