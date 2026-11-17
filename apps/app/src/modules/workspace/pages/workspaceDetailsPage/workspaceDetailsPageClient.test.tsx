@@ -7,7 +7,11 @@ import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAc
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
-import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDialogContext,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import {
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
@@ -19,6 +23,7 @@ import {
     workspaceService,
 } from '../../api/workspaceService';
 import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
+import * as useWorkspaceDaosModule from '../../hooks/useWorkspaceDaos';
 import * as useWorkspaceTodoDataModule from '../../hooks/useWorkspaceTodoData';
 import {
     type IWorkspaceDetailsPageClientProps,
@@ -154,6 +159,32 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         await waitFor(() =>
             expect(screen.getByText('Demo DAO')).toBeInTheDocument(),
         );
+    });
+
+    it('displays the DAO accounts with their indexed name and avatar', async () => {
+        const useWorkspaceDaosSpy = jest
+            .spyOn(useWorkspaceDaosModule, 'useWorkspaceDaos')
+            .mockReturnValue({
+                daos: {
+                    [`${Network.ETHEREUM_SEPOLIA}-${address}`]: generateDao({
+                        name: 'Indexed DAO',
+                        avatar: 'ipfs://avatar',
+                    }),
+                },
+                isPending: false,
+            });
+        const workspace = buildWorkspace();
+
+        try {
+            renderWorkspace(workspace);
+
+            expect(await screen.findByText('Indexed DAO')).toBeInTheDocument();
+            expect(useWorkspaceDaosSpy).toHaveBeenCalledWith(
+                workspace.accounts,
+            );
+        } finally {
+            useWorkspaceDaosSpy.mockRestore();
+        }
     });
 
     it('displays the to-do section above the accounts for a connected wallet', async () => {

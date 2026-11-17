@@ -18,6 +18,7 @@ import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
 import { WorkspaceTodoPreview } from '../../components/workspaceTodoPreview';
 import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
+import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -58,6 +59,9 @@ export const WorkspaceDetailsPageClient: React.FC<
     });
 
     const accounts = workspace?.accounts ?? [];
+
+    // For the avatar and indexed name; the workspace metadata goes over them.
+    const { daos } = useWorkspaceDaos(accounts);
 
     // Resolved once for the whole list to display the DAO names, which the registry does not store.
     const { data: accountInfos } = useWorkspaceAccounts(
@@ -170,6 +174,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         accountInfos,
                                         account,
                                     )}
+                                    dao={daos[account.id]}
                                     key={account.id}
                                     workspaceId={workspaceId}
                                 />
