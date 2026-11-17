@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
+import { Button, Icon, IconType } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -39,33 +39,23 @@ export const LandingPage: React.FC = () => {
             onSuccess: () => router.push('/workspace'),
         });
     const year = new Date().getFullYear();
-    const { address, isConnecting } = useWalletAccount();
+    const { address } = useWalletAccount();
+
+    // Prefetched, so a connected wallet leaves at once.
+    useEffect(() => router.prefetch('/workspace'), [router]);
 
     useEffect(() => {
         if (isWalletConnected) {
             router.replace('/workspace');
         }
     }, [isWalletConnected, router]);
-    const isOpeningWorkspace =
-        isWalletConnected || address != null || isConnecting;
+
+    // A connected or restoring wallet leaves; the page stays visible behind the connect modal.
+    const isOpeningWorkspace = isWalletConnected || address != null;
 
     if (isOpeningWorkspace) {
         return (
-            <main
-                aria-busy="true"
-                className="flex min-h-dvh items-center justify-center bg-neutral-0"
-                data-ftue-landing=""
-            >
-                <div
-                    className="flex flex-col items-center gap-3 text-neutral-500"
-                    role="status"
-                >
-                    <Spinner size="lg" variant="neutral" />
-                    <p className="text-base leading-tight">
-                        {t('app.application.landingPage.openingWorkspace')}
-                    </p>
-                </div>
-            </main>
+            <main aria-busy="true" className="min-h-dvh" data-ftue-landing="" />
         );
     }
 

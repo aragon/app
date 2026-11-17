@@ -74,6 +74,9 @@ export const WorkspaceGettingStarted: React.FC = () => {
         setSelected([]);
     }
 
+    // Prefetched, so a disconnect leaves at once.
+    useEffect(() => router.prefetch('/'), [router]);
+
     // Every disconnect returns to the landing page.
     useEffect(() => {
         if (!isConnected) {
@@ -156,6 +159,11 @@ export const WorkspaceGettingStarted: React.FC = () => {
               : t('app.workspace.workspaceGettingStarted.action.addMany', {
                     count: selected.length,
                 });
+
+    // The disconnect effect is already leaving.
+    if (!isConnected) {
+        return null;
+    }
 
     return (
         <>

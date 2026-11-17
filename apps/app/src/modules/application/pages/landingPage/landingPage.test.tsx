@@ -16,6 +16,7 @@ import { LandingPage } from './landingPage';
 describe('<LandingPage /> component', () => {
     const push = jest.fn();
     const replace = jest.fn();
+    const prefetch = jest.fn();
     const check = jest.fn();
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const walletGuardSpy = jest.spyOn(
@@ -32,6 +33,7 @@ describe('<LandingPage /> component', () => {
         useRouterSpy.mockReturnValue({
             push,
             replace,
+            prefetch,
         } as unknown as AppRouterInstance);
         walletGuardSpy.mockReturnValue({ check, result: false });
         walletAccountSpy.mockReturnValue({
@@ -46,6 +48,7 @@ describe('<LandingPage /> component', () => {
     afterEach(() => {
         push.mockReset();
         replace.mockReset();
+        prefetch.mockReset();
         check.mockReset();
         useRouterSpy.mockReset();
         walletGuardSpy.mockReset();
@@ -102,6 +105,12 @@ describe('<LandingPage /> component', () => {
         }
     });
 
+    it('prefetches /workspace on mount', () => {
+        render(createTestComponent());
+
+        expect(prefetch).toHaveBeenCalledWith('/workspace');
+    });
+
     it('opens the existing workspace when the wallet is already connected', async () => {
         walletGuardSpy.mockReturnValue({ check, result: true });
 
@@ -110,7 +119,7 @@ describe('<LandingPage /> component', () => {
         await waitFor(() => expect(replace).toHaveBeenCalledWith('/workspace'));
     });
 
-    it('shows workspace progress while restoring a connected wallet', () => {
+    it('hides the landing content without a loading message while restoring a connected wallet', () => {
         walletAccountSpy.mockReturnValue({
             address: '0x123',
             chainId: 1,
@@ -120,14 +129,29 @@ describe('<LandingPage /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByRole('status')).toHaveTextContent(
-            /landingPage\.openingWorkspace$/,
-        );
+        expect(screen.queryByRole('status')).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
                 name: /landingPage\.signIn\.walletAction$/,
             }),
         ).not.toBeInTheDocument();
+    });
+
+    it('keeps the landing content behind the wallet modal while connecting', () => {
+        walletAccountSpy.mockReturnValue({
+            address: undefined,
+            chainId: undefined,
+            isConnecting: true,
+            isReconnecting: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: /landingPage\.signIn\.walletAction$/,
+            }),
+        ).toBeInTheDocument();
     });
 
     it('checks the connected wallet before opening the workspace', async () => {

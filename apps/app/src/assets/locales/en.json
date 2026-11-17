@@ -466,7 +466,6 @@
           "title": "Your team’s onchain finances, in one place"
         },
         "legal": "Legal",
-        "openingWorkspace": "Opening your workspace…",
         "privacy": "Privacy",
         "signIn": {
           "comingSoon": "coming soon",
@@ -4784,7 +4783,8 @@
         "error": {
           "description": "Something went wrong while opening your workspace. Please try again later.",
           "title": "Workspace failed to open"
-        }
+        },
+        "opening": "Opening your workspace…"
       },
       "workspaceGettingStarted": {
         "name": "Getting started",

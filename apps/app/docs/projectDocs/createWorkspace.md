@@ -1010,9 +1010,14 @@ generic `Page.Error`, and branches on the account segment read with `useParams()
 | empty | none | `router.replace('/')` |
 | empty | connected | Getting started (`WorkspaceGettingStarted`) |
 
-The wallet reads as disconnected until it settles, so an empty list waits for it, behind a spinner, before deciding.
-Getting started latches once shown: it owns the page from then on, leaving on a disconnect and for the workspace it
-creates, so the entry route never redirects again after a create.
+The wallet reads as disconnected until it settles, so an empty list waits for it before deciding, rendering nothing
+meanwhile (no spinner: the wait is short). A stored workspace is known from the first read, so its redirect shows
+"Opening your workspace…" with a spinner while the workspace route loads. Getting started latches once shown: it owns
+the page from then on, leaving on a disconnect and for the workspace it creates, so the entry route never redirects
+again after a create. Once disconnected it renders nothing while it leaves, so no wallet-less state shows before the
+landing page. The landing page, in turn, stays visible behind the connect modal and goes blank only once a wallet is
+connected or restoring. Each side prefetches the other on mount (`/workspace` from the landing page, `/` from Getting
+started), so the swap takes about a frame, as in the design.
 
 The content column is 800px wide at most, with 32px between the header, the body and the actions.
 

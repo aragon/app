@@ -90,11 +90,11 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         );
     };
 
-    it('renders a loading state while the workspace list loads', () => {
+    it('renders nothing while the workspace list loads', () => {
         getWorkspaceListSpy.mockReturnValue(new Promise(() => undefined));
         render(createTestComponent());
 
-        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
     it('replaces the route with the aggregated overview of the first workspace, wallet or not', async () => {
@@ -111,6 +111,17 @@ describe('<WorkspaceEntryPageClient /> component', () => {
             ),
         );
         expect(replaceMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows that the workspace is opening while the redirect to it loads', async () => {
+        mockWallet({ isConnected: false });
+        getWorkspaceListSpy.mockResolvedValue([workspace]);
+        render(createTestComponent());
+
+        expect(await screen.findByRole('status')).toHaveTextContent(
+            'app.workspace.workspaceEntryPage.opening',
+        );
+        expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
     it('replaces the route with the landing page when there is no workspace and no wallet', async () => {
@@ -131,7 +142,7 @@ describe('<WorkspaceEntryPageClient /> component', () => {
             createTestComponent(undefined, queryClient),
         );
 
-        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         expect(replaceMock).not.toHaveBeenCalled();
 
         mockWallet({ isConnected: true });
@@ -169,7 +180,7 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         render(createTestComponent(undefined, queryClient));
 
         await waitFor(() => expect(getWorkspaceListSpy).toHaveBeenCalled());
-        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         expect(replaceMock).not.toHaveBeenCalled();
     });
 

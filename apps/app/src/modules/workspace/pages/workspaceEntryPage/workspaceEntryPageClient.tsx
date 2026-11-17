@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { Page } from '@/shared/components/page';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useWorkspaceList } from '../../api/workspaceService';
 import {
@@ -21,6 +22,7 @@ type WorkspaceEntryOutcome = 'open' | 'landing' | 'gettingStarted' | 'wait';
 export const WorkspaceEntryPageClient: React.FC<
     IWorkspaceEntryPageClientProps
 > = () => {
+    const { t } = useTranslations();
     const router = useRouter();
     const { data: workspaces, error } = useWorkspaceList();
     const { address, isConnecting, isReconnecting } = useWalletAccount();
@@ -89,9 +91,20 @@ export const WorkspaceEntryPageClient: React.FC<
         );
     }
 
-    return (
-        <div className="flex grow items-center justify-center py-20">
-            <Spinner size="lg" variant="neutral" />
-        </div>
-    );
+    // The workspace route can be slow to load; the short wallet wait shows nothing.
+    if (outcome === 'open') {
+        return (
+            <div
+                className="flex grow flex-col items-center justify-center gap-3 py-20 text-neutral-500"
+                role="status"
+            >
+                <Spinner size="lg" variant="neutral" />
+                <p className="text-base leading-tight">
+                    {t('app.workspace.workspaceEntryPage.opening')}
+                </p>
+            </div>
+        );
+    }
+
+    return null;
 };

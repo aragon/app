@@ -94,6 +94,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
 
     const replaceMock = jest.fn();
     const pushMock = jest.fn();
+    const prefetchMock = jest.fn();
     const openMock = jest.fn();
     const closeMock = jest.fn();
     const disconnectMock = jest.fn();
@@ -145,6 +146,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
         useRouterSpy.mockReturnValue({
             replace: replaceMock,
             push: pushMock,
+            prefetch: prefetchMock,
         } as unknown as AppRouterInstance);
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ open: openMock, close: closeMock }),
@@ -168,6 +170,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
         useSuggestionsSpy.mockReset();
         replaceMock.mockReset();
         pushMock.mockReset();
+        prefetchMock.mockReset();
         openMock.mockReset();
         closeMock.mockReset();
         disconnectMock.mockReset();
@@ -449,6 +452,12 @@ describe('<WorkspaceGettingStarted /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('prefetches the landing page on mount', () => {
+        render(createTestComponent());
+
+        expect(prefetchMock).toHaveBeenCalledWith('/');
+    });
+
     it('returns to the landing page without prompting to reconnect when the wallet disconnects', () => {
         const { rerender } = render(createTestComponent());
         expect(replaceMock).not.toHaveBeenCalled();
@@ -466,6 +475,15 @@ describe('<WorkspaceGettingStarted /> component', () => {
         );
     });
 
+    it('renders nothing once the wallet disconnects, so no wallet-less state shows before the landing page', () => {
+        const { container, rerender } = render(createTestComponent());
+
+        useWalletConnectedSpy.mockReturnValue(false);
+        rerender(createTestComponent());
+
+        expect(container).toBeEmptyDOMElement();
+    });
+
     it('disconnects on close and lands on the landing page once disconnected', async () => {
         const { rerender } = render(createTestComponent());
 
@@ -480,6 +498,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
         useWalletConnectedSpy.mockReturnValue(false);
         rerender(createTestComponent());
 
+        expect(prefetchMock).toHaveBeenCalledWith('/');
         expect(replaceMock).toHaveBeenCalledTimes(1);
         expect(replaceMock).toHaveBeenCalledWith('/');
     });
