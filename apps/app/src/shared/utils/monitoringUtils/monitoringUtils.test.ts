@@ -314,6 +314,7 @@ describe('monitoring utils', () => {
             { env: 'staging', result: true },
             { env: 'development', result: true },
             { env: 'production', result: true },
+            { env: 'occ', result: true },
             { env: 'local', result: false },
             { env: 'unknown', result: false },
         ])('returns $result for $env environment', ({ env, result }) => {

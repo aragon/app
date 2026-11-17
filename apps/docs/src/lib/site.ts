@@ -1,12 +1,16 @@
 // Where the site is published: the Aragon app rewrites /help to this deployment, so every page
-// is built under the base path and canonical URLs point at the app's domain.
+// is built under the base path and canonical URLs point at the app's domain. Links to the app are
+// root-relative, since the site is served from the app's host.
 export const siteOrigin = 'https://app.aragon.org';
 export const basePath = '/help';
 export const siteUrl = `${siteOrigin}${basePath}`;
 
-// The app this environment's site belongs to (config/.env.*): the header and the footer link to
-// it, since the site has its own design and no app navigation.
-export const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? siteOrigin;
+// Origins of the apps that serve the site (NEXT_PUBLIC_APP_ORIGINS); the first is where app links
+// lead when the site is opened on any other host.
+export const appOrigins = (process.env.NEXT_PUBLIC_APP_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin !== '');
 
 // The rest of Aragon, linked the way docs.aragon.org does it.
 export const developerDocsUrl = 'https://docs.aragon.org';
