@@ -12,6 +12,7 @@ import {
     workspaceService,
 } from '../../api/workspaceService';
 import * as workspaceAccountSelectModule from '../../components/workspaceAccountSelect';
+import * as useWorkspaceAccountSuggestionsModule from '../../hooks/useWorkspaceAccountSuggestions';
 import {
     type IWorkspaceAddAccountsDialogProps,
     WorkspaceAddAccountsDialog,
@@ -49,11 +50,24 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
         workspaceAccountSelectModule,
         'WorkspaceAccountSelect',
     );
+    const useSuggestionsSpy = jest.spyOn(
+        useWorkspaceAccountSuggestionsModule,
+        'useWorkspaceAccountSuggestions',
+    );
+    const mockIncomplete = (isIncomplete: boolean) =>
+        useSuggestionsSpy.mockReturnValue({
+            suggestions: [],
+            isPending: false,
+            isError: false,
+            isIncomplete,
+            refetch: jest.fn(),
+        });
 
     let workspace: IWorkspace;
 
     beforeEach(async () => {
         mockWallet('0x5dcD623bf6E792bfBDbf8d643f6478153df4A8D2');
+        mockIncomplete(false);
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ close: closeSpy }),
         );
@@ -85,6 +99,7 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
         useDialogContextSpy.mockReset();
         addWorkspaceAccountSpy.mockClear();
         selectSpy.mockReset();
+        useSuggestionsSpy.mockReset();
         closeSpy.mockClear();
         localStorage.clear();
     });
@@ -209,6 +224,17 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
         rerender(createTestComponent());
 
         await waitFor(() => expect(getAddButton()).toBeDisabled());
+    });
+
+    it('warns above the selector when accounts could not be loaded', async () => {
+        mockIncomplete(true);
+        render(createTestComponent());
+
+        expect(
+            await screen.findByText(
+                'app.workspace.workspaceAccountSelect.incomplete',
+            ),
+        ).toBeInTheDocument();
     });
 
     it('links to creating a new account', async () => {

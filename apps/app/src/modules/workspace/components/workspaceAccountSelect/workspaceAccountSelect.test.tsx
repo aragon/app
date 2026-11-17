@@ -76,6 +76,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: created,
@@ -268,6 +270,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: true,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: member,
@@ -296,6 +300,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions,
         });
         render(createTestComponent());
@@ -322,6 +328,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: lookedUp,
@@ -356,6 +364,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: testnetMember,
@@ -483,6 +493,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: true,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: created,
@@ -567,6 +579,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: true,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [],
         });
         render(createTestComponent());

@@ -129,16 +129,35 @@ describe('getWorkspaceAccountSuggestions stand-in', () => {
         });
     });
 
-    it('leaves out the Safes of a network that fails', async () => {
+    it('leaves out the Safes of a network that fails and flags the list as incomplete', async () => {
         getSafesByOwnerSpy.mockRejectedValue(new Error('quota'));
 
-        const { data } = await getWorkspaceAccountSuggestions(params);
+        const { data, isIncomplete } =
+            await getWorkspaceAccountSuggestions(params);
 
         expect(
             data.some(
                 ({ account }) => account.type === WorkspaceAccountType.SAFE,
             ),
         ).toBe(false);
+        expect(isIncomplete).toBe(true);
+    });
+
+    it('reads at most three Safe networks at a time', async () => {
+        let inFlight = 0;
+        let maxInFlight = 0;
+        getSafesByOwnerSpy.mockImplementation(async () => {
+            inFlight++;
+            maxInFlight = Math.max(maxInFlight, inFlight);
+            await Promise.resolve();
+            inFlight--;
+            return [];
+        });
+
+        await getWorkspaceAccountSuggestions(params);
+
+        expect(getSafesByOwnerSpy.mock.calls.length).toBeGreaterThan(3);
+        expect(maxInFlight).toBe(3);
     });
 
     it('ranks the DAOs the wallet deployed first, as a single page', async () => {

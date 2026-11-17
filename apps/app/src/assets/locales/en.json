@@ -5093,6 +5093,8 @@
       },
       "workspaceAccountSelect": {
         "entity": "Accounts",
+        "incomplete": "Some of your accounts could not be loaded.",
+        "retry": "Retry",
         "searchPlaceholder": "Search accounts...",
         "addAddress": "Add address",
         "emptyState": {

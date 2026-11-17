@@ -1278,8 +1278,12 @@ Keep it that way when extending this.
   [Suggestions backend endpoint](#suggestions-backend-endpoint)). Until then:
   - DAOs the wallet deployed without being a member are not suggested: `daos/member` only lists memberships.
   - Every Safe is labelled "Member": the Safe API calls every signer an owner.
-  - A Safe network that fails, e.g. on the shared quota, drops its Safes without a warning, and the incomplete list
-    stays cached for 10 minutes.
+  - A Safe network that fails, e.g. on the shared quota, drops its Safes. The list is flagged incomplete: an alert
+    reads "Some of your accounts could not be loaded." with a Retry button. The list also goes stale after 30 seconds
+    instead of 10 minutes, so it is read again on the next mount or window focus.
+  - The alert names no network, though the design names the one that failed. The stand-in could, but an endpoint
+    that returns the Safes can only if it reports the networks it could not read.
+  - To stay under the Safe API rate limit, Safe networks are read three at a time.
   - The "N found so far" count jumps from 0 to the total, as the stand-in returns one page.
 - **"Create a new account" leaves the dialog** for the DAO creation page (`/create/dao`) until accounts can be
   created in place (PR 3).
@@ -1360,9 +1364,12 @@ A new backend endpoint will bring in the account suggestions. When it lands:
 
 - **Replace** the body of `workspaceQueryService.getAccountSuggestions` with the request to the endpoint, and its
   query parameters if they differ.
-- **Remove** `api/workspaceQueryService/workspaceAccountSuggestionsStandIn.ts` and its test.
+- **Remove** `api/workspaceQueryService/workspaceAccountSuggestionsStandIn.ts` and its test, which takes the
+  three-at-a-time Safe reads with it.
 - **Remove**, if the endpoint returns the Safes: `safeTransactionService.getSafesByOwner`, its test and
   `IGetSafesByOwnerParams`, and the `v1/owners/{address}/safes` entry of the Safe proxy allowlist
   (`proxySafeUtils.isSupportedPath`) and its tests.
 - **Revisit** the "Scanning N networks, N found so far" message of `WorkspaceAccountSelect`, as the endpoint has no
   per-network progress.
+- **Revisit** `isIncomplete`, the incomplete alert with its Retry (`WorkspaceAccountSelectIncompleteAlert`) and
+  `incompleteSuggestionsStaleTime`: they go if the endpoint never returns partial results.

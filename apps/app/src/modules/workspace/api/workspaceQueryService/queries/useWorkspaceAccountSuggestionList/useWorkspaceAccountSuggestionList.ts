@@ -1,25 +1,26 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type {
     InfiniteQueryOptions,
     SharedInfiniteQueryOptions,
 } from '@/shared/types';
-import type { IWorkspaceAccountSuggestion } from '../../domain';
+import type { IWorkspaceAccountSuggestionListResponse } from '../../domain';
 import { workspaceQueryService } from '../../workspaceQueryService';
 import type { IGetWorkspaceAccountSuggestionsParams } from '../../workspaceQueryService.api';
 import { workspaceQueryServiceKeys } from '../../workspaceQueryServiceKeys';
 
 // A wallet's accounts rarely change, and each read spends the shared Safe API quota.
 const accountSuggestionsStaleTime = 10 * 60 * 1000;
+// An incomplete list goes stale sooner, so it is read again.
+const incompleteSuggestionsStaleTime = 30 * 1000;
 
 export const workspaceAccountSuggestionListOptions = (
     params: IGetWorkspaceAccountSuggestionsParams,
     options?: InfiniteQueryOptions<
-        IPaginatedResponse<IWorkspaceAccountSuggestion>,
+        IWorkspaceAccountSuggestionListResponse,
         IGetWorkspaceAccountSuggestionsParams
     >,
 ): SharedInfiniteQueryOptions<
-    IPaginatedResponse<IWorkspaceAccountSuggestion>,
+    IWorkspaceAccountSuggestionListResponse,
     IGetWorkspaceAccountSuggestionsParams
 > => ({
     queryKey: workspaceQueryServiceKeys.accountSuggestions(params),
@@ -27,7 +28,10 @@ export const workspaceAccountSuggestionListOptions = (
     queryFn: ({ pageParam }) =>
         workspaceQueryService.getAccountSuggestions(pageParam),
     getNextPageParam: workspaceQueryService.getNextPageParams,
-    staleTime: accountSuggestionsStaleTime,
+    staleTime: ({ state }) =>
+        state.data?.pages.some((page) => page.isIncomplete)
+            ? incompleteSuggestionsStaleTime
+            : accountSuggestionsStaleTime,
     gcTime: accountSuggestionsStaleTime,
     ...options,
 });
@@ -35,7 +39,7 @@ export const workspaceAccountSuggestionListOptions = (
 export const useWorkspaceAccountSuggestionList = (
     params: IGetWorkspaceAccountSuggestionsParams,
     options?: InfiniteQueryOptions<
-        IPaginatedResponse<IWorkspaceAccountSuggestion>,
+        IWorkspaceAccountSuggestionListResponse,
         IGetWorkspaceAccountSuggestionsParams
     >,
 ) => useInfiniteQuery(workspaceAccountSuggestionListOptions(params, options));

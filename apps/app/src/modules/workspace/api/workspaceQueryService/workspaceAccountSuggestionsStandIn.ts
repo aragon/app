@@ -2,7 +2,6 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
 import { safeTxServiceShortNames } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { daoExplorerService } from '@/modules/explore/api/daoExplorerService';
-import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { IDao, Network } from '@/shared/api/daoService';
 import { safeTransactionService } from '@/shared/api/safeService';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -12,6 +11,7 @@ import {
 } from '../workspaceService';
 import {
     type IWorkspaceAccountSuggestion,
+    type IWorkspaceAccountSuggestionListResponse,
     WorkspaceAccountSuggestionRole,
 } from './domain';
 import type { IGetWorkspaceAccountSuggestionsParams } from './workspaceQueryService.api';
@@ -19,16 +19,19 @@ import type { IGetWorkspaceAccountSuggestionsParams } from './workspaceQueryServ
 // Largest page `daos/member` serves; the stand-in reads every page.
 const daoPageSize = 50;
 
+// Reading every Safe network at once gets 429s on the shared Safe API key.
+const safeNetworkConcurrency = 3;
+
 /**
  * Stands in for the suggestions endpoint: every page of `daos/member` and the Safes the wallet signs for on each
  * Safe network, ranked and returned as one page.
  */
 export const getWorkspaceAccountSuggestions = async (
     params: IGetWorkspaceAccountSuggestionsParams,
-): Promise<IPaginatedResponse<IWorkspaceAccountSuggestion>> => {
+): Promise<IWorkspaceAccountSuggestionListResponse> => {
     const { address } = params.urlParams;
 
-    const [daos, safes] = await Promise.all([
+    const [daos, { safes, isIncomplete }] = await Promise.all([
         getMemberDaos(address),
         getSignerSafes(address),
     ]);
@@ -61,6 +64,7 @@ export const getWorkspaceAccountSuggestions = async (
             totalPages: 1,
             totalRecords: data.length,
         },
+        isIncomplete,
     };
 };
 
@@ -83,24 +87,37 @@ const getMemberDaos = async (address: string): Promise<IDao[]> => {
     return [firstPage, ...otherPages].flatMap((page) => page.data);
 };
 
-// A network that fails, e.g. on the shared quota, is left out rather than failing the suggestions.
+// A failed network is left out and the list flagged incomplete.
 const getSignerSafes = async (
     address: string,
-): Promise<{ network: Network; address: string }[]> => {
+): Promise<{
+    safes: { network: Network; address: string }[];
+    isIncomplete: boolean;
+}> => {
     // Only the networks both the app and the Safe transaction service support.
     const safeNetworks = networkUtils
         .getSupportedNetworks()
         .filter((network) => safeTxServiceShortNames[network] != null);
 
-    const results = await Promise.allSettled(
-        safeNetworks.map((network) =>
-            safeTransactionService.getSafesByOwner({
-                urlParams: { network, address },
-            }),
-        ),
-    );
+    const results: PromiseSettledResult<string[]>[] = [];
 
-    return results.flatMap((result, index) =>
+    for (
+        let index = 0;
+        index < safeNetworks.length;
+        index += safeNetworkConcurrency
+    ) {
+        const batch = safeNetworks.slice(index, index + safeNetworkConcurrency);
+        const batchResults = await Promise.allSettled(
+            batch.map((network) =>
+                safeTransactionService.getSafesByOwner({
+                    urlParams: { network, address },
+                }),
+            ),
+        );
+        results.push(...batchResults);
+    }
+
+    const safes = results.flatMap((result, index) =>
         result.status === 'fulfilled'
             ? result.value.map((safe) => ({
                   network: safeNetworks[index],
@@ -108,6 +125,9 @@ const getSignerSafes = async (
               }))
             : [],
     );
+    const isIncomplete = results.some(({ status }) => status === 'rejected');
+
+    return { safes, isIncomplete };
 };
 
 const isCreator = ({ role }: IWorkspaceAccountSuggestion) =>
