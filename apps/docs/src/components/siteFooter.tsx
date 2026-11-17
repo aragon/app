@@ -2,7 +2,6 @@
 
 import { Tag } from '@aragon/gov-ui-kit';
 import {
-    appUrl,
     basePath,
     developerDocsUrl,
     privacyPolicyUrl,
@@ -11,7 +10,7 @@ import {
 import { AragonLogo } from './aragonLogo';
 
 const links = [
-    { text: 'Aragon App', url: appUrl },
+    { text: 'Aragon App', url: '/' },
     { text: 'Developers', url: developerDocsUrl },
     { text: 'Privacy', url: privacyPolicyUrl },
     { text: 'Terms of Service', url: termsOfServiceUrl },

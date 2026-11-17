@@ -1,14 +1,18 @@
 'use client';
 
-import { Button, Icon, IconType } from '@aragon/gov-ui-kit';
+import { Button, GukCoreProvider, Icon, IconType } from '@aragon/gov-ui-kit';
 import Link from 'fumadocs-core/link';
-import { appUrl, developerDocsUrl, websiteUrl } from '../lib/site';
+import { developerDocsUrl, websiteUrl } from '../lib/site';
 import { AragonLogo } from './aragonLogo';
 
 const links = [
     { text: 'Developers', url: developerDocsUrl },
     { text: 'Website', url: websiteUrl },
 ];
+
+// The kit's links go through the Next link, which prefixes the base path; the app link is a plain
+// anchor to the root of the host that serves the site.
+const plainLinkValues = { Link: 'a' } as const;
 
 /**
  * The header of the site, the blue navigation bar of the app: the Aragon wordmark with the site
@@ -42,9 +46,11 @@ export const SiteHeader = () => (
                         <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
                     </a>
                 ))}
-                <Button href={appUrl} size="md" variant="secondary">
-                    Launch app
-                </Button>
+                <GukCoreProvider values={plainLinkValues}>
+                    <Button href="/" size="md" variant="secondary">
+                        Launch app
+                    </Button>
+                </GukCoreProvider>
             </nav>
         </div>
     </header>

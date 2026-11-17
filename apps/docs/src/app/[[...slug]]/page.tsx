@@ -55,7 +55,6 @@ export default async function Page({ params }: IPageProps) {
                 <ViewOptionsPopover
                     className={pageActionClassName}
                     markdownUrl={markdownPath}
-                    pageUrl={toCanonicalUrl(page.url)}
                 />
             </div>
             <DocsDescription>{page.data.description}</DocsDescription>
