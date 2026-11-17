@@ -109,7 +109,15 @@ const launch = async () => {
             // so a rounded edge on a fractional position (the wallet button in the top bar) came out a shade
             // different with every repaint, and the result depended on how often the page had repainted. Full
             // raster clears the tile first.
-            args: ['--disable-partial-raster'],
+            // The rest are what Playwright's headless-shell wrapper passes, and the reference screenshots were taken
+            // with them: text without hinting or subpixel (LCD) antialiasing and one colour profile render the same
+            // whichever Chromium binary runs, so screenshots and canvas renders compare across machines.
+            args: [
+                '--disable-partial-raster',
+                '--font-render-hinting=none',
+                '--disable-lcd-text',
+                '--force-color-profile=srgb',
+            ],
         });
     } catch (error) {
         return die(
@@ -589,35 +597,50 @@ const runCapture = async (jobs, match) => {
         'Start both servers with ./start.sh (the first start compiles for several minutes).',
     );
 
+    // Jobs run on several browsers at once, each its own Chromium, so a failing job's cleanup touches only its own
+    // contexts. Every job sets up its page from scratch, so the order does not matter; the mock backend keeps no
+    // state between requests. BASELINE_CONCURRENCY overrides the count.
     const failures = [];
-    const browser = await launch();
-    for (const job of selected) {
-        console.log(job.name);
-        let failed = false;
-        try {
-            await job.run(browser);
-        } catch (error) {
-            failed = true;
-            const reason = String(error.message ?? error).split('\n')[0];
-            failures.push(`${job.name}: ${reason}`);
-            console.error(`  FAILED: ${reason}`);
-        }
-        // A job that fails leaves its context open: keep what was on screen, then close it.
-        for (const context of browser.contexts()) {
-            for (const page of failed ? context.pages() : []) {
-                fs.mkdirSync(FAILURES, { recursive: true });
-                await page
-                    .screenshot({
-                        path: path.join(FAILURES, `${job.name}.png`),
-                        fullPage: true,
-                    })
-                    // Best effort: the page may already be gone, and the failure is reported either way.
-                    .catch(() => undefined);
+    const concurrency = Math.max(
+        1,
+        Number(process.env.BASELINE_CONCURRENCY) ||
+            Math.min(4, require('node:os').availableParallelism()),
+    );
+    let next = 0;
+    const worker = async () => {
+        const browser = await launch();
+        while (next < selected.length) {
+            const job = selected[next++];
+            let failed = false;
+            try {
+                await job.run(browser);
+                console.log(job.name);
+            } catch (error) {
+                failed = true;
+                const reason = String(error.message ?? error).split('\n')[0];
+                failures.push(`${job.name}: ${reason}`);
+                console.error(`${job.name}\n  FAILED: ${reason}`);
             }
-            await context.close();
+            // A job that fails leaves its context open: keep what was on screen, then close it.
+            for (const context of browser.contexts()) {
+                for (const page of failed ? context.pages() : []) {
+                    fs.mkdirSync(FAILURES, { recursive: true });
+                    await page
+                        .screenshot({
+                            path: path.join(FAILURES, `${job.name}.png`),
+                            fullPage: true,
+                        })
+                        // Best effort: the page may already be gone, and the failure is reported either way.
+                        .catch(() => undefined);
+                }
+                await context.close();
+            }
         }
-    }
-    await browser.close();
+        await browser.close();
+    };
+    await Promise.all(
+        Array.from({ length: Math.min(concurrency, selected.length) }, worker),
+    );
 
     const after = await mockHealth();
     for (const key of ['unmatched', 'errors']) {

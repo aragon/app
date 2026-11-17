@@ -117,8 +117,10 @@ baseline canvas is refreshed from `main`.
   delete them from the baseline.
 - Reference screenshots change only in a baseline check, never in a feature pull request (binary files cannot be
   merged).
-- Never upload an image to a canvas. Images are files: app-owned ones are listed in `screens.json`, design-only ones
-  live in `design/canvas/assets/`.
+- Images are files in the repo: app-owned ones are listed in `screens.json`, design-only ones live in
+  `design/canvas/assets/`. A canvas shows images only from its own asset store, so a refresh uploads each image once
+  and publishes the screens with the upload's url in place of the path (the pointer file records which url is which
+  file). Never upload an image to a canvas by hand: it would exist only there.
 - A canvas is only refreshed after it has been synced, so hand edits are never overwritten.
 - The kit version of a canvas changes only on purpose, in a commit that says so.
 - Kit components cannot be edited on a canvas. An exploration that changes one draws a marked stand-in in its place

@@ -44,8 +44,10 @@ Run it when asked, at the start of a session that will touch the canvas, and bef
      publish the corrected screen. If you cannot, stop and report it;
    - a file that is not a screen, `canvas.json`, `app.css` or under `assets/`: report it and leave it out.
 5. Did the repo change since the pointer's commit (`git diff --quiet <that commit> HEAD -- design/canvas`)?
-   - No: make `design/canvas/` a mirror of the canvas files. Write each file byte for byte, and delete repo files whose
-     screen was deleted on the canvas. App-owned images (`screens.json` → `appAssets`) are not copied back.
+   - No: make `design/canvas/` a mirror of the canvas files. Write each file byte for byte, except that every image
+     url recorded in the pointer's `assets` goes back to its path (the reverse of `prepare-publish.cjs`), and delete
+     repo files whose screen was deleted on the canvas. App-owned images (`screens.json` → `appAssets`) are not
+     copied back.
    - Yes: both sides changed. Merge file by file with the pointer's commit as the base
      (`git merge-file <repo file> <file at that commit> <canvas file>`). On a conflict, stop and show the owner both
      versions. After a clean merge, publish the merged files to the canvas (a refresh).
@@ -59,8 +61,12 @@ Never reformat a canvas file. Biome and editors are configured to leave `design/
 ## Refresh (repo → canvas)
 
 1. Sync first.
-2. Publish every file under `design/canvas/` to `project/<same path>`, and every entry of `screens.json` →
-   `appAssets` (canvas path → repo file). A missing source file is an error: stop.
+2. `node design/baseline-check/prepare-publish.cjs <folder>` writes what to publish to `<folder>/project/`. A canvas
+   shows only images from its own asset store, so every image path in the screens is swapped there for the url of its
+   upload, recorded in the pointer's `assets`. If it exits 2, images are new or changed: upload the files it lists
+   from `<folder>/uploads/` (Artifact tool: publish with the canvas `url`, `asset: true`, `file_paths`), save the
+   answered urls as `{ "<canvas path>": "/_blob/<id>" }` and run `record-assets.cjs` on that file, then run
+   `prepare-publish.cjs` again. Publish every file of `<folder>/project/` to the same path on the canvas.
 3. Remove from the canvas every file under `project/`, outside `project/ds/`, that this branch does not have.
 4. Design system: the canvas must carry exactly the pinned copy (pointer → `kit`).
    - If `project/ds/<kit.folder>/` is missing, install it from `kit.designSystem` **at `kit.designSystemVersion`**

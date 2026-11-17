@@ -215,6 +215,7 @@ const renderArtboard = async (browser, artboard, opts = {}) => {
 
 module.exports = {
     KIT_DIR,
+    canvasPointer,
     KNOWN_404,
     RENDER_CONCURRENCY,
     checkInputs,
