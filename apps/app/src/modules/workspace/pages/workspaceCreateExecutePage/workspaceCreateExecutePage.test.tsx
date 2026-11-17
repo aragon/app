@@ -10,6 +10,7 @@ import {
     type IWorkspaceGateProps,
     WorkspaceGate,
 } from '../../components/workspaceGate';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspaceCreateExecutePageProps,
     WorkspaceCreateExecutePage,
@@ -72,6 +73,18 @@ describe('<WorkspaceCreateExecutePage /> component', () => {
             network: Network.ETHEREUM_SEPOLIA,
             addressOrEns: address,
         });
+    });
+
+    it('redirects an unpermitted wallet to the account workspace transactions', async () => {
+        const { page } = await createTestComponent();
+
+        expect(page.props.exitPath).toEqual(
+            workspaceUtils.getAccountScopeUrl(
+                'demo',
+                accountId,
+                'transactions',
+            ),
+        );
     });
 
     it('renders the 404 page when the workspaces flag is disabled', async () => {

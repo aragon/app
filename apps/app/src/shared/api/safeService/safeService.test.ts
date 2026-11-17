@@ -91,6 +91,63 @@ describe('safe service', () => {
         expect(result).toEqual(queue);
     });
 
+    describe('getSafePendingTransaction', () => {
+        let getSafePendingTransactionsSpy: jest.SpyInstance;
+        const safeTxHash = `0x${'ab'.repeat(32)}`;
+        const target = generateSafeTransaction({ safeTxHash });
+        const other = generateSafeTransaction({
+            safeTxHash: `0x${'cd'.repeat(32)}`,
+        });
+        const generatePage = (
+            results: ReturnType<typeof generateSafeTransaction>[],
+            next: string | null,
+        ) => ({ count: 3, next, previous: null, results, meta });
+
+        beforeEach(() => {
+            getSafePendingTransactionsSpy = jest.spyOn(
+                safeService,
+                'getSafePendingTransactions',
+            );
+        });
+
+        afterEach(() => {
+            getSafePendingTransactionsSpy.mockRestore();
+        });
+
+        it('reads the queue page by page until it finds the transaction', async () => {
+            getSafePendingTransactionsSpy
+                .mockResolvedValueOnce(generatePage([other], 'next-page'))
+                .mockResolvedValueOnce(generatePage([target], null));
+
+            const result = await safeService.getSafePendingTransaction({
+                urlParams: {
+                    ...urlParams,
+                    safeTxHash: safeTxHash.toUpperCase().replace('0X', '0x'),
+                },
+                queryParams: { limit: 1 },
+            });
+
+            expect(result).toEqual(target);
+            expect(getSafePendingTransactionsSpy).toHaveBeenNthCalledWith(2, {
+                urlParams,
+                queryParams: { limit: 1, offset: 1 },
+            });
+        });
+
+        it('returns null only once the whole queue has been read', async () => {
+            getSafePendingTransactionsSpy
+                .mockResolvedValueOnce(generatePage([other], 'next-page'))
+                .mockResolvedValueOnce(generatePage([other], null));
+
+            const result = await safeService.getSafePendingTransaction({
+                urlParams: { ...urlParams, safeTxHash },
+            });
+
+            expect(result).toBeNull();
+            expect(getSafePendingTransactionsSpy).toHaveBeenCalledTimes(2);
+        });
+    });
+
     it('getSafeNextNonce takes no caller-supplied nonce and reads one endpoint', async () => {
         // A `currentNonce` parameter would eventually be handed a polled value; the backend reads
         // both the live onchain nonce and the queue itself, uncached.

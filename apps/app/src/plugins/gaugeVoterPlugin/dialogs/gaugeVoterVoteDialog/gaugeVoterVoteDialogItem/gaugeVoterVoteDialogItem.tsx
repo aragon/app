@@ -73,7 +73,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
     const displayGaugeName =
         gaugeName ?? addressUtils.truncateAddress(gaugeAddress);
     const avatarFallback = (
-        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
             {displayGaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -88,8 +88,8 @@ export const GaugeVoterVoteDialogItem: React.FC<
         weight > BigInt(0) && displayVotes && displayVotes !== '0';
 
     return (
-        <DataList.Item className="relative flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
-            <div className="b-0 flex flex-1 items-center gap-3 border-neutral-100 border-b pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
+        <DataList.Item className="bg-neutral-0 relative flex flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:flex-row md:items-center md:justify-between">
+            <div className="b-0 flex flex-1 items-center gap-3 border-b border-neutral-100 pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
                 {gaugeAvatar && (
                     <Avatar
                         alt={displayGaugeName}
@@ -107,7 +107,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
                             label={gaugeName ?? undefined}
                         />
                     </span>
-                    <span className="truncate text-neutral-500 text-sm">
+                    <span className="truncate text-sm text-neutral-500">
                         <AddressOutput address={gaugeAddress} copy={false} />
                     </span>
                 </div>
@@ -115,12 +115,12 @@ export const GaugeVoterVoteDialogItem: React.FC<
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
                 <div className="flex flex-col items-end md:w-32">
                     {displayShare != null && (
-                        <span className="font-semibold text-base text-neutral-800">
+                        <span className="text-base font-semibold text-neutral-800">
                             {displayShare.toFixed(2)}%
                         </span>
                     )}
                     {showTokenAmount && (
-                        <span className="text-neutral-500 text-sm">
+                        <span className="text-sm text-neutral-500">
                             {displayVotes} {tokenSymbol}
                         </span>
                     )}

@@ -121,6 +121,24 @@ describe('useExecutePermissionCheckGuard hook', () => {
         );
     });
 
+    it('redirects to the given exit path when not permitted', () => {
+        useDaoExecutePermissionSpy.mockReturnValue({
+            hasPermission: false,
+            isLoading: false,
+        });
+
+        renderHook(() =>
+            useExecutePermissionCheckGuard({
+                daoId: 'dao-id',
+                exitPath: '/workspace/demo/account/transactions',
+            }),
+        );
+
+        expect(mockRouter.replace).toHaveBeenCalledWith(
+            '/workspace/demo/account/transactions',
+        );
+    });
+
     it('does not redirect while the permission check is loading', () => {
         useDaoExecutePermissionSpy.mockReturnValue({
             hasPermission: false,

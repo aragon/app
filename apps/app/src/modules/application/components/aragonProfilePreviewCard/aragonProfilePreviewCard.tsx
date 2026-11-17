@@ -23,7 +23,7 @@ export const AragonProfilePreviewCard: React.FC<
     const { t } = useTranslations();
 
     return (
-        <Card className="w-full px-6 py-0 shadow-neutral-sm">
+        <Card className="shadow-neutral-sm w-full px-6 py-0">
             <div className="flex flex-col gap-3 py-6">
                 <div className="flex items-center gap-4">
                     <MemberAvatar
@@ -40,7 +40,7 @@ export const AragonProfilePreviewCard: React.FC<
                         />
                     </div>
                 </div>
-                <p className="truncate text-neutral-800 text-xl leading-tight">
+                <p className="truncate text-xl leading-tight text-neutral-800">
                     {label}
                 </p>
             </div>

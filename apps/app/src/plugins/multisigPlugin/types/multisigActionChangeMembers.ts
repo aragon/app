@@ -6,14 +6,6 @@ export interface IMultisigActionChangeMembersMember {
      * The address of the member.
      */
     address: string;
-    /**
-     * The ENS name of the member.
-     */
-    ens?: string;
-    /**
-     * The avatar URL of the member.
-     */
-    avatar?: string;
 }
 
 export interface IMultisigActionChangeMembers extends IProposalAction {

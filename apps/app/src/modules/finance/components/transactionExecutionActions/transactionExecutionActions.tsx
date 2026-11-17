@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AlertInline,
     type IProposalAction as IGukProposalAction,
     type IProposalActionsFooterDropdownItem,
     ProposalActions,
@@ -32,6 +33,10 @@ export interface ITransactionExecutionActionsProps {
      */
     isLoading: boolean;
     /**
+     * Whether the actions could not be read.
+     */
+    isError: boolean;
+    /**
      * Chain ID of the execution.
      */
     chainId: number;
@@ -57,12 +62,23 @@ export const TransactionExecutionActions: React.FC<
         normalizedActions = actions,
         actionCount,
         isLoading,
+        isError,
         chainId,
         transactionId,
         daoId,
     } = props;
 
     const { t } = useTranslations();
+
+    // Without actions to render, the list would report the execution as having none.
+    if (isError) {
+        return (
+            <AlertInline
+                message={t('app.finance.transactionExecutionActions.loadError')}
+                variant="critical"
+            />
+        );
+    }
 
     const dropdownItems: IProposalActionsFooterDropdownItem[] =
         normalizedActions.length > 0

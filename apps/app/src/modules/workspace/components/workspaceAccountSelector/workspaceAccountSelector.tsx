@@ -148,7 +148,7 @@ export const WorkspaceAccountSelector: React.FC<
             customTrigger={
                 <button
                     className={classNames(
-                        'focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
+                        'focus-ring-primary bg-neutral-0 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 p-2 pr-3 text-neutral-500 transition-all hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
                         className,
                     )}
                     type="button"
@@ -163,7 +163,7 @@ export const WorkspaceAccountSelector: React.FC<
                             {activeOption?.label}
                         </span>
                         {subtitle !== activeOption?.label && (
-                            <span className="truncate text-neutral-500 text-sm">
+                            <span className="truncate text-sm text-neutral-500">
                                 {subtitle}
                             </span>
                         )}
@@ -202,7 +202,7 @@ export const WorkspaceAccountSelector: React.FC<
                                     addressUtils.truncateAddress(
                                         option.account.address,
                                     ) && (
-                                    <span className="truncate text-neutral-500 text-sm">
+                                    <span className="truncate text-sm text-neutral-500">
                                         {addressUtils.truncateAddress(
                                             option.account.address,
                                         )}
@@ -210,7 +210,7 @@ export const WorkspaceAccountSelector: React.FC<
                                 )}
                         </span>
                         {option.isExternal && (
-                            <span className="shrink-0 text-neutral-500 text-sm">
+                            <span className="shrink-0 text-sm text-neutral-500">
                                 {t(
                                     'app.workspace.workspaceAccountSelector.notInWorkspace',
                                 )}

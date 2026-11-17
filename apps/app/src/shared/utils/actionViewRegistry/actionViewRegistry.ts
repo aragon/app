@@ -11,7 +11,7 @@ export class ActionViewRegistry {
 
     register = (descriptor: IActionViewDescriptor): this => {
         if (
-            this.views.find((view) => view.actionType === descriptor.actionType)
+            this.views.some((view) => view.actionType === descriptor.actionType)
         ) {
             return this;
         }

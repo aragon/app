@@ -5,19 +5,20 @@ Decision record for moving the app's data from `app-backend` to [aragon-indexer]
 - **Status:** accepted, 2026-10-06; roadmap added 2026-10-07. Owner: Platform team.
 - **Project:** [Migration to Envio and aragon-domain](https://linear.app/aragon/project/migration-to-envio-and-aragon-domain-e1c1b0cdc8b8) (milestones M0 to M5).
 - **Goal:** every read the app makes moves off `app-backend`, and `app-backend` is retired.
-- **Out of scope:** data created by users (campaign uploads, Telegram subscriptions, hidden DAOs) gets one small store, decided in the target model ([APP-1318](https://linear.app/aragon/issue/APP-1318)). Gauge rewards stay a read-time computation.
+- **Out of scope:** data created by users gets one small store, and background work gets one small worker; the [target model](./dataLayerTargetModel.md#the-store-for-user-data) names both ([APP-1318](https://linear.app/aragon/issue/APP-1318)). Gauge rewards stay a read-time computation.
+- **Target model:** [dataLayerTargetModel.md](./dataLayerTargetModel.md) maps every path the app calls onto the layers, lists the entities and use cases per milestone, states how lists get their rows and totals and how workspaces read, sets the security rules for the new surfaces and carries the capacity budget.
 
 Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. An accepted decision does not mean its tooling is already built.
 
 ## Principles
 
-- Two layers, no new backend. The indexer holds deterministic read models and metadata by CID; the domain and the BFF compose volatile sources at read time behind a cache.
+- Two layers, no new backend on the read path. The indexer holds deterministic read models and metadata by CID; the domain composes volatile sources at read time behind a cache. The work no request starts (notifications, the DAO directory, TVL, spam scoring) runs in one small worker outside the app, and the worker serves no reads.
 - Nothing is ported one for one. The legacy audit ([APP-1317](https://linear.app/aragon/issue/APP-1317)) gives every app-backend route, collection and job a verdict: read model, simplify, read time, Envio provides, bury. Slices follow the verdicts; the bury list is the deletion list of M5.
 - The UI does not know what feeds it. The BFF forks per route between app-backend and the domain behind one flag per slice (CMS). A migrated route keeps its path and its JSON shape; the domain DTO is mapped to the app's view model inside the BFF. The fork sits in both server entry points: the `/api/backend` proxy for the browser and `AragonBackendService` for RSC. The token-voting members route (app#1128) stays as built.
 - Legacy stays the source of truth for a slice until its parity report is clean on Sepolia and mainnet. The BFF falls back to legacy on page 1 and never mixes two sources in one list.
-- The app never calls Envio directly. It goes through `@aragon/aragon-domain` and the BFF service: a route for the browser, in-process for RSC prefetch.
-- One multichain indexer. Every deploy re-indexes from the start blocks while the previous deployment keeps serving. Capacity (chains, events, registered contracts, requests per minute) is budgeted before a chain is added.
-- Every count the app shows is computed at index time, because the hosted endpoint has no aggregates.
+- The app never calls Envio directly. It goes through `@aragon/aragon-domain` and the BFF service: a route for the browser, in-process for RSC prefetch. Every read is a domain use case, whatever its source (the indexer, RPC, an external API, the store); the BFF is the HTTP layer, and the worker calls the same use cases.
+- One multichain indexer. Every deploy re-indexes from the start blocks while the previous deployment keeps serving. Capacity (chains, events, registered contracts, requests per minute, indexing hours) is budgeted before a chain is added; the [budget](./dataLayerTargetModel.md#capacity-budget) may split the chains over two production indexers from the same repository, one config each; nothing else changes the rule.
+- Every count the app shows is computed at index time, because the hosted endpoint has no aggregates. Counters are kept per account or finer and summed for a DAO with linked accounts or a workspace. The explore list is the exception: its rows, order and total come from the DAO directory in the store.
 - The DDD foundation of `aragon-domain` stays.
 
 ## Where data lives
@@ -26,9 +27,12 @@ Some mechanisms below do not exist yet. They are marked **(pending APP-xxxx)**. 
 |---|---|
 | Derived from events or calls at a fixed block (DAOs, plugins, members, votes, proposals, settings, SPP, transfers, permissions) | indexer |
 | Immutable by key (IPFS metadata by CID, for DAOs, plugins and proposals) | indexer effect, cached |
-| Volatile external (ENS names, prices, balances, Safe service, ABIs, simulations, current-state RPC reads) | domain and BFF at read time, cached |
+| Volatile external (prices, balances, Safe service, ABIs, simulations, current-state RPC reads) | domain at read time, cached |
+| ENS names of members, creators and voters | the browser (`useEnsName`); no server resolves them |
 | Not read by the app (admin queues, monitors, integrity tools) | dropped |
-| Created by users (campaign uploads, Telegram subscriptions, hidden DAOs) | one small store ([APP-1318](https://linear.app/aragon/issue/APP-1318)) |
+| Created by users (campaign uploads, saved simulations) or computed by the worker (spam verdicts, the DAO directory behind explore with its TVL) | one small Postgres, written by the BFF and the worker, read through the domain ([target model](./dataLayerTargetModel.md#the-store-for-user-data)) |
+| Telegram subscriptions and notification state | the worker, in a database of its own ([target model](./dataLayerTargetModel.md#worker)) |
+| Curated by the team (hidden DAOs, spam list, featured DAOs, overrides, flags) | `aragon/app-cms` |
 
 ## Indexer decisions
 
@@ -37,7 +41,7 @@ Settled in [aragon-indexer#33](https://github.com/aragon/aragon-indexer/pull/33)
 - **Deterministic reads only.** Chain reads run at the event's block hash. IPFS metadata is fetched by CID. Both go through Envio effects, cached by the Effect API (hosted plan Production Medium).
 - **Failed fetches.** A failed optional metadata fetch is stored with `fetchSucceeded: false`, keeps the previous display fields and is never cached. A failed required chain read throws and stops the indexer. Retrying failed fetches between deploys is planned **(pending APP-1260)**.
 - **Metadata is indexed.** DAO and plugin metadata get one row per `MetadataSet`, the latest `ACTIVE` and older ones `HISTORY`. `Dao` also carries the current name, description, avatar and links, so lists and search by name read one row.
-- **Read time.** Primary ENS names and prices are resolved at read time in the domain. The ENS text records of `aragon.eth` member names are indexed.
+- **Read time.** Prices are resolved at read time in the domain. Primary ENS names are resolved in the browser. The ENS text records of `aragon.eth` member names are indexed.
 - **Plugin family** is read from the code behind the plugin (proxies and clones followed). The repo `subdomain` is stored as a fact only.
 - **Chains and ids.** Every entity has `network` (`ethereum-mainnet`) and `chainId: Int! @index`. Ids start with the network, with two exceptions kept for compatibility: `Domain` is the bare subnode namehash, and `ENSResolver` and `TextRecord` keep their `chainId-` ids.
 - **Start blocks.** Each chain starts at its DAORegistry deployment (mainnet 16721858, Sepolia 4421512). The ENS contracts on mainnet start at the MemberRegistry deployment (25179000).
@@ -80,11 +84,11 @@ Slice order: token-voting members (M1); multisig and admin members, votes, propo
 | M0 Foundations | domain in the monorepo; indexer foundation and release flow merged; ADR merged; vaults and CI secret in place |
 | M1 Indexer base and members | legacy audit and target model reviewed; token-voting members rebuilt with the contract suite green and the development endpoint switched; BFF fork and readiness gate; parity clean for members |
 | M2 Governance read models | the M2 slices behind flags below production, Sepolia first; parity clean per slice on Sepolia and mainnet |
-| M3 DAO read model and read-time routes | DAO read model from the indexer; read-time routes through the BFF; every app-backend route marked migrated, dropped or deferred; user-data store decided |
+| M3 DAO read model and read-time routes | DAO read model from the indexer; read-time routes through the domain; the worker running with the DAO directory; every app-backend route marked migrated, dropped or deferred; user-data store decided |
 | M4 All chains and production | remaining HyperSync chains within the plan limits; every slice on in production; legacy frozen |
 | M5 Retire app-backend | proxy removed, services stopped, Mongo and RabbitMQ cancelled, repository archived |
 
-Sepolia first. A slice turns on for Sepolia in local, development, preview and staging, where the Sepolia gate runs: correctness on 6 335 DAOs and every plugin family. Mainnet follows in the same environments once that gate is clean, with the mainnet gate: scale and real data ([APP-1189](https://linear.app/aragon/issue/APP-1189)). Both gates fit in one week. Production turns the slice on for both chains together, with 48 h of observation, `*_domain_error` at zero and a Slack note with the Sentry link ([APP-1186](https://linear.app/aragon/issue/APP-1186)). Other chains follow as a config change, a resync and a parity sample. The ENS profile records stay on mainnet in every environment, as today.
+Sepolia first. A slice turns on for Sepolia in local, development, preview and staging, where the Sepolia gate runs: correctness on every Sepolia DAO and every plugin family. Mainnet follows in the same environments once that gate is clean, with the mainnet gate: scale and real data ([APP-1189](https://linear.app/aragon/issue/APP-1189)). Both gates fit in one week. Production turns the slice on for both chains together, with 48 h of observation, `*_domain_error` at zero and a Slack note with the Sentry link ([APP-1186](https://linear.app/aragon/issue/APP-1186)). Other chains follow as a config change, a resync and a parity sample. The ENS profile records stay on mainnet in every environment, as today.
 
 ## Readiness gate
 
@@ -93,6 +97,7 @@ Sepolia first. A slice turns on for Sepolia in local, development, preview and s
 - The domain reads `_meta` per chain (cached about 30 s): `chainId`, `isReady`, `progressBlock`, `sourceBlock`, `readyAt`. Lag is `sourceBlock - progressBlock`. `!isReady`, a lag above the chain's limit, a missing row or an unreachable endpoint is a domain failure.
 - A domain failure on a list falls back to legacy on page 1 and logs `envio_lag_fallback` to Sentry. A later page of a domain-served list fails instead of switching source; a list that started on legacy stays on legacy.
 - The set of indexed chains comes from `_meta`, not from app code.
+- A read from a table the worker keeps has the same gate on that table's age. Explore reads the DAO directory, and a directory that was last synced more than 2 minutes ago is a domain failure ([target model](./dataLayerTargetModel.md#monitoring)).
 - The ENS text-records route (`/api/domain/member-profile/[subdomain]/records`) has no legacy source. It gets its own `domainMemberProfile` slice entry and gate; when off or not ready it returns 503 and the rename dialog shows an unavailable state.
 - There is no shadow mode: parity runs offline against both sources ([APP-1178](https://linear.app/aragon/issue/APP-1178)).
 
@@ -114,7 +119,7 @@ Once a slice is on in production, its legacy handlers in `app-backend` take bug 
 
 ## Capacity
 
-Envio Production Medium: 10 chains, 10M events, about 10 000 registered contracts, 1 000 requests a minute, $300 a month. Production Large: 15 chains, 100M events, about 50 000 contracts, 2 000 requests a minute, $800 a month. The app serves 14 networks, 13 of them on HyperSync (Hemi is not). Dynamic registration counts towards contracts: Sepolia alone registers about 17 000 DAO and plugin addresses. The budget and the tier decision are in the target model ([APP-1318](https://linear.app/aragon/issue/APP-1318)); a chain is added only inside the budget. The BFF caches domain reads and the app sits behind Cloudflare, so a scraping run never reaches the Envio rate limit.
+Envio Production Medium: 10 chains, about 10 M stored events, about 10 000 contracts, 1 000 requests a minute, 800 indexing hours, $300 a month. Production Large: 15 chains, about 100 M events, about 50 000 contracts, 2 000 requests a minute, $800 a month. The plan belongs to an indexer, and every running deployment counts towards its hours, so a candidate and the previous production cost extra while they exist. The app serves 19 networks, 18 of them on HyperSync (Hemi is not). The current deployment registers 18 200 DAO and plugin addresses on two chains (measured 2026-11-05) and has run on Medium for a month; the dashboard meters the hours only and has no line for contracts. Deployments left running next to production added $208.60 and $66.20 to the September and October bills. The inventory per network, the budget, the plan by milestone and the fallback are in the [target model](./dataLayerTargetModel.md#capacity-budget) ([APP-1318](https://linear.app/aragon/issue/APP-1318)); a chain is added only inside the budget. The app's server sends app-backend 22 requests a minute on average and 900 to 2 100 in its busiest minutes (Sentry, the 7 days to 2026-11-16), so the average is far below the rate limit and a burst is not. The domain counts its Envio queries against a budget per endpoint, with a share reserved for the worker, and serves cached results when the budget runs low ([target model](./dataLayerTargetModel.md#indexer-reads-and-the-envio-budget)).
 
 ## Runbook
 
@@ -152,5 +157,6 @@ On the app side, run the status checks above on the candidate's endpoint before 
 - Indexer: [README](https://github.com/aragon/aragon-indexer/blob/main/README.md), [AGENTS.md](https://github.com/aragon/aragon-indexer/blob/main/AGENTS.md)
 - Domain: [README](/packages/aragon-domain/README.md), [AGENTS.md](/packages/aragon-domain/AGENTS.md)
 - Feature flags: [README](/apps/app/src/shared/featureFlags/README.md)
-- Legacy audit and target model: [APP-1317](https://linear.app/aragon/issue/APP-1317), [APP-1318](https://linear.app/aragon/issue/APP-1318)
+- Legacy audit: [aragon-indexer `docs/legacy-audit.md`](https://github.com/aragon/aragon-indexer/blob/main/docs/legacy-audit.md) ([APP-1317](https://linear.app/aragon/issue/APP-1317))
+- Target model and capacity budget: [dataLayerTargetModel.md](./dataLayerTargetModel.md) ([APP-1318](https://linear.app/aragon/issue/APP-1318))
 - Envio: [zero-downtime deployments](https://docs.envio.dev/docs/HyperIndex/hosted-service-features#zero-downtime-deployments), [Effect API cache](https://docs.envio.dev/docs/HyperIndex/hosted-service-features#effect-api-cache)

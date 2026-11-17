@@ -6,6 +6,7 @@ import { generateTransaction } from '@/modules/finance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import * as safeService from '@/shared/api/safeService';
 import {
+    generateReactQueryResultError,
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
@@ -153,6 +154,44 @@ describe('<SafeExecutionDetails /> component', () => {
         expect(screen.getByText('4')).toBeInTheDocument();
         expect(transactionExecutionActionsSpy).toHaveBeenCalledWith(
             expect.objectContaining({ actionCount: 4, isLoading: true }),
+            undefined,
+        );
+    });
+
+    it('reports the actions as not loaded when they could not be read', () => {
+        useSafeTransactionActionsSpy.mockReturnValue(
+            generateReactQueryResultError({
+                error: new Error('error'),
+            }) as ReturnType<typeof safeService.useSafeTransactionActions>,
+        );
+
+        render(createTestComponent());
+
+        expect(transactionExecutionActionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ isError: true }),
+            undefined,
+        );
+    });
+
+    it('keeps the actions already read when a later read fails', () => {
+        useSafeTransactionActionsSpy.mockReturnValue({
+            ...generateReactQueryResultSuccess<
+                safeService.ISafeTransactionActions,
+                Error
+            >({
+                data: { decoding: true, actions: [], rawActions: [] },
+            }),
+            error: new Error('error'),
+            isError: true,
+            isRefetchError: true,
+            isSuccess: false,
+            status: 'error',
+        });
+
+        render(createTestComponent());
+
+        expect(transactionExecutionActionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ isError: false }),
             undefined,
         );
     });

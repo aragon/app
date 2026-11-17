@@ -426,13 +426,16 @@ Safe branch will be tempted to open it.
 #### Create wizards
 
 The DAO's create wizards inside the workspace, at the DAO's own path after the account. Each workspace layout and page
-renders the DAO's with the route parameters adapted; the layout passes an `exitPath` to the account's workspace section.
+renders the DAO's with the route parameters adapted, passing an `exitPath` to the account's workspace section.
 DAO accounts only: a Safe has no execute wizard and no proposals.
 
 | Route | DAO wizard | Exits to |
 | --- | --- | --- |
 | `{accountId}/create/execute` | `/dao/…/create/execute` | `{accountId}/transactions` |
 | `{accountId}/create/{pluginAddress}/proposal` | `/dao/…/create/{pluginAddress}/proposal` | `{accountId}/proposals` |
+
+The execute page drills its `exitPath` through `CreateExecuteActionsPage` and `CreateExecuteActionsPageClient` to
+`useExecutePermissionCheckGuard`, which redirects there instead of the DAO transactions when the wallet cannot execute.
 
 | Outcome | Where |
 | --- | --- |
@@ -443,7 +446,8 @@ DAO accounts only: a Safe has no execute wizard and no proposals.
 | workspace not on this device | page: `WorkspaceGate` |
 | DAO | the wizard |
 
-Some of their links still leave the workspace; see "Links out of the workspace".
+Some of their links still leave the workspace; see "Links out of the workspace". Review the `exitPath` prop drilling
+when the workspace links are fixed: a route-aware link mechanism should replace it.
 
 ### Account scope
 
@@ -807,7 +811,8 @@ A running `pnpm dev` does not pick up a new dynamic route folder (e.g. `[pluginA
 #### Links out of the workspace
 
 Links on a workspace route that lead to `/dao/…`, kept here for a review pass. Add a row when a change introduces one;
-remove it when the link stays in the workspace.
+remove it when the link stays in the workspace. The same review covers the `exitPath` props that keep the DAO
+wizards' redirects in the workspace today (see "Create wizards").
 
 | Route | Link | Leads to | Source |
 | --- | --- | --- | --- |

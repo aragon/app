@@ -45,6 +45,18 @@ export interface IGetSafePendingTransactionsParams
     queryParams?: IGetSafePendingTransactionsQueryParams;
 }
 
+export interface IGetSafePendingTransactionQueryParams {
+    /**
+     * Number of queued transactions read per request while looking for the transaction.
+     */
+    limit?: number;
+}
+
+export interface IGetSafePendingTransactionParams
+    extends IRequestUrlParams<ISafeTransactionUrlParams> {
+    queryParams?: IGetSafePendingTransactionQueryParams;
+}
+
 export interface IGetSafeNextNonceParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 

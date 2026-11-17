@@ -138,7 +138,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                                     <p className="text-neutral-500">
                                         {networkDefinitions[network].name}
                                     </p>
-                                    <p className="font-normal text-neutral-400 text-sm leading-tight">
+                                    <p className="text-sm leading-tight font-normal text-neutral-400">
                                         {t(
                                             `${translationKey}.account.notChangeable`,
                                         )}

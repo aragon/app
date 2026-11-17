@@ -184,10 +184,10 @@ export const WorkspaceTodoPreviewItem: React.FC<
         <div className={rowClassName}>
             {avatar}
             <div className="flex min-w-0 grow flex-col gap-1">
-                <p className="truncate text-base text-neutral-800 leading-tight">
+                <p className="truncate text-base leading-tight text-neutral-800">
                     {title}
                 </p>
-                <p className="truncate text-neutral-500 text-sm leading-tight">
+                <p className="truncate text-sm leading-tight text-neutral-500">
                     {meta}
                 </p>
             </div>

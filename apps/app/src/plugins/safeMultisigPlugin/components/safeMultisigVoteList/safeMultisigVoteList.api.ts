@@ -18,3 +18,26 @@ export interface ISafeMultisigVoteListProps {
      */
     isVeto?: boolean;
 }
+
+export interface ISafeMultisigVoteListViewProps {
+    /**
+     * Addresses of the owners that confirmed the transaction.
+     */
+    signers: string[];
+    /**
+     * Connected account, listed first when it is one of the signers.
+     */
+    connectedAddress?: string;
+    /**
+     * Builds the link of a signer row. Rows are not links when not set.
+     */
+    getSignerHref?: (signer: string) => string | undefined;
+    /**
+     * Defines if the Safe vetoes rather than approves.
+     */
+    isVeto?: boolean;
+    /**
+     * Renders the list skeleton while the Safe state is loading.
+     */
+    isLoading?: boolean;
+}

@@ -352,7 +352,7 @@ export const SafeTransactionReviewContent: React.FC<
     return (
         <>
             {intent != null && (
-                <p className="pb-4 text-neutral-500 text-sm md:text-base">
+                <p className="pb-4 text-sm text-neutral-500 md:text-base">
                     {intent}
                 </p>
             )}
@@ -415,10 +415,10 @@ export const SafeTransactionReviewContent: React.FC<
             )}
             <dl className="flex flex-col gap-3 pt-4">
                 <div className="flex flex-row items-center justify-between gap-4">
-                    <dt className="text-neutral-500 text-sm md:text-base">
+                    <dt className="text-sm text-neutral-500 md:text-base">
                         {t(`${translationKey}.fields.safe`)}
                     </dt>
-                    <dd className="text-neutral-800 text-sm md:text-base">
+                    <dd className="text-sm text-neutral-800 md:text-base">
                         <AddressOutput
                             address={safeAddress}
                             href={safeAppAccountUrl({
@@ -435,7 +435,7 @@ export const SafeTransactionReviewContent: React.FC<
                 />
             </dl>
             {costNote != null && (
-                <p className="pt-3 text-neutral-500 text-sm md:text-base">
+                <p className="pt-3 text-sm text-neutral-500 md:text-base">
                     {costNote}
                 </p>
             )}
@@ -500,7 +500,7 @@ export const SafeTransactionReviewContent: React.FC<
                          * match. Deliberately never labelled verified: a self-consistent malicious payload
                          * produces hashes that match the device perfectly.
                          */}
-                        <p className="text-neutral-500 text-sm">
+                        <p className="text-sm text-neutral-500">
                             {t(`${translationKey}.hashComparison`)}
                         </p>
                         {/* Only once the version is known: while the read is in flight the pair is
@@ -508,7 +508,7 @@ export const SafeTransactionReviewContent: React.FC<
                          * derive it, and the same suppression applies to `hashUnverifiable`. */}
                         {!isVersionPending &&
                             (domainHash == null || messageHash == null) && (
-                                <p className="text-neutral-500 text-sm">
+                                <p className="text-sm text-neutral-500">
                                     {t(
                                         `${translationKey}.hashComparisonPartial`,
                                     )}
@@ -545,7 +545,7 @@ export const SafeTransactionReviewContent: React.FC<
                         {/* The tool is named, not generic: an unnamed "external tool" leaves a signer to
                          * pick one, and a tool that fetches from the same service the app does would
                          * make the comparison pass by construction. */}
-                        <div className="text-neutral-500 text-sm">
+                        <div className="text-sm text-neutral-500">
                             {t(`${translationKey}.hashTool`)}{' '}
                             <KitLink
                                 href="https://github.com/Cyfrin/safe-hash-rs"
@@ -560,7 +560,7 @@ export const SafeTransactionReviewContent: React.FC<
                         <ol className="flex flex-col gap-3">
                             {calls.map(({ call, depth }, index) => (
                                 <li
-                                    className="flex flex-col gap-1 border-neutral-100 border-t pt-3"
+                                    className="flex flex-col gap-1 border-t border-neutral-100 pt-3"
                                     // Position identifies a call: the same target can legitimately appear
                                     // more than once in a batch.
                                     key={`${index.toString()}-${call.to}`}
@@ -579,7 +579,7 @@ export const SafeTransactionReviewContent: React.FC<
                                                     : 'info'
                                             }
                                         />
-                                        <span className="truncate text-neutral-800 text-sm md:text-base">
+                                        <span className="truncate text-sm text-neutral-800 md:text-base">
                                             {/* Local decode wins; a blank remote type is the service
                                              * saying it could not decode, not a name. */}
                                             {localNames[index] ||
@@ -602,7 +602,7 @@ export const SafeTransactionReviewContent: React.FC<
                                                 variant="critical"
                                             />
                                         )}
-                                    <span className="text-neutral-500 text-sm">
+                                    <span className="text-sm text-neutral-500">
                                         {t(`${translationKey}.callTarget`, {
                                             target: addressUtils.truncateAddress(
                                                 call.to,
@@ -610,7 +610,7 @@ export const SafeTransactionReviewContent: React.FC<
                                             value: call.value.toString(),
                                         })}
                                     </span>
-                                    <span className="break-all font-mono text-neutral-500 text-xs">
+                                    <span className="font-mono text-xs break-all text-neutral-500">
                                         {call.data ?? '0x'}
                                     </span>
                                 </li>
@@ -631,8 +631,8 @@ const SafeTransactionReviewRow: React.FC<{
 
     return (
         <div className="flex flex-row items-center justify-between gap-4">
-            <dt className="text-neutral-500 text-sm md:text-base">{label}</dt>
-            <dd className="truncate text-neutral-800 text-sm md:text-base">
+            <dt className="text-sm text-neutral-500 md:text-base">{label}</dt>
+            <dd className="truncate text-sm text-neutral-800 md:text-base">
                 {value}
             </dd>
         </div>
@@ -652,8 +652,8 @@ const SafeTransactionReviewHash: React.FC<{
 
     return (
         <div className="flex flex-col gap-1">
-            <dt className="text-neutral-500 text-sm md:text-base">{label}</dt>
-            <dd className="break-all font-mono text-neutral-800 text-xs">
+            <dt className="text-sm text-neutral-500 md:text-base">{label}</dt>
+            <dd className="font-mono text-xs break-all text-neutral-800">
                 {value}
             </dd>
         </div>

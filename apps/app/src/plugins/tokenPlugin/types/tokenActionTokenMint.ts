@@ -20,10 +20,6 @@ export interface ITokenActionTokenMint extends IProposalAction {
          */
         address: string;
         /**
-         * The ENS name of the receiver.
-         */
-        ens?: string;
-        /**
          * The current balance of the receiver.
          */
         currentBalance: string;

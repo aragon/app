@@ -48,7 +48,7 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   explicitly — it is emitted to the package root, not into `dist/`.
 - **Lint/format rules come from the root `biome.json`.** The local `biome.jsonc` extends it
   (`"root": false`, `"extends": "//"`) and holds only the kit's own policy: 120-column lines,
-  Tailwind class sorting, `noImgElement` / `noReactForwardRef` off, overrides for scripts, tests
+  `noImgElement` / `noReactForwardRef` / `noDuplicateSelectors` off, overrides for scripts, tests
   and stories. It must stay `.jsonc`: Biome silently treats a commented `biome.json` as a *root*
   config and fails with "Found a nested root configuration".
 - **`tsconfig.json` extends the root `tsconfig.base.json`** but keeps `outDir` literal, because

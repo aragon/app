@@ -20,9 +20,9 @@ export const FooterSidebar: React.FC = () => {
     const year = new Date().getFullYear();
 
     return (
-        <div className="flex flex-col gap-2 border-neutral-100 border-t px-1 pt-4 text-neutral-500 text-sm leading-tight">
+        <div className="flex flex-col gap-2 border-t border-neutral-100 px-1 pt-4 text-sm leading-tight text-neutral-500">
             <Link
-                className="flex items-center gap-2 self-start font-normal text-neutral-500 text-sm hover:text-neutral-800"
+                className="flex items-center gap-2 self-start text-sm font-normal text-neutral-500 hover:text-neutral-800"
                 href="/"
             >
                 <span className="text-nowrap">
@@ -33,7 +33,7 @@ export const FooterSidebar: React.FC = () => {
             <div className="flex flex-wrap items-center gap-x-2">
                 {sidebarLinks.map(({ link, label, target }) => (
                     <Link
-                        className="font-normal text-neutral-500 text-sm hover:text-neutral-800"
+                        className="text-sm font-normal text-neutral-500 hover:text-neutral-800"
                         href={link}
                         key={label}
                         target={target}

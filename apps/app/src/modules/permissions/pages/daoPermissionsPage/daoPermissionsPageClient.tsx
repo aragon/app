@@ -214,7 +214,7 @@ export const DaoPermissionsPageClient: React.FC<
                                     />
                                 </ToggleGroup>
                             </div>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-700 md:justify-end">
                                 <div className="flex items-center gap-1">
                                     <Switch
                                         checked={hideDaoPermissions}

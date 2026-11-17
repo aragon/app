@@ -44,7 +44,7 @@ export const Breadcrumbs: React.FC<IBreadcrumbsProps> = (props) => {
                 ))}
                 <li
                     aria-current="page"
-                    className="truncate font-normal text-neutral-500 text-sm leading-tight md:text-base"
+                    className="truncate text-sm leading-tight font-normal text-neutral-500 md:text-base"
                 >
                     {currentPage?.label}
                 </li>

@@ -43,7 +43,9 @@ class WorkspaceTransactionUtils {
             : transaction.blockTimestamp;
 
     /**
-     * Whether a pending transaction collected the confirmations it needs to be executed.
+     * Whether a pending transaction collected the confirmations it needs to be executed, as counted by the backend.
+     * Unlike `safeTransactionUtils.getApprovalReadiness`, it neither drops confirmations of removed owners nor
+     * checks the nonce, so a row can be tagged executable while its voting card cannot execute it yet.
      */
     isExecutable = (
         transaction: IWorkspaceTransactionPendingExecution,

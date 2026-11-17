@@ -42,7 +42,7 @@ export const WorkspaceListItemSummary: React.FC<
         <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
             {avatar}
             <div className="flex min-w-0 grow flex-col items-start gap-y-0.5 md:gap-y-1">
-                <div className="flex max-w-full gap-x-1.5 text-left text-neutral-800 leading-tight md:text-lg">
+                <div className="flex max-w-full gap-x-1.5 text-left leading-tight text-neutral-800 md:text-lg">
                     <span className="truncate">{title}</span>
                     {identifier != null && (
                         <span className="shrink-0 text-neutral-500">
@@ -51,13 +51,13 @@ export const WorkspaceListItemSummary: React.FC<
                     )}
                 </div>
                 {description != null && (
-                    <p className="max-w-full truncate text-left text-neutral-500 text-sm leading-tight md:text-base">
+                    <p className="max-w-full truncate text-left text-sm leading-tight text-neutral-500 md:text-base">
                         {description}
                     </p>
                 )}
             </div>
             {value != null && (
-                <span className="shrink-0 truncate text-neutral-800 leading-tight md:text-lg">
+                <span className="shrink-0 truncate leading-tight text-neutral-800 md:text-lg">
                     {value}
                 </span>
             )}

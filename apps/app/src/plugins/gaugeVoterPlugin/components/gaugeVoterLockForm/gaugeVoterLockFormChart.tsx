@@ -188,7 +188,7 @@ export const GaugeVoterLockFormChart: React.FC<
                         )}
                     </span>
                 </p>
-                <span className="text-neutral-500 text-sm md:text-base">
+                <span className="text-sm text-neutral-500 md:text-base">
                     {activePoint.x}
                 </span>
             </div>

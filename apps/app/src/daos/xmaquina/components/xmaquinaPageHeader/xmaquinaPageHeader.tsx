@@ -47,7 +47,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
 
             <Container className="relative flex w-full grow flex-col">
                 <div className="top-6 flex w-fit max-w-180 flex-col gap-1.5 pt-6 pb-6 md:absolute md:top-8 md:w-180 md:gap-3">
-                    <p className="text-3xl text-neutral-0 leading-tight md:text-5xl">
+                    <p className="text-neutral-0 text-3xl leading-tight md:text-5xl">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
                         {ensName && (
                             <span className="text-[#1ED612]">{ensName}</span>
@@ -73,7 +73,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                 />
 
                 {/* Static row for desktop view */}
-                <div className="hidden h-full grow border-l border-l-neutral-0/10 lg:flex">
+                <div className="border-l-neutral-0/10 hidden h-full grow border-l lg:flex">
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}

@@ -48,7 +48,11 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
 ) => {
     const { transaction, safeAddress, safeTxHash } = props;
 
-    const { data: actionData, isLoading } = useSafeTransactionActions(
+    const {
+        data: actionData,
+        isLoading,
+        isError,
+    } = useSafeTransactionActions(
         {
             urlParams: {
                 network: transaction.network,
@@ -90,6 +94,8 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
                 actionCount={actionCount}
                 actions={actions}
                 chainId={chainId}
+                // A failed poll keeps the actions already read, so only a read that never succeeded is reported.
+                isError={actionData == null && isError}
                 isLoading={isLoading}
                 transactionId={transaction.id}
             />

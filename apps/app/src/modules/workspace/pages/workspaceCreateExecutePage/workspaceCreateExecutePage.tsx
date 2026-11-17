@@ -5,6 +5,7 @@ import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { WorkspaceGate } from '../../components/workspaceGate';
+import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceCreateExecutePageProps {
     /**
@@ -14,8 +15,9 @@ export interface IWorkspaceCreateExecutePageProps {
 }
 
 /**
- * Page of `/workspace/{workspaceId}/{accountId}/create/execute`: the DAO's direct-execute page. The layout guards the
- * account; the page renders `WorkspaceGate`, as it sits outside `LayoutWorkspace`.
+ * Page of `/workspace/{workspaceId}/{accountId}/create/execute`: the DAO's direct-execute page, redirecting to the
+ * account's workspace transactions when the wallet cannot execute. The layout guards the account; the page renders
+ * `WorkspaceGate`, as it sits outside `LayoutWorkspace`.
  */
 export const WorkspaceCreateExecutePage: React.FC<
     IWorkspaceCreateExecutePageProps
@@ -28,10 +30,16 @@ export const WorkspaceCreateExecutePage: React.FC<
 
     const { workspaceId, accountId } = await params;
     const { network, address } = daoUtils.parseDaoId(accountId);
+    const exitPath = workspaceUtils.getAccountScopeUrl(
+        workspaceId,
+        accountId,
+        'transactions',
+    );
 
     return (
         <WorkspaceGate workspaceId={workspaceId}>
             <CreateExecuteActionsPage
+                exitPath={exitPath}
                 params={Promise.resolve({ network, addressOrEns: address })}
             />
         </WorkspaceGate>

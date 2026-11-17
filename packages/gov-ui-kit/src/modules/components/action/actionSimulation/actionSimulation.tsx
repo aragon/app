@@ -59,7 +59,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
 
                 <DefinitionList.Item term={copy.actionSimulation.lastSimulationTerm}>
                     {isLoading ? (
-                        <span className="flex items-center gap-2 text-primary-400 md:gap-3">
+                        <span className="text-primary-400 flex items-center gap-2 md:gap-3">
                             <Spinner size="md" variant="primary" />
                             {simulationCopy.simulating}
                         </span>
@@ -72,7 +72,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                     <div className="flex w-full items-center justify-between">
                         <div className="flex items-center gap-2">
                             {isLoading ? (
-                                <span className="flex items-center gap-2 text-primary-400 md:gap-3">
+                                <span className="text-primary-400 flex items-center gap-2 md:gap-3">
                                     <Spinner size="md" variant="primary" />
                                     {simulationCopy.simulating}
                                 </span>
@@ -124,7 +124,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 )}
             </div>
             {error && (
-                <div className="flex items-center gap-2 text-critical-800 text-sm">
+                <div className="text-critical-800 flex items-center gap-2 text-sm">
                     <AvatarIcon icon={IconType.INFO} size="sm" variant="critical" />
                     {error}
                 </div>

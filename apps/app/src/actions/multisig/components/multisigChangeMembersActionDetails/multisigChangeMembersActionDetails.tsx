@@ -8,9 +8,11 @@ import {
     type IProposalActionComponentProps,
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import {
     type IMultisigActionChangeMembers,
+    type IMultisigActionChangeMembersMember,
     MultisigProposalActionType,
 } from '@/plugins/multisigPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -40,17 +42,13 @@ export const MultisigChangeMembersActionDetails: React.FC<
         <div className="flex w-full flex-col gap-y-6">
             <div className="flex flex-wrap gap-2">
                 {members.map((member) => (
-                    <MemberDataListItem.Structure
-                        address={member.address}
-                        avatarSrc={member.avatar}
-                        className="grow basis-60"
-                        ensName={member.ens}
+                    <MultisigChangeMembersActionMember
                         href={buildEntityUrl({
                             type: ChainEntityType.ADDRESS,
                             id: member.address,
                         })}
                         key={member.address}
-                        target="_blank"
+                        member={member}
                     />
                 ))}
             </div>
@@ -96,12 +94,39 @@ export const MultisigChangeMembersActionDetails: React.FC<
                         </p>
                     </DefinitionList.Item>
                 </DefinitionList.Container>
-                <p className="text-neutral-500 text-sm">
+                <p className="text-sm text-neutral-500">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.blockNote',
                     )}
                 </p>
             </div>
         </div>
+    );
+};
+
+interface IMultisigChangeMembersActionMemberProps {
+    member: IMultisigActionChangeMembersMember;
+    href?: string;
+}
+
+/**
+ * Member item that resolves the member's ENS name and avatar.
+ */
+const MultisigChangeMembersActionMember: React.FC<
+    IMultisigChangeMembersActionMemberProps
+> = (props) => {
+    const { member, href } = props;
+    const { data: ensName } = useEnsName(member.address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
+
+    return (
+        <MemberDataListItem.Structure
+            address={member.address}
+            avatarSrc={ensAvatar ?? undefined}
+            className="grow basis-60"
+            ensName={ensName ?? undefined}
+            href={href}
+            target="_blank"
+        />
     );
 };
