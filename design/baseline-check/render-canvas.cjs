@@ -42,6 +42,32 @@ const MIME = {
     '.woff2': 'font/woff2',
 };
 
+// The pointer file of the canvas that belongs to the checked-out branch (design/canvases/*.json, "branch"), or
+// baseline.json when no pointer names this branch.
+const canvasPointer = () => {
+    const dir = path.join(DESIGN, 'canvases');
+    let branch = '';
+    try {
+        branch = require('node:child_process')
+            .execFileSync('git', ['branch', '--show-current'], {
+                cwd: REPO,
+                encoding: 'utf8',
+            })
+            .trim();
+    } catch {
+        // not a git checkout: fall back to the baseline
+    }
+    const own = fs
+        .readdirSync(dir)
+        .filter((file) => file.endsWith('.json'))
+        .map((file) => path.join(dir, file))
+        .find(
+            (file) =>
+                JSON.parse(fs.readFileSync(file, 'utf8')).branch === branch,
+        );
+    return own ?? path.join(dir, 'baseline.json');
+};
+
 // Exits unless the runtime and the design-system copy are in out/runtime, the copy is the pinned one, and every
 // app-owned image of design/screens.json exists.
 const checkInputs = () => {
@@ -55,10 +81,10 @@ const checkInputs = () => {
             ].join('\n'),
         );
     }
-    const pinFile = path.join(DESIGN, 'canvases', 'baseline.json');
-    const pinned = fs.existsSync(pinFile)
-        ? JSON.parse(fs.readFileSync(pinFile, 'utf8')).kit?.files
-        : undefined;
+    // The pin of the checked-out branch's canvas (an exploration may have moved to a newer kit), else the baseline's.
+    const pinFile = canvasPointer();
+    const pinName = path.relative(REPO, pinFile);
+    const pinned = JSON.parse(fs.readFileSync(pinFile, 'utf8')).kit?.files;
     const wrong = Object.entries(pinned ?? {}).filter(([file, sha256]) => {
         const full = path.join(KIT_DIR, file);
         return (
@@ -71,7 +97,7 @@ const checkInputs = () => {
     });
     if (wrong.length > 0) {
         die(
-            `The design-system copy in out/runtime is not the one pinned in design/canvases/baseline.json (kit.files). Missing or different: ${wrong.map(([file]) => file).join(', ')}`,
+            `The design-system copy in out/runtime is not the one pinned in ${pinName} (kit.files). Missing or different: ${wrong.map(([file]) => file).join(', ')}`,
         );
     }
     const missing = Object.values(SCREENS.appAssets ?? {}).filter(
@@ -83,8 +109,8 @@ const checkInputs = () => {
         );
     }
     return pinned
-        ? `kit copy matches design/canvases/baseline.json (${Object.keys(pinned).length} files)`
-        : 'no kit pin to check (design/canvases/baseline.json has no kit.files)';
+        ? `kit copy matches ${pinName} (${Object.keys(pinned).length} files)`
+        : `no kit pin to check (${pinName} has no kit.files)`;
 };
 
 // Resolves a path of the canvas project the way the canvas does.
