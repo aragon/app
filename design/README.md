@@ -214,4 +214,8 @@ Ideas that need this flow to have run for real at least once before they are wor
   future image change (each retake adds the changed images to history).
 - **Automatic refresh.** Refreshing the baseline canvas after a merge to `main`, and the baseline check after a
   release, are manual today; both could run from a GitHub Action.
-
+- **Feature flags as a tweak.** The screens show the app as it runs locally, with every flag that is on there (the
+  workspace call to action and links, the Safe account page). One environment tweak on each screen (local, development,
+  production), taking its values from the snapshot of the flags in `baseline-check/cms/feature-flags.json`, would let
+  a designer see and design the other states. Only for flags that change what a drawn screen shows; the baseline check
+  would then also capture those pages with production flags, so the flag-off states are verified too.
