@@ -83,9 +83,22 @@ then writes the resolved params into the URL (`router.replace`).
 | --- | --- | --- | --- |
 | Shareable / bookmarkable selection | yes | no | yes |
 | Back/forward restores selection | yes | no | yes |
-| Independent tabs | yes | no | yes |
+| Independent tabs | yes | no | yes, with the per-tab fallback below |
 | A link without params | resets to defaults | keeps the selection | keeps the last selection |
 | Server sees the scope | yes | no | after params are written in |
+
+### Multiple tabs
+
+- **A.** Each tab keeps its selection in its URL. Changing it in one tab never affects another. A new tab opened
+  without params starts at the defaults.
+- **B.** All tabs share one value; the last write wins. Read on load: other tabs jump to that selection on their next
+  navigation. Synced via the `storage` event: all tabs switch together, even mid-wizard. `sessionStorage` instead:
+  tabs are independent, but a new tab starts at the defaults.
+- **C.** Open tabs behave like A. A URL without params reads `localStorage`, i.e. the selection of whichever tab
+  wrote last, so a link that forgets the params can move a tab to another tab's selection. Fix: fall back to the
+  tab's own selection first (`sessionStorage`), then to the device's last selection (`localStorage`), then to the
+  defaults.
+- **Default workspace and scope in the workspace data** (C's variation): no per-tab state, behaves like A's defaults.
 
 
 ## Open questions
