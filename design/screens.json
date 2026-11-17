@@ -4,6 +4,294 @@
         "assets/net_bg.svg": "apps/app/src/assets/images/net_bg.svg",
         "assets/safeWallet.png": "apps/app/src/assets/images/safeWallet.png"
     },
+    "pages": [
+        {
+            "id": "dao",
+            "name": "DAO pages",
+            "rows": [
+                {
+                    "title": "Explore and not-found",
+                    "artboards": [
+                        "Main.dc.html",
+                        "NotFound.dc.html",
+                        "DaoNotFound.dc.html"
+                    ]
+                },
+                {
+                    "title": "Meridian DAO (token voting)",
+                    "artboards": [
+                        "Dashboard.dc.html",
+                        "Proposals.dc.html",
+                        "Assets.dc.html",
+                        "Transactions.dc.html",
+                        "Settings.dc.html",
+                        "SettingsProcess.dc.html",
+                        "Members.dc.html",
+                        "Member.dc.html",
+                        "Permissions.dc.html",
+                        "PermissionsWithDaoGrants.dc.html",
+                        "PermissionsGraph.dc.html"
+                    ]
+                },
+                {
+                    "title": "Meridian DAO, wallet connected",
+                    "artboards": [
+                        "ConnectedDashboard.dc.html",
+                        "ConnectedMemberSelf.dc.html"
+                    ]
+                },
+                {
+                    "title": "Atlas Grants Council (multisig)",
+                    "artboards": [
+                        "MsProposals.dc.html",
+                        "MsAssets.dc.html",
+                        "MsDashboard.dc.html",
+                        "MsMembers.dc.html",
+                        "MsMember.dc.html",
+                        "MsTransactions.dc.html",
+                        "MsPermissions.dc.html",
+                        "MsPermissionsWithDaoGrants.dc.html",
+                        "MsPermissionsGraph.dc.html",
+                        "MsSettings.dc.html",
+                        "MsSettingsProcess.dc.html"
+                    ]
+                },
+                {
+                    "title": "Northstar Protocol (multistage)",
+                    "artboards": [
+                        "SppProposals.dc.html",
+                        "SppDashboard.dc.html",
+                        "SppMembers.dc.html",
+                        "SppMembersCoreTeam.dc.html",
+                        "SppMembersCouncilSafe.dc.html",
+                        "SppMembersGuardianSafe.dc.html",
+                        "SppMember.dc.html",
+                        "SppAssets.dc.html",
+                        "SppTransactions.dc.html",
+                        "SppSettings.dc.html",
+                        "SppSettingsProcess.dc.html",
+                        "SppPermissions.dc.html",
+                        "SppPermissionsWithDaoGrants.dc.html",
+                        "SppPermissionsGraph.dc.html"
+                    ]
+                },
+                {
+                    "title": "Safe account",
+                    "artboards": [
+                        "SafeAccount.dc.html"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "proposals",
+            "name": "Proposals",
+            "rows": [
+                {
+                    "title": "Meridian DAO (token voting)",
+                    "artboards": [
+                        "Proposal.dc.html",
+                        "ProposalMGP7.dc.html",
+                        "ProposalMGP6.dc.html",
+                        "ProposalMGP5.dc.html",
+                        "ProposalMGP4.dc.html",
+                        "ProposalMGP3.dc.html",
+                        "ProposalMGP2.dc.html"
+                    ]
+                },
+                {
+                    "title": "Meridian DAO, wallet connected",
+                    "artboards": [
+                        "ConnectedProposalNotVoted.dc.html",
+                        "ConnectedProposalVoteOptions.dc.html",
+                        "ConnectedProposalVoteYes.dc.html"
+                    ]
+                },
+                {
+                    "title": "Atlas Grants Council (multisig)",
+                    "artboards": [
+                        "MsProposalAGC5.dc.html",
+                        "MsProposalAGC6.dc.html",
+                        "MsProposalAGC4.dc.html",
+                        "MsProposalAGC3.dc.html",
+                        "MsProposalAGC2.dc.html",
+                        "MsProposalAGC1.dc.html"
+                    ]
+                },
+                {
+                    "title": "Northstar Protocol (multistage)",
+                    "artboards": [
+                        "SppProposalNSP8.dc.html",
+                        "SppProposalNSP7.dc.html",
+                        "SppProposalNSP6.dc.html",
+                        "SppProposalNSP5.dc.html",
+                        "SppProposalNSP4.dc.html",
+                        "SppProposalNSP3.dc.html",
+                        "SppProposalNSP2.dc.html",
+                        "SppProposalNSP1.dc.html"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "wizards",
+            "name": "Wizards",
+            "rows": [
+                {
+                    "title": "Create DAO",
+                    "artboards": [
+                        "CreateDaoStep1.dc.html",
+                        "CreateDaoStep2.dc.html",
+                        "CreateDaoStep2Filled.dc.html"
+                    ]
+                },
+                {
+                    "title": "Create proposal",
+                    "artboards": [
+                        "CreateProposalStep1.dc.html",
+                        "CreateProposalStep1Filled.dc.html",
+                        "CreateProposalStep2.dc.html",
+                        "CreateProposalStep2ActionMenu.dc.html",
+                        "CreateProposalStep2Transfer.dc.html",
+                        "CreateProposalStep2TransferFilled.dc.html",
+                        "CreateProposalStep2NextMenu.dc.html",
+                        "CreateProposalStep3.dc.html",
+                        "MsCreateProposalStep1.dc.html",
+                        "SppCreateProposalStep1.dc.html"
+                    ]
+                },
+                {
+                    "title": "Execute directly",
+                    "artboards": [
+                        "CreateExecute.dc.html",
+                        "CreateExecuteActionMenu.dc.html",
+                        "CreateExecuteTransferFilled.dc.html"
+                    ]
+                },
+                {
+                    "title": "Create governance process",
+                    "artboards": [
+                        "CreateProcessStep1.dc.html",
+                        "CreateProcessStep1Filled.dc.html",
+                        "CreateProcessStep2.dc.html"
+                    ]
+                },
+                {
+                    "title": "Create workspace",
+                    "artboards": [
+                        "CreateWorkspaceStep1.dc.html",
+                        "CreateWorkspaceStep1Filled.dc.html",
+                        "CreateWorkspaceStep2.dc.html",
+                        "CreateWorkspaceStep3.dc.html"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "workspaces",
+            "name": "Workspaces",
+            "rows": [
+                {
+                    "title": "All accounts",
+                    "artboards": [
+                        "WorkspaceOverview.dc.html",
+                        "WorkspaceTodos.dc.html",
+                        "WorkspaceProposals.dc.html",
+                        "WorkspaceMembers.dc.html",
+                        "WorkspaceAssets.dc.html",
+                        "WorkspaceTransactions.dc.html"
+                    ]
+                },
+                {
+                    "title": "One account",
+                    "artboards": [
+                        "WorkspaceAccountOverview.dc.html",
+                        "WorkspaceAccountTodos.dc.html",
+                        "WorkspaceAccountProposals.dc.html",
+                        "WorkspaceAccountMembers.dc.html",
+                        "WorkspaceAccountAssets.dc.html",
+                        "WorkspaceAccountTransactions.dc.html",
+                        "WorkspaceAccountPermissions.dc.html",
+                        "WorkspaceAccountSettings.dc.html",
+                        "WorkspaceAccountMember.dc.html",
+                        "WorkspaceAccountProposal.dc.html"
+                    ]
+                },
+                {
+                    "title": "Wallet connected",
+                    "artboards": [
+                        "ConnectedWorkspaceOverview.dc.html",
+                        "ConnectedWorkspaceTodos.dc.html",
+                        "ConnectedWorkspaceAccountTodos.dc.html"
+                    ]
+                },
+                {
+                    "title": "Edit and execute",
+                    "artboards": [
+                        "WorkspaceEdit.dc.html",
+                        "WorkspaceCreateExecute.dc.html"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "dialogs",
+            "name": "Dialogs",
+            "rows": [
+                {
+                    "title": "Wallet and navigation",
+                    "artboards": [
+                        "DialogUserWallet.dc.html",
+                        "DialogSelectAsset.dc.html",
+                        "DialogConnectWallet.dc.html",
+                        "DialogConnectWalletAppkit.dc.html",
+                        "DialogDaoNavigationMobile.dc.html"
+                    ]
+                },
+                {
+                    "title": "Transactions",
+                    "artboards": [
+                        "DialogVoteTransaction.dc.html",
+                        "DialogPublishProposal.dc.html",
+                        "DialogPublishDao.dc.html",
+                        "DialogAddVotingBody.dc.html"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "components",
+            "name": "Components",
+            "rows": [
+                {
+                    "title": "Navigation and footer",
+                    "artboards": [
+                        "Sidebar.dc.html",
+                        "Footer.dc.html",
+                        "AragonLogo.dc.html",
+                        "WorkspaceSidebar.dc.html"
+                    ]
+                },
+                {
+                    "title": "Wizard frame",
+                    "artboards": [
+                        "CreateProposalNext.dc.html",
+                        "WizardActions.dc.html",
+                        "WizardNav.dc.html",
+                        "WizardProgress.dc.html"
+                    ]
+                },
+                {
+                    "title": "Other parts",
+                    "artboards": [
+                        "PermissionsToolbar.dc.html",
+                        "SppPermissionsToolbar.dc.html",
+                        "TxDialogSteps.dc.html"
+                    ]
+                }
+            ]
+        }
+    ],
     "screens": [
         {
             "artboard": "Main.dc.html",

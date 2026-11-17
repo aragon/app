@@ -86,7 +86,9 @@ Never reformat a canvas file. Biome and editors are configured to leave `design/
    - mock values come from `baseline-check/data.cjs`. Dates that a kit component prints relative to now are written as
      offsets from `Date.now()`; absolute dates are fixed text matching the reference;
    - link only to screens that exist; use `#` until the target is drawn;
-   - a new screen gets an entry in `canvas.json` (frame = its rendered size at 1440 px) and in `screens.json`.
+   - a new screen gets an entry in `screens.json` → `screens` and its name on a row of `screens.json` → `pages`;
+     then `node design/baseline-check/layout-canvas.cjs` places it in `canvas.json`. Set its board's `h` to its
+     rendered height at 1440 px.
 3. Check: `node design/baseline-check/compare.cjs` (see its README; it needs the canvas runtime and the kit copy
    downloaded from the canvas). Every screen must render without errors and match its reference.
 4. Refresh, then commit screens and pointer together.

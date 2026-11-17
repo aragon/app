@@ -96,6 +96,19 @@ that differ by more than 25/255 in a channel. It exits 1 when a height differs, 
 pixels differ, when a render reports a page error or a missing file, or when a screen uses a class that neither the
 kit stylesheet nor `design/canvas/app.css` defines.
 
+### Canvas layout
+
+```sh
+node design/baseline-check/layout-canvas.cjs
+```
+
+Writes the canvas's pages, board positions and row titles into `design/canvas/canvas.json` from
+`design/screens.json` → `pages`: each page is a list of rows, each row a title and its artboards left to right. Every
+`.dc.html` file must be on exactly one row, so the script fails when a screen or part is missing, listed twice, or
+listed without a file. A new screen therefore gets its name added to a row, then this script; positions are never
+edited by hand. It keeps each board's other keys (size, title, flags); a board it has not seen before takes its size
+from the file's `$preview`.
+
 ### Canvas runtime
 
 Rendering an artboard needs two things the claude.ai canvas serves and the repo does not hold:
