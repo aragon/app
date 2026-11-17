@@ -5,6 +5,7 @@ import { featureFlags } from '@/shared/featureFlags';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { workspaceAccountInfoUtils } from '../../utils/workspaceAccountInfoUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+import { WorkspaceSectionGuard } from '../workspaceSectionGuard';
 
 export interface ILayoutWizardCreateWorkspaceTransactionProps {
     /**
@@ -21,6 +22,9 @@ export interface ILayoutWizardCreateWorkspaceTransactionProps {
  * Wizard layout of the create-transaction flow of a workspace account, exiting to the transactions of that account.
  * Checks the `workspaces` flag itself, so with the flag off the route is a plain 404 rather than a 404 inside the
  * wizard. A segment that is not an account ID is a 404 too: a transaction is always created on one account.
+ *
+ * The guard wraps the wizard layout and is the only account check on the route: a DAO is redirected to its overview,
+ * an unknown account is a 404.
  */
 export const LayoutWizardCreateWorkspaceTransaction: React.FC<
     ILayoutWizardCreateWorkspaceTransactionProps
@@ -44,11 +48,18 @@ export const LayoutWizardCreateWorkspaceTransaction: React.FC<
     );
 
     return (
-        <LayoutWizard
-            exitPath={exitPath}
-            name="app.workspace.layoutWizardCreateWorkspaceTransaction.name"
+        <WorkspaceSectionGuard
+            accountId={accountId}
+            section="create"
+            subsection="transaction"
+            workspaceId={workspaceId}
         >
-            {children}
-        </LayoutWizard>
+            <LayoutWizard
+                exitPath={exitPath}
+                name="app.workspace.layoutWizardCreateWorkspaceTransaction.name"
+            >
+                {children}
+            </LayoutWizard>
+        </WorkspaceSectionGuard>
     );
 };

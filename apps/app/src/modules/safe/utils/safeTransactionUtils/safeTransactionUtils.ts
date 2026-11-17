@@ -95,13 +95,7 @@ export interface ISafeApprovalReadinessParams
 }
 
 /**
- * Pure rules of a Safe transaction: its liveness in the Safe queue, its confirmations and what the owners can do next.
- * They know nothing about DAOs or proposals, so the Safe module, the Safe multisig plugin and the SPP plugin share them.
- *
- * Safe nonces are a single sequential queue, so liveness is derived from the nonce and never read
- * from `isExecuted`: transactions below the Safe's current nonce are permanently unexecutable no
- * matter how many confirmations they hold, and a reverted execution consumes its nonce just the
- * same. Deriving on every read is what makes the rule recoverable — no transition is tracked.
+ * Threshold and owners of a Safe, as read from it, checked by `hasValidThreshold`.
  */
 export interface ISafeOwnerThresholdParams {
     /**
@@ -114,6 +108,15 @@ export interface ISafeOwnerThresholdParams {
     owners: string[];
 }
 
+/**
+ * Pure rules of a Safe transaction: its liveness in the Safe queue, its confirmations and what the owners can do next.
+ * They know nothing about DAOs or proposals, so the Safe module, the Safe multisig plugin and the SPP plugin share them.
+ *
+ * Safe nonces are a single sequential queue, so liveness is derived from the nonce and never read
+ * from `isExecuted`: transactions below the Safe's current nonce are permanently unexecutable no
+ * matter how many confirmations they hold, and a reverted execution consumes its nonce just the
+ * same. Deriving on every read is what makes the rule recoverable — no transition is tracked.
+ */
 class SafeTransactionUtils {
     supportsEip1271Signatures = (version: string | null): boolean => {
         if (version == null) {
