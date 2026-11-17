@@ -930,6 +930,140 @@
       "title": "Multistage DAO: SppTransactions",
       "expand": "fill",
       "is_interactive": true
+    },
+    "SppSettings.dc.html": {
+      "x": 0,
+      "y": 42400,
+      "w": 1440,
+      "h": 1194,
+      "title": "Multistage settings and permissions: SppSettings",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppSettingsProcess.dc.html": {
+      "x": 1520,
+      "y": 42400,
+      "w": 1440,
+      "h": 3990,
+      "title": "Multistage settings and permissions: SppSettingsProcess",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppPermissions.dc.html": {
+      "x": 3040,
+      "y": 42400,
+      "w": 1440,
+      "h": 900,
+      "title": "Multistage settings and permissions: SppPermissions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppPermissionsWithDaoGrants.dc.html": {
+      "x": 4560,
+      "y": 42400,
+      "w": 1440,
+      "h": 1654,
+      "title": "Multistage settings and permissions: SppPermissionsWithDaoGrants",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppPermissionsGraph.dc.html": {
+      "x": 6080,
+      "y": 42400,
+      "w": 1440,
+      "h": 942,
+      "title": "Multistage settings and permissions: SppPermissionsGraph",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppCreateProposalStep1.dc.html": {
+      "x": 7600,
+      "y": 42400,
+      "w": 1440,
+      "h": 1630,
+      "title": "Multistage settings and permissions: SppCreateProposalStep1",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogUserWallet.dc.html": {
+      "x": 0,
+      "y": 46800,
+      "w": 1440,
+      "h": 900,
+      "title": "Dialogs: DialogUserWallet",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogSelectAsset.dc.html": {
+      "x": 1520,
+      "y": 46800,
+      "w": 1440,
+      "h": 900,
+      "title": "Dialogs: DialogSelectAsset",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogConnectWallet.dc.html": {
+      "x": 3040,
+      "y": 46800,
+      "w": 1440,
+      "h": 900,
+      "title": "Dialogs: DialogConnectWallet",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogConnectWalletAppkit.dc.html": {
+      "x": 4560,
+      "y": 46800,
+      "w": 1440,
+      "h": 900,
+      "title": "Dialogs: DialogConnectWalletAppkit",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogDaoNavigationMobile.dc.html": {
+      "x": 6080,
+      "y": 46800,
+      "w": 390,
+      "h": 844,
+      "title": "Dialogs: DialogDaoNavigationMobile (phone)",
+      "is_interactive": true
+    },
+    "DialogVoteTransaction.dc.html": {
+      "x": 0,
+      "y": 48200,
+      "w": 1440,
+      "h": 900,
+      "title": "Transaction dialogs: DialogVoteTransaction",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogPublishProposal.dc.html": {
+      "x": 1520,
+      "y": 48200,
+      "w": 1440,
+      "h": 900,
+      "title": "Transaction dialogs: DialogPublishProposal",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogPublishDao.dc.html": {
+      "x": 3040,
+      "y": 48200,
+      "w": 1440,
+      "h": 900,
+      "title": "Transaction dialogs: DialogPublishDao",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DialogAddVotingBody.dc.html": {
+      "x": 4560,
+      "y": 48200,
+      "w": 1440,
+      "h": 900,
+      "title": "Transaction dialogs: DialogAddVotingBody",
+      "expand": "fill",
+      "is_interactive": true
     }
   },
   "order": [
@@ -1035,7 +1169,22 @@
     "SppMembersGuardianSafe.dc.html",
     "SppMember.dc.html",
     "SppAssets.dc.html",
-    "SppTransactions.dc.html"
+    "SppTransactions.dc.html",
+    "SppSettings.dc.html",
+    "SppSettingsProcess.dc.html",
+    "SppPermissions.dc.html",
+    "SppPermissionsWithDaoGrants.dc.html",
+    "SppPermissionsGraph.dc.html",
+    "SppCreateProposalStep1.dc.html",
+    "DialogUserWallet.dc.html",
+    "DialogSelectAsset.dc.html",
+    "DialogConnectWallet.dc.html",
+    "DialogConnectWalletAppkit.dc.html",
+    "DialogDaoNavigationMobile.dc.html",
+    "DialogVoteTransaction.dc.html",
+    "DialogPublishProposal.dc.html",
+    "DialogPublishDao.dc.html",
+    "DialogAddVotingBody.dc.html"
   ],
   "notes": {
     "screens": {
@@ -1163,6 +1312,27 @@
       "text": "Multistage DAO",
       "kind": "title1",
       "maxW": 13600
+    },
+    "row-Multistage settings and permissions": {
+      "x": 0,
+      "y": 42120,
+      "text": "Multistage settings and permissions",
+      "kind": "title1",
+      "maxW": 9040
+    },
+    "row-Dialogs": {
+      "x": 0,
+      "y": 46520,
+      "text": "Dialogs",
+      "kind": "title1",
+      "maxW": 6000
+    },
+    "row-Transaction dialogs": {
+      "x": 0,
+      "y": 47920,
+      "text": "Transaction dialogs",
+      "kind": "title1",
+      "maxW": 6000
     }
   },
   "designSystems": [

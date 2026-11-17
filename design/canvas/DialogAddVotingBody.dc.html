@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dialog add voting body</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="dlg-stage">
+<dc-import name="CreateProcessStep2" hint-size="1440px,900px"></dc-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" size="lg">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Add voting body" on-close="{{noop}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="pb-1.5">
+    <div class="dlg-wizard-form">
+      <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Governance type" help-text="This determines the governance the body uses to make decisions." value="multisig" on-value-change="{{noop}}">
+        <x-import component-from-global-scope="GovUiKit.RadioCard" label="Multisig" description="Designated members must reach a minimum threshold" value="multisig"></x-import>
+        <x-import component-from-global-scope="GovUiKit.RadioCard" label="Token voting" description="Majority voting based on token voting power" value="tokenVoting"></x-import>
+        <x-import component-from-global-scope="GovUiKit.RadioCard" label="Lock to vote" description="Temporarily lock ERC-20 tokens to vote, even after a proposal opens." value="lockToVote"></x-import>
+      </x-import>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}" variant="wizard"></x-import>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, noFocus: (e) => e.preventDefault(), primary: { label: 'Next' }, secondary: { label: 'Close' }, noop: () => undefined };
+  }
+}
+</script>
+</body>
+</html>

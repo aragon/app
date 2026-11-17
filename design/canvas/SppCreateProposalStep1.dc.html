@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal: describe (SPP)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+/* TextAreaRichText: no typography plugin in the kit css, so the editor text is coloured here (the app renders neutral-700); .pw-focus draws focus-within */
+.pw-rich .tiptap p{color:rgb(64,64,64);margin:0}
+.pw-focus div:has(> div > div > .tiptap){border-color:var(--color-primary-400);box-shadow:var(--shadow-primary)}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create proposal" dao-name="Northstar Protocol" dao-address="0xA767846912853E30403f3efb946A5250e8E6A063" dao-avatar="assets/mock/avatar/northstar.svg" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Add actions" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe proposal</x-import>
+            <p class="wizard-step__description">Describe the proposal so voters have the information they need to understand it and make a decision.</p>
+          </div>
+          <div class="wizard-fields">
+            <x-import component-from-global-scope="GovUiKit.InputText" label="Proposal title" max-length="{{d128}}" value="" on-change="{{noop}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.TextArea" label="Summary" help-text="This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about." is-optional="{{yes}}" max-length="{{d480}}" value="" on-change="{{noop}}"></x-import>
+            <div class="pw-rich"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="" on-change="{{noop}}"></x-import></div>
+            <div class="resources-input">
+              <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the proposal page. They can be used to help members understand the proposal." use-custom-wrapper="{{yes}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Switch" label="Add actions" help-text="Actions are onchain transactions that can be executed if the proposal passes." inline-label="Yes" checked="{{yes}}" on-checked-changed="{{noop}}"></x-import>
+          </div>
+        </div>
+<dc-import name="WizardActions" has-back="{{no}}" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1630}}'>
+// Create proposal, step 1 empty, staged (SPP) DAO (Northstar Protocol) (apps/app: modules/governance/pages/createProposalPage/createProposalPageClientSteps.tsx, components/createProposalForm/createProposalFormMetadata).
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, zero: 0, one: 1, step: 1, total: 3, d128: 128, d480: 480, noop: () => {}, };
+  }
+}
+</script>
+</body>
+</html>

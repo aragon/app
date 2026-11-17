@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spp settings process</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" active="settings" dao="northstar" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Northstar Staged Governance</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Proposals are approved by the Council Safe or the Core Team, then pass a 7-day community veto window in which NSP holders or the Security Guardian can block them.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>8</p></div>
+                    <p class="page-stat__label">Proposals</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>{{lastValue}}</p><p>{{lastUnit}}</p></div>
+                    <p class="page-stat__label">Last proposal</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+                        <div class="page-section">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance process</x-import>
+                </div>
+              </div>
+              <div class="stage-list">
+              <x-import component-from-global-scope="GovUiKit.Card" class-name="stage-card">
+                <div>
+                  <div class="stage-head__row">
+                    <p class="stage-title">Council approval</p>
+                    <p class="stage-number">Stage 1</p>
+                  </div>
+                </div>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" label="Voting bodies" help-text="These bodies will decide whether this stage passes." id="bodies1" use-custom-wrapper="{{yes}}" class-name="flex flex-col gap-2">
+              <div class="stage-list">
+                    <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" default-value="{{open_council}}">
+                      <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="council">
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                          <div class="body-info">
+                            <div class="body-info__row">
+                              <p class="body-info__name process-body__external">0x515f…02e2<x-import component-from-global-scope="GovUiKit.Avatar" size="sm" src="assets/safeWallet.png"></x-import></p>
+                            </div>
+                            <p class="body-info__subtitle">External address</p>
+                          </div>
+                        </x-import>
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="w-full">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Governance type">Approval<p class="process-body__note">This body is able to approve the proposal to advance this stage.</p></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS name" link="{{councilLinkEns}}" children="council.northstar.eth"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{councilLink}}" children="0x515fec2e8f6553948b1d57c14c1243a1405c02e2"></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Type" children="Safe{Wallet}"></x-import>
+                          </x-import>
+                        </x-import>
+                      </x-import>
+                    </x-import>
+                    <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" default-value="{{open_core}}">
+                      <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="core">
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                          <div class="body-info">
+                            <div class="body-info__row">
+                              <p class="body-info__name">Core Team</p>
+                              <p class="body-info__address">0x5668…a6a2</p>
+                            </div>
+                            <p class="body-info__subtitle">Multisig v1.3</p>
+                          </div>
+                        </x-import>
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="w-full">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Governance type">Approval<p class="process-body__note">This body is able to approve the proposal to advance this stage.</p></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Members" children="3 members"></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Multisig threshold" children="2 of 3"></x-import>
+                          </x-import>
+                        </x-import>
+                      </x-import>
+                    </x-import>
+              </div>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" label="Settings" use-custom-wrapper="{{yes}}" class-name="flex flex-col items-start gap-3" id="stageSettings1">
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="stage-settings">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Approval threshold" children="1"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Stage duration" children="5 days"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Early stage advance"><x-import component-from-global-scope="GovUiKit.Tag" label="Disabled" variant="neutral" class-name="w-fit"></x-import></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Stage expiration"><x-import component-from-global-scope="GovUiKit.Tag" label="Enabled" variant="primary" class-name="w-fit"></x-import></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Expiration period" children="7 days"></x-import>
+              </x-import>
+            </x-import>
+              </x-import>
+              <x-import component-from-global-scope="GovUiKit.Card" class-name="stage-card">
+                <div>
+                  <div class="stage-head__row">
+                    <p class="stage-title">Community veto</p>
+                    <p class="stage-number">Stage 2</p>
+                  </div>
+                </div>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" label="Vetoing bodies" help-text="These bodies will decide whether this stage passes." id="bodies2" use-custom-wrapper="{{yes}}" class-name="flex flex-col gap-2">
+              <div class="stage-list">
+                    <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" default-value="{{open_nsp}}">
+                      <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="nsp">
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                          <div class="body-info">
+                            <div class="body-info__row">
+                              <p class="body-info__name">NSP Token Holders</p>
+                              <p class="body-info__address">0x65bc…8f36</p>
+                            </div>
+                            <p class="body-info__subtitle">TokenVoting v1.3</p>
+                          </div>
+                        </x-import>
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="w-full">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Governance type">Veto<p class="process-body__note">This body is able to veto the proposal to prevent it from advancing this stage.</p></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" description="Token Voting v1.3" link="{{tvLink}}" children="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{tvLaunch}}" children="January 2026"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Token" description="Northstar (NSP)" link="{{tokenLink}}" children="0x384915d45e1807d6d3875540263d2801b9309e70"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Members" link="{{membersLink}}" children="10 delegates"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Supply" children="100,000,000 (NSP)"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Support threshold" children="&gt; 50%"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Minimum participation" children="≥ 5.00%"></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Vote change"><x-import component-from-global-scope="GovUiKit.Tag" label="Disabled" variant="neutral" class-name="max-w-fit"></x-import></x-import>
+                          </x-import>
+                        </x-import>
+                      </x-import>
+                    </x-import>
+                    <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" default-value="{{open_guardian}}">
+                      <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="guardian">
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                          <div class="body-info">
+                            <div class="body-info__row">
+                              <p class="body-info__name process-body__external">0xf361…465e<x-import component-from-global-scope="GovUiKit.Avatar" size="sm" src="assets/safeWallet.png"></x-import></p>
+                            </div>
+                            <p class="body-info__subtitle">External address</p>
+                          </div>
+                        </x-import>
+                        <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="w-full">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Governance type">Veto<p class="process-body__note">This body is able to veto the proposal to prevent it from advancing this stage.</p></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS name" link="{{guardianLinkEns}}" children="guardian.northstar.eth"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{guardianLink}}" children="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e"></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Type" children="Safe{Wallet}"></x-import>
+                          </x-import>
+                        </x-import>
+                      </x-import>
+                    </x-import>
+              </div>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" label="Settings" use-custom-wrapper="{{yes}}" class-name="flex flex-col items-start gap-3" id="stageSettings2">
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="stage-settings">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Veto threshold" children="1"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Stage duration" children="7 days"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Stage expiration"><x-import component-from-global-scope="GovUiKit.Tag" label="Enabled" variant="primary" class-name="w-fit"></x-import></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Expiration period" children="14 days"></x-import>
+              </x-import>
+            </x-import>
+              </x-import>
+              </div>
+            </div>
+
+            <div class="page-section" id="proposal-creation-eligibility">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal creation eligibility</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Card">
+                <div class="eligibility-list">
+                  <div class="flex flex-col gap-y-1">
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{councilEligLink}}" children="0x515f…02e2"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposal creation" children="Safe multisig member"></x-import>
+                    </x-import>
+                    <div class="or-divider"><div class="or-divider__line"></div><span class="or-divider__text">or</span><div class="or-divider__line"></div></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Name" children="Core Team"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposal creation" children="Multisig member"></x-import>
+                    </x-import>
+                  </div>
+                </div>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Authorized actions</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardEmptyState" is-stacked="{{no}}" heading="Unrestricted execution" description="This process has permission to execute on behalf of the DAO. It could, for example, withdraw funds, modify governance contracts, and call any function on any smart contract." object-illustration="{{settingsIllustration}}"></x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              </div>
+              <div class="process-details">
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin name" children="Northstar Staged Governance"></x-import></div>
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Process key" children="NSP"></x-import></div>
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" description="Spp v1.3" link="{{pluginLink}}" children="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="January 2026"></x-import>
+                </x-import>
+                <div class="process-details__uninstall">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md">Uninstall process</x-import>
+                  <p class="process-details__info">Proposals of this type can't be executed once this process is uninstalled.</p>
+                </div>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Governance process details (apps/app: modules/settings/pages/daoProcessDetailsPage/daoProcessDetailsPageClient.tsx).
+// Governance process: createProcessForm GovernanceBodyField (readOnly, open accordion) with GovernanceBodyInfo in the
+// header and the token plugin's TokenProcessBodyField; eligibility: PermissionsDefinitionList; actions:
+// The app gives ItemContent open-state flex/gap classes the kit stylesheet lacks; with one child they change nothing, so
+// they are left out. DaoProcessAllowedActions (no condition = unrestricted empty state); aside: DaoProcessDetailsInfo.
+// Mock data: design/baseline-check/data.cjs (Northstar Protocol, SPP DAO: data-spp.cjs, process NSP). Staged process: createProcessForm GovernanceStagesField (readOnly) > GovernanceStagesFieldItem > GovernanceStageBodiesField / GovernanceStageSettingsField; eligibility: PermissionsDefinitionList with two groups.
+class Component extends DCLogic {
+  renderVals() {
+    const day = 24 * 60 * 60 * 1000;
+    // The last proposal is two days old (stat "2 days ago", formatted like the app: value + unit suffix).
+    const rel = GovUiKit.formatterUtils.formatDate(Date.now() - 2 * day, { format: GovUiKit.DateFormat.RELATIVE }) || '';
+    const [lastValue, unit] = rel.split(' ');
+    return {
+      yes: true,
+      no: false,
+      two: 2,
+      lastValue,
+      lastUnit: unit ? unit + ' ago' : '',
+      open_council: ['council'], open_core: ['core'], open_nsp: ['nsp'], open_guardian: ['guardian'],
+      breadcrumbs: [{ href: 'SppSettings.dc.html', label: 'Settings' }, { label: 'NSP' }],
+      pluginLink: { href: 'https://etherscan.io/address/0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09', isExternal: true, isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x55153e28947691aed34cd9da03038caa9540dcdb4960ae559d4339ffe15d9784' },
+      tvLink: { href: 'https://etherscan.io/address/0x65bcf0e7d2a74d45fe702135d19f954d59658f36', isExternal: true, isOnchainEntity: true },
+      tvLaunch: { href: 'https://etherscan.io/tx/0x3995ecdb4ac48b1d2129986ea48b2668d1fc8f8f4cb3fb59dad4f99f4e868c6e' },
+      tokenLink: { href: 'https://etherscan.io/address/0x384915d45e1807d6d3875540263d2801b9309e70', isExternal: true, isOnchainEntity: true },
+      councilLink: { href: 'https://etherscan.io/address/0x515fec2e8f6553948b1d57c14c1243a1405c02e2', isExternal: true, isOnchainEntity: true },
+      guardianLink: { href: 'https://etherscan.io/address/0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e', isExternal: true, isOnchainEntity: true },
+      councilEligLink: { href: 'https://etherscan.io/address/0x515fec2e8f6553948b1d57c14c1243a1405c02e2', isExternal: true },
+      councilLinkEns: { href: 'https://etherscan.io/address/0x515fec2e8f6553948b1d57c14c1243a1405c02e2', isExternal: true },
+      guardianLinkEns: { href: 'https://etherscan.io/address/0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e', isExternal: true },
+      membersLink: { href: '#', isExternal: false },
+      settingsIllustration: { object: 'SETTINGS' }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spp permissions graph</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" active="permissions" dao="northstar" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Permissions</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">All permissions configured in this DAO — who has access, to which contract, and under what conditions.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="perm-body">
+              <dc-import name="SppPermissionsToolbar" view="graph" state="graph" hint-size="100%,40px"></dc-import>
+              <div class="pg-container pg-container--spp" data-testid="permissions-graph-container">
+                <div class="pg-flow">
+                  <svg class="pg-background" aria-hidden="true"><defs><pattern id="pg-dots" x="9.35" y="4.15" width="13.844" height="13.844" patternUnits="userSpaceOnUse"><circle cx="0.346" cy="0.346" r="0.346"></circle></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(#pg-dots)"></rect></svg>
+                  <svg class="pg-edges" aria-hidden="true">
+                    <g transform="translate(-297,-223)">
+                    <path class="pg-edge--self" d="M891,292 V310"></path>
+                    <path d="M891,343 V382 Q891,387 886,387 H809 Q804,387 804,392 V520 Q804,525 809,525 H837 Q842,525 842,530 V571"></path>
+                    <path d="M891,343 V511 Q891,516 886,516 H847 Q842,516 842,521 V571"></path>
+                    <path d="M891,343 V391 Q891,396 896,396 H994 Q999,396 999,401 V571"></path>
+                    <path d="M842,601 V640 Q842,645 837,645 H701 Q696,645 696,650 V809"></path>
+                    <path d="M842,601 V809"></path>
+                    <path d="M842,601 V643 Q842,648 847,648 H982 Q987,648 987,653 V809"></path>
+                    </g>
+                  </svg>
+                  <div class="pg-stack" style="left:594px;top:23px"><button type="button" class="pg-stack__item" title="ROOT_PERMISSION"><span>Root</span></button><button type="button" class="pg-stack__item" title="UPGRADE_DAO_PERMISSION"><span>Upgrade dao</span></button><button type="button" class="pg-stack__item" title="SET_METADATA_PERMISSION"><span>Set metadata</span></button><button type="button" class="pg-stack__item" title="REGISTER_STANDARD_CALLBACK_PERMISSION"><span>Register standard callback</span></button><button type="button" class="pg-stack__item" title="SET_TRUSTED_FORWARDER_PERMISSION"><span>Set trusted forwarder</span></button></div>
+                  <div class="pg-stack" style="left:507px;top:210px"><button type="button" class="pg-stack__item" title="UPDATE_STAGES_PERMISSION"><span>Update stages</span></button><button type="button" class="pg-stack__item" title="UPDATE_RULES_PERMISSION"><span>Update rules</span></button><button type="button" class="pg-stack__item" title="SET_METADATA_PERMISSION"><span>Set metadata</span></button><button type="button" class="pg-stack__item" title="SET_TARGET_CONFIG_PERMISSION"><span>Set target config</span></button><button type="button" class="pg-stack__item" title="UPGRADE_PLUGIN_PERMISSION"><span>Upgrade plugin</span></button></div>
+                  <div class="pg-stack" style="left:594px;top:229px"><button type="button" class="pg-stack__item" title="EXECUTE_PERMISSION"><span>Execute</span></button></div>
+                  <div class="pg-stack" style="left:702.5px;top:229px"><button type="button" class="pg-stack__item" title="MINT_PERMISSION"><span>Mint</span></button></div>
+                  <div class="pg-stack" style="left:399.5px;top:468px"><button type="button" class="pg-stack__item" title="ADVANCE_PERMISSION"><span>Advance</span></button><button type="button" class="pg-stack__item" title="EXECUTE_PROPOSAL_PERMISSION"><span>Execute proposal</span></button></div>
+                  <div class="pg-stack" style="left:545px;top:469px"><button type="button" class="pg-stack__item pg-stack__item--cond" title="CREATE_PROPOSAL_PERMISSION"><span>Create proposal</span><span class="pg-stack__cond">if SafeOwner</span></button></div>
+                  <div class="pg-stack" style="left:690px;top:473px"><button type="button" class="pg-stack__item" title="CREATE_PROPOSAL_PERMISSION"><span>Create proposal</span></button></div>
+                  <div class="pg-node" style="left:594px;top:88.0px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="Northstar Protocol" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Primary DAO</span></div>
+                      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Northstar Protocol" size="sm" src="assets/mock/avatar/northstar.svg"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-node" style="left:545px;top:347.0px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" label="Northstar Staged Governance" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Spp v1.3</span></div>
+                      <x-import component-from-global-scope="GovUiKit.Tag" label="OSx" variant="primary" class-name="self-start"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-node" style="left:702.5px;top:347.0px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x384915d45e1807d6d3875540263d2801b9309e70" label="Northstar (NSP)" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Address</span></div>
+                      <x-import component-from-global-scope="GovUiKit.Avatar" size="sm"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-node" style="left:399.5px;top:585.0px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xffffffffffffffffffffffffffffffffffffffff" label="Anyone" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Address</span></div>
+                      <x-import component-from-global-scope="GovUiKit.Avatar" size="sm"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-node" style="left:545px;top:585.0px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" label="Safe" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Aragon OSx Plugin</span></div>
+                      <x-import component-from-global-scope="GovUiKit.Avatar" size="sm" src="assets/safeWallet.png"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-node" style="left:690px;top:585.0px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x566805a83e872e67a32d84596b81d16faa7ba6a2" label="Members of Core Team" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Address</span></div>
+                      <x-import component-from-global-scope="GovUiKit.Avatar" size="sm"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-controls" aria-label="Control Panel">
+                    <button type="button" class="pg-controls__button" title="Zoom In" aria-label="Zoom In"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M32 18.133H18.133V32h-4.266V18.133H0v-4.266h13.867V0h4.266v13.867H32z"></path></svg></button>
+                    <button type="button" class="pg-controls__button" title="Zoom Out" aria-label="Zoom Out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 5"><path d="M0 0h32v4.2H0z"></path></svg></button>
+                    <button type="button" class="pg-controls__button" title="Fit View" aria-label="Fit View"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 30"><path d="M3.692 4.63c0-.53.4-.938.939-.938h5.215V0H4.708C2.13 0 0 2.054 0 4.63v5.216h3.692V4.631zM27.354 0h-5.2v3.692h5.17c.53 0 .984.4.984.939v5.215H32V4.631A4.624 4.624 0 0027.354 0zm.954 24.83c0 .532-.4.94-.939.94h-5.215v3.768h5.215c2.577 0 4.631-2.13 4.631-4.707v-5.139h-3.692v5.139zm-23.677.94c-.531 0-.939-.4-.939-.94v-5.138H0v5.139c0 2.577 2.13 4.707 4.708 4.707h5.138V25.77H4.631z"></path></svg></button>
+                  </div>
+                </div>
+                <div class="pg-expand">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-left="EXPAND" aria-label="Expand graph" class-name="shadow-neutral-sm"></x-import>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":942}}'>
+// Atlas Grants Council (multisig) permissions, graph view, with "Hide permissions granted to DAO" turned off (apps/app:
+// modules/permissions/pages/daoPermissionsPage/daoPermissionsPageClient.tsx; graph: modules/settings/components/
+// permissionsGraph — permissionsGraph.tsx, permissionsGraphCanvas.tsx, permissionGraphNode.tsx, permissionStackNode.tsx,
+// permissionGraphEdge.tsx).
+// The app draws this with React Flow (@xyflow/react), which is not in the kit bundle. It is redrawn as a static picture
+// of the fitted graph: the nodes and permission stacks are the app's markup at React Flow's fitted zoom (0.6922,
+// --pg-zoom in app.css), each placed by its anchor (node: top centre; stack: top centre) in container pixels measured
+// on the reference; the smooth-step edges and React Flow's dot background are inline SVG in the same pixels; the
+// Controls panel copies React Flow's own buttons and icons. Kit components (AddressOutput, DaoAvatar, Avatar, Tag,
+// Button) are mounted inside the nodes as the app does.
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, two: 2 };
+  }
+}
+</script>
+</body>
+</html>

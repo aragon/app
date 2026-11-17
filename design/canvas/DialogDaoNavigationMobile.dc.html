@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DAO navigation dialog (mobile)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<!-- Phone (render at 390x844): the DAO navigation dialog opened from the top bar menu button, drawn with the kit's own
+     Dialog.Root (open) over the DAO dashboard, in an 844px clipped stage; needs the z-index tokens at the end of
+     app.css. apps/app: shared/components/navigation/navigationDialog + navigationDao.tsx, links as in the sidebar. -->
+<div style="position:relative;height:844px;overflow:hidden">
+<dc-import name="Dashboard" hint-size="390px,844px"></dc-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="DAO navigation menu" hidden-description="This dialog provides key DAO details and links to governance, treasury, and community pages">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+<div style="display:flex;flex-direction:column;gap:16px;padding:32px 0 16px">
+<div style="display:flex;flex-direction:column;gap:12px;padding:0 32px">
+<x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="lg"></x-import>
+<div class="app-sidebar__dao">
+<p class="app-sidebar__dao-name" style="font-size:18px;line-height:28px;margin:0">Meridian DAO</p>
+<x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xc8c322384903ee8f11f511b71d0504237886bcde" href="#" is-external="{{yes}}" copy="{{no}}" class-name="w-full text-sm text-neutral-500 sm:text-base"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;padding:0 16px">
+<div class="app-nav-links">
+<a class="app-nav-link" href="#" aria-current="page"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_DASHBOARD" class-name="text-neutral-800"></x-import>Dashboard</a>
+<a class="app-nav-link" href="#"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_PROPOSALS" class-name="text-neutral-300"></x-import>Proposals</a>
+<a class="app-nav-link" href="#"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_TRANSACTIONS" class-name="text-neutral-300"></x-import>Transactions</a>
+<a class="app-nav-link" href="#"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_ASSETS" class-name="text-neutral-300"></x-import>Assets</a>
+<a class="app-nav-link" href="#"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_MEMBERS" class-name="text-neutral-300"></x-import>Members</a>
+<a class="app-nav-link" href="#"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_PERMISSIONS" class-name="text-neutral-300"></x-import>Permissions</a>
+<a class="app-nav-link" href="#"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import>Settings</a>
+</div>
+<div style="padding:0 16px"><div style="border-top:1px solid var(--color-neutral-100)"></div></div>
+<a class="app-nav-link" href="Main.dc.html" style="justify-content:space-between">Explore all DAOs<x-import component-from-global-scope="GovUiKit.Icon" icon="APP_EXPLORE" class-name="text-neutral-300"></x-import></a>
+</div>
+</div>
+</x-import>
+</x-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic { renderVals(){ return {yes:true, no:false, rootProps:{onOpenAutoFocus:(e)=>e.preventDefault()} }; } }
+</script>
+</body></html>

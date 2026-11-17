@@ -465,6 +465,71 @@
             "artboard": "SppTransactions.dc.html",
             "route": "/dao/ethereum-mainnet/northstar.dao.eth/transactions",
             "reference": "spp-transactions.webp"
+        },
+        {
+            "artboard": "SppSettings.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/settings",
+            "reference": "spp-settings.webp"
+        },
+        {
+            "artboard": "SppSettingsProcess.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/settings/nsp",
+            "reference": "spp-settings-process-nsp.webp"
+        },
+        {
+            "artboard": "SppPermissions.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/permissions",
+            "reference": "spp-permissions.webp"
+        },
+        {
+            "artboard": "SppPermissionsWithDaoGrants.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/permissions",
+            "reference": "spp-permissions-including-dao-grants.webp"
+        },
+        {
+            "artboard": "SppPermissionsGraph.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/permissions",
+            "reference": "spp-permissions-graph.webp"
+        },
+        {
+            "artboard": "SppCreateProposalStep1.dc.html",
+            "reference": "spp-create-proposal-step1-empty.webp"
+        },
+        {
+            "artboard": "DialogUserWallet.dc.html",
+            "reference": "dialog-user-wallet.webp"
+        },
+        {
+            "artboard": "DialogSelectAsset.dc.html",
+            "reference": "dialog-select-asset.webp"
+        },
+        {
+            "artboard": "DialogConnectWallet.dc.html",
+            "reference": "dialog-connect-wallet.webp"
+        },
+        {
+            "artboard": "DialogConnectWalletAppkit.dc.html",
+            "reference": "dialog-connect-wallet-appkit.webp"
+        },
+        {
+            "artboard": "DialogDaoNavigationMobile.dc.html",
+            "mobileReference": "dialog-dao-navigation-mobile.webp"
+        },
+        {
+            "artboard": "DialogVoteTransaction.dc.html",
+            "reference": "dialog-vote-transaction.webp"
+        },
+        {
+            "artboard": "DialogPublishProposal.dc.html",
+            "reference": "dialog-publish-proposal-transaction.webp"
+        },
+        {
+            "artboard": "DialogPublishDao.dc.html",
+            "reference": "dialog-publish-dao-transaction.webp"
+        },
+        {
+            "artboard": "DialogAddVotingBody.dc.html",
+            "reference": "dialog-create-process-add-voting-body.webp"
         }
     ]
 }

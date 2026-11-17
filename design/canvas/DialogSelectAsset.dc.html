@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Select asset dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<!-- Dialog over its page, drawn with the kit's own Dialog.Root (open) over the create-proposal "Transfer" step
+     (CreateProposalStep2Transfer), in a 900px clipped stage; needs the z-index tokens at the end of app.css.
+     apps/app: modules/finance/dialogs/assetSelectionDialog + components/assetAddressSelect, size md (480px). -->
+<div style="position:relative;height:900px;overflow:hidden">
+<dc-import name="CreateProposalStep2Transfer" hint-size="1440px,900px"></dc-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Select an asset" hidden-description="Select the asset from the list below">
+<x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Select an asset" on-close="{{noop}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Content">
+<div style="display:flex;flex-direction:column;gap:24px;padding:28px 0">
+<x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Filter" placeholder="Search assets..." search-value="" on-search-value-change="{{noop}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.ActionItem" icon="PLUS" label="Add address" variant="primary"></x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="USD Coin" symbol="USDC" amount="1852340.55" fiat-price="1.00" hide-value="{{no}}" logo-src="assets/mock/token/usdc.svg" variant="select" on-click="{{noop}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Ether" symbol="ETH" amount="418.274" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/eth.svg" variant="select" on-click="{{noop}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Meridian" symbol="MRD" amount="1100000" fiat-price="0.84" hide-value="{{no}}" logo-src="assets/mock/token/mrd.svg" variant="select" on-click="{{noop}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Wrapped Ether" symbol="WETH" amount="152.5" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/weth.svg" variant="select" on-click="{{noop}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Dai Stablecoin" symbol="DAI" amount="231420.18" fiat-price="0.9998" hide-value="{{no}}" logo-src="assets/mock/token/dai.svg" variant="select" on-click="{{noop}}"></x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+</x-import>
+</div>
+</x-import>
+</x-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic { renderVals(){ return {yes:true, no:false, noop:()=>undefined, count:5, pageSize:12,
+ rootProps:{onOpenAutoFocus:(e)=>e.preventDefault()} }; } }
+</script>
+</body></html>

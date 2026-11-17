@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Connect wallet dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<!-- Dialog over its page, drawn with the kit's own Dialog.Root (open) over the Explore page (Main), in a 900px clipped
+     stage. Pattern shared by all Dialog*.dc.html files: needs the z-index tokens at the end of app.css.
+     apps/app: modules/application/dialogs/connectWalletDialog/connectWalletDialog.tsx, size md (480px). -->
+<div style="position:relative;height:900px;overflow:hidden">
+<dc-import name="Main" hint-size="1440px,900px"></dc-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Connect wallet" hidden-description="Connect your wallet to Aragon">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+<div style="display:flex;flex-direction:column;gap:24px;padding:32px 24px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<dc-import name="AragonLogo" size="lg" hint-size="123px,40px"></dc-import>
+<p style="margin:0;font-size:20px;line-height:1.25;font-weight:400;color:var(--color-neutral-500)">wants to connect to your wallet</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;font-size:14px;line-height:1.25;font-weight:400;color:var(--color-neutral-500)">
+<div style="display:flex;flex-direction:row;align-items:center;gap:12px">
+<x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="primary"></x-import>
+<p style="margin:0;font-size:14px;line-height:1.25">View-only permissions</p>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:12px"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="APP_MEMBERS" size="sm" variant="primary"></x-import>
+<p style="margin:0;font-size:14px;line-height:1.25">Trusted by 7,500+ DAOs and $27B+</p>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:12px"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" size="sm" variant="primary"></x-import>
+<x-import component-from-global-scope="GovUiKit.Link" href="#" is-external="{{yes}}"><span style="font-size:14px">Audited smart contracts</span></x-import>
+</div>
+</div>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Footer" dc-props="{{footerProps}}"></x-import>
+</x-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic { renderVals(){ return {yes:true,
+ rootProps:{onOpenAutoFocus:(e)=>e.preventDefault()},
+ footerProps:{primaryAction:{iconLeft:'BLOCKCHAIN_WALLET',label:'Connect'},secondaryAction:{label:'Cancel'}} }; } }
+</script>
+</body></html>

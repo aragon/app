@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>User wallet dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<!-- Dialog over its page, drawn with the kit's own Dialog.Root (open): the page behind (ConnectedDashboard) in a
+     900px-high clipped stage, then Dialog.Root, which portals its blurred overlay and the dialog above it.
+     Needs the z-index tokens at the end of app.css (launcher stays under the overlay).
+     apps/app: modules/application/dialogs/userDialog/userDialog.tsx, size md (480px). -->
+<div style="position:relative;height:900px;overflow:hidden">
+<dc-import name="ConnectedDashboard" hint-size="1440px,900px"></dc-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="User" hidden-description="User wallet">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content"  no-inset="{{yes}}">
+<div style="display:flex;flex-direction:column;gap:24px;padding:32px 0 16px">
+<div style="display:flex;flex-direction:column;gap:12px;padding:0 32px">
+<div style="display:flex;align-items:flex-start;justify-content:space-between">
+<x-import component-from-global-scope="GovUiKit.MemberAvatar" address="0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" ens-name="nadia.eth" size="xl"></x-import>
+<div style="display:flex;gap:8px">
+<x-import component-from-global-scope="GovUiKit.Button" icon-left="PEN" size="md" variant="tertiary"></x-import>
+<x-import component-from-global-scope="GovUiKit.Button" icon-left="LOGOUT" size="md" variant="tertiary"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="margin:0;font-size:20px;line-height:1.25;font-weight:400;color:var(--color-neutral-800)">nadia.eth</p>
+<x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" class-name="text-base" href="#" is-external="{{yes}}"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;padding:0 32px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<x-import component-from-global-scope="GovUiKit.Button" class-name="w-full" size="md" variant="tertiary">My DAOs</x-import>
+</div>
+</div>
+</div>
+</x-import>
+</x-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic { renderVals(){ return {yes:true, rootProps:{onOpenAutoFocus:(e)=>e.preventDefault()}}; } }
+</script>
+</body></html>

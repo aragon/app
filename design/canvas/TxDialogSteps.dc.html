@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Transaction dialog steps</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<ul class="tx-steps">
+  <sc-if value="{{withIpfs}}" hint-placeholder-val="{{no}}">
+    <li class="tx-step">
+      <div class="tx-step__main">
+        <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="success"></x-import>
+        <p class="tx-step__label tx-step__label--success">Pin data on IPFS</p>
+      </div>
+    </li>
+  </sc-if>
+  <li class="tx-step">
+    <div class="tx-step__main">
+      <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="success"></x-import>
+      <p class="tx-step__label tx-step__label--success">Prepare transaction</p>
+    </div>
+  </li>
+  <li class="tx-step">
+    <div class="tx-step__main">
+      <div class="tx-step__spinner"><x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="neutral" is-loading="{{no}}"></x-import></div>
+      <p class="tx-step__label tx-step__label--idle">Sign transaction</p>
+    </div>
+    <div class="tx-step__addon">
+      <p class="tx-step__addon-label">Wallet</p>
+      <x-import component-from-global-scope="GovUiKit.Icon" icon="BLOCKCHAIN_WALLET" size="md" class-name="text-neutral-300"></x-import>
+    </div>
+  </li>
+  <li class="tx-step">
+    <div class="tx-step__main">
+      <div class="tx-step__spinner"><x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="neutral" is-loading="{{no}}"></x-import></div>
+      <p class="tx-step__label tx-step__label--idle">Confirm transaction</p>
+    </div>
+  </li>
+  <li class="tx-step">
+    <div class="tx-step__main">
+      <div class="tx-step__spinner"><x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="neutral" is-loading="{{no}}"></x-import></div>
+      <p class="tx-step__label tx-step__label--idle">Index onchain data</p>
+    </div>
+  </li>
+</ul>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"withIpfs":{"editor":"boolean","default":false},"$preview":{"width":432,"height":200}}'>
+// Step list of a TransactionDialog (apps/app: shared/components/transactionDialog/transactionDialogShell.tsx, with
+// transactionStatus/transactionStatusContainer + transactionStatusStep), drawn in the state every reference shows:
+// everything before "Sign transaction" done, the rest idle. Rebuilt as markup (app component, not in the kit); rules
+// are `.tx-steps*` / `.tx-step*` in app.css. Place inside the dialog content (`.tx-dialog__content`).
+//   <dc-import name="TxDialogSteps" with-ipfs="{{yes}}" hint-size="100%,182px"></dc-import>
+// Props:
+//   withIpfs  adds the first step "Pin data on IPFS" (publish proposal / publish DAO; the vote dialog has none).
+class Component extends DCLogic {
+  renderVals() {
+    return { no: false, withIpfs: !!this.props.withIpfs };
+  }
+}
+</script>
+</body>
+</html>

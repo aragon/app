@@ -972,3 +972,65 @@
     .process-governance { gap: 24px; }
     .process-governance__types { flex-direction: row; }
 }
+
+/* ---- SppSettingsProcess: modules/createDao/components/createProcessForm/createProcessFormGovernance (GovernanceStagesFieldItem, GovernanceStageBodiesField, GovernanceStageSettingsField), modules/governance/components/permissionsDefinitionList ---- */
+.stage-card { display: flex; flex-direction: column; gap: 40px; padding: 24px; }
+.stage-list { display: flex; flex-direction: column; gap: 8px; }
+.stage-title { margin: 0; color: var(--color-neutral-800); font-size: 20px; line-height: 28px; }
+.stage-number { margin: 0; color: var(--color-neutral-400); font-size: 16px; line-height: 24px; }
+.stage-settings { border-radius: 12px; border: 1px solid var(--color-neutral-100); padding: 16px 24px; }
+.process-body__external { display: flex; align-items: center; gap: 8px; }
+.process-body__note { margin: 0; color: var(--color-neutral-400); font-size: 14px; line-height: 20px; }
+.or-divider { display: flex; align-items: center; margin: 8px 0 4px; }
+.or-divider__line { flex-grow: 1; border-top: 1px solid var(--color-neutral-100); }
+.or-divider__text { margin: 0 8px; color: var(--color-neutral-500); font-size: 16px; line-height: 24px; }
+.stage-head__row { display: flex; align-items: center; justify-content: space-between; }
+
+/* ---- SppPermissionsGraph: modules/settings/components/permissionsGraph/permissionStackNode.tsx (condition pill), fitted zoom of the Northstar graph ---- */
+.pg-flow--spp, .pg-container--spp { --pg-zoom: 0.4136; }
+.pg-container--spp .pg-edges path { stroke-width: calc(1.4px * 0.4136); }
+.pg-stack__item--cond { padding-bottom: 4px; }
+.pg-stack__cond { border-radius: 4px; padding: 0 4px; background: var(--color-neutral-0); color: var(--color-neutral-800); }
+
+/* ---- Dialogs: apps/app layoutRoot.overrides.css (z-index tokens of the kit dialogs) ---- */
+:root {
+    --guk-dialog-overlay-z-index: 20;
+    --guk-dialog-alert-overlay-z-index: 20;
+    --guk-dialog-content-z-index: 30;
+    --guk-dialog-alert-content-z-index: 30;
+}
+/* The references were opened with the mouse: Radix still auto-focuses the first control on the canvas, so no focus ring. */
+[role="dialog"] :focus-visible { box-shadow: none !important; }
+
+/* ---- Transaction dialogs (TxDialogSteps): shared/components/transactionStatus/transactionStatusContainer +
+   transactionStatusStep (md sizes: the dialog is drawn at desktop width) ---- */
+/* ul: bg-neutral-0 shadow-neutral flex flex-col gap-3 rounded-xl border border-neutral-100 p-6 text-base */
+.tx-steps { box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 24px; list-style: none; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); font-size: 16px; box-shadow: 0px 1px 3px 0px #616e7c1a, 0px 1px 2px -1px #616e7c1a; }
+/* li: flex flex-row justify-between gap-2 */
+.tx-step { display: flex; flex-direction: row; justify-content: space-between; gap: 8px; }
+/* flex flex-row items-center gap-3 */
+.tx-step__main { display: flex; flex-direction: row; align-items: center; gap: 12px; }
+/* Spinner wrapper: p-0.5 */
+.tx-step__spinner { padding: 2px; }
+/* p: text-base leading-tight font-normal + state colour */
+.tx-step__label { margin: 0; font-size: 16px; line-height: 1.25; font-weight: 400; }
+.tx-step__label--success { color: var(--color-success-800); }
+.tx-step__label--idle { color: var(--color-neutral-500); }
+/* addon: flex flex-row items-center gap-2, label text-base leading-tight text-neutral-500 */
+.tx-step__addon { display: flex; flex-direction: row; align-items: center; gap: 8px; }
+.tx-step__addon-label { margin: 0; font-size: 16px; line-height: 1.25; font-weight: 400; color: var(--color-neutral-500); }
+/* ---- Transaction dialogs: shared/components/transactionDialog/transactionDialogShell.tsx ---- */
+/* Dialog.Content child: flex flex-col gap-6 pb-3 md:pb-4 */
+.tx-dialog__body { display: flex; flex-direction: column; gap: 24px; padding-bottom: 16px; }
+/* Stage: the dialog screens draw the page the dialog was opened on in a 1440x900 viewport (the kit's overlay and
+   container are position: fixed) */
+.dlg-stage { position: relative; width: 100%; height: 900px; overflow: hidden; }
+/* Dialog.Root container-class-name on the dialog screens: the reference shows no focus ring on the autofocused
+   primary button (the capture's focus is not keyboard-visible) */
+.dlg-container--static button:focus-visible { box-shadow: none !important; }
+.dlg-container--static :focus-visible { outline: none !important; box-shadow: none !important; }
+/* Wizard.Form className="pt-6" (shared/components/wizards/wizardDialog/wizardDialogContainer) */
+.dlg-wizard-form { padding-top: 24px; }
+/* radioCard.tsx: with a description the indicator wrapper is `h-full` (top-aligned in the real app, where the percentage
+   height resolves; on the canvas the wrapper chain makes it auto, so align it to the top explicitly) */
+.dlg-wizard-form [role="radio"] > div > span { align-self: flex-start; }

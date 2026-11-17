@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dialog vote transaction</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+/* the page is scrolled so that its "Submit vote" button sits at y=448 (reference); the sidebar stays */
+.dlg-stage .app-column{margin-top:-1064px}
+</style>
+</helmet>
+<div class="dlg-stage">
+<dc-import name="ConnectedProposalVoteYes" hint-size="1440px,900px"></dc-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Submit vote" description="To submit your vote, confirm the onchain transaction in your wallet."></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <div class="tx-dialog__body">
+      <x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-8" proposal-title="Fund the Q1 2027 Ecosystem Grants Program" vote-indicator="yes" vote-indicator-description="to approve"></x-import>
+      <dc-import name="TxDialogSteps" hint-size="100%,182px"></dc-import>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, noFocus: (e) => e.preventDefault(), primary: { label: 'Sign transaction' }, secondary: { label: 'Close' } };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Connect wallet (AppKit) dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<!-- Third-party wallet SDK modal (Reown AppKit, <w3m-modal>) opened from the Connect wallet dialog: plain markup, not
+     a kit component. Drawn as the reference shows it: caught mid fade-in (header and checkbox at full strength, the
+     wallet list and social logins faded), over the Explore page (Main) behind a light blurred scrim, 900px clipped stage.
+     Absolute positions in px measured from the reference. -->
+<div style="position:relative;height:900px;overflow:hidden">
+<dc-import name="Main" hint-size="1440px,900px"></dc-import>
+<div style="position:absolute;inset:0;z-index:50;background:rgba(235,235,235,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)"></div>
+<div style="position:absolute;z-index:51;left:536px;top:165px;width:368px;height:570px;box-sizing:border-box;background:#fff;border-radius:20px;box-shadow:0 0 0 1px rgba(0,0,0,.04),0 4px 20px rgba(0,0,0,.08);font-family:var(--font-sans),sans-serif;color:#141414;overflow:hidden">
+<svg style="position:absolute;left:25px;top:26px" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#141414" stroke-width="1.4"><circle cx="8" cy="8" r="7"/><path d="M6 6.2a2 2 0 1 1 2.8 1.8c-.6.3-.8.6-.8 1.2"/><circle cx="8" cy="11.6" r=".5" fill="#141414"/></svg>
+<div style="position:absolute;left:0;right:0;top:23px;text-align:center;font-size:16px;line-height:24px;font-weight:400;letter-spacing:-.2px">Connect Wallet</div>
+<svg style="position:absolute;left:329px;top:27px" width="14" height="14" viewBox="0 0 14 14" stroke="#141414" stroke-width="1.6"><path d="M1.5 1.5l11 11M12.5 1.5l-11 11"/></svg>
+<div style="position:absolute;left:41px;top:78px;width:20px;height:20px;box-sizing:border-box;border:1.2px solid #8a8a8a;border-radius:5px;background:#fff"></div>
+<div style="position:absolute;left:69px;top:78px;width:270px;height:20px;font-size:12px;line-height:20px;letter-spacing:-.3px;color:#3a3a3a;white-space:nowrap">I agree to our terms of service and privacy policy</div>
+<div style="opacity:.3">
+<div style="position:absolute;left:27px;top:128px;width:32px;height:32px;background:#f1f1f1;border-radius:8px"></div>
+<div style="position:absolute;left:67px;top:128px;width:200px;height:32px;font-size:17px;line-height:32px;letter-spacing:-.3px;white-space:nowrap">WalletConnect</div>
+<div style="position:absolute;left:258px;top:134px;width:58px;height:20px;background:#d6e4ff;color:#3396ff;border-radius:6px;font-size:12px;line-height:20px;text-align:center;letter-spacing:-.3px">QR CODE</div>
+<svg style="position:absolute;left:329px;top:138px;opacity:1" width="8" height="12" viewBox="0 0 8 12" fill="none" stroke="#9a9a9a" stroke-width="1.5"><path d="M1.5 1l5 5-5 5"/></svg>
+<div style="position:absolute;left:27px;top:192px;width:32px;height:32px;background:#f9a870;border-radius:8px"></div>
+<div style="position:absolute;left:67px;top:192px;width:200px;height:32px;font-size:17px;line-height:32px;letter-spacing:-.3px">MetaMask</div>
+<div style="position:absolute;left:249px;top:198px;width:67px;height:20px;background:#bfe8cf;color:#26b562;border-radius:6px;font-size:12px;line-height:20px;text-align:center;letter-spacing:-.3px">INSTALLED</div>
+<svg style="position:absolute;left:329px;top:202px;opacity:1" width="8" height="12" viewBox="0 0 8 12" fill="none" stroke="#9a9a9a" stroke-width="1.5"><path d="M1.5 1l5 5-5 5"/></svg>
+<div style="position:absolute;left:15px;top:246px;width:338px;height:54px;background:#f1f1f1;border-radius:14px"></div>
+<div style="position:absolute;left:27px;top:256px;width:32px;height:32px;background:#e4e4e4;border-radius:8px"></div>
+<div style="position:absolute;left:67px;top:256px;width:200px;height:32px;font-size:17px;line-height:32px;letter-spacing:-.3px">Search Wallet</div>
+<div style="position:absolute;left:302px;top:263px;width:16px;height:18px;background:#e4e4e4;border-radius:4px;font-size:11px;line-height:18px;text-align:center">0</div>
+<svg style="position:absolute;left:329px;top:266px;opacity:1" width="8" height="12" viewBox="0 0 8 12" fill="none" stroke="#9a9a9a" stroke-width="1.5"><path d="M1.5 1l5 5-5 5"/></svg>
+<div style="position:absolute;left:9px;top:320px;width:350px;height:1px;background:#e4e4e4"></div>
+<div style="position:absolute;left:154px;top:311px;width:60px;height:20px;background:#fff;font-size:12px;line-height:20px;text-align:center;color:#8a8a8a">or</div>
+<div style="position:absolute;left:15px;top:341px;width:338px;height:52px;box-sizing:border-box;border:1px solid #d9d9d9;border-radius:14px"></div>
+<svg style="position:absolute;left:32px;top:361px" width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="#777" stroke-width="1.3"><rect x=".7" y=".7" width="12.6" height="10.6" rx="2"/><path d="M1 2l6 5 6-5"/></svg>
+<div style="position:absolute;left:56px;top:351px;width:120px;height:32px;font-size:16px;line-height:32px;letter-spacing:-.3px;color:#555">Email</div>
+<div style="position:absolute;left:15px;top:401px;width:338px;height:52px;background:#f1f1f1;border-radius:14px"></div>
+<div style="position:absolute;left:97px;top:401px;width:200px;height:52px;font-size:16px;line-height:52px;letter-spacing:-.3px;white-space:nowrap"><span style="color:#4285f4;margin-right:6px">G</span>Continue with Google</div>
+</div>
+<div style="opacity:.45">
+<div style="position:absolute;left:15px;top:461px;width:60px;height:52px;background:#f1f1f1;border-radius:12px"></div><div style="position:absolute;left:32px;top:472px;width:28px;height:28px;background:#444;border-radius:50%;color:#fff;text-align:center;line-height:28px;font-size:16px">X</div>
+<div style="position:absolute;left:84px;top:461px;width:60px;height:52px;background:#f1f1f1;border-radius:12px"></div><div style="position:absolute;left:101px;top:472px;width:28px;height:28px;background:#5865f2;border-radius:50%"></div>
+<div style="position:absolute;left:153px;top:461px;width:60px;height:52px;background:#f1f1f1;border-radius:12px"></div><div style="position:absolute;left:170px;top:472px;width:28px;height:28px;background:#9a5ce6;border-radius:50%"></div>
+<div style="position:absolute;left:222px;top:461px;width:60px;height:52px;background:#f1f1f1;border-radius:12px"></div><div style="position:absolute;left:240px;top:472px;width:28px;height:28px;background:#2a2a2a;border-radius:50%"></div>
+<div style="position:absolute;left:291px;top:461px;width:62px;height:52px;background:#f1f1f1;border-radius:12px;text-align:center;line-height:48px;font-size:20px;letter-spacing:2px;color:#555">···</div>
+<div style="position:absolute;left:121px;top:531px;width:34px;height:24px;font-size:12px;line-height:24px;color:#666;white-space:nowrap">UX by</div>
+<div style="position:absolute;left:156px;top:531px;width:13px;height:24px;background:#999;border-radius:8px;font:12px/24px monospace;text-align:center">.</div>
+<div style="position:absolute;left:170px;top:531px;width:24px;height:24px;background:#999;border-radius:8px;font:12px/24px monospace;text-align:center">/</div>
+<div style="position:absolute;left:195px;top:531px;width:51px;height:24px;background:#999;border-radius:12px;font:11px/24px monospace;text-align:center">reown</div>
+</div>
+</div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic { renderVals(){ return {}; } }
+</script>
+</body></html>
