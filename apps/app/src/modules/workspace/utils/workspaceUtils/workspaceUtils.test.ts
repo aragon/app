@@ -347,6 +347,23 @@ describe('workspace utils', () => {
             },
         );
 
+        it.each<{ scope: IWorkspaceSectionScope; expected: boolean }>([
+            { scope: { ...safe, subsection: 'transaction' }, expected: true },
+            { scope: { ...dao, subsection: 'transaction' }, expected: false },
+            { scope: { ...all, subsection: 'transaction' }, expected: false },
+            {
+                scope: { ...unknown, subsection: 'transaction' },
+                expected: false,
+            },
+        ])(
+            'returns $expected for the create/transaction subsection on $scope',
+            ({ scope, expected }) => {
+                expect(workspaceUtils.isSectionServed('create', scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
         it('applies the section rule to a section that declares no subsections', () => {
             expect(
                 workspaceUtils.isSectionServed('settings', {
@@ -383,6 +400,7 @@ describe('workspace utils', () => {
         it('returns the routes a section restricts under it', () => {
             expect(workspaceUtils.getSubsections('create')).toEqual([
                 'execute',
+                'transaction',
             ]);
         });
 

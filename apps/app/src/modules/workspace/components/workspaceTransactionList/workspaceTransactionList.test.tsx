@@ -383,7 +383,12 @@ describe('<WorkspaceTransactionList /> component', () => {
 
         expect(screen.getByText('safe-execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
-            { safeAddress: address, safeTxHash: '0xff54', transaction },
+            {
+                isRejection: false,
+                safeAddress: address,
+                safeTxHash: '0xff54',
+                transaction,
+            },
             undefined,
         );
         expect(getDaoSpy).not.toHaveBeenCalled();
