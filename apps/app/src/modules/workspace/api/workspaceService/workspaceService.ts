@@ -17,7 +17,6 @@ import type {
     IGetWorkspaceParams,
     IRemoveWorkspaceAccountParams,
     IUpdateWorkspaceDetailsParams,
-    IUpdateWorkspaceParams,
     IWorkspaceExport,
 } from './workspaceService.api';
 
@@ -256,25 +255,6 @@ class WorkspaceService {
             body.name,
             Object.keys(workspaces),
         );
-        const workspace: IWorkspace = { ...body, id };
-
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
-
-        return workspace;
-    };
-
-    updateWorkspace = async (
-        params: IUpdateWorkspaceParams,
-    ): Promise<IWorkspace> => {
-        const { urlParams, body } = params;
-        const { id } = urlParams;
-
-        const workspaces = this.getStoredWorkspaces();
-
-        if (workspaces[id] == null) {
-            throw this.buildNotFoundError(id);
-        }
-
         const workspace: IWorkspace = { ...body, id };
 
         this.persistWorkspaces({ ...workspaces, [id]: workspace });

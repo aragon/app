@@ -15,7 +15,6 @@ import {
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 
 /**
  * A network and address pair, i.e. what identifies a workspace account or target.
@@ -112,11 +111,6 @@ export interface IWorkspaceSectionScope {
     accountType?: WorkspaceAccountType;
 }
 
-/**
- * Query parameter opening the edit wizard of a workspace on a given step, e.g. `?step=ACCOUNTS`.
- */
-export const workspaceEditStepParam = 'step';
-
 class WorkspaceUtils {
     /**
      * Builds the ID of a workspace account, matching the backend `daoId` format for DAO accounts. The address is
@@ -196,33 +190,6 @@ class WorkspaceUtils {
      */
     getWorkspaceAdminUrl = (workspaceId: string): string =>
         this.getWorkspaceUrl(workspaceId, 'admin');
-
-    /**
-     * URL of the edit wizard of a workspace.
-     * @param workspaceId - ID of the workspace.
-     * @param step - Optional step to open the wizard on, read back by `parseWorkspaceEditStep`.
-     * @returns The edit wizard URL.
-     */
-    getWorkspaceEditUrl = (
-        workspaceId: string,
-        step?: WorkspaceWizardStep,
-    ): string => {
-        const editUrl = this.getWorkspaceUrl(workspaceId, 'edit');
-
-        return step != null
-            ? `${editUrl}?${workspaceEditStepParam}=${step}`
-            : editUrl;
-    };
-
-    /**
-     * Step the edit wizard opens on, read from the step query parameter written by `getWorkspaceEditUrl`.
-     * @param stepParam - Value of the step query parameter, if any.
-     * @returns The step, or undefined to open the first step when the parameter names none.
-     */
-    parseWorkspaceEditStep = (
-        stepParam?: string | string[],
-    ): WorkspaceWizardStep | undefined =>
-        Object.values(WorkspaceWizardStep).find((step) => step === stepParam);
 
     /**
      * URL of a section of a workspace, scoped to one account.

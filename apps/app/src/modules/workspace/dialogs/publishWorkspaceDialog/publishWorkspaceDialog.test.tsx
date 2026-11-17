@@ -11,11 +11,7 @@ import {
     WorkspaceAccountInfoType,
     workspaceQueryService,
 } from '../../api/workspaceQueryService';
-import {
-    type IWorkspace,
-    workspaceService,
-    workspaceStorageKey,
-} from '../../api/workspaceService';
+import { workspaceService } from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
 import {
     type IPublishWorkspaceDialogProps,
@@ -193,116 +189,5 @@ describe('<PublishWorkspaceDialog /> component', () => {
             ).toBeInTheDocument(),
         );
         expect(setIsBlockedSpy).not.toHaveBeenCalledWith(false);
-    });
-
-    describe('update mode', () => {
-        const storedWorkspace: IWorkspace = {
-            id: 'demo-workspace',
-            name: 'Demo Workspace',
-            description: '',
-            avatar: 'ipfs://stored-cid',
-            links: [],
-            accounts: [],
-            targets: [],
-        };
-
-        const createUpdateComponent = (
-            values?: Partial<ICreateWorkspaceFormData>,
-        ) =>
-            createTestComponent({
-                location: {
-                    id: 'PUBLISH_WORKSPACE',
-                    params: {
-                        values: buildValues(values),
-                        workspaceId: storedWorkspace.id,
-                    },
-                },
-            });
-
-        const getUpdateButton = () =>
-            screen.getByRole('button', {
-                name: /publishWorkspaceDialog.update.submit/,
-            });
-
-        beforeEach(() => {
-            localStorage.setItem(
-                workspaceStorageKey,
-                JSON.stringify({ [storedWorkspace.id]: storedWorkspace }),
-            );
-        });
-
-        it('updates the stored workspace', async () => {
-            render(createUpdateComponent({ name: 'Renamed' }));
-
-            await userEvent.click(getUpdateButton());
-
-            const successLink = await screen.findByRole('link', {
-                name: /publishWorkspaceDialog.button.success/,
-            });
-            expect(successLink).toHaveAttribute(
-                'href',
-                '/workspace/demo-workspace/all/overview',
-            );
-            await expect(
-                workspaceService.getWorkspace({
-                    urlParams: { id: storedWorkspace.id },
-                }),
-            ).resolves.toMatchObject({ name: 'Renamed' });
-        });
-
-        it('keeps a stored avatar without pinning it again', async () => {
-            render(
-                createUpdateComponent({
-                    accounts: [],
-                    avatar: {
-                        url: 'https://aragon-1.mypinata.cloud/ipfs/stored-cid?img-width=256&img-height=256',
-                    },
-                }),
-            );
-
-            await userEvent.click(getUpdateButton());
-            await screen.findByRole('link', {
-                name: /publishWorkspaceDialog.button.success/,
-            });
-
-            expect(pinFileSpy).not.toHaveBeenCalled();
-            await expect(
-                workspaceService.getWorkspace({
-                    urlParams: { id: storedWorkspace.id },
-                }),
-            ).resolves.toMatchObject({ avatar: 'ipfs://stored-cid' });
-        });
-
-        it('pins a newly selected avatar', async () => {
-            const file = new File([], 'avatar.png');
-            render(
-                createUpdateComponent({
-                    avatar: { file, url: 'blob:avatar' },
-                }),
-            );
-
-            await userEvent.click(getUpdateButton());
-            await screen.findByRole('link', {
-                name: /publishWorkspaceDialog.button.success/,
-            });
-
-            expect(pinFileSpy).toHaveBeenCalledWith({ body: file });
-            await expect(
-                workspaceService.getWorkspace({
-                    urlParams: { id: storedWorkspace.id },
-                }),
-            ).resolves.toMatchObject({ avatar: 'ipfs://pinned-cid' });
-        });
-
-        it('resolves no account type when the workspace holds no account', async () => {
-            render(createUpdateComponent({ accounts: [] }));
-
-            await userEvent.click(getUpdateButton());
-            await screen.findByRole('link', {
-                name: /publishWorkspaceDialog.button.success/,
-            });
-
-            expect(getAccountsSpy).not.toHaveBeenCalled();
-        });
     });
 });

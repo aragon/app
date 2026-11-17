@@ -4663,9 +4663,6 @@
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
-      "layoutWizardEditWorkspace": {
-        "name": "Edit workspace"
-      },
       "publishWorkspaceDialog": {
         "button": {
           "retry": "Try again",
@@ -4680,16 +4677,7 @@
           "success": "Workspace created",
           "title": "Create workspace"
         },
-        "summary": "{{accounts}} accounts · {{targets}} targets",
-        "update": {
-          "error": {
-            "description": "The changes could not be saved. Check your connection and try again.",
-            "title": "Unable to save the workspace"
-          },
-          "submit": "Save changes",
-          "success": "Workspace updated",
-          "title": "Save workspace"
-        }
+        "summary": "{{accounts}} accounts · {{targets}} targets"
       },
       "workspaceAccountAvatar": {
         "safe": "Safe"
@@ -4950,26 +4938,6 @@
         "create": "Create workspace",
         "import": "Import workspace",
         "importError": "This file is not a valid workspace export."
-      },
-      "workspaceEditPage": {
-        "steps": {
-          "ACCOUNTS": {
-            "description": "Add or remove the accounts belonging to this workspace. Each one is identified by its network and address.",
-            "name": "Edit accounts",
-            "title": "Edit accounts"
-          },
-          "METADATA": {
-            "description": "Update how your workspace is described to visitors.",
-            "name": "Edit details",
-            "title": "Edit details"
-          },
-          "TARGETS": {
-            "description": "Add or remove the addresses this workspace relates to. This step is optional and can be left empty.",
-            "name": "Edit targets",
-            "title": "Edit targets"
-          }
-        },
-        "submitLabel": "Save changes"
       },
       "workspaceSafeDashboardPage": {
         "main": {

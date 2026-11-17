@@ -238,74 +238,6 @@ describe('workspace service', () => {
         });
     });
 
-    describe('updateWorkspace', () => {
-        it('replaces the workspace, keeping its ID', async () => {
-            const created = await workspaceService.createWorkspace({
-                body: buildBody(),
-            });
-
-            const body = buildBody({ name: 'Renamed', accounts: [] });
-            const workspace = await workspaceService.updateWorkspace({
-                urlParams: { id: created.id },
-                body,
-            });
-
-            expect(workspace).toEqual({ ...body, id: created.id });
-            expect(getStoredWorkspaces()).toEqual({ [created.id]: workspace });
-        });
-
-        it('keeps the other workspaces', async () => {
-            const first = await workspaceService.createWorkspace({
-                body: buildBody({ name: 'First' }),
-            });
-            const second = await workspaceService.createWorkspace({
-                body: buildBody({ name: 'Second' }),
-            });
-
-            const updated = await workspaceService.updateWorkspace({
-                urlParams: { id: first.id },
-                body: buildBody({ name: 'Renamed' }),
-            });
-
-            expect(getStoredWorkspaces()).toEqual({
-                first: updated,
-                second,
-            });
-        });
-
-        it('rejects with a storage error when local storage rejects the write', async () => {
-            const created = await workspaceService.createWorkspace({
-                body: buildBody(),
-            });
-            const setItemSpy = jest
-                .spyOn(Storage.prototype, 'setItem')
-                .mockImplementation(() => {
-                    throw new Error('QuotaExceededError');
-                });
-
-            await expect(
-                workspaceService.updateWorkspace({
-                    urlParams: { id: created.id },
-                    body: buildBody({ name: 'Renamed' }),
-                }),
-            ).rejects.toMatchObject({
-                code: 'workspaceStorageError',
-                status: 500,
-            });
-
-            setItemSpy.mockRestore();
-        });
-
-        it('rejects with a not-found error for an unknown workspace', async () => {
-            await expect(
-                workspaceService.updateWorkspace({
-                    urlParams: { id: 'unknown' },
-                    body: buildBody(),
-                }),
-            ).rejects.toMatchObject({ status: 404 });
-        });
-    });
-
     describe('addWorkspaceAccount', () => {
         const safeAccount: IWorkspaceAccount = {
             id: 'ethereum-sepolia-0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
@@ -336,9 +268,9 @@ describe('workspace service', () => {
             const created = await workspaceService.createWorkspace({
                 body: buildBody(),
             });
-            await workspaceService.updateWorkspace({
+            await workspaceService.updateWorkspaceDetails({
                 urlParams: { id: created.id },
-                body: buildBody({ name: 'Renamed in another tab' }),
+                body: { ...buildBody(), name: 'Renamed in another tab' },
             });
 
             const workspace = await workspaceService.addWorkspaceAccount({
@@ -426,9 +358,9 @@ describe('workspace service', () => {
             await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
                 fixture.fixture,
             ]);
-            await workspaceService.updateWorkspace({
+            await workspaceService.updateWorkspaceDetails({
                 urlParams: { id: 'fixture' },
-                body: buildBody({ name: 'Changed fixture' }),
+                body: { ...buildBody(), name: 'Changed fixture' },
             });
             expect(getStoredWorkspaces()).toEqual({
                 [persistent.id]: persistent,

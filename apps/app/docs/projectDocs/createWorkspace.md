@@ -91,8 +91,8 @@ Route `/create/workspace`, three steps:
 | 1     | `TARGETS`  | repeatable `{ network, address }` rows, may be empty            |
 | 2     | `ACCOUNTS` | repeatable `{ network, address, metadata? }` rows, optional |
 
-Both flows render `WorkspaceWizard` (`components/workspaceWizard/`); `WorkspaceWizardStep` fixes the steps, and each
-page passes its translation namespace, default values and submit action.
+`CreateWorkspacePageClient` renders `WorkspaceWizard` (`components/workspaceWizard/`); `WorkspaceWizardStep` fixes the
+steps, and the page passes its translation namespace, default values and submit action.
 
 Metadata is step 0 because naming the thing first reads as a creation flow and leaves the first screen as a text
 field rather than an address row. Targets precede Accounts for the discovery reason above.
@@ -228,21 +228,18 @@ local storage for real requests is a single-method change:
   `useGetOrCreateDefaultWorkspace` mutation.
 - `createDefaultWorkspace(accounts)` → persists "My workspace" holding the given accounts next to the stored ones and
   resolves with it. Called by Getting started through the `useCreateDefaultWorkspace` mutation.
-- `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
-  stored workspace, keeping its ID (so its URLs keep working); rejects with
-  `notFoundCode` / 404 when absent. Called by the publish dialog in update mode.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
   `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to the active browser registry, resolves with the full
   `IWorkspace`.
 - `addWorkspaceAccount({ urlParams: { id }, body: { account } })` → appends one account to the stored workspace,
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
-  caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
-  `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
+  caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects with
+  `notFoundCode` / 404 when absent. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
 - `updateWorkspaceDetails({ urlParams: { id }, body })` where `body` is `name`, `description`, `avatar` and
   `links` → replaces those fields of the stored workspace, reading it in the same step like `addWorkspaceAccount`.
   Called by `WorkspaceEditDetailsDialog`.
 - `removeWorkspaceAccount({ urlParams: { id }, body: { accountId } })` → drops one account; a workspace not holding
-  it is returned unchanged. Rejects like `updateWorkspace`. Called by the admin page.
+  it is returned unchanged. Rejects like `addWorkspaceAccount`. Called by the admin page.
 - `exportWorkspace({ urlParams: { id } })` → one workspace as `{ version: 1, workspace }`, without its ID. Links
   saved without a protocol get `https://`: the resources input accepts them, the import validation does not.
 - `importWorkspace(json)` → validates an `exportWorkspace` file and stores it as a **new** workspace (ID from its
@@ -329,13 +326,8 @@ src/app/workspace/[workspaceId]/
 │     ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
 │     ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
 │     ├─ members/page.tsx     WorkspaceAccountMembersPage
-└─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
-   ├─ layout.tsx              LayoutWizardEditWorkspace
-   └─ page.tsx                WorkspaceEditPage
 │     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
-The route group, as with `(daoPage)`, only decides the layout: `edit/` sits outside it to get the wizard layout.
-
 
 Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
 it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
@@ -841,7 +833,7 @@ reads the account type (`workspaceAccountInfoUtils.resolveAccountType`), renders
 `WorkspaceSafeSettingsPageClient` for a Safe and the DAO settings page otherwise, like the members routes.
 
 The Safe page mirrors the DAO one, read-only and without actions (no Edit: a Safe is configured in the Safe app, and
-its workspace name, description and avatar are set from Edit workspace):
+its workspace name, description and avatar are edited on the admin page):
 
 - **Account** — the rows `DaoHierarchy` states a DAO with: the blockchain and the address, each with "Not
   changeable" under it (the address standing where a DAO's ENS name would, linked to the Safe app with a copy
@@ -963,7 +955,7 @@ URL narrows it to that account. The navigation is three labelled groups
 (`INavigationLinkGroup`): "Inbox" with the "To-dos" link, shown only while a wallet is connected and badged with the
 number waiting in the account scope it opens (`navigationWorkspaceUtils.buildInboxLinks`; the count comes from the
 same query as the to-dos page and the overview, so it costs no extra request); the sections of the account in scope under the workspace name; and "Workspace" with the
-edit link.
+admin link.
 
 Eligibility is computed by the backend. `useWorkspaceTodoData` posts the accounts and the wallet address to
 `query/todo` (`useWorkspaceTodo`), which answers from its stored rows: the wallet's plugin memberships across the DAO
@@ -993,7 +985,7 @@ generic `Page.Error`, and branches on the account segment read with `useParams()
 
 | Link | `resolveAccountScope(accountId)` | State |
 | --- | --- | --- |
-| Pure workspace link (`all/…`, the edit wizard, an invalid account segment) | `all` | `WorkspaceGateNotFound`: "Go to my workspaces" (the `/workspace` entry route) and "Create workspace" |
+| Pure workspace link (`all/…`, an invalid account segment) | `all` | `WorkspaceGateNotFound`: "Go to my workspaces" (the `/workspace` entry route) and "Create workspace" |
 | Account link (`{accountId}/…`, deeper segments included) | the account ID | `WorkspaceGateAccountPrompt`: open the same page in one of the reader's workspaces |
 
 - Both render in the gate rather than through `notFound()`: `NotFoundBase` is generic ("Explore DAOs"), and the
@@ -1099,17 +1091,6 @@ DAO or a Safe on is a selectable row, "In your list" when the list already has i
 - **Create a new account** (footer) temporarily goes to the DAO creation page (`/create/dao`) and closes the dialog.
   Creating the account in the dialog, and returning to the selector with it selected, comes with APP-1499.
 
-## Edit workspace
-
-`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`. No page links to it
-any more: details are edited on the admin page and accounts are added with the Add accounts dialog.
-
-- Outside `(workspacePage)`, so it renders its own `WorkspaceGate`; the wizard reads its default values
-  (`workspaceFormUtils.buildFormValues`) on mount.
-- Submitting opens `PublishWorkspaceDialog` with a `workspaceId`. A stored avatar comes back as a URL with no file
-  and keeps its URI instead of being pinned again.
-- `?step=ACCOUNTS` opens a given step (`workspaceUtils.getWorkspaceEditUrl` / `parseWorkspaceEditStep`).
-
 ## Feature flag
 
 The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/featureFlags.constants.ts`, key
@@ -1195,7 +1176,6 @@ its initial; naming a Safe is what the optional account metadata is for.
 The row lookup follows the `manageMembershipAddressList` precedent: a React Query hook (`useWorkspaceAccounts`)
 gated with `enabled` on a well-formed address, a synchronous validator reading its data, and an effect that
 re-`trigger`s the field once the lookup resolves. `staleTime` is 5 minutes because resolving a non-DAO address costs
-│   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
 a gateway round trip and on-chain reads (`getCode`, then the Safe's state) — not a Safe Transaction Service call,
 so it spends none of the hourly Safe API budget — and the backend caches only a resolved Safe, never a miss.
 
@@ -1211,7 +1191,6 @@ than storing a guessed type, which surfaces as the dialog's error state with a r
   external-link icon whenever `href` is set.
 - `src/shared/types/workspacePageParams.ts` — `IWorkspacePageParams { workspaceId: string }`, exported from
   `src/shared/types/index.ts` (ported verbatim from 1096).
-├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 - `src/assets/locales/en.json` — `app.workspace.*` (new top-level module namespace),
   `app.shared.networkInput.*`, and one new explore CTA block.
 
@@ -1230,7 +1209,6 @@ src/modules/workspace/
 │   ├── queries/useWorkspaceAccounts/{useWorkspaceAccounts.ts,index.ts}
 │   ├── queries/useWorkspaceAssetList/{useWorkspaceAssetList.ts,index.ts}
 │   ├── queries/index.ts
-├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,index.ts}
 │   └── {workspaceQueryService.ts,workspaceQueryService.api.ts,workspaceQueryServiceKeys.ts,workspaceQueryService.test.ts,index.ts}
 ├── api/workspaceService/
 │   ├── domain/{workspace.ts,workspaceAccount.ts,workspaceTarget.ts,index.ts}
@@ -1292,8 +1270,6 @@ Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/
 `finance/hooks/useAssetListData` (uses the extracted normaliser), `finance/components/assetList/index.ts` (exposes
 `AssetList.Item`),
 `src/shared/featureFlags/{featureFlags.constants.ts,featureFlags.api.ts}`, `src/shared/testUtils/formWrapper.tsx`
-- **The edit wizard route is unreachable** (see [Edit workspace](#edit-workspace)); removing it is a separate
-  ticket.
 (gained an optional `defaultValues` prop).
 Deleted: `src/app/create/layout.tsx`.
 

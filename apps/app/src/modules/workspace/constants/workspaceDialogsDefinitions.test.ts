@@ -12,8 +12,8 @@ describe('workspaceDialogsDefinitions', () => {
         ).toBeFalsy();
     });
 
-    it('does not require a wallet to create or update a workspace', () => {
-        // Workspaces are stored locally, so neither mode reads the connected address. Flagging it
+    it('does not require a wallet to create a workspace', () => {
+        // Workspaces are stored locally, so creating one does not read the connected address. Flagging it
         // would make `DialogRoot` render null for a disconnected user, and saving would silently do nothing.
         expect(
             workspaceDialogsDefinitions[WorkspaceDialogId.PUBLISH_WORKSPACE]

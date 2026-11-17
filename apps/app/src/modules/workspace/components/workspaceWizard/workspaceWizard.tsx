@@ -23,10 +23,6 @@ export interface IWorkspaceWizardProps {
      */
     defaultValues?: UseFormProps<ICreateWorkspaceFormData>['defaultValues'];
     /**
-     * Step the wizard opens on, the first one when not set.
-     */
-    initialActiveStep?: WorkspaceWizardStep;
-    /**
      * Product flow reported by the wizard analytics, e.g. `create_workspace`.
      */
     analyticsFlow: string;
@@ -43,17 +39,11 @@ const stepContent: Record<WorkspaceWizardStep, ReactNode> = {
 };
 
 /**
- * Wizard of the workspace form, shared by the create and the edit flows, which only differ in their copy, default
- * values and submit action.
+ * Wizard of the workspace form, used by the create flow.
  */
 export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
-    const {
-        translationNamespace,
-        defaultValues,
-        initialActiveStep,
-        analyticsFlow,
-        onSubmit,
-    } = props;
+    const { translationNamespace, defaultValues, analyticsFlow, onSubmit } =
+        props;
 
     const { t } = useTranslations();
 
@@ -84,7 +74,6 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
             analytics={{ flow: analyticsFlow }}
             defaultValues={defaultValues}
             finalStep={submitLabel}
-            initialActiveStep={initialActiveStep}
             initialSteps={steps}
             onSubmit={handleSubmit}
             submitLabel={submitLabel}
