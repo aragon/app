@@ -334,7 +334,7 @@ test.describe('First-time workspace experience', () => {
             ).toHaveCount(0);
         });
 
-        test('creates an empty workspace and exposes both account actions', async ({
+        test('creates an empty workspace and asks to connect a wallet before adding an account', async ({
             page,
         }) => {
             await page.goto('/workspace');
@@ -346,7 +346,7 @@ test.describe('First-time workspace experience', () => {
                 page.getByRole('heading', { level: 1, name: 'My workspace' }),
             ).toBeVisible();
 
-            const addExistingAccount = page.getByRole('link', {
+            const addExistingAccount = page.getByRole('button', {
                 name: 'Add an existing account',
             });
             await expect(addExistingAccount).toBeVisible();
@@ -355,7 +355,10 @@ test.describe('First-time workspace experience', () => {
             ).toBeVisible();
 
             await addExistingAccount.click();
-            await expect(page).toHaveURL(/\/edit\?step=ACCOUNTS$/);
+            await expect(
+                page.getByRole('dialog', { name: 'Connect wallet' }),
+            ).toBeVisible();
+            await expect(page).toHaveURL(/\/all\/overview$/);
         });
 
         test('opens DAO creation from the empty workspace', async ({
