@@ -2,7 +2,7 @@
     "name": "baseline",
     "branch": "claude/eloquent-cori-mv7xrx",
     "canvas": "https://claude.ai/artifact/9gVpqYZDyCe6ksmjvvkA54",
-    "canvasVersion": "1794912709-5903",
+    "canvasVersion": "1794932427-955a",
     "kit": {
         "package": "@aragon/gov-ui-kit",
         "version": "3.0.0",
