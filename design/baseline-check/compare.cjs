@@ -23,7 +23,13 @@ const {
     die,
     launch,
 } = require('./lib.cjs');
-const { KIT_DIR, checkInputs, renderArtboard } = require('./render-canvas.cjs');
+const {
+    KIT_DIR,
+    RENDER_CONCURRENCY,
+    checkInputs,
+    mapConcurrent,
+    renderArtboard,
+} = require('./render-canvas.cjs');
 
 const CHANNEL_TOLERANCE = 25; // a pixel differs when one of its channels is off by more than this (of 255)
 
@@ -193,6 +199,7 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
         ],
     ];
     const notes = [];
+    const tasks = [];
     for (const screen of SCREENS.screens) {
         for (const [reference, mobile] of [
             [screen.reference, false],
@@ -216,6 +223,19 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
                 );
                 continue;
             }
+            tasks.push({ screen, reference, mobile, referenceFile });
+        }
+        notes.push(
+            ...(screen.knownDifferences ?? []).map(
+                (note) => `${screen.artboard}, known difference: ${note}`,
+            ),
+        );
+    }
+    // Several screens render at once: most of a render is waiting (see renderArtboard), not computing.
+    const results = await mapConcurrent(
+        tasks,
+        RENDER_CONCURRENCY,
+        async ({ screen, reference, mobile, referenceFile }) => {
             const render = await renderArtboard(browser, screen.artboard, {
                 mobile,
             });
@@ -226,39 +246,34 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
                 render.png,
                 path.join(outDir, reference.replace(/\.webp$/, '.png')),
             );
-            const problems = [
-                ...render.problems,
-                ...(render.height === referenceHeight
-                    ? []
-                    : [
-                          `height ${render.height} instead of ${referenceHeight}`,
-                      ]),
-                ...(differing > threshold
-                    ? [
-                          `${differing.toFixed(2)}% of pixels differ (threshold ${threshold}%)`,
-                      ]
-                    : []),
-            ];
-            rows.push([
-                screen.artboard,
-                reference,
-                String(referenceHeight),
-                String(render.height),
-                `${differing.toFixed(2)}%`,
-                problems.length > 0 ? 'FAIL' : 'ok',
-            ]);
-            failures.push(
-                ...problems.map(
-                    (p) => `${screen.artboard} vs ${reference}: ${p}`,
-                ),
-            );
-        }
-        notes.push(
-            ...(screen.knownDifferences ?? []).map(
-                (note) => `${screen.artboard}, known difference: ${note}`,
-            ),
+            return { render, referenceHeight, differing };
+        },
+    );
+    tasks.forEach(({ screen, reference }, i) => {
+        const { render, referenceHeight, differing } = results[i];
+        const problems = [
+            ...render.problems,
+            ...(render.height === referenceHeight
+                ? []
+                : [`height ${render.height} instead of ${referenceHeight}`]),
+            ...(differing > threshold
+                ? [
+                      `${differing.toFixed(2)}% of pixels differ (threshold ${threshold}%)`,
+                  ]
+                : []),
+        ];
+        rows.push([
+            screen.artboard,
+            reference,
+            String(referenceHeight),
+            String(render.height),
+            `${differing.toFixed(2)}%`,
+            problems.length > 0 ? 'FAIL' : 'ok',
+        ]);
+        failures.push(
+            ...problems.map((p) => `${screen.artboard} vs ${reference}: ${p}`),
         );
-    }
+    });
     await browser.close();
 
     const widths = rows[0].map((_, column) =>

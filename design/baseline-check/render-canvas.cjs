@@ -128,6 +128,30 @@ const resolve = (urlPath) => {
     return p.includes('..') ? undefined : path.join(CANVAS, p);
 };
 
+// How many artboards render at once. A render mostly waits (fonts, the lookups the kit retries offline, two
+// identical frames), so a few in parallel cost little CPU. BASELINE_CONCURRENCY overrides it.
+const RENDER_CONCURRENCY = Math.max(
+    1,
+    Number(process.env.BASELINE_CONCURRENCY) ||
+        Math.min(6, require('node:os').availableParallelism()),
+);
+
+// Runs fn over items with at most `limit` at a time; results keep the order of items.
+const mapConcurrent = async (items, limit, fn) => {
+    const results = new Array(items.length);
+    let next = 0;
+    const worker = async () => {
+        while (next < items.length) {
+            const i = next++;
+            results[i] = await fn(items[i], i);
+        }
+    };
+    await Promise.all(
+        Array.from({ length: Math.min(limit, items.length) }, worker),
+    );
+    return results;
+};
+
 // Renders one artboard as a top-level page on a fake origin, at the reference time. Returns the full-page PNG, its
 // height and the problems found (page errors, missing files).
 const renderArtboard = async (browser, artboard, opts = {}) => {
@@ -189,7 +213,14 @@ const renderArtboard = async (browser, artboard, opts = {}) => {
     return { png, height, problems };
 };
 
-module.exports = { KIT_DIR, KNOWN_404, checkInputs, renderArtboard };
+module.exports = {
+    KIT_DIR,
+    KNOWN_404,
+    RENDER_CONCURRENCY,
+    checkInputs,
+    mapConcurrent,
+    renderArtboard,
+};
 
 if (require.main === module) {
     (async () => {
@@ -210,12 +241,14 @@ if (require.main === module) {
         const outDir = path.join(OUT, 'canvas');
         fs.mkdirSync(outDir, { recursive: true });
         let failed = false;
-        for (const artboard of names.length > 0 ? names : known) {
-            const { png, height, problems } = await renderArtboard(
-                browser,
-                artboard,
-                { mobile },
-            );
+        const artboards = names.length > 0 ? names : known;
+        const renders = await mapConcurrent(
+            artboards,
+            RENDER_CONCURRENCY,
+            (artboard) => renderArtboard(browser, artboard, { mobile }),
+        );
+        artboards.forEach((artboard, i) => {
+            const { png, height, problems } = renders[i];
             const file = path.join(
                 outDir,
                 `${artboard.replace('.dc.html', '')}-${mobile ? 390 : 1440}.png`,
@@ -228,7 +261,7 @@ if (require.main === module) {
                 failed = true;
                 console.error(`  ${problem}`);
             }
-        }
+        });
         await browser.close();
         process.exit(failed ? 1 : 0);
     })();
