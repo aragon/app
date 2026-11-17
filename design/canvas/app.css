@@ -1069,3 +1069,30 @@
 }
 @media (min-width: 64rem) { .safe-header .page-header__stats { gap: 40px; } }
 @media (min-width: 80rem) { .safe-header .page-header__stats { gap: 64px; } }
+
+/* ---- TextAreaRichText: packages/gov-ui-kit/src/core/components/forms/textAreaRichText/textAreaRichText.tsx (Body field of
+   modules/governance/components/createProposalForm/createProposalFormMetadata) ---- */
+/* the editor's `prose prose-neutral` classes need the typography plugin, which the kit stylesheet does not ship: the
+   paragraph colour and margin are set here; --focused draws the container's focus-within ring (border-primary-400, shadow-primary) */
+.rich-text .tiptap p { margin: 0; color: rgb(64, 64, 64); }
+.rich-text--focused div:has(> div > div > .tiptap) { border-color: var(--color-primary-400); box-shadow: var(--shadow-primary); }
+
+/* ---- TransferAssetForm: modules/finance/components/transferAssetForm/transferAssetForm.tsx ---- */
+/* flex w-full flex-col, gap-6 while no asset is selected */
+.transfer-form { display: flex; width: 100%; flex-direction: column; }
+.transfer-form--no-asset { gap: 24px; }
+
+/* ---- AdvancedDateInput: shared/components/forms/advancedDateInput (advancedDateInput.tsx, advancedDateInputDuration.tsx),
+   plugins/tokenPlugin/components/tokenCreateProposalSettingsForm/tokenCreateProposalSettingsForm.tsx ---- */
+/* tokenCreateProposalSettingsForm: flex flex-col gap-6 md:gap-12 */
+.advanced-date-input-stack { display: flex; flex-direction: column; gap: 48px; }
+/* advancedDateInput.tsx: flex flex-col gap-2; RadioGroup `flex gap-4 md:flex-row!` (the canvas wraps every RadioCard, so the
+   wrappers take the card's w-full) */
+.advanced-date-input { display: flex; flex-direction: column; gap: 8px; }
+.advanced-date-input__modes { display: flex !important; flex-direction: row !important; gap: 16px; }
+.advanced-date-input__modes > * { width: 100%; }
+/* advancedDateInputDuration.tsx: Card `shadow-neutral-sm flex flex-col gap-4 p-6`, fields `flex flex-col justify-between gap-4 md:flex-row`,
+   each InputNumber `w-full md:w-1/3` (on the canvas's wrapper) */
+.advanced-date-input__duration { display: flex; flex-direction: column; gap: 16px; padding: 24px; }
+.advanced-date-input__fields { display: flex; flex-direction: row; justify-content: space-between; gap: 16px; }
+.advanced-date-input__fields > * { flex: 0 1 auto; width: 33.3333%; }

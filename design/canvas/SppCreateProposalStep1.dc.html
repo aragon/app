@@ -15,9 +15,6 @@
 <helmet>
 <style>
 body{margin:0}
-/* TextAreaRichText: no typography plugin in the kit css, so the editor text is coloured here (the app renders neutral-700); .pw-focus draws focus-within */
-.pw-rich .tiptap p{color:rgb(64,64,64);margin:0}
-.pw-focus div:has(> div > div > .tiptap){border-color:var(--color-primary-400);box-shadow:var(--shadow-primary)}
 </style>
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
@@ -35,7 +32,7 @@ body{margin:0}
           <div class="wizard-fields">
             <x-import component-from-global-scope="GovUiKit.InputText" label="Proposal title" max-length="{{d128}}" value="" on-change="{{noop}}"></x-import>
             <x-import component-from-global-scope="GovUiKit.TextArea" label="Summary" help-text="This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about." is-optional="{{yes}}" max-length="{{d480}}" value="" on-change="{{noop}}"></x-import>
-            <div class="pw-rich"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="" on-change="{{noop}}"></x-import></div>
+            <div class="rich-text"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="" on-change="{{noop}}"></x-import></div>
             <div class="resources-input">
               <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the proposal page. They can be used to help members understand the proposal." use-custom-wrapper="{{yes}}"></x-import>
               <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>

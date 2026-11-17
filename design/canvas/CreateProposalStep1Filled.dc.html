@@ -15,9 +15,6 @@
 <helmet>
 <style>
 body{margin:0}
-/* TextAreaRichText: no typography plugin in the kit css, so the editor text is coloured here (the app renders neutral-700); .pw-focus draws focus-within */
-.pw-rich .tiptap p{color:rgb(64,64,64);margin:0}
-.pw-focus div:has(> div > div > .tiptap){border-color:var(--color-primary-400);box-shadow:var(--shadow-primary)}
 </style>
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
@@ -35,7 +32,7 @@ body{margin:0}
           <div class="wizard-fields">
             <x-import component-from-global-scope="GovUiKit.InputText" label="Proposal title" max-length="{{d128}}" value="Fund the Q2 2027 Ecosystem Grants Program" on-change="{{noop}}"></x-import>
             <x-import component-from-global-scope="GovUiKit.TextArea" label="Summary" help-text="This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about." is-optional="{{yes}}" max-length="{{d480}}" value="Allocate 300,000 USDC to the Ecosystem Grants Program to fund integrations, tooling and research during Q2 2027." on-change="{{noop}}"></x-import>
-            <div class="pw-rich pw-focus"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="<p>Over the last two quarters Meridian has grown routed volume by 38%. This proposal continues the grants program ratified in MGP-8.</p>" on-change="{{noop}}"></x-import></div>
+            <div class="rich-text rich-text--focused"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="<p>Over the last two quarters Meridian has grown routed volume by 38%. This proposal continues the grants program ratified in MGP-8.</p>" on-change="{{noop}}"></x-import></div>
             <div class="resources-input">
               <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the proposal page. They can be used to help members understand the proposal." use-custom-wrapper="{{yes}}"></x-import>
               <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>
