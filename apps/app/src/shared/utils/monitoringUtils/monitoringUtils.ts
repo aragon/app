@@ -10,6 +10,8 @@ import {
     captureException,
     captureMessage,
     captureRequestError,
+    flush,
+    metrics,
     setUser,
     withServerActionInstrumentation,
 } from '@sentry/nextjs';
@@ -56,6 +58,17 @@ export type SentryNoiseClass =
     | 'security-probe'
     | 'internal-broken-link';
 
+type TracesSampler = (
+    context: Parameters<NonNullable<ClientOptions['tracesSampler']>>[0],
+) => number;
+
+// Where Vercel exposes the context of the request a function is serving, see `MonitoringUtils.deliverBeforeSuspend`.
+const requestContextKey = Symbol.for('@vercel/request-context');
+
+interface IRequestContextHost {
+    get?: () => { waitUntil?: (task: Promise<unknown>) => void } | undefined;
+}
+
 // Process-wide home of the secrets registry, see `MonitoringUtils.secrets`.
 const secretsKey = Symbol.for('aragon.monitoringUtils.secrets');
 const secretsHost = globalThis as unknown as Record<symbol, Set<string>>;
@@ -82,7 +95,7 @@ class MonitoringUtils {
         "session topic doesn't exist", // WalletConnect: stale session
         'No matching key. session topic', // WalletConnect: stale session
         'Failed to disconnect', // AppKit: disconnect with an already-gone wallet session
-        'BotIdUtils: automated request rejected', // Server action refused by BotID; the info event logged by botIdUtils is the monitored signal
+        'BotIdUtils: automated request rejected', // Server action refused by BotID; the counter of botIdUtils is the monitored signal
     ];
 
     /**
@@ -160,11 +173,26 @@ class MonitoringUtils {
         'fetch failed',
     ];
 
+    // The 403 the RPC relay answers when BotID refuses a request, as viem reports it.
+    private relayRejectionPatterns = ['Status: 403', 'URL: /api/rpc/'];
+
+    /**
+     * User agents of uptime probes: they request the home page of every environment several times a minute, so
+     * their traces would take most of the span quota and are never recorded.
+     */
+    private probeUserAgents = ['Blackbox Exporter'];
+
+    // Share of traces recorded for browsers: the browser SDK and the server requests carrying Sec-Fetch headers.
+    private browserTracesSampleRate = 0.5;
+
+    // Share of traces recorded for the other server requests: scripts, crawlers, link previews.
+    private serverTracesSampleRate = 0.1;
+
     getBaseConfig = (): Pick<
         ClientOptions,
         | 'enabled'
         | 'dsn'
-        | 'tracesSampleRate'
+        | 'tracesSampler'
         | 'environment'
         | 'release'
         | 'beforeSend'
@@ -172,12 +200,40 @@ class MonitoringUtils {
     > => ({
         enabled: this.isEnabled(),
         dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
-        tracesSampleRate: 0.1,
+        tracesSampler: this.serverTracesSampler,
         environment: process.env.NEXT_PUBLIC_ENV,
         release: process.env.version,
         beforeSend: this.beforeSend,
         beforeSendTransaction: this.beforeSendTransaction,
     });
+
+    /**
+     * Server-side head sampling. A trace continued from a sampled parent keeps the parent's decision; a request
+     * without readable headers gets the lower rate.
+     */
+    serverTracesSampler: TracesSampler = ({
+        inheritOrSampleWith,
+        normalizedRequest,
+    }) => {
+        const headers = normalizedRequest?.headers ?? {};
+        const userAgent = headers['user-agent'] ?? '';
+
+        if (this.probeUserAgents.some((probe) => userAgent.includes(probe))) {
+            return 0;
+        }
+
+        const isBrowserRequest = headers['sec-fetch-mode'] != null;
+
+        return inheritOrSampleWith(
+            isBrowserRequest
+                ? this.browserTracesSampleRate
+                : this.serverTracesSampleRate,
+        );
+    };
+
+    // Head sampling of the browser SDK; a page load keeps the decision the server made for its document request.
+    browserTracesSampler: TracesSampler = ({ inheritOrSampleWith }) =>
+        inheritOrSampleWith(this.browserTracesSampleRate);
 
     /**
      * Routes events instead of hiding them. Only objectively zero-value third-party junk
@@ -213,9 +269,17 @@ class MonitoringUtils {
     beforeSendTransaction = (event: TransactionEvent): TransactionEvent =>
         this.redactSecrets(event);
 
+    /**
+     * Replay `beforeErrorSampling` hook, called with the event as sent (after `beforeSend`): only errors without a
+     * `noise_class` tag spend the replay quota.
+     */
+    shouldSampleReplay = (event: Event): boolean =>
+        event.tags?.noise_class == null;
+
     logError = (error: unknown, params?: ILogErrorParams) => {
         const { context } = params ?? {};
         captureException(this.toError(error), { extra: context });
+        this.deliverBeforeSuspend();
     };
 
     /**
@@ -269,9 +333,33 @@ class MonitoringUtils {
                 ? { ...context, noise_class: noiseClass }
                 : context;
         captureMessage(name, { level, tags });
+        this.deliverBeforeSuspend();
     };
 
-    logRequestError = captureRequestError;
+    // Counts an occurrence that is watched as a rate, not triaged as an issue. Attributes must be low-cardinality.
+    incrementCounter = (name: string, attributes?: Record<string, string>) => {
+        metrics.count(name, 1, { attributes });
+        this.deliverBeforeSuspend();
+    };
+
+    logRequestError: typeof captureRequestError = (...args) => {
+        captureRequestError(...args);
+        this.deliverBeforeSuspend();
+    };
+
+    /**
+     * Vercel suspends a function once its response is sent, and the SDK sends in the background: what a request
+     * captured right before responding was delivered late or lost. The platform keeps the function running for a
+     * promise handed to `waitUntil`; the SDK does that on the edge runtime only. No-op in the browser and outside
+     * Vercel, where no request context exists.
+     */
+    private deliverBeforeSuspend = () => {
+        const host = (globalThis as Record<symbol, IRequestContextHost>)[
+            requestContextKey
+        ];
+
+        host?.get?.()?.waitUntil?.(flush(2000));
+    };
 
     serverActionWrapper = withServerActionInstrumentation;
 
@@ -280,6 +368,16 @@ class MonitoringUtils {
         message: string,
         hint?: EventHint,
     ): SentryNoiseClass | undefined => {
+        // The RPC relay refused the user's own request (see botIdUtils): the user is locked out of chain data.
+        // Checked first because the failed call is usually an ENS lookup, which the patterns below demote.
+        if (
+            this.relayRejectionPatterns.every((pattern) =>
+                message.includes(pattern),
+            )
+        ) {
+            return undefined;
+        }
+
         // Expected user/wallet behaviour and non-actionable external (ENS gateway)
         // failures: kept for investigation, demoted to info, out of alerts.
         if (
