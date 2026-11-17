@@ -1,5 +1,6 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
+import { addressUtils, ensUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
+import { normalize } from 'viem/ens';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -157,6 +158,20 @@ class WorkspaceUtils {
         return accounts.find((account) =>
             this.isSameNetworkAddress(account, networkAddress),
         );
+    };
+
+    /**
+     * Normalizes an ENS name (e.g. `Vitalik.ETH` to `vitalik.eth`).
+     * @returns The normalized name, or undefined when the value is not an ENS name.
+     */
+    normalizeEnsName = (value: string): string | undefined => {
+        try {
+            const name = normalize(value.trim());
+
+            return ensUtils.isEnsName(name) ? name : undefined;
+        } catch {
+            return undefined;
+        }
     };
 
     /**
