@@ -1,0 +1,36 @@
+{
+    "$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+    "root": false,
+    "extends": "//",
+    "files": {
+        // files.includes of a nested config replaces the root list, so the shared exclusions repeat here.
+        // canvas/ is written by the claude.ai canvas editor and synced back verbatim: reformatting it breaks the round-trip.
+        "includes": [
+            "**",
+            "!**/*.svg",
+            "!canvas",
+            "!reference"
+        ]
+    },
+    "overrides": [
+        {
+            // Local scripts that run the app on mock data and take screenshots: they log progress, and resolve their
+            // dependencies (viem, sharp) through apps/app instead of declaring their own.
+            "includes": [
+                "mock-backend/**"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off",
+                        // Fetch shims and request handlers return promises by contract, with or without an await.
+                        "useAwait": "off"
+                    },
+                    "correctness": {
+                        "noUndeclaredDependencies": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

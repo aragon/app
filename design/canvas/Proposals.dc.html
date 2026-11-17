@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Proposals</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:#f5f7fa}
+a{color:#3164fa}a:hover{color:#003bf5}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div style="min-height: 100vh; display: flex; flex-wrap: wrap; align-items: flex-start; background: var(--color-neutral-50); color: var(--color-neutral-800); font-family: Manrope, sans-serif;">
+  <dc-import name="Sidebar" active="proposals" hint-size="256px,900px" style="flex: 0 0 256px;"></dc-import>
+
+  <div style="position: relative; flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="width: 100%; max-width: 1280px; margin: 0 auto; box-sizing: border-box; padding: 40px 40px 80px; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+      <main style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+        <header style="display: flex; flex-direction: row; justify-content: space-between; gap: 24px;">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposals</x-import>
+          <a href="CreateProposal.dc.html" style="text-decoration: none;">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS">Proposal</x-import>
+          </a>
+        </header>
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+            <sc-for list="{{proposals}}" as="p" hint-placeholder-count="8">
+              <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="Proposal.dc.html"></x-import>
+            </sc-for>
+          </x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+        </x-import>
+      </main>
+
+      <aside style="flex: 1 1 400px; max-width: 400px; min-width: 0; display: flex; flex-direction: column; gap: 40px;">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Meridian Token Voting (MGP)</x-import>
+          <p style="margin: 0; color: var(--color-neutral-500); line-height: 1.5;">Token-weighted governance for all MRD holders and their delegates. Proposals pass with a simple majority and 15% quorum.</p>
+          <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.meridian.xyz/governance" is-external="{{yes}}" show-url="{{yes}}">Governance docs</x-import>
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="{{pluginAddress}}" description="Token Voting v1.3" link="{{pluginLink}}">0xa147…8fda</x-import>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{txLink}}">October 2025</x-import>
+          </x-import>
+          <a href="Settings.dc.html" style="display: block; text-decoration: none;">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" class-name="w-full">View governance process</x-import>
+          </a>
+        </x-import>
+
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Notifications</x-import>
+          <p style="margin: 0; color: var(--color-neutral-500);">Get notified on Telegram about new proposals and other activity.</p>
+          <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="SOCIAL_TELEGRAM" class-name="w-full">Subscribe</x-import>
+        </x-import>
+      </aside>
+    </div>
+
+    <div style="position: sticky; bottom: 24px; z-index: 10; height: 0; align-self: flex-end;">
+      <button type="button" aria-label="Ask Aragon" style="position: absolute; right: 24px; bottom: 0; display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--color-primary-400); color: var(--color-neutral-0); font: 400 16px/1.25 Manrope, sans-serif; white-space: nowrap; cursor: pointer; box-shadow: 0px 16px 32px -4px rgba(97,110,124,0.12), 0px 10px 20px -6px rgba(97,110,124,0.08);">
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+        <span>Ask Aragon</span>
+      </button>
+    </div>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const day = 86400000;
+    const now = Date.now();
+    const pub = (address, name) => (name ? { address, name } : { address });
+    const lena = '0x3f1d7a4c5b6e8d9f0a1b2c3d4e5f6a7b8c9d0e1f';
+    const nadia = '0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b';
+    const kofi = '0x5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c';
+    const sofia = '0x2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d';
+    const proposals = [
+      { id: 'MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + 3600000, publisher: pub(lena, 'lenaweber.eth') },
+      { id: 'MGP-7', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + 3600000, publisher: pub(nadia, 'nadia.eth') },
+      { id: 'MGP-6', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: 'EXECUTABLE', date: now - 1 * day, publisher: pub(kofi, 'kofi-mensah.eth') },
+      { id: 'MGP-5', title: 'Signal: Expand the delegate compensation framework', summary: 'Non-binding signal to expand delegate compensation to the top 30 delegates by voting power, funded from the community budget.', status: 'ACCEPTED', date: now - 6 * day, publisher: pub(sofia, 'sofiaruiz.eth') },
+      { id: 'MGP-4', title: 'Reduce proposal threshold to 25,000 MRD', summary: 'Lower the minimum voting power required to submit a proposal from 100,000 MRD to 25,000 MRD to broaden participation.', status: 'REJECTED', date: now - 13 * day, publisher: pub('0x865fA1b2C3d4E5f6a7B8c9D0e1F2a3B4c5D6e089') },
+      { id: 'MGP-3', title: 'Update DAO metadata and website links', summary: 'Refresh the DAO description to reflect the cross-chain routing roadmap and add the new Discord and forum links.', status: 'EXECUTED', date: now - 26 * day, publisher: pub(kofi, 'kofi-mensah.eth') },
+      { id: 'MGP-2', title: 'Q4 2026 Contributor Compensation', summary: 'Approve the Q4 2026 compensation budget of 180,000 USDC for the core contributor team, paid to the Contributors Safe.', status: 'EXECUTED', date: now - 35 * day, publisher: pub(nadia, 'nadia.eth') },
+      { id: 'MGP-1', title: 'Sponsor the ETHDenver 2027 Community Hub', summary: 'Proposal to sponsor a Meridian community hub at ETHDenver 2027 for 85,000 USDC to grow developer adoption.', status: 'REJECTED', date: now - 62 * day, publisher: pub(lena, 'lenaweber.eth') }
+    ];
+    return {
+      yes: true,
+      proposals,
+      count: proposals.length,
+      pageSize: 10,
+      pluginAddress: '0xa1472b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8fda',
+      pluginLink: { href: 'https://etherscan.io/address/0xa1472b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8fda', isOnchainEntity: true },
+      txLink: { href: 'https://etherscan.io' }
+    };
+  }
+}
+</script>
+</body>
+</html>

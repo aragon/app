@@ -1,0 +1,146 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-16T12:00:00Z"
+  },
+  "title": "Aragon App Recreation",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": -900,
+      "w": 1440,
+      "h": 2719,
+      "title": "Explore DAOs",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateDao.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1100,
+      "title": "Create a DAO \u2014 wizard",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Sidebar.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 256,
+      "h": 900,
+      "title": "DAO sidebar (shared)"
+    },
+    "Dashboard.dc.html": {
+      "x": 0,
+      "y": 2280,
+      "w": 1440,
+      "h": 2316,
+      "title": "DAO dashboard",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Proposals.dc.html": {
+      "x": 1520,
+      "y": 2280,
+      "w": 1440,
+      "h": 2000,
+      "title": "Proposals",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Proposal.dc.html": {
+      "x": 3040,
+      "y": 2280,
+      "w": 1440,
+      "h": 1990,
+      "title": "Proposal detail",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Members.dc.html": {
+      "x": 0,
+      "y": 5000,
+      "w": 1440,
+      "h": 1100,
+      "title": "Members",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Assets.dc.html": {
+      "x": 1520,
+      "y": 5000,
+      "w": 1440,
+      "h": 1100,
+      "title": "Assets",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Transactions.dc.html": {
+      "x": 3040,
+      "y": 5000,
+      "w": 1440,
+      "h": 1100,
+      "title": "Transactions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Settings.dc.html": {
+      "x": 4560,
+      "y": 5000,
+      "w": 1440,
+      "h": 1200,
+      "title": "Settings",
+      "expand": "fill",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "CreateDao.dc.html",
+    "Sidebar.dc.html",
+    "Dashboard.dc.html",
+    "Proposals.dc.html",
+    "Proposal.dc.html",
+    "Members.dc.html",
+    "Assets.dc.html",
+    "Transactions.dc.html",
+    "Settings.dc.html"
+  ],
+  "notes": {
+    "row1": {
+      "x": 0,
+      "y": -1200,
+      "text": "Entry & onboarding",
+      "kind": "title1",
+      "maxW": 3296
+    },
+    "row2": {
+      "x": 0,
+      "y": 1980,
+      "text": "DAO governance",
+      "kind": "title1",
+      "maxW": 4480
+    },
+    "row3": {
+      "x": 0,
+      "y": 4700,
+      "text": "Members, treasury & settings",
+      "kind": "title1",
+      "maxW": 6000
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Aragon Governance UI Kit",
+      "namespace": "aragon-gov-ui-kit",
+      "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
+      "version": "1794906150-8cdd",
+      "copiedAt": "2026-11-17T09:00:00Z"
+    }
+  ]
+}

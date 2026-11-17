@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Meridian DAO dashboard</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:#f5f7fa}
+a{color:#3164fa}a:hover{color:#003bf5}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div style="min-height: 100vh; display: flex; flex-wrap: wrap; align-items: flex-start; background: var(--color-neutral-50); color: var(--color-neutral-800); font-family: Manrope, sans-serif;">
+  <dc-import name="Sidebar" active="dashboard" hint-size="256px,900px" style="flex: 0 0 256px;"></dc-import>
+
+  <div style="position: relative; flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+
+    <header style="padding-top: 40px;">
+      <div style="max-width: 1280px; margin: 0 auto; box-sizing: border-box; padding: 0 40px; display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; flex-wrap: wrap; width: 100%; min-width: 0; gap: 40px;">
+          <div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+            <div style="display: flex; flex-direction: column; row-gap: 12px;">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Meridian DAO</x-import>
+              <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-lg text-neutral-500">Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol fee parameters through onchain token voting.</x-import>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 40px; padding: 12px 0;">
+              <sc-for list="{{stats}}" as="s" hint-placeholder-count="3">
+                <div style="display: flex; flex-direction: column; gap: 4px; line-height: 1.25;">
+                  <div style="display: flex; flex-direction: row; align-items: baseline; gap: 4px;">
+                    <p style="margin: 0; font-size: 20px; color: var(--color-neutral-800);">{{s.value}}</p>
+                    <p style="margin: 0; font-size: 14px; color: var(--color-neutral-500);">{{s.suffix}}</p>
+                  </div>
+                  <p style="margin: 0; font-size: 14px; color: var(--color-neutral-500);">{{s.label}}</p>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex: 0 0 400px;">
+            <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" size="2xl"></x-import>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div style="width: 100%; max-width: 1280px; margin: 0 auto; box-sizing: border-box; padding: 40px 40px 80px; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+      <main style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 48px;">
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Latest proposals</x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+              <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
+                <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="Proposal.dc.html"></x-import>
+              </sc-for>
+            </x-import>
+          </x-import>
+          <a href="Proposals.dc.html" style="align-self: flex-start; text-decoration: none;">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT">View all</x-import>
+          </a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Members</x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{six}}" page-size="{{six}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+              <sc-for list="{{members}}" as="m" hint-placeholder-count="6">
+                <x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m.address}}" ens-name="{{m.ens}}" delegation-count="{{m.delegations}}" token-amount="{{m.power}}" href="Members.dc.html"></x-import>
+              </sc-for>
+            </x-import>
+          </x-import>
+          <a href="Members.dc.html" style="align-self: flex-start; text-decoration: none;">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT">View all</x-import>
+          </a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Assets</x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{three}}" page-size="{{three}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+              <sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+                <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{a.name}}" symbol="{{a.symbol}}" amount="{{a.amount}}" fiat-price="{{a.price}}"></x-import>
+              </sc-for>
+            </x-import>
+          </x-import>
+          <a href="Assets.dc.html" style="align-self: flex-start; text-decoration: none;">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT">View all</x-import>
+          </a>
+        </div>
+      </main>
+
+      <aside style="flex: 1 1 400px; max-width: 400px; min-width: 0; display: flex; flex-direction: column; gap: 40px;">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contract</x-import>
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain"><p style="margin: 0; color: var(--color-neutral-500);">Ethereum</p></x-import>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="DAO address" copy-value="{{daoAddress}}" link="{{addressLink}}">0xc8c3…bcde</x-import>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="{{daoAddress}}" link="{{addressLink}}">meridian.dao.eth</x-import>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{txLink}}">September 2025</x-import>
+          </x-import>
+          <a href="Permissions.dc.html" style="display: block; text-decoration: none;">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" class-name="w-full">View permissions</x-import>
+          </a>
+        </x-import>
+
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Resources</x-import>
+          <sc-for list="{{links}}" as="l" hint-placeholder-count="4">
+            <x-import component-from-global-scope="GovUiKit.Link" href="{{l.url}}" is-external="{{yes}}" show-url="{{yes}}">{{l.name}}</x-import>
+          </sc-for>
+        </x-import>
+
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Notifications</x-import>
+          <p style="margin: 0; color: var(--color-neutral-500);">Get notified on Telegram about new proposals and other activity.</p>
+          <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="SOCIAL_TELEGRAM" class-name="w-full">Subscribe</x-import>
+        </x-import>
+      </aside>
+    </div>
+
+    <div style="position: sticky; bottom: 24px; z-index: 10; height: 0; align-self: flex-end;">
+      <button type="button" aria-label="Ask Aragon" style="position: absolute; right: 24px; bottom: 0; display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--color-primary-400); color: var(--color-neutral-0); font: 400 16px/1.25 Manrope, sans-serif; white-space: nowrap; cursor: pointer; box-shadow: 0px 16px 32px -4px rgba(97,110,124,0.12), 0px 10px 20px -6px rgba(97,110,124,0.08);">
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+        <span>Ask Aragon</span>
+      </button>
+    </div>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2316}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const day = 86400000;
+    const now = Date.now();
+    return {
+      yes: true, two: 2, three: 3, six: 6,
+      stats: [
+        { value: '8', suffix: '', label: 'Proposals' },
+        { value: '1.28K', suffix: '', label: 'Members' },
+        { value: '$4.80M', suffix: 'USD', label: 'Treasury' }
+      ],
+      proposals: [
+        { id: 'MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + 3600000, publisher: { address: '0x3f1d7a4c5b6e8d9f0a1b2c3d4e5f6a7b8c9d0e1f', name: 'lenaweber.eth' } },
+        { id: 'MGP-7', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + 3600000, publisher: { address: '0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b', name: 'nadia.eth' } },
+        { id: 'MGP-6', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: 'EXECUTABLE', date: now - 1 * day, publisher: { address: '0x5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c', name: 'kofi-mensah.eth' } }
+      ],
+      members: [
+        { address: '0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b', ens: 'nadia.eth', delegations: 214, power: 4850000 },
+        { address: '0x5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c', ens: 'kofi-mensah.eth', delegations: 167, power: 3920000 },
+        { address: '0x3f1d7a4c5b6e8d9f0a1b2c3d4e5f6a7b8c9d0e1f', ens: 'lenaweber.eth', delegations: 98, power: 2740000 },
+        { address: '0x865fA1b2C3d4E5f6a7B8c9D0e1F2a3B4c5D6e089', ens: undefined, delegations: undefined, power: 2120000 },
+        { address: '0x2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d', ens: 'sofiaruiz.eth', delegations: 54, power: 1680000 },
+        { address: '0x7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f', ens: 'tomas.eth', delegations: 21, power: 1250000 }
+      ],
+      assets: [
+        { name: 'USD Coin', symbol: 'USDC', amount: 1850000, price: 1 },
+        { name: 'Ether', symbol: 'ETH', amount: 418.27, price: 3155.84 },
+        { name: 'Meridian', symbol: 'MRD', amount: 1100000, price: 0.84 }
+      ],
+      daoAddress: '0xc8c3A1f0E9b2d4C6a8B0e2D4f6A8c0E2b4D6bcde',
+      addressLink: { href: 'https://etherscan.io/address/0xc8c3A1f0E9b2d4C6a8B0e2D4f6A8c0E2b4D6bcde', isOnchainEntity: true },
+      txLink: { href: 'https://etherscan.io' },
+      links: [
+        { name: 'Website', url: 'https://meridian.xyz' },
+        { name: 'Forum', url: 'https://forum.meridian.xyz' },
+        { name: 'X', url: 'https://x.com/meridianproto' },
+        { name: 'Discord', url: 'https://discord.gg/meridian' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
