@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create process: governance designer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="process-governance">
+  <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Governance designer" help-text="This determines the amount of control and flexibility you need to design your governance process." value="{{govType}}" on-value-change="{{onGovType}}" class-name="process-governance__types">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" label="Basic" value="BASIC"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" label="Advanced" value="ADVANCED" tag="{{advancedTag}}"></x-import>
+  </x-import>
+  <sc-if value="{{isBasic}}" hint-placeholder-val="{{yes}}">
+    <x-import component-from-global-scope="GovUiKit.InputContainer" id="basicBody" use-custom-wrapper="{{yes}}" label="{{bodyLabel}}" help-text="{{bodyHelp}}" alert="{{bodyAlert}}">
+      <sc-if value="{{hasBody}}" hint-placeholder-val="{{no}}">
+        <dc-import name="CreateProcessBodyCard" vm="{{body}}" hint-size="100%,80px"></dc-import>
+      </sc-if>
+      <sc-if value="{{noBody}}" hint-placeholder-val="{{yes}}">
+        <x-import component-from-global-scope="GovUiKit.CardEmptyState" class-name="border border-neutral-100" heading="Set up your voting body" description="Basic governance supports a single voting body — either a multisig or token voting. Add one to define how proposals are decided." object-illustration="{{usersIllustration}}" primary-button="{{addBody}}"></x-import>
+      </sc-if>
+    </x-import>
+  </sc-if>
+  <sc-if value="{{isGated}}" hint-placeholder-val="{{no}}">
+    <div class="process-gated">
+      <div class="process-gated__head">
+        <div class="process-gated__text">
+          <p class="process-gated__heading">Governance custom-built for {{daoName}}</p>
+          <p class="process-gated__description">The Aragon team can help you design an advanced governance flow designed for the unique needs of your organization. For example:</p>
+        </div>
+        <div class="process-gated__art"><x-import component-from-global-scope="GovUiKit.IllustrationObject" object="SECURITY"></x-import></div>
+      </div>
+      <ol class="process-gated__list">
+        <sc-for list="{{features}}" as="f" hint-placeholder-count="5">
+          <li class="process-gated__item"><span class="process-gated__num">{{f.n}}</span><span>{{f.text}}</span></li>
+        </sc-for>
+      </ol>
+      <x-import component-from-global-scope="GovUiKit.Button" class-name="w-full md:w-auto md:self-start" href="#" icon-right="LINK_EXTERNAL" size="lg" variant="primary">Get in touch</x-import>
+    </div>
+  </sc-if>
+  <sc-if value="{{isAdvancedEmpty}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.CardEmptyState" class-name="border border-neutral-100" heading="Design your own advanced governance" description="Advanced governance lets you build a proposal flow with multiple sequential stages — each with one or more voting bodies. Use it for multi-step processes like optimistic governance with community review, a guardian veto, or a founder sign off." object-illustration="{{buildIllustration}}" primary-button="{{addStageButton}}"></x-import>
+  </sc-if>
+  <sc-if value="{{hasStages}}" hint-placeholder-val="{{no}}">
+    <div class="process-stages">
+      <div class="stage-list">
+        <sc-for list="{{stages}}" as="stage" hint-placeholder-count="1">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="stage-card">
+            <div class="process-stage__head">
+              <div class="stage-head__row">
+                <p class="stage-title">{{stage.title}}</p>
+                <p class="stage-number">{{stage.number}}</p>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.InputText" label="Name" help-text="This is used to identify the stage the proposal is in. For example: Community Review, Guardian Veto, or Founder Signoff" max-length="{{d40}}" value="{{stage.name}}" on-change="{{stage.onName}}" on-blur="{{stage.onNameBlur}}" alert="{{stage.nameAlert}}"></x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" label="{{stage.bodiesLabel}}" help-text="These bodies will decide whether this stage passes." id="{{stage.bodiesId}}" use-custom-wrapper="{{yes}}" class-name="flex flex-col gap-2" alert="{{stage.bodiesAlert}}">
+              <sc-if value="{{stage.noBodies}}" hint-placeholder-val="{{yes}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" class-name="border border-neutral-100" heading="No voting bodies" description="Without bodies, the stage will be a timelock so proposals pass automatically when it ends." is-stacked="{{no}}" object-illustration="{{timelockIllustration}}" secondary-button="{{stage.addBodyButton}}"></x-import>
+              </sc-if>
+              <sc-if value="{{stage.hasBodies}}" hint-placeholder-val="{{no}}">
+                <div class="stage-list">
+                  <sc-for list="{{stage.bodies}}" as="b" hint-placeholder-count="1">
+                    <dc-import name="CreateProcessBodyCard" vm="{{b}}" hint-size="100%,80px"></dc-import>
+                  </sc-for>
+                  <x-import component-from-global-scope="GovUiKit.Button" class-name="w-fit" icon-left="PLUS" size="md" variant="tertiary" on-click="{{stage.onAddBody}}">Add body</x-import>
+                </div>
+              </sc-if>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" label="Settings" use-custom-wrapper="{{yes}}" class-name="flex flex-col items-start gap-3" id="{{stage.settingsId}}">
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="stage-settings">
+                <sc-for list="{{stage.settings}}" as="row" hint-placeholder-count="4">
+                  <div class="{{row.wrap}}">
+                    <sc-if value="{{row.isTag}}" hint-placeholder-val="{{no}}">
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="{{row.term}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{row.text}}" variant="{{row.variant}}" class-name="w-fit"></x-import></x-import>
+                    </sc-if>
+                    <sc-if value="{{row.isText}}" hint-placeholder-val="{{yes}}">
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="{{row.term}}" children="{{row.text}}"></x-import>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" size="md" variant="tertiary" on-click="{{stage.onEditSettings}}">Edit settings</x-import>
+            </x-import>
+            <div class="process-stage__more">
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{stage.moreTrigger}}" size="md" constrain-content-width="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{stage.onRemove}}">Remove stage</x-import>
+              </x-import>
+            </div>
+          </x-import>
+        </sc-for>
+      </div>
+      <x-import component-from-global-scope="GovUiKit.Button" class-name="self-start" icon-left="PLUS" size="md" variant="tertiary" on-click="{{onAddStage}}">Add stage</x-import>
+    </div>
+  </sc-if>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// Step 2 body "Design the governance process" of the Create process wizard (apps/app: modules/createDao/components/
+// createProcessForm/createProcessFormGovernance/createProcessFormGovernance.tsx and fields/governanceBasicBodyField,
+// governanceStagesField, governanceStagesFieldItem, governanceStageBodiesField, governanceStageSettingsField).
+// One source for the static screen CreateProcessStep2 and the FlowCreateProcess flow. The body cards are the part
+// CreateProcessBodyCard.
+// Props: vm = {
+//   govType 'BASIC' | 'ADVANCED', onGovType(value), advancedGated (shows the "On request" tag and the gated block instead of stages),
+//   daoName (gated heading),
+//   body (CreateProcessBodyCard vm | null), bodyAlert ({message, variant}), onAddBody,   // BASIC
+//   stages: [{ title, number, name, nameAlert, onName, onNameBlur, bodiesLabel, bodiesAlert, bodies: [BodyCard vm],
+//     onAddBody, settings: [{ term, text, tag?, variant? }], onEditSettings, onRemove }], onAddStage }   // ADVANCED
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const R = window.React, G = window.GovUiKit;
+    const noop = () => undefined;
+    const govType = vm.govType || 'BASIC';
+    const isBasic = govType === 'BASIC';
+    const gated = !!vm.advancedGated;
+    const stages = (vm.stages || []).map((s, i) => ({
+      onName: noop, onNameBlur: noop, onAddBody: noop, onEditSettings: noop, onRemove: noop, ...s,
+      bodiesId: 'bodies' + i, settingsId: 'stageSettings' + i,
+      noBodies: (s.bodies || []).length === 0, hasBodies: (s.bodies || []).length > 0,
+      addBodyButton: { label: 'Add body', iconLeft: 'PLUS', onClick: s.onAddBody || noop },
+      settings: (s.settings || []).map((r, j, a) => ({ ...r, wrap: j < a.length - 1 ? 'dl-row' : '', isTag: r.kind === 'tag', isText: r.kind !== 'tag' })),
+      moreTrigger: R.createElement(G.Button, { iconRight: 'DOTS_VERTICAL', size: 'md', variant: 'tertiary' }, 'More')
+    }));
+    const body = vm.body || null;
+    return { yes: true, no: false, d40: 40, govType, isBasic, onGovType: vm.onGovType || noop,
+      advancedTag: gated ? { label: 'On request', variant: 'primary' } : undefined,
+      body, hasBody: body != null, noBody: body == null,
+      bodyLabel: body != null ? 'Voting body' : undefined,
+      bodyHelp: body != null ? 'Governing bodies decide whether or not the proposal passes.' : undefined,
+      bodyAlert: vm.bodyAlert,
+      usersIllustration: { object: 'USERS' }, buildIllustration: { object: 'BUILD' }, timelockIllustration: { object: 'TIMELOCK' },
+      addBody: { label: 'Add voting body', iconLeft: 'PLUS', onClick: vm.onAddBody || noop, href: vm.addBodyHref },
+      addStageButton: { label: 'Add stage', iconLeft: 'PLUS', onClick: vm.onAddStage || noop },
+      onAddStage: vm.onAddStage || noop,
+      isGated: !isBasic && gated, daoName: vm.daoName || 'Meridian DAO',
+      features: ['Different proposal flows for different types of decisions', 'Granular permissions around who can do what',
+        'Optimistic governance where proposals pass unless vetoed', 'Security councils that can propose or review proposals before execution',
+        'The ability to adapt your governance over time'].map((text, i) => ({ n: i + 1, text })),
+      isAdvancedEmpty: !isBasic && !gated && stages.length === 0, hasStages: !isBasic && !gated && stages.length > 0, stages };
+  }
+}
+</script>
+</body>
+</html>

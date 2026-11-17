@@ -35,7 +35,8 @@
                         "FlowCreateDao.dc.html",
                         "FlowCreateWorkspace.dc.html",
                         "FlowWorkspaceEdit.dc.html",
-                        "FlowCreateProposal.dc.html"
+                        "FlowCreateProposal.dc.html",
+                        "FlowCreateProcess.dc.html"
                     ]
                 }
             ]
@@ -343,7 +344,18 @@
                         "CreateProposalActions.dc.html",
                         "CreateProposalSettings.dc.html",
                         "AssetSelectionDialog.dc.html",
-                        "SimulateActionsDialog.dc.html"
+                        "SimulateActionsDialog.dc.html",
+                        "CreateProcessMetadata.dc.html",
+                        "CreateProcessDesigner.dc.html",
+                        "CreateProcessBodyCard.dc.html",
+                        "CreateProcessProposalCreation.dc.html",
+                        "CreateProcessPermissions.dc.html",
+                        "SetupBodyDialog.dc.html",
+                        "SetupStageSettingsDialog.dc.html",
+                        "ResourcesInput.dc.html",
+                        "NumberProgressInput.dc.html",
+                        "AdvancedDateInputDuration.dc.html",
+                        "TransactionStatus.dc.html"
                     ]
                 }
             ]
@@ -923,6 +935,13 @@
         {
             "artboard": "FlowCreateProposal.dc.html",
             "reference": "create-proposal-step1-empty.webp",
+            "knownDifferences": [
+                "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
+            ]
+        },
+        {
+            "artboard": "FlowCreateProcess.dc.html",
+            "reference": "create-process-step1-empty.webp",
             "knownDifferences": [
                 "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
             ]

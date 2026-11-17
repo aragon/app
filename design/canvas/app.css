@@ -1154,3 +1154,95 @@
 /* ---- FlowCreateProposal: shared/components/wizards/wizardPage/wizardPageStep/wizardPageStep.tsx ---- */
 /* footer block of a step: flex flex-col gap-6 > (step alert when the step was submitted invalid) + the buttons */
 .wizard-step__footer { display: flex; flex-direction: column; gap: 24px; }
+
+/* ---- Create process designer: modules/createDao/components/createProcessForm/createProcessFormGovernance (governanceBodyField.tsx,
+   governanceStagesField.tsx, governanceStagesFieldItem.tsx) ---- */
+/* governanceBodyField.tsx ItemContent: data-[state=open]:flex flex-col gap-y-4 md:gap-y-6; footer: flex w-full grow justify-between (justify-end without Edit) */
+.process-body__content { display: flex; flex-direction: column; gap: 24px; }
+.process-body__actions { display: flex; width: 100%; flex-grow: 1; align-items: center; justify-content: space-between; }
+.process-body__actions--end { justify-content: flex-end; }
+/* governanceStagesField.tsx: flex flex-col gap-2 md:gap-3 */
+.process-stages { display: flex; flex-direction: column; gap: 12px; }
+/* governanceStagesFieldItem.tsx: header flex flex-col gap-6; the "More" menu is `self-end` of the card */
+.process-stage__head { display: flex; flex-direction: column; gap: 24px; }
+.process-stage__more { display: flex; justify-content: flex-end; }
+/* governanceStagesField.tsx, gated block: bg-neutral-0 shadow-neutral-sm flex flex-col gap-6 rounded-xl border border-neutral-100 p-4 md:p-12 */
+.process-gated { display: flex; flex-direction: column; gap: 24px; padding: 48px; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); box-shadow: 0px 1px 3px 0px #616e7c1a, 0px 1px 2px -1px #616e7c1a; }
+.process-gated__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.process-gated__text { display: flex; flex-direction: column; gap: 8px; }
+.process-gated__heading { margin: 0; color: var(--color-neutral-800); font-size: 24px; line-height: 1.25; }
+.process-gated__description { margin: 0; color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+.process-gated__art { display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 9999px; background: var(--color-neutral-50); }
+.process-gated__list { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+.process-gated__item { display: flex; align-items: baseline; gap: 12px; }
+.process-gated__num { display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 9999px; background: var(--color-neutral-50); color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; }
+
+/* ---- NumberProgressInput: shared/components/forms/numberProgressInput/numberProgressInput.tsx ---- */
+/* Card: flex w-full flex-col gap-4 rounded-xl p-4 md:gap-6 md:p-6 */
+.num-progress { display: flex; width: 100%; flex-direction: column; gap: 24px; padding: 24px; border-radius: 12px; }
+/* flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between; InputNumber `w-full md:max-w-40` */
+.num-progress__row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; }
+.num-progress__input { width: 100%; max-width: 160px; }
+/* mt-0 flex w-full grow flex-col gap-2 (self-end with a total label) */
+.num-progress__bar { display: flex; width: 100%; flex-grow: 1; flex-direction: column; gap: 8px; }
+.num-progress__bar--end { align-self: flex-end; }
+.num-progress__line { display: flex; align-items: center; gap: 12px; }
+.num-progress__track { position: relative; display: flex; flex-grow: 1; }
+.num-progress__track > * { width: 100%; }
+.num-progress__value { position: absolute; top: -20px; margin: 0; color: var(--color-primary-400); font-size: 12px; line-height: 16px; white-space: nowrap; transition: all 0.5s ease-in-out; }
+.num-progress__total { align-self: flex-end; margin: 0; color: var(--color-neutral-500); font-size: 12px; line-height: 1.25; font-weight: 400; }
+.num-progress__alert { display: flex; justify-content: center; }
+
+/* ---- TransactionStatus: shared/components/transactionStatus (info header, warning / error / pending label colours) ---- */
+.tx-steps__info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tx-step__label--pending { color: var(--color-primary-400); }
+.tx-step__label--error { color: var(--color-critical-800); }
+.tx-step__label--warning { color: var(--color-warning-800); }
+
+/* ---- SetupBodyDialog: modules/createDao/dialogs/setupBodyDialog + plugins/{multisig,token,lockToVote}Plugin setup membership and governance components ---- */
+/* flex flex-col gap-6 (metadata, token membership); governance: flex w-full flex-col gap-y-6, multisig gap-y-6 md:gap-y-10 */
+.setup-body__fields { display: flex; flex-direction: column; gap: 24px; }
+.setup-body__fields--wide { width: 100%; gap: 40px; }
+.setup-body__governance { display: flex; width: 100%; flex-direction: column; gap: 24px; }
+.setup-body__external { display: flex; width: 100%; flex-direction: column; gap: 12px; }
+/* tokenSetupMembershipImportToken.tsx: flex flex-col gap-2 md:gap-3 */
+.setup-body__import { display: flex; flex-direction: column; gap: 12px; }
+.setup-body__alert { display: flex; flex-direction: column; gap: 12px; }
+.setup-body__alert-text { display: flex; flex-direction: column; gap: 24px; }
+.setup-body__alert-text > p { margin: 0; }
+/* tokenSetupMembership.tsx: flex w-full flex-row gap-x-2 */
+.setup-token-type { display: flex; width: 100%; flex-direction: row; gap: 8px; }
+.setup-token-type > * { flex: 1 1 0%; min-width: 0; }
+/* shared/components/forms/addressesInput: container flex w-full flex-col gap-3; fieldset flex flex-col gap-3; item Card p-4; actions flex w-full justify-between */
+.addr-list { display: flex; width: 100%; flex-direction: column; gap: 12px; }
+.addr-list__fieldset { display: flex; min-width: 0; flex-direction: column; gap: 12px; margin: 0; padding: 0; border: 0; }
+.addr-list__actions { display: flex; width: 100%; justify-content: space-between; }
+.addr-item { width: 100%; flex-shrink: 0; padding: 16px; }
+.addr-item__inner { display: flex; width: 100%; min-width: 0; align-items: flex-start; gap: 8px; }
+.addr-item__input { width: 100%; min-width: 0; }
+.addr-item__remove { flex-shrink: 0; margin-top: 8px; }
+/* tokenSetupMembershipCreateTokenMember.tsx: flex items-end gap-x-4 rounded-xl border border-neutral-100 p-6; fields md:flex-row gap-4 (65% / 1/3) */
+.token-member { display: flex; align-items: flex-end; gap: 16px; padding: 24px; border: 1px solid var(--color-neutral-100); border-radius: 12px; }
+.token-member + .token-member { margin-top: 12px; }
+.token-member__fields { display: flex; width: 100%; flex-direction: row; gap: 16px; }
+.token-member__address { flex-basis: 65%; min-width: 0; }
+.token-member__amount { flex-basis: 33.3333%; min-width: 0; }
+.token-member__remove { flex-shrink: 0; align-self: flex-end; }
+.token-member__remove--center { align-self: center; }
+
+/* ---- SetupStageSettingsDialog: modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialog.tsx (form: flex flex-col gap-6 py-4) ---- */
+.stage-settings-form { display: flex; flex-direction: column; gap: 24px; padding-block: 16px; }
+
+/* ---- Create process steps 3 and 4: modules/createDao/components/createProcessForm/createProcessFormProposalCreation, createProcessFormPermissions ---- */
+/* step content with two siblings (wizardPageStep: flex flex-col gap-6 md:gap-12) */
+.process-fragment { display: flex; flex-direction: column; gap: 48px; }
+.process-fragment__start { align-self: flex-start; }
+.process-fragment__note { margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; }
+/* RadioGroup `flex gap-4 md:!flex-row`, RadioCard `min-w-0` */
+.process-modes { display: flex !important; flex-direction: row !important; gap: 16px; }
+.process-modes > * { flex: 1 1 0%; min-width: 0; }
+/* createProcessFormPermissions.tsx: flex flex-col gap-6 */
+.process-permissions { display: flex; flex-direction: column; gap: 24px; }
+
+/* ---- Create process flow, error footer: shared/components/wizards/wizardPage/wizardPageStep/wizardPageStep.tsx (AlertCard + buttons: flex flex-col gap-6) ---- */
+.wizard-step__errors { display: flex; flex-direction: column; gap: 24px; }

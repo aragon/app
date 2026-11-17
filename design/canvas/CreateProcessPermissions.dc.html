@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create process: permissions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="process-permissions">
+  <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Authorized actions" help-text="Each action is defined by a function selector on a specific smart contract address." value="{{mode}}" on-value-change="{{onMode}}" class-name="process-modes">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="min-w-0" label="Any action" description="Any action can be added to proposals" value="ANY"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="min-w-0" label="Specific actions" description="Selected actions can be added to proposals" value="SELECTED"></x-import>
+  </x-import>
+  <sc-if value="{{isAny}}" hint-placeholder-val="{{yes}}">
+    <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Unrestricted execution" description="This process will be granted permission to execute on behalf of the DAO. It could, for example, withdraw funds, modify governance contracts, and call any function on any smart contract." is-stacked="{{no}}" object-illustration="{{settingsIllustration}}"></x-import>
+  </sc-if>
+  <sc-if value="{{isSelected}}" hint-placeholder-val="{{no}}">
+    <sc-if value="{{noSelectors}}" hint-placeholder-val="{{yes}}">
+      <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="No actions added" is-stacked="{{no}}" object-illustration="{{settingsIllustration}}"></x-import>
+    </sc-if>
+    <sc-if value="{{hasSelectors}}" hint-placeholder-val="{{no}}">
+      <x-import component-from-global-scope="GovUiKit.InputContainer" class-name="w-full" id="selectors" use-custom-wrapper="{{yes}}" alert="{{alert}}">
+        <sc-for list="{{selectors}}" as="s" hint-placeholder-count="1">
+          <x-import component-from-global-scope="GovUiKit.SmartContractFunctionDataListItem.Structure" contract-address="{{s.address}}" contract-name="{{s.contract}}" function-name="{{s.name}}" function-selector="{{s.selector}}" on-remove="{{s.onRemove}}"></x-import>
+        </sc-for>
+      </x-import>
+    </sc-if>
+    <div class="autocomplete">
+      <x-import component-from-global-scope="GovUiKit.InputText" placeholder="Search by action, contract name, or address" value="{{search}}" on-change="{{onSearch}}" on-focus="{{onSearchFocus}}" on-blur="{{onSearchBlur}}" auto-complete="off" wrapper-class-name="{{inputWrap}}"></x-import>
+      <sc-if value="{{menuOpen}}" hint-placeholder-val="{{no}}">
+        <div class="autocomplete-menu" role="listbox">
+          <div class="autocomplete-menu__list">
+            <sc-for list="{{groups}}" as="g" hint-placeholder-count="2">
+              <div class="autocomplete-group">
+                <div class="autocomplete-group__header"><p class="autocomplete-group__name">{{g.name}}</p><hr class="autocomplete-group__rule"><p class="autocomplete-group__info">{{g.info}}</p><hr class="autocomplete-group__rule autocomplete-group__rule--end"></div>
+                <sc-for list="{{g.items}}" as="it" hint-placeholder-count="1">
+                  <div class="autocomplete-item" role="option" aria-selected="false" onClick="{{it.onSelect}}">
+                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">{{it.name}}</p></span>
+                    <span class="autocomplete-item__trail"><span class="autocomplete-item__info">{{it.selector}}</span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <div class="autocomplete-menu__footer">
+            <div class="autocomplete-menu__keys"><span class="keyboard-shortcut">↑</span><span class="keyboard-shortcut">↓</span><p class="autocomplete-menu__hint">Select</p></div>
+            <div class="autocomplete-menu__keys"><p class="autocomplete-menu__hint">Add action</p><span class="keyboard-shortcut">↵</span></div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// Step 4 body "Set permissions" (apps/app: modules/createDao/components/createProcessForm/createProcessFormPermissions/createProcessFormPermissions.tsx;
+// modules/governance/components/actionComposer for the "Add action" autocomplete, whose menu markup is the one of CreateProposalStep2ActionMenu).
+// Props: vm = { mode 'ANY'|'SELECTED', onMode(value), selectors: [{ address, contract, name, selector, onRemove }], alert ({message, variant}),
+//   search, onSearch(event), onSearchFocus, onSearchBlur, menuOpen, groups: [{ name, info, items: [{ name, selector, onSelect }] }] }.
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const noop = () => undefined;
+    const mode = vm.mode || 'ANY';
+    const selectors = vm.selectors || [];
+    return { yes: true, no: false, mode, onMode: vm.onMode || noop, isAny: mode === 'ANY', isSelected: mode === 'SELECTED',
+      settingsIllustration: { object: 'SETTINGS' }, selectors, noSelectors: selectors.length === 0, hasSelectors: selectors.length > 0, alert: vm.alert,
+      search: vm.search || '', onSearch: vm.onSearch || noop, onSearchFocus: vm.onSearchFocus || noop, onSearchBlur: vm.onSearchBlur || noop, menuOpen: !!vm.menuOpen,
+      inputWrap: vm.menuOpen ? 'shadow-primary-lg border-primary-400 autocomplete__input--open' : '', groups: vm.groups || [] };
+  }
+}
+</script>
+</body>
+</html>

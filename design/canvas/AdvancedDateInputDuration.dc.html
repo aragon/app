@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Advanced date input duration</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm advanced-date-input__duration">
+  <div class="advanced-date-input__fields">
+    <x-import component-from-global-scope="GovUiKit.InputNumber" label="Minutes" max="{{d59}}" min="{{zero}}" placeholder="0 min" suffix="min" value="{{minutes}}" on-change="{{onMinutes}}" on-blur="{{onBlur}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.InputNumber" label="Hours" max="{{d23}}" min="{{zero}}" placeholder="0 h" suffix="h" value="{{hours}}" on-change="{{onHours}}" on-blur="{{onBlur}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.InputNumber" label="Days" min="{{zero}}" placeholder="0 d" suffix="d" value="{{days}}" on-change="{{onDays}}" on-blur="{{onBlur}}"></x-import>
+  </div>
+  <sc-if value="{{isCard}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{label}}" variant="{{variant}}">{{text}}</x-import>
+  </sc-if>
+  <sc-if value="{{isInline}}" hint-placeholder-val="{{yes}}">
+    <x-import component-from-global-scope="GovUiKit.AlertInline" message="{{text}}" variant="{{variant}}"></x-import>
+  </sc-if>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// AdvancedDateInputDuration (apps/app: shared/components/forms/advancedDateInput/advancedDateInputDuration.tsx +
+// advancedDateInputInfoText.tsx): minutes / hours / days inputs and the info text (alert card, or inline) that turns critical
+// with the min-duration message.
+// Props: vm = { label, days, hours, minutes (numbers), onDays/onHours/onMinutes(value string), onBlur, infoText, infoDisplay 'card'|'inline',
+//   error (message; replaces infoText, critical) }.
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const noop = () => undefined;
+    const text = vm.error || vm.infoText;
+    const display = vm.infoDisplay || 'card';
+    return { yes: true, no: false, zero: 0, d59: 59, d23: 23, label: vm.label, days: vm.days ?? 0, hours: vm.hours ?? 0, minutes: vm.minutes ?? 0,
+      onDays: vm.onDays || noop, onHours: vm.onHours || noop, onMinutes: vm.onMinutes || noop, onBlur: vm.onBlur || noop,
+      text, variant: vm.error ? 'critical' : 'info', isCard: !!text && display === 'card', isInline: !!text && display === 'inline' };
+  }
+}
+</script>
+</body>
+</html>

@@ -52,6 +52,16 @@
       "expand": "fill",
       "is_interactive": true
     },
+    "FlowCreateProcess.dc.html": {
+      "w": 1440,
+      "h": 1351,
+      "title": "Create a governance process (designer)",
+      "x": 7600,
+      "y": 300,
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
     "Main.dc.html": {
       "expand": "fill",
       "h": 2719,
@@ -1464,6 +1474,94 @@
       "x": 18900,
       "y": 2991,
       "page": "components"
+    },
+    "CreateProcessMetadata.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessMetadata",
+      "x": 20420,
+      "y": 2991,
+      "page": "components"
+    },
+    "CreateProcessDesigner.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessDesigner",
+      "x": 21940,
+      "y": 2991,
+      "page": "components"
+    },
+    "CreateProcessBodyCard.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessBodyCard",
+      "x": 23460,
+      "y": 2991,
+      "page": "components"
+    },
+    "CreateProcessProposalCreation.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessProposalCreation",
+      "x": 24980,
+      "y": 2991,
+      "page": "components"
+    },
+    "CreateProcessPermissions.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessPermissions",
+      "x": 26500,
+      "y": 2991,
+      "page": "components"
+    },
+    "SetupBodyDialog.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "SetupBodyDialog",
+      "x": 28020,
+      "y": 2991,
+      "page": "components"
+    },
+    "SetupStageSettingsDialog.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "SetupStageSettingsDialog",
+      "x": 29540,
+      "y": 2991,
+      "page": "components"
+    },
+    "ResourcesInput.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "ResourcesInput",
+      "x": 31060,
+      "y": 2991,
+      "page": "components"
+    },
+    "NumberProgressInput.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "NumberProgressInput",
+      "x": 32580,
+      "y": 2991,
+      "page": "components"
+    },
+    "AdvancedDateInputDuration.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "AdvancedDateInputDuration",
+      "x": 34100,
+      "y": 2991,
+      "page": "components"
+    },
+    "TransactionStatus.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "TransactionStatus",
+      "x": 35620,
+      "y": 2991,
+      "page": "components"
     }
   },
   "createdOnFiles": {
@@ -1515,7 +1613,7 @@
       "y": 0,
       "text": "Interactive flows (click through in Play)",
       "kind": "title1",
-      "maxW": 7520,
+      "maxW": 8000,
       "page": "prototypes"
     },
     "dao-explore-and-not-found": {
@@ -1749,6 +1847,7 @@
     "FlowCreateWorkspace.dc.html",
     "FlowWorkspaceEdit.dc.html",
     "FlowCreateProposal.dc.html",
+    "FlowCreateProcess.dc.html",
     "Main.dc.html",
     "NotFound.dc.html",
     "DaoNotFound.dc.html",
@@ -1895,7 +1994,18 @@
     "CreateProposalActions.dc.html",
     "CreateProposalSettings.dc.html",
     "AssetSelectionDialog.dc.html",
-    "SimulateActionsDialog.dc.html"
+    "SimulateActionsDialog.dc.html",
+    "CreateProcessMetadata.dc.html",
+    "CreateProcessDesigner.dc.html",
+    "CreateProcessBodyCard.dc.html",
+    "CreateProcessProposalCreation.dc.html",
+    "CreateProcessPermissions.dc.html",
+    "SetupBodyDialog.dc.html",
+    "SetupStageSettingsDialog.dc.html",
+    "ResourcesInput.dc.html",
+    "NumberProgressInput.dc.html",
+    "AdvancedDateInputDuration.dc.html",
+    "TransactionStatus.dc.html"
   ],
   "pages": [
     {
