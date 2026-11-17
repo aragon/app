@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace form account identity</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{no}}">
+  <div class="workspace-identity">
+    <x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="neutral"></x-import>
+    <span class="workspace-identity__resolving">Checking address…</span>
+  </div>
+</sc-if>
+<sc-if value="{{isDao}}" hint-placeholder-val="{{no}}">
+  <div class="workspace-identity">
+    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{name}}" size="md" class-name="shrink-0"></x-import>
+    <div class="workspace-identity__main">
+      <span class="workspace-identity__name">{{primary}}</span>
+      <sc-if value="{{hasName}}" hint-placeholder-val="{{no}}">
+        <span class="workspace-identity__address">{{address}}</span>
+      </sc-if>
+    </div>
+    <x-import component-from-global-scope="GovUiKit.Tag" label="DAO" variant="primary" class-name="shrink-0"></x-import>
+  </div>
+</sc-if>
+<sc-if value="{{isSafe}}" hint-placeholder-val="{{no}}">
+  <div class="workspace-identity">
+    <x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" size="md" src="assets/safeWallet.png" class-name="shrink-0"></x-import>
+    <div class="workspace-identity__main">
+      <span class="workspace-identity__name">{{address}}</span>
+    </div>
+    <x-import component-from-global-scope="GovUiKit.Tag" label="Safe" variant="neutral" class-name="shrink-0"></x-import>
+  </div>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["loading","dao","safe"],"default":"dao"},"daoName":{"editor":null},"address":{"editor":null},"$preview":{"width":640,"height":56}}'>
+// What a filled in account address turned out to be: an inset band under the network and address fields
+// (apps/app: modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccountIdentity). Mounted by
+// WorkspaceFormNetworkAddress for account rows only.
+// Props:
+//   kind     "loading" (Checking address…), "dao" or "safe" (nothing is rendered for an unresolved address: the field's
+//            own error says why).
+//   daoName  DAO name (dao only; without it the address becomes the primary line).
+//   address  truncated address printed under the name (the primary line of a Safe).
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const kind = p.kind;
+    const name = p.daoName != null && p.daoName !== '' ? p.daoName : undefined;
+    return {
+      no: false,
+      isLoading: kind === 'loading',
+      isDao: kind === 'dao',
+      isSafe: kind === 'safe',
+      name,
+      hasName: name != null,
+      primary: name ?? p.address,
+      address: p.address
+    };
+  }
+}
+</script>
+</body>
+</html>

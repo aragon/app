@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace wizard</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="{{wizardName}}" exit-href="{{exitHref}}" wallet-connected="{{walletConnected}}" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" onSubmit="{{noSubmit}}">
+      <dc-import name="WizardProgress" step="{{stepNo}}" total="{{total}}" next-step="{{nextStep}}" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <sc-if value="{{isMetadata}}" hint-placeholder-val="{{yes}}">
+          <dc-import name="WorkspaceFormMetadata" title="{{title}}" intro="{{intro}}" model="{{metadata}}" hint-size="100%,1100px"></dc-import>
+        </sc-if>
+        <sc-if value="{{isTargets}}" hint-placeholder-val="{{no}}">
+          <dc-import name="WorkspaceFormTargets" title="{{title}}" intro="{{intro}}" model="{{targets}}" hint-size="100%,300px"></dc-import>
+        </sc-if>
+        <sc-if value="{{isAccounts}}" hint-placeholder-val="{{no}}">
+          <dc-import name="WorkspaceFormAccounts" title="{{title}}" intro="{{intro}}" model="{{accounts}}" hint-size="100%,400px"></dc-import>
+        </sc-if>
+        <dc-import name="WorkspaceWizardFooter" has-back="{{hasBack}}" is-last="{{isLast}}" submit-label="{{submitLabel}}" error-status="{{errorStatus}}" on-next="{{next}}" on-back="{{back}}" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+<dc-import name="PublishWorkspaceDialog" open="{{dialogOpen}}" mode="{{mode}}" status="{{status}}" workspace-name="{{publishName}}" avatar="{{publishAvatar}}" description="{{publishDescription}}" accounts="{{accountCount}}" targets="{{targetCount}}" workspace-href="WorkspaceOverview.dc.html" on-action="{{dialogAction}}" hint-size="0px,0px"></dc-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["create","edit"],"default":"create"},"$preview":{"width":1440,"height":1339}}'>
+// The workspace wizard: frame (WizardNav, WizardProgress, step content, WorkspaceWizardFooter, Footer) and the form state
+// machine, shared by Create workspace and Edit workspace exactly as the app shares it (apps/app: modules/workspace/components/
+// workspaceWizard/workspaceWizard.tsx, pages/createWorkspacePage, pages/workspaceEditPage). Mounted by FlowCreateWorkspace
+// (mode "create") and FlowWorkspaceEdit (mode "edit"). The step bodies are the parts WorkspaceFormMetadata, WorkspaceFormTargets,
+// WorkspaceFormAccounts; the save dialog is PublishWorkspaceDialog.
+// Validation as the app (react-hook-form, mode onTouched): Next validates the whole step and shows every error under its field,
+// the footer alert and a critical submit button; after that each change re-validates its field; a blurred field validates
+// on blur. Back clears the errors. Last step Next opens PUBLISH_WORKSPACE (the "save" step: local storage, no transaction).
+// Source-only states (no screenshot): everything but the first step and the three static steps.
+// Mock account lookup (/v2/workspaces/query/accounts of design/baseline-check): Meridian DAO, Atlas Grants Council and
+// Northstar Protocol resolve to a DAO, the Northstar Council / Guardian Safes to a Safe, any other address is unsupported.
+const MERIDIAN = '0xC8C322384903eE8f11F511b71d0504237886BCde';
+const ATLAS = '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368';
+const LOOKUP = {
+  [MERIDIAN.toLowerCase()]: { kind: 'dao', name: 'Meridian DAO' },
+  [ATLAS.toLowerCase()]: { kind: 'dao', name: 'Atlas Grants Council' },
+  '0xa767846912853e30403f3efb946a5250e8e6a063': { kind: 'dao', name: 'Northstar Protocol' },
+  '0x515fec2e8f6553948b1d57c14c1243a1405c02e2': { kind: 'safe' },
+  '0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e': { kind: 'safe' }
+};
+const URL_RE = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
+const COPY = {
+  create: {
+    name: 'Create workspace', submit: 'Create workspace',
+    steps: [
+      ['Describe your workspace', "Describe your workspace so visitors know what it covers. Don't worry if these aren't final\u2014any of these fields can be changed later."],
+      ['Add targets', 'Add the addresses this workspace relates to. This step is optional and can be left empty.'],
+      ['Add accounts', 'Add the accounts belonging to this workspace. Each one is identified by its network and address. This step is optional and accounts can be added later.']
+    ]
+  },
+  edit: {
+    name: 'Edit workspace', submit: 'Save changes',
+    steps: [
+      ['Edit details', 'Update how your workspace is described to visitors.'],
+      ['Edit targets', 'Add or remove the addresses this workspace relates to. This step is optional and can be left empty.'],
+      ['Edit accounts', 'Add or remove the accounts belonging to this workspace. Each one is identified by its network and address.']
+    ]
+  }
+};
+const AVATAR_ERRORS = {
+  'file-invalid-type': 'The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).',
+  'file-too-large': 'The file size exceeds the maximum allowed limit of 1 MB.',
+  'square-only': 'The image must be square. Upload a square image.',
+  'too-many-files': 'Only one file can be uploaded at a time.',
+  'unknown-file-error': 'Unable to upload image',
+  'wrong-dimension': 'The image dimensions exceed the maximum allowed size of 1024x1024 pixels.'
+};
+const MSG = {
+  name: 'Workspace name is mandatory.', url: 'URL is mandatory.', urlFormat: 'Invalid URL format.',
+  address: 'Address is mandatory.', invalid: 'Enter a valid address or ENS name.',
+  duplicate: 'This address is already used on the selected network.',
+  unsupported: 'This address is not an Aragon DAO or a Safe on the selected network.',
+  accountName: 'Account name is mandatory.'
+};
+const isAddr = (a) => window.GovUiKit.addressUtils.isAddress(a || '');
+const trunc = (a) => window.GovUiKit.addressUtils.truncateAddress(a || '');
+const lookupKey = (r) => r.network + ':' + (r.address || '').toLowerCase();
+const lookupOf = (r) => LOOKUP[(r.address || '').toLowerCase()] || { kind: 'unsupported' };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const edit = props.mode === 'edit';
+    this.timers = [];
+    this.state = {
+      step: 0, submitted: false, showErrors: false, touched: {}, dialog: false, status: 'idle', resolved: {},
+      form: edit ? {
+        name: 'Meridian Ecosystem',
+        description: 'Treasury and governance of Meridian DAO and the Atlas Grants Council in one place.',
+        avatar: undefined,
+        resources: [{ name: 'Website', url: 'https://meridian.xyz' }],
+        targets: [],
+        accounts: [
+          { network: 'ethereum-mainnet', address: MERIDIAN, meta: { name: 'Meridian DAO', description: '', avatar: undefined } },
+          { network: 'ethereum-mainnet', address: ATLAS, meta: { name: 'Atlas Grants Council', description: '', avatar: undefined } }
+        ]
+      } : {
+        name: '', description: '', avatar: undefined, resources: [], targets: [],
+        accounts: [{ network: 'ethereum-sepolia', address: '', meta: null }]
+      }
+    };
+    if (edit) this.state.resolved = { ['ethereum-mainnet:' + MERIDIAN.toLowerCase()]: true, ['ethereum-mainnet:' + ATLAS.toLowerCase()]: true };
+  }
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+
+  // ---- state helpers
+  patch(fn, touchKey) {
+    this.setState((s) => {
+      const form = fn(s.form);
+      const touched = touchKey && s.submitted ? { ...s.touched, [touchKey]: true } : s.touched;
+      return { form, touched };
+    });
+  }
+  touch(key) { this.setState((s) => ({ touched: { ...s.touched, [key]: true } })); }
+  listSet(list, i, patch, touchKey) { this.patch((f) => ({ ...f, [list]: f[list].map((r, j) => (j === i ? { ...r, ...patch } : r)) }), touchKey); }
+  resolve(row) {
+    // the lookup answers after a short delay: "Checking address…" then the identity band
+    if (!isAddr(row.address)) return;
+    const key = lookupKey(row);
+    if (this.state.resolved[key]) return;
+    const t = setTimeout(() => this.setState((s) => ({ resolved: { ...s.resolved, [key]: true } })), 900);
+    this.timers.push(t);
+  }
+
+  // ---- validation: returns { fields: {key: message}, top: {required, invalid} } for one step
+  validate(step, s) {
+    const f = s.form, fields = {}, top = { required: false, invalid: false };
+    const add = (key, msg, kind) => { fields[key] = msg; top[kind] = true; };
+    if (step === 0) {
+      if ((f.name || '').trim() === '') add('name', MSG.name, 'required');
+      if (f.avatar && f.avatar.error) add('avatar', AVATAR_ERRORS[f.avatar.error], 'invalid');
+      f.resources.forEach((r, i) => {
+        if ((r.url || '').trim() === '') add('res.' + i, MSG.url, 'invalid');
+        else if (!URL_RE.test(r.url.trim())) add('res.' + i, MSG.urlFormat, 'invalid');
+      });
+    }
+    const rows = (list, accounts) => f[list].forEach((r, i) => {
+      const key = (accounts ? 'acc.' : 'tgt.') + i;
+      if ((r.address || '') === '') add(key, MSG.address, 'invalid');
+      else if (!isAddr(r.address)) add(key, MSG.invalid, 'invalid');
+      else if (f[list].slice(0, i).some((c) => c.network === r.network && (c.address || '').toLowerCase() === r.address.toLowerCase())) add(key, MSG.duplicate, 'invalid');
+      else if (accounts && s.resolved[lookupKey(r)] && lookupOf(r).kind === 'unsupported') add(key, MSG.unsupported, 'invalid');
+      if (accounts && r.meta) {
+        if ((r.meta.name || '').trim() === '') add(key + '.name', MSG.accountName, 'invalid');
+        if (r.meta.avatar && r.meta.avatar.error) add(key + '.avatar', AVATAR_ERRORS[r.meta.avatar.error], 'invalid');
+      }
+    });
+    if (step === 1) rows('targets', false);
+    if (step === 2) rows('accounts', true);
+    return { fields, top };
+  }
+  // errors the form currently shows: all of them after a failed Next, otherwise those of touched fields (and the unsupported account)
+  visible(step, s) {
+    const v = this.validate(step, s), fields = {}, top = { required: false, invalid: false };
+    Object.keys(v.fields).forEach((k) => {
+      const msg = v.fields[k];
+      const show = s.showErrors || s.touched[k] || msg === MSG.unsupported || k === 'avatar' || /\.avatar$/.test(k);
+      if (!show) return;
+      fields[k] = msg;
+      if (k === 'name') top.required = true; else top.invalid = true;
+    });
+    return { fields, top };
+  }
+
+  // ---- actions
+  next = () => {
+    const s = this.state;
+    const v = this.validate(s.step, s);
+    if (Object.keys(v.fields).length > 0) { this.setState({ submitted: true, showErrors: true }); return; }
+    if (s.step < 2) this.setState({ step: s.step + 1, submitted: true, showErrors: false });
+    else this.setState({ submitted: true, showErrors: false, dialog: true, status: 'idle' });
+  };
+  back = () => this.setState((s) => ({ step: Math.max(0, s.step - 1), showErrors: false }));
+  dialogAction = (type) => {
+    if (type === 'publish') {
+      this.setState({ status: 'pending' });
+      this.timers.push(setTimeout(() => this.setState({ status: 'success' }), 1500));
+    } else if (type === 'close' && this.state.status !== 'pending') {
+      this.setState({ dialog: false, status: 'idle' });
+    }
+  };
+
+  renderVals() {
+    const s = this.state, f = s.form, edit = this.props.mode === 'edit';
+    const copy = COPY[edit ? 'edit' : 'create'];
+    const vis = this.visible(s.step, s).fields;
+    const status = this.visible(s.step, s).top;
+    const errorStatus = !s.submitted ? '' : status.required && status.invalid ? 'invalid-required' : status.required ? 'required' : status.invalid ? 'invalid' : '';
+
+    const metadata = {
+      name: f.name, nameError: vis.name, onName: (v) => this.patch((x) => ({ ...x, name: v }), 'name'), onNameBlur: () => this.touch('name'),
+      description: f.description, onDescription: (v) => this.patch((x) => ({ ...x, description: v })),
+      avatar: f.avatar, avatarError: vis.avatar, onAvatar: (v) => this.patch((x) => ({ ...x, avatar: v })),
+      onAddResource: () => this.patch((x) => ({ ...x, resources: [...x.resources, { name: '', url: '' }] })),
+      resources: f.resources.map((r, i) => ({
+        url: r.url, name: r.name, urlError: vis['res.' + i],
+        onUrl: (v) => this.listSet('resources', i, { url: v }, 'res.' + i), onUrlBlur: () => this.touch('res.' + i),
+        onName: (v) => this.listSet('resources', i, { name: v }),
+        onRemove: () => this.patch((x) => ({ ...x, resources: x.resources.filter((_, j) => j !== i) }))
+      }))
+    };
+    const rowHandlers = (list, key, i, r) => ({
+      network: r.network, address: r.address, error: vis[key + '.' + i],
+      onNetwork: (n) => { this.listSet(list, i, { network: n }, key + '.' + i); if (list === 'accounts') this.resolve({ ...r, network: n }); },
+      onAddress: (a) => { this.listSet(list, i, { address: a }, key + '.' + i); if (list === 'accounts') this.resolve({ ...r, address: a }); },
+      onBlur: () => this.touch(key + '.' + i),
+      onRemove: () => this.patch((x) => ({ ...x, [list]: x[list].filter((_, j) => j !== i) }))
+    });
+    const targets = {
+      onAdd: () => this.patch((x) => ({ ...x, targets: [...x.targets, { network: 'ethereum-sepolia', address: '' }] })),
+      targets: f.targets.map((r, i) => rowHandlers('targets', 'tgt', i, r))
+    };
+    const accounts = {
+      onAdd: () => this.patch((x) => ({ ...x, accounts: [...x.accounts, { network: 'ethereum-sepolia', address: '', meta: null }] })),
+      accounts: f.accounts.map((r, i) => {
+        const base = rowHandlers('accounts', 'acc', i, r), key = 'acc.' + i;
+        let identityKind = '', identityName, identityAddress;
+        if (isAddr(r.address)) {
+          if (!s.resolved[lookupKey(r)]) identityKind = 'loading';
+          else { const l = lookupOf(r); if (l.kind !== 'unsupported') { identityKind = l.kind; identityName = l.name; identityAddress = trunc(r.address); } }
+        }
+        const meta = r.meta;
+        return {
+          ...base, identityKind, identityName, identityAddress,
+          error: vis[key], metaOpen: meta != null, metaName: meta ? meta.name : '', metaNameError: vis[key + '.name'],
+          metaDescription: meta ? meta.description : '', avatar: meta ? meta.avatar : undefined, avatarError: vis[key + '.avatar'],
+          onToggleMeta: () => this.listSet('accounts', i, { meta: meta ? null : { name: '', description: '', avatar: undefined } }),
+          onMetaName: (v) => this.listSet('accounts', i, { meta: { ...meta, name: v } }, key + '.name'),
+          onMetaNameBlur: () => this.touch(key + '.name'),
+          onMetaDescription: (v) => this.listSet('accounts', i, { meta: { ...meta, description: v } }),
+          onAvatar: (v) => this.listSet('accounts', i, { meta: { ...meta, avatar: v } })
+        };
+      })
+    };
+    const st = copy.steps[s.step];
+    const nextNames = [copy.steps[1][0], copy.steps[2][0], copy.submit];
+    return {
+      yes: true, no: false, noSubmit: (e) => e.preventDefault(),
+      wizardName: copy.name, exitHref: edit ? 'WorkspaceOverview.dc.html' : undefined, walletConnected: edit ? false : undefined,
+      stepNo: s.step + 1, total: 3, nextStep: nextNames[s.step], title: st[0], intro: st[1],
+      isMetadata: s.step === 0, isTargets: s.step === 1, isAccounts: s.step === 2,
+      metadata, targets, accounts,
+      hasBack: s.step > 0, isLast: s.step === 2, submitLabel: copy.submit, errorStatus, next: this.next, back: this.back,
+      mode: edit ? 'update' : 'create', dialogOpen: s.dialog, status: s.status, dialogAction: this.dialogAction,
+      publishName: f.name, publishAvatar: f.avatar ? f.avatar.url : undefined, publishDescription: f.description,
+      accountCount: f.accounts.length, targetCount: f.targets.length
+    };
+  }
+}
+</script>
+</body>
+</html>

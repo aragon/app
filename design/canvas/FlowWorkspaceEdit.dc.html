@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flow edit workspace</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<dc-import name="WorkspaceWizard" mode="edit" hint-size="1440px,1488px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1488}}'>
+// Interactive flow: /workspace/<id>/edit (apps/app: pages/workspaceEditPage): edit details, targets, accounts, then the PUBLISH_WORKSPACE dialog (update).
+// One artboard, one state machine: the WorkspaceWizard part (frame + form state), whose step bodies are the parts
+// WorkspaceFormMetadata / WorkspaceFormTargets / WorkspaceFormAccounts and whose save dialog is PublishWorkspaceDialog: the same
+// parts the static screens mount. Starts as the static first step.
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

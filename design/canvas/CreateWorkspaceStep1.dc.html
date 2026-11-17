@@ -24,22 +24,8 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Add targets" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe your workspace</x-import>
-            <p class="wizard-step__description">Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later.</p>
-          </div>
-          <div class="wizard-fields">
-            <x-import component-from-global-scope="GovUiKit.InputText" label="Workspace name" max-length="{{d128}}" value="" on-change="{{noop}}"></x-import>
-            <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{maxFile}}" max-dimension="{{maxDim}}" on-change="{{noop}}"></x-import>
-            <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the workspace pages so visitors know what this workspace covers." is-optional="{{yes}}" max-length="{{d480}}" value="" on-change="{{noop}}"></x-import>
-          <div class="resources-input">
-            <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels." use-custom-wrapper="{{yes}}"></x-import>
-            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>
-          </div>
-          </div>
-        </div>
-        <dc-import name="WizardActions" next-href="CreateWorkspaceStep2.dc.html"  hint-size="100%,48px"></dc-import>
+        <dc-import name="WorkspaceFormMetadata" title="Describe your workspace" intro="Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later." model="{{model}}" hint-size="100%,900px"></dc-import>
+        <dc-import name="WorkspaceWizardFooter" next-href="CreateWorkspaceStep2.dc.html" hint-size="100%,48px"></dc-import>
       </div>
     </form>
   </main>
@@ -48,13 +34,12 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1339}}'>
-// Create workspace, step 1 "Describe your workspace", empty (apps/app: app/create/workspace,
-// modules/workspace/pages/createWorkspacePage, components/workspaceWizard/workspaceWizard.tsx,
-// components/createWorkspaceForm/createWorkspaceFormMetadata). Values as typed by design/baseline-check/capture-wizards.cjs.
-// Frame: WizardNav, WizardProgress, WizardActions parts + app.css "Wizards".
+// Create workspace, step 1 "Describe your workspace", empty (apps/app: app/create/workspace, modules/workspace/pages/createWorkspacePage,
+// components/workspaceWizard/workspaceWizard.tsx). Frame: WizardNav, WizardProgress, step part WorkspaceFormMetadata (fixed props),
+// WorkspaceWizardFooter + app.css "Wizards". The interactive version is FlowCreateWorkspace (same parts).
 class Component extends DCLogic {
   renderVals() {
-    return { yes: true, no: false, step: 1, total: 3, d128: 128, d18: 18, d480: 480, fourty: 40, maxFile: 1048576, maxDim: 1024, noop: () => {} };
+    return { yes: true, no: false, step: 1, total: 3, model: {} };
   }
 }
 </script>

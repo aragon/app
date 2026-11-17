@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace form network and address</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="workspace-fields">
+  <div class="workspace-account__row">
+    <div class="workspace-account__network">{{networkSelect}}</div>
+    <x-import component-from-global-scope="GovUiKit.AddressInput" label="Address" placeholder="0x… or ENS name" value="{{address}}" chain-id="{{chainId}}" on-change="{{onAddress}}" on-blur="{{onBlur}}" variant="{{variant}}" alert="{{alert}}" class-name="w-full min-w-0"></x-import>
+  </div>
+  <sc-if value="{{hasIdentity}}" hint-placeholder-val="{{no}}">
+    <dc-import name="WorkspaceFormAccountIdentity" kind="{{identityKind}}" dao-name="{{identityName}}" address="{{identityAddress}}" hint-size="100%,56px"></dc-import>
+  </sc-if>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":640,"height":120}}'>
+// Network and address fields shared by the target and account rows (apps/app: modules/workspace/components/
+// createWorkspaceForm/createWorkspaceFormNetworkAddressFields, shared/components/forms/networkInput). The network is a
+// kit Dropdown whose trigger is the bordered button of the app's NetworkInput (all 19 networks, sorted by `order`,
+// testnets tagged).
+// Props:
+//   network       network id ("ethereum-sepolia", "ethereum-mainnet", ...), default Ethereum Sepolia.
+//   address       the address text.
+//   fieldId       id of the network InputContainer (e.g. "accounts.0.network").
+//   error         error message under the address ("" for none).
+//   identityKind  "", "loading", "dao" or "safe": the account identity band (accounts only); identityName / identityAddress.
+//   onNetwork(network), onAddress(text), onBlur(): callbacks (optional: omitted = read-only).
+const NETWORKS = [
+  ['ethereum-sepolia', 'Ethereum Sepolia', 'sepolia', 11155111, true],
+  ['ethereum-mainnet', 'Ethereum', 'ethereum', 1],
+  ['base-mainnet', 'Base', 'base', 8453],
+  ['bnb-mainnet', 'BNB Smart Chain', 'bnb', 56],
+  ['monad-mainnet', 'Monad', 'monad', 143],
+  ['robinhood-mainnet', 'Robinhood Chain', 'robinhood', 4663],
+  ['arbitrum-mainnet', 'Arbitrum', 'arbitrum', 42161],
+  ['polygon-mainnet', 'Polygon', 'polygon', 137],
+  ['avax-mainnet', 'Avalanche', 'avalanche', 43114],
+  ['optimism-mainnet', 'Optimism', 'optimism', 10],
+  ['katana-mainnet', 'Katana', 'katana', 747474],
+  ['zksync-mainnet', 'zkSync', 'zksync', 324],
+  ['citrea-mainnet', 'Citrea', 'citrea', 4114],
+  ['chiliz-mainnet', 'Chiliz', 'chiliz', 88888],
+  ['hemi-mainnet', 'Hemi', 'hemi', 43111],
+  ['ethereum-hoodi', 'Hoodi', 'hoodi', 560048, true],
+  ['base-sepolia', 'Base Sepolia', 'base_sepolia', 84532, true],
+  ['bnb-testnet', 'BNB Smart Chain Testnet', 'bnb_testnet', 97, true],
+  ['polygon-amoy', 'Polygon Amoy', 'polygon_amoy', 80002, true]
+];
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const R = window.React, G = window.GovUiKit;
+    const noop = () => undefined;
+    const network = p.network ?? 'ethereum-sepolia';
+    const cur = NETWORKS.find((n) => n[0] === network) ?? NETWORKS[0];
+    const items = NETWORKS.map((n) => R.createElement(G.Dropdown.Item, { key: n[0], selected: n[0] === network, onClick: () => (p.onNetwork || noop)(n[0]) },
+      R.createElement('span', { className: 'network-option' },
+        R.createElement(G.Avatar, { alt: n[1], size: 'sm', src: 'assets/networks/' + n[2] + '.svg' }),
+        R.createElement('span', { className: 'network-option__name' }, n[1]),
+        n[4] ? R.createElement('span', { className: 'network-tag' }, 'Testnet') : null)));
+    const trigger = R.createElement('button', { type: 'button', className: 'network-input', 'aria-label': 'Network' },
+      R.createElement(G.Avatar, { alt: cur[1], size: 'sm', src: 'assets/networks/' + cur[2] + '.svg', className: 'shrink-0' }),
+      R.createElement('span', { className: 'network-input__name' }, cur[1]),
+      R.createElement(G.Icon, { icon: 'CHEVRON_DOWN', className: 'shrink-0 text-neutral-300' }));
+    const networkSelect = R.createElement(G.InputContainer, { id: p.fieldId ?? 'network', label: 'Network', useCustomWrapper: true },
+      R.createElement(G.Dropdown.Container, { align: 'start', className: 'w-full', customTrigger: trigger }, items));
+    const err = p.error != null && p.error !== '';
+    return {
+      no: false,
+      networkSelect,
+      address: p.address ?? '',
+      chainId: cur[3],
+      onAddress: (v) => (p.onAddress || noop)(v ?? ''),
+      onBlur: () => (p.onBlur || noop)(),
+      variant: err ? 'critical' : undefined,
+      alert: err ? { message: p.error, variant: 'critical' } : undefined,
+      hasIdentity: p.identityKind != null && p.identityKind !== '',
+      identityKind: p.identityKind,
+      identityName: p.identityName,
+      identityAddress: p.identityAddress
+    };
+  }
+}
+</script>
+</body>
+</html>

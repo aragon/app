@@ -32,7 +32,9 @@
                     "title": "Interactive flows (click through in Play)",
                     "artboards": [
                         "FlowVote.dc.html",
-                        "FlowCreateDao.dc.html"
+                        "FlowCreateDao.dc.html",
+                        "FlowCreateWorkspace.dc.html",
+                        "FlowWorkspaceEdit.dc.html"
                     ]
                 }
             ]
@@ -327,7 +329,15 @@
                         "TxFlowDialog.dc.html",
                         "FlowVoteOptions.dc.html",
                         "CreateDaoFormNetwork.dc.html",
-                        "CreateDaoFormMetadata.dc.html"
+                        "CreateDaoFormMetadata.dc.html",
+                        "WorkspaceWizard.dc.html",
+                        "WorkspaceWizardFooter.dc.html",
+                        "WorkspaceFormMetadata.dc.html",
+                        "WorkspaceFormTargets.dc.html",
+                        "WorkspaceFormAccounts.dc.html",
+                        "WorkspaceFormNetworkAddress.dc.html",
+                        "WorkspaceFormAccountIdentity.dc.html",
+                        "PublishWorkspaceDialog.dc.html"
                     ]
                 }
             ]
@@ -886,6 +896,20 @@
         {
             "artboard": "FlowCreateDao.dc.html",
             "reference": "create-dao-step1-chain.webp",
+            "knownDifferences": [
+                "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
+            ]
+        },
+        {
+            "artboard": "FlowCreateWorkspace.dc.html",
+            "reference": "create-workspace-step1-empty.webp",
+            "knownDifferences": [
+                "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
+            ]
+        },
+        {
+            "artboard": "FlowWorkspaceEdit.dc.html",
+            "reference": "workspace-edit.webp",
             "knownDifferences": [
                 "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
             ]

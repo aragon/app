@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace form accounts</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">{{title}}</x-import>
+    <p class="wizard-step__description">{{intro}}</p>
+  </div>
+  <div class="workspace-list">
+    <x-import component-from-global-scope="GovUiKit.InputContainer" id="workspaceAccounts" class-name="gap-3" label="Accounts" is-optional="{{yes}}" help-text="The accounts whose assets, transactions and members this workspace brings together." use-custom-wrapper="{{yes}}">
+      <sc-for list="{{items}}" as="a" hint-placeholder-count="1">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm flex flex-col gap-4 p-6">
+          <div class="workspace-account">
+            <div class="workspace-account__fields">
+              <dc-import name="WorkspaceFormNetworkAddress" field-id="{{a.fieldId}}" network="{{a.network}}" address="{{a.address}}" error="{{a.error}}" identity-kind="{{a.identityKind}}" identity-name="{{a.identityName}}" identity-address="{{a.identityAddress}}" on-network="{{a.onNetwork}}" on-address="{{a.onAddress}}" on-blur="{{a.onBlur}}" hint-size="100%,100px"></dc-import>
+            </div>
+            <div class="workspace-account__menu">{{a.menu}}</div>
+          </div>
+          <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-left="{{a.metaIcon}}" class-name="w-fit" on-click="{{a.onToggleMeta}}">{{a.metaLabel}}</x-import>
+          <sc-if value="{{a.metaOpen}}" hint-placeholder-val="{{no}}">
+            <div class="workspace-account-meta">
+              <x-import component-from-global-scope="GovUiKit.Heading" as="h4" size="h5">Metadata</x-import>
+              <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{maxFile}}" max-dimension="{{maxDim}}" value="{{a.avatar}}" on-change="{{a.onAvatar}}" alert="{{a.avatarAlert}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.InputText" label="Account name" max-length="{{d128}}" value="{{a.metaName}}" on-change="{{a.onMetaName}}" on-blur="{{a.onMetaNameBlur}}" variant="{{a.metaNameVariant}}" alert="{{a.metaNameAlert}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.TextArea" label="Account description" is-optional="{{yes}}" max-length="{{d480}}" value="{{a.metaDescription}}" on-change="{{a.onMetaDescription}}"></x-import>
+            </div>
+          </sc-if>
+        </x-import>
+      </sc-for>
+    </x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit" on-click="{{onAdd}}">Add account</x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"title":{"editor":null},"intro":{"editor":null},"model":{"editor":null},"$preview":{"width":1000,"height":700}}'>
+// Step "Add accounts" / "Edit accounts" (apps/app: modules/workspace/components/createWorkspaceForm/
+// createWorkspaceFormAccounts (+ AccountsItem, AccountsItemMetadata)). It is `.wizard-step__content`.
+// Props:
+//   title, intro  step heading and description.
+//   model         { accounts: [{ network, address, error, identityKind ("", "loading", "dao", "safe"), identityName,
+//                    identityAddress, metaOpen, metaName, metaNameError, metaDescription, avatar, avatarError,
+//                    onNetwork(id), onAddress(text), onBlur(), onRemove(), onToggleMeta(), onMetaName(text),
+//                    onMetaNameBlur(), onMetaDescription(text), onAvatar(value) }], onAdd() }
+
+// Row menu: the kit Dropdown whose trigger is the tertiary dots button, one item (app: Dropdown.Container customTrigger).
+const rowMenu = (label, onRemove) => {
+  const R = window.React, G = window.GovUiKit;
+  return R.createElement(G.Dropdown.Container, { constrainContentWidth: false, size: 'md',
+    customTrigger: R.createElement(G.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' }) },
+    R.createElement(G.Dropdown.Item, { onClick: onRemove }, label));
+};
+const noop = () => undefined;
+const ev = (f) => (e) => (f || noop)(e && e.target ? e.target.value : e);
+const alertOf = (msg) => (msg ? { message: msg, variant: 'critical' } : undefined);
+const variantOf = (msg) => (msg ? 'critical' : undefined);
+
+class Component extends DCLogic {
+  renderVals() {
+    const m = this.props.model || {};
+    const items = (m.accounts || []).map((a, i) => ({
+      fieldId: 'accounts.' + i + '.network', network: a.network, address: a.address, error: a.error,
+      identityKind: a.identityKind, identityName: a.identityName, identityAddress: a.identityAddress,
+      onNetwork: a.onNetwork || noop, onAddress: a.onAddress || noop, onBlur: a.onBlur || noop,
+      menu: rowMenu('Remove account', a.onRemove || noop),
+      metaOpen: !!a.metaOpen, metaIcon: a.metaOpen ? 'CLOSE' : 'PLUS', metaLabel: a.metaOpen ? 'Remove metadata' : 'Add metadata',
+      onToggleMeta: a.onToggleMeta || noop,
+      avatar: a.avatar, onAvatar: a.onAvatar || noop, avatarAlert: alertOf(a.avatarError),
+      metaName: a.metaName ?? '', onMetaName: ev(a.onMetaName), onMetaNameBlur: a.onMetaNameBlur || noop,
+      metaNameVariant: variantOf(a.metaNameError), metaNameAlert: alertOf(a.metaNameError),
+      metaDescription: a.metaDescription ?? '', onMetaDescription: ev(a.onMetaDescription)
+    }));
+    return { yes: true, no: false, d128: 128, d480: 480, maxFile: 1048576, maxDim: 1024, title: this.props.title, intro: this.props.intro, items, onAdd: m.onAdd || noop };
+  }
+}
+</script>
+</body>
+</html>

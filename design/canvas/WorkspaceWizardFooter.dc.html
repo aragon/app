@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace wizard footer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-footer {{footerClass}}">
+  <sc-if value="{{hasError}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{errTitle}}" variant="critical" children="{{errDescription}}"></x-import>
+  </sc-if>
+  <dc-import name="WizardActions" has-back="{{hasBack}}" is-last="{{isLast}}" submit-label="{{submitLabel}}" hover="{{hover}}" back-href="{{backHref}}" next-href="{{nextHref}}" on-next="{{onNext}}" on-back="{{onBack}}" hint-size="100%,48px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"errorStatus":{"editor":"enum","options":["","required","invalid","invalid-required"],"default":""},"$preview":{"width":800,"height":48}}'>
+// Footer of a workspace wizard step (apps/app: shared/components/wizards/wizardPage/wizardPageStep/wizardPageStep.tsx footer):
+// the validation AlertCard shown after a failed submit, then the WizardActions part, whose submit button turns critical.
+// Last child of `.wizard-step`. Props are those of WizardActions (hasBack, isLast, submitLabel, hover, backHref, nextHref,
+// onNext, onBack) plus:
+//   errorStatus  "", "required" (Missing data), "invalid" (Invalid data) or "invalid-required" (Missing and invalid data).
+const TEXT = {
+  required: ['Missing data', 'Some inputs are missing. Fill out all mandatory fields to proceed.'],
+  invalid: ['Invalid data', 'Some values are invalid. Review and fix them to proceed.'],
+  'invalid-required': ['Missing and invalid data', 'Some inputs are missing or invalid. Fix them to proceed.']
+};
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const t = TEXT[p.errorStatus];
+    return {
+      no: false,
+      hasError: t != null,
+      footerClass: t != null ? 'wizard-footer--critical' : '',
+      errTitle: t ? t[0] : '',
+      errDescription: t ? t[1] : '',
+      hasBack: p.hasBack, isLast: p.isLast, submitLabel: p.submitLabel, hover: p.hover,
+      backHref: p.backHref, nextHref: p.nextHref, onNext: p.onNext, onBack: p.onBack
+    };
+  }
+}
+</script>
+</body>
+</html>

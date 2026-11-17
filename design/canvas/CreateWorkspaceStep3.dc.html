@@ -24,40 +24,8 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Create workspace" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add accounts</x-import>
-            <p class="wizard-step__description">Add the accounts belonging to this workspace. Each one is identified by its network and address. This step is optional and accounts can be added later.</p>
-          </div>
-          <div class="workspace-list">
-            <x-import component-from-global-scope="GovUiKit.InputContainer" id="workspaceAccounts" class-name="gap-3" label="Accounts" is-optional="{{yes}}" help-text="The accounts whose assets, transactions and members this workspace brings together." use-custom-wrapper="{{yes}}">
-              <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm flex flex-col gap-4 p-6">
-                <div class="workspace-account">
-                  <div class="workspace-account__fields">
-                    <div class="workspace-account__row">
-                      <div class="workspace-account__network">
-                        <x-import component-from-global-scope="GovUiKit.InputContainer" id="accounts.0.network" label="Network" use-custom-wrapper="{{yes}}">
-                          <button type="button" class="network-input" aria-label="Network">
-                            <x-import component-from-global-scope="GovUiKit.Avatar" alt="Ethereum Sepolia" size="sm" src="assets/networks/sepolia.svg" class-name="shrink-0"></x-import>
-                            <span class="network-input__name">Ethereum Sepolia</span>
-                            <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" class-name="shrink-0 text-neutral-300"></x-import>
-                          </button>
-                        </x-import>
-                      </div>
-                      <x-import component-from-global-scope="GovUiKit.AddressInput" label="Address" placeholder="0x… or ENS name" value="" chain-id="{{sepolia}}" on-change="{{noop}}" class-name="w-full min-w-0"></x-import>
-                    </div>
-                  </div>
-                  <div class="workspace-account__menu">
-                    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="DOTS_VERTICAL" aria-label="Options"></x-import>
-                  </div>
-                </div>
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-left="PLUS" class-name="w-fit">Add metadata</x-import>
-              </x-import>
-            </x-import>
-            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add account</x-import>
-          </div>
-        </div>
-        <dc-import name="WizardActions" has-back="{{yes}}" is-last="{{yes}}" submit-label="Create workspace" hover="{{yes}}" back-href="CreateWorkspaceStep2.dc.html" hint-size="100%,48px"></dc-import>
+        <dc-import name="WorkspaceFormAccounts" title="Add accounts" intro="Add the accounts belonging to this workspace. Each one is identified by its network and address. This step is optional and accounts can be added later." model="{{model}}" hint-size="100%,900px"></dc-import>
+        <dc-import name="WorkspaceWizardFooter" has-back="{{yes}}" is-last="{{yes}}" submit-label="Create workspace" hover="{{yes}}" back-href="CreateWorkspaceStep2.dc.html" hint-size="100%,48px"></dc-import>
       </div>
     </form>
   </main>
@@ -66,14 +34,12 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
-// Create workspace, step 3 "Add accounts" with its default empty account row (Ethereum Sepolia) (apps/app:
-// modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccounts (+ AccountsItem),
-// createWorkspaceFormNetworkAddressFields, shared/components/forms/networkInput). The row's menu is a kit Dropdown whose
-// trigger is the tertiary dots button: drawn closed, as that button. The pointer rests on the submit button, drawn hovered.
-// Frame: WizardNav, WizardProgress, WizardActions parts + app.css "Wizards".
+// Create workspace, step 3 "Add accounts" with its default empty account row (Ethereum Sepolia) (apps/app: createWorkspaceFormAccounts
+// (+ AccountsItem), createWorkspaceFormNetworkAddressFields, shared/components/forms/networkInput). The pointer rests on the submit
+// button, drawn hovered. Parts: WorkspaceFormAccounts, WorkspaceWizardFooter; interactive version FlowCreateWorkspace.
 class Component extends DCLogic {
   renderVals() {
-    return { yes: true, no: false, step: 3, total: 3, d128: 128, d18: 18, d480: 480, fourty: 40, maxFile: 1048576, maxDim: 1024, sepolia: 11155111, noop: () => {} };
+    return { yes: true, no: false, step: 3, total: 3, model: { accounts: [{ network: 'ethereum-sepolia', address: '' }] } };
   }
 }
 </script>

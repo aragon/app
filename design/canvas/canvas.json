@@ -22,6 +22,26 @@
       "expand": "fill",
       "is_interactive": true
     },
+    "FlowCreateWorkspace.dc.html": {
+      "w": 1440,
+      "h": 1339,
+      "title": "Create a workspace",
+      "x": 3040,
+      "y": 300,
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "FlowWorkspaceEdit.dc.html": {
+      "w": 1440,
+      "h": 1488,
+      "title": "Edit a workspace",
+      "x": 4560,
+      "y": 300,
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
     "Main.dc.html": {
       "expand": "fill",
       "h": 2719,
@@ -1330,6 +1350,70 @@
       "x": 3596,
       "y": 2991,
       "page": "components"
+    },
+    "WorkspaceWizard.dc.html": {
+      "w": 1440,
+      "h": 1339,
+      "title": "WorkspaceWizard",
+      "x": 4892,
+      "y": 2991,
+      "page": "components"
+    },
+    "WorkspaceWizardFooter.dc.html": {
+      "w": 800,
+      "h": 48,
+      "title": "WorkspaceWizardFooter",
+      "x": 6412,
+      "y": 2991,
+      "page": "components"
+    },
+    "WorkspaceFormMetadata.dc.html": {
+      "w": 1000,
+      "h": 1100,
+      "title": "WorkspaceFormMetadata",
+      "x": 7292,
+      "y": 2991,
+      "page": "components"
+    },
+    "WorkspaceFormTargets.dc.html": {
+      "w": 1000,
+      "h": 600,
+      "title": "WorkspaceFormTargets",
+      "x": 8372,
+      "y": 2991,
+      "page": "components"
+    },
+    "WorkspaceFormAccounts.dc.html": {
+      "w": 1000,
+      "h": 700,
+      "title": "WorkspaceFormAccounts",
+      "x": 9452,
+      "y": 2991,
+      "page": "components"
+    },
+    "WorkspaceFormNetworkAddress.dc.html": {
+      "w": 640,
+      "h": 120,
+      "title": "WorkspaceFormNetworkAddress",
+      "x": 10532,
+      "y": 2991,
+      "page": "components"
+    },
+    "WorkspaceFormAccountIdentity.dc.html": {
+      "w": 640,
+      "h": 56,
+      "title": "WorkspaceFormAccountIdentity",
+      "x": 11252,
+      "y": 2991,
+      "page": "components"
+    },
+    "PublishWorkspaceDialog.dc.html": {
+      "w": 1440,
+      "h": 900,
+      "title": "PublishWorkspaceDialog",
+      "x": 11972,
+      "y": 2991,
+      "page": "components"
     }
   },
   "createdOnFiles": {
@@ -1381,7 +1465,7 @@
       "y": 0,
       "text": "Interactive flows (click through in Play)",
       "kind": "title1",
-      "maxW": 2960,
+      "maxW": 6000,
       "page": "prototypes"
     },
     "dao-explore-and-not-found": {
@@ -1605,13 +1689,15 @@
       "y": 2691,
       "text": "Flow parts",
       "kind": "title1",
-      "maxW": 4812,
+      "maxW": 8000,
       "page": "components"
     }
   },
   "order": [
     "FlowVote.dc.html",
     "FlowCreateDao.dc.html",
+    "FlowCreateWorkspace.dc.html",
+    "FlowWorkspaceEdit.dc.html",
     "Main.dc.html",
     "NotFound.dc.html",
     "DaoNotFound.dc.html",
@@ -1745,7 +1831,15 @@
     "TxFlowDialog.dc.html",
     "FlowVoteOptions.dc.html",
     "CreateDaoFormNetwork.dc.html",
-    "CreateDaoFormMetadata.dc.html"
+    "CreateDaoFormMetadata.dc.html",
+    "WorkspaceWizard.dc.html",
+    "WorkspaceWizardFooter.dc.html",
+    "WorkspaceFormMetadata.dc.html",
+    "WorkspaceFormTargets.dc.html",
+    "WorkspaceFormAccounts.dc.html",
+    "WorkspaceFormNetworkAddress.dc.html",
+    "WorkspaceFormAccountIdentity.dc.html",
+    "PublishWorkspaceDialog.dc.html"
   ],
   "pages": [
     {

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace form targets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">{{title}}</x-import>
+    <p class="wizard-step__description">{{intro}}</p>
+  </div>
+  <div class="workspace-list">
+    <x-import component-from-global-scope="GovUiKit.InputContainer" id="workspaceTargets" class-name="gap-3" label="Targets" is-optional="{{yes}}" help-text="Addresses this workspace relates to. They are stored as-is for now and will later be used to discover accounts automatically." use-custom-wrapper="{{yes}}">
+      <sc-for list="{{items}}" as="t" hint-placeholder-count="1">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm workspace-target">
+          <div class="workspace-account__fields">
+            <dc-import name="WorkspaceFormNetworkAddress" field-id="{{t.fieldId}}" network="{{t.network}}" address="{{t.address}}" error="{{t.error}}" on-network="{{t.onNetwork}}" on-address="{{t.onAddress}}" on-blur="{{t.onBlur}}" hint-size="100%,100px"></dc-import>
+          </div>
+          <div class="workspace-account__menu">{{t.menu}}</div>
+        </x-import>
+      </sc-for>
+    </x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit" on-click="{{onAdd}}">Add target</x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"title":{"editor":null},"intro":{"editor":null},"model":{"editor":null},"$preview":{"width":1000,"height":600}}'>
+// Step "Add targets" / "Edit targets" (apps/app: modules/workspace/components/createWorkspaceForm/
+// createWorkspaceFormTargets (+ TargetsItem)). It is `.wizard-step__content`: first child of `.wizard-step`.
+// Props:
+//   title, intro  step heading and description.
+//   model         { targets: [{ network, address, error, onNetwork(id), onAddress(text), onBlur(), onRemove() }], onAdd() }
+
+// Row menu: the kit Dropdown whose trigger is the tertiary dots button, one item (app: Dropdown.Container customTrigger).
+const rowMenu = (label, onRemove) => {
+  const R = window.React, G = window.GovUiKit;
+  return R.createElement(G.Dropdown.Container, { constrainContentWidth: false, size: 'md',
+    customTrigger: R.createElement(G.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' }) },
+    R.createElement(G.Dropdown.Item, { onClick: onRemove }, label));
+};
+const noop = () => undefined;
+const ev = (f) => (e) => (f || noop)(e && e.target ? e.target.value : e);
+const alertOf = (msg) => (msg ? { message: msg, variant: 'critical' } : undefined);
+const variantOf = (msg) => (msg ? 'critical' : undefined);
+
+class Component extends DCLogic {
+  renderVals() {
+    const m = this.props.model || {};
+    const items = (m.targets || []).map((t, i) => ({
+      fieldId: 'targets.' + i + '.network', network: t.network, address: t.address, error: t.error,
+      onNetwork: t.onNetwork || noop, onAddress: t.onAddress || noop, onBlur: t.onBlur || noop,
+      menu: rowMenu('Remove target', t.onRemove || noop)
+    }));
+    return { yes: true, title: this.props.title, intro: this.props.intro, items, onAdd: m.onAdd || noop };
+  }
+}
+</script>
+</body>
+</html>

@@ -1112,3 +1112,41 @@
 /* useWizardFooter: the submit button turns critical while the validation alert shows (kit Button variant critical) */
 .flowdao-critical button[type="submit"] { background-color: var(--color-critical-100); border-color: var(--color-critical-300); color: var(--color-critical-800); box-shadow: var(--shadow-critical-sm); }
 .flowdao-critical button[type="submit"]:hover { border-color: var(--color-critical-500); box-shadow: var(--shadow-critical); }
+
+/* ---- Workspace form (interactive): modules/workspace/components/createWorkspaceForm (createWorkspaceFormNetworkAddressFields,
+   createWorkspaceFormTargetsItem, createWorkspaceFormAccountsItemMetadata, createWorkspaceFormAccountIdentity),
+   shared/components/forms/networkInput ---- */
+/* NetworkAddressFields root: flex flex-col gap-3 */
+.workspace-fields { display: flex; flex-direction: column; gap: 12px; }
+/* TargetsItem Card: shadow-neutral-sm flex flex-col gap-3 p-6 md:flex-row md:gap-2 (menu mt-0 md:mt-9 = .workspace-account__menu) */
+.workspace-target { box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 24px; }
+@media (min-width: 48rem) { .workspace-target { flex-direction: row; gap: 8px; } }
+/* AccountsItemMetadata: flex flex-col gap-6 border-t border-neutral-100 pt-4 */
+.workspace-account-meta { display: flex; flex-direction: column; gap: 24px; padding-top: 16px; border-top: 1px solid var(--color-neutral-100); }
+/* AccountIdentity: flex min-h-14 items-center gap-3 rounded-xl bg-neutral-50 px-4 py-3; text-base / text-sm leading-tight */
+.workspace-identity { box-sizing: border-box; display: flex; min-height: 56px; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--color-neutral-50); }
+.workspace-identity__resolving { font-size: 16px; line-height: 1.25; color: var(--color-neutral-500); }
+.workspace-identity__main { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; }
+.workspace-identity__name { overflow: hidden; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800); text-overflow: ellipsis; white-space: nowrap; }
+.workspace-identity__address { overflow: hidden; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); text-overflow: ellipsis; white-space: nowrap; }
+/* networkInput.tsx dropdown item: flex items-center gap-3 (avatar, truncate name, testnet tag) */
+.network-option { display: flex; align-items: center; gap: 12px; }
+.network-option__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* networkTagClassName: flex h-5 shrink-0 items-center rounded-full bg-neutral-100 px-1.5 text-neutral-500 text-sm leading-tight md:h-6 md:px-2 md:text-base */
+.network-tag { display: flex; height: 20px; flex-shrink: 0; align-items: center; padding: 0 6px; border-radius: 9999px; background: var(--color-neutral-100); color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; }
+@media (min-width: 48rem) { .network-tag { height: 24px; padding: 0 8px; font-size: 16px; } }
+
+/* ---- Workspace wizard footer: shared/components/wizards/wizardPage/wizardPageStep (validation alert + critical submit) ---- */
+/* footer: flex flex-col gap-6 > [AlertCard, buttons]; after a failed submit the submit button is variant critical */
+.wizard-footer { display: flex; flex-direction: column; gap: 24px; }
+.wizard-footer--critical .wizard-actions__buttons button[type="submit"] { background: var(--color-critical-100); border-color: var(--color-critical-300); color: var(--color-critical-800); box-shadow: var(--shadow-critical-sm); }
+.wizard-footer--critical .wizard-actions__buttons button[type="submit"]:hover { border-color: var(--color-critical-500); box-shadow: var(--shadow-critical); }
+.wizard-footer--critical .wizard-actions__buttons button[type="submit"] svg { color: var(--color-critical-500); }
+
+/* ---- PublishWorkspaceDialog: modules/workspace/dialogs/publishWorkspaceDialog/publishWorkspaceDialog.tsx ---- */
+/* Dialog.Content: flex flex-col gap-4 px-6 pt-4 pb-6 */
+.workspace-publish { display: flex; flex-direction: column; gap: 16px; padding: 16px 24px 24px; }
+.workspace-publish__head { display: flex; align-items: center; gap: 12px; }
+.workspace-publish__title { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.workspace-publish__summary { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500); }
+.workspace-publish__description { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-neutral-500); }

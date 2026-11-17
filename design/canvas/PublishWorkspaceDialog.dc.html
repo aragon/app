@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Publish workspace dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{open}}" dc-props="{{rootProps}}">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="{{title}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="workspace-publish">
+    <div class="workspace-publish__head">
+      <x-import component-from-global-scope="GovUiKit.Avatar" alt="{{name}}" size="lg" src="{{avatar}}"></x-import>
+      <div class="workspace-publish__title">
+        <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h4">{{name}}</x-import>
+        <p class="workspace-publish__summary">{{summary}}</p>
+      </div>
+    </div>
+    <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
+      <p class="workspace-publish__description">{{description}}</p>
+    </sc-if>
+    <sc-if value="{{isError}}" hint-placeholder-val="{{no}}">
+      <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{errTitle}}" variant="critical" children="{{errDescription}}"></x-import>
+    </sc-if>
+    <sc-if value="{{isSuccess}}" hint-placeholder-val="{{no}}">
+      <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{successTitle}}" variant="success"></x-import>
+    </sc-if>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" has-error="{{isError}}" primary-action="{{primary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"mode":{"editor":"enum","options":["create","update"],"default":"create"},"status":{"editor":"enum","options":["idle","pending","error","success"],"default":"idle"},"$preview":{"width":1440,"height":900}}'>
+// PUBLISH_WORKSPACE dialog: the summary of the workspace about to be stored in the browser, then pending / error / success
+// (apps/app: modules/workspace/dialogs/publishWorkspaceDialog/publishWorkspaceDialog.tsx). Not a transaction dialog: the
+// registry is local storage. It has no close button; the kit Dialog.Root closes on overlay click / Escape (onAction("close")).
+// Props:
+//   open         shows the dialog (default true).
+//   mode         "create" or "update" (copy: Create workspace / Save workspace, Workspace created / Workspace updated).
+//   status       "idle", "pending" (button loading), "error" (Try again, critical alert), "success" (View workspace).
+//   workspaceName, avatar, description, accounts, targets   the form values summarised (counts as numbers).
+//   workspaceHref  where "View workspace" goes.
+//   onAction(type) "publish" (idle submit and "Try again"), "close" (overlay / Escape / View workspace).
+const COPY = {
+  create: { title: 'Create workspace', submit: 'Create workspace', success: 'Workspace created', errTitle: 'Unable to create the workspace', errDescription: 'The workspace could not be created. Check your connection and try again.' },
+  update: { title: 'Save workspace', submit: 'Save changes', success: 'Workspace updated', errTitle: 'Unable to save the workspace', errDescription: 'The changes could not be saved. Check your connection and try again.' }
+};
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const act = p.onAction || (() => undefined);
+    const mode = p.mode === 'update' ? 'update' : 'create';
+    const c = COPY[mode];
+    const status = p.status ?? 'idle';
+    const isSuccess = status === 'success';
+    const primary = isSuccess
+      ? { label: 'View workspace', href: p.workspaceHref, onClick: () => act('close') }
+      : { label: status === 'error' ? 'Try again' : c.submit, isLoading: status === 'pending', onClick: () => act('publish') };
+    return {
+      no: false,
+      open: p.open !== false && p.open !== 'false',
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) act('close'); } },
+      title: c.title, name: p.workspaceName ?? '', avatar: p.avatar,
+      summary: (p.accounts ?? 0) + ' accounts · ' + (p.targets ?? 0) + ' targets',
+      hasDescription: p.description != null && p.description !== '', description: p.description,
+      isError: status === 'error', errTitle: c.errTitle, errDescription: c.errDescription,
+      isSuccess, successTitle: c.success, primary
+    };
+  }
+}
+</script>
+</body>
+</html>
