@@ -86,7 +86,7 @@ body{margin:0}
 </nav>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"wallet":{"editor":"enum","options":["","nadia","jonas"],"default":""},"dao":{"editor":"enum","options":["meridian","atlas"],"default":"meridian"},"$preview":{"width":1024,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"wallet":{"editor":"enum","options":["","nadia","jonas"],"default":""},"dao":{"editor":"enum","options":["meridian","atlas","northstar"],"default":"meridian"},"$preview":{"width":1024,"height":900}}'>
 // The DAO navigation of the app: the sidebar (from the lg breakpoint) and the top bar that replaces it below lg.
 // Prop `wallet` (nadia | jonas | absent = disconnected): footer shows the account row of navigationSidebarAccount.tsx, the top bar's Wallet the user.
 // Mirrors navigationDao.tsx, navigationSidebar.tsx, navigationLinksItem.tsx and footerSidebar.tsx in apps/app.
@@ -101,7 +101,8 @@ class Component extends DCLogic {
     // The two mock DAOs (design/baseline-check/data.cjs): token voting (Meridian) and multisig (Atlas Grants Council).
     const daos = {
       meridian: { name: 'Meridian DAO', address: '0xc8c322384903ee8f11f511b71d0504237886bcde', avatar: 'assets/mock/avatar/meridian.svg' },
-      atlas: { name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', avatar: 'assets/mock/avatar/atlas.svg' }
+      atlas: { name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', avatar: 'assets/mock/avatar/atlas.svg' },
+      northstar: { name: 'Northstar Protocol', address: '0xa767846912853e30403f3efb946a5250e8e6a063', avatar: 'assets/mock/avatar/northstar.svg' }
     };
     const dao = daos[this.props.dao ?? 'meridian'] ?? daos.meridian;
     const link = (id, label, icon, href) => ({
