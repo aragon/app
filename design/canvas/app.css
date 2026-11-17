@@ -1105,3 +1105,10 @@
 /* ---- FlowVote: plugins/tokenPlugin/components/tokenSubmitVote/components/tokenVotingOptionToggle.tsx (selected neutral / critical) ---- */
 .vote-toggle--on-neutral { border-color: var(--color-primary-300); color: var(--color-neutral-800); }
 .vote-toggle--on-critical { border-color: var(--color-critical-300); color: var(--color-critical-800); }
+
+/* ---- FlowCreateDao: apps/app shared/components/wizards/wizardPage/wizardPageStep (footer block) ---- */
+/* wizardPageStep.tsx: the footer is `flex flex-col gap-6` (validation AlertCard above the button row) */
+.wizard-step__footer { display: flex; flex-direction: column; gap: 24px; }
+/* useWizardFooter: the submit button turns critical while the validation alert shows (kit Button variant critical) */
+.flowdao-critical button[type="submit"] { background-color: var(--color-critical-100); border-color: var(--color-critical-300); color: var(--color-critical-800); box-shadow: var(--shadow-critical-sm); }
+.flowdao-critical button[type="submit"]:hover { border-color: var(--color-critical-500); box-shadow: var(--shadow-critical); }

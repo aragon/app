@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create DAO form: network</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Select chain</x-import>
+    <p class="wizard-step__description">The chain you choose is where your DAO and tokens will be deployed. If you already have a token, select the chain your token is on.</p>
+  </div>
+  <x-import component-from-global-scope="GovUiKit.RadioGroup" value="{{network}}" on-value-change="{{setNetwork}}">
+    <div class="create-dao-networks">
+      <div class="create-dao-networks__section">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h4">Mainnets</x-import>
+        <div class="create-dao-networks__list">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/ethereum.svg" label="Ethereum" value="ethereum"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/base.svg" label="Base" value="base"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/bnb.svg" label="BNB Smart Chain" value="bnb"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/monad.svg" label="Monad" value="monad"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/robinhood.svg" label="Robinhood Chain" value="robinhood"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/arbitrum.svg" label="Arbitrum" value="arbitrum"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/polygon.svg" label="Polygon" value="polygon"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/avalanche.svg" label="Avalanche" value="avalanche"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/optimism.svg" label="Optimism" value="optimism"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/katana.svg" label="Katana" value="katana"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/zksync.svg" label="zkSync" value="zksync"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/citrea.svg" label="Citrea" value="citrea"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/chiliz.svg" label="Chiliz" value="chiliz"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/hemi.svg" label="Hemi" value="hemi"></x-import>
+        </div>
+      </div>
+      <div class="create-dao-networks__section">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h4">Testnets</x-import>
+        <div class="create-dao-networks__list">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/sepolia.svg" label="Ethereum Sepolia" value="sepolia"></x-import>
+    <sc-if value="{{showHoodi}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/hoodi.svg" label="Ethereum Hoodi" value="hoodi"></x-import>
+    </sc-if>
+    <sc-if value="{{showBaseSepolia}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/base_sepolia.svg" label="Base Sepolia" value="base-sepolia"></x-import>
+    </sc-if>
+    <sc-if value="{{showBnbTestnet}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/bnb_testnet.svg" label="BNB Smart Chain Testnet" value="bnb-testnet"></x-import>
+    </sc-if>
+    <sc-if value="{{showPolygonAmoy}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/polygon_amoy.svg" label="Polygon Amoy" value="polygon-amoy"></x-import>
+    </sc-if>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-right="{{testnetIcon}}" class-name="self-start" aria-expanded="{{expanded}}" on-click="{{toggleTestnets}}">{{testnetLabel}}</x-import>
+      </div>
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"network":{"editor":null},"expanded":{"editor":"boolean","default":false},"onSelect":{"editor":null},"onToggle":{"editor":null},"$preview":{"width":1216,"height":1500}}'>
+// Step body "Select chain" of the Create DAO wizard (apps/app: modules/createDao/components/createDaoForm/createDaoFormNetwork,
+// page copy from createDaoPageClient steps.NETWORK; networks from shared/constants/networkDefinitions.ts sorted by `order`,
+// logos assets/networks/<chain>.svg). First child of `.wizard-step`, above the footer block (frame: WizardNav, WizardProgress,
+// WizardActions + app.css "Wizards"). Used by CreateDaoStep1 (fixed props) and FlowCreateDao (state).
+// Props:
+//   network    selected value (default "sepolia"): ethereum base bnb monad robinhood arbitrum polygon avalanche optimism katana zksync
+//              citrea chiliz hemi | sepolia hoodi base-sepolia bnb-testnet polygon-amoy.
+//   expanded   testnets expanded ("Show fewer") or collapsed ("Show all testnets"); a selected testnet stays listed when collapsed.
+//   onSelect   function(value) called when a RadioCard is chosen.
+//   onToggle   function called by the "Show all testnets" / "Show fewer" button.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, sel = p.network || 'sepolia', ex = !!p.expanded;
+    const show = (k) => ex || sel === k;
+    return {
+      yes: true, no: false,
+      network: sel, setNetwork: (v) => { if (typeof p.onSelect === 'function') p.onSelect(v); },
+      toggleTestnets: () => { if (typeof p.onToggle === 'function') p.onToggle(); },
+      expanded: ex, testnetLabel: ex ? 'Show fewer' : 'Show all testnets', testnetIcon: ex ? 'CHEVRON_UP' : 'CHEVRON_DOWN',
+      showHoodi: show('hoodi'), showBaseSepolia: show('base-sepolia'), showBnbTestnet: show('bnb-testnet'), showPolygonAmoy: show('polygon-amoy')
+    };
+  }
+}
+</script>
+</body>
+</html>

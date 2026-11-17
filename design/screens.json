@@ -31,7 +31,8 @@
                 {
                     "title": "Interactive flows (click through in Play)",
                     "artboards": [
-                        "FlowVote.dc.html"
+                        "FlowVote.dc.html",
+                        "FlowCreateDao.dc.html"
                     ]
                 }
             ]
@@ -324,7 +325,9 @@
                     "title": "Flow parts",
                     "artboards": [
                         "TxFlowDialog.dc.html",
-                        "FlowVoteOptions.dc.html"
+                        "FlowVoteOptions.dc.html",
+                        "CreateDaoFormNetwork.dc.html",
+                        "CreateDaoFormMetadata.dc.html"
                     ]
                 }
             ]
@@ -876,6 +879,13 @@
         {
             "artboard": "FlowVote.dc.html",
             "reference": "connected-dao-proposal-mgp-8-not-voted.webp",
+            "knownDifferences": [
+                "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
+            ]
+        },
+        {
+            "artboard": "FlowCreateDao.dc.html",
+            "reference": "create-dao-step1-chain.webp",
             "knownDifferences": [
                 "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
             ]

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flow: Create DAO</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create DAO" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" on-submit="{{preventSubmit}}">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{two}}" next-step="{{nextStepName}}" hint-size="100%,36px"></dc-import>
+      <sc-if value="{{isStep1}}" hint-placeholder-val="{{yes}}">
+      <div class="wizard-step">
+        <dc-import name="CreateDaoFormNetwork" network="{{network}}" expanded="{{expanded}}" on-select="{{setNetwork}}" on-toggle="{{toggleTestnets}}" hint-size="100%,1500px"></dc-import>
+        <div class="wizard-step__footer">
+          <dc-import name="WizardActions" on-next="{{next}}" hint-size="100%,48px"></dc-import>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{isStep2}}" hint-placeholder-val="{{no}}">
+      <div class="wizard-step">
+        <dc-import name="CreateDaoFormMetadata" values="{{form}}" errors="{{errs}}" is-mainnet="{{isMainnet}}" on-change="{{onField}}" on-blur="{{onBlurField}}" on-add-resource="{{addResource}}" on-remove-resource="{{removeResource}}" on-resource-change="{{changeResource}}" on-resource-blur="{{blurResource}}" hint-size="100%,1000px"></dc-import>
+        <div class="wizard-step__footer {{footerClass}}">
+          <sc-if value="{{showAlert}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{alertTitle}}" variant="critical">{{alertDescription}}</x-import>
+          </sc-if>
+          <dc-import name="WizardActions" has-back="{{yes}}" is-last="{{yes}}" submit-label="Publish DAO" on-back="{{back}}" on-next="{{next}}" hint-size="100%,48px"></dc-import>
+        </div>
+      </div>
+      </sc-if>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+  <dc-import name="TxFlowDialog" open="{{txOpen}}" title="Publish DAO" description="To publish the DAO, confirm the onchain transaction in your wallet." steps="{{txSteps}}" summary="{{txSummary}}" submit-label="Create DAO" success-label="View DAO" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,900px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1907}}'>
+// Flow F1, Create DAO (apps/app: app/create/dao, modules/createDao/pages/createDaoPage/createDaoPageClient.tsx,
+// components/createDaoForm/{createDaoFormNetwork,createDaoFormMetadata}, shared/components/wizards (wizardPageStep, useWizardFooter,
+// wizardRoot: react-hook-form mode onTouched), forms/{avatarInput,resourcesInput}, dialogs/publishDaoDialog).
+// ONE artboard: `state.step` (1 select chain, 2 describe) and `state.txOpen` (the Publish DAO TxFlowDialog). The first
+// render is CreateDaoStep1.dc.html. Validation follows react-hook-form: a field is validated on blur, then on change; Next /
+// Publish validates every field of the step (errors + the "Missing data" / "Invalid data" AlertCard, critical button);
+// Back clears the errors. ENS "taken" lookup is faked (names in `takenEns`); the app resolves it on-chain.
+// Publish opens TxFlowDialog; its success button ("View DAO") goes to Dashboard.dc.html (the app opens /dao/<network>/<ens or address>).
+const NETWORK_NAMES = { ethereum: 'Ethereum', base: 'Base', bnb: 'BNB Smart Chain', monad: 'Monad', robinhood: 'Robinhood Chain', arbitrum: 'Arbitrum', polygon: 'Polygon', avalanche: 'Avalanche', optimism: 'Optimism', katana: 'Katana', zksync: 'zkSync', citrea: 'Citrea', chiliz: 'Chiliz', hemi: 'Hemi', sepolia: 'Ethereum Sepolia', hoodi: 'Ethereum Hoodi', 'base-sepolia': 'Base Sepolia', 'bnb-testnet': 'BNB Smart Chain Testnet', 'polygon-amoy': 'Polygon Amoy' };
+const AVATAR_ERRORS = {
+  'file-invalid-type': 'The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).',
+  'file-too-large': 'The file size exceeds the maximum allowed limit of 1 MB.',
+  'square-only': 'The image must be square. Upload a square image.',
+  'too-many-files': 'Only one file can be uploaded at a time.',
+  'unknown-file-error': 'Unable to upload image',
+  'wrong-dimension': 'The image dimensions exceed the maximum allowed size of 1024x1024 pixels.'
+};
+const TAKEN_ENS = ['aragon', 'dao', 'test', 'meridian', 'atlas'];
+const URL_RE = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
+const ALERTS = {
+  required: ['Missing data', 'Some inputs are missing. Fill out all mandatory fields to proceed.'],
+  invalid: ['Invalid data', 'Some values are invalid. Review and fix them to proceed.'],
+  'invalid-required': ['Missing and invalid data', 'Some inputs are missing or invalid. Fix them to proceed.']
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      step: 1, network: 'sepolia', expanded: false,
+      form: { name: '', ens: '', description: '', avatar: undefined, resources: [] },
+      touched: {}, errors: {}, submitted: false, txOpen: false, nextId: 1
+    };
+  }
+
+  // ---- validation (one rule set per field, as in the app) ----
+  validate(key, form, network) {
+    const mainnet = (network || this.state.network) === 'ethereum';
+    if (key === 'name') {
+      if (!form.name) return { type: 'required', message: 'DAO name is mandatory.' };
+      if (form.name.length > 128) return { type: 'maxLength', message: 'DAO name must be 128 characters or fewer.' };
+    } else if (key === 'ens') {
+      if (!mainnet || !form.ens) return null;
+      if (form.ens.length > 18) return { type: 'maxLength', message: 'ENS subname must be 18 characters or fewer.' };
+      if (!/^[a-z0-9-]+$/.test(form.ens)) return { type: 'validate', message: 'ENS subdomain is invalid.' };
+      if (TAKEN_ENS.indexOf(form.ens) >= 0) return { type: 'validate', message: 'ENS subdomain is not available.' };
+    } else if (key === 'description') {
+      if (form.description.length > 480) return { type: 'maxLength', message: 'Description must be 480 characters or fewer.' };
+    } else if (key === 'avatar') {
+      const e = form.avatar && form.avatar.error;
+      if (e) return { type: 'validate', message: AVATAR_ERRORS[e] };
+    } else if (key.indexOf('url') === 0) {
+      const r = form.resources.find((x) => 'url' + x.id === key);
+      if (!r) return null;
+      if (!r.url) return { type: 'required', message: 'URL is mandatory.' };
+      if (!URL_RE.test(r.url)) return { type: 'pattern', message: 'Invalid URL format.' };
+    }
+    return null;
+  }
+  fieldKeys(form) {
+    return ['name', 'ens', 'avatar', 'description'].concat(form.resources.map((r) => 'url' + r.id));
+  }
+  // value changed: react-hook-form (onTouched) revalidates a touched field, or any field once the form was submitted
+  change(key, patch) {
+    const s = this.state;
+    const form = Object.assign({}, s.form, patch);
+    const errors = Object.assign({}, s.errors);
+    if (s.touched[key] || s.submitted) {
+      const e = this.validate(key, form);
+      if (e) errors[key] = e; else delete errors[key];
+    }
+    this.setState({ form, errors });
+  }
+  blur(key) {
+    const s = this.state;
+    const errors = Object.assign({}, s.errors);
+    const e = this.validate(key, s.form);
+    if (e) errors[key] = e; else delete errors[key];
+    this.setState({ touched: Object.assign({}, s.touched, { [key]: true }), errors });
+  }
+  setResource(id, patch, validateNow) {
+    const s = this.state;
+    const resources = s.form.resources.map((r) => (r.id === id ? Object.assign({}, r, patch) : r));
+    const form = Object.assign({}, s.form, { resources });
+    const key = 'url' + id;
+    const errors = Object.assign({}, s.errors);
+    if (validateNow || s.touched[key] || s.submitted) {
+      const e = this.validate(key, form);
+      if (e) errors[key] = e; else delete errors[key];
+    }
+    this.setState({ form, errors, touched: validateNow ? Object.assign({}, s.touched, { [key]: true }) : s.touched });
+  }
+
+  // ---- wizard ----
+  next(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const s = this.state;
+    if (s.step === 1) { this.setState({ step: 2, submitted: true, errors: {} }); return; }
+    const errors = {};
+    this.fieldKeys(s.form).forEach((k) => { const err = this.validate(k, s.form); if (err) errors[k] = err; });
+    this.setState({ errors, submitted: true, txOpen: Object.keys(errors).length === 0 });
+  }
+  back(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    this.setState({ step: 1, errors: {} });
+  }
+
+  renderVals() {
+    const s = this.state, f = s.form;
+    const set = (patch) => this.setState(patch);
+    const errKeys = Object.keys(s.errors);
+    // useWizardFooter.getValidationStatus: top-level errors of type 'required' vs the rest (resources errors are an array: no type)
+    const topKey = (k) => (k.indexOf('url') === 0 ? 'resources' : k);
+    const top = {};
+    errKeys.forEach((k) => { const t = k.indexOf('url') === 0 ? undefined : s.errors[k].type; if (top[topKey(k)] === undefined || t === 'required') top[topKey(k)] = t; });
+    const nReq = Object.keys(top).filter((k) => top[k] === 'required').length;
+    const nInv = Object.keys(top).length - nReq;
+    const status = nReq && nInv ? 'invalid-required' : nReq ? 'required' : 'invalid';
+    const showAlert = s.submitted && errKeys.length > 0;
+    const selected = s.network;
+    const isMainnet = selected === 'ethereum';
+    const name = NETWORK_NAMES[selected] || 'Ethereum Sepolia';
+
+    return {
+      yes: true, no: false, two: 2, d128: 128, d18: 18, d480: 480, fourty: 40, maxFile: 1048576, maxDim: 1024,
+      preventSubmit: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      step: s.step, isStep1: s.step === 1, isStep2: s.step === 2,
+      nextStepName: s.step === 1 ? 'Describe your DAO' : 'Publish DAO',
+      network: selected, isMainnet,
+      setNetwork: (v) => set({ network: v }),
+      expanded: s.expanded,
+      toggleTestnets: () => set({ expanded: !s.expanded }),
+      next: (e) => this.next(e), back: (e) => this.back(e),
+      form: f,
+      errs: s.errors,
+      onField: (field, value) => {
+        if (field === 'ens') value = String(value).replace(/[<>]/g, '').toLowerCase();
+        this.change(field, { [field]: value });
+      },
+      onBlurField: (field) => this.blur(field),
+      addResource: () => set({ form: Object.assign({}, f, { resources: f.resources.concat([{ id: s.nextId, url: '', name: '' }]) }), nextId: s.nextId + 1 }),
+      removeResource: (id) => {
+        const errors = Object.assign({}, s.errors); delete errors['url' + id];
+        set({ form: Object.assign({}, f, { resources: f.resources.filter((x) => x.id !== id) }), errors });
+      },
+      changeResource: (id, patch) => this.setResource(id, patch),
+      blurResource: (id) => this.setResource(id, {}, true),
+      showAlert, alertTitle: (ALERTS[status] || ALERTS.invalid)[0], alertDescription: (ALERTS[status] || ALERTS.invalid)[1],
+      footerClass: showAlert ? 'flowdao-critical' : '',
+      txOpen: s.txOpen, txSteps: ['Pin data on IPFS'],
+      txSummary: { type: 'dao', name: f.name, description: f.description, network: name, logoSrc: f.avatar && f.avatar.url },
+      closeTx: () => set({ txOpen: false }),
+      txDone: () => { set({ txOpen: false }); window.location.href = 'Dashboard.dc.html'; }
+    };
+  }
+}
+</script>
+</body>
+</html>

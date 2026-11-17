@@ -22,45 +22,12 @@ body{margin:0}
   <dc-import name="WizardNav" wizard-name="Create DAO" hint-size="100%,91px"></dc-import>
   <main class="wizard-main">
     <form class="wizard-form">
-      <dc-import name="WizardProgress" step="{{one}}" total="{{two}}" next-step="Describe your DAO" hint-size="100%,36px"></dc-import>
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Describe your DAO" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Select chain</x-import>
-            <p class="wizard-step__description">The chain you choose is where your DAO and tokens will be deployed. If you already have a token, select the chain your token is on.</p>
-          </div>
-          <x-import component-from-global-scope="GovUiKit.RadioGroup" value="sepolia" on-value-change="{{noop}}">
-            <div class="create-dao-networks">
-              <div class="create-dao-networks__section">
-                <x-import component-from-global-scope="GovUiKit.Heading" size="h4">Mainnets</x-import>
-                <div class="create-dao-networks__list">
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/ethereum.svg" label="Ethereum" value="ethereum"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/base.svg" label="Base" value="base"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/bnb.svg" label="BNB Smart Chain" value="bnb"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/monad.svg" label="Monad" value="monad"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/robinhood.svg" label="Robinhood Chain" value="robinhood"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/arbitrum.svg" label="Arbitrum" value="arbitrum"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/polygon.svg" label="Polygon" value="polygon"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/avalanche.svg" label="Avalanche" value="avalanche"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/optimism.svg" label="Optimism" value="optimism"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/katana.svg" label="Katana" value="katana"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/zksync.svg" label="zkSync" value="zksync"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/citrea.svg" label="Citrea" value="citrea"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/chiliz.svg" label="Chiliz" value="chiliz"></x-import>
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/hemi.svg" label="Hemi" value="hemi"></x-import>
-                </div>
-              </div>
-              <div class="create-dao-networks__section">
-                <x-import component-from-global-scope="GovUiKit.Heading" size="h4">Testnets</x-import>
-                <div class="create-dao-networks__list">
-            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="assets/networks/sepolia.svg" label="Ethereum Sepolia" value="sepolia"></x-import>
-                </div>
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-right="CHEVRON_DOWN" class-name="self-start" aria-expanded="false">Show all testnets</x-import>
-              </div>
-            </div>
-          </x-import>
+        <dc-import name="CreateDaoFormNetwork" network="sepolia" hint-size="100%,1500px"></dc-import>
+        <div class="wizard-step__footer">
+          <dc-import name="WizardActions" next-href="CreateDaoStep2.dc.html" hint-size="100%,48px"></dc-import>
         </div>
-        <dc-import name="WizardActions" next-href="CreateDaoStep2.dc.html" hint-size="100%,48px"></dc-import>
       </div>
     </form>
   </main>
@@ -69,13 +36,12 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1907}}'>
-// Create DAO, step 1 "Select chain" (apps/app: app/create/dao, modules/createDao/pages/createDaoPage/createDaoPageClient.tsx,
-// components/createDaoForm/createDaoFormNetwork/createDaoFormNetwork.tsx; networks from shared/constants/networkDefinitions.ts
-// sorted by `order`, logos from apps/app/public/networks). Ethereum Sepolia is the form's default value; one testnet is
-// listed before "Show all testnets". Frame: WizardNav, WizardProgress, WizardActions parts + app.css "Wizards".
+// Create DAO, step 1 "Select chain": frame (WizardNav, WizardProgress, WizardActions + app.css "Wizards") around the CreateDaoFormNetwork
+// part (apps/app: createDaoPageClient.tsx, createDaoFormNetwork.tsx), Ethereum Sepolia preselected, testnets collapsed.
+// The same part is mounted by FlowCreateDao with state.
 class Component extends DCLogic {
   renderVals() {
-    return { one: 1, two: 2, noop: () => {} };
+    return { step: 1, total: 2 };
   }
 }
 </script>
